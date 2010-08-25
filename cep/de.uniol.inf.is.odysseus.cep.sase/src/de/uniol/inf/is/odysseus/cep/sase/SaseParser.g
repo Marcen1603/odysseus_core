@@ -21,6 +21,7 @@ tokens{
 	KMEMBER;
 	MEMBER;
 	COMPAREEXPRESSION;
+	ASSIGNMENT;
 	IDEXPRESSION;
 	AGGREGATION;
 	CREATEVIEW;
@@ -144,12 +145,13 @@ len	:
 	;
 	
 whereExpressions
-	:	expression (AND expression)* -> ^(WHEREEXPRESSION expression*)
+	:	expression ((AND|KOMMA) expression)* -> ^(WHEREEXPRESSION expression*)
 	;
 	
 expression
 	:	BBRACKETLEFT NAME BBRACKETRIGHT -> ^(IDEXPRESSION NAME) |
-		f1=mathExpression (op=SINGLEEQUALS|op=COMPAREOP) f2=mathExpression ->  ^(COMPAREEXPRESSION $f1 $op $f2)
+		f1=mathExpression (op=SINGLEEQUALS|op=COMPAREOP) f2=mathExpression ->  ^(COMPAREEXPRESSION $f1 $op $f2) |
+		sAttributeName ASSIGN mathExpression -> ^(ASSIGNMENT sAttributeName mathExpression)
 	;
 	
 mathExpression:	mult ((PLUS^|MINUS^) mult)* 

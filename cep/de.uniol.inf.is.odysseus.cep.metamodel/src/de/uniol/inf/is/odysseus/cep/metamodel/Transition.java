@@ -158,6 +158,9 @@ public class Transition {
 		return getCondition().evaluate(eventTypePort);
 	}
 
+	public void addAssigment(String attributeName, String fullExpression) {
+		getCondition().addAssignment(attributeName, fullExpression);		
+	}
 	
 	public void appendAND(String fullExpression) {
 		getCondition().appendAND(fullExpression);		

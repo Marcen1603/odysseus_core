@@ -2,11 +2,11 @@ package de.uniol.inf.is.odysseus.cep.sase;
 
 import java.util.List;
 
-class CompareExpression {
+class AttributeExpression {
 	private List<PathAttribute> _attributes = null;
 	private String _fullExpression = null;
 
-	public CompareExpression(List<PathAttribute> attributes,
+	public AttributeExpression(List<PathAttribute> attributes,
 			String fullExpression) {
 		super();
 		_attributes = attributes;

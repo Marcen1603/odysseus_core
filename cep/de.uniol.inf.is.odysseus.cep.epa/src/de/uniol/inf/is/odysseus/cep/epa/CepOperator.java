@@ -17,10 +17,10 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
-import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
@@ -73,6 +73,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * und die Struktur des Zwischenspeichers enthÃ¤lt
 	 */
 	private StateMachine<R> stateMachine;
+	
+	/**
+	 * Referenz auf die globale, automatenübergreifende Symboltabelle
+	 */
+	private SymbolTable<R> symTab;
 
 	/**
 	 * leerer Standardkonstruktor

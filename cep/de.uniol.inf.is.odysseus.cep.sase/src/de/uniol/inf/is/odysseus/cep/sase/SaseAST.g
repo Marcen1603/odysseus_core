@@ -37,8 +37,8 @@ options {
 
 @members {
 
-  Logger _logger = null;
-  Logger getLogger(){
+  static Logger _logger = null;
+  static Logger getLogger(){
     if (_logger == null){
       _logger = LoggerFactory.getLogger(SaseAST.class);
     }
@@ -51,13 +51,10 @@ options {
 	Map<String, String> kleeneAttributeState = null;
 	ISymbolTableOperationFactory symTableOpFac = null;
 	
-	// TODO: Hierfuer eine bessere Loesung finden
-	 private String tranformAttributesToMetamodell(CompareExpression ce, State s) {
-    // In die Syntax des Metamodells umwandeln
-    String ret = new String(ce.getFullExpression());
-    for (PathAttribute attrib : ce.getAttributes()) {
+
+
+  private String transformAttribute(PathAttribute attrib,State s){
       String index = ""; // getKleenePart.equals("[i]")
-      String fullAttribName = attrib.getFullAttributeName();
       String aggregation = attrib.getAggregation();
       String stateIdentifier = attrib.getAttribute();
       String realAttributeName = attrib.getRealAttributeName();
@@ -93,11 +90,20 @@ options {
           }
         }
       }
-
-      ret = replaceStrings(ret, fullAttribName, aggregation
+      
+     return aggregation
           + CepVariable.getSeperator() + stateIdentifier
           + CepVariable.getSeperator() + index
-          + CepVariable.getSeperator() + realAttributeName);
+          + CepVariable.getSeperator() + realAttributeName;
+  }
+
+	 private String tranformAttributesToMetamodell(AttributeExpression ce, State s) {
+    // In die Syntax des Metamodells umwandeln
+    String ret = new String(ce.getFullExpression());
+    for (PathAttribute attrib : ce.getAttributes()) {
+      String fullAttribName = attrib.getFullAttributeName();
+      String convertedAttributeName = transformAttribute(attrib,s);
+      ret = replaceStrings(ret, fullAttribName, convertedAttributeName);
     }
 
     return ret;
@@ -129,6 +135,21 @@ options {
             }
           }
           return time;    
+      }
+      
+      private Transition getTransition(PathAttribute attr, State s){
+           Transition t = null;
+           if (attr != null) {
+             t = s.getTransition(s.getId() + "_begin");
+              if (t == null && attr.isKleeneAttribute()) {
+                if (attr.getKleenePart().equals("[i]")) {
+                 t = s.getTransition(s.getId() + "_take");
+                } else {
+                  t = s.getTransition(s.getId() + "_proceed");
+                }
+              }
+           }
+           return t;
       }
 
 }
@@ -301,7 +322,8 @@ attributeName
 
 whereExpression[StateMachine stmachine]
 @init {
-  List<CompareExpression> compareExpressions = new ArrayList<CompareExpression>();
+  List<AttributeExpression> compareExpressions = new ArrayList<AttributeExpression>();
+  List assignExpressions = new ArrayList();
 }
   :
   ^(
@@ -309,60 +331,37 @@ whereExpression[StateMachine stmachine]
     (
       compareExpression[stmachine,compareExpressions]
       | idexpression[stmachine.getStates(),compareExpressions]
+      | assignment[stmachine, assignExpressions]
     )*
    )
   {
-     //getLogger().debug("Compare Expressions");
-//     for (CompareExpression expr:compareExpressions){
-//       getLogger().debug(expr);
-//     }
     List<State> finalStates = stmachine.getFinalStates();
     for (State finalState : finalStates) {
       List<State> pathes = stmachine.getAllPathesToStart(finalState);
       for (State s : pathes) {
-        Iterator<CompareExpression> compareIter = compareExpressions
+        Iterator<AttributeExpression> compareIter = compareExpressions
             .iterator();
         while (compareIter.hasNext()) {
-          CompareExpression ce = compareIter.next();
-          //getLogger().debug(ce);
-          //System.out.println("Compare Expression "+ce);
+          AttributeExpression ce = compareIter.next();
           PathAttribute attr = ce.get(s.getId());
           if (attr != null) {
-            Transition t = s.getTransition(s.getId() + "_begin");
-            if (t == null && attr.isKleeneAttribute()) {
-              if (attr.getKleenePart().equals("[i]")) {
-                t = s.getTransition(s.getId() + "_take");
-              } else {
-                t = s.getTransition(s.getId() + "_proceed");
-              }
-            }
+            Transition t = getTransition(attr, s);
             // Anpassen der Variablennamen für das Metamodell:
-            String fullExpression = tranformAttributesToMetamodell(
-                ce, s);
-            //System.out.println("fullExpression "+fullExpression);  
-            //String fullExpression = ce.getFullExpression();
+            String fullExpression = tranformAttributesToMetamodell(ce, s);
             t.appendAND(fullExpression);
-//            t = s.getTransition(s.getId() + "_ignore");
-//            if (t != null) {
-//              switch (stmachine.getEventSelectionStrategy()) {
-//              case PARTITION_CONTIGUITY:
-//                t.appendAND(fullExpression);
-//                // negation later!
-//                break;
-//              case SKIP_TILL_NEXT_MATCH:
-//                t.appendOR(fullExpression);
-//                t.getCondition().setEventTypeChecking(false);
-//                // negation later!
-//                break;
-//              case STRICT_CONTIGUITY:
-//                t.appendAND("false");
-//                break;
-//              case SKIP_TILL_ANY_MATCH:                
-//              default:
-//                t.getCondition().setEventTypeChecking(false);
-//              }
-//            }
             compareIter.remove();
+          }
+        }// while
+        Iterator<AssignExpression> assignIter = assignExpressions.iterator();
+        while(assignIter.hasNext()){
+          AssignExpression ae = assignIter.next();
+          PathAttribute attr = ae.get(s.getId());
+          if (attr != null){
+            Transition t = getTransition(attr, s);
+            // Anpassen der Variablennamen für das Metamodell:
+            String fullExpression = tranformAttributesToMetamodell(ae, s);
+            t.addAssigment(transformAttribute(ae.getAttributToAssign(),s), fullExpression);
+            assignIter.remove();
           }
         }
       }
@@ -402,7 +401,7 @@ whereExpression[StateMachine stmachine]
   }
   ;
 
-compareExpression[StateMachine sm,List<CompareExpression> compareExpressions]
+compareExpression[StateMachine sm,List<AttributeExpression> compareExpressions]
 @init {
 		 StringBuffer left= new StringBuffer();
      StringBuffer right=new StringBuffer();
@@ -424,8 +423,18 @@ compareExpression[StateMachine sm,List<CompareExpression> compareExpressions]
       ret.append($op);
    }
    ret.append(right);
-   compareExpressions.add(new CompareExpression(attribs, ret.toString()));}
+   compareExpressions.add(new AttributeExpression(attribs, ret.toString()));}
   ;
+
+assignment[StateMachine sm,List assignExpressions]
+@init{
+  List<PathAttribute> singleAttrib = new ArrayList<PathAttribute>();
+  List<PathAttribute> attribs = new ArrayList<PathAttribute>();
+  StringBuffer right=new StringBuffer();
+}:
+^(ASSIGNMENT attributeTerm[singleAttrib] mathExpression[right,attribs]){
+    assignExpressions.add(new AssignExpression(singleAttrib.get(0),attribs,right.toString()));
+};
 
 mathExpression[StringBuffer exp, List<PathAttribute> attribs]
 @init {
@@ -507,7 +516,7 @@ kAttributeUsage[StringBuffer name, StringBuffer usage]
   {usage.append("[i-1]");name.append($NAME);}
   ;
 
-idexpression[List<State> states, List<CompareExpression> compareExpressions]
+idexpression[List<State> states, List<AttributeExpression> compareExpressions]
   :
   ^(IDEXPRESSION var=NAME)
   {
@@ -521,7 +530,7 @@ idexpression[List<State> states, List<CompareExpression> compareExpressions]
             StringBuffer expr = new StringBuffer();
             expr.append(t).append(t).append(t).append(states.get(i).getId()).append(".").append(var.getText());
             expr.append(t).append(t).append(t).append(states.get(i+1).getId()).append(".").append(var.getText());
-            compareExpressions.add(new CompareExpression(attr,expr.toString()));
+            compareExpressions.add(new AttributeExpression(attr,expr.toString()));
         }
   }
   ;

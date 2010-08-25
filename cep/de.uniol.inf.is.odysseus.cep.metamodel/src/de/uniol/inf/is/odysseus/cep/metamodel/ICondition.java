@@ -21,6 +21,7 @@ public interface ICondition extends IExpression{
 	public boolean evaluate(int eventTypePort);
 	public void appendAND(String fullExpression);
 	public void appendOR(String fullExpression);
+	public void addAssignment(String attribute, String fullexpression);
 	public void negate();
 	public boolean isNegate();
 

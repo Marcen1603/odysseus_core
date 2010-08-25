@@ -47,6 +47,7 @@ MULT	: '*';
 COMPAREOP : '<='|'>='|'!='|'<'|'>';
 SINGLEEQUALS : '=';
 EQUALS 	: '==';
+ASSIGN  : ':=';
 
 NOTSIGN	: '~';
 	

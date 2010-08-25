@@ -65,5 +65,5 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 	public String getName() {
 		return "CepAO --> CepOperator (Relational)";
 	}
-
 }
+

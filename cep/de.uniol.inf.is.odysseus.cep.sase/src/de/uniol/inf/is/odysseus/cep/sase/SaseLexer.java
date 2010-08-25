@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2010-08-09 15:31:30
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2010-08-25 11:25:59
  package de.uniol.inf.is.odysseus.cep.sase;
 
 import org.antlr.runtime.*;
@@ -11,57 +11,58 @@ public class SaseLexer extends Lexer {
     public static final int WHERE=8;
     public static final int MILLISECOND=23;
     public static final int POINT=35;
-    public static final int LETTER=49;
+    public static final int LETTER=50;
     public static final int MAX=30;
-    public static final int FLOAT=46;
+    public static final int FLOAT=47;
     public static final int DAY=19;
     public static final int COUNT=32;
     public static final int EQUALS=40;
     public static final int AND=14;
     public static final int SUM=31;
-    public static final int SPACE=53;
+    public static final int SPACE=54;
     public static final int EOF=-1;
+    public static final int LBRACKET=44;
     public static final int PATTERN=7;
-    public static final int LBRACKET=43;
     public static final int SINGLEEQUALS=39;
-    public static final int NAME=50;
+    public static final int NAME=51;
     public static final int CREATE=4;
-    public static final int STRING_LITERAL=52;
-    public static final int NOTSIGN=41;
+    public static final int STRING_LITERAL=53;
+    public static final int NOTSIGN=42;
     public static final int LEFTCURLY=12;
     public static final int SEQ=11;
-    public static final int COMMA=42;
+    public static final int COMMA=43;
     public static final int AVG=28;
     public static final int RETURN=10;
     public static final int RIGHTCURLY=13;
     public static final int DIVISION=36;
     public static final int PLUS=33;
-    public static final int DIGIT=48;
-    public static final int RBRACKET=44;
+    public static final int DIGIT=49;
+    public static final int RBRACKET=45;
     public static final int STREAM=5;
     public static final int BBRACKETRIGHT=17;
-    public static final int INTEGER=45;
+    public static final int INTEGER=46;
     public static final int SECOND=22;
     public static final int VIEW=6;
-    public static final int NUMBER=47;
-    public static final int WHITESPACE=57;
+    public static final int NUMBER=48;
+    public static final int WHITESPACE=58;
     public static final int MIN=29;
     public static final int MINUS=34;
     public static final int MULT=37;
     public static final int HOUR=20;
     public static final int SKIP_TILL_NEXT_MATCH=24;
-    public static final int NEWLINE=56;
-    public static final int NONCONTROL_CHAR=51;
+    public static final int NEWLINE=57;
+    public static final int NONCONTROL_CHAR=52;
     public static final int BBRACKETLEFT=16;
     public static final int PARTITION_CONTIGUITY=27;
+    public static final int ASSIGN=41;
     public static final int WITHIN=9;
     public static final int SKIP_TILL_ANY_MATCH=25;
     public static final int LEN=15;
-    public static final int LOWER=54;
+    public static final int LOWER=55;
     public static final int MINUTE=21;
     public static final int STRICT_CONTIGUITY=26;
     public static final int COMPAREOP=38;
-    public static final int UPPER=55;
+    public static final int UPPER=56;
 
     // delegates
     // delegators
@@ -2587,13 +2588,34 @@ public class SaseLexer extends Lexer {
     }
     // $ANTLR end "EQUALS"
 
+    // $ANTLR start "ASSIGN"
+    public final void mASSIGN() throws RecognitionException {
+        try {
+            int _type = ASSIGN;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:50:9: ( ':=' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:50:11: ':='
+            {
+            match(":="); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "ASSIGN"
+
     // $ANTLR start "NOTSIGN"
     public final void mNOTSIGN() throws RecognitionException {
         try {
             int _type = NOTSIGN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:51:9: ( '~' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:51:11: '~'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:9: ( '~' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:11: '~'
             {
             match('~'); 
 
@@ -2612,8 +2634,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:53:7: ( ',' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:53:9: ','
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:7: ( ',' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:9: ','
             {
             match(','); 
 
@@ -2632,8 +2654,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = LBRACKET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:56:2: ( '(' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:56:4: '('
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:2: ( '(' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:4: '('
             {
             match('('); 
 
@@ -2652,8 +2674,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = RBRACKET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:58:2: ( ')' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:58:4: ')'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:59:2: ( ')' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:59:4: ')'
             {
             match(')'); 
 
@@ -2672,19 +2694,19 @@ public class SaseLexer extends Lexer {
         try {
             int _type = NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:8: ( INTEGER | FLOAT )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:8: ( INTEGER | FLOAT )
             int alt8=2;
             alt8 = dfa8.predict(input);
             switch (alt8) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:11: INTEGER
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:11: INTEGER
                     {
                     mINTEGER(); 
 
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:21: FLOAT
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:21: FLOAT
                     {
                     mFLOAT(); 
 
@@ -2703,12 +2725,12 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "FLOAT"
     public final void mFLOAT() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:16: ( INTEGER '.' ( DIGIT )+ )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:18: INTEGER '.' ( DIGIT )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:16: ( INTEGER '.' ( DIGIT )+ )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:18: INTEGER '.' ( DIGIT )+
             {
             mINTEGER(); 
             match('.'); 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:30: ( DIGIT )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:30: ( DIGIT )+
             int cnt9=0;
             loop9:
             do {
@@ -2722,7 +2744,7 @@ public class SaseLexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:30: DIGIT
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:30: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -2750,7 +2772,7 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "INTEGER"
     public final void mINTEGER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:18: ( '0' | '1' .. '9' ( '0' .. '9' )* )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:18: ( '0' | '1' .. '9' ( '0' .. '9' )* )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -2768,17 +2790,17 @@ public class SaseLexer extends Lexer {
             }
             switch (alt11) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:20: '0'
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:20: '0'
                     {
                     match('0'); 
 
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:26: '1' .. '9' ( '0' .. '9' )*
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:26: '1' .. '9' ( '0' .. '9' )*
                     {
                     matchRange('1','9'); 
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:35: ( '0' .. '9' )*
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:35: ( '0' .. '9' )*
                     loop10:
                     do {
                         int alt10=2;
@@ -2791,7 +2813,7 @@ public class SaseLexer extends Lexer {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:36: '0' .. '9'
+                    	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:36: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -2819,11 +2841,11 @@ public class SaseLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:65:6: ( LETTER ( LETTER | DIGIT | '_' | ':' )* )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:65:8: LETTER ( LETTER | DIGIT | '_' | ':' )*
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:6: ( LETTER ( LETTER | DIGIT | '_' | ':' )* )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:8: LETTER ( LETTER | DIGIT | '_' | ':' )*
             {
             mLETTER(); 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:65:15: ( LETTER | DIGIT | '_' | ':' )*
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:15: ( LETTER | DIGIT | '_' | ':' )*
             loop12:
             do {
                 int alt12=2;
@@ -2872,11 +2894,11 @@ public class SaseLexer extends Lexer {
         try {
             int _type = STRING_LITERAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:16: ( '\"' ( NONCONTROL_CHAR )* '\"' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:18: '\"' ( NONCONTROL_CHAR )* '\"'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:67:16: ( '\"' ( NONCONTROL_CHAR )* '\"' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:67:18: '\"' ( NONCONTROL_CHAR )* '\"'
             {
             match('\"'); 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:22: ( NONCONTROL_CHAR )*
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:67:22: ( NONCONTROL_CHAR )*
             loop13:
             do {
                 int alt13=2;
@@ -2889,7 +2911,7 @@ public class SaseLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:22: NONCONTROL_CHAR
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:67:22: NONCONTROL_CHAR
             	    {
             	    mNONCONTROL_CHAR(); 
 
@@ -2916,7 +2938,7 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "NONCONTROL_CHAR"
     public final void mNONCONTROL_CHAR() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:68:26: ( LETTER | DIGIT | SPACE )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:69:26: ( LETTER | DIGIT | SPACE )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
             if ( input.LA(1)=='\t'||input.LA(1)==' '||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -2940,7 +2962,7 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:69:17: ( LOWER | UPPER )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:70:17: ( LOWER | UPPER )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -2964,8 +2986,8 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "LOWER"
     public final void mLOWER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:70:17: ( 'a' .. 'z' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:70:19: 'a' .. 'z'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:71:17: ( 'a' .. 'z' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:71:19: 'a' .. 'z'
             {
             matchRange('a','z'); 
 
@@ -2980,8 +3002,8 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "UPPER"
     public final void mUPPER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:71:17: ( 'A' .. 'Z' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:71:19: 'A' .. 'Z'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:72:17: ( 'A' .. 'Z' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:72:19: 'A' .. 'Z'
             {
             matchRange('A','Z'); 
 
@@ -2996,8 +3018,8 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:72:17: ( '0' .. '9' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:72:19: '0' .. '9'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:73:17: ( '0' .. '9' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:73:19: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -3012,7 +3034,7 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "SPACE"
     public final void mSPACE() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:73:17: ( ' ' | '\\t' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:74:17: ( ' ' | '\\t' )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
             if ( input.LA(1)=='\t'||input.LA(1)==' ' ) {
@@ -3038,10 +3060,10 @@ public class SaseLexer extends Lexer {
         try {
             int _type = NEWLINE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:75:9: ( ( ( '\\r' )? '\\n' )+ )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:75:11: ( ( '\\r' )? '\\n' )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:9: ( ( ( '\\r' )? '\\n' )+ )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:11: ( ( '\\r' )? '\\n' )+
             {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:75:11: ( ( '\\r' )? '\\n' )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:11: ( ( '\\r' )? '\\n' )+
             int cnt15=0;
             loop15:
             do {
@@ -3055,9 +3077,9 @@ public class SaseLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:75:12: ( '\\r' )? '\\n'
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:12: ( '\\r' )? '\\n'
             	    {
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:75:12: ( '\\r' )?
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:12: ( '\\r' )?
             	    int alt14=2;
             	    int LA14_0 = input.LA(1);
 
@@ -3066,7 +3088,7 @@ public class SaseLexer extends Lexer {
             	    }
             	    switch (alt14) {
             	        case 1 :
-            	            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:75:12: '\\r'
+            	            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:12: '\\r'
             	            {
             	            match('\r'); 
 
@@ -3106,10 +3128,10 @@ public class SaseLexer extends Lexer {
         try {
             int _type = WHITESPACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:77:12: ( ( SPACE )+ )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:77:14: ( SPACE )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:78:12: ( ( SPACE )+ )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:78:14: ( SPACE )+
             {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:77:14: ( SPACE )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:78:14: ( SPACE )+
             int cnt16=0;
             loop16:
             do {
@@ -3123,7 +3145,7 @@ public class SaseLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:77:14: SPACE
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:78:14: SPACE
             	    {
             	    mSPACE(); 
 
@@ -3152,8 +3174,8 @@ public class SaseLexer extends Lexer {
     // $ANTLR end "WHITESPACE"
 
     public void mTokens() throws RecognitionException {
-        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:8: ( CREATE | STREAM | VIEW | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | LEN | BBRACKETLEFT | BBRACKETRIGHT | WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND | SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY | AVG | MIN | MAX | SUM | COUNT | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOTSIGN | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE )
-        int alt17=46;
+        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:8: ( CREATE | STREAM | VIEW | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | LEN | BBRACKETLEFT | BBRACKETRIGHT | WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND | SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY | AVG | MIN | MAX | SUM | COUNT | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | ASSIGN | NOTSIGN | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE )
+        int alt17=47;
         alt17 = dfa17.predict(input);
         switch (alt17) {
             case 1 :
@@ -3416,63 +3438,70 @@ public class SaseLexer extends Lexer {
                 }
                 break;
             case 38 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:320: NOTSIGN
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:320: ASSIGN
+                {
+                mASSIGN(); 
+
+                }
+                break;
+            case 39 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:327: NOTSIGN
                 {
                 mNOTSIGN(); 
 
                 }
                 break;
-            case 39 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:328: COMMA
+            case 40 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:335: COMMA
                 {
                 mCOMMA(); 
 
                 }
                 break;
-            case 40 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:334: LBRACKET
+            case 41 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:341: LBRACKET
                 {
                 mLBRACKET(); 
 
                 }
                 break;
-            case 41 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:343: RBRACKET
+            case 42 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:350: RBRACKET
                 {
                 mRBRACKET(); 
 
                 }
                 break;
-            case 42 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:352: NUMBER
+            case 43 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:359: NUMBER
                 {
                 mNUMBER(); 
 
                 }
                 break;
-            case 43 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:359: NAME
+            case 44 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:366: NAME
                 {
                 mNAME(); 
 
                 }
                 break;
-            case 44 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:364: STRING_LITERAL
+            case 45 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:371: STRING_LITERAL
                 {
                 mSTRING_LITERAL(); 
 
                 }
                 break;
-            case 45 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:379: NEWLINE
+            case 46 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:386: NEWLINE
                 {
                 mNEWLINE(); 
 
                 }
                 break;
-            case 46 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:387: WHITESPACE
+            case 47 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:394: WHITESPACE
                 {
                 mWHITESPACE(); 
 
@@ -3537,98 +3566,97 @@ public class SaseLexer extends Lexer {
             this.transition = DFA8_transition;
         }
         public String getDescription() {
-            return "61:1: NUMBER : ( INTEGER | FLOAT );";
+            return "62:1: NUMBER : ( INTEGER | FLOAT );";
         }
     }
     static final String DFA17_eotS =
-        "\1\uffff\6\34\2\uffff\2\34\2\uffff\3\34\6\uffff\1\64\11\uffff\23"+
-        "\34\2\uffff\3\34\1\117\2\34\1\122\7\34\1\132\1\133\1\134\1\136\1"+
-        "\34\1\141\1\34\1\143\4\34\1\uffff\2\34\1\uffff\1\152\4\34\1\160"+
-        "\1\34\3\uffff\1\136\1\uffff\1\163\1\34\1\uffff\1\34\1\uffff\1\34"+
-        "\1\167\4\34\1\uffff\2\34\1\176\1\34\1\160\1\uffff\1\34\1\163\1\uffff"+
-        "\2\34\1\u0083\1\uffff\1\u0084\1\34\1\u0087\3\34\1\uffff\1\u008b"+
-        "\1\u008c\1\u008d\1\34\2\uffff\1\34\1\u0087\1\uffff\1\34\1\u0092"+
-        "\1\34\3\uffff\1\u008d\3\34\1\uffff\16\34\1\u00a7\4\34\1\u00a7\1"+
-        "\uffff\20\34\1\u00bc\3\34\1\uffff\4\34\1\u00c4\1\34\1\u00c6\1\uffff"+
-        "\1\u00c7\2\uffff";
+        "\1\uffff\6\35\2\uffff\2\35\2\uffff\3\35\6\uffff\1\65\12\uffff\23"+
+        "\35\2\uffff\3\35\1\120\2\35\1\123\7\35\1\133\1\134\1\135\1\136\1"+
+        "\35\1\142\1\35\1\144\4\35\1\uffff\2\35\1\uffff\1\153\4\35\1\160"+
+        "\1\35\4\uffff\1\136\1\163\1\35\1\uffff\1\35\1\uffff\1\35\1\170\4"+
+        "\35\1\uffff\2\35\1\177\1\35\1\uffff\1\160\1\35\1\uffff\1\163\2\35"+
+        "\1\u0084\1\uffff\1\u0085\1\35\1\u0087\3\35\1\uffff\1\u008c\1\u008d"+
+        "\1\u008f\1\35\2\uffff\1\35\1\uffff\1\u0087\1\35\1\u0093\1\35\2\uffff"+
+        "\1\u008f\1\uffff\3\35\1\uffff\16\35\1\u00a7\4\35\1\uffff\1\u00a7"+
+        "\20\35\1\u00bd\3\35\1\uffff\4\35\1\u00c5\1\35\1\u00c7\1\uffff\1"+
+        "\u00c8\2\uffff";
     static final String DFA17_eofS =
-        "\u00c8\uffff";
+        "\u00c9\uffff";
     static final String DFA17_minS =
         "\1\11\1\117\1\105\1\111\1\101\2\105\2\uffff\1\116\1\105\2\uffff"+
-        "\1\101\1\117\1\101\6\uffff\1\75\11\uffff\1\105\1\125\1\122\1\103"+
+        "\1\101\1\117\1\101\6\uffff\1\75\12\uffff\1\105\1\125\1\122\1\103"+
         "\1\111\1\115\1\105\1\122\1\105\1\124\1\105\1\124\1\104\1\107\1\116"+
         "\1\131\1\125\1\114\1\130\2\uffff\1\101\1\116\1\105\1\60\1\117\1"+
         "\120\1\60\1\127\2\124\1\122\1\110\1\113\1\125\4\60\1\122\1\60\1"+
         "\114\1\60\2\124\1\101\1\103\1\uffff\1\116\1\137\1\uffff\1\60\1\105"+
-        "\1\111\1\105\1\111\1\60\1\122\3\uffff\1\60\1\uffff\1\60\1\124\1"+
-        "\uffff\1\111\1\uffff\1\105\1\60\1\115\1\124\1\104\1\124\1\uffff"+
-        "\1\122\1\124\1\60\1\116\1\60\1\uffff\1\116\1\60\1\uffff\1\105\1"+
-        "\123\1\60\1\uffff\1\60\1\137\1\60\1\111\1\116\1\111\1\uffff\3\60"+
-        "\1\105\2\uffff\1\103\1\60\1\uffff\1\114\1\60\1\117\3\uffff\1\60"+
-        "\1\103\1\117\1\114\1\uffff\1\116\1\117\1\116\2\137\1\116\1\124\1"+
-        "\101\1\103\1\104\1\111\1\105\1\116\1\117\1\60\1\107\1\130\1\131"+
-        "\1\116\1\60\1\uffff\1\125\1\124\1\137\1\124\1\111\1\137\1\115\1"+
-        "\111\1\124\1\115\1\101\1\107\1\131\1\101\1\124\1\125\1\60\1\124"+
-        "\1\103\1\111\1\uffff\1\103\1\110\1\124\1\110\1\60\1\131\1\60\1\uffff"+
-        "\1\60\2\uffff";
+        "\1\111\1\105\1\111\1\60\1\122\4\uffff\2\60\1\124\1\uffff\1\111\1"+
+        "\uffff\1\105\1\60\1\115\1\124\1\104\1\124\1\uffff\1\122\1\124\1"+
+        "\60\1\116\1\uffff\1\60\1\116\1\uffff\1\60\1\105\1\123\1\60\1\uffff"+
+        "\1\60\1\137\1\60\1\111\1\116\1\111\1\uffff\3\60\1\105\2\uffff\1"+
+        "\103\1\uffff\1\60\1\114\1\60\1\117\2\uffff\1\60\1\uffff\1\103\1"+
+        "\117\1\114\1\uffff\1\116\1\117\1\116\2\137\1\116\1\124\1\101\1\103"+
+        "\1\104\1\111\1\105\1\116\1\117\1\60\1\107\1\130\1\131\1\116\1\uffff"+
+        "\1\60\1\125\1\124\1\137\1\124\1\111\1\137\1\115\1\111\1\124\1\115"+
+        "\1\101\1\107\1\131\1\101\1\124\1\125\1\60\1\124\1\103\1\111\1\uffff"+
+        "\1\103\1\110\1\124\1\110\1\60\1\131\1\60\1\uffff\1\60\2\uffff";
     static final String DFA17_maxS =
         "\1\176\1\162\1\165\1\151\1\141\1\151\1\145\2\uffff\1\166\1\145"+
-        "\2\uffff\1\141\1\157\1\151\6\uffff\1\75\11\uffff\1\145\1\165\1\162"+
+        "\2\uffff\1\141\1\157\1\151\6\uffff\1\75\12\uffff\1\145\1\165\1\162"+
         "\1\161\1\151\1\155\1\145\1\164\1\145\1\164\1\145\1\164\1\144\1\147"+
         "\1\156\1\171\1\165\1\156\1\170\2\uffff\1\141\1\156\1\151\1\172\1"+
         "\157\1\160\1\172\1\167\2\164\1\162\1\150\1\153\1\165\4\172\1\162"+
         "\1\172\1\154\1\172\2\164\1\141\1\143\1\uffff\1\156\1\137\1\uffff"+
-        "\1\172\1\145\1\151\1\145\1\151\1\172\1\162\3\uffff\1\172\1\uffff"+
-        "\1\172\1\164\1\uffff\1\151\1\uffff\1\145\1\172\1\155\1\164\1\144"+
-        "\1\164\1\uffff\1\162\1\164\1\172\1\156\1\172\1\uffff\1\156\1\172"+
-        "\1\uffff\1\145\1\163\1\172\1\uffff\1\172\1\137\1\172\1\151\1\156"+
-        "\1\151\1\uffff\3\172\1\145\2\uffff\1\143\1\172\1\uffff\1\154\1\172"+
-        "\1\157\3\uffff\1\172\1\143\1\157\1\154\1\uffff\1\156\1\157\1\156"+
-        "\2\137\1\156\1\164\1\156\1\143\1\144\1\151\1\145\1\156\1\157\1\172"+
-        "\1\147\1\170\1\171\1\156\1\172\1\uffff\1\165\1\164\1\137\1\164\1"+
-        "\151\1\137\1\155\1\151\1\164\1\155\1\141\1\147\1\171\1\141\1\164"+
-        "\1\165\1\172\1\164\1\143\1\151\1\uffff\1\143\1\150\1\164\1\150\1"+
-        "\172\1\171\1\172\1\uffff\1\172\2\uffff";
+        "\1\172\1\145\1\151\1\145\1\151\1\172\1\162\4\uffff\2\172\1\164\1"+
+        "\uffff\1\151\1\uffff\1\145\1\172\1\155\1\164\1\144\1\164\1\uffff"+
+        "\1\162\1\164\1\172\1\156\1\uffff\1\172\1\156\1\uffff\1\172\1\145"+
+        "\1\163\1\172\1\uffff\1\172\1\137\1\172\1\151\1\156\1\151\1\uffff"+
+        "\3\172\1\145\2\uffff\1\143\1\uffff\1\172\1\154\1\172\1\157\2\uffff"+
+        "\1\172\1\uffff\1\143\1\157\1\154\1\uffff\1\156\1\157\1\156\2\137"+
+        "\1\156\1\164\1\156\1\143\1\144\1\151\1\145\1\156\1\157\1\172\1\147"+
+        "\1\170\1\171\1\156\1\uffff\1\172\1\165\1\164\1\137\1\164\1\151\1"+
+        "\137\1\155\1\151\1\164\1\155\1\141\1\147\1\171\1\141\1\164\1\165"+
+        "\1\172\1\164\1\143\1\151\1\uffff\1\143\1\150\1\164\1\150\1\172\1"+
+        "\171\1\172\1\uffff\1\172\2\uffff";
     static final String DFA17_acceptS =
         "\7\uffff\1\11\1\12\2\uffff\1\15\1\16\3\uffff\1\36\1\37\1\40\1\41"+
         "\1\42\1\43\1\uffff\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56"+
-        "\23\uffff\1\45\1\44\32\uffff\1\10\2\uffff\1\34\7\uffff\1\13\1\31"+
-        "\1\14\1\uffff\1\20\2\uffff\1\32\1\uffff\1\33\6\uffff\1\3\5\uffff"+
-        "\1\17\2\uffff\1\21\3\uffff\1\35\6\uffff\1\5\4\uffff\1\1\1\2\2\uffff"+
-        "\1\23\3\uffff\1\6\1\7\1\22\4\uffff\1\4\24\uffff\1\24\24\uffff\1"+
-        "\27\7\uffff\1\26\1\uffff\1\25\1\30";
+        "\1\57\23\uffff\1\45\1\44\32\uffff\1\10\2\uffff\1\34\7\uffff\1\13"+
+        "\1\31\1\14\1\20\3\uffff\1\32\1\uffff\1\33\6\uffff\1\3\4\uffff\1"+
+        "\17\2\uffff\1\21\4\uffff\1\35\6\uffff\1\5\4\uffff\1\1\1\2\1\uffff"+
+        "\1\23\4\uffff\1\6\1\7\1\uffff\1\22\3\uffff\1\4\23\uffff\1\24\25"+
+        "\uffff\1\27\7\uffff\1\26\1\uffff\1\25\1\30";
     static final String DFA17_specialS =
-        "\u00c8\uffff}>";
+        "\u00c9\uffff}>";
     static final String[] DFA17_transitionS = {
-            "\1\37\1\36\2\uffff\1\36\22\uffff\1\37\1\25\1\35\5\uffff\1\31"+
-            "\1\32\1\24\1\20\1\30\1\21\1\22\1\23\12\33\2\uffff\1\25\1\26"+
-            "\1\25\2\uffff\1\11\1\34\1\1\1\15\3\34\1\16\3\34\1\12\1\17\2"+
-            "\34\1\4\1\34\1\6\1\2\2\34\1\3\1\5\3\34\1\13\1\uffff\1\14\3\uffff"+
-            "\1\11\1\34\1\1\1\15\3\34\1\16\3\34\1\12\1\17\2\34\1\4\1\34\1"+
-            "\6\1\2\2\34\1\3\1\5\3\34\1\7\1\uffff\1\10\1\27",
-            "\1\41\2\uffff\1\40\34\uffff\1\41\2\uffff\1\40",
-            "\1\43\5\uffff\1\44\10\uffff\1\42\1\45\17\uffff\1\43\5\uffff"+
-            "\1\44\10\uffff\1\42\1\45",
-            "\1\46\37\uffff\1\46",
+            "\1\40\1\37\2\uffff\1\37\22\uffff\1\40\1\25\1\36\5\uffff\1\32"+
+            "\1\33\1\24\1\20\1\31\1\21\1\22\1\23\12\34\1\27\1\uffff\1\25"+
+            "\1\26\1\25\2\uffff\1\11\1\35\1\1\1\15\3\35\1\16\3\35\1\12\1"+
+            "\17\2\35\1\4\1\35\1\6\1\2\2\35\1\3\1\5\3\35\1\13\1\uffff\1\14"+
+            "\3\uffff\1\11\1\35\1\1\1\15\3\35\1\16\3\35\1\12\1\17\2\35\1"+
+            "\4\1\35\1\6\1\2\2\35\1\3\1\5\3\35\1\7\1\uffff\1\10\1\30",
+            "\1\42\2\uffff\1\41\34\uffff\1\42\2\uffff\1\41",
+            "\1\44\5\uffff\1\45\10\uffff\1\43\1\46\17\uffff\1\44\5\uffff"+
+            "\1\45\10\uffff\1\43\1\46",
             "\1\47\37\uffff\1\47",
-            "\1\52\2\uffff\1\50\1\51\33\uffff\1\52\2\uffff\1\50\1\51",
-            "\1\53\37\uffff\1\53",
+            "\1\50\37\uffff\1\50",
+            "\1\53\2\uffff\1\51\1\52\33\uffff\1\53\2\uffff\1\51\1\52",
+            "\1\54\37\uffff\1\54",
             "",
             "",
-            "\1\54\7\uffff\1\55\27\uffff\1\54\7\uffff\1\55",
-            "\1\56\37\uffff\1\56",
-            "",
-            "",
+            "\1\55\7\uffff\1\56\27\uffff\1\55\7\uffff\1\56",
             "\1\57\37\uffff\1\57",
+            "",
+            "",
             "\1\60\37\uffff\1\60",
-            "\1\62\7\uffff\1\61\27\uffff\1\62\7\uffff\1\61",
+            "\1\61\37\uffff\1\61",
+            "\1\63\7\uffff\1\62\27\uffff\1\63\7\uffff\1\62",
             "",
             "",
             "",
             "",
             "",
             "",
-            "\1\63",
+            "\1\64",
             "",
             "",
             "",
@@ -3638,15 +3666,15 @@ public class SaseLexer extends Lexer {
             "",
             "",
             "",
-            "\1\65\37\uffff\1\65",
+            "",
             "\1\66\37\uffff\1\66",
             "\1\67\37\uffff\1\67",
-            "\1\71\15\uffff\1\70\21\uffff\1\71\15\uffff\1\70",
-            "\1\72\37\uffff\1\72",
+            "\1\70\37\uffff\1\70",
+            "\1\72\15\uffff\1\71\21\uffff\1\72\15\uffff\1\71",
             "\1\73\37\uffff\1\73",
             "\1\74\37\uffff\1\74",
-            "\1\76\1\uffff\1\75\35\uffff\1\76\1\uffff\1\75",
-            "\1\77\37\uffff\1\77",
+            "\1\75\37\uffff\1\75",
+            "\1\77\1\uffff\1\76\35\uffff\1\77\1\uffff\1\76",
             "\1\100\37\uffff\1\100",
             "\1\101\37\uffff\1\101",
             "\1\102\37\uffff\1\102",
@@ -3655,139 +3683,139 @@ public class SaseLexer extends Lexer {
             "\1\105\37\uffff\1\105",
             "\1\106\37\uffff\1\106",
             "\1\107\37\uffff\1\107",
-            "\1\111\1\uffff\1\110\35\uffff\1\111\1\uffff\1\110",
-            "\1\112\37\uffff\1\112",
-            "",
-            "",
+            "\1\110\37\uffff\1\110",
+            "\1\112\1\uffff\1\111\35\uffff\1\112\1\uffff\1\111",
             "\1\113\37\uffff\1\113",
+            "",
+            "",
             "\1\114\37\uffff\1\114",
-            "\1\115\3\uffff\1\116\33\uffff\1\115\3\uffff\1\116",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\120\37\uffff\1\120",
+            "\1\115\37\uffff\1\115",
+            "\1\116\3\uffff\1\117\33\uffff\1\116\3\uffff\1\117",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\121\37\uffff\1\121",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\123\37\uffff\1\123",
+            "\1\122\37\uffff\1\122",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\124\37\uffff\1\124",
             "\1\125\37\uffff\1\125",
             "\1\126\37\uffff\1\126",
             "\1\127\37\uffff\1\127",
             "\1\130\37\uffff\1\130",
             "\1\131\37\uffff\1\131",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\13\34\6\uffff\22\34\1\135\7\34\4\uffff\1\34\1\uffff\22\34"+
-            "\1\135\7\34",
-            "\1\137\37\uffff\1\137",
-            "\13\34\6\uffff\24\34\1\140\5\34\4\uffff\1\34\1\uffff\24\34"+
-            "\1\140\5\34",
-            "\1\142\37\uffff\1\142",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\144\37\uffff\1\144",
+            "\1\132\37\uffff\1\132",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\13\35\6\uffff\22\35\1\137\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\137\7\35",
+            "\1\140\37\uffff\1\140",
+            "\13\35\6\uffff\24\35\1\141\5\35\4\uffff\1\35\1\uffff\24\35"+
+            "\1\141\5\35",
+            "\1\143\37\uffff\1\143",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\145\37\uffff\1\145",
             "\1\146\37\uffff\1\146",
             "\1\147\37\uffff\1\147",
-            "",
             "\1\150\37\uffff\1\150",
-            "\1\151",
             "",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\153\37\uffff\1\153",
+            "\1\151\37\uffff\1\151",
+            "\1\152",
+            "",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\154\37\uffff\1\154",
             "\1\155\37\uffff\1\155",
             "\1\156\37\uffff\1\156",
-            "\13\34\6\uffff\22\34\1\157\7\34\4\uffff\1\34\1\uffff\22\34"+
-            "\1\157\7\34",
-            "\1\161\37\uffff\1\161",
+            "\1\157\37\uffff\1\157",
+            "\13\35\6\uffff\22\35\1\161\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\161\7\35",
+            "\1\162\37\uffff\1\162",
             "",
             "",
             "",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
             "",
-            "\13\34\6\uffff\22\34\1\162\7\34\4\uffff\1\34\1\uffff\22\34"+
-            "\1\162\7\34",
-            "\1\164\37\uffff\1\164",
-            "",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\13\35\6\uffff\22\35\1\164\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\164\7\35",
             "\1\165\37\uffff\1\165",
             "",
             "\1\166\37\uffff\1\166",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\170\37\uffff\1\170",
+            "",
+            "\1\167\37\uffff\1\167",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\171\37\uffff\1\171",
             "\1\172\37\uffff\1\172",
             "\1\173\37\uffff\1\173",
-            "",
             "\1\174\37\uffff\1\174",
+            "",
             "\1\175\37\uffff\1\175",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\177\37\uffff\1\177",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "",
+            "\1\176\37\uffff\1\176",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u0080\37\uffff\1\u0080",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
             "",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u0081\37\uffff\1\u0081",
-            "\1\u0082\37\uffff\1\u0082",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
             "",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\u0085",
-            "\13\34\6\uffff\22\34\1\u0086\7\34\4\uffff\1\34\1\uffff\22"+
-            "\34\1\u0086\7\34",
-            "\1\u0088\37\uffff\1\u0088",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\1\u0082\37\uffff\1\u0082",
+            "\1\u0083\37\uffff\1\u0083",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\1\u0086",
+            "\13\35\6\uffff\22\35\1\u0088\7\35\4\uffff\1\35\1\uffff\22"+
+            "\35\1\u0088\7\35",
             "\1\u0089\37\uffff\1\u0089",
             "\1\u008a\37\uffff\1\u008a",
+            "\1\u008b\37\uffff\1\u008b",
             "",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\13\34\6\uffff\22\34\1\u008e\7\34\4\uffff\1\34\1\uffff\22"+
-            "\34\1\u008e\7\34",
-            "\1\u008f\37\uffff\1\u008f",
-            "",
-            "",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\13\35\6\uffff\22\35\1\u008e\7\35\4\uffff\1\35\1\uffff\22"+
+            "\35\1\u008e\7\35",
             "\1\u0090\37\uffff\1\u0090",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
+            "",
             "",
             "\1\u0091\37\uffff\1\u0091",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\u0093\37\uffff\1\u0093",
             "",
-            "",
-            "",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\1\u0092\37\uffff\1\u0092",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u0094\37\uffff\1\u0094",
+            "",
+            "",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "",
             "\1\u0095\37\uffff\1\u0095",
             "\1\u0096\37\uffff\1\u0096",
-            "",
             "\1\u0097\37\uffff\1\u0097",
+            "",
             "\1\u0098\37\uffff\1\u0098",
             "\1\u0099\37\uffff\1\u0099",
-            "\1\u009a",
+            "\1\u009a\37\uffff\1\u009a",
             "\1\u009b",
-            "\1\u009c\37\uffff\1\u009c",
+            "\1\u009c",
             "\1\u009d\37\uffff\1\u009d",
-            "\1\u009f\14\uffff\1\u009e\22\uffff\1\u009f\14\uffff\1\u009e",
-            "\1\u00a0\37\uffff\1\u00a0",
+            "\1\u009e\37\uffff\1\u009e",
+            "\1\u00a0\14\uffff\1\u009f\22\uffff\1\u00a0\14\uffff\1\u009f",
             "\1\u00a1\37\uffff\1\u00a1",
             "\1\u00a2\37\uffff\1\u00a2",
             "\1\u00a3\37\uffff\1\u00a3",
             "\1\u00a4\37\uffff\1\u00a4",
             "\1\u00a5\37\uffff\1\u00a5",
-            "\13\34\6\uffff\22\34\1\u00a6\7\34\4\uffff\1\34\1\uffff\22"+
-            "\34\1\u00a6\7\34",
-            "\1\u00a8\37\uffff\1\u00a8",
+            "\1\u00a6\37\uffff\1\u00a6",
+            "\13\35\6\uffff\22\35\1\u00a8\7\35\4\uffff\1\35\1\uffff\22"+
+            "\35\1\u00a8\7\35",
             "\1\u00a9\37\uffff\1\u00a9",
             "\1\u00aa\37\uffff\1\u00aa",
             "\1\u00ab\37\uffff\1\u00ab",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "",
             "\1\u00ac\37\uffff\1\u00ac",
+            "",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u00ad\37\uffff\1\u00ad",
-            "\1\u00ae",
-            "\1\u00af\37\uffff\1\u00af",
+            "\1\u00ae\37\uffff\1\u00ae",
+            "\1\u00af",
             "\1\u00b0\37\uffff\1\u00b0",
-            "\1\u00b1",
-            "\1\u00b2\37\uffff\1\u00b2",
+            "\1\u00b1\37\uffff\1\u00b1",
+            "\1\u00b2",
             "\1\u00b3\37\uffff\1\u00b3",
             "\1\u00b4\37\uffff\1\u00b4",
             "\1\u00b5\37\uffff\1\u00b5",
@@ -3797,20 +3825,21 @@ public class SaseLexer extends Lexer {
             "\1\u00b9\37\uffff\1\u00b9",
             "\1\u00ba\37\uffff\1\u00ba",
             "\1\u00bb\37\uffff\1\u00bb",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\u00bd\37\uffff\1\u00bd",
+            "\1\u00bc\37\uffff\1\u00bc",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u00be\37\uffff\1\u00be",
             "\1\u00bf\37\uffff\1\u00bf",
-            "",
             "\1\u00c0\37\uffff\1\u00c0",
+            "",
             "\1\u00c1\37\uffff\1\u00c1",
             "\1\u00c2\37\uffff\1\u00c2",
             "\1\u00c3\37\uffff\1\u00c3",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
-            "\1\u00c5\37\uffff\1\u00c5",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
+            "\1\u00c4\37\uffff\1\u00c4",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "\1\u00c6\37\uffff\1\u00c6",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "",
-            "\13\34\6\uffff\32\34\4\uffff\1\34\1\uffff\32\34",
+            "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "",
             ""
     };
@@ -3845,7 +3874,7 @@ public class SaseLexer extends Lexer {
             this.transition = DFA17_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( CREATE | STREAM | VIEW | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | LEN | BBRACKETLEFT | BBRACKETRIGHT | WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND | SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY | AVG | MIN | MAX | SUM | COUNT | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOTSIGN | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE );";
+            return "1:1: Tokens : ( CREATE | STREAM | VIEW | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | LEN | BBRACKETLEFT | BBRACKETRIGHT | WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND | SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY | AVG | MIN | MAX | SUM | COUNT | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | ASSIGN | NOTSIGN | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE );";
         }
     }
  

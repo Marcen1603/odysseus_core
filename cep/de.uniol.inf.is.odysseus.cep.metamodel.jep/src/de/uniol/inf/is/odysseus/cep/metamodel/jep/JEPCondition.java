@@ -21,8 +21,8 @@ abstract public class JEPCondition extends AbstractCondition {
 	private Map<CepVariable, String> symbolTable = new HashMap<CepVariable, String>();
 	private boolean negate = false;
 	
-	private Logger _logger = null;
-	private Logger getLogger(){
+	static private Logger _logger = null;
+	static private Logger getLogger(){
 		if (_logger == null){
 			_logger = LoggerFactory.getLogger(JEPCondition.class);
 		}
@@ -178,6 +178,10 @@ abstract public class JEPCondition extends AbstractCondition {
 		}
 	}
 
+	@Override
+	public void addAssignment(String attribute, String fullexpression) {
+		// TODO: Implement Assignment
+	}
 	
 	@Override
 	public void negate() {
