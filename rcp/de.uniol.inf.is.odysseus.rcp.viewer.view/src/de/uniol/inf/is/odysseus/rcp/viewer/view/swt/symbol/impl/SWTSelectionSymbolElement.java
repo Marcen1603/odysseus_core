@@ -23,7 +23,7 @@ public class SWTSelectionSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 			return;
 		
 		gc.setBackground( borderColor );
-		gc.fillRectangle( pos.getX() - 3, pos.getY() - 3, width + 6, height + 6);
+		gc.fillRectangle( (int)pos.getX() - 3, (int)pos.getY() - 3, width + 6, height + 6);
 		
 	}
 

@@ -25,7 +25,7 @@ public class SWTCircleSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 		gc.setForeground( color );
 			
-		gc.drawOval( pos.getX(), pos.getY(), width, height );
+		gc.drawOval( (int)pos.getX(), (int)pos.getY(), width, height );
 	}
 
 }

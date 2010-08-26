@@ -21,7 +21,7 @@ public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElemen
 		}
 	
 		getActualGC().setForeground( color );
-		getActualGC().drawLine( start.getX(), start.getY(), end.getX(), end.getY() );
+		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
 	}
 	
 	@Override

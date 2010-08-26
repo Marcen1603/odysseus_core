@@ -42,7 +42,7 @@ public class SWTSimpleRenderer<C> extends SimpleSymbolRenderer<C> {
 							.add( startNode.getWidth() / 2, startNode.getHeight() / 2 )
 							.mul( zoomFactor );
 			
-			gc.drawLine( start.getX(), start.getY(), end.getX(), end.getY() );
+			gc.drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
 		}
 		
 		for( INodeView<C> node : graph.getViewedNodes() ) {
@@ -52,7 +52,7 @@ public class SWTSimpleRenderer<C> extends SimpleSymbolRenderer<C> {
 			final int width = (int)(node.getWidth() * zoomFactor);
 
 			gc.setBackground( gc.getDevice().getSystemColor( SWT.COLOR_BLACK ) );
-			gc.fillRectangle( pos.getX(), pos.getY(), width, height );
+			gc.fillRectangle( (int)pos.getX(), (int)pos.getY(), width, height );
 		}
 	}
 	

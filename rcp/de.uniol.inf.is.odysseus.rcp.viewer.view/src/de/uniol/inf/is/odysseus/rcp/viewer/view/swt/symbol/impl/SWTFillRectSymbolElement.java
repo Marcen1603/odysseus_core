@@ -23,7 +23,7 @@ public class SWTFillRectSymbolElement<C> extends UnfreezableSWTSymbolElement<C> 
 			return;
 		
 		gc.setBackground( borderColor );
-		gc.fillRectangle( pos.getX(), pos.getY(), width, height );
+		gc.fillRectangle( (int)pos.getX(), (int)pos.getY(), width, height );
 	}
 
 }

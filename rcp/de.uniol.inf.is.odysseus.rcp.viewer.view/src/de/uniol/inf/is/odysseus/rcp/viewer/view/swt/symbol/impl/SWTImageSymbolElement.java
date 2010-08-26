@@ -28,7 +28,7 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			if( gc == null )
 				return;
 			
-			gc.drawImage( image, 0, 0, imageWidth, imageHeight, pos.getX(), pos.getY(), width, height );
+			gc.drawImage( image, 0, 0, imageWidth, imageHeight, (int)pos.getX(), (int)pos.getY(), width, height );
 		}
 	}
 	

@@ -26,10 +26,10 @@ public class SWTSelectivitySymbolElement<C> extends SWTSymbolElement<C> {
 			int realHeight = (int)(height * 0.3f);
 			// Balken reinzeichnen
 			gc.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
-			gc.fillRectangle( position.getX(), position.getY(), (int)(width * value), realHeight );
+			gc.fillRectangle( (int)position.getX(), (int)position.getY(), (int)(width * value), realHeight );
 			
 			gc.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
-			gc.drawRectangle( position.getX(), position.getY(), width,  realHeight );
+			gc.drawRectangle( (int)position.getX(), (int)position.getY(), width,  realHeight );
 			
 		}
 	}

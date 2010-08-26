@@ -15,7 +15,7 @@ public final class RenderRange {
 	}
 	
 	public boolean contains( Vector v ) {
-		return contains( v.getX(), v.getY() );
+		return contains( (int)v.getX(), (int)v.getY() );
 	}
 	
 	public boolean intersects (int x, int y, int width, int height) {
@@ -24,6 +24,6 @@ public final class RenderRange {
 	}
 	
 	public boolean intersects( Vector start, int width, int height ) {
-		return intersects( start.getX(), start.getY(), width, height );
+		return intersects( (int)start.getX(), (int)start.getY(), width, height );
 	}
 }

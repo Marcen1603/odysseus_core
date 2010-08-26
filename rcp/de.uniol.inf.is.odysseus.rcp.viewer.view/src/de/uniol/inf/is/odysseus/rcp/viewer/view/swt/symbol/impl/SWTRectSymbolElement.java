@@ -23,7 +23,7 @@ public class SWTRectSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			return;
 		
 		gc.setForeground( borderColor );
-		gc.drawRectangle( pos.getX(), pos.getY(), width, height );
+		gc.drawRectangle( (int)pos.getX(), (int)pos.getY(), width, height );
 	}
 
 }

@@ -59,7 +59,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		/** PHASE 1 **/
 		// Quellen finden.. diese haben einen Eingangsgrad von 0
 		// Und Ebene der Knoten ermitteln und die Äquivalenzklassen ermitteln
-		logger.trace( "Phase 1: Find equivalent-classes (or levels) of NodeDisplays" );
+		logger.debug( "Phase 1: Find equivalent-classes (or levels) of NodeDisplays" );
 		int found = 0;
 		for( INodeView<IPhysicalOperator> node : graph.getViewedNodes() ) {
 			if( node.getConnectionsAsEnd().size() == 0 ) {
@@ -72,7 +72,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		
 		// DummyNodes erzeugen, wenn eine Kante über mehr als zwei benachbarte
 		// Ebenen verläuft
-		logger.trace( "Creating invisible nodes, if neccessary" );
+		logger.debug( "Creating invisible nodes, if neccessary" );
 		
 		// toArray(...) um ConcurrentModificationException zu vermeiden
 		for( IConnectionView<IPhysicalOperator> conn : graph.getViewedConnections().toArray( new IConnectionView[0] ) ) {
@@ -123,7 +123,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		/** PHASE 2 **/
 		// Knoten der Ebenen arrangieren, sodass möglichst wenige Kreuzungen vorkommen
 		if( logger.isTraceEnabled() )
-			logger.trace( "Phase 2: Arrange nodes" );
+			logger.debug( "Phase 2: Arrange nodes" );
 
 		// Anzahlen der Knoten pro Ebene ermitteln und Knoten zuordnen
 		layers = new ArrayList< ArrayList<INodeView<IPhysicalOperator>>>();
@@ -198,7 +198,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		}
 
 		/** PHASE 3 **/
-		logger.trace( "Phase 3: Calculate x- and y-Coordinates" );
+		logger.debug( "Phase 3: Calculate x- and y-Coordinates" );
 		
 		// Arrays initialisieren
 		// Diese werden die X-Koordinaten beherbergen

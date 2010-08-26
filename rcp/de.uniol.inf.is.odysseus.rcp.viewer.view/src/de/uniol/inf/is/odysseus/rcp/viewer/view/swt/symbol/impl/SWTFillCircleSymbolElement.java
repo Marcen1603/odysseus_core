@@ -24,7 +24,7 @@ public class SWTFillCircleSymbolElement<C> extends UnfreezableSWTSymbolElement<C
 
 		gc.setBackground( color );
 			
-		gc.fillOval( pos.getX(), pos.getY(), width, height );
+		gc.fillOval( (int)pos.getX(), (int)pos.getY(), width, height );
 		
 	}
 

@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.viewer.view.graph;
 
 public class Vector {
 
-	private int x;
-	private int y;
+	private double x;
+	private double y;
 	
 	public static final Vector EMPTY_VECTOR = new Vector(0,0);
 	
-	public Vector( int x, int y ) {
+	public Vector( double x, double y ) {
 		this.x = x;
 		this.y = y;
 	}
@@ -18,33 +18,27 @@ public class Vector {
 		return new Vector(x,y);
 	}
 	
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 	
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 	
 	public Vector add( Vector v ) {
-		if( v == null )
-			return clone();
-		
 		return new Vector( v.x + x, v.y + y );
 	}
 	
-	public Vector add( int x, int y ) {
+	public Vector add( double x, double y ) {
 		return new Vector( this.x + x, this.y + y );
 	}
 	
 	public Vector sub( Vector v ) {
-		if( v == null )
-			return clone();
-		
 		return new Vector( x - v.x, y - v.y );
 	}
 	
-	public Vector sub( int x, int y ) {
+	public Vector sub( double x, double y ) {
 		return new Vector( this.x - x, this.y - y );
 	}
 	
@@ -53,10 +47,10 @@ public class Vector {
 	}
 	
 	public Vector mul( double factor ) {
-		return new Vector( (int)(x * factor), (int)(y * factor));
+		return new Vector( x * factor, y * factor);
 	}
 	
-	public int mul( Vector v ) {
+	public double mul( Vector v ) {
 		return v.x * x + v.y * y;
 	}
 	
@@ -65,6 +59,25 @@ public class Vector {
 	}
 	
 	public Vector div( double factor ) {
-		return new Vector( (int)(x / factor), (int)(y / factor));
+		return new Vector(x / factor, y / factor);
+	}
+	
+	public float getLength() {
+		return (float)Math.sqrt(x * x + y * y);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{").append(x).append(", ").append(y).append("}");
+		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof Vector)) return false;
+		if( obj == this ) return true;
+		Vector v = (Vector)obj;
+		return v.x == x && v.y == y;
 	}
 }

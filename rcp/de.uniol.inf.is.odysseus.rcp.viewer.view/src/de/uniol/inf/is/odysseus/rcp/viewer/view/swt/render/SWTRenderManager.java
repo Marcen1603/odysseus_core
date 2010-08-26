@@ -459,7 +459,7 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 						final int width = (int)(nodeDisplay.getWidth() * getZoomFactor());
 						final int height = (int)(nodeDisplay.getHeight() * getZoomFactor());
 						
-						if( selectRect.intersects( pos.getX(), pos.getY(), width, height ) ) {
+						if( selectRect.intersects( (int)pos.getX(), (int)pos.getY(), width, height ) ) {
 							nodesToSelect.add( nodeDisplay );
 						}
 					}

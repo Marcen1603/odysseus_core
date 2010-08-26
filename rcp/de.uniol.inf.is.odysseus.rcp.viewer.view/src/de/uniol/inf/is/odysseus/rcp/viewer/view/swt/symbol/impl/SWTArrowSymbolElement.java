@@ -24,7 +24,7 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		}
 	
 		getActualGC().setForeground( color );
-		getActualGC().drawLine( start.getX(), start.getY(), end.getX(), end.getY() );
+		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
 		
 		// Pfeilspitze berechnen
 		if( getConnectionView() == null )
@@ -34,13 +34,13 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		if( node == null )
 			return;
 		
-		final float nx = start.getX();
-		final float ny = start.getY();		
-		final float mx = end.getX();
-		final float my = end.getY();
+		final float nx = (float)start.getX();
+		final float ny = (float)start.getY();		
+		final float mx = (float)end.getX();
+		final float my = (float)end.getY();
 		
-		final float fx = end.getX() - node.getWidth() * zoomFactor * 0.5f;
-		final float fy = end.getY() - node.getHeight() * zoomFactor * 0.5f;
+		final float fx = (float)end.getX() - node.getWidth() * zoomFactor * 0.5f;
+		final float fy = (float)end.getY() - node.getHeight() * zoomFactor * 0.5f;
 		final float gx = fx + node.getWidth() * zoomFactor;
 		final float gy = fy;
 		final float hx = fx;
