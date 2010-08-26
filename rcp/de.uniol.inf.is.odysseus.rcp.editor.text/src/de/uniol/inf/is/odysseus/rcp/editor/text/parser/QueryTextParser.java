@@ -106,7 +106,7 @@ public class QueryTextParser {
 		// neue Replacementdefinition?
 		final int pos = line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
 		if (pos != -1) {
-			String[] parts = line.split(" ", 3);
+			String[] parts = line.split(" |\t", 3);
 			// parts[0] is #DEFINE
 			replacements.put(parts[1].trim(), parts[2].trim());
 			return null;
