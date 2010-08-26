@@ -114,9 +114,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * IMPORTANT: data[0] contains the attribute resolver data[1] contains the child
  * operator data[2] contains the output port of the child operator to which the
  * parent is connected
- * 
+ *
  * @author Andre Bolles
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor {
@@ -1150,10 +1150,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		selection.setID(opName);
 		selection.setNewObjListPath(pathNew);
 		selection.setOldObjListPath(pathOld);
-		
+
 		// saving op for source lookup
 		AssociationDictionary.getInstance().addSource(opName, selection);
-		
+
 		// constructing return values
 		((ArrayList) data).add(selection);
 		((ArrayList) data).add(new Integer(0));
@@ -1172,14 +1172,14 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		if (associationSource == null) {
 			throw new RuntimeException("The source cannot be found: " + srcName);
 		}
-		
+
         // get output-port of selection
 		String number = ((ASTNumber) node.jjtGetChild(1)).getValue();
 		Integer outputPort = new Integer(number);
-				RenameAO renameAO = new RenameAO();
+		RenameAO renameAO = new RenameAO();
 		renameAO.setOutputSchema(associationSource.getOutputSchema());
         renameAO.subscribeToSource(associationSource, 0, outputPort, associationSource.getOutputSchema());
-           
+
 		// constructing return values
 		((ArrayList) data).add(renameAO);
 		((ArrayList) data).add(new Integer(0));
@@ -1286,7 +1286,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		return data;
 	}
-	
+
 	@Override
 	public Object visit(ASTBenchmarkOpExt node, Object data) {
 		// first child is preceeding operator
@@ -1323,7 +1323,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		// subscribe bei der Assoziation (HypothesisSelektion)
 		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
-		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		int sourceOutPort = ((Integer) childData.get(0)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
@@ -1336,7 +1336,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		// subscribe bei der Filterung
 		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this, newData);
-		sourceOutPort = ((Integer) childData.get(2)).intValue();
+		sourceOutPort = ((Integer) childData.get(1)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
 		evalAO.subscribeToSource(childOp, 1, sourceOutPort, childOp.getOutputSchema());
 
@@ -1506,7 +1506,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
 
 		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
-		
+
 		//
 		// create Filter AO
 		// and initialize it
