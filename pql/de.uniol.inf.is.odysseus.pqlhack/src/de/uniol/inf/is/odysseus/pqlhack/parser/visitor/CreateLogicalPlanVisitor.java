@@ -1323,7 +1323,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		// subscribe bei der Assoziation (HypothesisSelektion)
 		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
-		int sourceOutPort = ((Integer) childData.get(0)).intValue();
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
@@ -1336,7 +1336,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		// subscribe bei der Filterung
 		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this, newData);
-		sourceOutPort = ((Integer) childData.get(1)).intValue();
+		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
 		evalAO.subscribeToSource(childOp, 1, sourceOutPort, childOp.getOutputSchema());
 
