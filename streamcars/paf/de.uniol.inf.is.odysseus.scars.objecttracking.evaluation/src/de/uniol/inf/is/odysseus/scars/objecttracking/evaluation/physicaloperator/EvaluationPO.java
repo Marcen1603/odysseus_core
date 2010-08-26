@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.physicaloperato
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -132,26 +133,32 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		// Check if there is a complete input -> one list from every port (so that it can be evaluated)
 		if((boolAsso || boolAssoEmpty)&&(boolFilter || boolFilterEmpty)&&(boolBroker || boolBrokerEmpty)) {
 
-			MVRelationalTuple<M>[] associationObjList = null;
-			MVRelationalTuple<M>[] filteringObjList = null;
-			MVRelationalTuple<M>[] brokerObjList = null;
+			List<MVRelationalTuple<M>> associationObjList = new ArrayList<MVRelationalTuple<M>>();
+			List<MVRelationalTuple<M>> filteringObjList = new ArrayList<MVRelationalTuple<M>>();
+			List<MVRelationalTuple<M>> brokerObjList = new ArrayList<MVRelationalTuple<M>>();
 
 			if(boolAsso) {
 				MVRelationalTuple<M> associationMainObject = itAssociation.next();
 				MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput.getSchemaIndexPath(this.associationObjListPath).toTupleIndexPath(associationMainObject).getTupleObject();
-				associationObjList = (MVRelationalTuple<M>[]) associationListObject.getAttributes();
+				for (Object obj : associationListObject.getAttributes()) {
+					associationObjList.add((MVRelationalTuple<M>)obj);
+				}
 			}
 
 			if(boolFilter) {
 				MVRelationalTuple<M> filteringMainObject = itFiltering.next();
 				MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>) shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
-				filteringObjList = (MVRelationalTuple<M>[]) filteringListObject.getAttributes();
+				for (Object obj : filteringListObject.getAttributes()) {
+					filteringObjList.add((MVRelationalTuple<M>)obj);
+				}
 			}
 
 			if(boolBroker) {
 				MVRelationalTuple<M> brokerMainObject = itBroker.next();
 				MVRelationalTuple<M> brokerListObject = (MVRelationalTuple<M>) shSecondBrokerInput.getSchemaIndexPath(this.brokerObjListPath).toTupleIndexPath(brokerMainObject).getTupleObject();
-				brokerObjList = (MVRelationalTuple<M>[]) brokerListObject.getAttributes();
+				for (Object obj : brokerListObject.getAttributes()) {
+					brokerObjList.add((MVRelationalTuple<M>)obj);
+				}
 			}
 
 			// Do the evaluation
