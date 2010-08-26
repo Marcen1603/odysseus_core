@@ -25,6 +25,7 @@ public class ScarsTransformationConfiguration implements IParameterTransformatio
 		
 	@Override
 	public ParameterTransformationConfiguration get() {
+		trafoConfigParam.getValue().setOption("IBrokerInterval", true);
 		return trafoConfigParam;
 	}
 
