@@ -33,8 +33,8 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
   }
 
   public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
-      double[][] predictedObjCovariance, double[] prdictedObjMesurementValues) {
-    
+      double[][] predictedObjCovariance, double[] prdictedObjMesurementValues, double currentRatingValue) {
+
     RealMatrix leftV = new RealMatrixImpl(scannedObjMesurementValues);
     RealMatrix rightV = new RealMatrixImpl(prdictedObjMesurementValues);
 

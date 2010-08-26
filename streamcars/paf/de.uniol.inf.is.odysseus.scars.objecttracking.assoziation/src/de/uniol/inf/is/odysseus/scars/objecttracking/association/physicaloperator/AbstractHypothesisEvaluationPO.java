@@ -21,11 +21,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 /**
  * Physical Operator for the rating of connections within the association
  * process.
- * 
+ *
  * new = left; old = right
- * 
+ *
  * @author Volker Janz
- * 
+ *
  * @param <M>
  */
 public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IConnectionContainer> extends
@@ -85,7 +85,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     return measurementPairs;
   }
 
-  private double[] getMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath) {
+  protected double[] getMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath) {
     ArrayList<Double> values = new ArrayList<Double>();
 
     // TODO:
@@ -112,29 +112,32 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 
   // TODO (Wolf):
   // Das muss noch gekapselt werden. Zudem sollte ein Wert, der ggf. noch von alten Berechnungen vorhanden ist Ã¼bergeben werden.
+  // Volker -> Alte Bewertung wird jetzt übergeben und kann verwendet werden
   public abstract double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
-      double[][] predictedObjCovariance, double[] predictedObjMesurementValues);
+      double[][] predictedObjCovariance, double[] predictedObjMesurementValues, double currentConnectionRating);
 
   @Override
   protected void process_open() throws OpenFailedException {
     super.process_open();
     this.schemaHelper = new SchemaHelper(getOutputSchema());
 
-    this.scannedObjectListPath = this.schemaHelper.getSchemaIndexPath(this.newObjListPath);
-    this.predictedObjectListPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath);
+    this.setScannedObjectListPath(this.schemaHelper.getSchemaIndexPath(this.newObjListPath));
+    this.setPredictedObjectListPath(this.schemaHelper.getSchemaIndexPath(this.oldObjListPath));
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  protected void process_next(MVRelationalTuple<M> object, int port) {    
-    TupleIndexPath scannedTupleIndexPath = this.scannedObjectListPath.toTupleIndexPath(object);
-    TupleIndexPath predictedTupleIndexPath = this.predictedObjectListPath.toTupleIndexPath(object);
+  protected void process_next(MVRelationalTuple<M> object, int port) {
+    TupleIndexPath scannedTupleIndexPath = this.getScannedObjectListPath().toTupleIndexPath(object);
+    TupleIndexPath predictedTupleIndexPath = this.getPredictedObjectListPath().toTupleIndexPath(object);
 
     ConnectionList newObjConList = new ConnectionList();
 
     // TODO (Wolf):
     // Berechnungen vorheriger EvalOps berÃ¼cksichtigen, d. h. alte connections ermitteln.
-    
+    // Volker:
+    // Erledigt -> evaluate wird alter connection wert übergeben
+
     for (TupleInfo scannedTupleInfo : scannedTupleIndexPath) {
       MVRelationalTuple<M> scannedObject = (MVRelationalTuple<M>) scannedTupleInfo.tupleObject;
 
@@ -143,8 +146,8 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 
         double value = evaluate(scannedObject.getMetadata().getCovariance(),
             getMeasurementValues(object, scannedTupleInfo.tupleIndexPath), predictedObject.getMetadata()
-                .getCovariance(), getMeasurementValues(object, predictedTupleInfo.tupleIndexPath));
-        
+                .getCovariance(), getMeasurementValues(object, predictedTupleInfo.tupleIndexPath), object.getMetadata().getConnectionList().getRatingForElementPair(scannedTupleIndexPath.toArray(), predictedTupleIndexPath.toArray()));
+
         if(value > 0) {
           newObjConList.add(new Connection(scannedTupleInfo.tupleIndexPath.toArray(), predictedTupleInfo.tupleIndexPath.toArray(), value));
         }
@@ -164,4 +167,20 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
   public OutputMode getOutputMode() {
     return OutputMode.MODIFIED_INPUT;
   }
+
+public void setScannedObjectListPath(SchemaIndexPath scannedObjectListPath) {
+	this.scannedObjectListPath = scannedObjectListPath;
+}
+
+public SchemaIndexPath getScannedObjectListPath() {
+	return scannedObjectListPath;
+}
+
+public void setPredictedObjectListPath(SchemaIndexPath predictedObjectListPath) {
+	this.predictedObjectListPath = predictedObjectListPath;
+}
+
+public SchemaIndexPath getPredictedObjectListPath() {
+	return predictedObjectListPath;
+}
 }

@@ -12,9 +12,9 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 
-public class NearestNeighborEvaluationPO<M extends IProbability & IConnectionContainer> extends
+public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionContainer> extends
     AbstractHypothesisEvaluationPO<M> {
-  
+
   private static final String DISTANCE_ID = "distanceFunction";
 
   // Available Functions: ChebyshevDistance, EuclideanDistance,
@@ -26,10 +26,10 @@ public class NearestNeighborEvaluationPO<M extends IProbability & IConnectionCon
 
   private DistanceFunction df;
 
-  public NearestNeighborEvaluationPO() {
+  public MultiDistanceEvaluationPO() {
   }
 
-  public NearestNeighborEvaluationPO(NearestNeighborEvaluationPO<M> clone) {
+  public MultiDistanceEvaluationPO(MultiDistanceEvaluationPO<M> clone) {
     super(clone);
     this.df = clone.df;
   }
@@ -55,7 +55,7 @@ public class NearestNeighborEvaluationPO<M extends IProbability & IConnectionCon
 
   @Override
   public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
-      double[][] predictedObjCovariance, double[] predictedObjMesurementValues) {
+      double[][] predictedObjCovariance, double[] predictedObjMesurementValues, double currentRating) {
 
     // Create instances
     Instance scannedObjInstance = new DenseInstance(scannedObjMesurementValues.length);
@@ -72,11 +72,11 @@ public class NearestNeighborEvaluationPO<M extends IProbability & IConnectionCon
     // Return Distance
     // Available Functions: ChebyshevDistance, EuclideanDistance,
     // ManhattanDistance, MinkowskiDistance, NormalizableDistance
-    return this.df.distance(scannedObjInstance, predictedObjInstance);
+    return currentRating + this.df.distance(scannedObjInstance, predictedObjInstance)*(-1);
   }
 
   @Override
   public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-    return new NearestNeighborEvaluationPO<M>(this);
+    return new MultiDistanceEvaluationPO<M>(this);
   }
 }
