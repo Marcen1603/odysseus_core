@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
-
 /**
  * ConnectionList is a special ArrayList which contains rated connections. It brings some functions
  * along to get all left objects for an right object or all right objects for an left object.
@@ -46,7 +44,7 @@ public class ConnectionList extends ArrayList<Connection> {
 		}
 		return tmplist;
 	}
-	
+
 	public ArrayList<int[]> getAllElements() {
 		ArrayList<int[]> tmpList = new ArrayList<int[]>();
 		int[] leftElement;
@@ -62,6 +60,21 @@ public class ConnectionList extends ArrayList<Connection> {
 			}
 		}
 		return tmpList;
+	}
+
+	/**
+	 * Returns the rating for a specific pair
+	 * @param leftPath leftPath
+	 * @param rightPath rightPath
+	 * @return The rating of the specific pair - returns 0 if it´s not found in connection list. So 0 is the default value for a new connection.
+	 */
+	public double getRatingForElementPair(int[] leftPath, int[] rightPath) {
+		for(Connection con : this) {
+			if(con.getLeftPath().equals(leftPath) && con.getRightPath().equals(rightPath)) {
+				return con.getRating();
+			}
+		}
+		return -1;
 	}
 
 }
