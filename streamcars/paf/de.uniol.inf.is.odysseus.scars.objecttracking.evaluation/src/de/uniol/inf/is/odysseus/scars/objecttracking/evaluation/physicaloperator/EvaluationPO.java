@@ -15,6 +15,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.PointInTimeSweepArea;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -22,6 +25,8 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	private String associationObjListPath;
 	private String filteringObjListPath;
 	private String brokerObjListPath;
+	
+	private String resultRemovePath;
 
 	private PointInTimeSweepArea<M> sweepAssociation;
 	private PointInTimeSweepArea<M> sweepFiltering;
@@ -61,11 +66,11 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		if(port == 0) {
+		if(port == 0 && !boolAsso) {
 			this.associationTime = timestamp.getMainPoint();
-		} else if (port == 1) {
+		} else if (port == 1 && !boolFilter) {
 			this.filteringTime = timestamp.getMainPoint();
-		} else if (port == 2) {
+		} else if (port == 2 && !boolBroker) {
 			this.brokerTime = timestamp.getMainPoint();
 		}
 		this.sendPunctuation(timestamp);
@@ -87,7 +92,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		// Create temporary objects that will be filled with "correct" tuples.
 		// The temporary objects will be converted to a scan object that can be transfered at the end of process_next.
 		Object[] combinedListFather = new Object[1];
-		ArrayList<Object> combinedListChildTmp = new ArrayList<Object>();
+		ArrayList<MVRelationalTuple<M>> combinedListChildTmp = new ArrayList<MVRelationalTuple<M>>();
 
 		// Fill the sweep areas according to the port
 		switch(port) {
@@ -100,6 +105,16 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		this.sweepAssociation.purgeElements(object, Order.LeftRight);
 		this.sweepFiltering.purgeElements(object, Order.LeftRight);
 		this.sweepBroker.purgeElements(object, Order.LeftRight);
+		
+		if(this.sweepAssociation.isEmpty()){
+			this.boolAsso = false;
+		}
+		if(this.sweepBroker.isEmpty()) {
+			this.boolBroker = false;
+		}
+		if(this.sweepFiltering.isEmpty()) {
+			this.boolFilter = false;
+		}
 
 		// Get iterators with valid objects according to the timestamp of the current object
 		Iterator<MVRelationalTuple<M>> itAssociation = sweepAssociation.query(object, Order.LeftRight);
@@ -132,13 +147,18 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 
 		// Check if there is a complete input -> one list from every port (so that it can be evaluated)
 		if((boolAsso || boolAssoEmpty)&&(boolFilter || boolFilterEmpty)&&(boolBroker || boolBrokerEmpty)) {
-
+			MVRelationalTuple<M> resultTuple = null;
+			SchemaHelper schemaHelper = null;
+			
 			List<MVRelationalTuple<M>> associationObjList = new ArrayList<MVRelationalTuple<M>>();
 			List<MVRelationalTuple<M>> filteringObjList = new ArrayList<MVRelationalTuple<M>>();
 			List<MVRelationalTuple<M>> brokerObjList = new ArrayList<MVRelationalTuple<M>>();
 
 			if(boolAsso) {
 				MVRelationalTuple<M> associationMainObject = itAssociation.next();
+				resultTuple = new MVRelationalTuple<M>(associationMainObject);
+				schemaHelper = new SchemaHelper(this.getSubscribedToSource(0).getSchema());
+				this.resultRemovePath = this.associationObjListPath;
 				MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput.getSchemaIndexPath(this.associationObjListPath).toTupleIndexPath(associationMainObject).getTupleObject();
 				for (Object obj : associationListObject.getAttributes()) {
 					associationObjList.add((MVRelationalTuple<M>)obj);
@@ -147,6 +167,9 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 
 			if(boolFilter) {
 				MVRelationalTuple<M> filteringMainObject = itFiltering.next();
+				resultTuple = new MVRelationalTuple<M>(filteringMainObject);
+				schemaHelper = new SchemaHelper(this.getSubscribedToSource(1).getSchema());
+				this.resultRemovePath = this.filteringObjListPath;
 				MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>) shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
 				for (Object obj : filteringListObject.getAttributes()) {
 					filteringObjList.add((MVRelationalTuple<M>)obj);
@@ -155,6 +178,9 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 
 			if(boolBroker) {
 				MVRelationalTuple<M> brokerMainObject = itBroker.next();
+				resultTuple = new MVRelationalTuple<M>(brokerMainObject);
+				schemaHelper = new SchemaHelper(this.getSubscribedToSource(2).getSchema());
+				this.resultRemovePath = this.brokerObjListPath;
 				MVRelationalTuple<M> brokerListObject = (MVRelationalTuple<M>) shSecondBrokerInput.getSchemaIndexPath(this.brokerObjListPath).toTupleIndexPath(brokerMainObject).getTupleObject();
 				for (Object obj : brokerListObject.getAttributes()) {
 					brokerObjList.add((MVRelationalTuple<M>)obj);
@@ -204,11 +230,17 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 			}
 
 			// Generate the output tuple
-			Object[] combinedListChild = combinedListChildTmp.toArray();
-			combinedListFather[0] = combinedListChild;
+			MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(combinedListChildTmp.size());
+			int counter = 0;
+			for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
+				tuples.addAttributeValue(counter++, mvRelationalTuple);
+			}
+			SchemaIndexPath schemaPath = schemaHelper.getSchemaIndexPath(resultRemovePath);
+			TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(resultTuple);
+			tuplePath.setTupleObject(new MVRelationalTuple<IProbability>(tuples));
 
 			// Transfer the generated tuple
-			transfer(new MVRelationalTuple<M>(combinedListFather));
+			transfer(resultTuple);
 			boolAsso = false;
 			boolAssoEmpty = false;
 			boolFilter = false;
