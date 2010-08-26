@@ -248,18 +248,23 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		if (node.jjtGetNumChildren() > 2) {
 			if (node.jjtGetChild(2) != null) {
 
-				ASTAttributeDefinitions metaAttributeDe = (ASTAttributeDefinitions) node.jjtGetChild(2);
-				for (int i = 0; i < metaAttributeDe.jjtGetNumChildren(); i++) {
-					ASTAttributeDefinition attrNode = (ASTAttributeDefinition) metaAttributeDe.jjtGetChild(i);
-					String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
-					SDFAttribute attribute = new SDFAttribute(brokerName, attrName);
-					ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
-					attribute.setDatatype(astAttrType.getType());
-					if (SDFDatatypes.isDate(attribute.getDatatype())) {
-						attribute.addDtConstraint("format", astAttrType.getDateFormat());
+				if( node.jjtGetChild(2) instanceof ASTAttributeDefinitions ) {
+					ASTAttributeDefinitions metaAttributeDe = (ASTAttributeDefinitions) node.jjtGetChild(2);
+					for (int i = 0; i < metaAttributeDe.jjtGetNumChildren(); i++) {
+						ASTAttributeDefinition attrNode = (ASTAttributeDefinition) metaAttributeDe.jjtGetChild(i);
+						String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
+						SDFAttribute attribute = new SDFAttribute(brokerName, attrName);
+						ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
+						attribute.setDatatype(astAttrType.getType());
+						if (SDFDatatypes.isDate(attribute.getDatatype())) {
+							attribute.addDtConstraint("format", astAttrType.getDateFormat());
+						}
+						attribute.setCovariance(astAttrType.getRow());
+						metaAttributes.add(attribute);
 					}
-					attribute.setCovariance(astAttrType.getRow());
-					metaAttributes.add(attribute);
+				} else if( node.jjtGetChild(2) instanceof ASTORSchemaDefinition) {
+					SDFAttribute rootAttribute = (SDFAttribute)node.jjtGetChild(2).jjtAccept(this, brokerName);
+					metaAttributes.add(rootAttribute);
 				}
 			}
 		}
