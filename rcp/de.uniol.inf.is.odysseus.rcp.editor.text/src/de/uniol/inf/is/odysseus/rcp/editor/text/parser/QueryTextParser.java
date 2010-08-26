@@ -80,7 +80,7 @@ public class QueryTextParser {
 
 					if (sb == null)
 						throw new QueryTextParseException("No key set in line " + (currentLine + 1));
-					sb.append(line.trim());
+					sb.append("\n").append(line.trim());
 				}
 			}
 
