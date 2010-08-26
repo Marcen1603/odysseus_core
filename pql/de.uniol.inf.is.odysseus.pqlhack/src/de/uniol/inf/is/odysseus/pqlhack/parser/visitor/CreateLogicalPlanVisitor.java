@@ -95,6 +95,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.EvaluationAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterCovarianceUpdateAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterEstimateUpdateAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterGainAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
