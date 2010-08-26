@@ -1325,7 +1325,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-		evalAO.subscribeToSource(childOp, 2, sourceOutPort, childOp.getOutputSchema());
+		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		// Assoziations Objektpfad
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
@@ -1338,7 +1338,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
-		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+		evalAO.subscribeToSource(childOp, 1, sourceOutPort, childOp.getOutputSchema());
 
 		// get filteringObjListPaths
 		identifier = (ASTIdentifier) node.jjtGetChild(3);
@@ -1351,7 +1351,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		childData = (ArrayList<Object>) node.jjtGetChild(4).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
-		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+		evalAO.subscribeToSource(childOp, 2, sourceOutPort, childOp.getOutputSchema());
 
 		// get brokerObjListPath
 		identifier = (ASTIdentifier) node.jjtGetChild(5);
