@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
@@ -19,13 +20,18 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTListDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMetric;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordDefinition;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordEntryDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
@@ -217,20 +223,26 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 		// parse attributes
 		SDFAttributeListExtended attributes = new SDFAttributeListExtended();
-		ASTAttributeDefinitions attributeDe = (ASTAttributeDefinitions) node.jjtGetChild(1);
-		for (int i = 0; i < attributeDe.jjtGetNumChildren(); i++) {
-			ASTAttributeDefinition attrNode = (ASTAttributeDefinition) attributeDe.jjtGetChild(i);
-			String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
-			SDFAttribute attribute = new SDFAttribute(brokerName, attrName);
-			ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
-			attribute.setDatatype(astAttrType.getType());
-			if (SDFDatatypes.isDate(attribute.getDatatype())) {
-				attribute.addDtConstraint("format", astAttrType.getDateFormat());
-			}
-			attribute.setCovariance(astAttrType.getRow());
-			attributes.add(attribute);
-		}
 
+		if (node.jjtGetChild(1) instanceof ASTORSchemaDefinition) {
+			SDFAttribute rootAttribute = (SDFAttribute)node.jjtGetChild(1).jjtAccept(this, brokerName);
+			attributes.add(rootAttribute);
+		} else {
+			ASTAttributeDefinitions attributeDe = (ASTAttributeDefinitions) node.jjtGetChild(1);
+			for (int i = 0; i < attributeDe.jjtGetNumChildren(); i++) {
+				ASTAttributeDefinition attrNode = (ASTAttributeDefinition) attributeDe.jjtGetChild(i);
+				String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
+				SDFAttribute attribute = new SDFAttribute(brokerName, attrName);
+				ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
+				attribute.setDatatype(astAttrType.getType());
+				if (SDFDatatypes.isDate(attribute.getDatatype())) {
+					attribute.addDtConstraint("format", astAttrType.getDateFormat());
+				}
+				attribute.setCovariance(astAttrType.getRow());
+				attributes.add(attribute);
+			}
+		}
+		
 		// parse meta attributes
 		SDFAttributeList metaAttributes = new SDFAttributeList();
 		if (node.jjtGetNumChildren() > 2) {
@@ -262,14 +274,14 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		broker.setSchema(attributes);
 		broker.setQueueSchema(metaAttributes);
 		BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema(), broker.getQueueSchema());
-		
+
 		// set the broker view in the data dictionary
 		// used for procedural parser
 		BrokerDictionary.getInstance().setLogicalPlan(brokerName, broker);
-		
+
 		// Is this necessary any more?
 		DataDictionary.getInstance().setLogicalView(brokerName, broker);
-		
+
 		return broker;
 	}
 
@@ -304,5 +316,58 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			}
 			return true;
 		}
+	}
+	
+	@Override
+	public Object visit(ASTORSchemaDefinition node, Object data) {
+		return node.jjtGetChild(0).jjtAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTRecordDefinition node, Object data) {
+		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		
+		SDFAttribute recordAttribute = new SDFAttribute(data.toString(), attrName);
+		recordAttribute.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
+		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
+			SDFAttribute attr = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
+			recordAttribute.addSubattribute(attr);
+		}
+		
+		return recordAttribute;
+	}
+
+	@Override
+	public Object visit(ASTRecordEntryDefinition node, Object data) {
+		return node.jjtGetChild(0).jjtAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTListDefinition node, Object data) {
+		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		
+		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName);
+		attribute.setDatatype(SDFDatatypeFactory.getDatatype("List"));
+		
+		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
+			SDFAttribute listedAttribute = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
+			attribute.addSubattribute(listedAttribute);
+		}
+		
+		return attribute;
+	}
+
+	@Override
+	public Object visit(ASTAttrDefinition node, Object data) {
+		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
+		
+		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName);
+		attribute.setDatatype(astAttrType.getType());
+		attribute.setCovariance(astAttrType.getRow());
+		if (SDFDatatypes.isDate(attribute.getDatatype())) 
+			attribute.addDtConstraint("format", astAttrType.getDateFormat());
+		
+		return attribute;
 	}
 }
