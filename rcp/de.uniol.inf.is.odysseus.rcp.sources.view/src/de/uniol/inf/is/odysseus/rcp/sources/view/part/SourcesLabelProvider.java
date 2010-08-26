@@ -44,7 +44,9 @@ public class SourcesLabelProvider implements ILabelProvider {
 		if( element instanceof Entry ) {
 			@SuppressWarnings("unchecked")
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>)element;
-			return entry.getKey();
+			StringBuilder sb = new StringBuilder();
+			sb.append(entry.getKey()).append(" [").append(entry.getValue().getClass().getSimpleName()).append("]");
+			return sb.toString();
 		}
 		if( element instanceof SDFAttribute ) {
 			SDFAttribute a = (SDFAttribute) element;
