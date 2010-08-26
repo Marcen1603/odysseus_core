@@ -13,30 +13,49 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 
 public class QueryPreParserKeyword implements IPreParserKeyword {
 
 	@Override
 	public void validate(QueryTextParser parser, String parameter) throws QueryTextParseException {
-		if( parameter.length() == 0 )
-			throw new QueryTextParseException("Encountered empty query");
+		try {
+			IAdvancedExecutor executor = ExecutorHandler.getExecutor();
+			if (executor == null)
+				throw new QueryTextParseException("No executor found");
+
+			if (parameter.length() == 0)
+				throw new QueryTextParseException("Encountered empty query");
+
+			String parserID = parser.getVariable("PARSER");
+			if (parserID == null)
+				throw new QueryTextParseException("Parser not set");
+			if (!executor.getSupportedQueryParser().contains(parserID))
+				throw new QueryTextParseException("Parser " + parserID + " not found");
+			String transCfg = parser.getVariable("TRANSCFG");
+			if (transCfg == null)
+				throw new QueryTextParseException("TransformationConfiguration not set");
+			if (ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null)
+				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
+		} catch (Exception ex) {
+			throw new QueryTextParseException("Unknown Exception during validation a cyclic query", ex);
+		}
 	}
 
 	@Override
 	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
 		String parserID = parser.getVariable("PARSER");
 		String transCfg = parser.getVariable("TRANSCFG");
-		
-		if( parserID == null ) parserID = "CQL";
-		if( transCfg == null ) transCfg = "Standard";
-		
+
 		try {
-			executeQuery( parserID, transCfg, parameter);
-		} catch ( Exception ex ) {
+			executeQuery(parserID, transCfg, parameter);
+		} catch (Exception ex) {
 			throw new QueryTextParseException("Error during executing query", ex);
 		}
 	}

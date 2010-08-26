@@ -10,9 +10,17 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.planmanagement.executor,
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement,
+ de.uniol.inf.is.odysseus.base.planmanagement.query,
+ de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.base.usermanagement,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.optimization,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.query,
  de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.viewer.query,
+ de.uniol.inf.is.odysseus.util,
  org.eclipse.core.resources,
  org.eclipse.jface.text,
  org.eclipse.jface.text.presentation,

@@ -24,6 +24,7 @@ public class TransCfgPreParserKeyword implements IPreParserKeyword {
 		if (!registry.getTransformationConfigurationNames().contains(parameter)) {
 			throw new QueryTextParseException("TransformationCfg " + parameter + " not found");
 		}
+		parser.setVariable("TRANSCFG", parameter);
 	}
 
 	@Override

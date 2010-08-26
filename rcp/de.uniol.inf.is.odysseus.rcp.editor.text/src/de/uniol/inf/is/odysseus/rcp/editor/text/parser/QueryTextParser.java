@@ -97,7 +97,7 @@ public class QueryTextParser {
 				}
 			}
 		} catch (QueryTextParseException ex) {
-			throw new QueryTextParseException("[Line " + (currentLine + 1) + "]" + ex.getMessage());
+			throw new QueryTextParseException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
 		}
 	}
 
