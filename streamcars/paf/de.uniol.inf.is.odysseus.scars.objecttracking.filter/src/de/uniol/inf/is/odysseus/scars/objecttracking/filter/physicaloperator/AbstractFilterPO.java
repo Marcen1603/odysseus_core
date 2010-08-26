@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 
 public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer> extends
     AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -30,6 +32,8 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	  this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 	  this.havingData= copy.havingData;
   }
+  
+  
   
   protected void process_next(MVRelationalTuple<M> object, int port) {
     havingData = true;

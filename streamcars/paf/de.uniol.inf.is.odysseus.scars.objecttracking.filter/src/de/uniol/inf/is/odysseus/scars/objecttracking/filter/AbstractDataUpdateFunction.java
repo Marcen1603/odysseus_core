@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
@@ -44,8 +46,30 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath);
+	public abstract void compute(TupleIndexPath scannedObjectTupleIndex,
+			TupleIndexPath predictedObjectTupleIndex);
 
+	public double[] getMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath) {
+	    
+		ArrayList<Double> values = new ArrayList<Double>();
+	    
+		TupleHelper tHelper = new TupleHelper(tuple);
+	
+		
+	    for( TupleInfo info :  new TupleIterator(tuple, tupleIndexPath) ) {
+	      if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
+	        values.add(new Double(info.tupleObject.toString()));
+	      }
+	    }
+
+	    double[] result = new double[values.size()];
+	    for (int i = 0; i < values.size(); i++) {
+	      result[i] = values.get(i);
+	    }
+
+	    return result;
+	  }
+	
 	public double[] getMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path) {
 		    ArrayList<Double> values = new ArrayList<Double>();
 		    for( TupleInfo info :  new TupleIterator(tuple, path) ) {
@@ -62,9 +86,9 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 		    return result;
 		  }
 	
-	public void setMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path, double[] result) {
+	public void setMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath scannedObjectTupleIndex, double[] result) {
 		int i=0;
-		for( TupleInfo info :  new TupleIterator(tuple, path) ) {
+		for( TupleInfo info :  new TupleIterator(tuple, scannedObjectTupleIndex) ) {
 			 if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
 			   info.tupleIndexPath.setTupleObject(result[i]);
 			   i+=1;

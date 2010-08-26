@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.math.linear.RealMatrix;
@@ -12,6 +13,10 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
+import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 
 public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnectionContainer & IGain> extends AbstractDataUpdateFunction<M> {
@@ -36,16 +41,20 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		
 	@SuppressWarnings("unchecked")
 	@Override
-	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
-		
-		TupleHelper tHelper = new TupleHelper(tuple);
-		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getRightPath());
-		//MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getLeftPath());
-		
-		double[] measurementOld = getMeasurementValues(tuple, oldObjPath) ;
-		double[] measurementNew = getMeasurementValues(tuple, newObjPath) ;
-		
+	public void compute(TupleIndexPath scannedObjectTupleIndex,
+			TupleIndexPath predictedObjectTupleIndex) {
+	
+		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>) predictedObjectTupleIndex.getTupleObject();
 		double[][] gain = oldTuple.getMetadata().getGain();
+		
+		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>) scannedObjectTupleIndex.getTupleObject();
+		
+		
+		
+		double[] measurementOld = getMeasurementValues(oldTuple, predictedObjectTupleIndex) ;
+		double[] measurementNew = getMeasurementValues(newTuple, scannedObjectTupleIndex) ;
+		
+		
 		
 		double[] result;
 		
@@ -62,15 +71,8 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		result = temp.getColumn(0);
 		
 		
-		setMeasurementValues(tuple, oldObjPath, result);
-		
-		// TODO richtig machen
-		/*for (int y=0; y<= result.length; y++) {
-			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[y], result[i]);
-		}*/
-		
+		setMeasurementValues(oldTuple, predictedObjectTupleIndex, result);
 	
-		
 	}
 
 	@Override

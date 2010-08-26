@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -26,100 +27,114 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author dtwumasi
  * 
  */
-public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
+public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContainer>
+		extends AbstractFilterPO<M> {
 
-  private AbstractDataUpdateFunction<M> dataUpdateFunction;
+	private AbstractDataUpdateFunction<M> dataUpdateFunction;
 
-  private SchemaHelper schemaHelper;
-  private SchemaIndexPath oldObjectListPath;
-  private SchemaIndexPath newObjectListPath;
-  private SchemaIndexPath newObjPath;
-  private SchemaIndexPath oldObjPath;
-  private TupleHelper tupleHelper;
-  SDFAttributeList inputSchema;
-  
-  public FilterEstimateUpdatePO() {
-    super();
-  }
+	private SchemaHelper schemaHelper;
+	private SchemaIndexPath oldObjectListPath;
+	private SchemaIndexPath newObjectListPath;
+	private SchemaIndexPath newObjPath;
+	private SchemaIndexPath oldObjPath;
+	private TupleHelper tupleHelper;
+	SDFAttributeList inputSchema;
 
-  public FilterEstimateUpdatePO(FilterEstimateUpdatePO<M> copy) {
-    super(copy);
-    this.dataUpdateFunction = copy.getDataUpdateFunction().clone();
-   
-  }
+	public FilterEstimateUpdatePO() {
+		super();
+	}
 
-  @Override
-  protected void process_open() throws OpenFailedException {
-    
-	 super.process_open();
-    inputSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema(); 
-    this.schemaHelper = new SchemaHelper(inputSchema);
+	public FilterEstimateUpdatePO(FilterEstimateUpdatePO<M> copy) {
+		super(copy);
+		this.dataUpdateFunction = copy.getDataUpdateFunction().clone();
 
-    this.newObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath());
-    this.newObjPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath() + SchemaHelper.ATTRIBUTE_SEPARATOR
-        + this.newObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
+	}
 
-    this.oldObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getOldObjListPath());
-    this.oldObjPath = this.schemaHelper.getSchemaIndexPath(this.getOldObjListPath() + SchemaHelper.ATTRIBUTE_SEPARATOR
-        + this.oldObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
-  }
-  
-  @Override
-  public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+	@Override
+	protected void process_open() throws OpenFailedException {
 
-	// list of connections
-    ArrayList<Connection> objConList = object.getMetadata().getConnectionList();
+		super.process_open();
+		inputSchema = this.getSubscribedToSource(0).getTarget()
+				.getOutputSchema();
+		this.schemaHelper = new SchemaHelper(inputSchema);
 
-    // traverse connection list and filter
-    for (Connection connected : objConList) {
-       compute(connected, (MVRelationalTuple<M>)object, newObjPath, oldObjPath);
-    }
-   
-   MVRelationalTuple<M> oldList = (MVRelationalTuple<M>) oldObjectListPath.toTupleIndexPath(object).getTupleObject(); 
-   
-   String timeStampName = schemaHelper.getStartTimestampFullAttributeName();
-   //SDFAttribute timestamp = schemaHelper.getAttribute(timeStampName);
-   Object timeStamp =  schemaHelper.getSchemaIndexPath(timeStampName).toTupleIndexPath(object).getTupleObject();
-   MVRelationalTuple<M> newObject = new MVRelationalTuple<M>(1);
-   
-   MVRelationalTuple <M> scan = new MVRelationalTuple<M>(2);
-   
-   scan.setAttribute(0, timeStamp);
-   scan.setAttribute(1, oldList);
+		this.newObjectListPath = this.schemaHelper.getSchemaIndexPath(this
+				.getNewObjListPath());
+		this.newObjPath = this.schemaHelper.getSchemaIndexPath(this
+				.getNewObjListPath()
+				+ SchemaHelper.ATTRIBUTE_SEPARATOR
+				+ this.newObjectListPath.getAttribute().getSubattribute(0)
+						.getAttributeName());
 
-   
-   newObject.setAttribute(0, scan);
+		this.oldObjectListPath = this.schemaHelper.getSchemaIndexPath(this
+				.getOldObjListPath());
+		this.oldObjPath = this.schemaHelper.getSchemaIndexPath(this
+				.getOldObjListPath()
+				+ SchemaHelper.ATTRIBUTE_SEPARATOR
+				+ this.oldObjectListPath.getAttribute().getSubattribute(0)
+						.getAttributeName());
+	}
 
-   tupleHelper = new TupleHelper(object);
-   
-   
+	@Override
+	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
-    return newObject;
-  }
-  
-  public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
-    this.dataUpdateFunction.compute(connected, tuple, newObjPath, oldObjPath);
-  }
-  
-  
-  @Override
-  public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-    return new FilterEstimateUpdatePO<M>(this);
-  }
+		// list of connections
+		ArrayList<Connection> objConList = object.getMetadata()
+				.getConnectionList();
 
-  @Override
-  public void processPunctuation(PointInTime timestamp, int port) {
-    this.sendPunctuation(timestamp);
-  }
+		// traverse connection list and filter
+		for (Connection connected : objConList) {
+			compute(TupleIndexPath.fromIntArray(connected.getLeftPath(), object, this.newObjPath), TupleIndexPath.fromIntArray(connected.getRightPath(), object, this.oldObjPath));
+		}
 
-  
-  // Getter & Setter
-  
-  public AbstractDataUpdateFunction<M> getDataUpdateFunction() {
-    return dataUpdateFunction;
-  }
-  
-  public void setDataUpdateFunction(AbstractDataUpdateFunction<M> dataUpdateFunction) {
-    this.dataUpdateFunction = dataUpdateFunction;
-  }
+		MVRelationalTuple<M> oldList = (MVRelationalTuple<M>) oldObjectListPath
+				.toTupleIndexPath(object).getTupleObject();
+
+		String timeStampName = schemaHelper
+				.getStartTimestampFullAttributeName();
+		// SDFAttribute timestamp = schemaHelper.getAttribute(timeStampName);
+		Object timeStamp = schemaHelper.getSchemaIndexPath(timeStampName)
+				.toTupleIndexPath(object).getTupleObject();
+
+		MVRelationalTuple<M> newObject = new MVRelationalTuple<M>(1);
+
+		MVRelationalTuple<M> scan = new MVRelationalTuple<M>(2);
+
+		scan.setAttribute(0, timeStamp);
+		scan.setAttribute(1, oldList);
+
+		newObject.setAttribute(0, scan);
+
+		tupleHelper = new TupleHelper(object);
+
+		return newObject;
+	}
+
+	private void compute(TupleIndexPath scannedObjectTupleIndex,
+			TupleIndexPath predictedObjectTupleIndex) {
+	this.dataUpdateFunction.compute(scannedObjectTupleIndex,
+			predictedObjectTupleIndex);
+	}
+
+
+	@Override
+	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+		return new FilterEstimateUpdatePO<M>(this);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		this.sendPunctuation(timestamp);
+	}
+
+	// Getter & Setter
+
+	public AbstractDataUpdateFunction<M> getDataUpdateFunction() {
+		return dataUpdateFunction;
+	}
+
+	public void setDataUpdateFunction(
+			AbstractDataUpdateFunction<M> dataUpdateFunction) {
+		this.dataUpdateFunction = dataUpdateFunction;
+	}
 }

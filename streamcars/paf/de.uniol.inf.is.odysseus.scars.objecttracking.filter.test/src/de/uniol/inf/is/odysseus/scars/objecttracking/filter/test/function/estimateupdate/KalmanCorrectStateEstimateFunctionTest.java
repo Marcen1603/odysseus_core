@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
@@ -46,6 +47,9 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 	private SchemaIndexPath newObjPath;
 	private SchemaIndexPath oldObjPath;
 	
+	TupleIndexPath scannedTupleIndexPath;
+	TupleIndexPath predictedTupleIndexPath;
+	 
 	private String newObjListPath ="scan.newlist";
 	
 	private String oldObjListPath = "scan.oldlist";
@@ -76,6 +80,8 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 		
 		double[][] gain = { {0.2,0.2}, {0.1,0.4}};
 		
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,1);
+		
 		this.outputSchema = testData.getSchema();
 		
 		this.schemaHelper = new SchemaHelper(this.outputSchema);
@@ -89,9 +95,10 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 	    this.oldObjPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath + SchemaHelper.ATTRIBUTE_SEPARATOR
 	        + this.oldObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
 	  
+	    scannedTupleIndexPath = this.newObjPath.toTupleIndexPath(measurementTuple);
+	    predictedTupleIndexPath = this.oldObjPath.toTupleIndexPath(measurementTuple);
 		
 		
-		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,1);
 		
 		// the expected tuple
 		
@@ -116,7 +123,7 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 		
 		Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 		
-		correctStateEstimateFunction.compute(connected, measurementTuple, newObjPath, oldObjPath);
+		correctStateEstimateFunction.compute(scannedTupleIndexPath, predictedTupleIndexPath );
 	
 		assertEquals(expectedTuple,measurementTuple);
 	
