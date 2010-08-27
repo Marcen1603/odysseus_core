@@ -47,11 +47,13 @@ public class BenchmarkSink<M extends ILatency> extends
 		lock.unlock();
 	}
 
+	int i = 0;
 	@Override
 	protected synchronized void process_next(RelationalTuple<M> object,
 			int port, boolean isReadOnly) {
 		if (resultsToRead == -1 || result.size() < resultsToRead) {
 			addToResult(object);
+//			System.out.println("added result no " + i++);
 		} else {
 			lock.lock();
 			inputDone();

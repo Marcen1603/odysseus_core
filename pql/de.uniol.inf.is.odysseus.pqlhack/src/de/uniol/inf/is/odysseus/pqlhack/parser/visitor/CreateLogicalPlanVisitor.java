@@ -1475,6 +1475,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// filter data should be a List<Object> implementation (this is a
 		// convention)
 		List<Object> dataList = null;
+
 		if (!(data instanceof List<?>)) {
 			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
 		}
@@ -1552,6 +1553,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// filter data should be a List<Object> implementation (this is a
 		// convention)
 		List<Object> dataList = null;
+
 		if (!(data instanceof List<?>)) {
 			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
 		}
@@ -1641,6 +1643,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// filter data should be a List<Object> implementation (this is a
 		// convention)
 		List<Object> dataList = null;
+		
 		if (!(data instanceof List<?>)) {
 			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
 		}

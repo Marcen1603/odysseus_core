@@ -17,6 +17,9 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 	private DummyJDVEData<M> data;
 	private SDFAttributeList outputSchema;
 	protected static int CARCOUNT = 5;
+	private int limit = 5000;
+	private int counter = 0;
+	private MVRelationalTuple<M> buffer = null;
 
 	private long lastTime = 0;
 
@@ -47,12 +50,33 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 
 	@Override
 	public boolean hasNext() {
-		return true;
+		
+		/*
+		 * Hier wird gewartet, damit die Verarbeitung der Daten besser
+		 * nachvollzogen werden kann und Odysseus / Eclipse nicht �berlastet
+		 * wird (siehe auch Ticket 225).
+		 */
+		if(!this.isDone()){
+			if (System.currentTimeMillis() - lastTime > 20) {
+				this.buffer = data.getScan();
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			this.propagateDone();
+			return false;
+		}
 	}
 
 	@Override
 	public boolean isDone() {
-		return false;
+		if(counter < limit){
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -62,16 +86,14 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 
 	@Override
 	public void transferNext() {
-		/*
-		 * Hier wird gewartet, damit die Verarbeitung der Daten besser
-		 * nachvollzogen werden kann und Odysseus / Eclipse nicht �berlastet
-		 * wird (siehe auch Ticket 225).
-		 */
-		if (System.currentTimeMillis() - lastTime > 1000) {
-			transfer(data.getScan());
+		++this.counter;
+//		System.out.println("Dummy hasNext: " + this.hasNext());
+		transfer(this.buffer);
+		this.buffer = null;
+		if(this.counter % 5 == 0){
 			sendPunctuation(new PointInTime(data.getLastTimestamp()));
-			lastTime = System.currentTimeMillis();
 		}
+		lastTime = System.currentTimeMillis();
 
 	}
 

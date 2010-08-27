@@ -36,7 +36,6 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<?>> extends
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected final void process_next(R object, int port) {
 		// elements will be processed after punctuation arrived
 		this.buffer.addLast(object);
@@ -87,7 +86,7 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<?>> extends
 		if (selectivity == 1) {
 			waitProcessingTime(end);
 			while(!buffer.isEmpty()){
-				transfer(buffer.getFirst());
+				transfer(buffer.pollFirst());
 			}
 		} else {
 

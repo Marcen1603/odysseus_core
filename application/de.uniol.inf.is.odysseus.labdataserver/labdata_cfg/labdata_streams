@@ -1,3 +1,9 @@
+CREATE STREAM groupStream(
+	groupID INTEGER,
+	timestamp STARTTIMESTAMP,
+	x INTEGER
+) SOCKET MV localhost : 44470
+
 CREATE STREAM ego(
 	lane INTEGER,
 	timestamp STARTTIMESTAMP,

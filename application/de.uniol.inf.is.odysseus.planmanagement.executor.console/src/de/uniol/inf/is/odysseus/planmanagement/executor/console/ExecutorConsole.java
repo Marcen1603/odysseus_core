@@ -1714,6 +1714,8 @@ public class ExecutorConsole implements CommandProvider,
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.getTargetException().printStackTrace();
+		} catch(NegativeArraySizeException e){
+			e.printStackTrace();
 		}
 
 	}

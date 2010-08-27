@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -160,7 +161,8 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 
 	}
 	
-	private void generateOutput(){
+	private synchronized void generateOutput(){
+//		System.out.println("Thread start: " + Thread.currentThread().getId());
 		// determin the minimum of all writing streams
 		this.min = getMinimum();
 		// printDebug("Minimun time is " + this.min);
@@ -247,6 +249,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			// operators have to send a punctuation.
 		}
 
+//		System.out.println("Thread end: " + Thread.currentThread().getId());
 	}
 
 	/**

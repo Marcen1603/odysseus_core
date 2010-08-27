@@ -274,6 +274,7 @@ public class ObjectTrackingNestPO
 		return minStart;
 	}
 	
+	int v = 0;
 	/**
 	 * process_next method is a primary function for an operator, tuples of 
 	 * subscripted sources will be sent to this method. The port is not 
@@ -293,8 +294,10 @@ public class ObjectTrackingNestPO
 			this.q.extractElementsBefore(minStart);
 		
 		while(it.hasNext()) {
-			this.transfer(it.next());
+			MVRelationalTuple<M> tuple = it.next();
+			this.transfer(tuple);
 			it.remove();
+			this.sendPunctuation(tuple.getMetadata().getStart());
 		}	
 	}	
 
@@ -325,8 +328,8 @@ public class ObjectTrackingNestPO
 		
 		this.allTuplesSent();
 		
-		for(MVRelationalTuple<M> t : this.q) {
-			this.transfer(t);			
+		while(!q.isEmpty()){
+			this.transfer(this.q.poll());
 		}
 	}
 	
@@ -372,7 +375,7 @@ public class ObjectTrackingNestPO
 	}
 
 	public boolean isDone() {
-		return (q.size() == 0);
+		return this.getSubscribedToSource().get(0).isDone();
 	}
 	
 	/**
