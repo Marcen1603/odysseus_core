@@ -88,8 +88,12 @@ public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M ex
 				element = buffer.pop();
 			}
 //			System.out.println("Transfer Element: " + v++);
+			
 			transfer(element);
-			sendPunctuation(element.getMetadata().getStart());
+			if(v % 5 == 0){
+				sendPunctuation(element.getMetadata().getStart());
+				v++;
+			}
 			if (isDone()) {
 				propagateDone();
 			}

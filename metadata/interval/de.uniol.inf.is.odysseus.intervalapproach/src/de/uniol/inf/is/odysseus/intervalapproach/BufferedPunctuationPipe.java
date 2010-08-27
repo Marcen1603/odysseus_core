@@ -129,8 +129,8 @@ public class BufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M ext
 	@Override
 	protected void process_next(T object, int port) {
 		synchronized (this.buffer) {
-//			i++;
-//			if(i % 1 == 0){
+			i++;
+//			if(i % 20 == 0){
 //				LoggerHelper.getInstance(this.getName()).debug("Buffer size: " + this.size());
 //			}
 			this.buffer.add(object);

@@ -9,13 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.
-	objecttracking.helper.ObjectTrackingNestTISweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.
-	objecttracking.helper.ObjectTrackingPartialNest;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.
-	objecttracking.helper.ObjectTrackingPriorityQueueG;
-
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
@@ -26,7 +19,9 @@ import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.helper.ObjectTrackingNestTISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.helper.ObjectTrackingPartialNest;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.helper.ObjectTrackingPriorityQueueG;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -580,8 +575,7 @@ public class ObjectTrackingNestPO
 	private ObjectTrackingPartialNest<M> merge
 		(ObjectTrackingPartialNest<M> a, MVRelationalTuple<M> b) {
 		
-		ObjectTrackingMetadata<Object> meta = 
-			new ObjectTrackingMetadata<Object>();
+		ObjectTrackingMetadata<Object> meta = a.getMetadata().clone();
 		
 		TimeInterval ti = TimeInterval.intersection(
 		      a.getMetadata().clone(), 
@@ -679,7 +673,6 @@ public class ObjectTrackingNestPO
 		 * Get all other partial nests that qualify (overlap in time)
 		 * for a merge.
 		 */
-		
 		Iterator<ObjectTrackingPartialNest<M>> qualifies = 
 			sa.queryOverlaps(incomingTuple.getMetadata());
 		
@@ -728,6 +721,7 @@ public class ObjectTrackingNestPO
 								
 				if(partialStart.before(incomingTupleStart)) {
 					
+					// first generate left partial
 					ObjectTrackingPartialNest<M> leftOverlapPartial = 
 						partial.clone();						
 					
@@ -749,22 +743,35 @@ public class ObjectTrackingNestPO
 					
 					sa.insert(leftOverlapPartial);
 				
-					if(incomingTupleEnd.before(partialEnd)) {
+					// second generate overlapping partial
+					// we already now, that partial and incoming
+					// tuple are overlapping, so we do not
+					// have to check, whether partial ends before
+					// incoming
+					ObjectTrackingPartialNest<M> mergePartial = 
+						this.merge(partial.clone(), incomingTuple);
+					
+					sa.insert(mergePartial);
+					
+					
+					// third generate right partial
+					// there three cases
+					// 1. partial.end == incoming.end => covered by merge
+					// 2. partial.end < incoming.end => right partial contains incoming
+					// 3. partial.end > incoming.end => right partial contains old partial
+					if(partialEnd.before(incomingTupleEnd)){
+						ObjectTrackingPartialNest<M> rightOverlapPartial =
+							new ObjectTrackingPartialNest<M>(incomingTuple);
 						
-						/*
-						 * Incoming tuple TI is contained in partial TI.
-						 *
-						 * Here we need to merge the partial nest with 
-						 * time interval equals intersection
-						 */
-											
-						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingTuple);
+						meta = rightOverlapPartial.getMetadata();
+						TimeInterval time = new TimeInterval(partialEnd.clone(), incomingTupleEnd.clone());
+						meta.setStreamTime(time);
 						
-						/*
-						 * time interval of partial is reduced to 
-						 * [incomingPartialEnd, partialEnd)
-						 */
+						this.setTimeIntervalOnSubtuples(rightOverlapPartial, time);
+						sa.insert(rightOverlapPartial);
+						
+					}
+					else if(partialEnd.after(incomingTupleEnd)){
 						
 						ObjectTrackingPartialNest<M> rightOverlapPartial = 
 							partial.clone();
@@ -788,101 +795,66 @@ public class ObjectTrackingNestPO
 							ti
 						);
 						
+						
 						sa.insert(rightOverlapPartial);
-						sa.insert(mergePartial);			
-												
-						this.updateFillInitialTI(fillInitialTI, mergePartial);
-						
-					} else {	
-						
-						/*
-						 * Incoming tuple TI right overlaps the partial TI.
-						 */
+					}							
 					
-						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingTuple);
-						
-						sa.insert(mergePartial);	
-						this.updateFillInitialTI(fillInitialTI, mergePartial);	
-					}
+					this.updateFillInitialTI(fillInitialTI, mergePartial);
 				
 				// remind: if(partialStart.before(incomingPartialStart)) ...
 					
-				} else {					
-					if(partialTI.equals( 
-						TimeInterval.union(
-							partialTI, 
-							incomingTupleTI
-						))) {
-												
-						/*
-						 * Incoming tuple TI is equal to partial TI.
-						 */			
-						
-						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingTuple);
-						
-						sa.insert(mergePartial);
-						this.updateFillInitialTI(fillInitialTI, mergePartial);					
-					} else 
-					if(partialTI.getEnd().before(incomingTupleTI.getEnd())) {
-						
-						/*
-						 * Incoming tuple TI contains whole partial TI.
-						 */									
-
-						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingTuple);
-														
-						sa.insert(mergePartial);							
-						this.updateFillInitialTI(fillInitialTI, mergePartial);
-					}					
-					else {
+				} else if(partialStart.afterOrEquals(incomingTupleStart)){
 					
-						/*
-						 * Incoming tuple TI left overlaps the partial TI.
-						 */
+					// first generate left partial
+					if(partialStart.after(incomingTupleStart)){
+						ObjectTrackingPartialNest<M> leftOverlapPartial =
+							new ObjectTrackingPartialNest<M>(incomingTuple);
 						
-						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingTuple);				
-
-						/*
-						 * Special case if incomingPartialEnd is equal
-						 * to partialEnd the interval is empty. Therefore 
-						 * check.
-						 */
+						M meta = leftOverlapPartial.getMetadata();
+						TimeInterval time = new TimeInterval(incomingTupleStart, partialStart);
+						meta.setStreamTime(time);
 						
-						if(!incomingTupleEnd.equals(partialEnd)) {
+						this.setTimeIntervalOnSubtuples(leftOverlapPartial, time);
+						sa.insert(leftOverlapPartial);
+					}
+					
+					// second generate overlapping partial
+					ObjectTrackingPartialNest<M> mergePartial = 
+						this.merge(partial.clone(), incomingTuple);
+					
+					sa.insert(mergePartial);
+					
+					// third generate right partial
+					// there are three cases again
+					// partialEnd < incomingEnd => right contains incoming
+					// partialEnd = incomingEnd => covered by merge
+					// partialEnd > incomingEnd => left contains partial
+					if(partialEnd.before(incomingTupleEnd)){
+						ObjectTrackingPartialNest<M> rightOverlapPartial =
+							new ObjectTrackingPartialNest<M>(incomingTuple);
 						
-							ObjectTrackingPartialNest<M> overlapPartialRight = 
-								partial.clone();
-							
-							M meta = overlapPartialRight.getMetadata();
-							
-							TimeInterval ti3 = new TimeInterval(
-								incomingTupleEnd.clone(),
-								partialEnd.clone()
-							);
-							
-							meta.setStreamTime(ti3);
-							
-							/*
-							 * Setting the time interval of the subtuples 
-							 * of the overlapPartialRight
-							 */
-							
-							this.setTimeIntervalOnSubtuples(
-								overlapPartialRight, 
-								ti3
-							);
-							
-							sa.insert(overlapPartialRight);
-						}
+						M meta = rightOverlapPartial.getMetadata();
+						TimeInterval time = new TimeInterval(partialEnd, incomingTupleEnd);
+						meta.setStreamTime(time);
 						
-						sa.insert(mergePartial);
-						this.updateFillInitialTI(fillInitialTI, mergePartial);	
-							
-					} // else
+						this.setTimeIntervalOnSubtuples(rightOverlapPartial, time);
+						sa.insert(rightOverlapPartial);
+					}
+					
+					else if(partialEnd.after(incomingTupleEnd)){
+						ObjectTrackingPartialNest<M> rightOverlapPartial =
+							partial.clone();
+						
+						M meta = rightOverlapPartial.getMetadata();
+						TimeInterval time = new TimeInterval(incomingTupleEnd, partialEnd);
+						meta.setStreamTime(time);
+						
+						this.setTimeIntervalOnSubtuples(rightOverlapPartial, time);
+						sa.insert(rightOverlapPartial);
+					}
+					
+					this.updateFillInitialTI(fillInitialTI, mergePartial);
+					
 				} // else				
 			} // while			
 			
@@ -891,22 +863,22 @@ public class ObjectTrackingNestPO
 			 * of the incoming partial (which have not been merged) 
 			 */
 			
-			for(ITimeInterval ti : fillInitialTI) {
-				ObjectTrackingPartialNest<M> fillPartial = 
-					new ObjectTrackingPartialNest<M>(incomingTuple);			
-				
-				M meta = fillPartial.getMetadata();				
-				meta.setStreamTime(ti.clone());
-				
-				/*
-				 * Setting the time interval of the sub tuples of the 
-				 * filling partial. 
-				 */
-				
-				this.setTimeIntervalOnSubtuples(fillPartial, ti);
-				
-				sa.insert(fillPartial);
-			}
+//			for(ITimeInterval ti : fillInitialTI) {
+//				ObjectTrackingPartialNest<M> fillPartial = 
+//					new ObjectTrackingPartialNest<M>(incomingTuple);			
+//				
+//				M meta = fillPartial.getMetadata();				
+//				meta.setStreamTime(ti.clone());
+//				
+//				/*
+//				 * Setting the time interval of the sub tuples of the 
+//				 * filling partial. 
+//				 */
+//				
+//				this.setTimeIntervalOnSubtuples(fillPartial, ti);
+//				
+//				sa.insert(fillPartial);
+//			}
 		}
 	}	
 

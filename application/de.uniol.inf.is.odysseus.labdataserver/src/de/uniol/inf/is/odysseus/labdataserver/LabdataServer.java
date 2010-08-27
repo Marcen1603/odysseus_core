@@ -406,8 +406,8 @@ class CSVHandler extends ClientHandler {
 			long startDuration = System.nanoTime();
 			boolean stop = false;
 			
-			long lastTime = System.nanoTime();
 			while ((limit < 1 || i < limit) && !stop) {
+				long lastTime = System.nanoTime();
 				if (limit > 0) {
 					
 					for (int u = 0; u < cachedValues[i].length; u++) {
@@ -496,11 +496,14 @@ class CSVHandler extends ClientHandler {
 				// wait for the next element for this.periodLength nanoseconds
 				long expectedTime = lastTime + this.periodLength;
 				while (expectedTime > System.nanoTime()) {
+					int m = 0;
+					m = 1;
 				}
 			}
 			long endDuration = System.nanoTime();
 			System.out.println(" |->Done" + " i = " + i);
 			System.out.println("Duration: " + (endDuration - startDuration));
+			System.out.println("Frequency: " + ((double)i * 1000000000 / (double)((double)endDuration - (double)startDuration)));
 		} catch (EOFException e) {
 			System.out.println(" |->Done");
 		} catch (Exception e) {
