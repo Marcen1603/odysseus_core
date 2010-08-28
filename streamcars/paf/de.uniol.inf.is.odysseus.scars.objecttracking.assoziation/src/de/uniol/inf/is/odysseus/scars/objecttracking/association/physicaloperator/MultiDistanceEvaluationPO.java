@@ -27,6 +27,7 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
   private DistanceFunction df;
 
   public MultiDistanceEvaluationPO() {
+	  super();
   }
 
   public MultiDistanceEvaluationPO(MultiDistanceEvaluationPO<M> clone) {
@@ -35,22 +36,29 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
   }
 
   public void initAlgorithmParameter() {
-    if (this.getAlgorithmParameter().containsKey(DISTANCE_ID)) {
-      String algoName = this.getAlgorithmParameter().get(DISTANCE_ID);
-      if (algoName.equals(CHEBYSHEV)) {
-        this.df = new ChebyshevDistance();
-      } else if (algoName.equals(EUCLIDEAN)) {
-        this.df = new EuclideanDistance();
-      } else if (algoName.equals(MANHATTEN)) {
-        this.df = new ManhattanDistance();
-      } else if (algoName.equals(MINKOWSKI)) {
-        this.df = new MinkowskiDistance();
-      } else {
-        this.df = new EuclideanDistance();
+	// try - catch so that the operator does not crash if there is no parameter given
+	try {
+	    if (this.getAlgorithmParameter().containsKey(DISTANCE_ID)) {
+	      String algoName = this.getAlgorithmParameter().get(DISTANCE_ID);
+	      if (algoName.equals(CHEBYSHEV)) {
+	        this.df = new ChebyshevDistance();
+	      } else if (algoName.equals(EUCLIDEAN)) {
+	        this.df = new EuclideanDistance();
+	      } else if (algoName.equals(MANHATTEN)) {
+	        this.df = new ManhattanDistance();
+	      } else if (algoName.equals(MINKOWSKI)) {
+	        this.df = new MinkowskiDistance();
+	      } else {
+	        this.df = new EuclideanDistance();
+	        System.out
+	            .println("### MultiDistanceEvaluationPO: ### No valid Distancefunction ### Default function was selected (EuclideanDistance) ##");
+	      }
+	    }
+	} catch(Exception e) {
+		this.df = new EuclideanDistance();
         System.out
-            .println("### NearestNeighborEvaluationPO: ### No valid distanceFunction ### Default function was selected (EuclideanDistance) ##");
-      }
-    }
+            .println("### MultiDistanceEvaluationPO: ### Can not access distance parameter ### Default function was selected (EuclideanDistance) ##");
+	}
   }
 
   @Override
@@ -68,6 +76,9 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
     for (int i = 0; i < predictedObjMesurementValues.length; i++) {
       predictedObjInstance.setValue(i, predictedObjMesurementValues[i]);
     }
+
+    // VJ:
+    // What about the covariance matrix? How to combine the weka distance function with the cov.?
 
     // Return Distance
     // Available Functions: ChebyshevDistance, EuclideanDistance,
