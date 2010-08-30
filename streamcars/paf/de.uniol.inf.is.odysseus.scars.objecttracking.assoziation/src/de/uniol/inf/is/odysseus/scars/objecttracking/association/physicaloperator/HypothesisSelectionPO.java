@@ -205,7 +205,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 				object);
 		TupleIndexPath scannedObjectList = this.scannedObjectListPath
 				.toTupleIndexPath(scannedNotMatchedTuple);
-		scannedObjectList.setTupleObject(scannedNotMatchedObjects);
+		scannedObjectList.setTupleObject(scannedTuple);
 		transfer(scannedNotMatchedTuple, 0);
 		System.out.println("Port 0: " + object);
 
@@ -222,7 +222,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 					object);
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath
 					.toTupleIndexPath(predictedNotMatchedTuple);
-			predictedObjectList.setTupleObject(predictedNotMatchedObjects);
+			predictedObjectList.setTupleObject(predictedTuple);
 			transfer(predictedNotMatchedTuple, 2);
 			System.out.println("Port 2: " + object);
 		} else {
