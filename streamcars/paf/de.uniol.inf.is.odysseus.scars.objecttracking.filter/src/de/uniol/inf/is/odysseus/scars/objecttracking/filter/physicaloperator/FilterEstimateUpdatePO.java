@@ -97,7 +97,8 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 				.toTupleIndexPath(object).getTupleObject();
 
 		MVRelationalTuple<M> newObject = new MVRelationalTuple<M>(1);
-
+		
+		newObject.setMetadata(object.getMetadata());
 		MVRelationalTuple<M> scan = new MVRelationalTuple<M>(2);
 
 		scan.setAttribute(0, timeStamp);
