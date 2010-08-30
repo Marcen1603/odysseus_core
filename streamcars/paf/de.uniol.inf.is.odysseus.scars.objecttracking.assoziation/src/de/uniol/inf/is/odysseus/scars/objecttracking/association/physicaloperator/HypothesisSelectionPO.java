@@ -197,6 +197,10 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		List<Object> scannedNotMatchedObjects = getDifferenceSet(object,
 				this.scannedObjectListPath.toTupleIndexPath(object),
 				matchedObjects);
+		MVRelationalTuple<M> scannedTuple = new MVRelationalTuple<M>(scannedNotMatchedObjects.size());
+		for (int i = 0; i<scannedNotMatchedObjects.size(); i++) {
+			scannedTuple.setAttribute(i, scannedNotMatchedObjects.get(i));
+		}
 		MVRelationalTuple<M> scannedNotMatchedTuple = new MVRelationalTuple<M>(
 				object);
 		TupleIndexPath scannedObjectList = this.scannedObjectListPath
@@ -210,6 +214,10 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 				this.predictedObjectListPath.toTupleIndexPath(object),
 				matchedObjects);
 		if (predictedNotMatchedObjects.size() > 0) {
+			MVRelationalTuple<M> predictedTuple = new MVRelationalTuple<M>(predictedNotMatchedObjects.size());
+			for (int i = 0; i<predictedNotMatchedObjects.size(); i++) {
+				predictedTuple.setAttribute(i, predictedNotMatchedObjects.get(i));
+			}
 			MVRelationalTuple<M> predictedNotMatchedTuple = new MVRelationalTuple<M>(
 					object);
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath
