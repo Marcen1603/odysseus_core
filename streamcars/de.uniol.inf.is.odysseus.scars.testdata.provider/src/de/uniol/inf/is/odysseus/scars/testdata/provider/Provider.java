@@ -298,4 +298,8 @@ public class Provider implements IProvider {
 		return schema;
 	}
 
+	public Long getLastTimestamp() {
+		return this.currentTimeStamp;
+	}
+
 }
