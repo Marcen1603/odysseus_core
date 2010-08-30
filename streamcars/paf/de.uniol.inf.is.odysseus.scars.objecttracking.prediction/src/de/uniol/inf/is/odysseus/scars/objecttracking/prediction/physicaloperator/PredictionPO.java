@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperato
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
@@ -10,6 +12,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
+import de.uniol.inf.is.odysseus.scars.util.PointInTimeSweepArea;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
@@ -18,12 +21,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private MVRelationalTuple<M> currentTimeTuple;
-	private MVRelationalTuple<M> currentScanTuple;
+//	private MVRelationalTuple<M> currentTimeTuple;
+//	private MVRelationalTuple<M> currentScanTuple;
 
 	private int[] objListPath;
 	private SchemaIndexPath currentTimeSchemaPath;
 	private SchemaIndexPath currentScanTimeSchemaPath;
+	private PointInTimeSweepArea<M> timeQueue;
+	private PointInTimeSweepArea<M> scanQueue;
 
 	private PredictionFunctionContainer<M> predictionFunctions;
 
@@ -61,49 +66,60 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 		currentTimeSchemaPath = helper1.getSchemaIndexPath(helper1.getStartTimestampFullAttributeName());
 		SchemaHelper helper2 = new SchemaHelper(scanSchema);
 		currentScanTimeSchemaPath = helper2.getSchemaIndexPath(helper2.getStartTimestampFullAttributeName());
+		timeQueue = new PointInTimeSweepArea<M>();
+		scanQueue = new PointInTimeSweepArea<M>();
+
 	}
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		if (port == 0) {
-			currentTimeTuple = object.clone();
+			timeQueue.insert(object.clone());
+//			currentTimeTuple = object.clone();
 		} else if (port == 1) {
-			currentScanTuple = object.clone();
+			scanQueue.insert(object.clone());
+//			currentScanTuple = object.clone();
 		}
-		if (currentTimeTuple != null && currentScanTuple != null) {
-			predictData();
-			MVRelationalTuple<M> tmp = currentScanTuple;
-			currentScanTuple = null;
-			transfer(tmp);
+		if(!timeQueue.isEmpty() && !scanQueue.isEmpty()) {
+			transfer(predictData(timeQueue.poll(), scanQueue.poll()));
 		}
+		
+//		if (currentTimeTuple != null && currentScanTuple != null) {
+//			predictData();
+//			MVRelationalTuple<M> tmp = currentScanTuple;
+//			currentScanTuple = null;
+//			transfer(tmp);
+//		}
 	}
 
 	// @SuppressWarnings("unchecked")
-	private void predictData() {
-		if (currentScanTuple != null) {
-			TupleHelper helper = new TupleHelper(currentScanTuple);
+	private MVRelationalTuple<M> predictData(MVRelationalTuple<M> time, MVRelationalTuple<M> scan) {
+		
+		if (scan != null) {
+			TupleHelper helper = new TupleHelper(scan);
 			MVRelationalTuple<?> list = (MVRelationalTuple<?>) helper.getObject(objListPath);
 			for (int index = 0; index < list.getAttributeCount(); index++) {
 				MVRelationalTuple<M> obj = list.getAttribute(index);
 				IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
 				if (pf != null) {
-					pf.predictData(currentScanTuple, currentTimeTuple, index);
+					pf.predictData(scan, time, index);
 					M metadata = obj.getMetadata();
-					pf.predictMetadata(metadata, currentScanTuple, currentTimeTuple, index);
+					pf.predictMetadata(metadata, scan, time, index);
 				} else {
 					System.err.println("No PredictionFunction assigned (NO DEFAULT PREDICTION_FUNCTION)");
 				}
 
 			}
-			TupleIndexPath scanTimeTPath = currentTimeSchemaPath.toTupleIndexPath(currentTimeTuple);
+			TupleIndexPath scanTimeTPath = currentTimeSchemaPath.toTupleIndexPath(time);
 			Long currentTimeValue = (Long) scanTimeTPath.getTupleObject();
 
-			currentScanTuple.getMetadata().getStart().setMainPoint(currentTimeValue);
-			TupleIndexPath currentScanTimeTPath = currentScanTimeSchemaPath.toTupleIndexPath(currentScanTuple);
+			scan.getMetadata().getStart().setMainPoint(currentTimeValue);
+			TupleIndexPath currentScanTimeTPath = currentScanTimeSchemaPath.toTupleIndexPath(scan);
 			currentScanTimeTPath.setTupleObject(currentTimeValue);
 		} else {
 			System.err.println("Prediction: currentScanTuple was null!!");
 		}
+		return scan;
 	}
 
 	@Override
