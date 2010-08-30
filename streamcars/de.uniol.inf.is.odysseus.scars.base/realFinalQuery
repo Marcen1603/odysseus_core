@@ -7,7 +7,7 @@
 CREATE SENSOR radarSensor (
 	RECORD( scan,
 		ATTRIBUTE(timestamp, STARTTIMESTAMP)
-		LIST( cars, 
+		LIST( cars,
 			RECORD( car,
 				ATTRIBUTE(type, INTEGER)
 				ATTRIBUTE(id, INTEGER)
@@ -30,7 +30,7 @@ CREATE SENSOR radarSensor (
 CREATE SENSOR brokerSensor ( // wird durch Broker ersetzt
 	RECORD( scan,
 		ATTRIBUTE(timestamp, STARTTIMESTAMP)
-		LIST( cars, 
+		LIST( cars,
 			RECORD( car,
 				ATTRIBUTE(type, INTEGER)
 				ATTRIBUTE(id, INTEGER)
@@ -64,17 +64,17 @@ CREATE SENSOR brokerSensor ( // wird durch Broker ersetzt
 
 #PARSER PQLHack
 #CYCLICQUERY
-LOGICAL PLAN : 
+LOGICAL PLAN :
 ASSOCIATION-SEL(
 	ASSOCIATION-EVAL (
 		ASSOCIATION-GEN (
 			${sensorSource},
-			PREDICTION( 
+			PREDICTION(
 				${sensorSource}, // Timestamp aus Sensor
 				SET-PREDICTION-OR(
 					${brokerSource}, // Brokerdaten
 					${brokerListName},
-					brokerSensor.scan:cars:car:posx := brokerSensor.scan:cars:car:posx * 2 ; 
+					brokerSensor.scan:cars:car:posx := brokerSensor.scan:cars:car:posx * 2 ;
 					WHERE brokerSensor.scan:cars:car:id >= 50;
 					DEFAULT brokerSensor.scan:cars:car:posx := brokerSensor.scan:cars:car:posx;
 				),
@@ -84,7 +84,7 @@ ASSOCIATION-SEL(
 			${brokerListName}
 		),
 		${assoAlgo},
-		threshold := 5; operator := lessEqual;,
+		distanceFunction := EUCLIDEAN;,
 		${assoScanned},
 		${assoPedicted}
 	),
@@ -109,7 +109,7 @@ EVALUATE(
 	            ${filterAlgo}
 	        ),
 	        ${filterAlgo}
-	    ), 
+	    ),
 	    ${assoScanned},
 	    ${assoPedicted},
 	    ${filterAlgo}
