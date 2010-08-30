@@ -86,6 +86,7 @@ public class Provider implements IProvider {
 		while (iterator.hasNext()) {
 			CarModel cm = iterator.next();
 			if (!this.isVisible(cm)) {
+				idQueue.offer(cm.getId());
 				iterator.remove();
 			}
 		}
