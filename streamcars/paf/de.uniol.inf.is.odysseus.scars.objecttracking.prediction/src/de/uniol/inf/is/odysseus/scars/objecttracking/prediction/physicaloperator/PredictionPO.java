@@ -84,8 +84,10 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 		}
 		if(!scanQueue.isEmpty() && !working) {
 			working = true;
-			transfer(predictData(timeQueue.getLastElement(), scanQueue.peek()));
-			timeQueue.purgeElements(scanQueue.poll(), null);
+			if(!timeQueue.isEmpty()) {
+				transfer(predictData(timeQueue.getLastElement(), scanQueue.peek()));
+				timeQueue.purgeElements(scanQueue.poll(), null);
+			}
 			working = false;
 		}
 		
