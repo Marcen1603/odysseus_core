@@ -52,8 +52,8 @@ CREATE SENSOR brokerSensor ( // wird durch Broker ersetzt
 #DEFINE brokerSource 	ACCESS(brokerSensor) // Quellenoperator(!) des Brokers
 #DEFINE brokerListName 	brokerSensor.scan:cars // Attributname der Liste der Autos in der Brokerquelle
 
-#DEFINE sensorSource 	ACCESS(brokerSensor) // Quellenoperator(!) des Sensors
-#DEFINE sensorListName 	brokerSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
+#DEFINE sensorSource 	ACCESS(radarSensor) // Quellenoperator(!) des Sensors
+#DEFINE sensorListName 	radarSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
 
 #DEFINE assoScanned 	association.scan:scannedObjects
 #DEFINE assoPedicted 	association.scan:predictedObjects
