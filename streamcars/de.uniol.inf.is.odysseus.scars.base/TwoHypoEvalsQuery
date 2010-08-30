@@ -1,0 +1,134 @@
+#PARSER CQL
+#TRANSCFG StreamCars
+
+#DEFINE ip 127.0.0.1:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
+
+#QUERY
+CREATE SENSOR radarSensor (
+	RECORD( scan,
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
+		LIST( cars,
+			RECORD( car,
+				ATTRIBUTE(type, INTEGER)
+				ATTRIBUTE(id, INTEGER)
+				ATTRIBUTE(laneid, INTEGER)
+				ATTRIBUTE(posx, MV FLOAT 		0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posy, MV FLOAT		0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posz, MV FLOAT		0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(roll, MV FLOAT		0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+				ATTRIBUTE(pitch, MV FLOAT		0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+				ATTRIBUTE(heading, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+				ATTRIBUTE(velocity, MV FLOAT	0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+				ATTRIBUTE(length, FLOAT)
+				ATTRIBUTE(width, FLOAT)
+			)
+		)
+	)
+) FROM CHANNEL ${ip}
+
+#QUERY
+CREATE SENSOR brokerSensor ( // wird durch Broker ersetzt
+	RECORD( scan,
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
+		LIST( cars,
+			RECORD( car,
+				ATTRIBUTE(type, INTEGER)
+				ATTRIBUTE(id, INTEGER)
+				ATTRIBUTE(laneid, INTEGER)
+				ATTRIBUTE(posx, MV FLOAT 		0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posy, MV FLOAT		0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posz, MV FLOAT		0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(roll, MV FLOAT		0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+				ATTRIBUTE(pitch, MV FLOAT		0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+				ATTRIBUTE(heading, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+				ATTRIBUTE(velocity, MV FLOAT	0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+				ATTRIBUTE(length, FLOAT)
+				ATTRIBUTE(width, FLOAT)
+			)
+		)
+	)
+) FROM CHANNEL ${ip}
+
+#DEFINE brokerSource 	ACCESS(brokerSensor) // Quellenoperator(!) des Brokers
+#DEFINE brokerListName 	brokerSensor.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+
+#DEFINE sensorSource 	ACCESS(brokerSensor) // Quellenoperator(!) des Sensors
+#DEFINE sensorListName 	brokerSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
+
+#DEFINE assoScanned 	association.scan:scannedObjects
+#DEFINE assoPedicted 	association.scan:predictedObjects
+#DEFINE assoSource   	selectionSrc
+#DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
+#DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
+
+#DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
+
+#PARSER PQLHack
+#CYCLICQUERY
+LOGICAL PLAN :
+ASSOCIATION-SEL(
+	ASSOCIATION-EVAL (
+		ASSOCIATION-EVAL (
+			ASSOCIATION-GEN (
+				${sensorSource},
+				PREDICTION(
+					${sensorSource}, // Timestamp aus Sensor
+					SET-PREDICTION-OR(
+						${brokerSource}, // Brokerdaten
+						${brokerListName},
+						brokerSensor.scan:cars:car:posx := brokerSensor.scan:cars:car:posx * 2 ;
+						WHERE brokerSensor.scan:cars:car:id >= 50;
+						DEFAULT brokerSensor.scan:cars:car:posx := brokerSensor.scan:cars:car:posx;
+					),
+					${brokerListName}
+				),
+				${sensorListName},
+				${brokerListName}
+			),
+			${assoAlgo1},
+			threshold := 5; operator := LESSEQUAL;,
+			${assoScanned},
+			${assoPedicted}
+		),
+		${assoAlgo2},
+		distanceFunction := EUCLIDEAN;,
+		${assoScanned},
+		${assoPedicted}
+	),
+	${assoSource},
+	${assoScanned},
+	${assoPedicted}
+)
+
+EVALUATE(
+    ASSOCIATION-SRC(
+        ${assoSource},
+        2
+    ),
+    ${assoPedicted},
+	FILTER-ESTIMATE(
+	    FILTER-COVARIANCE(
+	        FILTER-GAIN(
+	            ASSOCIATION-SRC(
+	                ${assoSource},
+	                1
+	            ),
+	            ${filterAlgo}
+	        ),
+	        ${filterAlgo}
+	    ),
+	    ${assoScanned},
+	    ${assoPedicted},
+	    ${filterAlgo}
+	),
+    ${assoPedicted},
+    FILTER-GAIN(
+        ASSOCIATION-SRC(
+            ${assoSource},
+            0
+        ),
+        ${filterAlgo}
+    ),
+    ${assoScanned},
+    5
+)
