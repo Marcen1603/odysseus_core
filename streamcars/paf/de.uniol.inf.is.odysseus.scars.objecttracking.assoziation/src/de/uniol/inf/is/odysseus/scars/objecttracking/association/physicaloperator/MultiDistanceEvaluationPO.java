@@ -65,7 +65,7 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
 	}
   }
 
-  @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
       double[][] predictedObjCovariance, double[] predictedObjMesurementValues, double currentRating) {
