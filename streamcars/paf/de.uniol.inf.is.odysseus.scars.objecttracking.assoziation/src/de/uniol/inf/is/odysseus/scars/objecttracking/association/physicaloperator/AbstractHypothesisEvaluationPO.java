@@ -31,6 +31,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IConnectionContainer> extends
     AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
+
+  // if debugMode is true the connections will be send to the console
+  private boolean debugMode = false;
+
   private String oldObjListPath;
   private String newObjListPath;
   private HashMap<String, String> algorithmParameter;
@@ -155,6 +159,14 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     }
 
     object.getMetadata().setConnectionList(newObjConList);
+
+    if(debugMode) {
+    	System.out.println("######################### CONNECTIONS: #########################");
+    	for(Connection con : object.getMetadata().getConnectionList()) {
+    		System.out.println("CON: [" + con.getLeftPath() + "] <-> [" + con.getRightPath() + "] RATING: [" + con.getRating() + "]");
+    	}
+    }
+
     transfer(object);
   }
 

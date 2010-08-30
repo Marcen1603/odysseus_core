@@ -122,7 +122,9 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
     // Return Distance
     // Available Functions: ChebyshevDistance, EuclideanDistance,
     // ManhattanDistance, MinkowskiDistance, NormalizableDistance
-    return currentRating + this.df.distance(scannedObjInstance, predictedObjInstance)*(-1);
+    double newval = currentRating + this.df.distance(scannedObjInstance, predictedObjInstance)*(-1);
+    // System.out.println(String.valueOf(newval));
+    return newval;
   }
 
   @Override
