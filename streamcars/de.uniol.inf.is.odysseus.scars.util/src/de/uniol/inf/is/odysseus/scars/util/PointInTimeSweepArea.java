@@ -73,5 +73,11 @@ public class PointInTimeSweepArea<M extends ITimeInterval & IProbability> extend
       return this.elements.remove(element);
     }
   }
+  
+  public MVRelationalTuple<M> getLastElement() {
+	  synchronized(elements) {
+		return elements.getLast();
+	  }
+  }
 
 }
