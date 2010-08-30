@@ -83,12 +83,12 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 //			currentScanTuple = object.clone();
 		}
 		if(!scanQueue.isEmpty() && !working) {
-			working = true;
-			if(!timeQueue.isEmpty()) {
-				transfer(predictData(timeQueue.getLastElement(), scanQueue.peek()));
-				timeQueue.purgeElements(scanQueue.poll(), null);
-			}
-			working = false;
+          working = true;
+          MVRelationalTuple<M> obj = scanQueue.peek();
+          transfer(predictData(timeQueue.getLastElement(), obj));
+          timeQueue.purgeElements(obj, null);
+          scanQueue.poll();
+          working = false;
 		}
 		
 //		if (currentTimeTuple != null && currentScanTuple != null) {
