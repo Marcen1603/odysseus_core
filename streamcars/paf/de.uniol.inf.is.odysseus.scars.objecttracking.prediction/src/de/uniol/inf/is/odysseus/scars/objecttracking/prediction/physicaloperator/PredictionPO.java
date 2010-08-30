@@ -29,6 +29,8 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 	private SchemaIndexPath currentScanTimeSchemaPath;
 	private PointInTimeSweepArea<M> timeQueue;
 	private PointInTimeSweepArea<M> scanQueue;
+	
+	private boolean working = false;
 
 	private PredictionFunctionContainer<M> predictionFunctions;
 
@@ -80,8 +82,11 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 			scanQueue.insert(object.clone());
 //			currentScanTuple = object.clone();
 		}
-		if(!timeQueue.isEmpty() && !scanQueue.isEmpty()) {
-			transfer(predictData(timeQueue.poll(), scanQueue.poll()));
+		if(!scanQueue.isEmpty() && !working) {
+			working = true;
+			transfer(predictData(timeQueue.getLastElement(), scanQueue.peek()));
+			timeQueue.purgeElements(scanQueue.poll(), null);
+			working = false;
 		}
 		
 //		if (currentTimeTuple != null && currentScanTuple != null) {
