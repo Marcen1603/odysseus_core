@@ -12,10 +12,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 	
 	private Provider provider;
-	private SDFAttributeList outputSchema;
 	private long lastTime;
 	private MVRelationalTuple<M> buffer = null;
 	private int counter = 0;
+	private String sourceName;
 	
 	public TestdataProviderPO() {
 		
@@ -24,7 +24,6 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	@SuppressWarnings("rawtypes")
 	public TestdataProviderPO(TestdataProviderPO operator) {
 		this.provider = operator.provider;
-		this.outputSchema = operator.getOutputSchema().clone();
 		this.lastTime = operator.lastTime;
 	}
 
@@ -34,10 +33,6 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 		provider.setDelay(50);
 		provider.setNumOfCars(5);
 		provider.init();
-		for (int i = 0; i < 200; i++) {
-			//provider.nextTuple();
-			System.out.println(provider.nextTuple());
-		}
 	}
 
 	@Override
@@ -47,7 +42,11 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
+		if (this.provider != null ) {
+			return this.provider.getSchema(this.sourceName);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -98,7 +97,16 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		super.setOutputSchema(outputSchema);
-		this.outputSchema = outputSchema;
 	}
+
+	public String getSourceName() {
+		return sourceName;
+	}
+
+	public void setSourceName(String sourceName) {
+		this.sourceName = sourceName;
+	}
+	
+	
 
 }
