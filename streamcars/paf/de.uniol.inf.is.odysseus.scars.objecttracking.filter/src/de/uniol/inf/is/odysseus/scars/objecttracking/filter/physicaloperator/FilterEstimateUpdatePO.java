@@ -87,7 +87,7 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 			compute(TupleIndexPath.fromIntArray(connected.getLeftPath(), object, this.newObjPath), TupleIndexPath.fromIntArray(connected.getRightPath(), object, this.oldObjPath));
 		}
 
-		MVRelationalTuple<M> oldList = (MVRelationalTuple<M>) oldObjectListPath
+		/*MVRelationalTuple<M> oldList = (MVRelationalTuple<M>) oldObjectListPath
 				.toTupleIndexPath(object).getTupleObject();
 
 		String timeStampName = schemaHelper
@@ -106,9 +106,10 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 
 		newObject.setAttribute(0, scan);
 
-		tupleHelper = new TupleHelper(object);
+		tupleHelper = new TupleHelper(object); 
 
-		return newObject;
+		return newObject; */
+		return object;
 	}
 
 	private void compute(TupleIndexPath scannedObjectTupleIndex,

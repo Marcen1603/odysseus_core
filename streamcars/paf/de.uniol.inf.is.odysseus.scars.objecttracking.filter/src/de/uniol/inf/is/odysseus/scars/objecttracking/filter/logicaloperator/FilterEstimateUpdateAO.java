@@ -55,7 +55,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	
 	  @Override
 	  public SDFAttributeList getOutputSchema() {
-		  SchemaHelper helper = new SchemaHelper(this.getInputSchema().clone());
+		 /* SchemaHelper helper = new SchemaHelper(this.getInputSchema().clone());
 		  SDFAttributeListExtended newSchema = new SDFAttributeListExtended((SDFAttributeListExtended)this.getInputSchema());
 		  helper = new SchemaHelper(newSchema);
 		  SchemaIndexPath path = helper.getSchemaIndexPath(newObjListPath);
@@ -63,7 +63,8 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		  SDFAttribute oldListAttrParent = path.getSchemaIndex(path.getLength()-2).getAttribute();
 		  oldListAttrParent.removeSubattribute(oldListAttr);
 		  
-		  return newSchema;
+		  return newSchema; */
+		  return this.getInputSchema();
 	  }
 	
 	
