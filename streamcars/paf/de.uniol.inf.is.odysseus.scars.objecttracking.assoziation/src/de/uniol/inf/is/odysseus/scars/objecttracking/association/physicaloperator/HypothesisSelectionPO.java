@@ -191,7 +191,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 				.getMetadata().getConnectionList());
 		object.getMetadata().setConnectionList(matchedObjects);
 		transfer(object, 1);
-		System.out.println("Port 1: " + object);
 
 		// PORT: 0, get new not matching objects
 		List<Object> scannedNotMatchedObjects = getDifferenceSet(object,
@@ -207,7 +206,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 				.toTupleIndexPath(scannedNotMatchedTuple);
 		scannedObjectList.setTupleObject(scannedTuple);
 		transfer(scannedNotMatchedTuple, 0);
-		System.out.println("Port 0: " + object);
 
 		// PORT: 2, get predicted not matching objects
 		List<Object> predictedNotMatchedObjects = getDifferenceSet(object,
@@ -224,7 +222,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 					.toTupleIndexPath(predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedTuple);
 			transfer(predictedNotMatchedTuple, 2);
-			System.out.println("Port 2: " + object);
 		} else {
 			this.sendPunctuation(new PointInTime(object.getMetadata()
 					.getStart()), 2);
