@@ -44,20 +44,17 @@ public class UserManagement {
 				user = null;
 			}
 		}
-		
-		
-		return null;
+		return user;
 	}
 
 	public User getUser(String username, String password) {
 		User user = registeredUsers.get(username);
 		if (user != null){
-			if (!user.validatePassword(password, false)){
+			if (!user.validatePassword(password, true)){
 				user = null;
 			}
-			return user;
 		}
-		return null;
+		return user;
 	}
 	
 
