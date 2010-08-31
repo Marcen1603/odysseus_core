@@ -169,8 +169,8 @@ public class Provider implements IProvider {
 			cars.setAttribute(i, car);
 		}
 		
-		scan.addAttributeValue(0, timestamp);
-		scan.addAttributeValue(1, cars);
+		scan.setAttribute(0, timestamp);
+		scan.setAttribute(1, cars);
 		
 		//this.printCarModels();
 
@@ -284,9 +284,10 @@ public class Provider implements IProvider {
 
 		SDFAttribute cars = new SDFAttribute(sourceName, "cars");
 		cars.setDatatype(SDFDatatypeFactory.getDatatype("LIST"));
-
+		cars.addSubattribute(car);
+		
 		SDFAttribute timestamp = new SDFAttribute(sourceName, "timestamp");
-		timestamp.setDatatype(SDFDatatypeFactory.getDatatype("STARTTIMESTAMP"));
+		timestamp.setDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
 
 		SDFAttribute scan = new SDFAttribute(sourceName, "scan");
 		scan.setDatatype(SDFDatatypeFactory.getDatatype("RECORD"));
