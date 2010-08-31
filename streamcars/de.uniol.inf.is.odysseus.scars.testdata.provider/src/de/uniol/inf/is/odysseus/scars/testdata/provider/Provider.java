@@ -116,55 +116,55 @@ public class Provider implements IProvider {
 		for (int i = 0; i < this.state.size(); i++) {
 			CarModel cm = this.state.get(i);
 
-			MVRelationalTuple<?> type = createTuple(1);
-			type.setAttribute(0, cm.getType());
-
-			MVRelationalTuple<?> id = createTuple(1);
-			id.setAttribute(0, cm.getId());
-
-			MVRelationalTuple<?> laneid = createTuple(1);
-			laneid.setAttribute(0, cm.getLaneid());
-
-			MVRelationalTuple<?> posx = createTuple(1);
-			posx.setAttribute(0, cm.getPosx());
-
-			MVRelationalTuple<?> posy = createTuple(1);
-			posy.setAttribute(0, cm.getPosy());
-
-			MVRelationalTuple<?> posz = createTuple(1);
-			posz.setAttribute(0, cm.getPosz());
-
-			MVRelationalTuple<?> roll = createTuple(1);
-			roll.setAttribute(0, cm.getRoll());
-
-			MVRelationalTuple<?> pitch = createTuple(1);
-			pitch.setAttribute(0, cm.getPitch());
-
-			MVRelationalTuple<?> heading = createTuple(1);
-			heading.setAttribute(0, cm.getHeading());
-
-			MVRelationalTuple<?> velocity = createTuple(1);
-			velocity.setAttribute(0, cm.getVelocity());
-
-			MVRelationalTuple<?> length = createTuple(1);
-			length.setAttribute(0, cm.getLength());
-
-			MVRelationalTuple<?> width = createTuple(1);
-			width.setAttribute(0, cm.getWidth());
+//			MVRelationalTuple<?> type = createTuple(1);
+//			type.setAttribute(0, cm.getType());
+//
+//			MVRelationalTuple<?> id = createTuple(1);
+//			id.setAttribute(0, cm.getId());
+//
+//			MVRelationalTuple<?> laneid = createTuple(1);
+//			laneid.setAttribute(0, cm.getLaneid());
+//
+//			MVRelationalTuple<?> posx = createTuple(1);
+//			posx.setAttribute(0, cm.getPosx());
+//
+//			MVRelationalTuple<?> posy = createTuple(1);
+//			posy.setAttribute(0, cm.getPosy());
+//
+//			MVRelationalTuple<?> posz = createTuple(1);
+//			posz.setAttribute(0, cm.getPosz());
+//
+//			MVRelationalTuple<?> roll = createTuple(1);
+//			roll.setAttribute(0, cm.getRoll());
+//
+//			MVRelationalTuple<?> pitch = createTuple(1);
+//			pitch.setAttribute(0, cm.getPitch());
+//
+//			MVRelationalTuple<?> heading = createTuple(1);
+//			heading.setAttribute(0, cm.getHeading());
+//
+//			MVRelationalTuple<?> velocity = createTuple(1);
+//			velocity.setAttribute(0, cm.getVelocity());
+//
+//			MVRelationalTuple<?> length = createTuple(1);
+//			length.setAttribute(0, cm.getLength());
+//
+//			MVRelationalTuple<?> width = createTuple(1);
+//			width.setAttribute(0, cm.getWidth());
 
 			MVRelationalTuple<?> car = createTuple(12);
-			car.setAttribute(0, type);
-			car.setAttribute(1, id);
-			car.setAttribute(2, laneid);
-			car.setAttribute(3, posx);
-			car.setAttribute(4, posy);
-			car.setAttribute(5, posz);
-			car.setAttribute(6, roll);
-			car.setAttribute(7, pitch);
-			car.setAttribute(8, heading);
-			car.setAttribute(9, velocity);
-			car.setAttribute(10, length);
-			car.setAttribute(11, width);
+			car.setAttribute(0, cm.getType());
+			car.setAttribute(1, cm.getId());
+			car.setAttribute(2, cm.getLaneid());
+			car.setAttribute(3, cm.getPosx());
+			car.setAttribute(4, cm.getPosy());
+			car.setAttribute(5, cm.getPosz());
+			car.setAttribute(6, cm.getRoll());
+			car.setAttribute(7, cm.getPitch());
+			car.setAttribute(8, cm.getHeading());
+			car.setAttribute(9, cm.getVelocity());
+			car.setAttribute(10, cm.getLength());
+			car.setAttribute(11, cm.getWidth());
 
 			cars.setAttribute(i, car);
 		}
