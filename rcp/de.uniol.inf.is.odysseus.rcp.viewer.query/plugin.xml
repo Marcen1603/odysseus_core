@@ -23,6 +23,16 @@
                name="TransformationConfiguration Name"
                optional="false">
          </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.viewer.query.UserNameParameter"
+               name="Username Parameter"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.viewer.query.UserPasswordParameter"
+               name="UserPassword Parameter"
+               optional="false">
+         </commandParameter>
       </command>
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.RemoveQueryCommand"

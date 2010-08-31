@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
@@ -40,6 +41,10 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 				throw new QueryTextParseException("TransformationConfiguration not set");
 			if( ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null ) 
 				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
+			String userID = parser.getVariable("USER");
+			User user = UserManagement.getInstance().getUser(userID, "");
+			if( user == null ) 
+				throw new QueryTextParseException("User " + userID + " not valid");
 			
 		} catch( Exception ex ) {
 			throw new QueryTextParseException("Unknown Exception during validation a cyclic query", ex);
@@ -48,15 +53,17 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(QueryTextParser parser, String parameter, User user) throws QueryTextParseException {
+	public void execute(QueryTextParser parser, String parameter ) throws QueryTextParseException {
 
 		String queries = parameter;
 		String parserID = parser.getVariable("PARSER");
 		String transCfgID = parser.getVariable("TRANSCFG");
+		String userID = parser.getVariable("USER");
 
 		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
 		ICompiler compiler = executor.getCompiler();
 		ParameterTransformationConfiguration transCfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfgID);
+		User user = UserManagement.getInstance().getUser(userID, "");
 		try {
 			List<IQuery> plans = compiler.translateQuery(queries, parserID);
 

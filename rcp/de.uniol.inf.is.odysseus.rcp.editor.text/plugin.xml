@@ -102,6 +102,10 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.CyclicQueryPreParserKeyword"
             name="CYCLICQUERY">
       </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.UserPreParserKeyword"
+            name="USER">
+      </PreParserKeyword>
    </extension>
    <extension
          point="de.uniol.inf.is.odysseus.rcp.editor.Keyword">

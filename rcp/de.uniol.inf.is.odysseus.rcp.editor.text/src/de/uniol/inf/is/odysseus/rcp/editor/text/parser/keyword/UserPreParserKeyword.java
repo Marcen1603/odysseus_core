@@ -13,23 +13,18 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
  * @author Timo Michelsen
  * 
  */
-public class ParserPreParserKeyword implements IPreParserKeyword {
+public class UserPreParserKeyword implements IPreParserKeyword {
 
 	@Override
 	public void validate(QueryTextParser parser, String parameter) throws QueryTextParseException {
 		if (parameter.length() == 0)
-			throw new QueryTextParseException("Parameter needed for #PARSER");
+			throw new QueryTextParseException("Parameter needed for #USER");
 
 		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
 		try {
-			if (!executor.getSupportedQueryParser().contains(parameter)) {
-				throw new QueryTextParseException("Parser " + parameter + " does not exist");
-			}
-			parser.setVariable("PARSER", parameter);
-		} catch (QueryTextParseException ex ) {
-			throw ex;
+			parser.setVariable("USER", parameter);
 		} catch (Exception ex) {
 			throw new QueryTextParseException("Unknown error", ex);
 		}
@@ -37,6 +32,6 @@ public class ParserPreParserKeyword implements IPreParserKeyword {
 
 	@Override
 	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
-		parser.setVariable("PARSER", parameter);
+		parser.setVariable("USER", parameter);
 	}
 }

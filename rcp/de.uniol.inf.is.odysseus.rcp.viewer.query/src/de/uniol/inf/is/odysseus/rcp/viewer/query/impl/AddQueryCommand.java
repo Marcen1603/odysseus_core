@@ -31,8 +31,8 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		final String queryToExecute = event.getParameter(IQueryConstants.QUERY_PARAMETER_ID);
 		final String parserToUse = event.getParameter(IQueryConstants.PARSER_PARAMETER_ID);
 		final String parameterTransformationConfigurationName = event.getParameter(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID);
-		final String userName = event.getParameter(IQueryConstants.USER_NAME);
-		final String userPassword = event.getParameter(IQueryConstants.USER_PASSWORD);		
+		final String userName = event.getParameter(IQueryConstants.USER_NAME_PARAMETER_ID);
+		final String userPassword = event.getParameter(IQueryConstants.USER_PASSWORD_PARAMETER_ID);		
 		final User user = UserManagement.getInstance().getUser(userName,userPassword);
 		
 		final IAdvancedExecutor executor = Activator.getExecutor();

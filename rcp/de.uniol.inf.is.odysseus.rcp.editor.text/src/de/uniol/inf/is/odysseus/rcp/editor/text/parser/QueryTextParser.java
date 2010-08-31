@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
-
 public class QueryTextParser {
 
 	public static final String PARAMETER_KEY = "#";
@@ -16,8 +13,6 @@ public class QueryTextParser {
 
 	public static final String SINGLE_LINE_COMMENT_KEY = "//";
 	
-	public final User user = UserManagement.getInstance().getUser("RCP", "");
-
 	private final Map<String, String> replacements = new HashMap<String, String>();
 	private Map<String, String> variables = new HashMap<String, String>();
 	private int currentLine;
@@ -67,7 +62,7 @@ public class QueryTextParser {
 							if (sb != null && currentKey != null) {
 								IPreParserKeyword keyword = PreParserKeywordRegistry.getInstance().createKeywordExecutor(currentKey);
 								if (!test)
-									keyword.execute(this, sb.toString(), user);
+									keyword.execute(this, sb.toString());
 								else
 									keyword.validate(this, sb.toString());
 							}
@@ -94,7 +89,7 @@ public class QueryTextParser {
 				if (sb.length() > 0) {
 					IPreParserKeyword keyword = PreParserKeywordRegistry.getInstance().createKeywordExecutor(currentKey);
 					if (!test)
-						keyword.execute(this, sb.toString(), user);
+						keyword.execute(this, sb.toString());
 					else
 						keyword.validate(this, sb.toString());
 				} else {

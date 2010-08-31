@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
 
 /**
  * Schnittstelle, welches ein Schlüsselwort für den Preparser darstellt. Wird
@@ -61,5 +60,5 @@ public interface IPreParserKeyword {
 	 *             Wird geworfen, wenn der Befehl mit den gegebenen Parametern
 	 *             nicht ausführbar wäre.
 	 */
-	public void execute(QueryTextParser parser, String parameter, User user) throws QueryTextParseException;
+	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException;
 }

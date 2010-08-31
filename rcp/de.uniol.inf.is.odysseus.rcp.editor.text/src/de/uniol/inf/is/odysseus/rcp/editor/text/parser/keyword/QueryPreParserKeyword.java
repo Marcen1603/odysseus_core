@@ -14,6 +14,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
@@ -44,16 +45,22 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 				throw new QueryTextParseException("TransformationConfiguration not set");
 			if (ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null)
 				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
+			String userID = parser.getVariable("USER");
+			User user = UserManagement.getInstance().getUser(userID, "");
+			if( user == null ) 
+				throw new QueryTextParseException("User " + userID + " not valid");
 		} catch (Exception ex) {
-			throw new QueryTextParseException("Unknown Exception during validation a cyclic query", ex);
+			throw new QueryTextParseException("Unknown Exception during validation a query", ex);
 		}
 	}
 
 	@Override
-	public void execute(QueryTextParser parser, String parameter, User user) throws QueryTextParseException {
+	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
 		String parserID = parser.getVariable("PARSER");
 		String transCfg = parser.getVariable("TRANSCFG");
+		String userID = parser.getVariable("USER");
 
+		User user = UserManagement.getInstance().getUser(userID, "");
 		try {
 			executeQuery(parserID, transCfg, parameter, user);
 		} catch (Exception ex) {
@@ -72,8 +79,8 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 		map.put(IQueryConstants.PARSER_PARAMETER_ID, parserID);
 		map.put(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID, transCfg);
 		map.put(IQueryConstants.QUERY_PARAMETER_ID, queryText);
-		map.put(IQueryConstants.USER_NAME, user.getUsername());
-		map.put(IQueryConstants.USER_PASSWORD, user.getPassword());
+		map.put(IQueryConstants.USER_NAME_PARAMETER_ID, user.getUsername());
+		map.put(IQueryConstants.USER_PASSWORD_PARAMETER_ID, user.getPassword());
 
 		
 		ICommandService cS = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
