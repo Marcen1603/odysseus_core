@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p.distribution.bidding.client">
-   <implementation class="de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.BiddingClient"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient"/>
-   </service>
-   <reference bind="bindQuerySelectionStrategy" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy" name="IQuerySelectionStrategy" policy="static" unbind="unbindQuerySelectionStrategy"/>
-</scr:component>

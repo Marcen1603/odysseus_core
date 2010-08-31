@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator">
-   <implementation class="de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator.OnePlanPerOperator"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy"/>
-   </service>
-   <reference bind="bindRefinement" cardinality="0..1" interface="de.uniol.inf.is.odysseus.p2p.splitting.refinement.base.IRefinementStrategy" name="IRefinementStrategy" policy="static" unbind="unbindRefinement"/>
-</scr:component>
