@@ -1176,8 +1176,8 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         // get output-port of selection
 		String number = ((ASTNumber) node.jjtGetChild(1)).getValue();
 		Integer outputPort = new Integer(number);
-		RenameAO renameAO = new RenameAO();
-		renameAO.setOutputSchema(associationSource.getOutputSchema());
+		
+		TestAO renameAO = new TestAO(srcName);
         renameAO.subscribeToSource(associationSource, 0, outputPort, associationSource.getOutputSchema());
 
 		// constructing return values
