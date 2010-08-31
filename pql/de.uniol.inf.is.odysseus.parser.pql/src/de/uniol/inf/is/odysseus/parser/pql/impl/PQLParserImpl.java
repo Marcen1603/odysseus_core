@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
@@ -34,9 +33,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
   {
     IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase());
     List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();
-    for (int i = 0;
-    i < inputOps.size();
-    ++ i)
+    for (int i = 0; i < inputOps.size(); ++i)
     {
       builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);
     }
@@ -131,7 +128,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           }
           if (!found)
           {
-            {if (true) throw new RuntimeException("unknown parameter for query: "+ parameterName);}
+            {if (true) throw new RuntimeException("unknown parameter for query: " + parameterName);}
           }
         }
       }
@@ -142,7 +139,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           {
             if (true)
             {
-              if (true) {if (true) throw new IllegalArgumentException("query parameters can only be defined for root operators, not for: "+ queryName);}
+              if (true) {if (true) throw new IllegalArgumentException("query parameters can only be defined for root operators, not for: " + queryName);}
             }
           }
         }
@@ -185,15 +182,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
     String nameStr = name.image.toUpperCase();
     if (namedOps.containsKey(nameStr))
     {
-      {if (true) throw new IllegalArgumentException("multiple definition of '"+ nameStr+ "'");}
+      {if (true) throw new IllegalArgumentException("multiple definition of '" + nameStr + "'");}
     }
     if (isView)
     {
-      nameStr = name.image;
       DataDictionary dd = DataDictionary.getInstance();
       if (dd.containsView(nameStr))
       {
-        {if (true) throw new IllegalArgumentException("multiple definition of view '"+ nameStr+ "'");}
+        {if (true) throw new IllegalArgumentException("multiple definition of view '" + nameStr + "'");}
       }
       SDFEntity entity = new SDFEntity(nameStr);
       entity.setAttributes(op.getOutputSchema());
@@ -204,11 +200,10 @@ public class PQLParserImpl implements PQLParserImplConstants {
       //to top operator of the view
       op = dd.getView(nameStr);
     }
-    else
-    {
-      namedOpParameters.put(nameStr, parameters);
-      namedOps.put(nameStr, op);
-    }
+    System.out.println(nameStr);
+        System.out.println(op);
+    namedOpParameters.put(nameStr, parameters);
+    namedOps.put(nameStr, op);
   }
 
   static final public ILogicalOperator operator(Map < String, ILogicalOperator > namedOps) throws ParseException {
@@ -247,7 +242,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator op = namedOps.get(identifier.image.toUpperCase());
       if (op == null)
       {
-        {if (true) throw new IllegalArgumentException("no such operator: "+ identifier.image);}
+        {if (true) throw new IllegalArgumentException("no such operator: " + identifier.image);}
       }
       {if (true) return op;}
         break;
@@ -374,7 +369,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         ;
       }
       operator = operator(namedOps);
-      port = tPort == null? 0 : Integer.parseInt(tPort.image);
+      port = tPort == null ? 0 : Integer.parseInt(tPort.image);
       list.add(new InputOperatorItem(operator, port));
       label_4:
       while (true) {
@@ -397,7 +392,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           ;
         }
         operator = operator(namedOps);
-        port = tPort == null? 0 : Integer.parseInt(tPort.image);
+        port = tPort == null ? 0 : Integer.parseInt(tPort.image);
         list.add(new InputOperatorItem(operator, port));
       }
       break;
