@@ -17,7 +17,7 @@
 #DEFINE ip 127.0.0.1:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
 
 // Quellendefinitionen
-
+#USER RCP // Username
 #PARSER CQL
 #TRANSCFG StreamCars
 #QUERY
