@@ -18,7 +18,7 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	private String sourceName;
 	
 	public TestdataProviderPO() {
-		
+		this.provider = new Provider();
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -29,7 +29,6 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		this.provider = new Provider();
 		provider.setDelay(50);
 		provider.setNumOfCars(5);
 		provider.init();
