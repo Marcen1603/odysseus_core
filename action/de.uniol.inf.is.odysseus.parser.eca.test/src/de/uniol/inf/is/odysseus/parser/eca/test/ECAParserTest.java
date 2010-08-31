@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.console.ExecutorConsole;
 
@@ -35,7 +36,7 @@ public class ECAParserTest implements CommandProvider {
 	private ExecutorConsole executerConsole;
 	private IActuatorFactory actuatorFactory;
 	private ICompiler compiler;
-	private User user = new User("ECAParserTest");
+	User user = UserManagement.getInstance().login("Console","");
 	
 	//set to false if u want to prevent removal of testActuators!
 	private static boolean autoRemoveActuator = true;

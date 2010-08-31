@@ -48,7 +48,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
+	public void execute(QueryTextParser parser, String parameter, User user) throws QueryTextParseException {
 
 		String queries = parameter;
 		String parserID = parser.getVariable("PARSER");
@@ -79,7 +79,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			// so transform this one
 			List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), transCfg.getValue());
 
-			int queryID = executor.addQuery(physPlan, new User("T1000"), transCfg);
+			int queryID = executor.addQuery(physPlan, user, transCfg);
 			executor.startQuery(queryID);
 
 		} catch (QueryParseException e1) {

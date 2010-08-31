@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -42,7 +43,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	public int addStatement(QueryType query) throws StatementQueryFault    { 
         try {
 			// TODO: User einfuegen, der diese Query ausführt
-			User user = new User("TODO.SetUser");
+        	User user = UserManagement.getInstance().login("Console","");
 			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user
 					).iterator().next();
 			return queryID;
@@ -123,7 +124,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     			query = sourceDescription.getSourceString();
     		}
 			// TODO: User einfuegen, der diese Query ausführt
-			User user = new User("TODO.SetUser");
+    		User user = UserManagement.getInstance().login("Console","");
     		executor.addQuery(query, "CQL", user);
     		return "";
     	}catch (Exception e){

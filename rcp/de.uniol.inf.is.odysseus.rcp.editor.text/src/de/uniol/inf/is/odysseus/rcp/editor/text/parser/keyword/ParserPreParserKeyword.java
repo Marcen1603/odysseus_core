@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
@@ -36,7 +37,7 @@ public class ParserPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
+	public void execute(QueryTextParser parser, String parameter, User user) throws QueryTextParseException {
 		parser.setVariable("PARSER", parameter);
 	}
 }

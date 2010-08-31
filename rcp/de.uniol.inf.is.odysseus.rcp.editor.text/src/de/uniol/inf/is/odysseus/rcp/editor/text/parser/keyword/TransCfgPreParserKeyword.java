@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
@@ -28,7 +29,7 @@ public class TransCfgPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
+	public void execute(QueryTextParser parser, String parameter, User user) throws QueryTextParseException {
 		parser.setVariable("TRANSCFG", parameter);
 	}
 

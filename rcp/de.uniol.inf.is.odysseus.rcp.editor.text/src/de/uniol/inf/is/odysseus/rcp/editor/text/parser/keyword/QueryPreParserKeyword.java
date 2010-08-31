@@ -13,6 +13,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
@@ -49,18 +50,18 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
+	public void execute(QueryTextParser parser, String parameter, User user) throws QueryTextParseException {
 		String parserID = parser.getVariable("PARSER");
 		String transCfg = parser.getVariable("TRANSCFG");
 
 		try {
-			executeQuery(parserID, transCfg, parameter);
+			executeQuery(parserID, transCfg, parameter, user);
 		} catch (Exception ex) {
 			throw new QueryTextParseException("Error during executing query", ex);
 		}
 	}
 
-	private void executeQuery(String parserID, String transCfg, String queryText) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
+	private void executeQuery(String parserID, String transCfg, String queryText, User user) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		parserID = parserID.trim();
 		transCfg = transCfg.trim();
 		queryText = queryText.trim();
@@ -71,7 +72,10 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 		map.put(IQueryConstants.PARSER_PARAMETER_ID, parserID);
 		map.put(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID, transCfg);
 		map.put(IQueryConstants.QUERY_PARAMETER_ID, queryText);
+		map.put(IQueryConstants.USER_NAME, user.getUsername());
+		map.put(IQueryConstants.USER_PASSWORD, user.getPassword());
 
+		
 		ICommandService cS = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command cmd = cS.getCommand(IQueryConstants.ADD_QUERY_COMMAND_ID);
 		ParameterizedCommand parCmd = ParameterizedCommand.generateCommand(cmd, map);

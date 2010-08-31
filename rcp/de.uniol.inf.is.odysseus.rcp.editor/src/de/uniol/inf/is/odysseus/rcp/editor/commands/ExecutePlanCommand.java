@@ -57,7 +57,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 					return null;
 				}
 				// Logischen Plan aufbauen
-				buildLogicalPlan( part.getOperatorPlan() );
+				buildLogicalPlan( part.getOperatorPlan(), part.getUser() );
 				
 			}
 		} catch( Exception ex ) {
@@ -89,7 +89,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		return errorTexts.size() == 0;
 	}
 
-	private void buildLogicalPlan( OperatorPlan plan ) {
+	private void buildLogicalPlan( OperatorPlan plan, User user ) {
 		
 		for( Operator op : plan.getOperators() ) 
 			operators.add(op);
@@ -133,8 +133,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		} 
 		
 		try {
-//			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), new User("TestUser"), trafoConfigParam);
-			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), new User("TestUser"), (AbstractQueryBuildParameter<?>) null); // TransCfg muss korrigiert werden
+			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), user, (AbstractQueryBuildParameter<?>) null); // TransCfg muss korrigiert werden
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}

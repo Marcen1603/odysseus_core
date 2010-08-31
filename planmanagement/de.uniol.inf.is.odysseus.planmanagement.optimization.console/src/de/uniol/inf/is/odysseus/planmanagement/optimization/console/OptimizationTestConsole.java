@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -58,8 +59,8 @@ public class OptimizationTestConsole implements
 
 	OptimizationTestSink sink = null;
 	
-	User currentUser = new User("OptimizationTestConsole");
-
+	User currentUser = UserManagement.getInstance().login("Console","");
+	
 	/**
 	 * This is the basebath to files. This path can be set by command setPath.
 	 */

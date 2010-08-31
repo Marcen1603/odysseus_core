@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -30,7 +31,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IAdvancedExecutor executer;
 	private IActuatorFactory actuatorFactory;
 	private IActuatorBenchmark benchmark;
-	private User user = new User("Console");
+	private User user = UserManagement.getInstance().login("Console","");
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));

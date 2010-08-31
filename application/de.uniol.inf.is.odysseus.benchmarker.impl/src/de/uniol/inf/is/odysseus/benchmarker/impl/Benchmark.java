@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.SameDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
@@ -47,7 +48,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private boolean extendedPostPriorisation = false;
 	private boolean useBenchmarkMemUsage = false;
 
-	private User user = new User("Benchmark");
+	private User user = UserManagement.getInstance().login("Benchmark","");
 
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
