@@ -46,7 +46,7 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 			if (ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null)
 				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
 			String userID = parser.getVariable("USER");
-			User user = UserManagement.getInstance().getUser(userID, "");
+			User user = UserManagement.getInstance().login(userID, "");
 			if( user == null ) 
 				throw new QueryTextParseException("User " + userID + " not valid");
 		} catch (Exception ex) {
@@ -60,7 +60,7 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 		String transCfg = parser.getVariable("TRANSCFG");
 		String userID = parser.getVariable("USER");
 
-		User user = UserManagement.getInstance().getUser(userID, "");
+		User user = UserManagement.getInstance().login(userID, "");
 		try {
 			executeQuery(parserID, transCfg, parameter, user);
 		} catch (Exception ex) {

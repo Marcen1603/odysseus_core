@@ -42,7 +42,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			if( ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null ) 
 				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
 			String userID = parser.getVariable("USER");
-			User user = UserManagement.getInstance().getUser(userID, "");
+			User user = UserManagement.getInstance().login(userID, "");
 			if( user == null ) 
 				throw new QueryTextParseException("User " + userID + " not valid");
 			
@@ -63,7 +63,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
 		ICompiler compiler = executor.getCompiler();
 		ParameterTransformationConfiguration transCfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfgID);
-		User user = UserManagement.getInstance().getUser(userID, "");
+		User user = UserManagement.getInstance().login(userID, "");
 		try {
 			List<IQuery> plans = compiler.translateQuery(queries, parserID);
 
