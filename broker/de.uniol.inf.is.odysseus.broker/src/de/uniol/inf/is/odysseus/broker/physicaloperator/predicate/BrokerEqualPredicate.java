@@ -59,8 +59,9 @@ public class BrokerEqualPredicate<T extends IMetaAttributeContainer<ITimeInterva
 			return left.equals(right);
 		} else {
 			RelationalTuple<ITimeInterval> leftTuple = (RelationalTuple<ITimeInterval>) left;
-			RelationalTuple<ITimeInterval> rightTuple = (RelationalTuple<ITimeInterval>) right;			
-			if (leftTuple.getAttribute(this.position).equals(rightTuple.getAttribute(this.position))) {				
+			RelationalTuple<ITimeInterval> rightTuple = (RelationalTuple<ITimeInterval>) right;	
+			if( leftTuple.getMetadata().getStart().equals(rightTuple.getMetadata().getStart()) ) {
+//			if (leftTuple.getAttribute(this.position).equals(rightTuple.getAttribute(this.position))) {				
 				return true;
 			} else {				
 				return false;
