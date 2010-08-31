@@ -36,6 +36,12 @@ public class UserManagement {
 
 	private Map<String, User> registeredUsers = new HashMap<String, User>();
 		
+	/**
+	 * Get user with non hash password
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	public User login(String username, String password){
 		// TODO: Ausbauen f�r ein richtiges UserManagement
 		User user = registeredUsers.get(username);
@@ -47,6 +53,12 @@ public class UserManagement {
 		return user;
 	}
 
+	/**
+	 * Get user with hash password
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	public User getUser(String username, String password) {
 		User user = registeredUsers.get(username);
 		if (user != null){
