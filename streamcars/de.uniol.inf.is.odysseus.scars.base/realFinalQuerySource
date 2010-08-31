@@ -1,0 +1,116 @@
+// Konstanten
+#DEFINE ip 127.0.0.1:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
+
+
+// Quellendefinitionen
+#USER RCP
+#PARSER CQL
+#TRANSCFG StreamCars
+#QUERY
+CREATE SENSOR radarSensor (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+) FROM CHANNEL ${ip}
+
+#QUERY
+CREATE BROKER streamCarsBroker (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+) QUEUE (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+);
+
+#QUERY
+CREATE BROKER streamCarsBroker2 (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+) QUEUE (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+);

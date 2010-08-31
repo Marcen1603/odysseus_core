@@ -1,123 +1,59 @@
 #DEFINE brokerSourceName streamCarsBroker // QuellenName
 #DEFINE brokerListName   streamCarsBroker.scan:cars // Attributname der Liste der Autos in der Brokerquelle
 
+#DEFINE brokerSourceName2 streamCarsBroker2 // QuellenName
+#DEFINE brokerListName2   streamCarsBroker2.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+
 #DEFINE sensorSource    ACCESS(radarSensor) // Quellenoperator(!) des Sensors
 #DEFINE sensorListName  radarSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
 
 #DEFINE assoScanned     association.scan:scannedObjects
 #DEFINE assoPedicted    association.scan:predictedObjects
 #DEFINE assoSource      selectionSrc
+#DEFINE assoSource0     ASSOCIATION-SRC(selectionSrc, 0)
+#DEFINE assoSource2     selectionSrc2
 #DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
 #DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
 
-
-// Konstanten
-#DEFINE ip 127.0.0.1:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
-
-// Quellendefinitionen
-#USER RCP // Username
-#PARSER CQL
-#TRANSCFG StreamCars
-#QUERY
-CREATE SENSOR radarSensor (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(length, FLOAT)
-                ATTRIBUTE(width, FLOAT)
-            )
-        )
-    )
-) FROM CHANNEL ${ip}
-
-#QUERY
-CREATE BROKER streamCarsBroker (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(length, FLOAT)
-                ATTRIBUTE(width, FLOAT)
-            )
-        )
-    )
-) QUEUE (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(length, FLOAT)
-                ATTRIBUTE(width, FLOAT)
-            )
-        )
-    )
-)
-
-
-
+#USER RCP
 #PARSER PQLHack
 #TRANSCFG StreamCars
 #CYCLICQUERY
 LOGICAL PLAN : 
 BROKER(${brokerSourceName}, // Pfad für das Initialisieren des Brokers mit Startdaten (muss noch ein Select rein)
-    ${sensorSource}
+                  SET-PREDICTION-OR(
+                        ${sensorSource},
+                        ${sensorListName},
+                        ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
+                        WHERE ${sensorListName}:car:id >= 50;
+                        DEFAULT ${sensorListName}:car:posx := ${sensorListName}:car:posx;
+                 )
 );
 
 ASSOCIATION-SEL(
     ASSOCIATION-EVAL (
         ASSOCIATION-EVAL (
             ASSOCIATION-GEN (
-                ${sensorSource},
-                PREDICTION(
+                 SET-PREDICTION-OR(
+                        ${sensorSource},
+                        ${sensorListName},
+                        ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
+                        WHERE ${sensorListName}:car:id >= 50;
+                        DEFAULT ${sensorListName}:car:posx := ${sensorListName}:car:posx;
+                 ),
+                 PREDICTION(
                     ${sensorSource}, // Timestamp aus Sensor
-                    SET-PREDICTION-OR(
-                        BROKER(${brokerSourceName}, // Brokerdaten 
+                    BROKER(${brokerSourceName}, // Brokerdaten 
                             QUEUE( // Zeitgeber für den Broker
                                 ${sensorSource}
                             )
                         ), 
-                        ${brokerListName},
-                        ${brokerSourceName}.scan:cars:car:posx := ${brokerSourceName}.scan:cars:car:posx * 2 ;
-                        WHERE ${brokerSourceName}.scan:cars:car:id >= 50;
-                        DEFAULT ${brokerSourceName}.scan:cars:car:posx := ${brokerSourceName}.scan:cars:car:posx;
-                    ),
                     ${brokerListName}
-                ),
-                ${sensorListName},
-                ${brokerListName}
+                 ),
+                 ${sensorListName},
+                 ${brokerListName}
             ),
             ${assoAlgo1},
             threshold := 5; operator := LESSEQUAL;,
@@ -136,36 +72,34 @@ ASSOCIATION-SEL(
 
 BROKER( 
     ${brokerSourceName}, 
-	EVALUATE(
-	    ASSOCIATION-SRC(
-	        ${assoSource},
-	        2
-	    ),
-	    ${assoPedicted},
-	    FILTER-ESTIMATE(
-	        FILTER-COVARIANCE(
-	            FILTER-GAIN(
-	                ASSOCIATION-SRC(
-	                    ${assoSource},
-	                    1
-	                ),
-	                ${filterAlgo}
-	            ),
-	            ${filterAlgo}
-	        ),
-	        ${assoScanned},
-	        ${assoPedicted},
-	        ${filterAlgo}
-	    ),
-	    ${assoPedicted},
-	    FILTER-GAIN(
-	        ASSOCIATION-SRC(
-	            ${assoSource},
-	            0
-	        ),
-	        ${filterAlgo}
-	    ),
-	    ${assoScanned},
-	    5
-	)
+    EVALUATE(
+        ASSOCIATION-SRC(
+            ${assoSource},
+            2
+        ),
+        ${assoPedicted},
+        FILTER-ESTIMATE(
+            FILTER-COVARIANCE(
+                FILTER-GAIN(
+                    ASSOCIATION-SRC(
+                        ${assoSource},
+                        1
+                    ),
+                    ${filterAlgo}
+                ),
+                ${filterAlgo}
+            ),
+            ${assoScanned},
+            ${assoPedicted},
+            ${filterAlgo}
+        ),
+        ${assoPedicted},
+        FILTER-GAIN(
+            ${assoSource0},
+            ${filterAlgo}
+        ),
+        ${assoScanned},
+        5
+    )
 );
+
