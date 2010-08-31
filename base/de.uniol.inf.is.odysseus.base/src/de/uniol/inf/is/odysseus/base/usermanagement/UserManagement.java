@@ -10,7 +10,7 @@ public class UserManagement {
 	public synchronized static UserManagement getInstance(){
 		if (instance == null){
 			instance = new UserManagement();
-			// TODO: Später entfernen 
+			// TODO: Spï¿½ter entfernen 
 			try {
 				instance.registerUser("Console","");
 				instance.registerUser("Benchmark","");
@@ -37,7 +37,7 @@ public class UserManagement {
 	private Map<String, User> registeredUsers = new HashMap<String, User>();
 		
 	public User login(String username, String password){
-		// TODO: Ausbauen für ein richtiges UserManagement
+		// TODO: Ausbauen fï¿½r ein richtiges UserManagement
 		User user = registeredUsers.get(username);
 		if (user != null){
 			if (!user.validatePassword(password, false)){
@@ -52,9 +52,10 @@ public class UserManagement {
 	public User getUser(String username, String password) {
 		User user = registeredUsers.get(username);
 		if (user != null){
-			if (!user.validatePassword(password, true)){
+			if (!user.validatePassword(password, false)){
 				user = null;
 			}
+			return user;
 		}
 		return null;
 	}
