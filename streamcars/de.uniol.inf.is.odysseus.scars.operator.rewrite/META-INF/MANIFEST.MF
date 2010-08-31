@@ -15,4 +15,5 @@ Import-Package: de.uniol.inf.is.odysseus.scars.objecttracking.association.logica
  de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator,
- de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata
+ de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata,
+ de.uniol.inf.is.odysseus.scars.operator.testdata
