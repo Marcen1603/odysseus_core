@@ -22,7 +22,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private List<Exception> errors;
 	private int minPortCount;
 	private int maxPortCount;
-	protected Map<Integer, InputOperatorItem> inputOperators;
+	private Map<Integer, InputOperatorItem> inputOperators;
 
 	public AbstractOperatorBuilder(int minPortCount, int maxPortCount) {
 		if (minPortCount > maxPortCount) {
@@ -166,6 +166,18 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		}
 		this.inputOperators.put(inputPort, new InputOperatorItem(operator,
 				outputPort));
+	}
+	
+	public ILogicalOperator getInputOperator(int inputPort){
+		return this.inputOperators.get(inputPort).operator;
+	}
+	
+	public boolean hasInputOperator(int inputPort) {
+		return this.inputOperators.containsKey(inputPort);
+	}
+	
+	public int getInputOperatorCount() {
+		return this.inputOperators.size();
 	}
 
 }

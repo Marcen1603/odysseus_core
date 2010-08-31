@@ -17,8 +17,8 @@ public class UnionAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	protected boolean internalValidation() {
-		ILogicalOperator firstInput = inputOperators.get(0).operator;
-		ILogicalOperator secondInput = inputOperators.get(1).operator;
+		ILogicalOperator firstInput = getInputOperator(0);
+		ILogicalOperator secondInput = getInputOperator(1);
 		SDFAttributeList firstSchema = firstInput.getOutputSchema();
 		SDFAttributeList secondSchema = secondInput.getOutputSchema();
 		if (!firstSchema.compatibleTo(secondSchema)) {

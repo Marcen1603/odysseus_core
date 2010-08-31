@@ -24,7 +24,7 @@ public class RenameAOBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		List<String> names = aliases.getValue();
-		ILogicalOperator inputOp = inputOperators.get(0).operator;
+		ILogicalOperator inputOp = getInputOperator(0);
 		SDFAttributeList inputSchema = inputOp.getOutputSchema();
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		Iterator<SDFAttribute> it = inputSchema.iterator();
@@ -45,7 +45,7 @@ public class RenameAOBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected boolean internalValidation() {
 		List<String> names = aliases.getValue();
-		ILogicalOperator inputOp = inputOperators.get(0).operator;
+		ILogicalOperator inputOp = getInputOperator(0);
 		SDFAttributeList inputSchema = inputOp.getOutputSchema();
 		if (inputSchema.size() != names.size()) {
 			throw new IllegalArgumentException(
