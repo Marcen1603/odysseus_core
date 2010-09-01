@@ -131,6 +131,9 @@
          <keyword
                name="FILTER-GAIN">
          </keyword>
+         <keyword
+               name="BUFFER">
+         </keyword>
       </group>
    </extension>
 
