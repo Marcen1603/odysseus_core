@@ -12,4 +12,3 @@ Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.scars.operator.test.po
-Service-Component: OSGI-INF/TestPO.xml
