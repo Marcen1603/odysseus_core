@@ -1,6 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Symbols xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="symbolSchema.xsd">
 		
+		
+	<!-- STREAMCARS -->
+	<Symbol nodeName="DummyAccessMVPO">
+		<Size width="48" height="48"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="accessPO"/>
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="JDVEAccessMVPO">
+		<Size width="48" height="48"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="accessPO"/>
+		</SymbolElement>
+	</Symbol>	
+
+	<Symbol nodeName="MetadataObjectRelationalCreationPO">
+		<Size width="91" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="metadataCreationPO"/>
+		</SymbolElement>
+	</Symbol>
+	
+	<Symbol nodeName="MetadataUpdatePO">
+		<Size width="91" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="metadataPO"/>
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="PredictionAssignPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="predictionAssignPO" />
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="BrokerPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="brokerPO" />
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="HypothesisGenerationPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="associationPO" />
+		</SymbolElement>
+	</Symbol>		
+		
+	<Symbol nodeName="MahalanobisDistanceEvaluationPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="associationPO" />
+		</SymbolElement>
+	</Symbol>		
+	
+	<Symbol nodeName="MultiDistanceEvaluationPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="associationPO" />
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="HypothesisSelectionPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="associationPO" />
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="TestPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="testPO" />
+		</SymbolElement>
+	</Symbol>	
+		
+	<Symbol nodeName="FilterGainPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="filterPO" />
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="FilterCovarianceUpdatePO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="filterPO" />
+		</SymbolElement>
+	</Symbol>	
+		
+	<Symbol nodeName="FilterEstimateUpdatePO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="filterPO" />
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="EvaluationPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="evaluationPO" />
+		</SymbolElement>
+	</Symbol>	
+	
 	<!-- -BENCHMARKER BASE -->
 	<Symbol nodeName="BenchmarkDataProducer">
 		<Size width="25" height="25"/>

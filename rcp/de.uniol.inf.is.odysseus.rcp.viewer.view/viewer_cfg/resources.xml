@@ -5,7 +5,7 @@
 	
 	<Image source="viewer_cfg/bufferedPipe.png" name="bufferedPipe" />
 	<Image source="viewer_cfg/benchmarkPO.png" name="benchmarkPO" />	
-<Image source="viewer_cfg/cepPO.png" name="cepPO" />
+	<Image source="viewer_cfg/cepPO.png" name="cepPO" />
 	<Image source="viewer_cfg/latency.png" name="latency" />
 	<Image source="viewer_cfg/sink.png" name="sink" />
 	<Image source="viewer_cfg/source.png" name="source" />
@@ -36,5 +36,12 @@
 	<Image source="viewer_cfg/priorityPO.png" name="priorityPO" />
 	<Image source="viewer_cfg/fixedsetPO.png" name="fixedSetPO" />
 	<Image source="viewer_cfg/windowPO.png" name="windowPO" />	
+	
+	<Image source="viewer_cfg/predictionAssignPO.png" name="predictionAssignPO" />
+	<Image source="viewer_cfg/brokerPO.png" name="brokerPO" />
+	<Image source="viewer_cfg/associationPO.png" name="associationPO" />
+	<Image source="viewer_cfg/testPO.png" name="testPO" />
+	<Image source="viewer_cfg/evaluationPO.png" name="evaluationPO" />
+	
 </Resources>
 
