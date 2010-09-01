@@ -31,7 +31,7 @@ public class RewriteExecutor implements IRewrite {
 	}
 
 	private ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf) {
-
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting rewriting...");
 		RewriteInventory rewriteInventory = new RewriteInventory(RewriteInventory.getInstance());
 		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory);
 		TopAO top = new TopAO();
@@ -42,8 +42,8 @@ public class RewriteExecutor implements IRewrite {
 		// *******
 		PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 		new AbstractGraphWalker<String, ILogicalOperator, LogicalSubscription>().prefixWalk(top, pv);
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.DEBUG, "Pre rewrite: \n" + pv.getResult());
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.DEBUG, "Processing rules...");
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Pre rewrite: \n" + pv.getResult());
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules...");
 		// start transformation
 		env.processEnvironment();
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules done.");
@@ -53,8 +53,8 @@ public class RewriteExecutor implements IRewrite {
 
 		pv = new PrintGraphVisitor<ILogicalOperator>();
 		new AbstractGraphWalker<String, ILogicalOperator, LogicalSubscription>().prefixWalk(ret, pv);
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Post rewrite: " + pv.getResult());
-
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Post rewrite: " + pv.getResult());
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Rewriting finished.");
 		return ret;
 	}
 
