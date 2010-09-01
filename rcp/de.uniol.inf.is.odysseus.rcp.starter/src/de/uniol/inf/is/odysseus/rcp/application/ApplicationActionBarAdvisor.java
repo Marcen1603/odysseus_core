@@ -117,7 +117,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		editMenu.add(new Separator());
 		editMenu.add(delete);
 		editMenu.add(selectAll);
-		editMenu.add(new Separator());
+		editMenu.add(new Separator("find.ext"));
 		editMenu.add(find);
 		
 		viewsMenu.add(viewsShortlistAction);
