@@ -12,7 +12,6 @@ public class TestPO<T> extends AbstractPipe<T, T>{
 
 	private String name;
 	private ISystemMonitor monitor;
-	private ISystemMonitorFactory factory;
 	
 	public TestPO(String debugName) {
 		this.name = debugName;
