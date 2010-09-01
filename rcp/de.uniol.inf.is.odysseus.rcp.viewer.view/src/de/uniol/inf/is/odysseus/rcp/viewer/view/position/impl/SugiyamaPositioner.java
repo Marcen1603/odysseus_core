@@ -64,7 +64,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		for( INodeView<IPhysicalOperator> node : graph.getViewedNodes() ) {
 			if( node.getConnectionsAsEnd().size() == 0 ) {
 				found++;
-				traverse( node, 0 );
+				traverse( node, 0, new ArrayList<INodeView<IPhysicalOperator>>() );
 			}
 		}
 		if( found == 0 )
@@ -305,18 +305,22 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 			ArrayList<Integer> indexes = new ArrayList<Integer>();
 			for( int p = 0; p < neighbours.size(); p++ ) {
 				int pos = fixedLayerNodes.indexOf( neighbours.get( p ) );
-				indexes.add( pos );
+				if( pos != -1 )
+					indexes.add( pos );
 			}
 			
 			Collections.sort( indexes );
-			med = indexes.get( indexes.size() / 2 );
+			if( indexes.isEmpty() ) 
+				med = 0;
+			else
+				med = indexes.get( indexes.size() / 2 );
 		} else {
 			med = 0;
 		}		
 		return med;
 	}
 
-	private void traverse( INodeView<IPhysicalOperator> node, int level ) {
+	private void traverse( INodeView<IPhysicalOperator> node, int level, Collection<INodeView<IPhysicalOperator>> visitedNodes ) {
 		if( node == null ) {
 			if( logger.isWarnEnabled() )
 				logger.warn("node in level " + level + " is null!");
@@ -328,14 +332,19 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 			throw new IllegalArgumentException("level is negative: " + level);
 		}
 		
+		if( visitedNodes.contains(node))
+			return;
+		
 		if( logger.isTraceEnabled() ) 
 			logger.trace( "Begin traverse level " + level );
+		
 		
 		maxLevel = Math.max( maxLevel, level );
 		final Collection<? extends IConnectionView<IPhysicalOperator>> connections = node.getConnectionsAsStart();
 		
+		visitedNodes.add(node);
 		for( IConnectionView<IPhysicalOperator> conn : connections ) {
-			traverse( conn.getViewedEndNode(), level + 1 );
+			traverse( conn.getViewedEndNode(), level + 1, visitedNodes );
 		}
 		
 		if( nodeLevels.containsKey( node ) ) {
