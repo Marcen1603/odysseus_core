@@ -27,10 +27,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 
 public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable {
 
@@ -106,8 +106,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	@Override
 	protected void initializeGraphicalViewer() {
 		super.initializeGraphicalViewer();
-		// TODO: den aktuellen Nutzer hier einfügen
-		user = UserManagement.getInstance().getUser("RCP","");
+		user = ActiveUser.getActiveUser();
 		plan = new OperatorPlan();
 		GraphicalViewer graphicalViewer = getGraphicalViewer();
 		graphicalViewer.setContents(plan);

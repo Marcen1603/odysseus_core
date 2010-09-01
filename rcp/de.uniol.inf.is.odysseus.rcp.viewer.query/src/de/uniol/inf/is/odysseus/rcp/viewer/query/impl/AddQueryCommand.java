@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 
@@ -31,9 +31,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		final String queryToExecute = event.getParameter(IQueryConstants.QUERY_PARAMETER_ID);
 		final String parserToUse = event.getParameter(IQueryConstants.PARSER_PARAMETER_ID);
 		final String parameterTransformationConfigurationName = event.getParameter(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID);
-		final String userName = event.getParameter(IQueryConstants.USER_NAME_PARAMETER_ID);
-		final String userPassword = event.getParameter(IQueryConstants.USER_PASSWORD_PARAMETER_ID);		
-		final User user = UserManagement.getInstance().getUser(userName,userPassword);
+		final User user = ActiveUser.getActiveUser();
 		
 		final IAdvancedExecutor executor = Activator.getExecutor();
 		if (executor != null) {

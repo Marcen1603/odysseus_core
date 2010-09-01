@@ -9,12 +9,12 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
@@ -41,10 +41,6 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 				throw new QueryTextParseException("TransformationConfiguration not set");
 			if( ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null ) 
 				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
-			String userID = parser.getVariable("USER");
-			User user = UserManagement.getInstance().login(userID, "");
-			if( user == null ) 
-				throw new QueryTextParseException("User " + userID + " not valid");
 			
 		} catch( Exception ex ) {
 			throw new QueryTextParseException("Unknown Exception during validation a cyclic query", ex);
@@ -58,12 +54,11 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 		String queries = parameter;
 		String parserID = parser.getVariable("PARSER");
 		String transCfgID = parser.getVariable("TRANSCFG");
-		String userID = parser.getVariable("USER");
 
 		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
 		ICompiler compiler = executor.getCompiler();
 		ParameterTransformationConfiguration transCfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfgID);
-		User user = UserManagement.getInstance().login(userID, "");
+		User user = ActiveUser.getActiveUser();
 		try {
 			List<IQuery> plans = compiler.translateQuery(queries, parserID);
 

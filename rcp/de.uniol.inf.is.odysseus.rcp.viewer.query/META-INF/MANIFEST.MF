@@ -18,6 +18,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.statusbar,
+ de.uniol.inf.is.odysseus.rcp.user,
  org.eclipse.core.commands,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.query
