@@ -14,6 +14,7 @@ public class StatusBarManager {
 	
 	public static final String EXECUTOR_ID = "executorStatus";
 	public static final String SCHEDULER_ID = "schedulerStatus";
+	public static final String USER_ID = "userStatus";
 	
 	private IStatusLineManager manager;
 	
@@ -35,8 +36,10 @@ public class StatusBarManager {
 		
 		StatusLineContributionItem item = new StatusLineContributionItem(EXECUTOR_ID);
 		StatusLineContributionItem item2 = new StatusLineContributionItem(SCHEDULER_ID);
+		StatusLineContributionItem item3 = new StatusLineContributionItem(USER_ID);
 		manager.add(item);	
 		manager.add(item2);
+		manager.add(item3);
 		
 		setStandardMessages();
 		applyCache();
@@ -45,6 +48,7 @@ public class StatusBarManager {
 	private void setStandardMessages() {
 		setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
 		setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler stopped");
+		setMessage(StatusBarManager.USER_ID, "No user logged in");
 	}
 	
 	private void applyCache() {
