@@ -9,9 +9,6 @@
             colorG="0"
             colorR="0"
             name="PQL">
-         <keyword
-               name="de.uniol.inf.is.odysseus.rcp.editor.text.pql.keyword110">
-         </keyword>
       </group>
    </extension>
 
