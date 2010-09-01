@@ -48,13 +48,11 @@ public class PrintGraphVisitor<T> implements IGraphNodeVisitor<T,String>{
 
 	@Override
 	public String getResult() {
-		// TODO Auto-generated method stub
 		return this.graph;
 	}
 
 	@Override
-	public void nodeAction(T node) {
-		// TODO Auto-generated method stub
+	public void nodeAction(T node) {	
 		
 	}
 
