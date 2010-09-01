@@ -32,8 +32,7 @@ public class TransformationExecutor implements ITransformation {
 	}
 
 	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config) throws TransformationException {
-		logger.info("**********************************************************************");
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config) throws TransformationException {		
 		logger.info("Starting transformation of " + op + "...");		
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 		logger.info("Before transformation: \n"+planPrinter.createString(op));
