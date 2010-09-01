@@ -58,7 +58,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 
 		final Shell dialogShell = new Shell(parent);
 		dialogShell.setSize(600, 500);
-		dialogShell.setText("Add Query");
+		dialogShell.setText("Fast Query");
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
