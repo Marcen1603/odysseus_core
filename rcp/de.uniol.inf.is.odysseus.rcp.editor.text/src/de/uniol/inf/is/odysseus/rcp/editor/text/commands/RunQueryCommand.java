@@ -57,6 +57,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					ex.printStackTrace();
 					new ExceptionWindow(ex);
 				}
+			} else {
+				System.out.println("selection is not from type IFile: " + obj.getClass().getName());
 			}
 		}
 		return null;
