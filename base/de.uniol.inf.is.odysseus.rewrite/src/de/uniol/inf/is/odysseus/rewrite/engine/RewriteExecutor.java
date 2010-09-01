@@ -41,7 +41,7 @@ public class RewriteExecutor implements IRewrite {
 		addLogicalOperator(top, list, env);
 		// *******
 		PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
-		new AbstractGraphWalker().prefixWalk(top, pv);
+		new AbstractGraphWalker<String, ILogicalOperator, LogicalSubscription>().prefixWalk(top, pv);
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.DEBUG, "Pre rewrite: \n" + pv.getResult());
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.DEBUG, "Processing rules...");
 		// start transformation
@@ -52,7 +52,7 @@ public class RewriteExecutor implements IRewrite {
 		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 
 		pv = new PrintGraphVisitor<ILogicalOperator>();
-		new AbstractGraphWalker().prefixWalk(top, pv);
+		new AbstractGraphWalker<String, ILogicalOperator, LogicalSubscription>().prefixWalk(ret, pv);
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Post rewrite: " + pv.getResult());
 
 		return ret;
