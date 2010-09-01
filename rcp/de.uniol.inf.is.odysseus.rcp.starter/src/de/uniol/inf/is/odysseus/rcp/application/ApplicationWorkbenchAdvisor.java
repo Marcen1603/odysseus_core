@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.application;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import de.uniol.inf.is.odysseus.rcp.perspective.observer.IObserverPerspectiveConstants;
+import de.uniol.inf.is.odysseus.rcp.user.Login;
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
@@ -27,6 +29,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
+		Login.login(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), false, false);
 		
 		// Log4j-Ausgaben in Console umleiten
 		// Init der Message Console
