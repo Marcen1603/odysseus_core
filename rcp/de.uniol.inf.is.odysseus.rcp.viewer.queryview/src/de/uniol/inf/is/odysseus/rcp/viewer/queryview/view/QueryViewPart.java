@@ -103,7 +103,11 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 		userColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(((IQuery) cell.getElement()).getUser().getUsername());
+				IQuery query = (IQuery) cell.getElement();
+				if( query.getUser() != null ) 
+					cell.setText(query.getUser().getUsername());
+				else
+					cell.setText("[No user]");
 			}
 		});
 		tableColumnLayout.setColumnData(userColumn.getColumn(), new ColumnWeightData(20,75,true));
