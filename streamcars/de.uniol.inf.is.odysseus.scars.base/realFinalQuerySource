@@ -3,7 +3,6 @@
 
 
 // Quellendefinitionen
-#USER RCP
 #PARSER CQL
 #TRANSCFG StreamCars
 #QUERY

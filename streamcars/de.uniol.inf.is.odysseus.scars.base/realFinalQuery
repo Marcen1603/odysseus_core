@@ -17,7 +17,6 @@
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
 
-#USER RCP
 #PARSER PQLHack
 #TRANSCFG StreamCars
 #CYCLICQUERY
