@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
@@ -18,10 +20,10 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
-		System.out.println("Transform AccessAO: " + accessAO);	
+		LoggerSystem.printlog(Accuracy.TRACE,"Transform AccessAO: " + accessAO);	
 		ISource<?> accessPO = WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI());
-		System.out.println("Transform to existing AccessPO: trafo = " + trafo);
-		System.out.println("Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
+		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafo = " + trafo);
+		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO,accessPO);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -32,7 +34,7 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public boolean isExecutable(AccessAO operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(AccessAO operator, TransformationConfiguration transformConfig) {		
 		return WrapperPlanFactory.getAccessPlan(operator.getSource().getURI(false)) != null;
 	}
 

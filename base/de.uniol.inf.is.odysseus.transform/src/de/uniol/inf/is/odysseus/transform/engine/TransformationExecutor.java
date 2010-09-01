@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
+import de.uniol.inf.is.odysseus.util.SimplePlanPrinter;
 
 /**
  * entry point for transformation (is bound by osgi-service)
@@ -32,8 +33,10 @@ public class TransformationExecutor implements ITransformation {
 
 	@Override
 	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config) throws TransformationException {
-		logger.debug("Starting transformation of " + op + "...");
-
+		logger.info("**********************************************************************");
+		logger.info("Starting transformation of " + op + "...");		
+		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
+		logger.info("Before transformation: \n"+planPrinter.createString(op));
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		ArrayList<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
 		TopAO top = new TopAO();
@@ -69,9 +72,15 @@ public class TransformationExecutor implements ITransformation {
 		AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 		walker.prefixWalkPhysical(physicalPO, visitor);
 		plan = visitor.getResult();
-
+		if(plan.isEmpty()){
+			logger.warn("Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
+		}
+		SimplePlanPrinter<IPhysicalOperator> physicalPlanPrinter = new SimplePlanPrinter<IPhysicalOperator>();
+		logger.info("After transformation: \n"+physicalPlanPrinter.createString(physicalPO));
+		
+		
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
-		logger.debug("Transformation of " + op + " finished");
+		logger.info("Transformation of " + op + " finished");
 		return plan;
 	}
 

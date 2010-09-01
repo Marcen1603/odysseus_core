@@ -76,8 +76,10 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI(false))==null){
 			ILogicalOperator view = DataDictionary.getInstance().getViewForTransformation(accessAO.getSource().getURI());
-			if(view.getSubscribedToSource().size()!=1 || (!view.getSubscribedToSource(0).getTarget().equals(accessAO))){
-				return true;
+			if(view!=null){		
+				if(view.getSubscribedToSource().size()!=1 || (!view.getSubscribedToSource(0).getTarget().equals(accessAO))){
+					return true;
+				}
 			}
 		}
 		return false;
