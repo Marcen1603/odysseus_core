@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.transform.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.ITransformation;
@@ -13,6 +10,8 @@ import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
@@ -25,7 +24,7 @@ import de.uniol.inf.is.odysseus.util.SimplePlanPrinter;
  */
 public class TransformationExecutor implements ITransformation {
 
-	private static Logger logger = LoggerFactory.getLogger("transformation");
+	private static final String LOGGER_NAME = "transform";	
 
 	public TransformationExecutor() {
 
@@ -33,9 +32,9 @@ public class TransformationExecutor implements ITransformation {
 
 	@Override
 	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config) throws TransformationException {		
-		logger.info("Starting transformation of " + op + "...");		
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting transformation of " + op + "...");		
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-		logger.info("Before transformation: \n"+planPrinter.createString(op));
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Before transformation: \n"+planPrinter.createString(op));
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		ArrayList<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
 		TopAO top = new TopAO();
@@ -54,17 +53,17 @@ public class TransformationExecutor implements ITransformation {
 		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent);
 
 		addLogicalOperator(top, list, env);
-		logger.trace("Processing rules...");
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules...");
 		// start transformation
 		env.processEnvironment();
-		logger.trace("Processing rules done.");
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules done.");
 
 		IPhysicalOperator physicalPO = top.getPhysicalInput();
 		if (physicalPO == null) {
-			logger.warn("PhysicalInput of TopAO is null!");
-			logger.warn("Current working memory:");
-			logger.warn(env.getWorkingMemory().getCurrentContent().toString());
-			logger.warn("Further information: \n" + env.getWorkingMemory().getDebugTrace());
+			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, "PhysicalInput of TopAO is null!");
+			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, "Current working memory:");
+			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, env.getWorkingMemory().getCurrentContent().toString());
+			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, "Further information: \n" + env.getWorkingMemory().getDebugTrace());
 		}
 
 		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
@@ -72,14 +71,14 @@ public class TransformationExecutor implements ITransformation {
 		walker.prefixWalkPhysical(physicalPO, visitor);
 		plan = visitor.getResult();
 		if(plan.isEmpty()){
-			logger.warn("Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
+			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, "Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
 		}
 		SimplePlanPrinter<IPhysicalOperator> physicalPlanPrinter = new SimplePlanPrinter<IPhysicalOperator>();
-		logger.info("After transformation: \n"+physicalPlanPrinter.createString(physicalPO));
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "After transformation: \n"+physicalPlanPrinter.createString(physicalPO));
 		
 		
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
-		logger.info("Transformation of " + op + " finished");
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Transformation of " + op + " finished");
 		return plan;
 	}
 
@@ -99,10 +98,5 @@ public class TransformationExecutor implements ITransformation {
 				addLogicalOperator(sub.getTarget(), inserted, env);
 			}
 		}
-	}
-
-	public static Logger getLogger() {
-		return logger;
-	}
-
+	}	
 }
