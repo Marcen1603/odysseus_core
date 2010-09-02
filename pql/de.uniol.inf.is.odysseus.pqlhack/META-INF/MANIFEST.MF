@@ -44,6 +44,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.unit,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,
+ de.uniol.infs.is.odysseus.scars.operator.brokerinit,
  org.osgi.framework
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
