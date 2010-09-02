@@ -32,6 +32,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 
 			if (obj instanceof IFile) {
 				run((IFile)obj);
+				return null;
 			} 
 		}
 		
@@ -41,6 +42,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			SimpleEditor editor = (SimpleEditor)part;
 			FileEditorInput input = (FileEditorInput)editor.getEditorInput();
 			run(input.getFile());
+			return null;
 		}
 		
 		return null;
