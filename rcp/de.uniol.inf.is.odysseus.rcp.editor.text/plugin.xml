@@ -35,6 +35,19 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="RunToolbar">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
+                  icon="Icons/run.gif"
+                  label="Run Query"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

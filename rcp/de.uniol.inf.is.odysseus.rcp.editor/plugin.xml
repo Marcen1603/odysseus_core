@@ -40,21 +40,6 @@
       </command>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="toolbar:org.eclipse.ui.main.toolbar">
-         <toolbar
-               id="de.uniol.inf.is.odysseus.rcp.editor.toolbar1">
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.editor.ExecutePlan"
-                  icon="icons/run.gif"
-                  label="Execute"
-                  style="push">
-            </command>
-         </toolbar>
-      </menuContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
