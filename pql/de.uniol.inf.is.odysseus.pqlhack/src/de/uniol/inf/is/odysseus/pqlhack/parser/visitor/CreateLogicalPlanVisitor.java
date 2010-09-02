@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOpExt;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerInitOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBufferOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
@@ -108,6 +109,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeExce
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.infs.is.odysseus.scars.operator.brokerinit.BrokerInitAO;
 
 /**
  * This visitor creates the logical plan from a procedural expression.
@@ -1697,6 +1699,27 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
 
 		return dataList;
+	}
+
+	@Override
+	public Object visit(ASTBrokerInitOp node, Object data) {
+		BrokerInitAO ao = new BrokerInitAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) returnData.get(1);
+		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
+
+		ao.subscribeToSource(inputOp, 0, sourceOutPort, inputOp.getOutputSchema());
+
+		ao.setSize( Integer.valueOf(((ASTNumber) node.jjtGetChild(1)).getValue() ));
+		
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
 	}
 
 }

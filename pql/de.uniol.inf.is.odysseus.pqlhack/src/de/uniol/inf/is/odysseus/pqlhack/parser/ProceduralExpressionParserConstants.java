@@ -107,27 +107,29 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_FILTER_COVARIANCE = 52;
   /** RegularExpression Id. */
-  int IDENTIFIER = 53;
+  int K_BROKER_INIT = 53;
   /** RegularExpression Id. */
-  int LETTER = 54;
+  int IDENTIFIER = 54;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 55;
+  int LETTER = 55;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 56;
+  int SPECIAL_CHARS = 56;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 57;
+  int CHAR_LITERAL = 57;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 58;
+  int QUOTED_IDENTIFIER = 58;
   /** RegularExpression Id. */
-  int REGEXP = 59;
+  int COMPARE_OPERATOR = 59;
   /** RegularExpression Id. */
-  int FLOAT = 60;
+  int REGEXP = 60;
   /** RegularExpression Id. */
-  int INTEGER = 61;
+  int FLOAT = 61;
   /** RegularExpression Id. */
-  int DIGIT = 62;
+  int INTEGER = 62;
   /** RegularExpression Id. */
-  int IPADDRESS = 63;
+  int DIGIT = 63;
+  /** RegularExpression Id. */
+  int IPADDRESS = 64;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -187,6 +189,7 @@ public interface ProceduralExpressionParserConstants {
     "\"FILTER-GAIN\"",
     "\"FILTER-ESTIMATE\"",
     "\"FILTER-COVARIANCE\"",
+    "\"BROKER-INIT\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

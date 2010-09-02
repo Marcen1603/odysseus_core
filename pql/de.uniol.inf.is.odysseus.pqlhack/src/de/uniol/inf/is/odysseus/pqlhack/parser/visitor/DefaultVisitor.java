@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOpExt;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerInitOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBufferOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
@@ -56,7 +57,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
 
-public class DefaultVisitor implements ProceduralExpressionParserVisitor{
+public class DefaultVisitor implements ProceduralExpressionParserVisitor {
 
 	public Object visit(SimpleNode node, Object data) {
 		// TODO Auto-generated method stub
@@ -68,176 +69,147 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTAlgebraOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTProjectionOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, data);	}
+		return node.childrenAccept(this, data);
+	}
 
-	
 	public Object visit(ASTProjectionIdentifier node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTSelectionOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, data);	}
+		return node.childrenAccept(this, data);
+	}
 
-	
 	public Object visit(ASTJoinOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTWindowOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTSlidingTimeWindow node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTAccessOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTPredictionAssignOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTPredicate node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTSimplePredicate node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTBasicPredicate node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTOrPredicate node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTAndPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTNotPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTExpression node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTSimpleToken node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTNumber node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTString node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTIdentifier node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTCompareOperator node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTPredictionDefinition node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTPredictionFunctionDefinition node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTDefaultPredictionDefinition node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTFunctionExpression node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTFunctionName node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTRelationalSelectionOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTRelationalJoinOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTRelationalProjectionOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTRelationalNestOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
-	
 	public Object visit(ASTRelationalUnnestOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
@@ -333,27 +305,29 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 		return node.childrenAccept(this, data);
 	}
 
-  @Override
-  public Object visit(ASTFilterGainOp node, Object data)
-  {
-    return node.childrenAccept(this, data);
-  }
+	@Override
+	public Object visit(ASTFilterGainOp node, Object data) {
+		return node.childrenAccept(this, data);
+	}
 
-  @Override
-  public Object visit(ASTFilterEstimateOp node, Object data)
-  {
-    return node.childrenAccept(this, data);
-  }
+	@Override
+	public Object visit(ASTFilterEstimateOp node, Object data) {
+		return node.childrenAccept(this, data);
+	}
 
-  @Override
-  public Object visit(ASTFilterCovarianceOp node, Object data)
-  {
-    return node.childrenAccept(this, data);
-  }
+	@Override
+	public Object visit(ASTFilterCovarianceOp node, Object data) {
+		return node.childrenAccept(this, data);
+	}
 
-@Override
-public Object visit(ASTBenchmarkOpExt node, Object data) {
-	return node.childrenAccept(this, data);
-}
+	@Override
+	public Object visit(ASTBenchmarkOpExt node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTBrokerInitOp node, Object data) {
+		return node.childrenAccept(this, data);
+	}
 
 }

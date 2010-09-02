@@ -85,6 +85,7 @@ TOKEN : /* Keywords */ {
 |   <K_FILTER_GAIN: "FILTER-GAIN">
 |   <K_FILTER_ESTIMATE: "FILTER-ESTIMATE">
 |   <K_FILTER_COVARIANCE: "FILTER-COVARIANCE">
+|   <K_BROKER_INIT: "BROKER-INIT">
 }
 
 TOKEN:{
@@ -187,7 +188,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	ExistOp() |
 	FilterGainOp() |
 	FilterEstimateOp() |
-	FilterCovarianceOp()/*@bgen(jjtree)*/
+	FilterCovarianceOp() |
+	BrokerInitOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -207,7 +209,7 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
             jjtree.closeNodeScope(jjtn000, true);
           }
         }
-/*@egen*/
+/*@egen*/ 
 }
 
 void TestOp(): {/*@bgen(jjtree) TestOp */
@@ -512,6 +514,36 @@ void SelectionOp(): {/*@bgen(jjtree) SelectionOp */
         }
 /*@egen*/
 }
+
+void BrokerInitOp():{/*@bgen(jjtree) BrokerInitOp */
+  ASTBrokerInitOp jjtn000 = new ASTBrokerInitOp(JJTBROKERINITOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) BrokerInitOp */
+  try {
+/*@egen*/
+  < K_BROKER_INIT >"(" AlgebraOp() "," Number() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}
 
 void RelationalSelectionOp():{/*@bgen(jjtree) RelationalSelectionOp */
         ASTRelationalSelectionOp jjtn000 = new ASTRelationalSelectionOp(JJTRELATIONALSELECTIONOP);

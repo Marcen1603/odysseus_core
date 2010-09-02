@@ -81,6 +81,7 @@ TOKEN : /* Keywords */ {
 |   <K_FILTER_GAIN: "FILTER-GAIN">
 |   <K_FILTER_ESTIMATE: "FILTER-ESTIMATE">
 |   <K_FILTER_COVARIANCE: "FILTER-COVARIANCE">
+|   <K_BROKER_INIT: "BROKER-INIT">
 }
 
 TOKEN:{
@@ -146,7 +147,8 @@ void AlgebraOp():{}{
 	ExistOp() |
 	FilterGainOp() |
 	FilterEstimateOp() |
-	FilterCovarianceOp()
+	FilterCovarianceOp() |
+	BrokerInitOp() 
 }
 
 void TestOp(): {}{
@@ -189,6 +191,10 @@ void SelectionOp(): {
     // window size is a hack for evaluation of range predicates
 	<K_SELECTION>"(" AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
 }
+
+void BrokerInitOp():{}
+{
+  < K_BROKER_INIT >"(" AlgebraOp() "," Number() ")"}
 
 void RelationalSelectionOp():{
 	Token windowSize;
