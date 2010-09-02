@@ -16,10 +16,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.base
-Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.model,
- de.uniol.inf.is.odysseus.rcp.viewer.model.create,
- de.uniol.inf.is.odysseus.rcp.viewer.model.ctrl,
+Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.model.create,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
  de.uniol.inf.is.odysseus.rcp.viewer.model.stream
-Service-Component: OSGI-INF/Executor.xml

@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.commands;
 
+import java.util.List;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -15,23 +15,14 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.Model;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderSinkOneWay;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditorInput;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditorInputFactory;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElementFactory;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.PhysicalGraphEditorInput;
 
 public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
 
-	private static GraphViewEditorInputFactory GRAPH_VIEW_FACTORY = new GraphViewEditorInputFactory();
-	private static ISymbolElementFactory<IPhysicalOperator> SYMBOL_FACTORY = new SWTSymbolElementFactory<IPhysicalOperator>();
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
@@ -44,52 +35,21 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 			Object obj = treeSelection.getFirstElement();
 						
 			// Auswahl holen
-			IGraphModel<IPhysicalOperator> graph = null;
-			if( obj instanceof IGraphModel<?>)
-				graph = (IGraphModel<IPhysicalOperator>)obj;
-			else if( obj instanceof IQuery ) {
-				IQuery q = (IQuery)obj;
+			List<IPhysicalOperator> graph = null;
+			if( obj instanceof IQuery ) {
+				IQuery query = (IQuery)obj;
+				graph = query.getRoots();
+			
+				ISink<?> sink = (ISink<?>)graph.get(0); 
+				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay(sink, query);
+				PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "Query " + query.getID());
 				
-				for( IGraphModel<IPhysicalOperator> g : Model.getInstance().getModelManager().getModels()) {
-					if( g instanceof IOdysseusGraphModel ) {
-						if( ((IOdysseusGraphModel)g).getQuery() == q ) {
-							graph = g;
-							break;
-						}
-					}
-				}
-			} else if( obj instanceof IOdysseusNodeModel) {
-				return null;
-			} else {
-				return null;
-			}
-			
-			if( graph == null )
-				return null;
-			
-			// schauen, ob Editor f�r den Graphen schon offen ist
-			for( IEditorReference editorRef : page.getEditorReferences() ) {
 				try {
-					IEditorInput i = editorRef.getEditorInput();
-					if( i instanceof GraphViewEditorInput) {
-						GraphViewEditorInput gInput = (GraphViewEditorInput)i;
-						if( gInput.getModelGraph() == graph ) 
-							return null; // Graph wird schon angezeigt
-					}
+					page.openEditor(input, GraphViewEditor.EDITOR_ID);
+					
 				} catch( PartInitException ex ) {
-					ex.printStackTrace();
+					System.out.println(ex.getStackTrace());
 				}
-			}
-			
-			
-			// ViewModell erzeugen
-			GraphViewEditorInput input = (GraphViewEditorInput)GRAPH_VIEW_FACTORY.createGraphView(graph, Activator.SYMBOL_CONFIGURATION, SYMBOL_FACTORY);
-			
-			try {
-				page.openEditor(input, GraphViewEditor.EDITOR_ID);
-				
-			} catch( PartInitException ex ) {
-				System.out.println(ex.getStackTrace());
 			}
 		}
 		

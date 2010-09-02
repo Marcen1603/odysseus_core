@@ -16,8 +16,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.Model;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.IStreamConstants;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
@@ -39,7 +37,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		if (selection == null)
 			return null;
 
-		INodeModel<IPhysicalOperator> opForStream = null;
+		IPhysicalOperator opForStream = null;
 		if (selection instanceof IStructuredSelection) {
 
 			IStructuredSelection structSelection = (IStructuredSelection) selection;
@@ -47,26 +45,18 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 			
 			if( selectedObject instanceof IQuery ) {
 				IQuery query = (IQuery)selectedObject;
-				IPhysicalOperator op;
 				if( query.getRoots().size() > 0 )
-					op = query.getRoots().get(0);
+					opForStream = query.getRoots().get(0);
 				else 
-					op = query.getIntialPhysicalPlan().get(0);
+					opForStream = query.getIntialPhysicalPlan().get(0);
 				
-				// NodeModel suchen
-				for( INodeModel<IPhysicalOperator> node : Model.getInstance().getModelManager().getActiveModel().getNodes() ) {
-					if( node.getContent().equals(op)) {
-						opForStream = node;
-						break;
-					}
-				}
 			}
 			
 			if (selectedObject instanceof IOdysseusNodeView) {
 				IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
 
 				// Auswahl holen
-				opForStream = nodeView.getModelNode();
+				opForStream = nodeView.getModelNode().getContent();
 			}
 		}
 		
@@ -78,7 +68,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 						IEditorInput i = editorRef.getEditorInput();
 						if (i instanceof StreamEditorInput) {
 							StreamEditorInput gInput = (StreamEditorInput) i;
-							if (gInput.getNodeModel() == opForStream && gInput.getEditorTypeID().equals(editorTypeID) ) {
+							if (gInput.getPhysicalOperator() == opForStream && gInput.getEditorTypeID().equals(editorTypeID) ) {
 								page.activate(editorRef.getPart(false));
 								return null; // Stream wird schon angezeigt
 							}
@@ -98,7 +88,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 								IStreamEditorType editor = (IStreamEditorType)editorType;
 								
 								// ViewModell erzeugen
-								StreamEditorInput input = new StreamEditorInput((INodeModel<IPhysicalOperator>) opForStream, editor, editorTypeID, def.getLabel());
+								StreamEditorInput input = new StreamEditorInput(opForStream, editor, editorTypeID, def.getLabel());
 	
 								try {
 									page.openEditor(input, IStreamConstants.STREAM_EDITOR_ID);

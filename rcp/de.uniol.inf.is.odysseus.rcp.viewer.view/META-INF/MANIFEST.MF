@@ -8,11 +8,12 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.plan,
  de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.monitoring,
- de.uniol.inf.is.odysseus.rcp.viewer.model,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.rcp.viewer.model.create,
- de.uniol.inf.is.odysseus.rcp.viewer.model.ctrl,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
  org.eclipse.core.commands,
@@ -39,3 +40,4 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.view,
  de.uniol.inf.is.odysseus.rcp.viewer.view.select,
  de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol,
  de.uniol.inf.is.odysseus.rcp.viewer.view.symbol
+Service-Component: OSGI-INF/Executor.xml

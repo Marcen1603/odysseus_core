@@ -10,47 +10,40 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
 
 public class StreamEditorInput implements IStreamEditorInput {
 
-	private INodeModel<IPhysicalOperator> nodeModel;
 	private IStreamConnection<Object> connection;
 	private IStreamEditorType editorType;
 	private String editorTypeID;
 	private String editorLabel;
+	private IPhysicalOperator operator;
 	
-	public StreamEditorInput( INodeModel<IPhysicalOperator> nodeModel, IStreamEditorType type, String editorTypeID, String editorLabel ) {
-		this.nodeModel = nodeModel;
+	public StreamEditorInput( IPhysicalOperator operator, IStreamEditorType type, String editorTypeID, String editorLabel ) {
 		this.editorType = type;
 		this.editorTypeID = editorTypeID;
 		this.editorLabel = editorLabel;
+		this.operator = operator;
 		
 		// Datenstromquellen identifizieren
 		final Collection<ISource<?>> sources = new ArrayList<ISource<?>>();
-		IPhysicalOperator content = nodeModel.getContent();
-		if( content instanceof ISource<?> ) {
-			sources.add( (ISource<?>)content );
-		} else if( content instanceof ISink<?> ) {
-			Collection<?> list = ((ISink<?>)content).getSubscribedToSource();
+		if( operator instanceof ISource<?> ) {
+			sources.add( (ISource<?>)operator );
+		} else if( operator instanceof ISink<?> ) {
+			Collection<?> list = ((ISink<?>)operator).getSubscribedToSource();
 			for( Object obj : list ) 
 				sources.add( (ISource<?>)((PhysicalSubscription<?>)obj).getTarget() );
 		} else 
-			throw new IllegalArgumentException("could not identify type of content of node " + nodeModel );
+			throw new IllegalArgumentException("could not identify type of content of node " + operator );
 		
 		connection = new DefaultStreamConnection<Object>(sources);
 	}
 	
 	public String getEditorTypeID() {
 		return editorTypeID;
-	}
-	
-	@Override
-	public INodeModel<IPhysicalOperator> getNodeModel() {
-		return nodeModel;
 	}
 	
 	@Override
@@ -74,7 +67,7 @@ public class StreamEditorInput implements IStreamEditorInput {
 
 	@Override
 	public String getName() {
-		return nodeModel.getName() + "[" + editorLabel + "]";
+		return operator.getName() + "[" + editorLabel + "]";
 	}
 
 	@Override
@@ -99,7 +92,7 @@ public class StreamEditorInput implements IStreamEditorInput {
 		}
 		if (obj instanceof StreamEditorInput) {
 			StreamEditorInput i = (StreamEditorInput)obj;
-			return nodeModel.equals(i.getNodeModel()) && editorTypeID.equals(((StreamEditorInput) obj).getEditorTypeID());
+			return operator.equals(i.operator) && editorTypeID.equals(((StreamEditorInput) obj).getEditorTypeID());
 		}
 		return false;	
 	}
@@ -109,4 +102,7 @@ public class StreamEditorInput implements IStreamEditorInput {
 		return super.hashCode();
 	}
 
+	public IPhysicalOperator getPhysicalOperator() {
+		return operator;
+	}
 }

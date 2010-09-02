@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl;
+package de.uniol.inf.is.odysseus.rcp.viewer.model.create;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
