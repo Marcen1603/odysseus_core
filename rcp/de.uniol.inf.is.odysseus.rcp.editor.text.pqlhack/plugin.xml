@@ -134,6 +134,9 @@
          <keyword
                name="BUFFER">
          </keyword>
+         <keyword
+               name="BROKER-INIT">
+         </keyword>
       </group>
    </extension>
 
