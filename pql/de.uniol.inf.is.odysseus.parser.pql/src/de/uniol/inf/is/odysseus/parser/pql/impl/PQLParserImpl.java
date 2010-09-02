@@ -48,15 +48,24 @@ public class PQLParserImpl implements PQLParserImplConstants {
 
   static private Set < ILogicalOperator > findRoots(ILogicalOperator op)
   {
-    Collection < LogicalSubscription > subscriptions = op.getSubscriptions();
-    if (subscriptions.isEmpty())
-    {
-      return Collections.singleton(op);
-    }
+    return findRoots(op, new ArrayList < ILogicalOperator > ());
+  }
+
+  static private Set < ILogicalOperator > findRoots(ILogicalOperator op, List < ILogicalOperator > visited)
+  {
     Set < ILogicalOperator > result = new HashSet < ILogicalOperator > ();
-    for (LogicalSubscription sub : subscriptions)
+    if (!visited.contains(op))
     {
-      result.addAll(findRoots(sub.getTarget()));
+      visited.add(op);
+      Collection < LogicalSubscription > subscriptions = op.getSubscriptions();
+      if (subscriptions.isEmpty())
+      {
+        return Collections.singleton(op);
+      }
+      for (LogicalSubscription sub : subscriptions)
+      {
+        result.addAll(findRoots(sub.getTarget(), visited));
+      }
     }
     return result;
   }
@@ -186,6 +195,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     }
     if (isView)
     {
+      nameStr = name.image;
       DataDictionary dd = DataDictionary.getInstance();
       if (dd.containsView(nameStr))
       {
@@ -200,10 +210,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
       //to top operator of the view
       op = dd.getView(nameStr);
     }
-    System.out.println(nameStr);
-        System.out.println(op);
-    namedOpParameters.put(nameStr, parameters);
-    namedOps.put(nameStr, op);
+    namedOpParameters.put(nameStr.toUpperCase(), parameters);
+    namedOps.put(nameStr.toUpperCase(), op);
   }
 
   static final public ILogicalOperator operator(Map < String, ILogicalOperator > namedOps) throws ParseException {
