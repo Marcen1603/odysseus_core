@@ -26,41 +26,23 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:#EditorContext?after=additions">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
+               label="Run Query"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.commands.RunQueryCommand"
             id="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
             name="Run Query">
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="isQryFile">
-         <with
-               variable="selection">
-            <iterate
-                  ifEmpty="false"
-                  operator="or">
-               <instanceof
-                     value="org.eclipse.core.resources.IFile">
-               </instanceof>
-            </iterate>
-         </with>
-      </definition>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.commands.RunQueryCommand"
-            commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery">
-         <activeWhen>
-            <reference
-                  definitionId="isQryFile">
-            </reference>
-         </activeWhen>
-      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

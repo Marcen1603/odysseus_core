@@ -12,8 +12,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.part.FileEditorInput;
 
+import de.uniol.inf.is.odysseus.rcp.editor.text.editor.SimpleEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
@@ -28,39 +31,48 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			Object obj = structuredSelection.getFirstElement();
 
 			if (obj instanceof IFile) {
-
-				try {
-					// Datei öffnen
-					IFile file = (IFile) obj;
-					if (!file.isSynchronized(IResource.DEPTH_ZERO))
-						file.refreshLocal(IResource.DEPTH_ZERO, null);
-
-					// Datei einlesen
-					ArrayList<String> lines = new ArrayList<String>();
-					BufferedReader br = new BufferedReader( new InputStreamReader(file.getContents()));
-					String line = br.readLine();
-					while( line != null ) {
-						lines.add(line);
-						line = br.readLine();
-					}
-					br.close();
-					
-					// Erst Text testen
-					QueryTextParser parser = new QueryTextParser();
-					parser.parse(lines.toArray(new String[lines.size()]), true);
-					
-					// Dann ausführen
-					parser = new QueryTextParser();
-					parser.parse(lines.toArray(new String[lines.size()]), false);
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					new ExceptionWindow(ex);
-				}
-			} else {
-				System.out.println("selection is not from type IFile: " + obj.getClass().getName());
-			}
+				run((IFile)obj);
+			} 
 		}
+		
+		// Check if we have an active Editor
+		IEditorPart part = HandlerUtil.getActiveEditor(event);
+		if( part instanceof SimpleEditor ) {
+			SimpleEditor editor = (SimpleEditor)part;
+			FileEditorInput input = (FileEditorInput)editor.getEditorInput();
+			run(input.getFile());
+		}
+		
 		return null;
+	}
+	
+	private void run( IFile queryFile ) {
+		try {
+			// Datei öffnen
+			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
+				queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
+
+			// Datei einlesen
+			ArrayList<String> lines = new ArrayList<String>();
+			BufferedReader br = new BufferedReader( new InputStreamReader(queryFile.getContents()));
+			String line = br.readLine();
+			while( line != null ) {
+				lines.add(line);
+				line = br.readLine();
+			}
+			br.close();
+			
+			// Erst Text testen
+			QueryTextParser parser = new QueryTextParser();
+			parser.parse(lines.toArray(new String[lines.size()]), true);
+			
+			// Dann ausführen
+			parser = new QueryTextParser();
+			parser.parse(lines.toArray(new String[lines.size()]), false);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			new ExceptionWindow(ex);
+		}
 	}
 }
