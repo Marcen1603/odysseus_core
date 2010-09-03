@@ -71,6 +71,22 @@ public abstract class AbstractInventory implements IRuleFlow {
 		}
 	}
 
+	public void removeRule(IRule<?, ?> rule, IRuleFlowGroup group){
+		if(this.ruleBase.containsKey(group)){
+			if(this.ruleBase.get(group).contains(rule)){
+				if(this.ruleBase.get(group).remove(rule)){
+					LoggerSystem.printlog(Accuracy.DEBUG, "Rule removed - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+				}else{
+					LoggerSystem.printlog(Accuracy.WARN, "Removing rule \"" + rule + "\" failed!");
+				}
+			}else{
+				LoggerSystem.printlog(Accuracy.WARN, "Unable to remove rule \"" + rule + "\", because it does not exists in the inventory!");				
+			}
+		}else{
+			LoggerSystem.printlog(Accuracy.WARN, "Unable to remove rule \"" + rule + "\", because the given group does not exists in the inventory!");
+		}		
+	}
+	
 	@Override
 	public Iterator<IRuleFlowGroup> iterator() {
 		return workFlow.iterator();
