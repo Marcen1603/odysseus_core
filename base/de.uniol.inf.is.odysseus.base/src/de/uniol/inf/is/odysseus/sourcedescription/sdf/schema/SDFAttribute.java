@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
@@ -33,7 +33,7 @@ public class SDFAttribute extends SDFSchemaElement implements
 	/**
 	 * used for measurement values
 	 */
-	private ArrayList<?> covariance;
+	private List<?> covariance;
 
 	private static final long serialVersionUID = -5128455072793206061L;
 
@@ -241,11 +241,11 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return getQualName();
 	}
 
-	public void setCovariance(ArrayList<?> cov) {
+	public void setCovariance(List<?> cov) {
 		this.covariance = cov;
 	}
 
-	public ArrayList<?> getCovariance() {
+	public List<?> getCovariance() {
 		return this.covariance;
 	}
 
