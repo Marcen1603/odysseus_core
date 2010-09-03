@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata.factory;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -34,7 +34,7 @@ public class ObjectTrackingMetadataFactory extends AbstractMetadataUpdater<Objec
 		int counter = 0;
 		for(SDFAttribute attr: this.schema){
 			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
-				ArrayList covariance = ((SDFAttribute)attr).getCovariance();
+				List covariance = ((SDFAttribute)attr).getCovariance();
 				if(cov == null){
 					cov = new double[covariance.size()][covariance.size()];
 				}
