@@ -110,7 +110,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
     {
 
       // get covariance list out of attribute
-      ArrayList<?> covarianceList = mAttr.getCovariance();
+      List<?> covarianceList = mAttr.getCovariance();
 
       // initialize current matrix row with covariance list
       for (int i = 0; i < covarianceList.size(); ++i)
