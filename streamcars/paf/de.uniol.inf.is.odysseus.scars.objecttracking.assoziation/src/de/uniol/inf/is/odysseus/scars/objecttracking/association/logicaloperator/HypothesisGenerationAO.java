@@ -52,7 +52,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     SchemaHelper helper = null;
 
     // copy scanned Objects
-    helper = new SchemaHelper(((SDFAttributeListExtended) this.getSubscribedToSource(LEFT).getSchema().clone()));
+    helper = new SchemaHelper(this.getSubscribedToSource(LEFT).getSchema().clone());
     SDFAttribute scannedObjects = helper.getAttribute(this.newObjListPath).clone();
     // set new list name
     scannedObjects.setAttributeName(SCANNED_OBJECTS_NAME);
@@ -62,7 +62,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     SDFAttribute timestamp = helper.getAttribute(timeStampName);
 
     // copy scanned Objects
-    helper = new SchemaHelper(((SDFAttributeListExtended) this.getSubscribedToSource(RIGHT).getSchema().clone()));
+    helper = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema().clone());
     SDFAttribute predictedObjects = helper.getAttribute(this.oldObjListPath).clone();
     // set new list name
     predictedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
