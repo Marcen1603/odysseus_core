@@ -59,7 +59,7 @@ public class FilterGainPOTest<K> {
 		
 		double[][] gain = { {0.2,0.2}, {0.1,0.4}};
 		
-		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,5);
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, null,5);
 
 		// the expected tuple
 

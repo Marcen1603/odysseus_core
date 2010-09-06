@@ -123,7 +123,7 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 		
 		Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 		
-		correctStateEstimateFunction.compute(scannedTupleIndexPath, predictedTupleIndexPath );
+		correctStateEstimateFunction.compute(scannedTupleIndexPath, predictedTupleIndexPath, null );
 	
 		assertEquals(expectedTuple,measurementTuple);
 	

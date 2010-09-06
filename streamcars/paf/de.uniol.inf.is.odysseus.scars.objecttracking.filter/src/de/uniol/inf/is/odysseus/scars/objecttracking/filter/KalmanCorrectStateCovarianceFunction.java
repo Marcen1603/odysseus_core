@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
+
 public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConnectionContainer & IGain> extends AbstractMetaDataUpdateFunction<K> {
 	
 	
@@ -22,11 +24,11 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConn
 	
 	public KalmanCorrectStateCovarianceFunction(KalmanCorrectStateCovarianceFunction<K> copy) {
 
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 		
 	}
 	
-	public KalmanCorrectStateCovarianceFunction(HashMap<Integer, Object> parameters) {
+	public KalmanCorrectStateCovarianceFunction(HashMap<Enum, Object> parameters) {
 		this.setParameters(parameters);
 	}
 	
@@ -35,7 +37,7 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConn
 	/**
 	 * This method computes the new state covariance
 	 */
-	public void compute(Connection connected, MVRelationalTuple<K> tuple) {
+	public void compute(Connection connected, MVRelationalTuple<K> tuple, HashMap<Enum, Object> parameters) {
 		
 	
 		TupleHelper tHelper = new TupleHelper(tuple);
@@ -45,8 +47,18 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConn
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
 			
 		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
-			
-		double[][] gain = oldTuple.getMetadata().getGain();		
+		
+		double[][] gain = null;
+		
+		// check if there is a gain in the parameters
+		if (parameters != null) {
+			if (parameters.containsKey(Parameters.Gain)) {
+				gain = (double[][]) parameters.get(Parameters.Gain);
+			}
+		}  else {
+			gain = oldTuple.getMetadata().getGain();
+		}
+		
 		
 		double[][] result;
 		

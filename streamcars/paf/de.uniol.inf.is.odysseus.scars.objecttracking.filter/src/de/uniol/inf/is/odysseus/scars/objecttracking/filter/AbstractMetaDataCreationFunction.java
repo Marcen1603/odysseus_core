@@ -17,18 +17,18 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
  */
 public abstract class AbstractMetaDataCreationFunction<M extends IGain & IProbability> {
 
-	private HashMap<Integer, Object> parameters;
+	private HashMap<Enum, Object> parameters;
 
 	public AbstractMetaDataCreationFunction() {
-		parameters = new HashMap<Integer, Object>();
+		parameters = new HashMap<Enum, Object>();
 	}
 
-	public AbstractMetaDataCreationFunction(HashMap<Integer, Object> parameters) {
+	public AbstractMetaDataCreationFunction(HashMap<Enum, Object> parameters) {
 		this.setParameters(parameters);
 	}
 
 	public AbstractMetaDataCreationFunction(AbstractMetaDataCreationFunction<M> copy) {
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
 	}
 
 	public abstract AbstractMetaDataCreationFunction<M> clone();
@@ -38,20 +38,20 @@ public abstract class AbstractMetaDataCreationFunction<M extends IGain & IProbab
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(Connection connected, MVRelationalTuple<M> completeTuple);
+	public abstract void compute(Connection connected, MVRelationalTuple<M> completeTuple, HashMap<Enum, Object> hashMap);
 
 	/**
 	 * @param parameters
 	 *            the parameters needed for computation
 	 */
-	public void setParameters(HashMap<Integer, Object> parameters) {
+	public void setParameters(HashMap<Enum, Object> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
 	 * @return the parameters
 	 */
-	public HashMap<Integer, Object> getParameters() {
+	public HashMap<Enum, Object> getParameters() {
 
 		return parameters;
 	}
@@ -60,7 +60,7 @@ public abstract class AbstractMetaDataCreationFunction<M extends IGain & IProbab
 	 * @param parameters
 	 *            the parameters to set
 	 */
-	public void addParameter(Integer key, Object value) {
+	public void addParameter(Enum key, Object value) {
 		this.parameters.put(key, value);
 	}
 

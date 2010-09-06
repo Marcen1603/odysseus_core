@@ -28,7 +28,7 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   }
 
 	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
-    updateMetaDataFunction.compute(connected, (MVRelationalTuple<M>)tuple);
+    updateMetaDataFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
   }
 
   

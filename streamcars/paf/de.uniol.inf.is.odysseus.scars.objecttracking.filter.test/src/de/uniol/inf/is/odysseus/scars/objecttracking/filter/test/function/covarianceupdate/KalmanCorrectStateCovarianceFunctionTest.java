@@ -92,7 +92,7 @@ public class KalmanCorrectStateCovarianceFunctionTest<M extends IProbability & I
 		
 		Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 		
-		covarianceFunction.compute(connected, measurementTuple);
+		covarianceFunction.compute(connected, measurementTuple, null);
 		
 		assertEquals(expectedTuple,measurementTuple);
 		

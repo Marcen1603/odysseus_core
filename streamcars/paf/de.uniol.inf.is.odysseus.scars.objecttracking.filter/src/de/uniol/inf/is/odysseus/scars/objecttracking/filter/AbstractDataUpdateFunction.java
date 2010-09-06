@@ -24,18 +24,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  */
 public abstract class AbstractDataUpdateFunction<M extends IProbability & IConnectionContainer> {
 	
-	private HashMap<Integer, Object> parameters;
+	private HashMap<Enum, Object> parameters;
 	
 	public AbstractDataUpdateFunction() {
-		parameters = new HashMap<Integer, Object>();
+		parameters = new HashMap<Enum, Object>();
 	}
 	
-	public AbstractDataUpdateFunction(HashMap<Integer,Object> parameters ) {
+	public AbstractDataUpdateFunction(HashMap<Enum,Object> parameters ) {
 		this.setParameters(parameters);
 	}
 	
 	public AbstractDataUpdateFunction(AbstractDataUpdateFunction<M> copy ) {
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 	}
 	
 	public abstract AbstractDataUpdateFunction<M> clone();
@@ -47,7 +47,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * @return Object the result of the computation
 	 */
 	public abstract void compute(TupleIndexPath scannedObjectTupleIndex,
-			TupleIndexPath predictedObjectTupleIndex);
+			TupleIndexPath predictedObjectTupleIndex, HashMap<Enum, Object> parameters);
 
 	public double[] getMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath) {
 	    
@@ -112,14 +112,14 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	/**
 	 * @param parameters the parameters needed for computation
 	 */
-	public void setParameters(HashMap<Integer, Object> parameters) { 
+	public void setParameters(HashMap<Enum, Object> parameters) { 
 	this.parameters = parameters;
 	}
 	
 	/**
 	 * @return the parameters
 	 */
-	public HashMap<Integer, Object> getParameters() {
+	public HashMap<Enum, Object> getParameters() {
 		
 		return parameters;
 	} 
@@ -127,7 +127,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void addParameter(Integer key, Object value) {
+	public void addParameter(Enum key, Object value) {
 		this.parameters.put(key, value);
 	}
 

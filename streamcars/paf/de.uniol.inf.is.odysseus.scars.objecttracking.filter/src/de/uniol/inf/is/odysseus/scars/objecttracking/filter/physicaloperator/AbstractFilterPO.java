@@ -19,7 +19,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
   private String newObjListPath;
 
   // optional parameters for the filter function. Not used right now
-  private HashMap<Integer, Object> parameters;
+  private HashMap<Enum, Object> parameters;
 
   public AbstractFilterPO() {
 	 super(); 
@@ -29,7 +29,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	  super(copy);
 	  this.setNewObjListPath(new String(copy.getNewObjListPath()));
 	  this.setOldObjListPath(new String(copy.getOldObjListPath()));
-	  this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+	  this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 	  this.havingData= copy.havingData;
   }
   
@@ -71,11 +71,11 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
     this.newObjListPath = newObjListPath;
   }
   
-  public HashMap<Integer, Object> getParameters() {
+  public HashMap<Enum, Object> getParameters() {
 	return parameters;
   }
 
-  public void setParameters(HashMap<Integer, Object> parameters) {
+  public void setParameters(HashMap<Enum, Object> parameters) {
     this.parameters = parameters;
   }
 }

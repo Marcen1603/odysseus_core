@@ -115,7 +115,7 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 	private void compute(TupleIndexPath scannedObjectTupleIndex,
 			TupleIndexPath predictedObjectTupleIndex) {
 	this.dataUpdateFunction.compute(scannedObjectTupleIndex,
-			predictedObjectTupleIndex);
+			predictedObjectTupleIndex, this.getParameters());
 	}
 
 

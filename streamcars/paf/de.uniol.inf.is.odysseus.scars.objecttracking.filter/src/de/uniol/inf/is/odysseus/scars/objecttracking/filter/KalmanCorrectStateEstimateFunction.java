@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
-
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 
 public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnectionContainer & IGain> extends AbstractDataUpdateFunction<M> {
 		
@@ -29,11 +29,11 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		
 	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction<M> copy) {
 		super(copy);
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 			
 	}
 		
-	public KalmanCorrectStateEstimateFunction(HashMap<Integer, Object> parameters) {
+	public KalmanCorrectStateEstimateFunction(HashMap<Enum, Object> parameters) {
 			
 		this.setParameters(parameters);
 	}
@@ -42,10 +42,21 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 	@SuppressWarnings("unchecked")
 	@Override
 	public void compute(TupleIndexPath scannedObjectTupleIndex,
-			TupleIndexPath predictedObjectTupleIndex) {
+			TupleIndexPath predictedObjectTupleIndex, HashMap<Enum, Object> parameters) {
 	
 		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>) predictedObjectTupleIndex.getTupleObject();
-		double[][] gain = oldTuple.getMetadata().getGain();
+		
+		double[][] gain = null;
+		
+		// check if there is a gain in the parameters
+		if (parameters != null) {
+			if (parameters.containsKey(Parameters.Gain)) {
+				gain = (double[][]) parameters.get(Parameters.Gain);
+			}
+		}  else {
+			gain = oldTuple.getMetadata().getGain();
+		}
+		
 		
 		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>) scannedObjectTupleIndex.getTupleObject();
 		

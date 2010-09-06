@@ -32,7 +32,7 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer & IGain>
 	}
 
 	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
-		metaDataCreationFunction.compute(connected, (MVRelationalTuple<M>)tuple);
+		metaDataCreationFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
 	}
 
 	@Override

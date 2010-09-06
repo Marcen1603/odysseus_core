@@ -26,16 +26,16 @@ public class KalmanGainFunction<M extends IProbability & IGain > extends Abstrac
 
 	public KalmanGainFunction(KalmanGainFunction<M> copy) {
 
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
 
 	}
 
-	public KalmanGainFunction(HashMap<Integer, Object> parameters) {
+	public KalmanGainFunction(HashMap<Enum, Object> parameters) {
 		this.setParameters(parameters);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
+	public void compute(Connection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters) {
 
 		TupleHelper tHelper = new TupleHelper(tuple);
 		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getRightPath());
