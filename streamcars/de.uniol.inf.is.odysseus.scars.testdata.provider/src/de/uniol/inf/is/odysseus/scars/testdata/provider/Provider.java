@@ -110,10 +110,10 @@ public class Provider implements IProvider {
 		MVRelationalTuple<?> scan = createTuple(2);
 		root.setAttribute(0, scan);
 
-		MVRelationalTuple<?> timestamp = createTuple(1);
-		timestamp.setAttribute(0, this.currentTimeStamp);
+//		MVRelationalTuple<?> timestamp = createTuple(1);
+//		timestamp.setAttribute(0, this.currentTimeStamp);
 
-		MVRelationalTuple<?> cars = createTuple(this.numOfCars);
+		MVRelationalTuple<?> cars = createTuple(this.state.size());
 		for (int i = 0; i < this.state.size(); i++) {
 			CarModel cm = this.state.get(i);
 
@@ -170,7 +170,7 @@ public class Provider implements IProvider {
 			cars.setAttribute(i, car);
 		}
 		
-		scan.setAttribute(0, timestamp);
+		scan.setAttribute(0,  this.currentTimeStamp);
 		scan.setAttribute(1, cars);
 		
 		//this.printCarModels();
