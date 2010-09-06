@@ -117,12 +117,6 @@ public class TransactionDetector {
 	 * @return True, if a cycle has been detected, false otherwise
 	 */
 	private boolean goToFollowingOps(ILogicalOperator curNode, int curNodesInPort, BrokerAO currentBroker, int brokerOutPort){
-		if(this.visitedFollowing.contains(curNode)){
-			return false;
-		}
-		else{
-			this.visitedFollowing.add(curNode);
-		}
 		if(curNode instanceof BrokerAO && ((BrokerAO)curNode).getIdentifier().equals(currentBroker.getIdentifier())){
 			// cycle detected
 			BrokerDictionary.getInstance().setReadTypeForPort(currentBroker.getIdentifier(), brokerOutPort, ReadTransaction.Cyclic);
@@ -146,6 +140,13 @@ public class TransactionDetector {
 			return true;
 		}
 		else{
+			if(this.visitedFollowing.contains(curNode)){
+				return false;
+			}
+			else{
+				this.visitedFollowing.add(curNode);
+			}
+			
 			boolean cycleDetected = false;
 			for(LogicalSubscription sub: curNode.getSubscriptions()){
 				cycleDetected = cycleDetected || goToFollowingOps(sub.getTarget(), sub.getSinkInPort(), currentBroker, brokerOutPort);
@@ -155,12 +156,7 @@ public class TransactionDetector {
 	}
 	
 	private boolean goToPrecedingOps(ILogicalOperator curNode, int curNodesOutPort, BrokerAO currentBroker, int brokerInPort){
-		if(this.visitedPreceeding.contains(curNode)){
-			return false;
-		}
-		else{
-			this.visitedPreceeding.add(curNode);
-		}
+
 		if(curNode instanceof BrokerAO && ((BrokerAO)curNode).getIdentifier().equals(currentBroker.getIdentifier())){
 			// cycle detected
 			BrokerDictionary.getInstance().setWriteTypeForPort(currentBroker.getIdentifier(), brokerInPort, WriteTransaction.Cyclic);
@@ -184,12 +180,13 @@ public class TransactionDetector {
 			
 			return true;
 		}
-		// Hack: Fall mehrere Broker im Plan vorkommen, kann es passieren, dass man von einem Broker in den Zyklus eines anderen Brokers
-		// läuft. In diesem Fall entsteht ein StackOverflow.
-		// Die folgende Bedingung verhindert das, erlaubt es aber auch nicht mehr, dass ein Zyklus aus mehreren Brokern besteht (braucht man das?)
-		// Folgendes ist also nicht mehr möglich:
-		// Broker(a) <- Op <- Op <- Broker(b) <- Op <- Op <- Broker(a)
 		else{
+			if(this.visitedPreceeding.contains(curNode)){
+				return false;
+			}
+			else{
+				this.visitedPreceeding.add(curNode);
+			}
 			boolean cycleDetected = false;
 			for(LogicalSubscription sub: curNode.getSubscribedToSource()){
 				cycleDetected = cycleDetected || goToPrecedingOps(sub.getTarget(), sub.getSourceOutPort(), currentBroker, brokerInPort);
