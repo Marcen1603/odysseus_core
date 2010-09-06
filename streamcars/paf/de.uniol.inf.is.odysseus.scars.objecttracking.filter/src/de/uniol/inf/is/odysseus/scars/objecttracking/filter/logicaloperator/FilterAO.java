@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
@@ -12,12 +13,17 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
   private static final long serialVersionUID = 1L;
   private String functionID;
 
-  // path to new and old objects
+  private Vector<Object> functions;
+  
+
+
+// path to new and old objects
   private String oldObjListPath;
   private String newObjListPath;
 
+  
   // Optional parameters for the Filter function. Not used right now.
-  private HashMap<Integer, Object> parameters;
+  private HashMap<Enum, Object> parameters;
 
   
   public FilterAO() {
@@ -26,8 +32,10 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
 
   public FilterAO(FilterAO<M> copy) {
     super(copy);
+    this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
     this.oldObjListPath = copy.getOldObjListPath();
     this.newObjListPath = copy.getNewObjListPath();
+    this.functions = (Vector<Object>) copy.getFunctions().clone();
   }
 
   
@@ -43,6 +51,14 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
   
   
   // Getter & Setter
+  
+  public Vector<Object> getFunctions() {
+		return functions;
+	}
+
+  public void setFunctions(Vector<Object> functions) {
+		this.functions = functions;
+	}
   
   public String getOldObjListPath() {
     return oldObjListPath;
@@ -68,11 +84,11 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
     this.functionID = functionID;
   }
 
-  public HashMap<Integer, Object> getParameters() {
+  public HashMap<Enum, Object> getParameters() {
     return parameters;
   }
   
-  public void setParameters(HashMap<Integer, Object> parameters) {
+  public void setParameters(HashMap<Enum, Object> parameters) {
     this.parameters = parameters;
   }
 }

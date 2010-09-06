@@ -18,7 +18,7 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 	private String oldListName;
 	
 	// Optional parameters for the Filter function. Not used right now.
-	private HashMap<Integer, Object> parameters;
+	private HashMap<Enum, Object> parameters;
 	
 	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
 	
@@ -27,7 +27,7 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 		super();
 		
 		// Standardwerte (Timo M)
-		parameters = new HashMap<Integer, Object>();
+		parameters = new HashMap<Enum, Object>();
 		metaDataCreationFunction = new KalmanGainFunction<M>();
 		functionID = "KALMAN";
 	}
@@ -35,7 +35,7 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 	public FilterGainAO(FilterGainAO<M> copy) {
 		super(copy);
 		this.setFunctionID(new String(copy.getFunctionID()));
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 		setNewListName(copy.getNewListName());
 		setOldListName(copy.getOldListName());
@@ -62,11 +62,11 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 		this.functionID = functionID;
 	}
 
-	public HashMap<Integer, Object> getParameters() {
+	public HashMap<Enum, Object> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(HashMap<Integer, Object> parameters) {
+	public void setParameters(HashMap<Enum, Object> parameters) {
 		this.parameters = parameters;
 	}
 

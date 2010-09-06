@@ -18,21 +18,21 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 	private String functionID;
 	
 	// Optional parameters for the Filter function. Not used right now.
-	private HashMap<Integer, Object> parameters;
+	private HashMap<Enum, Object> parameters;
 	
 	private AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction;
 	
 	public FilterCovarianceUpdateAO()
 	{
 		super();
-		parameters = new HashMap<Integer, Object>();
+		parameters = new HashMap<Enum, Object>();
 		metaDataUpdateFunction = new KalmanCorrectStateCovarianceFunction<M>();
 	}
 	
 	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {
 		super(copy);
 		this.setFunctionID(new String(copy.getFunctionID()));
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 		this.setMetaDataUpdateFunction(copy.getMetaDataUpdateFunction().clone());
 		
 	}
@@ -59,11 +59,11 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 		this.functionID = functionID;
 	}
 
-	public HashMap<Integer, Object> getParameters() {
+	public HashMap<Enum, Object> getParameters() {
 		return parameters;
 	}
 	
-	public void setParameters(HashMap<Integer, Object> parameters) {
+	public void setParameters(HashMap<Enum, Object> parameters) {
 		this.parameters = parameters;
 	}
 

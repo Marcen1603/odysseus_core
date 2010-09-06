@@ -25,7 +25,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	private String newObjListPath;
 	
 	// Optional parameters for the Filter function. Not used right now.
-	private HashMap<Integer, Object> parameters;
+	private HashMap<Enum, Object> parameters;
 
 	private AbstractDataUpdateFunction<M>  dataUpdateFunction;
 	
@@ -34,7 +34,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	{
 		super();
 		functionID = "KALMAN";
-		parameters = new HashMap<Integer, Object>();
+		parameters = new HashMap<Enum, Object>();
 		dataUpdateFunction = new KalmanCorrectStateEstimateFunction<M>();
 	}
 	
@@ -43,7 +43,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.setOldObjListPath(new String(copy.getOldObjListPath()));
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
 		this.setFunctionID(new String(copy.getFunctionID()));
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 		this.setDataUpdateFunction(copy.getDataUpdateFunction().clone());
 	}
 
@@ -94,11 +94,11 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.functionID = functionID;
 	}
 
-	public HashMap<Integer, Object> getParameters() {
+	public HashMap<Enum, Object> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(HashMap<Integer, Object> parameters) {
+	public void setParameters(HashMap<Enum, Object> parameters) {
 		this.parameters = parameters;
 	}
 
