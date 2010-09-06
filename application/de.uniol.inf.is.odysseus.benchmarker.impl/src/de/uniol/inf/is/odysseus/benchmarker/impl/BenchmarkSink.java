@@ -53,7 +53,10 @@ public class BenchmarkSink<M extends ILatency> extends
 			int port, boolean isReadOnly) {
 		if (resultsToRead == -1 || result.size() < resultsToRead) {
 			addToResult(object);
-//			System.out.println("added result no " + i++);
+//			if(i % 20 == 0){
+//				System.out.println("added result no " + i);
+//			}
+//			i++;
 		} else {
 			lock.lock();
 			inputDone();

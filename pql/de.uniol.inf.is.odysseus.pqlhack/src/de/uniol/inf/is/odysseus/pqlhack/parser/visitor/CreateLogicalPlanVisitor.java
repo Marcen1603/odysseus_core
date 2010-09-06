@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoi
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingSelectAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.PunctuationAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.SchemaConvertAO;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
@@ -71,6 +72,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPunctuationOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalNestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalProjectionOp;
@@ -1699,6 +1701,33 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
 
 		return dataList;
+	}
+
+	@Override
+	public Object visit(ASTPunctuationOp node, Object data) {
+		// TODO Auto-generated method stub
+		PunctuationAO puncOp = new PunctuationAO();
+		
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList)data).get(0));
+		
+		// the first child is the input operator;
+		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData));
+		AbstractLogicalOperator inputForPunctuation = (AbstractLogicalOperator) returnData.get(1);
+		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
+		puncOp.subscribeToSource(inputForPunctuation, 0, sourceOutPort, inputForPunctuation.getOutputSchema());
+
+		
+		// the second child is the number of elements
+		// to be transferred before a punctuation is
+		// generated.
+		int noElems = Integer.parseInt(((ASTNumber)node.jjtGetChild(1)).getValue());
+	
+		puncOp.setPunctuationCount(noElems);
+		
+		((ArrayList)data).add(puncOp);
+		((ArrayList)data).add(new Integer(0));
+		return data;
 	}
 
 	@Override

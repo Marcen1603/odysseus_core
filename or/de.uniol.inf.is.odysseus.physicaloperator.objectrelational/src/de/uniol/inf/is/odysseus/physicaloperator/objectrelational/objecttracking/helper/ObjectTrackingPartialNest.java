@@ -79,4 +79,8 @@ public class ObjectTrackingPartialNest<M extends ObjectTrackingMetadata<Object>>
 	public Integer getSize() {
 		return partial.size();
 	}
+	
+	public String toString(){
+		return this.getMetadata().getStreamTime().toString() + " Size: " + this.getSize();
+	}
 }

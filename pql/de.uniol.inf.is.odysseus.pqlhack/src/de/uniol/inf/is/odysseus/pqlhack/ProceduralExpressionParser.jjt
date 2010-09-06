@@ -56,6 +56,7 @@ TOKEN : /* Keywords */ {
 |	<K_PLAN: "PLAN">
 |   <K_PREDICTION: "PREDICTION">
 |	<K_PROJECTION: "PROJECTION">
+|	<K_PUNCTUATION: "PUNCTUATION">
 |   <K_QUEUE: "QUEUE">
 |   <K_RELATIONAL_PROJECTION: "RPROJECTION">
 |   <K_RELATIONAL_SELECTION: "RSELECTION">
@@ -148,6 +149,7 @@ void AlgebraOp():{}{
 	FilterGainOp() |
 	FilterEstimateOp() |
 	FilterCovarianceOp() |
+	PunctuationOp()|
 	BrokerInitOp() 
 }
 
@@ -171,6 +173,10 @@ void BenchmarkOpExt() : {}{
 
 void BufferOp(): {}{
 	<K_BUFFER>"(" AlgebraOp() "," Identifier() ")"
+}
+
+void PunctuationOp(): {} {
+	<K_PUNCTUATION>"(" AlgebraOp() "," Number() ")"
 }
 
 void ProjectionOp(): {}{

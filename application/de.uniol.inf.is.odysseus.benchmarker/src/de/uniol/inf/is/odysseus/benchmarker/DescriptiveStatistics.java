@@ -163,6 +163,8 @@ public class DescriptiveStatistics {
 		str += "Standard deviation: " + this.getStandardDeviation() + "\n";
 		str += "Variance: " + this.getVariance() + "\n";
 		str += "95 percentile: " + this.getPercentile(95) + "\n";
+		str += "90 percentile: " + this.getPercentile(90) + "\n";
+		str += "75 percentile: " + this.getPercentile(75) + "\n";
 		str += "50 percentile: " + this.getPercentile(50);
 		return str;
 	}

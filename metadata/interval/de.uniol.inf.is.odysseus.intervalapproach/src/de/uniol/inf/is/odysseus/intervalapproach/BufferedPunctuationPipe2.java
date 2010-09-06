@@ -90,9 +90,9 @@ public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M ex
 //			System.out.println("Transfer Element: " + v++);
 			
 			transfer(element);
+			v++;
 			if(v % 5 == 0){
 				sendPunctuation(element.getMetadata().getStart());
-				v++;
 			}
 			if (isDone()) {
 				propagateDone();
@@ -132,10 +132,10 @@ public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M ex
 	@Override
 	protected void process_next(T object, int port) {
 		synchronized (this.buffer) {
-//			i++;
-//			if(i % 1 == 0){
-//				LoggerHelper.getInstance(this.getName()).debug("Buffer size: " + this.size());
-//			}
+			i++;
+			if(i % 20 == 0){
+				LoggerHelper.getInstance(this.getName()).debug("Buffer size: " + this.size());
+			}
 			this.buffer.add(object);
 		}
 	}

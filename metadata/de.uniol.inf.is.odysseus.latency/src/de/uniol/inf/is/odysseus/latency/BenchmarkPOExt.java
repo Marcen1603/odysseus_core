@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.benchmarker.impl;
+package de.uniol.inf.is.odysseus.latency;
 
 import java.util.LinkedList;
 
@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
-public class BenchmarkPOExt<R extends IMetaAttributeContainer<?>> extends
+public class BenchmarkPOExt<R extends IMetaAttributeContainer<? extends ILatency>> extends
 		AbstractPipe<R, R> {
 
 	final double selectivity;
@@ -35,10 +35,17 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<?>> extends
 		this.selectivity = benchmarkPO.selectivity;
 	}
 
+	
+	long last = 0;
 	@Override
 	protected final void process_next(R object, int port) {
+		long now = System.nanoTime();
+//		System.out.println("next incoming in BPO: " + (now - last) + " with lat start: " + object.getMetadata().getLatencyStart());
+		this.last = now;
 		// elements will be processed after punctuation arrived
 		this.buffer.addLast(object);
+//		long end = System.nanoTime() + this.processingTime;
+//		this.processData(end);
 	}
 	
 
@@ -79,15 +86,33 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<?>> extends
 		return new BenchmarkPOExt(this);
 	}
 
+	private void processData(long endTime){
+		
+		waitProcessingTime(endTime);
+		long latencyStart = 0;
+		if(!buffer.isEmpty()){
+			latencyStart = buffer.peekFirst().getMetadata().getLatencyStart();
+		}
+		while(!buffer.isEmpty()){
+			R next = buffer.pollFirst();
+//			double addNSSec = (double)next.getMetadata().getLatencyStart() - (double)latencyStart;
+//			double addSec = addNSSec/1000000;
+//			System.out.println("Will add " + addNSSec);
+			next.getMetadata().setLatencyStart(latencyStart);
+			transfer(next);
+		}
+	}
+	
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
+		long now = System.nanoTime();
+//		System.out.println("next punc in BPO: " + (now - last));
+		this.last = now;
+		
 		long end = System.nanoTime() + this.processingTime;
 		
 		if (selectivity == 1) {
-			waitProcessingTime(end);
-			while(!buffer.isEmpty()){
-				transfer(buffer.pollFirst());
-			}
+			this.processData(end);
 		} else {
 
 			throw new RuntimeException("Not implemented yet.");

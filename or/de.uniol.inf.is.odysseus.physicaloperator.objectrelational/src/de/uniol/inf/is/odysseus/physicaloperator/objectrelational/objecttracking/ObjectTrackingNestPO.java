@@ -48,6 +48,14 @@ public class ObjectTrackingNestPO
 	private SDFAttributeList outputSchema;
 	private SDFAttributeList groupingAttributes;
 	private SDFAttribute nestingAttribute;
+	
+	public long processingTime = 0;
+	public long elemCounter = 0;
+	public long start = 0;
+	public boolean started = false;
+	public long end = 0;
+	public boolean transferred = false;
+	public long last = 0;
 
 	private int maxIdOfKeyMap = 0;
 	private int groupingAttributesPos[];
@@ -164,7 +172,7 @@ public class ObjectTrackingNestPO
 	private PointInTime process(
 		MVRelationalTuple<M> incomingTuple,
 		int port
-	) {			
+	) {	
 		ObjectTrackingNestTISweepArea<M> sa;
 		PointInTime minStart;
 		PointInTime incomingTupleStart;
@@ -281,7 +289,15 @@ public class ObjectTrackingNestPO
 	final protected void process_next(
 		MVRelationalTuple<M> incomingTuple, 
 		int port
-	) {		
+	) {	
+		long now = System.nanoTime();
+//		System.out.println("incoming nest elem: " + (now - last) + " with lat start " + incomingTuple.getMetadata().getLatencyStart());
+		this.last = now;
+		if(!started){
+			this.start = System.nanoTime();
+			this.started = true;
+		}
+		this.elemCounter++;
 		PointInTime minStart;
 		minStart = this.process(incomingTuple, port);
 		
@@ -290,10 +306,14 @@ public class ObjectTrackingNestPO
 		
 		while(it.hasNext()) {
 			MVRelationalTuple<M> tuple = it.next();
+			if(!this.transferred){
+				this.end = System.nanoTime();
+				this.transferred = true;
+			}
 			this.transfer(tuple);
 			it.remove();
 			this.sendPunctuation(tuple.getMetadata().getStart());
-		}	
+		}
 	}	
 
 	/**
@@ -316,6 +336,8 @@ public class ObjectTrackingNestPO
 	    	"ObjectTrackingNestPO done signal: " + 
 	    	System.nanoTime()
 	    );
+		
+		System.out.println("Time from first arrive to first transfer: " + (this.end - this.start));
 		
 		/**
 		 * Evaluates all partials in min-priority order.
@@ -384,16 +406,24 @@ public class ObjectTrackingNestPO
 	 */
 	@Override
     public void processPunctuation(PointInTime timestamp, int port) {
-    	sendPunctuation(timestamp);    
-    	    	
+    	    
+    	long now = System.nanoTime();
+//    	System.out.println("incoming punc: " + (now - last) + " with point in time: " + timestamp.getMainPoint());
+		this.last = now;
+    	long start = System.nanoTime();   	
     	Integer minGroup = g.min();
     	
     	while(minGroup != -1) {
 	    	g.removeLastMin();
 	    	ObjectTrackingNestTISweepArea<M> sa = groups.get(minGroup);
 	    	
+	    	// we need before or equals, since
+	    	// if a punctuation arrives we know
+	    	// that all the elements with timestamp
+	    	// less than or equal to the timestamp
+	    	// of the punctuation have been processed
 	    	Iterator<ObjectTrackingPartialNest<M>> it = 
-	    		sa.extractElementsBefore(timestamp);
+	    		sa.extractElementsStartingBefore(new PointInTime(timestamp.getMainPoint() + 1));
 	    	
 	    	Object[] groupingValues = sa.getGroupingValues();
 	    	
@@ -412,9 +442,19 @@ public class ObjectTrackingNestPO
     	Iterator<MVRelationalTuple<M>> itQ = 
     		q.extractElementsBefore(timestamp);
     	
+    	
+    	long end = System.nanoTime();
+    	this.processingTime += (end - start);
     	while(itQ.hasNext()) {
+    		if(!this.transferred){
+    			this.end = System.nanoTime();
+    			this.transferred = true;
+    		}
     		transfer(itQ.next());
     	}
+
+    	
+    	sendPunctuation(timestamp);
     }
 
     /**

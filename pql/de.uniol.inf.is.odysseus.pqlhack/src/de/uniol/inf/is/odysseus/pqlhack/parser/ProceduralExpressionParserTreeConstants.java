@@ -10,52 +10,53 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTBENCHMARKOP = 4;
   public int JJTBENCHMARKOPEXT = 5;
   public int JJTBUFFEROP = 6;
-  public int JJTPROJECTIONOP = 7;
-  public int JJTPROJECTIONIDENTIFIER = 8;
-  public int JJTRELATIONALPROJECTIONOP = 9;
-  public int JJTSELECTIONOP = 10;
-  public int JJTBROKERINITOP = 11;
-  public int JJTRELATIONALSELECTIONOP = 12;
-  public int JJTRELATIONALJOINOP = 13;
-  public int JJTRELATIONALNESTOP = 14;
-  public int JJTRELATIONALUNNESTOP = 15;
-  public int JJTJOINOP = 16;
-  public int JJTSCHEMACONVERTOP = 17;
-  public int JJTWINDOWOP = 18;
-  public int JJTSLIDINGTIMEWINDOW = 19;
-  public int JJTACCESSOP = 20;
-  public int JJTBROKEROP = 21;
-  public int JJTPREDICTIONASSIGNOP = 22;
-  public int JJTPREDICTIONASSIGNOROP = 23;
-  public int JJTPREDICTIONOP = 24;
-  public int JJTPREDICATE = 25;
-  public int JJTSIMPLEPREDICATE = 26;
-  public int JJTBASICPREDICATE = 27;
-  public int JJTORPREDICATE = 28;
-  public int JJTANDPREDICATE = 29;
-  public int JJTNOTPREDICATE = 30;
-  public int JJTEXPRESSION = 31;
-  public int JJTSIMPLETOKEN = 32;
-  public int JJTFUNCTIONEXPRESSION = 33;
-  public int JJTFUNCTIONNAME = 34;
-  public int JJTNUMBER = 35;
-  public int JJTSTRING = 36;
-  public int JJTVOID = 37;
-  public int JJTIDENTIFIER = 38;
-  public int JJTCOMPAREOPERATOR = 39;
-  public int JJTPREDICTIONDEFINITION = 40;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 41;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 42;
-  public int JJTKEYVALUELIST = 43;
-  public int JJTKEYVALUEPAIR = 44;
-  public int JJTASSOCIATIONGENOP = 45;
-  public int JJTASSOCIATIONEVALOP = 46;
-  public int JJTASSOCIATIONSELOP = 47;
-  public int JJTASSOCIATIONSRCOP = 48;
-  public int JJTEVALUATEOP = 49;
-  public int JJTFILTERGAINOP = 50;
-  public int JJTFILTERESTIMATEOP = 51;
-  public int JJTFILTERCOVARIANCEOP = 52;
+  public int JJTPUNCTUATIONOP = 7;
+  public int JJTPROJECTIONOP = 8;
+  public int JJTPROJECTIONIDENTIFIER = 9;
+  public int JJTRELATIONALPROJECTIONOP = 10;
+  public int JJTSELECTIONOP = 11;
+  public int JJTBROKERINITOP = 12;
+  public int JJTRELATIONALSELECTIONOP = 13;
+  public int JJTRELATIONALJOINOP = 14;
+  public int JJTRELATIONALNESTOP = 15;
+  public int JJTRELATIONALUNNESTOP = 16;
+  public int JJTJOINOP = 17;
+  public int JJTSCHEMACONVERTOP = 18;
+  public int JJTWINDOWOP = 19;
+  public int JJTSLIDINGTIMEWINDOW = 20;
+  public int JJTACCESSOP = 21;
+  public int JJTBROKEROP = 22;
+  public int JJTPREDICTIONASSIGNOP = 23;
+  public int JJTPREDICTIONASSIGNOROP = 24;
+  public int JJTPREDICTIONOP = 25;
+  public int JJTPREDICATE = 26;
+  public int JJTSIMPLEPREDICATE = 27;
+  public int JJTBASICPREDICATE = 28;
+  public int JJTORPREDICATE = 29;
+  public int JJTANDPREDICATE = 30;
+  public int JJTNOTPREDICATE = 31;
+  public int JJTEXPRESSION = 32;
+  public int JJTSIMPLETOKEN = 33;
+  public int JJTFUNCTIONEXPRESSION = 34;
+  public int JJTFUNCTIONNAME = 35;
+  public int JJTNUMBER = 36;
+  public int JJTSTRING = 37;
+  public int JJTVOID = 38;
+  public int JJTIDENTIFIER = 39;
+  public int JJTCOMPAREOPERATOR = 40;
+  public int JJTPREDICTIONDEFINITION = 41;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 42;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 43;
+  public int JJTKEYVALUELIST = 44;
+  public int JJTKEYVALUEPAIR = 45;
+  public int JJTASSOCIATIONGENOP = 46;
+  public int JJTASSOCIATIONEVALOP = 47;
+  public int JJTASSOCIATIONSELOP = 48;
+  public int JJTASSOCIATIONSRCOP = 49;
+  public int JJTEVALUATEOP = 50;
+  public int JJTFILTERGAINOP = 51;
+  public int JJTFILTERESTIMATEOP = 52;
+  public int JJTFILTERCOVARIANCEOP = 53;
 
 
   public String[] jjtNodeName = {
@@ -66,6 +67,7 @@ public interface ProceduralExpressionParserTreeConstants
     "BenchmarkOp",
     "BenchmarkOpExt",
     "BufferOp",
+    "PunctuationOp",
     "ProjectionOp",
     "ProjectionIdentifier",
     "RelationalProjectionOp",
@@ -114,4 +116,4 @@ public interface ProceduralExpressionParserTreeConstants
     "FilterCovarianceOp",
   };
 }
-/* JavaCC - OriginalChecksum=2933408c92617514d04ca33ba6b8ba6b (do not edit this line) */
+/* JavaCC - OriginalChecksum=79da5be63719a057308e86c41157b11d (do not edit this line) */

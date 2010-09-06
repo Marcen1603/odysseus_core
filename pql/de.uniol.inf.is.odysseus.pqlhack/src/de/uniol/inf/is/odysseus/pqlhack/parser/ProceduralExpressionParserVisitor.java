@@ -11,6 +11,7 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTBenchmarkOp node, Object data);
   public Object visit(ASTBenchmarkOpExt node, Object data);
   public Object visit(ASTBufferOp node, Object data);
+  public Object visit(ASTPunctuationOp node, Object data);
   public Object visit(ASTProjectionOp node, Object data);
   public Object visit(ASTProjectionIdentifier node, Object data);
   public Object visit(ASTRelationalProjectionOp node, Object data);
@@ -57,4 +58,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTFilterEstimateOp node, Object data);
   public Object visit(ASTFilterCovarianceOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=5f3d5abebcfdc89287e4655b024dcef4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9a701998ad40fecd3a42ea0832971e8c (do not edit this line) */

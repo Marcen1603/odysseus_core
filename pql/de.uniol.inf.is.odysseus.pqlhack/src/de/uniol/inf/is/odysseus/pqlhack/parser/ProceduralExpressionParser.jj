@@ -60,6 +60,7 @@ TOKEN : /* Keywords */ {
 |	<K_PLAN: "PLAN">
 |   <K_PREDICTION: "PREDICTION">
 |	<K_PROJECTION: "PROJECTION">
+|	<K_PUNCTUATION: "PUNCTUATION">
 |   <K_QUEUE: "QUEUE">
 |   <K_RELATIONAL_PROJECTION: "RPROJECTION">
 |   <K_RELATIONAL_SELECTION: "RSELECTION">
@@ -189,6 +190,7 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	FilterGainOp() |
 	FilterEstimateOp() |
 	FilterCovarianceOp() |
+	PunctuationOp()|
 	BrokerInitOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
@@ -342,6 +344,36 @@ void BufferOp(): {/*@bgen(jjtree) BufferOp */
         try {
 /*@egen*/
 	<K_BUFFER>"(" AlgebraOp() "," Identifier() ")"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void PunctuationOp(): {/*@bgen(jjtree) PunctuationOp */
+  ASTPunctuationOp jjtn000 = new ASTPunctuationOp(JJTPUNCTUATIONOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) PunctuationOp */
+        try {
+/*@egen*/
+	<K_PUNCTUATION>"(" AlgebraOp() "," Number() ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
