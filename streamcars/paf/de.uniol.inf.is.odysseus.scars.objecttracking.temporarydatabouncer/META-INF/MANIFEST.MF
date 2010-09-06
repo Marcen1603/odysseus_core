@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TemporaryDataBouncer
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.temporaryDataBouncer
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.Activator
 Bundle-ActivationPolicy: lazy
