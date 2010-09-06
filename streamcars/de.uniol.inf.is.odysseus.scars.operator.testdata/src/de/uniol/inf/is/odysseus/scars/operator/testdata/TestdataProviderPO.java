@@ -84,6 +84,9 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 
 	@Override
 	public void transferNext() {
+		System.out.println(this.buffer);
+		SDFAttributeList schema = this.provider.getSchema(this.sourceName); 
+		System.out.println(schema);
 		transfer(this.buffer);
 		this.buffer = null;
 		if(this.counter % 5 == 0){
