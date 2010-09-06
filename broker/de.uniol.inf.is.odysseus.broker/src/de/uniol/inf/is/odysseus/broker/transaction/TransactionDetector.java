@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.broker.transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -17,20 +18,29 @@ import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
  * @author Dennis Geesen
  */
 public class TransactionDetector {
+	
+	public ArrayList<ILogicalOperator> visitedPreceeding;
+	public ArrayList<ILogicalOperator> visitedFollowing;
+	
+	public TransactionDetector(){
+		this.visitedPreceeding = new ArrayList<ILogicalOperator>();
+		this.visitedFollowing = new ArrayList<ILogicalOperator>();
+	}
 
 	/**
 	 * Finds new cycles and invokes each broker to reorganize his transaction types according to the new cycles.
 	 *
 	 * @param brokers a list of brokers
 	 */
-	public static void reorganizeTransactions(List<BrokerPO<?>> brokers) {
+	public void reorganizeTransactions(List<BrokerPO<?>> brokers) {
 		LoggerFactory.getLogger(TransactionDetector.class).debug("Reorganizing transactions");
 		int count = 0;
 		for (BrokerPO<?> broker : brokers) {
 			List<CycleSubscription> results = GraphUtils.findCycles(broker); 			
 			count = results.size();			
 			broker.reorganizeTransactions(results);			
-			
+			this.visitedFollowing = new ArrayList<ILogicalOperator>();
+			this.visitedPreceeding = new ArrayList<ILogicalOperator>();
 		}				
 		LoggerFactory.getLogger(TransactionDetector.class).debug("Found " + count + " cycle(s) in physical plan");
 				
@@ -43,7 +53,7 @@ public class TransactionDetector {
 	// plan can be created with cycles. So, there
 	// transactions can already be identified
 	// on the logical level
-	public static void organizeTransactions(BrokerAO broker){
+	public void organizeTransactions(BrokerAO broker){
 		// first check all reading transactions
 		for(LogicalSubscription sub: broker.getSubscriptions()){
 			boolean cycleDetected = goToFollowingOps(sub.getTarget(), sub.getSinkInPort(), broker, sub.getSourceOutPort());
@@ -106,7 +116,13 @@ public class TransactionDetector {
 	 * 
 	 * @return True, if a cycle has been detected, false otherwise
 	 */
-	private static boolean goToFollowingOps(ILogicalOperator curNode, int curNodesInPort, BrokerAO currentBroker, int brokerOutPort){
+	private boolean goToFollowingOps(ILogicalOperator curNode, int curNodesInPort, BrokerAO currentBroker, int brokerOutPort){
+		if(this.visitedFollowing.contains(curNode)){
+			return false;
+		}
+		else{
+			this.visitedFollowing.add(curNode);
+		}
 		if(curNode instanceof BrokerAO && ((BrokerAO)curNode).getIdentifier().equals(currentBroker.getIdentifier())){
 			// cycle detected
 			BrokerDictionary.getInstance().setReadTypeForPort(currentBroker.getIdentifier(), brokerOutPort, ReadTransaction.Cyclic);
@@ -138,7 +154,13 @@ public class TransactionDetector {
 		}
 	}
 	
-	private static boolean goToPrecedingOps(ILogicalOperator curNode, int curNodesOutPort, BrokerAO currentBroker, int brokerInPort){
+	private boolean goToPrecedingOps(ILogicalOperator curNode, int curNodesOutPort, BrokerAO currentBroker, int brokerInPort){
+		if(this.visitedPreceeding.contains(curNode)){
+			return false;
+		}
+		else{
+			this.visitedPreceeding.add(curNode);
+		}
 		if(curNode instanceof BrokerAO && ((BrokerAO)curNode).getIdentifier().equals(currentBroker.getIdentifier())){
 			// cycle detected
 			BrokerDictionary.getInstance().setWriteTypeForPort(currentBroker.getIdentifier(), brokerInPort, WriteTransaction.Cyclic);
@@ -162,6 +184,11 @@ public class TransactionDetector {
 			
 			return true;
 		}
+		// Hack: Fall mehrere Broker im Plan vorkommen, kann es passieren, dass man von einem Broker in den Zyklus eines anderen Brokers
+		// läuft. In diesem Fall entsteht ein StackOverflow.
+		// Die folgende Bedingung verhindert das, erlaubt es aber auch nicht mehr, dass ein Zyklus aus mehreren Brokern besteht (braucht man das?)
+		// Folgendes ist also nicht mehr möglich:
+		// Broker(a) <- Op <- Op <- Broker(b) <- Op <- Op <- Broker(a)
 		else{
 			boolean cycleDetected = false;
 			for(LogicalSubscription sub: curNode.getSubscribedToSource()){

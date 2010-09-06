@@ -111,7 +111,7 @@ public class ProceduralParser implements IQueryParser {
 		// now take all brokers and organize their transactions
 		for(Entry<String, BrokerDictionaryEntry> entry: BrokerDictionary.getInstance().getLogicalPlans().entrySet()){
 			if(this.brokerNames.contains(entry.getValue().getBrokerName())){
-				TransactionDetector.organizeTransactions(entry.getValue().getLogicalPlan());
+				new TransactionDetector().organizeTransactions(entry.getValue().getLogicalPlan());
 			}
 		}
 		
