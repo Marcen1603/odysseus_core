@@ -74,7 +74,7 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 		 * wird (siehe auch Ticket 225).
 		 */
 		if(!this.isDone()){
-			if (System.currentTimeMillis() - lastTime > 20) {
+			if (System.currentTimeMillis() - lastTime > 1000) {
 				this.buffer = data.getScan();
 				return true;
 			}
