@@ -74,6 +74,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.outputSchema = source.outputSchema;
 		this.blocked = new AtomicBoolean();
 		this.blocked.set(source.blocked.get());
+		this.name = source.name;
 		// TODO: Other Members to copy??
 	}
 
