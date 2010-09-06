@@ -233,50 +233,50 @@ public class Provider implements IProvider {
 	@Override
 	public SDFAttributeList getSchema(String sourceName) {
 		SDFAttribute type = new SDFAttribute(sourceName, "type");
-		type.setDatatype(SDFDatatypeFactory.getDatatype("INTEGER"));
+		type.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 
 		SDFAttribute id = new SDFAttribute(sourceName, "id");
-		id.setDatatype(SDFDatatypeFactory.getDatatype("INTEGER"));
+		id.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 
 		SDFAttribute laneid = new SDFAttribute(sourceName, "laneid");
-		laneid.setDatatype(SDFDatatypeFactory.getDatatype("INTEGER"));
+		laneid.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 
 		SDFAttribute posx = new SDFAttribute(sourceName, "posx");
-		posx.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		posx.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posx.setCovariance(Arrays.asList(new Double[] {0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
 
 		SDFAttribute posy = new SDFAttribute(sourceName, "posy");
-		posy.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		posy.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posy.setCovariance(Arrays.asList(new Double[] {0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0}));
 
 		SDFAttribute posz = new SDFAttribute(sourceName, "posz");
-		posz.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		posz.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posz.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0}));
 
 		SDFAttribute roll = new SDFAttribute(sourceName, "roll");
-		roll.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		roll.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		roll.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0}));
 
 		SDFAttribute pitch = new SDFAttribute(sourceName, "pitch");
-		pitch.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		pitch.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		pitch.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0}));
 
 		SDFAttribute heading = new SDFAttribute(sourceName, "heading");
-		heading.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		heading.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		heading.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0}));
 
 		SDFAttribute velocity = new SDFAttribute(sourceName, "velocity");
-		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		velocity.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1}));
 
 		SDFAttribute length = new SDFAttribute(sourceName, "length");
-		length.setDatatype(SDFDatatypeFactory.getDatatype("FLOAT"));
+		length.setDatatype(SDFDatatypeFactory.getDatatype("Float"));
 
 		SDFAttribute width = new SDFAttribute(sourceName, "width");
-		width.setDatatype(SDFDatatypeFactory.getDatatype("FLOAT"));
+		width.setDatatype(SDFDatatypeFactory.getDatatype("Float"));
 
 		SDFAttribute car = new SDFAttribute(sourceName, "car");
-		car.setDatatype(SDFDatatypeFactory.getDatatype("RECORD"));
+		car.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
 		car.addSubattribute(type);
 		car.addSubattribute(id);
 		car.addSubattribute(laneid);
@@ -291,14 +291,14 @@ public class Provider implements IProvider {
 		car.addSubattribute(width);
 
 		SDFAttribute cars = new SDFAttribute(sourceName, "cars");
-		cars.setDatatype(SDFDatatypeFactory.getDatatype("LIST"));
+		cars.setDatatype(SDFDatatypeFactory.getDatatype("List"));
 		cars.addSubattribute(car);
 		
 		SDFAttribute timestamp = new SDFAttribute(sourceName, "timestamp");
 		timestamp.setDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
 
 		SDFAttribute scan = new SDFAttribute(sourceName, "scan");
-		scan.setDatatype(SDFDatatypeFactory.getDatatype("RECORD"));
+		scan.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
 		scan.addSubattribute(timestamp);
 		scan.addSubattribute(cars);
 
