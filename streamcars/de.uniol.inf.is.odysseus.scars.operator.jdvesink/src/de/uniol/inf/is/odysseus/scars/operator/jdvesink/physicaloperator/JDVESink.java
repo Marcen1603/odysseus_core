@@ -28,6 +28,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	
 	public JDVESink(JDVESink<M> sink) {
 		this.port = sink.port;
+		this.server = sink.server;
 	}
 
 	@Override
