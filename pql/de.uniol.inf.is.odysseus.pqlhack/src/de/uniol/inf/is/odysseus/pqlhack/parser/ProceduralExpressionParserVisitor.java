@@ -54,8 +54,9 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTAssociationSelOp node, Object data);
   public Object visit(ASTAssociationSrcOp node, Object data);
   public Object visit(ASTEvaluateOp node, Object data);
+  public Object visit(ASTTmpDataBouncerOp node, Object data);
   public Object visit(ASTFilterGainOp node, Object data);
   public Object visit(ASTFilterEstimateOp node, Object data);
   public Object visit(ASTFilterCovarianceOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=9a701998ad40fecd3a42ea0832971e8c (do not edit this line) */
+/* JavaCC - OriginalChecksum=0a61c68d48c1c0c1cf67d48abba08ef1 (do not edit this line) */
