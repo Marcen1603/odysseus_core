@@ -80,6 +80,8 @@ public class LoginWindow {
 		
 		createButtons(wnd);
 		
+		usernameInput.setFocus();
+		
 		wnd.layout();
 		return wnd;
 	}
