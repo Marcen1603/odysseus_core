@@ -83,6 +83,7 @@ TOKEN : /* Keywords */ {
 |   <K_FILTER_ESTIMATE: "FILTER-ESTIMATE">
 |   <K_FILTER_COVARIANCE: "FILTER-COVARIANCE">
 |   <K_BROKER_INIT: "BROKER-INIT">
+|	<K_TMP_DATA_BOUNCER: "TMP-DATA-BOUNCER">
 }
 
 TOKEN:{
@@ -150,7 +151,8 @@ void AlgebraOp():{}{
 	FilterEstimateOp() |
 	FilterCovarianceOp() |
 	PunctuationOp()|
-	BrokerInitOp() 
+	BrokerInitOp() |
+	TmpDataBouncerOp()
 }
 
 void TestOp(): {}{
@@ -432,6 +434,10 @@ void AssociationSrcOp(): {} {
 
 void EvaluateOp(): {} {
   < K_EVALUATE > "(" AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," Number() ")"}
+
+void TmpDataBouncerOp(): {} {
+ < K_TMP_DATA_BOUNCER > "(" AlgebraOp() "," Identifier() "," Number() ")"
+}
 
 void FilterGainOp(): {}
 {

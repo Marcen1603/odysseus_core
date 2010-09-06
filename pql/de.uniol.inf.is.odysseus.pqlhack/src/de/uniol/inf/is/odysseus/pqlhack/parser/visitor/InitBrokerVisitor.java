@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTmpDataBouncerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
@@ -434,6 +435,12 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTBrokerInitOp node, Object data) {
+		return node.childrenAccept(this, true);
+	}
+
+	@Override
+	public Object visit(ASTTmpDataBouncerOp node, Object data) {
+		// TODO Auto-generated method stub
 		return node.childrenAccept(this, true);
 	}
 

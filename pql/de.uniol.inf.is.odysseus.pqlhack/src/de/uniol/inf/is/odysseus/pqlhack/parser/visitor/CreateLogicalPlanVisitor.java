@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
@@ -85,6 +84,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTmpDataBouncerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.Node;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
@@ -104,6 +104,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.Filt
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.logicaloperator.TemporaryDataBouncerAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -1315,7 +1316,46 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		return data;
 	}
+	@Override
+	public Object visit(ASTTmpDataBouncerOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
+		TemporaryDataBouncerAO bouncerAO = new TemporaryDataBouncerAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		// subscribe bei der Assoziation (HypothesisSelektion)
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		bouncerAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		// Assoziations Objektpfad
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		String brokerObjListPath = identifier.getName();
+
+		
+		// Init AO paths
+		bouncerAO.setObjListPath(brokerObjListPath);
+
+		// get threshold
+		ASTNumber number = (ASTNumber) node.jjtGetChild(2);
+
+		Double threshold = 0.0;
+		try {
+			threshold = new Double(number.getValue());
+		} catch (Exception e) {
+		}
+
+		// set threshold
+		bouncerAO.setThreshold(threshold);
+
+		((ArrayList) data).add(bouncerAO);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
 	@Override
 	public Object visit(ASTEvaluateOp node, Object data) {
 		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
