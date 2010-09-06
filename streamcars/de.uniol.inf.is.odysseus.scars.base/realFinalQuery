@@ -22,13 +22,16 @@
 #CYCLICQUERY
 LOGICAL PLAN : 
 BROKER(${brokerSourceName}, // Pfad für das Initialisieren des Brokers mit Startdaten (muss noch ein Select rein)
-                  SET-PREDICTION-OR(
-                        ${sensorSource},
-                        ${sensorListName},
-                        ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
-                        WHERE ${sensorListName}:car:id >= 50;
-                        DEFAULT ${sensorListName}:car:posx := ${sensorListName}:car:posx;
-                 )
+    SET-PREDICTION-OR(
+        BROKER-INIT(
+            ${sensorSource},
+            3
+        ),
+        ${sensorListName},
+        ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
+        WHERE ${sensorListName}:car:id >= 50;
+        DEFAULT ${sensorListName}:car:posx := ${sensorListName}:car:posx;
+    )
 );
 
 ASSOCIATION-SEL(
@@ -36,7 +39,10 @@ ASSOCIATION-SEL(
         ASSOCIATION-EVAL (
             ASSOCIATION-GEN (
                  SET-PREDICTION-OR(
-                        ${sensorSource},
+                        BUFFER(
+                            ${sensorSource},
+                            Normal
+                        ),
                         ${sensorListName},
                         ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
                         WHERE ${sensorListName}:car:id >= 50;
@@ -44,11 +50,14 @@ ASSOCIATION-SEL(
                  ),
                  PREDICTION(
                     ${sensorSource}, // Timestamp aus Sensor
-                    BROKER(${brokerSourceName}, // Brokerdaten 
-                            QUEUE( // Zeitgeber für den Broker
-                                ${sensorSource}
-                            )
-                        ), 
+                    BUFFER(
+	                    BROKER(${brokerSourceName}, // Brokerdaten 
+	                            QUEUE( // Zeitgeber für den Broker
+	                                   ${sensorSource}
+	                            )
+	                    ),
+	                    Normal 
+	                ),
                     ${brokerListName}
                  ),
                  ${sensorListName},
