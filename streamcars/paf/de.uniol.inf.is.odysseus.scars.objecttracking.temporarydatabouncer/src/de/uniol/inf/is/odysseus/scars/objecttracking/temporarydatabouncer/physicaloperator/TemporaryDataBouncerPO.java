@@ -62,6 +62,8 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 		SchemaIndexPath schemaPath = sh.getSchemaIndexPath(this.objListPath);
 		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(object);
 		tuplePath.setTupleObject(tuples);
+
+		transfer(object);
 	}
 
 	@Override
