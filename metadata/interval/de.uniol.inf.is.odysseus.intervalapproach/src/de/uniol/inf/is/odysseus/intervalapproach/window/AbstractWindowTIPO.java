@@ -17,6 +17,7 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 		this.windowSize = ao.getWindowSize();
 		this.windowAdvance = ao.getWindowAdvance();
 		this.windowAO = ao;
+		setName(getName()+" s="+windowSize+" a="+windowAdvance);
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
