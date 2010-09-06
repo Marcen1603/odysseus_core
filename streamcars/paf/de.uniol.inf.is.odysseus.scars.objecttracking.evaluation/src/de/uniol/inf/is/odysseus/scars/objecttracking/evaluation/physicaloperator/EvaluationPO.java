@@ -222,7 +222,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 			MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(combinedListChildTmp.size());
 			int counter = 0;
 			for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
-				tuples.addAttributeValue(counter++, mvRelationalTuple);
+				tuples.setAttribute(counter++, mvRelationalTuple);
 			}
 		//	SchemaIndexPath schemaPath = schemaHelper.getSchemaIndexPath(resultRemovePath);
 	//		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(resultTuple);
