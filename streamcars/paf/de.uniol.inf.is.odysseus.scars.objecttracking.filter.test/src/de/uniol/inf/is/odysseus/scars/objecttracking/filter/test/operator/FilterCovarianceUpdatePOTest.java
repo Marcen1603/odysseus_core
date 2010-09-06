@@ -89,7 +89,7 @@ public class FilterCovarianceUpdatePOTest<K> {
 		
 		covarianceUpdatePO = new FilterCovarianceUpdatePO();
 		
-		covarianceUpdatePO.setUpdateMetaDataFunction(metaDataUpdateFunction);		
+		covarianceUpdatePO.setMetaDataUpdateFunction(metaDataUpdateFunction);		
 		
 		
 	

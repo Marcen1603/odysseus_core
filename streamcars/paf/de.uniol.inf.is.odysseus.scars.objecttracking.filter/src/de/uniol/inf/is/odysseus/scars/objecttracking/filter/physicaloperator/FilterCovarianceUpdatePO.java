@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
  */
 public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
-  private AbstractMetaDataUpdateFunction<M> updateMetaDataFunction;
+  private AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction;
 
   public FilterCovarianceUpdatePO() {
     super();
@@ -24,11 +24,11 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
 
   public FilterCovarianceUpdatePO(FilterCovarianceUpdatePO<M> copy) {
     super(copy);
-    this.setUpdateMetaDataFunction(copy.getUpdateMetaDataFunction().clone());
+    this.setMetaDataUpdateFunction(copy.getUpdateMetaDataFunction().clone());
   }
 
 	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
-    updateMetaDataFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
+    metaDataUpdateFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
   }
 
   
@@ -63,10 +63,10 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   // Getter & Setter
 
   public AbstractMetaDataUpdateFunction<M> getUpdateMetaDataFunction() {
-    return updateMetaDataFunction;
+    return metaDataUpdateFunction;
   }
 
-  public void setUpdateMetaDataFunction(AbstractMetaDataUpdateFunction<M> updateMetaDataFunction) {
-    this.updateMetaDataFunction = updateMetaDataFunction;
+  public void setMetaDataUpdateFunction(AbstractMetaDataUpdateFunction<M> updateMetaDataFunction) {
+    this.metaDataUpdateFunction = updateMetaDataFunction;
   }
 }
