@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -242,24 +243,31 @@ public class Provider implements IProvider {
 
 		SDFAttribute posx = new SDFAttribute(sourceName, "posx");
 		posx.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		posx.setCovariance(Arrays.asList(new Double[] {0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
 
 		SDFAttribute posy = new SDFAttribute(sourceName, "posy");
 		posy.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		posy.setCovariance(Arrays.asList(new Double[] {0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0}));
 
 		SDFAttribute posz = new SDFAttribute(sourceName, "posz");
 		posz.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		posz.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0}));
 
 		SDFAttribute roll = new SDFAttribute(sourceName, "roll");
 		roll.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		roll.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0}));
 
 		SDFAttribute pitch = new SDFAttribute(sourceName, "pitch");
 		pitch.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		pitch.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0}));
 
 		SDFAttribute heading = new SDFAttribute(sourceName, "heading");
 		heading.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		heading.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0}));
 
 		SDFAttribute velocity = new SDFAttribute(sourceName, "velocity");
 		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV FLOAT"));
+		velocity.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1}));
 
 		SDFAttribute length = new SDFAttribute(sourceName, "length");
 		length.setDatatype(SDFDatatypeFactory.getDatatype("FLOAT"));
@@ -296,6 +304,7 @@ public class Provider implements IProvider {
 
 		SDFAttributeListExtended schema = new SDFAttributeListExtended();
 		schema.add(scan);
+
 		
 		return schema;
 	}
