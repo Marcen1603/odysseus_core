@@ -26,8 +26,9 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		logger.debug("NexMark started ");
 		// Right now, just a simple set of parameters
-		
-		String[] args = new String[5];
+
+		String elementLimit = System.getenv("el");
+		String[] args = new String[elementLimit == null ? 5 : 7];
 		args[0] = "-pr"; 
 		args[1] = System.getenv("pr");
 		args[2] = "-useNIO";
@@ -41,6 +42,10 @@ public class Activator implements BundleActivator {
 		args[4] = System.getenv("gcf");
 		if (args[4] == null || args[4] == ""){
 			args[3] = "";
+		}
+		if (elementLimit != null) {
+			args[5] = "-el";
+			args[6] = elementLimit;
 		}
 
 		
