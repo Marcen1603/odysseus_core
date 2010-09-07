@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
@@ -100,5 +101,14 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void dispose() {}
+
+	@Override
+	public void punctuationElementRecieved(PointInTime point, int port) {
+//		@SuppressWarnings("rawtypes")
+//		RelationalTuple t = new RelationalTuple(schema.getAttributeCount());
+//		for( int i = 0; i < schema.getAttributeCount(); i++ ) 
+//			t.setAttribute(i, "PUCTUATION: " + point);
+//		streamElementRecieved(t, port);
+	}
 
 }

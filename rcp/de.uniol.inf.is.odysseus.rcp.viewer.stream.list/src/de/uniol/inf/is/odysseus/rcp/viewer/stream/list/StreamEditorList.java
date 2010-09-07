@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
@@ -70,6 +71,11 @@ public class StreamEditorList implements IStreamEditorType {
 	@Override
 	public void streamElementRecieved(Object element, int port) {
 		contentProvider.addElement(element.toString());
+	}
+
+	@Override
+	public void punctuationElementRecieved(PointInTime point, int port) {
+		contentProvider.addElement("PUNCTUATION: " + point);
 	}
 
 }

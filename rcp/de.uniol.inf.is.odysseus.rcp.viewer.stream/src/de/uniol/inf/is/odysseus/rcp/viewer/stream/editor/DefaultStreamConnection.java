@@ -152,7 +152,17 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		
+		notifyListenersPunctuation(timestamp, port);
+	}
+
+	@Override
+	public void notifyListenersPunctuation(PointInTime point, int port) {
+		synchronized( listeners ) {
+			for( IStreamElementListener<In> l : listeners ) {
+				if( l != null )
+					l.punctuationElementRecieved(point, port);
+			}
+		}
 	}
 
 
