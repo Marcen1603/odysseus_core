@@ -108,7 +108,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 		
 		// push byte buffer to server
 		buffer.flip();
-		this.server.addData(buffer);
+		this.server.sendData(buffer);
 	}
 
 	@Override

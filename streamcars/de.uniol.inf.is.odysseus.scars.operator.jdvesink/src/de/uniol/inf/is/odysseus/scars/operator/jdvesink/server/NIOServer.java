@@ -23,6 +23,8 @@ public class NIOServer extends Thread {
     Queue<ByteBuffer> data = new ConcurrentLinkedQueue<ByteBuffer>();
     ServerSocket socket = null;
     int port;
+    SocketChannel socketChannel;
+    ServerSocketChannel channel;
 
     public NIOServer( int port ) {
         this.port = port;
@@ -31,7 +33,7 @@ public class NIOServer extends Thread {
     @Override
     public void run() {
         while( true ) {
-            ServerSocketChannel channel = null;
+            channel = null;
             try {
                 channel = ServerSocketChannel.open();
                 socket = channel.socket();
@@ -42,15 +44,15 @@ public class NIOServer extends Thread {
                 System.out.println("NIOServer for " + port + " is waiting for connection");
                 Socket clientSocket = socket.accept();
                 System.out.println("NIOServer for " + port + " has connection established");
-                SocketChannel socketChannel = clientSocket.getChannel();
+                socketChannel = clientSocket.getChannel();
 
-                while( clientSocket.isConnected() ) {
-                    if( !data.isEmpty()) {
-
-                        ByteBuffer b = data.remove();
-                        socketChannel.write(b);
-                    }
-                }
+//                while( clientSocket.isConnected() ) {
+//                    if( !data.isEmpty()) {
+//
+//                        ByteBuffer b = data.remove();
+//                        socketChannel.write(b);
+//                    }
+//                }
 
             } catch( IOException ex ) {
                 if( DEBUG )
@@ -64,8 +66,27 @@ public class NIOServer extends Thread {
         }
     }
 
-    public void addData( ByteBuffer buffer ) {
-        data.add(buffer);
+    public void sendData(ByteBuffer buffer) {
+    	try {
+    		if (this.isConnected()) {
+    			this.socketChannel.write(buffer);
+    		}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+    }
+    
+    /**
+     * 
+     * @return true if a socket connection is established
+     */
+    public boolean isConnected() {
+    	if (this.socketChannel != null) {
+    		if (this.socketChannel.isConnected()) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     public void close() {
@@ -73,6 +94,11 @@ public class NIOServer extends Thread {
 			this.socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} finally {
+            if( channel != null ) {
+                try {channel.close();} catch( Exception ex ) {}
+                System.out.println("Connection for " + port + " closed");
+            }
+        }
     }
 }
