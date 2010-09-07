@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTrans
 /**
  * custom OSGi console to test planoptimization scenarios
  * 
- * @author Tobias Witt
+ * @author Tobias Witt, Marco Grawunder
  * 
  */
 public class OptimizationTestConsole implements
