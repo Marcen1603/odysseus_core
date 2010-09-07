@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecut
 public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 		IPOEventListener {
 
-	private static final int nsDivisor = 100000;
+	private static final int nsDivisor = 10000;
 	long lastTime = 0;
 
 	@Override
@@ -44,11 +44,9 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 					PlanExecutionEvent.EXECUTION_STARTED)) {
 				System.out
 						.println("Plan execution prepared...collecting memory usage data!");
-				for (IPartialPlan each : eventArgs.getSender()
-						.getExecutionPlan().getPartialPlans()) {
-					for (IPhysicalOperator op : each.getRoots()) {
-						addMemListeners((ISink<?>) op);
-					}
+				for (IPhysicalOperator op : eventArgs.getSender()
+						.getExecutionPlan().getRoots()) {
+					addMemListeners((ISink<?>) op);
 				}
 			}
 
@@ -80,7 +78,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 		if (op.isSink()) {
 			for (PhysicalSubscription<?> sub : ((ISink<?>) op)
 					.getSubscribedToSource()) {
-				addMemListeners((ISource<?>) sub.getTarget());
+				addMemListeners((IPhysicalOperator) sub.getTarget());
 			}
 		}
 
@@ -101,6 +99,9 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 
 	@Override
 	public void poEventOccured(POEvent poEvent) {
+		if (poEvent.getPOEventType() != POEventType.PushDone){
+			return;
+		}
 		long curTime = System.nanoTime() / nsDivisor;
 		if (lastTime == 0) {
 			lastTime = curTime;
@@ -122,7 +123,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 		if (timeDiff != 0) {
 			lastTime = curTime;
 			for (int i = 0; i < timeDiff; ++i) {
-				this.stats.addValue(tmpAgg);
+				this.stats.addValue(aggSize);
 			}
 			this.tmpAgg = 0;
 		}
