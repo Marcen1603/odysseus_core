@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.operator.jdvesink.physicaloperator;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -91,6 +92,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 		
 		//Allocate byte buffer
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		
 		// iterate over tuple and write elementary data to byte buffer
 		iterator = new TupleIterator(object, schema);
