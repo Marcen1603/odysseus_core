@@ -2,13 +2,37 @@
 <PREDICTION_ASSIGN>
 <BEFORE>
 	<SCAN time="50">
-		
+	<METADATA>
+			<MATRIX>
+		pox:  0.02131 0.0 0.0 0.0
+		posy: 0.00000	 
+	</MATRIX>
+	<DATA>
+		<SCAN index="0">
+			<TIMESTAMP index="0" />
+			<CARS index="1">
+				<CAR>
+				
+				
+				</CAR>
+			</CARS>
+		</SCAN>
+	
+	</DATA>
+	<CONNECTONLIST>
+		<CONNECTION oldID="a"  newID="b" rating="10">
+			<OLDPATH>1, 1, 1, 1</OLDPATH>
+			<NEWPATH>1, 2, 3, 4</NEWPATH>
+		</CONNECTION>
+	</CONNECTONLIST>
+	</METADATA>
+	
 	
 	</SCAN>
-	<SCAN time="100">
-		
+	<SCAN time="100"></SCAN>
+
 	
-	</SCAN>
+	
 </BEFORE>
 <AFTER>
 
