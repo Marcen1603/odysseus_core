@@ -201,7 +201,7 @@ public interface ProceduralExpressionParserConstants {
     "\"BROKER-INIT\"",
     "\"TMP-DATA-BOUNCER\"",
     "\"JDVE-SINK\"",
-    "\"SCARS_XML_PROFILER\"",
+    "\"SCARS-XML-PROFILER\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",
