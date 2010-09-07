@@ -23,7 +23,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
   private static final long serialVersionUID = 1L;
 
-  private static final String ASSOCIATION_SOURCE_NAME = "association";
+  //private static final String ASSOCIATION_SOURCE_NAME = "association";
   private static final String ASSOCIATION_RECORD_NAME = "scan";
   private static final String SCANNED_OBJECTS_NAME = "scannedObjects";
   private static final String PREDICTED_OBJECTS_NAME = "predictedObjects";
@@ -62,8 +62,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     SDFAttribute timestamp = helper.getAttribute(timeStampName);
 
     // copy scanned Objects
-    helper = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema().clone());
-    SDFAttribute predictedObjects = helper.getAttribute(this.oldObjListPath).clone();
+    SchemaHelper helper2 = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema().clone());
+    SDFAttribute predictedObjects = helper2.getAttribute(this.oldObjListPath).clone();
     // set new list name
     predictedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
 
@@ -78,12 +78,12 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     association.addSubattribute(predictedObjects);
 
     // set source name
-    setSourceName(association, ASSOCIATION_SOURCE_NAME);
+    setSourceName(association, helper.getSourceName());
 
     // TODO: die metadaten aus dem inputschema mitnehmen
     SDFAttributeListExtended newSchema = new SDFAttributeListExtended();
     newSchema.addAttribute(association);
-
+    
     return newSchema;
   }
 
