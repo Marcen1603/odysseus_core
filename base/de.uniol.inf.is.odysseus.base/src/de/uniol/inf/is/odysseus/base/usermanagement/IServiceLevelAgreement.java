@@ -11,6 +11,8 @@ public interface IServiceLevelAgreement {
 	public void init() throws IllegalServiceLevelDefinition;
 	public double oc(double currentSLAConformance) throws NotInitializedException;
 	public double mg(double currentSLAConformance) throws NotInitializedException;
-	double getMaxOcMg(double currentSLAConformance) throws NotInitializedException;	
+	public double getMaxOcMg(double currentSLAConformance) throws NotInitializedException;	
+	public int getMaxUsers();
+	void setMaxUsers(int maxUsers);
 
 }

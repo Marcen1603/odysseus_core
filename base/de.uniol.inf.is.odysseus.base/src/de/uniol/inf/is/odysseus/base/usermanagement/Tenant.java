@@ -7,20 +7,22 @@ import java.util.List;
 public class Tenant {
 	private List<User> users = new LinkedList<User>();
 	private String name;
-	private int id;
 	private IServiceLevelAgreement sla;
 	
-	public Tenant(int id, String name, IServiceLevelAgreement sla){
-		this.id = id;
+	Tenant(String name, IServiceLevelAgreement sla){
 		this.name = name;
 		this.sla = sla;
 	}
 	
-	public void addUser(User user){
-		users.add(user);
+	void addUser(User user) throws TooManyUsersException {
+		if (users.size() < sla.getMaxUsers()){
+			users.add(user);
+		}else{
+			throw new TooManyUsersException("Current limit: "+sla.getMaxUsers());
+		}
 	}
 	
-	public void removeUser(User user){
+	void removeUser(User user){
 		users.remove(user);
 	}
 	
@@ -30,10 +32,6 @@ public class Tenant {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public int getId() {
-		return id;
 	}
 	
 	public IServiceLevelAgreement getServiceLevelAgreement() {

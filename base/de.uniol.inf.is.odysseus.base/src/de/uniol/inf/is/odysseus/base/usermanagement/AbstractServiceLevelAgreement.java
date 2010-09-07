@@ -10,6 +10,7 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 	private List<IPercentileConstraint> pcs = new ArrayList<IPercentileConstraint>();
 	protected double[] delta = null;
 	private boolean initialized;
+	int maxUsers = -1;
 	
 	@Override
 	public void addPercentilConstraint(IPercentileConstraint pc) throws PercentileConstraintOverlapException{
@@ -99,6 +100,16 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 	@Override
 	public double getMaxOcMg(double currentSLAConformance) throws NotInitializedException{
 		return Math.max(oc(currentSLAConformance), mg(currentSLAConformance));
+	}
+	
+	@Override
+	public void setMaxUsers(int maxUsers) {
+		this.maxUsers = maxUsers;
+	}
+	
+	@Override
+	public int getMaxUsers() {
+		return maxUsers;
 	}
 
 }
