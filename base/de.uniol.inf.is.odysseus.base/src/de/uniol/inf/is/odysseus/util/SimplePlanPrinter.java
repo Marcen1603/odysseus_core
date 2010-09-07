@@ -23,24 +23,24 @@ public class SimplePlanPrinter<T> {
 	}
 
 	private void dumpPlan(T object, int depth, StringBuffer builder) {
-		builder.append(getIndent(depth));
+		
 		if (!contains(visited, object)) {
 			visited.add(object);
-			builder.append(object);
+			builder.append(getObjectName(object));
 			builder.append('\n');
 			if (object instanceof ISubscriber) {
 				@SuppressWarnings("unchecked")
 				ISubscriber<?, ISubscription<T>> objectSub = (ISubscriber<?, ISubscription<T>>) object;
-				for (ISubscription<T> sub : objectSub.getSubscribedToSource()) {
+				for (ISubscription<T> sub : objectSub.getSubscribedToSource()) {		
 					builder.append(getIndent(depth));
-					builder.append(sub.getSinkInPort() + " <--- " + sub.getSourceOutPort());
+					builder.append(sub.getSinkInPort() + " <- " + sub.getSourceOutPort()+" ");
 					dumpPlan(sub.getTarget(), depth + 1, builder);
 				}
 			}
 		} else {
-			builder.append(object);
+			builder.append(getObjectName(object));
 			builder.append('\n');
-			builder.append(getIndent(depth) + "  [see above for following operators]\n");
+			builder.append(getIndent(depth+1) + "[see above for following operators]\n");
 		}
 	}
 
@@ -53,10 +53,16 @@ public class SimplePlanPrinter<T> {
 		return false;
 	}
 
+	private String getObjectName(Object object){
+		String name ="";
+		name = object.getClass().getSimpleName()+" ("+object.hashCode()+")";
+		return name;
+	}
+	
 	private String getIndent(int depth) {
 		String str = "";
 		while (depth > 0) {
-			str = str + " ";
+			str = str + "       ";
 			depth--;
 		}
 		return str;
