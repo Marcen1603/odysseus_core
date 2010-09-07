@@ -87,6 +87,7 @@ TOKEN : /* Keywords */ {
 |   <K_FILTER_ESTIMATE: "FILTER-ESTIMATE">
 |   <K_FILTER_COVARIANCE: "FILTER-COVARIANCE">
 |   <K_BROKER_INIT: "BROKER-INIT">
+|	<K_TMP_DATA_BOUNCER: "TMP-DATA-BOUNCER">
 }
 
 TOKEN:{
@@ -191,7 +192,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	FilterEstimateOp() |
 	FilterCovarianceOp() |
 	PunctuationOp()|
-	BrokerInitOp()/*@bgen(jjtree)*/
+	BrokerInitOp() |
+	TmpDataBouncerOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -211,7 +213,7 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
             jjtree.closeNodeScope(jjtn000, true);
           }
         }
-/*@egen*/ 
+/*@egen*/
 }
 
 void TestOp(): {/*@bgen(jjtree) TestOp */
@@ -1734,6 +1736,36 @@ void EvaluateOp(): {/*@bgen(jjtree) EvaluateOp */
     }
   }
 /*@egen*/}
+
+void TmpDataBouncerOp(): {/*@bgen(jjtree) TmpDataBouncerOp */
+  ASTTmpDataBouncerOp jjtn000 = new ASTTmpDataBouncerOp(JJTTMPDATABOUNCEROP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) TmpDataBouncerOp */
+ try {
+/*@egen*/
+ < K_TMP_DATA_BOUNCER > "(" AlgebraOp() "," Identifier() "," Number() ")"/*@bgen(jjtree)*/
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
+/*@egen*/
+}
 
 void FilterGainOp(): {/*@bgen(jjtree) FilterGainOp */
   ASTFilterGainOp jjtn000 = new ASTFilterGainOp(JJTFILTERGAINOP);
