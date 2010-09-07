@@ -116,11 +116,7 @@ BROKER(
             ${filterAlgo}
         ),
         ${assoPedicted},
-        BROKER( ${brokerSourceName2},
-            QUEUE(
-                ${assoSource}
-            )
-        ),
+        BROKER( ${brokerSourceName2}),
         
         
         //FILTER-GAIN(
