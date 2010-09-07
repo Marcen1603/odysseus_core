@@ -60,10 +60,10 @@ public class ScarsXMLProfiler {
 		return instances.get(file);
 	}
 
-	public void profile(String operator, long time, SDFAttributeList schema, MVRelationalTuple<IProbability> scan) {
+	public void profile(String operator, long time, SDFAttributeList schema, MVRelationalTuple<?> scan) {
 		Element operatorElement = getOperatorElement(operator);
 		Element scanElement = new Element("SCAN_RESULT");
-		scanElement.setAttribute("timestamp", Long.toString(time));
+//		scanElement.setAttribute("timestamp", Long.toString(time));
 		operatorElement.addContent(scanElement);
 		addData(scanElement, schema, scan);
 
