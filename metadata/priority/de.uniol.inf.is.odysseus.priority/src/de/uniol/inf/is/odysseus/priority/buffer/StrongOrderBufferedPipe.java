@@ -15,8 +15,8 @@ public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends
 	@SuppressWarnings("unchecked")
 	public StrongOrderBufferedPipe(int maxPrio) {
 		super();
-		buffers = new LinkedList[maxPrio+1];
-		for (int i = 0; i < maxPrio+1; ++i) {
+		buffers = new LinkedList[maxPrio + 1];
+		for (int i = 0; i < maxPrio + 1; ++i) {
 			buffers[i] = new LinkedList<T>();
 		}
 	}
@@ -41,14 +41,13 @@ public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends
 	public void transferNext() {
 		transferLock.lock();
 		boolean transfered = false;
-		for (int i = buffers.length-1; i > -1; --i) {
+		for (int i = buffers.length - 1; i > -1; --i) {
 			if (!buffers[i].isEmpty()) {
 				transfered = true;
 				T element;
 				synchronized (this.buffer) {
 					element = buffers[i].pop();
 				}
-				// logger.debug(this+" transferNext() "+element);
 				transfer(element);
 				if (isDone()) {
 					propagateDone();
@@ -56,9 +55,11 @@ public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends
 				break;
 			}
 		}
-		PointInTime hearbeat = this.heartbeat.get();
-		if (!transfered && hearbeat != null) {
-			sendPunctuation(heartbeat.getAndSet(null));
+		if (!transfered) {
+			PointInTime hearbeat = this.heartbeat.get();
+			if (hearbeat != null) {
+				sendPunctuation(heartbeat.getAndSet(null));
+			}
 		}
 		transferLock.unlock();
 	}
@@ -95,7 +96,7 @@ public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends
 
 	@Override
 	public Byte getTopElementPrio() {
-		for (int i = buffers.length-1; i > -1; --i) {
+		for (int i = buffers.length - 1; i > -1; --i) {
 			if (!buffers[i].isEmpty()) {
 				return (byte) i;
 			}
