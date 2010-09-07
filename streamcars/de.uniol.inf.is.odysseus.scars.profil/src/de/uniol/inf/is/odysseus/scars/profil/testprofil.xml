@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PREDICTION_ASSIGN>
+<BEFORE>
+	<SCAN time="50">
+		
+	
+	</SCAN>
+	<SCAN time="100">
+		
+	
+	</SCAN>
+</BEFORE>
+<AFTER>
+
+
+</AFTER>
+</PREDICTION_ASSIGN>
+
+<PREDICTION>
+	<SCAN time="50">
+	
+	</SCAN>
+</PREDICTION>
