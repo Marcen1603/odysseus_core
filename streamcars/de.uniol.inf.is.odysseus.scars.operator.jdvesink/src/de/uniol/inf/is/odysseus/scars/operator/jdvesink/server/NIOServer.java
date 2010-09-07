@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author boomer
  * @author tommy
  */
-public class NIOServer extends Thread {
+public class NIOServer extends Thread implements IServer {
 
     private static final boolean DEBUG = false;
 

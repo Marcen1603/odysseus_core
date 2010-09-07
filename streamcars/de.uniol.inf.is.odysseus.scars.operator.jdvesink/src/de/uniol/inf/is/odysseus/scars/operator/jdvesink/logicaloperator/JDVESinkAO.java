@@ -9,6 +9,8 @@ public class JDVESinkAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -8687211058868598662L;
 
 	private int port;
+	private String hostAdress;
+	private String serverType;
 
 	public JDVESinkAO() {
 
@@ -16,6 +18,8 @@ public class JDVESinkAO extends UnaryLogicalOp {
 
 	public JDVESinkAO(JDVESinkAO op) {
 		this.port = op.port;
+		this.hostAdress = op.hostAdress;
+		this.serverType = op.serverType;
 	}
 
 	public int getPort() {
@@ -24,6 +28,22 @@ public class JDVESinkAO extends UnaryLogicalOp {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+	
+	public String getHostAdress() {
+		return hostAdress;
+	}
+
+	public void setHostAdress(String hostAdress) {
+		this.hostAdress = hostAdress;
+	}
+
+	public String getServerType() {
+		return serverType;
+	}
+
+	public void setServerType(String serverType) {
+		this.serverType = serverType;
 	}
 
 	@Override

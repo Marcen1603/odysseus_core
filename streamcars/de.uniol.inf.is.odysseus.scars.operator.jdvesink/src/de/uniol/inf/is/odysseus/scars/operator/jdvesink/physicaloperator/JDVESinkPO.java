@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.DatagramServer;
+import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.IServer;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.NIOServer;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
@@ -19,16 +21,25 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class JDVESinkPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	
-	private NIOServer server;
-	private int port;
+	public static final String SERVER_TYPE_UDP = "udp";
+	public static final String SERVER_TYPE_SOCKET = "socket";
 	
-	public JDVESinkPO(int port) {
+	private IServer server;
+	private int port;
+	private String serverType;
+	private String hostAdress;
+	
+	public JDVESinkPO(String hostAdress, int port, String serverType) {
 		this.port = port;
+		this.hostAdress = hostAdress;
+		this.serverType = serverType;
 	}
 	
 	public JDVESinkPO(JDVESinkPO<M> sink) {
 		this.port = sink.port;
 		this.server = sink.server;
+		this.hostAdress = sink.hostAdress;
+		this.serverType = sink.serverType;
 	}
 
 	@Override
@@ -39,7 +50,11 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		this.server = new NIOServer(this.port);
+		if (JDVESinkPO.SERVER_TYPE_SOCKET.equals(this.serverType)) {
+			this.server = new NIOServer(this.port);
+		} else if (JDVESinkPO.SERVER_TYPE_UDP.equals(this.serverType)) {
+			this.server = new DatagramServer(this.hostAdress, this.port);
+		}
 		this.server.start();
 	}
 
