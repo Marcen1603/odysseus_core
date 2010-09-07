@@ -38,6 +38,15 @@ public class CombinedMergeFunction<T extends IClone> implements
 	public void add(IInlineMetadataMergeFunction<? super T> func) {
 		this.mergeFunctions.add(func);
 	}
+	
+	public boolean containsMergeFunction(Class<? extends IInlineMetadataMergeFunction<? super T>> type){
+		for(IInlineMetadataMergeFunction<? super T> curFunc : mergeFunctions){
+			if(curFunc.getClass() == type){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

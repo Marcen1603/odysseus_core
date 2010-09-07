@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListen
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ISettingChangeListener;
@@ -446,6 +447,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		try {
 			schedulerManager().stopScheduling();
 			this.executionPlan.close();
+			Router.getInstance().stopRouting();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
