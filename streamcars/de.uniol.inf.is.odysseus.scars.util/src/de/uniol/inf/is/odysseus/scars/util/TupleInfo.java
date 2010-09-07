@@ -18,8 +18,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 public class TupleInfo {
 
 	/**
-	 * Das aktuelle Object/Tupel, worauf der Iterator gerade zeigt. Ist nie
-	 * <code>null</code>.
+	 * Das aktuelle Object/Tupel, worauf der Iterator gerade zeigt. 
 	 */
 	public Object tupleObject = null;
 
