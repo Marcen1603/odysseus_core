@@ -3,65 +3,67 @@ package de.uniol.inf.is.odysseus.pqlhack.parser;
 
 public interface ProceduralExpressionParserTreeConstants
 {
-  public int JJTLOGICALPLAN = 0;
-  public int JJTALGEBRAOP = 1;
-  public int JJTTESTOP = 2;
-  public int JJTEXISTOP = 3;
-  public int JJTBENCHMARKOP = 4;
-  public int JJTBENCHMARKOPEXT = 5;
-  public int JJTBUFFEROP = 6;
-  public int JJTPUNCTUATIONOP = 7;
-  public int JJTPROJECTIONOP = 8;
-  public int JJTPROJECTIONIDENTIFIER = 9;
-  public int JJTRELATIONALPROJECTIONOP = 10;
-  public int JJTSELECTIONOP = 11;
-  public int JJTBROKERINITOP = 12;
-  public int JJTRELATIONALSELECTIONOP = 13;
-  public int JJTRELATIONALJOINOP = 14;
-  public int JJTRELATIONALNESTOP = 15;
-  public int JJTRELATIONALUNNESTOP = 16;
-  public int JJTJOINOP = 17;
-  public int JJTSCHEMACONVERTOP = 18;
-  public int JJTWINDOWOP = 19;
-  public int JJTSLIDINGTIMEWINDOW = 20;
-  public int JJTACCESSOP = 21;
-  public int JJTBROKEROP = 22;
-  public int JJTPREDICTIONASSIGNOP = 23;
-  public int JJTPREDICTIONASSIGNOROP = 24;
-  public int JJTPREDICTIONOP = 25;
-  public int JJTPREDICATE = 26;
-  public int JJTSIMPLEPREDICATE = 27;
-  public int JJTBASICPREDICATE = 28;
-  public int JJTORPREDICATE = 29;
-  public int JJTANDPREDICATE = 30;
-  public int JJTNOTPREDICATE = 31;
-  public int JJTEXPRESSION = 32;
-  public int JJTSIMPLETOKEN = 33;
-  public int JJTFUNCTIONEXPRESSION = 34;
-  public int JJTFUNCTIONNAME = 35;
-  public int JJTNUMBER = 36;
-  public int JJTSTRING = 37;
-  public int JJTVOID = 38;
-  public int JJTIDENTIFIER = 39;
-  public int JJTCOMPAREOPERATOR = 40;
-  public int JJTPREDICTIONDEFINITION = 41;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 42;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 43;
-  public int JJTKEYVALUELIST = 44;
-  public int JJTKEYVALUEPAIR = 45;
-  public int JJTASSOCIATIONGENOP = 46;
-  public int JJTASSOCIATIONEVALOP = 47;
-  public int JJTASSOCIATIONSELOP = 48;
-  public int JJTASSOCIATIONSRCOP = 49;
-  public int JJTEVALUATEOP = 50;
-  public int JJTTMPDATABOUNCEROP = 51;
-  public int JJTFILTERGAINOP = 52;
-  public int JJTFILTERESTIMATEOP = 53;
-  public int JJTFILTERCOVARIANCEOP = 54;
-  public int JJTJDVESINKOP = 55;
+  public int JJTHOST = 0;
+  public int JJTLOGICALPLAN = 1;
+  public int JJTALGEBRAOP = 2;
+  public int JJTTESTOP = 3;
+  public int JJTEXISTOP = 4;
+  public int JJTBENCHMARKOP = 5;
+  public int JJTBENCHMARKOPEXT = 6;
+  public int JJTBUFFEROP = 7;
+  public int JJTPUNCTUATIONOP = 8;
+  public int JJTPROJECTIONOP = 9;
+  public int JJTPROJECTIONIDENTIFIER = 10;
+  public int JJTRELATIONALPROJECTIONOP = 11;
+  public int JJTSELECTIONOP = 12;
+  public int JJTBROKERINITOP = 13;
+  public int JJTRELATIONALSELECTIONOP = 14;
+  public int JJTRELATIONALJOINOP = 15;
+  public int JJTRELATIONALNESTOP = 16;
+  public int JJTRELATIONALUNNESTOP = 17;
+  public int JJTJOINOP = 18;
+  public int JJTSCHEMACONVERTOP = 19;
+  public int JJTWINDOWOP = 20;
+  public int JJTSLIDINGTIMEWINDOW = 21;
+  public int JJTACCESSOP = 22;
+  public int JJTBROKEROP = 23;
+  public int JJTPREDICTIONASSIGNOP = 24;
+  public int JJTPREDICTIONASSIGNOROP = 25;
+  public int JJTPREDICTIONOP = 26;
+  public int JJTPREDICATE = 27;
+  public int JJTSIMPLEPREDICATE = 28;
+  public int JJTBASICPREDICATE = 29;
+  public int JJTORPREDICATE = 30;
+  public int JJTANDPREDICATE = 31;
+  public int JJTNOTPREDICATE = 32;
+  public int JJTEXPRESSION = 33;
+  public int JJTSIMPLETOKEN = 34;
+  public int JJTFUNCTIONEXPRESSION = 35;
+  public int JJTFUNCTIONNAME = 36;
+  public int JJTNUMBER = 37;
+  public int JJTSTRING = 38;
+  public int JJTVOID = 39;
+  public int JJTIDENTIFIER = 40;
+  public int JJTCOMPAREOPERATOR = 41;
+  public int JJTPREDICTIONDEFINITION = 42;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 43;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 44;
+  public int JJTKEYVALUELIST = 45;
+  public int JJTKEYVALUEPAIR = 46;
+  public int JJTASSOCIATIONGENOP = 47;
+  public int JJTASSOCIATIONEVALOP = 48;
+  public int JJTASSOCIATIONSELOP = 49;
+  public int JJTASSOCIATIONSRCOP = 50;
+  public int JJTEVALUATEOP = 51;
+  public int JJTTMPDATABOUNCEROP = 52;
+  public int JJTFILTERGAINOP = 53;
+  public int JJTFILTERESTIMATEOP = 54;
+  public int JJTFILTERCOVARIANCEOP = 55;
+  public int JJTJDVESINKOP = 56;
 
 
   public String[] jjtNodeName = {
+    "Host",
     "LogicalPlan",
     "AlgebraOp",
     "TestOp",
@@ -120,4 +122,4 @@ public interface ProceduralExpressionParserTreeConstants
     "JDVESinkOp",
   };
 }
-/* JavaCC - OriginalChecksum=1f9b7b59a7a167c2d5a7a848f55b8f4e (do not edit this line) */
+/* JavaCC - OriginalChecksum=2e3e2102b8309491b68a04a39680da21 (do not edit this line) */

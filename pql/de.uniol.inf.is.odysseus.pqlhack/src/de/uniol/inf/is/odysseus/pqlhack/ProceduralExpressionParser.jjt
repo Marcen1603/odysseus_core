@@ -120,6 +120,18 @@ TOKEN:/* Numeric Constants */
  | <IPADDRESS:<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?>
 }
 
+void Host() :
+{
+  Token value;
+}
+{
+  value = < IPADDRESS >
+  {
+    jjtThis.setValue(value.image);
+  }
+| Identifier()
+}
+
 ASTLogicalPlan LogicalPlan():{}{
 	
 	<K_LOGICAL><K_PLAN>":" (AlgebraOp() [";"])+ < EOF > {return jjtThis;}
@@ -457,4 +469,4 @@ void FilterCovarianceOp(): {}
 }
 
 void JDVESinkOp(): {}
-{  <  K_JDVE_SINK > "(" AlgebraOp() "," Identifier() "," Number() "," Identifier() ")"}
+{  <  K_JDVE_SINK > "(" AlgebraOp() "," Host() "," Number() "," Identifier() ")"}

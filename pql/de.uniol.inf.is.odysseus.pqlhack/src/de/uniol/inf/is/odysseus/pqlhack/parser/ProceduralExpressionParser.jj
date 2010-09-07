@@ -124,6 +124,49 @@ TOKEN:/* Numeric Constants */
  | <IPADDRESS:<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?>
 }
 
+void Host() :
+{/*@bgen(jjtree) Host */
+  ASTHost jjtn000 = new ASTHost(JJTHOST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token value;
+}
+{/*@bgen(jjtree) Host */
+  try {
+/*@egen*/
+  value = < IPADDRESS >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.setValue(value.image);
+  }
+| Identifier()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+
 ASTLogicalPlan LogicalPlan():{/*@bgen(jjtree) LogicalPlan */
   ASTLogicalPlan jjtn000 = new ASTLogicalPlan(JJTLOGICALPLAN);
   boolean jjtc000 = true;
@@ -1869,7 +1912,7 @@ void JDVESinkOp(): {/*@bgen(jjtree) JDVESinkOp */
 /*@egen*/}
 {/*@bgen(jjtree) JDVESinkOp */
   try {
-/*@egen*/  <  K_JDVE_SINK > "(" AlgebraOp() "," Identifier() "," Number() "," Identifier() ")"/*@bgen(jjtree)*/
+/*@egen*/  <  K_JDVE_SINK > "(" AlgebraOp() "," Host() "," Number() "," Identifier() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

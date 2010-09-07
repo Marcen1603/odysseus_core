@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTHost;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJDVESinkOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJoinOp;
@@ -1814,6 +1815,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		((ArrayList) data).add(new Integer(0));
 
 		return data;
+	}
+
+	@Override
+	public Object visit(ASTHost node, Object data) {
+		return node.getValue();
 	}
 
 }

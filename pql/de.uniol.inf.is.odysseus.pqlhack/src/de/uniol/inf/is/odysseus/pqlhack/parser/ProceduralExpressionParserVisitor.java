@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.pqlhack.parser;
 public interface ProceduralExpressionParserVisitor
 {
   public Object visit(SimpleNode node, Object data);
+  public Object visit(ASTHost node, Object data);
   public Object visit(ASTLogicalPlan node, Object data);
   public Object visit(ASTAlgebraOp node, Object data);
   public Object visit(ASTTestOp node, Object data);
@@ -60,4 +61,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTFilterCovarianceOp node, Object data);
   public Object visit(ASTJDVESinkOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=92da30ff242919d6b9097ecfe0a26a84 (do not edit this line) */
+/* JavaCC - OriginalChecksum=51f906c2130601f54b7174109bf60bbf (do not edit this line) */
