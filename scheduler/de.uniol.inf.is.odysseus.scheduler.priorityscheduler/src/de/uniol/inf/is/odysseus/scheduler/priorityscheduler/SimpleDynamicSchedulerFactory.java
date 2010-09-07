@@ -1,7 +1,8 @@
-package de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy;
+package de.uniol.inf.is.odysseus.scheduler.priorityscheduler;
 
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy.SimpleDynamicPriorityPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
