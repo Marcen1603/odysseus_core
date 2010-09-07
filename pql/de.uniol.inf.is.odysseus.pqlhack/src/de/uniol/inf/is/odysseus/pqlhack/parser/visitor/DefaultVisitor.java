@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJDVESinkOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJoinOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTKeyValueList;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTKeyValuePair;
@@ -339,6 +340,11 @@ public Object visit(ASTBrokerInitOp node, Object data) {
 @Override
 public Object visit(ASTTmpDataBouncerOp node, Object data) {
 	// TODO Auto-generated method stub
+	return node.childrenAccept(this, data);
+}
+
+@Override
+public Object visit(ASTJDVESinkOp node, Object data) {
 	return node.childrenAccept(this, data);
 }
 

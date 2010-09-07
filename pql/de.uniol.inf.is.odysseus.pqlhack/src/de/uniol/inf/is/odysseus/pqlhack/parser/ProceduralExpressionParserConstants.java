@@ -113,27 +113,29 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_TMP_DATA_BOUNCER = 55;
   /** RegularExpression Id. */
-  int IDENTIFIER = 56;
+  int K_JDVE_SINK = 56;
   /** RegularExpression Id. */
-  int LETTER = 57;
+  int IDENTIFIER = 57;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 58;
+  int LETTER = 58;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 59;
+  int SPECIAL_CHARS = 59;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 60;
+  int CHAR_LITERAL = 60;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 61;
+  int QUOTED_IDENTIFIER = 61;
   /** RegularExpression Id. */
-  int REGEXP = 62;
+  int COMPARE_OPERATOR = 62;
   /** RegularExpression Id. */
-  int FLOAT = 63;
+  int REGEXP = 63;
   /** RegularExpression Id. */
-  int INTEGER = 64;
+  int FLOAT = 64;
   /** RegularExpression Id. */
-  int DIGIT = 65;
+  int INTEGER = 65;
   /** RegularExpression Id. */
-  int IPADDRESS = 66;
+  int DIGIT = 66;
+  /** RegularExpression Id. */
+  int IPADDRESS = 67;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -196,6 +198,7 @@ public interface ProceduralExpressionParserConstants {
     "\"FILTER-COVARIANCE\"",
     "\"BROKER-INIT\"",
     "\"TMP-DATA-BOUNCER\"",
+    "\"JDVE-SINK\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

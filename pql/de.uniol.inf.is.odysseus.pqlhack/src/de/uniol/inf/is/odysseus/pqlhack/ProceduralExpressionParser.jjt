@@ -84,6 +84,7 @@ TOKEN : /* Keywords */ {
 |   <K_FILTER_COVARIANCE: "FILTER-COVARIANCE">
 |   <K_BROKER_INIT: "BROKER-INIT">
 |	<K_TMP_DATA_BOUNCER: "TMP-DATA-BOUNCER">
+|   <K_JDVE_SINK: "JDVE-SINK">
 }
 
 TOKEN:{
@@ -152,7 +153,8 @@ void AlgebraOp():{}{
 	FilterCovarianceOp() |
 	PunctuationOp()|
 	BrokerInitOp() |
-	TmpDataBouncerOp()
+	TmpDataBouncerOp() |
+	JDVESinkOp()
 }
 
 void TestOp(): {}{
@@ -453,3 +455,6 @@ void FilterCovarianceOp(): {}
 {
   < K_FILTER_COVARIANCE > "(" AlgebraOp() "," Identifier() ")"
 }
+
+void JDVESinkOp(): {}
+{  <  K_JDVE_SINK > "(" AlgebraOp() "," Number() ")"}

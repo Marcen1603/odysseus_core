@@ -56,6 +56,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJDVESinkOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJoinOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTKeyValueList;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTKeyValuePair;
@@ -105,6 +106,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.logicaloperator.TemporaryDataBouncerAO;
+import de.uniol.inf.is.odysseus.scars.operator.jdvesink.logicaloperator.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -1784,6 +1786,27 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ao.subscribeToSource(inputOp, 0, sourceOutPort, inputOp.getOutputSchema());
 
 		ao.setSize( Integer.valueOf(((ASTNumber) node.jjtGetChild(1)).getValue() ));
+		
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTJDVESinkOp node, Object data) {
+		JDVESinkAO ao = new JDVESinkAO();
+		
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+		
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) returnData.get(1);
+		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
+		
+		ao.subscribeToSource(inputOp, 0, sourceOutPort, inputOp.getOutputSchema());
+		
+		ao.setPort( Integer.valueOf(((ASTNumber) node.jjtGetChild(1)).getValue() ));
 		
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));

@@ -58,6 +58,7 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTFILTERGAINOP = 52;
   public int JJTFILTERESTIMATEOP = 53;
   public int JJTFILTERCOVARIANCEOP = 54;
+  public int JJTJDVESINKOP = 55;
 
 
   public String[] jjtNodeName = {
@@ -116,6 +117,7 @@ public interface ProceduralExpressionParserTreeConstants
     "FilterGainOp",
     "FilterEstimateOp",
     "FilterCovarianceOp",
+    "JDVESinkOp",
   };
 }
-/* JavaCC - OriginalChecksum=e0247a7254dad12370e7f4afc2ddad88 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1f9b7b59a7a167c2d5a7a848f55b8f4e (do not edit this line) */
