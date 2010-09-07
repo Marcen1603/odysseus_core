@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
+import de.uniol.inf.is.odysseus.broker.transaction.BrokerAssociationMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
@@ -21,8 +23,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistPredicate;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistVariablesDeclaration;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
@@ -97,8 +97,12 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	private ArrayList<String> brokerNames;
 	
+	private HashMap<String, BrokerAssociationMapping> associationMappings;
+	
+	
 	public InitBrokerVisitor(){
 		this.brokerNames = new ArrayList<String>();
+		this.associationMappings = new HashMap<String, BrokerAssociationMapping>();
 	}
 	
 	public ArrayList<String> getBrokerNames(){
@@ -106,6 +110,8 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 	}
 	
 	public Object visit(ASTBrokerOp broker, Object hasPreceedingOperator) {
+		ArrayList returnData = new ArrayList();
+		returnData.add(broker.getName());
 		
 		// in create logical plan visitor
 		// first the sources are created and then
@@ -116,7 +122,16 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		// mappings.
 		// first go down the tree and that upwards
 		// again
-		broker.childrenAccept(this, true);
+		// if the children return data, then an association
+		// source is writing into this broker. In this
+		// case it can happen that the corresponding
+		// association comes from this broker
+		// so that a queue port mapping must be matched.
+		Object childData = broker.childrenAccept(this, true);
+		String assName = null;
+		if(childData != null && childData instanceof String){
+			assName = (String)childData;
+		}
 		
 		if(!brokerNames.contains(broker.getName())){
 			this.brokerNames.add(broker.getName());
@@ -132,6 +147,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 				int curOut = BrokerDictionary.getInstance().getCurrentOutputPort(broker.getName());
 				
 				QueuePortMapping qpm = new QueuePortMapping(curOut, curIn);
+				returnData.add(curOut);
 				
 				BrokerDictionary.getInstance().setCurrentInputPort(broker.getName(), curIn+1);
 				BrokerDictionary.getInstance().setCurrentOuputPort(broker.getName(), curOut+1);
@@ -143,21 +159,36 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 			// the parent node is an algebra, the broker is the input for the algebra op.
 			else{
 				int curOut = BrokerDictionary.getInstance().getCurrentOutputPort(broker.getName());
+				returnData.add(curOut);
 				BrokerDictionary.getInstance().setCurrentOuputPort(broker.getName(), curOut+1);
 			}
 
-		}
+		}		
 		
 		// if there are child operators, than increment the no of input ports by 
 		// the no of child ops.
 		int curIn = BrokerDictionary.getInstance().getCurrentInputPort(broker.getName());
 		BrokerDictionary.getInstance().setCurrentInputPort(broker.getName(), curIn + broker.getNoOfChildOps());
 		
-		return null;
+		// I don't whether it is possible that the broker has proceeding operator
+		// in the statement an at the same time an association child, but maybe.
+		// Therefore the following is only if and not else if.
+		if(assName != null){
+			// get the out port for the association and a corresponding queue port;
+			// at the moment an association operator name is only connected to
+			// one single broker
+			QueuePortMapping qpm = new QueuePortMapping(this.associationMappings.get(assName).getOutPort(), curIn);
+			BrokerDictionary.getInstance().addQueuePortMapping(broker.getName(), qpm);
+		}
+		
+		return returnData;
 	}
 
 	@Override
 	public Object visit(SimpleNode node, Object data) {
+		for(int i = 0; i<node.jjtGetNumChildren(); i++){
+			
+		}
 		return node.childrenAccept(this, data);
 	}
 
@@ -346,12 +377,28 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		return node.childrenAccept(this, true);
+		
+		
+		Object returnValue = node.jjtGetChild(0).jjtAccept(this, true);
+		if(returnValue != null){
+			String brokerName = ((String)((ArrayList)returnValue).get(0));
+			int outPort = ((Integer)((ArrayList)returnValue).get(1)).intValue();
+			
+			// get name of this op
+			ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+			String opName = identifier.getName();
+			
+			this.associationMappings.put(opName, new BrokerAssociationMapping(opName, brokerName, outPort));
+		}
+		
+		return null;
 	}
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
-		return node.childrenAccept(this, true);
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
+		String srcName = identifier.getName();
+		return srcName;
 	}
 
 	@Override
@@ -378,7 +425,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTEvaluateOp node, Object data) {
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, true);
 	}
 
 	@Override
