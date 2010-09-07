@@ -1,20 +1,23 @@
-#DEFINE brokerSourceName streamCarsBroker // QuellenName
-#DEFINE brokerListName   streamCarsBroker.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+#DEFINE brokerSourceName1   streamCarsBroker // QuellenName
+#DEFINE brokerListName1     streamCarsBroker.scan:cars // Attributname der Liste der Autos in der Brokerquelle
 
-#DEFINE brokerSourceName2 streamCarsBroker2 // QuellenName
-#DEFINE brokerListName2   streamCarsBroker2.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+#DEFINE brokerSourceName2   streamCarsBroker2 // QuellenName
+#DEFINE brokerListName2     streamCarsBroker2.scan:cars // Attributname der Liste der Autos in der Brokerquelle
 
 #DEFINE sensorSource    ACCESS(radarSensor) // Quellenoperator(!) des Sensors
+#DEFINE sensorScan      radarSensor.scan // Attributname der Liste der Autos in der Sensorquelle
 #DEFINE sensorListName  radarSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
 
 #DEFINE assoScanned     radarSensor.scan:scannedObjects
 #DEFINE assoPedicted    radarSensor.scan:predictedObjects
-#DEFINE assoSourceName  selectionSrc
-#DEFINE assoSource      ASSOCIATION-SRC(selectionSrc, 0)
+#DEFINE assoSourceName1 selectionSrc
+#DEFINE assoSource1     ASSOCIATION-SRC(selectionSrc, 0)
 #DEFINE assoSourceName2 selectionSrc2
 #DEFINE assoSource2     ASSOCIATION-SRC(selectionSrc2, 0)
 #DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
+#DEFINE assoParam1      threshold := 5; operator := LESSEQUAL;
 #DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
+#DEFINE assoParam2      distanceFunction := EUCLIDEAN;
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
 
@@ -22,16 +25,16 @@
 #TRANSCFG StreamCars
 #CYCLICQUERY
 LOGICAL PLAN : 
-BROKER(${brokerSourceName}, // Pfad für das Initialisieren des Brokers mit Startdaten (muss noch ein Select rein)
+BROKER(${brokerSourceName1}, // Pfad für das Initialisieren des Brokers mit Startdaten (muss noch ein Select rein)
     SET-PREDICTION-OR(
         BROKER-INIT(
             ${sensorSource},
             3
         ),
         ${sensorListName},
-        ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
+        ${brokerListName1}:car:posx := ${brokerListName1}:car:posx * (${brokerListName1}:car:posx) ;
         WHERE ${sensorListName}:car:id >= 50;
-        DEFAULT ${sensorListName}:car:posx := ${sensorListName}:car:posx;
+        DEFAULT ${brokerListName1}:car:posx := ${brokerListName1}:car:posx;
     )
 );
 
@@ -42,61 +45,61 @@ BROKER(${brokerSourceName2}, // Pfad für das Initialisieren des Brokers mit Sta
             3
         ),
         ${sensorListName},
-        ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
+        ${brokerListName2}:car:posx := ${brokerListName2}:car:posx * 2 ;
         WHERE ${sensorListName}:car:id >= 50;
-        DEFAULT ${sensorListName}:car:posx := ${sensorListName}:car:posx;
+        DEFAULT ${brokerListName2}:car:posx := ${brokerListName2}:car:posx;
     )
 );
 
 ASSOCIATION-SEL(
     ASSOCIATION-EVAL (
         ASSOCIATION-EVAL (
-            ASSOCIATION-GEN (
-                 SET-PREDICTION-OR(
-                        BUFFER(
-                            ${sensorSource},
-                            Normal
-                        ),
-                        ${sensorListName},
-                        ${sensorListName}:car:posx := ${sensorListName}:car:posx * 2 ;
-                        WHERE ${sensorListName}:car:id >= 50;
-                        DEFAULT ${sensorListName}:car:posx := ${sensorListName}:car:posx;
+            ASSOCIATION-GEN (      
+                 BUFFER(
+                     ${sensorSource},
+                     Normal
                  ),
                  PREDICTION(
                     ${sensorSource}, // Timestamp aus Sensor
-                    BUFFER(
-                        BROKER(${brokerSourceName}, // Brokerdaten 
-                                QUEUE( // Zeitgeber für den Broker
-                                       ${sensorSource}
-                                )
-                        ),
-                        Normal 
+                    SET-PREDICTION-OR(
+	                    BUFFER(
+	                        BROKER(${brokerSourceName1}, // Brokerdaten 
+	                                QUEUE( // Zeitgeber für den Broker
+	                                       ${sensorSource}
+	                                )
+	                        ),
+	                        Normal 
+	                    ),
+                        ${brokerListName1},
+                        ${brokerListName1}:car:posx := ${brokerListName1}:car:posx * 2 ;
+                        WHERE ${brokerListName1}:car:id >= 50;
+                        DEFAULT ${brokerListName1}:car:posx := ${brokerListName1}:car:posx;
                     ),
-                    ${brokerListName}
+                    ${brokerListName1}
                  ),
                  ${sensorListName},
-                 ${brokerListName}
+                 ${brokerListName1}
             ),
             ${assoAlgo1},
-            threshold := 5; operator := LESSEQUAL;,
+            ${assoParam1},
             ${assoScanned},
             ${assoPedicted}
         ),
         ${assoAlgo2},
-        distanceFunction := EUCLIDEAN;,
+        ${assoParam2},
         ${assoScanned},
         ${assoPedicted}
     ),
-    ${assoSourceName},
+    ${assoSourceName1},
     ${assoScanned},
     ${assoPedicted}
 );
 
 BROKER( 
-    ${brokerSourceName}, 
+    ${brokerSourceName1}, 
     EVALUATE(
         ASSOCIATION-SRC(
-            ${assoSourceName},
+            ${assoSourceName1},
             2
         ),
         ${assoPedicted},
@@ -104,7 +107,7 @@ BROKER(
             FILTER-COVARIANCE(
                 FILTER-GAIN(
                     ASSOCIATION-SRC(
-                        ${assoSourceName},
+                        ${assoSourceName1},
                         1
                     ),
                     ${filterAlgo}
@@ -116,13 +119,13 @@ BROKER(
             ${filterAlgo}
         ),
         ${assoPedicted},
-        BROKER( ${brokerSourceName2}),
-        
-        
-        //FILTER-GAIN(
-        //    ${assoSource},
-        //    ${filterAlgo}
-        //),
+        TMP-DATA-BOUNCER(
+	        BROKER( 
+	            ${brokerSourceName2}
+	        ),
+	        ${brokerListName2},
+	        5
+	    ),
         ${assoScanned},
         5
     )
@@ -131,33 +134,39 @@ BROKER(
 ASSOCIATION-SEL(
     ASSOCIATION-EVAL (
         ASSOCIATION-EVAL (
-		    ASSOCIATION-GEN (
-		        BUFFER(
-		            ${assoSource},
-		            Normal
-		        ),
-		         PREDICTION(
-		            ${assoSource}, // Timestamp aus Sensor
-		            BUFFER(
-		                BROKER(${brokerSourceName2}, // Brokerdaten 
-		                        QUEUE( // Zeitgeber für den Broker
-		                               ${assoSource}
-		                        )
-		                ),
-		                Normal 
-		            ),
-		            ${brokerListName2}
-		         ),
-		         ${assoScanned},
-		         ${brokerListName2}
-		    ),
+            ASSOCIATION-GEN (
+                BUFFER(
+                    ${assoSource1},
+                    Normal
+                ),
+                PREDICTION(
+                    ${assoSource1}, // Timestamp aus Sensor
+                    SET-PREDICTION-OR(
+                        BUFFER(
+                            BROKER(${brokerSourceName2}, // Brokerdaten 
+                                    QUEUE( // Zeitgeber für den Broker
+                                           ${assoSource1}
+                                    )
+                            ),
+                            Normal 
+                        ),
+                        ${brokerListName2},
+                        ${brokerListName2}:car:posx := ${brokerListName2}:car:posx * 2 ;
+                        WHERE ${brokerListName2}:car:id >= 50;
+                        DEFAULT ${brokerListName2}:car:posx := ${brokerListName2}:car:posx;
+                    ),
+                    ${brokerListName2}
+                ),
+                ${assoScanned},
+                ${brokerListName2}
+            ),
             ${assoAlgo1},
-            threshold := 5; operator := LESSEQUAL;,
+            ${assoParam1},
             ${assoScanned},
             ${assoPedicted}
         ),
         ${assoAlgo2},
-        distanceFunction := EUCLIDEAN;,
+        ${assoParam2},
         ${assoScanned},
         ${assoPedicted}
     ),
