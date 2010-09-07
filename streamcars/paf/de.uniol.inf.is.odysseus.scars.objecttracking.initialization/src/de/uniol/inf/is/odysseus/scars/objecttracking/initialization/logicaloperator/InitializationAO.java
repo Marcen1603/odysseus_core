@@ -26,6 +26,8 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	
 	// path to new  objects
 	private String newObjListPath;
+	// path to old  objects
+	private String oldObjListPath;
 	
 	/**
 	 * @param AO
@@ -73,6 +75,14 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 
 	public HashMap<Enum, Object> getParameters() {
 		return parameters;
+	}
+
+	public void setOldObjListPath(String oldObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+	}
+
+	public String getOldObjListPath() {
+		return oldObjListPath;
 	}
 
 }

@@ -36,10 +36,14 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	private SchemaHelper schemaHelper;
 	private SchemaIndexPath newObjectListPath;
 	private SchemaIndexPath newObjPath;
+	private SchemaIndexPath oldObjectListPath;
+	private SchemaIndexPath oldObjPath;
 	SDFAttributeList inputSchema;
 	
 	// path to new  objects
 	private String newObjListPath;
+	// path to old  objects
+	private String oldObjListPath;
 	
 	private HashMap<Enum, Object> parameters;
 	
@@ -52,6 +56,7 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	public InitializationPO(InitializationPO<M> copy) {
 		super(copy);
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
+		this.setOldObjListPath(new String(copy.getOldObjListPath()));
 		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 		this.havingData= copy.havingData;
 	}
@@ -98,6 +103,9 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 				+ SchemaHelper.ATTRIBUTE_SEPARATOR
 				+ this.newObjectListPath.getAttribute().getSubattribute(0)
 						.getAttributeName());
+	
+		this.oldObjectListPath = this.schemaHelper.getSchemaIndexPath(this
+				.getOldObjListPath());
 	}
 	
 	@Override
@@ -106,6 +114,8 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 		havingData = true;
 		
 		TupleIndexPath newTupleIndexPath = this.newObjectListPath.toTupleIndexPath(object);
+		
+		TupleIndexPath oldTupleIndexPath = this.oldObjectListPath.toTupleIndexPath(object);
 		
 		TupleHelper tHelper = new TupleHelper(object);
 		
@@ -120,7 +130,7 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 		
 		
 		for (TupleInfo info : new TupleIterator(copy, newTupleIndexPath)) {
-			
+		
 			int [] path = info.schemaIndexPath.toArray();
 			int [] newPath = null;
 			System.arraycopy(path, 0, newPath, 0, path.length);
@@ -133,7 +143,7 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 		}
 		
 		object.getMetadata().setConnectionList(newObjConList);
-	
+		oldTupleIndexPath.setTupleObject(newList);
 		transfer(object);
 	}
 		     
@@ -143,6 +153,14 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 
 	public String getNewObjListPath() {
 		return newObjListPath;
+	}
+
+	public void setOldObjListPath(String oldObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+	}
+
+	public String getOldObjListPath() {
+		return oldObjListPath;
 	}
 
 }
