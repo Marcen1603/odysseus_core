@@ -11,8 +11,7 @@ import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
-import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
+import de.uniol.inf.is.odysseus.util.SimplePlanPrinter;
 
 public class RewriteExecutor implements IRewrite {
 
@@ -40,9 +39,8 @@ public class RewriteExecutor implements IRewrite {
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperator(top, list, env);
 		// *******
-		PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
-		new AbstractGraphWalker<String, ILogicalOperator, LogicalSubscription>().prefixWalk(top, pv);
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Pre rewrite: \n" + pv.getResult());
+		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Before rewriting: \n"+planPrinter.createString(plan));
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules...");
 		// start transformation
 		env.processEnvironment();
@@ -51,9 +49,8 @@ public class RewriteExecutor implements IRewrite {
 		ILogicalOperator ret = sub.getTarget();
 		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 
-		pv = new PrintGraphVisitor<ILogicalOperator>();
-		new AbstractGraphWalker<String, ILogicalOperator, LogicalSubscription>().prefixWalk(ret, pv);
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Post rewrite: " + pv.getResult());
+		planPrinter = new SimplePlanPrinter<ILogicalOperator>();
+		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "After rewriting: \n"+planPrinter.createString(ret));
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Rewriting finished.");
 		return ret;
 	}
