@@ -134,6 +134,7 @@ public class TransactionDetector {
 			}
 			
 			if(!found){
+				int i = 100;
 				throw new CyclicQueryException("Found cyclic read transaction, but no corresponding queue port mapping. Forgotten QUEUE clause in query?");
 			}
 			
@@ -175,6 +176,7 @@ public class TransactionDetector {
 			}
 			
 			if(!found){
+				int i = 1000;
 				throw new CyclicQueryException("Found cyclic write transaction, but no corresponding queue port mapping. Forgotten QUEUE clause in query?");
 			}
 			

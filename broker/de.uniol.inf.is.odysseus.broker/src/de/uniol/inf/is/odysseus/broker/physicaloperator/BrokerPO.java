@@ -212,7 +212,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 				}
 			}
 		}
-		printDebug("Next cyclic output: " + getNextCyclicTransactionList());
+		//printDebug("Next cyclic output: " + getNextCyclicTransactionList());
 		// transfer the content of the the SweepArea to the destinations
 		// (first ones are continuous)
 		if (!this.sweepArea.isEmpty()) {
