@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.profil.ScarsXMLProfiler;
 
 public class XMLProfilerPO<M extends IProbability & ITimeInterval & IConnectionContainer & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>>
 extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -32,7 +33,9 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-
+		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 2);
+		p.profile(operatorName, 0, getOutputSchema(), object);
+		p.setAttribute(operatorName, "wolf", "ist schlau");
 	}
 
 	@Override
