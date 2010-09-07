@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Transform
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.transform;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.transform
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.transform.Activator
 Bundle-ActivationPolicy: lazy

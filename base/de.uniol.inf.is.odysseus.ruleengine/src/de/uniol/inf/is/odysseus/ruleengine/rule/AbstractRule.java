@@ -43,7 +43,6 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
 	protected void update(Object operator) {
 		this.getCurrentWorkingMemory().updateObject(operator);
-
 	}
 
 	protected void retract(Object operator) {
