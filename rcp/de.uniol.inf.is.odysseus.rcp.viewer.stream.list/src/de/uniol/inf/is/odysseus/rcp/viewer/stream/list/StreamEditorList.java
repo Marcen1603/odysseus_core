@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.list;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
 
@@ -18,7 +18,7 @@ public class StreamEditorList implements IStreamEditorType {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		tableViewer = new TableViewer(parent, SWT.NONE);
+		tableViewer = new TableViewer(parent, SWT.BORDER);
 		tableViewer.setContentProvider(contentProvider);
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.setInput(input);
@@ -58,7 +58,7 @@ public class StreamEditorList implements IStreamEditorType {
 	public void dispose() {}
 
 	@Override
-	public void init(IEditorPart editorPart, IStreamEditorInput editorInput) {
+	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
 		this.input = editorInput;
 	}
 

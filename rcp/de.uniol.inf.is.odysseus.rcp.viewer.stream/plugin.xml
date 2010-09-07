@@ -81,5 +81,11 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.StartUp">
+      </startup>
+   </extension>
 
 </plugin>

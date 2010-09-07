@@ -109,7 +109,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 	
 	@Override
 	public boolean isEnabled() {
-		return enabled;
+		return !enabled;
 	}
 
 	@Override
@@ -152,7 +152,6 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO Auto-generated method stub
 		
 	}
 

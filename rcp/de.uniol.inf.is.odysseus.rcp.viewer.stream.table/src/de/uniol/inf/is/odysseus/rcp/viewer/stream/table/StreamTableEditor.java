@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -54,7 +55,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	@Override
-	public void init(IEditorPart editorPart, IStreamEditorInput editorInput) {
+	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
 		ISource<?>[] sources = editorInput.getStreamConnection().getSources().toArray(new ISource<?>[0]);
 		schema = sources[0].getOutputSchema();
 		part = editorPart;
@@ -66,7 +67,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		parent.setLayout(tableColumnLayout);
 		
-		viewer = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION);
+		viewer = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
 		
