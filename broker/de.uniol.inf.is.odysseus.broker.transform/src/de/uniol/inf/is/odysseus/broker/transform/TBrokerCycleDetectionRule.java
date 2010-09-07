@@ -18,7 +18,7 @@ public class TBrokerCycleDetectionRule extends AbstractTransformationRule<Broker
 	@Override
 	public void execute(BrokerPO<?> operator, TransformationConfiguration transformConfig) {		
 		LoggerSystem.printlog(Accuracy.DEBUG, "Searching for cycles and reorganize broker transactions..."); 
-		TransactionDetector.reorganizeTransactions(BrokerWrapperPlanFactory.getAllBrokerPOs());		
+		new TransactionDetector().reorganizeTransactions(BrokerWrapperPlanFactory.getAllBrokerPOs());		
 		LoggerSystem.printlog(Accuracy.DEBUG, "Searching done"); 
 		retract(operator);
 	}
