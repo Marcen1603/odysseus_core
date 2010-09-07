@@ -67,6 +67,10 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 				} else if (info.tupleObject instanceof Character) {
 					bufferSize++;
 				}
+			} else {
+				if (info.attribute.getDatatype().equals("List")) {
+					bufferSize += 4;
+				}
 			}
 		}
 		
@@ -95,6 +99,10 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 				} else if (info.tupleObject instanceof Character) {
 					buffer.putChar((Character)info.tupleObject);
 				}
+			} else if (info.attribute.getDatatype().equals("List")) {
+				@SuppressWarnings("unchecked")
+				MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) info.tupleObject;
+				buffer.putInt(tuple.getAttributeCount());
 			}
 		}
 		
