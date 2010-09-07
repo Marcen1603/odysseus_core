@@ -2,15 +2,11 @@ package de.uniol.inf.is.odysseus.scheduler.strategy;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
@@ -56,10 +52,6 @@ public abstract class AbstractScheduling implements IScheduling,
 	 */
 	boolean blocked = false;
 
-	/**
-	 * 
-	 * @param plan
-	 */
 	// private SLATestCalculator slaTestCalculator = null;
 
 	public AbstractScheduling(IPartialPlan plan) {
@@ -90,8 +82,6 @@ public abstract class AbstractScheduling implements IScheduling,
 		}
 		blocked = false;
 		schedulingPaused = false;
-		// TMP to Test
-		// slaTestCalculator = new SLATestCalculator(plan.getIterableSource());
 	}
 
 	@Override
@@ -125,7 +115,6 @@ public abstract class AbstractScheduling implements IScheduling,
 			}
 			nextSource = nextSource();
 		}
-		// System.out.println(slaTestCalculator);
 		return isDone();
 	}
 
@@ -238,39 +227,4 @@ public abstract class AbstractScheduling implements IScheduling,
 		return this.schedulable.cardinality() > 0;
 	}
 
-}
-
-class SLATestCalculator implements IPOEventListener {
-	final Map<IPhysicalOperator, Long> processPerOperator;
-	long overallCount = 0;
-
-	public SLATestCalculator(List<? extends IPhysicalOperator> toMonitor) {
-		processPerOperator = new HashMap<IPhysicalOperator, Long>();
-		for (IPhysicalOperator p : toMonitor) {
-			processPerOperator.put(p, 0l);
-			p.subscribe(this, POEventType.ProcessDone);
-		}
-	}
-
-	@Override
-	public void poEventOccured(POEvent poEvent) {
-		IPhysicalOperator source = poEvent.getSource();
-		synchronized (processPerOperator) {
-			long c = processPerOperator.get(source);
-			processPerOperator.put(source, c + 1);
-			overallCount++;
-		}
-	}
-
-	@Override
-	public String toString() {
-		StringBuffer b = new StringBuffer(this.getClass().getSimpleName());
-		b.append("OverallCount " + overallCount + "\n");
-		for (Entry<IPhysicalOperator, Long> p : processPerOperator.entrySet()) {
-			b.append("--> " + p.getKey() + " = " + p.getValue() + " "
-					+ (overallCount > 0 ? (p.getValue() / overallCount) : 0)
-					+ "\n");
-		}
-		return b.toString();
-	}
 }
