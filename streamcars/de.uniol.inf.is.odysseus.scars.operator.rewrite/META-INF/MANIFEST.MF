@@ -20,4 +20,6 @@ Import-Package: de.uniol.inf.is.odysseus.scars.objecttracking.association.logica
  de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.physicaloperator,
  de.uniol.inf.is.odysseus.scars.operator.jdvesink.logicaloperator,
  de.uniol.inf.is.odysseus.scars.operator.jdvesink.physicaloperator,
- de.uniol.inf.is.odysseus.scars.operator.testdata
+ de.uniol.inf.is.odysseus.scars.operator.testdata,
+ de.uniol.inf.is.odysseus.scars.xmlprofiler.logicaloperator,
+ de.uniol.inf.is.odysseus.scars.xmlprofiler.physicaloperator
