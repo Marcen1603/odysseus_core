@@ -11,6 +11,8 @@ public class Activator implements BundleActivator {
 	private static final String BATCH_PRODUCER = "BatchProducer";
 	private static final String TEST_PRODUCER = "TestProducer";
 	private static final String BUFFER = "Buffer";
+	private static final String PRIO_ID_JOIN = "PriorityIdJoin";
+	
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -22,6 +24,7 @@ public class Activator implements BundleActivator {
 				BenchmarkBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(BUFFER,
 				BufferAOBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(PRIO_ID_JOIN, PrioIdJoinAOBuilder.class);
 	}
 
 	@Override
