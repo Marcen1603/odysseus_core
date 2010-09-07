@@ -89,6 +89,7 @@ TOKEN : /* Keywords */ {
 |   <K_BROKER_INIT: "BROKER-INIT">
 |	<K_TMP_DATA_BOUNCER: "TMP-DATA-BOUNCER">
 |   <K_JDVE_SINK: "JDVE-SINK">
+| 	<K_SCARS_XML_PROFILER: "SCARS_XML_PROFILER">
 }
 
 TOKEN:{
@@ -238,7 +239,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	PunctuationOp()|
 	BrokerInitOp() |
 	TmpDataBouncerOp() |
-	JDVESinkOp()/*@bgen(jjtree)*/
+	JDVESinkOp() |
+	ScarsXMLProfilerOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1913,6 +1915,35 @@ void JDVESinkOp(): {/*@bgen(jjtree) JDVESinkOp */
 {/*@bgen(jjtree) JDVESinkOp */
   try {
 /*@egen*/  <  K_JDVE_SINK > "(" AlgebraOp() "," Host() "," Number() "," Identifier() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}
+
+void ScarsXMLProfilerOp(): {/*@bgen(jjtree) ScarsXMLProfilerOp */
+  ASTScarsXMLProfilerOp jjtn000 = new ASTScarsXMLProfilerOp(JJTSCARSXMLPROFILEROP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) ScarsXMLProfilerOp */
+  try {
+/*@egen*/
+  < K_SCARS_XML_PROFILER > "(" AlgebraOp() "," Identifier() "," Identifier() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

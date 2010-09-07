@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalNestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalUnnestOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTScarsXMLProfilerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSchemaConvertOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
@@ -351,6 +352,12 @@ public Object visit(ASTJDVESinkOp node, Object data) {
 
 @Override
 public Object visit(ASTHost node, Object data) {
+	return node.childrenAccept(this, data);
+}
+
+@Override
+public Object visit(ASTScarsXMLProfilerOp node, Object data) {
+	// TODO Auto-generated method stub
 	return node.childrenAccept(this, data);
 }
 

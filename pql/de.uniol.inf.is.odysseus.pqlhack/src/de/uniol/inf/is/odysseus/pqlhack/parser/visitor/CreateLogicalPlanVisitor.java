@@ -79,6 +79,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalNestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalUnnestOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTScarsXMLProfilerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSchemaConvertOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
@@ -109,6 +110,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionEx
 import de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.logicaloperator.TemporaryDataBouncerAO;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.logicaloperator.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
+import de.uniol.inf.is.odysseus.scars.xmlprofiler.logicaloperator.XMLProfilerAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
@@ -1820,6 +1822,37 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	@Override
 	public Object visit(ASTHost node, Object data) {
 		return node.getValue();
+	}
+
+	@Override
+	public Object visit(ASTScarsXMLProfilerOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+		XMLProfilerAO profilerAO = new XMLProfilerAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		profilerAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		// Assoziations Objektpfad
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		String fileName = identifier.getName();
+		
+		ASTIdentifier identifier2 = (ASTIdentifier) node.jjtGetChild(2);
+		String operatorName = identifier.getName();
+
+		
+		profilerAO.setFileName(fileName);
+		profilerAO.setOperatorName(operatorName);
+
+		((ArrayList) data).add(profilerAO);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
 	}
 
 }

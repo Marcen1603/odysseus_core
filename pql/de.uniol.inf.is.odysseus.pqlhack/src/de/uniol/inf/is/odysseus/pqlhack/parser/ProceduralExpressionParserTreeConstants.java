@@ -60,6 +60,7 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTFILTERESTIMATEOP = 54;
   public int JJTFILTERCOVARIANCEOP = 55;
   public int JJTJDVESINKOP = 56;
+  public int JJTSCARSXMLPROFILEROP = 57;
 
 
   public String[] jjtNodeName = {
@@ -120,6 +121,7 @@ public interface ProceduralExpressionParserTreeConstants
     "FilterEstimateOp",
     "FilterCovarianceOp",
     "JDVESinkOp",
+    "ScarsXMLProfilerOp",
   };
 }
-/* JavaCC - OriginalChecksum=2e3e2102b8309491b68a04a39680da21 (do not edit this line) */
+/* JavaCC - OriginalChecksum=413445e8a7583fa657bda6c170522649 (do not edit this line) */
