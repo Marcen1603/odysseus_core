@@ -8,7 +8,7 @@ public class LatencyMergeFunction implements IInlineMetadataMergeFunction<ILaten
 	public void mergeInto(ILatency result, ILatency inLeft, ILatency inRight) {
 		//only start timestamp get merged, 'cause the end timestamp should not be set,
 		//when two elements get merged
-		result.setLatencyStart(Math.min(inLeft.getLatencyStart(), inRight.getLatencyStart()));
+		result.setLatencyStart(Math.max(inLeft.getLatencyStart(), inRight.getLatencyStart()));
 	}
 
 	public LatencyMergeFunction clone() {
