@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.activator;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.SWTError;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.XMLResourceLoader;
-
 
 public class Startup implements IStartup {
 
@@ -24,6 +26,27 @@ public class Startup implements IStartup {
 			}
 			
 		});
+		
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				try{
+				Bundle bundle = Activator.getDefault().getBundle();
+				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
+				imageRegistry.put("metadata", ImageDescriptor.createFromURL(bundle.getEntry("icons/metadata.gif")));
+				imageRegistry.put("attribute", ImageDescriptor.createFromURL(bundle.getEntry("icons/attribute.png")));
+				imageRegistry.put("schema", ImageDescriptor.createFromURL(bundle.getEntry("icons/schema.png")));
+				imageRegistry.put("pipe_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/pipe.png")));
+				imageRegistry.put("sink_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/sink.png")));
+				imageRegistry.put("source_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/source.png")));
+				}catch(SWTError e){
+					// Ignore :-)
+				}
+			}
+			
+		});
+
 	}
 
 }

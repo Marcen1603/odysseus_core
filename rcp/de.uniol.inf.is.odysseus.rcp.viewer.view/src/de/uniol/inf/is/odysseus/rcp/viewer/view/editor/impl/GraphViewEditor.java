@@ -20,6 +20,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
@@ -42,6 +43,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 
 	private PhysicalGraphEditorInput input;
 	private SWTRenderManager<IPhysicalOperator> renderManager;
+	private GraphViewEditorOutlinePage outlinePage;
 
 	private final Collection<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
 
@@ -174,4 +176,13 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 		return input.getGraphView();
 	}
 
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (IContentOutlinePage.class.equals(adapter)) {
+			if (outlinePage == null) {
+				outlinePage = new GraphViewEditorOutlinePage(this.input);
+			}
+			return outlinePage;
+		}
+		return super.getAdapter(adapter);
+	}
 }

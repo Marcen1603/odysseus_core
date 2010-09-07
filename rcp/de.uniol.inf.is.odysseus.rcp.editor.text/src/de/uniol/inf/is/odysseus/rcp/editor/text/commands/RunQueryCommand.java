@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.commands;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -17,6 +20,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.editor.SimpleEditor;
+import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
@@ -65,12 +69,16 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			br.close();
 			
 			// Erst Text testen
-			QueryTextParser parser = new QueryTextParser();
-			parser.parse(lines.toArray(new String[lines.size()]), true);
+			List<PreParserStatement> statements = QueryTextParser.getInstance().parse(lines.toArray(new String[lines.size()]));
+			Map<String, String> variables = new HashMap<String, String>();
+			for( PreParserStatement stmt : statements )
+				stmt.validate(variables);
+			
 			
 			// Dann ausführen
-			parser = new QueryTextParser();
-			parser.parse(lines.toArray(new String[lines.size()]), false);
+			variables = new HashMap<String, String>();
+			for( PreParserStatement stmt : statements )
+				stmt.execute(variables);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

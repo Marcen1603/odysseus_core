@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
@@ -13,7 +14,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
 	@Override
-	public void validate(QueryTextParser parser, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		try {
 			IAdvancedExecutor executor = ExecutorHandler.getExecutor();
 			if( executor == null ) 
@@ -31,12 +31,12 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			if( executor.getCompiler() == null ) 
 				throw new QueryTextParseException("No compiler found");
 			
-			String parserID = parser.getVariable("PARSER");
+			String parserID = variables.get("PARSER");
 			if( parserID == null ) 
 				throw new QueryTextParseException("Parser not set");
 			if( !executor.getSupportedQueryParser().contains(parserID))
 				throw new QueryTextParseException("Parser " + parserID + " not found");
-			String transCfg = parser.getVariable("TRANSCFG");
+			String transCfg = variables.get("TRANSCFG");
 			if( transCfg == null ) 
 				throw new QueryTextParseException("TransformationConfiguration not set");
 			if( ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null ) 
@@ -49,11 +49,11 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(QueryTextParser parser, String parameter ) throws QueryTextParseException {
+	public void execute(Map<String, String> variables, String parameter ) throws QueryTextParseException {
 
 		String queries = parameter;
-		String parserID = parser.getVariable("PARSER");
-		String transCfgID = parser.getVariable("TRANSCFG");
+		String parserID = variables.get("PARSER");
+		String transCfgID = variables.get("TRANSCFG");
 
 		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
 		ICompiler compiler = executor.getCompiler();
@@ -88,6 +88,8 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			e1.printStackTrace();
 		} catch (Exception e1) {
 			e1.printStackTrace();
+		} catch( Throwable ex ) {
+//			ex.printStackTrace();
 		}
 	}
 

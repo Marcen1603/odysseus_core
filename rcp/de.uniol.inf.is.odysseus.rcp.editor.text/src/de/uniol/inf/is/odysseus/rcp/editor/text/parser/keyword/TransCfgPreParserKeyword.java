@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 
 /**
@@ -16,7 +17,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigur
 public class TransCfgPreParserKeyword implements IPreParserKeyword {
 
 	@Override
-	public void validate(QueryTextParser parser, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		if (parameter.length() == 0)
 			throw new QueryTextParseException("Parameter needed for #TRANCFG");
 
@@ -24,12 +25,12 @@ public class TransCfgPreParserKeyword implements IPreParserKeyword {
 		if (!registry.getTransformationConfigurationNames().contains(parameter)) {
 			throw new QueryTextParseException("TransformationCfg " + parameter + " not found");
 		}
-		parser.setVariable("TRANSCFG", parameter);
+		variables.put("TRANSCFG", parameter);
 	}
 
 	@Override
-	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
-		parser.setVariable("TRANSCFG", parameter);
+	public void execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
+		variables.put("TRANSCFG", parameter);
 	}
 
 }

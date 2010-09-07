@@ -17,14 +17,13 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 
 public class QueryPreParserKeyword implements IPreParserKeyword {
 
 	@Override
-	public void validate(QueryTextParser parser, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		try {
 			IAdvancedExecutor executor = ExecutorHandler.getExecutor();
 			if (executor == null)
@@ -33,12 +32,12 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 			if (parameter.length() == 0)
 				throw new QueryTextParseException("Encountered empty query");
 
-			String parserID = parser.getVariable("PARSER");
+			String parserID = variables.get("PARSER");
 			if (parserID == null)
 				throw new QueryTextParseException("Parser not set");
 			if (!executor.getSupportedQueryParser().contains(parserID))
 				throw new QueryTextParseException("Parser " + parserID + " not found");
-			String transCfg = parser.getVariable("TRANSCFG");
+			String transCfg = variables.get("TRANSCFG");
 			if (transCfg == null)
 				throw new QueryTextParseException("TransformationConfiguration not set");
 			if (ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null)
@@ -49,9 +48,9 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(QueryTextParser parser, String parameter) throws QueryTextParseException {
-		String parserID = parser.getVariable("PARSER");
-		String transCfg = parser.getVariable("TRANSCFG");
+	public void execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
+		String parserID = variables.get("PARSER");
+		String transCfg = variables.get("TRANSCFG");
 
 		try {
 			executeQuery(parserID, transCfg, parameter);

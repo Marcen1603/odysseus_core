@@ -1,9 +1,17 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class QueryTextParser {
+
+	private static QueryTextParser instance;
 
 	public static final String PARAMETER_KEY = "#";
 
@@ -12,26 +20,71 @@ public class QueryTextParser {
 	public static final String REPLACEMENT_END_KEY = "}";
 
 	public static final String SINGLE_LINE_COMMENT_KEY = "//";
-	
-	private final Map<String, String> replacements = new HashMap<String, String>();
-	private Map<String, String> variables = new HashMap<String, String>();
+
 	private int currentLine;
 
-	public void setVariable(String var, String value) {
-		getVariables().put(var, value);
+	private QueryTextParser() {
+
 	}
 
-	public String getVariable(String var) {
-		return getVariables().get(var);
+	public static QueryTextParser getInstance() {
+		if (instance == null)
+			instance = new QueryTextParser();
+		return instance;
 	}
 
-	protected Map<String, String> getVariables() {
-		if (variables == null)
-			variables = new HashMap<String, String>();
-		return variables;
+	public List<PreParserStatement> parse(String completeText) throws QueryTextParseException {
+		List<String> lines = null;
+		try {
+			lines = splitToList(completeText);
+		} catch (Exception ex) {
+			throw new QueryTextParseException("cannot parse query", ex);
+		}
+		return parse(lines.toArray(new String[lines.size()]));
+	}
+	
+	public Map<String, String> getReplacements(String text) {
+		return getReplacements( splitToList(text).toArray(new String[0]));
+	}	
+
+	public Map<String, String> getReplacements(String[] text) {
+		Map<String, String> repl = new HashMap<String, String>();
+		for (String line : text) {
+			String correctLine = removeComments(line).trim();
+			final int pos = correctLine.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
+			if (pos != -1) {
+				String[] parts = correctLine.split(" |\t", 3);
+				// parts[0] is #DEFINE
+				repl.put(parts[1].trim(), parts[2].trim());
+			}
+		}
+		return repl;
 	}
 
-	public void parse(String[] text, boolean test) throws QueryTextParseException {
+	private List<String> splitToList(String text)  {
+		ArrayList<String> lines = new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new StringReader(text));
+		try {
+			String line = br.readLine();
+			while (line != null) {
+				lines.add(line);
+				line = br.readLine();
+			}
+		}catch( Exception ex ) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+			}
+		}
+		return lines;
+	}
+
+	public List<PreParserStatement> parse(String[] text) throws QueryTextParseException {
+
+		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
+		Map<String, String> replacements = getReplacements(text);
 		try {
 			StringBuffer sb = null;
 
@@ -43,7 +96,7 @@ public class QueryTextParser {
 				line = removeComments(line).trim();
 
 				// Ersetzungen einsetzen
-				line = useReplacements(line);
+				line = useReplacements(line, replacements);
 				if (line == null)
 					continue;
 				else
@@ -61,10 +114,7 @@ public class QueryTextParser {
 							// alten parameter ausführen
 							if (sb != null && currentKey != null) {
 								IPreParserKeyword keyword = PreParserKeywordRegistry.getInstance().createKeywordExecutor(currentKey);
-								if (!test)
-									keyword.execute(this, sb.toString());
-								else
-									keyword.validate(this, sb.toString());
+								statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
 							}
 
 							// neue parameterzuweisung
@@ -86,48 +136,37 @@ public class QueryTextParser {
 
 			// Last query
 			if (sb != null && currentKey != null) {
-				if (sb.length() > 0) {
-					IPreParserKeyword keyword = PreParserKeywordRegistry.getInstance().createKeywordExecutor(currentKey);
-					if (!test)
-						keyword.execute(this, sb.toString());
-					else
-						keyword.validate(this, sb.toString());
-				} else {
-					throw new QueryTextParseException("Empty Key " + currentKey + " in line " + (text.length + 1));
-				}
+				IPreParserKeyword keyword = PreParserKeywordRegistry.getInstance().createKeywordExecutor(currentKey);
+				statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
 			}
+
+			return statements;
 		} catch (QueryTextParseException ex) {
 			throw new QueryTextParseException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
 		}
 	}
 
-	protected String useReplacements(String line) throws QueryTextParseException {
-
-		// neue Replacementdefinition?
+	protected String useReplacements(String line, Map<String, String> replacements) throws QueryTextParseException {
 		final int pos = line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
 		if (pos != -1) {
-			String[] parts = line.split(" |\t", 3);
-			// parts[0] is #DEFINE
-			replacements.put(parts[1].trim(), parts[2].trim());
 			return null;
-		} else {
-
-			int posStart = line.indexOf(REPLACEMENT_START_KEY);
-			while (posStart != -1) {
-				if (posStart != -1) {
-					int posEnd = line.indexOf(REPLACEMENT_END_KEY);
-					if (posEnd != -1 && posStart < posEnd) {
-						String key = line.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
-						if (replacements.containsKey(key)) {
-							line = line.replace(REPLACEMENT_START_KEY + key + REPLACEMENT_END_KEY, replacements.get(key));
-						} else {
-							throw new QueryTextParseException("Replacer " + key + " not defined ");
-						}
+		}
+		
+		int posStart = line.indexOf(REPLACEMENT_START_KEY);
+		while (posStart != -1) {
+			if (posStart != -1) {
+				int posEnd = line.indexOf(REPLACEMENT_END_KEY);
+				if (posEnd != -1 && posStart < posEnd) {
+					String key = line.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
+					if (replacements.containsKey(key)) {
+						line = line.replace(REPLACEMENT_START_KEY + key + REPLACEMENT_END_KEY, replacements.get(key));
+					} else {
+						throw new QueryTextParseException("Replacer " + key + " not defined ");
 					}
 				}
-
-				posStart = line.indexOf(REPLACEMENT_START_KEY);
 			}
+
+			posStart = line.indexOf(REPLACEMENT_START_KEY);
 		}
 		return line;
 	}

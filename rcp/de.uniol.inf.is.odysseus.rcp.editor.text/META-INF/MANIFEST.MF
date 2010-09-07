@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.text.activator.Activator
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.core.expressions
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
@@ -17,7 +16,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.usermanagement,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
- de.uniol.inf.is.odysseus.planmanagement.optimization.query,
  de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.user,
  de.uniol.inf.is.odysseus.rcp.viewer.query,
@@ -29,6 +27,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.eclipse.jface.text.source,
  org.eclipse.ui.editors.text,
  org.eclipse.ui.part,
- org.eclipse.ui.texteditor
+ org.eclipse.ui.texteditor,
+ org.eclipse.ui.views.contentoutline
 Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text
 Service-Component: OSGI-INF/Executor.xml

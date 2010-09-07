@@ -118,7 +118,11 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 		queryTextColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(((IQuery) cell.getElement()).getQueryText());
+				String text = ((IQuery) cell.getElement()).getQueryText();
+				text = text.replace('\n', ' ');
+				text = text.replace('\r', ' ');
+				text = text.replace('\t', ' ');
+				cell.setText(text);
 			}
 		});
 		tableColumnLayout.setColumnData(queryTextColumn.getColumn(), new ColumnWeightData(80,200,true));
