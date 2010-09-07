@@ -16,17 +16,17 @@ import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class JDVESink<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
+public class JDVESinkPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	
 	private NIOServer server;
 	private int port;
 	
-	public JDVESink(int port) {
+	public JDVESinkPO(int port) {
 		this.port = port;
 	}
 	
-	public JDVESink(JDVESink<M> sink) {
+	public JDVESinkPO(JDVESinkPO<M> sink) {
 		this.port = sink.port;
 		this.server = sink.server;
 	}
@@ -124,7 +124,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		return new JDVESink<M>(this);
+		return new JDVESinkPO<M>(this);
 	}
 
 }
