@@ -21,7 +21,12 @@ public class SimpleContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if( newInput != null ) {
 			input = (StringTreeRoot)newInput;
-			replaceLeaf = new ReplacementLeaf(QueryTextParser.getInstance().getReplacements(input.getString()));
+			try {
+				replaceLeaf = new ReplacementLeaf(QueryTextParser.getInstance().getReplacements(input.getString()));
+			} catch (QueryTextParseException e) {
+				e.printStackTrace();
+				replaceLeaf = null;
+			}
 		} else {
 			input = null;
 			replaceLeaf = null;
@@ -40,9 +45,13 @@ public class SimpleContentProvider implements ITreeContentProvider {
 			try {
 				ArrayList<Object> list = new ArrayList<Object>();
 				List<PreParserStatement> statements = QueryTextParser.getInstance().parse(text);
-				list.add( replaceLeaf );
-				list.addAll(statements);
-				return list.toArray();
+				if( replaceLeaf != null ) {
+					list.add( replaceLeaf );
+					list.addAll(statements);
+					return list.toArray();
+				} else {
+					throw new QueryTextParseException();
+				}
 			} catch (QueryTextParseException e) {
 				e.printStackTrace();
 				return new Object[] { new StringError("Error in Query") };

@@ -43,17 +43,18 @@ public class QueryTextParser {
 		return parse(lines.toArray(new String[lines.size()]));
 	}
 	
-	public Map<String, String> getReplacements(String text) {
+	public Map<String, String> getReplacements(String text) throws QueryTextParseException {
 		return getReplacements( splitToList(text).toArray(new String[0]));
 	}	
 
-	public Map<String, String> getReplacements(String[] text) {
+	public Map<String, String> getReplacements(String[] text) throws QueryTextParseException {
 		Map<String, String> repl = new HashMap<String, String>();
 		for (String line : text) {
 			String correctLine = removeComments(line).trim();
-			final int pos = correctLine.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
+			String replacedLine = useReplacements(correctLine, repl);
+			final int pos = replacedLine.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
 			if (pos != -1) {
-				String[] parts = correctLine.split(" |\t", 3);
+				String[] parts = replacedLine.split(" |\t", 3);
 				// parts[0] is #DEFINE
 				repl.put(parts[1].trim(), parts[2].trim());
 			}
@@ -84,8 +85,8 @@ public class QueryTextParser {
 	public List<PreParserStatement> parse(String[] text) throws QueryTextParseException {
 
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
-		Map<String, String> replacements = getReplacements(text);
 		try {
+			Map<String, String> replacements = getReplacements(text);
 			StringBuffer sb = null;
 
 			String currentKey = null;
@@ -96,12 +97,9 @@ public class QueryTextParser {
 				line = removeComments(line).trim();
 
 				// Ersetzungen einsetzen
-				line = useReplacements(line, replacements);
-				if (line == null)
-					continue;
-				else
-					line = line.trim();
-
+				line = useReplacements(line, replacements).trim();
+				if( line.indexOf(REPLACEMENT_DEFINITION_KEY) != -1 ) continue;
+				
 				if (line.length() > 0) {
 
 					// Neue Parameterzuweisung?
@@ -147,11 +145,6 @@ public class QueryTextParser {
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws QueryTextParseException {
-		final int pos = line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
-		if (pos != -1) {
-			return null;
-		}
-		
 		int posStart = line.indexOf(REPLACEMENT_START_KEY);
 		while (posStart != -1) {
 			if (posStart != -1) {
