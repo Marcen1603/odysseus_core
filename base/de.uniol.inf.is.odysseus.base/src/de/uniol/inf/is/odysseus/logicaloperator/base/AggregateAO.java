@@ -12,128 +12,138 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class AggregateAO extends UnaryLogicalOp {
 
-	private static final long serialVersionUID = 2539966167342852544L;
+    private static final long serialVersionUID = 2539966167342852544L;
 
-	private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>();
+    private Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>();
 
-	private List<SDFAttribute> groupingAttributes = new ArrayList<SDFAttribute>();
+    private List<SDFAttribute> groupingAttributes = new ArrayList<SDFAttribute>();
 
-	private SDFAttributeList outputSchema = null;
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ ((aggregations == null) ? 0 : aggregations.hashCode());
-		result = prime
-				* result
-				+ ((groupingAttributes == null) ? 0 : groupingAttributes
-						.hashCode());
-		return result;
-	}
+    private SDFAttributeList outputSchema = null;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AggregateAO other = (AggregateAO) obj;
-		if (aggregations == null) {
-			if (other.aggregations != null)
-				return false;
-		} else if (!aggregations.equals(other.aggregations))
-			return false;
-		if (groupingAttributes == null) {
-			if (other.groupingAttributes != null)
-				return false;
-		} else if (!groupingAttributes.equals(other.groupingAttributes))
-			return false;
-		return true;
-	}
-	
-	public AggregateAO() {
-		super();
-		aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>();
-		groupingAttributes = new ArrayList<SDFAttribute>();
-		outputSchema = new SDFAttributeList();
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((aggregations == null) ? 0 : aggregations.hashCode());
+        result = prime
+                * result
+                + ((groupingAttributes == null) ? 0 : groupingAttributes
+                        .hashCode());
+        return result;
+    }
 
-	public AggregateAO(AggregateAO op) {
-		super(op);
-		aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>(
-				op.aggregations);
-		groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
-		outputSchema = op.outputSchema.clone();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AggregateAO other = (AggregateAO) obj;
+        if (aggregations == null) {
+            if (other.aggregations != null)
+                return false;
+        }
+        else if (!aggregations.equals(other.aggregations))
+            return false;
+        if (groupingAttributes == null) {
+            if (other.groupingAttributes != null)
+                return false;
+        }
+        else if (!groupingAttributes.equals(other.groupingAttributes))
+            return false;
+        return true;
+    }
 
-	public void addAggregation(SDFAttribute attribute,
-			AggregateFunction function, SDFAttribute outAttribute) {
-		if (getOutputSchema().contains(outAttribute)) {
-			throw new IllegalArgumentException(
-					"multiple definitions of element " + outAttribute);
-		}
+    public AggregateAO() {
+        super();
+        aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>();
+        groupingAttributes = new ArrayList<SDFAttribute>();
+        outputSchema = new SDFAttributeList();
+    }
 
-		getOutputSchema().add(outAttribute);
-		Map<AggregateFunction, SDFAttribute> af = aggregations.get(attribute);
-		if (af == null) {
-			af = new HashMap<AggregateFunction, SDFAttribute>();
-			aggregations.put(attribute, af);
-		}
-		af.put(function, outAttribute);
-	}
-	
-	public void addAggregations(Map<SDFAttribute, Map<AggregateFunction,SDFAttribute>> aggregations){
-		for (SDFAttribute attr:aggregations.keySet()){
-			Map<AggregateFunction,SDFAttribute> aggs = aggregations.get(attr);
-			for (Entry<AggregateFunction,SDFAttribute> e:aggs.entrySet()){
-				addAggregation(attr, e.getKey(), e.getValue());
-			}
-		}
-	}
+    public AggregateAO(AggregateAO op) {
+        super(op);
+        aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>(
+                op.aggregations);
+        groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
+        outputSchema = op.outputSchema.clone();
+    }
 
-	public Map<AggregateFunction, SDFAttribute> getAggregationFunctions(
-			SDFAttribute attribute) {
-		return aggregations.get(attribute);
-	}
+    public void addAggregation(SDFAttribute attribute,
+            AggregateFunction function, SDFAttribute outAttribute) {
+        SDFAttributeList attributes = new SDFAttributeList();
+        attributes.add(attribute);
+        addAggregation(attributes, function, outAttribute);
+    }
 
-	public Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> getAggregations() {
-		return this.aggregations;
-	}
+    public void addAggregation(SDFAttributeList attributes,
+            AggregateFunction function, SDFAttribute outAttribute) {
+        if (getOutputSchema().contains(outAttribute)) {
+            throw new IllegalArgumentException(
+                    "multiple definitions of element " + outAttribute);
+        }
 
-	public boolean hasAggregations() {
-		return !this.aggregations.isEmpty();
-	}
+        getOutputSchema().add(outAttribute);
+        Map<AggregateFunction, SDFAttribute> af = aggregations.get(attributes);
+        if (af == null) {
+            af = new HashMap<AggregateFunction, SDFAttribute>();
+            aggregations.put(attributes, af);
+        }
+        af.put(function, outAttribute);
+    }
 
-	public void addGroupingAttribute(SDFAttribute attribute) {
-		if (groupingAttributes.contains(attribute)) {
-			return;
-		}
-		groupingAttributes.add(attribute);
-		getOutputSchema().add(attribute);
-	}
-	
-	public void addGroupingAttributes(SDFAttributeList attributes){
-		for(SDFAttribute a: attributes){
-			addGroupingAttribute(a);
-		}
-	}
+    public void addAggregations(
+            Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
+        for (SDFAttribute attr : aggregations.keySet()) {
+            Map<AggregateFunction, SDFAttribute> aggs = aggregations.get(attr);
+            for (Entry<AggregateFunction, SDFAttribute> e : aggs.entrySet()) {
+                addAggregation(attr, e.getKey(), e.getValue());
+            }
+        }
+    }
 
-	public List<SDFAttribute> getGroupingAttributes() {
-		return groupingAttributes;
-	}
+    public Map<AggregateFunction, SDFAttribute> getAggregationFunctions(
+            SDFAttribute attribute) {
+        return aggregations.get(attribute);
+    }
 
-	@Override
-	public AggregateAO clone() {
-		return new AggregateAO(this);
-	}
-	
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
-	}
-	
+    public Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> getAggregations() {
+        return this.aggregations;
+    }
+
+    public boolean hasAggregations() {
+        return !this.aggregations.isEmpty();
+    }
+
+    public void addGroupingAttribute(SDFAttribute attribute) {
+        if (groupingAttributes.contains(attribute)) {
+            return;
+        }
+        groupingAttributes.add(attribute);
+        getOutputSchema().add(attribute);
+    }
+
+    public void addGroupingAttributes(SDFAttributeList attributes) {
+        for (SDFAttribute a : attributes) {
+            addGroupingAttribute(a);
+        }
+    }
+
+    public List<SDFAttribute> getGroupingAttributes() {
+        return groupingAttributes;
+    }
+
+    @Override
+    public AggregateAO clone() {
+        return new AggregateAO(this);
+    }
+
+    @Override
+    public SDFAttributeList getOutputSchema() {
+        return outputSchema;
+    }
+
 }

@@ -27,18 +27,18 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	//
 	private static final int RIGHT = 1;
 	//
-	private ISweepArea<T>[] sa;
+	private final ISweepArea<T>[] sa;
 	//
-	private PriorityQueue<T> returnBuffer;
+	private final PriorityQueue<T> returnBuffer;
 	//
-	private PointInTime[] highestStart;
+	private final PointInTime[] highestStart;
 
 	//
 	@SuppressWarnings("unchecked")
 	public AntiJoinTIPO(ExistenceAO ao, ISweepArea<T> leftArea,
 			ISweepArea<T> rightArea) {
 		super();
-		this.sa = (ISweepArea<T>[]) new ISweepArea[] { leftArea, rightArea };
+		this.sa = new ISweepArea[] { leftArea, rightArea };
 		this.returnBuffer = new PriorityQueue<T>(10,
 				new MetadataComparator<ITimeInterval>());
 		PointInTime startTime = PointInTime.getZeroTime();
@@ -63,7 +63,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	}
 
 	public AntiJoinTIPO(AntiJoinTIPO<K, T> antiJoinTIPO) {
-		this.sa = antiJoinTIPO.sa.clone();// TODO was ist hier gewollt
+        this.sa = (ISweepArea<T>[]) antiJoinTIPO.sa.clone();// TODO was ist hier gewollt
 		this.returnBuffer = new PriorityQueue<T>(10,
 				new MetadataComparator<ITimeInterval>());
 		PointInTime startTime = PointInTime.getZeroTime();

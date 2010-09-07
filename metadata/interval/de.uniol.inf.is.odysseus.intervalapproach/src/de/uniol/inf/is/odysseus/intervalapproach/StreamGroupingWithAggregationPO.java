@@ -23,8 +23,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	private class G {
 
-		private List<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>> groups_queue = new ArrayList<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>>();
-		private HashMap<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>, Integer> gToId = new HashMap<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>, Integer>();
+        private final List<DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> groups_queue = new ArrayList<DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>>();
+        private final HashMap<DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>, Integer> gToId = new HashMap<DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>, Integer>();
 
 		public G(){};
 		
@@ -34,7 +34,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		}
 		
 		synchronized void insert(
-				DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+                DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 				Integer groupID) {
 			groups_queue.add(sa);
 			gToId.put(sa, groupID);
@@ -70,7 +70,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	private G g;
 	private DefaultTISweepArea<R> q = new DefaultTISweepArea<R>();
-	private Map<Integer, DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>>();
+    private final Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>>();
 
 	// Nur f�r Debug-Zwecke
 	// private PointInTime baseTime = null;
@@ -79,7 +79,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			SDFAttributeList inputSchema,
 			SDFAttributeList outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations,
+            Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
 			GroupingHelper<R> grHelper, Class<Q> metadataType) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
 				metadataType);
@@ -95,7 +95,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	public StreamGroupingWithAggregationPO(SDFAttributeList inputSchema,
 			SDFAttributeList outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
+            Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 	}
 
@@ -110,25 +110,25 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	protected void initAggFunctions() {
 		// AggregateAO aggregateAO = getAlgebraOp();
 		// SDFAttributeList inputSchema = aggregateAO.getInputSchema();
-		for (SDFAttribute a : getInputSchema()) {
+        Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = getAggregations();
 
-			Map<AggregateFunction, SDFAttribute> funcs = getAggregations().get(
-					a);
-			if (funcs != null) {
-				for (Entry<AggregateFunction, SDFAttribute> e : funcs
-						.entrySet()) {
-					FESortedPair<SDFAttribute, AggregateFunction> p = new FESortedPair<SDFAttribute, AggregateFunction>(
-							a, e.getKey());
-					setAggregationFunction(p, getGroupingHelper()
-							.getInitAggFunction(p));
-					setAggregationFunction(p, getGroupingHelper()
-							.getMergerAggFunction(p));
-					setAggregationFunction(p, getGroupingHelper()
-							.getEvaluatorAggFunction(p));
-
-				}
-			}
-		}
+	    for (SDFAttributeList attrList : aggregations.keySet()) {
+            if (SDFAttributeList.subset(attrList, getInputSchema())) {
+                Map<AggregateFunction, SDFAttribute> funcs = aggregations
+                        .get(attrList);
+                for (Entry<AggregateFunction, SDFAttribute> e : funcs
+                        .entrySet()) {
+                    FESortedPair<SDFAttributeList, AggregateFunction> p = new FESortedPair<SDFAttributeList, AggregateFunction>(
+                            attrList, e.getKey());
+                    setAggregationFunction(p, getGroupingHelper()
+                            .getInitAggFunction(p));
+                    setAggregationFunction(p, getGroupingHelper()
+                            .getMergerAggFunction(p));
+                    setAggregationFunction(p, getGroupingHelper()
+                            .getEvaluatorAggFunction(p));
+                }
+            }
+        }
 	}
 
 	@Override
@@ -148,10 +148,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			// Die Gruppe mit den �ltesten Elementen heraussuchen
 			Integer groupID = g.min();
 			// Sowie die passenden SweepArea
-			DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
+            DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 					.get(groupID);
 			g.removeLastMin();
-			Iterator<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> results = sa
+            Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results = sa
 					.iterator();
 			produceResults(results, groupID);
 			sa.clear();
@@ -197,10 +197,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// ermitteln
 		Integer groupID = getGroupingHelper().getGroupID(s);
 		// Passende SweepArea finden (oder ggf. erzeugen)
-		DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
+        DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 				.get(groupID);
 		if (sa == null) {
-			sa = new DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>();
+            sa = new DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
 		}
 		// Falls diese SA noch nicht verwaltet wurde
@@ -217,7 +217,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	private void createOutput(PointInTime startTimestamp) {
 		Integer groupID;
-		DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> sa;
+        DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 		PointInTime minTs = null;
 		while (!g.isEmpty()) {
 			// Die Gruppe mit den �ltesten Elementen heraussuchen
@@ -226,7 +226,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			sa = groups.get(groupID);
 
 			// Das �lteste Element der SweepArea auslesen
-			PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> e_dach = sa
+            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> e_dach = sa
 					.peek();
 
 			// Wenn das �lteste Element schon minTs als Startzeitpunkt hat,
@@ -238,7 +238,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 			if (minTs.before(startTimestamp)) {
 				g.removeLastMin();
-				Iterator<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> results = sa
+                Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results = sa
 						.extractElementsBefore(startTimestamp);
 				produceResults(results, groupID);
 				// Falls noch nicht alle Elemente der SweepArea verarbeitet
@@ -253,12 +253,12 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	private synchronized void produceResults(
-			Iterator<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> results,
+            Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results,
 			Integer groupID) {
 		while (results.hasNext()) {
-			PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> e = results
+            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
-			PairMap<SDFAttribute, AggregateFunction, R, ? extends ITimeInterval> r = calcEval(e);
+            PairMap<SDFAttributeList, AggregateFunction, R, ? extends ITimeInterval> r = calcEval(e);
 			R out = getGroupingHelper().createOutputElement(groupID, r);
 			out.setMetadata(e.getMetadata());
 			q.insert(out);
@@ -275,7 +275,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	 * For an IPlanMigrationStrategy that directly manipulates the operator states.
 	 * @return State of {@link StreamGroupingWithAggregationPO}.
 	 */
-	public Map<Integer, DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
+    public Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
 		return this.groups;
 	}
 
