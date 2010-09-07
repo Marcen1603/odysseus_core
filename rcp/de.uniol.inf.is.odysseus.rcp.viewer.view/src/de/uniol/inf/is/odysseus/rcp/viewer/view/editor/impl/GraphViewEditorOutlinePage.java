@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphEditorConstants;
@@ -46,6 +47,8 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if( part instanceof ContentOutline ) return;
+		
 		if( selection instanceof IStructuredSelection ) {
 			if( ((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusNodeView ||
 				((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusGraphView) {
