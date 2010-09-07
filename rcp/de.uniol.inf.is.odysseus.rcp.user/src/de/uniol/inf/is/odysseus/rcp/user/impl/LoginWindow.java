@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.user.impl;
 
-import java.security.MessageDigest;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -130,8 +128,8 @@ public class LoginWindow {
 					markRed();
 					return;
 				}
-				LoginPreferencesManager.getInstance().setUsername(usernameInput.getText());
-				LoginPreferencesManager.getInstance().setPasswordMD5(md5(passwordInput.getText()));
+				LoginPreferencesManager.getInstance().setUsername(user.getUsername());
+				LoginPreferencesManager.getInstance().setPasswordMD5(user.getPassword());
 				LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
 				LoginPreferencesManager.getInstance().save();
 				ActiveUser.setActiveUser(user);
@@ -151,32 +149,5 @@ public class LoginWindow {
 					System.exit(1);
 			}
 		});
-	}
-	
-	static MessageDigest md5;
-	private String md5(String password) {
-		StringBuffer hexString = new StringBuffer();
-		try {
-			md5 = MessageDigest.getInstance("SHA-1");
-			if (md5 != null) {
-				synchronized (md5) {
-					md5.reset();
-					md5.update(password.getBytes());
-					byte[] result = md5.digest();
-					for (int i = 0; i < result.length; i++) {
-						if (result[i] <= 15 && result[i] >= 0) {
-							hexString.append("0");
-						}
-						hexString.append(Integer.toHexString(0xFF & result[i]));
-					}
-				}
-				return hexString.toString();
-			} else {
-				return password;
-			}
-		} catch( Exception ex ) {
-			ex.printStackTrace();
-			return "";
-		}
 	}
 }
