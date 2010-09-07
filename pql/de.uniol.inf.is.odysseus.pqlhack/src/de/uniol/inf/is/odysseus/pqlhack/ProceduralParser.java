@@ -88,7 +88,9 @@ public class ProceduralParser implements IQueryParser {
 			// init the broker dictionary and
 			// store all the broker names that occur in one
 			// of the partial plans.
-			initBroker.visit(root, null);
+			ArrayList<Object> brokerData = new ArrayList<Object>();
+			brokerData.add(true);
+			initBroker.visit(root, brokerData);
 			ArrayList<String> newBrokerNames = (ArrayList<String>)initBroker.getBrokerNames();
 			
 			for(String brokerName: newBrokerNames){
