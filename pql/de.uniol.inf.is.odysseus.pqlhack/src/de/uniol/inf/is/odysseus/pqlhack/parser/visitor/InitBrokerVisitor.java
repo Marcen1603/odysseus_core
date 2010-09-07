@@ -401,7 +401,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 	@Override
 	public Object visit(ASTAssociationGenOp node, Object data) {
 		((ArrayList)data).set(0, true);
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
@@ -412,10 +412,18 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		((ArrayList)data).set(0, true);
-		return node.childrenAccept(this, data);
+		
+		ArrayList list = new ArrayList();
+		list.add(true);
+		ASTIdentifier id = (ASTIdentifier)node.jjtGetChild(1);
+		list.add(id.getName());
+		return node.childrenAccept(this, list);
 	}
 
+	// 1
+	// 2 brokerName
+	// 3 aktuelle Eingabeport im Broker
+	
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
 		// first get the broker name if availabe
@@ -470,14 +478,14 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 	@Override
 	public Object visit(ASTEvaluateOp node, Object data) {
 		((ArrayList)data).set(0, true);
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTTestOp node, Object data) {
 		// TODO Auto-generated method stub
 		((ArrayList)data).set(0, true);
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
