@@ -109,10 +109,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		return this.brokerNames;
 	}
 	
-	public Object visit(ASTBrokerOp broker, Object hasPreceedingOperator) {
-		ArrayList returnData = new ArrayList();
-		returnData.add(broker.getName());
-		
+	public Object visit(ASTBrokerOp broker, Object data) {		
 		// in create logical plan visitor
 		// first the sources are created and then
 		// followings ops are finished. So
@@ -122,23 +119,14 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		// mappings.
 		// first go down the tree and that upwards
 		// again
-		// if the children return data, then an association
-		// source is writing into this broker. In this
-		// case it can happen that the corresponding
-		// association comes from this broker
-		// so that a queue port mapping must be matched.
-		Object childData = broker.childrenAccept(this, true);
-		String assName = null;
-		if(childData != null && childData instanceof String){
-			assName = (String)childData;
-		}
+
 		
 		if(!brokerNames.contains(broker.getName())){
 			this.brokerNames.add(broker.getName());
 		}
 		
 		// check if the preceding node is an algebra operator
-		if(hasPreceedingOperator != null && ((Boolean)hasPreceedingOperator).booleanValue()){
+		if(data != null && ((Boolean)((ArrayList)data).get(0)).booleanValue()){
 			// check if the broker has a queue statement.
 			if(broker.hasQueue()){
 				// the broker must exist, since it has been created
@@ -147,7 +135,19 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 				int curOut = BrokerDictionary.getInstance().getCurrentOutputPort(broker.getName());
 				
 				QueuePortMapping qpm = new QueuePortMapping(curOut, curIn);
-				returnData.add(curOut);
+				// if there is a preceeding association selection operator
+				// then this operator must be stored in the list of association
+				// ops, because at such an operator the statements can be separated
+				// so the a cycle can be listed over more than one statement.
+				if(((ArrayList)data).size() > 1 && ((ArrayList)data).get(1) instanceof String){
+					// get the name of the broker
+					String brokerName = broker.getName();
+					
+					// get name of the association selection
+					String assSelName= (String)((ArrayList)data).get(1);
+					
+					this.associationMappings.put(assSelName, new BrokerAssociationMapping(assSelName, brokerName, curOut));
+				}
 				
 				BrokerDictionary.getInstance().setCurrentInputPort(broker.getName(), curIn+1);
 				BrokerDictionary.getInstance().setCurrentOuputPort(broker.getName(), curOut+1);
@@ -159,42 +159,43 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 			// the parent node is an algebra, the broker is the input for the algebra op.
 			else{
 				int curOut = BrokerDictionary.getInstance().getCurrentOutputPort(broker.getName());
-				returnData.add(curOut);
 				BrokerDictionary.getInstance().setCurrentOuputPort(broker.getName(), curOut+1);
 			}
 
-		}		
+		}
+		
 		
 		// if there are child operators, than increment the no of input ports by 
 		// the no of child ops.
 		int curIn = BrokerDictionary.getInstance().getCurrentInputPort(broker.getName());
+		
+		// the children of the broker can be
+		// an association source op.
+		// in this it has to be checked
+		// whether this source op goes back
+		// the broker or not. If it does
+		// a new queue port mapping
+		// must be added.
+		ArrayList passData = new ArrayList();
+		passData.add(true);
+		passData.add(broker.getName());
+		passData.add(curIn);
+		broker.childrenAccept(this, passData);
+		
 		BrokerDictionary.getInstance().setCurrentInputPort(broker.getName(), curIn + broker.getNoOfChildOps());
 		
-		// I don't whether it is possible that the broker has proceeding operator
-		// in the statement an at the same time an association child, but maybe.
-		// Therefore the following is only if and not else if.
-		if(assName != null){
-			// get the out port for the association and a corresponding queue port;
-			// at the moment an association operator name is only connected to
-			// one single broker
-			QueuePortMapping qpm = new QueuePortMapping(this.associationMappings.get(assName).getOutPort(), curIn);
-			BrokerDictionary.getInstance().addQueuePortMapping(broker.getName(), qpm);
-		}
-		
-		return returnData;
+		return null;
 	}
 
 	@Override
 	public Object visit(SimpleNode node, Object data) {
-		for(int i = 0; i<node.jjtGetNumChildren(); i++){
-			
-		}
 		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTLogicalPlan node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
@@ -204,47 +205,56 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTProjectionOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTProjectionIdentifier node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTRelationalProjectionOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTSelectionOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTRelationalSelectionOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTRelationalJoinOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTRelationalNestOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTRelationalUnnestOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTJoinOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
@@ -252,198 +262,236 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		// window op is an abstract grammar clause
 		// from this clause you cannot directly go
 		// an algebra op
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTSlidingTimeWindow node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAccessOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTPredictionAssignOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTPredicate node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTSimplePredicate node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTBasicPredicate node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTOrPredicate node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAndPredicate node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTNotPredicate node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTExpression node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTSimpleToken node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTFunctionExpression node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTFunctionName node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTNumber node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTString node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTIdentifier node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTCompareOperator node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTPredictionDefinition node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTDefaultPredictionDefinition node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTPredictionFunctionDefinition node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTPredictionAssignOrOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTKeyValuePair node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAssociationGenOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTAssociationEvalOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		
-		
-		Object returnValue = node.jjtGetChild(0).jjtAccept(this, true);
-		if(returnValue != null){
-			String brokerName = ((String)((ArrayList)returnValue).get(0));
-			int outPort = ((Integer)((ArrayList)returnValue).get(1)).intValue();
-			
-			// get name of this op
-			ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
-			String opName = identifier.getName();
-			
-			this.associationMappings.put(opName, new BrokerAssociationMapping(opName, brokerName, outPort));
-		}
-		
-		return null;
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
-		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
-		String srcName = identifier.getName();
-		return srcName;
+		// first get the broker name if availabe
+		if(data != null && data instanceof ArrayList){
+			if(((ArrayList)data).size() == 3){
+				String brokerName = (String)((ArrayList)data).get(1);
+				int curInPort = (Integer)((ArrayList)data).get(2);
+				
+				// get the name of the association
+				ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
+				String srcName = identifier.getName();
+				
+				// get the corresponding broker if available
+				if(this.associationMappings.get(srcName) != null){
+					BrokerAssociationMapping brokerMapping = this.associationMappings.get(srcName);
+					QueuePortMapping qpm = new QueuePortMapping(brokerMapping.getOutPort(), curInPort);
+					BrokerDictionary.getInstance().addQueuePortMapping(brokerName, qpm);
+				}
+			}
+		}
+		
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTKeyValueList node, Object data) {
-		return node.childrenAccept(this, false);
+		((ArrayList)data).set(0, false);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTSchemaConvertOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTPredictionOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTBenchmarkOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTEvaluateOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTTestOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTBufferOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTExistOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
   @Override
@@ -451,7 +499,8 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
   {
     // filter op is a production rule in the grammar which can
     // have AlgebraOp() as a child. so data:=true
-    return node.childrenAccept(this, true);
+	  ((ArrayList)data).set(0, true);
+	  return node.childrenAccept(this, data);
   }
 
   @Override
@@ -459,7 +508,8 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
   {
     // filter op is a production rule in the grammar which can
     // have AlgebraOp() as a child. so data:=true
-    return node.childrenAccept(this, true);
+	  ((ArrayList)data).set(0, true);
+	  return node.childrenAccept(this, data);
   }
 
   @Override
@@ -467,35 +517,41 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
   {
     // filter op is a production rule in the grammar which can
     // have AlgebraOp() as a child. so data:=true
-    return node.childrenAccept(this, true);
+	  ((ArrayList)data).set(0, true);
+	  return node.childrenAccept(this, data);
   }
 
 	@Override
 	public Object visit(ASTBenchmarkOpExt node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTPunctuationOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTBrokerInitOp node, Object data) {
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTTmpDataBouncerOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTJDVESinkOp node, Object data) {
 		// TODO Auto-generated method stub
-		return node.childrenAccept(this, true);
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
 	}
 
 }
