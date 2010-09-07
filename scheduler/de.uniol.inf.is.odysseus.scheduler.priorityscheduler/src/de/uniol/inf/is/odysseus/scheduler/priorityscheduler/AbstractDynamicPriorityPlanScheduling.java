@@ -1,9 +1,8 @@
-package de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy;
+package de.uniol.inf.is.odysseus.scheduler.priorityscheduler;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
@@ -11,7 +10,6 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener {
 
-	private static final CurrentPlanPriorityComperator CURRENT_PLAN_PRIORITY_COMPERATOR = new CurrentPlanPriorityComperator();
 	protected final ArrayList<IScheduling> queue;
 
 	public AbstractDynamicPriorityPlanScheduling() {
@@ -27,35 +25,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialP
 	abstract protected void updatePriorities(IScheduling current);
 	abstract public AbstractDynamicPriorityPlanScheduling clone();
 	
-	protected void updatePriorityCurrent(IScheduling current, int prio) {
-		synchronized (queue) {
-			IPartialPlan curPlan = current.getPlan();
-			int currentPriority = curPlan.getCurrentPriority();
-			curPlan.setCurrentPriority(prio);
-			int pos = queue.indexOf(current);
-			int nextPos = pos;
-			if (prio < currentPriority) {
-				// TODO binary search sinnvoll, aber findet das element nicht
-				// ...
-				while (++nextPos < queue.size()) {
-					if (queue.get(nextPos).getPlan().getCurrentPriority() > prio) {
-						Collections.swap(queue, pos++, nextPos);
-					} else {
-						break;
-					}
-				}
-			} else {
-				while (--nextPos >= 0) {
-					if (queue.get(nextPos).getPlan().getCurrentPriority() < prio) {
-						System.out.println("SSSSSSSSSSWWWWWWWWWAPPPPPP BACK");
-						Collections.swap(queue, pos--, nextPos);
-					} else {
-						break;
-					}
-				}
-			}
-		}
-	}
+
 
 	@Override
 	public void addPlan(IScheduling scheduling) {
