@@ -56,7 +56,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	final protected void process_next(RelationalTuple<T> object, int port) {
 		RelationalTuple<T> outputVal = new RelationalTuple<T>(
 				this.expressions.length);
-		outputVal.setMetadata((T) object.getMetadata());
+		outputVal.setMetadata((T) object.getMetadata().clone());
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {
 				Object[] values = new Object[this.variables[i].length];
