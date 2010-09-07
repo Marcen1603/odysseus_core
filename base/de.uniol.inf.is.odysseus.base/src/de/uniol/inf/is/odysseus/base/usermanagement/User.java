@@ -5,87 +5,94 @@ import java.security.NoSuchAlgorithmException;
 
 public class User {
 
-	private String username;
-	private String password;
-	static MessageDigest md5 = null;
+    private final String hashFunction = "SHA-1";
+    private String username;
+    private final String password;
+    static MessageDigest hash = null;
 
-	User(String username, String password) {
-		try {
-			synchronized (User.class) {
-				if (md5 == null) {
-					md5 = MessageDigest.getInstance("MD5");
-				}
-			}
-		} catch (NoSuchAlgorithmException e) {
-		}
-		this.username = username;
-		this.password = md5(password);
-	}
+    User(String username, String password) {
+        try {
+            synchronized (User.class) {
+                if (hash == null) {
+                    hash = MessageDigest.getInstance(hashFunction);
+                }
+            }
+        }
+        catch (NoSuchAlgorithmException e) {
+        }
+        this.username = username;
+        this.password = hash(password);
+    }
 
-	private String md5(String password) {
-		StringBuffer hexString = new StringBuffer();
-		if (md5 != null) {
-			synchronized (md5) {
-				md5.reset();
-				md5.update(password.getBytes());
-				byte[] result = md5.digest();
-				for (int i = 0; i < result.length; i++) {
-					if (result[i] <= 15 && result[i] >= 0) {
-						hexString.append("0");
-					}
-					hexString.append(Integer.toHexString(0xFF & result[i]));
-				}
-			}
-			return hexString.toString();
-		} else {
-			return password;
-		}
-	}
+    private String hash(String password) {
+        StringBuffer hexString = new StringBuffer();
+        if (hash != null) {
+            synchronized (hash) {
+                hash.reset();
+                hash.update(password.getBytes());
+                byte[] result = hash.digest();
+                for (int i = 0; i < result.length; i++) {
+                    if (result[i] <= 15 && result[i] >= 0) {
+                        hexString.append("0");
+                    }
+                    hexString.append(Integer.toHexString(0xFF & result[i]));
+                }
+            }
+            return hexString.toString();
+        }
+        else {
+            return password;
+        }
+    }
 
-	public String getUsername() {
-		return username;
-	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((username == null) ? 0 : username.hashCode());
-		return result;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (username == null) {
-			if (other.username != null)
-				return false;
-		} else if (!username.equals(other.username))
-			return false;
-		return true;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public boolean validatePassword(String password, boolean passwordIsMd5) {
-		if (passwordIsMd5) {
-			return password.equals(password);
-		} else {
-			return this.password.equals(md5(password));
-		}
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        }
+        else if (!username.equals(other.username))
+            return false;
+        return true;
+    }
+
+    public boolean validatePassword(String password, boolean passwordIsHash) {
+        if (passwordIsHash) {
+            return password.equals(password);
+        }
+        else {
+            return this.password.equals(hash(password));
+        }
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
 }
