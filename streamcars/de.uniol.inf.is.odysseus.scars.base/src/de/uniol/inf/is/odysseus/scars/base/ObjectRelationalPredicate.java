@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -120,8 +121,10 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 
 	public boolean evaluate(MVRelationalTuple<?> input) {
 		Object[] values = new Object[this.attributePaths.length];
+		TupleHelper th = new TupleHelper(input);
 		for (int i = 0; i < values.length; ++i) {
-			values[i] = input.getORAttribute(this.attributePaths[i]);
+//			values[i] = input.getORAttribute(this.attributePaths[i]);
+			values[i] = th.getObject(this.attributePaths[i]);
 		}
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
@@ -131,7 +134,9 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		Object[] values = new Object[this.attributePaths.length];
 		for (int i = 0; i < values.length; ++i) {
 			MVRelationalTuple<?> r = fromRightChannel[i] ? right : left;
-			values[i] = r.getORAttribute(this.attributePaths[i]);
+			TupleHelper th = new TupleHelper(r);
+//			values[i] = r.getORAttribute(this.attributePaths[i]);
+			values[i] = th.getObject(this.attributePaths[i]);
 		}
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
