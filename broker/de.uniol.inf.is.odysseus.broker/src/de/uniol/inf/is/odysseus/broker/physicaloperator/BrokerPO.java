@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -23,8 +22,8 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -509,7 +508,13 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	
 	@Override
 	public BrokerPO<T> clone() {
-		return new BrokerPO(this);
+		return new BrokerPO<T>(this);
 	}
+	
+	@Override
+	public String getName() {
+		return super.getName() + " [" + getIdentifier() + "]";
+	}
+	
 
 }
