@@ -28,3 +28,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Export-Package: de.uniol.inf.is.odysseus.scars.xmlprofiler,
  de.uniol.inf.is.odysseus.scars.xmlprofiler.logicaloperator,
  de.uniol.inf.is.odysseus.scars.xmlprofiler.physicaloperator
+Bundle-ClassPath: jdom/jdom.jar,
+ .

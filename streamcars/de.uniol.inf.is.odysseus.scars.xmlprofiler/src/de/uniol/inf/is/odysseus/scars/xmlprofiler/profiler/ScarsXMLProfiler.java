@@ -77,7 +77,7 @@ public class ScarsXMLProfiler {
 		if(finish) {
 			XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
 			try {
-				op.output(root, new FileOutputStream(new File(file)));
+				op.output(root, new FileOutputStream(new File("D:/superTest.xml")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
