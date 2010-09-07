@@ -78,7 +78,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				addError(new IllegalArgumentException(
 						"missing information for the creation of source "
 								+ sourceName
-								+ ". expecting host, port, type and attributes."));
+								+ ". expecting source, host, port, type and schema."));
 				return false;
 			}
 		}
