@@ -13,6 +13,8 @@ public class XMLProfilerPO<M extends IProbability & ITimeInterval & IConnectionC
 extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	String operatorName;
+	String fileName;
+	String filePath;
 
 	public XMLProfilerPO() {
 		super();
@@ -49,6 +51,22 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	public void setOperatorName(String operatorName) {
 		this.operatorName = operatorName;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 }

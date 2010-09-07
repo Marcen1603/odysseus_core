@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class XMLProfilerAO<M extends IProbability & ITimeInterval & IConnectionContainer & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends UnaryLogicalOp {
 
 	String operatorName;
+	String fileName;
+	String filePath;
 
 	private static final long serialVersionUID = 1L;
 
@@ -41,6 +43,22 @@ public class XMLProfilerAO<M extends IProbability & ITimeInterval & IConnectionC
 
 	public void setOperatorName(String operatorName) {
 		this.operatorName = operatorName;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 }
