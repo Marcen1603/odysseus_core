@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
@@ -23,15 +22,10 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 3037302552522493103L;
 
-	private HashMap<Integer, Object> parameters;
-	
-	private String functionID;
-	
-	private AbstractDataUpdateFunction dataUpdateFunction;
+	private HashMap<Enum, Object> parameters;
 	
 	// path to new  objects
 	private String newObjListPath;
-	
 	
 	/**
 	 * @param AO
@@ -39,8 +33,7 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	public InitializationAO(InitializationAO<M> copy) {
 		super(copy);
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
-		this.setFunctionID(new String(copy.getFunctionID()));
-		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 	}
 
 	/**
@@ -74,34 +67,11 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 		return newObjListPath;
 	}
 
-
-	/**
-	 * @param functionID the functionID to set
-	 */
-	public void setFunctionID(String functionID) {
-		this.functionID = functionID;
-	}
-
-	/**
-	 * @return the functionID
-	 */
-	public String getFunctionID() {
-		return functionID;
-	}
-
-	public void setDataUpdateFunction(AbstractDataUpdateFunction dataUpdateFunction) {
-		this.dataUpdateFunction = dataUpdateFunction;
-	}
-
-	public AbstractDataUpdateFunction getDataUpdateFunction() {
-		return dataUpdateFunction;
-	}
-
-	public void setParameters(HashMap<Integer, Object> parameters) {
+	public void setParameters(HashMap<Enum, Object> parameters) {
 		this.parameters = parameters;
 	}
 
-	public HashMap<Integer, Object> getParameters() {
+	public HashMap<Enum, Object> getParameters() {
 		return parameters;
 	}
 
