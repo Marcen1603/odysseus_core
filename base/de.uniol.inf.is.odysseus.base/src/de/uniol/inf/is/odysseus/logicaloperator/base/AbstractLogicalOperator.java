@@ -37,6 +37,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	// cache access to bounded physOperators
 	private Map<Integer, ISource<?>> physInputOperators = new HashMap<Integer, ISource<?>>();
 
+	public Map<Integer, ISource<?>> getPhysInputOperators() {
+		return physInputOperators;
+	}
+
 	private String name = null;
 
 	@SuppressWarnings("unchecked")
