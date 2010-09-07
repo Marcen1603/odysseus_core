@@ -1,15 +1,21 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphEditorConstants;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 
-public class GraphViewEditorOutlinePage extends ContentOutlinePage {
+public class GraphViewEditorOutlinePage extends ContentOutlinePage implements ISelectionListener{
 
 	private PhysicalGraphEditorInput input;
 
@@ -26,6 +32,8 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage {
 		viewer.setLabelProvider(new GraphOutlineLabelProvider());
 		viewer.addSelectionChangedListener(this);
 		viewer.setInput(input.getGraphView());
+		
+		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 
 		MenuManager manager = new MenuManager(IGraphEditorConstants.OUTLINE_CONTEXT_MENU_ID, IGraphEditorConstants.OUTLINE_CONTEXT_MENU_ID);
 		manager.setRemoveAllWhenShown(true);
@@ -34,5 +42,16 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage {
 
 		IPageSite site = getSite();
 		site.registerContextMenu(IGraphEditorConstants.OUTLINE_CONTEXT_MENU_ID, manager, viewer);
+	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if( selection instanceof IStructuredSelection ) {
+			if( ((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusNodeView ||
+				((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusGraphView) {
+				
+				getTreeViewer().setSelection(selection);
+			}
+		}
 	}
 }
