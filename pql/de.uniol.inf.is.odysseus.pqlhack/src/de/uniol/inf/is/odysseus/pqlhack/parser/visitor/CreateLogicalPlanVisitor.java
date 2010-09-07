@@ -1806,7 +1806,9 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		
 		ao.subscribeToSource(inputOp, 0, sourceOutPort, inputOp.getOutputSchema());
 		
-		ao.setPort( Integer.valueOf(((ASTNumber) node.jjtGetChild(1)).getValue() ));
+		ao.setHostAdress(((ASTIdentifier)node.jjtGetChild(1)).getName());
+		ao.setPort( Integer.valueOf(((ASTNumber) node.jjtGetChild(2)).getValue() ));
+		ao.setServerType(((ASTIdentifier)node.jjtGetChild(3)).getName());
 		
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));

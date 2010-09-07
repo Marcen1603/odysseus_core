@@ -1869,7 +1869,7 @@ void JDVESinkOp(): {/*@bgen(jjtree) JDVESinkOp */
 /*@egen*/}
 {/*@bgen(jjtree) JDVESinkOp */
   try {
-/*@egen*/  <  K_JDVE_SINK > "(" AlgebraOp() "," Number() ")"/*@bgen(jjtree)*/
+/*@egen*/  <  K_JDVE_SINK > "(" AlgebraOp() "," Identifier() "," Number() "," Identifier() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
