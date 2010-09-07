@@ -182,18 +182,18 @@ public class MVRelationalTuple<T extends IProbability> extends
 		this.findMeasurementValuePositions(schema);
 	}
 	
-	public Object getORAttribute(int[] path ) {
-		Object actualAttribute = null;
-		Object[] actualList = getAttributes();
-		for( int i = 0; i < path.length; i++ ) {
-			actualAttribute = actualList[path[i]];
-			if( actualAttribute instanceof MVRelationalTuple<?>) {
-				actualList = ((MVRelationalTuple<?>)actualAttribute).getAttributes();
-			}
-		}
-
-		return actualAttribute;
-	}
+//	public Object getORAttribute(int[] path ) {
+//		Object actualAttribute = null;
+//		Object[] actualList = getAttributes();
+//		for( int i = 0; i < path.length; i++ ) {
+//			actualAttribute = actualList[path[i]];
+//			if( actualAttribute instanceof MVRelationalTuple<?>) {
+//				actualList = ((MVRelationalTuple<?>)actualAttribute).getAttributes();
+//			}
+//		}
+//
+//		return actualAttribute;
+//	}
 
 	private boolean checkDataType(Object object, SDFAttribute attribute) {
 	    
