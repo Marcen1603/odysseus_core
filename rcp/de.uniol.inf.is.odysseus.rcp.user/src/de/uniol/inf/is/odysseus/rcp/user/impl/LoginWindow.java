@@ -157,7 +157,7 @@ public class LoginWindow {
 	private String md5(String password) {
 		StringBuffer hexString = new StringBuffer();
 		try {
-			md5 = MessageDigest.getInstance("MD5");
+			md5 = MessageDigest.getInstance("SHA-1");
 			if (md5 != null) {
 				synchronized (md5) {
 					md5.reset();
