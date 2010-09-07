@@ -9,40 +9,24 @@ import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanSche
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
-public class SimpleDynamicPriorityPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener {
+abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener {
 
 	private static final CurrentPlanPriorityComperator CURRENT_PLAN_PRIORITY_COMPERATOR = new CurrentPlanPriorityComperator();
-	final int minPrio;
 	protected final ArrayList<IScheduling> queue;
 
-	public SimpleDynamicPriorityPlanScheduling(int minPrio) {
-		this.minPrio = minPrio;
+	public AbstractDynamicPriorityPlanScheduling() {
 		queue = new ArrayList<IScheduling>();
 	}
 
-	public SimpleDynamicPriorityPlanScheduling(
-			SimpleDynamicPriorityPlanScheduling dynamicPriorityPlanScheduling) {
-		minPrio = dynamicPriorityPlanScheduling.minPrio;
+	public AbstractDynamicPriorityPlanScheduling(
+			AbstractDynamicPriorityPlanScheduling dynamicPriorityPlanScheduling) {
 		queue = new ArrayList<IScheduling>(dynamicPriorityPlanScheduling.queue);
 	}
 
-	@Override
-	public SimpleDynamicPriorityPlanScheduling clone() {
-		return new SimpleDynamicPriorityPlanScheduling(this);
-	}
-
 	
-	protected void updatePriorities(IScheduling current) {
-		int currentPriority = current.getPlan().getCurrentPriority();
-		int newPrio = currentPriority - 1;
-		if (newPrio < minPrio) {
-			newPrio = current.getPlan().getBasePriority();
-		}
-		if (newPrio != currentPriority) {
-			updatePriorityCurrent(current, newPrio);
-		}
-	}
-
+	abstract protected void updatePriorities(IScheduling current);
+	abstract public AbstractDynamicPriorityPlanScheduling clone();
+	
 	protected void updatePriorityCurrent(IScheduling current, int prio) {
 		synchronized (queue) {
 			IPartialPlan curPlan = current.getPlan();
