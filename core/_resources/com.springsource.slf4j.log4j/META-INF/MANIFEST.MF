@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SLF4J Log4J Binding
+Bundle-SymbolicName: com.springsource.slf4j.log4j
+Bundle-Version: 1.5.6
+Bundle-Vendor: SpringSource
+Fragment-Host: com.springsource.slf4j.api;bundle-version="[1.5.6, 1.5.6]"
+Export-Package: org.slf4j.impl;version="1.5.6";uses:="org.apache.log4j,org.slf4j,org.slf4j.spi"
+Build-Jdk: 1.6.0_05
+Implementation-Title: slf4j-log4j12
+Import-Package: org.apache.log4j;version="[1.2.15, 2.0.0)",org.slf4j;version="[1.5.6, 1.5.6]",org.slf4j.helpers;version="[1.5.6, 1.5.6]",org.slf4j.spi;version="[1.5.6, 1.5.6]"
+Created-By: Apache Maven
+Bundle-Classpath: com.springsource.slf4j.log4j-1.5.6.jar
+Built-By: ceki
+Implementation-Version: 1.5.6
+Bundle-Description: The slf4j log4j-12 binding
+Archiver-Version: Plexus Archiver

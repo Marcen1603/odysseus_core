@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JepModified Plug-in
+Bundle-SymbolicName: JepModified
+Bundle-Version: 1.0.0
+Export-Package: org.nfunk.jep,
+ org.nfunk.jep.evaluation,
+ org.nfunk.jep.function,
+ org.nfunk.jep.type

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SLF4J API
+Bundle-SymbolicName: com.springsource.slf4j.api
+Bundle-Version: 1.5.6
+Bundle-Vendor: SpringSource
+Export-Package: org.slf4j;version="1.5.6";uses:="org.slf4j.impl,org.slf4j.spi",org.slf4j.helpers;version="1.5.6";uses:="org.slf4j",org.slf4j.spi;version="1.5.6";uses:="org.slf4j"
+Import-Package: org.slf4j.impl
+Implementation-Version: 1.5.6
+Implementation-Title: slf4j-api
+Created-By: Apache Maven
+Archiver-Version: Plexus Archiver
+Bundle-Classpath: com.springsource.slf4j.api-1.5.6.jar
+Build-Jdk: 1.6.0_05
+Bundle-Description: The slf4j API
+Built-By: ceki
