@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: P2P Base
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p.Activator
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.monitoring.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.base.event,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Export-Package: de.uniol.inf.is.odysseus.p2p,
+ de.uniol.inf.is.odysseus.p2p.gui,
+ de.uniol.inf.is.odysseus.p2p.logicaloperator,
+ de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
+ de.uniol.inf.is.odysseus.p2p.queryhandling

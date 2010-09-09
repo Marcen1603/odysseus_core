@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Open
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.open
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.open.Activator
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement,
+ de.uniol.inf.is.odysseus.base.planmanagement.query,
+ de.uniol.inf.is.odysseus.p2p.distribution.provider,
+ de.uniol.inf.is.odysseus.p2p.gui,
+ de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
+ de.uniol.inf.is.odysseus.p2p.queryhandling,
+ org.osgi.framework;version="1.3.0"
+Service-Component: OSGI-INF/OpenExecutionHandler.xml

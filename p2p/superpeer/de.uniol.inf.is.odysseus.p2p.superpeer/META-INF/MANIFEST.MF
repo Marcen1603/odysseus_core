@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Superpeer
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.superpeer
+Bundle-Version: 1.0.0.qualifier
+Import-Package: de.uniol.inf.is.odysseus.p2p,
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.p2p;bundle-version="1.0.0"
+Export-Package: de.uniol.inf.is.odysseus.p2p.superpeer
