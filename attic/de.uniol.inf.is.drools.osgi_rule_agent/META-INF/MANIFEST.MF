@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OSGiRuleAgent
+Bundle-SymbolicName: de.uniol.inf.is.drools.osgi_rule_agent
+Bundle-Version: 1.0.0.qualifier
+Import-Package: org.drools,
+ org.drools.agent,
+ org.drools.rule.builder.dialect.mvel,
+ org.dynamicjava.osgi.classloading_utils,
+ org.osgi.framework;version="1.5.0",
+ org.slf4j;version="1.5.6"
+Export-Package: de.uniol.inf.is.drools
