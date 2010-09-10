@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.planmanagement.executor.console;
+package de.uniol.inf.is.odysseus.console;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;

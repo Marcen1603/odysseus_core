@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.planmanagement.executor.console;
+package de.uniol.inf.is.odysseus.console;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TestEnviroment
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.console
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.console
 Bundle-Version: 1.0.0
 Import-Package: 
  de.uniol.inf.is.odysseus.base,
@@ -49,4 +49,4 @@ Import-Package:
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/ExecutorConsole.xml
-Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.console
+Export-Package: de.uniol.inf.is.odysseus.console

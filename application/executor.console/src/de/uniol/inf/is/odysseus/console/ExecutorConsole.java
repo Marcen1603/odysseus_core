@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.planmanagement.executor.console;
+package de.uniol.inf.is.odysseus.console;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1099,7 +1099,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Help(parameter = "<filename> [useProp]", description = "Add query declared in <filename> [filepath automatically read from user.files, otherwise in current directory]")
 	public void _cyclicQueryFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
