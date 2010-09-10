@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
@@ -77,7 +78,7 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 						// Hier wird noch das Schema der Quelle zum DataDictionary hinzugefÃ¼gt, damit der Compiler mit den Informationen arbeiten kann
 						if(DataDictionary.getInstance().sourceTypeMap.isEmpty() || !DataDictionary.getInstance().sourceTypeMap.containsKey(adv.getSourceName())) {
 							// TODO: User einfuegen, der diese Query ausführt
-							User user = new User("TODO.SetUser");
+							User user = UserManagement.getInstance().getP2PUser();
 							getExecutor().addQuery(adv.getSourceScheme(), "CQL", user, this.trafoConfigParam, new ParameterPriority(2));
 						}
 						

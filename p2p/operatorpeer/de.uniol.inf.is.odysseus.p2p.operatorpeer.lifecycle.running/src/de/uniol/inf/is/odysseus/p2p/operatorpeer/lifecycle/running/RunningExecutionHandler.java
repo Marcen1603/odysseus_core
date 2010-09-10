@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
@@ -46,7 +47,7 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 				System.out.println("FÃ¼ge hinzu: "+AbstractTreeWalker.prefixWalk(s.getAo(),
 						new AlgebraPlanToStringVisitor()));
 				// TODO: User einfuegen, der diese Query ausführt
-				User user = new User("TODO.SetUser");
+				User user = UserManagement.getInstance().getP2PUser();
 				getFunction().addQuery(s.getAo(), user, new ParameterPriority(2));		
 			}
 		}

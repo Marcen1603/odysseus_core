@@ -22,6 +22,7 @@ public class UserManagement extends AbstractUserManagement {
 				instance.registerUser("Benchmark", "");
 				instance.registerUser("RCP", "");
 				instance.registerUser("Super", "held");
+				instance.registerUser("P2P", "jkhdsfkewrt");
 			} catch (UsernameAlreadyUsedException e) {
 				e.printStackTrace();
 			} catch (UserStoreException e) {
@@ -33,6 +34,11 @@ public class UserManagement extends AbstractUserManagement {
 			}
 		}
 		return instance;
+	}
+
+	// Hack um kurzfristig Nutzer im P2P zu erlauben und spaeter einfach wieder zu entfernen
+	public User getP2PUser() {
+		return login("P2P", "jkhdsfkewrt");
 	}
 
 }

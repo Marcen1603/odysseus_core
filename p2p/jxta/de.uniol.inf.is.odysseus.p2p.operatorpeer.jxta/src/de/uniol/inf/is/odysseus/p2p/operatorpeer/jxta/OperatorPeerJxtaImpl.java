@@ -17,6 +17,7 @@ import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
@@ -285,7 +286,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		for (String s : getSources().values()) {
 			try {		
 				// TODO: User einfuegen, der diese Query ausführt
-				User user = new User("TODO.SetUser");
+				User user = UserManagement.getInstance().getP2PUser();
 
 				aPeer.getExecutor().addQuery(s, "CQL", user, new ParameterPriority(2) );
 				
