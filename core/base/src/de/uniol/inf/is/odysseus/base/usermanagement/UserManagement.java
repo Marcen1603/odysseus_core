@@ -26,10 +26,8 @@ public class UserManagement extends AbstractUserManagement {
 			} catch (UsernameAlreadyUsedException e) {
 				e.printStackTrace();
 			} catch (UserStoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

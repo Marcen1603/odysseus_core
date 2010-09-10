@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
@@ -575,37 +574,35 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#stopQuery
-	 * (int)
-	 */
-	@Override
-	public void stopQuery(int queryID) {
-		getLogger().info("Stop a query (ID: " + queryID + ").");
-
-		Query queryToStop = (Query) this.plan.getQuery(queryID);
-
-		try {
-			this.executionPlanLock.lock();
-			setExecutionPlan(optimizer().preStopOptimization(queryToStop, this.executionPlan));
-			queryToStop.stop();
-			if (isRunning()) {
-				getLogger().error("entfernen des plans muss noch implementiert werden");
-				throw new RuntimeException("fixme");
-				// FIXME muss das query aus dem plan entfernt werden?
-			}
-			getLogger().debug("Query stopped.");
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_STOP, queryToStop));
-		} catch (Exception e) {
-			getLogger().warn("Query not stopped. An Error while optimizing occurd (ID: " + queryID + ").");
-			return;
-		} finally {
-			this.executionPlanLock.unlock();
-		}
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#stopQuery
+//	 * (int)
+//	 */
+//	@Override
+//	public void stopQuery(int queryID) {
+//		
+//		throw new RuntimeException("Stop Query not implemented. Use Remove Query");
+//		
+////		getLogger().info("Stop a query (ID: " + queryID + ").");
+////
+////		Query queryToStop = (Query) this.plan.getQuery(queryID);
+////
+////		try {
+////			this.executionPlanLock.lock();
+////			setExecutionPlan(optimizer().preStopOptimization(queryToStop, this.executionPlan));
+////			queryToStop.stop();
+////			getLogger().debug("Query stopped.");
+////			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_STOP, queryToStop));
+////		} catch (Exception e) {
+////			getLogger().warn("Query not stopped. An Error while optimizing occurd (ID: " + queryID + ").");
+////			return;
+////		} finally {
+////			this.executionPlanLock.unlock();
+////		}
+//	}
 
 	/*
 	 * (non-Javadoc)

@@ -1487,21 +1487,21 @@ public class ExecutorConsole implements CommandProvider,
 		DataDictionary.getInstance().clearViews();
 	}
 
-	@Help(parameter = "<query id>", description = "stop execution of query")
-	public void _qstop(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		addCommand(args);
-		if (args != null && args.length > 0) {
-			int qnum = Integer.valueOf(args[0]);
-			try {
-				this.executor.stopQuery(qnum);
-			} catch (Exception e) {
-				ci.println(e.getMessage());
-			}
-		} else {
-			ci.println("No query argument.");
-		}
-	}
+//	@Help(parameter = "<query id>", description = "stop execution of query")
+//	public void _qstop(CommandInterpreter ci) {
+//		String[] args = support.getArgs(ci);
+//		addCommand(args);
+//		if (args != null && args.length > 0) {
+//			int qnum = Integer.valueOf(args[0]);
+//			try {
+//				this.executor.stopQuery(qnum);
+//			} catch (Exception e) {
+//				ci.println(e.getMessage());
+//			}
+//		} else {
+//			ci.println("No query argument.");
+//		}
+//	}
 
 	@Help(parameter = "<query id>", description = "start execution of query")
 	public void _qstart(CommandInterpreter ci) {

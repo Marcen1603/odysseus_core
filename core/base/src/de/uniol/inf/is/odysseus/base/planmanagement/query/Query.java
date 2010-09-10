@@ -297,7 +297,6 @@ public class Query implements IQuery {
 		// set root of this querie
 		setRoots(roots);
 
-		// FIXME: Hier sollte in Zukunft mit Strategien gearbeitet werden
 		// Store each child in a list. And set this Query as owner of each child
 		for (IPhysicalOperator root : roots) {
 			addPhysicalChildren(getChildren(root));

@@ -50,16 +50,6 @@
             name="Show Query Dialog">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.StopQueryCommand"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.query.StopQueryCommand"
-            name="Stop Query">
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.viewer.query.QueryIDParameter"
-               name="Query ID"
-               optional="true">
-         </commandParameter>
-      </command>
-      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.StartQueryCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.query.StartQueryCommand"
             name="Start Query">
