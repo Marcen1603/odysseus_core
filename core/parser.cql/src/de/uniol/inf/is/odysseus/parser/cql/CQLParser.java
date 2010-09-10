@@ -122,7 +122,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAggregati
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateJoinAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePriorityAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
-import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateSensorVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateViewVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.IDatabaseAOVisitor;
@@ -783,8 +782,19 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateSensor node, Object data) {
-		CreateSensorVisitor v = new CreateSensorVisitor();
-		return v.visit(node, data);
+		try{
+			Class<?> sensorVisitor = Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
+			Object sv = sensorVisitor.newInstance();
+			Method m = sensorVisitor.getDeclaredMethod("visit",
+					ASTCreateSensor.class, Object.class);
+			return m.invoke(sv, node, data);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(
+					"Objecttracking plugin is missing in CQL parser.", e.getCause());
+		} catch (Exception e) {
+			throw new RuntimeException("Error while parsing the SENSOR clause",
+					e.getCause());
+		}
 	}
 
 	@Override
