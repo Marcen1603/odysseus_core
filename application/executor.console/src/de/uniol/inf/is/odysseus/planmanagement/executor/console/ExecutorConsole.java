@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.ITransformationHelper;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
@@ -68,7 +69,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper;
 import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
@@ -878,8 +878,10 @@ public class ExecutorConsole implements CommandProvider,
 				useObjectFusionConfig = toBoolean(args[0]);
 				TransformationConfiguration trafoConfig;
 				if (useObjectFusionConfig) {
+					Class<?> h = Class.forName("de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper");
+					ITransformationHelper helper = (ITransformationHelper)h.newInstance();
 					trafoConfig = new TransformationConfiguration(
-							new BrokerTransformationHelper(),
+							helper,
 							"relational",
 							ITimeInterval.class.getName(),
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
@@ -899,6 +901,14 @@ public class ExecutorConsole implements CommandProvider,
 			}
 		} catch (IllegalArgumentException e) {
 			ci.println(e.getMessage());
+		} catch (ClassNotFoundException cnfe){
+			
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		ci.println("Object fusion configuration is "
 				+ (useObjectFusionConfig ? "activated" : "deactivated"));
