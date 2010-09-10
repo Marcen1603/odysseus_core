@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.console.ExecutorConsole;
+import de.uniol.inf.is.odysseus.console.ExecutorConsole;
 
 /**
  * Testclass for ECAParser and its integration into the executer

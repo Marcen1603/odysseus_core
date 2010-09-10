@@ -13,7 +13,7 @@ Import-Package: de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.planmanagement.executor,
- de.uniol.inf.is.odysseus.planmanagement.executor.console,
+ de.uniol.inf.is.odysseus.console,
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework
 Service-Component: OSGI-INF/parser.xml
