@@ -58,12 +58,11 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		if(port == 0) {
 			this.sweepPrediction.insert(object);
+			this.sweepScanned.purgeElements(object, Order.LeftRight);
 		} else if(port == 1) {
 			this.sweepScanned.insert(object);
+			this.sweepPrediction.purgeElements(object, Order.LeftRight);
 		}
-
-		this.sweepPrediction.purgeElements(object, Order.LeftRight);
-		this.sweepScanned.purgeElements(object, Order.LeftRight);
 
 		Iterator<MVRelationalTuple<M>> itPred = sweepPrediction.query(object, Order.LeftRight);
 		Iterator<MVRelationalTuple<M>> itScan = sweepScanned.query(object, Order.LeftRight);
@@ -77,7 +76,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {
 		SchemaHelper helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		SchemaHelper helper2 = new SchemaHelper(getSubscribedToSource(1).getSchema());
-		
+
 		Object[] association = new Object[3];
 
 		// get timestamp path from scanned data
@@ -95,7 +94,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setMetadata(scannedObject.getMetadata());
 		base.setAttribute(0, new MVRelationalTuple<M>(association));
-		
+
 		return base;
 	}
 
