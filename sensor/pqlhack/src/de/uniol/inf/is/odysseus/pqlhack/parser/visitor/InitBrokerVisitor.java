@@ -414,12 +414,10 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		
-		ArrayList list = new ArrayList();
-		list.add(true);
+		((ArrayList)data).set(0, true);
 		ASTIdentifier id = (ASTIdentifier)node.jjtGetChild(1);
-		list.add(id.getName());
-		return node.childrenAccept(this, list);
+		((ArrayList)data).set(1, id.getName());
+		return node.childrenAccept(this, data);
 	}
 
 	// 1
