@@ -258,8 +258,8 @@ public class ScarsXMLProfiler {
 
 	public void addTimeInterval(Element parent, ITimeInterval ti) {
 		Element tiElement = new Element("TIME_INTERVAL");
-		tiElement.setAttribute("start", ti.getStart().toString());
-		tiElement.setAttribute("end", ti.getEnd().toString());
+		tiElement.setAttribute("start", ti.getStart() == null ? "null" : ti.getStart().toString());
+		tiElement.setAttribute("end", ti.getEnd() == null ? "null" : ti.getEnd().toString());
 		parent.addContent(tiElement);
 	}
 	
