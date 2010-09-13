@@ -235,8 +235,9 @@ public class ScarsXMLProfiler {
 			conEle.addContent(conEleNewPath);
 
 			conListEle.addContent(conEle);
-			parent.addContent(conListEle);
+			
 		}
+		parent.addContent(conListEle);
 	}
 
 	public void addGain(Element parent, IGain gain) {
@@ -259,6 +260,7 @@ public class ScarsXMLProfiler {
 		Element tiElement = new Element("TIME_INTERVAL");
 		tiElement.setAttribute("start", ti.getStart().toString());
 		tiElement.setAttribute("end", ti.getEnd().toString());
+		parent.addContent(tiElement);
 	}
 	
 	public void addLatency(Element parent, ILatency latency) {
@@ -266,6 +268,13 @@ public class ScarsXMLProfiler {
 		latencyElement.setAttribute("latency", String.valueOf(latency.getLatency()));
 		latencyElement.setAttribute("start", String.valueOf(latency.getLatencyStart()));
 		latencyElement.setAttribute("end", String.valueOf(latency.getLatencyEnd()));
+		parent.addContent(latencyElement);
+	}
+	
+	public void addApplicationTime(Element parent, IApplicationTime appTime) {
+		Element appTimeElement = new Element("APPLICATION_TIME");
+		appTimeElement.setText(appTime.getAllApplicationTimeIntervals().toString());
+		parent.addContent(appTimeElement);
 	}
 	
 	public Element getOperatorElement(String name) {
