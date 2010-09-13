@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.BufferAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

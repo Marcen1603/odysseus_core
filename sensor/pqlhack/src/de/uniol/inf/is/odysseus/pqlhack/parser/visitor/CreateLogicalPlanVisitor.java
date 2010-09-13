@@ -1539,7 +1539,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		String type = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 
 		try{
-			Class<?> bufferClass = Class.forName("de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO");			
+			Class<?> bufferClass = Class.forName("de.uniol.inf.is.odysseus.logicaloperator.base.BufferAO");			
 			
 			Object buffer = bufferClass.newInstance();
 			

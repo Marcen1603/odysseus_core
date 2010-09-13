@@ -1,6 +1,5 @@
-package de.uniol.inf.is.odysseus.benchmarker.impl;
+package de.uniol.inf.is.odysseus.logicaloperator.base;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
