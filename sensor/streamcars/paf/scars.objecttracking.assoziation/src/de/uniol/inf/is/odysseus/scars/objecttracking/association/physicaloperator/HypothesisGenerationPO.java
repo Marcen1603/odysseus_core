@@ -47,7 +47,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		this.sendPunctuation(timestamp);
+//		this.sendPunctuation(timestamp);
 	}
 
 	/**
@@ -68,8 +68,13 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		Iterator<MVRelationalTuple<M>> itScan = sweepScanned.query(object, Order.LeftRight);
 
 		if(itPred.hasNext() && itScan.hasNext()) {
-			MVRelationalTuple<M> output = createOutputTuple(itScan.next(), itPred.next());
+			MVRelationalTuple<M> scan = itScan.next();
+			MVRelationalTuple<M> pred = itPred.next();
+			MVRelationalTuple<M> output = createOutputTuple(scan, pred);
+			sweepScanned.remove(scan);
+			sweepPrediction.remove(pred);
 			transfer(output);
+			this.sendPunctuation(output.getMetadata().getStart());
 		}
 	}
 
