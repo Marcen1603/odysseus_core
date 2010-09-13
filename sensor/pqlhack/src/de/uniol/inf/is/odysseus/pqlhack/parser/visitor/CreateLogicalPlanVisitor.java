@@ -1977,12 +1977,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 		profilerAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
-		// Assoziations Objektpfad
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		String fileName = identifier.getName();
 		
 		ASTIdentifier identifier2 = (ASTIdentifier) node.jjtGetChild(2);
-		String operatorName = identifier.getName();
+		String operatorName = identifier2.getName();
 
 		
 		profilerAO.setFileName(fileName);
