@@ -13,6 +13,7 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
@@ -34,10 +35,12 @@ public class ScarsXMLProfiler {
 	private static Map<String, ScarsXMLProfiler> instances = new HashMap<String, ScarsXMLProfiler>();
 
 	private Map<String, Integer> operatorCycleCounts;
+	private Map<String, Integer> currentOperatorSkips;
 
 	private Element root;
 	private int numCycle;
 	private int numSkips;
+//	private int currentSkips;
 	private String file;
 	private boolean finish = false;
 
@@ -48,6 +51,7 @@ public class ScarsXMLProfiler {
 		this.numSkips = numBeginSkips;
 		root = new Element("ROOT");
 		operatorCycleCounts = new HashMap<String, Integer>();
+		currentOperatorSkips = new HashMap<String, Integer>();
 	}
 
 	public Element getRoot() {
@@ -63,19 +67,27 @@ public class ScarsXMLProfiler {
 		return instances.get(file);
 	}
 
-	public void profile(String operator, SDFAttributeList schema, MVRelationalTuple<?> scan) {
+	public synchronized void  profile(String operator, SDFAttributeList schema, MVRelationalTuple<?> scan) {
 		if(finish) {
 			return;
 		}
 		Element operatorElement = getOperatorElement(operator);
-//		Element scanElement = new Element("SCAN_RESULT");
 		
-//		operatorElement.addContent(scanElement);
-		addData(operatorElement, schema, scan);
+		int currentSkips = currentOperatorSkips.get(operator);
+		if(currentSkips < numSkips) {
+			currentOperatorSkips.put(operator, ++currentSkips);
+			return;
+		}
+		
+		int currentCycleCount = operatorCycleCounts.get(operator);
+		if(currentCycleCount <= numCycle) {
+			addData2(operatorElement, schema.getAttribute(0), scan.getAttribute(0));
+			operatorCycleCounts.put(operator, ++currentCycleCount);
+		}
 
 		finish = true;
 		for(Integer cycle : operatorCycleCounts.values()) {
-			if(cycle <= numCycle) {
+			if(cycle < numCycle) {
 				finish = false;
 			}
 		}
@@ -91,47 +103,42 @@ public class ScarsXMLProfiler {
 			}
 		}
 	}
+	
+	public synchronized void  profilePunctuation(String operator, PointInTime timestamp) {
+		if(finish) {
+			return;
+		}
+		Element operatorElement = getOperatorElement(operator);
+		Element punctuationElement = new Element("punctuation");
+		operatorElement.addContent(punctuationElement);
+		punctuationElement.setAttribute("time", timestamp.toString());
+	}
 
-	@SuppressWarnings("unchecked")
-	public void addData(Element parent, SDFAttributeList schema,  Object tuple) {
-		for(int index=0; index<schema.getAttributeCount(); index++) {
-			SDFAttribute attr = schema.get(index);
-
+	public void addData2(Element parent, SDFAttribute attr, Object value) {
+		if(value instanceof MVRelationalTuple<?>) {
+			
+			MVRelationalTuple<?> tuple = (MVRelationalTuple<?>)value;
+			Element tupleElement = new Element(attr.getAttributeName());
+			addMetadata(tupleElement, tuple);
+			parent.addContent(tupleElement);
+			
 			if(attr.getDatatype().getQualName().equals("Record")) {
-				String name = attr.getAttributeName();
 				
-				Element e = new Element(name);
-				parent.addContent(e);
-				
-				addMetadata(e, (MVRelationalTuple<?>) tuple);
-
-				addData(e, attr.getSubattributes(), ((MVRelationalTuple<?>)tuple).getAttribute(index));
-
-			} else if(attr.getDatatype().getQualName().equals("List")) {
-				String name = attr.getAttributeName();
-				Element e = new Element(name);
-				parent.addContent(e);
-				addMetadata(e, (MVRelationalTuple<?>) tuple);
-				MVRelationalTuple<?> listTuple = ((MVRelationalTuple<?>)tuple).getAttribute(index);
-				
-				for(Object car : listTuple.getAttributes()) {
-					addData(e, attr.getSubattributes(), car);
+				SDFAttributeList schema = attr.getSubattributes();
+				for(int i=0; i<schema.getAttributeCount(); i++) {
+					SDFAttribute childAttr = schema.getAttribute(i);
+					addData2(tupleElement, childAttr, tuple.getAttribute(i));
 				}
+			} else if (attr.getDatatype().getQualName().equals("List")) {
 				
-			} 
-			else if(tuple instanceof MVRelationalTuple) {
-				String attrName = attr.getAttributeName();
-				Object value = ((MVRelationalTuple<?>)tuple).getAttribute(index);
-				parent.setAttribute(attrName, value.toString());
-			} 
-//		else {
-//				String attrName = attr.getAttributeName();
-//				Object value = tuple;
-//				parent.setAttribute(attrName, value.toString());
-//			}
-
-
-
+				SDFAttributeList schema = attr.getSubattributes();
+				SDFAttribute childAttr = schema.getAttribute(0);
+				for(int i=0; i<tuple.getAttributeCount(); i++) {
+					addData2(tupleElement, childAttr, tuple.getAttribute(i));
+				}
+			}
+		} else {
+			parent.setAttribute(attr.getAttributeName(), value.toString());
 		}
 	}
 	
@@ -164,13 +171,11 @@ public class ScarsXMLProfiler {
 		parent.addContent(metaDataElement);
 	}
 
-	public void addDataFromList(Element parent, SDFAttributeList schema, MVRelationalTuple<?> tuple) {
-		for(int listIndex=0; listIndex<tuple.getAttributeCount(); listIndex++) {
-			addData(parent, schema, tuple.getAttribute(listIndex));
-		}
-
-
-	}
+//	public void addDataFromList(Element parent, SDFAttributeList schema, MVRelationalTuple<?> tuple) {
+//		for(int listIndex=0; listIndex<tuple.getAttributeCount(); listIndex++) {
+//			addData(parent, schema, tuple.getAttribute(listIndex));
+//		}
+//	}
 
 	public void addProbability(Element parent, IProbability tuple) {
 		double[][] cov = tuple.getCovariance();
@@ -187,7 +192,7 @@ public class ScarsXMLProfiler {
 //		}
 
 		for(int r = 0; r<cov.length; r++) {
-			covText += "\n\t";
+			covText += " \n\t";
 			for(int c = 0; c<cov[0].length; c++) {
 				covText += cov[r][c] + "\t";
 			}
@@ -285,12 +290,10 @@ public class ScarsXMLProfiler {
 		Element e = root.getChild(name);
 		if(e == null) {
 			e = new Element(name);
-			operatorCycleCounts.put(name, 1);
+			currentOperatorSkips.put(name, 0);
+			operatorCycleCounts.put(name, 0);
 			root.addContent(e);
 		}
-		int cycle = operatorCycleCounts.get(name);
-		operatorCycleCounts.put(name, ++cycle);
-		System.err.println("getOperator()" + e);
 		return e;
 	}
 

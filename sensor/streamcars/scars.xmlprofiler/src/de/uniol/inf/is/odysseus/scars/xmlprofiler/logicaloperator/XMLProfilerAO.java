@@ -47,6 +47,4 @@ public class XMLProfilerAO<M extends IProbability> extends UnaryLogicalOp {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-
-
 }
