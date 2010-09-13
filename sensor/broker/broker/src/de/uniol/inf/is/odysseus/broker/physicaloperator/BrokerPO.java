@@ -73,7 +73,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * The waitingFor is the minimum time for which the broker waits until
 	 * processing a new request
 	 */
-	private PointInTime waitingFor = PointInTime.getZeroTime();
+	private PointInTime waitingFor = null;
 
 	/** Sets debug outputs on or off. */
 	private boolean printDebug = true;

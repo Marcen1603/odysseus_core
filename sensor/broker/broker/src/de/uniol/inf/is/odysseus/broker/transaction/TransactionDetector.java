@@ -144,6 +144,13 @@ public class TransactionDetector {
 			if(this.visitedFollowing.contains(curNode)){
 				return false;
 			}
+			/* curNode is another broker. Cycles
+			 * over multiple brokers will not be considered
+			 */
+			else if(curNode instanceof BrokerAO){
+				this.visitedFollowing.add(curNode);
+				return false;
+			}
 			else{
 				this.visitedFollowing.add(curNode);
 			}
@@ -184,6 +191,13 @@ public class TransactionDetector {
 		}
 		else{
 			if(this.visitedPreceeding.contains(curNode)){
+				return false;
+			}
+			// curNode is another broker.
+			// Cycles over multiple brokers will not
+			// be considered
+			else if(curNode instanceof BrokerAO){
+				this.visitedPreceeding.add(curNode);
 				return false;
 			}
 			else{

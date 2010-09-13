@@ -111,6 +111,8 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		return this.brokerNames;
 	}
 	
+	@SuppressWarnings("all")
+	@Override
 	public Object visit(ASTBrokerOp broker, Object data) {		
 		// in create logical plan visitor
 		// first the sources are created and then
@@ -122,6 +124,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		// first go down the tree and that upwards
 		// again
 
+		String bn = broker.getName();
 		
 		if(!brokerNames.contains(broker.getName())){
 			this.brokerNames.add(broker.getName());
@@ -437,7 +440,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 				String srcName = identifier.getName();
 				
 				// get the corresponding broker if available
-				if(this.associationMappings.get(srcName) != null){
+				if(this.associationMappings.get(srcName) != null && this.associationMappings.get(srcName).getBrokerName().equals(brokerName)){
 					BrokerAssociationMapping brokerMapping = this.associationMappings.get(srcName);
 					QueuePortMapping qpm = new QueuePortMapping(brokerMapping.getOutPort(), curInPort);
 					BrokerDictionary.getInstance().addQueuePortMapping(brokerName, qpm);
