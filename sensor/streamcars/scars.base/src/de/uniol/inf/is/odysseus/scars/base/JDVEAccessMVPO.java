@@ -9,31 +9,46 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
+import java.util.HashSet;
 
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaDataInitializer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
+public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
 	private JDVEData<M> data;
 	private int port;
 	protected MVRelationalTuple<M> buffer;
 	private SDFAttributeList outputSchema;
+
+	private StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>> metadataCreator;
+
 	
 	public JDVEAccessMVPO(int pPort) {
 		this.port = pPort;
 	}
-	
-	public JDVEAccessMVPO( JDVEAccessMVPO<M> po ) {
+
+	public JDVEAccessMVPO(JDVEAccessMVPO<M> po) {
 		this.port = po.port;
 	}
-	
+
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		super.setOutputSchema(outputSchema);
@@ -44,12 +59,12 @@ public class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAcces
 	protected void process_open() throws OpenFailedException {
 		try {
 			data = new JDVEData<M>(this.port, outputSchema);
-		}
-		catch (SocketException ex){
+			metadataCreator = new StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>>(outputSchema);
+		} catch (SocketException ex) {
 			throw new OpenFailedException(ex);
 		}
 	}
-	
+
 	@Override
 	protected void process_done() {
 		data.closeJDVEDataPort();
@@ -86,27 +101,63 @@ public class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAcces
 	public AbstractSource<MVRelationalTuple<M>> clone() {
 		return new JDVEAccessMVPO<M>(this);
 	}
-	
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
-		if( buffer != null ) {
+		if (buffer != null) {
+			Class<M> clazz = (Class<M>) MetadataRegistry.getMetadataType(toStringSet(ITimeInterval.class, IPredictionFunctionKey.class, ILatency.class, IProbability.class, IApplicationTime.class,
+					IConnectionContainer.class, IGain.class));
+
+			assignMetadata(clazz, this.buffer);
+			metadataCreator.updateMetadata((MVRelationalTuple<StreamCarsMetaData<Object>>) this.buffer);
+
 			transfer(buffer);
 			sendPunctuation(new PointInTime(data.getLastTimestamp()));
 		}
 		buffer = null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void assignMetadata(Class<M> clazz, Object tuple ){
+		try {
+			if( tuple instanceof IMetaAttributeContainer ) {
+				((IMetaAttributeContainer<M>)tuple).setMetadata(clazz.newInstance());
+			}
+			if( tuple instanceof MVRelationalTuple<?>) {
+				MVRelationalTuple<M> t = (MVRelationalTuple<M>) tuple;
+				for( int i = 0; i < t.getAttributeCount(); i++ ) {
+					assignMetadata(clazz, t.getAttribute(i));
+				}
+			}
+		} catch( IllegalAccessException ex ) {
+			ex.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static HashSet<String> toStringSet(
+			Class<? extends IMetaAttribute>... combinationOf) {
+		HashSet<String> typeSet = new HashSet<String>();
+		for (Class<?> c : combinationOf) {
+			typeSet.add(c.getName());
+		}
+		return typeSet;
+	}
+
 }
 
 class JDVEData<M extends IProbability> {
-	
+
 	private static final int RECEIVE_SIZE = 10000;
 	private static final int TIMEOUT = 10000;
-		
+
 	private int port = -1;
 	private DatagramSocket clientSocket;
 	private SDFAttributeList attributeList;
@@ -118,106 +169,104 @@ class JDVEData<M extends IProbability> {
 		this.clientSocket.setSoTimeout(TIMEOUT);
 		this.attributeList = list;
 	}
-	
+
 	public long getLastTimestamp() {
 		return lastTimestamp;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public MVRelationalTuple<M> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
-		/* Ben�tigter Puffer:
-		 * carType: 4 Byte
-		 * carTrafficID: 4 Byte
-		 * laneID: 4 Byte
-		 * positionUTM: 8 Byte * 6 + 4 F�llbytes f�r das Array
-		 * velocity: 4 Byte
-		 * length: 4 Byte
-		 * width: 4 Byte 
-		 * = (76 Byte + 4 F�llbytes f�r das struct) * 50 Autos f�r einen Scan = 4000 Bytes */
+		/*
+		 * Ben�tigter Puffer: carType: 4 Byte carTrafficID: 4 Byte laneID: 4
+		 * Byte positionUTM: 8 Byte * 6 + 4 F�llbytes f�r das Array velocity: 4
+		 * Byte length: 4 Byte width: 4 Byte = (76 Byte + 4 F�llbytes f�r das
+		 * struct) * 50 Autos f�r einen Scan = 4000 Bytes
+		 */
 		byte[] receiveData = new byte[RECEIVE_SIZE];
-		
+
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		
+
 		clientSocket.receive(receivePacket);
-		
-		/* ByteBuffer �bernimmt die Daten. ByteBuffer besitzt
-	     * die Methoden, die wir zum Auslesen ben�tigen. */
+
+		/*
+		 * ByteBuffer �bernimmt die Daten. ByteBuffer besitzt die Methoden, die
+		 * wir zum Auslesen ben�tigen.
+		 */
 		ByteBuffer byteBuffer = ByteBuffer.wrap(receiveData);
 		byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 		Object res = parseStart(attributeList, byteBuffer);
-		
-		if( res instanceof MVRelationalTuple<?>) {
-			return (MVRelationalTuple<M>)res;
+
+		if (res instanceof MVRelationalTuple<?>) {
+			return (MVRelationalTuple<M>) res;
 		} else {
 			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(1);
 			tuple.setAttribute(0, res);
 			return tuple;
 		}
 	}
-	
+
 	public MVRelationalTuple<M> parseStart(SDFAttributeList schema, ByteBuffer bb) {
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setAttribute(0, parseNext(schema.get(0), bb));
 		return base;
 	}
-	
+
 	public MVRelationalTuple<M> parseRecord(SDFAttribute schema, ByteBuffer bb) {
 		int count = schema.getSubattributeCount();
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
-		for( int i = 0; i < count; i++ ) {
+		for (int i = 0; i < count; i++) {
 			Object obj = parseNext(schema.getSubattribute(i), bb);
 			recordTuple.setAttribute(i, obj);
 		}
 		return recordTuple;
 	}
-	
+
 	public MVRelationalTuple<M> parseList(SDFAttribute schema, ByteBuffer bb) {
-//		int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
-//		System.out.println(count);
+		// int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
+		// System.out.println(count);
 		int count = 50;
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 
-		for( int i = 0; i < count; i++ ) {
-			Object obj = parseNext(schema.getSubattribute(0), bb); 
+		for (int i = 0; i < count; i++) {
+			Object obj = parseNext(schema.getSubattribute(0), bb);
 			recordTuple.setAttribute(i, obj);
 		}
 		return recordTuple;
 	}
-		
+
 	public Object parseAttribute(SDFAttribute schema, ByteBuffer bb) {
-		if( "Integer".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		if ("Integer".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getInt();
-		} else 	if( "Double".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		} else if ("Double".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getDouble();
-		} else 	if( "String".equals(schema.getDatatype().getURIWithoutQualName() )) {
-			throw new RuntimeException("not implememted yet");			
-		} else 	if( "Long".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		} else if ("String".equals(schema.getDatatype().getURIWithoutQualName())) {
+			throw new RuntimeException("not implememted yet");
+		} else if ("Long".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getLong();
-		} else 	if( "Float".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		} else if ("Float".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getFloat();
-		} else if( "MV".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		} else if ("MV".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getDouble();
-		} else if( "MV Float".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		} else if ("MV Float".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getFloat();
-		} else if( "MV Long".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		} else if ("MV Long".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getLong();
-		} else if( "MV Integer".equals(schema.getDatatype().getURIWithoutQualName() )) {
+		} else if ("MV Integer".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getInt();
-//		} else 	if( "Date".equals(schema.getDatatype().getURIWithoutQualName() )) {
-//			throw new RuntimeException("not implememted yet");
-		} else if ("StartTimestamp".equals(schema.getDatatype()
-				.getURIWithoutQualName())) {
+			// } else if(
+			// "Date".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			// throw new RuntimeException("not implememted yet");
+		} else if ("StartTimestamp".equals(schema.getDatatype().getURIWithoutQualName())) {
 			lastTimestamp = bb.getLong();
 			return lastTimestamp;
-		} else if ("EndTimestamp".equals(schema.getDatatype()
-				.getURIWithoutQualName())) {
+		} else if ("EndTimestamp".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return bb.getLong();
 		} else {
-			throw new RuntimeException("not implememted yet");			
+			throw new RuntimeException("not implememted yet");
 		}
 	}
-	
-	public static float arr2float (byte[] arr, int start) {
+
+	public static float arr2float(byte[] arr, int start) {
 		int i = 0;
 		int len = 4;
 		int cnt = 0;
@@ -228,25 +277,25 @@ class JDVEData<M extends IProbability> {
 		}
 		int accum = 0;
 		i = 0;
-		for ( int shiftBy = 0; shiftBy < 32; shiftBy += 8 ) {
-			accum |= ( (long)( tmp[i] & 0xff ) ) << shiftBy;
+		for (int shiftBy = 0; shiftBy < 32; shiftBy += 8) {
+			accum |= ((long) (tmp[i] & 0xff)) << shiftBy;
 			i++;
 		}
 		return Float.intBitsToFloat(accum);
 	}
-	
+
 	public Object parseNext(SDFAttribute attr, ByteBuffer bb) {
 		Object obj = null;
-		if( "Record".equals(attr.getDatatype().getURIWithoutQualName())) {
+		if ("Record".equals(attr.getDatatype().getURIWithoutQualName())) {
 			obj = parseRecord(attr, bb);
-		} else if( "List".equals(attr.getDatatype().getURIWithoutQualName())) {
+		} else if ("List".equals(attr.getDatatype().getURIWithoutQualName())) {
 			obj = parseList(attr, bb);
 		} else {
 			obj = parseAttribute(attr, bb);
 		}
 		return obj;
 	}
-	
+
 	public void closeJDVEDataPort() {
 		this.clientSocket.close();
 	}
