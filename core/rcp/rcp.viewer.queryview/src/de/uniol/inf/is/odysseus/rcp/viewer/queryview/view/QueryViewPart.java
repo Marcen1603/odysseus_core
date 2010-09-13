@@ -119,6 +119,10 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 			@Override
 			public void update(ViewerCell cell) {
 				String text = ((IQuery) cell.getElement()).getQueryText();
+				if( text == null ) {
+					cell.setText("[No Text]");
+					return;
+				}
 				text = text.replace('\n', ' ');
 				text = text.replace('\r', ' ');
 				text = text.replace('\t', ' ');
