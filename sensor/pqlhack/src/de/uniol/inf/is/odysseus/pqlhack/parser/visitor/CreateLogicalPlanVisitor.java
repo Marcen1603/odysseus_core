@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +14,6 @@ import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
-import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
-import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAOExt;
-import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
@@ -1287,12 +1287,56 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// third child is duration
 		int duration = Integer.parseInt(((ASTNumber) node.jjtGetChild(2)).getValue());
 
-		BenchmarkAO bench = new BenchmarkAO(duration, selectivity);
+		try{
+			Class<?> benchClass = Class.forName("de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO");
+			
+			// get the correct constructor
+			Class[] params = new Class[2];
+			params[0] = int.class;
+			params[1] = double.class;
+			
+			Constructor constr = benchClass.getConstructor(params);
+			
+			Object[] paramValues = new Object[2];
+			paramValues[0] = new Integer(duration);
+			paramValues[1] = new Double(selectivity);
+			
+			
+			Object bench = constr.newInstance(paramValues);
+			
+			Method m = benchClass.getMethod("subscribeToSource",
+					ILogicalOperator.class, int.class, int.class, SDFAttributeList.class);
+			
+			m.invoke(bench, inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
+			
+			((ArrayList) data).add(bench);
+			((ArrayList) data).add(new Integer(0));
 
-		bench.subscribeToSource(inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
 
-		((ArrayList) data).add(bench);
-		((ArrayList) data).add(new Integer(0));
+		}catch(ClassNotFoundException cnf){
+			cnf.printStackTrace();
+		}catch(NoSuchMethodException e){
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// old code
+//		BenchmarkAO bench = new BenchmarkAO(duration, selectivity);
+//		bench.subscribeToSource(inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
+//
+//		((ArrayList) data).add(bench);
+//		((ArrayList) data).add(new Integer(0));
 
 		return data;
 	}
@@ -1312,12 +1356,66 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// third child is duration
 		int duration = Integer.parseInt(((ASTNumber) node.jjtGetChild(2)).getValue());
 
-		BenchmarkAOExt bench = new BenchmarkAOExt(duration, selectivity);
+		try{
+			Class<?> benchClass = Class.forName("de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAOExt");
+			
+			// get the correct constructor
+			Class[] params = new Class[2];
+			params[0] = int.class;
+			params[1] = double.class;			
+			Constructor constr = benchClass.getConstructor(params);
+			
+			Object[] paramValues = new Object[2];
+			paramValues[0] = new Integer(duration);
+			paramValues[1] = new Double(selectivity);
+			
+			
+			Object bench = constr.newInstance(paramValues);
+			
+//			Method[] ms = benchClass.getMethods();
+//			for(Method m : ms){
+//				Class[] paramTypes = m.getParameterTypes();
+//				int i = 0;
+//			}
+			
+			Method m = benchClass.getMethod("subscribeToSource",
+					ILogicalOperator.class, int.class, int.class, SDFAttributeList.class);
+			
+			m.invoke(bench, inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
+			
+			((ArrayList) data).add(bench);
+			((ArrayList) data).add(new Integer(0));
 
-		bench.subscribeToSource(inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
 
-		((ArrayList) data).add(bench);
-		((ArrayList) data).add(new Integer(0));
+		}catch(ClassNotFoundException cnf){
+			cnf.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// old code
+//		BenchmarkAOExt bench = new BenchmarkAOExt(duration, selectivity);
+//
+//		bench.subscribeToSource(inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
+//
+//		((ArrayList) data).add(bench);
+//		((ArrayList) data).add(new Integer(0));
 
 		return data;
 	}
@@ -1440,13 +1538,54 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// second child is selectivity
 		String type = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 
-		BufferAO buffer = new BufferAO();
-		buffer.setType(type);
+		try{
+			Class<?> bufferClass = Class.forName("de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO");			
+			
+			Object buffer = bufferClass.newInstance();
+			
+			Method mSetType = bufferClass.getDeclaredMethod("setType", String.class);
+			
+			mSetType.invoke(buffer, type);
+			
+			Method mSubscribeToSource = bufferClass.getMethod("subscribeToSource",
+					ILogicalOperator.class, int.class, int.class, SDFAttributeList.class);
+			
+			mSubscribeToSource.invoke(buffer, inputForBuffer, 0, inputSourceOutPort, inputForBuffer.getOutputSchema());
+			
+			((ArrayList) data).add(buffer);
+			((ArrayList) data).add(new Integer(0));
 
-		buffer.subscribeToSource(inputForBuffer, 0, inputSourceOutPort, inputForBuffer.getOutputSchema());
 
-		((ArrayList) data).add(buffer);
-		((ArrayList) data).add(new Integer(0));
+		}catch(ClassNotFoundException cnf){
+			cnf.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// old Code
+//		BufferAO buffer = new BufferAO();
+//		buffer.setType(type);
+//
+//		buffer.subscribeToSource(inputForBuffer, 0, inputSourceOutPort, inputForBuffer.getOutputSchema());
+//
+//		((ArrayList) data).add(buffer);
+//		((ArrayList) data).add(new Integer(0));
 
 		return data;
 	}

@@ -7,7 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.pqlhack.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.benchmarker.impl,
+ de.uniol.inf.is.odysseus.benchmarker.impl;resolution:=optional,
  de.uniol.inf.is.odysseus.broker.dictionary,
  de.uniol.inf.is.odysseus.broker.logicaloperator,
  de.uniol.inf.is.odysseus.broker.transaction,
