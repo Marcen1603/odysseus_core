@@ -25,7 +25,19 @@ public class OvertakeCalculationModel extends CalculationModelAdapter {
 
 	@Override
 	public float initPosy() {
-		return -10.0f;
+		return -5.0f;
+	}
+
+	@Override
+	public void calculateLaneid() {
+		if (this.currentModel.getPosy() > -2) {
+			this.tempModel.setLaneid(0);
+		}
+	}
+
+	@Override
+	public int initLaneid() {
+		return -1;
 	}
 
 	/**

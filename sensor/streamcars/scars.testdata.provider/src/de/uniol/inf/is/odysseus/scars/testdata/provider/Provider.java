@@ -97,7 +97,7 @@ public class Provider implements IProvider {
 			if (this.freeEntranceSlot()) {
 				ICalculationModel calcModel = CalculationModelFactory.getInstance().getCalculationModel(
 						CalculationModelFactory.OVERTAKE_CALCULATION_MODEL);
-				calcModel.init(new Float(3));
+				calcModel.init(new Float(1.5));
 				calcModel.setDelay(this.delay);
 				Integer id = idQueue.poll();
 				CarModel cm = new CarModel(id, calcModel);
@@ -173,7 +173,7 @@ public class Provider implements IProvider {
 		scan.setAttribute(0,  this.currentTimeStamp);
 		scan.setAttribute(1, cars);
 		
-		//this.printCarModels();
+		this.printCarModels();
 
 		return root;
 	}
