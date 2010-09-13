@@ -9,7 +9,6 @@ public class XMLProfilerAO<M extends IProbability> extends UnaryLogicalOp {
 
 	String operatorName;
 	String fileName;
-	String filePath;
 
 	private static final long serialVersionUID = 1L;
 
@@ -49,12 +48,5 @@ public class XMLProfilerAO<M extends IProbability> extends UnaryLogicalOp {
 		this.fileName = fileName;
 	}
 
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
 
 }

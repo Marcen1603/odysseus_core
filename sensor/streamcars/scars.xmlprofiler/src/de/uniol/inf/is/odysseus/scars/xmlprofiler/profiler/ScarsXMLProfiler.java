@@ -39,6 +39,7 @@ public class ScarsXMLProfiler {
 	private int numCycle;
 	private int numSkips;
 	private String file;
+	private boolean finish = false;
 
 
 	private ScarsXMLProfiler(String file, int numBeginSkips, int numCycle) {
@@ -61,8 +62,6 @@ public class ScarsXMLProfiler {
 		}
 		return instances.get(file);
 	}
-	
-	private boolean finish = false;
 
 	public void profile(String operator, SDFAttributeList schema, MVRelationalTuple<?> scan) {
 		if(finish) {
@@ -113,8 +112,12 @@ public class ScarsXMLProfiler {
 				Element e = new Element(name);
 				parent.addContent(e);
 				addMetadata(e, (MVRelationalTuple<?>) tuple);
+				MVRelationalTuple<?> listTuple = ((MVRelationalTuple<?>)tuple).getAttribute(index);
 				
-				addData(e, attr.getSubattributes(), (MVRelationalTuple<?>)((MVRelationalTuple<?>)tuple).getAttribute(index));
+				for(Object car : listTuple.getAttributes()) {
+					addData(e, attr.getSubattributes(), car);
+				}
+				
 			} 
 			else if(tuple instanceof MVRelationalTuple) {
 				String attrName = attr.getAttributeName();

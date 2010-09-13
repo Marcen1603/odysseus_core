@@ -34,7 +34,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 3);
+		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 25);
 		p.profile(operatorName, getOutputSchema(), object);
 		transfer(object);
 	}
