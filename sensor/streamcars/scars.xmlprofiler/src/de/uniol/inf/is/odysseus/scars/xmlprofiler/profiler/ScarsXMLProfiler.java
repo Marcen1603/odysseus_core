@@ -235,6 +235,7 @@ public class ScarsXMLProfiler {
 			conEle.addContent(conEleNewPath);
 
 			conListEle.addContent(conEle);
+			parent.addContent(conListEle);
 		}
 	}
 
@@ -242,10 +243,12 @@ public class ScarsXMLProfiler {
 		Element gainElement = new Element("GAIN");
 		double[][] g = gain.getGain();
 		String gainText = "";
-		for(int r=0; r<g.length; r++) {
-			gainText +="\n\t";
-			for(int c=0; c<g[0].length; c++) {
-				gainText += g[r][c] + "\t";
+		if(g != null) {
+			for(int r=0; r<g.length; r++) {
+				gainText +="\n\t";
+				for(int c=0; c<g[0].length; c++) {
+					gainText += g[r][c] + "\t";
+				}
 			}
 		}
 		gainElement.setText(gainText);
