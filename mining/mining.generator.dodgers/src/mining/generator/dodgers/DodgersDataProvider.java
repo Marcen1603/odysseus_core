@@ -1,0 +1,60 @@
+package mining.generator.dodgers;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import mining.generator.base.socket.StreamClientHandler;
+import mining.generator.base.tuple.DataTuple;
+
+public class DodgersDataProvider extends StreamClientHandler {
+
+	private BufferedReader in;
+	private SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy HH:mm");
+
+
+	@Override
+	public DataTuple next() {
+		DataTuple tuple = new DataTuple();
+		String line;
+		try {
+			line = in.readLine();
+			String[] rawTuple = line.split(",");
+			long timestamp = format.parse(rawTuple[0]).getTime();
+			
+			tuple.addAttribute(new Long(timestamp));
+			tuple.addAttribute(rawTuple[1]);
+			return tuple;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {			
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public void init() {
+		URL fileURL = Activator.getContext().getBundle().getEntry("/data/dodgers.data");
+		try {
+			InputStream inputStream = fileURL.openConnection().getInputStream();
+			in = new BufferedReader(new InputStreamReader(inputStream));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void close() {
+		try {
+			in.close();
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}		
+	}	
+	
+}
