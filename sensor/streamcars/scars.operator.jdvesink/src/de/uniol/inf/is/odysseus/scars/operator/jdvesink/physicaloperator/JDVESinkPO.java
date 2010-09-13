@@ -88,6 +88,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 					bufferSize += 4;
 				}
 			}
+			transfer(object);
 		}
 		
 		//Allocate byte buffer
