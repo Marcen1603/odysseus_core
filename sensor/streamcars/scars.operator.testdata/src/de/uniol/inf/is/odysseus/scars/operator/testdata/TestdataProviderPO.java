@@ -90,7 +90,7 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 		transfer(this.buffer);
 		this.buffer = null;
 		if(this.counter % 5 == 0){
-			sendPunctuation(new PointInTime(this.provider.getLastTimestamp()));
+			sendPunctuation(new PointInTime(this.provider.getLastTimestamp()+1));
 		}
 		lastTime = System.currentTimeMillis();
 
