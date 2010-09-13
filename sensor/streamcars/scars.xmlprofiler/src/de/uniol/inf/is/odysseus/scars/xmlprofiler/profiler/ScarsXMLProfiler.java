@@ -9,20 +9,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealMatrixImpl;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -67,10 +69,10 @@ public class ScarsXMLProfiler {
 			return;
 		}
 		Element operatorElement = getOperatorElement(operator);
-		Element scanElement = new Element("SCAN_RESULT");
+//		Element scanElement = new Element("SCAN_RESULT");
 		
-		operatorElement.addContent(scanElement);
-		addData(scanElement, schema, scan);
+//		operatorElement.addContent(scanElement);
+		addData(operatorElement, schema, scan);
 
 		finish = true;
 		for(Integer cycle : operatorCycleCounts.values()) {
@@ -98,8 +100,11 @@ public class ScarsXMLProfiler {
 
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				String name = attr.getAttributeName();
+				
 				Element e = new Element(name);
 				parent.addContent(e);
+				
+				addMetadata(e, (MVRelationalTuple<?>) tuple);
 
 				addData(e, attr.getSubattributes(), ((MVRelationalTuple<?>)tuple).getAttribute(index));
 
@@ -107,39 +112,58 @@ public class ScarsXMLProfiler {
 				String name = attr.getAttributeName();
 				Element e = new Element(name);
 				parent.addContent(e);
-				Element metaDataElement = new Element("METADATA");
-				MVRelationalTuple<?> mvrTuple = (MVRelationalTuple<?>) tuple;
-
-				if(mvrTuple.getMetadata() instanceof IProbability) {
-					this.addProbability(metaDataElement, (IProbability) mvrTuple.getMetadata());
-				}
-				if(mvrTuple.getMetadata() instanceof IPredictionFunctionKey) {
-					this.addPredictionFunctionKey(metaDataElement, (IPredictionFunctionKey<IPredicate<MVRelationalTuple<?>>>) mvrTuple.getMetadata());
-				}
-				if(mvrTuple.getMetadata() instanceof IConnectionContainer) {
-					this.addConnectionList(metaDataElement, (IConnectionContainer) mvrTuple.getMetadata());
-				}
-
-				e.addContent(metaDataElement);
-				addDataFromList(e, attr.getSubattributes(), (MVRelationalTuple<?>)((MVRelationalTuple<?>)tuple).getAttribute(index));
-			} else if(tuple instanceof MVRelationalTuple) {
+				addMetadata(e, (MVRelationalTuple<?>) tuple);
+				
+				addData(e, attr.getSubattributes(), (MVRelationalTuple<?>)((MVRelationalTuple<?>)tuple).getAttribute(index));
+			} 
+			else if(tuple instanceof MVRelationalTuple) {
 				String attrName = attr.getAttributeName();
 				Object value = ((MVRelationalTuple<?>)tuple).getAttribute(index);
 				parent.setAttribute(attrName, value.toString());
-			} else {
-				String attrName = attr.getAttributeName();
-				Object value = tuple;
-				parent.setAttribute(attrName, value.toString());
-			}
+			} 
+//		else {
+//				String attrName = attr.getAttributeName();
+//				Object value = tuple;
+//				parent.setAttribute(attrName, value.toString());
+//			}
 
 
 
 		}
 	}
+	
+	public void addMetadata(Element parent, MVRelationalTuple<?> tuple) {
+		Object metadata = tuple.getMetadata();
+		Element metaDataElement = new Element("METADATA");
+		if(metadata != null) {
+			if(metadata instanceof IProbability) {
+				this.addProbability(metaDataElement, (IProbability) metadata);
+			}
+			if(metadata instanceof IPredictionFunctionKey) {
+				this.addPredictionFunctionKey(metaDataElement, (IPredictionFunctionKey<IPredicate<MVRelationalTuple<?>>>) metadata);
+			}
+			if(metadata instanceof IConnectionContainer) {
+				this.addConnectionList(metaDataElement, (IConnectionContainer) metadata);
+			}
+			if(metadata instanceof IGain) {
+				this.addGain(metaDataElement, (IGain) metadata);
+			}
+			if(metadata instanceof ITimeInterval) {
+				this.addTimeInterval(metaDataElement, (ITimeInterval) metadata);
+			}
+			if(metadata instanceof ILatency) {
+				this.addLatency(metaDataElement, (ILatency) metadata);
+			}
+			if(metadata instanceof IApplicationTime) {
+				
+			}
+		}
+		parent.addContent(metaDataElement);
+	}
 
 	public void addDataFromList(Element parent, SDFAttributeList schema, MVRelationalTuple<?> tuple) {
 		for(int listIndex=0; listIndex<tuple.getAttributeCount(); listIndex++) {
-			addData(parent, schema, (MVRelationalTuple<?>)tuple.getAttribute(listIndex));
+			addData(parent, schema, tuple.getAttribute(listIndex));
 		}
 
 
@@ -147,15 +171,22 @@ public class ScarsXMLProfiler {
 
 	public void addProbability(Element parent, IProbability tuple) {
 		double[][] cov = tuple.getCovariance();
-		RealMatrix covMatrix = new RealMatrixImpl(cov);
+//		RealMatrix covMatrix = new RealMatrixImpl(cov);
 		String covText = "";
-		for(int i=0; i<covMatrix.getRowDimension(); i++) {
-			double[] row = covMatrix.getRow(i);
-			for(int j=0; j<row.length; j++) {
-				covText += row[j];
-			}
-			if(i != covMatrix.getRowDimension()-1) {
-				covText += "\n";
+//		for(int i=0; i<covMatrix.getRowDimension(); i++) {
+//			double[] row = covMatrix.getRow(i);
+//			for(int j=0; j<row.length; j++) {
+//				covText += row[j];
+//			}
+//			if(i != covMatrix.getRowDimension()-1) {
+//				covText += "\n";
+//			}
+//		}
+
+		for(int r = 0; r<cov.length; r++) {
+			covText += "\n\t";
+			for(int c = 0; c<cov[0].length; c++) {
+				covText += cov[r][c] + "\t";
 			}
 		}
 		Element covEle = new Element("COVARIANCEMATRIX");
@@ -207,11 +238,33 @@ public class ScarsXMLProfiler {
 		}
 	}
 
-	public void setAttribute(String operator, String name, String value) {
-		Element e = getOperatorElement(operator);
-		e.setAttribute(name, value);
+	public void addGain(Element parent, IGain gain) {
+		Element gainElement = new Element("GAIN");
+		double[][] g = gain.getGain();
+		String gainText = "";
+		for(int r=0; r<g.length; r++) {
+			gainText +="\n\t";
+			for(int c=0; c<g[0].length; c++) {
+				gainText += g[r][c] + "\t";
+			}
+		}
+		gainElement.setText(gainText);
+		parent.addContent(gainElement);
 	}
 
+	public void addTimeInterval(Element parent, ITimeInterval ti) {
+		Element tiElement = new Element("TIME_INTERVAL");
+		tiElement.setAttribute("start", ti.getStart().toString());
+		tiElement.setAttribute("end", ti.getEnd().toString());
+	}
+	
+	public void addLatency(Element parent, ILatency latency) {
+		Element latencyElement = new Element("LATENCY");
+		latencyElement.setAttribute("latency", String.valueOf(latency.getLatency()));
+		latencyElement.setAttribute("start", String.valueOf(latency.getLatencyStart()));
+		latencyElement.setAttribute("end", String.valueOf(latency.getLatencyEnd()));
+	}
+	
 	public Element getOperatorElement(String name) {
 		
 		Element e = root.getChild(name);
