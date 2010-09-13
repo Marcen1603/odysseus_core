@@ -24,6 +24,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	public XMLProfilerPO(XMLProfilerPO<M> clone) {
 		super(clone);
 		this.operatorName = clone.operatorName;
+		this.fileName = clone.fileName;
 	}
 
 	@Override
@@ -33,9 +34,8 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 2);
-		p.profile(operatorName,0, getOutputSchema(), object);
-		p.setAttribute(operatorName, "wolf", "ist schlau");
+		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 3);
+		p.profile(operatorName, getOutputSchema(), object);
 	}
 
 	@Override

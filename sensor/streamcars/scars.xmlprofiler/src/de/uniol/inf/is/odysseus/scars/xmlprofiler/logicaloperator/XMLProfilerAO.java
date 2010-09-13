@@ -20,6 +20,7 @@ public class XMLProfilerAO<M extends IProbability> extends UnaryLogicalOp {
 	public XMLProfilerAO(XMLProfilerAO<M> clone) {
 		super(clone);
 		this.operatorName = clone.operatorName;
+		this.fileName = clone.fileName;
 	}
 
 	@Override

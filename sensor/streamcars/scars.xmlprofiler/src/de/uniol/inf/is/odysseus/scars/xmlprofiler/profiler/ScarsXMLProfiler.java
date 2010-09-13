@@ -40,7 +40,7 @@ public class ScarsXMLProfiler {
 
 
 	private ScarsXMLProfiler(String file, int numBeginSkips, int numCycle) {
-		this.file = file;
+		this.file =  file.replace("..", File.separator);
 		this.numCycle = numCycle;
 		this.numSkips = numBeginSkips;
 		root = new Element("ROOT");
@@ -59,17 +59,22 @@ public class ScarsXMLProfiler {
 		}
 		return instances.get(file);
 	}
+	
+	private boolean finish = false;
 
-	public void profile(String operator, long time, SDFAttributeList schema, MVRelationalTuple<?> scan) {
+	public void profile(String operator, SDFAttributeList schema, MVRelationalTuple<?> scan) {
+		if(finish) {
+			return;
+		}
 		Element operatorElement = getOperatorElement(operator);
 		Element scanElement = new Element("SCAN_RESULT");
-//		scanElement.setAttribute("timestamp", Long.toString(time));
+		
 		operatorElement.addContent(scanElement);
 		addData(scanElement, schema, scan);
 
-		boolean finish = true;
+		finish = true;
 		for(Integer cycle : operatorCycleCounts.values()) {
-			if(cycle < numCycle) {
+			if(cycle <= numCycle) {
 				finish = false;
 			}
 		}
@@ -77,7 +82,8 @@ public class ScarsXMLProfiler {
 		if(finish) {
 			XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
 			try {
-				op.output(root, new FileOutputStream(new File("D:/superTest.xml")));
+
+				op.output(root,  new FileOutputStream(file));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -226,8 +232,8 @@ public class ScarsXMLProfiler {
 
 		SDFAttributeList scan = createScanSchema();
 		MVRelationalTuple<IProbability> scanTuple = createScanTuple(scan);
-		p.profile("OPERATOR", 50, scan, scanTuple);
-		p.profile("OPERATOR", 100, scan, scanTuple);
+		p.profile("OPERATOR", scan, scanTuple);
+		p.profile("OPERATOR", scan, scanTuple);
 		Element root = p.getRoot();
 		XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
 		try {
