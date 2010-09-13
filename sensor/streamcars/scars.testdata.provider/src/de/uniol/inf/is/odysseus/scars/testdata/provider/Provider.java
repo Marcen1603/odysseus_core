@@ -173,7 +173,7 @@ public class Provider implements IProvider {
 		scan.setAttribute(0,  this.currentTimeStamp);
 		scan.setAttribute(1, cars);
 		
-		this.printCarModels();
+		//this.printCarModels();
 
 		return root;
 	}
