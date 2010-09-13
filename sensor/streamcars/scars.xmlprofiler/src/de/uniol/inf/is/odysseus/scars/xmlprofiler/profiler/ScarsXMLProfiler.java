@@ -82,7 +82,6 @@ public class ScarsXMLProfiler {
 		if(finish) {
 			XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
 			try {
-
 				op.output(root,  new FileOutputStream(file));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -96,7 +95,6 @@ public class ScarsXMLProfiler {
 	public void addData(Element parent, SDFAttributeList schema,  Object tuple) {
 		for(int index=0; index<schema.getAttributeCount(); index++) {
 			SDFAttribute attr = schema.get(index);
-
 
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				String name = attr.getAttributeName();
@@ -215,6 +213,7 @@ public class ScarsXMLProfiler {
 	}
 
 	public Element getOperatorElement(String name) {
+		
 		Element e = root.getChild(name);
 		if(e == null) {
 			e = new Element(name);
@@ -223,6 +222,7 @@ public class ScarsXMLProfiler {
 		}
 		int cycle = operatorCycleCounts.get(name);
 		operatorCycleCounts.put(name, ++cycle);
+		System.err.println("getOperator()" + e);
 		return e;
 	}
 
