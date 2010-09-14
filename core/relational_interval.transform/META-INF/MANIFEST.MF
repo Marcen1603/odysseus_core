@@ -1,10 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Relational_interval
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational_interval.transform
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational_interval.transform;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.relational_interval.transform.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.intervalapproach,

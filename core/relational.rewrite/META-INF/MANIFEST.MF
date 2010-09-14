@@ -1,10 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rewrite
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational.rewrite
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational.rewrite;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.relational.rewrite.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.predicate,
