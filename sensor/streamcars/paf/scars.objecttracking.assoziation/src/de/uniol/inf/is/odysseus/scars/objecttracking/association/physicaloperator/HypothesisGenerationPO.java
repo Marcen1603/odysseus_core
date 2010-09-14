@@ -83,30 +83,49 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		Iterator<MVRelationalTuple<M>> itPred = sweepPrediction.query(object, Order.LeftRight);
 		Iterator<MVRelationalTuple<M>> itScan = sweepScanned.query(object, Order.LeftRight);
 
+		MVRelationalTuple<M> scan = null;
+		MVRelationalTuple<M> pred = null;
 		if(itPred.hasNext() && itScan.hasNext()) {
-			MVRelationalTuple<M> scan = itScan.next();
-			MVRelationalTuple<M> pred = itPred.next();
+			scan = itScan.next();
+			pred = itPred.next();
+		} else if(itScan.hasNext() && !sweepPunctuation.isEmpty()) {
+			scan = itScan.next();
+		}
+		if(scan != null) {
+			scan = itScan.next();
+			pred = itPred.next();
 			MVRelationalTuple<M> output = createOutputTuple(scan, pred);
 			sweepScanned.remove(scan);
-			sweepPrediction.remove(pred);
-			transfer(output);
-			PointInTime time = output.getMetadata().getStart();
-			Iterator<MVRelationalTuple<M>> punctuations = sweepPunctuation.punctuationQuery(output);
-			PointInTime punctuation = null; 
-			long maxPunctuation = 0;
-			while (punctuations.hasNext()) {
-				MVRelationalTuple<M> mvRelationalTuple = (MVRelationalTuple<M>) punctuations
-						.next();
-				PointInTime pt = mvRelationalTuple.getMetadata().getStart();
-				if(pt.getMainPoint() > maxPunctuation) {
-					maxPunctuation = pt.getMainPoint();
-					punctuation = pt;
-				}
+			if(pred != null) {
+				sweepPrediction.remove(pred);
 			}
-			if(punctuation != null) {
-				sendPunctuation(punctuation);
+			transfer(output);
+			punctuationSending(output);
+			sweepPunctuation.purgeElements(output, Order.LeftRight);
+		}
+	}
+	
+	private void punctuationSending(MVRelationalTuple<M> output) {
+		Iterator<MVRelationalTuple<M>> punctuationTuples = sweepPunctuation.punctuationQuery(output);
+		PointInTime punctuation = getMaxPunctuation(punctuationTuples);
+		if(punctuation != null) {
+			sendPunctuation(punctuation);
+		}
+	}
+	
+	private PointInTime getMaxPunctuation(Iterator<MVRelationalTuple<M>> punctuations) {
+		long maxPunctuation = 0;
+		PointInTime punctuation = null; 
+		while (punctuations.hasNext()) {
+			MVRelationalTuple<M> mvRelationalTuple = (MVRelationalTuple<M>) punctuations
+					.next();
+			PointInTime pt = mvRelationalTuple.getMetadata().getStart();
+			if(pt.getMainPoint() > maxPunctuation) {
+				maxPunctuation = pt.getMainPoint();
+				punctuation = pt;
 			}
 		}
+		return punctuation;
 	}
 
 	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {
@@ -125,7 +144,11 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 		// get predicted objects
 		path = helper2.getSchemaIndexPath(this.oldObjListPath);
-		association[2] =  path.toTupleIndexPath(predictedObject).getTupleObject();
+		if(predictedObject == null) {
+			association[2] = new MVRelationalTuple<M>(0);
+		} else {
+			association[2] =  path.toTupleIndexPath(predictedObject).getTupleObject();
+		}
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setMetadata(scannedObject.getMetadata());
