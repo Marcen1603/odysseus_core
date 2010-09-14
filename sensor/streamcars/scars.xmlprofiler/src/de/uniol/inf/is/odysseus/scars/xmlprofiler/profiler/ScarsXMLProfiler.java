@@ -128,7 +128,8 @@ public class ScarsXMLProfiler {
 			addMetadata(tupleElement, tuple);
 			parent.addContent(tupleElement);
 			
-			if(rootschema instanceof SDFAttributeListExtended) {
+			
+			if(rootschema != null && rootschema instanceof SDFAttributeListExtended) {
 				Object pfc = ((SDFAttributeListExtended) rootschema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 				if(pfc != null) {
 					addPredictionFunctionContainer(tupleElement, (PredictionFunctionContainer<?>)pfc);
@@ -140,14 +141,14 @@ public class ScarsXMLProfiler {
 				SDFAttributeList schema = attr.getSubattributes();
 				for(int i=0; i<schema.getAttributeCount(); i++) {
 					SDFAttribute childAttr = schema.getAttribute(i);
-					addData2(rootschema, tupleElement, childAttr, tuple.getAttribute(i));
+					addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
 				}
 			} else if (attr.getDatatype().getQualName().equals("List")) {
 				
 				SDFAttributeList schema = attr.getSubattributes();
 				SDFAttribute childAttr = schema.getAttribute(0);
 				for(int i=0; i<tuple.getAttributeCount(); i++) {
-					addData2(rootschema, tupleElement, childAttr, tuple.getAttribute(i));
+					addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
 				}
 			}
 		} else {
