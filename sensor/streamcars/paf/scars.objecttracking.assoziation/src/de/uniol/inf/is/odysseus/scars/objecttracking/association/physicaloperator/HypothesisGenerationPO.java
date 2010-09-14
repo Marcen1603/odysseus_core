@@ -56,7 +56,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	@SuppressWarnings("unchecked")
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		if(port == 0 && timestamp.getMainPoint() > this.timestamp) {
+		if(port == 1 && timestamp.getMainPoint() > this.timestamp) {
 			this.timestamp = timestamp.getMainPoint();
 			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(0);
 			StreamCarsMetaData<M> metaData = new StreamCarsMetaData<M>();
@@ -67,17 +67,17 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	}
 
 	/**
-	 * port 0 = old;
-	 * port 1 = new;
+	 * port 0 = new;
+	 * port 1 = old;
 	 */
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		if(port == 0) {
-			this.sweepPrediction.insert(object);
-			this.sweepScanned.purgeElements(object, Order.LeftRight);
-		} else if(port == 1) {
 			this.sweepScanned.insert(object);
 			this.sweepPrediction.purgeElements(object, Order.LeftRight);
+		} else if(port == 1) {
+			this.sweepPrediction.insert(object);
+			this.sweepScanned.purgeElements(object, Order.LeftRight);
 		}
 
 		Iterator<MVRelationalTuple<M>> itPred = sweepPrediction.query(object, Order.LeftRight);
@@ -159,9 +159,4 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	public void setNewObjListPath(String newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}
-
-	public void testProcessNext(MVRelationalTuple<M> object, int port) {
-		process_next(object, port);
-	}
-
 }
