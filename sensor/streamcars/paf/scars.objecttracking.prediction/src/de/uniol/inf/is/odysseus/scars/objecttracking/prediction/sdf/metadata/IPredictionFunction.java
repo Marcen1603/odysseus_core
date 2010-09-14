@@ -16,4 +16,6 @@ public interface IPredictionFunction<M extends IProbability> {
 	public void setExpressions(PredictionExpression[] expressions);
 	
 	public void setNoiseMatrix(double[][] noiseMatrix);
+	
+	public PredictionExpression[] getExpressions();
 }

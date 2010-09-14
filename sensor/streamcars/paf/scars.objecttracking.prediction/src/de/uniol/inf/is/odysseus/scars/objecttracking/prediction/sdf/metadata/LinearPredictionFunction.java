@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata;
 
+import java.util.Arrays;
+
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
@@ -163,6 +165,28 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	@Override
 	public void setNoiseMatrix(double[][] noiseMatrix) {
 		this.noiseMatrix = noiseMatrix;
+	}
+
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		return "LinearPredictionFunction [scanSchema="
+				+ scanSchema
+				+ ", timeSchema="
+				+ timeSchema
+				+ ", mapper="
+				+ mapper
+				+ ", expressions="
+				+ (expressions != null ? Arrays.asList(expressions).subList(0,
+						Math.min(expressions.length, maxLen)) : null)
+				+ ", noiseMatrix="
+				+ (noiseMatrix != null ? Arrays.asList(noiseMatrix).subList(0,
+						Math.min(noiseMatrix.length, maxLen)) : null) + "]";
+	}
+
+	@Override
+	public PredictionExpression[] getExpressions() {
+		return expressions;
 	}
 
 

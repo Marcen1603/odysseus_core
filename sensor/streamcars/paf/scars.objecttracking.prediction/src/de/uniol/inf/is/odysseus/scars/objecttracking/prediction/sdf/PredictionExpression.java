@@ -273,6 +273,10 @@ public class PredictionExpression {
 			e.printStackTrace();
 		}
 	}
+	
+	public String getExpression() {
+		return expression;
+	}
 
 	/**
 	 * 
