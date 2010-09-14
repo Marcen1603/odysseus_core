@@ -49,7 +49,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		if(timestamp.getMainPoint() > this.timestamp) {
+		if(port == 0 && timestamp.getMainPoint() > this.timestamp) {
 			this.sendPunctuation(timestamp);
 			this.timestamp = timestamp.getMainPoint();
 		}
