@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -9,6 +10,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.PointInTimeSweepArea;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
@@ -32,11 +34,14 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	private PointInTimeSweepArea<M> sweepPrediction;
 	private PointInTimeSweepArea<M> sweepScanned;
-
+	
+	private PointInTimeSweepArea<M> sweepPunctuation;
+	
 	public HypothesisGenerationPO() {
 		super();
 		sweepPrediction = new PointInTimeSweepArea<M>();
 		sweepScanned = new PointInTimeSweepArea<M>();
+		sweepPunctuation = new PointInTimeSweepArea<M>();
 	}
 
 	public HypothesisGenerationPO(HypothesisGenerationPO<M> copy) {
@@ -45,13 +50,19 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		this.newObjListPath = copy.getNewObjListPath();
 		this.sweepPrediction = (PointInTimeSweepArea<M>) copy.sweepPrediction.clone();
 		this.sweepScanned =  (PointInTimeSweepArea<M>) copy.sweepScanned.clone();
+		this.sweepPunctuation =  (PointInTimeSweepArea<M>) copy.sweepPunctuation.clone();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		if(port == 0 && timestamp.getMainPoint() > this.timestamp) {
-			this.sendPunctuation(timestamp);
 			this.timestamp = timestamp.getMainPoint();
+			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(0);
+			StreamCarsMetaData<M> metaData = new StreamCarsMetaData<M>();
+			metaData.setStart(timestamp);
+			tuple.setMetadata((M)metaData);
+			this.sweepPunctuation.insert(tuple);
 		}
 	}
 
@@ -79,6 +90,22 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 			sweepScanned.remove(scan);
 			sweepPrediction.remove(pred);
 			transfer(output);
+			PointInTime time = output.getMetadata().getStart();
+			Iterator<MVRelationalTuple<M>> punctuations = sweepPunctuation.punctuationQuery(output);
+			PointInTime punctuation = null; 
+			long maxPunctuation = 0;
+			while (punctuations.hasNext()) {
+				MVRelationalTuple<M> mvRelationalTuple = (MVRelationalTuple<M>) punctuations
+						.next();
+				PointInTime pt = mvRelationalTuple.getMetadata().getStart();
+				if(pt.getMainPoint() > maxPunctuation) {
+					maxPunctuation = pt.getMainPoint();
+					punctuation = pt;
+				}
+			}
+			if(punctuation != null) {
+				sendPunctuation(punctuation);
+			}
 		}
 	}
 
