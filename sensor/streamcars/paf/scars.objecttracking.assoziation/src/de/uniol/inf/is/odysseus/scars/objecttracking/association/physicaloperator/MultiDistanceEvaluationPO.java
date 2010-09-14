@@ -28,41 +28,61 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
   private static final String MANHATTEN = "MANHATTEN";
   private static final String MINKOWSKI = "MINKOWSKI";
 
+  private static final String GATINGMODE = "gatingMode";
+
   private DistanceFunction df;
+  private boolean gatingmode;
 
   public MultiDistanceEvaluationPO() {
-	  super();
+      super();
   }
 
   public MultiDistanceEvaluationPO(MultiDistanceEvaluationPO<M> clone) {
     super(clone);
     this.df = clone.df;
+    this.gatingmode = clone.gatingmode;
   }
 
   public void initAlgorithmParameter() {
-	// try - catch so that the operator does not crash if there is no parameter given
-	try {
-	    if (this.getAlgorithmParameter().containsKey(DISTANCE_ID)) {
-	      String algoName = this.getAlgorithmParameter().get(DISTANCE_ID);
-	      if (algoName.equals(CHEBYSHEV)) {
-	        this.df = new ChebyshevDistance();
-	      } else if (algoName.equals(EUCLIDEAN)) {
-	        this.df = new EuclideanDistance();
-	      } else if (algoName.equals(MANHATTEN)) {
-	        this.df = new ManhattanDistance();
-	      } else if (algoName.equals(MINKOWSKI)) {
-	        this.df = new MinkowskiDistance();
-	      } else {
-	        this.df = new EuclideanDistance();
-	        System.out
-	            .println("### MultiDistanceEvaluationPO: ### No valid Distancefunction ### Default function was selected (EuclideanDistance) ##");
-	      }
-	    }
-	} catch(Exception e) {
-		this.df = new EuclideanDistance();
-        System.out
-            .println("### MultiDistanceEvaluationPO: ### Can not access distance parameter ### Default function was selected (EuclideanDistance) ##");
-	}
+    // try - catch so that the operator does not crash if there is no parameter given
+    try {
+        if (this.getAlgorithmParameter().containsKey(DISTANCE_ID)) {
+          String algoName = this.getAlgorithmParameter().get(DISTANCE_ID);
+          if (algoName.equals(CHEBYSHEV)) {
+            this.df = new ChebyshevDistance();
+          } else if (algoName.equals(EUCLIDEAN)) {
+            this.df = new EuclideanDistance();
+          } else if (algoName.equals(MANHATTEN)) {
+            this.df = new ManhattanDistance();
+          } else if (algoName.equals(MINKOWSKI)) {
+            this.df = new MinkowskiDistance();
+          } else {
+            this.df = new EuclideanDistance();
+            System.out.println("### MultiDistanceEvaluationPO: ### No valid Distancefunction ### Default function was selected (EuclideanDistance) ##");
+          }
+        }
+    } catch(Exception e) {
+        this.df = new EuclideanDistance();
+        System.out.println("### MultiDistanceEvaluationPO: ### Can not access distance parameter ### Default function was selected (EuclideanDistance) ##");
+    }
+
+    try {
+        if (this.getAlgorithmParameter().containsKey(GATINGMODE)) {
+            String gatingmodeString = this.getAlgorithmParameter().get(GATINGMODE);
+            if(gatingmodeString.equals("true")) {
+                this.gatingmode = true;
+            } else if (gatingmodeString.equals("false")) {
+                this.gatingmode = false;
+            } else {
+                this.gatingmode = false;
+                System.out.println("### MultiDistanceEvaluationPO: ### No valid gating mode set (true; false) ### Default mode was selected (false) ##");
+            }
+        }
+    } catch(Exception e) {
+        this.gatingmode = false;
+        System.out.println("### MultiDistanceEvaluationPO: ### Can not access gating mode parameter ### Default mode was selected (false) ##");
+    }
+
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -70,22 +90,16 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
   public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
       double[][] predictedObjCovariance, double[] predictedObjMesurementValues, double currentRating) {
 
-	FastVector atts = new FastVector();
+	// if gating mode = true and current connection is not within a gate (means rating < 100) skip the calculation
+	// of the new rating and just return the old rating
+    if(this.gatingmode == true && currentRating < 100) {
+    	return currentRating;
+    }
 
-    // Create instances
-//    Instance scannedObjInstance = new DenseInstance(scannedObjMesurementValues.length);
-//    Instance predictedObjInstance = new DenseInstance(predictedObjMesurementValues.length);
-
-    // Set values
-//    for (int i = 0; i < scannedObjMesurementValues.length; i++) {
-//      scannedObjInstance.setValue(i, scannedObjMesurementValues[i]);
-//    }
-//    for (int i = 0; i < predictedObjMesurementValues.length; i++) {
-//      predictedObjInstance.setValue(i, predictedObjMesurementValues[i]);
-//    }
+    FastVector atts = new FastVector();
 
     for (int i = 0; i < scannedObjMesurementValues.length; i++) {
-    	atts.addElement(new Attribute(String.valueOf(i)));
+        atts.addElement(new Attribute(String.valueOf(i)));
     }
 
     Instances data = new Instances("Instances", atts, 0);
@@ -95,7 +109,7 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
     double[] vals = new double[data.numAttributes()];
 
     for (int i = 0; i < scannedObjMesurementValues.length; i++) {
-    	vals[i] = scannedObjMesurementValues[i];
+        vals[i] = scannedObjMesurementValues[i];
     }
 
     Instance scannedObjInstance = new DenseInstance(scannedObjMesurementValues.length, vals);
@@ -107,7 +121,7 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
     vals = new double[data.numAttributes()];
 
     for (int i = 0; i < predictedObjMesurementValues.length; i++) {
-    	vals[i] = predictedObjMesurementValues[i];
+        vals[i] = predictedObjMesurementValues[i];
     }
 
     Instance predictedObjInstance = new DenseInstance(predictedObjMesurementValues.length, vals);
@@ -123,7 +137,7 @@ public class MultiDistanceEvaluationPO<M extends IProbability & IConnectionConta
     // Available Functions: ChebyshevDistance, EuclideanDistance,
     // ManhattanDistance, MinkowskiDistance, NormalizableDistance
     double newval = currentRating + this.df.distance(scannedObjInstance, predictedObjInstance)*(-1);
-    // System.out.println(String.valueOf(newval));
+
     return newval;
   }
 
