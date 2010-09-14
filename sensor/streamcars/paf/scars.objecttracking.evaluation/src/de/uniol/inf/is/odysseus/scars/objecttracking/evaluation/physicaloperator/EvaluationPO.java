@@ -31,6 +31,8 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	private long associationTime = -1;
 	private long filteringTime = -1;
 	private long brokerTime = -1;
+	
+	private long timestamp = -1;
 
 	private boolean boolAsso = false;
 	private boolean boolFilter = false;
@@ -69,7 +71,11 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		} else if (port == 2 && !boolBroker) {
 			this.brokerTime = timestamp.getMainPoint();
 		}
-		this.sendPunctuation(timestamp);
+		
+		if(timestamp.getMainPoint() > this.timestamp && this.associationTime != -1 && this.filteringTime != -1 && this.brokerTime != -1) {
+			this.sendPunctuation(timestamp);
+			this.timestamp = timestamp.getMainPoint();
+		}
 	}
 
 	/*
