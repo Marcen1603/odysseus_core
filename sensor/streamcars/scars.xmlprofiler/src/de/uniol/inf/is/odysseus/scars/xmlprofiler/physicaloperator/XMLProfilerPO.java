@@ -29,14 +29,14 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 5, 25);
+		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 25);
 		p.profilePunctuation(operatorName, timestamp);
 		this.sendPunctuation(timestamp);
 	}
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 5, 25);
+		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 25);
 		p.profile(operatorName, getOutputSchema(), object);
 		transfer(object);
 	}
