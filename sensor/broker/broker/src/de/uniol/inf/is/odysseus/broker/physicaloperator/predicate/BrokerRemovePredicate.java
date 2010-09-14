@@ -53,13 +53,13 @@ public class BrokerRemovePredicate<T extends IMetaAttributeContainer<ITimeInterv
 	 */
 	@Override
 	public boolean evaluate(T left, T right) {		
-		if(this.brokerEqualPredicate.evaluate(left, right)){
+//		if(this.brokerEqualPredicate.evaluate(left, right)){
 			// wirklich t1_s >= t2_e?!
 			//if(right.getMetadata().getEnd().beforeOrEquals(left.getMetadata().getStart())){
 			if(left.getMetadata().getStart().beforeOrEquals(right.getMetadata().getStart())){
 				return true;
 			}
-		}
+//		}
 		return false;
 	}
 	
