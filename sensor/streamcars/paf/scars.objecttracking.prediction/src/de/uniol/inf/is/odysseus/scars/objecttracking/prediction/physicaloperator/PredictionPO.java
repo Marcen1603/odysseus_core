@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.Queue;
-
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -30,9 +27,10 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
   private SchemaIndexPath currentScanTimeSchemaPath;
 
   private PredictionFunctionContainer<M> predictionFunctions;
-  
-  private ArrayList<PointInTime> punctuations = new ArrayList<PointInTime>();
 
+  private PointInTime timePunctuation = null;
+  private boolean brokerPunctuation = false;
+  
   public PredictionPO() {
   }
 
@@ -72,13 +70,11 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
   @Override
   protected void process_next(MVRelationalTuple<M> object, int port) {
     synchronized (this) {
-    	Long tupleTime = (Long)currentScanTimeSchemaPath.toTupleIndexPath(object).getTupleObject();
       if (port == 0) {
         currentTimeTuple = object.clone();
-        printOutput("Timetuple on port 0: " + tupleTime);
       } else if (port == 1) {
         currentScanTuple = object.clone();
-        printOutput("Datatuple on port 1: " + tupleTime);
+        brokerPunctuation = false;
      }
 
       if (currentTimeTuple != null && currentScanTuple != null) {
@@ -89,17 +85,12 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
         
         Long time = (Long)currentScanTimeSchemaPath.toTupleIndexPath(tmp).getTupleObject();
         
-        // Send old punctuations
-        while( !punctuations.isEmpty() && punctuations.get(0).before(new PointInTime(time))) {
-        	printOutput("Send Punctuation out of Prediction : " + punctuations.get(0));
-        	sendPunctuation(punctuations.get(0));
-        	punctuations.remove(0);
-        	printPunctuationList();
-        }
-        
-        printOutput("Send Data of timestamp " + time);
         transfer(tmp);
         
+        if( timePunctuation != null ) {
+        	sendPunctuation(timePunctuation);
+        	timePunctuation = null;
+        }
       }
     }
   }
@@ -136,39 +127,21 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 
   @Override
   public void processPunctuation(PointInTime timestamp, int port) {
-	  if( port == 0 ) {
-		  printOutput("Process Punctuation of time " + timestamp + " on port 0");
-		  
-		  if( !punctuations.contains(timestamp)) {
-			  
-			  boolean found = false;
-			  for( int i = 0; i < punctuations.size(); i++ ) {
-				  if( punctuations.get(i).after(timestamp) ) {
-					  punctuations.add(i, timestamp);
-					  found = true;
-					  break;
-				  }
-			  }
-			  if( !found )
-				  punctuations.add(timestamp);
-			  
-			  printPunctuationList();
-	
+	  if( port == 0 ) { // Time
+		  timePunctuation = timestamp;
+		  if( brokerPunctuation ) {
+			  sendPunctuation(timePunctuation);
+			  timePunctuation = null;
+		  }
+	  } else if( port == 1 ) { // Broker
+		  brokerPunctuation = true;
+		  if( timePunctuation != null ) {
+			  sendPunctuation(timePunctuation);
+			  timePunctuation = null;
 		  }
 	  }
   }
   
-  private void printPunctuationList() {
-	  StringBuilder sb = new StringBuilder();
-	  sb.append("PunctuationList:");
-	  if( punctuations.isEmpty())
-		  sb.append("[Empty]");
-	  else
-		  for( int i = 0; i < punctuations.size(); i++ ) {
-			  sb.append(punctuations.get(i)).append(", ");
-		  }
-	  printOutput(sb.toString());
-  }
   
   private void printOutput( String txt ) {
 	  System.out.println("PREDICTION(" + hashCode() + "):" + txt);
