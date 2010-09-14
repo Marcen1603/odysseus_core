@@ -22,10 +22,13 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -83,6 +86,10 @@ public class ScarsXMLProfiler {
 		if(currentCycleCount <= numCycle) {
 			addData2(operatorElement, schema.getAttribute(0), scan.getAttribute(0));
 			operatorCycleCounts.put(operator, ++currentCycleCount);
+			
+			if(schema instanceof SDFAttributeListExtended) {
+				((SDFAttributeListExtended) schema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+			}
 		}
 
 		finish = true;
@@ -140,6 +147,11 @@ public class ScarsXMLProfiler {
 		} else {
 			parent.setAttribute(attr.getAttributeName(), value.toString());
 		}
+	}
+	
+	public void addPredictionFunctionContainer(Element parent, PredictionFunctionContainer c) {
+		Element predFuncElement = new Element("PREDICTION_FUNCTION_CONTAINER");
+		
 	}
 	
 	public void addMetadata(Element parent, MVRelationalTuple<?> tuple) {
