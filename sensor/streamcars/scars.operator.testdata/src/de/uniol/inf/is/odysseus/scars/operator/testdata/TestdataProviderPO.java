@@ -24,6 +24,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 	
+	private static final int DELAY = 100;
+	private static final int SEND_DELAY = 1000;
+	
 	private Provider provider;
 	private long lastTime;
 	private MVRelationalTuple<M> buffer = null;
@@ -43,7 +46,7 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		provider.setDelay(1000);
+		provider.setDelay(DELAY);
 		provider.setNumOfCars(5);
 		provider.init();
 		metadataCreator = new StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>>(getOutputSchema());
@@ -77,7 +80,7 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 		 * wird (siehe auch Ticket 225).
 		 */
 		if(!this.isDone()){
-			if (System.currentTimeMillis() - lastTime > 1000) {
+			if (System.currentTimeMillis() - lastTime > SEND_DELAY) {
 				this.buffer = (MVRelationalTuple<M>) provider.nextTuple();
 				return true;
 			}
