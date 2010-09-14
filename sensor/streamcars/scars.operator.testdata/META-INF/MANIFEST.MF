@@ -7,9 +7,12 @@ Bundle-Activator: de.uniol.inf.is.odysseus.scars.operator.testdata.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.scars.objecttracking.metadata,
  de.uniol.inf.is.odysseus.scars.testdata.provider,
  de.uniol.inf.is.odysseus.scars.testdata.provider.model,
  de.uniol.inf.is.odysseus.scars.testdata.provider.model.calculationmodels,
