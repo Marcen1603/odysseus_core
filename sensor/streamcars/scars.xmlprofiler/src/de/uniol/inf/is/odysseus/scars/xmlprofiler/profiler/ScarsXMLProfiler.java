@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -28,6 +29,8 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -84,12 +87,8 @@ public class ScarsXMLProfiler {
 		
 		int currentCycleCount = operatorCycleCounts.get(operator);
 		if(currentCycleCount <= numCycle) {
-			addData2(operatorElement, schema.getAttribute(0), scan.getAttribute(0));
+			addData2(schema, operatorElement, schema.getAttribute(0), scan.getAttribute(0));
 			operatorCycleCounts.put(operator, ++currentCycleCount);
-			
-			if(schema instanceof SDFAttributeListExtended) {
-				((SDFAttributeListExtended) schema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
-			}
 		}
 
 		finish = true;
@@ -121,7 +120,7 @@ public class ScarsXMLProfiler {
 		punctuationElement.setAttribute("time", timestamp.toString());
 	}
 
-	public void addData2(Element parent, SDFAttribute attr, Object value) {
+	public void addData2(SDFAttributeList rootschema, Element parent, SDFAttribute attr, Object value) {
 		if(value instanceof MVRelationalTuple<?>) {
 			
 			MVRelationalTuple<?> tuple = (MVRelationalTuple<?>)value;
@@ -129,19 +128,26 @@ public class ScarsXMLProfiler {
 			addMetadata(tupleElement, tuple);
 			parent.addContent(tupleElement);
 			
+			if(rootschema instanceof SDFAttributeListExtended) {
+				Object pfc = ((SDFAttributeListExtended) rootschema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+				if(pfc != null) {
+					addPredictionFunctionContainer(tupleElement, (PredictionFunctionContainer<?>)pfc);
+				}
+			}
+			
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				
 				SDFAttributeList schema = attr.getSubattributes();
 				for(int i=0; i<schema.getAttributeCount(); i++) {
 					SDFAttribute childAttr = schema.getAttribute(i);
-					addData2(tupleElement, childAttr, tuple.getAttribute(i));
+					addData2(rootschema, tupleElement, childAttr, tuple.getAttribute(i));
 				}
 			} else if (attr.getDatatype().getQualName().equals("List")) {
 				
 				SDFAttributeList schema = attr.getSubattributes();
 				SDFAttribute childAttr = schema.getAttribute(0);
 				for(int i=0; i<tuple.getAttributeCount(); i++) {
-					addData2(tupleElement, childAttr, tuple.getAttribute(i));
+					addData2(rootschema, tupleElement, childAttr, tuple.getAttribute(i));
 				}
 			}
 		} else {
@@ -149,9 +155,24 @@ public class ScarsXMLProfiler {
 		}
 	}
 	
-	public void addPredictionFunctionContainer(Element parent, PredictionFunctionContainer c) {
-		Element predFuncElement = new Element("PREDICTION_FUNCTION_CONTAINER");
-		
+	public void addPredictionFunctionContainer(Element parent, PredictionFunctionContainer<?> c) {
+		Element predFuncContainerElement = new Element("PREDICTION_FUNCTION_CONTAINER");
+		for(Entry<?, ?> e : c.getMap().entrySet()) {
+			Element predFuncElement = new Element("PREDICTION_FUNCTION");
+			predFuncElement.setAttribute("where", e.getKey().toString());
+			addPredictionFunction(predFuncElement, (IPredictionFunction<?>)e.getValue());
+			predFuncContainerElement.addContent(predFuncElement);
+		}
+		parent.addContent(predFuncContainerElement);
+	}
+	
+	public void addPredictionFunction(Element parent, IPredictionFunction<?> p) {
+		for(PredictionExpression exp : p.getExpressions()) {
+			Element expElement = new Element("Expression");
+			expElement.setAttribute("target", exp.getTargetAttributeName());
+			expElement.setAttribute("exp", exp.getExpression());
+			parent.addContent(expElement);
+		}
 	}
 	
 	public void addMetadata(Element parent, MVRelationalTuple<?> tuple) {
