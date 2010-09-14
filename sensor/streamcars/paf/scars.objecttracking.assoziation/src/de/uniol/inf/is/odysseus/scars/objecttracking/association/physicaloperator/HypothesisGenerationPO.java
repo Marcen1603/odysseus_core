@@ -27,6 +27,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	private String oldObjListPath;
 	private String newObjListPath;
+	
+	private long timestamp = -1;
 
 	private PointInTimeSweepArea<M> sweepPrediction;
 	private PointInTimeSweepArea<M> sweepScanned;
@@ -47,7 +49,10 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-//		this.sendPunctuation(timestamp);
+		if(timestamp.getMainPoint() > this.timestamp) {
+			this.sendPunctuation(timestamp);
+			this.timestamp = timestamp.getMainPoint();
+		}
 	}
 
 	/**
@@ -74,7 +79,6 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 			sweepScanned.remove(scan);
 			sweepPrediction.remove(pred);
 			transfer(output);
-			this.sendPunctuation(output.getMetadata().getStart());
 		}
 	}
 
