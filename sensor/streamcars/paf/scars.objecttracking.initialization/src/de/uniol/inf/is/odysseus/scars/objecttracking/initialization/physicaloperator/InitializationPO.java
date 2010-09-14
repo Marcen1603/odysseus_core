@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
+import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.AbstractInitializationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
@@ -40,6 +41,10 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	private SchemaIndexPath oldObjPath;
 	SDFAttributeList inputSchema;
 	
+	private AbstractInitializationFunction initalizationFunction;
+	
+	
+
 	// path to new  objects
 	private String newObjListPath;
 	// path to old  objects
@@ -55,6 +60,7 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	
 	public InitializationPO(InitializationPO<M> copy) {
 		super(copy);
+		this.initalizationFunction= copy.getInitalizationFunction().clone();
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
 		this.setOldObjListPath(new String(copy.getOldObjListPath()));
 		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
@@ -106,6 +112,8 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	
 		this.oldObjectListPath = this.schemaHelper.getSchemaIndexPath(this
 				.getOldObjListPath());
+	
+
 	}
 	
 	@Override
@@ -113,40 +121,20 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	
 		havingData = true;
 		
-		TupleIndexPath newTupleIndexPath = this.newObjectListPath.toTupleIndexPath(object);
+		object = initalizationFunction.compute(object, newObjectListPath, oldObjectListPath);
 		
-		TupleIndexPath oldTupleIndexPath = this.oldObjectListPath.toTupleIndexPath(object);
-		
-		TupleHelper tHelper = new TupleHelper(object);
-		
-		
-		MVRelationalTuple<M> newList = (MVRelationalTuple<M>) tHelper.getObject(newObjectListPath);
-	
-		MVRelationalTuple<M> copy = newList.clone();
-	
-		TupleHelper tHelper2 = new TupleHelper(copy);
-	
-		ConnectionList newObjConList = new ConnectionList();
-		
-		
-		for (TupleInfo info : new TupleIterator(copy, newTupleIndexPath)) {
-		
-			int [] path = info.schemaIndexPath.toArray();
-			int [] newPath = null;
-			System.arraycopy(path, 0, newPath, 0, path.length);
-			newPath[newPath.length]+=1;
-			Connection con = new Connection(path, newPath, 5.0);
-			newObjConList.add(con);
-			info.tupleIndexPath.getLastTupleIndex().setValue(parameters.get(Parameters.InitializationTuple));
-			
-			
-		}
-		
-		object.getMetadata().setConnectionList(newObjConList);
-		oldTupleIndexPath.setTupleObject(newList);
 		transfer(object);
 	}
-		     
+	
+	public AbstractInitializationFunction getInitalizationFunction() {
+		return initalizationFunction;
+	}
+
+	public void setInitalizationFunction(
+			AbstractInitializationFunction initalizationFunction) {
+		this.initalizationFunction = initalizationFunction;
+	}
+	
 	public void setNewObjListPath(String newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}

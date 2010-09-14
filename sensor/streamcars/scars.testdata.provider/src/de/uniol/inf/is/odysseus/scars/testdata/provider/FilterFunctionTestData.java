@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data;
+package de.uniol.inf.is.odysseus.scars.testdata.provider;
 
 
 import java.util.ArrayList;

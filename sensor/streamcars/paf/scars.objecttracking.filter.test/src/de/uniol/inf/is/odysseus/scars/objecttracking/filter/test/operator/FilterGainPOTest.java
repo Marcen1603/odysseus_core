@@ -14,9 +14,9 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.FilterGainPO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.FilterFunctionTestData;
 
 /**
  * @author dtwumasi
@@ -65,23 +65,6 @@ public class FilterGainPOTest<K> {
 
 		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,5);
 
-
-
-		Connection[] objConList = new Connection[expectedTuple.getMetadata().getConnectionList().toArray().length];
-		ArrayList<Connection> tmpConList = expectedTuple.getMetadata().getConnectionList();
-
-		for(int i = 0; i < objConList.length; i++) {
-			objConList[i] = tmpConList.get(i);
-		}
-
-
-	/*	MVRelationalTuple<StreamCarsMetaData<K>> test = (MVRelationalTuple<StreamCarsMetaData<K>>) objConList[0].getRight();
-		
-		test.getMetadata().setGain(gain);
-		
-		objConList[0].setRight(test);
-	*/	
-		
 		gainfunctionPO = new FilterGainPO(); 
 		gainFunction = new KalmanGainFunction();
 		

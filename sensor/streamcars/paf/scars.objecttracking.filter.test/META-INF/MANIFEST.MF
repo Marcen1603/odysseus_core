@@ -8,5 +8,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.scars.objecttracking.filter,
  de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator,
+ de.uniol.inf.is.odysseus.scars.testdata.provider,
  junit.framework,
  org.junit;version="4.5.0"

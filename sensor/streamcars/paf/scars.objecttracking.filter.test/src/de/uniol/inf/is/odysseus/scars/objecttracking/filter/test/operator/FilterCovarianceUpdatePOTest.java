@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpda
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateCovarianceFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.FilterCovarianceUpdatePO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.FilterGainPO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
