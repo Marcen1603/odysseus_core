@@ -1,0 +1,143 @@
+// Konstanten
+#DEFINE ip 127.0.0.1:5002 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 und 127.0.0.1:5002 lassen DummySource generieren
+// Quellendefinitionen
+#PARSER CQL
+#TRANSCFG StreamCars
+#QUERY
+CREATE SENSOR radarSensor (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+) FROM CHANNEL ${ip}
+
+#QUERY
+CREATE BROKER brokerSensor (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+) QUEUE (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars, 
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT        0.1 0.0 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posy, MV FLOAT        0.0 0.1 0.0 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 0.1 0.0 0.0 0.0 0.0)
+                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 0.1 0.0 0.0 0.0)
+                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 0.1 0.0 0.0)
+                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
+                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    )
+)
+
+#DEFINE brokerSource 	brokerSensor // Quellenoperator(!) des Brokers
+#DEFINE brokerListName 	brokerSensor.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+#DEFINE brokerScan		brokerSensor.scan
+
+#DEFINE sensorSource 	ACCESS(radarSensor) // Quellenoperator(!) des Sensors
+#DEFINE sensorListName 	radarSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
+#DEFINE sensorScan		radarSensor.scan
+#DEFINE xmlfile			D:..testPrediction3.xml // speicherort des xml profilers (".." == "\")
+
+#PARSER PQLHack
+#CYCLICQUERY
+LOGICAL PLAN :
+BROKER(${brokerSource},
+						BROKER-INIT(
+							BUFFER(
+								ACCESS(radarSensor),
+								Punct
+							),
+							1
+						)
+);
+
+BROKER(
+	${brokerSource},
+	SCARS-XML-PROFILER(
+		PREDICTION(
+			SCARS-XML-PROFILER(
+				BUFFER(
+					${sensorSource},
+					Punct
+				),
+				${xmlfile},
+				POST_SOURCE
+			),
+			SCARS-XML-PROFILER(
+					SET-PREDICTION-OR(
+						
+						    BUFFER(
+						   		SCARS-XML-PROFILER(
+									BROKER(${brokerSource}, // Brokerdaten 
+			                        	QUEUE( // Zeitgeber für den Broker
+			                            	BUFFER(
+			                            		${sensorSource},
+			                            		Punct
+			                            	)
+			                            )
+			                        ),
+		                        	${xmlfile},
+									POST_BROKER
+								),
+		                        Punct
+		                    ),
+						${brokerListName},
+	                    ${brokerListName}:car:posx := ${brokerListName}:car:posx + (cos(${brokerListName}:car:heading) * ${brokerListName}:car:velocity * ((${sensorScan}:timestamp - ${brokerScan}:timestamp) * 0.001)) ;
+	                    ${brokerListName}:car:posy := ${brokerListName}:car:posy + (sin(${brokerListName}:car:heading) * ${brokerListName}:car:velocity * ((${sensorScan}:timestamp - ${brokerScan}:timestamp) * 0.001)) ;
+	                    ${brokerListName}:car:posz := ${brokerListName}:car:posz ; 
+	                    WHERE ${brokerListName}:car:id >= 0 ; 
+					),
+					${xmlfile},
+					POST_SET_PREDICTION
+			),
+			${brokerListName}
+		),
+		${xmlfile},
+		POST_PREDICTION
+	)
+);
+
+TESTOP(
+	BROKER(${brokerSource}),
+	Bla
+);
