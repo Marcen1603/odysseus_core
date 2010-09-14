@@ -66,15 +66,32 @@ public class ConnectionList extends ArrayList<Connection> {
 	 * Returns the rating for a specific pair
 	 * @param leftPath leftPath
 	 * @param rightPath rightPath
-	 * @return The rating of the specific pair - returns 0 if it´s not found in connection list. So 0 is the default value for a new connection.
+	 * @return The rating of the specific pair - returns 0 if itï¿½s not found in connection list. So 0 is the default value for a new connection.
 	 */
 	public double getRatingForElementPair(int[] leftPath, int[] rightPath) {
 		for(Connection con : this) {
-			if(con.getLeftPath().equals(leftPath) && con.getRightPath().equals(rightPath)) {
+			if( cmpArrays( con.getLeftPath(), leftPath) && cmpArrays(con.getRightPath(), rightPath)) {
+//			if(con.getLeftPath().equals(leftPath) && con.getRightPath().equals(rightPath)) {
 				return con.getRating();
 			}
 		}
 		return -1;
 	}
 
+	private boolean cmpArrays( int[] a, int[] b ) {
+		if( a == null ) {
+			if( b == null ) {
+				return true;
+			}
+			return false;
+		}
+		
+		if( a.length != b.length ) return false;
+		
+		for( int i = 0; i < a.length; i++ ) 
+			if( a[i] != b[i] ) 
+				return false;
+		
+		return true;
+	}
 }
