@@ -1,7 +1,9 @@
 #DEFINE brokerSourceName1   streamCarsBroker // QuellenName
+#DEFINE brokerScan1         streamCarsBroker.scan
 #DEFINE brokerListName1     streamCarsBroker.scan:cars // Attributname der Liste der Autos in der Brokerquelle
 
 #DEFINE brokerSourceName2   streamCarsBroker2 // QuellenName
+#DEFINE brokerScan2         streamCarsBroker2.scan
 #DEFINE brokerListName2     streamCarsBroker2.scan:cars // Attributname der Liste der Autos in der Brokerquelle
 
 #DEFINE sensorSource    ACCESS(radarSensor) // Quellenoperator(!) des Sensors
@@ -24,33 +26,7 @@
 #PARSER PQLHack
 #TRANSCFG StreamCars
 #CYCLICQUERY
-LOGICAL PLAN : 
-BROKER(${brokerSourceName1}, // Pfad für das Initialisieren des Brokers mit Startdaten (muss noch ein Select rein)
-    SET-PREDICTION-OR(
-        BROKER-INIT(
-            ${sensorSource},
-            3
-        ),
-        ${sensorListName},
-        ${brokerListName1}:car:posx := ${brokerListName1}:car:posx * (${brokerListName1}:car:posx) ;
-        WHERE ${sensorListName}:car:id >= 50;
-        DEFAULT ${brokerListName1}:car:posx := ${brokerListName1}:car:posx;
-    )
-);
-
-BROKER(${brokerSourceName2}, // Pfad für das Initialisieren des Brokers mit Startdaten (muss noch ein Select rein)
-    SET-PREDICTION-OR(
-        BROKER-INIT(
-            ${sensorSource},
-            3
-        ),
-        ${sensorListName},
-        ${brokerListName2}:car:posx := ${brokerListName2}:car:posx * 2 ;
-        WHERE ${sensorListName}:car:id >= 50;
-        DEFAULT ${brokerListName2}:car:posx := ${brokerListName2}:car:posx;
-    )
-);
-
+LOGICAL PLAN :
 ASSOCIATION-SEL(
     ASSOCIATION-EVAL (
         ASSOCIATION-EVAL (
@@ -62,18 +38,23 @@ ASSOCIATION-SEL(
                  PREDICTION(
                     ${sensorSource}, // Timestamp aus Sensor
                     SET-PREDICTION-OR(
-	                    BUFFER(
-	                        BROKER(${brokerSourceName1}, // Brokerdaten 
-	                                QUEUE( // Zeitgeber für den Broker
-	                                       ${sensorSource}
-	                                )
-	                        ),
-	                        Normal 
-	                    ),
+                        BUFFER(
+                            BROKER(${brokerSourceName1}, // Brokerdaten 
+                                    QUEUE( // Zeitgeber für den Broker
+                                           ${sensorSource}
+                                    )
+                            ),
+                            Normal 
+                        ),
                         ${brokerListName1},
-                        ${brokerListName1}:car:posx := ${brokerListName1}:car:posx * 2 ;
-                        WHERE ${brokerListName1}:car:id >= 50;
-                        DEFAULT ${brokerListName1}:car:posx := ${brokerListName1}:car:posx;
+                        ${brokerListName1}:car:posx := ${brokerListName1}:car:posx +
+                            (cos(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * 
+                            (${brokerScan1}:timestamp - ${sensorScan}:timestamp)) ;
+                        ${brokerListName1}:car:posy := ${brokerListName1}:car:posy +
+                            (sin(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * 
+                            (${brokerScan1}:timestamp - ${sensorScan}:timestamp)) ;
+                        ${brokerListName1}:car:posz := ${brokerListName1}:car:posz ;
+                        WHERE ${brokerListName1}:car:id >= 0 ;                        
                     ),
                     ${brokerListName1}
                  ),
@@ -120,12 +101,12 @@ BROKER(
         ),
         ${assoPedicted},
         TMP-DATA-BOUNCER(
-	        BROKER( 
-	            ${brokerSourceName2}
-	        ),
-	        ${brokerListName2},
-	        5
-	    ),
+            BROKER( 
+                ${brokerSourceName2}
+            ),
+            ${brokerListName2},
+            5
+        ),
         ${assoScanned},
         5
     )
@@ -151,9 +132,14 @@ ASSOCIATION-SEL(
                             Normal 
                         ),
                         ${brokerListName2},
-                        ${brokerListName2}:car:posx := ${brokerListName2}:car:posx * 2 ;
-                        WHERE ${brokerListName2}:car:id >= 50;
-                        DEFAULT ${brokerListName2}:car:posx := ${brokerListName2}:car:posx;
+                        ${brokerListName2}:car:posx := ${brokerListName2}:car:posx +
+                            (cos(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
+                            (${brokerScan2}:timestamp - ${sensorScan}:timestamp)) ;
+                        ${brokerListName2}:car:posy := ${brokerListName2}:car:posy +
+                            (sin(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
+                            (${brokerScan2}:timestamp - ${sensorScan}:timestamp)) ;
+                        ${brokerListName2}:car:posz := ${brokerListName2}:car:posz ;
+                        WHERE ${brokerListName2}:car:id >= 0 ; 
                     ),
                     ${brokerListName2}
                 ),
