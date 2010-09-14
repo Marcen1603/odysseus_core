@@ -86,11 +86,6 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
         Long time = (Long)currentScanTimeSchemaPath.toTupleIndexPath(tmp).getTupleObject();
         
         transfer(tmp);
-        
-        if( timePunctuation != null ) {
-        	sendPunctuation(timePunctuation);
-        	timePunctuation = null;
-        }
       }
     }
   }
@@ -135,10 +130,6 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 		  }
 	  } else if( port == 1 ) { // Broker
 		  brokerPunctuation = true;
-		  if( timePunctuation != null ) {
-			  sendPunctuation(timePunctuation);
-			  timePunctuation = null;
-		  }
 	  }
   }
   
