@@ -87,7 +87,19 @@ public class ScarsXMLProfiler {
 		
 		int currentCycleCount = operatorCycleCounts.get(operator);
 		if(currentCycleCount <= numCycle) {
-			addData2(schema, operatorElement, schema.getAttribute(0), scan.getAttribute(0));
+			Element scanRootElement = new Element("ScanRoot");
+			operatorElement.addContent(scanRootElement);
+			if(schema != null && schema instanceof SDFAttributeListExtended) {
+				Object pfc = ((SDFAttributeListExtended) schema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+				if(pfc != null) {
+					addPredictionFunctionContainer(scanRootElement, (PredictionFunctionContainer<?>)pfc);
+				}
+			}
+			addMetadata(scanRootElement, scan);
+			for(int i=0; i<schema.getAttributeCount(); i++) {
+				addData2(schema, scanRootElement, schema.getAttribute(i), scan.getAttribute(i));
+			}
+
 			operatorCycleCounts.put(operator, ++currentCycleCount);
 		}
 
@@ -129,12 +141,7 @@ public class ScarsXMLProfiler {
 			parent.addContent(tupleElement);
 			
 			
-			if(rootschema != null && rootschema instanceof SDFAttributeListExtended) {
-				Object pfc = ((SDFAttributeListExtended) rootschema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
-				if(pfc != null) {
-					addPredictionFunctionContainer(tupleElement, (PredictionFunctionContainer<?>)pfc);
-				}
-			}
+
 			
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				
