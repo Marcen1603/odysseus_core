@@ -116,7 +116,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 
   // TODO (Wolf):
   // Das muss noch gekapselt werden. Zudem sollte ein Wert, der ggf. noch von alten Berechnungen vorhanden ist Ã¼bergeben werden.
-  // Volker -> Alte Bewertung wird jetzt übergeben und kann verwendet werden
+  // Volker -> Alte Bewertung wird jetzt ï¿½bergeben und kann verwendet werden
   public abstract double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
       double[][] predictedObjCovariance, double[] predictedObjMesurementValues, double currentConnectionRating);
 
@@ -140,7 +140,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     // TODO (Wolf):
     // Berechnungen vorheriger EvalOps berÃ¼cksichtigen, d. h. alte connections ermitteln.
     // Volker:
-    // Erledigt -> evaluate wird alter connection wert übergeben
+    // Erledigt -> evaluate wird alter connection wert ï¿½bergeben
 
     for (TupleInfo scannedTupleInfo : scannedTupleIndexPath) {
       MVRelationalTuple<M> scannedObject = (MVRelationalTuple<M>) scannedTupleInfo.tupleObject;
@@ -150,7 +150,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 
         double value = evaluate(scannedObject.getMetadata().getCovariance(),
             getMeasurementValues(object, scannedTupleInfo.tupleIndexPath), predictedObject.getMetadata()
-                .getCovariance(), getMeasurementValues(object, predictedTupleInfo.tupleIndexPath), object.getMetadata().getConnectionList().getRatingForElementPair(scannedTupleIndexPath.toArray(), predictedTupleIndexPath.toArray()));
+                .getCovariance(), getMeasurementValues(object, predictedTupleInfo.tupleIndexPath), object.getMetadata().getConnectionList().getRatingForElementPair(scannedTupleInfo.tupleIndexPath.toArray(), predictedTupleInfo.tupleIndexPath.toArray()));
 
         if(value > 0) {
           newObjConList.add(new Connection(scannedTupleInfo.tupleIndexPath.toArray(), predictedTupleInfo.tupleIndexPath.toArray(), value));
