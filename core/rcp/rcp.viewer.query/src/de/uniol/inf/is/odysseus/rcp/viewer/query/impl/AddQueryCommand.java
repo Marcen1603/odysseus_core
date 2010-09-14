@@ -10,7 +10,6 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -45,7 +44,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 				@Override
 				public void run() {
 					try {
-						executor.addQuery(queryToExecute, parserToUse, user, new ParameterDefaultRoot(new MySink()), cfg);
+						executor.addQuery(queryToExecute, parserToUse, user, cfg);
 						StatusBarManager.getInstance().setMessage("Query successfully added");
 					} catch (PlanManagementException e) {
 						new ExceptionWindow(e);
