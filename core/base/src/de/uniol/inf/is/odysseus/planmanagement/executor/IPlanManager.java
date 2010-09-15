@@ -31,13 +31,13 @@ public interface IPlanManager extends IPlanModificationHandler {
 	 */
 	public void startQuery(int queryID) throws PlanManagementException;
 
-//	/**
-//	 * stopQuery stoppt eine Aanfrage.
-//	 * 
-//	 * @param queryID
-//	 * @throws PlanManagementException
-//	 */
-//	public void stopQuery(int queryID) throws PlanManagementException;
+	/**
+	 * stopQuery stoppt eine Anfrage und entfernt sie
+	 * 
+	 * @param queryID
+	 * @throws PlanManagementException
+	 */
+	public void stopQuery(int queryID) throws PlanManagementException;
 
 	/**
 	 * getSealedPlan liefert alle in Odysseus registrierten Anfragen.

@@ -106,7 +106,7 @@ public abstract class AbstractScheduling implements IScheduling,
 			} else if (nextSource.isBlocked()) {
 				logger.debug(nextSource + " blocked");
 				updateBlocked(plan.getSourceId(nextSource));
-			} else if (nextSource.hasNext() && nextSource.isActive()) {
+			} else if (nextSource.hasNext()) {
 				// logger.debug(nextSource + " process");
 				nextSource.transferNext();
 			} else {
@@ -200,7 +200,7 @@ public abstract class AbstractScheduling implements IScheduling,
 			if (poEvent.getPOEventType() == POEventType.ProcessDone) {
 				synchronized (schedulingEventListener) {
 					schedulable.set(index, true);
-					if (schedulingPaused && s.isActive() && !s.isBlocked()) {
+					if (schedulingPaused && !s.isBlocked()) {
 						schedulingPaused = false;
 						// logger.debug("Scheduling reactivated");
 						for (ISchedulingEventListener l : schedulingEventListener) {

@@ -236,7 +236,7 @@ class SingleSourceExecutor extends Thread {
 	}
 
 	public void run() {
-		while (!isInterrupted() && !s.isDone() && s.isActive()) {
+		while (!isInterrupted() && !s.isDone()) {
 			while (s.hasNext()) {
 				s.transferNext();
 			}

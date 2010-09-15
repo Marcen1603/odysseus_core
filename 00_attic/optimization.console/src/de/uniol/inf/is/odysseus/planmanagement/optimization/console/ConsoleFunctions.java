@@ -38,10 +38,6 @@ public class ConsoleFunctions {
 			b.append("  ");
 		}
 		b.append(mySink);
-		if (mySink instanceof IIterableSource<?>) {
-			b.append(" active: ");
-			b.append(((IIterableSource<?>)mySink).isActive());
-		}
 		b.append("(");
 		b.append(mySink.getSubscribedToSource());
 		b.append(")\n");
@@ -64,10 +60,6 @@ public class ConsoleFunctions {
 				b.append("  ");
 			}
 			b.append(source);
-			if (source instanceof IIterableSource<?>) {
-				b.append(" active: ");
-				b.append(((IIterableSource<?>)source).isActive());
-			}
 			b.append("(");
 			b.append(source.getSubscriptions());
 			b.append(")\n");

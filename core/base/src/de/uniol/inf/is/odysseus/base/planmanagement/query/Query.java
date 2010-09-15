@@ -391,14 +391,14 @@ public class Query implements IQuery {
 	 */
 	@Override
 	public void start() {
-		synchronized (this.physicalChilds) {
-			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-				if (physicalOperator instanceof IIterableSource<?>) {
-					((IIterableSource<?>) physicalOperator)
-							.activateRequest(this);
-				}
-			}
-		}
+//		synchronized (this.physicalChilds) {
+//			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
+//				if (physicalOperator instanceof IIterableSource<?>) {
+//					((IIterableSource<?>) physicalOperator)
+//							.activateRequest(this);
+//				}
+//			}
+//		}
 		this.started = true;
 	}
 
@@ -409,14 +409,14 @@ public class Query implements IQuery {
 	 */
 	@Override
 	public void stop() {
-		synchronized (this.physicalChilds) {
-			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-				if (physicalOperator instanceof IIterableSource<?>) {
-					((IIterableSource<?>) physicalOperator)
-							.deactivateRequest(this);
-				}
-			}
-		}
+//		synchronized (this.physicalChilds) {
+//			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
+//				if (physicalOperator instanceof IIterableSource<?>) {
+//					((IIterableSource<?>) physicalOperator)
+//							.deactivateRequest(this);
+//				}
+//			}
+//		}
 		this.started = false;
 	}
 
@@ -605,5 +605,10 @@ public class Query implements IQuery {
 	@Override
 	public void setBuildParameter(QueryBuildParameter parameter) {
 		this.parameters = parameter;
+	}
+
+	public void close() {
+		// TODO Auto-generated method stub
+		
 	}
 }

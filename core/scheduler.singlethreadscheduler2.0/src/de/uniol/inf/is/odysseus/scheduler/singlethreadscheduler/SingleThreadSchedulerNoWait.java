@@ -98,7 +98,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 
 		public void run() {
 			sourceThreads.add(this);
-			while (!isInterrupted() && !s.isDone() && s.isActive()) {
+			while (!isInterrupted() && !s.isDone()) {
 				while (s.hasNext()) {
 					s.transferNext();
 				}

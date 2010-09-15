@@ -150,7 +150,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		public void run() {
 			sourceThreads.add(this);
 			terminate = false;
-			while (!isInterrupted() && !s.isDone() && s.isActive()
+			while (!isInterrupted() && !s.isDone() 
 					&& !terminate) {
 				while (s.hasNext()) {
 					s.transferNext();
