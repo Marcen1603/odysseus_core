@@ -82,10 +82,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	abstract public OutputMode getOutputMode();
 
 	@Override
-	public void close(IPhysicalOperator o) {
+	public void close(IPhysicalOperator o, int sourcePort) {
 		// process_close();
 		close();
-		super.close(o);
+		super.close(o, sourcePort);
 	};
 	
 	public void close(){
@@ -155,8 +155,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	
 
 	@Override
-	final synchronized public void open(IPhysicalOperator sink) throws OpenFailedException {
-		super.open(sink);
+	final synchronized public void open(IPhysicalOperator sink, int sourcePort) throws OpenFailedException {
+		super.open(sink, sourcePort);
 		open();
 	}
 	

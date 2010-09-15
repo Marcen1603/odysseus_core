@@ -29,7 +29,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	 *             if the source can't be initialised e.g. because some needed
 	 *             resources like socket connections can't be allocated.
 	 */
-	public void open(IPhysicalOperator op) throws OpenFailedException;
+	public void open(IPhysicalOperator op, int sourcePort) throws OpenFailedException;
 
 	/**
 	 * Calls {@link ISink#process(T)} on all subscribed {@link ISink sinks}.
@@ -51,7 +51,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	public void close(IPhysicalOperator op);
+	public void close(IPhysicalOperator op, int sourcePort);
 
 	public void sendPunctuation(PointInTime punctuation);
 

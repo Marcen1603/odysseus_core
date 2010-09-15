@@ -100,8 +100,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void close(IPhysicalOperator o) {
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o);
+	public void close(IPhysicalOperator o, int sourcePort) {
+		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o, sourcePort);
 		if (sub == null){
 			throw new RuntimeException("Close called from an unsubscribed sink");
 		}
@@ -115,8 +115,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	};
 	
 	@Override
-	public synchronized void open(IPhysicalOperator o) throws OpenFailedException {
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o);
+	public synchronized void open(IPhysicalOperator o, int sourcePort) throws OpenFailedException {
+		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o, sourcePort);
 		if (sub == null){
 			throw new OpenFailedException("Open called from an unsubscribed sink "+o);
 		}
@@ -132,9 +132,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(IPhysicalOperator o) {
+	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(IPhysicalOperator o, int sourcePort) {
 		for (PhysicalSubscription<ISink<? super T>> sub: this.sinkSubscriptions){
-			if (sub.getTarget() == o){
+			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort){
 				return sub;
 			}
 		}

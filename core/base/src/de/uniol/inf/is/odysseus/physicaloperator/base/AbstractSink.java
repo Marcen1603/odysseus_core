@@ -103,7 +103,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		process_close();
 		stopMonitoring();
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-			sub.getTarget().close(sink);
+			sub.getTarget().close(sink, sub.getSourceOutPort());
 		}
 	};
 
@@ -115,7 +115,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			this.isOpen.set(true);
 		}
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-			sub.getTarget().open(sink);
+			sub.getTarget().open(sink, sub.getSourceOutPort());
 		}
 	}
 	
