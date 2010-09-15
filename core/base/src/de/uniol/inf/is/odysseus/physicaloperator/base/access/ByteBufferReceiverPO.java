@@ -17,7 +17,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 
 	protected static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(ByteBufferReceiverPO.class);
 		}
 		return _logger;
 	}
