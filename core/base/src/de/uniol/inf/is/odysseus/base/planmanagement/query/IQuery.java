@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 
 /**
  * Describes an object which represents a basic query in odyessus.
@@ -163,5 +164,13 @@ public interface IQuery extends
 	 */
 	@Override
 	public void start();
+
+	// Eventlistening
+	
+	/**
+	 * 
+	 */
+	public void addIPOEventListener(String name, IPOEventListener listener);
+	public void removeIPOEventListener(String name);
 	
 }

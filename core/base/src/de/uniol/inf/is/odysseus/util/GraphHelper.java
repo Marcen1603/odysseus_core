@@ -14,7 +14,7 @@ public class GraphHelper {
 	 * @return
 	 */
 	static public ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
-		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new CollectOperatorsVisitor<IPhysicalOperator>();
+		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new CollectChildOperatorsVisitor<IPhysicalOperator>();
 		AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 		walker.prefixWalkPhysical(root, visitor);
 		return visitor.getResult();

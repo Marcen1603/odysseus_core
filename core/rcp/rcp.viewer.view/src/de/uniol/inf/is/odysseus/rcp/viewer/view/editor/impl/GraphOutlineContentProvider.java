@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
@@ -44,6 +45,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 //					children.add(attr);
 				children.add( node.getModelNode().getContent().getOutputSchema());
 			}
+			for(IOperatorOwner o: node.getModelNode().getContent().getOwner()){
+				children.add(o);
+			}
 			// Add Metadatainformation
 			for( String type : node.getModelNode().getProvidedMetadataTypes())
 				children.add(node.getModelNode().getMetadataItem(type));
@@ -63,7 +67,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		if( parentElement instanceof SDFAttribute ) {
 			return ((SDFAttribute)parentElement).getSubattributes().toArray();
 		}
-	
+			
 		return null;
 	}
 

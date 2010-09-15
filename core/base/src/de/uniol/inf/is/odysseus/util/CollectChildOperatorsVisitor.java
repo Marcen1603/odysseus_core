@@ -5,24 +5,21 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 
 /**
- * This visitor finds all roots of a physical plan
- * that have no owner. These are the roots of the
- * current query. If they have already an owner,
- * then they belong to another query, so that
- * they will not be returned.
- * @author André Bolles
+ * This visitor finds children of a physical plan
+ * @author Marco Grawunder
  *
  */
-public class CollectOperatorsVisitor<P extends IPhysicalOperator> implements IGraphNodeVisitor<P, ArrayList<P>>{
+public class CollectChildOperatorsVisitor<P extends IPhysicalOperator> implements IGraphNodeVisitor<P, ArrayList<P>>{
 
 	ArrayList<P> found;
 	
-	public CollectOperatorsVisitor(){
+	public CollectChildOperatorsVisitor(){
 		this.found = new ArrayList<P>();
 	}
 	
 	@Override
 	public void afterFromSinkToSourceAction(P sink, P source) {
+		this.found.add(source);
 	}
 
 	@Override
@@ -44,8 +41,7 @@ public class CollectOperatorsVisitor<P extends IPhysicalOperator> implements IGr
 	}
 
 	@Override
-	public void nodeAction(P node) {
-		this.found.add(node);		
+	public void nodeAction(P node) {		
 	}
 
 }

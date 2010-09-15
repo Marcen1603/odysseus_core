@@ -56,6 +56,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
+		getLogger().debug("Process_open");
 		if (!opened) {
 			try {
 				router.connectToServer(this, host, port);
@@ -68,6 +69,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 	
 	@Override
 	protected void process_close(){
+		getLogger().debug("Process_close");
 		if (opened){
 			try {
 				router.disconnectFromServer(this);
@@ -75,6 +77,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 				e.printStackTrace();
 			}
 		}
+		opened = false;
 	}
 
 	@Override

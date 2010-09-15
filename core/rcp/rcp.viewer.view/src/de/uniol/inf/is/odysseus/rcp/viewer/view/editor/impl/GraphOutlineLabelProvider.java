@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator;
@@ -81,11 +82,15 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			name.append(":").append(a.getDatatype().getURI());
 			return name.toString();
 		}
-		if (element instanceof IMonitoringData<?>) {
+		if (element != null && element instanceof IMonitoringData<?>) {
 			final IMonitoringData<?> monData = (IMonitoringData<?>) element;
 			final String type = monData.getType();
 			final String value = monData.getValue() != null ? monData.getValue().toString() : "null";
 			return type + " = " + value;
+		}
+		
+		if (element != null && element instanceof IOperatorOwner){
+			return "Part of Query # "+((IOperatorOwner)element).getID();
 		}
 
 		return element.getClass().getName();

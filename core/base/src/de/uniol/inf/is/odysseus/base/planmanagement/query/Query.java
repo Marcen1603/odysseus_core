@@ -2,8 +2,10 @@ package de.uniol.inf.is.odysseus.base.planmanagement.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -16,10 +18,10 @@ import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 
 /**
  * Query is a standard implementation of a query in odysseus. Each query has an
@@ -30,7 +32,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
  * 
  */
 public class Query implements IQuery {
-
+	
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {
@@ -106,6 +108,13 @@ public class Query implements IQuery {
 	 * Parameter for building this query.
 	 */
 	private QueryBuildParameter parameters = new QueryBuildParameter();
+	
+	/**
+	 * EventListener
+	 */
+	
+	Map<String,IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
+
 
 	public Query() {
 		this("", null, null, null);
@@ -299,6 +308,7 @@ public class Query implements IQuery {
 
 		// Store each child in a list. And set this Query as owner of each child
 		for (IPhysicalOperator root : roots) {
+			//addPhysicalChildren(GraphHelper.getChildren(root));
 			addPhysicalChildren(getChildren(root));
 		}
 	}
@@ -607,8 +617,16 @@ public class Query implements IQuery {
 		this.parameters = parameter;
 	}
 
-	public void close() {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public void addIPOEventListener(String name, IPOEventListener listener) {
+		poEventListener.put(name,listener);
 	}
+
+	@Override
+	public void removeIPOEventListener(String name) {
+		poEventListener.remove(name);
+	}
+
+	
+	
 }

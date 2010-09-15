@@ -611,7 +611,7 @@ public class StandardExecutor extends AbstractExecutor {
 					}
 				}
 			}
-			getLogger().debug("Query stopped.");
+			getLogger().debug("Query "+queryID+" stopped.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this,
 					QueryPlanModificationEvent.QUERY_STOP, queryToStop));
 		} catch (Exception e) {
