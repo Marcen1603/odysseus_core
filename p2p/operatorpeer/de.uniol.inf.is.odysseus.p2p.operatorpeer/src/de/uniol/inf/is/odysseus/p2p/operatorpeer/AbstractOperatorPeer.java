@@ -11,14 +11,14 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
 public abstract class AbstractOperatorPeer extends AbstractPeer {
 
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 
 	protected IAliveHandler aliveHandler;
 
@@ -87,7 +87,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		return WrapperPlanFactory.getSources();
 	}
 	
-	public IAdvancedExecutor getExecutor() {
+	public IExecutor getExecutor() {
 		return executor;
 	}
 
@@ -118,12 +118,12 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		}
 	}
 
-	public void bindExecutor(IAdvancedExecutor executor) {
+	public void bindExecutor(IExecutor executor) {
 		getLogger().info("Binding Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
 		this.executor = executor;
 	}
 	
-	public void unbindExecutor(IAdvancedExecutor executor) {
+	public void unbindExecutor(IExecutor executor) {
 		if(this.executor == executor) {
 			getLogger().info("Unbinding Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
 			this.executor = null;

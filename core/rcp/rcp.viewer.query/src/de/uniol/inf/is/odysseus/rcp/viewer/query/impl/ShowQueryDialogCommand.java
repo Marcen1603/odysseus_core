@@ -29,7 +29,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
@@ -232,7 +232,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 	private void fillParserCombo() {
 		parserCombo.removeAll();
 		try {
-			IAdvancedExecutor executor = Activator.getExecutor();
+			IExecutor executor = Activator.getExecutor();
 			boolean lastFound = false;
 			for (String parserID : executor.getSupportedQueryParser()) {
 				parserCombo.add(parserID);

@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.query.impl;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryHistory;
@@ -15,7 +15,7 @@ public class Activator extends Plugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.query";
 	private static Activator plugin;
-	private static IAdvancedExecutor executor = null;
+	private static IExecutor executor = null;
 
 	public Activator() {
 	}
@@ -50,18 +50,18 @@ public class Activator extends Plugin {
 		return plugin;
 	}
 	
-	public static IAdvancedExecutor getExecutor() {
+	public static IExecutor getExecutor() {
 		return executor;
 	}
 
 	// Declarative Service
-	public void bindExecutor(IAdvancedExecutor ex) {
+	public void bindExecutor(IExecutor ex) {
 		executor = ex;
 		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "Executor ready");
 	}
 	
 	// Declarative Service
-	public void unbindExecutor(IAdvancedExecutor ex) {
+	public void unbindExecutor(IExecutor ex) {
 		executor = null;
 		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
 	}

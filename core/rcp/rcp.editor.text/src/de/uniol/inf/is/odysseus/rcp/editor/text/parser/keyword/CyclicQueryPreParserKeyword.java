@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
@@ -24,7 +24,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 	@Override
 	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		try {
-			IAdvancedExecutor executor = ExecutorHandler.getExecutor();
+			IExecutor executor = ExecutorHandler.getExecutor();
 			if( executor == null ) 
 				throw new QueryTextParseException("No executor found");
 			
@@ -55,7 +55,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 		String parserID = variables.get("PARSER");
 		String transCfgID = variables.get("TRANSCFG");
 
-		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
+		IExecutor executor = ExecutorHandler.getExecutor();
 		ICompiler compiler = executor.getCompiler();
 		ParameterTransformationConfiguration transCfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfgID);
 		User user = ActiveUser.getActiveUser();

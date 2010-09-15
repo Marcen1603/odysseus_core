@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.console.ExecutorConsole;
 
 /**
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.console.ExecutorConsole;
  *
  */
 public class ECAParserTest implements CommandProvider {
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 	private ExecutorConsole executerConsole;
 	private IActuatorFactory actuatorFactory;
 	private ICompiler compiler;
@@ -120,7 +120,7 @@ public class ECAParserTest implements CommandProvider {
 	
 	
 	
-	public void bindExecutor(IAdvancedExecutor exec){
+	public void bindExecutor(IExecutor exec){
 		this.executor = exec;
 		
 	}

@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphEditorConstants;
 public class QueryViewPart extends ViewPart implements IPlanModificationListener {
 
 	private Logger logger = LoggerFactory.getLogger(QueryViewPart.class);
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 
 	private TableViewer tableViewer;
 
@@ -159,10 +159,10 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 
 			@Override
 			public void run() {
-				ServiceTracker execTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), IAdvancedExecutor.class.getName(), null);
+				ServiceTracker execTracker = new ServiceTracker(Activator.getDefault().getBundle().getBundleContext(), IExecutor.class.getName(), null);
 				execTracker.open();
 				try {
-					executor = (IAdvancedExecutor) execTracker.waitForService(0);
+					executor = (IExecutor) execTracker.waitForService(0);
 					if (executor != null) {
 						addQueries(executor.getSealedPlan().getQueries());
 

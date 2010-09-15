@@ -60,7 +60,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -86,7 +86,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	private static final String MACROS_NODE = "/macros";
 
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 
 	private String parser = null;
 
@@ -256,7 +256,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	private boolean useBrokerConfig = false;
 
-	public void bindExecutor(IAdvancedExecutor executor) {
+	public void bindExecutor(IExecutor executor) {
 		logger.debug("executor gebunden");
 
 		this.executor = executor;
@@ -295,7 +295,7 @@ public class ExecutorConsole implements CommandProvider,
 		// }
 	}
 
-	public void unbindExecutor(IAdvancedExecutor executor) {
+	public void unbindExecutor(IExecutor executor) {
 		this.executor = null;
 	}
 

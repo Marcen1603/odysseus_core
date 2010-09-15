@@ -70,7 +70,8 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 		}
 		else{
 			fire(this.pushInitNegEvent);
-			process_transfer(object);
+			//process_transfer(object);
+			transfer(object);
 			fire(this.pushDoneNegEvent);
 		}
 	}

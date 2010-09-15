@@ -2,7 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
    <implementation class="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor"/>
    <service>
-       <provide interface="de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor"/>
+       <provide interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor"/>
    </service>
    <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
    <reference bind="bindSchedulerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager" name="ISchedulerManager" policy="dynamic" unbind="unbindSchedulerManager"/>

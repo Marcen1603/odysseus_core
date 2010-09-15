@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTrans
 public class OptimizationTestConsole implements
 		org.eclipse.osgi.framework.console.CommandProvider, ICompilerListener {
 
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 
 	private static ConsoleFunctions support = new ConsoleFunctions();
 
@@ -76,7 +76,7 @@ public class OptimizationTestConsole implements
 
 	private Object parser;
 
-	public void bindExecutor(IAdvancedExecutor executor) {
+	public void bindExecutor(IExecutor executor) {
 		this.executor = executor;
 		System.out.println("executor gebunden");
 		this.executor.addCompilerListener(this);

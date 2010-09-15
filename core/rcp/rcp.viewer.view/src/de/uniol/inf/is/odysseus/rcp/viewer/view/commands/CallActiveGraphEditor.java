@@ -12,7 +12,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderMultipleSink;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.ExecutorHandler;
@@ -28,7 +28,7 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 		IWorkbenchPage page = window.getActivePage();
 	
 		
-		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
+		IExecutor executor = ExecutorHandler.getExecutor();
 		if( executor == null ) 
 			return null;
 		

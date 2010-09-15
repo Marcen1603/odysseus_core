@@ -13,7 +13,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
@@ -25,7 +25,7 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 	@Override
 	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		try {
-			IAdvancedExecutor executor = ExecutorHandler.getExecutor();
+			IExecutor executor = ExecutorHandler.getExecutor();
 			if (executor == null)
 				throw new QueryTextParseException("No executor found");
 

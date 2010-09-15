@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.security.auth.login.Configuration;
+
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
@@ -13,10 +15,16 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListe
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 
 /**
  * IExecutor stellt die Hauptschnittstelle für externe Anwendungen zu Odysseus
@@ -159,5 +167,103 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	
 	public void addCompilerListener(ICompilerListener compilerListener);
 
+	// --- Moved vom AdvancedExecutor, easier handling
+	
+	/**
+	 * Provides a Set of registered buffer placement strategies represented by
+	 * an id.
+	 * 
+	 * @return Set of registered buffer placement strategies represented by an
+	 *         id
+	 */
+	public Set<String> getRegisteredBufferPlacementStrategies();
 
+	/**
+	 * Set the buffer placement strategy which should be used.
+	 * 
+	 * @param strategy
+	 *            new buffer placement strategy which should be used.
+	 */
+	public void setDefaultBufferPlacementStrategy(String strategy);
+
+	/**
+	 * Provides a Set of registered scheduling strategy factories represented by
+	 * an id.
+	 * 
+	 * @return Set of registered scheduling strategy factories represented by an
+	 *         id
+	 */
+	public Set<String> getRegisteredSchedulingStrategyFactories();
+
+	/**
+	 * Provides a Set of registered scheduler factories represented by an id.
+	 * 
+	 * @return Set of registered scheduler factories represented by an id
+	 */
+	public Set<String> getRegisteredSchedulerFactories();
+
+	/**
+	 * Sets the the scheduler factory with a scheduling strategy factory which
+	 * should be used for creating concrete scheduler.
+	 * 
+	 * @param scheduler
+	 *            scheduler factory which should be used for creating concrete
+	 *            scheduler.
+	 * @param schedulerStrategy
+	 *            scheduling strategy factory which should be used by scheduler
+	 *            for creating concrete scheduler.
+	 */
+	public void setScheduler(String scheduler, String schedulerStrategy);
+
+	/**
+	 * Get the current active scheduler factory represented by an id.
+	 * 
+	 * @return current active scheduler factory represented by an id.
+	 */
+	public String getCurrentScheduler();
+
+	/**
+	 * Get the current active scheduling strategy factory represented by an id.
+	 * 
+	 * @return current active scheduling strategy factory represented by an id.
+	 */
+	public String getCurrentSchedulingStrategy();
+
+	/**
+	 * 
+	 * @return {@link Configuration} of current {@link IOptimizer}.
+	 * 
+	 * @throws NoOptimizerLoadedException
+	 */
+	public OptimizationConfiguration getOptimizerConfiguration()
+			throws NoOptimizerLoadedException;
+	
+	/**
+	 * Returns the default System Monitor with an fixed measure period.
+	 * @return {@link ISystemMonitor}
+	 * 
+	 * @throws NoSystemMonitorLoadedException
+	 */
+	public ISystemMonitor getDefaultSystemMonitor()
+			throws NoSystemMonitorLoadedException;
+	
+	/**
+	 * Creates a new System Monitor with the specified period.
+	 * @param period measure period.
+	 * @return {@link ISystemMonitor}
+	 * 
+	 * @throws NoSystemMonitorLoadedException
+	 */
+	public ISystemMonitor newSystemMonitor(long period)
+			throws NoSystemMonitorLoadedException;
+	
+	/**
+	 * Updates the execution plan to find new iterable sources, if the plan 
+	 * has changed.
+	 * 
+	 * @throws NoOptimizerLoadedException
+	 * @throws QueryOptimizationException
+	 */
+	public void updateExecutionPlan() throws NoOptimizerLoadedException,
+			QueryOptimizationException;
 }

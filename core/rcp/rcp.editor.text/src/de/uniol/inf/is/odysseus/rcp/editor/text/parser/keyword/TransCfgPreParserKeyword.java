@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigur
 /**
  * Realisiert das TRANSCFG-Schlüsselwort für den PreParser. Wenn eine
  * Transformationskonfiguration angegeben wird, muss dieser dem
- * <code>IAdvancedExecutor</code> bekannt sein.
+ * <code>IExecutor</code> bekannt sein.
  * 
  * @author Timo Michelsen
  * 

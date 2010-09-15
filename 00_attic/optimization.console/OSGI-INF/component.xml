@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
-   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor" name="IAdvancedExecutor" policy="dynamic"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic"/>
 </scr:component>

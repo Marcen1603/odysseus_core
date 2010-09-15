@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
@@ -206,19 +206,19 @@ public class StandardOptimizer extends AbstractOptimizer {
 		
 		// high system load test
 		try {
-			ISystemMonitor monitor = ((IAdvancedExecutor)sender).getDefaultSystemMonitor();
+			ISystemMonitor monitor = ((IExecutor)sender).getDefaultSystemMonitor();
 			double cpuLoad = monitor.getAverageCPULoad();
 			double memLoad = monitor.getHeapMemoryUsage();
 			if (cpuLoad >= this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()) {
 				queueRequest(query, "System CPU load is currently too high ("+cpuLoad+").");
-				new LowSystemLoadWaiter(((IAdvancedExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
+				new LowSystemLoadWaiter(((IExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
 						this, this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()*0.8,
 						this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()*0.8);
 				return executionPlan;
 			}
 			if (memLoad >= this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()) {
 				queueRequest(query, "System memory load is currently too high ("+memLoad+").");
-				new LowSystemLoadWaiter(((IAdvancedExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
+				new LowSystemLoadWaiter(((IExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
 						this, this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()*0.8,
 						this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()*0.8);
 				return executionPlan;
@@ -271,7 +271,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			listOfRoots.add(optimalMigration.getNewPlan());
 			optimalMigration.getStrategy().migrateQuery(this, query, listOfRoots);
 			
-			((IAdvancedExecutor)sender).updateExecutionPlan();
+			((IExecutor)sender).updateExecutionPlan();
 			
 			// wait for migration end callback
 			getLogger().info("Plan migration running (query ID "+query.getID()+")");
@@ -293,7 +293,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			query.setLogicalPlan(context.getLogicalPlan());
 			
 			// update execution plan
-			((IAdvancedExecutor)context.getSender()).updateExecutionPlan();
+			((IExecutor)context.getSender()).updateExecutionPlan();
 			
 			// reinstall metadata listener
 			updateMetadataListener(query);

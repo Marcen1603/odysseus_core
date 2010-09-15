@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.broker.transaction.GraphUtils;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 
 /**
  * The ExecutorBinder extends the console to provide some commands for the broker.
@@ -193,7 +193,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param executor the executor to bind
 	 */
 	
-	public void bindExecutor(IAdvancedExecutor executor) {		
+	public void bindExecutor(IExecutor executor) {		
 		logger.info("Broker Executor bound");
 	}
 	
@@ -202,7 +202,7 @@ public class ExecutorBinder implements CommandProvider{
 	 *
 	 * @param executor the executor to unbind
 	 */
-	public void unbindExecutor(IAdvancedExecutor executor) {		
+	public void unbindExecutor(IExecutor executor) {		
 	}
 	
 	

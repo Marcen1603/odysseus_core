@@ -8,7 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
@@ -18,7 +18,7 @@ public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IAdvancedExecutor executor = Activator.getExecutor();
+		IExecutor executor = Activator.getExecutor();
 		if( executor != null ) {
 			try {
 				executor.startExecution();

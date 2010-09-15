@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
@@ -40,7 +40,7 @@ public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
 			}
 		}
 
-		final IAdvancedExecutor executor = Activator.getExecutor();
+		final IExecutor executor = Activator.getExecutor();
 		final int qID2 = qID; // final machen :-)
 		if (executor != null) {
 			Thread t = new Thread(new Runnable() {

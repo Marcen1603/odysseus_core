@@ -2,14 +2,14 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 
 /**
  * Realisiert das PARSER-Schlüsselwort für den PreParser. Wenn ein Parser
- * angegeben wird, muss dieser dem <code>IAdvancedExecutor</code> bekannt sein.
+ * angegeben wird, muss dieser dem <code>IExecutor</code> bekannt sein.
  * 
  * @author Timo Michelsen
  * 
@@ -21,7 +21,7 @@ public class ParserPreParserKeyword implements IPreParserKeyword {
 		if (parameter.length() == 0)
 			throw new QueryTextParseException("Parameter needed for #PARSER");
 
-		IAdvancedExecutor executor = ExecutorHandler.getExecutor();
+		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
 		try {

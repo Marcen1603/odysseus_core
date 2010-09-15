@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
 /**
@@ -33,19 +33,19 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 	
 	private int WAIT_TIME=10000;
 	
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 	
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 
-	public IAdvancedExecutor getExecutor() {
+	public IExecutor getExecutor() {
 		return executor;
 	}
 
 	public SourceListenerJxtaImpl(){
 	}
 	
-	public SourceListenerJxtaImpl(IAdvancedExecutor executor) {
+	public SourceListenerJxtaImpl(IExecutor executor) {
 		this.executor = executor;
 	}
 

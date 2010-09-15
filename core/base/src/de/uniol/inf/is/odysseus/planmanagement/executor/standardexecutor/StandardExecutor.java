@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.AbstractExecutionSetting;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
@@ -54,7 +54,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
  * 
  * @author Wolf Bauer, Jonas Jacobi, Tobias Witt
  */
-public class StandardExecutor extends AbstractExecutor implements IAdvancedExecutor {
+public class StandardExecutor extends AbstractExecutor {
 
 	protected static Logger _logger = null;
 
@@ -83,7 +83,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * setDefaultBufferPlacementStrategy(java.lang.String)
 	 */
 	@Override
@@ -687,7 +687,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getRegisteredBufferPlacementStrategies()
 	 */
 	@Override
@@ -703,7 +703,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getRegisteredSchedulingStrategyFactories()
 	 */
 	@Override
@@ -720,7 +720,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getRegisteredSchedulerFactories()
 	 */
 	@Override
@@ -737,7 +737,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * setScheduler(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -752,7 +752,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getCurrentSchedulingStrategy()
 	 */
 	@Override
@@ -768,7 +768,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getCurrentScheduler()
 	 */
 	@Override

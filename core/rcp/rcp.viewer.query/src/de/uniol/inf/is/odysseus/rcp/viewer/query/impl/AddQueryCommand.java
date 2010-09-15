@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
@@ -32,7 +32,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		final String parameterTransformationConfigurationName = event.getParameter(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID);
 		final User user = ActiveUser.getActiveUser();
 		
-		final IAdvancedExecutor executor = Activator.getExecutor();
+		final IExecutor executor = Activator.getExecutor();
 		if (executor != null) {
 			final ParameterTransformationConfiguration cfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(parameterTransformationConfigurationName);
 			if (cfg == null) {

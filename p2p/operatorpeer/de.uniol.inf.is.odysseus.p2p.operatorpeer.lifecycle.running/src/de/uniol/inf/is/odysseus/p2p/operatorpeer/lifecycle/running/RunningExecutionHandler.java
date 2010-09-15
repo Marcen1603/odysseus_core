@@ -12,11 +12,11 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHand
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPeer, IAdvancedExecutor> {
+public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPeer, IExecutor> {
 
 	public RunningExecutionHandler() {
 		super();
@@ -24,8 +24,8 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 	}
 	
 	@Override
-	public IExecutionHandler<AbstractPeer, IAdvancedExecutor> clone()  {
-		IExecutionHandler<AbstractPeer, IAdvancedExecutor> handler = new RunningExecutionHandler();
+	public IExecutionHandler<AbstractPeer, IExecutor> clone()  {
+		IExecutionHandler<AbstractPeer, IExecutor> handler = new RunningExecutionHandler();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());
 		handler.setExecutionListenerCallback(getExecutionListenerCallback());
@@ -73,9 +73,9 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 		super.setPeer(peer);
 		Method[] methods = peer.getClass().getMethods();
 		for(Method m : methods) {
-			if(m.getReturnType().toString().equals("interface de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor")) {
+			if(m.getReturnType().toString().equals("interface de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor")) {
 				try {
-					setFunction((IAdvancedExecutor) m.invoke(peer,(Object[])null));
+					setFunction((IExecutor) m.invoke(peer,(Object[])null));
 					break;
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();

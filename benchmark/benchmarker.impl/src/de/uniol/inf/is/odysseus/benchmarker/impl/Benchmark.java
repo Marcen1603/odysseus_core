@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
@@ -54,7 +54,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
 
 	private ITransformationHelper transformHelper;
@@ -234,7 +234,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		}
 	}
 
-	public void bindExecutor(IAdvancedExecutor executor) {
+	public void bindExecutor(IExecutor executor) {
 		this.executor = executor;
 	}
 

@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IHotPeerStrategy;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 
 public abstract class AbstractAdministrationPeer extends AbstractPeer {
 
@@ -45,7 +45,7 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	protected IHotPeerStrategy hotPeerStrategy;
 	
 	
-	private IAdvancedExecutor executor;
+	private IExecutor executor;
 	protected ISplittingStrategy splitting;
 	protected IDistributionProvider<?> distributionProvider;
 	
@@ -69,16 +69,16 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 			this.compiler = null;
 		}
 	}
-	public IAdvancedExecutor getExecutor() {
+	public IExecutor getExecutor() {
 		return executor;
 	}
 
-	public void bindExecutor(IAdvancedExecutor executor) {
+	public void bindExecutor(IExecutor executor) {
 		getLogger().info("Binding Executor" , executor);
 		this.executor = executor;
 	}
 	
-	public void unbindExecutor(IAdvancedExecutor executor) {
+	public void unbindExecutor(IExecutor executor) {
 		getLogger().info("Unbinding Executor" , executor);
 		if(this.executor == executor) {
 			this.executor = null;

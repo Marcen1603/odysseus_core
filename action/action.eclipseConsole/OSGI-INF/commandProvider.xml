@@ -5,6 +5,6 @@
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
    <reference bind="bindActuatorFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory" name="IActuatorFactory" policy="dynamic"/>
-   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor" name="IAdvancedExecutor" policy="dynamic"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic"/>
    <reference bind="bindBenchmark" cardinality="0..1" interface="de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark" name="IActuatorBenchmark" policy="dynamic"/>
 </scr:component>

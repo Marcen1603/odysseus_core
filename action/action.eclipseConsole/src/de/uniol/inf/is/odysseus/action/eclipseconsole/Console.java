@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTrans
  *
  */
 public class Console implements	org.eclipse.osgi.framework.console.CommandProvider {
-	private IAdvancedExecutor executer;
+	private IExecutor executer;
 	private IActuatorFactory actuatorFactory;
 	private IActuatorBenchmark benchmark;
 	private User user = UserManagement.getInstance().login("Console","");
@@ -240,7 +240,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		this.actuatorFactory = factory;
 	}
 	
-	public void bindExecutor(IAdvancedExecutor executer){
+	public void bindExecutor(IExecutor executer){
 		this.executer = executer;
 	}
 	

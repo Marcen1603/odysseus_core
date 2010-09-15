@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 
 
 public class Activator implements BundleActivator {
 
-	private static IAdvancedExecutor executor = null;
+	private static IExecutor executor = null;
 //	@SuppressWarnings("unchecked")
 //	private static ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 //			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
@@ -28,15 +28,15 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 	}
 
-	public static IAdvancedExecutor getExecutor() {
+	public static IExecutor getExecutor() {
 		return executor;
 	}
 	
-	public void bindExecutor( IAdvancedExecutor ex ) {
+	public void bindExecutor( IExecutor ex ) {
 		executor = ex;
 	}
 	
-	public void unbindExecutor( IAdvancedExecutor ex ) {
+	public void unbindExecutor( IExecutor ex ) {
 		executor = null;
 	}
 

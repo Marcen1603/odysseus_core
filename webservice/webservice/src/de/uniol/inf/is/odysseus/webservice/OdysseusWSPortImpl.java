@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTrans
                       
 public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
-	private static IAdvancedExecutor executor;
+	private static IExecutor executor;
 	private static IActuatorFactory actuatorFactory;
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
@@ -68,7 +68,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	 * Used by osgi for binding the executor
 	 * @param executor
 	 */
-    public void bindExecutor(IAdvancedExecutor executor) {
+    public void bindExecutor(IExecutor executor) {
 		OdysseusWSPortImpl.executor = executor;
 	}
     
