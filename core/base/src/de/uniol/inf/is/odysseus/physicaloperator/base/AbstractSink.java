@@ -93,25 +93,37 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public int getInputPortCount() {
 		return this.noInputPorts;
 	}
-
+	
 	public void close() {
+		close(this);
+	}
+
+	protected void close(ISink sink) {
 		this.isOpen.set(false);
 		process_close();
 		stopMonitoring();
+		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+			sub.getTarget().close(sink);
+		}
 	};
 
-	@Override
-	final public void open() throws OpenFailedException {
+	protected void open(ISink sink) throws OpenFailedException {
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
 			this.isOpen.set(true);
-			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-				sub.getTarget().open();
-			}
+		}
+		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+			sub.getTarget().open(sink);
 		}
 	}
+	
+	@Override
+	final public void open() throws OpenFailedException {
+		open(this);		
+	}
+	
 
 	final public boolean isOpen() {
 		return this.isOpen.get();

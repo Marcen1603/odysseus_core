@@ -43,7 +43,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private String name = null;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IPredicate predicate = null;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
@@ -66,6 +66,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	abstract public AbstractLogicalOperator clone();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void updateAfterClone(
 			Map<ILogicalOperator, ILogicalOperator> replaced) {
@@ -81,7 +82,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#getPredicate
 	 * ()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public IPredicate getPredicate() {
 		return predicate;
 	}
@@ -93,7 +94,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#setPredicate
 	 * (de.uniol.inf.is.odysseus.base.predicate.IPredicate)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes") 
 	public void setPredicate(IPredicate predicate) {
 		this.predicate = predicate;
 	}
@@ -273,8 +274,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 				it.remove();
 				LogicalSubscription subscription = next.getValue();
 				subscription.getTarget().unsubscribeSink(this,
-						subscription.getsinkInPort(),
-						subscription.getsourceOutPort(),
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
 						subscription.getSchema());
 			}
 			recalcOutputSchemata = true;
@@ -372,5 +373,19 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.physInputOperators.clear();
 		this.physSubscriptionTo.clear();
 	}
+	
+	@Override
+	public void connectSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		// Nothing special in logical Operators
+		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+	}
 
+	@Override
+	public void disconnectSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		// Nothing special in logical Operators
+		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
+	}
+	
 }

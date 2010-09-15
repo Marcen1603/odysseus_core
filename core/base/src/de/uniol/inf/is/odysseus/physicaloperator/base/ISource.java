@@ -19,7 +19,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Jonas Jacobi, Tobias Witt
  */
-public interface ISource<T> extends IPhysicalOperator, ISubscribable<ISink<? super T>, PhysicalSubscription<ISink<? super T>>>{
+public interface ISource<T> extends IPhysicalOperator,
+		ISubscribable<ISink<? super T>, PhysicalSubscription<ISink<? super T>>> {
 	/**
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.
@@ -28,7 +29,7 @@ public interface ISource<T> extends IPhysicalOperator, ISubscribable<ISink<? sup
 	 *             if the source can't be initialised e.g. because some needed
 	 *             resources like socket connections can't be allocated.
 	 */
-	public void open() throws OpenFailedException;
+	public void open(IPhysicalOperator op) throws OpenFailedException;
 
 	/**
 	 * Calls {@link ISink#process(T)} on all subscribed {@link ISink sinks}.
@@ -37,23 +38,25 @@ public interface ISource<T> extends IPhysicalOperator, ISubscribable<ISink<? sup
 	 *            the parameter for processNext.
 	 */
 	public void transfer(T object, int sourceOutPort);
+
 	public void transfer(T object);
-	
+
 	/**
 	 * Same as above, but for transfering a batch of elements.
 	 */
 	public void transfer(Collection<T> object, int sourceOutPort);
+
 	public void transfer(Collection<T> object);
-	
+
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	public void close();
+	public void close(IPhysicalOperator op);
 
 	public void sendPunctuation(PointInTime punctuation);
-	
+
 	public void sendPunctuation(PointInTime punctuation, int outPort);
-	
+
 	/**
 	 * Removes several subscriptions in remove list to this source and
 	 * subscribes a sink in one 'atomic' step, so that no transfer() can be

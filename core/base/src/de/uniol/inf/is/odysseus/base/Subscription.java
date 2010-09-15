@@ -19,7 +19,6 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	private int sinkInPort;
 	private int sourceOutPort;
 	private SDFAttributeList schema;
-	private boolean enabled = true;
 
 	public Subscription(K target, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
 		this.target = target;
@@ -28,37 +27,17 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		this.schema=schema;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
-	}
-	
-	public void enable(){
-		this.enabled = true;
-	}
-
-	public void disable(){
-		this.enabled = false;
-	}
 	@Override
 	public K getTarget() {
 		return target;
 	}
 	
-	@Override
-	public int getsinkInPort() {
-		return getSinkInPort();
-	}
 	
 	@Override
 	public int getSinkInPort() {
 		return sinkInPort;
 	}
-	
-	@Override
-	public int getsourceOutPort() {
-		return getSourceOutPort();
-	}
-	
+		
 	@Override
 	public int getSourceOutPort() {
 		return sourceOutPort;

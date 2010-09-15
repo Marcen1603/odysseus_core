@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -561,7 +562,11 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 					// this also works for cyclic plans,
 					// since if an operator is already open, the
 					// following sources will not be called any more.
-					curRoot.open();
+					if (curRoot.isSink()){
+						((ISink<?>)curRoot).open();
+					}else{
+						throw new IllegalArgumentException("Open cannot be called on a a source");
+					}
 				}
 			}
 			getLogger().debug("Query " + queryID + " started.");

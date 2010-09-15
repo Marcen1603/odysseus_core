@@ -11,15 +11,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface ISubscription<K> {	
 	public K getTarget();
-	@Deprecated
-	public int getsinkInPort();
+//	@Deprecated
+//	public int getsinkInPort();
 	public int getSinkInPort();
-	@Deprecated
-	public int getsourceOutPort();
+//	@Deprecated
+//	public int getsourceOutPort();
 	public int getSourceOutPort();
 	public SDFAttributeList getSchema();
 	
-	public boolean isEnabled();
-	public void enable();
-	public void disable();
 }

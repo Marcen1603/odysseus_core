@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
@@ -105,7 +106,11 @@ public class ExecutionPlan implements IExecutionPlan {
 			// Call only if theres a plan to execute
 			if (roots != null) {
 				for (IPhysicalOperator root : roots) {
-					root.open();
+					if (root.isSink()){
+						((ISink<?>)root).open();
+					}else{
+						throw new IllegalArgumentException("Open cannot be called on a source");
+					}
 				}
 
 				// for (IPartialPlan partialPlan : this.partialPlans) {
@@ -129,7 +134,12 @@ public class ExecutionPlan implements IExecutionPlan {
 		if (isOpen()) {
 			for (IPartialPlan partialPlan : this.partialPlans) {
 				for (IPhysicalOperator root : partialPlan.getRoots()) {
-					root.close();
+					if (root.isSink()){
+						((ISink<?>)root).close();	
+					}else{
+						throw new IllegalArgumentException("Close cannot be called on a source");
+					}
+					
 				}
 			}
 		}

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
@@ -22,6 +23,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		protected void process_next(R object, int port, boolean exclusive) {
 			AbstractPipe.this.delegatedProcess(object, port, exclusive);
 		}
+		
+		
 
 		@Override
 		protected void setInputPortCount(int ports) {
@@ -42,6 +45,16 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		public void processPunctuation(PointInTime timestamp, int port) {
 		}
 
+
+		public void open(ISink abstractPipe) throws OpenFailedException {
+			super.open(abstractPipe);			
+		}
+
+		public void close(ISink abstractPipe){
+			super.close(abstractPipe);			
+		}
+
+		
 	};
 
 	final protected DelegateSink delegateSink = new DelegateSink();
@@ -69,11 +82,16 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	abstract public OutputMode getOutputMode();
 
 	@Override
-	public void close() {
-		process_close();
-		this.delegateSink.close();
-		super.close();
+	public void close(IPhysicalOperator o) {
+		// process_close();
+		close();
+		super.close(o);
 	};
+	
+	public void close(){
+		process_close();
+		this.delegateSink.close(this);
+	}
 
 	protected int getInputPortCount() {
 		return this.delegateSink.noInputPorts;
@@ -134,11 +152,16 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			boolean exclusive) {
 		delegateSink.process(object, port, exclusive);
 	}
+	
 
 	@Override
-	final synchronized public void open() throws OpenFailedException {
-		super.open();
-		delegateSink.open();
+	final synchronized public void open(IPhysicalOperator sink) throws OpenFailedException {
+		super.open(sink);
+		open();
+	}
+	
+	public void open() throws OpenFailedException{
+		this.delegateSink.open(this);
 	}
 
 	@Override

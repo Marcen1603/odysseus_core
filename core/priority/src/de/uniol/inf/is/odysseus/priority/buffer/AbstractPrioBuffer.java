@@ -25,11 +25,11 @@ public abstract class AbstractPrioBuffer<T extends IMetaAttributeContainer<? ext
 	}
 
 	@Override
-	protected void process_transfer(T object) {
+	public void transfer(T object) {
 		if (object.getMetadata().getPriority() > 0) {
 				prioCount.decrementAndGet();	
 		}
-		super.process_transfer(object);
+		super.transfer(object);
 	}
 
 }

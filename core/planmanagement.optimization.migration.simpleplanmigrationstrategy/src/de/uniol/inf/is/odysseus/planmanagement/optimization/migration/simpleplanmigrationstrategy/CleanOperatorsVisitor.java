@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
@@ -46,7 +47,8 @@ public class CleanOperatorsVisitor implements INodeVisitor<IPhysicalOperator, Ob
 				// TODO: removeMonitoringData sollte auch die metadata listener aus der eventListener Map entfernen 
 				op.removeMonitoringData(data);
 			}
-			op.close();
+			// TODO: Das scheint irgendwie wo anders hinzugehören	
+			((ISink<?>)op).close();
 		}
 	}
 

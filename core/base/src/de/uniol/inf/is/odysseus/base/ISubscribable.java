@@ -14,6 +14,8 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 * A.subscribe(B) will be called.
 	 * 
 	 * A -> B
+	 * 
+	 * Subscription is initial inactive, call open to active, close to deaktivate
 	 *
 	 */
 	public void subscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
@@ -31,4 +33,16 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 */
 	public void unsubscribeSink(S subscription);
 	public Collection<S> getSubscriptions();
+	
+	/**
+	 * Same as subscribeSink but needs no open. Especially for terminal sinks, that connect at runtime
+	 * to specific operators
+	 * @param sink
+	 * @param sinkInPort
+	 * @param sourceOutPort
+	 * @param schema
+	 */
+	public void connectSink(T sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
+	public void disconnectSink(T sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
+	
 }

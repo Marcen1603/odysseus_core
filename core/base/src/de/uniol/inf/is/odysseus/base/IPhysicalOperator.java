@@ -17,12 +17,17 @@ public interface IPhysicalOperator extends IOwnedOperator,
 
 	boolean isPipe();
 
-	public void open() throws OpenFailedException;
-
-	/**
-	 * stop the operator and free all its resources
-	 */
-	public void close();
+//	/**
+//	 * Initialize operator and propagates this down the tree
+//	 * @param o father who called open
+//	 * @throws OpenFailedException
+//	 */
+//	public void open(IPhysicalOperator o) throws OpenFailedException;
+//
+//	/**
+//	 * stop the operator and free all its resources
+//	 */
+//	public void close(IPhysicalOperator o);
 
 	public void subscribe(IPOEventListener listener, POEventType type);
 

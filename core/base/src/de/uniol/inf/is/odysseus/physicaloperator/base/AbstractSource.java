@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
@@ -38,6 +39,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return _logger;
 	}
 
+	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
 	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();
@@ -97,21 +99,46 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return open.get();
 	}
 
-	public void close() {
-		getLogger().debug("Closing " + toString());
-		this.process_close();
-		open.set(false);
-		stopMonitoring();
-	};
-
 	@Override
-	public synchronized void open() throws OpenFailedException {
+	public void close(IPhysicalOperator o) {
+		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o);
+		if (sub == null){
+			throw new RuntimeException("Close called from an unsubscribed sink");
+		}
+		this.activeSinkSubscriptions.remove(sub);
+		if (activeSinkSubscriptions.size() == 0){
+			getLogger().debug("Closing " + toString());
+			this.process_close();
+			open.set(false);
+			stopMonitoring();
+		}
+	};
+	
+	@Override
+	public synchronized void open(IPhysicalOperator o) throws OpenFailedException {
+		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o);
+		if (sub == null){
+			throw new OpenFailedException("Open called from an unsubscribed sink "+o);
+		}
+		// Handle duplicate open calls
+		if (!activeSinkSubscriptions.contains(sub)){
+			this.activeSinkSubscriptions.add(sub);
+		}
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
 			open.set(true);
 		}
+	}
+
+	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(IPhysicalOperator o) {
+		for (PhysicalSubscription<ISink<? super T>> sub: this.sinkSubscriptions){
+			if (sub.getTarget() == o){
+				return sub;
+			}
+		}
+		return null;
 	}
 
 	protected abstract void process_open() throws OpenFailedException;
@@ -129,7 +156,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void transfer(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
-		for (PhysicalSubscription<ISink<? super T>> sink : this.sinkSubscriptions) {
+		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				sink.getTarget().process(object, sink.getSinkInPort(),
 						isTransferExclusive());
@@ -145,7 +172,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void transfer(Collection<T> object, int sourceOutPort) {
 		fire(this.pushListInitEvent);
-		for (PhysicalSubscription<ISink<? super T>> sink : this.sinkSubscriptions) {
+		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				sink.getTarget().process(object, sink.getSinkInPort(),
 						isTransferExclusive());
@@ -190,14 +217,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	protected void process_transfer(T object) {
-		for (PhysicalSubscription<ISink<? super T>> sink : this.sinkSubscriptions) {
-			if (sink.isEnabled()) {
-				sink.getTarget().process(object, sink.getSinkInPort(),
-						!this.hasSingleConsumer());
-			}
-		}
-	}
+//	protected void process_transfer(T object) {
+//		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+//			if (sink.isEnabled()) {
+//				sink.getTarget().process(object, sink.getSinkInPort(),
+//						!this.hasSingleConsumer());
+//			}
+//		}
+//	}
 
 	@Override
 	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
@@ -212,12 +239,30 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
 		}
 	}
-
+	
+	@Override
+	public void connectSink(ISink<? super T> sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+			PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
+					sink, sinkInPort, sourceOutPort, schema);
+			this.activeSinkSubscriptions.add(sub);
+	}
+	
 	@Override
 	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
 		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(sink,
 				sinkInPort, sourceOutPort, schema));
+	}
+	
+	@Override
+	public void disconnectSink(ISink<? super T> sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
+				sink, sinkInPort, sourceOutPort, schema);
+		this.activeSinkSubscriptions.remove(sub);		
 	}
 
 	@Override
@@ -278,7 +323,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribe(de.uniol.inf.is.odysseus.IPOEventListener.queryexecution.event.POEventListener,
 	 *      de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventType)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void subscribe(IPOEventListener listener, POEventType type) {
 		synchronized (this.eventListener) {
@@ -345,7 +389,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void sendPunctuation(PointInTime punctuation) {
 		// synchronized (this.subscriptions) {
-		for (PhysicalSubscription<? extends ISink<?>> sub : this.sinkSubscriptions) {
+		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			sub.getTarget()
 					.processPunctuation(punctuation, sub.getSinkInPort());
 		}
@@ -354,7 +398,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	
 	@Override
 	public void sendPunctuation(PointInTime punctuation, int outPort){
-		for(PhysicalSubscription<? extends ISink<?>> sub: this.sinkSubscriptions){
+		for(PhysicalSubscription<? extends ISink<?>> sub: this.activeSinkSubscriptions){
 			if(sub.getSourceOutPort() == outPort){
 				sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
 			}

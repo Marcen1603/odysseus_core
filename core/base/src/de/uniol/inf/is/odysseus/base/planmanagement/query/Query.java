@@ -362,6 +362,7 @@ public class Query implements IQuery {
 	 */
 	@Override
 	public void removeOwnerschip() {
+		// TODO: RemoveOwnership und Close
 		getLogger().debug("Remove ownership start");
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 			getLogger().debug("Remove Ownership for " + physicalOperator);
@@ -369,7 +370,8 @@ public class Query implements IQuery {
 			if (!physicalOperator.hasOwner()) {
 				getLogger()
 						.debug("No more owners. Closing " + physicalOperator);
-				physicalOperator.close();
+				// physicalOperator.close();
+				getLogger().error("ATTENTION: CLOSING CURRENT NOT IMPLEMENTED");
 				if (physicalOperator.isSink()) {
 					getLogger().debug(
 							"Sink unsubscribe from all sources "
