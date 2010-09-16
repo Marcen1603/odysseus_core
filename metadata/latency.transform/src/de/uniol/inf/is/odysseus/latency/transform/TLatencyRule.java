@@ -4,6 +4,8 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> {
@@ -31,6 +33,12 @@ public class TLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> {
 	@Override
 	public String getName() {
 		return  "JoinTIPO add MetadataMerge (ILatency)";
+	}
+	
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
 	}
 
 	

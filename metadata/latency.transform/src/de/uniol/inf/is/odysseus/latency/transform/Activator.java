@@ -20,7 +20,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		TransformationInventory.getInstance().addRule(new TLatencyRule(), TransformRuleFlowGroup.METAOBJECTS);
+		//TransformationInventory.getInstance().addRule(new TLatencyRule(), TransformRuleFlowGroup.METAOBJECTS);
 	}
 
 	/*
