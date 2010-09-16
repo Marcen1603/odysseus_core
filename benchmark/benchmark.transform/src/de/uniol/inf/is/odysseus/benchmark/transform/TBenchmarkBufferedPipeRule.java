@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BufferAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBenchmarkBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
@@ -39,6 +41,11 @@ public class TBenchmarkBufferedPipeRule extends AbstractTransformationRule<Buffe
 	@Override
 	public String getName() {
 		return "BufferAO -> BufferedPipe";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

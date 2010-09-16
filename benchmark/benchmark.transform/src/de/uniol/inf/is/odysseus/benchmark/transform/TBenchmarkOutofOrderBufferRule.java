@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BufferAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.priority.buffer.OutOfOrderBufferedPipe;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBenchmarkOutofOrderBufferRule extends AbstractTransformationRule<BufferAO> {
@@ -43,4 +45,8 @@ public class TBenchmarkOutofOrderBufferRule extends AbstractTransformationRule<B
 		return "BufferAO -> OutOfOrderBufferedPipe";
 	}
 
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
 }

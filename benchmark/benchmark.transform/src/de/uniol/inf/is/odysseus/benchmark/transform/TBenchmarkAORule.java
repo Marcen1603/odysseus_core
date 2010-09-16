@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkPO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.PriorityBenchmarkPO;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBenchmarkAORule extends AbstractTransformationRule<BenchmarkAO> {
@@ -45,5 +47,10 @@ public class TBenchmarkAORule extends AbstractTransformationRule<BenchmarkAO> {
 		} else {
 			return new BenchmarkPO(processingTime, selectivity);
 		}
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 }

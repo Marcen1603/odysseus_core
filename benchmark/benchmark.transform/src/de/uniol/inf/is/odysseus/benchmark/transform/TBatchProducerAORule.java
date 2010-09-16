@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BatchProducer;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BatchProducerAO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBatchProducerAORule extends AbstractTransformationRule<BatchProducerAO> {
@@ -41,4 +43,8 @@ public class TBatchProducerAORule extends AbstractTransformationRule<BatchProduc
 		return "BatchProducerAO -> BatchProducer";
 	}
 
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;
+	}
 }

@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.benchmarker.impl.TestProducerAO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.TestproducerPO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TTestProducerAORule extends AbstractTransformationRule<TestProducerAO> {
@@ -39,6 +41,11 @@ public class TTestProducerAORule extends AbstractTransformationRule<TestProducer
 	@Override
 	public String getName() {
 		return "TestProducerAO -> TestProducerPO";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;
 	}
 
 }

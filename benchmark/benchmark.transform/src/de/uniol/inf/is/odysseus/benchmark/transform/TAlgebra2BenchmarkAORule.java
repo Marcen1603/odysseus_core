@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkPO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.PriorityBenchmarkPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TAlgebra2BenchmarkAORule extends AbstractTransformationRule<ILogicalOperator> {
@@ -54,6 +56,11 @@ public class TAlgebra2BenchmarkAORule extends AbstractTransformationRule<ILogica
 		} else {
 			return new BenchmarkPO(processingTime, selectivity);
 		}
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }
