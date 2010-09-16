@@ -7,7 +7,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
@@ -44,6 +46,11 @@ public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 	@Override
 	public String getName() {
 		return "Switch Projection and Rename";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.SWITCH;
 	}
 
 }

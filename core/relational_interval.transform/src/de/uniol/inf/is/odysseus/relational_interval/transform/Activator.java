@@ -23,9 +23,9 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		TransformationInventory.getInstance().addRule(new TApplicationTimestampRule(), TransformRuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TJoinTIPOInsertDataMergeRule(), TransformRuleFlowGroup.METAOBJECTS);
-		TransformationInventory.getInstance().addRule(new TRelationalSlidingElementWindowTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
+//		TransformationInventory.getInstance().addRule(new TApplicationTimestampRule(), TransformRuleFlowGroup.TRANSFORMATION);
+//		TransformationInventory.getInstance().addRule(new TJoinTIPOInsertDataMergeRule(), TransformRuleFlowGroup.METAOBJECTS);
+//		TransformationInventory.getInstance().addRule(new TRelationalSlidingElementWindowTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
 	}
 
 	/*

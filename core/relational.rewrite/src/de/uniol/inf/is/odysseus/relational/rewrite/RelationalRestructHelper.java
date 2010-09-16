@@ -40,9 +40,9 @@ public class RelationalRestructHelper {
 	
 	static String LOGGER_NAME = RelationalRestructHelper.class.toString();
 
-	public static boolean containsAllSources(ILogicalOperator op, Set sources) {
+	public static boolean containsAllSources(ILogicalOperator op, Set<?> sources) {
 		List<SDFAttribute> schema = op.getOutputSchema();
-		Set schemaSources = sourcesOfAttributes(schema);
+		Set<?> schemaSources = sourcesOfAttributes(schema);
 		for (Object source : sources) {
 			if (!schemaSources.contains(source)) {
 				return false;
@@ -51,7 +51,7 @@ public class RelationalRestructHelper {
 		return true;
 	}
 
-	public static Set sourcesOfPredicate(IPredicate predicate) {
+	public static Set<?> sourcesOfPredicate(IPredicate<?> predicate) {
 		final HashSet<String> sources = new HashSet<String>();
 		visitPredicates((IPredicate<?>) predicate,
 				new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
@@ -71,7 +71,7 @@ public class RelationalRestructHelper {
 		return sources;
 	}
 
-	public static Set sourcesOfAttributes(List attributes) {
+	public static Set<?> sourcesOfAttributes(List<?> attributes) {
 		HashSet<String> sources = new HashSet<String>();
 		for (Object attribute : attributes) {
 			sources.add(((SDFAttribute) attribute).getSourceName());
@@ -134,7 +134,7 @@ public class RelationalRestructHelper {
 				predicates.push(((ComplexPredicate<?>) curPred).getLeft());
 				predicates.push(((ComplexPredicate<?>) curPred).getRight());
 			} else if(curPred instanceof NotPredicate){
-				predicates.push(((NotPredicate) curPred).getChild());
+				predicates.push(((NotPredicate<?>) curPred).getChild());
 			}
 			else {
 				functor.call(curPred);
@@ -187,7 +187,7 @@ public class RelationalRestructHelper {
 		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0, son
 				.getOutputSchema());
 
-		Collection<ILogicalOperator> toUpdate = new ArrayList(2);
+		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>(2);
 		toUpdate.add(toDown.getTarget());
 		toUpdate.add(toUp.getTarget());
 		return toUpdate;

@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.relational.base.access.AtomicDataInputStreamAccessPO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO> {
@@ -47,5 +49,11 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	public String getName() {
 		return "AccessAO (AtomicData) -> AccessPO";
 	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;		
+	}
+
 
 }

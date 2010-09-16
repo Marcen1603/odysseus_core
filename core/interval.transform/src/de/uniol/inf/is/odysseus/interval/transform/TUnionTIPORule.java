@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
@@ -45,6 +47,11 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 	@Override
 	public String getName() {
 		return "UnionAO -> UnionPO";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

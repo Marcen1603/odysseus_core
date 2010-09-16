@@ -5,12 +5,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rules.TAccessAOExistsRule;
-import de.uniol.inf.is.odysseus.transform.rules.TCreateMetadataRule;
-import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
-import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
-import de.uniol.inf.is.odysseus.transform.rules.TSplitAORule;
-import de.uniol.inf.is.odysseus.transform.rules.TTransformViewRule;
+import de.uniol.inf.is.odysseus.transform.rules.RuleProvider;
 
 public class Activator implements BundleActivator {
 
@@ -33,16 +28,10 @@ public class Activator implements BundleActivator {
 		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.CREATE_METADATA);
 		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.TRANSFORMATION);
 		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.METAOBJECTS);
-		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.CLEANUP);	
+		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.CLEANUP);		
 		
-		//loading default rules		
-		TransformationInventory.getInstance().addRule(new TAccessAOExistsRule(), TransformRuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TCreateMetadataRule(), TransformRuleFlowGroup.CREATE_METADATA);
-		TransformationInventory.getInstance().addRule(new TDeleteRenameAORule(), TransformRuleFlowGroup.INIT);
-		TransformationInventory.getInstance().addRule(new TSelectAORule(), TransformRuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TSplitAORule(), TransformRuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TTransformViewRule(), TransformRuleFlowGroup.ACCESS);
-		
+		//loading my own rules because self-binding-services don't work
+		TransformationInventory.getInstance().bindRuleProvider(new RuleProvider());
 		
 	}
 

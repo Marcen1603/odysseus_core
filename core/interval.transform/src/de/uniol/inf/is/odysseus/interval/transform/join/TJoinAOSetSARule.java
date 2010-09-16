@@ -5,6 +5,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
@@ -51,6 +53,11 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	@Override
 	public String getName() {
 		return "JoinTIPO set SweepArea";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

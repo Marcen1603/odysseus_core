@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RestructHelper;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO>{
@@ -36,5 +38,10 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO>{
 	@Override
 	public String getName() {
 		return "Delete Rename";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.INIT;
 	}
 }

@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
@@ -47,6 +49,11 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 	@Override
 	public String getName() {
 		return "ExistenceAO -> AntiJoinTIPO";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.FixedSetPO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAccessAO<?>> {
@@ -41,6 +43,11 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 	@Override
 	public String getName() {		
 		return "FixedSetAccessAO -> FixedSetPO";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;
 	}
 
 }

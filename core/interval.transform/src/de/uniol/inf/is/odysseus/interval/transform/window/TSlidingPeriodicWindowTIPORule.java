@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingPeriodicWindowTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TSlidingPeriodicWindowTIPORule extends AbstractTransformationRule<WindowAO> {
@@ -45,6 +47,11 @@ public class TSlidingPeriodicWindowTIPORule extends AbstractTransformationRule<W
 	@Override
 	public String getName() {
 		return "WindowAO -> SlidingPeriodicWindowTIPO";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

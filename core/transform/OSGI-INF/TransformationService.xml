@@ -4,4 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.base.ITransformation"/>
    </service>
+   <reference bind="addRuleProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider" name="ITransformRuleProvider" policy="static" unbind="removeRuleProvider"/>
 </scr:component>

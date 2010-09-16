@@ -7,7 +7,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
@@ -51,6 +53,11 @@ public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 			return true;
 		}		
 		return false;
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.SWITCH;
 	}
 
 }

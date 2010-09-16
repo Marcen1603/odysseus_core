@@ -5,6 +5,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TIMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TJoinTIPOSetMetadataMerge extends AbstractTransformationRule<JoinTIPO> {
@@ -50,6 +52,11 @@ public class TJoinTIPOSetMetadataMerge extends AbstractTransformationRule<JoinTI
 	@Override
 	public String getName() {
 		return "JoinTIPO set MetadataMerge (ITimeInterval)";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
 	}
 
 }

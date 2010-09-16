@@ -7,7 +7,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 
@@ -44,6 +46,11 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	@Override
 	public String getName() {
 		return "Switch Projection and Window";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.SWITCH;
 	}
 
 }

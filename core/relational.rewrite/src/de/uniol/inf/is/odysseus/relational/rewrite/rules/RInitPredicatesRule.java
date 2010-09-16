@@ -4,7 +4,9 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.relational.rewrite.InitPredicateFunctor;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class RInitPredicatesRule extends AbstractRewriteRule<ILogicalOperator> {
 
@@ -27,6 +29,11 @@ public class RInitPredicatesRule extends AbstractRewriteRule<ILogicalOperator> {
 	@Override
 	public String getName() {
 		return "Init Predicates";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.CLEANUP;
 	}
 
 }

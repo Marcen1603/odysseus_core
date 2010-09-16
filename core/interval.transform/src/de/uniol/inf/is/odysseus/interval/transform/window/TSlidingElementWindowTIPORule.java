@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TSlidingElementWindowTIPORule extends AbstractTransformationRule<WindowAO> {
@@ -47,6 +49,11 @@ public class TSlidingElementWindowTIPORule extends AbstractTransformationRule<Wi
 	@Override
 	public String getName() {
 		return "WindowAO -> SlidingElementWindowTIPO";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

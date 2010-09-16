@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
@@ -99,4 +100,12 @@ public class TransformationExecutor implements ITransformation {
 			}
 		}
 	}	
+	
+	public void addRuleProvider(ITransformRuleProvider provider){		
+		TransformationInventory.getInstance().bindRuleProvider(provider);
+	}
+	
+	public void removeRuleProvider(ITransformRuleProvider provider){		
+		TransformationInventory.getInstance().unbindRuleProvider(provider);
+	}
 }

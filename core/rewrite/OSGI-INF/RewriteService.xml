@@ -4,4 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.base.IRewrite"/>
    </service>
+   <reference bind="addRuleProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider" name="IRewriteRuleProvider" policy="static" unbind="removeRuleProvider"/>
 </scr:component>

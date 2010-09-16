@@ -13,9 +13,8 @@ public class TransformationInventory extends AbstractInventory {
 
 	private static TransformationInventory instance = null;
 
-	private TransformationInventory(){
-		// intentionally left blank
-		super();
+	private TransformationInventory(){	
+		super();		
 	}
 	
 	public TransformationInventory(AbstractInventory inventory) {
@@ -28,4 +27,12 @@ public class TransformationInventory extends AbstractInventory {
 		}
 		return instance;
 	}
+	
+	public AbstractInventory getCurrentInstance(){
+		return getInstance();
+	}
+	
+	public String getInventoryName(){
+		return "Transform";
+	}	
 }

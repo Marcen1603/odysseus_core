@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TimestampAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TApplicationTimestampRule extends AbstractTransformationRule<TimestampAO> {
@@ -47,6 +49,11 @@ public class TApplicationTimestampRule extends AbstractTransformationRule<Timest
 	@Override
 	public String getName() {
 		return "TimestampAO -> MetadataUpdatePO(application timestamp/relational)";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

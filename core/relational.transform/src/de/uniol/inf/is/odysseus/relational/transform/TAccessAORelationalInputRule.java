@@ -9,8 +9,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IdentityTransformation;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.InputStreamAccessPO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TAccessAORelationalInputRule extends AbstractTransformationRule<AccessAO> {
@@ -49,5 +51,10 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 	@Override
 	public String getName() {
 		return "AccessAO (RelationalInputStream) -> AccessPO";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;
 	}
 }

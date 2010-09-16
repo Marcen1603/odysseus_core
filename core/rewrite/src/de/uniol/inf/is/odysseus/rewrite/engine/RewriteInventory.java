@@ -4,9 +4,9 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.AbstractInventory;
 
 public class RewriteInventory extends AbstractInventory {
 	
-	private static RewriteInventory instance = null;
+	private static RewriteInventory instance = null;	
 
-	private RewriteInventory() {
+	public RewriteInventory() {
 		super();
 	}
 
@@ -19,6 +19,13 @@ public class RewriteInventory extends AbstractInventory {
 			instance = new RewriteInventory();
 		}
 		return instance;
-	}	
-
+	}
+	
+	public AbstractInventory getCurrentInstance(){
+		return getInstance();
+	}
+	
+	public String getInventoryName(){
+		return "Rewrite";
+	}		
 }

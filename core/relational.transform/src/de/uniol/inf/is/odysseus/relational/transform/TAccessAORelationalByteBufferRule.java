@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.ByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TAccessAORelationalByteBufferRule extends AbstractTransformationRule<AccessAO> {
@@ -52,6 +54,11 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 	@Override
 	public String getName() {		
 		return "AccessAO (RelationalByteBuffer) -> AccessPO";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;
 	}
 
 }

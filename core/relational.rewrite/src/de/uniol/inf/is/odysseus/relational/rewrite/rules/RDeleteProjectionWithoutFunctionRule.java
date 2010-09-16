@@ -6,7 +6,9 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class RDeleteProjectionWithoutFunctionRule extends AbstractRewriteRule<ProjectAO> {
 
@@ -34,6 +36,11 @@ public class RDeleteProjectionWithoutFunctionRule extends AbstractRewriteRule<Pr
 	@Override
 	public String getName() {
 		return "Delete Projection without function";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.DELETE;
 	}
 
 }

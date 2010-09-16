@@ -9,13 +9,14 @@ import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
+import de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 
 public abstract class AbstractInventory implements IRuleFlow {
 
 	private LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>();
-	private LinkedList<IRuleFlowGroup> workFlow = new LinkedList<IRuleFlowGroup>();
+	private LinkedList<IRuleFlowGroup> workFlow = new LinkedList<IRuleFlowGroup>();	
 
 	public AbstractInventory() {
 		// intentionally left blank
@@ -51,42 +52,41 @@ public abstract class AbstractInventory implements IRuleFlow {
 		return copyflow;
 	}
 
-	public void addRuleFlowGroup(IRuleFlowGroup group) {		
+	public void addRuleFlowGroup(IRuleFlowGroup group) {
 		if (!this.ruleBase.containsKey(group)) {
 			this.ruleBase.put(group, new PriorityQueue<IRule<?, ?>>());
 		}
 		workFlow.add(group);
-		LoggerSystem.printlog("Group added to workflow: " + group+ ". New workflow is: "+workFlow.toString());
+		LoggerSystem.printlog(this.getInventoryName()+" - Group added to workflow: " + group + ". New workflow is: " + workFlow.toString());
 	}
 
-	public void addRule(IRule<?, ?> rule, IRuleFlowGroup group) {
+	private void addRule(IRule<?, ?> rule, IRuleFlowGroup group) {
 		if (this.ruleBase.containsKey(group)) {
 			if (this.ruleBase.get(group).contains(rule)) {
-				LoggerSystem.printlog(Accuracy.WARN, "Rule \"" + rule + "\" already exists in inventory!");
+				LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Rule \"" + rule + "\" already exists in inventory!");
 			}
-			LoggerSystem.printlog(Accuracy.DEBUG, "Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+			LoggerSystem.printlog(Accuracy.DEBUG, this.getInventoryName()+" - Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
 			this.ruleBase.get(group).offer(rule);
 		} else {
-			throw new RuntimeException("Group " + group + " for rule " + rule + " doesn't exist");
+			throw new RuntimeException(this.getInventoryName()+" - Group " + group + " for rule " + rule + " doesn't exist");
 		}
 	}
 
-	public void removeRule(IRule<?, ?> rule, IRuleFlowGroup group){
-		if(this.ruleBase.containsKey(group)){
-			if(this.ruleBase.get(group).contains(rule)){
-				if(this.ruleBase.get(group).remove(rule)){
-					LoggerSystem.printlog(Accuracy.DEBUG, "Rule removed - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
-				}else{
-					LoggerSystem.printlog(Accuracy.WARN, "Removing rule \"" + rule + "\" failed!");
+	private void removeRule(IRule<?, ?> rule, IRuleFlowGroup group) {
+		if (this.ruleBase.containsKey(group)) {
+			if (this.ruleBase.get(group).contains(rule)) {
+				if (this.ruleBase.get(group).remove(rule)) {
+					LoggerSystem.printlog(Accuracy.DEBUG, this.getInventoryName()+" - Rule removed - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+				} else {
+					LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Removing rule \"" + rule + "\" failed!");
 				}
-			}else{
-				LoggerSystem.printlog(Accuracy.WARN, "Unable to remove rule \"" + rule + "\", because it does not exists in the inventory!");				
+			} else {
+				LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Unable to remove rule \"" + rule + "\", because it does not exists in the inventory!");
 			}
-		}else{
-			LoggerSystem.printlog(Accuracy.WARN, "Unable to remove rule \"" + rule + "\", because the given group does not exists in the inventory!");
-		}		
+		} else {
+			LoggerSystem.printlog(Accuracy.WARN, this.getInventoryName()+" - Unable to remove rule \"" + rule + "\", because the given group does not exists in the inventory!");
+		}
 	}
-	
 	@Override
 	public Iterator<IRuleFlowGroup> iterator() {
 		return workFlow.iterator();
@@ -123,5 +123,27 @@ public abstract class AbstractInventory implements IRuleFlow {
 		};
 
 		return iterator;
+	}	
+	
+	
+	public void bindRuleProvider(IRuleProvider provider) {
+		LoggerSystem.printlog(Accuracy.DEBUG, getInventoryName()+" - Loading rules for... "+provider);
+		for (IRule<?, ?> rule : provider.getRules()) {			
+			this.getCurrentInstance().addRule(rule, rule.getRuleFlowGroup());
+		}
 	}
+
+	public abstract AbstractInventory getCurrentInstance();
+
+	public void unbindRuleProvider(IRuleProvider provider) {
+		LoggerSystem.printlog(Accuracy.DEBUG, getInventoryName()+" - Removing rules for... "+provider);
+		for (IRule<?, ?> rule : provider.getRules()) {
+			this.getCurrentInstance().removeRule(rule, rule.getRuleFlowGroup());
+		}
+	}
+	
+	public String getInventoryName(){
+		return "Abstract";
+	}
+
 }

@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalTupleGroupingHelper;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TAggregateAORule extends AbstractTransformationRule<AggregatePO> {
@@ -33,6 +35,11 @@ public class TAggregateAORule extends AbstractTransformationRule<AggregatePO> {
 	@Override
 	public String getName() {
 		return "Insert RelationalTupleGroupingHelper";
+	}
+	
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
 	}
 
 }

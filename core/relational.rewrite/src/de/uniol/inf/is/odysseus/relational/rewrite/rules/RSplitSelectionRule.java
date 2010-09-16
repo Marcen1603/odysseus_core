@@ -4,7 +4,9 @@ import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RestructHelper;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
@@ -45,6 +47,11 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public String getName() {
 		return "Split Selection with more than one Predicate";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.SPLIT;
 	}
 
 }
