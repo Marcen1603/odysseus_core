@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -30,7 +29,6 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	private Provider provider;
 	private long lastTime;
 	private MVRelationalTuple<M> buffer = null;
-	private int counter = 0;
 	private String sourceName;
 	private StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>> metadataCreator;
 	
@@ -100,6 +98,7 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
 		System.out.println("Send Data: " + this.buffer);
@@ -116,8 +115,8 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 
 		transfer(this.buffer);
 		this.buffer = null;
-		System.out.println("Send Punctuation: " + (this.provider.getLastTimestamp()+1));
-		sendPunctuation(new PointInTime(this.provider.getLastTimestamp()+1));
+//		System.out.println("Send Punctuation: " + (this.provider.getLastTimestamp()+1));
+//		sendPunctuation(new PointInTime(this.provider.getLastTimestamp()+1));
 		lastTime = System.currentTimeMillis();
 
 	}

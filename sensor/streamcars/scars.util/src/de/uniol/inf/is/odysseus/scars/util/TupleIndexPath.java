@@ -215,6 +215,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	 * Liefert eine tiefe Kopie des aktuellen TupleIndexPaths. Das referenzierte
 	 * SchemaIndexPath wird nicht geklont.
 	 */
+	@Override
 	public TupleIndexPath clone() {
 		return new TupleIndexPath(this);
 	}
@@ -259,6 +260,9 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		int lastListIndex = listIndices.get(listIndices.size() - 1);
 
 		MVRelationalTuple<?> obj = (MVRelationalTuple<?>) indices.get(lastListIndex).getValue();
+		if( obj.getAttributeCount() == 0) {
+			return false;
+		}
 		if (lastListIndex == indices.size() - 1) {
 			SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getSubattribute(0);
 			indices.add(new TupleIndex(obj, 0, lastAttribute));

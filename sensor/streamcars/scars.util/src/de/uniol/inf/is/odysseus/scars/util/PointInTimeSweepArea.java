@@ -57,6 +57,20 @@ public class PointInTimeSweepArea<M extends ITimeInterval & IProbability> extend
     return retval.iterator();
   }
   
+  public Iterator<MVRelationalTuple<M>> queryBeforeEquals(PointInTime punctuation) {
+	    ArrayList<MVRelationalTuple<M>> retval = new ArrayList<MVRelationalTuple<M>>();
+	    synchronized (elements) {
+	      Iterator<MVRelationalTuple<M>> it = elements.iterator();
+	      while (it.hasNext()) {
+	        MVRelationalTuple<M> tuple = it.next();
+	        if (tuple.getMetadata().getStart().beforeOrEquals(punctuation)) {
+	          retval.add(tuple);
+	        }
+	      }
+	    }
+	    return retval.iterator();
+ }
+  
   public Iterator<MVRelationalTuple<M>> punctuationQuery(MVRelationalTuple<M> element) {
 	    ArrayList<MVRelationalTuple<M>> retval = new ArrayList<MVRelationalTuple<M>>();
 	    synchronized (elements) {

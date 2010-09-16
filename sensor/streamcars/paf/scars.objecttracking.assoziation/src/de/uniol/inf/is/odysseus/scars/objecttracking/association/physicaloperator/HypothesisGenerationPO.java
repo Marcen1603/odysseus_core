@@ -1,19 +1,17 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.util.PointInTimeSweepArea;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
 
 /**
  * The Hypothesis Generation has two inputstreams:
@@ -29,40 +27,56 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	private String oldObjListPath;
 	private String newObjListPath;
-	
-	private long timestamp = -1;
-
-	private PointInTimeSweepArea<M> sweepPrediction;
-	private PointInTimeSweepArea<M> sweepScanned;
-	
-	private PointInTimeSweepArea<M> sweepPunctuation;
+	StreamCollector streamCollector;
 	
 	public HypothesisGenerationPO() {
 		super();
-		sweepPrediction = new PointInTimeSweepArea<M>();
-		sweepScanned = new PointInTimeSweepArea<M>();
-		sweepPunctuation = new PointInTimeSweepArea<M>();
 	}
 
 	public HypothesisGenerationPO(HypothesisGenerationPO<M> copy) {
 		super(copy);
 		this.oldObjListPath = copy.getOldObjListPath();
 		this.newObjListPath = copy.getNewObjListPath();
-		this.sweepPrediction = (PointInTimeSweepArea<M>) copy.sweepPrediction.clone();
-		this.sweepScanned =  (PointInTimeSweepArea<M>) copy.sweepScanned.clone();
-		this.sweepPunctuation =  (PointInTimeSweepArea<M>) copy.sweepPunctuation.clone();
+	}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+		streamCollector = new StreamCollector(getSubscribedToSource().size());
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		if( port == 0 ) // von dort sollte keine Punctuation kommen...
+			throw new IllegalArgumentException("HypothesisGenerationPO recieved Punctuation on Port 0");
+		
+		// Punctuation aus Port 1 heißt, dass die Prediction nix hat
+		streamCollector.recieve(timestamp, port);
+		if( streamCollector.isReady() )
+			send( streamCollector.getNext());
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		if(port == 1 && timestamp.getMainPoint() > this.timestamp) {
-			this.timestamp = timestamp.getMainPoint();
-			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(0);
-			StreamCarsMetaData<M> metaData = new StreamCarsMetaData<M>();
-			metaData.setStart(timestamp);
-			tuple.setMetadata((M)metaData);
-			this.sweepPunctuation.insert(tuple);
+	private void send(List<Object> next) {
+		Object obj0 = next.get(0); // Port 0
+		Object obj1 = next.get(1); // Port 1
+		
+		// An Port 0 haben wir immer einen Tupel aus der Quelle/Selection
+		MVRelationalTuple<M> scannedTuple = (MVRelationalTuple<M>)obj0;
+		
+		// Und an Port1 aus Prediction?
+		if( obj1 instanceof MVRelationalTuple) {
+			// Ein Tupel!
+			MVRelationalTuple<M> predictedTuple = (MVRelationalTuple<M>)obj1;
+			
+			// Normale Function ausführen... wir haben Daten zum Senden
+			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, predictedTuple);
+			transfer(output);
+			
+		} else {
+			// Eine Punctuation! Prediction hat nix
+			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, null);
+			transfer(output);
 		}
 	}
 
@@ -72,60 +86,9 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	 */
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		if(port == 0) {
-			this.sweepScanned.insert(object);
-			this.sweepPrediction.purgeElements(object, Order.LeftRight);
-		} else if(port == 1) {
-			this.sweepPrediction.insert(object);
-			this.sweepScanned.purgeElements(object, Order.LeftRight);
-		}
-
-		Iterator<MVRelationalTuple<M>> itPred = sweepPrediction.query(object, Order.LeftRight);
-		Iterator<MVRelationalTuple<M>> itScan = sweepScanned.query(object, Order.LeftRight);
-
-		MVRelationalTuple<M> scan = null;
-		MVRelationalTuple<M> pred = null;
-		if(itPred.hasNext() && itScan.hasNext()) {
-			scan = itScan.next();
-			pred = itPred.next();
-		} else if(itScan.hasNext() && !sweepPunctuation.isEmpty()) {
-			scan = itScan.next();
-		}
-		if(scan != null) {
-			scan = itScan.next();
-			pred = itPred.next();
-			MVRelationalTuple<M> output = createOutputTuple(scan, pred);
-			sweepScanned.remove(scan);
-			if(pred != null) {
-				sweepPrediction.remove(pred);
-			}
-			transfer(output);
-			punctuationSending(output);
-			sweepPunctuation.purgeElements(output, Order.LeftRight);
-		}
-	}
-	
-	private void punctuationSending(MVRelationalTuple<M> output) {
-		Iterator<MVRelationalTuple<M>> punctuationTuples = sweepPunctuation.punctuationQuery(output);
-		PointInTime punctuation = getMaxPunctuation(punctuationTuples);
-		if(punctuation != null) {
-			sendPunctuation(punctuation);
-		}
-	}
-	
-	private PointInTime getMaxPunctuation(Iterator<MVRelationalTuple<M>> punctuations) {
-		long maxPunctuation = 0;
-		PointInTime punctuation = null; 
-		while (punctuations.hasNext()) {
-			MVRelationalTuple<M> mvRelationalTuple = (MVRelationalTuple<M>) punctuations
-					.next();
-			PointInTime pt = mvRelationalTuple.getMetadata().getStart();
-			if(pt.getMainPoint() > maxPunctuation) {
-				maxPunctuation = pt.getMainPoint();
-				punctuation = pt;
-			}
-		}
-		return punctuation;
+		streamCollector.recieve(object, port);
+		if( streamCollector.isReady())
+			send(streamCollector.getNext());
 	}
 
 	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {

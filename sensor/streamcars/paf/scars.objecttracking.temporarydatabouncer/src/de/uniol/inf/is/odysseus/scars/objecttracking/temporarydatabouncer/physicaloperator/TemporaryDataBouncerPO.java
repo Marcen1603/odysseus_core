@@ -28,7 +28,8 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		this.sendPunctuation(timestamp);
+		// Punctuations nicht weitersenden. Der Temp. Broker muss irgendwann ja daten haben, oder nicht.
+//		this.sendPunctuation(timestamp);
 	}
 
 	@SuppressWarnings("unchecked")
