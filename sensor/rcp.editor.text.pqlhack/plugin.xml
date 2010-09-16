@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.editor.Keyword">
+      <group
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.pqlhack.PQLHackKeywords"
+            colorB="0"
+            colorG="0"
+            colorR="0"
+            name="PLQHack Keywords Group">
+      </group>
+   </extension>
+
+</plugin>
