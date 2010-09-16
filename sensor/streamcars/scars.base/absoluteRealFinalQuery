@@ -1,3 +1,6 @@
+#DEFINE bufferType      Punct
+
+
 #DEFINE brokerSourceName1   streamCarsBroker // QuellenName
 #DEFINE brokerScan1         streamCarsBroker.scan
 #DEFINE brokerListName1     streamCarsBroker.scan:cars // Attributname der Liste der Autos in der Brokerquelle
@@ -30,21 +33,27 @@ LOGICAL PLAN :
 ASSOCIATION-SEL(
     ASSOCIATION-EVAL (
         ASSOCIATION-EVAL (
-            ASSOCIATION-GEN (      
-                 BUFFER(
-                     ${sensorSource},
-                     Normal
+            ASSOCIATION-GEN (     
+                 BUFFER( 
+                    ${sensorSource},
+                    ${bufferType} 
                  ),
                  PREDICTION(
-                    ${sensorSource}, // Timestamp aus Sensor
+                    BUFFER( 
+                        ${sensorSource}, // Timestamp aus Sensor
+                        ${bufferType} 
+                    ),
                     SET-PREDICTION-OR(
                         BUFFER(
                             BROKER(${brokerSourceName1}, // Brokerdaten 
                                     QUEUE( // Zeitgeber für den Broker
-                                           ${sensorSource}
+                                        BUFFER(
+                                           ${sensorSource},
+                                           ${bufferType} 
+                                        )
                                     )
                             ),
-                            Normal 
+                            ${bufferType} 
                         ),
                         ${brokerListName1},
                         ${brokerListName1}:car:posx := ${brokerListName1}:car:posx +
@@ -101,9 +110,10 @@ BROKER(
         ),
         ${assoPedicted},
         TMP-DATA-BOUNCER(
-            BROKER( 
-                ${brokerSourceName2}
-            ),
+            BUFFER(
+	            BROKER( ${brokerSourceName2}),
+	            ${bufferType}
+	        ),
             ${brokerListName2},
             5
         ),
@@ -118,18 +128,25 @@ ASSOCIATION-SEL(
             ASSOCIATION-GEN (
                 BUFFER(
                     ${assoSource1},
-                    Normal
+                    ${bufferType}
                 ),
                 PREDICTION(
-                    ${assoSource1}, // Timestamp aus Sensor
+                    BUFFER(
+                        ${assoSource1}, // Timestamp aus Sensor
+                        ${bufferType}
+                    ),
                     SET-PREDICTION-OR(
                         BUFFER(
                             BROKER(${brokerSourceName2}, // Brokerdaten 
                                     QUEUE( // Zeitgeber für den Broker
-                                           ${assoSource1}
+                                        BUFFER(
+                                           ${assoSource1},
+                                           ${bufferType} 
+                                        )
+                                        
                                     )
                             ),
-                            Normal 
+                            ${bufferType} 
                         ),
                         ${brokerListName2},
                         ${brokerListName2}:car:posx := ${brokerListName2}:car:posx +
@@ -192,4 +209,9 @@ BROKER(
         ${assoScanned},
         5
     )
+);
+
+TESTOP(
+    BROKER(${brokerSourceName1}),
+    Bla
 );

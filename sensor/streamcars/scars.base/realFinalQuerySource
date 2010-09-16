@@ -1,5 +1,5 @@
 // Konstanten
-#DEFINE ip 127.0.0.1:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
+#DEFINE ip 127.0.0.1:5002 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
 
 
 // Quellendefinitionen
@@ -65,7 +65,7 @@ CREATE BROKER streamCarsBroker (
                 ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 0.1 0.0)
                 ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 0.1)
                 ATTRIBUTE(length, FLOAT)
-                ATTRIBUTE(width, FLOAT)
+                ATTRIBUTE(width, FLOAT) 
             )
         )
     )
