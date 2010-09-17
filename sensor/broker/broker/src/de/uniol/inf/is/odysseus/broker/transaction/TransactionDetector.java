@@ -33,16 +33,20 @@ public class TransactionDetector {
 	 * @param brokers a list of brokers
 	 */
 	public void reorganizeTransactions(List<BrokerPO<?>> brokers) {
-		LoggerFactory.getLogger(TransactionDetector.class).debug("Reorganizing transactions");
-		int count = 0;
-		for (BrokerPO<?> broker : brokers) {
-			List<CycleSubscription> results = GraphUtils.findCycles(broker); 			
-			count = results.size();			
-			broker.reorganizeTransactions(results);			
-			this.visitedFollowing = new ArrayList<ILogicalOperator>();
-			this.visitedPreceeding = new ArrayList<ILogicalOperator>();
-		}				
-		LoggerFactory.getLogger(TransactionDetector.class).debug("Found " + count + " cycle(s) in physical plan");
+		// Do nothing here this method was used for the case
+		// when physical plans using the same broker were attached
+		// to each other. This will not be used anymore.
+		
+//		LoggerFactory.getLogger(TransactionDetector.class).debug("Reorganizing transactions");
+//		int count = 0;
+//		for (BrokerPO<?> broker : brokers) {
+//			List<CycleSubscription> results = GraphUtils.findCycles(broker); 			
+//			count = results.size();			
+//			broker.reorganizeTransactions(results);			
+//			this.visitedFollowing = new ArrayList<ILogicalOperator>();
+//			this.visitedPreceeding = new ArrayList<ILogicalOperator>();
+//		}				
+//		LoggerFactory.getLogger(TransactionDetector.class).debug("Found " + count + " cycle(s) in physical plan");
 				
 	}
 	
