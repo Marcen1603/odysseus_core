@@ -54,6 +54,11 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	}
 	
 	public final void setAttribute(int pos, Object value) {
+//		if( this.attributes[pos] != null ) {
+//			if( !this.attributes[pos].getClass().equals(value.getClass()))
+//				throw new IllegalArgumentException("Typ eines Attributes Ã¤nderte sich! Von " + 
+//						this.attributes[pos].getClass().getName() + " zu " + value.getClass().getName() );
+//		}
 		this.attributes[pos] = value;
 		//calcSize();
 	}
@@ -209,7 +214,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		if (attObject instanceof Double) return Double.SIZE/8;
 		if (attObject instanceof Long) return Long.SIZE/8;
 		if (attObject instanceof String) return ((String)attObject).length()*2 // Unicode!
-												+Integer.SIZE/8; // Für die Längeninformation (evtl. anders machen?)
+												+Integer.SIZE/8; // Fï¿½r die Lï¿½ngeninformation (evtl. anders machen?)
 		if (attObject instanceof RelationalTuple<?>) return ((RelationalTuple<?>)attObject).memSize(true);
 		
 		throw new IllegalArgumentException("Illegal Relation Attribute Type "+attObject);		
