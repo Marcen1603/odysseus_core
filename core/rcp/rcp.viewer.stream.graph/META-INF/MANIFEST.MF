@@ -17,9 +17,3 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
-Bundle-ClassPath: src/jcommon-1.0.16.jar,
- src/jfreechart-1.0.13-experimental.jar,
- src/jfreechart-1.0.13-swt.jar,
- src/jfreechart-1.0.13.jar,
- src/swtgraphics2d.jar,
- .

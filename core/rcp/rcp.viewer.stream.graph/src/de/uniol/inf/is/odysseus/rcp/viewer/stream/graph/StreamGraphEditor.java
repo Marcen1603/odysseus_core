@@ -42,7 +42,7 @@ public class StreamGraphEditor implements IStreamEditorType {
 						.println("Warning: StreamTable is only for relational tuple!");
 				return;
 			}
-			System.out.println(element);
+			//System.out.println(element);
 			@SuppressWarnings("unchecked")
 			final RelationalTuple<? extends ITimeInterval> r = (RelationalTuple<? extends ITimeInterval>) element;
 
