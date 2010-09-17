@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.util.CovarianceMapper;
+import de.uniol.inf.is.odysseus.scars.util.TypeCaster;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class LinearPredictionFunction<M extends IProbability> implements IPredictionFunction<M>{
@@ -154,7 +155,9 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 		for(int depth=0; depth<path.length-1; depth++) {
 			currentTuple = ((MVRelationalTuple<?>) currentTuple).<MVRelationalTuple<?>>getAttribute(path[depth]);
 		}
-		currentTuple.setAttribute(path[path.length-1], value);
+		Object oldValue = currentTuple.getAttribute(path[path.length - 1]);
+		Object newValue = TypeCaster.cast(value, oldValue);
+		currentTuple.setAttribute(path[path.length-1], newValue);
 	}
 	
 	@Override
