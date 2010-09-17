@@ -29,6 +29,12 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	private String newObjListPath;
 	StreamCollector streamCollector;
 	
+	private SchemaHelper helper;
+	private SchemaHelper helper2;
+	private SchemaIndexPath timePathFromScannedData;
+	private SchemaIndexPath carsFromscannedData;
+	private SchemaIndexPath carsFromPredictedData;
+	
 	public HypothesisGenerationPO() {
 		super();
 	}
@@ -43,6 +49,12 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		streamCollector = new StreamCollector(getSubscribedToSource().size());
+		helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
+		helper2 = new SchemaHelper(getSubscribedToSource(1).getSchema());
+		
+		timePathFromScannedData = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
+		carsFromscannedData = helper.getSchemaIndexPath(this.newObjListPath);
+		carsFromPredictedData = helper2.getSchemaIndexPath(this.oldObjListPath);
 	}
 
 	@Override
@@ -92,25 +104,19 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	}
 
 	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {
-		SchemaHelper helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
-		SchemaHelper helper2 = new SchemaHelper(getSubscribedToSource(1).getSchema());
-
 		Object[] association = new Object[3];
 
 		// get timestamp path from scanned data
-		SchemaIndexPath path = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
-		association[0] = path.toTupleIndexPath(scannedObject).getTupleObject();
+		association[0] = timePathFromScannedData.toTupleIndexPath(scannedObject).getTupleObject();
 
 		// get scanned objects
-		path = helper.getSchemaIndexPath(this.newObjListPath);
-		association[1] = path.toTupleIndexPath(scannedObject).getTupleObject();
+		association[1] = carsFromscannedData.toTupleIndexPath(scannedObject).getTupleObject();
 
 		// get predicted objects
-		path = helper2.getSchemaIndexPath(this.oldObjListPath);
 		if(predictedObject == null) {
 			association[2] = new MVRelationalTuple<M>(0);
 		} else {
-			association[2] =  path.toTupleIndexPath(predictedObject).getTupleObject();
+			association[2] =  carsFromPredictedData.toTupleIndexPath(predictedObject).getTupleObject();
 		}
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);

@@ -53,10 +53,7 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
 
   @Override
   public void processPunctuation(PointInTime timestamp, int port) {
-    if (!havingData) {
-      this.sendPunctuation(timestamp);
-      havingData = false;
-    }
+	  this.sendPunctuation(timestamp);
   }
   
   

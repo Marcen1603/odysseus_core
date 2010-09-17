@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -10,7 +11,6 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCrea
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 
 /**
  * @author dtwumasi
@@ -20,8 +20,6 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 public class FilterGainPO<M extends IProbability & IConnectionContainer & IGain> extends AbstractFilterPO<M> {
 
 	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
-	private SchemaHelper helper;
-	
 	public FilterGainPO() {
 		super();
 	}
@@ -34,13 +32,15 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer & IGain>
 	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
 		metaDataCreationFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
 	}
+	
+	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+	}
 
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
-		if( helper == null ) 
-			helper = new SchemaHelper(getOutputSchema());
-		
 		// traverse connection list and filter
 		for (Connection connected : object.getMetadata().getConnectionList()) {
 			compute(connected, object);

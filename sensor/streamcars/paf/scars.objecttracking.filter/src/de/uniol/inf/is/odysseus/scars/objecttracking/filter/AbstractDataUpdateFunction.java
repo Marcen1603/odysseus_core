@@ -52,8 +52,6 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 
 		ArrayList<Double> values = new ArrayList<Double>();
 
-		TupleHelper tHelper = new TupleHelper(tuple);
-
 		for (TupleInfo info : new TupleIterator(tuple, tupleIndexPath)) {
 			if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
 				values.add(new Double(info.tupleObject.toString()));

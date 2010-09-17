@@ -168,6 +168,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		
 		// PORT: 1, get matched objects
 		ConnectionList matchedObjects = matchObjects(object, object.getMetadata().getConnectionList());
 		if( matchedObjects.size() > 0 ) {

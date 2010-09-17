@@ -12,8 +12,6 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer> extends
     AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-  protected boolean havingData = false;
-
   // path to new and old objects
   private String oldObjListPath;
   private String newObjListPath;
@@ -30,13 +28,11 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	  this.setNewObjListPath(new String(copy.getNewObjListPath()));
 	  this.setOldObjListPath(new String(copy.getOldObjListPath()));
 	  this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
-	  this.havingData= copy.havingData;
   }
   
   
   
   protected void process_next(MVRelationalTuple<M> object, int port) {
-    havingData = true;
     object = computeAll(object);
     // transfer to broker
     transfer(object);
