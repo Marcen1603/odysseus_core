@@ -62,7 +62,25 @@ public class SDFAttributeListExtended extends SDFAttributeList {
 		}
 		return copy;
 	}
-
+	
+	/**
+	 * recursively sets the source name for each attribute to
+	 * newSourceName
+	 * @param newSourceName
+	 */
+	public void redefineSourceName(String newSourceName){
+		for(int i = 0; i<this.getAttributeCount(); i++){
+			this.redAttrSourceName(this.getAttribute(i), newSourceName);
+		}
+	}
+	
+	private void redAttrSourceName(SDFAttribute attr, String newSourceName){
+		attr.setSourceName(newSourceName);
+		for(SDFAttribute subAttr: attr.getSubattributes()){
+			this.redAttrSourceName(subAttr, newSourceName);
+		}
+	}
+	
 	public SDFAttributeListExtended(SDFAttribute[] attributes1) {
 		super(attributes1);
 		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();

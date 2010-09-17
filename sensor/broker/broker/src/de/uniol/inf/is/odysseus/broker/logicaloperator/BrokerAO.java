@@ -70,18 +70,22 @@ public class BrokerAO extends AbstractLogicalOperator{
 	 */
 	public void setSchema(SDFAttributeList outputSchema) {		
 		//create alias schema
-		SDFAttributeListExtended aliasSchema = new SDFAttributeListExtended();
-		for(SDFAttribute attribute : outputSchema){
-			SDFAttribute newAttribute = attribute.clone();
-			newAttribute.setSourceName(this.identifier);
-			aliasSchema.add(newAttribute);
-		}
+		SDFAttributeListExtended aliasSchema = new SDFAttributeListExtended(outputSchema);
+		aliasSchema.redefineSourceName(this.getIdentifier());
 		
-		if(outputSchema instanceof SDFAttributeListExtended){
-			for(SDFAttributeListMetadataTypes p : SDFAttributeListMetadataTypes.values()){
-				aliasSchema.setMetadata(p, ((SDFAttributeListExtended)outputSchema).getMetadata(p));
-			}
-		}
+		// old code for flat schemas
+//		SDFAttributeListExtended aliasSchema = new SDFAttributeListExtended();
+//		for(SDFAttribute attribute : outputSchema){
+//			SDFAttribute newAttribute = attribute.clone();
+//			newAttribute.setSourceName(this.identifier);
+//			aliasSchema.add(newAttribute);
+//		}
+//		
+//		if(outputSchema instanceof SDFAttributeListExtended){
+//			for(SDFAttributeListMetadataTypes p : SDFAttributeListMetadataTypes.values()){
+//				aliasSchema.setMetadata(p, ((SDFAttributeListExtended)outputSchema).getMetadata(p));
+//			}
+//		}
 		
 		this.schema = aliasSchema;		
 	}
