@@ -119,7 +119,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 				associationObjList.add((MVRelationalTuple<M>)obj);
 			}
 		}
-
+		// Filter
 		if(obj1 instanceof MVRelationalTuple ) {
 			MVRelationalTuple<M> filteringMainObject = (MVRelationalTuple<M>)obj1;
 			resultTuple = new MVRelationalTuple<M>(filteringMainObject);
@@ -128,7 +128,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 				filteringObjList.add((MVRelationalTuple<M>)obj);
 			}
 		}
-
+		// Temp. Broker
 		if(obj2 instanceof MVRelationalTuple) {
 			MVRelationalTuple<M> brokerMainObject = (MVRelationalTuple<M>)obj2;
 			resultTuple = new MVRelationalTuple<M>(brokerMainObject);

@@ -57,7 +57,7 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(transferCarListArrayList.size());
 		int counter = 0;
 		for (MVRelationalTuple<M> mvRelationalTuple : transferCarListArrayList) {
-			tuples.addAttributeValue(counter++, mvRelationalTuple);
+			tuples.setAttribute(counter++, mvRelationalTuple);
 		}
 
 		SchemaIndexPath schemaPath = sh.getSchemaIndexPath(this.objListPath);
