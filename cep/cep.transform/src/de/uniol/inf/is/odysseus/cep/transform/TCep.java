@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational.RelationalCre
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
 import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TCep extends AbstractTransformationRule<CepAO> {
@@ -64,6 +66,11 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 	@Override
 	public String getName() {
 		return "CepAO --> CepOperator (Relational)";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 }
 
