@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
@@ -137,7 +138,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	protected void process_open() {
+	protected synchronized void process_open() throws OpenFailedException{
 		getGroupingHelper().init();
 		g = new G();
 	}

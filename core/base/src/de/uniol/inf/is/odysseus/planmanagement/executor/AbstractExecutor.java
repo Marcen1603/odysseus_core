@@ -414,7 +414,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		getLogger().info("Start Scheduler.");
 		getLogger().debug(
 				"#PartialPlans: " + this.executionPlan.getPartialPlans().size()
-						+ " #Roots: " + this.executionPlan.getRoots().size());
+						+ " #Roots: " + this.executionPlan.getRoots());
 		try {
 			this.executionPlan.open();
 

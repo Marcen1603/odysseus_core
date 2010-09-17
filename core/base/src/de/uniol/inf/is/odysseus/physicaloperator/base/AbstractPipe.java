@@ -24,7 +24,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			AbstractPipe.this.delegatedProcess(object, port, exclusive);
 		}
 		
-		
+		@Override
+		protected void process_open() throws OpenFailedException {
+			AbstractPipe.this.delegatedProcessOpen();			
+		}
 
 		@Override
 		protected void setInputPortCount(int ports) {
@@ -66,6 +69,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	abstract protected void process_next(R object, int port);
 
 	// private boolean[] inputExclusive;
+
+	public void delegatedProcessOpen() throws OpenFailedException {
+		process_open();
+	}
 
 	public AbstractPipe() {
 	};
@@ -157,7 +164,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	final synchronized public void open(IPhysicalOperator sink, int sourcePort) throws OpenFailedException {
 		super.open(sink, sourcePort);
-		open();
+		this.delegateSink.open(this);
 	}
 	
 	public void open() throws OpenFailedException{

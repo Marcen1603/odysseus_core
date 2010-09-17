@@ -30,7 +30,6 @@ public class FileSink extends AbstractSink<Object> {
 	
 	@Override
 	protected void process_open() throws OpenFailedException {
-		super.process_open();
 		try {
 			out = new BufferedWriter(new FileWriter(filename));
 		} catch (IOException e) {

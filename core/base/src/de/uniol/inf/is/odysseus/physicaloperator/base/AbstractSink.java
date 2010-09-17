@@ -150,7 +150,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		// Empty Default Implementation
 	}
 
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException{
 		// Empty Default Implementation
 	}
 
