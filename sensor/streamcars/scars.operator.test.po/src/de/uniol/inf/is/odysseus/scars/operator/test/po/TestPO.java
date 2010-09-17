@@ -27,10 +27,10 @@ public class TestPO<T> extends AbstractPipe<T, T>{
 	}
 	
 	public void process_open(){
-		ServiceTracker tracker = new ServiceTracker(Activator.bc, ISystemMonitorFactory.class.getName(), null);
-		tracker.open();
-		this.monitor = ((ISystemMonitorFactory)tracker.getService()).newSystemMonitor(); 
-		this.monitor.initialize();
+//		ServiceTracker tracker = new ServiceTracker(Activator.bc, ISystemMonitorFactory.class.getName(), null);
+//		tracker.open();
+//		this.monitor = ((ISystemMonitorFactory)tracker.getService()).newSystemMonitor(); 
+//		this.monitor.initialize();
 	}
 
 	@Override
@@ -40,9 +40,9 @@ public class TestPO<T> extends AbstractPipe<T, T>{
 	}
 	
 	public void process_done(){
-		LoggerHelper.getInstance(this.name).info("AvgMem: " + this.monitor.getAverageMemoryUsage());
-		LoggerHelper.getInstance(this.name).info("MaxMem: " + this.monitor.getMaxMemoryUsage());
-		this.monitor.stop();
+//		LoggerHelper.getInstance(this.name).info("AvgMem: " + this.monitor.getAverageMemoryUsage());
+//		LoggerHelper.getInstance(this.name).info("MaxMem: " + this.monitor.getMaxMemoryUsage());
+//		this.monitor.stop();
 	}
 
 	@Override
