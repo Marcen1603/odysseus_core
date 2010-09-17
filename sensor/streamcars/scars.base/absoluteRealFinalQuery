@@ -151,10 +151,10 @@ ASSOCIATION-SEL(
                         ${brokerListName2},
                         ${brokerListName2}:car:posx := ${brokerListName2}:car:posx +
                             (cos(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
-                            (${brokerScan2}:timestamp - ${sensorScan}:timestamp)) ;
+                            (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
                         ${brokerListName2}:car:posy := ${brokerListName2}:car:posy +
                             (sin(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
-                            (${brokerScan2}:timestamp - ${sensorScan}:timestamp)) ;
+                            (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
                         ${brokerListName2}:car:posz := ${brokerListName2}:car:posz ;
                         WHERE ${brokerListName2}:car:id >= 0 ; 
                     ),
