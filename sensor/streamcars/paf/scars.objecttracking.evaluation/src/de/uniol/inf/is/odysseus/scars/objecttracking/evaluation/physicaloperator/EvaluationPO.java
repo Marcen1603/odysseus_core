@@ -47,6 +47,8 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	private SchemaHelper shAssociationInput;
 	private SchemaHelper shFilteringInput;
 	private SchemaHelper shSecondBrokerInput;
+	
+	private SchemaHelper helper;
 
 	public EvaluationPO() {
 		super();
@@ -74,6 +76,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		shSecondBrokerInput = new SchemaHelper(getSubscribedToSource(2).getSchema());
 
 		streamCollector = new StreamCollector(getSubscribedToSource().size());
+		helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
 	}
 
 	@Override
@@ -99,7 +102,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	@SuppressWarnings("unchecked")
 	private void send(List<Object> next) {
 		Object obj0 = next.get(0); // Assoziation
-		Object obj1 = next.get(1); // Filter
+		Object obj1 = next.get(1); // Filter 
 		Object obj2 = next.get(2); // Temp. Broker
 
 		ArrayList<MVRelationalTuple<M>> combinedListChildTmp = new ArrayList<MVRelationalTuple<M>>();
@@ -141,41 +144,47 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		// Do the evaluation
 		double val = 0;
 
+		if(brokerObjList != null) {
+			for(MVRelationalTuple<M> tuple : brokerObjList) {
+				if( !isTupleInList(tuple, combinedListChildTmp)) {
+					val = 0;
+					double[][] cov = tuple.getMetadata().getCovariance();
+					for(int i = 0; i < cov.length; i++) {
+						val += cov[i][i];
+					}
+					if(val < this.threshold) {
+						combinedListChildTmp.add(tuple);
+					}
+				}
+			}
+		}
+
 		if(associationObjList != null) {
 			for(MVRelationalTuple<M> tuple : associationObjList) {
-				val = 0;
-				double[][] cov = tuple.getMetadata().getCovariance();
-				for(int i = 0; i < cov.length; i++) {
-					val += cov[i][i];
-				}
-				if(val < this.threshold) {
-					combinedListChildTmp.add(tuple);
+				if( !isTupleInList(tuple, combinedListChildTmp)) {
+					val = 0;
+					double[][] cov = tuple.getMetadata().getCovariance();
+					for(int i = 0; i < cov.length; i++) {
+						val += cov[i][i];
+					}
+					if(val < this.threshold) {
+						combinedListChildTmp.add(tuple);
+					}
 				}
 			}
 		}
 
 		if(filteringObjList != null) {
 			for(MVRelationalTuple<M> tuple : filteringObjList) {
-				val = 0;
-				double[][] cov = tuple.getMetadata().getCovariance();
-				for(int i = 0; i < cov.length; i++) {
-					val += cov[i][i];
-				}
-				if(val < this.threshold) {
-					combinedListChildTmp.add(tuple);
-				}
-			}
-		}
-
-		if(brokerObjList != null) {
-			for(MVRelationalTuple<M> tuple : brokerObjList) {
-				val = 0;
-				double[][] cov = tuple.getMetadata().getCovariance();
-				for(int i = 0; i < cov.length; i++) {
-					val += cov[i][i];
-				}
-				if(val < this.threshold) {
-					combinedListChildTmp.add(tuple);
+				if( !isTupleInList(tuple, combinedListChildTmp)) {
+					val = 0;
+					double[][] cov = tuple.getMetadata().getCovariance();
+					for(int i = 0; i < cov.length; i++) {
+						val += cov[i][i];
+					}
+					if(val < this.threshold) {
+						combinedListChildTmp.add(tuple);
+					}
 				}
 			}
 		}
@@ -191,8 +200,6 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	//	tuplePath.setTupleObject(new MVRelationalTuple<IProbability>(tuples));
 		
 		
-		SchemaHelper helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
-		
 		Object[] association = new Object[2];
 
 		// get timestamp path from scanned data
@@ -200,7 +207,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		association[0] = path.toTupleIndexPath(resultTuple).getTupleObject();
 
 		// get scanned objects
-		association[1] = new MVRelationalTuple<IProbability>(tuples);
+		association[1] = new MVRelationalTuple<M>(tuples);
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setMetadata(resultTuple.getMetadata());
@@ -219,13 +226,20 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 //		brokerTime = -1;
 	}
 	
+	private boolean isTupleInList( MVRelationalTuple<M> tuple, List<MVRelationalTuple<M>> list ) {
+		for( MVRelationalTuple<M> t : list ) {
+			if(tuple.getAttribute(1).equals(t.getAttribute(1))) // ID-Vergleich
+				return true;
+		}
+		return false;
+	}
 
 	/*
 	 * Port 0: Objekte aus der Assoziation
 	 * Port 1: Objekte aus der Filterung
 	 * Port 2: Objekte aus dem temporaeren Broker
 	 */
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		streamCollector.recieve(object, port);
