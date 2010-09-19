@@ -184,10 +184,18 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		for (int i = 0; i < scannedNotMatchedObjects.size(); i++) {
 			scannedTuple.setAttribute(i, scannedNotMatchedObjects.get(i));
 		}
-		MVRelationalTuple<M> scannedNotMatchedTuple = new MVRelationalTuple<M>(object);
-		TupleIndexPath scannedObjectList = this.scannedObjectListPath.toTupleIndexPath(scannedNotMatchedTuple);
-		scannedObjectList.setTupleObject(scannedTuple);
-		transfer(scannedNotMatchedTuple, 0); // immer senden, auch wenn leere liste
+		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		base.setMetadata((M)object.getMetadata().clone());
+		Object[] objArray = new Object[2];
+		objArray[0] = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName()).toTupleIndexPath(object).getTupleObject();
+		objArray[1] = scannedTuple;
+		base.setAttribute(0, new MVRelationalTuple<M>(objArray));
+		transfer(base, 0);
+		
+//		MVRelationalTuple<M> scannedNotMatchedTuple = new MVRelationalTuple<M>(object); // Timo: Wieso wird das Ursprungsobjekt geklont?
+//		TupleIndexPath scannedObjectTuplePath = this.scannedObjectListPath.toTupleIndexPath(scannedNotMatchedTuple);
+//		scannedObjectTuplePath.setTupleObject(scannedTuple);
+//		transfer(scannedNotMatchedTuple, 0); // immer senden, auch wenn leere liste
 
 		// PORT: 2, get predicted not matching objects
 		List<Object> predictedNotMatchedObjects = getDifferenceSet(object, this.predictedObjectListPath.toTupleIndexPath(object), matchedObjects);
