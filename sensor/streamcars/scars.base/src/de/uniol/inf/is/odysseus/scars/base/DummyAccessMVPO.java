@@ -6,7 +6,6 @@ import java.util.Random;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -29,8 +28,6 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 	private DummyJDVEData<M> data;
 	private SDFAttributeList outputSchema;
 	protected static int CARCOUNT = 5;
-	private int limit = 5000;
-	private int counter = 0;
 	private MVRelationalTuple<M> buffer = null;
 
 	private long lastTime = 0;
@@ -90,10 +87,7 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 
 	@Override
 	public boolean isDone() {
-		if(counter < limit){
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -104,7 +98,6 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
-		++this.counter;
 		Class<M> clazz = (Class<M>) MetadataRegistry.getMetadataType(toStringSet(ITimeInterval.class, 
 				IPredictionFunctionKey.class, 
 				ILatency.class, 
@@ -117,9 +110,6 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 		metadataCreator.updateMetadata((MVRelationalTuple<StreamCarsMetaData<Object>>)this.buffer);
 		transfer(this.buffer);
 		this.buffer = null;
-		if(this.counter % 5 == 0){
-			sendPunctuation(new PointInTime(data.getLastTimestamp()));
-		}
 		lastTime = System.currentTimeMillis();
 
 	}

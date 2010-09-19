@@ -13,7 +13,6 @@ import java.util.HashSet;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -118,7 +117,7 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 			metadataCreator.updateMetadata((MVRelationalTuple<StreamCarsMetaData<Object>>) this.buffer);
 
 			transfer(buffer);
-			sendPunctuation(new PointInTime(data.getLastTimestamp()));
+//			sendPunctuation(new PointInTime(data.getLastTimestamp()));
 		}
 		buffer = null;
 	}
