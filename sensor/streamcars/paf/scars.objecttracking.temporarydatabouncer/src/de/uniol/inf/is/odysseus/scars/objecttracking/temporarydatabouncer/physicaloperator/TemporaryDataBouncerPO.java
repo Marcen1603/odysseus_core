@@ -34,7 +34,9 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVRelationalTuple<M> obj, int port) {
+		MVRelationalTuple<M> object = obj.clone();
+		
 		SchemaHelper sh = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		// Get the list of cars
 		MVRelationalTuple<M> carListTuple = (MVRelationalTuple<M>) sh.getSchemaIndexPath(this.objListPath).toTupleIndexPath(object).getTupleObject();
