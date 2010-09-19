@@ -68,7 +68,10 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		
 		
 		double[] result;
-		
+		if( gain == null ) {
+			System.err.println("Gain is null!");
+			return;
+		}
 		RealMatrix measurementOldMatrix = new RealMatrixImpl(measurementOld);
 		RealMatrix measurementNewMatrix = new RealMatrixImpl(measurementNew);
 		RealMatrix gainMatrix = new RealMatrixImpl(gain);	
