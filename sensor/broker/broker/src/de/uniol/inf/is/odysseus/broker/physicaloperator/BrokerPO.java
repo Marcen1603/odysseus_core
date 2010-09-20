@@ -174,6 +174,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 
 	}
 
+	boolean send = false;
 	private synchronized void generateOutput() {
 		// System.out.println("Thread start: " +
 		// Thread.currentThread().getId());
@@ -266,8 +267,9 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			// The punctuation must be send to all following operators, I think.
 
 			else {
-				if (this.min != null) {
+				if (this.min != null && send == false) {
 					this.sendPunctuation(new PointInTime(this.min));
+					send = true;
 				}
 
 				// if min is null, you cannot send a punctuation, because
