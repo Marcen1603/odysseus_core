@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking.
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.ObjectTrackingNestPO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TNestAORule extends AbstractTransformationRule<ObjectTrackingNestAO> {
@@ -47,6 +49,10 @@ public class TNestAORule extends AbstractTransformationRule<ObjectTrackingNestAO
 	@Override
 	public String getName() {
 		return "ObjectTrackingNestAO -> ObjectTrackingNestPO";
+	}
+	
+	public IRuleFlowGroup getRuleFlowGroup() {
+	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }
