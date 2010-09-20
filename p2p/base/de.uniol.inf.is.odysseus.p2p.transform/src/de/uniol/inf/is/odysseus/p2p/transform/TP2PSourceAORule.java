@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSourceAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PInputStreamAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IdentityTransformation;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
@@ -38,4 +40,7 @@ public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
 		return "P2PSourceAO -> P2PInputStreamAccessPO";
 	}
 
+	public IRuleFlowGroup getRuleFlowGroup() {
+	    return TransformRuleFlowGroup.TRANSFORMATION;
+	}
 }
