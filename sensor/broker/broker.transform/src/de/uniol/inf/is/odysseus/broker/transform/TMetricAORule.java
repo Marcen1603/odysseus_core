@@ -6,8 +6,10 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasurePO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TMetricAORule extends AbstractTransformationRule<MetricMeasureAO> {
@@ -38,6 +40,10 @@ public class TMetricAORule extends AbstractTransformationRule<MetricMeasureAO> {
 	@Override
 	public String getName() {
 		return "MetricMeasureAO -> MetricMeasurePO";
+	}
+
+	public IRuleFlowGroup getRuleFlowGroup() {
+	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

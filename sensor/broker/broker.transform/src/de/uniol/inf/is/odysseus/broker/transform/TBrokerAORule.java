@@ -7,8 +7,10 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerAORule extends AbstractTransformationRule<BrokerAO> {
@@ -43,6 +45,10 @@ public class TBrokerAORule extends AbstractTransformationRule<BrokerAO> {
 	@Override
 	public String getName() {
 		return "BrokerAO -> BrokerPO";
+	}
+
+	public IRuleFlowGroup getRuleFlowGroup() {
+	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

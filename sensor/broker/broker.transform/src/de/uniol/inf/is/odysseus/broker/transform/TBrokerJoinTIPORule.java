@@ -13,8 +13,10 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerJoinTIPORule extends AbstractTransformationRule<JoinAO> {
@@ -58,6 +60,10 @@ public class TBrokerJoinTIPORule extends AbstractTransformationRule<JoinAO> {
 	@Override
 	public String getName() {
 		return "JoinAO -> JoinTIPO (Broker)";
+	}
+
+	public IRuleFlowGroup getRuleFlowGroup() {
+	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }

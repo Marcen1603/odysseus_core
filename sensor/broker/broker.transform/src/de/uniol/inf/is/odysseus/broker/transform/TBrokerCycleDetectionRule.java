@@ -4,8 +4,10 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
 import de.uniol.inf.is.odysseus.broker.transaction.TransactionDetector;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerCycleDetectionRule extends AbstractTransformationRule<BrokerPO<?>> {
@@ -32,5 +34,10 @@ public class TBrokerCycleDetectionRule extends AbstractTransformationRule<Broker
 	public String getName() {
 		return "Detecting Cycles Rule";
 	}
+	
+	public IRuleFlowGroup getRuleFlowGroup() {
+	    return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+
 
 }

@@ -20,12 +20,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		TransformationInventory.getInstance().addRule(new TBrokerAccessAORule(), TransformRuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TBrokerAOExistsRule(), TransformRuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TBrokerAORule(), TransformRuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TBrokerCycleDetectionRule(), TransformRuleFlowGroup.CLEANUP);
-		TransformationInventory.getInstance().addRule(new TBrokerJoinTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TMetricAORule(), TransformRuleFlowGroup.TRANSFORMATION);
 	}
 
 	/*

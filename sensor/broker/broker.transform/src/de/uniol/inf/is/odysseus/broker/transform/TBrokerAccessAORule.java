@@ -11,8 +11,10 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
@@ -64,6 +66,10 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 	@Override
 	public String getName() {
 		return "AccessAO (RelationalByteBuffer) -> BrokerAccessPO";
+	}
+
+	public IRuleFlowGroup getRuleFlowGroup() {
+	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }
