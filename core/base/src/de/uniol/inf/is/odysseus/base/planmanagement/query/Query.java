@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -87,9 +86,9 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	private ILogicalOperator logicalPlan;
 
 	/**
-	 * Indicates if this query is started.
+	 * Indicates if this query is active.
 	 */
-	private boolean started;
+	private boolean active;
 
 	/**
 	 * List of objects which respond to reoptimize requests.
@@ -175,7 +174,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	private Query(String parserID, ILogicalOperator logicalPlan,
 			List<IPhysicalOperator> physicalPlan, QueryBuildParameter parameters) {
 		this.id = idCounter++;
-		this.started = true;
+		this.active = true;
 		this.parameters = parameters;
 		this.parserID = parserID;
 		this.logicalPlan = logicalPlan;
@@ -201,7 +200,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	public String getDebugInfo() {
 		String info = "";
 		info += "ID:" + this.id;
-		info += "Started:" + this.started;
+		info += "Started:" + this.active;
 		info += "CompileLanguage:" + this.parserID;
 		info += "LogicalAlgebra:" + AppEnv.LINE_SEPARATOR + this.logicalPlan;
 		info += "PhysicalAlgebra:" + AppEnv.LINE_SEPARATOR + this.roots;
@@ -438,7 +437,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 //				}
 //			}
 //		}
-		this.started = true;
+		this.active = true;
 	}
 
 	/*
@@ -456,7 +455,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 //				}
 //			}
 //		}
-		this.started = false;
+		this.active = false;
 	}
 
 	/*
@@ -607,8 +606,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 * de.uniol.inf.is.odysseus.base.planmanagement.IOperatorControl#îsRunning()
 	 */
 	@Override
-	public boolean isRunning() {
-		return this.started;
+	public boolean isActive() {
+		return this.active;
 	}
 
 	@Override

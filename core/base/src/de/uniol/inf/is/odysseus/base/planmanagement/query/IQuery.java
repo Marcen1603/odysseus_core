@@ -36,7 +36,7 @@ public interface IQuery extends
 	 * 
 	 * @return TRUE: This query will be scheduled. FALSE: else
 	 */
-	public boolean isRunning();
+	public boolean isActive();
 
 	/**
 	 * Returns the priority with which this query should be scheduled.

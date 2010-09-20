@@ -71,7 +71,7 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 		statusColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText( ((IQuery)cell.getElement()).isRunning() == true ? "Running" : "Stopped");
+				cell.setText( ((IQuery)cell.getElement()).isActive() == true ? "Active" : "Inactive");
 			}
 		});
 		tableColumnLayout.setColumnData(statusColumn.getColumn(), new ColumnWeightData(10,50,true));

@@ -754,7 +754,7 @@ public class OptimizationTestConsole implements
 			System.out
 					.println("Current registered queries (ID | STARTED | PARSERID):");
 			for (IQuery query : this.executor.getSealedPlan().getQueries()) {
-				System.out.println(query.getID() + " | " + query.isRunning()
+				System.out.println(query.getID() + " | " + query.isActive()
 						+ " | " + query.getParserId());
 			}
 		} catch (PlanManagementException e) {

@@ -65,7 +65,7 @@ public class StandardExecutor extends AbstractExecutor {
 		}
 		return _logger;
 	}
-	
+
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
 	 * constructor and bind-methods). This method can be used to configure this
@@ -74,8 +74,11 @@ public class StandardExecutor extends AbstractExecutor {
 	public void activate() {
 		// store buffer placement strategy in the configuration
 		Iterator<String> iter;
-		if (getRegisteredBufferPlacementStrategies() != null && (iter = getRegisteredBufferPlacementStrategies().iterator()).hasNext()) {
-			this.configuration.set(new SettingBufferPlacementStrategy(iter.next()));
+		if (getRegisteredBufferPlacementStrategies() != null
+				&& (iter = getRegisteredBufferPlacementStrategies().iterator())
+						.hasNext()) {
+			this.configuration.set(new SettingBufferPlacementStrategy(iter
+					.next()));
 		} else {
 			this.configuration.set(new SettingBufferPlacementStrategy(null));
 		}
@@ -109,7 +112,8 @@ public class StandardExecutor extends AbstractExecutor {
 			infos += "not set. " + AppEnv.LINE_SEPARATOR + e.getMessage();
 		}
 
-		infos += AppEnv.LINE_SEPARATOR + AppEnv.LINE_SEPARATOR + "SchedulerManager: ";
+		infos += AppEnv.LINE_SEPARATOR + AppEnv.LINE_SEPARATOR
+				+ "SchedulerManager: ";
 		try {
 			infos += AppEnv.LINE_SEPARATOR + schedulerManager().getInfos();
 		} catch (Exception e) {
@@ -177,7 +181,10 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private List<IQuery> createQueries(String queryStr, String parserID, User user, QueryBuildParameter parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
+	private List<IQuery> createQueries(String queryStr, String parserID,
+			User user, QueryBuildParameter parameters)
+			throws NoCompilerLoadedException, QueryParseException,
+			OpenFailedException {
 		getLogger().debug("Translate Queries.");
 		// translate query and build logical plans
 		List<IQuery> queries = compiler().translateQuery(queryStr, parserID);
@@ -206,7 +213,8 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private void addQueries(List<IQuery> newQueries) throws NoOptimizerLoadedException, QueryOptimizationException {
+	private void addQueries(List<IQuery> newQueries)
+			throws NoOptimizerLoadedException, QueryOptimizationException {
 		getLogger().debug("Optimize Queries. Count:" + newQueries.size());
 		if (newQueries.isEmpty()) {
 			return;
@@ -216,7 +224,8 @@ public class StandardExecutor extends AbstractExecutor {
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			setExecutionPlan(optimizer().preQueryAddOptimization(this, newQueries, ParameterDoRestruct.TRUE));
+			setExecutionPlan(optimizer().preQueryAddOptimization(this,
+					newQueries, ParameterDoRestruct.TRUE));
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
@@ -225,7 +234,8 @@ public class StandardExecutor extends AbstractExecutor {
 		// store optimized queries
 		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, optimizedQuery));
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 		}
 
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
@@ -249,7 +259,9 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private void addQueries(List<IQuery> newQueries, boolean doRestruct, Set<String> rulesToUse) throws NoOptimizerLoadedException, QueryOptimizationException {
+	private void addQueries(List<IQuery> newQueries, boolean doRestruct,
+			Set<String> rulesToUse) throws NoOptimizerLoadedException,
+			QueryOptimizationException {
 		getLogger().debug("Optimize Queries. Count:" + newQueries.size());
 		if (newQueries.isEmpty()) {
 			return;
@@ -259,18 +271,24 @@ public class StandardExecutor extends AbstractExecutor {
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			setExecutionPlan(optimizer().preQueryAddOptimization(this, newQueries, rulesToUse, doRestruct ? ParameterDoRestruct.TRUE : ParameterDoRestruct.FALSE));
+			setExecutionPlan(optimizer().preQueryAddOptimization(
+					this,
+					newQueries,
+					rulesToUse,
+					doRestruct ? ParameterDoRestruct.TRUE
+							: ParameterDoRestruct.FALSE));
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
 		}
 
-		getLogger().info("Before adding these new Queries "+newQueries);
-		
+		getLogger().info("Before adding these new Queries " + newQueries);
+
 		// store optimized queries
 		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, optimizedQuery));
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 		}
 
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
@@ -291,7 +309,8 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private void addQueries(List<IQuery> newQueries, boolean doRestruct) throws NoOptimizerLoadedException, QueryOptimizationException {
+	private void addQueries(List<IQuery> newQueries, boolean doRestruct)
+			throws NoOptimizerLoadedException, QueryOptimizationException {
 		getLogger().debug("Optimize Queries. Count:" + newQueries.size());
 		if (newQueries.isEmpty()) {
 			return;
@@ -301,7 +320,11 @@ public class StandardExecutor extends AbstractExecutor {
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			setExecutionPlan(optimizer().preQueryAddOptimization(this, newQueries, doRestruct ? ParameterDoRestruct.TRUE : ParameterDoRestruct.FALSE));
+			setExecutionPlan(optimizer().preQueryAddOptimization(
+					this,
+					newQueries,
+					doRestruct ? ParameterDoRestruct.TRUE
+							: ParameterDoRestruct.FALSE));
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
@@ -343,15 +366,20 @@ public class StandardExecutor extends AbstractExecutor {
 	 *            Parameter for creating a {@link QueryBuildParameter} object.
 	 * @return {@link QueryBuildParameter} with some assured parameters.
 	 */
-	private QueryBuildParameter getBuildParameter(AbstractQueryBuildParameter<?>... parameters) {
+	private QueryBuildParameter getBuildParameter(
+			AbstractQueryBuildParameter<?>... parameters) {
 		QueryBuildParameter params = new QueryBuildParameter(parameters);
 		// assure ParameterTransformationConfiguration
 		if (params.getTransformationConfiguration() == null) {
-			throw new RuntimeException("No transformation configuration set. Abort query execution.");
+			throw new RuntimeException(
+					"No transformation configuration set. Abort query execution.");
 		}
 		// assure ParameterBufferPlacementStrategy
 		if (params.getBufferPlacementStrategy() == null) {
-			params.set(new ParameterBufferPlacementStrategy(this.getBufferPlacementStrategy((String) this.configuration.get(SettingBufferPlacementStrategy.class).getValue())));
+			params.set(new ParameterBufferPlacementStrategy(this
+					.getBufferPlacementStrategy((String) this.configuration
+							.get(SettingBufferPlacementStrategy.class)
+							.getValue())));
 		}
 
 		return params;
@@ -372,7 +400,9 @@ public class StandardExecutor extends AbstractExecutor {
 			this.executionPlanLock.lock();
 			return optimizer().getBufferPlacementStrategy(strategy);
 		} catch (NoOptimizerLoadedException e) {
-			getLogger().error("Error while using optimizer. Getting BufferplacementStrategy. " + e.getMessage());
+			getLogger().error(
+					"Error while using optimizer. Getting BufferplacementStrategy. "
+							+ e.getMessage());
 		} finally {
 			this.executionPlanLock.unlock();
 		}
@@ -389,15 +419,19 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public Collection<Integer> addQuery(String query, String parserID,
+			User user, AbstractQueryBuildParameter<?>... parameters)
+			throws PlanManagementException {
 		getLogger().info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			List<IQuery> newQueries = createQueries(query, parserID, user, params);
+			List<IQuery> newQueries = createQueries(query, parserID, user,
+					params);
 			addQueries(newQueries);
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
-			getLogger().error("Error adding Queries. Details: " + e.getMessage());
+			getLogger().error(
+					"Error adding Queries. Details: " + e.getMessage());
 			e.printStackTrace();
 			throw new QueryAddException(e);
 		}
@@ -413,11 +447,15 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, User user, boolean doRestruct, Set<String> rulesToUse, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public Collection<Integer> addQuery(String query, String parserID,
+			User user, boolean doRestruct, Set<String> rulesToUse,
+			AbstractQueryBuildParameter<?>... parameters)
+			throws PlanManagementException {
 		getLogger().info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			List<IQuery> newQueries = createQueries(query, parserID, user, params);
+			List<IQuery> newQueries = createQueries(query, parserID, user,
+					params);
 			if (rulesToUse != null && !rulesToUse.isEmpty()) {
 				addQueries(newQueries, doRestruct, rulesToUse);
 			} else {
@@ -425,7 +463,8 @@ public class StandardExecutor extends AbstractExecutor {
 			}
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
-			getLogger().error("Error adding Queries. Details: " + e.getMessage());
+			getLogger().error(
+					"Error adding Queries. Details: " + e.getMessage());
 			e.printStackTrace();
 			throw new QueryAddException(e);
 		}
@@ -442,7 +481,9 @@ public class StandardExecutor extends AbstractExecutor {
 	 * <?>[])
 	 */
 	@Override
-	public int addQuery(ILogicalOperator logicalPlan, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public int addQuery(ILogicalOperator logicalPlan, User user,
+			AbstractQueryBuildParameter<?>... parameters)
+			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
@@ -454,7 +495,8 @@ public class StandardExecutor extends AbstractExecutor {
 			addQueries(newQueries);
 			return query.getID();
 		} catch (Exception e) {
-			getLogger().error("Error adding Queries. Details: " + e.getMessage());
+			getLogger().error(
+					"Error adding Queries. Details: " + e.getMessage());
 			throw new QueryAddException(e);
 		}
 	}
@@ -470,7 +512,9 @@ public class StandardExecutor extends AbstractExecutor {
 	 * <?>[])
 	 */
 	@Override
-	public int addQuery(List<IPhysicalOperator> physicalPlan, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
+			AbstractQueryBuildParameter<?>... parameters)
+			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
@@ -482,14 +526,18 @@ public class StandardExecutor extends AbstractExecutor {
 			addQueries(newQueries);
 			return query.getID();
 		} catch (Exception e) {
-			getLogger().error("Error adding Queries. Details: " + e.getMessage());
+			getLogger().error(
+					"Error adding Queries. Details: " + e.getMessage());
 			throw new QueryAddException(e);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Query)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de
+	 * .uniol.inf.is.odysseus.planmanagement.executor.datastructure.Query)
 	 */
 	@Override
 	public int addQuery(Query query) throws PlanManagementException {
@@ -497,10 +545,11 @@ public class StandardExecutor extends AbstractExecutor {
 			query.addReoptimizeListener(this);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			newQueries.add(query);
-			addQueries(newQueries,false);
+			addQueries(newQueries, false);
 			return query.getID();
 		} catch (Exception e) {
-			getLogger().error("Error adding Queries. Details: " + e.getMessage());
+			getLogger().error(
+					"Error adding Queries. Details: " + e.getMessage());
 			throw new QueryAddException(e);
 		}
 	}
@@ -520,20 +569,29 @@ public class StandardExecutor extends AbstractExecutor {
 
 		if (queryToRemove != null && optimizer() != null) {
 			try {
-				getLogger().info("Try to aquire executionPlanLock (Currently " + executionPlanLock.getHoldCount() + ").");	
+				getLogger().info(
+						"Try to aquire executionPlanLock (Currently "
+								+ executionPlanLock.getHoldCount() + ").");
 				executionPlanLock.lock();
-				getLogger().info("Try to aquire executionPlanLock (Currently " + executionPlanLock.getHoldCount() + "). done");	
-				setExecutionPlan(optimizer().preQueryRemoveOptimization(this, queryToRemove, this.executionPlan));
-				getLogger().info("Removing Query "+queryToRemove.getID());
+				getLogger().info(
+						"Try to aquire executionPlanLock (Currently "
+								+ executionPlanLock.getHoldCount() + "). done");
+				setExecutionPlan(optimizer().preQueryRemoveOptimization(this,
+						queryToRemove, this.executionPlan));
+				getLogger().info("Removing Query " + queryToRemove.getID());
 				this.plan.removeQuery(queryToRemove.getID());
-				getLogger().info("Removing Ownership "+queryToRemove.getID());		
+				getLogger().info("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.stop();
 				queryToRemove.removeOwnerschip();
 				WrapperPlanFactory.removeClosedSources();
-				getLogger().debug("Query " + queryToRemove.getID() + " removed.");
-				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
+				getLogger().debug(
+						"Query " + queryToRemove.getID() + " removed.");
+				firePlanModificationEvent(new QueryPlanModificationEvent(this,
+						PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 			} catch (QueryOptimizationException e) {
-				getLogger().warn("Query not removed. An Error while optimizing occurd (ID: " + queryID + ").");
+				getLogger().warn(
+						"Query not removed. An Error while optimizing occurd (ID: "
+								+ queryID + ").");
 				throw new PlanManagementException(e);
 			} finally {
 				executionPlanLock.unlock();
@@ -551,7 +609,7 @@ public class StandardExecutor extends AbstractExecutor {
 	@Override
 	public void startQuery(int queryID) {
 		Query queryToStart = (Query) this.plan.getQuery(queryID);
-		if (queryToStart.isRunning()) {
+		if (queryToStart.isActive()) {
 			getLogger().info("Query (ID: " + queryID + ") is already started.");
 			return;
 		}
@@ -559,24 +617,29 @@ public class StandardExecutor extends AbstractExecutor {
 
 		try {
 			this.executionPlanLock.lock();
-			setExecutionPlan(optimizer().preStartOptimization(queryToStart, this.executionPlan));
+			setExecutionPlan(optimizer().preStartOptimization(queryToStart,
+					this.executionPlan));
 			queryToStart.start();
 			if (isRunning()) {
-				for(IPhysicalOperator curRoot : queryToStart.getRoots()){
+				for (IPhysicalOperator curRoot : queryToStart.getRoots()) {
 					// this also works for cyclic plans,
 					// since if an operator is already open, the
 					// following sources will not be called any more.
-					if (curRoot.isSink()){
-						((ISink<?>)curRoot).open();
-					}else{
-						throw new IllegalArgumentException("Open cannot be called on a a source");
+					if (curRoot.isSink()) {
+						((ISink<?>) curRoot).open();
+					} else {
+						throw new IllegalArgumentException(
+								"Open cannot be called on a a source");
 					}
 				}
 			}
 			getLogger().debug("Query " + queryID + " started.");
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_START, queryToStart));
 		} catch (Exception e) {
-			getLogger().warn("Query not started. An Error during optimizing occurd (ID: " + queryID + ").");
+			getLogger().warn(
+					"Query not started. An Error during optimizing occurd (ID: "
+							+ queryID + ").");
 			return;
 		} finally {
 			this.executionPlanLock.unlock();
@@ -592,7 +655,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	@Override
 	public void stopQuery(int queryID) {
-				
+
 		getLogger().info("Stop a query (ID: " + queryID + ").");
 
 		Query queryToStop = (Query) this.plan.getQuery(queryID);
@@ -603,18 +666,19 @@ public class StandardExecutor extends AbstractExecutor {
 					this.executionPlan));
 			queryToStop.stop();
 			if (isRunning()) {
-				for(IPhysicalOperator curRoot : queryToStop.getRoots()){
+				for (IPhysicalOperator curRoot : queryToStop.getRoots()) {
 					// this also works for cyclic plans,
 					// since if an operator is already open, the
 					// following sources will not be called any more.
-					if (curRoot.isSink()){
-						((ISink<?>)curRoot).close();
-					}else{
-						throw new IllegalArgumentException("Close cannot be called on a a source");
+					if (curRoot.isSink()) {
+						((ISink<?>) curRoot).close();
+					} else {
+						throw new IllegalArgumentException(
+								"Close cannot be called on a a source");
 					}
 				}
 			}
-			getLogger().debug("Query "+queryID+" stopped.");
+			getLogger().debug("Query " + queryID + " stopped.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this,
 					PlanModificationEventType.QUERY_STOP, queryToStop));
 		} catch (Exception e) {
@@ -636,22 +700,28 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	@Override
 	public void reoptimize(IQuery sender) {
-		getLogger().info("Reoptimize request by query (ID: " + sender.getID() + ").");
+		getLogger().info(
+				"Reoptimize request by query (ID: " + sender.getID() + ").");
 
 		try {
 			if (sender instanceof Query) {
 				this.executionPlanLock.lock();
-				setExecutionPlan(optimizer().reoptimize(this, (IQuery) sender, this.executionPlan));
+				setExecutionPlan(optimizer().reoptimize(this, (IQuery) sender,
+						this.executionPlan));
 
 				getLogger().debug("Query " + sender.getID() + " reoptimized.");
-				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REOPTIMIZE, sender));
+				firePlanModificationEvent(new QueryPlanModificationEvent(this,
+						PlanModificationEventType.QUERY_REOPTIMIZE, sender));
 			} else {
-				getLogger().warn("Query not reoptimized. Query type is not supported.");
+				getLogger().warn(
+						"Query not reoptimized. Query type is not supported.");
 				return;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			getLogger().warn("Query not reoptimized. An Error while optimizing occurd (ID: " + sender.getID() + ").");
+			getLogger().warn(
+					"Query not reoptimized. An Error while optimizing occurd (ID: "
+							+ sender.getID() + ").");
 			return;
 		} finally {
 			this.executionPlanLock.unlock();
@@ -674,17 +744,21 @@ public class StandardExecutor extends AbstractExecutor {
 		if (sender instanceof Plan) {
 			try {
 				this.executionPlanLock.lock();
-				setExecutionPlan(optimizer().reoptimize(this, this.executionPlan));
+				setExecutionPlan(optimizer().reoptimize(this,
+						this.executionPlan));
 				getLogger().debug("Plan reoptimized.");
-				firePlanModificationEvent(new PlanModificationEvent(this, PlanModificationEventType.PLAN_REOPTIMIZE, this.plan));
+				firePlanModificationEvent(new PlanModificationEvent(this,
+						PlanModificationEventType.PLAN_REOPTIMIZE, this.plan));
 			} catch (Exception e) {
-				getLogger().warn("Plan not reoptimized. An Error while optimizing occurd.");
+				getLogger()
+						.warn("Plan not reoptimized. An Error while optimizing occurd.");
 				return;
 			} finally {
 				this.executionPlanLock.unlock();
 			}
 		} else {
-			getLogger().warn("Plan not reoptimized. Plan type is not supported.");
+			getLogger().warn(
+					"Plan not reoptimized. Plan type is not supported.");
 			return;
 		}
 
@@ -713,7 +787,9 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			return optimizer().getRegisteredBufferPlacementStrategies();
 		} catch (NoOptimizerLoadedException e) {
-			getLogger().error("Error while using optimizer. Getting BufferplacementStrategies. " + e.getMessage());
+			getLogger().error(
+					"Error while using optimizer. Getting BufferplacementStrategies. "
+							+ e.getMessage());
 		}
 		return null;
 	}
@@ -730,7 +806,9 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			return schedulerManager().getSchedulingStrategy();
 		} catch (SchedulerException e) {
-			getLogger().error("Error while using schedulerManager. Getting SchedulingStrategyFactories. " + e.getMessage());
+			getLogger().error(
+					"Error while using schedulerManager. Getting SchedulingStrategyFactories. "
+							+ e.getMessage());
 		}
 		return null;
 	}
@@ -747,7 +825,9 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			return schedulerManager().getScheduler();
 		} catch (SchedulerException e) {
-			getLogger().error("Error while using schedulerManager. Getting SchedulingFactories. " + e.getMessage());
+			getLogger().error(
+					"Error while using schedulerManager. Getting SchedulingFactories. "
+							+ e.getMessage());
 		}
 		return null;
 	}
@@ -761,9 +841,12 @@ public class StandardExecutor extends AbstractExecutor {
 	@Override
 	public void setScheduler(String scheduler, String schedulerStrategy) {
 		try {
-			schedulerManager().setActiveScheduler(scheduler, schedulerStrategy, this);
+			schedulerManager().setActiveScheduler(scheduler, schedulerStrategy,
+					this);
 		} catch (SchedulerException e) {
-			getLogger().error("Error while using schedulerManager. Setting Scheduler. " + e.getMessage());
+			getLogger().error(
+					"Error while using schedulerManager. Setting Scheduler. "
+							+ e.getMessage());
 		}
 	}
 
@@ -778,7 +861,9 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			return schedulerManager().getActiveSchedulingStrategy();
 		} catch (SchedulerException e) {
-			getLogger().error("Error while using schedulerManager. Getting Active Scheduling Strategy. " + e.getMessage());
+			getLogger().error(
+					"Error while using schedulerManager. Getting Active Scheduling Strategy. "
+							+ e.getMessage());
 		}
 		return null;
 	}
@@ -794,7 +879,9 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			return schedulerManager().getActiveScheduler();
 		} catch (SchedulerException e) {
-			getLogger().error("Error while using schedulerManager. Getting Active Scheduler. " + e.getMessage());
+			getLogger().error(
+					"Error while using schedulerManager. Getting Active Scheduler. "
+							+ e.getMessage());
 		}
 		return null;
 	}
@@ -812,35 +899,40 @@ public class StandardExecutor extends AbstractExecutor {
 	}
 
 	@Override
-	public OptimizationConfiguration getOptimizerConfiguration() throws NoOptimizerLoadedException {
+	public OptimizationConfiguration getOptimizerConfiguration()
+			throws NoOptimizerLoadedException {
 		return this.optimizer().getConfiguration();
 	}
-	
+
 	@Override
-	public ISystemMonitor getDefaultSystemMonitor() throws NoSystemMonitorLoadedException {
-		if (this.systemMonitorFactory==null) {
+	public ISystemMonitor getDefaultSystemMonitor()
+			throws NoSystemMonitorLoadedException {
+		if (this.systemMonitorFactory == null) {
 			throw new NoSystemMonitorLoadedException();
 		}
 		return this.defaultSystemMonitor;
 	}
-	
+
 	@Override
-	public ISystemMonitor newSystemMonitor(long period) throws NoSystemMonitorLoadedException {
-		if (this.systemMonitorFactory==null) {
+	public ISystemMonitor newSystemMonitor(long period)
+			throws NoSystemMonitorLoadedException {
+		if (this.systemMonitorFactory == null) {
 			throw new NoSystemMonitorLoadedException();
 		}
 		ISystemMonitor monitor = this.systemMonitorFactory.newSystemMonitor();
 		monitor.initialize(period);
 		return monitor;
 	}
-	
+
 	@Override
-	public void updateExecutionPlan() throws NoOptimizerLoadedException, QueryOptimizationException {
+	public void updateExecutionPlan() throws NoOptimizerLoadedException,
+			QueryOptimizationException {
 		getLogger().debug("Update Execution Plan.");
 		// synchronize the process
 		this.executionPlanLock.lock();
 		try {
-			setExecutionPlan(this.optimizer().preQueryMigrateOptimization(this, new OptimizeParameter(ParameterDoRestruct.FALSE)));
+			setExecutionPlan(this.optimizer().preQueryMigrateOptimization(this,
+					new OptimizeParameter(ParameterDoRestruct.FALSE)));
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
