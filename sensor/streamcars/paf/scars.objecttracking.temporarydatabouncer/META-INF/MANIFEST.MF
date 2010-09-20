@@ -7,8 +7,10 @@ Bundle-Activator: de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabou
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.objectrelational.base,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.physicaloperator.base,

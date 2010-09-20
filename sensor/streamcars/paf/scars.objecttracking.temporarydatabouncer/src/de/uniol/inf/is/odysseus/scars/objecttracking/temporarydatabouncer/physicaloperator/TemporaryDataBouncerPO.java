@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.physi
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -11,10 +12,18 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
-public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String objListPath;
 	private double threshold;
+
+	private static final String LESS = "LESS";
+	private static final String LESS_EQUAL = "LESSEQUAL";
+	private static final String GREATER = "GREATER";
+	private static final String GREATER_EQUAL = "GREATEREQUAL";
+	private static final String EQUAL = "EQUAL";
+
+	private String operator = LESS;
 
 	public TemporaryDataBouncerPO() {
 		super();
@@ -24,6 +33,7 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 		super(clone);
 		this.objListPath = clone.objListPath;
 		this.threshold = clone.threshold;
+		this.operator = clone.operator;
 	}
 
 	@Override
@@ -36,12 +46,14 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 	@Override
 	protected void process_next(MVRelationalTuple<M> obj, int port) {
 		MVRelationalTuple<M> object = obj.clone();
-		
+
 		SchemaHelper sh = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		// Get the list of cars
 		MVRelationalTuple<M> carListTuple = (MVRelationalTuple<M>) sh.getSchemaIndexPath(this.objListPath).toTupleIndexPath(object).getTupleObject();
 		// Init an arraylist for the elements that should be transfered
 		ArrayList<MVRelationalTuple<M>> transferCarListArrayList = new ArrayList<MVRelationalTuple<M>>();
+
+		PointInTime timestamp = object.getMetadata().getStart();
 
 		double val = 0;
 		for(Object carObject : carListTuple.getAttributes()) {
@@ -51,8 +63,26 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 			for(int i = 0; i < cov.length; i++) {
 				val += cov[i][i];
 			}
-			if(val < this.threshold) {
-				transferCarListArrayList.add(car);
+			if (this.operator.toUpperCase().equals(LESS)) {
+				if(val < this.threshold) {
+					transferCarListArrayList.add(car);
+				}
+			} else if (this.operator.toUpperCase().equals(LESS_EQUAL)) {
+				if(val <= this.threshold) {
+					transferCarListArrayList.add(car);
+				}
+			} else if (this.operator.toUpperCase().equals(GREATER)) {
+				if(val > this.threshold) {
+					transferCarListArrayList.add(car);
+				}
+			} else if (this.operator.toUpperCase().equals(GREATER_EQUAL)) {
+				if(val >= this.threshold) {
+					transferCarListArrayList.add(car);
+				}
+			} else if (this.operator.toUpperCase().equals(EQUAL)) {
+				if(val == this.threshold) {
+					transferCarListArrayList.add(car);
+				}
 			}
 		}
 
@@ -65,6 +95,11 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 		SchemaIndexPath schemaPath = sh.getSchemaIndexPath(this.objListPath);
 		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(object);
 		tuplePath.setTupleObject(tuples);
+
+		// Falls NICHTS weitergeleitet wird -> punctuation senden
+		if(transferCarListArrayList.size() == 0) {
+			processPunctuation(timestamp, 0);
+		}
 
 		transfer(object);
 	}
@@ -93,5 +128,13 @@ public class TemporaryDataBouncerPO<M extends IProbability> extends AbstractPipe
 
 	public void setThreshold(double threshold) {
 		this.threshold = threshold;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 }

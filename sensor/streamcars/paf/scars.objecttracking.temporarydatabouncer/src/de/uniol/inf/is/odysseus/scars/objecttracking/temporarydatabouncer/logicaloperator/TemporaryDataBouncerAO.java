@@ -11,6 +11,8 @@ public class TemporaryDataBouncerAO<M extends IProbability> extends AbstractLogi
 	private String objListPath;
 	private double threshold;
 
+	private String operator;
+
 	public TemporaryDataBouncerAO() {
 		super();
 	}
@@ -19,6 +21,7 @@ public class TemporaryDataBouncerAO<M extends IProbability> extends AbstractLogi
 		super(copy);
 		this.objListPath = copy.objListPath;
 		this.threshold = copy.threshold;
+		this.operator = copy.operator;
 	}
 
 	@Override
@@ -45,6 +48,14 @@ public class TemporaryDataBouncerAO<M extends IProbability> extends AbstractLogi
 
 	public void setThreshold(double threshold) {
 		this.threshold = threshold;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 }
