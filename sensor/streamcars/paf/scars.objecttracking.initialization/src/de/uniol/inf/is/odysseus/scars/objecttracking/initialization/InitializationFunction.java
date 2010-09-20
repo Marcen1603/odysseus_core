@@ -56,17 +56,19 @@ public class InitializationFunction<M extends IGain & IProbability & IPrediction
 	
 		ConnectionList newObjConList = new ConnectionList();
 		
+		int [] newpath = newTupleIndexPath.toArray();
 		
-		
-		TupleIterator iterator = new TupleIterator(newList, newTupleIndexPath);
+		int [] oldpath = oldTupleIndexPath.toArray();
 		
 		for (int i=0; i<= newList.getAttributeCount()-1; i++) {
-			TupleInfo info = iterator.next();
-			int [] path = info.schemaIndexPath.toArray();
-			int [] newPath= new int[path.length];
-			System.arraycopy(path, 0, newPath, 0, path.length);
-			//newPath[newPath.length]+=1;
-			Connection con = new Connection(path, newPath, 5.0);
+		
+			int [] newConPath= new int[newpath.length+1];
+			System.arraycopy(newpath, 0, newConPath, 0, newpath.length);
+			newConPath[newpath.length]=i;
+			int [] oldConPath = new int[oldpath.length+1];
+			System.arraycopy(oldpath, 0, oldConPath, 0, oldpath.length);
+			oldConPath[oldpath.length]=i;
+			Connection con = new Connection(newConPath, oldConPath, 5.0);
 			newObjConList.add(con);
 			copy.setAttribute(i, this.getParameters().get(Parameters.InitializationTuple));
 			
@@ -78,7 +80,8 @@ public class InitializationFunction<M extends IGain & IProbability & IPrediction
 	
 		return object;
 	}
-
+	
+	
 
 	@Override
 	public AbstractInitializationFunction clone() {
