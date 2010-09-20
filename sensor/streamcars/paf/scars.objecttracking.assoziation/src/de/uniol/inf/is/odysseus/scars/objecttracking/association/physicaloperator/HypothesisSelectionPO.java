@@ -173,7 +173,8 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		ConnectionList matchedObjects = matchObjects(object, object.getMetadata().getConnectionList());
 		if( matchedObjects.size() > 0 ) {
 			object.getMetadata().setConnectionList(matchedObjects);
-			transfer(object, 1);
+//			hasDublicates(object);
+			transfer(object.clone(), 1);
 		} else {
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 1);
 		}
@@ -190,7 +191,11 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		objArray[0] = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName()).toTupleIndexPath(object).getTupleObject();
 		objArray[1] = scannedTuple;
 		base.setAttribute(0, new MVRelationalTuple<M>(objArray));
-		transfer(base, 0);
+		
+		
+//		hasDublicates(base);
+		
+		transfer(base.clone(), 0);
 		
 //		MVRelationalTuple<M> scannedNotMatchedTuple = new MVRelationalTuple<M>(object); // Timo: Wieso wird das Ursprungsobjekt geklont?
 //		TupleIndexPath scannedObjectTuplePath = this.scannedObjectListPath.toTupleIndexPath(scannedNotMatchedTuple);
@@ -207,11 +212,30 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			MVRelationalTuple<M> predictedNotMatchedTuple = new MVRelationalTuple<M>(object);
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath.toTupleIndexPath(predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedTuple);
-			transfer(predictedNotMatchedTuple, 2);
+//			hasDublicates(predictedNotMatchedTuple);
+			transfer(predictedNotMatchedTuple.clone(), 2);
 		} else {
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 2);
 		}
 	}
+//	
+//	private void hasDublicates( MVRelationalTuple<?> list ) {
+//		
+//		MVRelationalTuple<?> cars = ((MVRelationalTuple<?>)list.getAttribute(0)).getAttribute(1);
+//		
+//		for( int i = 0; i < cars.getAttributeCount(); i++ ) {
+//			for( int o = 0; o < cars.getAttributeCount(); o++ ) {
+//				if( i != o ) {
+//					int id1 = (Integer)((MVRelationalTuple<?>)cars.getAttribute(i)).getAttribute(1);
+//					int id2 = (Integer)((MVRelationalTuple<?>)cars.getAttribute(o)).getAttribute(1);
+//					if( id1 == id2 ) {
+//						System.out.println("Double!");
+//					}
+//				}
+//			}
+//		}
+//		
+//	}
 
 	@Override
 	public OutputMode getOutputMode() {
