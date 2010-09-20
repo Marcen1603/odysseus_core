@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.base.planmanagement.event;
+package de.uniol.inf.is.odysseus.base;
+
 
 /**
  * This object is a base class for creating events.
@@ -14,15 +15,15 @@ public abstract class AbstractEvent<SenderType, ValueType> implements
 		IEvent<SenderType, ValueType> {
 
 	/**
-	 * ID that identifies this event. This ID should be unique.
-	 */
-	private String id;
-
-	/**
 	 * The value of this event.
 	 */
 	private ValueType value;
 
+	/**
+	 * The Type of this Event
+	 */
+	private IEventType eventType;
+	
 	/**
 	 * The sender of this event.
 	 */
@@ -35,8 +36,8 @@ public abstract class AbstractEvent<SenderType, ValueType> implements
 	 * @param id ID that identifies this event. This ID should be unique.
 	 * @param value The value of this event.
 	 */
-	protected AbstractEvent(SenderType sender, String id, ValueType value) {
-		this.id = id;
+	protected AbstractEvent(SenderType sender, IEventType eventType, ValueType value) {
+		this.eventType = eventType;
 		this.sender = sender;
 		this.value = value;
 	}
@@ -61,7 +62,12 @@ public abstract class AbstractEvent<SenderType, ValueType> implements
 	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.IEvent#getID()
 	 */
 	@Override
-	public String getID() {
-		return this.id;
+	public IEventType getEventType() {
+		return this.eventType;
+	}
+	
+	@Override
+	public String toString() {
+		return this.value+" from "+sender;
 	}
 }

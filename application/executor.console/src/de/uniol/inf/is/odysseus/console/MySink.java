@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.console;
 
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
@@ -11,6 +12,10 @@ public class MySink extends AbstractSink<Object> {
 	
 	public MySink(MySink original){
 		super();
+	}
+	
+	@Override
+	protected void process_open() throws OpenFailedException {	
 	}
 	
 	@Override

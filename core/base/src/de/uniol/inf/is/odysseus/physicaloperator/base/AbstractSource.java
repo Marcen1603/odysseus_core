@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,8 +15,6 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -41,8 +36,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
-	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
-	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
 	private SDFAttributeList outputSchema;
@@ -200,32 +193,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return this.sinkSubscriptions.size() == 1;
 	}
 
-	final protected void fire(POEvent event) {
-		ArrayList<IPOEventListener> list = this.eventListener.get(event
-				.getPOEventType());
-		if (list != null) {
-			synchronized (list) {
-				for (IPOEventListener listener : list) {
-					listener.poEventOccured(event);
-				}
-			}
-		}
-		synchronized (this.eventListener) {
-			for (IPOEventListener listener : this.genericEventListener) {
-				listener.poEventOccured(event);
-			}
-		}
-	}
-
-//	protected void process_transfer(T object) {
-//		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-//			if (sink.isEnabled()) {
-//				sink.getTarget().process(object, sink.getSinkInPort(),
-//						!this.hasSingleConsumer());
-//			}
-//		}
-//	}
-
 	@Override
 	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
@@ -316,70 +283,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	/**
-	 * One listener can have multiple subscriptions to the same event sender and
-	 * the same event type
-	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribe(de.uniol.inf.is.odysseus.IPOEventListener.queryexecution.event.POEventListener,
-	 *      de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventType)
-	 */
-	@Override
-	public void subscribe(IPOEventListener listener, POEventType type) {
-		synchronized (this.eventListener) {
-			ArrayList<IPOEventListener> curEventListener = this.eventListener
-					.get(type);
-			if (curEventListener == null) {
-				curEventListener = new ArrayList<IPOEventListener>();
-				this.eventListener.put(type, curEventListener);
-			}
-			curEventListener.add(listener);
-		}
-		if (listener instanceof IMonitoringData) {
-			IMonitoringData<?> mItem = (IMonitoringData<?>) listener;
-			// nur dann registrieren, falls es noch nicht registriert ist
-			// es kann z.B. sein, dass ein MetadataItem f�r zwei Events
-			// registriert wird, aber nat�rlich trotzdem nur einmal
-			// als MetadataItem registriert sein muss
-
-			// TODO: Die Loesung mit der Exception war nicht schoen ...
-			// Jetzt wird es einfach ignoriert
-			// try {
-			if (!this.providesMonitoringData(mItem.getType())) {
-				this.addMonitoringData(mItem.getType(), mItem);
-			}
-			// } catch (IllegalArgumentException e) {
-			// }
-		}
-	}
-
-	@Override
-	public void unsubscribe(IPOEventListener listener, POEventType type) {
-		synchronized (this.eventListener) {
-			ArrayList<IPOEventListener> curEventListener = this.eventListener
-					.get(type);
-			curEventListener.remove(listener);
-		}
-	}
-
-	/**
-	 * One listener can have multiple subscriptions to the same event sender
-	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribeToAll(de.uniol.inf.is.odysseus.IPOEventListener.queryexecution.event.POEventListener)
-	 */
-	@Override
-	public void subscribeToAll(IPOEventListener listener) {
-		synchronized (this.genericEventListener) {
-			this.genericEventListener.add(listener);
-		}
-	}
-
-	@Override
-	public void unSubscribeFromAll(IPOEventListener listener) {
-		synchronized (this.genericEventListener) {
-			this.genericEventListener.remove(listener);
-		}
-	}
-
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")"
@@ -388,12 +291,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void sendPunctuation(PointInTime punctuation) {
-		// synchronized (this.subscriptions) {
 		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			sub.getTarget()
 					.processPunctuation(punctuation, sub.getSinkInPort());
 		}
-		// }
 	}
 	
 	@Override

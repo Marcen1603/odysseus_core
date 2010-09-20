@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
+import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.AbstractScheduler;
@@ -311,7 +312,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		}
 
 		// send an ErrorEvent to all listenern
-		fireErrorEvent(new ErrorEvent(this, "", new Exception(e.getMessage())));
+		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR, new Exception(e)));
 	}
 
 }

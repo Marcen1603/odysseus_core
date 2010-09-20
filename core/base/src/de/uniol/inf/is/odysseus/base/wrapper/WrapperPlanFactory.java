@@ -12,11 +12,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 /**

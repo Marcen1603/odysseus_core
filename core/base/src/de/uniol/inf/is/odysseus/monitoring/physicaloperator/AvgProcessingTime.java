@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 
@@ -14,23 +14,31 @@ public class AvgProcessingTime extends AbstractMonitoringData<Double> implements
 	private double runSum = 0;
 	private long runCount = 0;
 
+	public AvgProcessingTime(){
+		super();
+	}
+	
 	public AvgProcessingTime(IPhysicalOperator target) {
-		super(target);
-		target.subscribe(this, POEventType.ProcessInit);
-		target.subscribe(this, POEventType.ProcessDone);
+		setTarget(target);
 	}
 
 	public AvgProcessingTime(AvgProcessingTime avgProcessingTime) {
-		super(avgProcessingTime.getTarget());
+		setTarget(avgProcessingTime.getTarget());
 		this.start = avgProcessingTime.start;
 		this.lastRun = avgProcessingTime.lastRun;
 		this.runSum = avgProcessingTime.runSum;
 		this.runCount = avgProcessingTime.runCount;
 	}
+	
+	public void setTarget(IPhysicalOperator target) {
+		super.setTarget(target);
+		target.subscribe(this, POEventType.ProcessInit);
+		target.subscribe(this, POEventType.ProcessDone);
+	}
 
 	@Override
-	public void poEventOccured(POEvent poEvent) {
-		if (poEvent.getPOEventType().equals(POEventType.ProcessInit)) {
+	public void eventOccured(IEvent<?,?> poEvent) {
+		if (poEvent.getEventType().equals(POEventType.ProcessInit)) {
 			start = System.nanoTime();
 		} else {
 			lastRun = System.nanoTime() - start;

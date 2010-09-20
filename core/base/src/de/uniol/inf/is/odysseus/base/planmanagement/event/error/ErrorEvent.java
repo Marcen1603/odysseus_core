@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.base.planmanagement.event.error;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.event.AbstractEvent;
+import de.uniol.inf.is.odysseus.base.AbstractEvent;
 
 /**
  * Defines an error event which could be send by an {@link IErrorEventHandler}.
@@ -10,10 +10,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.AbstractEvent;
  */
 public class ErrorEvent extends AbstractEvent<IErrorEventHandler, Exception> {
 
-	/**
-	 * This ID defines an error event
-	 */
-	public static String ERROR = "ERROR";
+	private String message;
 
 	/**
 	 * Creates a new event.
@@ -22,8 +19,9 @@ public class ErrorEvent extends AbstractEvent<IErrorEventHandler, Exception> {
 	 * @param id ID that identifies this event. This ID should be unique.
 	 * @param message The error message which is created.
 	 */
-	public ErrorEvent(IErrorEventHandler sender, String id, String message) {
-		super(sender, id, new Exception(message));
+	public ErrorEvent(IErrorEventHandler sender, ExceptionEventType eventType, String message, Exception e) {
+		super(sender, eventType, e);
+		this.message = message;
 	}
 
 	/**
@@ -33,8 +31,8 @@ public class ErrorEvent extends AbstractEvent<IErrorEventHandler, Exception> {
 	 * @param id ID that identifies this event. This ID should be unique.
 	 * @param value The {@link Exception} which created this event.
 	 */
-	public ErrorEvent(IErrorEventHandler sender, String id, Exception value) {
-		super(sender, id, value);
+	public ErrorEvent(IErrorEventHandler sender, ExceptionEventType eventType, Exception value) {
+		super(sender, eventType, value);
 	}
 
 	/**
@@ -43,6 +41,6 @@ public class ErrorEvent extends AbstractEvent<IErrorEventHandler, Exception> {
 	 * @return The error message of this event.
 	 */
 	public String getMessage() {
-		return getValue() != null ? getValue().getMessage() : "";
+		return getValue() != null ? message+getValue().getMessage() : message;
 	}
 }

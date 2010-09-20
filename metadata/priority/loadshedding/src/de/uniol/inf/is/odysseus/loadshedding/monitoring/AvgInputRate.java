@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.loadshedding.monitoring;
 
-import de.uniol.inf.is.odysseus.loadshedding.LoadManager;
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
+import de.uniol.inf.is.odysseus.loadshedding.LoadManager;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 
 public class AvgInputRate implements
@@ -36,7 +36,7 @@ public class AvgInputRate implements
 	}
 
 	@Override
-	public void poEventOccured(POEvent poEvent) {
+	public void eventOccured(IEvent<?,?> poEvent) {
 		read++;
 		target.updateLoadSheddingState();
 	}

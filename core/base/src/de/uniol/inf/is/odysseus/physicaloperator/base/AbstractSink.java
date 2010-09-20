@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
@@ -38,9 +34,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
-	// Monitoring Data
-	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
-	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();;
 
 	final private POEvent openInitEvent = new POEvent(this,
 			POEventType.OpenInit);
@@ -98,7 +91,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		close(this);
 	}
 
-	protected void close(ISink sink) {
+	protected void close(ISink<T> sink) {
 		this.isOpen.set(false);
 		process_close();
 		stopMonitoring();
@@ -107,7 +100,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	};
 
-	protected void open(ISink sink) throws OpenFailedException {
+	protected void open(ISink<T> sink) throws OpenFailedException {
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
@@ -245,73 +238,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return this.subscribedToSource.get(port);
 	}
 
-	/**
-	 * One listener can have multiple subscriptions to the same event sender and
-	 * the same event type
-	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribe(de.uniol.inf.is.odysseus.IPOEventListener.queryexecution.event.POEventListener,
-	 *      de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventType)
-	 */
-	@Override
-	public void subscribe(IPOEventListener listener, POEventType type) {
-		synchronized (this.eventListener) {
-			ArrayList<IPOEventListener> curEventListener = this.eventListener
-					.get(type);
-			if (curEventListener == null) {
-				curEventListener = new ArrayList<IPOEventListener>();
-				this.eventListener.put(type, curEventListener);
-			}
-			curEventListener.add(listener);
-		}
-	}
 
-	@Override
-	public void unsubscribe(IPOEventListener listener, POEventType type) {
-		synchronized (this.eventListener) {
-			ArrayList<IPOEventListener> curEventListener = this.eventListener
-					.get(type);
-			curEventListener.remove(listener);
-		}
-	}
-
-
-
-	/**
-	 * One listener can have multiple subscriptions to the same event sender
-	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribeToAll(de.uniol.inf.is.odysseus.IPOEventListener.queryexecution.event.POEventListener)
-	 */
-	@Override
-	public void subscribeToAll(IPOEventListener listener) {
-		synchronized (this.genericEventListener) {
-			this.genericEventListener.add(listener);
-		}
-	}
-
-	@Override
-	public void unSubscribeFromAll(IPOEventListener listener) {
-		synchronized (this.genericEventListener) {
-			this.genericEventListener.remove(listener);
-		}
-	}
-
-	final protected void fire(POEvent event) {
-		synchronized (eventListener) {
-			
-		ArrayList<IPOEventListener> list = this.eventListener.get(event
-				.getPOEventType());
-		if (list != null) {
-			synchronized (list) {
-				for (IPOEventListener listener : list) {
-					listener.poEventOccured(event);
-				}
-			}
-		}
-			for (IPOEventListener listener : this.genericEventListener) {
-				listener.poEventOccured(event);
-			}
-		}
-	}
 
 	@Override
 	public String toString() {

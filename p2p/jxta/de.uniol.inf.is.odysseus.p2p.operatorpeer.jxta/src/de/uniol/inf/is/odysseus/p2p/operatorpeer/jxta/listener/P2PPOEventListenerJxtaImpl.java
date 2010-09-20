@@ -9,11 +9,12 @@ import java.util.HashMap;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IP2PPOEventListener;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IP2PPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 
 public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 
@@ -71,17 +72,17 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 	}
 
 	@Override
-	public void poEventOccured(POEvent poEvent) {
+	public void eventOccured(IEvent poEvent) {
 		Log.logEvent(queryId, "Event aufgetreten: "
-				+ poEvent.getPOEventType().toString());
-		sendEvent(poEvent);
+				+ poEvent.getEventType().toString());
+		sendEvent((POEvent)poEvent);
 	}
-
+ 
 	@Override
 	public void sendEvent(POEvent poEvent) {
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
 		messageElements.put("queryId", queryId);
-		messageElements.put("event", poEvent.getPOEventType().toString());
+		messageElements.put("event", poEvent.getEventType().toString());
 		Message msg = MessageTool.createSimpleMessage("Event", messageElements);
 
 		try {

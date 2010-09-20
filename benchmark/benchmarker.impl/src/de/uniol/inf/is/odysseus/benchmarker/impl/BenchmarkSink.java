@@ -78,8 +78,8 @@ public class BenchmarkSink<M extends ILatency> extends
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		super.process_open();
 	}
+	
 	@Override
 	protected void setInputPortCount(int ports) {
 		super.setInputPortCount(ports);

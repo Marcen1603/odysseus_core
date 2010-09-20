@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.event.AbstractEvent;
+import de.uniol.inf.is.odysseus.base.AbstractEvent;
+import de.uniol.inf.is.odysseus.base.IEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
 
 /**
@@ -28,8 +29,8 @@ public abstract class AbstractPlanModificationEvent<ValueType> extends
 	 * @param value
 	 *            value which refers to the modification.
 	 */
-	public AbstractPlanModificationEvent(IPlanManager sender, String id,
+	public AbstractPlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType,
 			ValueType value) {
-		super(sender, id, value);
+		super(sender, eventType, value);
 	}
 }

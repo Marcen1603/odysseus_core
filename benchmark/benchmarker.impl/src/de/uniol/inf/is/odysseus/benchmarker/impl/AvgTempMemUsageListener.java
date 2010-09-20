@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
@@ -24,10 +25,11 @@ public class AvgTempMemUsageListener implements IPOEventListener {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized void poEventOccured(POEvent poEvent) {
+	public synchronized void eventOccured(IEvent<?,?> event) {
+		POEvent poEvent = (POEvent) event;
 		long tmp = 0;
 
-		IPhysicalOperator sourceOp = poEvent.getSource();
+		IPhysicalOperator sourceOp = poEvent.getSender();
 		if (sourceOp instanceof JoinTIPO) {
 			final ISweepArea[] areas = ((JoinTIPO) sourceOp).getAreas();
 

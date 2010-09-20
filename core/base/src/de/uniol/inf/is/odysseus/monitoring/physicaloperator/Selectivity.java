@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 
@@ -68,7 +69,8 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 		return readCount.length;
 	}
 
-	public void poEventOccured(POEvent poEvent) {
+	public void eventOccured(IEvent<?,?> event) {
+		POEvent poEvent = (POEvent) event;
 		synchronized (this.writeCount) {
 			synchronized (this.readCount) {
 				if (poEvent.getPOEventType() == POEventType.PushDone) {

@@ -5,10 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IEventListener;
+import de.uniol.inf.is.odysseus.base.IEventType;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -23,10 +24,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		protected void process_next(R object, int port, boolean exclusive) {
 			AbstractPipe.this.delegatedProcess(object, port, exclusive);
 		}
-		
+
 		@Override
 		protected void process_open() throws OpenFailedException {
-			AbstractPipe.this.delegatedProcessOpen();			
+			AbstractPipe.this.delegatedProcessOpen();
 		}
 
 		@Override
@@ -48,16 +49,14 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		public void processPunctuation(PointInTime timestamp, int port) {
 		}
 
-
 		public void open(ISink abstractPipe) throws OpenFailedException {
-			super.open(abstractPipe);			
+			super.open(abstractPipe);
 		}
 
-		public void close(ISink abstractPipe){
-			super.close(abstractPipe);			
+		public void close(ISink abstractPipe) {
+			super.close(abstractPipe);
 		}
 
-		
 	};
 
 	final protected DelegateSink delegateSink = new DelegateSink();
@@ -94,8 +93,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		close();
 		super.close(o, sourcePort);
 	};
-	
-	public void close(){
+
+	public void close() {
 		process_close();
 		this.delegateSink.close(this);
 	}
@@ -159,15 +158,15 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			boolean exclusive) {
 		delegateSink.process(object, port, exclusive);
 	}
-	
 
 	@Override
-	final synchronized public void open(IPhysicalOperator sink, int sourcePort) throws OpenFailedException {
+	final synchronized public void open(IPhysicalOperator sink, int sourcePort)
+			throws OpenFailedException {
 		super.open(sink, sourcePort);
 		this.delegateSink.open(this);
 	}
-	
-	public void open() throws OpenFailedException{
+
+	public void open() throws OpenFailedException {
 		this.delegateSink.open(this);
 	}
 
@@ -254,32 +253,35 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void subscribe(IPOEventListener listener, POEventType type) {
-		super.subscribe(listener, type);
-		switch (type) {
-		case ProcessInit:
-		case ProcessDone:
-			this.delegateSink.subscribe(listener, type);
-		default:
+	public void subscribe(IEventListener listener, IEventType type) {
+		if (type instanceof POEventType) {
+			switch ((POEventType) type) {
+			case ProcessInit:
+			case ProcessDone:
+				this.delegateSink.subscribe(listener, type);
+			default:
+				super.subscribe(listener, type);
+			}
+		}else{
 			super.subscribe(listener, type);
 		}
 	}
 
 	@Override
-	public void subscribeToAll(IPOEventListener listener) {
+	public void subscribeToAll(IEventListener listener) {
 		super.subscribeToAll(listener);
 		this.delegateSink.subscribe(listener, POEventType.ProcessInit);
 		this.delegateSink.subscribe(listener, POEventType.ProcessDone);
 	}
 
 	@Override
-	public void unsubscribe(IPOEventListener listener, POEventType type) {
+	public void unsubscribe(IEventListener listener, IEventType type) {
 		super.unsubscribe(listener, type);
 		this.delegateSink.unsubscribe(listener, type);
 	}
 
 	@Override
-	public void unSubscribeFromAll(IPOEventListener listener) {
+	public void unSubscribeFromAll(IEventListener listener) {
 		super.unSubscribeFromAll(listener);
 		this.delegateSink.unSubscribeFromAll(listener);
 	}

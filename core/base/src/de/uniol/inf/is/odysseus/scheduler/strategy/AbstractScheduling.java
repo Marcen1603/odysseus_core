@@ -7,9 +7,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
@@ -176,15 +176,15 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	@Override
-	public void poEventOccured(POEvent poEvent) {
-		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSource();
+	public void eventOccured(IEvent<?,?> poEvent) {
+		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSender();
 		int index = plan.getSourceId(s);
 		synchronized (notBlocked) {
-			if (poEvent.getPOEventType() == POEventType.Blocked) {
+			if (poEvent.getEventType() == POEventType.Blocked) {
 				// System.out.println(poEvent);
 				updateBlocked(index);
 				return;
-			} else if (poEvent.getPOEventType() == POEventType.Unblocked) {
+			} else if (poEvent.getEventType() == POEventType.Unblocked) {
 				// System.out.println(poEvent);
 				notBlocked.set(index, true);
 				if (blocked) {
@@ -197,7 +197,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		// Ignore ProcessDone Events if Source is blocked
 		if (notBlocked.get(index)) {
 			// System.out.println(poEvent);
-			if (poEvent.getPOEventType() == POEventType.ProcessDone) {
+			if (poEvent.getEventType() == POEventType.ProcessDone) {
 				synchronized (schedulingEventListener) {
 					schedulable.set(index, true);
 					if (schedulingPaused && !s.isBlocked()) {

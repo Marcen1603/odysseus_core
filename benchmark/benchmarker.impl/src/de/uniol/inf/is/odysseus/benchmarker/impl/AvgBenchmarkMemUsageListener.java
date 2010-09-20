@@ -6,21 +6,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEvent;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEventType;
 
 /**
  * Called after initializing the plan and stopping the execution.
@@ -40,8 +39,8 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
 		if (eventArgs instanceof PlanExecutionEvent) {
 
-			if (((PlanExecutionEvent) eventArgs).getID().equals(
-					PlanExecutionEvent.EXECUTION_STARTED)) {
+			if (((PlanExecutionEvent) eventArgs).getEventType().equals(
+					PlanExecutionEventType.EXECUTION_STARTED)) {
 				System.out
 						.println("Plan execution prepared...collecting memory usage data!");
 				for (IPhysicalOperator op : eventArgs.getSender()
@@ -50,8 +49,8 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 				}
 			}
 
-			if (((PlanExecutionEvent) eventArgs).getID().equals(
-					PlanExecutionEvent.EXECUTION_STOPPED)) {
+			if (((PlanExecutionEvent) eventArgs).getEventType().equals(
+					PlanExecutionEventType.EXECUTION_STOPPED)) {
 				System.out
 						.println("Plan execution finished...create benchmark results!");
 				hash.clear();
@@ -98,8 +97,8 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 	}
 
 	@Override
-	public void poEventOccured(POEvent poEvent) {
-		if (poEvent.getPOEventType() != POEventType.PushDone){
+	public void eventOccured(IEvent poEvent) {
+		if (poEvent.getEventType() != POEventType.PushDone){
 			return;
 		}
 		long curTime = System.nanoTime() / nsDivisor;

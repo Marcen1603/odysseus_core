@@ -13,30 +13,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
 public class QueryPlanModificationEvent extends
 		AbstractPlanModificationEvent<IQuery> {
 
-	/**
-	 * ID for an event after removing a query.
-	 */
-	public static String QUERY_REMOVE = "QUERY_REMOVE";
-	
-	/**
-	 * ID for an event after adding a query.
-	 */
-	public static String QUERY_ADDED = "QUERY_ADDED";
-	
-	/**
-	 * ID for an event after starting a query.
-	 */
-	public static String QUERY_START = "QUERY_START";
-	
-	/**
-	 * ID for an event after stopping a query.
-	 */
-	public static String QUERY_STOP = "QUERY_STOP";
-	
-	/**
-	 * ID for an event after reoptimize a query.
-	 */
-	public static String QUERY_REOPTIMIZE = "QUERY_REOPTIMIZE";
 
 	/**
 	 * Constructor of QueryPlanModificationEvent.
@@ -48,8 +24,7 @@ public class QueryPlanModificationEvent extends
 	 * @param value
 	 *            {@link IQuery} to which this event refers.
 	 */
-	public QueryPlanModificationEvent(IPlanManager sender, String id,
-			IQuery value) {
-		super(sender, id, value);
+	public QueryPlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType, IQuery value) {
+		super(sender, eventType, value);
 	}
 }

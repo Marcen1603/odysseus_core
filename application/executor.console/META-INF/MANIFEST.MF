@@ -7,7 +7,6 @@ Import-Package:
  de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.base.planmanagement.configuration,
- de.uniol.inf.is.odysseus.base.planmanagement.event,
  de.uniol.inf.is.odysseus.base.planmanagement.event.error,
  de.uniol.inf.is.odysseus.base.planmanagement.plan,
  de.uniol.inf.is.odysseus.base.planmanagement.query,

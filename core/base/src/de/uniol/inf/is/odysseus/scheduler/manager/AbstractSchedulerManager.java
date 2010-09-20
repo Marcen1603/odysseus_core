@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
+import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory;
@@ -223,9 +224,9 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	public synchronized void sendErrorEvent(ErrorEvent eventArgs) {
 		this.logger.error("Error while scheduling.");
 
-		fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
-				"Schedulermanager exception (with inner error). "
-						+ eventArgs.getMessage()));
+		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
+				"Schedulermanager exception (with inner error). ",
+						eventArgs.getValue()));
 	}
 
 	/*

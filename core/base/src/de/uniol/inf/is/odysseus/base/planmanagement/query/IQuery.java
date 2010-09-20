@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 
 /**
  * Describes an object which represents a basic query in odyessus.
@@ -18,12 +18,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
  * It has a unique ID and consists of a logical plan, a physical plan, a
  * priority and a execution state.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Marco Grawunder
  * 
  */
 public interface IQuery extends
 		IReoptimizeRequester<AbstractQueryReoptimizeRule>,
-		IReoptimizeHandler<IQueryReoptimizeListener>, IOperatorOwner{
+		IReoptimizeHandler<IQueryReoptimizeListener>, IOperatorOwner, IMonitoringDataProvider {
 	/**
 	 * ID of this query. Should be unique.
 	 * 
@@ -83,8 +83,7 @@ public interface IQuery extends
 	 * there maybe more than one root in a query.
 	 * 
 	 * Initializes the physical plan of this query. Should be used if a new plan
-	 * is set. This method also opens the physical plan and sets the owner
-	 * relationship between the query and the operators.
+	 * is set. 
 	 * 
 	 * The new physical plan is stored as the initial physical plan and is set
 	 * as the current active physical root.
@@ -127,12 +126,10 @@ public interface IQuery extends
 	 * Returns the direct physical children which are necessary for the
 	 * execution of this query.
 	 * 
-	 * TODO: rename to getPhysicalChilds()?
-	 * 
 	 * @return The direct physical children which are necessary for the
 	 *         execution of this query.
 	 */
-	public List<IPhysicalOperator> getIntialPhysicalPlan();
+	public List<IPhysicalOperator> getPhysicalChilds();
 
 	/**
 	 * Removes the ownership of this query and the registered child operators.
@@ -164,13 +161,5 @@ public interface IQuery extends
 	 */
 	@Override
 	public void start();
-
-	// Eventlistening
-	
-	/**
-	 * 
-	 */
-	public void addIPOEventListener(String name, IPOEventListener listener);
-	public void removeIPOEventListener(String name);
 	
 }

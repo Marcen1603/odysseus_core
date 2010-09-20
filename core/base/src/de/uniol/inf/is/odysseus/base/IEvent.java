@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.base.planmanagement.event;
+package de.uniol.inf.is.odysseus.base;
 
 /**
  * Defines an event which is send by an object and has a value.
@@ -11,12 +11,8 @@ package de.uniol.inf.is.odysseus.base.planmanagement.event;
  *            Type of the value which this event could have.
  */
 public interface IEvent<SenderType, ValueType> {
-	/**
-	 * Returns ID that identifies this event. This ID should be unique.
-	 * 
-	 * @return ID that identifies this event. This ID should be unique.
-	 */
-	public String getID();
+	
+	public IEventType getEventType();
 
 	/**
 	 * Returns the value of this event.

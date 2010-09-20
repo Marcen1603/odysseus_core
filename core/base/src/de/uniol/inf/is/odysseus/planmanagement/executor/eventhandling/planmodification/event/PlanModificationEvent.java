@@ -28,8 +28,8 @@ public class PlanModificationEvent extends
 	 * @param value
 	 *            {@link IPlan} to which this event refers.
 	 */
-	public PlanModificationEvent(IPlanManager sender, String id,
+	public PlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType,
 			IPlan value) {
-		super(sender, id, value);
+		super(sender, eventType, value);
 	}
 }

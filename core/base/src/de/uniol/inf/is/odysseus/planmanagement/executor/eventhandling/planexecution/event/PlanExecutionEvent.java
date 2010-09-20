@@ -9,22 +9,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling;
  * @author Wolf Bauer
  * 
  */
-public class PlanExecutionEvent extends AbstractPlanExecutionEvent<String> {
-
-	/**
-	 * ID for an event after initializing the plan and before starting the execution.
-	 */
-	public static final String EXECUTION_PREPARED = "EXECUTION_PREPARED";
-
-	/**
-	 * ID for an event after stopping the execution.
-	 */
-	public static String EXECUTION_STOPPED = "EXECUTION_STOPPED";
-	
-	/**
-	 * ID for an event after starting the execution.
-	 */
-	public static String EXECUTION_STARTED = "EXECUTION_STARTED";
+public class PlanExecutionEvent extends AbstractPlanExecutionEvent<PlanExecutionEventType> {
 
 	/**
 	 * Constructor of PlanExecutionEvent.
@@ -34,7 +19,7 @@ public class PlanExecutionEvent extends AbstractPlanExecutionEvent<String> {
 	 * @param id
 	 *            ID which describes which event occurs.
 	 */
-	public PlanExecutionEvent(IPlanScheduling sender, String id) {
-		super(sender, id, "");
+	public PlanExecutionEvent(IPlanScheduling sender, PlanExecutionEventType eventType) {
+		super(sender, eventType, eventType);
 	}
 }

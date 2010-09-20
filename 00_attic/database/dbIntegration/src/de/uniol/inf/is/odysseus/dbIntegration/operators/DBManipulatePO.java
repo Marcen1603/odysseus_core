@@ -31,7 +31,6 @@ public class DBManipulatePO<T> extends AbstractSink<T> {
 	
 	@Override
 	protected void process_open() throws OpenFailedException {
-		super.process_open();
 		controller = new Controller(query, inputSchema);
 	}
 	

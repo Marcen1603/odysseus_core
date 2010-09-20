@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
+import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public class Query implements IQuery {
+public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	
 	protected static Logger _logger = null;
 
@@ -41,6 +42,7 @@ public class Query implements IQuery {
 		}
 		return _logger;
 	}
+	
 
 	/**
 	 * Counter for ID creation.
@@ -288,10 +290,10 @@ public class Query implements IQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
-	 * getIntialPhysicalPlan()
+	 * getPhysicalChilds()
 	 */
 	@Override
-	public ArrayList<IPhysicalOperator> getIntialPhysicalPlan() {
+	public ArrayList<IPhysicalOperator> getPhysicalChilds() {
 		return this.physicalChilds;
 	}
 
@@ -325,6 +327,7 @@ public class Query implements IQuery {
 			children.add(curOp);
 			visitedOps.add(curOp);
 			if (curOp.isSink()) {
+				@SuppressWarnings("rawtypes")
 				Collection<PhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
 						.getSubscribedToSource();
 				for (PhysicalSubscription<ISource<?>> subscription : subsriptions) {
@@ -356,14 +359,41 @@ public class Query implements IQuery {
 		synchronized (this.physicalChilds) {
 			// Store children, if not already done.
 			for (IPhysicalOperator child : children) {
-				if (!this.physicalChilds.contains(child)) {
-					this.physicalChilds.add(child);
-					child.addOwner(this);
-				}
+				addChild(child);
 			}
 		}
 	}
 
+	private void addChild(IPhysicalOperator child) {
+		if (!this.physicalChilds.contains(child)) {
+			this.physicalChilds.add(child);
+			child.addOwner(this);
+		}
+	}
+	
+	private boolean removeChild(IPhysicalOperator child) {
+		if (this.physicalChilds.remove(child)) {
+			child.removeOwner(this);
+			return true;
+		}
+		return false;
+	}
+
+	
+	/**
+	 * replace an physical operator of the query plan with another operator
+	 * operator subscription are not touched, so correct subscriptions need to
+	 * be set before replacement 
+	 * @param oldOp
+	 * @param newOp
+	 */
+	public void replaceOperator(IPhysicalOperator oldOp, IPhysicalOperator newOp){
+		if (removeChild(oldOp)){
+			addChild(newOp);
+		}// TODO: Exception werfen?
+	}
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -372,26 +402,25 @@ public class Query implements IQuery {
 	 */
 	@Override
 	public void removeOwnerschip() {
-		// TODO: RemoveOwnership und Close
+
 		getLogger().debug("Remove ownership start");
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 			getLogger().debug("Remove Ownership for " + physicalOperator);
 			physicalOperator.removeOwner(this);
-			if (!physicalOperator.hasOwner()) {
-				getLogger()
-						.debug("No more owners. Closing " + physicalOperator);
-				// physicalOperator.close();
-				getLogger().error("ATTENTION: CLOSING CURRENT NOT IMPLEMENTED");
-				if (physicalOperator.isSink()) {
-					getLogger().debug(
-							"Sink unsubscribe from all sources "
-									+ physicalOperator);
-					ISink<?> sink = (ISink<?>) physicalOperator;
-					sink.unsubscribeFromAllSources();
-				}
-			}
+//			if (!physicalOperator.hasOwner()) {
+//				getLogger()
+//						.debug("No more owners. Closing " + physicalOperator);
+//				// physicalOperator.close();
+//				getLogger().error("ATTENTION: CLOSING CURRENT NOT IMPLEMENTED");
+//				if (physicalOperator.isSink()) {
+//					getLogger().debug(
+//							"Sink unsubscribe from all sources "
+//									+ physicalOperator);
+//					ISink<?> sink = (ISink<?>) physicalOperator;
+//					sink.unsubscribeFromAllSources();
+//				}
+//			}
 		}
-		WrapperPlanFactory.removeClosedSources();
 	}
 
 	/*
@@ -615,18 +644,6 @@ public class Query implements IQuery {
 	@Override
 	public void setBuildParameter(QueryBuildParameter parameter) {
 		this.parameters = parameter;
-	}
-
-	@Override
-	public void addIPOEventListener(String name, IPOEventListener listener) {
-		poEventListener.put(name,listener);
-	}
-
-	@Override
-	public void removeIPOEventListener(String name) {
-		poEventListener.remove(name);
-	}
-
-	
+	}	
 	
 }

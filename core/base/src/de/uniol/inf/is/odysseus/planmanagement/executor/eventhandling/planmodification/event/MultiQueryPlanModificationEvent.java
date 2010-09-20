@@ -30,8 +30,8 @@ public class MultiQueryPlanModificationEvent extends
 	 * @param value
 	 *            List of {@link IQuery} to which this event refers.
 	 */
-	public MultiQueryPlanModificationEvent(IPlanManager sender, String id,
+	public MultiQueryPlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType,
 			ArrayList<IQuery> value) {
-		super(sender,  id, value);
+		super(sender,  eventType, value);
 	}
 }

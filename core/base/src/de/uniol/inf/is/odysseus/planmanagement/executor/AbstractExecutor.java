@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
+import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ISettingCh
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEvent;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
@@ -155,9 +157,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				getLogger().error(
 						"Error while setting new execution plan. "
 								+ e.getMessage());
-				fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
-						"Error while setting new execution plan. "
-								+ e.getMessage()));
+				fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
+						"Error while setting new execution plan. ", e));
 			} finally {
 				executionPlanLock.unlock();
 			}
@@ -419,7 +420,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			this.executionPlan.open();
 
 			firePlanExecutionEvent(new PlanExecutionEvent(this,
-					PlanExecutionEvent.EXECUTION_PREPARED));
+					PlanExecutionEventType.EXECUTION_PREPARED));
 
 			schedulerManager().startScheduling();
 		} catch (Exception e) {
@@ -428,7 +429,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		getLogger().info("Scheduler started.");
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
-				PlanExecutionEvent.EXECUTION_STARTED));
+				PlanExecutionEventType.EXECUTION_STARTED));
 	}
 
 	/*
@@ -454,7 +455,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		getLogger().info("Scheduler stopped.");
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
-				PlanExecutionEvent.EXECUTION_STOPPED));
+				PlanExecutionEventType.EXECUTION_STOPPED));
 	}
 
 	/*
@@ -642,9 +643,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	@Override
 	public synchronized void sendErrorEvent(ErrorEvent eventArgs) {
-		fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
-				"Executor exception (with inner error). "
-						+ eventArgs.getMessage()));
+		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
+				"Executor exception (with inner error). ", eventArgs.getValue()));
 	}
 
 	public void bindSystemMonitorFactory(

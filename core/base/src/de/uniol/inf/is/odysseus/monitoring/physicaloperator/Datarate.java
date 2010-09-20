@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.ISubscriber;
 import de.uniol.inf.is.odysseus.monitoring.MonitoringDataScheduler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 
@@ -74,7 +74,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double> implement
 		}
 	}
 
-	public void poEventOccured(POEvent poEvent) {
+	public void eventOccured(IEvent<?,?> event) {
 		synchronized (this.value) {
 			++writeCount;
 		}

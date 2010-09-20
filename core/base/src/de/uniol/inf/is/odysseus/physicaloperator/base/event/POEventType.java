@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.event;
 
+import de.uniol.inf.is.odysseus.base.IEventType;
+
 /**
  * @author  Marco Grawunder
  */
@@ -14,7 +16,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.event;
 //	InitTimeout, ReadTimeout, WriteTimeout,
 //	POElementBufferMaxCapacityReached,
 //	PutElementToBuffer, GetElementFromBuffer}
-public enum POEventType {
+public enum POEventType implements IEventType{
 	OpenInit, OpenDone,
 	PostPriorisation,
 	ProcessInit, ProcessDone, ProcessInitNeg, ProcessDoneNeg,

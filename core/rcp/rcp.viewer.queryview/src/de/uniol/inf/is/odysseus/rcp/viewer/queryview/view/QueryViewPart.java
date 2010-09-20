@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.queryview.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphEditorConstants;
@@ -195,14 +196,14 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		if ("QUERY_REMOVE".equals(eventArgs.getID())) {
+		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 			removeQuery((IQuery) eventArgs.getValue());
-		} else if ("QUERY_ADDED".equals(eventArgs.getID())) {
+		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			addQuery((IQuery) eventArgs.getValue());
-		} else if( "QUERY_STOP".equals(eventArgs.getID())) {
+		} else if( PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
 //			tableViewer.refresh((IQuery) eventArgs.getValue());
 			refreshTable();
-		} else if( "QUERY_START".equals(eventArgs.getID())) {
+		} else if( PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
 //			tableViewer.refresh((IQuery) eventArgs.getValue());
 			refreshTable();
 		}

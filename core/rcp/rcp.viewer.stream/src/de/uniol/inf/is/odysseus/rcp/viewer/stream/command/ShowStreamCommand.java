@@ -48,7 +48,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 				if( query.getRoots().size() > 0 )
 					opForStream = query.getRoots().get(0);
 				else 
-					opForStream = query.getIntialPhysicalPlan().get(0);
+					opForStream = query.getPhysicalChilds().get(0);
 				
 			}
 			

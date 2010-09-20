@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.monitoring;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.base.IEventListener;
+import de.uniol.inf.is.odysseus.base.IEventType;
+
 public interface IMonitoringDataProvider {
 	public Collection<String> getProvidedMonitoringData();
 
@@ -14,4 +17,12 @@ public interface IMonitoringDataProvider {
 
 	public void addMonitoringData(String type, IMonitoringData<?> item);
 	public void removeMonitoringData(String type);
+	
+	public void subscribe(IEventListener listener, IEventType type);
+
+	public void unsubscribe(IEventListener listener, IEventType type);
+
+	public void subscribeToAll(IEventListener listener);
+
+	public void unSubscribeFromAll(IEventListener listener);
 }

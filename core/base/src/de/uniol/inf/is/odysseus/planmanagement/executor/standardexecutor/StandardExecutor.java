@@ -22,16 +22,17 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Ab
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.AbstractExecutionSetting;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Plan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
@@ -224,7 +225,7 @@ public class StandardExecutor extends AbstractExecutor {
 		// store optimized queries
 		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
+			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 		}
 
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
@@ -269,7 +270,7 @@ public class StandardExecutor extends AbstractExecutor {
 		// store optimized queries
 		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
+			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 		}
 
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
@@ -309,7 +310,8 @@ public class StandardExecutor extends AbstractExecutor {
 		// store optimized queries
 		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 		}
 
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
@@ -527,8 +529,9 @@ public class StandardExecutor extends AbstractExecutor {
 				getLogger().info("Removing Ownership "+queryToRemove.getID());		
 				queryToRemove.stop();
 				queryToRemove.removeOwnerschip();
+				WrapperPlanFactory.removeClosedSources();
 				getLogger().debug("Query " + queryToRemove.getID() + " removed.");
-				firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_REMOVE, queryToRemove));
+				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 			} catch (QueryOptimizationException e) {
 				getLogger().warn("Query not removed. An Error while optimizing occurd (ID: " + queryID + ").");
 				throw new PlanManagementException(e);
@@ -571,7 +574,7 @@ public class StandardExecutor extends AbstractExecutor {
 				}
 			}
 			getLogger().debug("Query " + queryID + " started.");
-			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_START, queryToStart));
+			firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
 		} catch (Exception e) {
 			getLogger().warn("Query not started. An Error during optimizing occurd (ID: " + queryID + ").");
 			return;
@@ -613,7 +616,7 @@ public class StandardExecutor extends AbstractExecutor {
 			}
 			getLogger().debug("Query "+queryID+" stopped.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this,
-					QueryPlanModificationEvent.QUERY_STOP, queryToStop));
+					PlanModificationEventType.QUERY_STOP, queryToStop));
 		} catch (Exception e) {
 			getLogger().warn(
 					"Query not stopped. An Error while optimizing occurd (ID: "
@@ -641,7 +644,7 @@ public class StandardExecutor extends AbstractExecutor {
 				setExecutionPlan(optimizer().reoptimize(this, (IQuery) sender, this.executionPlan));
 
 				getLogger().debug("Query " + sender.getID() + " reoptimized.");
-				firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_REOPTIMIZE, sender));
+				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REOPTIMIZE, sender));
 			} else {
 				getLogger().warn("Query not reoptimized. Query type is not supported.");
 				return;
@@ -673,7 +676,7 @@ public class StandardExecutor extends AbstractExecutor {
 				this.executionPlanLock.lock();
 				setExecutionPlan(optimizer().reoptimize(this, this.executionPlan));
 				getLogger().debug("Plan reoptimized.");
-				firePlanModificationEvent(new PlanModificationEvent(this, PlanModificationEvent.PLAN_REOPTIMIZE, this.plan));
+				firePlanModificationEvent(new PlanModificationEvent(this, PlanModificationEventType.PLAN_REOPTIMIZE, this.plan));
 			} catch (Exception e) {
 				getLogger().warn("Plan not reoptimized. An Error while optimizing occurd.");
 				return;
