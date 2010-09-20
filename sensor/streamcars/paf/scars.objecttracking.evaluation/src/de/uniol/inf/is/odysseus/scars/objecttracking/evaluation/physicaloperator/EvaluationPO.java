@@ -11,10 +11,14 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -124,11 +128,23 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		}
 		// Filter
 		if(obj1 instanceof MVRelationalTuple ) {
+					
 			MVRelationalTuple<M> filteringMainObject = (MVRelationalTuple<M>)obj1;
+			
+			ConnectionList connectionList =filteringMainObject.getMetadata().getConnectionList();
+//			ArrayList<MVRelationalTuple<?>> blubb = new ArrayList<MVRelationalTuple<?>>();
+			TupleHelper helper = new TupleHelper(filteringMainObject);
+//			for( Connection conn : connectionList ) {
+//				blubb.add((MVRelationalTuple<?>) helper.getObject(conn.getLeftPath()));
+//			}
 			resultTuple = new MVRelationalTuple<M>(filteringMainObject);
-			MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>) shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
-			for (Object obj : filteringListObject.getAttributes()) {
-				filteringObjList.add((MVRelationalTuple<M>)obj);
+//			MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>) shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
+//			for (Object obj : filteringListObject.getAttributes()) {
+//				if( blubb.contains(obj))
+//					filteringObjList.add((MVRelationalTuple<M>)obj);
+//			}
+			for( Connection conn : connectionList ) {
+				filteringObjList.add((MVRelationalTuple<M>) helper.getObject(conn.getLeftPath()));
 			}
 		}
 		// Temp. Broker
@@ -190,47 +206,73 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		}
 
 		// Generate the output tuple
-		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(combinedListChildTmp.size());
-		int counter = 0;
-		for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
-			tuples.setAttribute(counter++, mvRelationalTuple);
+		if( combinedListChildTmp.size() > 0 ) {
+			MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(combinedListChildTmp.size());
+			int counter = 0;
+			for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
+				tuples.setAttribute(counter++, mvRelationalTuple);
+			}
+		//	SchemaIndexPath schemaPath = schemaHelper.getSchemaIndexPath(resultRemovePath);
+	//		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(resultTuple);
+		//	tuplePath.setTupleObject(new MVRelationalTuple<IProbability>(tuples));
+			
+			
+			Object[] association = new Object[2];
+	
+			// get timestamp path from scanned data
+			SchemaIndexPath path = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
+			association[0] = path.toTupleIndexPath(resultTuple).getTupleObject();
+	
+			// get scanned objects
+			association[1] = new MVRelationalTuple<M>(tuples);
+	
+			MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+			base.setMetadata(resultTuple.getMetadata());
+			base.setAttribute(0, new MVRelationalTuple<M>(association));
+					
+			// Transfer the generated tuple
+			transfer(base);
+	//		boolAsso = false;
+	//		boolAssoEmpty = false;
+	//		boolFilter = false;
+	//		boolFilterEmpty = false;
+	//		boolBroker = false;
+	//		boolBrokerEmpty = false;
+	//		associationTime = -1;
+	//		filteringTime = -1;
+	//		brokerTime = -1;
+		} else {
+			// Zeitstempel holen
+			Long timestamp;
+			if( obj0 instanceof PointInTime)
+				timestamp = ((PointInTime)obj0).getMainPoint();
+			else if( obj1 instanceof PointInTime )
+				timestamp = ((PointInTime)obj1).getMainPoint();
+			else if( obj2 instanceof PointInTime )
+				timestamp = ((PointInTime)obj2).getMainPoint();
+			else
+				throw new IllegalArgumentException("Could not determine timestamp!");
+			
+//			sendPunctuation(new PointInTime(timestamp));
+			// Leere Liste senden
+			MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+			
+			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(2);
+			tuple.setAttribute(0, new Long(timestamp));
+			tuple.setAttribute(1, new MVRelationalTuple<M>(0));
+			
+			base.setAttribute(0, tuple);
+			base.setMetadata( (M) new StreamCarsMetaData());
+			base.getMetadata().setStart(new PointInTime(timestamp));
+			transfer(base);
 		}
-	//	SchemaIndexPath schemaPath = schemaHelper.getSchemaIndexPath(resultRemovePath);
-//		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(resultTuple);
-	//	tuplePath.setTupleObject(new MVRelationalTuple<IProbability>(tuples));
-		
-		
-		Object[] association = new Object[2];
-
-		// get timestamp path from scanned data
-		SchemaIndexPath path = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
-		association[0] = path.toTupleIndexPath(resultTuple).getTupleObject();
-
-		// get scanned objects
-		association[1] = new MVRelationalTuple<M>(tuples);
-
-		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-		base.setMetadata(resultTuple.getMetadata());
-		base.setAttribute(0, new MVRelationalTuple<M>(association));
-				
-		// Transfer the generated tuple
-		transfer(base);
-//		boolAsso = false;
-//		boolAssoEmpty = false;
-//		boolFilter = false;
-//		boolFilterEmpty = false;
-//		boolBroker = false;
-//		boolBrokerEmpty = false;
-//		associationTime = -1;
-//		filteringTime = -1;
-//		brokerTime = -1;
 	}
 	
 	private boolean isTupleInList( MVRelationalTuple<M> tuple, List<MVRelationalTuple<M>> list ) {
-		for( MVRelationalTuple<M> t : list ) {
-			if(tuple.getAttribute(1).equals(t.getAttribute(1))) // ID-Vergleich
-				return true;
-		}
+//		for( MVRelationalTuple<M> t : list ) {
+//			if(tuple.getAttribute(1).equals(t.getAttribute(1))) // ID-Vergleich
+//				return true;
+//		}
 		return false;
 	}
 
