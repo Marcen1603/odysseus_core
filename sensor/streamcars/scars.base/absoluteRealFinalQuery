@@ -115,7 +115,8 @@ BROKER(
 	            ${bufferType}
 	        ),
             ${brokerListName2},
-            5
+            2,
+            LESS
         ),
         ${brokerListName2},
         5
@@ -136,18 +137,19 @@ ASSOCIATION-SEL(
                         ${bufferType}
                     ),
                     SET-PREDICTION-OR(
-                        BUFFER(
-                            BROKER(${brokerSourceName2}, // Brokerdaten 
-                                    QUEUE( // Zeitgeber für den Broker
-                                        BUFFER(
-                                           ${assoSource1},
-                                           ${bufferType} 
-                                        )
-                                        
-                                    )
-                            ),
-                            ${bufferType} 
-                        ),
+                        TMP-DATA-BOUNCER(
+	                        BUFFER(
+	                            BROKER(${brokerSourceName2}, // Brokerdaten 
+	                                    QUEUE( // Zeitgeber für den Broker
+	                                           ${assoSource1}
+	                                    )
+	                            ),
+	                            ${bufferType} 
+	                        ),
+	                        ${brokerListName2},
+	                        2,
+	                        GREATEREQUAL
+	                    ),
                         ${brokerListName2},
                         ${brokerListName2}:car:posx := ${brokerListName2}:car:posx +
                             (cos(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
