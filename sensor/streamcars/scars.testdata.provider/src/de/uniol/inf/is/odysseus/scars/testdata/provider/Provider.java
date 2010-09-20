@@ -232,7 +232,8 @@ public class Provider implements IProvider {
 
 	@Override
 	public SDFAttributeList getSchema(String sourceName) {
-		double mvValue = 0.5;
+		double mvValue = 1.0;
+		double mvCorrelationValue = 0.5; 
 		SDFAttribute type = new SDFAttribute(sourceName, "type");
 		type.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 
@@ -244,31 +245,31 @@ public class Provider implements IProvider {
 
 		SDFAttribute posx = new SDFAttribute(sourceName, "posx");
 		posx.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		posx.setCovariance(Arrays.asList(new Double[] {mvValue, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
+		posx.setCovariance(Arrays.asList(new Double[] {mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
 
 		SDFAttribute posy = new SDFAttribute(sourceName, "posy");
 		posy.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		posy.setCovariance(Arrays.asList(new Double[] {0.0, mvValue, 0.0, 0.0, 0.0, 0.0, 0.0}));
+		posy.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
 
 		SDFAttribute posz = new SDFAttribute(sourceName, "posz");
 		posz.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		posz.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, mvValue, 0.0, 0.0, 0.0, 0.0}));
+		posz.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
 
 		SDFAttribute roll = new SDFAttribute(sourceName, "roll");
 		roll.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		roll.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, mvValue, 0.0, 0.0, 0.0}));
+		roll.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
 
 		SDFAttribute pitch = new SDFAttribute(sourceName, "pitch");
 		pitch.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		pitch.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, mvValue, 0.0, 0.0}));
+		pitch.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue}));
 
 		SDFAttribute heading = new SDFAttribute(sourceName, "heading");
 		heading.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		heading.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.0, mvValue, 0.0}));
+		heading.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue}));
 
 		SDFAttribute velocity = new SDFAttribute(sourceName, "velocity");
 		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		velocity.setCovariance(Arrays.asList(new Double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, mvValue}));
+		velocity.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue}));
 
 		SDFAttribute length = new SDFAttribute(sourceName, "length");
 		length.setDatatype(SDFDatatypeFactory.getDatatype("Float"));
