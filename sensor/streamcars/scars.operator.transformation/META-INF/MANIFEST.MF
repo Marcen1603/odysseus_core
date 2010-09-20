@@ -27,6 +27,8 @@ Import-Package: de.uniol.inf.is.odysseus.objecttracking.drools,
  de.uniol.inf.is.odysseus.scars.operator,
  de.uniol.inf.is.odysseus.scars.operator.jdvesink.logicaloperator,
  de.uniol.inf.is.odysseus.scars.operator.jdvesink.physicaloperator,
+ de.uniol.inf.is.odysseus.scars.operator.objectselector.logicaloperator,
+ de.uniol.inf.is.odysseus.scars.operator.objectselector.physicaloperator,
  de.uniol.inf.is.odysseus.scars.xmlprofiler.logicaloperator,
  de.uniol.inf.is.odysseus.scars.xmlprofiler.physicaloperator,
  de.uniol.infs.is.odysseus.scars.operator.brokerinit

@@ -86,6 +86,7 @@ TOKEN : /* Keywords */ {
 |	<K_TMP_DATA_BOUNCER: "TMP-DATA-BOUNCER">
 |   <K_JDVE_SINK: "JDVE-SINK">
 | 	<K_SCARS_XML_PROFILER: "SCARS-XML-PROFILER">
+|   <K_DISTANCE_OBJECT_SELECTOR: "DISTANCE-OBJECT-SELECTOR">
 }
 
 TOKEN:{
@@ -168,7 +169,8 @@ void AlgebraOp():{}{
 	BrokerInitOp() |
 	TmpDataBouncerOp() |
 	JDVESinkOp() |
-	ScarsXMLProfilerOp()
+	ScarsXMLProfilerOp() |
+	DistanceObjectSelectorOp()
 }
 
 void TestOp(): {}{
@@ -475,3 +477,8 @@ void JDVESinkOp(): {}
 
 void ScarsXMLProfilerOp(): {}{
   < K_SCARS_XML_PROFILER > "(" AlgebraOp() "," Identifier() "," Identifier() ")"}
+
+void DistanceObjectSelectorOp(): {}
+{
+  < K_DISTANCE_OBJECT_SELECTOR > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() "," Number() "," Number() "," Number() "," Number() ")"
+}
