@@ -124,9 +124,9 @@ import de.uniol.infs.is.odysseus.scars.operator.brokerinit.BrokerInitAO;
  * IMPORTANT: data[0] contains the attribute resolver data[1] contains the child
  * operator data[2] contains the output port of the child operator to which the
  * parent is connected
- * 
+ *
  * @author Andre Bolles
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements
@@ -1119,7 +1119,7 @@ public class CreateLogicalPlanVisitor implements
 								predDef, prediction.getOutputSchema()));
 			}
 		}
-		
+
 		((ArrayList) data).add(prediction);
 		((ArrayList) data).add(new Integer(0));
 
@@ -1577,8 +1577,20 @@ public class CreateLogicalPlanVisitor implements
 		} catch (Exception e) {
 		}
 
+		// init operator
+		ASTIdentifier operator = (ASTIdentifier) node.jjtGetChild(3);
+		String op = "LESS";
+		try {
+			op = operator.getName();
+		} catch (Exception e) {
+
+		}
+
 		// set threshold
 		bouncerAO.setThreshold(threshold);
+
+		// set operator
+		bouncerAO.setOperator(op);
 
 		((ArrayList) data).add(bouncerAO);
 		((ArrayList) data).add(new Integer(0));

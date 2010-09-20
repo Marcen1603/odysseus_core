@@ -15,8 +15,8 @@ options {
   //LOOKAHEAD = 2;
   //FORCE_LA_CHECK = true;
 }
- 
-PARSER_BEGIN(ProceduralExpressionParser) 
+
+PARSER_BEGIN(ProceduralExpressionParser)
 package de.uniol.inf.is.odysseus.pqlhack.parser;
 
 public class ProceduralExpressionParser{} PARSER_END(ProceduralExpressionParser)
@@ -134,7 +134,7 @@ void Host() :
 }
 
 ASTLogicalPlan LogicalPlan():{}{
-	
+
 	<K_LOGICAL><K_PLAN>":" (AlgebraOp() [";"])+ < EOF > {return jjtThis;}
 }
 
@@ -237,13 +237,13 @@ void RelationalJoinOp(): {
 
 void RelationalNestOp(): {
 }{
-	// NEST stream, a, b AS z, z is the attribute name of the nesting. 
+	// NEST stream, a, b AS z, z is the attribute name of the nesting.
 	<K_RELATIONAL_NEST>"(" AlgebraOp() "," Identifier() "," (Identifier())* ")"
 }
 
 void RelationalUnnestOp(): {
 }{
-	// NEST stream, a, b AS z, z is the attribute name of the nesting. 
+	// NEST stream, a, b AS z, z is the attribute name of the nesting.
 	<K_RELATIONAL_UNNEST>"(" AlgebraOp() "," Identifier() ")"
 }
 
@@ -422,7 +422,7 @@ void DefaultPredictionDefinition(): {}{
 }
 
 void PredictionFunctionDefinition(): {}{
-	Identifier() ":=" Expression()";"	
+	Identifier() ":=" Expression()";"
 }
 
 void KeyValueList(): {}{
@@ -437,7 +437,7 @@ void AssociationGenOp(): {} {
   <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ")"}
 
 void AssociationEvalOp(): {} {
-  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier() ( "," KeyValueList() )? ")" 
+  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier() ( "," KeyValueList() )? ")"
 }
 
 void AssociationSelOp(): {} {
@@ -452,7 +452,7 @@ void EvaluateOp(): {} {
   < K_EVALUATE > "(" AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," Number() ")"}
 
 void TmpDataBouncerOp(): {} {
- < K_TMP_DATA_BOUNCER > "(" AlgebraOp() "," Identifier() "," Number() ")"
+ < K_TMP_DATA_BOUNCER > "(" AlgebraOp() "," Identifier() "," Number() "," Identifier()  ")"
 }
 
 void FilterGainOp(): {}
