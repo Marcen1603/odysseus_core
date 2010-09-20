@@ -38,8 +38,8 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval> exte
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// Punctuations nicht weitersenden. Der Temp. Broker muss irgendwann ja daten haben, oder nicht.
-//		this.sendPunctuation(timestamp);
+		if( !this.operator.toUpperCase().equals(LESS))
+			sendPunctuation(timestamp);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -98,10 +98,10 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval> exte
 
 		// Falls NICHTS weitergeleitet wird -> punctuation senden
 		if(transferCarListArrayList.size() == 0) {
-			processPunctuation(timestamp, 0);
+			sendPunctuation(timestamp);
+		} else {
+			transfer(object);
 		}
-
-		transfer(object);
 	}
 
 	@Override
