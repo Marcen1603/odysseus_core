@@ -9,6 +9,7 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
@@ -74,6 +75,7 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 		if (buffer == null) {
 			try {
 				buffer = data.getScan();
+				buffer = this.removeGhostCars(buffer);
 			} catch (SocketTimeoutException e) {
 				e.printStackTrace();
 				return false;
@@ -149,6 +151,41 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 		}
 		return typeSet;
 	}
+	
+	/**
+	 * Creates a new tuple without any ghost cars
+	 * @param scan
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public MVRelationalTuple<M> removeGhostCars(MVRelationalTuple<M> tuple) {
+		MVRelationalTuple<M> newTuple = new MVRelationalTuple<M>(1);
+		
+		MVRelationalTuple<M> newScan = new MVRelationalTuple<M>(2);
+		MVRelationalTuple<M> scan = (MVRelationalTuple<M>)tuple.getAttribute(0);
+		
+		Object timestamp = scan.getAttribute(0);
+		MVRelationalTuple<M> cars = (MVRelationalTuple<M>)scan.getAttribute(1);
+		ArrayList<MVRelationalTuple<M>> validCars = new ArrayList<MVRelationalTuple<M>>();
+		
+		for (int i = 0; i < cars.getAttributeCount(); i++) {
+			MVRelationalTuple<M> car = (MVRelationalTuple<M>)cars.getAttribute(i);
+			if (((Integer)car.getAttribute(1)) != -1) {
+				validCars.add(car);
+			}
+		}
+		
+		MVRelationalTuple<M> newCars = new MVRelationalTuple<M>(validCars.size());
+		for (int i = 0; i < validCars.size(); i++) {
+			newCars.setAttribute(i, validCars.get(i));
+		}
+		
+		newScan.setAttribute(0, timestamp);
+		newScan.setAttribute(1, newCars);
+		newTuple.setAttribute(0, newScan);
+		
+		return newTuple;
+	}
 
 }
 
@@ -172,6 +209,8 @@ class JDVEData<M extends IProbability> {
 	public long getLastTimestamp() {
 		return lastTimestamp;
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	public MVRelationalTuple<M> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
