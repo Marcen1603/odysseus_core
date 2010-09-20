@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.AbstractInitializationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.InitializationFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
@@ -78,7 +79,15 @@ public class InitializationTest<K> {
 	double[][] covarianceIni = { {1,0}, {0,1} };
 	
 	measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, null,5);
-
+	
+	ConnectionList con = new ConnectionList();
+	
+	StreamCarsMetaData scars = new StreamCarsMetaData();
+	
+	scars.setConnectionList(con);
+	
+	measurementTuple.setMetadata(scars);
+	
 	// the expected tuple
 
 	expectedTuple = testData.generateTestTuple(speedIni, posIni, covarianceIni, speedNew, posNew, covarianceNew, null,5);
