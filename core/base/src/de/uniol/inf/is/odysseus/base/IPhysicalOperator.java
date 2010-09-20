@@ -29,4 +29,6 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public void setOutputSchema(SDFAttributeList outputSchema);
 	
 	public IPhysicalOperator clone();
+	
+	public boolean isOpen();
 }

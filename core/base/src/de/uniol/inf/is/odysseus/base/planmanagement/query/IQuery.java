@@ -162,4 +162,6 @@ public interface IQuery extends
 	@Override
 	public void start();
 	
+	public boolean isOpened();
+	
 }

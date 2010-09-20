@@ -167,6 +167,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	public void open() throws OpenFailedException {
+		super.open(null, -1);
 		this.delegateSink.open(this);
 	}
 
@@ -262,7 +263,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			default:
 				super.subscribe(listener, type);
 			}
-		}else{
+		} else {
 			super.subscribe(listener, type);
 		}
 	}

@@ -94,28 +94,36 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void close(IPhysicalOperator o, int sourcePort) {
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o, sourcePort);
-		if (sub == null){
+		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o,
+				sourcePort);
+		if (sub == null) {
 			throw new RuntimeException("Close called from an unsubscribed sink");
 		}
 		this.activeSinkSubscriptions.remove(sub);
-		if (activeSinkSubscriptions.size() == 0){
+		if (activeSinkSubscriptions.size() == 0) {
 			getLogger().debug("Closing " + toString());
 			this.process_close();
 			open.set(false);
 			stopMonitoring();
 		}
 	};
-	
+
 	@Override
-	public synchronized void open(IPhysicalOperator o, int sourcePort) throws OpenFailedException {
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o, sourcePort);
-		if (sub == null){
-			throw new OpenFailedException("Open called from an unsubscribed sink "+o);
-		}
-		// Handle duplicate open calls
-		if (!activeSinkSubscriptions.contains(sub)){
-			this.activeSinkSubscriptions.add(sub);
+	public synchronized void open(IPhysicalOperator o, int sourcePort)
+			throws OpenFailedException {
+		// o can be null, if operator is top operator 
+		// otherwise top operator cannot be opened
+		if (o != null) {
+			PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+					o, sourcePort);
+			if (sub == null) {
+				throw new OpenFailedException(
+						"Open called from an unsubscribed sink " + o);
+			}
+			// Handle duplicate open calls
+			if (!activeSinkSubscriptions.contains(sub)) {
+				this.activeSinkSubscriptions.add(sub);
+			}
 		}
 		if (!isOpen()) {
 			fire(openInitEvent);
@@ -125,9 +133,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(IPhysicalOperator o, int sourcePort) {
-		for (PhysicalSubscription<ISink<? super T>> sub: this.sinkSubscriptions){
-			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort){
+	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(
+			IPhysicalOperator o, int sourcePort) {
+		for (PhysicalSubscription<ISink<? super T>> sub : this.sinkSubscriptions) {
+			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort) {
 				return sub;
 			}
 		}
@@ -206,30 +215,30 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
 		}
 	}
-	
+
 	@Override
 	public void connectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
-			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-			PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
-					sink, sinkInPort, sourceOutPort, schema);
-			this.activeSinkSubscriptions.add(sub);
+		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
+				sink, sinkInPort, sourceOutPort, schema);
+		this.activeSinkSubscriptions.add(sub);
 	}
-	
+
 	@Override
 	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
 		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(sink,
 				sinkInPort, sourceOutPort, schema));
 	}
-	
+
 	@Override
 	public void disconnectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
-		this.activeSinkSubscriptions.remove(sub);		
+		this.activeSinkSubscriptions.remove(sub);
 	}
 
 	@Override
@@ -296,12 +305,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 					.processPunctuation(punctuation, sub.getSinkInPort());
 		}
 	}
-	
+
 	@Override
-	public void sendPunctuation(PointInTime punctuation, int outPort){
-		for(PhysicalSubscription<? extends ISink<?>> sub: this.activeSinkSubscriptions){
-			if(sub.getSourceOutPort() == outPort){
-				sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
+	public void sendPunctuation(PointInTime punctuation, int outPort) {
+		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+			if (sub.getSourceOutPort() == outPort) {
+				sub.getTarget().processPunctuation(punctuation,
+						sub.getSinkInPort());
 			}
 		}
 	}

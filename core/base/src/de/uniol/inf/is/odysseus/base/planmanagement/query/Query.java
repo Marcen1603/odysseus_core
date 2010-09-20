@@ -457,6 +457,16 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 //		}
 		this.active = false;
 	}
+	
+	@Override
+	public boolean isOpened() {
+		for (IPhysicalOperator o: getRoots()){
+			if (!o.isOpen()){
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/*
 	 * (non-Javadoc)
