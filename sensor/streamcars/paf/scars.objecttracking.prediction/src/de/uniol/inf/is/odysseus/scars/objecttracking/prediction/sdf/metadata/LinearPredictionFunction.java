@@ -63,7 +63,7 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 				sigma[row][col] = metadata.getCovariance()[row][col];
 			}
 		}
-		printMatrix("START", sigma);
+//		printMatrix("START", sigma);
 		// H * Sigma...
 		double[][] tmpCov = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
 		for(int row=0; row<sigma.length; row++) {
@@ -76,33 +76,33 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 			expressions[index].replaceVaryingAttributeIndex(scanSchema, index);
 			expressions[index].replaceVaryingAttributeIndex(timeSchema, index);
 			int covRow = mapper.getCovarianceIndex(expressions[index].getTargetAttributeName());
-//			System.out.println("matrix row index: " + covRow);
-//			System.out.println("target attr name: " + expressions[index].getTargetAttributeName());
+//			System.out.println("H * Sigma...matrix row index: " + covRow);
+//			System.out.println("H * Sigma...target attr name: " + expressions[index].getTargetAttributeName());
 			
 			for(int col=0; col<tmpCov.length; col++) {
 				for(String attrName : expressions[index].getAttributeNames(scanSchema)) {
 					int covAttrIndex = mapper.getCovarianceIndex(attrName);
 					if(covAttrIndex != -1) {
 						expressions[index].bindVariable(attrName, sigma[covAttrIndex][col]);
-//						System.out.println("bind: " + attrName + "= " + sigma[covAttrIndex][col]);
+//						System.out.println("H * Sigma...bind:[" + covAttrIndex + "] [" + col + "] " + attrName + "= " + sigma[covAttrIndex][col]);
 					} else {
 						// not found in covmatrix so it usually reflects a time value
 						// TODO use paths in tuples (for time etc.)
 						int[] attrPath = expressions[index].getAttributePath(attrName);
 						expressions[index].bindVariable(attrName, resolveValue(attrPath, scanRootTuple));
-//						System.out.println("bind: " + attrName + "= " + resolveValue(attrPath, scanRootTuple));
+//						System.out.println("H * Sigma...bind: " + attrName + "= " + resolveValue(attrPath, scanRootTuple));
 					}
 				}
 				
 				for(String attrName : expressions[index].getAttributeNames(timeSchema)) {
 					int[] attrPath = expressions[index].getAttributePath(attrName);
 					expressions[index].bindVariable(attrName, resolveValue(attrPath, timeTuple));
-//					System.out.println("bind: " + attrName + "= " + resolveValue(attrPath, timeTuple));
+//					System.out.println("H * Sigma...bind: " + attrName + "= " + resolveValue(attrPath, timeTuple));
 				}
 				
 				expressions[index].evaluate();
 				tmpCov[covRow][col] = expressions[index].getTargetDoubleValue();
-//				System.out.println("result: " + "[" + covRow + "][" + col + "] = " +  tmpCov[covRow][col]);
+//				System.out.println("H * Sigma...result: " + "[" + covRow + "][" + col + "] = " +  tmpCov[covRow][col]);
 			}
 		}
 //		printMatrix("H * Sigma...", tmpCov);
@@ -116,6 +116,8 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 		}
 		for(int index=0; index<expressions.length; index++) {
 			int covCol = mapper.getCovarianceIndex(expressions[index].getTargetAttributeName());
+//			System.out.println("... * H^T...matrix col index: " + covCol);
+//			System.out.println("... * H^T...target attr name: " + expressions[index].getTargetAttributeName());
 			
 			for(int row=0; row<tmpCov[covCol].length; row++) {
 				for(String attrName : expressions[index].getAttributeNames(scanSchema)) {
@@ -123,23 +125,27 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 					int covAttrIndex = mapper.getCovarianceIndex(attrName);
 					if(covAttrIndex != -1) {
 						expressions[index].bindVariable(attrName, tmpCov[row][covAttrIndex]);
+//						System.out.println("... * H^T...bind:[" + row + "] [" + covAttrIndex + "] " + attrName + "= " + sigma[row][covAttrIndex]);
 					} else {
 						// not found in covmatrix so it usually reflects a time value
 						// TODO use paths in tuples (for time etc.)
 						int[] attrPath = expressions[index].getAttributePath(attrName);
 						expressions[index].bindVariable(attrName, resolveValue(attrPath, scanRootTuple));
+//						System.out.println("... * H^T...bind: " + attrName + "= " + resolveValue(attrPath, scanRootTuple));
 					}
 				}
 				for(String attrName : expressions[index].getAttributeNames(timeSchema)) {
 					int[] attrPath = expressions[index].getAttributePath(attrName);
 					expressions[index].bindVariable(attrName, resolveValue(attrPath, timeTuple));
+//					System.out.println("... * H^T...bind: " + attrName + "= " + resolveValue(attrPath, timeTuple));
 				}
 				expressions[index].evaluate();
 				tmpCov2[row][covCol] = expressions[index].getTargetDoubleValue();
+//				System.out.println("... * H^T...result: " + "[" + row + "][" + covCol + "] = " +  tmpCov2[row][covCol]);
 			}
 		}
 		
-//		printMatrix("... * H^T", tmpCov2);
+//		printMatrix("... * H^T...", tmpCov2);
 		
 		// ... + Q
 		if(this.noiseMatrix != null){
