@@ -23,6 +23,11 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.NMQN"
             name="NMQN">
       </command>
+       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.SetStandardBuffPlacementCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.SetStandardBuffPlacementCommand"
+            name="SetStandardBufferPlcmt">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -61,6 +66,15 @@
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.NMQN"
                   label="Nexmark Example Queries"
+                  style="push">
+            </command>
+            <separator
+                  name="Seperator"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.SetStandardBuffPlacementCommand"
+                  label="Set Std Buffer Placement"
                   style="push">
             </command>
          </menu>
