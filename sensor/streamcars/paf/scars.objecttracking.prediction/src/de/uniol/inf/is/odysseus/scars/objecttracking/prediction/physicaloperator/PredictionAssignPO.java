@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperato
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -9,7 +10,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
-public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class PredictionAssignPO<M extends ITimeInterval & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	
 	private PredictionFunctionContainer<M> predictionFunctions;
 	private int[] pathToList;
@@ -43,6 +44,10 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 		
 		if(listObj instanceof MVRelationalTuple<?>) {
 			Object[] objList = ((MVRelationalTuple<?>) listObj).getAttributes();
+			if( objList.length == 0 ) {
+				sendPunctuation(object.getMetadata().getStart().clone());
+				return;
+			}
 			for(Object mvObj : objList ) {
 				evaluatePredicateKey((MVRelationalTuple<M>)mvObj);
 			}
