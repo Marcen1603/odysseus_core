@@ -90,6 +90,7 @@ TOKEN : /* Keywords */ {
 |	<K_TMP_DATA_BOUNCER: "TMP-DATA-BOUNCER">
 |   <K_JDVE_SINK: "JDVE-SINK">
 | 	<K_SCARS_XML_PROFILER: "SCARS-XML-PROFILER">
+|   <K_DISTANCE_OBJECT_SELECTOR: "DISTANCE-OBJECT-SELECTOR">
 }
 
 TOKEN:{
@@ -240,7 +241,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	BrokerInitOp() |
 	TmpDataBouncerOp() |
 	JDVESinkOp() |
-	ScarsXMLProfilerOp()/*@bgen(jjtree)*/
+	ScarsXMLProfilerOp() |
+	DistanceObjectSelectorOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1964,3 +1966,34 @@ void ScarsXMLProfilerOp(): {/*@bgen(jjtree) ScarsXMLProfilerOp */
     }
   }
 /*@egen*/}
+
+void DistanceObjectSelectorOp(): {/*@bgen(jjtree) DistanceObjectSelectorOp */
+  ASTDistanceObjectSelectorOp jjtn000 = new ASTDistanceObjectSelectorOp(JJTDISTANCEOBJECTSELECTOROP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) DistanceObjectSelectorOp */
+  try {
+/*@egen*/
+  < K_DISTANCE_OBJECT_SELECTOR > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() "," Number() "," Number() "," Number() "," Number() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}

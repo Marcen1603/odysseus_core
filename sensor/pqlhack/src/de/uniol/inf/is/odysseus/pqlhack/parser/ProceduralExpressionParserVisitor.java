@@ -61,5 +61,6 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTFilterCovarianceOp node, Object data);
   public Object visit(ASTJDVESinkOp node, Object data);
   public Object visit(ASTScarsXMLProfilerOp node, Object data);
+  public Object visit(ASTDistanceObjectSelectorOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=d937671e0caaefa9cefce6f7f493ac0a (do not edit this line) */
+/* JavaCC - OriginalChecksum=7fa5d1f908de4636ac2b47f2289db481 (do not edit this line) */
