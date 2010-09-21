@@ -60,8 +60,10 @@ public class SDFExpression implements Serializable {
 	private int[] attributePositions;
 
 	private SDFAttribute attribute;
-
+	private boolean isOnlyAttribute = false;
+	
 	private IAttributeResolver attributeResolver;
+	
 
 	private static final List<CustomFunction> customFunctions = new ArrayList<CustomFunction>();
 
@@ -82,7 +84,16 @@ public class SDFExpression implements Serializable {
 	// erstellen
 	public SDFExpression(SDFAttribute attribute) {
 		this.variableArray = new Variable[0];
+		isOnlyAttribute = true;
 		init(attribute);
+	}
+	
+	public boolean isOnlyAttribute() {
+		return isOnlyAttribute;
+	}
+	
+	public SDFAttribute getSingleAttribute(){
+		return attribute;
 	}
 
 	public synchronized static void addFunction(CustomFunction function) {
