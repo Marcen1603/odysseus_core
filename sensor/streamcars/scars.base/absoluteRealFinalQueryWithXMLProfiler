@@ -26,7 +26,10 @@
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
 
-#DEFINE xml				D:..testPrediction.xml // speicherort des xml profilers (".." == "\")
+#DEFINE xml				C:..xml..completeTest.xml // speicherort des xml profilers (".." == "\")
+
+#DEFINE bouncerThreshold	7
+#DEFINE evaluateThreshold	7
 
 #PARSER PQLHack
 #TRANSCFG StreamCars
@@ -40,9 +43,9 @@ ASSOCIATION-SEL(
 					SCARS-XML-PROFILER (
 						ASSOCIATION-GEN (
 							SCARS-XML-PROFILER (
-								BUFFER( 
+								BUFFER(
 									${sensorSource},
-									${bufferType} 
+									${bufferType}
 								 ),
 								 ${xml},
 								 SOURCE_DATA_PRE_ASSO_GEN_MAIN
@@ -50,9 +53,9 @@ ASSOCIATION-SEL(
 							 SCARS-XML-PROFILER (
 								 PREDICTION(
 									SCARS-XML-PROFILER (
-										BUFFER( 
+										BUFFER(
 											${sensorSource}, // Timestamp aus Sensor
-											${bufferType} 
+											${bufferType}
 										),
 										${xml},
 										SOURCE_TIMESTAMP_PRE_PREDICTION_MAIN
@@ -61,15 +64,15 @@ ASSOCIATION-SEL(
 										SET-PREDICTION-OR(
 											SCARS-XML-PROFILER (
 												BUFFER(
-													BROKER(${brokerSourceName1}, // Brokerdaten 
+													BROKER(${brokerSourceName1}, // Brokerdaten
 															QUEUE( // Zeitgeber für den Broker
 																BUFFER(
 																   ${sensorSource},
-																   ${bufferType} 
+																   ${bufferType}
 																)
 															)
 													),
-													${bufferType} 
+													${bufferType}
 												),
 												${xml},
 												POST_BROKER_MAIN
@@ -78,7 +81,7 @@ ASSOCIATION-SEL(
 											${brokerListName1}:car:posx := ${brokerListName1}:car:posx + (cos(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * (${sensorScan}:timestamp - ${brokerScan1}:timestamp)) * 0.001 ;
 											${brokerListName1}:car:posy := ${brokerListName1}:car:posy + (sin(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * (${sensorScan}:timestamp - ${brokerScan1}:timestamp)) * 0.001 ;
 											${brokerListName1}:car:posz := ${brokerListName1}:car:posz ;
-											WHERE ${brokerListName1}:car:id >= 0 ;                        
+											WHERE ${brokerListName1}:car:id >= 0 ;
 										),
 										${xml},
 										POST_SET_PREDICTION_MAIN
@@ -116,9 +119,9 @@ ASSOCIATION-SEL(
 );
 
 
-BROKER( 
+BROKER(
     ${brokerSourceName1},
-	SCARS-XML-PROFILER (	
+	SCARS-XML-PROFILER (
     EVALUATE(
         ASSOCIATION-SRC(
             ${assoSourceName1},
@@ -152,14 +155,14 @@ BROKER(
 					PRE_DATA_BOUNCER_MAIN
 				),
 				${brokerListName2},
-				6,
+				${bouncerThreshold},
 				LESS
 			),
 			${xml},
 			POST_DATA_BOUNCER_MAIN
 		),
         ${brokerListName2},
-        6
+        ${evaluateThreshold}
     ),
 	${xml},
 	POST_EVAL_MAIN
@@ -180,24 +183,25 @@ ASSOCIATION-SEL(
                         ${bufferType}
                     ),
                     SET-PREDICTION-OR(
+                    	SCARS-XML-PROFILER(
                         TMP-DATA-BOUNCER(
 	                        BUFFER(
-	                            BROKER(${brokerSourceName2}, // Brokerdaten 
+	                            BROKER(${brokerSourceName2}, // Brokerdaten
 	                                    QUEUE( // Zeitgeber für den Broker
 	                                           ${assoSource1}
 	                                    )
 	                            ),
-	                            ${bufferType} 
+	                            ${bufferType}
 	                        ),
 	                        ${brokerListName2},
-	                        6,
+	                        ${bouncerThreshold},
 	                        GREATEREQUAL
-	                    ),
+	                    ),${xml},POST_SECONDBOUNCER),
                         ${brokerListName2},
                         ${brokerListName2}:car:posx := ${brokerListName2}:car:posx +(cos(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
                         ${brokerListName2}:car:posy := ${brokerListName2}:car:posy +(sin(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
                         ${brokerListName2}:car:posz := ${brokerListName2}:car:posz ;
-                        WHERE ${brokerListName2}:car:id >= 0 ; 
+                        WHERE ${brokerListName2}:car:id >= 0 ;
                     ),
                     ${brokerListName2}
                 ),
@@ -219,8 +223,8 @@ ASSOCIATION-SEL(
     ${assoPedicted}
 );
 
-BROKER( 
-    ${brokerSourceName2}, 
+BROKER(
+    ${brokerSourceName2},
     EVALUATE(
         ASSOCIATION-SRC(
             ${assoSourceName2},
