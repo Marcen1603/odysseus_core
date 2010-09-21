@@ -249,6 +249,7 @@ public class ScarsXMLProfiler {
 		
 		Element covEle = new Element("COVARIANCEMATRIX");
 		parent.addContent(covEle);
+		
 		if(cov == null) {
 			covEle.setText("null");
 			return;
@@ -263,6 +264,7 @@ public class ScarsXMLProfiler {
 				covText += cov[r][c] + "\t";
 			}
 		}
+		covEle.setText(covText);
 	}
 
 	public void addPredictionFunctionKey(Element parent, IPredictionFunctionKey<IPredicate<MVRelationalTuple<?>>> predictionFunctionKey) {
