@@ -54,8 +54,9 @@ public class KalmanGainFunction<M extends IProbability & IGain > extends Abstrac
 		temp = oldCovariance.multiply(temp);
 
 		// set gain
+//		System.out.println("Gain: " + temp.getData());
 		oldTuple.getMetadata().setGain(temp.getData());
-
+		newTuple.getMetadata().setGain(temp.getData());
 	}
 
 	@Override

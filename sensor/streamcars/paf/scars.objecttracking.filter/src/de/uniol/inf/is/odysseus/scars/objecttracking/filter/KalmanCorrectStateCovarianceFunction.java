@@ -50,11 +50,11 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConn
 		
 		double[][] gain = null;
 		
+//		System.out.println(this.toString() + " Gain: " + oldTuple.getMetadata().getGain());
+		
 		// check if there is a gain in the parameters
-		if (parameters != null) {
-			if (parameters.containsKey(Parameters.Gain)) {
-				gain = (double[][]) parameters.get(Parameters.Gain);
-			}
+		if (parameters != null && !parameters.containsKey(Parameters.Gain)) {
+			gain = (double[][]) parameters.get(Parameters.Gain);
 		}  else {
 			gain = oldTuple.getMetadata().getGain();
 		}
@@ -91,6 +91,9 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConn
 		
 		//set new state covariance
 		oldTuple.getMetadata().setCovariance(result);
+		
+//		System.out.println(this.toString() + " Gain: " + oldTuple.getMetadata().getGain());
+		
 	}
 	
 

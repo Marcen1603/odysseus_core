@@ -19,74 +19,72 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 
-public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnectionContainer & IGain> extends AbstractDataUpdateFunction<M> {
-		
+public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnectionContainer & IGain>
+		extends AbstractDataUpdateFunction<M> {
 
-		
 	public KalmanCorrectStateEstimateFunction() {
-		
+
 	}
-		
-	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction<M> copy) {
+
+	public KalmanCorrectStateEstimateFunction(
+			KalmanCorrectStateEstimateFunction<M> copy) {
 		super(copy);
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
-			
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+
 	}
-		
+
 	public KalmanCorrectStateEstimateFunction(HashMap<Enum, Object> parameters) {
-			
+
 		this.setParameters(parameters);
 	}
 
-		
 	@SuppressWarnings("unchecked")
 	@Override
 	public void compute(TupleIndexPath scannedObjectTupleIndex,
-			TupleIndexPath predictedObjectTupleIndex, HashMap<Enum, Object> parameters) {
-	
-		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>) predictedObjectTupleIndex.getTupleObject();
-		
+			TupleIndexPath predictedObjectTupleIndex,
+			HashMap<Enum, Object> parameters) {
+
+		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>) predictedObjectTupleIndex
+				.getTupleObject();
+
 		double[][] gain = null;
 		
+//		System.out.println(this.toString() + " Gain: " + oldTuple.getMetadata().getGain());
+
 		// check if there is a gain in the parameters
-		if (parameters != null) {
-			if (parameters.containsKey(Parameters.Gain)) {
-				gain = (double[][]) parameters.get(Parameters.Gain);
-			}
-		}  else {
+		if (parameters != null && parameters.containsKey(Parameters.Gain)) {
+			gain = (double[][]) parameters.get(Parameters.Gain);
+		} else {
 			gain = oldTuple.getMetadata().getGain();
 		}
-		
-		
-		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>) scannedObjectTupleIndex.getTupleObject();
-		
-		
-		
-		double[] measurementOld = getMeasurementValues(oldTuple, predictedObjectTupleIndex) ;
-		double[] measurementNew = getMeasurementValues(newTuple, scannedObjectTupleIndex) ;
-		
-		
-		
+
+		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>) scannedObjectTupleIndex
+				.getTupleObject();
+
+		double[] measurementOld = getMeasurementValues(oldTuple,
+				predictedObjectTupleIndex);
+		double[] measurementNew = getMeasurementValues(newTuple,
+				scannedObjectTupleIndex);
+
 		double[] result;
-		if( gain == null ) {
+		if (gain == null) {
 			System.err.println("Gain is null!");
 			return;
 		}
 		RealMatrix measurementOldMatrix = new RealMatrixImpl(measurementOld);
 		RealMatrix measurementNewMatrix = new RealMatrixImpl(measurementNew);
-		RealMatrix gainMatrix = new RealMatrixImpl(gain);	
-		
+		RealMatrix gainMatrix = new RealMatrixImpl(gain);
+
 		RealMatrix temp = new RealMatrixImpl();
-		
-		temp =  measurementNewMatrix.subtract(measurementOldMatrix);
-		temp =  gainMatrix.multiply(temp);
-		temp =  measurementOldMatrix.add(temp);
-		
+
+		temp = measurementNewMatrix.subtract(measurementOldMatrix);
+		temp = gainMatrix.multiply(temp);
+		temp = measurementOldMatrix.add(temp);
+
 		result = temp.getColumn(0);
-		
-		
+
 		setMeasurementValues(oldTuple, predictedObjectTupleIndex, result);
-	
+
 	}
 
 	@Override
