@@ -66,7 +66,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 		SDFAttributeList schema = this.getSubscribedToSource(0).getSchema();
 		TupleIterator iterator = new TupleIterator(object, schema);
 		for (TupleInfo info : iterator) {
-			//atomare typen beachten, komplexe Ÿbergehen
+			//atomare typen beachten, komplexe ï¿½bergehen
 			if (!info.isTuple) {
 				if (info.tupleObject instanceof Integer) {
 					bufferSize += 4;
@@ -88,8 +88,8 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 					bufferSize += 4;
 				}
 			}
-			transfer(object);
 		}
+		transfer(object);
 		
 		//Allocate byte buffer
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
