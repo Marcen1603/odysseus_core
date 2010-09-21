@@ -33,14 +33,19 @@ public class MapAO extends UnaryLogicalOp {
 		outputSchema.clear();
 		if (expressions != null) {
 			for (SDFExpression expr : expressions) {
-				SDFAttribute attr = new SDFAttribute(expr.getExpression());
-				// FIXME stimmt natuerlich nicht im allgemeinen, aber atm
-				// ist datatype unbekannt
-				attr.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+				SDFAttribute attr = null;
+				if (expr.isOnlyAttribute()) {
+					attr = new SDFAttribute(expr.getSingleAttribute());
+				} else {
+					attr = new SDFAttribute(expr.getExpression());
+					// FIXME stimmt natuerlich nicht im allgemeinen, aber atm
+					// ist datatype unbekannt
+					attr.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+				}
 				outputSchema.add(attr);
 
 				// Alles Quatsch :-)
-				//				
+				//
 				// if (expr.isSingleAttribute()){
 				// outputSchema.add(expr.getSingleAttribute());
 				// }else if (inputSchema.contains(attr)){
