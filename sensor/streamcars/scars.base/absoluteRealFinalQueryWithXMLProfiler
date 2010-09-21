@@ -28,8 +28,9 @@
 
 #DEFINE xml				C:..xml..completeTest.xml // speicherort des xml profilers (".." == "\")
 
-#DEFINE bouncerThreshold	7
-#DEFINE evaluateThreshold	7
+#DEFINE bouncerThreshold	10
+#DEFINE evaluateThreshold	10
+#DEFINE secondEvalThreshold 10
 
 #PARSER PQLHack
 #TRANSCFG StreamCars
@@ -252,7 +253,7 @@ BROKER(
             0
         ),
         ${assoScanned},
-        10
+        ${secondEvalThreshold}
     )
 );
 
