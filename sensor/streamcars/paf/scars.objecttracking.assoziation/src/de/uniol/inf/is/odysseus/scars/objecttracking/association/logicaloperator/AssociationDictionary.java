@@ -28,4 +28,8 @@ public class AssociationDictionary {
     }
     return null;
   }
+  
+  public void clear(){
+	  this.sources = new HashMap<String, HypothesisSelectionAO<?>>();
+  }
 }
