@@ -88,23 +88,29 @@ public class ScarsXMLProfiler {
 		
 		
 		int currentCycleCount = operatorCycleCounts.get(operator);
-//		if(currentCycleCount <= numCycle) {
-			Element scanRootElement = new Element("ScanRoot");
-			operatorElement.addContent(scanRootElement);
-			if(schema != null && schema instanceof SDFAttributeListExtended) {
-				Object pfc = ((SDFAttributeListExtended) schema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
-				if(pfc != null) {
-					addPredictionFunctionContainer(scanRootElement, (PredictionFunctionContainer<?>)pfc);
-				}
-			}
-			addMetadata(scanRootElement, scan);
-			for(int i=0; i<schema.getAttributeCount(); i++) {
-				addData2(schema, scanRootElement, schema.getAttribute(i), scan.getAttribute(i));
-			}
 
-			operatorCycleCounts.put(operator, ++currentCycleCount);
-//		}
+		Element scanRootElement = new Element("ScanRoot");
+		operatorElement.addContent(scanRootElement);
+		if(schema != null && schema instanceof SDFAttributeListExtended) {
+			Object pfc = ((SDFAttributeListExtended) schema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+			if(pfc != null) {
+				addPredictionFunctionContainer(scanRootElement, (PredictionFunctionContainer<?>)pfc);
+			}
+		}
+		addMetadata(scanRootElement, scan);
+		for(int i=0; i<schema.getAttributeCount(); i++) {
+			addData2(schema, scanRootElement, schema.getAttribute(i), scan.getAttribute(i));
+		}
 
+		operatorCycleCounts.put(operator, ++currentCycleCount);
+		updateFinish();
+
+		if(finish) {
+			saveFile();
+		}
+	}
+	
+	private void updateFinish() {
 		finish = true;
 		for(Integer cycle : operatorCycleCounts.values()) {
 			if(cycle < numCycle) {
@@ -112,26 +118,44 @@ public class ScarsXMLProfiler {
 			}
 		}
 
-		if(finish) {
-			XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
-			try {
-				op.output(root,  new FileOutputStream(file));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+	}
+	
+	private void saveFile() {
+		XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
+		try {
+			op.output(root,  new FileOutputStream(file));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	public synchronized void  profilePunctuation(String operator, PointInTime timestamp) {
+		
 		if(finish) {
 			return;
 		}
+		
+		int currentSkips = currentOperatorSkips.get(operator);
+		if(currentSkips < numSkips) {
+			currentOperatorSkips.put(operator, ++currentSkips);
+			return;
+		}
+		
 		Element operatorElement = getOperatorElement(operator);
 		Element punctuationElement = new Element("punctuation");
 		operatorElement.addContent(punctuationElement);
 		punctuationElement.setAttribute("time", timestamp.toString());
+		int currentCycleCount = operatorCycleCounts.get(operator);
+		operatorCycleCounts.put(operator, ++currentCycleCount);
+		
+		updateFinish();
+
+		if(finish) {
+			saveFile();
+		}
 	}
 
 	public void addData2(SDFAttributeList rootschema, Element parent, SDFAttribute attr, Object value) {
