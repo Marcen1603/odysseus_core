@@ -44,5 +44,10 @@ public class AggregateFunction implements Comparable<AggregateFunction>,
 	public int compareTo(AggregateFunction o) {
 		return this.name.compareToIgnoreCase(o.getName());
 	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
 
 }
