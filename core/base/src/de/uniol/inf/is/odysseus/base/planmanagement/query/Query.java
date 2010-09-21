@@ -265,7 +265,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 						}
 					}
 				}
-//				this.roots = newRoots;
+				this.roots = newRoots;
 			}
 		}
 
