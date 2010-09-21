@@ -10,6 +10,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.EventHandler;
+import de.uniol.inf.is.odysseus.base.IEvent;
+import de.uniol.inf.is.odysseus.base.IEventHandler;
+import de.uniol.inf.is.odysseus.base.IEventListener;
+import de.uniol.inf.is.odysseus.base.IEventType;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
@@ -39,6 +44,28 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
 	private SDFAttributeList outputSchema;
+	
+	private IEventHandler eventHandler = new EventHandler();
+
+	public void subscribe(IEventListener listener, IEventType type) {
+		eventHandler.subscribe(listener, type);
+	}
+
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		eventHandler.unsubscribe(listener, type);
+	}
+
+	public void subscribeToAll(IEventListener listener) {
+		eventHandler.subscribeToAll(listener);
+	}
+
+	public void unSubscribeFromAll(IEventListener listener) {
+		eventHandler.unSubscribeFromAll(listener);
+	}
+
+	public void fire(IEvent<?, ?> event) {
+		eventHandler.fire(event);
+	}
 
 	// Events
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);

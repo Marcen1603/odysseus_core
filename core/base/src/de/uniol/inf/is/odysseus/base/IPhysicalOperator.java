@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Marco Grawunder, Jonas Jacobi
  */
 public interface IPhysicalOperator extends IOwnedOperator,
-		IMonitoringDataProvider, IClone {
+		IMonitoringDataProvider, IEventHandler, IClone {
 
 	boolean isSource();
 
