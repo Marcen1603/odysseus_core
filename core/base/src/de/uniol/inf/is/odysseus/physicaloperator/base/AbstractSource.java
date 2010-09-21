@@ -29,7 +29,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
+	
+	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
+	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
+	private AtomicBoolean open = new AtomicBoolean(false);
+	private String name = null;
+	private SDFAttributeList outputSchema;
+	protected List<IOperatorOwner> owners = new Vector<IOperatorOwner>();
 
+	// --------------------------------------------------------------------
+	// Logging
+	// --------------------------------------------------------------------
+	
 	static private Logger _logger = null;
 
 	private static Logger getLogger() {
@@ -39,11 +50,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return _logger;
 	}
 
-	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
-	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
-	private AtomicBoolean open = new AtomicBoolean(false);
-	private String name = null;
-	private SDFAttributeList outputSchema;
+	// ------------------------------------------------------------------
+	// Eventhandling
+	// ------------------------------------------------------------------
 	
 	private IEventHandler eventHandler = new EventHandler();
 
@@ -66,8 +75,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
-
-	// Events
+	
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
 	final private POEvent openInitEvent = new POEvent(this,
 			POEventType.OpenInit);
@@ -87,17 +95,18 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	POEvent blockedEvent = new POEvent(this, POEventType.Blocked);
 	POEvent unblockedEvent = new POEvent(this, POEventType.Unblocked);
 
-	protected List<IOperatorOwner> owners = new Vector<IOperatorOwner>();
+	// ------------------------------------------------------------------
 
+	
 	public AbstractSource() {
 	};
 
 	public AbstractSource(AbstractSource<T> source) {
-		this.outputSchema = source.outputSchema;
+		this.outputSchema = new SDFAttributeList(source.outputSchema);
 		this.blocked = new AtomicBoolean();
 		this.blocked.set(source.blocked.get());
 		this.name = source.name;
-		// TODO: Other Members to copy??
+		this.owners = new Vector<IOperatorOwner>(source.owners);
 	}
 
 	@Override

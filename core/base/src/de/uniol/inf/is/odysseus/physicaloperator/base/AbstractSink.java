@@ -29,6 +29,19 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
 
+	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
+	protected int noInputPorts = -1;
+
+	private String name;
+	private SDFAttributeList outputSchema;
+
+	protected Vector<IOperatorOwner> owners = new Vector<IOperatorOwner>();
+
+	private volatile boolean allInputsDone = false;
+	
+	// --------------------------------------------------------------------
+	// Logging
+	// --------------------------------------------------------------------
 	private static Logger logger = null;
 
 	private static Logger getLogger() {
@@ -37,6 +50,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 		return logger;
 	}
+
+
+	// ------------------------------------------------------------------
+	// Eventhandling
+	// ------------------------------------------------------------------
 	
 	private IEventHandler eventHandler = new EventHandler();
 	
@@ -61,8 +79,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		eventHandler.fire(event);
 	}
 
-	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
-
 	final private POEvent openInitEvent = new POEvent(this,
 			POEventType.OpenInit);
 	final private POEvent openDoneEvent = new POEvent(this,
@@ -73,14 +89,19 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected POEvent[] processInitEvent = null;
 	protected POEvent[] processDoneEvent = null;
 
-	protected int noInputPorts = -1;
+	// ------------------------------------------------------------------
+	
+	public AbstractSink() {
+	}
 
-	private String name;
-	private SDFAttributeList outputSchema;
-
-	protected Vector<IOperatorOwner> owners = new Vector<IOperatorOwner>();
-
-	private volatile boolean allInputsDone = false;
+	public AbstractSink(AbstractSink<T> other){
+		noInputPorts = other.noInputPorts;
+		name = other.name;
+		outputSchema = new SDFAttributeList(other.outputSchema);
+		owners = new Vector<IOperatorOwner>(other.owners);
+		allInputsDone = false;
+	}
+	
 
 	@Override
 	public boolean isSink() {

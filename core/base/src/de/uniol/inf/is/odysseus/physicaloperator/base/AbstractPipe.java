@@ -78,6 +78,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	public AbstractPipe(AbstractPipe<R, W> pipe) {
 		super(pipe);
+		// TODO: Muss auch was mit der Sink gemacht werden?
 	}
 
 	@Override
