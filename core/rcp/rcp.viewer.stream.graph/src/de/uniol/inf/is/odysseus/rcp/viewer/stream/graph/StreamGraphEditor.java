@@ -73,21 +73,21 @@ public class StreamGraphEditor implements IStreamEditorType {
 		part = editorPart;
 		ISource<?>[] sources = editorInput.getStreamConnection().getSources().toArray(new ISource<?>[0]);
 		schema = sources[0].getOutputSchema();
-		System.out.println("Schema "+schema);
+		System.out.println(sources[0]+" Schema "+schema);;
 		collection = new XYSeriesCollection();
 		int i=0;
 		for (SDFAttribute attr: schema){
 			System.out.println(attr);
-			SDFDatatype t = attr.getDatatype();
+			String t = attr.getDatatype().getURI();
 			System.out.println(t);
-			// TODO: Currently no datatype are visible ... so the creator has to assure that
+			// TODO: Currently no datatypes are visible ... so the creator has to assure that
 			// data is numeric
-			//if (t.equals("Double") || t.equals("Long") || t.equals("Integer")){
+			if (t.equals("Double") || t.equals("Long") || t.equals("Integer")){
 				XYSeries s = new XYSeries(schema.get(i).toString());
 				series.put(i++, s);
 				s.setMaximumItemCount(100);
 				collection.addSeries(s);
-			//}
+			}
 		}
 
 
