@@ -99,4 +99,11 @@ public interface ISource<T> extends IPhysicalOperator,
 			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
 			SDFAttributeList schema);
 
+	/**
+	 * Methods to mark (!) Operator as blocked. Can be used by scheduler
+	 */
+	void unblock();
+	void block();
+	boolean isBlocked();
+
 }

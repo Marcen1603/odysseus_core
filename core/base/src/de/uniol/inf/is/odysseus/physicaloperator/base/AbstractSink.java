@@ -95,6 +95,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	public AbstractSink(AbstractSink<T> other){
+		init(other);
+	}
+
+	protected void init(AbstractSink<T> other) {
 		noInputPorts = other.noInputPorts;
 		name = other.name;
 		outputSchema = new SDFAttributeList(other.outputSchema);
@@ -102,6 +106,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		allInputsDone = false;
 	}
 	
+	
+	// "delegatable this", used for the delegate sink
+	protected ISink<T> getInstance() {
+		return this;
+	}
 
 	@Override
 	public boolean isSink() {
@@ -136,19 +145,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return this.noInputPorts;
 	}
 	
-	public void close() {
-		close(this);
-	}
-
-	protected void close(ISink<T> sink) {
-		this.isOpen.set(false);
-		process_close();
-		stopMonitoring();
-		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-			sub.getTarget().close(sink, sub.getSourceOutPort());
-		}
-	};
-
+	// ------------------------------------------------------------------------
+	// OPEN
+	// ------------------------------------------------------------------------
 	protected void open(ISink<T> sink) throws OpenFailedException {
 		if (!isOpen()) {
 			fire(openInitEvent);
@@ -165,11 +164,18 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public void open() throws OpenFailedException {
 		open(this);		
 	}
-	
+
+	protected void process_open() throws OpenFailedException{
+		// Empty Default Implementation
+	}
 
 	final public boolean isOpen() {
 		return this.isOpen.get();
 	}
+
+	// ------------------------------------------------------------------------
+	// PROCESS
+	// ------------------------------------------------------------------------
 
 	@Override
 	final public void process(T object, int port, boolean isReadOnly) {
@@ -187,12 +193,25 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected abstract void process_next(T object, int port, boolean isReadOnly);
-
-	protected void process_close() {
-		// Empty Default Implementation
+	
+	// ------------------------------------------------------------------------
+	// CLOSE and DONE
+	// ------------------------------------------------------------------------
+	
+	public void close() {
+		close(this);
 	}
 
-	protected void process_open() throws OpenFailedException{
+	protected void close(ISink<T> sink) {
+		this.isOpen.set(false);
+		process_close();
+		stopMonitoring();
+		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+			sub.getTarget().close(sink, sub.getSourceOutPort());
+		}
+	};
+
+	protected void process_close() {
 		// Empty Default Implementation
 	}
 
@@ -218,6 +237,68 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return this.allInputsDone;
 	}
 
+	// ------------------------------------------------------------------------
+	// Getter and Setter
+	// ------------------------------------------------------------------------
+	
+	@Override
+	public String getName() {
+		if (name == null) {
+			return this.getClass().getSimpleName() + "(" + this.hashCode()
+					+ ")";
+		}
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
+
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		this.outputSchema = outputSchema;
+	}
+	
+	// ------------------------------------------------------------------------	
+	// Owner Management
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void addOwner(IOperatorOwner owner) {
+		this.owners.add(owner);
+	}
+
+	@Override
+	public void removeOwner(IOperatorOwner owner) {
+		while (this.owners.remove(owner)) {
+		}
+	}
+
+	@Override
+	final public boolean isOwnedBy(IOperatorOwner owner) {
+		return this.owners.contains(owner);
+	}
+
+	@Override
+	final public boolean hasOwner() {
+		return !this.owners.isEmpty();
+	}
+
+	@Override
+	final public List<IOperatorOwner> getOwner() {
+		return Collections.unmodifiableList(this.owners);
+	}
+	
+	// ------------------------------------------------------------------------
+	// Subscription management
+	// ------------------------------------------------------------------------
+	
 	@Override
 	public void subscribeToSource(ISource<? extends T> source, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
@@ -234,11 +315,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 					schema);
 		}
-	}
-
-	// "delegatable this", used for the delegate sink
-	protected ISink<T> getInstance() {
-		return this;
 	}
 
 	@Override
@@ -287,62 +363,14 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return this.subscribedToSource.get(port);
 	}
 
+	// ------------------------------------------------------------------------
+	// Other Methods
+	// ------------------------------------------------------------------------
 
 
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
-	}
-
-	@Override
-	public String getName() {
-		if (name == null) {
-			return this.getClass().getSimpleName() + "(" + this.hashCode()
-					+ ")";
-		}
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
-	}
-
-	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema;
-	}
-
-	@Override
-	public void addOwner(IOperatorOwner owner) {
-		this.owners.add(owner);
-	}
-
-	@Override
-	public void removeOwner(IOperatorOwner owner) {
-		// remove all occurrences
-		while (this.owners.remove(owner)) {
-		}
-	}
-
-	@Override
-	final public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owners.contains(owner);
-	}
-
-	@Override
-	final public boolean hasOwner() {
-		return !this.owners.isEmpty();
-	}
-
-	@Override
-	final public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owners);
 	}
 
 	@Override

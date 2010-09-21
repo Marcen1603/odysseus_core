@@ -30,8 +30,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
 	
-	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
+	// Only active subscription are served on transfer
+	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
+
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
 	private SDFAttributeList outputSchema;
@@ -123,27 +125,43 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public boolean isPipe() {
 		return isSink() && isSource();
 	}
+	
+	protected boolean hasSingleConsumer() {
+		return this.sinkSubscriptions.size() == 1;
+	}
+
+	@Override
+	public String getName() {
+		if (name == null) {
+			return this.getClass().getSimpleName() + "(" + this.hashCode()
+					+ ")";
+		}
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
+
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		this.outputSchema = outputSchema;
+	}
+	
+	// ------------------------------------------------------------------------	
+	// OPEN
+	// ------------------------------------------------------------------------
 
 	public boolean isOpen() {
 		return open.get();
 	}
-
-	@Override
-	public void close(IPhysicalOperator o, int sourcePort) {
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o,
-				sourcePort);
-		if (sub == null) {
-			throw new RuntimeException("Close called from an unsubscribed sink");
-		}
-		this.activeSinkSubscriptions.remove(sub);
-		if (activeSinkSubscriptions.size() == 0) {
-			getLogger().debug("Closing " + toString());
-			this.process_close();
-			open.set(false);
-			stopMonitoring();
-		}
-	};
-
+	
 	@Override
 	public synchronized void open(IPhysicalOperator o, int sourcePort)
 			throws OpenFailedException {
@@ -168,28 +186,35 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			open.set(true);
 		}
 	}
-
-	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(
-			IPhysicalOperator o, int sourcePort) {
-		for (PhysicalSubscription<ISink<? super T>> sub : this.sinkSubscriptions) {
-			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort) {
-				return sub;
-			}
-		}
-		return null;
-	}
-
+	
 	protected abstract void process_open() throws OpenFailedException;
 
-	protected void process_close() {
+
+	// ------------------------------------------------------------------------	
+	// Punctuations
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void sendPunctuation(PointInTime punctuation) {
+		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+			sub.getTarget()
+					.processPunctuation(punctuation, sub.getSinkInPort());
+		}
 	}
 
-	/**
-	 * If a source needs to propagate done to other elements in the operator,
-	 * overwrite this method. It is called when this operator is done!
-	 */
-	protected void process_done() {
-	};
+	@Override
+	public void sendPunctuation(PointInTime punctuation, int outPort) {
+		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+			if (sub.getSourceOutPort() == outPort) {
+				sub.getTarget().processPunctuation(punctuation,
+						sub.getSinkInPort());
+			}
+		}
+	}
+	
+	// ------------------------------------------------------------------------	
+	// TRANSFER
+	// ------------------------------------------------------------------------
 
 	@Override
 	public void transfer(T object, int sourceOutPort) {
@@ -234,8 +259,92 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return hasSingleConsumer();
 	}
 
-	protected boolean hasSingleConsumer() {
-		return this.sinkSubscriptions.size() == 1;
+
+	
+	// ------------------------------------------------------------------------	
+	// CLOSE
+	// ------------------------------------------------------------------------
+	
+	@Override
+	public void close(IPhysicalOperator o, int sourcePort) {
+		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(o,
+				sourcePort);
+		if (sub == null) {
+			throw new RuntimeException("Close called from an unsubscribed sink");
+		}
+		this.activeSinkSubscriptions.remove(sub);
+		if (activeSinkSubscriptions.size() == 0) {
+			getLogger().debug("Closing " + toString());
+			this.process_close();
+			open.set(false);
+			stopMonitoring();
+		}
+	};
+
+	protected void process_close() {
+	}
+
+	// ------------------------------------------------------------------------	
+	// DONE
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * If a source needs to propagate done to other elements in the operator,
+	 * overwrite this method. It is called when this operator is done!
+	 */
+	protected void process_done() {
+	};
+	
+	final protected void propagateDone() {
+		fire(this.doneEvent);
+		this.process_done();
+		for (PhysicalSubscription<ISink<? super T>> sub : sinkSubscriptions) {
+			sub.getTarget().done(sub.getSinkInPort());
+		}
+	}
+	
+	// ------------------------------------------------------------------------	
+	// BLOCK
+	// ------------------------------------------------------------------------
+	
+	@Override
+	public boolean isBlocked() {
+		return blocked.get();
+	}
+	
+	@Override
+	public void block() {
+		synchronized (blocked) {
+			this.blocked.set(true);
+			getLogger().debug("Operator " + this.toString() + " blocked");
+			fire(blockedEvent);
+		}
+	}
+	
+	@Override
+	public void unblock() {
+		synchronized (blocked) {
+			this.blocked.set(false);
+			getLogger().debug("Operator " + this.toString() + " unblocked");
+			fire(unblockedEvent);
+		}
+	}
+
+	
+
+	// ------------------------------------------------------------------------	
+	// Subscription management
+	// ------------------------------------------------------------------------
+
+	
+	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(
+			IPhysicalOperator o, int sourcePort) {
+		for (PhysicalSubscription<ISink<? super T>> sub : this.sinkSubscriptions) {
+			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort) {
+				return sub;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -320,13 +429,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return Collections.unmodifiableList(this.sinkSubscriptions);
 	}
 
-	final protected void propagateDone() {
-		fire(this.doneEvent);
-		this.process_done();
-		for (PhysicalSubscription<ISink<? super T>> sub : sinkSubscriptions) {
-			sub.getTarget().done(sub.getSinkInPort());
-		}
-	}
+
 
 	@Override
 	public String toString() {
@@ -334,48 +437,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				+ (blocked.get() ? "b" : "");
 	}
 
-	@Override
-	public void sendPunctuation(PointInTime punctuation) {
-		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-			sub.getTarget()
-					.processPunctuation(punctuation, sub.getSinkInPort());
-		}
-	}
 
-	@Override
-	public void sendPunctuation(PointInTime punctuation, int outPort) {
-		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-			if (sub.getSourceOutPort() == outPort) {
-				sub.getTarget().processPunctuation(punctuation,
-						sub.getSinkInPort());
-			}
-		}
-	}
 
-	@Override
-	public String getName() {
-		if (name == null) {
-			return this.getClass().getSimpleName() + "(" + this.hashCode()
-					+ ")";
-		}
-		return name;
-	}
 
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
 
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
-	}
-
-	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema;
-	}
-
+	// ------------------------------------------------------------------------	
+	// Owner Management
+	// ------------------------------------------------------------------------
+	
 	@Override
 	public void addOwner(IOperatorOwner owner) {
 		this.owners.add(owner);
@@ -405,27 +474,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
+	
+	// ------------------------------------------------------------------------	
+	// Other Methods
+	// ------------------------------------------------------------------------
+
 
 	abstract public AbstractSource<T> clone();
 
-	public boolean isBlocked() {
-		return blocked.get();
-	}
 
-	public void block() {
-		synchronized (blocked) {
-			this.blocked.set(true);
-			getLogger().debug("Operator " + this.toString() + " blocked");
-			fire(blockedEvent);
-		}
-	}
-
-	public void unblock() {
-		synchronized (blocked) {
-			this.blocked.set(false);
-			getLogger().debug("Operator " + this.toString() + " unblocked");
-			fire(unblockedEvent);
-		}
-	}
 
 }
