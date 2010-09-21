@@ -85,8 +85,10 @@ public class ScarsXMLProfiler {
 			return;
 		}
 		
+		
+		
 		int currentCycleCount = operatorCycleCounts.get(operator);
-		if(currentCycleCount <= numCycle) {
+//		if(currentCycleCount <= numCycle) {
 			Element scanRootElement = new Element("ScanRoot");
 			operatorElement.addContent(scanRootElement);
 			if(schema != null && schema instanceof SDFAttributeListExtended) {
@@ -101,7 +103,7 @@ public class ScarsXMLProfiler {
 			}
 
 			operatorCycleCounts.put(operator, ++currentCycleCount);
-		}
+//		}
 
 		finish = true;
 		for(Integer cycle : operatorCycleCounts.values()) {
