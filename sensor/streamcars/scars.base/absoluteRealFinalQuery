@@ -115,11 +115,11 @@ BROKER(
 	            ${bufferType}
 	        ),
             ${brokerListName2},
-            2,
+            8,
             LESS
         ),
         ${brokerListName2},
-        5
+        10
     )
 );
 
@@ -147,7 +147,7 @@ ASSOCIATION-SEL(
 	                            ${bufferType} 
 	                        ),
 	                        ${brokerListName2},
-	                        2,
+	                        8,
 	                        GREATEREQUAL
 	                    ),
                         ${brokerListName2},
@@ -209,7 +209,7 @@ BROKER(
             0
         ),
         ${assoScanned},
-        5
+        10
     )
 );
 
