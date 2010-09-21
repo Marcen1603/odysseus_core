@@ -112,13 +112,15 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	@Override
 	public void transferNext() {
 		if (buffer != null) {
+			
+			MVRelationalTuple<M> tuple = this.buffer.clone();
 			Class<M> clazz = (Class<M>) MetadataRegistry.getMetadataType(toStringSet(ITimeInterval.class, IPredictionFunctionKey.class, ILatency.class, IProbability.class, IApplicationTime.class,
 					IConnectionContainer.class, IGain.class));
 
-			assignMetadata(clazz, this.buffer);
-			metadataCreator.updateMetadata((MVRelationalTuple<StreamCarsMetaData<Object>>) this.buffer);
+			assignMetadata(clazz, tuple);
+			metadataCreator.updateMetadata((MVRelationalTuple<StreamCarsMetaData<Object>>) tuple);
 
-			transfer(buffer);
+			transfer(tuple);
 //			sendPunctuation(new PointInTime(data.getLastTimestamp()));
 		}
 		buffer = null;
