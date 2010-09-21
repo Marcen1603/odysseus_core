@@ -44,6 +44,13 @@ public class DataDictionary {
 	public Map<String, SDFEntity> entityMap = new HashMap<String, SDFEntity>();
 
 	public Map<String, String> sourceTypeMap = new HashMap<String, String>();
+	
+	public void clear(){
+		this.viewDefinitions = new HashMap<String, ILogicalOperator>();
+		this.logicalViewDefinitions = new HashMap<String, ILogicalOperator>();
+		this.entityMap = new HashMap<String, SDFEntity>();
+		this.sourceTypeMap = new HashMap<String, String>();
+	}
 
 	private DataDictionary() {
 	}
