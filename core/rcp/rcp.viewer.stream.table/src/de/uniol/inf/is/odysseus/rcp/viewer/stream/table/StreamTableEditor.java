@@ -77,7 +77,8 @@ public class StreamTableEditor implements IStreamEditorType {
 			SDFAttribute attribute = schema.getAttribute(i);
 			
 			TableViewerColumn col = new TableViewerColumn(viewer, SWT.NONE);
-			col.getColumn().setText(attribute.getAttributeName());
+			//col.getColumn().setText(attribute.getAttributeName());
+			col.getColumn().setText(attribute.toPointString());
 			col.getColumn().setAlignment(SWT.CENTER);
 			final int fi = i;
 			col.setLabelProvider( new CellLabelProvider() {
