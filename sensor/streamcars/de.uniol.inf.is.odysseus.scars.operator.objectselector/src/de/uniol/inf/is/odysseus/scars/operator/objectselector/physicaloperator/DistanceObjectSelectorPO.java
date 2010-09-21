@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 
-public class DistanceObjectSelectorPO <M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
-extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>{
+public class DistanceObjectSelectorPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval> extends
+		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private Double distanceThresholdYRight;
 	private Double distanceThresholdYLeft;
@@ -29,7 +29,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>{
 	private String trackedObjectList;
 	private SchemaHelper schemaHelper;
 	private SchemaIndexPath trackedObjectListSchemaIndexPath;
-	
+
 	public DistanceObjectSelectorPO() {
 	}
 
@@ -43,17 +43,17 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>{
 		this.trackedObjectX = distanceObjectSelectorPO.trackedObjectX;
 		this.trackedObjectList = distanceObjectSelectorPO.trackedObjectList;
 	}
-	
-  protected double getValueByName(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath, String attributName) {
-    for (TupleInfo info : new TupleIterator(tuple, tupleIndexPath)) {
-      if (info.attribute.getAttributeName().equals(attributName)) {
-        return new Double(info.tupleObject.toString());
-      }
-    }
- 
-    return 0;
-  }
-	
+
+	protected double getValueByName(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath, String attributName) {
+		for (TupleInfo info : new TupleIterator(tuple, tupleIndexPath)) {
+			if (info.attribute.getAttributeName().equals(attributName)) {
+				return new Double(info.tupleObject.toString());
+			}
+		}
+
+		return 0;
+	}
+
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 	}
@@ -61,26 +61,26 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>{
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		TupleIndexPath trackedObjectListTupleIndexPath = this.trackedObjectListSchemaIndexPath.toTupleIndexPath(object);		
+		TupleIndexPath trackedObjectListTupleIndexPath = this.trackedObjectListSchemaIndexPath.toTupleIndexPath(object);
 		ArrayList<MVRelationalTuple<M>> newList = new ArrayList<MVRelationalTuple<M>>();
-		
+
 		for (TupleInfo tupleInfo : trackedObjectListTupleIndexPath) {
-      double x = getValueByName(object, tupleInfo.tupleIndexPath, this.trackedObjectX);
-      double y = getValueByName(object, tupleInfo.tupleIndexPath, this.trackedObjectY);
-      
+			double x = getValueByName(object, tupleInfo.tupleIndexPath, this.trackedObjectX);
+			double y = getValueByName(object, tupleInfo.tupleIndexPath, this.trackedObjectY);
+
 			boolean threat = x >= -this.distanceThresholdXLeft && x <= this.distanceThresholdXRight;
 			threat &= y >= -this.distanceThresholdYLeft && y <= this.distanceThresholdYRight;
-      System.out.println("Threat: " + threat + " - " + tupleInfo.tupleObject.toString());
-      if(threat) {
-      	newList.add((MVRelationalTuple<M>) tupleInfo.tupleObject);
-      }
-    }
+//			System.out.println("Threat: " + threat + " - " + tupleInfo.tupleObject.toString());
+			if (threat) {
+				newList.add((MVRelationalTuple<M>) tupleInfo.tupleObject);
+			}
+		}
 		
-		Object[] result = new Object[3];
+		Object[] result = new Object[2];
 		// get timestamp path from scanned data
 		SchemaIndexPath path = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName());
 		result[0] = path.toTupleIndexPath(object).getTupleObject();
-		
+
 		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(newList.size());
 		int counter = 0;
 		for (MVRelationalTuple<M> mvRelationalTuple : newList) {
@@ -96,9 +96,9 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>{
 
 		transfer(base);
 	}
-	
+
 	@Override
-	protected void process_open() throws OpenFailedException {		
+	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		schemaHelper = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		trackedObjectListSchemaIndexPath = schemaHelper.getSchemaIndexPath(this.trackedObjectList);
