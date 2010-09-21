@@ -244,4 +244,8 @@ public class BrokerDictionary {
 	public Map<String, BrokerDictionaryEntry> getLogicalPlans(){
 		return this.brokerlist;
 	}
+	
+	public void clear(){
+		this.brokerlist = new HashMap<String, BrokerDictionaryEntry>();
+	}
 }
