@@ -220,17 +220,16 @@ public class ScarsXMLProfiler {
 
 	public void addProbability(Element parent, IProbability tuple) {
 		double[][] cov = tuple.getCovariance();
-//		RealMatrix covMatrix = new RealMatrixImpl(cov);
+		
+		Element covEle = new Element("COVARIANCEMATRIX");
+		parent.addContent(covEle);
+		if(cov == null) {
+			covEle.setText("null");
+			return;
+		}
+		
 		String covText = "";
-//		for(int i=0; i<covMatrix.getRowDimension(); i++) {
-//			double[] row = covMatrix.getRow(i);
-//			for(int j=0; j<row.length; j++) {
-//				covText += row[j];
-//			}
-//			if(i != covMatrix.getRowDimension()-1) {
-//				covText += "\n";
-//			}
-//		}
+
 
 		for(int r = 0; r<cov.length; r++) {
 			covText += " \n\t";
@@ -238,9 +237,6 @@ public class ScarsXMLProfiler {
 				covText += cov[r][c] + "\t";
 			}
 		}
-		Element covEle = new Element("COVARIANCEMATRIX");
-		covEle.setText(covText);
-		parent.addContent(covEle);
 	}
 
 	public void addPredictionFunctionKey(Element parent, IPredictionFunctionKey<IPredicate<MVRelationalTuple<?>>> predictionFunctionKey) {
