@@ -40,7 +40,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		Object parent = tuple;
 		for (int i = 0; i < path.getSchemaIndices().size(); i++) {
 			
-			TupleIndex index = new TupleIndex((MVRelationalTuple<?>) parent, path.getSchemaIndex(i).toInt(), path.getSchemaIndex(i).getAttribute());
+			TupleIndex index = new TupleIndex((MVRelationalTuple<?>) parent, array[i], path.getSchemaIndex(i).getAttribute());
 			indices.add(index);
 			if (parent instanceof MVRelationalTuple)
 				parent = ((MVRelationalTuple<?>) parent).getAttribute(path.getSchemaIndex(i).toInt());
