@@ -22,9 +22,13 @@
 #DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
 #DEFINE assoParam1      threshold := 5; operator := LESSEQUAL;
 #DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
-#DEFINE assoParam2      distanceFunction := EUCLIDEAN;
+#DEFINE assoParam2      distanceFunction := EUCLIDEAN; gatingMode := true;
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
+
+#DEFINE bouncerVal      7.1
+#DEFINE tempEvaluationVal 7.3
+#DEFINE evaluationVal   7.1
 
 #PARSER PQLHack
 #TRANSCFG StreamCars
@@ -115,11 +119,11 @@ BROKER(
 	            ${bufferType}
 	        ),
             ${brokerListName2},
-            8,
+            ${bouncerVal},
             LESS
         ),
         ${brokerListName2},
-        10
+        ${evaluationVal}
     )
 );
 
@@ -147,7 +151,7 @@ ASSOCIATION-SEL(
 	                            ${bufferType} 
 	                        ),
 	                        ${brokerListName2},
-	                        8,
+	                        ${bouncerVal},
 	                        GREATEREQUAL
 	                    ),
                         ${brokerListName2},
@@ -209,11 +213,25 @@ BROKER(
             0
         ),
         ${assoScanned},
-        10
+        ${tempEvaluationVal}
     )
 );
 
-TESTOP(
-    BROKER(${brokerSourceName1}),
-    Bla
+JDVE-SINK(
+	TESTOP(
+	    DISTANCE-OBJECT-SELECTOR(
+	        BROKER(${brokerSourceName1}),
+	        ${brokerListName1},
+	        posx,
+	        posy,
+	        0,
+	        50,
+	        2.0,
+	        2.0
+	    ),
+	    Bla
+	),
+	192.168.0.42,
+	5005,
+	udp
 );
