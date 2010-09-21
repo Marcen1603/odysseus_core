@@ -174,7 +174,12 @@ public class ScarsXMLProfiler {
 				SDFAttributeList schema = attr.getSubattributes();
 				for(int i=0; i<schema.getAttributeCount(); i++) {
 					SDFAttribute childAttr = schema.getAttribute(i);
-					addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
+					try {
+						addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
+					} catch(ArrayIndexOutOfBoundsException e) {
+						tupleElement.addContent(new Element("ERROR").setText("schema/tuple different: " + childAttr.getAttributeName() + ", tuple index: " + i));
+					}
+
 				}
 			} else if (attr.getDatatype().getQualName().equals("List")) {
 				
