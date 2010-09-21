@@ -22,7 +22,7 @@
 #DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
 #DEFINE assoParam1      threshold := 5; operator := LESSEQUAL;
 #DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
-#DEFINE assoParam2      distanceFunction := EUCLIDEAN;
+#DEFINE assoParam2      distanceFunction := EUCLIDEAN; gatingMode := true;
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
 
