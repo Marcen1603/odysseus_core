@@ -233,7 +233,7 @@ public class Provider implements IProvider {
 	@Override
 	public SDFAttributeList getSchema(String sourceName) {
 		double mvValue = 1.0;
-		double mvCorrelationValue = 0.5; 
+		double mvCorrelationValue = 0.0; 
 		SDFAttribute type = new SDFAttribute(sourceName, "type");
 		type.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 
