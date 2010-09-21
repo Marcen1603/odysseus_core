@@ -267,9 +267,9 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			// The punctuation must be send to all following operators, I think.
 
 			else {
-				if (this.min != null && send == false) {
+				if (this.min != null) {
 					this.sendPunctuation(new PointInTime(this.min));
-					send = true;
+//					send = true;
 				}
 
 				// if min is null, you cannot send a punctuation, because
