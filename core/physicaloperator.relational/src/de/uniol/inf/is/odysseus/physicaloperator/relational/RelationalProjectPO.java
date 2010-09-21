@@ -38,9 +38,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	final protected void process_next(RelationalTuple<T> object, int port) {
 		try {
 			// System.out.println("RelationalTuple "+this+" "+object);
-			//RelationalTuple<T> out = object.restrict(this.restrictList, false);
-			// TODO: Change the Following ??
-			RelationalTuple<T> out = object.restrict(this.restrictList, true);
+			RelationalTuple<T> out = object.restrict(this.restrictList, false);
 		//	logger.debug(this+" transferNext() "+object);
 			transfer(out);
 		} catch (Exception e) {
