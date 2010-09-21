@@ -137,14 +137,14 @@ public class ScarsXMLProfiler {
 		if(finish) {
 			return;
 		}
-		
+		Element operatorElement = getOperatorElement(operator);
 		int currentSkips = currentOperatorSkips.get(operator);
 		if(currentSkips < numSkips) {
 			currentOperatorSkips.put(operator, ++currentSkips);
 			return;
 		}
 		
-		Element operatorElement = getOperatorElement(operator);
+
 		Element punctuationElement = new Element("punctuation");
 		operatorElement.addContent(punctuationElement);
 		punctuationElement.setAttribute("time", timestamp.toString());
