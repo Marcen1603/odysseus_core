@@ -3,11 +3,8 @@ package de.uniol.inf.is.odysseus.base.usermanagement;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.StringTokenizer;
 
-import de.uniol.inf.is.odysseus.base.store.IHasId;
-
-public class User implements IHasId<String>, Serializable{
+public class User implements Serializable{
 
 	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
@@ -29,20 +26,6 @@ public class User implements IHasId<String>, Serializable{
 				}
 			}
 		} catch (NoSuchAlgorithmException e) {
-		}
-	}
-
-	User(String line) {
-		StringTokenizer tokenizer = new StringTokenizer(line, " ");
-		if (tokenizer.hasMoreTokens()) {
-			username = tokenizer.nextToken();
-		}else{
-			throw new IllegalArgumentException("Cannot initiate user from line "+line);
-		}
-		if (tokenizer.hasMoreElements()) {
-			password = tokenizer.nextToken();
-		}else{
-			throw new IllegalArgumentException("Cannot initiate user from line "+line);
 		}
 	}
 
@@ -105,9 +88,9 @@ public class User implements IHasId<String>, Serializable{
 
 	public boolean validatePassword(String password, boolean passwordIsHash) {
 		if (passwordIsHash) {
-			return password.equals(password);
+			return password.equals(this.password);
 		} else {
-			return this.password.equals(hash(password));
+			return this.password.equals(hash(this.password));
 		}
 	}
 
@@ -122,13 +105,6 @@ public class User implements IHasId<String>, Serializable{
 	@Override
 	public String toString() {
 		return username+" "+password;
-	}
-
-	@Override
-	public String getId() {
-		return getUsername();
-	}
-	
-
+	}	
 
 }
