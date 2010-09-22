@@ -22,5 +22,10 @@ public class MemoryUserStore implements IUserStore {
 	Collection<User> getUsers() {
 		return Collections.unmodifiableCollection(registeredUsers.values());
 	}
+
+	@Override
+	public boolean isEmpty() {
+		return registeredUsers.isEmpty();
+	}
 	
 }

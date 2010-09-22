@@ -13,18 +13,19 @@ public class UserManagement extends AbstractUserManagement {
 		if (instance == null) {
 
 			try {
-				instance = new UserManagement(new MemoryUserStore());
-//				instance = new UserManagement(new FileUserStore(
-//						System.getProperty("user.home") + "/odysseus/users"));
+//				instance = new UserManagement(new MemoryUserStore());
+				instance = new UserManagement(new FileUserStore(
+						System.getProperty("user.home") + "/odysseus/users.txt"));
 				// TODO: Spaeter entfernen
-
-				instance.registerUser("Console", "");
-				instance.registerUser("Benchmark", "");
-				instance.registerUser("RCP", "");
-				instance.registerUser("Super", "held");
-				instance.registerUser("P2P", "jkhdsfkewrt");
+				
+				if (instance.hasNoUsers()){
+					instance.registerUser("Console", "");
+					instance.registerUser("Benchmark", "");
+					instance.registerUser("RCP", "");
+					instance.registerUser("Super", "held");
+					instance.registerUser("P2P", "jkhdsfkewrt");
+				}
 			} catch (UsernameAlreadyUsedException e) {
-				e.printStackTrace();
 			} catch (UserStoreException e) {
 				e.printStackTrace();
 			} catch (Exception e) {

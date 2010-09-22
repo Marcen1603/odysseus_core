@@ -8,7 +8,7 @@ public class User {
 
 	private final String hashFunction = "SHA-1";
 	private String username;
-	private final String password;
+	private String password;
 	static MessageDigest hash = null;
 
 	User(String username, String password) {
@@ -104,8 +104,14 @@ public class User {
 		return password;
 	}
 
+	public void setPassword(String password) {
+		this.password = hash(password);
+	}
+	
 	@Override
 	public String toString() {
 		return username+" "+password;
 	}
+
+
 }

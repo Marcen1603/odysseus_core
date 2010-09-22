@@ -60,4 +60,9 @@ public class FileUserStore implements IUserStore {
 		}
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return cache.isEmpty();
+	}
+
 }

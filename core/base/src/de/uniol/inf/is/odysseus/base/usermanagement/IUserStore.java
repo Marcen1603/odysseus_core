@@ -4,5 +4,6 @@ public interface IUserStore {
 
 	public User getUserByName(String username);
 	public void storeUser(User user) throws UserStoreException;
+	public boolean isEmpty();
 
 }

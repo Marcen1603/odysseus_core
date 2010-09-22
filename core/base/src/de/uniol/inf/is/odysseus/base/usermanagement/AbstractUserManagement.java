@@ -29,8 +29,26 @@ abstract public class AbstractUserManagement {
 		} else {
 			throw new UsernameAlreadyUsedException();
 		}
-
 	}
+	
+	/**
+	 * Register new User with plain text password
+	 * @param username
+	 * @param password
+	 * @throws UsernameAlreadyUsedException
+	 * @throws UserStoreException 
+	 */
+	public void updateUser(String username, String password)
+			throws UsernameNotExistException, UserStoreException {
+		User user = userStore.getUserByName(username);
+		if (user != null) {
+			user.setPassword(password);
+			userStore.storeUser(user);
+		} else {
+			throw new UsernameNotExistException(username);
+		}
+	}
+	
 
 	/**
 	 * Login user with non hash password
@@ -71,5 +89,8 @@ abstract public class AbstractUserManagement {
 		loggedIn.remove(username);
 	}
 	
+	protected boolean hasNoUsers() {
+		return userStore.isEmpty();
+	}
 
 }
