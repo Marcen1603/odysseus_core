@@ -95,6 +95,7 @@ public interface NewSQLParserTreeConstants
   public int JJTBROKERQUEUE = 89;
   public int JJTMETRIC = 90;
   public int JJTCREATEUSERSTATEMENT = 91;
+  public int JJTALTERUSERSTATEMENT = 92;
 
 
   public String[] jjtNodeName = {
@@ -190,6 +191,7 @@ public interface NewSQLParserTreeConstants
     "BrokerQueue",
     "Metric",
     "CreateUserStatement",
+    "AlterUserStatement",
   };
 }
-/* JavaCC - OriginalChecksum=d75109cc99926d0af08d079ebcea11b1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1865ec1e0f78b2b168fc4c59c8cd9480 (do not edit this line) */

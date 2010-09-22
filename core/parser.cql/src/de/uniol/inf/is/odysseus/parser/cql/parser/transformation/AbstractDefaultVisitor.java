@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAdvance;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateFunction;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAlterUserStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
@@ -637,6 +638,12 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTCreateUserStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTAlterUserStatement node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -469,4 +469,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTAlterUserStatement node, Object data) {
+		return pvisit(node);
+	}
+
 }

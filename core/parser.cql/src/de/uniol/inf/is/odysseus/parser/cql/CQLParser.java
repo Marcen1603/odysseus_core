@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAdvance;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateFunction;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAlterUserStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
@@ -835,6 +836,18 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String password = node.getPassword();
 		try {
 			UserManagement.getInstance().registerUser(user, password);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTAlterUserStatement node, Object data) {
+		String user = (String) node.jjtGetChild(0).jjtAccept(this, data);
+		String password = node.getPassword();
+		try {
+			UserManagement.getInstance().updateUser(user, password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
