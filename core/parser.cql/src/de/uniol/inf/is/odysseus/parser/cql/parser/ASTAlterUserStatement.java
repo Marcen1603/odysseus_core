@@ -11,7 +11,8 @@ public class ASTAlterUserStatement extends SimpleNode {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		// Anfuehrungszeichen entfernen
+		this.password = password.substring(1,password.length()-2);		
 	}
 
 	public ASTAlterUserStatement(int id) {
