@@ -121,7 +121,6 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 			NewSQLParser.Statement().childrenAccept(
 					new NewSQLParserDumpVisitor(), null);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -231,32 +230,27 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	}
 
 	public Object visit(ASTTimedTuples node, Object data) {
-		// TODO Auto-generated method stub
 		return pvisit(node);
 	}
 
 	public Object visit(ASTTimedTuple node, Object data) {
-		// TODO Auto-generated method stub
+
 		return pvisit(node);
 	}
 
 	public Object visit(ASTTimeInterval node, Object data) {
-		// TODO Auto-generated method stub
 		return pvisit(node);
 	}
 
 	public Object visit(ASTSimpleTuple node, Object data) {
-		// TODO Auto-generated method stub
 		return pvisit(node);
 	}
 
 	public Object visit(ASTAttributeType node, Object data) {
-		// TODO Auto-generated method stub
 		return pvisit(node);
 	}
 
 	public Object visit(ASTPriority node, Object data) {
-		// TODO Auto-generated method stub
 		return pvisit(node);
 	}
 
@@ -367,14 +361,12 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTSilab node, Object data) {
-		// TODO Auto-generated method stub
 		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTDBExecuteStatement node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
@@ -439,44 +431,42 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTCreateSensor node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTORSchemaDefinition node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTRecordDefinition node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTRecordEntryDefinition node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTListDefinition node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTAttrDefinition node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTCreateUserStatement node, Object data) {
+		return pvisit(node);
 	}
 
 }

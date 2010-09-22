@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCovarianceRow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateSensor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateUserStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateViewStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
@@ -630,6 +631,12 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCreateUserStatement node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

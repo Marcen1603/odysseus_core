@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.IntersectionAO;
@@ -44,6 +45,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCovarianceRow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateSensor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateUserStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateViewStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
@@ -824,6 +826,18 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTAttrDefinition node, Object data) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCreateUserStatement node, Object data) {
+		String user = (String) node.jjtGetChild(0).jjtAccept(this, data);
+		String password = node.getPassword();
+		try {
+			UserManagement.getInstance().registerUser(user, password);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		return null;
 	}
 
