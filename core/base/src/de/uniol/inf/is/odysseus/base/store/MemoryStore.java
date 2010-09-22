@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryStore<STORETYPE extends IHasId<IDType>,IDType> {
+public class MemoryStore<IDType,STORETYPE extends IHasId<IDType>> {
 
 	private Map<IDType, STORETYPE> elements = new HashMap<IDType, STORETYPE>();
 	

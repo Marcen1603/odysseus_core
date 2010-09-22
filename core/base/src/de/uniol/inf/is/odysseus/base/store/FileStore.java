@@ -10,10 +10,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 
-public class FileStore<STORETYPE extends IHasId<IDType> & Serializable,IDType> {
+public class FileStore<IDType,STORETYPE extends IHasId<IDType> & Serializable> {
 	
 	private String path;
-	private MemoryStore<STORETYPE,IDType> cache = new MemoryStore<STORETYPE, IDType>();
+	private MemoryStore<IDType,STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
 	
 	public FileStore(String path) throws IOException{
 		this.path = path;

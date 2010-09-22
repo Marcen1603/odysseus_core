@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.store.MemoryStore;
 
-public class MemoryUserStore extends MemoryStore<User, String> implements IUserStore {
+public class MemoryUserStore extends MemoryStore<String, User> implements IUserStore {
 	
 	@Override
 	public User getUserByName(String username) {

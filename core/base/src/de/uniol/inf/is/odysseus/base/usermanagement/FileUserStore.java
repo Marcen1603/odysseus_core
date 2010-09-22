@@ -5,7 +5,7 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.base.store.FileStore;
 import de.uniol.inf.is.odysseus.base.store.StoreException;
 
-public class FileUserStore extends FileStore<User, String> implements IUserStore {
+public class FileUserStore extends FileStore<String,User> implements IUserStore {
 	
 	public FileUserStore(String path) throws IOException{
 		super(path);
