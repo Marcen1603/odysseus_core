@@ -20,7 +20,7 @@ abstract public class AbstractUserManagement {
 	 * @throws UsernameAlreadyUsedException
 	 * @throws UserStoreException 
 	 */
-	void registerUser(String username, String password)
+	public void registerUser(String username, String password)
 			throws UsernameAlreadyUsedException, UserStoreException {
 		User user = userStore.getUserByName(username);
 		if (user == null) {
