@@ -12,7 +12,7 @@ public class ASTCreateUserStatement extends SimpleNode {
 
 	public void setPassword(String password) {
 		// Anfuehrungszeichen entfernen
-		this.password = password.substring(1,password.length()-2);		
+		this.password = password.substring(1,password.length()-1);		
 	}
 
 	public ASTCreateUserStatement(int id) {
