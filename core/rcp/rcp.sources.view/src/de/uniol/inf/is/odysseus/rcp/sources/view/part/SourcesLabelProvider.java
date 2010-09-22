@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.sources.view.activator.Activator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -46,6 +47,7 @@ public class SourcesLabelProvider implements ILabelProvider {
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>)element;
 			StringBuilder sb = new StringBuilder();
 			sb.append(entry.getKey()).append(" [").append(entry.getValue().getClass().getSimpleName()).append("]");
+			sb.append(" ").append(DataDictionary.getInstance().getUserForView(entry.getKey()).getUsername());
 			return sb.toString();
 		}
 		if( element instanceof SDFAttribute ) {

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.ProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -14,6 +15,13 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 public class ProbabilityPredicateVisitor implements IVisitor{
 
 	static boolean registerd = VisitorFactory.getInstance().setVisitor(new CreateMVProjectionVisitor(), "ProbabilityPredicate");
+	
+	User user = null;
+	
+	@Override
+	public void setUser(User user) {
+		this.user = user;	
+	}
 	
 	@Override
 	public Object visit(SimpleNode node, Object data, Object baseObject) {

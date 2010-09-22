@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.store.FileStore;
+import de.uniol.inf.is.odysseus.base.store.IStore;
 import de.uniol.inf.is.odysseus.base.store.StoreException;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -38,10 +40,11 @@ public class DataDictionary {
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
 
-	final private FileStore<String, ILogicalOperator> viewDefinitions;
-	final private FileStore<String, ILogicalOperator> logicalViewDefinitions;
-	final private FileStore<String, SDFEntity> entityMap;
-	final private FileStore<String, String> sourceTypeMap;
+	final private IStore<String, ILogicalOperator> viewDefinitions;
+	final private IStore<String, User> viewFromUser;
+	final private IStore<String, ILogicalOperator> logicalViewDefinitions;
+	final private IStore<String, SDFEntity> entityMap;
+	final private IStore<String, String> sourceTypeMap;
 
 	public void clear() {
 		try {
@@ -58,6 +61,8 @@ public class DataDictionary {
 		try {
 			viewDefinitions = new FileStore<String, ILogicalOperator>(
 					filePrefix + "viewDefinitions.store");
+			viewFromUser = new FileStore<String, User>(
+					filePrefix + "viewFromUser.store");
 			logicalViewDefinitions = new FileStore<String, ILogicalOperator>(
 					filePrefix + "logicalViewDefinitions.store");
 			entityMap = new FileStore<String, SDFEntity>(filePrefix
@@ -157,9 +162,10 @@ public class DataDictionary {
 		}
 	}
 
-	public void setView(String name, ILogicalOperator plan) {
+	public void setView(String name, ILogicalOperator plan, User user) {
 		try {
 			viewDefinitions.put(name, plan);
+			viewFromUser.put(name,user);
 		} catch (StoreException e) {
 			throw new RuntimeException(e);
 		}
@@ -255,4 +261,9 @@ public class DataDictionary {
 	public boolean emptySourceTypeMap() {
 		return sourceTypeMap.isEmpty();
 	}
+
+	public User getUserForView(String user) {
+		return viewFromUser.get(user);
+	}
+	
 }

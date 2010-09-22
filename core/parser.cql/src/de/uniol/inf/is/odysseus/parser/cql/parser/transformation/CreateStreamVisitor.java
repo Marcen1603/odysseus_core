@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
@@ -36,6 +37,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  */
 public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
+	private User user;
+
+	public CreateStreamVisitor(User user) {
+		this.user = user;
+	}
 
 	public String getName() {
 		return name;
@@ -86,7 +92,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTTimedTuples node, Object data) {
 		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary.getInstance().getSource(name), node.getTuples(attributes));
 		newPO.setOutputSchema(attributes);
-		DataDictionary.getInstance().setView(name, newPO);
+		DataDictionary.getInstance().setView(name, newPO, user);
 		return null;
 	}
 
@@ -109,7 +115,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		operator = addTimestampAO(operator);
 		
-		DataDictionary.getInstance().setView(name, operator);
+		DataDictionary.getInstance().setView(name, operator, user);
 		return null;
 	}
 
@@ -182,7 +188,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
-		DataDictionary.getInstance().setView(name, op);
+		DataDictionary.getInstance().setView(name, op, user);
 		return data;
 	}
 
@@ -199,7 +205,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		AccessAO source = new AccessAO(new SDFSource(name, "RelationalByteBufferAccessPO"));
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
-		DataDictionary.getInstance().setView(name, op);
+		DataDictionary.getInstance().setView(name, op, user);
 		return data;
 	}
 
@@ -213,6 +219,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			e.printStackTrace();
 		}
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
+		v.setUser(user);
 		return v.visit(node, data, this);
 	}
 }

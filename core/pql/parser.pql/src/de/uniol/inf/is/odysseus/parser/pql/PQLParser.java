@@ -31,6 +31,7 @@ public class PQLParser implements IQueryParser {
 	public synchronized List<IQuery> parse(String query, User user)
 			throws QueryParseException {
 		this.user = user;
+		PQLParserImpl.setUser(user);
 		return parse(new StringReader(query),user);
 	}
 
@@ -38,6 +39,7 @@ public class PQLParser implements IQueryParser {
 	public synchronized List<IQuery> parse(Reader reader, User user)
 			throws QueryParseException {
 		this.user = user;
+		PQLParserImpl.setUser(user);
 		try {
 			if (this.parser == null) {
 				try {

@@ -173,15 +173,20 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			}
 			ASTStatement statement = NewSQLParser.Statement();
 			CQLParser cqlParser = new CQLParser();
+			cqlParser.setUser(user);
 			cqlParser.visit(statement, null);
 			return cqlParser.plans;
 		} catch (NoClassDefFoundError e) {
 			throw new QueryParseException(
-					"parse error: missing plugin for language feature", e
-							.getCause());
+					"parse error: missing plugin for language feature",
+					e.getCause());
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
+	}
+
+	private void setUser(User user) {
+		this.user = user;
 	}
 
 	public Object visit(ASTStatement node, Object data) {
@@ -325,16 +330,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	public Object visit(ASTCreateStatement node, Object data) {
-		CreateStreamVisitor v = new CreateStreamVisitor();
+		CreateStreamVisitor v = new CreateStreamVisitor(user);
 		return v.visit(node, data);
 	}
-	
+
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) {
 		CreateViewVisitor v = new CreateViewVisitor();
 		return v.visit(node, data);
 	}
-
 
 	public Object visit(ASTPriority node, Object data) {
 		return node.getPriority();
@@ -347,8 +351,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			if (curInputAO.getSubscribedToSource().size() > 1) {
 				rightInputSchema = curInputAO.getInputSchema(1);
 			}
-			initPredicate(curInputAO.getPredicate(), curInputAO
-					.getInputSchema(0), rightInputSchema);
+			initPredicate(curInputAO.getPredicate(),
+					curInputAO.getInputSchema(0), rightInputSchema);
 		}
 		for (int i = 0; i < curInputAO.getSubscribedToSource().size(); ++i) {
 			initPredicates(curInputAO.getSubscribedToSource(i).getTarget());
@@ -749,8 +753,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					"Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
 			throw new RuntimeException(
-					"Error while parsing the SELECT INTO statement", e
-							.getCause());
+					"Error while parsing the SELECT INTO statement",
+					e.getCause());
 		}
 	}
 
@@ -791,15 +795,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateSensor node, Object data) {
-		try{
-			Class<?> sensorVisitor = Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
+		try {
+			Class<?> sensorVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
 			Object sv = sensorVisitor.newInstance();
 			Method m = sensorVisitor.getDeclaredMethod("visit",
 					ASTCreateSensor.class, Object.class);
 			return m.invoke(sv, node, data);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(
-					"Objecttracking plugin is missing in CQL parser.", e.getCause());
+					"Objecttracking plugin is missing in CQL parser.",
+					e.getCause());
 		} catch (Exception e) {
 			throw new RuntimeException("Error while parsing the SENSOR clause",
 					e.getCause());
@@ -841,7 +847,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().registerUser(this.user, username, password);
+			UserManagement.getInstance().registerUser(this.user, username,
+					password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -853,7 +860,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().updateUser(this.user, username, password);
+			UserManagement.getInstance().updateUser(this.user, username,
+					password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -867,6 +875,5 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		DataDictionary.getInstance().removeView(streamname);
 		return null;
 	}
-
 
 }

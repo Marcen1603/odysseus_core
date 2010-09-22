@@ -10,5 +10,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.usermanagement,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TimestampAO;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
@@ -17,6 +18,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class SILABVisitor implements IVisitor{
 
 	static boolean registerd = VisitorFactory.getInstance().setVisitor(new SILABVisitor(), "Silab");
+	
+	private User user;
+	
+	@Override
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
 	@Override
 	public Object visit(SimpleNode node, Object data, Object baseObject) {
 			
@@ -46,7 +55,7 @@ public class SILABVisitor implements IVisitor{
 			
 //		}
 		ILogicalOperator op = addTimestampAO(source, source.getOutputSchema());
-		DataDictionary.getInstance().setView(((CreateStreamVisitor)baseObject).getName(), op);
+		DataDictionary.getInstance().setView(((CreateStreamVisitor)baseObject).getName(), op, user);
 		return data;
 		
 	}
