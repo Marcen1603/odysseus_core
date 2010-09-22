@@ -22,12 +22,12 @@ public interface IDefaultRootStrategy {
 	 * 
 	 * @param defaultRoot
 	 * @param source
-	 * @return The default root, that has been subscribed. Some strategies
+	 * @return The default root, that has to be subscribed. Some strategies
 	 * may clone the default root, so that another reference has to be returned.
 	 * This is necessary, since in Query.java the new root of the query has to
 	 * set. However, if the subscribed object is already set, because it has not
 	 * been cloned, we do not have to set it again. To check this we need the reference
 	 * to the default root (clone or not).
 	 */
-	public IPhysicalOperator subscribeDefaultRootToSource(ISink<?> defaultRoot, IPhysicalOperator source);
+	public IPhysicalOperator connectDefaultRootToSource(ISink<?> defaultRoot, IPhysicalOperator source);
 }

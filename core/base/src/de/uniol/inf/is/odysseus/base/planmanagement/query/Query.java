@@ -247,7 +247,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 							&& oldRoot.isSource()) {
 						IPhysicalOperator cloned = this.parameters
 								.getDefaultRootStrategy()
-								.subscribeDefaultRootToSource((ISink<?>) defaultRoot,
+								.connectDefaultRootToSource((ISink<?>) defaultRoot,
 										oldRoot);
 						// ((ISink) defaultRoot).subscribeToSource((ISource)
 						// oldRoot, 0,
@@ -265,7 +265,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 						}
 					}
 				}
-				this.roots = newRoots;
+				//this.roots = newRoots;
 			}
 		}
 

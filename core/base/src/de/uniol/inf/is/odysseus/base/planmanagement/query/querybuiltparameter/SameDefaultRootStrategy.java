@@ -8,10 +8,9 @@ public class SameDefaultRootStrategy implements IDefaultRootStrategy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IPhysicalOperator subscribeDefaultRootToSource(
+	public IPhysicalOperator connectDefaultRootToSource(
 			ISink<?> defaultRoot, IPhysicalOperator source) {
-		defaultRoot.subscribeToSource((ISource) source, 0, 0, source.getOutputSchema());
-		
+		((ISource) source).connectSink((ISink) defaultRoot, 0, 0, source.getOutputSchema());		
 		return defaultRoot;
 	}
 
