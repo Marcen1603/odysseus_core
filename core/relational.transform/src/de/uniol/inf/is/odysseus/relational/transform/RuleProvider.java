@@ -17,7 +17,10 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TFixedSetAccessAORule());
 		rules.add(new TAggregateAORule());
 		rules.add(new TMapAORule());
-		rules.add(new TProjectAORule());				
+		rules.add(new TProjectAORule());	
+		
+		rules.add(new TFileAccessAORule());
+		
 		return rules;
 	}
 

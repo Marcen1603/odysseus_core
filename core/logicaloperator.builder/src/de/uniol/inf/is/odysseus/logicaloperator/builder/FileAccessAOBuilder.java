@@ -1,0 +1,110 @@
+package de.uniol.inf.is.odysseus.logicaloperator.builder;
+
+import java.io.File;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.FileAccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
+
+public class FileAccessAOBuilder extends AbstractOperatorBuilder{
+
+	private final DirectParameter<String> sourceName = new DirectParameter<String>(
+			"SOURCE", REQUIREMENT.MANDATORY);
+	
+	private final DirectParameter<String> path = new DirectParameter<String>(
+			"PATH", REQUIREMENT.MANDATORY);
+	
+	private final DirectParameter<String> fileType = new DirectParameter<String>(
+			"FILETYPE", REQUIREMENT.MANDATORY);	
+	
+	private final DirectParameter<String> type = new DirectParameter<String>(
+			"TYPE", REQUIREMENT.OPTIONAL);
+	
+	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
+			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
+					"ATTRIBUTE", REQUIREMENT.MANDATORY));	
+	
+	private final DirectParameter<Long> delay = new DirectParameter<Long>(
+			"DELAY", REQUIREMENT.OPTIONAL);
+	
+	Logger logger = LoggerFactory.getLogger(FileAccessAOBuilder.class);
+	
+	public FileAccessAOBuilder() {
+		super(0,0);
+		setParameters(sourceName,path,fileType,type,attributes,delay);
+	}
+	
+	@Override
+	protected ILogicalOperator createOperatorInternal() {
+		String sourceName = this.sourceName.getValue();
+		if (DataDictionary.getInstance().containsView(sourceName)) {
+			return DataDictionary.getInstance().getView(sourceName);
+		}
+		
+		FileAccessAO ao = createNewFileAccessAO(sourceName);
+		
+		DataDictionary.getInstance().setView(sourceName,ao);
+		return ao;
+	}
+	
+	private FileAccessAO createNewFileAccessAO(String sourceName) {
+		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
+		SDFEntity sdfEntity = new SDFEntity(sourceName);
+		List<SDFAttribute> attributeList = attributes.getValue();
+		SDFAttributeList schema = new SDFAttributeList(attributeList);
+		sdfEntity.setAttributes(schema);
+		
+		DataDictionary.getInstance().sourceTypeMap.put(sourceName, "RelationalStreaming");
+		DataDictionary.getInstance().entityMap.put(sourceName, sdfEntity);
+		
+		
+		FileAccessAO ao = new FileAccessAO(sdfSource);
+		ao.setPath(path.getValue());
+		ao.setFileType(fileType.getValue());
+		ao.setDelay(delay.getValue());
+		
+		
+		ao.setOutputSchema(schema);
+		return ao;
+	}
+	
+	@Override
+	protected boolean internalValidation() {
+		String sourceName = this.sourceName.getValue();
+		
+		if(delay.getValue() == null)
+			delay.setInputValue(0l);
+			
+		if (DataDictionary.getInstance().containsView(sourceName)) {
+			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
+				addError(new IllegalArgumentException("view " + sourceName
+						+ " already exists"));
+				return false;
+			}
+		}else {
+			if (!(path.hasValue() && type.hasValue() && fileType.hasValue() && attributes.hasValue())) {
+				addError(new IllegalArgumentException(
+						"missing information for the creation of source "
+								+ sourceName
+								+ ". expecting path, fileType, type and attributes."));
+				return false;
+			}
+		}
+		File file = new File(path.getValue());
+		if(!file.exists()){
+			addError(new IllegalArgumentException("File " + path.getValue() + " does not exists."));
+			return false;
+		}
+			
+		return true;
+	}
+}

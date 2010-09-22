@@ -7,6 +7,7 @@ public class Activator implements BundleActivator {
 
 	private static final String SPLIT = "SPLIT";
 	private static final String ACCESS = "ACCESS";
+	private static final String FILEACCESS = "FILEACCESS";
 	private static final String SELECT = "SELECT";
 	private static final String JOIN = "JOIN";
 	private static final String MAP = "MAP";
@@ -27,6 +28,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		OperatorBuilderFactory.putOperatorBuilderType(ACCESS, AccessAOBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(FILEACCESS, FileAccessAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(SELECT, SelectAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(JOIN, JoinAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(PROJECT, ProjectAOBuilder.class);
@@ -48,6 +50,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		OperatorBuilderFactory.removeOperatorBuilderType(ACCESS);
+		OperatorBuilderFactory.removeOperatorBuilderType(FILEACCESS);
 		OperatorBuilderFactory.removeOperatorBuilderType(SELECT);
 		OperatorBuilderFactory.removeOperatorBuilderType(JOIN);
 		OperatorBuilderFactory.removeOperatorBuilderType(MAP);
