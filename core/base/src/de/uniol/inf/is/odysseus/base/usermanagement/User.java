@@ -13,7 +13,6 @@ public class User implements Serializable{
 	static transient MessageDigest hash = null;
 
 	User(String username, String password) {
-		initHash();
 		this.username = username;
 		this.password = hash(password);
 	}
@@ -90,7 +89,8 @@ public class User implements Serializable{
 		if (passwordIsHash) {
 			return password.equals(this.password);
 		} else {
-			return this.password.equals(hash(this.password));
+			String h = hash(password);
+			return this.password.equals(h);
 		}
 	}
 
@@ -105,6 +105,6 @@ public class User implements Serializable{
 	@Override
 	public String toString() {
 		return username+" "+password;
-	}	
+	}
 
 }
