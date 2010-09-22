@@ -19,10 +19,13 @@ import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 
 public class SaseBuilder implements IQueryParser, BundleActivator {
+
+	private User user;
 
 	@Override
 	public String getLanguage() {
@@ -49,7 +52,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		}
 	}
 
-	public List<IQuery> parse(Reader reader) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, User user) throws QueryParseException {
+		this.user = user;
 		SaseLexer lex = null;
 		try {
 			lex = new SaseLexer(new ANTLRReaderStream(reader));
@@ -60,7 +64,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return processParse(lex);
 	}
 
-	public List<IQuery> parse(String text) throws QueryParseException {
+	public List<IQuery> parse(String text, User user) throws QueryParseException {
+		this.user = user;
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
 		return processParse(lex);
 	}

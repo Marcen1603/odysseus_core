@@ -19,7 +19,7 @@ public class FileUserStore extends FileStore<String,User> implements IUserStore 
 	@Override
 	public void storeUser(User user) throws UserStoreException {
 		try {
-			store(user);
+			store(user.getUsername(),user);
 		} catch (StoreException e) {
 			throw new UserStoreException(e);
 		}

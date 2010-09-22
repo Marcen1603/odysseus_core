@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
@@ -137,6 +138,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	private List<IQuery> plans = new ArrayList<IQuery>();
+	private User user;
 	private static CQLParser instance = null;
 	private static NewSQLParser parser;
 
@@ -152,13 +154,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return "CQL";
 	}
 
-	public synchronized List<IQuery> parse(String query)
+	public synchronized List<IQuery> parse(String query, User user)
 			throws QueryParseException {
-		return parse(new StringReader(query));
+		this.user = user;
+		return parse(new StringReader(query), user);
 	}
 
-	public synchronized List<IQuery> parse(Reader reader)
+	public synchronized List<IQuery> parse(Reader reader, User user)
 			throws QueryParseException {
+		this.user = user;
 		try {
 			if (parser == null) {
 				parser = new NewSQLParser(reader);
@@ -832,10 +836,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateUserStatement node, Object data) {
-		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().registerUser(user, password);
+			UserManagement.getInstance().registerUser(this.user, username, password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -844,10 +848,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTAlterUserStatement node, Object data) {
-		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().updateUser(user, password);
+			UserManagement.getInstance().updateUser(this.user, username, password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -24,6 +24,7 @@ import com.Ostermiller.util.CSVParser;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -109,7 +110,7 @@ public class LabdataServer {
 		
 		InputStreamReader reader = new InputStreamReader(input);
 		try{
-			CQLParser.getInstance().parse(reader);
+			CQLParser.getInstance().parse(reader, UserManagement.getInstance().getTestUser());
 		}catch(QueryParseException e){
 			e.printStackTrace();
 		}

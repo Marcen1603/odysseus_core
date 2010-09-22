@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
-public class FileStore<IDType,STORETYPE extends IHasId<IDType> & Serializable> {
+public class FileStore<IDType extends Serializable,STORETYPE extends Serializable> implements IStore<IDType, STORETYPE> {
 	
 	private String path;
 	private MemoryStore<IDType,STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
@@ -36,10 +38,12 @@ public class FileStore<IDType,STORETYPE extends IHasId<IDType> & Serializable> {
 		ObjectInputStream in = null;
 		try{
 			in = new ObjectInputStream(new FileInputStream(f));
-			STORETYPE element = null;
+			IDType key = null;
 			try {
-				while((element = (STORETYPE) in.readObject() )!=null){
-					cache.store(element);
+				while((key = (IDType) in.readObject() )!=null){
+					STORETYPE element = (STORETYPE) in.readObject();
+					System.out.println("READ "+key+" "+element);
+					cache.store(key,element);
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -52,8 +56,10 @@ public class FileStore<IDType,STORETYPE extends IHasId<IDType> & Serializable> {
 
 	private void saveCache() throws IOException{
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(path)));
-		for (STORETYPE e:cache.getAll()){
-			out.writeObject(e);
+		for (Entry<IDType,STORETYPE> e:cache.getAll().entrySet()){
+			out.writeObject(e.getKey());
+			out.writeObject(e.getValue());
+			System.out.println("WRITTEN "+e.getKey()+" "+e.getValue());
 		}
 		out.close();
 	}
@@ -62,8 +68,17 @@ public class FileStore<IDType,STORETYPE extends IHasId<IDType> & Serializable> {
 		return cache.getByName(id);
 	}
 
-	public void store(STORETYPE elem) throws StoreException {
-		cache.store(elem);
+	public void store(IDType id,STORETYPE elem) throws StoreException {
+		cache.store(id, elem);
+		try {
+			saveCache();
+		} catch (IOException e) {
+			throw new StoreException(e);
+		}
+	}
+	
+	public void clear() throws StoreException{
+		cache.clear();
 		try {
 			saveCache();
 		} catch (IOException e) {
@@ -73,6 +88,11 @@ public class FileStore<IDType,STORETYPE extends IHasId<IDType> & Serializable> {
 
 	public boolean isEmpty() {
 		return cache.isEmpty();
+	}
+
+	@Override
+	public Map<IDType, STORETYPE> getAll() {
+		return cache.getAll();
 	}
 
 }

@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.labdataserver.Activator
 Import-Package: com.Ostermiller.util;version="1.0.0",
  de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.usermanagement,
  de.uniol.inf.is.odysseus.parser.cql,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,

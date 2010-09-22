@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 
 /**
  * Describes an object which provides methods for processing queries. Fassade to
@@ -33,7 +34,7 @@ public interface ICompiler extends IInfoProvider {
 	 * @throws QueryParseException
 	 *             An {@link Exception} which occurs during parsing the query.
 	 */
-	public List<IQuery> translateQuery(String query, String parserID)
+	public List<IQuery> translateQuery(String query, String parserID, User user)
 			throws QueryParseException;
 
 	/**

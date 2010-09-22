@@ -187,7 +187,7 @@ public class StandardExecutor extends AbstractExecutor {
 			OpenFailedException {
 		getLogger().debug("Translate Queries.");
 		// translate query and build logical plans
-		List<IQuery> queries = compiler().translateQuery(queryStr, parserID);
+		List<IQuery> queries = compiler().translateQuery(queryStr, parserID, user);
 		getLogger().trace("Number of queries: " + queries.size());
 		// create for each logical plan an intern query
 		for (IQuery query : queries) {

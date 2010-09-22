@@ -1143,7 +1143,7 @@ public class ExecutorConsole implements CommandProvider,
 
 			ICompiler compiler = this.executor.getCompiler();
 			try {
-				List<IQuery> plans = compiler.translateQuery(queries, parser());
+				List<IQuery> plans = compiler.translateQuery(queries, parser(), currentUser);
 
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();

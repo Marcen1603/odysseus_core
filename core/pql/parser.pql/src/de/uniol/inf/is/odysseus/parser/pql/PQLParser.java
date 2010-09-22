@@ -10,12 +10,15 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 
 public class PQLParser implements IQueryParser {
 
 	private PQLParserImpl parser;
+
+	private User user;
 
 	private static Map<String, IParameter<?>> queryParameters = new HashMap<String, IParameter<?>>();
 
@@ -25,14 +28,16 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query)
+	public synchronized List<IQuery> parse(String query, User user)
 			throws QueryParseException {
-		return parse(new StringReader(query));
+		this.user = user;
+		return parse(new StringReader(query),user);
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(Reader reader)
+	public synchronized List<IQuery> parse(Reader reader, User user)
 			throws QueryParseException {
+		this.user = user;
 		try {
 			if (this.parser == null) {
 				try {

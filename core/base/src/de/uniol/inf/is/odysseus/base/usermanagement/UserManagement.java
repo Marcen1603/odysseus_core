@@ -19,11 +19,13 @@ public class UserManagement extends AbstractUserManagement {
 				// TODO: Spaeter entfernen
 				
 				if (instance.hasNoUsers()){
-					instance.registerUser("Console", "");
-					instance.registerUser("Benchmark", "");
-					instance.registerUser("RCP", "");
-					instance.registerUser("Super", "held");
-					instance.registerUser("P2P", "jkhdsfkewrt");
+					instance.registerUserInt("Console", "");
+					instance.registerUserInt("Benchmark", "");
+					instance.registerUserInt("RCP", "");
+					instance.registerUserInt("Super", "held");
+					instance.registerUserInt("P2P", "jkhdsfkewrt");
+					instance.registerUserInt("Test", "jkhdsfkewrt");
+
 				}
 			} catch (UsernameAlreadyUsedException e) {
 			} catch (UserStoreException e) {
@@ -38,6 +40,10 @@ public class UserManagement extends AbstractUserManagement {
 	// Hack um kurzfristig Nutzer im P2P zu erlauben und spaeter einfach wieder zu entfernen
 	public User getP2PUser() {
 		return login("P2P", "jkhdsfkewrt");
+	}
+
+	public User getTestUser() {
+		return login("Test","jkhdsfkewrt");
 	}
 
 }

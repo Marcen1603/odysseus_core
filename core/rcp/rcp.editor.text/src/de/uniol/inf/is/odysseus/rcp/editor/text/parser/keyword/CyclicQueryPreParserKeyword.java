@@ -60,7 +60,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 		ParameterTransformationConfiguration transCfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfgID);
 		User user = ActiveUser.getActiveUser();
 		try {
-			List<IQuery> plans = compiler.translateQuery(queries, parserID);
+			List<IQuery> plans = compiler.translateQuery(queries, parserID, user);
 
 			// DEBUG: Print the logical plan.
 			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();

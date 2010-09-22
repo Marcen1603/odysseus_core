@@ -10,9 +10,9 @@ import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionaryEntry;
-import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.transaction.TransactionDetector;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
@@ -38,6 +38,8 @@ public class ProceduralParser implements IQueryParser {
 	 */
 	private ArrayList<String> brokerNames;
 
+	private User user;
+
 	public static synchronized IQueryParser getInstance() {
 		if (instance == null) {
 			instance = new ProceduralParser();
@@ -52,7 +54,8 @@ public class ProceduralParser implements IQueryParser {
 	 * the last plan in returned list contains the whole plan.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<IQuery> parse(String query) throws QueryParseException {
+	public List<IQuery> parse(String query, User user) throws QueryParseException {
+		this.user = user;
 		List<IQuery> listOfPlans = new ArrayList<IQuery>();
 		this.brokerNames = new ArrayList<String>();
 		
@@ -131,7 +134,8 @@ public class ProceduralParser implements IQueryParser {
 		return this.brokerNames;
 	}
 
-	public List<IQuery> parse(Reader reader) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, User user) throws QueryParseException {
+		this.user = user;
 		return null;
 	}
 

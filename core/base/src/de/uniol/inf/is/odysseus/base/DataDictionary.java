@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.base.store.FileStore;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -35,6 +36,8 @@ public class DataDictionary {
 	}
 	
 	static private DataDictionary instance = null;
+	
+	static private String filePrefix = System.getProperty("user.home") + "/odysseus/";
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
 	
@@ -46,10 +49,10 @@ public class DataDictionary {
 	public Map<String, String> sourceTypeMap = new HashMap<String, String>();
 	
 	public void clear(){
-		this.viewDefinitions = new HashMap<String, ILogicalOperator>();
-		this.logicalViewDefinitions = new HashMap<String, ILogicalOperator>();
-		this.entityMap = new HashMap<String, SDFEntity>();
-		this.sourceTypeMap = new HashMap<String, String>();
+		this.viewDefinitions.clear();
+		this.logicalViewDefinitions.clear();
+		this.entityMap.clear();
+		this.sourceTypeMap.clear();
 	}
 
 	private DataDictionary() {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 
 public abstract class Query implements Serializable{
 	
@@ -36,6 +37,12 @@ public abstract class Query implements Serializable{
 	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
 	
 	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
+
+	private User user;
+	
+	public User getUser() {
+		return user;
+	}
 
 	public ArrayList<Lifecycle> getHistory() {
 		return history;
@@ -121,9 +128,10 @@ public abstract class Query implements Serializable{
 		return true;
 	}
 	
-	public Query(String query, String queryID) {
+	public Query(String query, String queryID, User user) {
 		setDeclarativeQuery(queryID);
 		setId(queryID);
+		this.user = user;
 	}
 	
 	public ILogicalOperator getLogicalOperatorplan() {

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.base;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -8,7 +9,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface ILogicalOperator extends IOwnedOperator, 
-	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone{
+	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone, Serializable{
 
 	public ILogicalOperator clone();
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced);

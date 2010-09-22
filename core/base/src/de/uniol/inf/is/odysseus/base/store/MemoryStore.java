@@ -1,28 +1,36 @@
 package de.uniol.inf.is.odysseus.base.store;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryStore<IDType,STORETYPE extends IHasId<IDType>> {
+public class MemoryStore<IDType,STORETYPE> implements IStore<IDType,STORETYPE>{
 
 	private Map<IDType, STORETYPE> elements = new HashMap<IDType, STORETYPE>();
 	
+	@Override
 	public STORETYPE getByName(IDType username) {
 		return elements.get(username);
 	}
 
-	public void store(STORETYPE element) {
-		elements.put(element.getId(), element);
+	@Override
+	public void store(IDType id, STORETYPE element) {
+		elements.put(id, element);
 	}
 	
-	public Collection<STORETYPE> getAll() {
-		return Collections.unmodifiableCollection(elements.values());
+	@Override
+	public Map<IDType, STORETYPE> getAll() {
+		return Collections.unmodifiableMap(elements);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return elements.isEmpty();
+	}
+
+	@Override
+	public void clear() {
+		elements.clear();
 	}
 	
 }

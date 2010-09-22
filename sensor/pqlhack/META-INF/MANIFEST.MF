@@ -56,3 +56,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
 Export-Package: de.uniol.inf.is.odysseus.pqlhack.parser,
  de.uniol.inf.is.odysseus.pqlhack.parser.visitor
+Require-Bundle: de.uniol.inf.is.odysseus.base

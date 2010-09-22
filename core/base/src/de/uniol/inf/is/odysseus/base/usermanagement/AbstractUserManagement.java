@@ -20,8 +20,14 @@ abstract public class AbstractUserManagement {
 	 * @throws UsernameAlreadyUsedException
 	 * @throws UserStoreException 
 	 */
-	public void registerUser(String username, String password)
+	public void registerUser(User caller, String username, String password)
 			throws UsernameAlreadyUsedException, UserStoreException {
+		// TODO: Rechte von caller überprüfen
+		registerUserInt(username, password);
+	}
+
+	protected void registerUserInt(String username, String password)
+			throws UserStoreException, UsernameAlreadyUsedException {
 		User user = userStore.getUserByName(username);
 		if (user == null) {
 			user = new User(username, password);
@@ -31,6 +37,7 @@ abstract public class AbstractUserManagement {
 		}
 	}
 	
+	
 	/**
 	 * Register new User with plain text password
 	 * @param username
@@ -38,8 +45,9 @@ abstract public class AbstractUserManagement {
 	 * @throws UsernameAlreadyUsedException
 	 * @throws UserStoreException 
 	 */
-	public void updateUser(String username, String password)
+	public void updateUser(User caller, String username, String password)
 			throws UsernameNotExistException, UserStoreException {
+		// TODO: Rechte von caller überprüfen
 		User user = userStore.getUserByName(username);
 		if (user != null) {
 			user.setPassword(password);

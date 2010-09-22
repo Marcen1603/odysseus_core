@@ -13,11 +13,11 @@ public class MemoryUserStore extends MemoryStore<String, User> implements IUserS
 
 	@Override
 	public void storeUser(User user) {
-		store(user);
+		store(user.getUsername(),user);
 	}
 	
 	Collection<User> getUsers() {
-		return getAll();
+		return getAll().values();
 	}
 	
 }

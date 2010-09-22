@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
@@ -174,10 +175,10 @@ public class StandardCompiler implements ICompiler {
 	 */
 	@Override
 	public List<IQuery> translateQuery(String query,
-			String parserID) throws QueryParseException {
+			String parserID, User user) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
 			return (List<IQuery>) this.parserList.get(parserID)
-					.parse(query);
+					.parse(query, user);
 		}
 
 		throw new QueryParseException("Parser with ID " + parserID
