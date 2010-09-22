@@ -832,7 +832,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateUserStatement node, Object data) {
-		String user = (String) node.jjtGetChild(0).jjtAccept(this, data);
+		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
 			UserManagement.getInstance().registerUser(user, password);
@@ -844,7 +844,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTAlterUserStatement node, Object data) {
-		String user = (String) node.jjtGetChild(0).jjtAccept(this, data);
+		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
 			UserManagement.getInstance().updateUser(user, password);
