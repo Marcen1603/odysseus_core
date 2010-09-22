@@ -28,7 +28,6 @@
 	<Image source="viewer_cfg/differencePO.png" name="differencePO" />
 	<Image source="viewer_cfg/p2paccessPO.png" name="p2paccessPO" />
 	<Image source="viewer_cfg/p2ppipePO.png" name="p2ppipePO" />
-	<Image source="viewer_cfg/filterPO.png" name="filterPO" />
 	<Image source="viewer_cfg/associatePO.png" name="associatePO" />
 	<Image source="viewer_cfg/mapPO.png" name="mapPO" />
 	<Image source="viewer_cfg/predictionPO.png" name="predictionPO" />
@@ -39,9 +38,16 @@
 	
 	<Image source="viewer_cfg/predictionAssignPO.png" name="predictionAssignPO" />
 	<Image source="viewer_cfg/brokerPO.png" name="brokerPO" />
-	<Image source="viewer_cfg/associationPO.png" name="associationPO" />
 	<Image source="viewer_cfg/testPO.png" name="testPO" />
 	<Image source="viewer_cfg/evaluationPO.png" name="evaluationPO" />
+	<Image source="viewer_cfg/assoEvaluationPO.png" name="associationEvaluationPO" />
+	<Image source="viewer_cfg/assoGenerationPO.png" name="associationGenerationPO" />
+	<Image source="viewer_cfg/assoSelectionPO.png" name="associationSelectionPO" />
+	<Image source="viewer_cfg/filterPO.png" name="filterPO" />
+	<Image source="viewer_cfg/filterCovUpdatePO.png" name="filterCovarianceUpdatePO" />
+	<Image source="viewer_cfg/filterEstUpdatePO.png" name="filterEstimateUpdatePO" />
+	<Image source="viewer_cfg/filterGainPO.png" name="filterGainPO" />
+	<Image source="viewer_cfg/temporaryDataBouncerPO.png" name="bouncerPO" />
 	
 </Resources>
 

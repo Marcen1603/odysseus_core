@@ -25,84 +25,91 @@
 	</Symbol>
 	
 	<Symbol nodeName="MetadataUpdatePO">
-		<Size width="91" height="28"/>
+		<Size width="120" height="34"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="metadataPO"/>
 		</SymbolElement>
 	</Symbol>	
 	
 	<Symbol nodeName="PredictionAssignPO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="predictionAssignPO" />
 		</SymbolElement>
 	</Symbol>	
 	
 	<Symbol nodeName="BrokerPO">
-		<Size width="92" height="28"/>
+		<Size width="30" height="50"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="brokerPO" />
 		</SymbolElement>
 	</Symbol>	
 	
-	<Symbol nodeName="HypothesisGenerationPO">
-		<Size width="92" height="28"/>
+	<Symbol nodeName="TemporaryDataBouncerPO">
+		<Size width="120" height="34"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="associationPO" />
+			<Parameter key="resource" value="bouncerPO" />
+		</SymbolElement>
+	</Symbol>	
+	
+	<Symbol nodeName="HypothesisGenerationPO">
+		<Size width="112" height="30"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="associationGenerationPO" />
 		</SymbolElement>
 	</Symbol>		
 		
 	<Symbol nodeName="MahalanobisDistanceEvaluationPO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="associationPO" />
+			<Parameter key="resource" value="associationEvaluationPO" />
 		</SymbolElement>
 	</Symbol>		
 	
 	<Symbol nodeName="MultiDistanceEvaluationPO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="associationPO" />
+			<Parameter key="resource" value="associationEvaluationPO" />
 		</SymbolElement>
 	</Symbol>	
 	
 	<Symbol nodeName="HypothesisSelectionPO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="associationPO" />
+			<Parameter key="resource" value="associationSelectionPO" />
 		</SymbolElement>
 	</Symbol>	
 	
 	<Symbol nodeName="TestPO">
-		<Size width="92" height="28"/>
+		<Size width="16" height="16"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="testPO" />
 		</SymbolElement>
 	</Symbol>	
 		
 	<Symbol nodeName="FilterGainPO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="filterPO" />
+			<Parameter key="resource" value="filterGainPO" />
 		</SymbolElement>
 	</Symbol>	
 	
 	<Symbol nodeName="FilterCovarianceUpdatePO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="filterPO" />
+			<Parameter key="resource" value="filterCovarianceUpdatePO" />
 		</SymbolElement>
 	</Symbol>	
 		
 	<Symbol nodeName="FilterEstimateUpdatePO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="filterPO" />
+			<Parameter key="resource" value="filterEstimateUpdatePO" />
 		</SymbolElement>
 	</Symbol>	
 	
 	<Symbol nodeName="EvaluationPO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="evaluationPO" />
 		</SymbolElement>
@@ -122,6 +129,13 @@
 			<Parameter key="resource" value="bufferedPipe"/>
 		</SymbolElement>
 	</Symbol>
+	
+	<Symbol nodeName="BufferedPunctuationPipe">
+		<Size width="92" height="30"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="bufferedPipe"/>
+		</SymbolElement>
+	</Symbol>	
 	
 	<Symbol nodeName="BenchmarkPO">
 		<Size width="92" height="28"/>
@@ -143,7 +157,14 @@
 			<Parameter key="resource" value="sink" />
 		</SymbolElement>
 	</Symbol>
-
+	
+	<Symbol nodeName="JDVESinkPO">
+		<Size width="86" height="43"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="sink" />
+		</SymbolElement>
+	</Symbol>
+	
 	<!--  EXTENDED -->
 	<Symbol nodeName="SelectPO">
 		<Size width="92" height="28"/>
@@ -174,7 +195,7 @@
 	</Symbol>
 
 	<Symbol nodeName="MetadataPO">
-		<Size width="91" height="28"/>
+		<Size width="120" height="34"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="metadataPO"/>
 		</SymbolElement>
@@ -294,7 +315,7 @@
 	</Symbol>
 
 	<Symbol nodeName="PredictionPO">
-		<Size width="92" height="28"/>
+		<Size width="112" height="30"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="predictionPO" />
 		</SymbolElement>
