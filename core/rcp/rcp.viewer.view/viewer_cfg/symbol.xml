@@ -39,7 +39,7 @@
 	</Symbol>	
 	
 	<Symbol nodeName="BrokerPO">
-		<Size width="30" height="50"/>
+		<Size width="40" height="65"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="brokerPO" />
 		</SymbolElement>
@@ -124,14 +124,14 @@
 	</Symbol>
 	
 	<Symbol nodeName="BufferedPipe">
-		<Size width="92" height="30"/>
+		<Size width="29" height="27"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="bufferedPipe"/>
 		</SymbolElement>
 	</Symbol>
 	
 	<Symbol nodeName="BufferedPunctuationPipe">
-		<Size width="92" height="30"/>
+		<Size width="29" height="27"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="bufferedPipe"/>
 		</SymbolElement>
@@ -202,7 +202,7 @@
 	</Symbol>
 
 	<Symbol nodeName="MetadataCreationPO">
-		<Size width="91" height="28"/>
+		<Size width="120" height="34"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="metadataCreationPO"/>
 		</SymbolElement>
