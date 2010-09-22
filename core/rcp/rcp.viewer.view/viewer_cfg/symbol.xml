@@ -38,6 +38,13 @@
 		</SymbolElement>
 	</Symbol>	
 	
+	<Symbol nodeName="DistanceObjectSelectorPO">
+		<Size width="112" height="30"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="distanceObjectSelectorPO" />
+		</SymbolElement>
+	</Symbol>	
+		
 	<Symbol nodeName="BrokerPO">
 		<Size width="40" height="65"/>
 		<SymbolElement type="image">
@@ -46,7 +53,7 @@
 	</Symbol>	
 	
 	<Symbol nodeName="TemporaryDataBouncerPO">
-		<Size width="120" height="34"/>
+		<Size width="112" height="29"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="bouncerPO" />
 		</SymbolElement>
