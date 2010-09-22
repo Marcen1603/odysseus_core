@@ -96,6 +96,7 @@ public interface NewSQLParserTreeConstants
   public int JJTMETRIC = 90;
   public int JJTCREATEUSERSTATEMENT = 91;
   public int JJTALTERUSERSTATEMENT = 92;
+  public int JJTDROPSTREAMSTATEMENT = 93;
 
 
   public String[] jjtNodeName = {
@@ -192,6 +193,7 @@ public interface NewSQLParserTreeConstants
     "Metric",
     "CreateUserStatement",
     "AlterUserStatement",
+    "DropStreamStatement",
   };
 }
-/* JavaCC - OriginalChecksum=1865ec1e0f78b2b168fc4c59c8cd9480 (do not edit this line) */
+/* JavaCC - OriginalChecksum=24c3d1dea0c911cfb7c0c5fbf8b9ffc6 (do not edit this line) */

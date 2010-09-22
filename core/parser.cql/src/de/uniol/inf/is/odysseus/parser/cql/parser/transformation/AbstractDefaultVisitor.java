@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseOptions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDateFormat;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDistinctExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropStreamStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
@@ -644,6 +645,12 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTAlterUserStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDropStreamStatement node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
@@ -56,6 +57,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseOptions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDateFormat;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDistinctExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropStreamStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
@@ -855,6 +857,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDropStreamStatement node, Object data) {
+		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		// TODO: Darf der Nutzer das
+		DataDictionary.getInstance().removeView(streamname);
 		return null;
 	}
 
