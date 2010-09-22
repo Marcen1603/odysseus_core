@@ -1,17 +1,27 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.StringTokenizer;
 
-public class User {
+import de.uniol.inf.is.odysseus.base.store.IHasId;
 
+public class User implements IHasId<String>, Serializable{
+
+	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
 	private String username;
 	private String password;
-	static MessageDigest hash = null;
+	static transient MessageDigest hash = null;
 
 	User(String username, String password) {
+		initHash();
+		this.username = username;
+		this.password = hash(password);
+	}
+
+	private void initHash() {
 		try {
 			synchronized (User.class) {
 				if (hash == null) {
@@ -20,8 +30,6 @@ public class User {
 			}
 		} catch (NoSuchAlgorithmException e) {
 		}
-		this.username = username;
-		this.password = hash(password);
 	}
 
 	User(String line) {
@@ -40,6 +48,9 @@ public class User {
 
 	private String hash(String password) {
 		StringBuffer hexString = new StringBuffer();
+		if (hash == null){
+			initHash();
+		}
 		if (hash != null) {
 			synchronized (hash) {
 				hash.reset();
@@ -112,6 +123,12 @@ public class User {
 	public String toString() {
 		return username+" "+password;
 	}
+
+	@Override
+	public String getId() {
+		return getUsername();
+	}
+	
 
 
 }

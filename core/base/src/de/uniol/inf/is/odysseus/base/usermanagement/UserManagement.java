@@ -15,7 +15,7 @@ public class UserManagement extends AbstractUserManagement {
 			try {
 //				instance = new UserManagement(new MemoryUserStore());
 				instance = new UserManagement(new FileUserStore(
-						System.getProperty("user.home") + "/odysseus/users.txt"));
+						System.getProperty("user.home") + "/odysseus/users.store"));
 				// TODO: Spaeter entfernen
 				
 				if (instance.hasNoUsers()){

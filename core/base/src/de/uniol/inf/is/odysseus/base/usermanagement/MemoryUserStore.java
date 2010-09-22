@@ -1,31 +1,23 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-public class MemoryUserStore implements IUserStore {
+import de.uniol.inf.is.odysseus.base.store.MemoryStore;
 
-	private Map<String, User> registeredUsers = new HashMap<String, User>();
+public class MemoryUserStore extends MemoryStore<User, String> implements IUserStore {
 	
 	@Override
 	public User getUserByName(String username) {
-		return registeredUsers.get(username);
+		return getByName(username);
 	}
 
 	@Override
 	public void storeUser(User user) {
-		registeredUsers.put(user.getUsername(), user);
+		store(user);
 	}
 	
 	Collection<User> getUsers() {
-		return Collections.unmodifiableCollection(registeredUsers.values());
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return registeredUsers.isEmpty();
+		return getAll();
 	}
 	
 }
