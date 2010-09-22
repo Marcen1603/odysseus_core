@@ -1,16 +1,14 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
-        implements Comparable<SDFAttributeList> {
+        implements Comparable<SDFAttributeList>, Serializable {
 
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = 5218658682722448980L;
 
     public SDFAttributeList(String URI) {

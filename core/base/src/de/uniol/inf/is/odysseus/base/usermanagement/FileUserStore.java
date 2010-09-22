@@ -13,13 +13,13 @@ public class FileUserStore extends FileStore<String,User> implements IUserStore 
 	
 	@Override
 	public User getUserByName(String username) {
-		return getByName(username);
+		return get(username);
 	}
 
 	@Override
 	public void storeUser(User user) throws UserStoreException {
 		try {
-			store(user.getUsername(),user);
+			put(user.getUsername(),user);
 		} catch (StoreException e) {
 			throw new UserStoreException(e);
 		}

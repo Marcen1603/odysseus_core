@@ -117,10 +117,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		// connect the source to broker
 		broker.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		// make it accessible like a normal source
-		DataDictionary.getInstance().sourceTypeMap.put(name, "brokerStreaming");
+		DataDictionary.getInstance().addSourceType(name, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(broker.getOutputSchema());
-		DataDictionary.getInstance().entityMap.put(name, entity);
+		DataDictionary.getInstance().addEntity(name, entity);
 		return broker;
 
 	}
@@ -270,10 +270,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// make it accessible like a normal source
-		DataDictionary.getInstance().sourceTypeMap.put(brokerName, "brokerStreaming");
+		DataDictionary.getInstance().addSourceType(brokerName, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(brokerName);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().entityMap.put(brokerName, entity);
+		DataDictionary.getInstance().addEntity(brokerName, entity);
 		// create the broker
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		broker.setSchema(attributes);

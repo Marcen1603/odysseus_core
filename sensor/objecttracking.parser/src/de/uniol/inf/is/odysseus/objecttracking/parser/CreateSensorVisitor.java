@@ -41,8 +41,8 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(ex);
-		DataDictionary.getInstance().sourceTypeMap.put(name, "ObjectRelationalStreaming");
-		DataDictionary.getInstance().entityMap.put(name, entity);
+		DataDictionary.getInstance().addSourceType(name, "ObjectRelationalStreaming");
+		DataDictionary.getInstance().addEntity(name, entity);
 		
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist (extra Klasse oder so)
 		// accessao bauen

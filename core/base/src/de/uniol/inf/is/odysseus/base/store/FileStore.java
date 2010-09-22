@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 
 public class FileStore<IDType extends Serializable,STORETYPE extends Serializable> implements IStore<IDType, STORETYPE> {
@@ -43,7 +44,7 @@ public class FileStore<IDType extends Serializable,STORETYPE extends Serializabl
 				while((key = (IDType) in.readObject() )!=null){
 					STORETYPE element = (STORETYPE) in.readObject();
 					System.out.println("READ "+key+" "+element);
-					cache.store(key,element);
+					cache.put(key,element);
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -56,7 +57,7 @@ public class FileStore<IDType extends Serializable,STORETYPE extends Serializabl
 
 	private void saveCache() throws IOException{
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(path)));
-		for (Entry<IDType,STORETYPE> e:cache.getAll().entrySet()){
+		for (Entry<IDType,STORETYPE> e:cache.entrySet()){
 			out.writeObject(e.getKey());
 			out.writeObject(e.getValue());
 			System.out.println("WRITTEN "+e.getKey()+" "+e.getValue());
@@ -64,12 +65,12 @@ public class FileStore<IDType extends Serializable,STORETYPE extends Serializabl
 		out.close();
 	}
 	
-	public STORETYPE getByName(IDType id) {
-		return cache.getByName(id);
+	public STORETYPE get(IDType id) {
+		return cache.get(id);
 	}
 
-	public void store(IDType id,STORETYPE elem) throws StoreException {
-		cache.store(id, elem);
+	public void put(IDType id,STORETYPE elem) throws StoreException {
+		cache.put(id, elem);
 		try {
 			saveCache();
 		} catch (IOException e) {
@@ -91,8 +92,24 @@ public class FileStore<IDType extends Serializable,STORETYPE extends Serializabl
 	}
 
 	@Override
-	public Map<IDType, STORETYPE> getAll() {
-		return cache.getAll();
+	public boolean containsKey(IDType key) {
+		return cache.containsKey(key);
+	}
+
+	@Override
+	public STORETYPE remove(IDType id) throws StoreException {
+		STORETYPE ret = cache.remove(id);
+		try {
+			saveCache();
+		} catch (IOException e) {
+			throw new StoreException(e);
+		}
+		return ret;
+	}
+
+	@Override
+	public Set<Entry<IDType, STORETYPE>> entrySet() {
+		return cache.entrySet();
 	}
 
 }

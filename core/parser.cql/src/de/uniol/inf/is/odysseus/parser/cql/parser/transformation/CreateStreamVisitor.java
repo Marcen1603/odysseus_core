@@ -71,8 +71,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data);
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().sourceTypeMap.put(name, "RelationalStreaming");
-		DataDictionary.getInstance().entityMap.put(name, entity);
+		DataDictionary.getInstance().addSourceType(name, "RelationalStreaming");
+		DataDictionary.getInstance().addEntity(name, entity);
 
 		for (int i = 2; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);

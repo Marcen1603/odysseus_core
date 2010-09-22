@@ -1482,9 +1482,7 @@ public class ExecutorConsole implements CommandProvider,
 	@Help(description = "removes all registered sources")
 	public void _clearsources(CommandInterpreter ci) {
 		WrapperPlanFactory.clearSources();
-		DataDictionary.getInstance().sourceTypeMap.clear();
-		DataDictionary.getInstance().entityMap.clear();
-		DataDictionary.getInstance().clearViews();
+		DataDictionary.getInstance().clear();
 	}
 
 //	@Help(parameter = "<query id>", description = "stop execution of query")

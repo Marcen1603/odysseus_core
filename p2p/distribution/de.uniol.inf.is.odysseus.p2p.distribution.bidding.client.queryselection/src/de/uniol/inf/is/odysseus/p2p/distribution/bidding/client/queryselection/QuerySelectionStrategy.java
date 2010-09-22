@@ -35,7 +35,7 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 			return true;
 		}
 		//keine Quellen werden verwaltet
-		if(DataDictionary.getInstance().sourceTypeMap.isEmpty()) {
+		if(DataDictionary.getInstance().emptySourceTypeMap()) {
 			return true;
 		}
 		//Zum einfacheren testen wird true zurückgeliefert, obwohl false geliefert werden müsste

@@ -1,23 +1,18 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
-import java.util.Collection;
-
 import de.uniol.inf.is.odysseus.base.store.MemoryStore;
 
 public class MemoryUserStore extends MemoryStore<String, User> implements IUserStore {
 	
 	@Override
 	public User getUserByName(String username) {
-		return getByName(username);
+		return get(username);
 	}
 
 	@Override
 	public void storeUser(User user) {
-		store(user.getUsername(),user);
+		put(user.getUsername(),user);
 	}
-	
-	Collection<User> getUsers() {
-		return getAll().values();
-	}
+
 	
 }
