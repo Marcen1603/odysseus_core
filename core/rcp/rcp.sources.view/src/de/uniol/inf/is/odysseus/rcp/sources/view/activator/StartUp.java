@@ -18,7 +18,7 @@ public class StartUp implements IStartup {
 				try{
 				Bundle bundle = Activator.getDefault().getBundle();
 				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
-				imageRegistry.put("source", ImageDescriptor.createFromURL(bundle.getEntry("Icons/source.png")));
+				imageRegistry.put("source", ImageDescriptor.createFromURL(bundle.getEntry("Icons/repository_rep.gif")));
 				imageRegistry.put("attribute", ImageDescriptor.createFromURL(bundle.getEntry("Icons/attribute.png")));
 				}catch(SWTError e){
 					// Ignore :-)
