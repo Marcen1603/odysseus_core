@@ -1,6 +1,11 @@
 package de.uniol.inf.is.odysseus.rcp.sources.view.activator;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.SWTError;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -15,6 +20,21 @@ public class Activator extends AbstractUIPlugin {
 	 * The constructor
 	 */
 	public Activator() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				try{
+				Bundle bundle = Activator.getDefault().getBundle();
+				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
+				imageRegistry.put("source", ImageDescriptor.createFromURL(bundle.getEntry("Icons/repository_rep.gif")));
+				imageRegistry.put("attribute", ImageDescriptor.createFromURL(bundle.getEntry("Icons/attribute.png")));
+				}catch(SWTError e){
+					// Ignore :-)
+				}
+			}
+			
+		});
 	}
 
 	/*
