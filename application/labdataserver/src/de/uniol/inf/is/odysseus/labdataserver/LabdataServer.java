@@ -117,7 +117,7 @@ public class LabdataServer {
 		
 		DataDictionary dd = DataDictionary.getInstance();
 		
-		SDFEntity stream = dd.getEntity(streamName);
+		SDFEntity stream = dd.getEntity(streamName, UserManagement.getInstance().getTestUser());
 		SDFAttributeList schema = stream.getAttributes();
 
 		ObjectInputStream iStream = null;

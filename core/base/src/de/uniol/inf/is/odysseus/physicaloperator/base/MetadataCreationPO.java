@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -8,7 +10,9 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
  * @author Jonas Jacobi
  */
 public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttributeContainer<M>> extends
-		AbstractPipe<In, In> {
+		AbstractPipe<In, In> implements Serializable{
+
+	private static final long serialVersionUID = 3783851208646530940L;
 
 	private Class<M> type;
 
@@ -44,10 +48,9 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		return type;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public MetadataCreationPO<M, In> clone()  {
-		return new MetadataCreationPO(this);
+		return new MetadataCreationPO<M,In>(this);
 	}
 	
 	@Override

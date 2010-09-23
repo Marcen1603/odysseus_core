@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
@@ -14,6 +16,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTListDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordEntryDefinition;
+import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -21,11 +24,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
-public class CreateSensorVisitor extends AbstractDefaultVisitor {
+public class CreateSensorVisitor extends AbstractDefaultVisitor{
 
 	private String name;
 	private String host;
 	private Long port;
+	
+	private User user;
+	
+	public void setUser(User user) {
+		this.user = user;
+	}
 	
 	@Override
 	public Object visit(ASTCreateSensor node, Object data) {
@@ -42,7 +51,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(ex);
 		DataDictionary.getInstance().addSourceType(name, "ObjectRelationalStreaming");
-		DataDictionary.getInstance().addEntity(name, entity);
+		DataDictionary.getInstance().addEntity(name, entity, user);
 		
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist (extra Klasse oder so)
 		// accessao bauen
@@ -50,7 +59,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		source.setPort(port.intValue());
 		source.setHost(host);
 		source.setOutputSchema(ex);
-		DataDictionary.getInstance().setLogicalView(name, source);
+		DataDictionary.getInstance().setLogicalView(name, source, user);
 //		DataDictionary.getInstance().setView(name, source);
 		return null;
 	}
@@ -119,4 +128,5 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		this.port = ((ASTInteger)node.jjtGetChild(1)).getValue();
 		return super.visit(node, data);
 	}
+
 }

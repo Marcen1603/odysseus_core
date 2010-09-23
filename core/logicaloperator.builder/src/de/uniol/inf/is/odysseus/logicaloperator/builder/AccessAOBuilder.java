@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -27,16 +28,18 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
 					"ATTRIBUTE", REQUIREMENT.MANDATORY));
+	private User user;
 
-	public AccessAOBuilder() {
+	public AccessAOBuilder(User user) {
 		super(0, 0);
+		this.user = user;
 		setParameters(sourceName, host, port, type, attributes);
 	}
 
 	protected ILogicalOperator createOperatorInternal() {
 		String sourceName = this.sourceName.getValue();
-		if (DataDictionary.getInstance().containsView(sourceName)) {
-			return DataDictionary.getInstance().getView(sourceName);
+		if (DataDictionary.getInstance().containsView(sourceName, user)) {
+			return DataDictionary.getInstance().getView(sourceName, user);
 		}
 		AccessAO ao = createNewAccessAO(sourceName);
 
@@ -52,7 +55,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		DataDictionary.getInstance().addSourceType(sourceName,
 				"RelationalStreaming");
-		DataDictionary.getInstance().addEntity(sourceName, sdfEntity);
+		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, user);
 
 		AccessAO ao = new AccessAO(sdfSource);
 		ao.setHost(host.getValue());
@@ -65,7 +68,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	protected boolean internalValidation() {
 		String sourceName = this.sourceName.getValue();
 
-		if (DataDictionary.getInstance().containsView(sourceName)) {
+		if (DataDictionary.getInstance().containsView(sourceName, user)) {
 			if (host.hasValue() || type.hasValue() || port.hasValue()
 					|| attributes.hasValue()) {
 				addError(new IllegalArgumentException("view " + sourceName

@@ -30,6 +30,7 @@ options {
 	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalJEPOutputSchemeEntry;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
+	import de.uniol.inf.is.odysseus.base.usermanagement.User;
 	
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
@@ -50,9 +51,12 @@ options {
 	Map<String, String> simpleAttributeState = null;
 	Map<String, String> kleeneAttributeState = null;
 	ISymbolTableOperationFactory symTableOpFac = null;
+	User user = null;
 	
-
-
+	
+  public void setUser(User user){
+    this.user = user;
+  }
   private String transformAttribute(PathAttribute attrib,State s){
       String index = ""; // getKleenePart.equals("[i]")
       String aggregation = attrib.getAggregation();
@@ -162,7 +166,7 @@ catch(RecognitionException e){
 start returns [ILogicalOperator op]
   :
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
-  {	DataDictionary.getInstance().setLogicalView(n.getText(), q);
+  {	DataDictionary.getInstance().setLogicalView(n.getText(), q, user);
 	  getLogger().debug("Created New View "+n+" "+q);
 	  $op = q;}
   | o=query {$op = o;} // Only Query
@@ -187,7 +191,7 @@ query returns [ILogicalOperator op]
     int port = 0;
     for (String sn : sourceNames) {
       getLogger().debug("Bind "+sn+" to Port "+port);      
-      ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
+      ILogicalOperator ao = DataDictionary.getInstance().getView(sn, user);
       if (ao != null) {
         cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
         cepAo.setInputTypeName(port, sn);

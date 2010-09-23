@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDateFormat;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDistinctExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropStreamStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropViewStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
@@ -287,7 +288,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	public Object visit(ASTSelectStatement statement, Object data) {
 		try {
-			CreateAccessAOVisitor access = new CreateAccessAOVisitor();
+			CreateAccessAOVisitor access = new CreateAccessAOVisitor(user);
 			access.visit(statement, null);
 			AttributeResolver attributeResolver = access.getAttributeResolver();
 
@@ -336,7 +337,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) {
-		CreateViewVisitor v = new CreateViewVisitor();
+		CreateViewVisitor v = new CreateViewVisitor(user);
 		return v.visit(node, data);
 	}
 
@@ -799,7 +800,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> sensorVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
 			Object sv = sensorVisitor.newInstance();
-			Method m = sensorVisitor.getDeclaredMethod("visit",
+			Method m = sensorVisitor.getDeclaredMethod("setUser", User.class);
+			m.invoke(sv, user);
+			m = sensorVisitor.getDeclaredMethod("visit",
 					ASTCreateSensor.class, Object.class);
 			return m.invoke(sv, node, data);
 		} catch (ClassNotFoundException e) {
@@ -872,7 +875,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTDropStreamStatement node, Object data) {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		// TODO: Darf der Nutzer das
-		DataDictionary.getInstance().removeView(streamname);
+		DataDictionary.getInstance().removeView(streamname, user);
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDropViewStatement node, Object data) {
+		String viewname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		// TODO: Darf der Nutzer das
+		DataDictionary.getInstance().removeView(viewname, user);
 		return null;
 	}
 

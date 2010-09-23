@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class FileStore<IDType extends Serializable,STORETYPE extends Serializabl
 			try {
 				while((key = (IDType) in.readObject() )!=null){
 					STORETYPE element = (STORETYPE) in.readObject();
-					System.out.println("READ "+key+" "+element);
+					//System.out.println("READ "+key+" "+element);
 					cache.put(key,element);
 				}
 			} catch (ClassNotFoundException e) {
@@ -60,7 +59,7 @@ public class FileStore<IDType extends Serializable,STORETYPE extends Serializabl
 		for (Entry<IDType,STORETYPE> e:cache.entrySet()){
 			out.writeObject(e.getKey());
 			out.writeObject(e.getValue());
-			System.out.println("WRITTEN "+e.getKey()+" "+e.getValue());
+			//System.out.println("WRITTEN "+e.getKey()+" "+e.getValue());
 		}
 		out.close();
 	}

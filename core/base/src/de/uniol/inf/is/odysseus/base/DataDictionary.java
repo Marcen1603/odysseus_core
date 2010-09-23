@@ -61,8 +61,8 @@ public class DataDictionary {
 		try {
 			viewDefinitions = new FileStore<String, ILogicalOperator>(
 					filePrefix + "viewDefinitions.store");
-			viewFromUser = new FileStore<String, User>(
-					filePrefix + "viewFromUser.store");
+			viewFromUser = new FileStore<String, User>(filePrefix
+					+ "viewFromUser.store");
 			logicalViewDefinitions = new FileStore<String, ILogicalOperator>(
 					filePrefix + "logicalViewDefinitions.store");
 			entityMap = new FileStore<String, SDFEntity>(filePrefix
@@ -70,8 +70,6 @@ public class DataDictionary {
 			sourceTypeMap = new FileStore<String, String>(filePrefix
 					+ "sourceTypeMap.store");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -115,8 +113,8 @@ public class DataDictionary {
 		}
 		return instance;
 	}
-	
-	public void addEntity(String uri, SDFEntity entity){
+
+	public void addEntity(String uri, SDFEntity entity, User user) {
 		try {
 			this.entityMap.put(uri, entity);
 		} catch (StoreException e) {
@@ -124,21 +122,21 @@ public class DataDictionary {
 		}
 	}
 
-	public SDFEntity getEntity(String uri) {
+	public SDFEntity getEntity(String uri, User user) {
 		SDFEntity ret = entityMap.get(uri);
 		if (ret == null) {
 			throw new IllegalArgumentException("no such entity: " + uri);
 		}
 		return ret;
 	}
-	
-	public void addSourceType(String sourcename, String sourcetype){
+
+	public void addSourceType(String sourcename, String sourcetype) {
 		try {
 			sourceTypeMap.put(sourcename, sourcetype);
 		} catch (StoreException e) {
 			new RuntimeException(e);
 		}
-		
+
 	}
 
 	public String getSourceType(String sourcename) throws SQLException {
@@ -163,27 +161,52 @@ public class DataDictionary {
 	}
 
 	public void setView(String name, ILogicalOperator plan, User user) {
+		if (viewDefinitions.containsKey(name)){
+			throw new RuntimeException("View "+name+" already exists. Remove First");
+		}
 		try {
 			viewDefinitions.put(name, plan);
-			viewFromUser.put(name,user);
+			viewFromUser.put(name, user);
 		} catch (StoreException e) {
 			throw new RuntimeException(e);
 		}
 		fireAddEvent(name, plan);
 	}
 
-	public ILogicalOperator getView(String name) {
+	public ILogicalOperator getView(String name, User user) {
 		if (this.logicalViewDefinitions.containsKey(name)) {
-			return getLogicalView(name);
+			return getLogicalView(name, user);
 		} else {
-			return getViewReference(name);
+			return getViewReference(name, user);
 		}
 	}
 
-	public ILogicalOperator removeView(String name) {
+	public ILogicalOperator removeView(String name, User user) {
+		if (this.logicalViewDefinitions.containsKey(name)) {
+			return removeLogicalView(name, user);
+		} else {
+			ILogicalOperator op;
+			try {
+				op = viewDefinitions.remove(name);
+				if (op != null) {
+					viewFromUser.remove(name);
+				}
+			} catch (StoreException e) {
+				throw new RuntimeException(e);
+			}
+			if (op != null)
+				fireRemoveEvent(name, op);
+			return op;
+		}
+	}
+
+	public ILogicalOperator removeLogicalView(String name, User user) {
 		ILogicalOperator op;
 		try {
-			op = viewDefinitions.remove(name);
+			op = logicalViewDefinitions.remove(name);
+			if (op != null) {
+				viewFromUser.remove(name);
+			}
 		} catch (StoreException e) {
 			throw new RuntimeException(e);
 		}
@@ -196,7 +219,7 @@ public class DataDictionary {
 		return viewDefinitions.get(name);
 	}
 
-	private AccessAO getViewReference(String name) {
+	private AccessAO getViewReference(String name, User user) {
 		if (!this.viewDefinitions.containsKey(name)) {
 			throw new IllegalArgumentException("no such view: " + name);
 		}
@@ -204,15 +227,20 @@ public class DataDictionary {
 		SDFSource source = getSource(name);
 		AccessAO ao = new AccessAO(source);
 
-		SDFEntity entity = getEntity(name);
+		SDFEntity entity = getEntity(name, user);
 		ao.setOutputSchema(entity.getAttributes());
 
 		return ao;
 	}
 
-	public void setLogicalView(String name, ILogicalOperator topOperator) {
+	public void setLogicalView(String name, ILogicalOperator topOperator,
+			User user) {
+		if (logicalViewDefinitions.containsKey(name)){
+			throw new RuntimeException("View "+name+" already exists. Drop First");
+		}
 		try {
 			this.logicalViewDefinitions.put(name, topOperator);
+			viewFromUser.put(name, user);
 		} catch (StoreException e) {
 			throw new RuntimeException(e);
 		}
@@ -220,15 +248,16 @@ public class DataDictionary {
 	}
 
 	@SuppressWarnings("unchecked")
-	private ILogicalOperator getLogicalView(String name) {
+	private ILogicalOperator getLogicalView(String name, User user) {
 		ILogicalOperator logicalPlan = this.logicalViewDefinitions.get(name);
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+		@SuppressWarnings("rawtypes")
 		AbstractGraphWalker walker = new AbstractGraphWalker();
 		walker.prefixWalk(logicalPlan, copyVisitor);
 		return copyVisitor.getResult();
 	}
 
-	public boolean hasView(String name) {
+	public boolean hasView(String name, User user) {
 		return viewDefinitions.containsKey(name);
 	}
 
@@ -253,7 +282,7 @@ public class DataDictionary {
 
 	}
 
-	public boolean containsView(String viewName) {
+	public boolean containsView(String viewName, User user) {
 		return this.viewDefinitions.containsKey(viewName)
 				|| this.logicalViewDefinitions.containsKey(viewName);
 	}
@@ -262,8 +291,8 @@ public class DataDictionary {
 		return sourceTypeMap.isEmpty();
 	}
 
-	public User getUserForView(String user) {
-		return viewFromUser.get(user);
+	public User getUserForView(String view) {
+		return viewFromUser.get(view);
 	}
-	
+
 }

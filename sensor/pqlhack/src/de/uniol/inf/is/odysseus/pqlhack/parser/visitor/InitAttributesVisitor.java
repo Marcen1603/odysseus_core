@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
@@ -26,12 +27,14 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	private Map<SDFSource, AccessAO> sources;
 	private Map<SDFSource, BrokerAO> brokers;
 	private AttributeResolver attributeResolver;
+	private User user;
 	
-	public InitAttributesVisitor(){
+	public InitAttributesVisitor(User user){
 		super();
 		this.attributeResolver = new AttributeResolver();
 		this.sources = new HashMap<SDFSource, AccessAO>();
 		this.brokers = new HashMap<SDFSource, BrokerAO>();
+		this.user = user;
 	}
 	
 	@Override
@@ -52,7 +55,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		AccessAO access = this.sources.get(source);
 		if (access == null) {
 			
-			access = (AccessAO)DataDictionary.getInstance().getView(sourceName);
+			access = (AccessAO)DataDictionary.getInstance().getView(sourceName, user);
 //			access = new AccessAO();
 //			access.setSource(new SDFSource(sourceName,""));
 //			access.setOutputSchema(DataDictionary.getInstance().getViewOutputSchema(sourceName));

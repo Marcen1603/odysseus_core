@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.broker.parser.cql;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
@@ -44,6 +45,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  */
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
+	private User user;
+
+	public BrokerVisitor(User user) {
+		this.user = user;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -120,7 +127,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		DataDictionary.getInstance().addSourceType(name, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(broker.getOutputSchema());
-		DataDictionary.getInstance().addEntity(name, entity);
+		DataDictionary.getInstance().addEntity(name, entity, user);
 		return broker;
 
 	}
@@ -273,7 +280,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		DataDictionary.getInstance().addSourceType(brokerName, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(brokerName);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().addEntity(brokerName, entity);
+		DataDictionary.getInstance().addEntity(brokerName, entity, user);
 		// create the broker
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		broker.setSchema(attributes);
@@ -285,7 +292,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		BrokerDictionary.getInstance().setLogicalPlan(brokerName, broker);
 
 		// Is this necessary any more?
-		DataDictionary.getInstance().setLogicalView(brokerName, broker);
+		DataDictionary.getInstance().setLogicalView(brokerName, broker, user);
 
 		return broker;
 	}

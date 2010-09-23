@@ -7,6 +7,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.QueryAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
@@ -31,9 +32,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private Map<SDFSource, ILogicalOperator> sources;
 
-	public CreateAccessAOVisitor() {
+	private User user;
+
+	public CreateAccessAOVisitor(User user) {
 		super();
 		init();
+		this.user = user;
 	}
 
 	public final void init() {
@@ -138,7 +142,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private void relationalStreamingSource(ASTSimpleSource node,
 			SDFSource source, String sourceName) {
-		ILogicalOperator access = DataDictionary.getInstance().getView(sourceName);
+		ILogicalOperator access = DataDictionary.getInstance().getView(sourceName, user);
 		
 
 		ILogicalOperator inputOp = access;

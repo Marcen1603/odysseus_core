@@ -59,9 +59,9 @@ public class ProceduralParser implements IQueryParser {
 		List<IQuery> listOfPlans = new ArrayList<IQuery>();
 		this.brokerNames = new ArrayList<String>();
 		
-		InitAttributesVisitor initAttrs = new InitAttributesVisitor();
+		InitAttributesVisitor initAttrs = new InitAttributesVisitor(user);
 		InitBrokerVisitor initBroker = new InitBrokerVisitor();
-		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor();
+		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor(user);
 		
 		if(this.parser == null){
 			this.parser = new ProceduralExpressionParser(new StringReader(query));

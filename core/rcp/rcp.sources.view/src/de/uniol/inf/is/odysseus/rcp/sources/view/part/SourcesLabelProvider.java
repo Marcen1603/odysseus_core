@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.rcp.sources.view.activator.Activator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
@@ -32,25 +33,34 @@ public class SourcesLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		if( element instanceof Entry ) 
+		if (element instanceof Entry) {
 			return Activator.getDefault().getImageRegistry().get("source");
-		if( element instanceof SDFAttribute ) 
+		}
+		if (element instanceof SDFAttribute) {
 			return Activator.getDefault().getImageRegistry().get("attribute");
-		
+		}
 		return null;
 	}
 
 	@Override
 	public String getText(Object element) {
-		if( element instanceof Entry ) {
+		if (element instanceof Entry) {
 			@SuppressWarnings("unchecked")
-			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>)element;
+			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
 			StringBuilder sb = new StringBuilder();
-			sb.append(entry.getKey()).append(" [").append(entry.getValue().getClass().getSimpleName()).append("]");
-			sb.append(" ").append(DataDictionary.getInstance().getUserForView(entry.getKey()).getUsername());
+			sb.append(entry.getKey()).append(" [")
+					.append(entry.getValue().getClass().getSimpleName())
+					.append("]");
+			User user = DataDictionary.getInstance().getUserForView(
+					entry.getKey());
+			if (user != null) {
+				sb.append(" created by ").append(user.getUsername());
+			} else {
+				sb.append(" created by no user ??");
+			}
 			return sb.toString();
 		}
-		if( element instanceof SDFAttribute ) {
+		if (element instanceof SDFAttribute) {
 			SDFAttribute a = (SDFAttribute) element;
 			StringBuffer name = new StringBuffer(a.getAttributeName());
 			name.append(":").append(a.getDatatype().getURI());

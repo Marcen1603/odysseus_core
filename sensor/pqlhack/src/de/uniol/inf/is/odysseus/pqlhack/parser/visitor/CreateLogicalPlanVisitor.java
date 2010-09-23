@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
@@ -133,6 +134,12 @@ import de.uniol.infs.is.odysseus.scars.operator.brokerinit.BrokerInitAO;
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor {
 
+	private User user;
+
+	public CreateLogicalPlanVisitor(User user){
+		this.user = user;
+	}
+	
 	public Object visit(SimpleNode node, Object data) {
 		return null;
 	}
@@ -396,7 +403,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		if (((ArrayList) data).get(1) == null) {
 			((ArrayList) data).remove(1);
-			((ArrayList) data).add(DataDictionary.getInstance().getView(((ASTIdentifier) node.jjtGetChild(0)).getName()));
+			((ArrayList) data).add(DataDictionary.getInstance().getView(((ASTIdentifier) node.jjtGetChild(0)).getName(), user));
 		}
 
 		((ArrayList) data).add(new Integer(0));
