@@ -34,7 +34,13 @@ public class SourcesLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof Entry) {
-			return Activator.getDefault().getImageRegistry().get("source");
+			@SuppressWarnings("unchecked")
+			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
+			if (DataDictionary.getInstance().isLogicalView(entry.getKey())){
+				return Activator.getDefault().getImageRegistry().get("view");				
+			}else{
+				return Activator.getDefault().getImageRegistry().get("source");
+			}
 		}
 		if (element instanceof SDFAttribute) {
 			return Activator.getDefault().getImageRegistry().get("attribute");

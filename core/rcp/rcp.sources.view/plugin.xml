@@ -6,7 +6,7 @@
       <view
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.sources.view.part.SourcesViewPart"
-            icon="Icons/source.png"
+            icon="Icons/repository_rep.gif"
             id="de.uniol.inf.is.odysseus.rcp.sources.SourcesView"
             name="Sources"
             restorable="true">
