@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.FileAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -35,6 +36,12 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 	
 	private final DirectParameter<Long> delay = new DirectParameter<Long>(
 			"DELAY", REQUIREMENT.OPTIONAL);
+
+	private final DirectParameter<String> user = new DirectParameter<String>(
+			"DELAY", REQUIREMENT.OPTIONAL);
+
+	private final DirectParameter<String> password = new DirectParameter<String>(
+			"DELAY", REQUIREMENT.OPTIONAL);
 	
 	Logger logger = LoggerFactory.getLogger(FileAccessAOBuilder.class);
 	
@@ -45,69 +52,77 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 	
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
-//		String sourceName = this.sourceName.getValue();
-//		if (DataDictionary.getInstance().containsView(sourceName)) {
-//			return DataDictionary.getInstance().getView(sourceName);
-//		}
-//		
-//		FileAccessAO ao = createNewFileAccessAO(sourceName);
-//		
-//		DataDictionary.getInstance().setView(sourceName,ao);
-//		return ao;
-		return null;
+		String sourceName = this.sourceName.getValue();
+		if (DataDictionary.getInstance().containsView(sourceName, getUser())) {
+			return DataDictionary.getInstance().getView(sourceName, getUser());
+		}
+		
+		FileAccessAO ao = createNewFileAccessAO(sourceName);
+		
+		DataDictionary.getInstance().setView(sourceName,ao,getUser());
+		return ao;
 	}
 	
 	private FileAccessAO createNewFileAccessAO(String sourceName) {
-//		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
-//		SDFEntity sdfEntity = new SDFEntity(sourceName);
-//		List<SDFAttribute> attributeList = attributes.getValue();
-//		SDFAttributeList schema = new SDFAttributeList(attributeList);
-//		sdfEntity.setAttributes(schema);
-//		
-//		DataDictionary.getInstance().sourceTypeMap.put(sourceName, "RelationalStreaming");
-//		DataDictionary.getInstance().entityMap.put(sourceName, sdfEntity);
-//		
-//		
-//		FileAccessAO ao = new FileAccessAO(sdfSource);
-//		ao.setPath(path.getValue());
-//		ao.setFileType(fileType.getValue());
-//		ao.setDelay(delay.getValue());
-//		
-//		
-//		ao.setOutputSchema(schema);
-//		return ao;
+		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
+		SDFEntity sdfEntity = new SDFEntity(sourceName);
+		List<SDFAttribute> attributeList = attributes.getValue();
+		SDFAttributeList schema = new SDFAttributeList(attributeList);
+		sdfEntity.setAttributes(schema);
 		
-		return null;
+		//DataDictionary.getInstance().sourceTypeMap.put(sourceName, "RelationalStreaming");
+		//DataDictionary.getInstance().entityMap.put(sourceName, sdfEntity);
+		
+		//
+		
+		DataDictionary.getInstance().addSourceType(sourceName, "FileAccessAO");
+		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, getUser());
+		
+		
+		FileAccessAO ao = new FileAccessAO(sdfSource);
+		ao.setPath(path.getValue());
+		ao.setFileType(fileType.getValue());
+		ao.setDelay(delay.getValue());		
+		
+		ao.setOutputSchema(schema);
+		return ao;
 	}
 	
 	@Override
 	protected boolean internalValidation() {
-//		String sourceName = this.sourceName.getValue();
-//		
-//		if(delay.getValue() == null)
-//			delay.setInputValue(0l);
-//			
-//		if (DataDictionary.getInstance().containsView(sourceName)) {
-//			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
-//				addError(new IllegalArgumentException("view " + sourceName
-//						+ " already exists"));
-//				return false;
-//			}
-//		}else {
-//			if (!(path.hasValue() && type.hasValue() && fileType.hasValue() && attributes.hasValue())) {
-//				addError(new IllegalArgumentException(
-//						"missing information for the creation of source "
-//								+ sourceName
-//								+ ". expecting path, fileType, type and attributes."));
-//				return false;
-//			}
-//		}
-//		File file = new File(path.getValue());
-//		if(!file.exists()){
-//			addError(new IllegalArgumentException("File " + path.getValue() + " does not exists."));
-//			return false;
-//		}
+		String sourceName = this.sourceName.getValue();
+		
+		if(delay.getValue() == null)
+			delay.setInputValue(0l);
+			
+		if (DataDictionary.getInstance().containsView(sourceName,getUser())) {
+			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
+				addError(new IllegalArgumentException("view " + sourceName
+						+ " already exists"));
+				return false;
+			}
+		}else {
+			if (!(path.hasValue() && type.hasValue() && fileType.hasValue() && attributes.hasValue())) {
+				addError(new IllegalArgumentException(
+						"missing information for the creation of source "
+								+ sourceName
+								+ ". expecting path, fileType, type and attributes."));
+				return false;
+			}
+		}
+		File file = new File(path.getValue());
+		if(!file.exists()){
+			addError(new IllegalArgumentException("File " + path.getValue() + " does not exists."));
+			return false;
+		}
 			
 		return true;
 	}
+	
+	
+	protected User getUser(){
+		User user = null;
+		return user;
+	}
+	
 }
