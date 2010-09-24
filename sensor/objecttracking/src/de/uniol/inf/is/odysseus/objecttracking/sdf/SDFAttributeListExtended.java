@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.sdf;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,7 +19,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author André Bolles
  *
  */
-public class SDFAttributeListExtended extends SDFAttributeList {
+public class SDFAttributeListExtended extends SDFAttributeList implements Serializable{
+
+	private static final long serialVersionUID = -6831412045682783890L;
 
 	private Map<SDFAttributeListMetadataTypes, Object> metadata;
 	

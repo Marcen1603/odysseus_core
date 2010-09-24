@@ -211,6 +211,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 			}
 			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
 					.iterator();
+
 			while (i.hasNext()) {
 				SDFDatatypeConstraint constraint = i.next();
 				if (SDFDatatypeConstraints.isInteger(constraint)) {
