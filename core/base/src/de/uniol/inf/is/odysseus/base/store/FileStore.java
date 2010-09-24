@@ -27,7 +27,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		this.path = path;
 		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
 		this.cl = new OsgiEnvironmentClassLoader(Activator.getBundleContext(),
-				curCl, (Class<?>) null);
+				curCl, Activator.getBundleContext().getBundle());
 		loadCache();
 	}
 
