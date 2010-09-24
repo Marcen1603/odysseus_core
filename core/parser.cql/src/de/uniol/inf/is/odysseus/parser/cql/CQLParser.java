@@ -708,7 +708,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+			
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", User.class);
+			m.invoke(bsv, user);
+			
+			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTCreateBroker.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);
@@ -719,6 +723,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throw new RuntimeException(
 					"Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(
 					"Error while parsing CREATE BROKER statement", e.getCause());
 		}
