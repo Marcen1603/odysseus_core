@@ -26,29 +26,29 @@ public class SimpleSLAScheduler extends AbstractDynamicPriorityPlanScheduling {
 		// Jetzt für alle zu schedulden Plaene die entsprechenden SLAs
 		// identifizieren
 		// TODO: STATISCH BERECHNEN
-		synchronized (queue) {
-			for (IScheduling scheduling : queue) {
-				IPartialPlan plan = scheduling.getPlan();
-				List<IPhysicalOperator> roots = plan.getRoots();
-				for (IPhysicalOperator r:roots){
-					// TODO: Ermitteln wie  die currentSLAConformance ist
-					double currentSLAConformance = 0.5; 
-					List<IOperatorOwner> owners = r.getOwner();
-					for (IOperatorOwner owner: owners){
-						if (owner instanceof IQuery){
-							User user = ((IQuery)owner).getUser();
- 							Tenant t = TenantManagement.getInstance().getTenant(user);
-							IServiceLevelAgreement sla = t.getServiceLevelAgreement();
-							try {
-								double urge = sla.getMaxOcMg(currentSLAConformance);
-							} catch (NotInitializedException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-			}
-		}
+//		synchronized (queue) {
+//			for (IScheduling scheduling : queue) {
+//				IPartialPlan plan = scheduling.getPlan();
+//				List<IPhysicalOperator> roots = plan.getRoots();
+//				for (IPhysicalOperator r:roots){
+//					// TODO: Ermitteln wie  die currentSLAConformance ist
+//					double currentSLAConformance = 0.5; 
+//					List<IOperatorOwner> owners = r.getOwner();
+//					for (IOperatorOwner owner: owners){
+//						if (owner instanceof IQuery){
+//							User user = ((IQuery)owner).getUser();
+// 							Tenant t = TenantManagement.getInstance().getTenant(user);
+//							IServiceLevelAgreement sla = t.getServiceLevelAgreement();
+//							try {
+//								double urge = sla.getMaxOcMg(currentSLAConformance);
+//							} catch (NotInitializedException e) {
+//								e.printStackTrace();
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
 
 	}
 
