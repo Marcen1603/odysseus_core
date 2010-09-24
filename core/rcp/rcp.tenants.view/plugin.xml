@@ -10,7 +10,7 @@
       </category>
       <view
             name="Tenants and Users"
-            icon="icons/repository_rep.gif"
+            icon="icons/users.png"
             category="de.uniol.inf.is.odysseus.rcp.tenants.view"
             class="de.uniol.inf.is.odysseus.rcp.tenants.view.views.TenantView"
             id="de.uniol.inf.is.odysseus.rcp.tenants.view.views.TenantView">
