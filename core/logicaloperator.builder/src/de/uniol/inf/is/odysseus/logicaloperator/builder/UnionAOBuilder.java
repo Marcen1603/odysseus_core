@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class UnionAOBuilder extends AbstractOperatorBuilder {
 
 	public UnionAOBuilder() {
-		super(2, 2);
+		super(2, 999);
 	}
 
 	@Override
@@ -17,14 +17,20 @@ public class UnionAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	protected boolean internalValidation() {
+		int count = getInputOperatorCount();
 		ILogicalOperator firstInput = getInputOperator(0);
-		ILogicalOperator secondInput = getInputOperator(1);
+		for (int i=1;i<count;i++){
+			ILogicalOperator currentInput = getInputOperator(i);	
+			validateSchemata(firstInput, currentInput);
+		}
+		return true;
+	}
+
+	protected void validateSchemata(ILogicalOperator firstInput, ILogicalOperator secondInput) {
 		SDFAttributeList firstSchema = firstInput.getOutputSchema();
 		SDFAttributeList secondSchema = secondInput.getOutputSchema();
 		if (!firstSchema.compatibleTo(secondSchema)) {
 			throw new IllegalArgumentException("incompatible schemas for union");
 		}
-
-		return true;
 	}
 }
