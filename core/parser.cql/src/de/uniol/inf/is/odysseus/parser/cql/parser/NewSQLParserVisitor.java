@@ -96,6 +96,12 @@ public interface NewSQLParserVisitor
   public Object visit(ASTMetric node, Object data);
   public Object visit(ASTCreateUserStatement node, Object data);
   public Object visit(ASTAlterUserStatement node, Object data);
+  public Object visit(ASTCreateSLAStatement node, Object data);
+  public Object visit(ASTPercentileConstraint node, Object data);
+  public Object visit(ASTCreateTenantStatement node, Object data);
+  public Object visit(ASTAddUserToTenantStatement node, Object data);
+  public Object visit(ASTRemoveUserFromTenantStatement node, Object data);
   public Object visit(ASTDropStreamStatement node, Object data);
+  public Object visit(ASTDropViewStatement node, Object data);
 }
-/* JavaCC - OriginalChecksum=825f690e4f73547c132e379d259a10c7 (do not edit this line) */
+/* JavaCC - OriginalChecksum=35c59165e716d7d5d11157529873f383 (do not edit this line) */
