@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.store.FileStore;
 import de.uniol.inf.is.odysseus.base.store.IStore;
+import de.uniol.inf.is.odysseus.base.store.MemoryStore;
 import de.uniol.inf.is.odysseus.base.store.StoreException;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
@@ -24,9 +25,8 @@ import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 public class DataDictionary {
 
-
 	// TODO: Zugriffsberechtigungen realisieren
-	
+
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {
@@ -40,6 +40,7 @@ public class DataDictionary {
 
 	static private String filePrefix = System.getProperty("user.home")
 			+ "/odysseus/";
+	private boolean useFileStore = false;
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
 
@@ -62,16 +63,24 @@ public class DataDictionary {
 
 	private DataDictionary() {
 		try {
-			viewDefinitions = new FileStore<String, ILogicalOperator>(
-					filePrefix + "viewDefinitions.store");
-			viewFromUser = new FileStore<String, User>(filePrefix
-					+ "viewFromUser.store");
-			logicalViewDefinitions = new FileStore<String, ILogicalOperator>(
-					filePrefix + "logicalViewDefinitions.store");
-			entityMap = new FileStore<String, SDFEntity>(filePrefix
-					+ "entities.store");
-			sourceTypeMap = new FileStore<String, String>(filePrefix
-					+ "sourceTypeMap.store");
+			if (useFileStore) {
+				viewDefinitions = new FileStore<String, ILogicalOperator>(
+						filePrefix + "viewDefinitions.store");
+				viewFromUser = new FileStore<String, User>(filePrefix
+						+ "viewFromUser.store");
+				logicalViewDefinitions = new FileStore<String, ILogicalOperator>(
+						filePrefix + "logicalViewDefinitions.store");
+				entityMap = new FileStore<String, SDFEntity>(filePrefix
+						+ "entities.store");
+				sourceTypeMap = new FileStore<String, String>(filePrefix
+						+ "sourceTypeMap.store");
+			} else {
+				viewDefinitions = new MemoryStore<String, ILogicalOperator>();
+				viewFromUser = new MemoryStore<String, User>();
+				logicalViewDefinitions = new MemoryStore<String, ILogicalOperator>();
+				entityMap = new MemoryStore<String, SDFEntity>();
+				sourceTypeMap = new MemoryStore<String, String>();
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -164,8 +173,9 @@ public class DataDictionary {
 	}
 
 	public void setView(String name, ILogicalOperator plan, User user) {
-		if (viewDefinitions.containsKey(name)){
-			throw new RuntimeException("View "+name+" already exists. Remove First");
+		if (viewDefinitions.containsKey(name)) {
+			throw new RuntimeException("View " + name
+					+ " already exists. Remove First");
 		}
 		try {
 			viewDefinitions.put(name, plan);
@@ -238,8 +248,9 @@ public class DataDictionary {
 
 	public void setLogicalView(String name, ILogicalOperator topOperator,
 			User user) {
-		if (logicalViewDefinitions.containsKey(name)){
-			throw new RuntimeException("View "+name+" already exists. Drop First");
+		if (logicalViewDefinitions.containsKey(name)) {
+			throw new RuntimeException("View " + name
+					+ " already exists. Drop First");
 		}
 		try {
 			this.logicalViewDefinitions.put(name, topOperator);
@@ -259,8 +270,8 @@ public class DataDictionary {
 		walker.prefixWalk(logicalPlan, copyVisitor);
 		return copyVisitor.getResult();
 	}
-	
-	public boolean isLogicalView(String name){
+
+	public boolean isLogicalView(String name) {
 		return this.logicalViewDefinitions.containsKey(name);
 	}
 
