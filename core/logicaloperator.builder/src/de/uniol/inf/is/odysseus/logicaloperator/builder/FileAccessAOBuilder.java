@@ -45,65 +45,68 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 	
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
-		String sourceName = this.sourceName.getValue();
-		if (DataDictionary.getInstance().containsView(sourceName)) {
-			return DataDictionary.getInstance().getView(sourceName);
-		}
-		
-		FileAccessAO ao = createNewFileAccessAO(sourceName);
-		
-		DataDictionary.getInstance().setView(sourceName,ao);
-		return ao;
+//		String sourceName = this.sourceName.getValue();
+//		if (DataDictionary.getInstance().containsView(sourceName)) {
+//			return DataDictionary.getInstance().getView(sourceName);
+//		}
+//		
+//		FileAccessAO ao = createNewFileAccessAO(sourceName);
+//		
+//		DataDictionary.getInstance().setView(sourceName,ao);
+//		return ao;
+		return null;
 	}
 	
 	private FileAccessAO createNewFileAccessAO(String sourceName) {
-		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
-		SDFEntity sdfEntity = new SDFEntity(sourceName);
-		List<SDFAttribute> attributeList = attributes.getValue();
-		SDFAttributeList schema = new SDFAttributeList(attributeList);
-		sdfEntity.setAttributes(schema);
+//		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
+//		SDFEntity sdfEntity = new SDFEntity(sourceName);
+//		List<SDFAttribute> attributeList = attributes.getValue();
+//		SDFAttributeList schema = new SDFAttributeList(attributeList);
+//		sdfEntity.setAttributes(schema);
+//		
+//		DataDictionary.getInstance().sourceTypeMap.put(sourceName, "RelationalStreaming");
+//		DataDictionary.getInstance().entityMap.put(sourceName, sdfEntity);
+//		
+//		
+//		FileAccessAO ao = new FileAccessAO(sdfSource);
+//		ao.setPath(path.getValue());
+//		ao.setFileType(fileType.getValue());
+//		ao.setDelay(delay.getValue());
+//		
+//		
+//		ao.setOutputSchema(schema);
+//		return ao;
 		
-		DataDictionary.getInstance().sourceTypeMap.put(sourceName, "RelationalStreaming");
-		DataDictionary.getInstance().entityMap.put(sourceName, sdfEntity);
-		
-		
-		FileAccessAO ao = new FileAccessAO(sdfSource);
-		ao.setPath(path.getValue());
-		ao.setFileType(fileType.getValue());
-		ao.setDelay(delay.getValue());
-		
-		
-		ao.setOutputSchema(schema);
-		return ao;
+		return null;
 	}
 	
 	@Override
 	protected boolean internalValidation() {
-		String sourceName = this.sourceName.getValue();
-		
-		if(delay.getValue() == null)
-			delay.setInputValue(0l);
-			
-		if (DataDictionary.getInstance().containsView(sourceName)) {
-			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
-				addError(new IllegalArgumentException("view " + sourceName
-						+ " already exists"));
-				return false;
-			}
-		}else {
-			if (!(path.hasValue() && type.hasValue() && fileType.hasValue() && attributes.hasValue())) {
-				addError(new IllegalArgumentException(
-						"missing information for the creation of source "
-								+ sourceName
-								+ ". expecting path, fileType, type and attributes."));
-				return false;
-			}
-		}
-		File file = new File(path.getValue());
-		if(!file.exists()){
-			addError(new IllegalArgumentException("File " + path.getValue() + " does not exists."));
-			return false;
-		}
+//		String sourceName = this.sourceName.getValue();
+//		
+//		if(delay.getValue() == null)
+//			delay.setInputValue(0l);
+//			
+//		if (DataDictionary.getInstance().containsView(sourceName)) {
+//			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
+//				addError(new IllegalArgumentException("view " + sourceName
+//						+ " already exists"));
+//				return false;
+//			}
+//		}else {
+//			if (!(path.hasValue() && type.hasValue() && fileType.hasValue() && attributes.hasValue())) {
+//				addError(new IllegalArgumentException(
+//						"missing information for the creation of source "
+//								+ sourceName
+//								+ ". expecting path, fileType, type and attributes."));
+//				return false;
+//			}
+//		}
+//		File file = new File(path.getValue());
+//		if(!file.exists()){
+//			addError(new IllegalArgumentException("File " + path.getValue() + " does not exists."));
+//			return false;
+//		}
 			
 		return true;
 	}
