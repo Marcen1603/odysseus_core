@@ -18,8 +18,8 @@ public class StartUp implements IStartup {
 				try {
 					Bundle bundle = Activator.getDefault().getBundle();
 					ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
-					imageRegistry.put("stopStream", ImageDescriptor.createFromURL(bundle.getEntry("Icons/stopStream.png")));
-					imageRegistry.put("startStream", ImageDescriptor.createFromURL(bundle.getEntry("Icons/startStream.png")));
+					imageRegistry.put("stopStream", ImageDescriptor.createFromURL(bundle.getEntry("Icons/control-stop.png")));
+					imageRegistry.put("startStream", ImageDescriptor.createFromURL(bundle.getEntry("Icons/control.png")));
 				} catch (SWTError e) {
 					// Ignore :-)
 				}
