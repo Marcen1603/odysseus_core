@@ -16,110 +16,20 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.base.usermanagement.IServiceLevelAgreement;
+import de.uniol.inf.is.odysseus.base.usermanagement.PercentileConstraintOverlapException;
+import de.uniol.inf.is.odysseus.base.usermanagement.PercentileContraint;
+import de.uniol.inf.is.odysseus.base.usermanagement.ServiceLevelAgreement;
+import de.uniol.inf.is.odysseus.base.usermanagement.TenantManagement;
+import de.uniol.inf.is.odysseus.base.usermanagement.TenantNotFoundException;
+import de.uniol.inf.is.odysseus.base.usermanagement.TooManyUsersException;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.IntersectionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAS;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAdvance;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateFunction;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAlterUserStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAndPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBasicPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerAsSource;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerQueue;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSimpleSource;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCSVSource;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCompareOperator;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCovarianceRow;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateSensor;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateUserStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateViewStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabase;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseOptions;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDateFormat;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDistinctExpression;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropStreamStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropViewStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriority;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExpression;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFromClause;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionExpression;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionName;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHavingClause;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTListDefinition;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMetric;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNotPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNumber;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOSGI;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOrPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPartition;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriority;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionMatrix;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionVector;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationOperator;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordDefinition;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordEntryDefinition;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRenamedExpression;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSQL;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSQLStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSetOperator;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimplePredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleTuple;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSlide;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSpatialCompareOperator;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSpatialPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTStreamSQLWindow;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTString;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimeInterval;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuple;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTuple;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTupleSet;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
-import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParser;
-import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor;
-import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
+import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckAttributes;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckGroupBy;
@@ -141,7 +51,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	private List<IQuery> plans = new ArrayList<IQuery>();
-	private User user;
+	private User caller;
 	private static CQLParser instance = null;
 	private static NewSQLParser parser;
 
@@ -159,13 +69,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	public synchronized List<IQuery> parse(String query, User user)
 			throws QueryParseException {
-		this.user = user;
+		this.caller = user;
 		return parse(new StringReader(query), user);
 	}
 
 	public synchronized List<IQuery> parse(Reader reader, User user)
 			throws QueryParseException {
-		this.user = user;
+		this.caller = user;
 		try {
 			if (parser == null) {
 				parser = new NewSQLParser(reader);
@@ -187,7 +97,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	private void setUser(User user) {
-		this.user = user;
+		this.caller = user;
 	}
 
 	public Object visit(ASTStatement node, Object data) {
@@ -288,7 +198,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	public Object visit(ASTSelectStatement statement, Object data) {
 		try {
-			CreateAccessAOVisitor access = new CreateAccessAOVisitor(user);
+			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller);
 			access.visit(statement, null);
 			AttributeResolver attributeResolver = access.getAttributeResolver();
 
@@ -331,13 +241,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	public Object visit(ASTCreateStatement node, Object data) {
-		CreateStreamVisitor v = new CreateStreamVisitor(user);
+		CreateStreamVisitor v = new CreateStreamVisitor(caller);
 		return v.visit(node, data);
 	}
 
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) {
-		CreateViewVisitor v = new CreateViewVisitor(user);
+		CreateViewVisitor v = new CreateViewVisitor(caller);
 		return v.visit(node, data);
 	}
 
@@ -360,7 +270,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void initPredicate(IPredicate<RelationalTuple<?>> predicate,
 			SDFAttributeList left, SDFAttributeList right) {
 		if (predicate instanceof ComplexPredicate) {
@@ -710,7 +620,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Object bsv = brokerSourceVisitor.newInstance();
 			
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", User.class);
-			m.invoke(bsv, user);
+			m.invoke(bsv, caller);
 			
 			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTCreateBroker.class, Object.class);
@@ -806,9 +716,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
 			Object sv = sensorVisitor.newInstance();
 			Method m = sensorVisitor.getDeclaredMethod("setUser", User.class);
-			m.invoke(sv, user);
-			m = sensorVisitor.getDeclaredMethod("visit",
-					ASTCreateSensor.class, Object.class);
+			m.invoke(sv, caller);
+			m = sensorVisitor.getDeclaredMethod("visit", ASTCreateSensor.class,
+					Object.class);
 			return m.invoke(sv, node, data);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(
@@ -855,7 +765,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().registerUser(this.user, username,
+			UserManagement.getInstance().registerUser(this.caller, username,
 					password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -868,7 +778,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().updateUser(this.user, username,
+			UserManagement.getInstance().updateUser(this.caller, username,
 					password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -880,7 +790,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTDropStreamStatement node, Object data) {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		// TODO: Darf der Nutzer das
-		DataDictionary.getInstance().removeView(streamname, user);
+		DataDictionary.getInstance().removeView(streamname, caller);
 		return null;
 	}
 
@@ -888,8 +798,74 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTDropViewStatement node, Object data) {
 		String viewname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		// TODO: Darf der Nutzer das
-		DataDictionary.getInstance().removeView(viewname, user);
+		DataDictionary.getInstance().removeView(viewname, caller);
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTCreateTenantStatement node, Object data) {
+		String tenant = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String sla = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		TenantManagement.getInstance().createTenant(tenant, sla, caller);
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTAddUserToTenantStatement node, Object data) {
+		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String tenantName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		User uToAdd = UserManagement.getInstance().findUser(userName, caller);
+		try {
+			TenantManagement.getInstance().addUserToTenant(tenantName, uToAdd,
+					caller);
+		} catch (TenantNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (TooManyUsersException e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTRemoveUserFromTenantStatement node, Object data) {
+		String tenantName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		User uToRemove = UserManagement.getInstance().findUser(userName, caller);
+		try {
+			TenantManagement.getInstance().removeUserFromTenant(tenantName, uToRemove,
+					caller);
+		} catch (TenantNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCreateSLAStatement node, Object data) {
+		String slaName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		// TODO: Anpassen, das hier erstmal nur zum Testen
+		String monitorType = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		PercentileContraint pc = null;
+		IServiceLevelAgreement sla = new ServiceLevelAgreement(slaName);
+		for (int i=2; i<node.jjtGetNumChildren();i++){
+			pc = (PercentileContraint) node.jjtGetChild(i).jjtAccept(this, data);
+			try {
+				sla.addPercentilConstraint(pc);
+			} catch (PercentileConstraintOverlapException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		TenantManagement.getInstance().addSLA(slaName, sla);
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTPercentileConstraint node, Object data) {
+		double left = Double.parseDouble(((ASTNumber) node.jjtGetChild(0)).getValue());
+		double right = Double.parseDouble(((ASTNumber) node.jjtGetChild(1)).getValue());
+		double penalty = Double.parseDouble(((ASTNumber) node.jjtGetChild(2)).getValue());
+		return new PercentileContraint(right, left, penalty);
 	}
 
 }

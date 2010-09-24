@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.store.FileStore;
 import de.uniol.inf.is.odysseus.base.store.StoreException;
@@ -25,5 +26,11 @@ public class FileUserStore extends FileStore<String,User> implements IUserStore 
 		}
 	}
 
+	@Override
+	public Collection<User> getUsers() {
+		return values();
+	}
+
+	
 
 }

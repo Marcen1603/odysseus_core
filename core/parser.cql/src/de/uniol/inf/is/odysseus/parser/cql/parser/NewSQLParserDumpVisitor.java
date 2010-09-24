@@ -484,4 +484,29 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTCreateTenantStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTAddUserToTenantStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTRemoveUserFromTenantStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTCreateSLAStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTPercentileConstraint node, Object data) {
+		return pvisit(node);
+	}
+
 }

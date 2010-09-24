@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
-public class Tenant {
-	private List<User> users = new LinkedList<User>();
+public class Tenant implements Serializable{
+
+	private static final long serialVersionUID = -4491105336941528822L;
+
+	private List<User> users = new ArrayList<User>();
 	private String name;
 	private IServiceLevelAgreement sla;
 	
@@ -15,7 +19,7 @@ public class Tenant {
 	}
 	
 	void addUser(User user) throws TooManyUsersException {
-		if (users.size() < sla.getMaxUsers()){
+		if (sla.getMaxUsers() == -1 || users.size() < sla.getMaxUsers()){
 			users.add(user);
 		}else{
 			throw new TooManyUsersException("Current limit: "+sla.getMaxUsers());
@@ -38,4 +42,9 @@ public class Tenant {
 		return sla;
 	}
 
+	@Override
+	public String toString() {
+		return name+" "+sla+" "+users;
+	}
+	
 }

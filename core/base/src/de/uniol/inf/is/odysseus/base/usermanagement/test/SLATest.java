@@ -12,7 +12,7 @@ public class SLATest {
 	public static void main(String[] args)
 			throws PercentileConstraintOverlapException,
 			NotInitializedException, IllegalServiceLevelDefinition {
-		IServiceLevelAgreement sla = new ServiceLevelAgreement();
+		IServiceLevelAgreement sla = new ServiceLevelAgreement("Test");
 		PercentileContraint pc = new PercentileContraint(1, 0.9, 0, true);
 		sla.addPercentilConstraint(pc);
 		pc = new PercentileContraint(0.8, 0.7, 200);

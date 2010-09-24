@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
-public interface IPercentileConstraint extends Comparable<IPercentileConstraint>{
+import java.io.Serializable;
+
+public interface IPercentileConstraint extends Comparable<IPercentileConstraint>, Serializable{
 
 	public double getLowSlaConformanceLevel();
 	public double getHighSlaConformanceLevel();

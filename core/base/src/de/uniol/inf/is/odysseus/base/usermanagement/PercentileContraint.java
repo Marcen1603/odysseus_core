@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.base.usermanagement;
 
 public class PercentileContraint implements
 		IPercentileConstraint {
+	
+	private static final long serialVersionUID = 3932940457600499058L;
 	final double highSlaConformanceLevel;
 	final double lowSlaConformanceLevel;
 	final double width;
@@ -17,8 +19,8 @@ public class PercentileContraint implements
 		this.highInside = highInside;
 	}
 
-	public PercentileContraint(double d, double e, int i) {
-		this(d,e,i,false);
+	public PercentileContraint(double high, double low, double penalty) {
+		this(high,low,penalty,false);
 	}
 
 	@Override

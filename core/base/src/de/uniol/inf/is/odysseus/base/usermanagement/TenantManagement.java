@@ -1,57 +1,136 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import de.uniol.inf.is.odysseus.base.store.FileStore;
+import de.uniol.inf.is.odysseus.base.store.IStore;
+import de.uniol.inf.is.odysseus.base.store.StoreException;
 
 public class TenantManagement {
+
+	// TODO: Rechtemanagement
+
 	static private TenantManagement instance = null;
+	
+	private List<ITenantManagementListener> listeners = new CopyOnWriteArrayList<ITenantManagementListener>();
+
+	public void addTenantManagementListener(ITenantManagementListener l){
+		listeners.add(l);		
+	}
+
+	public void removeTenantManagementListener(ITenantManagementListener l){
+		listeners.remove(l);		
+	}
+	
+	public void fireTenantManagementListener(){
+		for (ITenantManagementListener l:listeners){
+			l.tenantsChangedEvent();
+		}
+	}
 
 	public synchronized static TenantManagement getInstance() {
 		if (instance == null) {
 			instance = new TenantManagement();
+
 		}
 		return instance;
 	}
-	
-	private Map<String, Tenant> registeredTenants = new HashMap<String, Tenant>();
-	private Map<User, Tenant> users = new HashMap<User, Tenant>();
-	
-	public void createTenant(String name, IServiceLevelAgreement sla){
-		Tenant newT = new Tenant(name, sla);
-		registeredTenants.put(name, newT);
-	}
-	
-	public void addUserToTenant(Tenant tenant, User user) throws TenantNotFoundException, TooManyUsersException{
-		addUserToTenant(tenant.getName(), user);
-	}
-		
-	public void addUserToTenant(String tenantName, User user) throws TenantNotFoundException, TooManyUsersException{
-		Tenant t = registeredTenants.get(tenantName);
-		if (t != null){
-			t.addUser(user);
-			users.put(user, t);
-		}else{
-			throw new TenantNotFoundException(tenantName);
+
+	static private String filePrefix = System.getProperty("user.home")
+			+ "/odysseus/";
+
+	final private IStore<String, Tenant> registeredTenants;
+	final private IStore<String, Tenant> users;
+	final private IStore<String, IServiceLevelAgreement> slas;
+
+	private TenantManagement() {
+		try {
+			registeredTenants = new FileStore<String, Tenant>(filePrefix
+					+ "tenants.store");
+			users = new FileStore<String, Tenant>(filePrefix + "userTenant.store");
+			slas = new FileStore<String, IServiceLevelAgreement>(filePrefix
+					+ "slas.store");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
-	
-	public void removeUserFromTenant(Tenant tenant, User user) throws TenantNotFoundException{
-		removeUserFromTenant(tenant.getName(), user);
+
+	public void addSLA(String name, IServiceLevelAgreement sla) {
+		try {
+			slas.put(name, sla);
+		} catch (StoreException e) {
+			throw new RuntimeException(e);
+		}
+		fireTenantManagementListener();
 	}
 
-	
-	public void removeUserFromTenant(String tenantName, User user) throws TenantNotFoundException{
-		Tenant t = registeredTenants.get(tenantName);
-		if (t != null){
-			t.removeUser(user);
-			users.remove(user);
-		}else{
-			throw new TenantNotFoundException(tenantName);
-		}		
+	public void createTenant(String name, String slaName, User caller) {
+		IServiceLevelAgreement sla = slas.get(slaName);
+		if (sla != null) {
+			Tenant newT = new Tenant(name, sla);
+
+			try {
+				registeredTenants.put(name, newT);
+			} catch (StoreException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			throw new RuntimeException("No SLA with name " + slaName + " found");
+		}
+		fireTenantManagementListener();
 	}
-	
-	public Tenant getTenant(User user){
-		return users.get(user);
+
+	public void addUserToTenant(Tenant tenant, User user, User caller)
+			throws TenantNotFoundException, TooManyUsersException {
+		addUserToTenant(tenant.getName(), user, caller);
+	}
+
+	public void addUserToTenant(String tenantName, User user, User caller)
+			throws TenantNotFoundException, TooManyUsersException {
+		Tenant t = registeredTenants.get(tenantName);
+		if (t != null) {
+			t.addUser(user);
+			try {
+				users.put(user.getUsername(), t);
+			} catch (StoreException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			throw new TenantNotFoundException(tenantName);
+		}
+		fireTenantManagementListener();
+	}
+
+	public void removeUserFromTenant(Tenant tenant, User user, User caller)
+			throws TenantNotFoundException {
+		removeUserFromTenant(tenant.getName(), user, caller);
+	}
+
+	public void removeUserFromTenant(String tenantName, User user, User caller)
+			throws TenantNotFoundException {
+		Tenant t = registeredTenants.get(tenantName);
+		if (t != null) {
+			t.removeUser(user);
+			try {
+				users.remove(user.getUsername());
+			} catch (StoreException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			throw new TenantNotFoundException(tenantName);
+		}
+		fireTenantManagementListener();
+	}
+
+	public Tenant getTenant(User user, User caller) {
+		return users.get(user.getUsername());
+	}
+
+	public Collection<Tenant> getTenants() {	
+		return Collections.unmodifiableCollection(registeredTenants.values());
 	}
 
 }

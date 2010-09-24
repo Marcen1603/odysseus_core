@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
 
+
 public class UserManagement extends AbstractUserManagement {
 
 	static private UserManagement instance = null;
@@ -8,7 +9,7 @@ public class UserManagement extends AbstractUserManagement {
 	public UserManagement(IUserStore userStore) {
 		super(userStore);
 	}
-
+	
 	public synchronized static UserManagement getInstance() {
 		if (instance == null) {
 
@@ -45,5 +46,6 @@ public class UserManagement extends AbstractUserManagement {
 	public User getTestUser() {
 		return login("Test","jkhdsfkewrt");
 	}
+
 
 }

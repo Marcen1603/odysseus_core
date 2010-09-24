@@ -24,6 +24,9 @@ import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 public class DataDictionary {
 
+
+	// TODO: Zugriffsberechtigungen realisieren
+	
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {

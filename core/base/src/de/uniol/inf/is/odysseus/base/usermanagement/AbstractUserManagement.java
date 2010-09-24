@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.base.usermanagement;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 abstract public class AbstractUserManagement {
 
@@ -35,6 +38,7 @@ abstract public class AbstractUserManagement {
 		} else {
 			throw new UsernameAlreadyUsedException();
 		}
+		fireUserManagementListener();
 	}
 	
 	
@@ -55,6 +59,7 @@ abstract public class AbstractUserManagement {
 		} else {
 			throw new UsernameNotExistException(username);
 		}
+		fireUserManagementListener();
 	}
 	
 
@@ -90,15 +95,47 @@ abstract public class AbstractUserManagement {
 				loggedIn.put(username, user);
 			}
 		}
+		fireUserManagementListener();
 		return user;
 	}
 	
 	public void logout(String username) {
 		loggedIn.remove(username);
+		fireUserManagementListener();
 	}
 	
 	protected boolean hasNoUsers() {
 		return userStore.isEmpty();
 	}
+	
+	public User findUser(String username, User caller) {
+		// Todo: Testen ob caller das darf
+		return userStore.getUserByName(username);
+	}
+	
+	public Collection<User> getUsers(){
+		return userStore.getUsers();
+	}
+	
+	private List<IUserManagementListener> listeners = new CopyOnWriteArrayList<IUserManagementListener>();
+
+	public void addTenantManagementListener(IUserManagementListener l){
+		listeners.add(l);		
+	}
+
+	public void removeTenantManagementListener(IUserManagementListener l){
+		listeners.remove(l);		
+	}
+	
+	public void fireUserManagementListener(){
+		for (IUserManagementListener l:listeners){
+			l.usersChangedEvent();
+		}
+	}
+	
+	public boolean isLoggedIn(String username){
+		return loggedIn.containsKey(username);
+	}
+	
 
 }

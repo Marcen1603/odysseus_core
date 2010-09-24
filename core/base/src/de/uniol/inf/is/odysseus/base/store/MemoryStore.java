@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.base.store;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
-public class MemoryStore<IDType,STORETYPE> implements IStore<IDType,STORETYPE>{
+public class MemoryStore<IDType extends Comparable<? extends IDType>,STORETYPE> implements IStore<IDType ,STORETYPE>{
 
-	private Map<IDType, STORETYPE> elements = new HashMap<IDType, STORETYPE>();
+	private Map<IDType, STORETYPE> elements = new TreeMap<IDType, STORETYPE>();
 	
 	@Override
 	public STORETYPE get(IDType username) {
@@ -43,6 +43,17 @@ public class MemoryStore<IDType,STORETYPE> implements IStore<IDType,STORETYPE>{
 	public STORETYPE remove(IDType id) {
 		return elements.remove(id);
 	}
+
+	@Override
+	public Set<IDType> keySet() {
+		return elements.keySet();
+	}
+
+	@Override
+	public Collection<STORETYPE> values() {
+		return elements.values();
+	}
+	
 
 
 	

@@ -8,14 +8,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
 
-public class FileStore<IDType extends Serializable,STORETYPE extends Serializable> implements IStore<IDType, STORETYPE> {
+public class FileStore<IDType extends Serializable & Comparable<? extends IDType>,STORETYPE extends Serializable> implements IStore<IDType, STORETYPE> {
 	
 	private String path;
-	private MemoryStore<IDType,STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
+	private MemoryStore<IDType ,STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
 	
 	public FileStore(String path) throws IOException{
 		this.path = path;
@@ -109,6 +110,16 @@ public class FileStore<IDType extends Serializable,STORETYPE extends Serializabl
 	@Override
 	public Set<Entry<IDType, STORETYPE>> entrySet() {
 		return cache.entrySet();
+	}
+
+	@Override
+	public Set<IDType> keySet() {
+		return cache.keySet();
+	}
+
+	@Override
+	public Collection<STORETYPE> values() {
+		return cache.values();
 	}
 
 }

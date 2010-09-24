@@ -7,10 +7,19 @@ import java.util.List;
 
 abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgreement{
 
+	private static final long serialVersionUID = 7791032987035486163L;
+
 	private List<IPercentileConstraint> pcs = new ArrayList<IPercentileConstraint>();
-	protected double[] delta = null;
-	private boolean initialized;
+	
+	transient protected double[] delta = null;
+	transient private boolean initialized = false;
 	int maxUsers = -1;
+
+	private String name;
+	
+	public AbstractServiceLevelAgreement(String name) {
+		this.name = name;
+	}
 	
 	@Override
 	public void addPercentilConstraint(IPercentileConstraint pc) throws PercentileConstraintOverlapException{
@@ -112,4 +121,13 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 		return maxUsers;
 	}
 
+	@Override
+	public List<IPercentileConstraint> getPercentilConstraints() {
+		return Collections.unmodifiableList(pcs);
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
 }

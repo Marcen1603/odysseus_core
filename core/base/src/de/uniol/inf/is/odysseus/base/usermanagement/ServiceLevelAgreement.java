@@ -3,6 +3,11 @@ package de.uniol.inf.is.odysseus.base.usermanagement;
 
 public class ServiceLevelAgreement extends AbstractServiceLevelAgreement{
 
+	private static final long serialVersionUID = 3682984863695708771L;
+
+	public ServiceLevelAgreement(String name) {
+		super(name);
+	}
 	
 	// TODO: Darüber nachdenken, ob man nicht einfach 100 Werte vorberechnet, sollte ausreichend sein ...
 	
