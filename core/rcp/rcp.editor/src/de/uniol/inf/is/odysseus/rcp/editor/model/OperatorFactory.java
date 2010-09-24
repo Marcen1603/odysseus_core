@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.rcp.editor.model;
 
 import org.eclipse.gef.requests.CreationFactory;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 
 public class OperatorFactory implements CreationFactory {
 
@@ -14,7 +16,8 @@ public class OperatorFactory implements CreationFactory {
 	
 	@Override
 	public Object getNewObject() {
-		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName), operatorBuilderName);
+		final User user = ActiveUser.getActiveUser();
+		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName, user), operatorBuilderName);
 		return op;
 	}
 
