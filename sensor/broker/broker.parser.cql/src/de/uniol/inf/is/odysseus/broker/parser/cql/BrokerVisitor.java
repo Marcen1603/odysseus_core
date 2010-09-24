@@ -47,7 +47,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	private User user;
 
-	public BrokerVisitor(User user) {
+	public BrokerVisitor() {
+	}
+	
+	public void setUser(User user){
 		this.user = user;
 	}
 	
