@@ -13,7 +13,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class Activator implements BundleActivator {
 
-    /*
+    private static BundleContext bundleContext;
+
+	/*
      * (non-Javadoc)
      * @see
      * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
@@ -21,6 +23,7 @@ public class Activator implements BundleActivator {
      */
     public void start(BundleContext context) throws Exception {
         // Add default Functions
+    	bundleContext = context;
         SDFExpression.addFunction(new DolToEur());
         SDFExpression.addFunction(new Now());
         SDFExpression.addFunction(new ToNumber());
@@ -29,6 +32,10 @@ public class Activator implements BundleActivator {
         SDFExpression.addFunction(new Polygon());
 
     }
+    
+    public static BundleContext getBundleContext() {
+		return bundleContext;
+	}
 
     /*
      * (non-Javadoc)

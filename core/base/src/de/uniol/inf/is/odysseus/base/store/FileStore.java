@@ -12,64 +12,76 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.dynamicjava.osgi.classloading_utils.OsgiEnvironmentClassLoader;
 
-public class FileStore<IDType extends Serializable & Comparable<? extends IDType>,STORETYPE extends Serializable> implements IStore<IDType, STORETYPE> {
-	
+import de.uniol.inf.is.odysseus.base.Activator;
+
+public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
+		implements IStore<IDType, STORETYPE> {
+
 	private String path;
-	private MemoryStore<IDType ,STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
-	
-	public FileStore(String path) throws IOException{
+	private MemoryStore<IDType, STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
+	private OsgiEnvironmentClassLoader cl;
+
+	public FileStore(String path) throws IOException {
 		this.path = path;
+		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
+		this.cl = new OsgiEnvironmentClassLoader(Activator.getBundleContext(),
+				curCl, (Class<?>) null);
 		loadCache();
 	}
 
 	@SuppressWarnings("unchecked")
-	private void loadCache() throws IOException{
+	private void loadCache() throws IOException {
+		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(this.cl);
 		File f = new File(path);
-		if (!f.exists()){
+		if (!f.exists()) {
 			File d = f.getParentFile();
-			if (d!= null){
+			if (d != null) {
 				d.mkdirs();
 			}
 			f.createNewFile();
-			System.out.println("Created new File "+f.getAbsolutePath());
-		}else{
-			System.out.println("Read from file "+f.getAbsolutePath());
+			System.out.println("Created new File " + f.getAbsolutePath());
+		} else {
+			System.out.println("Read from file " + f.getAbsolutePath());
 		}
 		ObjectInputStream in = null;
-		try{
+		try {
 			in = new ObjectInputStream(new FileInputStream(f));
 			IDType key = null;
 			try {
-				while((key = (IDType) in.readObject() )!=null){
+				while ((key = (IDType) in.readObject()) != null) {
 					STORETYPE element = (STORETYPE) in.readObject();
-					//System.out.println("READ "+key+" "+element);
-					cache.put(key,element);
+					// System.out.println("READ "+key+" "+element);
+					cache.put(key, element);
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			in.close();
-		}catch(EOFException e){
+		} catch (EOFException e) {
 			// initial ...
 		}
+		Thread.currentThread().setContextClassLoader(curCl);
 	}
 
-	private void saveCache() throws IOException{
-		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(path)));
-		for (Entry<IDType,STORETYPE> e:cache.entrySet()){
+	private void saveCache() throws IOException {
+		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
+				new File(path)));
+		for (Entry<IDType, STORETYPE> e : cache.entrySet()) {
 			out.writeObject(e.getKey());
 			out.writeObject(e.getValue());
-			//System.out.println("WRITTEN "+e.getKey()+" "+e.getValue());
+			// System.out.println("WRITTEN "+e.getKey()+" "+e.getValue());
 		}
 		out.close();
 	}
-	
+
 	public STORETYPE get(IDType id) {
 		return cache.get(id);
 	}
 
-	public void put(IDType id,STORETYPE elem) throws StoreException {
+	public void put(IDType id, STORETYPE elem) throws StoreException {
 		cache.put(id, elem);
 		try {
 			saveCache();
@@ -77,8 +89,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			throw new StoreException(e);
 		}
 	}
-	
-	public void clear() throws StoreException{
+
+	public void clear() throws StoreException {
 		cache.clear();
 		try {
 			saveCache();
