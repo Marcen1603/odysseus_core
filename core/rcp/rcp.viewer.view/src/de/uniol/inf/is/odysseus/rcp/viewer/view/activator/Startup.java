@@ -35,11 +35,12 @@ public class Startup implements IStartup {
 				Bundle bundle = Activator.getDefault().getBundle();
 				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
 				imageRegistry.put("metadata", ImageDescriptor.createFromURL(bundle.getEntry("icons/metadata.gif")));
-				imageRegistry.put("attribute", ImageDescriptor.createFromURL(bundle.getEntry("icons/attribute.png")));
-				imageRegistry.put("schema", ImageDescriptor.createFromURL(bundle.getEntry("icons/schema.png")));
-				imageRegistry.put("pipe_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/pipe.png")));
-				imageRegistry.put("sink_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/sink.png")));
-				imageRegistry.put("source_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/source.png")));
+				imageRegistry.put("attribute", ImageDescriptor.createFromURL(bundle.getEntry("icons/status.png")));
+				imageRegistry.put("schema", ImageDescriptor.createFromURL(bundle.getEntry("icons/odata.png")));
+				imageRegistry.put("pipe_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/task.png")));
+				imageRegistry.put("sink_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/monitor.png")));
+				imageRegistry.put("source_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/application-import.png")));
+				imageRegistry.put("partof_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/application-import.png")));
 				}catch(SWTError e){
 					// Ignore :-)
 				}
