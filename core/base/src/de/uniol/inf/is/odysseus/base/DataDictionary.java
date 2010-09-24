@@ -259,6 +259,10 @@ public class DataDictionary {
 		walker.prefixWalk(logicalPlan, copyVisitor);
 		return copyVisitor.getResult();
 	}
+	
+	public boolean isLogicalView(String name){
+		return this.logicalViewDefinitions.containsKey(name);
+	}
 
 	public boolean hasView(String name, User user) {
 		return viewDefinitions.containsKey(name);
