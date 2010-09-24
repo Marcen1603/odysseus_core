@@ -4,20 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
+
 public class OperatorBuilderFactory {
 	private static Map<String, Class<? extends IOperatorBuilder>> operatorBuilders = new HashMap<String, Class<? extends IOperatorBuilder>>();
 	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
 
 	@SuppressWarnings("unchecked")
 	public static <T extends IOperatorBuilder> T createOperatorBuilder(
-			String name) {
+			String name, User caller) {
 		name = name.toUpperCase();
 		if (!operatorBuilders.containsKey(name)) {
 			throw new IllegalArgumentException("no such operator builder: "
 					+ name);
 		}
 		try {
-			return (T) operatorBuilders.get(name).newInstance();
+			T builder = (T)operatorBuilders.get(name).newInstance();
+			builder.setCaller(caller);
+			return builder; 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

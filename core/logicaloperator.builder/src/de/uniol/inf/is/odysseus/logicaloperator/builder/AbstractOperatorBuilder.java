@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -23,7 +24,8 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private int minPortCount;
 	private int maxPortCount;
 	private Map<Integer, InputOperatorItem> inputOperators;
-
+	private User caller;
+	
 	public AbstractOperatorBuilder(int minPortCount, int maxPortCount) {
 		if (minPortCount > maxPortCount) {
 			throw new IllegalArgumentException(
@@ -64,6 +66,14 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	@Override
 	public int getMinInputOperatorCount() {
 		return minPortCount;
+	}
+	
+	public void setCaller(User caller){
+		this.caller = caller;
+	}
+	
+	public User getCaller() {
+		return caller;
 	}
 
 	@Override
