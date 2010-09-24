@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Dennis Geesen
  */
-public class BrokerAO extends AbstractLogicalOperator{
+public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	
 	/** The serialVersionUID. */
 	private static final long serialVersionUID = 6441896379097181325L;	
