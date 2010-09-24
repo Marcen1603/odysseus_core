@@ -27,7 +27,7 @@ public class Activator extends AbstractUIPlugin {
 				try{
 				Bundle bundle = Activator.getDefault().getBundle();
 				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
-				imageRegistry.put("source", ImageDescriptor.createFromURL(bundle.getEntry("Icons/repository_rep.gif")));
+				imageRegistry.put("source", ImageDescriptor.createFromURL(bundle.getEntry("Icons/application-import.png")));
 				imageRegistry.put("attribute", ImageDescriptor.createFromURL(bundle.getEntry("Icons/attribute.png")));
 				}catch(SWTError e){
 					// Ignore :-)
