@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public interface IStore<IDType extends Comparable<? extends IDType>, STORETYPE> {
+public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	public STORETYPE get(IDType id);
 	public void put(IDType id, STORETYPE element) throws StoreException;
 	public STORETYPE remove(IDType id) throws StoreException;
