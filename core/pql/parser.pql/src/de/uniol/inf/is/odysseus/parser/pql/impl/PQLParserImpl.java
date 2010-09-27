@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 public class PQLParserImpl implements PQLParserImplConstants {
   static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)
   {
-    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase());
+    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser());
     List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();
     for (int i = 0; i < inputOps.size(); ++i)
     {
@@ -68,6 +69,17 @@ public class PQLParserImpl implements PQLParserImplConstants {
       }
     }
     return result;
+  }
+
+   static User user;
+
+  static public User getUser(){
+        return user;
+  }
+
+  static public void setUser(User newUser)
+  {
+        user = newUser;
   }
 
   static final public List < IQuery > query() throws ParseException {
@@ -197,18 +209,18 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       nameStr = name.image;
       DataDictionary dd = DataDictionary.getInstance();
-      if (dd.containsView(nameStr))
+      if (dd.containsView(nameStr, getUser()))
       {
         {if (true) throw new IllegalArgumentException("multiple definition of view '" + nameStr + "'");}
       }
       SDFEntity entity = new SDFEntity(nameStr);
       entity.setAttributes(op.getOutputSchema());
-      DataDictionary.getInstance().sourceTypeMap.put(nameStr, "RelationalStreaming");
-      DataDictionary.getInstance().entityMap.put(nameStr, entity);
-      dd.setView(nameStr, op);
+      DataDictionary.getInstance().addSourceType(nameStr, "RelationalStreaming");
+      DataDictionary.getInstance().addEntity(nameStr, entity, getUser());
+      dd.setView(nameStr, op, user);
       //get access operator for view, so other operators don't get subscribed
       //to top operator of the view
-      op = dd.getView(nameStr);
+      op = dd.getView(nameStr, getUser());
     }
     namedOpParameters.put(nameStr.toUpperCase(), parameters);
     namedOps.put(nameStr.toUpperCase(), op);
