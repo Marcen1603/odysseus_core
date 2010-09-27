@@ -10,6 +10,7 @@ public class User implements Serializable, Comparable<User>{
 	private final String hashFunction = "SHA-1";
 	private String username;
 	private String password;
+	private Session session;
 	static transient MessageDigest hash = null;
 
 	User(String username, String password) {
@@ -112,4 +113,12 @@ public class User implements Serializable, Comparable<User>{
 		return this.getUsername().compareTo(o.getUsername());
 	}
 
+	public void setSession(Session session){
+		this.session = session;
+	}
+	
+	public Session getSession(){
+		return this.session;
+	}
+	
 }

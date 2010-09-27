@@ -11,6 +11,8 @@ abstract public class AbstractUserManagement {
 	private Map<String, User> loggedIn = new HashMap<String, User>();
 
 	private IUserStore userStore = null;
+
+	private int sessionID = -1;
 	
 	public AbstractUserManagement(IUserStore userStore) {
 		this.userStore = userStore; 
@@ -93,14 +95,20 @@ abstract public class AbstractUserManagement {
 				user = null;
 			} else {
 				loggedIn.put(username, user);
+				user.setSession(new Session(getSessionId()));
 			}
 		}
 		fireUserManagementListener();
 		return user;
 	}
 	
+	private synchronized int getSessionId() {
+		return ++sessionID;
+	}
+
 	public void logout(String username) {
-		loggedIn.remove(username);
+		User user = loggedIn.remove(username);
+		user.setSession(null);
 		fireUserManagementListener();
 	}
 	
