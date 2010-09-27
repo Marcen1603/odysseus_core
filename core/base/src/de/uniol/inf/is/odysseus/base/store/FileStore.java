@@ -12,29 +12,29 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.dynamicjava.osgi.classloading_utils.OsgiEnvironmentClassLoader;
+//import org.dynamicjava.osgi.classloading_utils.OsgiEnvironmentClassLoader;
 
-import de.uniol.inf.is.odysseus.base.Activator;
+//import de.uniol.inf.is.odysseus.base.Activator;
 
 public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
 		implements IStore<IDType, STORETYPE> {
 
 	private String path;
 	private MemoryStore<IDType, STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
-	private OsgiEnvironmentClassLoader cl;
+//	private OsgiEnvironmentClassLoader cl;
 
 	public FileStore(String path) throws IOException {
 		this.path = path;
-		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
-		this.cl = new OsgiEnvironmentClassLoader(Activator.getBundleContext(),
-				curCl, Activator.getBundleContext().getBundle());
+//		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
+//		this.cl = new OsgiEnvironmentClassLoader(Activator.getBundleContext(),
+//				curCl, Activator.getBundleContext().getBundle());
 		loadCache();
 	}
 
 	@SuppressWarnings("unchecked")
 	private void loadCache() throws IOException {
-		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
-		Thread.currentThread().setContextClassLoader(this.cl);
+//		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
+//		Thread.currentThread().setContextClassLoader(this.cl);
 		File f = new File(path);
 		if (!f.exists()) {
 			File d = f.getParentFile();
@@ -63,7 +63,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		} catch (EOFException e) {
 			// initial ...
 		}
-		Thread.currentThread().setContextClassLoader(curCl);
+//		Thread.currentThread().setContextClassLoader(curCl);
 	}
 
 	private void saveCache() throws IOException {
