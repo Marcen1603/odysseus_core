@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class User implements Serializable{
+public class User implements Serializable, Comparable<User>{
 
 	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
@@ -105,6 +105,11 @@ public class User implements Serializable{
 	@Override
 	public String toString() {
 		return username+" "+password;
+	}
+	
+	@Override
+	public int compareTo(User o) {
+		return this.getUsername().compareTo(o.getUsername());
 	}
 
 }
