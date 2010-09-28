@@ -578,6 +578,7 @@ public class StandardExecutor extends AbstractExecutor {
 								+ executionPlanLock.getHoldCount() + "). done");
 				setExecutionPlan(optimizer().preQueryRemoveOptimization(this,
 						queryToRemove, this.executionPlan));
+				stopQuery(queryToRemove.getID());
 				getLogger().info("Removing Query " + queryToRemove.getID());
 				this.plan.removeQuery(queryToRemove.getID());
 				getLogger().info("Removing Ownership " + queryToRemove.getID());
@@ -659,7 +660,7 @@ public class StandardExecutor extends AbstractExecutor {
 		getLogger().info("Stop a query (ID: " + queryID + ").");
 
 		Query queryToStop = (Query) this.plan.getQuery(queryID);
-
+	
 		try {
 			this.executionPlanLock.lock();
 			setExecutionPlan(optimizer().preStopOptimization(queryToStop,
@@ -684,8 +685,9 @@ public class StandardExecutor extends AbstractExecutor {
 		} catch (Exception e) {
 			getLogger().warn(
 					"Query not stopped. An Error while optimizing occurd (ID: "
-							+ queryID + ").");
-			return;
+							+ queryID + ")." + e.getMessage());
+			throw new RuntimeException(e);
+			//return;
 		} finally {
 			this.executionPlanLock.unlock();
 		}

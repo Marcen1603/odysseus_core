@@ -36,7 +36,7 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 				s = new Socket(host, port);
 				this.iStream = new ObjectInputStream(s.getInputStream());
 			} catch (Exception e) {
-				throw new OpenFailedException(e.getMessage());
+				throw new OpenFailedException(e.getMessage()+" on "+this.host+" "+this.port);
 			}
 		}
 	}

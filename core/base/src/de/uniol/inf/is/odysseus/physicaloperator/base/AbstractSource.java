@@ -91,6 +91,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			POEventType.PushListInit);
 	final private POEvent pushListDoneEvent = new POEvent(this,
 			POEventType.PushListDone);
+	final private POEvent closeInitEvent = new POEvent(this,
+			POEventType.CloseInit);
+	final private POEvent closeDoneEvent = new POEvent(this,
+			POEventType.CloseDone);
 
 	private AtomicBoolean blocked = new AtomicBoolean(false);
 
@@ -275,9 +279,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.activeSinkSubscriptions.remove(sub);
 		if (activeSinkSubscriptions.size() == 0) {
 			getLogger().debug("Closing " + toString());
+			fire(this.closeInitEvent);
 			this.process_close();
 			open.set(false);
 			stopMonitoring();
+			fire(this.closeDoneEvent);
 		}
 	};
 

@@ -77,6 +77,8 @@ public abstract class AbstractScheduling implements IScheduling,
 					POEventType.Unblocked);
 			plan.getIterableSource(bitIndex).subscribe(this,
 					POEventType.Blocked);
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.CloseDone);			
 			schedulable.set(bitIndex, true);
 			notBlocked.set(bitIndex, true);
 		}
@@ -100,7 +102,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		while (!this.blocked && !this.schedulingPaused && nextSource != null
 				&& System.currentTimeMillis() < endTime) {
 			// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" a="
-			// +nextSource.isActive()+" n="+nextSource.hasNext());
+			// +nextSource.isActive()+" n="+nextSource.hasNext());	
 			if (nextSource.isDone()) {
 				sourceDone(nextSource);
 			} else if (nextSource.isBlocked()) {
@@ -179,32 +181,37 @@ public abstract class AbstractScheduling implements IScheduling,
 	public void eventOccured(IEvent<?,?> poEvent) {
 		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSender();
 		int index = plan.getSourceId(s);
-		synchronized (notBlocked) {
-			if (poEvent.getEventType() == POEventType.Blocked) {
-				// System.out.println(poEvent);
-				updateBlocked(index);
-				return;
-			} else if (poEvent.getEventType() == POEventType.Unblocked) {
-				// System.out.println(poEvent);
-				notBlocked.set(index, true);
-				if (blocked) {
-					for (ISchedulingEventListener l : schedulingEventListener) {
-						l.scheddulingPossible(this);
+		if (poEvent.getEventType() == POEventType.CloseDone){
+			sourceDone(s);
+
+		}else{
+			synchronized (notBlocked) {
+				if (poEvent.getEventType() == POEventType.Blocked) {
+					// System.out.println(poEvent);
+					updateBlocked(index);
+					return;
+				} else if (poEvent.getEventType() == POEventType.Unblocked) {
+					// System.out.println(poEvent);
+					notBlocked.set(index, true);
+					if (blocked) {
+						for (ISchedulingEventListener l : schedulingEventListener) {
+							l.scheddulingPossible(this);
+						}
 					}
 				}
 			}
-		}
-		// Ignore ProcessDone Events if Source is blocked
-		if (notBlocked.get(index)) {
-			// System.out.println(poEvent);
-			if (poEvent.getEventType() == POEventType.ProcessDone) {
-				synchronized (schedulingEventListener) {
-					schedulable.set(index, true);
-					if (schedulingPaused && !s.isBlocked()) {
-						schedulingPaused = false;
-						// logger.debug("Scheduling reactivated");
-						for (ISchedulingEventListener l : schedulingEventListener) {
-							l.scheddulingPossible(this);
+			// Ignore ProcessDone Events if Source is blocked
+			if (notBlocked.get(index)) {
+				// System.out.println(poEvent);
+				if (poEvent.getEventType() == POEventType.ProcessDone) {
+					synchronized (schedulingEventListener) {
+						schedulable.set(index, true);
+						if (schedulingPaused && !s.isBlocked()) {
+							schedulingPaused = false;
+							// logger.debug("Scheduling reactivated");
+							for (ISchedulingEventListener l : schedulingEventListener) {
+								l.scheddulingPossible(this);
+							}
 						}
 					}
 				}
