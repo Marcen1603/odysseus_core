@@ -30,13 +30,13 @@ public class Activator extends AbstractUIPlugin {
 				try{
 				Bundle bundle = Activator.getDefault().getBundle();
 				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
-				imageRegistry.put("repository", ImageDescriptor.createFromURL(bundle.getEntry("Icons/repository_rep.gif")));
-				imageRegistry.put("user", ImageDescriptor.createFromURL(bundle.getEntry("Icons/user.png")));
-				imageRegistry.put("loggedinuser", ImageDescriptor.createFromURL(bundle.getEntry("Icons/user--plus.png")));
-				imageRegistry.put("users", ImageDescriptor.createFromURL(bundle.getEntry("Icons/users.png")));
-				imageRegistry.put("sla", ImageDescriptor.createFromURL(bundle.getEntry("Icons/document-block.png")));
-				imageRegistry.put("percentile", ImageDescriptor.createFromURL(bundle.getEntry("Icons/document-tag.png")));
-				imageRegistry.put("tenant", ImageDescriptor.createFromURL(bundle.getEntry("Icons/user-business.png")));
+				imageRegistry.put("repository", ImageDescriptor.createFromURL(bundle.getEntry("icons/repository_rep.gif")));
+				imageRegistry.put("user", ImageDescriptor.createFromURL(bundle.getEntry("icons/user.png")));
+				imageRegistry.put("loggedinuser", ImageDescriptor.createFromURL(bundle.getEntry("icons/user--plus.png")));
+				imageRegistry.put("users", ImageDescriptor.createFromURL(bundle.getEntry("icons/users.png")));
+				imageRegistry.put("sla", ImageDescriptor.createFromURL(bundle.getEntry("icons/document-block.png")));
+				imageRegistry.put("percentile", ImageDescriptor.createFromURL(bundle.getEntry("icons/document-tag.png")));
+				imageRegistry.put("tenant", ImageDescriptor.createFromURL(bundle.getEntry("icons/user-business.png")));
 				
 				}catch(SWTError e){
 					// Ignore :-)
