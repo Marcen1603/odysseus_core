@@ -21,7 +21,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 
 	@Override
 	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) {
-		UnionPO unionPO = new UnionPO(new TITransferArea());
+		UnionPO unionPO = new UnionPO(new TITransferArea(unionAO.getNumberOfInputs()));
 		unionPO.setOutputSchema(unionAO.getOutputSchema());
 		
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(unionAO, unionPO);
