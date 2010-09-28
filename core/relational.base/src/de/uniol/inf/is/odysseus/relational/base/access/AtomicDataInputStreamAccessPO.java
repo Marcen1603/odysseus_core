@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
@@ -23,10 +26,19 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		AbstractIterableSource<RelationalTuple<M>> {
 
+	static Logger _logger = null;
+
+	static synchronized public Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory
+					.getLogger(AtomicDataInputStreamAccessPO.class);
+		}
+		return _logger;
+	}
+
 	final private String hostName;
 	final private int port;
 	private ObjectInputStream channel;
-	private boolean isOpen;
 	private RelationalTuple<M> buffer;
 	private IAtomicDataHandler[] dataReader;
 	private Object[] attributeData;
@@ -34,6 +46,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 
 	private boolean p2p = false;
 	public boolean connectToPipe = false;
+	private Socket socket;
 
 	public boolean isConnectToPipe() {
 		return connectToPipe;
@@ -69,7 +82,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			} else if (uri.equals("String")) {
 				this.dataReader[i++] = new StringHandler();
 			} else {
-				throw new RuntimeException("illegal datatype "+uri);
+				throw new RuntimeException("illegal datatype " + uri);
 			}
 		}
 	}
@@ -83,75 +96,95 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.isOpen = false;
 	}
 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
+		getLogger().debug("process_open()");
 
-		if (!p2p) {
-			if (this.isOpen) {
-				return;
-			}
-			try {
-				Socket socket = new Socket(this.hostName, this.port);
-				this.channel = new ObjectInputStream(socket.getInputStream());
-			} catch (IOException e) {
-				throw new OpenFailedException(e.getMessage());
-			}
-			for (IAtomicDataHandler reader : this.dataReader) {
-				reader.setStream(this.channel);
-			}
-			this.isOpen = true;
-			this.isDone = false;
+		// // if (!p2p) {
+		// if (isOpen()) {
+		// return;
+		// }
+		try {
+			socket = new Socket(this.hostName, this.port);
+			this.channel = new ObjectInputStream(socket.getInputStream());
+		} catch (IOException e) {
+			throw new OpenFailedException(e.getMessage());
+		}
+		for (IAtomicDataHandler reader : this.dataReader) {
+			reader.setStream(this.channel);
+		}
+		this.isDone = false;
+		// }
+	}
+
+	@Override
+	protected void process_close() {
+		try {
+			getLogger().debug("Closing connection");
+			socket.close();
+			channel.close();
+			getLogger().debug("Closing connection done");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public boolean hasNext() {
+	public synchronized boolean hasNext() {
+		if (isOpen()) {
 
-		if (p2p) {
-			if (!connectToPipe) {
+			if (buffer != null) {
+				return true;
+			}
+			// if (p2p) {
+			// if (!connectToPipe) {
+			// return false;
+			// }
+			// if (this.channel == null) {
+			// Socket s;
+			// while (true) {
+			// try {
+			// s = new Socket(this.hostName, this.port);
+			// this.channel = new ObjectInputStream(s.getInputStream());
+			// } catch (Exception e) {
+			// // throw new OpenFailedException(e.getMessage());
+			// System.err.println("Konnte Quelle nicht öffnen");
+			// try {
+			// Thread.sleep(5000);
+			// } catch (InterruptedException e1) {
+			// // TODO Auto-generated catch block
+			// e1.printStackTrace();
+			// }
+			// continue;
+			// }
+			// break;
+			// }
+			// }
+			// }
+
+			try {
+				for (int i = 0; i < this.dataReader.length; ++i) {
+					this.attributeData[i] = dataReader[i].readData();
+				}
+			} catch (EOFException e) {
+				this.isDone = true;
+				propagateDone();
+				return false;
+			} catch (IOException e) {
+				// TODO wie mit diesem fehler umgehen?
+				//e.printStackTrace();
 				return false;
 			}
-			if (this.channel == null) {
-				Socket s;
-				while (true) {
-					try {
-						s = new Socket(this.hostName, this.port);
-						this.channel = new ObjectInputStream(s.getInputStream());
-					} catch (Exception e) {
-						// throw new OpenFailedException(e.getMessage());
-						System.err.println("Konnte Quelle nicht öffnen");
-						try {
-							Thread.sleep(5000);
-						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						continue;
-					}
-					break;
-				}
-			}
-		}
+			this.buffer = new RelationalTuple<M>(this.attributeData);
+			// this.buffer.setMetadata(this.metadataFactory.createMetadata());
 
-		try {
-			for (int i = 0; i < this.dataReader.length; ++i) {
-				this.attributeData[i] = dataReader[i].readData();
-			}
-		} catch (EOFException e) {
-			this.isDone = true;
-			propagateDone();
-			return false;
-		} catch (IOException e) {
-			// TODO wie mit diesem fehler umgehen?
+			return true;
+		} else {
 			return false;
 		}
-		this.buffer = new RelationalTuple<M>(this.attributeData);
-		// this.buffer.setMetadata(this.metadataFactory.createMetadata());
-
-		return true;
 	}
 
 	@Override
@@ -160,8 +193,8 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	}
 
 	@Override
-	public void transferNext() {
-		System.out.println("TRANSFER BUFFER: " + this.buffer);
+	public synchronized void transferNext() {
+		// System.out.println("TRANSFER BUFFER: " + this.buffer);
 		transfer(this.buffer);
 		this.buffer = null;
 	}
@@ -181,7 +214,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	// }
 
 	@Override
-	public AtomicDataInputStreamAccessPO<M> clone()  {
+	public AtomicDataInputStreamAccessPO<M> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 
