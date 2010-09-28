@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.user.impl;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -10,8 +12,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
@@ -70,6 +74,16 @@ public class LoginWindow {
 		
 		wnd.setLayout(new GridLayout());
 		
+		wnd.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				if( !cancelOK )
+					System.exit(1);
+			}
+			
+		});
+		
 		createInput(wnd);
 		
 		autoLoginCheck = new Button(wnd, SWT.CHECK);
@@ -123,18 +137,38 @@ public class LoginWindow {
 		okButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				User user = UserManagement.getInstance().login(usernameInput.getText(), passwordInput.getText());
-				if( user == null ) {
-					markRed();
-					return;
+				try {
+					User user = UserManagement.getInstance().login(usernameInput.getText(), passwordInput.getText());
+					if( user == null ) {
+						markRed();
+						return;
+					}
+					LoginPreferencesManager.getInstance().setUsername(user.getUsername());
+					LoginPreferencesManager.getInstance().setPasswordMD5(user.getPassword());
+					LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
+					LoginPreferencesManager.getInstance().save();
+					ActiveUser.setActiveUser(user);
+					StatusBarManager.getInstance().setMessage("Logged in as " + user.getUsername());
+					wnd.dispose();
+				} catch( RuntimeException ex ) {
+					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.YES | SWT.NO);
+				    box.setMessage("An error occured during validating the user.\n" +
+				    				"Probably the user-store is corrupted. Should the user-store\n" +
+				    				"be deleted?");
+				    box.setText("Error");
+				    if( box.open() == SWT.YES) {
+				    	try {
+							UserManagement.getInstance().clearUserStore();
+							box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_INFORMATION | SWT.OK );
+						    box.setMessage("User-store is now deleted. Please restart Odysseus RCP.");
+						    box.setText("Information");
+						    box.open();
+						} catch (Exception ex2) {
+							ex.printStackTrace();
+						} 
+				    }
+				    System.exit(1);
 				}
-				LoginPreferencesManager.getInstance().setUsername(user.getUsername());
-				LoginPreferencesManager.getInstance().setPasswordMD5(user.getPassword());
-				LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
-				LoginPreferencesManager.getInstance().save();
-				ActiveUser.setActiveUser(user);
-				StatusBarManager.getInstance().setMessage("Logged in as " + user.getUsername());
-				wnd.dispose();
 			}
 		});
 		
@@ -145,8 +179,6 @@ public class LoginWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				wnd.dispose();
-				if( !cancelOK )
-					System.exit(1);
 			}
 		});
 	}
