@@ -46,7 +46,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 					try {
 						executor.addQuery(queryToExecute, parserToUse, user, cfg);
 						StatusBarManager.getInstance().setMessage("Query successfully added");
-					} catch (PlanManagementException e) {
+					} catch (Exception e) {
 						new ExceptionWindow(e);
 						e.printStackTrace();
 						StatusBarManager.getInstance().setMessage("Adding query failed");
