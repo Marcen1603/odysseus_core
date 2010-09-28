@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.base.store.StoreException;
+
 abstract public class AbstractUserManagement {
 
 	private Map<String, User> loggedIn = new HashMap<String, User>();
@@ -30,7 +32,7 @@ abstract public class AbstractUserManagement {
 		// TODO: Rechte von caller überprüfen
 		registerUserInt(username, password);
 	}
-
+	
 	protected void registerUserInt(String username, String password)
 			throws UserStoreException, UsernameAlreadyUsedException {
 		User user = userStore.getUserByName(username);
@@ -114,6 +116,10 @@ abstract public class AbstractUserManagement {
 	
 	protected boolean hasNoUsers() {
 		return userStore.isEmpty();
+	}
+	
+	public void clearUserStore() throws StoreException{
+		userStore.clear();
 	}
 	
 	public User findUser(String username, User caller) {
