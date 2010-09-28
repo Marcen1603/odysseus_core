@@ -1,0 +1,89 @@
+ATTACH STREAM ideaal:bett1(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60001
+
+ATTACH STREAM ideaal:bett2(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60002
+
+ATTACH STREAM ideaal:bett3(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60003
+
+ATTACH STREAM ideaal:bett4(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60004
+
+ATTACH STREAM ideaal:bett5(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60005
+
+ATTACH STREAM ideaal:bett6(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60006
+
+ATTACH STREAM ideaal:bett7(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60007
+
+ATTACH STREAM ideaal:bett8(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60008
+
+ATTACH STREAM ideaal:bett9(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60009
+
+ATTACH STREAM ideaal:bett10(
+	timestamp STARTTIMESTAMP,
+	id INTEGER,
+	weight0 DOUBLE,
+	weight1 DOUBLE,
+	weight2 DOUBLE,
+	weight3 DOUBLE) 
+SOCKET localhost : 60010

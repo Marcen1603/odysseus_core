@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.locks.LockSupport;
 
 import com.Ostermiller.util.CSVParser;
 
@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
+
 /**
  * Simple server for sending <a
  * href="http://db.csail.mit.edu/labdata/labdata.html">Intel lab data</a>
@@ -66,13 +67,14 @@ public class LabdataServer {
 		String filename = DEFAULT_PROPERTIES_FILE;
 
 		Map<String, String> env = System.getenv();
-		if(env.containsKey("labdata_cfg")) {
-				filename = env.get("labdata_cfg");
+		if (env.containsKey("labdata_cfg")) {
+			filename = env.get("labdata_cfg");
 		}
-		
+
 		Properties cfg = new Properties();
 		try {
-			URL configFileURL = Activator.getContext().getBundle().getEntry(filename);
+			URL configFileURL = Activator.getContext().getBundle()
+					.getEntry(filename);
 			cfg.load(configFileURL.openStream());
 		} catch (FileNotFoundException e) {
 			System.out.println("Did not find config file.");
@@ -80,51 +82,77 @@ public class LabdataServer {
 		} catch (IOException e) {
 			throw e;
 		}
-		
-//		String inputFile = "C:\\Diss\\OdysseusOSGi\\application\\de.uniol.inf.is.odysseus.labdataserver\\labdata_cfg\\movingObjectsOL.csv";
-		String inputFile = "labdata_cfg/" + cfg.getProperty("inputfile", "labdata");
-		URL inputFileURL = Activator.getContext().getBundle().getEntry(inputFile);
-		
+
+		// String inputFile =
+		// "C:\\Diss\\OdysseusOSGi\\application\\de.uniol.inf.is.odysseus.labdataserver\\labdata_cfg\\movingObjectsOL.csv";
+		String inputFile = "labdata_cfg/"
+				+ cfg.getProperty("inputfile", "labdata");
+		URL inputFileURL = Activator.getContext().getBundle()
+				.getEntry(inputFile);
+
 		Integer limit = Integer.parseInt(cfg.getProperty("limit", "-1"));
-		
+
 		Integer accelerationFactor = Integer.parseInt(cfg.getProperty(
 				"acceleration", "1"));
 		Integer port = Integer.parseInt(cfg.getProperty("port", DEFAULT_PORT));
-		
+
 		boolean useRaw = Boolean
 				.parseBoolean(cfg.getProperty("useRaw", "true"));
-		
+
 		boolean useCSV = Boolean.parseBoolean(cfg
 				.getProperty("useCSV", "false"));
-		
+
 		char delim = cfg.getProperty("csvDelim", ";").charAt(0);
-		
+
 		String streamName = cfg.getProperty("streamName", "test:labdata");
-		
-		String stream_definition_file = "labdata_cfg/" + cfg.getProperty("streamDefinitons");
-		
-		int elementsPerSecond = Integer.parseInt(cfg.getProperty("frequency")); 
-		
-		URL stream_definition_URL = Activator.getContext().getBundle().getEntry(stream_definition_file);
-		InputStream input = stream_definition_URL.openStream();
-		
-		InputStreamReader reader = new InputStreamReader(input);
-		try{
-			CQLParser.getInstance().parse(reader, UserManagement.getInstance().getTestUser());
-		}catch(QueryParseException e){
-			e.printStackTrace();
+
+		String stream_definition_file = "labdata_cfg/"
+				+ cfg.getProperty("streamDefinitons");
+
+		int elementsPerSecond = 1;
+		try {
+			elementsPerSecond = Integer.parseInt(cfg.getProperty("frequency"));
+		} catch (Exception e) {
+			// ignore
 		}
-		
+
+		SDFEntity stream = null;
+
 		DataDictionary dd = DataDictionary.getInstance();
-		
-		SDFEntity stream = dd.getEntity(streamName, UserManagement.getInstance().getTestUser());
+		try {
+			stream = dd.getEntity(streamName, UserManagement.getInstance()
+					.getTestUser());
+		} catch (Exception e) {
+			// Ignore
+		}
+
+		// Load only if not already registered
+		if (stream == null) {
+
+			URL stream_definition_URL = Activator.getContext().getBundle()
+					.getEntry(stream_definition_file);
+			InputStream input = stream_definition_URL.openStream();
+
+			InputStreamReader reader = new InputStreamReader(input);
+			try {
+				CQLParser.getInstance().parse(reader,
+						UserManagement.getInstance().getTestUser());
+			} catch (QueryParseException e) {
+				e.printStackTrace();
+			}
+
+			stream = dd.getEntity(streamName, UserManagement.getInstance()
+					.getTestUser());
+		}
+
 		SDFAttributeList schema = stream.getAttributes();
 
 		ObjectInputStream iStream = null;
 		if (limit > 0) {
-//			System.out.println("Begin caching of " + limit + " values from file: " + inputFileURL);
+			// System.out.println("Begin caching of " + limit +
+			// " values from file: " + inputFileURL);
 			if (!useCSV) {
-				
+
 				iStream = new ObjectInputStream(inputFileURL.openStream());
 				cachedValues = new RelationalTuple[limit][1];
 				for (int i = 0; i < limit; ++i) {
@@ -142,15 +170,17 @@ public class LabdataServer {
 					String[] line = csvParser.getLine();
 					// if line is null, eof is reached
 					// so limit has been set higher than data is available
-					if(line == null){
+					if (line == null) {
 						break;
 					}
 					inner: for (int u = 0; u < schema.size(); u++) {
 						SDFAttribute attr = schema.get(u);
 						// hack fix for timestamp @TODO fix it someday.
-						if (attr.getDatatype().getURI(false).endsWith("Timestamp")) {
+						if (attr.getDatatype().getURI(false)
+								.endsWith("Timestamp")) {
 							cachedValues[i][u] = Long.parseLong(line[u]);
-						} else if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
+						} else if (SDFDatatypes.isMeasurementValue(attr
+								.getDatatype())) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
 						} else if (SDFDatatypes.isDouble(attr.getDatatype())) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
@@ -184,20 +214,24 @@ public class LabdataServer {
 		ServerSocket server = new ServerSocket(port);
 
 		while (true) {
-			System.out.println("Waiting for connection on port " + port);
-			Socket s = server.accept();
-			ClientHandler handler;
-			if (useRaw) {
-				handler = new RawHandler(s, iStream, limit, inputFile,
-						cachedValues, accelerationFactor);
-			} else if (useCSV) {
-				handler = new CSVHandler(s, iStream, limit, inputFile,
-						cachedValues, schema, elementsPerSecond, delim);
-			} else {
-				handler = new TupleHandler(s, iStream, limit, inputFile,
-						cachedValues, accelerationFactor);
+			try{
+				System.out.println("Waiting for connection on port " + port);
+				Socket s = server.accept();
+				ClientHandler handler;
+				if (useRaw) {
+					handler = new RawHandler(s, iStream, limit, inputFile,
+							cachedValues, accelerationFactor);
+				} else if (useCSV) {
+					handler = new CSVHandler(s, iStream, limit, inputFile,
+							cachedValues, schema, elementsPerSecond, delim);
+				} else {
+					handler = new TupleHandler(s, iStream, limit, inputFile,
+							cachedValues, accelerationFactor);
+				}
+				handler.start();
+			}catch(Exception e){
+				e.printStackTrace();
 			}
-			handler.start();
 		}
 	}
 }
@@ -281,6 +315,7 @@ class TupleHandler extends ClientHandler {
 			System.out.println(" |->Done");
 		} catch (Exception e) {
 			System.err.println(" |->Error: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			try {
 				oStream.close();
@@ -384,7 +419,7 @@ class CSVHandler extends ClientHandler {
 		super(s, stream, limit, inputFile, cachedValues, elementsPerSecond);
 		this.schema = schema;
 		this.csvDelim = delim;
-		this.periodLength = 1000000000/elementsPerSecond; // in nanoseconds
+		this.periodLength = 1000000000 / elementsPerSecond; // in nanoseconds
 		System.out.println("Sending all " + this.periodLength + "ns.");
 	}
 
@@ -397,33 +432,37 @@ class CSVHandler extends ClientHandler {
 				if (iStream != null) {
 					iStream.close();
 				}
+				System.out.println("Reading vom File " + inputFile);
 				iStream = new ObjectInputStream(new FileInputStream(inputFile));
 			}
 			oStream = new ObjectOutputStream(s.getOutputStream());
 
-//			Long lastTimestamp = null;
-//			Long diff = 0L;
+			// Long lastTimestamp = null;
+			// Long diff = 0L;
 			int i = 0;
 			long startDuration = System.nanoTime();
 			boolean stop = false;
-			
+
 			while ((limit < 1 || i < limit) && !stop) {
+				//System.out.println("Sending Tuple");
 				long lastTime = System.nanoTime();
 				if (limit > 0) {
-					
+
 					for (int u = 0; u < cachedValues[i].length; u++) {
 						// if the following condition is true,
 						// limit is higher than data is available.
-						if(cachedValues[i] == null || cachedValues[i][u] == null){
+						if (cachedValues[i] == null
+								|| cachedValues[i][u] == null) {
 							stop = true;
 							break;
-						}	
-						
+						}
 						SDFAttribute attr = this.schema.get(u);
 						// hack fix for timestamp @TODO fix it someday.
-						if (attr.getDatatype().getURI(false).endsWith("Timestamp")) {
+						if (attr.getDatatype().getURI(false)
+								.endsWith("Timestamp")) {
 							oStream.writeLong((Long) cachedValues[i][u]);
-						} else if (SDFDatatypes.isMeasurementValue(attr.getDatatype())
+						} else if (SDFDatatypes.isMeasurementValue(attr
+								.getDatatype())
 								|| SDFDatatypes.isDouble(attr.getDatatype())) {
 							oStream.writeDouble((Double) cachedValues[i][u]);
 						} else if (SDFDatatypes.isInteger(attr.getDatatype())) {
@@ -436,33 +475,39 @@ class CSVHandler extends ClientHandler {
 							oStream.writeLong(((Calendar) cachedValues[i][u])
 									.getTimeInMillis());
 						}
+						oStream.flush();
 					}
 				} else {
-					URL inputFileURL = Activator.getContext().getBundle().getEntry(inputFile);
+					URL inputFileURL = Activator.getContext().getBundle()
+							.getEntry(inputFile);
 					CSVParser csvParser = null;
 					File file = null;
-					try{
+					try {
 						file = new File(inputFile);
 						csvParser = new CSVParser(inputFileURL.openStream());
-					}catch(Exception e){
-						System.out.println("File not found: " + file.getAbsolutePath());
+					} catch (Exception e) {
+						System.out.println("File not found: "
+								+ file.getAbsolutePath());
 						return;
 					}
 					csvParser.changeDelimiter(this.csvDelim);
-					csvParser.getLine(); // first line are the attribute names, so do
+					csvParser.getLine(); // first line are the attribute names,
+											// so do
 					// not process it.
 					String[] line = null;
 					try {
 						line = csvParser.getLine();
+						for (String e : line) {
+							System.out.print(e + ";");
+						}
+						System.out.println();
 						for (int u = 0; u < line.length; u++) {
 							SDFAttribute attr = this.schema.get(i);
 							if (SDFDatatypes.isMeasurementValue(attr
 									.getDatatype())
 									|| SDFDatatypes
 											.isDouble(attr.getDatatype())) {
-								oStream
-										.writeDouble(Double
-												.parseDouble(line[u]));
+								oStream.writeDouble(Double.parseDouble(line[u]));
 							} else if (SDFDatatypes.isInteger(attr
 									.getDatatype())) {
 								oStream.writeInt(Integer.parseInt(line[u]));
@@ -488,11 +533,9 @@ class CSVHandler extends ClientHandler {
 						}
 					} catch (IOException e) {
 						break;
-					}
+					} 
 				}
-				
-				
-				
+
 				i++;
 				// wait for the next element for this.periodLength nanoseconds
 				long expectedTime = lastTime + this.periodLength;
@@ -504,17 +547,20 @@ class CSVHandler extends ClientHandler {
 			long endDuration = System.nanoTime();
 			System.out.println(" |->Done" + " i = " + i);
 			System.out.println("Duration: " + (endDuration - startDuration));
-			System.out.println("Frequency: " + ((double)i * 1000000000 / (double)((double)endDuration - (double)startDuration)));
+			System.out
+					.println("Frequency: "
+							+ ((double) i * 1000000000 / (double) ((double) endDuration - (double) startDuration)));
 		} catch (EOFException e) {
 			System.out.println(" |->Done");
 		} catch (Exception e) {
-			e.printStackTrace();
 			System.err.println(" |->Error: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			try {
 				oStream.close();
 			} catch (Exception e) {
 			}
+			System.out.println("Terminating Client Handler");
 		}
 
 	}
