@@ -4,15 +4,20 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
+import de.uniol.inf.is.odysseus.rcp.viewer.queryview.IQueryViewConstants;
 
 public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 
@@ -24,10 +29,22 @@ public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 				executor.startExecution();
 				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler is running");
 				StatusBarManager.getInstance().setMessage("Scheduler started");
+				
+				// Queryview aktualisieren
+				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+				handlerService.executeCommand(IQueryViewConstants.REFRESH_COMMAND_ID, null);
+				
 			} catch (PlanManagementException e) {
 				new ExceptionWindow(e);
 				e.printStackTrace();
+			} catch (NotDefinedException e) {
+				e.printStackTrace();
+			} catch (NotEnabledException e) {
+				e.printStackTrace();
+			} catch (NotHandledException e) {
+				e.printStackTrace();
 			}
+			
 		} else {
 			StatusBarManager.getInstance().setMessage("No executor available");
 

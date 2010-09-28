@@ -13,6 +13,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.statusbar,
  de.uniol.inf.is.odysseus.rcp.viewer.query,
+ de.uniol.inf.is.odysseus.rcp.viewer.queryview,
  org.eclipse.core.commands,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"
