@@ -57,5 +57,18 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.editor.wizard.NewLogicalPlanWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspective.queries"
+            hasPages="true"
+            icon="icons/plan.png"
+            id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard"
+            name="Logical Plan">
+      </wizard>
+   </extension>
 
 </plugin>

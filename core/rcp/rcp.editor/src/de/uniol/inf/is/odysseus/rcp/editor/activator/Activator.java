@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.rcp.editor.IEditorConstants;
+import de.uniol.inf.is.odysseus.rcp.editor.ILogicalPlanEditorConstants;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 
@@ -58,7 +58,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	private void resolveExtensions() {
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(IEditorConstants.PARAMETER_EDITOR_EXTENSION_ID);
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ILogicalPlanEditorConstants.PARAMETER_EDITOR_EXTENSION_ID);
 		for( int i = 0; i < elements.length; i++ ) {
 			IConfigurationElement element = elements[i];
 			try {
