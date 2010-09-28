@@ -40,6 +40,13 @@
                label="Current Graph"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.queryview.RefreshCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
@@ -70,6 +77,15 @@
                label="Copy Querytext"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.queryview.RefreshCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+         <separator
+               name="Separator3">
+         </separator>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
@@ -96,6 +112,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.queryview.commands.CopyCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.queryview.CopyCommand"
             name="Copy">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.queryview.commands.RefreshCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.queryview.RefreshCommand"
+            name="Refresh">
       </command>
    </extension>
 

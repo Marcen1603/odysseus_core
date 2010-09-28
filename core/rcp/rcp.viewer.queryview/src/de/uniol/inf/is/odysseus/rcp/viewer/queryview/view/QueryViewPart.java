@@ -211,7 +211,7 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 		}
 	}
 	
-	protected void refreshTable() {
+	public void refreshTable() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
