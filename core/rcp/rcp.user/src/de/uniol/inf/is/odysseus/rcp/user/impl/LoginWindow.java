@@ -46,6 +46,7 @@ public class LoginWindow {
 	
 	private final String startUserName;
 	private final boolean cancelOK;
+	private boolean loginOK = false;
 	private final Shell parent;
 	
 	public LoginWindow( Shell parent,  boolean cancelOK ) {
@@ -78,6 +79,9 @@ public class LoginWindow {
 
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
+				if( loginOK ) 
+					return;
+				
 				if( !cancelOK )
 					System.exit(1);
 			}
@@ -150,6 +154,7 @@ public class LoginWindow {
 					LoginPreferencesManager.getInstance().save();
 					ActiveUser.setActiveUser(user);
 					StatusBarManager.getInstance().setMessage("Logged in as " + user.getUsername());
+					loginOK = true;
 					wnd.dispose();
 				} catch( RuntimeException ex ) {
 					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.YES | SWT.NO);
