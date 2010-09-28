@@ -45,9 +45,11 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 //					children.add(attr);
 				children.add( node.getModelNode().getContent().getOutputSchema());
 			}
+			StringBuffer owner = new StringBuffer("Part of Queries: ");
 			for(IOperatorOwner o: node.getModelNode().getContent().getOwner()){
-				children.add(o);
+				owner.append(o.getID()).append(" ");
 			}
+			children.add(owner.toString());
 			// Add Metadatainformation
 			for( String type : node.getModelNode().getProvidedMetadataTypes())
 				children.add(node.getModelNode().getMetadataItem(type));
