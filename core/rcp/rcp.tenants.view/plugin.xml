@@ -4,14 +4,10 @@
 
    <extension
          point="org.eclipse.ui.views">
-      <category
-            name="Odysseus"
-            id="de.uniol.inf.is.odysseus.rcp.tenants.view">
-      </category>
       <view
             name="Tenants and Users"
             icon="icons/users.png"
-            category="de.uniol.inf.is.odysseus.rcp.tenants.view"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.tenants.view.views.TenantView"
             id="de.uniol.inf.is.odysseus.rcp.tenants.view.views.TenantView">
       </view>
