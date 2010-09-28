@@ -226,6 +226,8 @@ class ExecutorThread extends Thread {
 
 class SingleSourceExecutor extends Thread {
 
+	Logger logger = LoggerFactory.getLogger(SingleSourceExecutor.class);
+	
 	private IIterableSource<?> s;
 
 	private SingleThreadSchedulerWithStrategy caller;
@@ -237,12 +239,14 @@ class SingleSourceExecutor extends Thread {
 	}
 
 	public void run() {
-		while (!isInterrupted() && !s.isDone()) {
+		logger.debug("Added Source "+s);
+		while (!isInterrupted() && s.isOpen() && !s.isDone()) {
 			while (s.hasNext()) {
 				s.transferNext();
 			}
 			Thread.yield();
 		}
+		logger.debug("Remove Source "+s);
 		caller.removeSourceThread(this);
 	}
 

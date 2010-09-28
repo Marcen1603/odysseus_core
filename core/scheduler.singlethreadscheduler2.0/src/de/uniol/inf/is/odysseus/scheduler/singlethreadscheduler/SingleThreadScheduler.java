@@ -142,28 +142,23 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 
 		private IIterableSource<?> s;
 
-		boolean terminate = false;
-
 		public SingleSourceExecutor(IIterableSource<?> s) {
 			this.s = s;
 		}
 
 		public void run() {
 			sourceThreads.add(this);
-			terminate = false;
-			while (!isInterrupted() && !s.isDone() 
-					&& !terminate) {
+			logger.debug("Added Source "+s);
+			while (!isInterrupted() && s.isOpen() && !s.isDone()) {
 				while (s.hasNext()) {
 					s.transferNext();
 				}
 				Thread.yield();
 			}
+			logger.debug("Removed Source "+s);
 			sourceThreads.remove(this);
 		}
 
-		public void terminate() {
-			terminate = true;
-		};
 	}
 
 	/*
@@ -278,7 +273,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
 			for (SingleSourceExecutor source : sourceThreads) {
-				source.terminate();
+				source.interrupt();
 			}
 
 			for (IIterableSource<?> source : sourcesToSchedule) {
