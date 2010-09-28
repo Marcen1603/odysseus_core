@@ -71,7 +71,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 		@Override
 		public void run() {
 			try {
-				while (!isInterrupted()) {
+				while (!isInterrupted())  {
 					Iterator<IScheduling> part = parts.iterator();
 					while (part.hasNext() && !isInterrupted()) {
 						IScheduling nextPart = part.next();
@@ -80,6 +80,11 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 							// part is done
 							parts.remove(nextPart);
 							part = parts.iterator();
+						}
+					}
+					if (parts.size() == 0){
+						synchronized(parts){
+							parts.wait(1000);
 						}
 					}
 				}
@@ -99,12 +104,14 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 
 		public void run() {
 			sourceThreads.add(this);
-			while (!isInterrupted() && !s.isDone()) {
+			logger.debug("Added Source "+s);
+			while (!isInterrupted() && s.isOpen() && !s.isDone()) {
 				while (s.hasNext()) {
 					s.transferNext();
 				}
 				Thread.yield();
 			}
+			logger.debug("Removed Source "+s);
 			sourceThreads.remove(this);
 		}
 
@@ -168,7 +175,10 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 			for (IPartialPlan partialPlan : partialPlans) {
 				final IScheduling scheduling = schedulingFactory.create(
 						partialPlan, partialPlan.getCurrentPriority());
-				this.parts.add(scheduling);
+				synchronized(parts){
+					this.parts.add(scheduling);
+					parts.notifyAll();
+				}
 			}
 			// }
 			// restart ExecutorThread, if terminated before
