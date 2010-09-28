@@ -92,9 +92,9 @@ public class LoginWindow {
 		
 		createButtons(wnd);
 		
+		wnd.layout();
 		usernameInput.setFocus();
 		
-		wnd.layout();
 		return wnd;
 	}
 	
@@ -116,6 +116,7 @@ public class LoginWindow {
 		passwordLabel.setText(PASSWORD_TEXT);
 		passwordInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		passwordInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		passwordInput.setEchoChar('*');
 	}
 	
 	private void markRed() {
