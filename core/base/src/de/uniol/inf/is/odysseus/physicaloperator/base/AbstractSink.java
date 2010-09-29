@@ -216,17 +216,23 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
 
-	public void close() {
+	public void close(){
+		close(new ArrayList<PhysicalSubscription<ISink<?>>>());
+	}
+	
+	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
 		this.isOpen.set(false);
 		process_close();
 		stopMonitoring();
-		callCloseOnChildren();
+		callCloseOnChildren(callPath);
 	}
 
-	protected void callCloseOnChildren() {
+	protected void callCloseOnChildren(List<PhysicalSubscription<ISink<?>>> callPath) {
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-			sub.getTarget().close(getInstance(), sub.getSourceOutPort(),
-					sub.getSinkInPort());
+			if (!containsSubscription(callPath, getInstance(),sub.getSourceOutPort(),sub.getSinkInPort())){
+				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(), sub.getSinkInPort(), sub.getSourceOutPort(), null));
+				sub.getTarget().close(getInstance(), sub.getSourceOutPort(),sub.getSinkInPort(), callPath);
+			}
 		}
 	}
 

@@ -55,7 +55,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	public void close(ISink<? super T> caller, int sourcePort, int sinkPort);
+	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath);
 
 	public void sendPunctuation(PointInTime punctuation);
 

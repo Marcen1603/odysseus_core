@@ -54,8 +54,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 		
 		@Override
-		public void close() {
-			callCloseOnChildren();
+		public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
+			callCloseOnChildren(callPath);
 		}
 
 	};
@@ -167,9 +167,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(ISink<? super W> caller, int sourcePort, int sinkPort) {
-		super.close(caller, sourcePort, sinkPort);
-		this.delegateSink.close();
+	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,  List<PhysicalSubscription<ISink<?>>> callPath) {
+		super.close(caller, sourcePort, sinkPort, callPath);
+		this.delegateSink.close(callPath);
 	}
 	
 	public void close() {
