@@ -34,13 +34,6 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 		}
 	}
 	
-	public int hashCode() {
-		final int prime = 29;
-		int result = 7;
-		result = prime * result
-				+ ((this.rangePredicates == null) ? 0 : this.rangePredicates.hashCode());
-		return result;
-	}
 
 	@Override
 	public OutputMode getOutputMode() {

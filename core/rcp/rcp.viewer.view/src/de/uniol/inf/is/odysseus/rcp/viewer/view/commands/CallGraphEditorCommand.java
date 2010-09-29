@@ -39,7 +39,7 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 			if( obj instanceof IQuery ) {
 				IQuery query = (IQuery)obj;
 				graph = query.getRoots();
-			
+				
 				ISink<?> sink = (ISink<?>)graph.get(0); 
 				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay(sink, query);
 				PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "Query " + query.getID());

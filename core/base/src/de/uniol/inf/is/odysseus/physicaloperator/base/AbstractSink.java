@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -10,9 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.EventHandler;
 import de.uniol.inf.is.odysseus.base.IEvent;
 import de.uniol.inf.is.odysseus.base.IEventHandler;
-import de.uniol.inf.is.odysseus.base.EventHandler;
 import de.uniol.inf.is.odysseus.base.IEventListener;
 import de.uniol.inf.is.odysseus.base.IEventType;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
@@ -30,6 +31,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
 
 	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
+	// Marker fuer Rekursion
+	final private List<ISink<T>> openCalled = new CopyOnWriteArrayList<ISink<T>>();
+
 	protected int noInputPorts = -1;
 
 	private String name;
@@ -38,7 +42,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected Vector<IOperatorOwner> owners = new Vector<IOperatorOwner>();
 
 	private volatile boolean allInputsDone = false;
-	
+
 	// --------------------------------------------------------------------
 	// Logging
 	// --------------------------------------------------------------------
@@ -51,13 +55,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return logger;
 	}
 
-
 	// ------------------------------------------------------------------
 	// Eventhandling
 	// ------------------------------------------------------------------
-	
+
 	private IEventHandler eventHandler = new EventHandler();
-	
 
 	public void subscribe(IEventListener listener, IEventType type) {
 		eventHandler.subscribe(listener, type);
@@ -79,10 +81,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		eventHandler.fire(event);
 	}
 
-	final private POEvent openInitEvent = new POEvent(this,
-			POEventType.OpenInit);
-	final private POEvent openDoneEvent = new POEvent(this,
-			POEventType.OpenDone);
+	final private POEvent openInitEvent;
+	final private POEvent openDoneEvent;
 
 	final private AtomicBoolean isOpen = new AtomicBoolean(false);
 
@@ -90,11 +90,15 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected POEvent[] processDoneEvent = null;
 
 	// ------------------------------------------------------------------
-	
+
 	public AbstractSink() {
+		openInitEvent = new POEvent(getInstance(), POEventType.OpenInit);
+		openDoneEvent = new POEvent(getInstance(), POEventType.OpenDone);
 	}
 
-	public AbstractSink(AbstractSink<T> other){
+	public AbstractSink(AbstractSink<T> other) {
+		openInitEvent = new POEvent(getInstance(), POEventType.OpenInit);
+		openDoneEvent = new POEvent(getInstance(), POEventType.OpenDone);
 		init(other);
 	}
 
@@ -105,8 +109,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		owners = new Vector<IOperatorOwner>(other.owners);
 		allInputsDone = false;
 	}
-	
-	
+
 	// "delegatable this", used for the delegate sink
 	protected ISink<T> getInstance() {
 		return this;
@@ -144,28 +147,43 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public int getInputPortCount() {
 		return this.noInputPorts;
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
-	protected void open(ISink<T> sink) throws OpenFailedException {
+	@Override
+	public void open() throws OpenFailedException {
+		open(new ArrayList<PhysicalSubscription<ISink<?>>>());
+	}
+
+	protected void open(List<PhysicalSubscription<ISink<?>>> callPath) throws OpenFailedException {
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
 			this.isOpen.set(true);
-			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-				sub.getTarget().open(sink, sub.getSourceOutPort());
-			}
 		}
+		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+			// Check if callPath contains this call to avoid cycles
+			if (!containsSubscription(callPath, getInstance(),sub.getSourceOutPort(),sub.getSinkInPort())){
+				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(), sub.getSinkInPort(), sub.getSourceOutPort(), null));
+				sub.getTarget().open(getInstance(), sub.getSourceOutPort(),	sub.getSinkInPort(), callPath);
+			}
+		}		
 	}
 	
-	@Override
-	final public void open() throws OpenFailedException {
-		open(this);		
+	private boolean containsSubscription(List<PhysicalSubscription<ISink<?>>> callPath,
+			ISink<? super T> sink, int sourcePort, int sinkPort){
+		for (PhysicalSubscription<ISink<?>> sub: callPath){
+			if (sub.getTarget() == sink && sub.getSinkInPort() == sinkPort && sub.getSourceOutPort() == sourcePort){
+				return true;
+			}
+		}
+		
+		return false;
 	}
-
-	protected void process_open() throws OpenFailedException{
+	
+	protected void process_open() throws OpenFailedException {
 		// Empty Default Implementation
 	}
 
@@ -193,23 +211,24 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected abstract void process_next(T object, int port, boolean isReadOnly);
-	
+
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
-	
-	public void close() {
-		close(this);
-	}
 
-	protected void close(ISink<T> sink) {
+	public void close() {
 		this.isOpen.set(false);
 		process_close();
 		stopMonitoring();
+		callCloseOnChildren();
+	}
+
+	protected void callCloseOnChildren() {
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-			sub.getTarget().close(sink, sub.getSourceOutPort());
+			sub.getTarget().close(getInstance(), sub.getSourceOutPort(),
+					sub.getSinkInPort());
 		}
-	};
+	}
 
 	protected void process_close() {
 		// Empty Default Implementation
@@ -240,12 +259,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 	// Getter and Setter
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public String getName() {
 		if (name == null) {
-			return this.getClass().getSimpleName() + "(" + this.hashCode()
-					+ ")";
+			return getInstance().getClass().getSimpleName() + "("
+					+ getInstance().hashCode() + ")";
 		}
 		return name;
 	}
@@ -264,8 +283,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		this.outputSchema = outputSchema;
 	}
-	
-	// ------------------------------------------------------------------------	
+
+	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
 
@@ -294,11 +313,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Subscription management
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public void subscribeToSource(ISource<? extends T> source, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
@@ -340,7 +359,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
 				source, sinkInPort, sourceOutPort, schema));
 	}
-	
+
 	@Override
 	public void unsubscribeFromAllSources() {
 		while (!subscribedToSource.isEmpty()) {
@@ -367,12 +386,22 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// Other Methods
 	// ------------------------------------------------------------------------
 
-
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
+		return getInstance().getClass().getSimpleName() + "("
+				+ getInstance().hashCode() + ")";
+	}
+	
+	@Override
+	final public int hashCode() {
+		return super.hashCode();
 	}
 
+	@Override
+	final public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+	
 	@Override
 	abstract public AbstractSink<T> clone();
 

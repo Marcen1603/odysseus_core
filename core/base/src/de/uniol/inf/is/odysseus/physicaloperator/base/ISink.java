@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import java.util.Collection;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.ISubscriber;
@@ -50,8 +51,9 @@ public interface ISink<T> extends IPhysicalOperator, ISubscriber<ISource<? exten
 	public void processPunctuation(PointInTime timestamp, int port);
 	
 	/**
-	 * Open called on a sink has no parameter 
-	 */
+	 * Call open on a Sink. 	
+	 *  
+	*/
 	public void open() throws OpenFailedException;
 
 	/**

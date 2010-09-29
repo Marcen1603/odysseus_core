@@ -7,7 +7,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IEventListener;
 import de.uniol.inf.is.odysseus.base.IEventType;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -18,11 +17,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		IPipe<R, W> {
-	
+
 	// ------------------------------------------------------------------------
 	// Delegation to simulate multiple inheritance
 	// ------------------------------------------------------------------------
-	
+
 	protected class DelegateSink extends AbstractSink<R> {
 
 		@Override
@@ -53,15 +52,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		@Override
 		public void processPunctuation(PointInTime timestamp, int port) {
 		}
-
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public void open(ISink abstractPipe) throws OpenFailedException {
-			super.open(abstractPipe);
-		}
-
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public void close(ISink abstractPipe) {
-			super.close(abstractPipe);
+		
+		@Override
+		public void close() {
+			callCloseOnChildren();
 		}
 
 	};
@@ -69,13 +63,13 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	final protected DelegateSink delegateSink = new DelegateSink();
 
 	// ------------------------------------------------------------------------
-	
+
 	public enum OutputMode {
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
 	};
 
 	abstract public OutputMode getOutputMode();
-	
+
 	public AbstractPipe() {
 	};
 
@@ -122,23 +116,23 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			return false;
 		}
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
 	
 	@Override
-	final synchronized public void open(IPhysicalOperator sink, int sourcePort)
-			throws OpenFailedException {
-		super.open(sink, sourcePort);
-		this.delegateSink.open(this);
-	}
-
 	public void open() throws OpenFailedException {
-		super.open(null, -1);
-		this.delegateSink.open(this);
+		this.delegateSink.open();
 	}
 	
+	@Override
+	public synchronized void open(ISink<? super W> caller, int sourcePort,
+			int sinkPort,List<PhysicalSubscription<ISink<?>>> callPath) throws OpenFailedException {
+		super.open(caller, sourcePort, sinkPort, callPath);
+		this.delegateSink.open(callPath);
+	}
+
 	public void delegatedProcessOpen() throws OpenFailedException {
 		process_open();
 	}
@@ -146,11 +140,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 	// PROCESS
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 	}
-
 
 	@Override
 	public void process(R object, int port, boolean exclusive) {
@@ -168,34 +161,32 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	abstract protected void process_next(R object, int port);
-	
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
-	
-	@Override
-	public void close(IPhysicalOperator o, int sourcePort) {
-		close();
-		super.close(o, sourcePort);
-	};
 
-	public void close() {
-		process_close();
-		this.delegateSink.close(this);
+	@Override
+	public void close(ISink<? super W> caller, int sourcePort, int sinkPort) {
+		super.close(caller, sourcePort, sinkPort);
+		this.delegateSink.close();
 	}
+	
+	public void close() {
+		this.delegateSink.close();
+	}
+
 
 	@Override
 	protected void process_close() {
 	}
-	
+
 	@Override
 	protected void process_done() {
 	}
 
 	protected void process_done(int port) {
 	}
-
 
 	@Override
 	final public synchronized void done(int port) {
@@ -222,7 +213,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// Subscription management
 	// ------------------------------------------------------------------------
 
-	
 	@Override
 	public void subscribeToSource(ISource<? extends R> source, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
@@ -259,7 +249,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public void unsubscribeFromAllSources() {
 		this.delegateSink.unsubscribeFromAllSources();
 	}
-	
+
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
 		if (type instanceof POEventType) {
@@ -298,10 +288,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// Other methods
 	// ------------------------------------------------------------------------
 
-	
 	@Override
 	abstract public AbstractPipe<R, W> clone();
-	
+
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";

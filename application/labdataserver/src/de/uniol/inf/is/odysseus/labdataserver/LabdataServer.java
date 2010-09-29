@@ -428,13 +428,6 @@ class CSVHandler extends ClientHandler {
 		System.out.println("|->Connection from " + s.getRemoteSocketAddress());
 		ObjectOutputStream oStream = null;
 		try {
-			if (limit < 1) {
-				if (iStream != null) {
-					iStream.close();
-				}
-				System.out.println("Reading vom File " + inputFile);
-				iStream = new ObjectInputStream(new FileInputStream(inputFile));
-			}
 			oStream = new ObjectOutputStream(s.getOutputStream());
 
 			// Long lastTimestamp = null;
@@ -554,7 +547,6 @@ class CSVHandler extends ClientHandler {
 			System.out.println(" |->Done");
 		} catch (Exception e) {
 			System.err.println(" |->Error: " + e.getMessage());
-			e.printStackTrace();
 		} finally {
 			try {
 				oStream.close();

@@ -24,12 +24,16 @@ public interface ISource<T> extends IPhysicalOperator,
 	/**
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.
+	 * caller: who called open
+	 * sourcePort: on which output port of the source 
+	 * sinkPort: on which inport port of the sink
+	 * callPath: Is needed to cope with cycles in the graph
 	 * 
 	 * @throws OpenFailedException
 	 *             if the source can't be initialised e.g. because some needed
 	 *             resources like socket connections can't be allocated.
 	 */
-	public void open(IPhysicalOperator op, int sourcePort) throws OpenFailedException;
+	public void open(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath) throws OpenFailedException;
 
 	/**
 	 * Calls {@link ISink#process(T)} on all subscribed {@link ISink sinks}.
@@ -51,7 +55,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	public void close(IPhysicalOperator op, int sourcePort);
+	public void close(ISink<? super T> caller, int sourcePort, int sinkPort);
 
 	public void sendPunctuation(PointInTime punctuation);
 

@@ -110,7 +110,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			socket = new Socket(this.hostName, this.port);
 			this.channel = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
-			throw new OpenFailedException(e.getMessage());
+			throw new OpenFailedException(e.getMessage()+" "+this.hostName+" "+this.port);
 		}
 		for (IAtomicDataHandler reader : this.dataReader) {
 			reader.setStream(this.channel);
@@ -195,8 +195,10 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	@Override
 	public synchronized void transferNext() {
 		// System.out.println("TRANSFER BUFFER: " + this.buffer);
-		transfer(this.buffer);
-		this.buffer = null;
+		if (this.buffer != null){
+			transfer(this.buffer);
+			this.buffer = null;
+		}
 	}
 
 	//

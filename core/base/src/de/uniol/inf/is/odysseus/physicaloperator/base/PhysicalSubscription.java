@@ -10,6 +10,7 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 
 	private static final long serialVersionUID = -6266008340674321020L;
 	private boolean done;
+	private int openCalls = 0;
 	
 	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
 		super(target, sinkInPort, sourceOutPort, schema);
@@ -23,7 +24,20 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public boolean isDone() {
 		return done;
 	}
+	
+	public synchronized void incOpenCalls(){
+		openCalls++;
+	}
+
+	public synchronized void decOpenCalls(){
+		openCalls--;
+	}
+	
+	public synchronized int getOpenCalls(){
+		return openCalls;
+	}
 
 
+	
 	
 }
