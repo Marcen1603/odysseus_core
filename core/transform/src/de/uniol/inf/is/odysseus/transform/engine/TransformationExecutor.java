@@ -71,6 +71,11 @@ public class TransformationExecutor implements ITransformation {
 		AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 		walker.prefixWalkPhysical(physicalPO, visitor);
 		plan = visitor.getResult();
+		// Prefix Walker finds only roots that are not part of another query
+		// physicalPO is in every case root of this query, so if not already found, add to plan 
+		if (!plan.contains(physicalPO)){
+			plan.add(physicalPO);
+		}
 		if(plan.isEmpty()){
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, "Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
 		}
