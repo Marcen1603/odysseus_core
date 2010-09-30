@@ -12,7 +12,7 @@ public class BettenGenerator {
 			System.out.println("Bett "+bett);
 			writer.write("timestamp;id;weight0;weight1;weight2;weight3\n");
 			for (int messung=1;messung <= 10000; messung++){
-				writer.write(messung+";"+bett+";"+Math.round(Math.random()*60.0)+";"+Math.round(Math.random()*60.0)+";"+Math.round(Math.random()*60.0)+";"+Math.round(Math.random()*60.0)+"\n");
+				writer.write(messung+";"+bett+";"+Math.round(Math.random()*60.0*100)/100.0+";"+Math.round(Math.random()*60.0*100)/100.0+";"+Math.round(Math.random()*60.0*100)/100.0+";"+Math.round(Math.random()*60.0*100)/100.0+"\n");
 			}
 			writer.flush();
 		}
