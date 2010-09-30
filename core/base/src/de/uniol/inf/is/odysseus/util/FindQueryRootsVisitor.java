@@ -51,7 +51,7 @@ public class FindQueryRootsVisitor<P extends IPhysicalOperator> implements IGrap
 		// operators than it is a root. If this root has no owner,
 		// it belongs to the current query and is not used by other
 		// queries through plan sharing.
-		if((node.isSink() && !node.isSource() || (node.isSource() &&  ((ISource<?>)node).getSubscriptions()!= null && ((ISource<?>)node).getSubscriptions().isEmpty())) &&  !node.hasOwner()){
+		if((node.isSink() && !node.isSource() || (node.isSource() && ((ISource<?>)node).getSubscriptions().isEmpty())) &&  !node.hasOwner()){
 			this.foundRoots.add(node);
 		}
 		
