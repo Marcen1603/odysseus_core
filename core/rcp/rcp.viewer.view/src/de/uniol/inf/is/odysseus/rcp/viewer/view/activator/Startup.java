@@ -40,7 +40,7 @@ public class Startup implements IStartup {
 				imageRegistry.put("pipe_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/task.png")));
 				imageRegistry.put("sink_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/monitor.png")));
 				imageRegistry.put("source_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/application-import.png")));
-				imageRegistry.put("partof_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/application-import.png")));
+				imageRegistry.put("partof_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/graph.jpg")));
 				}catch(SWTError e){
 					// Ignore :-)
 				}

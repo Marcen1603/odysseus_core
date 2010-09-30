@@ -45,11 +45,11 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 //					children.add(attr);
 				children.add( node.getModelNode().getContent().getOutputSchema());
 			}
-			StringBuffer owner = new StringBuffer("Part of Queries: ");
+			StringBuffer owner = new StringBuffer("Part of Query: ");
 			for(IOperatorOwner o: node.getModelNode().getContent().getOwner()){
-				owner.append(o.getID()).append(" ");
+				owner.append("#"+o.getID()).append(" ");
 			}
-			children.add(owner.toString());
+			children.add(new OwnerWrapper(owner.toString()));
 			// Add Metadatainformation
 			for( String type : node.getModelNode().getProvidedMetadataTypes())
 				children.add(node.getModelNode().getMetadataItem(type));
@@ -123,4 +123,12 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		viewer.refresh();
 	}
 
+}
+
+class OwnerWrapper{
+	public OwnerWrapper(String string) {
+		this.content = string;
+	}
+
+	public String content;
 }

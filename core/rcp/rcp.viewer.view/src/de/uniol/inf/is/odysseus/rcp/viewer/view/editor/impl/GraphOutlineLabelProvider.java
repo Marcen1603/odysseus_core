@@ -36,6 +36,12 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return Activator.getDefault().getImageRegistry().get("attribute");
 		}
 		
+		if (element instanceof OwnerWrapper){
+			return Activator.getDefault().getImageRegistry().get("partof_icon");
+		}
+
+		
+		
 		if (element instanceof IOdysseusNodeView) {
 			IOdysseusNodeView node = (IOdysseusNodeView)element;
 			IPhysicalOperator op = node.getModelNode().getContent();
@@ -89,8 +95,8 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return type + " = " + value;
 		}
 		
-		if (element != null && element instanceof IOperatorOwner){
-			return "Part of Query # "+((IOperatorOwner)element).getID();
+		if (element != null && element instanceof OwnerWrapper){
+			return ((OwnerWrapper)element).content;
 		}
 
 		return element.getClass().getName();

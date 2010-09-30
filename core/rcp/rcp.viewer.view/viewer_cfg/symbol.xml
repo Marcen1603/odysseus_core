@@ -24,12 +24,14 @@
 		</SymbolElement>
 	</Symbol>
 	
+<!--  
 	<Symbol nodeName="MetadataUpdatePO">
 		<Size width="120" height="34"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="metadataPO"/>
 		</SymbolElement>
-	</Symbol>	
+	</Symbol> 
+-->	
 	
 	<Symbol nodeName="PredictionAssignPO">
 		<Size width="112" height="30"/>
@@ -201,15 +203,15 @@
 		<SymbolElement type="selectivity" />
 	</Symbol>
 
-	<Symbol nodeName="MetadataPO">
-		<Size width="120" height="34"/>
+	<Symbol nodeName="MetadataUpdatePO">
+		<Size width="91" height="27"/>
 		<SymbolElement type="image">
-			<Parameter key="resource" value="metadataPO"/>
+			<Parameter key="resource" value="metadataUpdatePO"/>
 		</SymbolElement>
 	</Symbol>
 
-	<Symbol nodeName="MetadataCreationPO">
-		<Size width="120" height="34"/>
+ <Symbol nodeName="MetadataCreationPO">
+		<Size width="91" height="27"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="metadataCreationPO"/>
 		</SymbolElement>
@@ -221,6 +223,13 @@
 			<Parameter key="resource" value="accessPO"/>
 		</SymbolElement>
 	</Symbol>
+	
+	<Symbol nodeName="AtomicDataInputStreamAccessPO">
+		<Size width="48" height="48"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="accessPO"/>
+		</SymbolElement>
+	</Symbol>	
 	
 	<Symbol nodeName="FixedSetPO">
 		<Size width="91" height="27"/>
