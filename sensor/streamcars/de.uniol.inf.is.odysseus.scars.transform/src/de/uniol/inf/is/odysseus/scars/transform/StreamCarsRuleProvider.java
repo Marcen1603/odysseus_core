@@ -10,6 +10,17 @@ import de.uniol.inf.is.odysseus.scars.transform.rules.TEvaluateAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TFilterAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TFilterCovarianceAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TFilterEstimateAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TFilterGainAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisEvaluationAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisSelectionAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TInitializationAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TJDVESinkAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TMetadataInitLatencyProbabilityStreamCarsRule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TMetadataObjectRelationalCreationPORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TPredictionAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TPredictionAssignPORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TScarsXMLProfilerAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TTemporaryDataBouncerAORule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 public class StreamCarsRuleProvider implements ITransformRuleProvider{
@@ -23,6 +34,17 @@ public class StreamCarsRuleProvider implements ITransformRuleProvider{
 		rules.add(new TFilterAORule());
 		rules.add(new TFilterCovarianceAORule());
 		rules.add(new TFilterEstimateAORule());
+		rules.add(new TFilterGainAORule());
+		rules.add(new THypothesisEvaluationAORule());
+		rules.add(new THypothesisSelectionAORule());
+		rules.add(new TInitializationAORule());
+		rules.add(new TJDVESinkAORule());
+		rules.add(new TMetadataInitLatencyProbabilityStreamCarsRule());
+		rules.add(new TMetadataObjectRelationalCreationPORule());
+		rules.add(new TPredictionAORule());
+		rules.add(new TPredictionAssignPORule());
+		rules.add(new TScarsXMLProfilerAORule());
+		rules.add(new TTemporaryDataBouncerAORule());
 		
 		return rules;
 	}

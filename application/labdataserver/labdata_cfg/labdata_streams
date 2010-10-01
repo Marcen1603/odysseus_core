@@ -16,6 +16,12 @@ CREATE STREAM radar(
 	rx INTEGER
 ) SOCKET MV localhost : 44473
 
+CREATE STREAM radarDouble(
+	rlane DOUBLE,
+	rtimestamp DOUBLE,
+	rx DOUBLE
+) SOCKET MV localhost : 44473
+
 
 CREATE STREAM CarLocStream (
 	m_iType INTEGER,   -- Type:
