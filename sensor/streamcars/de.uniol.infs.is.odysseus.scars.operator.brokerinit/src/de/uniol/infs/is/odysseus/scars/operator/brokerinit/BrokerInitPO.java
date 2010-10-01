@@ -1,7 +1,7 @@
 package de.uniol.infs.is.odysseus.scars.operator.brokerinit;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 
 public class BrokerInitPO<R> extends AbstractPipe<R, R> {
 
@@ -36,7 +36,7 @@ public class BrokerInitPO<R> extends AbstractPipe<R, R> {
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
+	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
 

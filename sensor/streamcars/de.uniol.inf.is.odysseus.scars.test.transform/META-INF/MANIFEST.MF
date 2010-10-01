@@ -4,9 +4,10 @@ Bundle-Name: Transform
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.test.transform
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.test.transform.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.scars.operator.test.ao,

@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.scars.operator.test.po;
 
 import org.osgi.util.tracker.ServiceTracker;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 public class TestPO<T> extends AbstractPipe<T, T>{

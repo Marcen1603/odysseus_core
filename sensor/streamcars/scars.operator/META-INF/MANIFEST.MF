@@ -5,11 +5,11 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.operator
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.operator.Activator
 Bundle-Vendor: Timo Michelsen
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.metadata.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.relational.base,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"

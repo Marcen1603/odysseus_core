@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.operator.objectselector.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class DistanceObjectSelectorAO extends UnaryLogicalOp {

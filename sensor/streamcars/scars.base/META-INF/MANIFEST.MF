@@ -3,21 +3,21 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Base2
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.base
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
- de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.scars.objecttracking.metadata,
  de.uniol.inf.is.odysseus.scars.util,
  org.osgi.framework,
  org.slf4j;version="1.5.6"
-Require-Bundle: de.uniol.inf.is.odysseus.base
+Require-Bundle: de.uniol.inf.is.odysseus
 Export-Package: de.uniol.inf.is.odysseus.scars.base
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

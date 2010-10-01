@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.scars.util;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;

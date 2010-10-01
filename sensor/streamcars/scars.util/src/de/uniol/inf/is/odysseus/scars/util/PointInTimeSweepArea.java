@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.scars.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSweepArea;
 
 public class PointInTimeSweepArea<M extends ITimeInterval & IProbability> extends
     AbstractSweepArea<MVRelationalTuple<M>> {
