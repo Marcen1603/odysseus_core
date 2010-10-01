@@ -5,12 +5,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.AbstractAtomicByteDataHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleByteHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.IntegerByteHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.StringByteHandler;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicByteDataHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleByteHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IntegerByteHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.StringByteHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;

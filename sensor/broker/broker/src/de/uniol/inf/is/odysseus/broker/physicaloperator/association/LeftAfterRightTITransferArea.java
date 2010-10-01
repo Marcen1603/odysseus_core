@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 /**
  * The LeftAfterRightTITransferFunction is a special transfer function for the
@@ -32,7 +32,7 @@ public class LeftAfterRightTITransferArea<R extends IMetaAttributeContainer<? ex
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction#newElement
-	 * (de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer, int)
+	 * (de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer, int)
 	 */
 	@Override
 	public void newElement(R object, int port) {

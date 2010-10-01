@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.merge;
 
-import de.uniol.inf.is.odysseus.metadata.base.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 

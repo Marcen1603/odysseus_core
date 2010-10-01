@@ -4,7 +4,8 @@ Bundle-Name: de.uniol.inf.is.odysseus.objecttracking.parser
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.objecttracking.parser
 Bundle-Version: 1.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.parser.cql;bundle-version="1.0.0"
-Import-Package: de.uniol.inf.is.odysseus.objecttracking,
+Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.logicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.objecttracking.metadata.factory,

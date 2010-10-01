@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IProbability, ILatency, IApplicationTime, ITimeInterval{
     

@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.objecttracking.drools;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.ISubscription;
+import de.uniol.inf.is.odysseus.ISubscription;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class ObjectTrackingTransformationHelper {

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.base.IClone;
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 
 /**
  * This interface is used to carry a key for a prediction function

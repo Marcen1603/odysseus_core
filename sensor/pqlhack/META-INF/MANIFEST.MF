@@ -4,14 +4,14 @@ Bundle-Name: de.uniol.inf.is.odysseus.pqlhack
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.pqlhack
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.pqlhack.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.planmanagement.query,
- de.uniol.inf.is.odysseus.base.predicate,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.planmanagement.query,
+ de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.benchmarker.impl;resolution:=optional,
  de.uniol.inf.is.odysseus.broker.dictionary,
  de.uniol.inf.is.odysseus.broker.logicaloperator,
  de.uniol.inf.is.odysseus.broker.transaction,
- de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.logicaloperator.objectrelational,
  de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.logicaloperator,
@@ -56,4 +56,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
 Export-Package: de.uniol.inf.is.odysseus.pqlhack.parser,
  de.uniol.inf.is.odysseus.pqlhack.parser.visitor
-Require-Bundle: de.uniol.inf.is.odysseus.base
+Require-Bundle: de.uniol.inf.is.odysseus

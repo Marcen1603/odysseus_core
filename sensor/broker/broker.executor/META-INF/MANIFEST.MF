@@ -5,12 +5,12 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.executor
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.broker.executor.Activator
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.broker.dictionary,
  de.uniol.inf.is.odysseus.broker.physicaloperator,
  de.uniol.inf.is.odysseus.broker.transaction,
  de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework;version="1.3.0",

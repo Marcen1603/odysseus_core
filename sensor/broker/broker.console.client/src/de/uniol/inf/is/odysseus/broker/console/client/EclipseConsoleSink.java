@@ -4,11 +4,11 @@ import net.java.dev.jaxb.array.StringArray;
 
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.broker.console.ConsoleServer;
 import de.uniol.inf.is.odysseus.broker.console.ConsoleServerService;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class EclipseConsoleSink extends AbstractSink<Object> {

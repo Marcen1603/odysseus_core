@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser;
 import java.io.StringReader;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTMaple;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.MapleResultParser;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ParseException;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.visitor.CreateExpressionMapVisitor;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
 public class MapleResultParserFacade {

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.util;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.IClone;
 
 public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Comparable<ComparablePair>{
 

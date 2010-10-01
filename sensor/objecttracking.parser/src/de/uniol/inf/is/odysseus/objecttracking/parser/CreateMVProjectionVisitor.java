@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class CreateMVProjectionVisitor implements IVisitor{
 	

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -56,7 +56,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.ILogicalOperator#getOutputSchema()
+	 * @see de.uniol.inf.is.odysseus.ILogicalOperator#getOutputSchema()
 	 */
 	@Override	
 	public synchronized SDFAttributeListExtended getOutputSchema() {		
@@ -180,7 +180,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator#clone()
+	 * @see de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#clone()
 	 */
 	@Override 
 	public BrokerAO clone() {	

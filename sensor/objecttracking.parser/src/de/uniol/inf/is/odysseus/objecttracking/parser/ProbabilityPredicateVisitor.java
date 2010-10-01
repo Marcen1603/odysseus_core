@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.ProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -10,6 +9,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 @SuppressWarnings("unchecked")
 public class ProbabilityPredicateVisitor implements IVisitor{

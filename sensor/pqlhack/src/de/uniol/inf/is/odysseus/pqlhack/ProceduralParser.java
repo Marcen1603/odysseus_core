@@ -6,15 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.base.IQueryParser;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionaryEntry;
 import de.uniol.inf.is.odysseus.broker.transaction.TransactionDetector;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTLogicalPlan;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ParseException;
@@ -22,6 +21,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParser;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.CreateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitAttributesVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitBrokerVisitor;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class ProceduralParser implements IQueryParser {
 

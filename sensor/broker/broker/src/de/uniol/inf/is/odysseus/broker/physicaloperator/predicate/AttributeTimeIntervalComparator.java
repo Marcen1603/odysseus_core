@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;
 
 import java.util.Comparator;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 

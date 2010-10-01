@@ -8,7 +8,6 @@ import java.util.PriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.predicate.BrokerQueryPredicate;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.predicate.BrokerRemovePredicate;
@@ -18,11 +17,12 @@ import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalComparator;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -141,7 +141,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe#process_next
+	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#process_next
 	 * (java.lang.Object, int)
 	 */
 	protected void process_next(T object, int port) {
@@ -331,7 +331,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource#transfer
+	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#transfer
 	 * (java.lang.Object, int)
 	 */
 	@Override
@@ -345,7 +345,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe#getOutputMode
+	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#getOutputMode
 	 * ()
 	 */
 	@Override
@@ -357,7 +357,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe#toString()
+	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#toString()
 	 */
 	@Override
 	public String toString() {
@@ -479,8 +479,8 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe#
-	 * processPunctuation(de.uniol.inf.is.odysseus.base.PointInTime, int)
+	 * @seede.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#
+	 * processPunctuation(de.uniol.inf.is.odysseus.PointInTime, int)
 	 */
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {

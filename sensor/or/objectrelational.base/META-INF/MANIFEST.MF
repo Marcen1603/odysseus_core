@@ -4,7 +4,7 @@ Bundle-Name: Base
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.objectrelational.base
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.objectrelational.base.Activator
-Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,

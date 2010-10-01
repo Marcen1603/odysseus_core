@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.objecttracking.drools
 Bundle-Version: 1.0.3
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.objecttracking,
@@ -25,7 +25,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes,
  de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.visitor,
  de.uniol.inf.is.odysseus.objecttracking.util,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.transformation.drools,

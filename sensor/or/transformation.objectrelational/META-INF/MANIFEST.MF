@@ -4,11 +4,10 @@ Bundle-Name: Objectrelational Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.objectrelational;singleton:=true
 Bundle-Version: 1.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.0"
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.wrapper,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.logicaloperator.objectrelational,
  de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking,
- de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.physicaloperator.objectrelational,

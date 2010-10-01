@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.rewrite.rules;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.IHasRangePredicates;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateInitializer;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;

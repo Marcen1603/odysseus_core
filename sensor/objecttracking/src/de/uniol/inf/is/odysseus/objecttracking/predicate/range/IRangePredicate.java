@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 import java.io.Serializable;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
