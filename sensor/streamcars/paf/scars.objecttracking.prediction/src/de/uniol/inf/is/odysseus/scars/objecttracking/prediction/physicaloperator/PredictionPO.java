@@ -2,14 +2,14 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperato
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;

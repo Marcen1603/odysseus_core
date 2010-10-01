@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
