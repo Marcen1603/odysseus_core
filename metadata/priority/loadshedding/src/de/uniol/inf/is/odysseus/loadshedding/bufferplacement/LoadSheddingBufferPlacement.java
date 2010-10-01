@@ -4,10 +4,10 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBuffer;
 import de.uniol.inf.is.odysseus.loadshedding.LoadManager;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;

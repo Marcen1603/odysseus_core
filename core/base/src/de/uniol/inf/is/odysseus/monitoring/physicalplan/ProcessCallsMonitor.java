@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.base.IEvent;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public class ProcessCallsMonitor extends AbstractMonitoringData<Long>
 implements IPOEventListener {

@@ -4,8 +4,8 @@ Bundle-Name: Bidding Provider
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.logicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.distribution.provider,
  de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection,

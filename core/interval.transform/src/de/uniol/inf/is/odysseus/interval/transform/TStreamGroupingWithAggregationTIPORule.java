@@ -2,12 +2,12 @@ package de.uniol.inf.is.odysseus.interval.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
-import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
+import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.pql.priority;
 
-import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class PriorityPredicate extends

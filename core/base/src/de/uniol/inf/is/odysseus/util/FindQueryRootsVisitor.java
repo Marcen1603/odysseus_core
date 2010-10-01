@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.util;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 
 /**
  * This visitor finds all roots of a physical plan

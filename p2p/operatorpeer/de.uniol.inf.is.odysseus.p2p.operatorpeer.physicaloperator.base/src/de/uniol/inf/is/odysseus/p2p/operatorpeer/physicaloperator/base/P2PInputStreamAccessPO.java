@@ -8,11 +8,11 @@ import java.io.ObjectInputStream;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.AbstractInputStreamAccessPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.IDataTransformation;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractInputStreamAccessPO;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IDataTransformation;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>

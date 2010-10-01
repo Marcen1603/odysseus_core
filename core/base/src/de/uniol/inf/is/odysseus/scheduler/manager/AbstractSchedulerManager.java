@@ -10,10 +10,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ExceptionEventType;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
+import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
@@ -186,9 +186,9 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * de.uniol.inf.is.odysseus.event.error.IErrorEventHandler
 	 * #
-	 * addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.
+	 * addErrorEventListener(de.uniol.inf.is.odysseus.planmanagement.event.
 	 * error.IErrorEventListener)
 	 */
 	@Override
@@ -202,9 +202,9 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * de.uniol.inf.is.odysseus.event.error.IErrorEventHandler
 	 * #
-	 * removeErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event
+	 * removeErrorEventListener(de.uniol.inf.is.odysseus.planmanagement.event
 	 * .error.IErrorEventListener)
 	 */
 	@Override
@@ -216,8 +216,8 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener
-	 * #sendErrorEvent(de.uniol.inf.is.odysseus.base.planmanagement.event.error.
+	 * de.uniol.inf.is.odysseus.event.error.IErrorEventListener
+	 * #sendErrorEvent(de.uniol.inf.is.odysseus.event.error.
 	 * ErrorEvent)
 	 */
 	@Override

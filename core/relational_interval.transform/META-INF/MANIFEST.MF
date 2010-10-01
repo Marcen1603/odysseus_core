@@ -5,12 +5,13 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational_interval.transform;sing
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.relational_interval.transform.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.metadata.base,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.metadata,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.ruleengine.rule,

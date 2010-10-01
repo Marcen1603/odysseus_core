@@ -12,17 +12,17 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.LiesInPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.StartsBeforePredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 
 /**
  * This is the physical sliding delta window po. It returns elements after a

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class UnionAOBuilder extends AbstractOperatorBuilder {

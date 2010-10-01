@@ -5,11 +5,12 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.transform;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.transform.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.wrapper,
- de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.metadata.base,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.metadata,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.ruleengine.system,
@@ -23,3 +24,4 @@ Service-Component: OSGI-INF/TransformationService.xml
 Export-Package: de.uniol.inf.is.odysseus.transform.engine,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule
+Require-Bundle: de.uniol.inf.is.odysseus

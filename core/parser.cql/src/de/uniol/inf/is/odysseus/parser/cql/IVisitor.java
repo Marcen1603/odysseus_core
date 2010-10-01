@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.cql;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public interface IVisitor {
 

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.nobuffers;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 
 /**
  * @author Jonas Jacobi

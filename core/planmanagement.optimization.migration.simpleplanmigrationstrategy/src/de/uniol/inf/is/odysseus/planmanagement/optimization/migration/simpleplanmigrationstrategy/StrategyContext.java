@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simplepla
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.IWindow;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.BlockingBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.IWindow;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * 

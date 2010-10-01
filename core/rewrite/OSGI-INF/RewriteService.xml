@@ -2,7 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rewrite">
    <implementation class="de.uniol.inf.is.odysseus.rewrite.engine.RewriteExecutor"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.base.IRewrite"/>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.IRewrite"/>
    </service>
    <reference bind="addRuleProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider" name="IRewriteRuleProvider" policy="static" unbind="removeRuleProvider"/>
 </scr:component>

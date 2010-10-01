@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 
 // TODO: Noch mal ber die Grenzen nachdenken (Wann <=, wann <)

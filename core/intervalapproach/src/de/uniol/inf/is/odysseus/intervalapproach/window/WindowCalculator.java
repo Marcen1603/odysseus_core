@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 /** Allgemeine Klasse fuer Fensterberechnungen. Diese Berechnungen sind fuer POS/NEG und Intervall-
  * Ansatz identisch.

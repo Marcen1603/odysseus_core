@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="de.uniol.inf.is.odysseus.transformation.drools">
    <implementation class="de.uniol.inf.is.odysseus.transformation.drools.DroolsTransformation"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.base.ITransformation"/>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.ITransformation"/>
    </service>
 </scr:component>

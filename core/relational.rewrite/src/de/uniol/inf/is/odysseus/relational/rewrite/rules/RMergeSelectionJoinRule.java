@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 import java.util.Collection;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;

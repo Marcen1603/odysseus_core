@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.priority.PostPrioritizationAO;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
 

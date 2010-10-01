@@ -2,12 +2,12 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.noplanmig
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * This is the standard plan migration strategy. No migration is performed. The
@@ -25,7 +25,7 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie#migratePlan(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie#migratePlan(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
 	public IExecutionPlan migratePlan(IPlanMigratable sender,

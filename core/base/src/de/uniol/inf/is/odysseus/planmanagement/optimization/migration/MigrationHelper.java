@@ -3,14 +3,14 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.migration;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.IWindow;
-import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.BlockingBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.planmanagement.IWindow;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 
 /**

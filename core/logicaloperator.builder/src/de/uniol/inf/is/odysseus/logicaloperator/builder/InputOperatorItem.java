@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 
 public class InputOperatorItem {
 	public InputOperatorItem(ILogicalOperator operator, int outputPort) {

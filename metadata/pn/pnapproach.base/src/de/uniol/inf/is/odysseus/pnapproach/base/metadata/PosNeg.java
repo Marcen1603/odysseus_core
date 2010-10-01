@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.pnapproach.base.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public class PosNeg implements IPosNeg{
 	

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 
 /**

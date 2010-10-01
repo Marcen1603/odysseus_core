@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.ISubscriber;
-import de.uniol.inf.is.odysseus.base.ISubscription;
+import de.uniol.inf.is.odysseus.ISubscriber;
+import de.uniol.inf.is.odysseus.ISubscription;
 
 public class SimplePlanPrinter<T> {
 

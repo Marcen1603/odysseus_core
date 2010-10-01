@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy;
 
 import java.util.Collections;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.priorityscheduler.AbstractDynamicPriorityPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 

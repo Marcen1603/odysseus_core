@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO.Type;
+import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO.Type;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 
 public class ExistenceAOBuilder extends AbstractOperatorBuilder {

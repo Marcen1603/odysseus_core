@@ -7,4 +7,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.scheduler.priorityscheduler,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy
-Require-Bundle: de.uniol.inf.is.odysseus.base
+Require-Bundle: de.uniol.inf.is.odysseus

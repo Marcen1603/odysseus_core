@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 /**
  * @author Jonas Jacobi

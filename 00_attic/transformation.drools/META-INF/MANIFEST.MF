@@ -4,16 +4,15 @@ Bundle-Name: Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.drools
 Bundle-Version: 1.0.12
 Import-Package: de.uniol.inf.is.drools,
- de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.planmanagement,
- de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.base.wrapper,
- de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.predicate,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
- de.uniol.inf.is.odysseus.physicaloperator.base,
- de.uniol.inf.is.odysseus.physicaloperator.base.event,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.event,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.function,
@@ -28,5 +27,6 @@ Import-Package: de.uniol.inf.is.drools,
  org.osgi.service.component;version="1.1.0",
  org.slf4j
 Service-Component: OSGI-INF/DroolsTransformation.xml
-Require-Bundle: de.uniol.org.drools;bundle-version="1.0.0"
+Require-Bundle: de.uniol.org.drools;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus
 Export-Package: de.uniol.inf.is.odysseus.transformation.drools

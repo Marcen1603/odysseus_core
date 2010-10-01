@@ -9,4 +9,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.rcp.viewer.stream
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.base
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.metadata

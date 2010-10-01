@@ -4,9 +4,9 @@ Bundle-Name: Norules
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.norules
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools;bundle-version="1.0.2"
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.logicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.predicate,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,

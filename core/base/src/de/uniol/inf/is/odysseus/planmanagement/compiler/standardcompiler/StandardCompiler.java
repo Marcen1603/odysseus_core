@@ -7,19 +7,19 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.IQueryParser;
-import de.uniol.inf.is.odysseus.base.IRewrite;
-import de.uniol.inf.is.odysseus.base.ITransformation;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
+import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.planmanagement.IRewrite;
+import de.uniol.inf.is.odysseus.planmanagement.ITransformation;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
@@ -150,7 +150,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider#getInfos()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
 	 */
 	@Override
 	public String getInfos() {
@@ -171,7 +171,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#translateQuery(java.lang.String, java.lang.String)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#translateQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public List<IQuery> translateQuery(String query,
@@ -186,7 +186,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#restructPlan(de.uniol.inf.is.odysseus.base.ILogicalOperator)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#restructPlan(de.uniol.inf.is.odysseus.ILogicalOperator)
 	 */
 	@Override
 	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan) {
@@ -194,7 +194,7 @@ public class StandardCompiler implements ICompiler {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#restructPlan(de.uniol.inf.is.odysseus.base.ILogicalOperator)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#restructPlan(de.uniol.inf.is.odysseus.ILogicalOperator)
 	 */
 	@Override
 	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan, Set<String> rulesToUse) {
@@ -202,7 +202,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.base.ILogicalOperator, de.uniol.inf.is.odysseus.base.TransformationConfiguration)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.ILogicalOperator, de.uniol.inf.is.odysseus.TransformationConfiguration)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -218,7 +218,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#getSupportedQueryParser()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#getSupportedQueryParser()
 	 */
 	@Override
 	public Set<String> getSupportedQueryParser() {

@@ -9,5 +9,5 @@ Import-Package: de.uniol.inf.is.odysseus.logicaloperator.builder,
  org.osgi.service.framework;version="1.0.0"
 Service-Component: OSGI-INF/component.xml
 Export-Package: de.uniol.inf.is.odysseus.parser.pql
-Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.Activator

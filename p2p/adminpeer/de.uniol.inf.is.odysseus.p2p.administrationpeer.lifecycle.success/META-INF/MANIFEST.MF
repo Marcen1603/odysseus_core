@@ -5,8 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.s
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.success.Activator
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.planmanagement,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.p2p.distribution.provider,
  de.uniol.inf.is.odysseus.p2p.gui,
  de.uniol.inf.is.odysseus.p2p.peer,

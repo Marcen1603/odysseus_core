@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.i
 import java.util.LinkedList;
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicScheduling;;
 
 /**

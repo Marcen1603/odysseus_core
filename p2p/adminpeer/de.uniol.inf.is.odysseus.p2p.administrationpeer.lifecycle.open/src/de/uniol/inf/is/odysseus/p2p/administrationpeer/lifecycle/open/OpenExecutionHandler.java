@@ -4,15 +4,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
+import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer, ICompiler> {
 
@@ -75,7 +75,7 @@ public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer,
 		super.setPeer(peer);
 		Method[] methods = peer.getClass().getMethods();
 		for(Method m : methods) {
-			if(m.getReturnType().toString().equals("interface de.uniol.inf.is.odysseus.base.planmanagement.ICompiler")) {
+			if(m.getReturnType().toString().equals("interface de.uniol.inf.is.odysseus.planmanagement.ICompiler")) {
 				try {
 					setFunction((ICompiler) m.invoke(peer,(Object[])null));
 					break;

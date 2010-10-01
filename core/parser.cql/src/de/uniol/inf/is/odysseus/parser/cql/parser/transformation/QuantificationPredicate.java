@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
-import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
+import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**

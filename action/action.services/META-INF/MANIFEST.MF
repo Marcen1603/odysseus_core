@@ -4,7 +4,7 @@ Bundle-Name: Action Services
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.services
 Bundle-Version: 1.0.1
 Bundle-Activator: de.uniol.inf.is.odysseus.action.services.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.apache.cxf.binding,

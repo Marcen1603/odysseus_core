@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class TestProducerAO extends AbstractLogicalOperator {

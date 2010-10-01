@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 
 abstract public class P2PAO extends UnaryLogicalOp {
 

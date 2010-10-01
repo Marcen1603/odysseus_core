@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * Holds context data for a plan migration. Used by {@link StandardOptimizer} to

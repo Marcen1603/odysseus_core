@@ -9,8 +9,8 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.AbstractAggregateFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -61,7 +61,7 @@ public class AggregationBean extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions
+	 * de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions
 	 * .IInitializer#init(java.lang.Object)
 	 */
 	@Override
@@ -136,9 +136,9 @@ public class AggregationBean extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions
+	 * de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions
 	 * .IMerger
-	 * #merge(de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions
+	 * #merge(de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions
 	 * .IPartialAggregate, java.lang.Object, boolean)
 	 */
 	@Override
@@ -213,9 +213,9 @@ public class AggregationBean extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions
+	 * de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions
 	 * .IEvaluator
-	 * #evaluate(de.uniol.inf.is.odysseus.physicaloperator.base.aggregate
+	 * #evaluate(de.uniol.inf.is.odysseus.physicaloperator.aggregate
 	 * .basefunctions.IPartialAggregate)
 	 */
 	@Override

@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.queryhandling;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 
 /**
  * 

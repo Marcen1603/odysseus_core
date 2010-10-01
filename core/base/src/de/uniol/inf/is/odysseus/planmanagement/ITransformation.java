@@ -1,0 +1,10 @@
+package de.uniol.inf.is.odysseus.planmanagement;
+
+import java.util.ArrayList;
+
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+
+public interface ITransformation {
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config) throws TransformationException;
+}

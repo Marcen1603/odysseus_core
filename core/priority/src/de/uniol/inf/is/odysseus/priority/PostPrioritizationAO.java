@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.priority;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PostPrioritizationAO extends UnaryLogicalOp {

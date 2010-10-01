@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.AggregatePO;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalTupleGroupingHelper;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

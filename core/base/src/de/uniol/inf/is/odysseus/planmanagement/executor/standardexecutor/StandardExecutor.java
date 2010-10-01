@@ -9,23 +9,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
+import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.AbstractExecutionSetting;
@@ -45,6 +37,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -99,7 +99,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider#getInfos()
+	 * de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
 	 */
 	@Override
 	public String getInfos() {
@@ -152,9 +152,9 @@ public class StandardExecutor extends AbstractExecutor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.configuration.
+	 * @seede.uniol.inf.is.odysseus.planmanagement.configuration.
 	 * IValueChangeListener
-	 * #settingChanged(de.uniol.inf.is.odysseus.base.planmanagement
+	 * #settingChanged(de.uniol.inf.is.odysseus.planmanagement
 	 * .configuration.IMapValue)
 	 */
 	@Override
@@ -415,7 +415,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(java
 	 * .lang.String, java.lang.String,
-	 * de.uniol.inf.is.odysseus.base.planmanagement
+	 * de.uniol.inf.is.odysseus.planmanagement
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
@@ -443,7 +443,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(java
 	 * .lang.String, java.lang.String, boolean
-	 * de.uniol.inf.is.odysseus.base.planmanagement
+	 * de.uniol.inf.is.odysseus.planmanagement
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
@@ -476,7 +476,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de
 	 * .uniol.inf.is.odysseus.base.ILogicalOperator,
-	 * de.uniol.inf.is.odysseus.base
+	 * de.uniol.inf.is.odysseus
 	 * .planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter
 	 * <?>[])
 	 */
@@ -507,7 +507,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de
 	 * .uniol.inf.is.odysseus.base.IPhysicalOperator,
-	 * de.uniol.inf.is.odysseus.base
+	 * de.uniol.inf.is.odysseus
 	 * .planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter
 	 * <?>[])
 	 */
@@ -697,8 +697,8 @@ public class StandardExecutor extends AbstractExecutor {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener
-	 * #reoptimize(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery)
+	 * de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener
+	 * #reoptimize(de.uniol.inf.is.odysseus.planmanagement.query.IQuery)
 	 */
 	@Override
 	public void reoptimize(IQuery sender) {
@@ -734,9 +734,9 @@ public class StandardExecutor extends AbstractExecutor {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener
+	 * de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener
 	 * #
-	 * reoptimizeRequest(de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan
+	 * reoptimizeRequest(de.uniol.inf.is.odysseus.planmanagement.plan.IPlan
 	 * )
 	 */
 	@Override

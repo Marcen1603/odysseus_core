@@ -3,6 +3,6 @@
    <property name="component.readableName" type="String" value="A4 Load Shedding Buffer Placement"/>
    <implementation class="de.uniol.inf.is.odysseus.loadshedding.bufferplacement.LoadSheddingBufferPlacement"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy"/>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy"/>
    </service>
 </scr:component>

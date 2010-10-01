@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class OperatorBuilderFactory {
 	private static Map<String, Class<? extends IOperatorBuilder>> operatorBuilders = new HashMap<String, Class<? extends IOperatorBuilder>>();

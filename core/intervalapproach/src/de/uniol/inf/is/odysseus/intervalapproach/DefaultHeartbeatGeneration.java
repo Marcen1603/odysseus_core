@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IHeartbeatGenerationStrategy;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.physicaloperator.IHeartbeatGenerationStrategy;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 
 public class DefaultHeartbeatGeneration<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> implements IHeartbeatGenerationStrategy<T>{
 

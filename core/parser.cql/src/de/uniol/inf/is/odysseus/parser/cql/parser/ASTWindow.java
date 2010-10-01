@@ -2,7 +2,7 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
 public abstract class ASTWindow extends SimpleNode {
 	public static enum Type {

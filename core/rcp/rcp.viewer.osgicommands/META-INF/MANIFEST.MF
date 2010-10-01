@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.rcp.exception,
@@ -20,5 +20,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.ui;bundle-version="3.5.1",
- de.uniol.inf.is.odysseus.base
+ de.uniol.inf.is.odysseus
 Service-Component: OSGI-INF/Executor.xml

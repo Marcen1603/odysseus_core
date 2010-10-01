@@ -10,19 +10,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ExceptionEventType;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
+import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
+import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ISettingChangeListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
@@ -37,6 +32,11 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoa
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
+import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
@@ -603,9 +603,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * de.uniol.inf.is.odysseus.event.error.IErrorEventHandler
 	 * #
-	 * addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.
+	 * addErrorEventListener(de.uniol.inf.is.odysseus.planmanagement.event.
 	 * error.IErrorEventListener)
 	 */
 	@Override
@@ -621,9 +621,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * de.uniol.inf.is.odysseus.event.error.IErrorEventHandler
 	 * #
-	 * removeErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event
+	 * removeErrorEventListener(de.uniol.inf.is.odysseus.planmanagement.event
 	 * .error.IErrorEventListener)
 	 */
 	@Override
@@ -637,8 +637,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener
-	 * #sendErrorEvent(de.uniol.inf.is.odysseus.base.planmanagement.event.error.
+	 * de.uniol.inf.is.odysseus.event.error.IErrorEventListener
+	 * #sendErrorEvent(de.uniol.inf.is.odysseus.event.error.
 	 * ErrorEvent)
 	 */
 	@Override

@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.IPublisher;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.meta.IMetadataChangeListener;
 

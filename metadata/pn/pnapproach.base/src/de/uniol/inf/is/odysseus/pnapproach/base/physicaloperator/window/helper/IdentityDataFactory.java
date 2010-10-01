@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.helper;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 
 /**
  * Diese Factory liefert das �bergebene Element zur�ck.

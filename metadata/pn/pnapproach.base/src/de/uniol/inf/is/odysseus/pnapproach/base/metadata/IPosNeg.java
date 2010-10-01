@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.pnapproach.base.metadata;
 import java.io.Serializable;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public interface IPosNeg extends IMetaAttribute, Comparable<IPosNeg>, Serializable{
 	

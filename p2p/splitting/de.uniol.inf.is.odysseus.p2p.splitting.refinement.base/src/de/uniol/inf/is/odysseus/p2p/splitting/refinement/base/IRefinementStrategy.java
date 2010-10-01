@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.p2p.splitting.refinement.base;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 
 public interface IRefinementStrategy {
 	public ArrayList<ILogicalOperator> refinePlan(ArrayList<ILogicalOperator> ao);

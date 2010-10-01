@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.util;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.ISubscribable;
-import de.uniol.inf.is.odysseus.base.ISubscriber;
-import de.uniol.inf.is.odysseus.base.ISubscription;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.ISubscribable;
+import de.uniol.inf.is.odysseus.ISubscriber;
+import de.uniol.inf.is.odysseus.ISubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 
 public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S, H>, H extends ISubscription<S>>{
 

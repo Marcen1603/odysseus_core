@@ -13,8 +13,8 @@ options {
 	import java.util.HashMap;
 	import java.util.Iterator;
 	
-	import de.uniol.inf.is.odysseus.base.DataDictionary;
-	import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+	import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+	import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 	import de.uniol.inf.is.odysseus.cep.CepAO;
 	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -30,7 +30,7 @@ options {
 	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalJEPOutputSchemeEntry;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
-	import de.uniol.inf.is.odysseus.base.usermanagement.User;
+	import de.uniol.inf.is.odysseus.usermanagement.User;
 	
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;

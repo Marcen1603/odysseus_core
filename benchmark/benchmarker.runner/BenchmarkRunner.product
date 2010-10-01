@@ -35,7 +35,7 @@
       <plugin id="de.uniol.inf.is.drools.osgi_rule_agent"/>
       <plugin id="de.uniol.inf.is.logicaloperator.builder"/>
       <plugin id="de.uniol.inf.is.odysseus.args"/>
-      <plugin id="de.uniol.inf.is.odysseus.base"/>
+      <plugin id="de.uniol.inf.is.odysseus"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.impl"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.runner"/>
@@ -126,7 +126,7 @@
    <configurations>
       <plugin id="de.uniol.inf.is.drools.osgi_rule_agent" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.args" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.base" autoStart="true" startLevel="0" />
+      <plugin id="de.uniol.inf.is.odysseus" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.benchmarker" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.impl" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.runner" autoStart="true" startLevel="0" />

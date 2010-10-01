@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction;
 
 /**
  * 

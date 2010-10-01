@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
+import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 
 public class DifferenceAOBuilder extends AbstractOperatorBuilder {
 

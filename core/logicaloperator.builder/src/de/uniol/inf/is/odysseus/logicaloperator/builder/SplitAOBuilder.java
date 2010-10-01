@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SplitAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.SplitAO;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 public class SplitAOBuilder extends AbstractOperatorBuilder {
 

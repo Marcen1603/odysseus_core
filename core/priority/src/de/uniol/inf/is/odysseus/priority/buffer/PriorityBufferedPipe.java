@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.priority.buffer;
 import java.util.Comparator;
 import java.util.ListIterator;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>

@@ -3,14 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Priorityscheduler
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.priorityscheduler
 Bundle-Version: 1.0.0
-Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement.optimization.plan,
  de.uniol.inf.is.odysseus.scheduler,
  de.uniol.inf.is.odysseus.scheduler.exception,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory
-Require-Bundle: de.uniol.inf.is.odysseus.base
+Require-Bundle: de.uniol.inf.is.odysseus
 Service-Component: OSGI-INF/simpledynamicpriorityscheduling.xml, OSGI-INF/staticpriorityscheduling.xml, OSGI-INF/staticpriorityplanscheduling.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.priorityscheduler
-

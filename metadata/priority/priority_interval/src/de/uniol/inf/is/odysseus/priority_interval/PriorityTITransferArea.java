@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.priority_interval;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 //interface should be K extends IPriority & ITimeInterval, but suns compiler (1.6) is buggy and doesn't accept it

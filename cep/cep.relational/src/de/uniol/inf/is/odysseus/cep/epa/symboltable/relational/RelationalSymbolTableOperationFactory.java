@@ -5,7 +5,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAvgSum;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalCount;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMinMax;

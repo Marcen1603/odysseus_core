@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.NoSuchElementException;
 
-import de.uniol.inf.is.odysseus.base.IClone;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class LinearRoadSource extends

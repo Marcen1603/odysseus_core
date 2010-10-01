@@ -5,8 +5,8 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 
 
 /**

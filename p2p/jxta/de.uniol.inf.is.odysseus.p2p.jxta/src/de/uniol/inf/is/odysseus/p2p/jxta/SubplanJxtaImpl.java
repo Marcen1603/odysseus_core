@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.jxta;
 
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 

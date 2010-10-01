@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.priority_interval;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.intervalapproach.IDummyDataCreationFunction;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class PriorityDataCreationFunction<K extends IMetaAttribute,T extends IMetaAttributeContainer<K>> implements IDummyDataCreationFunction<K,T>{

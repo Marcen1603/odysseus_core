@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * Defines an object which provides informations for global plan optimization.

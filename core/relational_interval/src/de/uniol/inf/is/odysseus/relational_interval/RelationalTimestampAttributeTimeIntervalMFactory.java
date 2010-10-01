@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.relational_interval;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
+import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**

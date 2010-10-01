@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.scheduler.manager;
 
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 
 /**

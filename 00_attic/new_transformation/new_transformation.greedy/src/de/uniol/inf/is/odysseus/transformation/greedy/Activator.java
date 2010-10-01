@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.transformation.greedy;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.AggregateAOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.JoinTIPOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.SelectAOTransformator;

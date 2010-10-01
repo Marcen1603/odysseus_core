@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.benchmark.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.logicaloperator.base.BufferAO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
+import de.uniol.inf.is.odysseus.logicaloperator.BufferAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.BufferedPipe;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.buffer.OutOfOrderBufferedPipe;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

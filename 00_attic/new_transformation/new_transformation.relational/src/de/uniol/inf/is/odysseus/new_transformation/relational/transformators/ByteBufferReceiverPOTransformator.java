@@ -1,17 +1,17 @@
 package de.uniol.inf.is.odysseus.new_transformation.relational.transformators;
 
 import java.io.IOException;
-import de.uniol.inf.is.odysseus.base.ITransformation;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
+import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.ByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.physicaloperator.access.ByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.planmanagement.ITransformation;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO.AccessPOMetadata;
 

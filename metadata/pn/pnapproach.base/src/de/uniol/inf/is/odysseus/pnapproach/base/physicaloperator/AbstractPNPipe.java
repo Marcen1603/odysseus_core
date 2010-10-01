@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POPortEvent;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;

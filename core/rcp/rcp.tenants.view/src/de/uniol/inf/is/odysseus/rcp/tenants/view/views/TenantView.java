@@ -16,15 +16,15 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.IPercentileConstraint;
-import de.uniol.inf.is.odysseus.base.usermanagement.IServiceLevelAgreement;
-import de.uniol.inf.is.odysseus.base.usermanagement.ITenantManagementListener;
-import de.uniol.inf.is.odysseus.base.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.base.usermanagement.Tenant;
-import de.uniol.inf.is.odysseus.base.usermanagement.TenantManagement;
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.rcp.tenants.view.Activator;
+import de.uniol.inf.is.odysseus.usermanagement.IPercentileConstraint;
+import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
+import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.Tenant;
+import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 
 public class TenantView extends ViewPart implements IUserManagementListener, ITenantManagementListener{

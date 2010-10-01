@@ -6,11 +6,11 @@ import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
-import de.uniol.inf.is.odysseus.base.IOperatorOwner;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 
 public class ConsoleFunctions {
 	

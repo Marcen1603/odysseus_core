@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
-import de.uniol.inf.is.odysseus.base.IEvent;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
+import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 
 /**
  * Collects memory usage for a given operator using SweepAreas.

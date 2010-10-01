@@ -4,13 +4,13 @@ Bundle-Name: Relational Priority Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.relational_priority;singleton:=true
 Bundle-Version: 1.0.1
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.metadata.base,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.metadata,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.priority,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
- de.uniol.inf.is.odysseus.physicaloperator.base.access,
- de.uniol.inf.is.odysseus.physicaloperator.base.event,
+ de.uniol.inf.is.odysseus.physicaloperator.access,
+ de.uniol.inf.is.odysseus.physicaloperator.event,
  de.uniol.inf.is.odysseus.priority_interval

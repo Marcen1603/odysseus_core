@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.predicate;
 
-import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
+import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 
 public class BeforePredicate extends AbstractPredicate<IMetaAttributeContainer<? extends IPosNeg>>{
 

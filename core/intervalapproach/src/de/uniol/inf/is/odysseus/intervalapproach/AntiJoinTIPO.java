@@ -4,18 +4,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.base.predicate.EqualsPredicate;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.predicate.EqualsPredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 ///**
 // * @author Jonas Jacobi
@@ -228,7 +228,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	//
 	// @Override
 	// public
-	// de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode
+	// de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode
 	// getOutputMode() {
 	// return OutputMode.INPUT;
 	// }
@@ -242,7 +242,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
+	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
 

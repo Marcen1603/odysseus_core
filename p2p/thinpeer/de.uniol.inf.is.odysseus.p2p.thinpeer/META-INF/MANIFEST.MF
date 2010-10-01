@@ -4,7 +4,7 @@ Bundle-Name: Thinpeer
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.thinpeer
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.thinpeer.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.gui,

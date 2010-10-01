@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.benchmark.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.benchmarker.impl.PrioIdJoinAO;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityIdHashSweepArea;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityTITransferArea;

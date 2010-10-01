@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public class TimeIntervalInlineMetadataMergeFunction implements
 		IInlineMetadataMergeFunction<ITimeInterval> {

@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.new_transformation.relational;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.AtomicDataInputStreamAccessPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.ByteBufferReceiverPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.FixedSetPOTransformator;

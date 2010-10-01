@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import de.uniol.inf.is.odysseus.base.IClone;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 
 public final class FixedSetPO<T extends IMetaAttributeContainer<? extends IClone>> extends

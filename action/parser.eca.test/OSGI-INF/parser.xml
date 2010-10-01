@@ -7,5 +7,5 @@
    <reference bind="bindConsole" cardinality="0..n" interface="org.eclipse.osgi.framework.console.CommandProvider" name="CommandProvider" policy="dynamic"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic"/>
    <reference bind="bindActuatorFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory" name="IActuatorFactory" policy="dynamic"/>
-   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.ICompiler" name="ICompiler" policy="dynamic"/>
+   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.ICompiler" name="ICompiler" policy="dynamic"/>
 </scr:component>

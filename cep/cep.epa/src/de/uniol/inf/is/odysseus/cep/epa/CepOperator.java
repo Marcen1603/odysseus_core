@@ -9,8 +9,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
@@ -24,11 +22,13 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IInputStreamSyncArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IProcessInternal;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IInputStreamSyncArea;
+import de.uniol.inf.is.odysseus.physicaloperator.IProcessInternal;
+import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 /**
  * Objekte dieser Klasse stellen die Grundkomponente fuer das Complex Event
@@ -374,7 +374,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 					for (CepVariable varName : entry.getVarNames()) {
 						Object value = getValue(-1, instance, varName);
-						entry.setValue(varName, value);
+						if (value != null){
+							entry.setValue(varName, value);
+						}else{
+							logger.warn("Variable "+varName+" has no value!");
+						}
 					}
 				}
 				complexEvents.add(this.complexEventFactory.createComplexEvent(

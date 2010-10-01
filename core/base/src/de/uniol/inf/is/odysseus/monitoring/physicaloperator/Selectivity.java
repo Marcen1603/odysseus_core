@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
-import de.uniol.inf.is.odysseus.base.IEvent;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POPortEvent;
 
 
 public abstract class Selectivity extends AbstractMonitoringData<Double>

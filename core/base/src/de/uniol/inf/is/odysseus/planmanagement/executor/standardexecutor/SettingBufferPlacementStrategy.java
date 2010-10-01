@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.AbstractExecutionSetting;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 

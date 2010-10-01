@@ -24,7 +24,7 @@ import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 
 @SuppressWarnings("unchecked")
 public class MessageTool {

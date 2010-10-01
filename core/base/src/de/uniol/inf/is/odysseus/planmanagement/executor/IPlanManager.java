@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 
 /**
  * IPlanManager bildet mit IPlanScheduling die Grundlage für die

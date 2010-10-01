@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.new_transformation.costmodel.base;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 
 public class TransformedPO {
 	private final ISource<?> source;

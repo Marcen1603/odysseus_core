@@ -3,10 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.running;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.base.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
+import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
@@ -14,6 +11,9 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPeer, IExecutor> {

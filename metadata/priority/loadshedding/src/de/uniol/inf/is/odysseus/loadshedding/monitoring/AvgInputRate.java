@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.loadshedding.monitoring;
 
-import de.uniol.inf.is.odysseus.base.IEvent;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.loadshedding.LoadManager;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 
 public class AvgInputRate implements
 		IPOEventListener {

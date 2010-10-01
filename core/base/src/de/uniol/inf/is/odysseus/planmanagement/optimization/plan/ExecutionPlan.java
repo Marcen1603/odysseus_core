@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 /**
  * EditableExecutionPlan is an object which is used to store an execution plan.
@@ -49,7 +49,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan#
+	 * @seede.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan#
 	 * getPartialPlans()
 	 */
 	@Override
@@ -61,7 +61,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan#getSources
+	 * de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan#getSources
 	 * ()
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
 	 * #setPartialPlans(java.util.List)
 	 */
 	@Override
@@ -84,7 +84,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
 	 * #setSources(java.util.List)
 	 */
 	@Override
@@ -96,7 +96,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
 	 * #open()
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
 	 * #close()
 	 */
 	@Override
@@ -147,9 +147,9 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan #
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan #
 	 * initWith
-	 * (de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan )
+	 * (de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan )
 	 */
 	@Override
 	public void initWith(IExecutionPlan newExecutionPlan) {

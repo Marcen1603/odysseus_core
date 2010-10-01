@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.IOperatorOwner;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 /**
  * A PartialPlan is a part of the global execution plan. It consist of root
@@ -91,7 +91,7 @@ public class PartialPlan implements IPartialPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan#
+	 * @seede.uniol.inf.is.odysseus.physicaloperator.plan.IPartialPlan#
 	 * getIterableSource()
 	 */
 	@Override
@@ -115,7 +115,7 @@ public class PartialPlan implements IPartialPlan {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan#getRoots
+	 * de.uniol.inf.is.odysseus.physicaloperator.plan.IPartialPlan#getRoots
 	 * ()
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class PartialPlan implements IPartialPlan {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan#getPriority
+	 * de.uniol.inf.is.odysseus.physicaloperator.plan.IPartialPlan#getPriority
 	 * ()
 	 */
 	@Override

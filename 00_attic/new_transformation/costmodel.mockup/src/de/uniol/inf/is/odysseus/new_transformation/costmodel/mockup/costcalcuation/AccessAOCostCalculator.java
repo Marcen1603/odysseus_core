@@ -11,8 +11,8 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.sail.nativerdf.model.NativeLiteral;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICost;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostCalculator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;

@@ -7,7 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.queryview.activator.Activa
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.base
+ de.uniol.inf.is.odysseus
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.planmanagement.executor,

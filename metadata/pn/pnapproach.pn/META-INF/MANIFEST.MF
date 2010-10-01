@@ -4,11 +4,11 @@ Bundle-Name: Pnapproach Plug-in
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.pnapproach.pn
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.pnapproach.pn.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.metadata.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.predicate,
+ de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.monitoring,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.pnapproach.base.metadata,
  de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator,
  de.uniol.inf.is.odysseus.pnapproach.base.sweeparea,

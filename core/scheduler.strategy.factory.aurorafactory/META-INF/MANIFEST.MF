@@ -3,11 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Aurorafactory
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory
 Bundle-Version: 1.0.1.qualifier
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.collection,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
- de.uniol.inf.is.odysseus.physicaloperator.base,
- de.uniol.inf.is.odysseus.physicaloperator.base.plan,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement.plan,
  de.uniol.inf.is.odysseus.scheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory,

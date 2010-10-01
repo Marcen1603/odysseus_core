@@ -2,11 +2,11 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.PriorityQueue;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder

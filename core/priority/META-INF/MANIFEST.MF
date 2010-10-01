@@ -3,15 +3,15 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Priority Plug-in
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.priority
 Bundle-Version: 1.0.1
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.predicate,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
- de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.monitoring,
- de.uniol.inf.is.odysseus.physicaloperator.base,
- de.uniol.inf.is.odysseus.physicaloperator.base.event,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.event,
  de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement,
  de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
@@ -22,4 +22,4 @@ Export-Package: de.uniol.inf.is.odysseus.priority,
  de.uniol.inf.is.odysseus.priority.buffer
 Bundle-Activator: de.uniol.inf.is.odysseus.priority.Activator
 Service-Component: OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/weakorderbufferplacement.xml, OSGI-INF/strongorderbufferplacement.xml
-Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"

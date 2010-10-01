@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
 /**

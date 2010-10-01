@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class TestproducerPO extends

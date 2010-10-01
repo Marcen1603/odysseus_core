@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;

@@ -3,13 +3,15 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Chainfactory
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.collection,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
- de.uniol.inf.is.odysseus.physicaloperator.base,
- de.uniol.inf.is.odysseus.physicaloperator.base.plan,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement.plan,
  de.uniol.inf.is.odysseus.scheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory,
  org.osgi.service.component
 Service-Component: OSGI-INF/ChainIterFactory.xml, OSGI-INF/ChainNoIterFactory.xml
+Require-Bundle: de.uniol.inf.is.odysseus

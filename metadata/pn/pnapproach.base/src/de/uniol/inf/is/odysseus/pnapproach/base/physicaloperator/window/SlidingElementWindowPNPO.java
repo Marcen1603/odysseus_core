@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.IWindow;
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.planmanagement.IWindow;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
 public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>>

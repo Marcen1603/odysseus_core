@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.query.impl;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
 public class MySink extends AbstractSink<Object> {
 

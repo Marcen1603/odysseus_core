@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.helper;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 /** Allgemeine Klasse fuer Fensterberechnungen. 
  * @author Marco Grawunder

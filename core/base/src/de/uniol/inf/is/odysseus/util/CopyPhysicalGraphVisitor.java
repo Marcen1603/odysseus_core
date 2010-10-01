@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.util;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 
 public class CopyPhysicalGraphVisitor<T extends IPhysicalOperator> implements IGraphNodeVisitor<T,T> {
 

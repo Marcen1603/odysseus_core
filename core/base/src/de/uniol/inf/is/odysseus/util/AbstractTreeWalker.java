@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.util;
 
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.ISubscriber;
-import de.uniol.inf.is.odysseus.base.ISubscription;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.ISubscriber;
+import de.uniol.inf.is.odysseus.ISubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 
 /**
  * @deprecated Should not be used any more. We have

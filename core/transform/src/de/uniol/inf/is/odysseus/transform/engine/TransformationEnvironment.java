@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.transform.engine;
 
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.ruleengine.system.AbstractWorkingEnvironment;
 

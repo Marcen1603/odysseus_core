@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.scheduler;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 /**
  * IScheduler describes a scheduler for scheduling physical plans. A scheduler

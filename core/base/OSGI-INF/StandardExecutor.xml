@@ -4,7 +4,7 @@
    <service>
        <provide interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor"/>
    </service>
-   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
+   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
    <reference bind="bindSchedulerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager" name="ISchedulerManager" policy="dynamic" unbind="unbindSchedulerManager"/>
    <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>
    <reference bind="bindSystemMonitorFactory" cardinality="0..1" interface="de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory" name="ISystemMonitorFactory" policy="dynamic" unbind="unbindSystemMonitorFactory"/>

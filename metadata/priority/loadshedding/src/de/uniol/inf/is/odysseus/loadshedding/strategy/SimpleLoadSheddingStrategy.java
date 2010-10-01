@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBuffer;
 import de.uniol.inf.is.odysseus.loadshedding.ILoadSheddingStrategy;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
 	

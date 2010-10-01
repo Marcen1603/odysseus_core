@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.relational.rewrite.InitPredicateFunctor;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;

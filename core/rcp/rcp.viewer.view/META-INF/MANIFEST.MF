@@ -7,12 +7,13 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.planmanagement.plan,
- de.uniol.inf.is.odysseus.base.planmanagement.query,
+Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.monitoring,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.plan,
+ de.uniol.inf.is.odysseus.planmanagement.query,
  de.uniol.inf.is.odysseus.rcp.viewer.model.create,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.model.meta,

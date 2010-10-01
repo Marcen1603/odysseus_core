@@ -9,10 +9,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ExceptionEventType;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
+import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.AbstractScheduler;
 import de.uniol.inf.is.odysseus.scheduler.exception.SchedulingException;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;

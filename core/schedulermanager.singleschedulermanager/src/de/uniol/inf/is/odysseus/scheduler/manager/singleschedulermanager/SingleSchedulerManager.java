@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager;
 
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.scheduler.manager.AbstractSchedulerManager;
@@ -98,7 +98,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider#getInfos()
+	 * de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
 	 */
 	@Override
 	public String getInfos() {

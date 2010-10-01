@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.graph;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
 
 public interface IOdysseusNodeView extends INodeView<IPhysicalOperator> {

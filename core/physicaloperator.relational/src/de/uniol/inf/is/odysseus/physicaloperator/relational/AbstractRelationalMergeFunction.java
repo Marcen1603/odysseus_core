@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public abstract class AbstractRelationalMergeFunction<T extends RelationalTuple<M>, M extends IMetaAttribute> implements IDataMergeFunction<T> {

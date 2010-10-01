@@ -4,16 +4,17 @@ Bundle-Name: Jxta
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta
 Bundle-Version: 1.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.p2p.operatorpeer;bundle-version="1.0.0"
-Import-Package: de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.base.usermanagement,
- de.uniol.inf.is.odysseus.logicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus.event,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
  de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
  de.uniol.inf.is.odysseus.p2p.jxta.utils,
  de.uniol.inf.is.odysseus.p2p.queryhandling,
  de.uniol.inf.is.odysseus.parser.cql.parser.transformation,
+ de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.predicate,
+ de.uniol.inf.is.odysseus.usermanagement,
  net.jxta.discovery,
  net.jxta.document,
  net.jxta.endpoint,

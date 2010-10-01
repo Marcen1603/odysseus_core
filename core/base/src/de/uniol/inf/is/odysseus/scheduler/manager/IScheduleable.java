@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.manager;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 
 /**
  * Describes an object which provides informations that are relevant for the

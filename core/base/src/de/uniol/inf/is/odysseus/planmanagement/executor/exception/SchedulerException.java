@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.exception;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 
 /**
  * SchedulerException stellt einen Fehler bezogen auf das Scheduling dar.

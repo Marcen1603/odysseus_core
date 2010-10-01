@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.priority;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PriorityAO<T> extends UnaryLogicalOp {

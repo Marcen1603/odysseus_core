@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodif
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * MultiQueryPlanModificationEvent is an event that occurs during modification of

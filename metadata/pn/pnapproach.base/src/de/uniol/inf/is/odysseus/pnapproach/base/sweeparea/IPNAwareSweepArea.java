@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.sweeparea;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 
 /**
  * Die IPNAwareSweepArea bietet zusaetzlich zu den Methoden der {@link ITemporalSweepArea}

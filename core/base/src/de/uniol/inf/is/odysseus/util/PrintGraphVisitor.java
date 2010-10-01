@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.util;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.Pair;
+import de.uniol.inf.is.odysseus.collection.Pair;
 
 public class PrintGraphVisitor<T> implements IGraphNodeVisitor<T,String>{
 

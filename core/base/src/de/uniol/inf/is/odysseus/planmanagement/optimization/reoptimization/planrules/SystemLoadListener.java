@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.AbstractPlanReoptimizeRule;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorListener;
+import de.uniol.inf.is.odysseus.planmanagement.plan.AbstractPlanReoptimizeRule;
 
 /**
  * Default implementation of {@link ISystemMonitorListener}.

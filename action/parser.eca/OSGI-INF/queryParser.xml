@@ -2,8 +2,8 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.parser.eca.ecaParser">
    <implementation class="de.uniol.inf.is.odysseus.parser.eca.ECAParser"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.base.IQueryParser"/>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.IQueryParser"/>
    </service>
-   <reference bind="bindCompiler" cardinality="0..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.ICompiler" name="ICompiler" policy="dynamic"/>
+   <reference bind="bindCompiler" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.ICompiler" name="ICompiler" policy="dynamic"/>
    <reference bind="bindActuatorFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory" name="IActuatorFactory" policy="dynamic"/>
 </scr:component>

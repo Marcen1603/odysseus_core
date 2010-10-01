@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.Count;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.CountPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.Count;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.CountPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalCount extends Count<RelationalTuple<?>> {

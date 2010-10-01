@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: No Splitting Strategy
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.splitting.nosplitting
 Bundle-Version: 1.0.0
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.logicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.utils,

@@ -3,15 +3,15 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
-import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
+import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * Defines an object which provides optimization methods. IOptimizer is the base

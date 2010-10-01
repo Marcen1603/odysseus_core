@@ -16,7 +16,7 @@ import net.jxta.protocol.PipeAdvertisement;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
+import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;

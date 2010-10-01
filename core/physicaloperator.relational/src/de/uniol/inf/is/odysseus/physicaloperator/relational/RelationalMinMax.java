@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.MinMax;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.MinMax;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalMinMax extends MinMax<RelationalTuple<?>> {

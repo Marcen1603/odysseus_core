@@ -2,7 +2,7 @@
 //
 //import java.util.ArrayList;
 //
-//import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+//import de.uniol.inf.is.odysseus.predicate.IPredicate;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;

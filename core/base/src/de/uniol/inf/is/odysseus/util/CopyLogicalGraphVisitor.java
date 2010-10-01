@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.util;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 
 public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements IGraphNodeVisitor<T,T> {
 

@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.util;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 public class GraphHelper {
 

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.extension;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 
 public interface IStreamElementListener<In> {

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.pnapproach.pn.physicaloperator.relational.join.helper;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.PosNeg;

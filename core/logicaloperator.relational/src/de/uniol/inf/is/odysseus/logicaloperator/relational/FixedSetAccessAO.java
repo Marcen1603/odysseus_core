@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.logicaloperator.relational;
 
 import java.util.Arrays;
 
-import de.uniol.inf.is.odysseus.base.IClone;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 
 public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone>> extends AccessAO {

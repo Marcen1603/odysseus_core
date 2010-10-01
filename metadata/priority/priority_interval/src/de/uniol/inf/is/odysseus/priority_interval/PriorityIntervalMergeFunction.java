@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.priority_interval;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class PriorityIntervalMergeFunction implements

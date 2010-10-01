@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.dbIntegration.operators;
 
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class DBManipulateAO extends UnaryLogicalOp {

@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.extension;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 
 
 

@@ -3,10 +3,10 @@ import java.util.Collection;
 
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.RestructHelper;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

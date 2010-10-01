@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.map.MultiValueMap;
 
-import de.uniol.inf.is.odysseus.base.Pair;
+import de.uniol.inf.is.odysseus.collection.Pair;
 
 public class LinkedMultiHashMap<K, V> implements Map<K, Collection<V>> {
 

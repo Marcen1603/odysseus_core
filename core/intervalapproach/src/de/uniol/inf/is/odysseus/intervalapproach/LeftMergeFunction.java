@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import de.uniol.inf.is.odysseus.base.IClone;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class LeftMergeFunction<T extends IClone> implements  IDataMergeFunction<T>{

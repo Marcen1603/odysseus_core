@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate">
    <implementation class="de.uniol.inf.is.odysseus.rewrite.drools.DroolsRewrite"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.base.IRewrite"/>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.IRewrite"/>
    </service>
 </scr:component>

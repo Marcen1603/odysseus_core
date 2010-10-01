@@ -6,7 +6,7 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener;
 //import java.util.Set;
 
 //import net.jxta.endpoint.Message;
-//import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 //import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IHotPeerListener;
 //import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;

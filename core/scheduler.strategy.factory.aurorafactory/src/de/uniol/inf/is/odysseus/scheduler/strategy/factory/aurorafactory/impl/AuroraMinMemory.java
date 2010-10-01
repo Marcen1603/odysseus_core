@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 public class AuroraMinMemory extends AbstractExecListScheduling {
 

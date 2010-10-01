@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
  * @author Jonas Jacobi

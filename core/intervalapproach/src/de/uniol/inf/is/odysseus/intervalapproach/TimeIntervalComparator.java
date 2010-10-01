@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Comparator;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 
 /**
  * This comparator compares two {@link ITimeInterval} objects.

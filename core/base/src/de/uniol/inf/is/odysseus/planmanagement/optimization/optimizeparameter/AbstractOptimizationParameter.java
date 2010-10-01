@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.IMapValue;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IMapValue;
 
 /**
  * AbstractOptimizationParameter is the base class for all optimization parameter.
@@ -37,7 +37,7 @@ public abstract class AbstractOptimizationParameter<E> implements IMapValue<E> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.configuration.IMapValue#getValue()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.configuration.IMapValue#getValue()
 	 */
 	@Override
 	public E getValue() {

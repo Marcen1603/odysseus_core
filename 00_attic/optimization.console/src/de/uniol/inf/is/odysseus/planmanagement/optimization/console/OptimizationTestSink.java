@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.console;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class OptimizationTestSink extends AbstractSink<Object> {

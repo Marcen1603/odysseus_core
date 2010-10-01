@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.priority;
 
-import de.uniol.inf.is.odysseus.metadata.base.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IInlineMetadataMergeFunction;
 
 /**
  * @author Jonas Jacobi

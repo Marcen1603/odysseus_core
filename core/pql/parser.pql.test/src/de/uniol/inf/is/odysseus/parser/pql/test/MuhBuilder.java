@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.parser.pql.test;
 import java.util.Collections;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 

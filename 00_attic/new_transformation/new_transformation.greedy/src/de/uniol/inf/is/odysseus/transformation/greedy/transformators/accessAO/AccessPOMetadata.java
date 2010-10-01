@@ -2,12 +2,12 @@ package de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 
 public class AccessPOMetadata {
 	public static MetadataCreationPO createMetadata(ISource<?> accessPO, TransformationConfiguration config) {

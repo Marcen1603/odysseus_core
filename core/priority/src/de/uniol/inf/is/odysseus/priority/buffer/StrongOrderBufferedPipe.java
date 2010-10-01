@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.priority.buffer;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>

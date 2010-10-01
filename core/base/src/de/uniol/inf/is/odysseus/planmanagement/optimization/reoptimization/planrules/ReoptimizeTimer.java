@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.plan
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.AbstractPlanReoptimizeRule;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.AbstractPlanReoptimizeRule;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 
 /**
  * ReoptimizeTimer is a reoptimze rule. After a defined time an reoptimize

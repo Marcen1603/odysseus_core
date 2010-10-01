@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.exception;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 
 /**
  * QueryOptimizationException describes an {@link Exception} which occurs during

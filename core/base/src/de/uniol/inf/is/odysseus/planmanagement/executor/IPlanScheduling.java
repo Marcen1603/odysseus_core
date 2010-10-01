@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionHandler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 
 /**
  * IPlanScheduling beschreibt die Möglichkeit das Scheduling innerhalb von

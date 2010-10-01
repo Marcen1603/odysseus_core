@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.priority_interval;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IPriority>> implements IPredicate<T> {

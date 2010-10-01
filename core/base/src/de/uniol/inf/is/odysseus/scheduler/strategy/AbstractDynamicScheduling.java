@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.scheduler.strategy;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 abstract public class AbstractDynamicScheduling extends
 		AbstractScheduling {

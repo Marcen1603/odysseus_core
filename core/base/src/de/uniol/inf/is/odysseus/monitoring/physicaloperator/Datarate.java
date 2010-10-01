@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
-import de.uniol.inf.is.odysseus.base.IEvent;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.monitoring.AbstractPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.ISubscriber;
 import de.uniol.inf.is.odysseus.monitoring.MonitoringDataScheduler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 
 public class Datarate extends AbstractPeriodicalMonitoringData<Double> implements IPOEventListener {
 

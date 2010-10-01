@@ -37,7 +37,7 @@
                   ifEmpty="false"
                   operator="or">
                <instanceof
-                     value="de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery">
+                     value="de.uniol.inf.is.odysseus.planmanagement.query.IQuery">
                </instanceof>
             </iterate>
          </with>

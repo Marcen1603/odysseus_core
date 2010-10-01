@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 
 /**
  * @author Jonas Jacobi

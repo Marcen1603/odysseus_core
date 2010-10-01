@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 
 /**
  * PlanModificationEvent is an event that occurs during modification of

@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standarde
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingTimeWindowTIPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.ByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.physicaloperator.access.ByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.ICostCalculator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel;

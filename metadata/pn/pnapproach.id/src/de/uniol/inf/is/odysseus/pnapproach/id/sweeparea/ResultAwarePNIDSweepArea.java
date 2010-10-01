@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.pnapproach.id.sweeparea;
 
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 

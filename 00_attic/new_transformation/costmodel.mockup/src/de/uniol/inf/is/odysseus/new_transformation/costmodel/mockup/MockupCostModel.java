@@ -7,8 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.TransformationException;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICost;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostCalculator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostModel;
@@ -16,6 +15,7 @@ import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransforma
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.costcalcuation.AccessAOCostCalculator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.costcalcuation.JoinAOCostCalculator;
 import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 
 /**
  * This class represents a mockup implementation of the {@link ICostModel} of

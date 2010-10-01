@@ -2,7 +2,7 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
-import de.uniol.inf.is.odysseus.base.AggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
 public class ASTAggregateExpression extends SimpleNode {
 	public ASTAggregateExpression(int id) {

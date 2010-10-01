@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.user;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class ActiveUser {
 

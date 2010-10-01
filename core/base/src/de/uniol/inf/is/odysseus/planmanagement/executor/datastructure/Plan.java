@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.AbstractPlanReoptimizeRule;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.plan.AbstractPlanReoptimizeRule;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 
 /**
  * Plan represents a map of all registered queries. 
@@ -44,7 +44,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#addQuery(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#addQuery(de.uniol.inf.is.odysseus.planmanagement.query.IQuery)
 	 */
 	@Override
 	public synchronized boolean addQuery(IQuery query) {
@@ -58,7 +58,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#removeQuery(int)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#removeQuery(int)
 	 */
 	@Override
 	public synchronized Query removeQuery(int queryID) {
@@ -66,7 +66,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#getQuery(int)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getQuery(int)
 	 */
 	@Override
 	public synchronized Query getQuery(int queryID) {
@@ -74,7 +74,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#getQueries()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getQueries()
 	 */
 	@Override
 	public synchronized ArrayList<IQuery> getQueries() {
@@ -82,7 +82,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester#reoptimize()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#reoptimize()
 	 */
 	@Override
 	public void reoptimize() {
@@ -92,7 +92,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeHandler#addReoptimizeListener(java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler#addReoptimizeListener(java.lang.Object)
 	 */
 	@Override
 	public void addReoptimizeListener(
@@ -105,7 +105,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeHandler#removeReoptimizeListener(java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler#removeReoptimizeListener(java.lang.Object)
 	 */
 	@Override
 	public void removeReoptimizeListener(
@@ -116,7 +116,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester#addReoptimzeRule(de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRule)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#addReoptimzeRule(de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule)
 	 */
 	@Override
 	public void addReoptimzeRule(AbstractPlanReoptimizeRule reoptimizeRule) {
@@ -129,7 +129,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester#removeReoptimzeRule(de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRule)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#removeReoptimzeRule(de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule)
 	 */
 	@Override
 	public void removeReoptimzeRule(AbstractPlanReoptimizeRule reoptimizeRule) {
@@ -140,7 +140,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#getEdittableQueries()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getEdittableQueries()
 	 */
 	@Override
 	public ArrayList<IQuery> getEdittableQueries() {
@@ -148,7 +148,7 @@ public class Plan implements IPlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#getRoots()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getRoots()
 	 */
 	@Override
 	public ArrayList<IPhysicalOperator> getRoots() {

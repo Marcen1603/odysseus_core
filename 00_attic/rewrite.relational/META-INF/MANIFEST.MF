@@ -4,9 +4,9 @@ Bundle-Name: Relational
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.relational;singleton:=true
 Bundle-Version: 1.0.9
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.logicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.predicate,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,

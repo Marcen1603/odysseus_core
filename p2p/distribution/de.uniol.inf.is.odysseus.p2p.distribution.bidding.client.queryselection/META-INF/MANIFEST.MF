@@ -4,8 +4,9 @@ Bundle-Name: Queryselection
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.queryselection
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.queryselection.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.logicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection,
  de.uniol.inf.is.odysseus.p2p.logicaloperator,
  de.uniol.inf.is.odysseus.p2p.peer,

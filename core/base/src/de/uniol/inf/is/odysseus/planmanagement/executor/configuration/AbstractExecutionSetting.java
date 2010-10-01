@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.configuration;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.IMapValue;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IMapValue;
 
 /**
  * AbstractExecutionSetting is the base class for all execution settings.
@@ -37,7 +37,7 @@ public abstract class AbstractExecutionSetting<E> implements IMapValue<E> {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.configuration.IMapValue#getValue()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.configuration.IMapValue#getValue()
 	 */
 	@Override
 	public E getValue() {

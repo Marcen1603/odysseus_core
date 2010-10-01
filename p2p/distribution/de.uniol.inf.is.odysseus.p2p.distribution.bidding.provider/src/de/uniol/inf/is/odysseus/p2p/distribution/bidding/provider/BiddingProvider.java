@@ -14,7 +14,7 @@ import net.jxta.protocol.PipeAdvertisement;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
 
-//import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
+//import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;

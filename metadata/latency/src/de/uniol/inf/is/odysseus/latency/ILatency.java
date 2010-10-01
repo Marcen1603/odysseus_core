@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.latency;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 
 public interface ILatency extends IMetaAttribute{
 	public void setLatencyStart(long timestamp);
