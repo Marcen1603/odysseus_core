@@ -19,6 +19,10 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TBenchmarkOutofOrderBufferRule());
 		rules.add(new TBenchmarkStrongOrderBufferRule());
 		rules.add(new TTestProducerAORule());
+		rules.add(new TBenchmarkPrioIdJoinAORule());
+		rules.add(new TBenchmarkAOExtRule());
+		rules.add(new TBenchmarkBufferAOToPuncPipeRule());
+		rules.add(new TBenchmarkBufferAOToPuncPipe2Rule());
 		return rules;
 	}
 
