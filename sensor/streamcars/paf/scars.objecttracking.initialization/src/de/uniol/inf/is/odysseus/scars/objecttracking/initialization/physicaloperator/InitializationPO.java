@@ -3,16 +3,16 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.initialization.physicalope
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.base.ISubscription;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.ISubscription;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.AbstractInitializationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
@@ -74,7 +74,7 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
+	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 	  return OutputMode.NEW_ELEMENT;
 	}
 	

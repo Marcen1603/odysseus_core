@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperato
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

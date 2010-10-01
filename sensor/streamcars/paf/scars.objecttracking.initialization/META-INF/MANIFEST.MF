@@ -4,13 +4,13 @@ Bundle-Name: Initialization
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.initialization
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.objecttracking.initialization.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.metadata.base,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.predicate,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
- de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.scars.objecttracking.filter,
  de.uniol.inf.is.odysseus.scars.objecttracking.metadata,

@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.initialization.logicaloper
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -46,7 +46,7 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator#clone()
+	 * @see de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#clone()
 	 */
 	@Override
 	public AbstractLogicalOperator clone() {
@@ -54,7 +54,7 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.ILogicalOperator#getOutputSchema()
+	 * @see de.uniol.inf.is.odysseus.ILogicalOperator#getOutputSchema()
 	 */
 	@Override
 	public SDFAttributeList getOutputSchema() {
