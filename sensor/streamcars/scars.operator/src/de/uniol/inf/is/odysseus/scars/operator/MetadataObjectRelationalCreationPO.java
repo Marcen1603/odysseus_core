@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.scars.operator;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 
 public class MetadataObjectRelationalCreationPO<M extends IProbability> extends MetadataCreationPO<M, MVRelationalTuple<M>> {
+
+	private static final long serialVersionUID = 1L;
 
 	public MetadataObjectRelationalCreationPO(Class<M> type) {
 		super(type);
@@ -15,6 +17,7 @@ public class MetadataObjectRelationalCreationPO<M extends IProbability> extends 
 		super(po);
 	}
 	
+	@Override
 	public void process_next(MVRelationalTuple<M> object, int port) {
 		try {
 			assignMetadata(object);
