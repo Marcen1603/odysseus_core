@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.commands.OperatorDeleteCommand;
 
 public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeEditPart, PropertyChangeListener {
 
+	private static final String ERROR_PREFIX = "- ";
+	
 	private ConnectionAnchor anchor;
 
 	public OperatorEditPart(Operator op) {
@@ -123,9 +125,16 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	
 	protected String getErrorText(List<Exception> errors) {
 		StringBuilder sb = new StringBuilder();
-		for( Exception ex : errors) {
+		if( !errors.isEmpty() )
+			sb.append(ERROR_PREFIX);
+		
+		for( int i = 0; i < errors.size(); i++) {
+			Exception ex = errors.get(i);
+			
+			if( i != 0 ) 
+				sb.append("\n");
+			
 			sb.append(ex.getMessage());
-			sb.append("\n");
 		}
 		return sb.toString();
 	}

@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorPlanEditPart;
 
 public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener {
 
+	private static final String ERROR_PREFIX = "- ";
+	
 	private Composite parent;
 	private Composite mainContainer;
 	private Composite optionalContainer;
@@ -186,7 +188,7 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 				Label label = new Label( errorContainer, SWT.WRAP);
 				label.setLayoutData(new GridData(GridData.FILL_BOTH));
 				label.setForeground(ColorConstants.red);
-				label.setText(ex.getMessage());
+				label.setText(ERROR_PREFIX + ex.getMessage());
 			}
 		}
 	}
