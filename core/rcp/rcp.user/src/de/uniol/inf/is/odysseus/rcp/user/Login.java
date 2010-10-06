@@ -32,6 +32,7 @@ public class Login {
 						return;
 					}
 				} catch( RuntimeException ex ) {
+					ex.printStackTrace();
 					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.YES | SWT.NO);
 				    box.setMessage("An error occured during validating the user.\n" +
 				    				"Probably the user-store is corrupted. Should the user-store\n" +
