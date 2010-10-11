@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,6 +18,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDbTable;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
@@ -24,6 +26,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -114,23 +117,23 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 
 		operator = addTimestampAO(operator);
-		
+
 		DataDictionary.getInstance().setView(name, operator, user);
 		return null;
 	}
 
 	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
 		TimestampAO timestampAO = new TimestampAO();
-		for(SDFAttribute attr : this.attributes) {
-			if (attr.getDatatype().getURI().equals("StartTimestamp")){
+		for (SDFAttribute attr : this.attributes) {
+			if (attr.getDatatype().getURI().equals("StartTimestamp")) {
 				timestampAO.setStartTimestamp(attr);
 			}
-			
-			if (attr.getDatatype().getURI().equals("EndTimestamp")){
+
+			if (attr.getDatatype().getURI().equals("EndTimestamp")) {
 				timestampAO.setEndTimestamp(attr);
 			}
 		}
-		
+
 		timestampAO.subscribeTo(operator, operator.getOutputSchema());
 		return timestampAO;
 	}
@@ -138,9 +141,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTAttributeDefinitions node, Object data) {
 		node.childrenAccept(this, data);
-		//check attributes for consistency
+		// check attributes for consistency
 		boolean hasEndTimestamp = false, hasStartTimestamp = false;
-		for(SDFAttribute attr : this.attributes) {
+		for (SDFAttribute attr : this.attributes) {
 			if (attr.getDatatype().equals("StartTimestamp")) {
 				if (hasStartTimestamp) {
 					throw new RuntimeException("multiple definitions of StartTimestamp attribute not allowed");
@@ -154,7 +157,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				hasEndTimestamp = true;
 			}
 			if (Collections.frequency(this.attributes, attr) > 1) {
-				throw new RuntimeException("ambiguous attribute definition: " + attr.toString()); 
+				throw new RuntimeException("ambiguous attribute definition: " + attr.toString());
 			}
 		}
 		return null;
@@ -221,5 +224,22 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
 		v.setUser(user);
 		return v.visit(node, data, this);
+	}
+
+	public Object visit(ASTDbTable node, Object data) {		
+		try {
+			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.FromTableVisitor");
+			Object v = visitor.newInstance();
+			Method m = visitor.getDeclaredMethod("setUser", User.class);
+			m.invoke(v, user);
+			m = visitor.getDeclaredMethod("visit", ASTDbTable.class, Object.class);
+			ISource<?> ao = (ISource<?>) m.invoke(v, node, data);
+			ao.setOutputSchema(this.attributes);
+			return ao;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Storing plugin is missing in CQL parser.", e.getCause());
+		} catch (Exception e) {
+			throw new RuntimeException("Error while parsing the DBTable clause", e.getCause());
+		}
 	}
 }

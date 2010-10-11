@@ -67,14 +67,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return "CQL";
 	}
 
-	public synchronized List<IQuery> parse(String query, User user)
-			throws QueryParseException {
+	public synchronized List<IQuery> parse(String query, User user) throws QueryParseException {
 		this.caller = user;
 		return parse(new StringReader(query), user);
 	}
 
-	public synchronized List<IQuery> parse(Reader reader, User user)
-			throws QueryParseException {
+	public synchronized List<IQuery> parse(Reader reader, User user) throws QueryParseException {
 		this.caller = user;
 		try {
 			if (parser == null) {
@@ -88,9 +86,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			cqlParser.visit(statement, null);
 			return cqlParser.plans;
 		} catch (NoClassDefFoundError e) {
-			throw new QueryParseException(
-					"parse error: missing plugin for language feature",
-					e.getCause());
+			throw new QueryParseException("parse error: missing plugin for language feature", e.getCause());
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
@@ -109,38 +105,29 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		Integer priority = 0;
 		if (node.jjtGetChild(0) instanceof ASTDBExecuteStatement) {
 			try {
-				Class<?> dbClass = Class
-						.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
-				IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
-						.newInstance();
+				Class<?> dbClass = Class.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
+				IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass.newInstance();
 
-				op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(
-						dbVisitor, data);
-				AbstractLogicalOperator dsOp = (AbstractLogicalOperator) node
-						.jjtGetChild(1).jjtAccept(this, data);
+				op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(dbVisitor, data);
+				AbstractLogicalOperator dsOp = (AbstractLogicalOperator) node.jjtGetChild(1).jjtAccept(this, data);
 				// op.setInputAO(0, dsOp);
 				op.subscribeToSource(dsOp, 0, 0, dsOp.getOutputSchema());
 				// hat nun 3 statt 2 kinder
 				if (node.jjtGetNumChildren() == 3) {
-					priority = (Integer) node.jjtGetChild(2).jjtAccept(this,
-							data);
+					priority = (Integer) node.jjtGetChild(2).jjtAccept(this, data);
 				}
 			} catch (Exception e) {
-				throw new RuntimeException(
-						"missing database plugin for cql parser");
+				throw new RuntimeException("missing database plugin for cql parser");
 			}
 
 		} else {
-			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this,
-					data);
+			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
 			if (node.jjtGetNumChildren() == 2) {
 				if (node.jjtGetChild(1) instanceof ASTPriority) {
-					priority = (Integer) node.jjtGetChild(1).jjtAccept(this,
-							data);
+					priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
 				} else {
 					if (node.jjtGetChild(1) instanceof ASTMetric) {
-						op = (AbstractLogicalOperator) node.jjtGetChild(1)
-								.jjtAccept(this, op);
+						op = (AbstractLogicalOperator) node.jjtGetChild(1).jjtAccept(this, op);
 					}
 				}
 			}
@@ -159,10 +146,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		if (node.jjtGetNumChildren() == 1) {
 			return node.jjtGetChild(0).jjtAccept(this, data);
 		}
-		AbstractLogicalOperator left = (AbstractLogicalOperator) node
-				.jjtGetChild(0).jjtAccept(this, data);
-		AbstractLogicalOperator right = (AbstractLogicalOperator) node
-				.jjtGetChild(2).jjtAccept(this, data);
+		AbstractLogicalOperator left = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
+		AbstractLogicalOperator right = (AbstractLogicalOperator) node.jjtGetChild(2).jjtAccept(this, data);
 		ILogicalOperator setOperator = null;
 		switch (((ASTSetOperator) node.jjtGetChild(1)).getOperation()) {
 		case INTERSECT:
@@ -176,8 +161,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			break;
 		}
 		if (left.getOutputSchema().size() != right.getOutputSchema().size()) {
-			throw new IllegalArgumentException(
-					"inputs of set operator have different schemas");
+			throw new IllegalArgumentException("inputs of set operator have different schemas");
 		}
 		Iterator<SDFAttribute> iLeft = left.getOutputSchema().iterator();
 		Iterator<SDFAttribute> iRight = right.getOutputSchema().iterator();
@@ -187,8 +171,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			// TODO problem: man kann keine zwei numerischen typen verknuepfen
 			// dazu muesste etwas wie typkompatibilitaet definiert werden
 			if (curLeft.getDatatype() != curRight.getDatatype()) {
-				throw new IllegalArgumentException(
-						"inputs of set operator have different schemas");
+				throw new IllegalArgumentException("inputs of set operator have different schemas");
 			}
 		}
 		setOperator.subscribeToSource(left, 0, 0, left.getOutputSchema());
@@ -208,8 +191,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			checkGroupBy.init(attributeResolver);
 			checkGroupBy.visit(statement, null);
 			if (!checkGroupBy.checkOkay()) {
-				throw new RuntimeException(
-						"missing attributes in GROUP BY clause");
+				throw new RuntimeException("missing attributes in GROUP BY clause");
 			}
 
 			CheckHaving checkHaving = new CheckHaving();
@@ -218,16 +200,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor();
 			joinVisitor.init(attributeResolver);
-			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(
-					statement, null);
+			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(statement, null);
 
 			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
 			aggregationVisitor.init(top, attributeResolver);
 			aggregationVisitor.visit(statement, null);
 			top = aggregationVisitor.getResult();
 
-			top = new CreateProjectionVisitor().createProjection(statement,
-					top, attributeResolver);
+			top = new CreateProjectionVisitor().createProjection(statement, top, attributeResolver);
 			CreatePriorityAOVisitor prioVisitor = new CreatePriorityAOVisitor();
 			prioVisitor.setTopOperator(top);
 			prioVisitor.setAttributeResolver(attributeResolver);
@@ -262,8 +242,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			if (curInputAO.getSubscribedToSource().size() > 1) {
 				rightInputSchema = curInputAO.getInputSchema(1);
 			}
-			initPredicate(curInputAO.getPredicate(),
-					curInputAO.getInputSchema(0), rightInputSchema);
+			initPredicate(curInputAO.getPredicate(), curInputAO.getInputSchema(0), rightInputSchema);
 		}
 		for (int i = 0; i < curInputAO.getSubscribedToSource().size(); ++i) {
 			initPredicates(curInputAO.getSubscribedToSource(i).getTarget());
@@ -271,8 +250,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void initPredicate(IPredicate<RelationalTuple<?>> predicate,
-			SDFAttributeList left, SDFAttributeList right) {
+	public static void initPredicate(IPredicate<RelationalTuple<?>> predicate, SDFAttributeList left, SDFAttributeList right) {
 		if (predicate instanceof ComplexPredicate) {
 			ComplexPredicate compPred = (ComplexPredicate) predicate;
 			initPredicate(compPred.getLeft(), left, right);
@@ -615,27 +593,22 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTCreateBroker node, Object data) {
 		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			
+
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(bsv, caller);
-			
-			m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTCreateBroker.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
+
+			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTCreateBroker.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
 
 			addQuery(sourceOp);
 			return plans;
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(
-					"Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException(
-					"Error while parsing CREATE BROKER statement", e.getCause());
+			throw new RuntimeException("Error while parsing CREATE BROKER statement", e.getCause());
 		}
 	}
 
@@ -655,22 +628,16 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTBrokerSelectInto node, Object data) {
 
 		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTBrokerSelectInto.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSelectInto.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
 			addQuery(sourceOp);
 			return plans;
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(
-					"Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException(
-					"Error while parsing the SELECT INTO statement",
-					e.getCause());
+			throw new RuntimeException("Error while parsing the SELECT INTO statement", e.getCause());
 		}
 	}
 
@@ -692,41 +659,31 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTMetric node, Object data) {
 		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTMetric.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit", ASTMetric.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
 			return sourceOp;
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(
-					"Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing the METRIC clause",
-					e.getCause());
+			throw new RuntimeException("Error while parsing the METRIC clause", e.getCause());
 		}
 	}
 
 	@Override
 	public Object visit(ASTCreateSensor node, Object data) {
 		try {
-			Class<?> sensorVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
+			Class<?> sensorVisitor = Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
 			Object sv = sensorVisitor.newInstance();
 			Method m = sensorVisitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(sv, caller);
-			m = sensorVisitor.getDeclaredMethod("visit", ASTCreateSensor.class,
-					Object.class);
+			m = sensorVisitor.getDeclaredMethod("visit", ASTCreateSensor.class, Object.class);
 			return m.invoke(sv, node, data);
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(
-					"Objecttracking plugin is missing in CQL parser.",
-					e.getCause());
+			throw new RuntimeException("Objecttracking plugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing the SENSOR clause",
-					e.getCause());
+			throw new RuntimeException("Error while parsing the SENSOR clause", e.getCause());
 		}
 	}
 
@@ -765,8 +722,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().registerUser(this.caller, username,
-					password);
+			UserManagement.getInstance().registerUser(this.caller, username, password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -778,8 +734,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().updateUser(this.caller, username,
-					password);
+			UserManagement.getInstance().updateUser(this.caller, username, password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -816,8 +771,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String tenantName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		User uToAdd = UserManagement.getInstance().findUser(userName, caller);
 		try {
-			TenantManagement.getInstance().addUserToTenant(tenantName, uToAdd,
-					caller);
+			TenantManagement.getInstance().addUserToTenant(tenantName, uToAdd, caller);
 		} catch (TenantNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (TooManyUsersException e) {
@@ -832,8 +786,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		User uToRemove = UserManagement.getInstance().findUser(userName, caller);
 		try {
-			TenantManagement.getInstance().removeUserFromTenant(tenantName, uToRemove,
-					caller);
+			TenantManagement.getInstance().removeUserFromTenant(tenantName, uToRemove, caller);
 		} catch (TenantNotFoundException e) {
 			throw new RuntimeException(e);
 		}
@@ -847,7 +800,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String monitorType = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		PercentileContraint pc = null;
 		IServiceLevelAgreement sla = new ServiceLevelAgreement(slaName);
-		for (int i=2; i<node.jjtGetNumChildren();i++){
+		for (int i = 2; i < node.jjtGetNumChildren(); i++) {
 			pc = (PercentileContraint) node.jjtGetChild(i).jjtAccept(this, data);
 			try {
 				sla.addPercentilConstraint(pc);
@@ -870,7 +823,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTDbTable node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
