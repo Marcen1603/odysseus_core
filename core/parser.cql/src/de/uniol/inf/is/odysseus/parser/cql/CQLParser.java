@@ -868,4 +868,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return new PercentileContraint(right, left, penalty);
 	}
 
+	@Override
+	public Object visit(ASTDbTable node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

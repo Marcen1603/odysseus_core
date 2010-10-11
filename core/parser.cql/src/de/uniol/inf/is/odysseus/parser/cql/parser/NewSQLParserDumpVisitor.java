@@ -509,4 +509,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTDbTable node, Object data) {
+		return pvisit(node);
+	}
+
 }
