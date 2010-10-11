@@ -44,7 +44,6 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification,
  de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
- de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
  de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement,
  de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy,
@@ -84,5 +83,5 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,
  de.uniol.inf.is.odysseus.usermanagement,
  de.uniol.inf.is.odysseus.util
-Service-Component: OSGI-INF/StandardExecutor.xml, OSGI-INF/StandardCompiler.xml, OSGI-INF/StandardPlanOptimizer.xml,OSGI-INF/StandardOptimizer.xml, OSGI-INF/QueryRestructOptimizer.xml, OSGI-INF/NoBuffersStrategy.xml, OSGI-INF/StandardBufferPlacementStrategy.xml, OSGI-INF/NoPlanMigrationStrategy.xml
+Service-Component: OSGI-INF/StandardCompiler.xml, OSGI-INF/StandardPlanOptimizer.xml,OSGI-INF/StandardOptimizer.xml, OSGI-INF/QueryRestructOptimizer.xml, OSGI-INF/NoBuffersStrategy.xml, OSGI-INF/StandardBufferPlacementStrategy.xml, OSGI-INF/NoPlanMigrationStrategy.xml
 Bundle-ActivationPolicy: lazy

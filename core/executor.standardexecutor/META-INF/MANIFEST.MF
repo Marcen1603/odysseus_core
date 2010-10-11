@@ -29,3 +29,5 @@ Import-Package: de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.usermanagement,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
+Service-Component: OSGI-INF/StandardExecutor.xml
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"

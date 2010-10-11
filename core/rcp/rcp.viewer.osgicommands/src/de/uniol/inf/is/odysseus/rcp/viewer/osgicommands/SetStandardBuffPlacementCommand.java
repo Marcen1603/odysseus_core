@@ -12,7 +12,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 
