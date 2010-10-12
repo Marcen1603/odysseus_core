@@ -238,7 +238,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			m = visitor.getDeclaredMethod("visit", ASTCreateFromDatabase.class, Object.class);
 			OutputSchemaSettable ao = (OutputSchemaSettable) m.invoke(v, node, data);
 			ao.setOutputSchema(this.attributes);
-			return ao;
+			return addTimestampAO((ILogicalOperator)ao);			
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Storing plugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {			
