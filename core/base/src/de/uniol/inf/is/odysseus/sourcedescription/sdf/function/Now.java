@@ -1,24 +1,27 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
 
-import java.util.Stack;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-import org.nfunk.jep.ParseException;
-
-public class Now extends CustomFunction {
-	public Now() {
-		super();
-		numberOfParameters = 0;
-	}
+public class Now extends AbstractFunction<Long> {
 
 	@Override
-	public String getName() {
+	public String getSymbol() {
 		return "Now";
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void run(Stack stack) throws ParseException {
-		stack.push(new Double(System.currentTimeMillis()));
+	public int getArity() {
+		return 0;
+	}
+
+	@Override
+	public Long getValue() {
+		return System.currentTimeMillis();
+	}
+
+	@Override
+	public Class<? extends Long> getType() {
+		return Long.class;
 	}
 
 }

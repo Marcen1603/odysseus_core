@@ -2,24 +2,19 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.nfunk.jep.ASTConstant;
-import org.nfunk.jep.ASTFunNode;
-import org.nfunk.jep.JEP;
-import org.nfunk.jep.Node;
-import org.nfunk.jep.ParseException;
-import org.nfunk.jep.Variable;
-
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.CustomFunction;
+import de.uniol.inf.is.odysseus.mep.Constant;
+import de.uniol.inf.is.odysseus.mep.IExpression;
+import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.ParseException;
+import de.uniol.inf.is.odysseus.mep.Variable;
 
 /**
  * @author Jonas Jacobi
@@ -28,25 +23,13 @@ public class SDFExpression implements Serializable {
 
 	private static final long serialVersionUID = 8658794141096208317L;
 	// Für P2P als transient gekennzeichnet
-	private transient JEP myParser;
-	// Für P2P als transient gekennzeichnet
-	transient Map<String, Variable> variables;
-	// Für P2P als transient gekennzeichnet
 	transient ArrayList<Variable> variableArrayList = new ArrayList<Variable>();
-	// Für P2P als transient gekennzeichnet
-	transient Variable[] variableArray;
 
-	// kann entfernt werden
 	private int varCounter;
 	// Für P2P als transient gekennzeichnet
-	private transient Node myNode;
+	private transient IExpression<?> expression;
 
-	public boolean isSetOperator(String symbol) {
-		ASTFunNode fun = (ASTFunNode) myNode;
-		return fun.getOperator().getSymbol().equals(symbol);
-	}
-
-	private String expression;
+	private String expressionString;
 
 	private Object value;
 
@@ -61,57 +44,54 @@ public class SDFExpression implements Serializable {
 
 	private SDFAttribute attribute;
 	private boolean isOnlyAttribute = false;
-	
+
 	private IAttributeResolver attributeResolver;
-	
-
-	private static final List<CustomFunction> customFunctions = new ArrayList<CustomFunction>();
-
-	private static final String variableRegexp = "(\\p{Alpha}[\\p{Alnum}\\_:\\.]*)([^\\(\\p{Alnum}_:\\.\"]|$)";
 
 	private static final String aggregateRegexp = "\\b((SUM|COUNT|AVG|MIN|MAX|BEAN|SCRIPT)\\([^\\)]*\\))";
-
-	private static final Pattern variablePattern = Pattern
-			.compile(variableRegexp);
 
 	private static final Pattern aggregatePattern = Pattern
 			.compile(aggregateRegexp);
 
-	private static final Set<String> functions = new HashSet<String>();
-	private static boolean isFunctionsInit = false;
-
 	// TODO alles schon im parser aufloesen und variable/attribut bindings
 	// erstellen
 	public SDFExpression(SDFAttribute attribute) {
-		this.variableArray = new Variable[0];
 		isOnlyAttribute = true;
 		init(attribute);
 	}
-	
+
 	public boolean isOnlyAttribute() {
 		return isOnlyAttribute;
 	}
-	
-	public SDFAttribute getSingleAttribute(){
+
+	public SDFAttribute getSingleAttribute() {
 		return attribute;
 	}
-
-	public synchronized static void addFunction(CustomFunction function) {
-		customFunctions.add(function);
-		functions.add(function.getName());
+	
+	/**
+	 * @param URI
+	 * @param value
+	 * @param attributeResolver
+	 * @throws ParseException
+	 */
+	public SDFExpression(String URI, String value,
+			IAttributeResolver attributeResolver)
+			throws SDFExpressionParseException {
+		init(value, attributeResolver);
 	}
 
-	public synchronized static Set<String> getFunctions() {
-		if (!isFunctionsInit) {
-			JEP tmpParser = new JEP();
-			tmpParser.addStandardFunctions();
-			for (Object o : tmpParser.getFunctionTable().keySet()) {
-				functions.add((String) o);
-			}
-			isFunctionsInit = true;
+	public SDFExpression(SDFExpression expression)
+			throws SDFExpressionParseException {
+		if (expression.attribute == null) {
+			init(expression.expressionString, expression.attributeResolver);
+		} else {
+			init(expression.attribute);
 		}
-
-		return Collections.unmodifiableSet(functions);
+		if (expression.attributePositions != null) {
+			this.attributePositions = new int[expression.attributePositions.length];
+			for (int i = 0; i < expression.attributePositions.length; i++) {
+				this.attributePositions[i] = expression.attributePositions[i];
+			}
+		}
 	}
 
 	private void init(SDFAttribute attribute) {
@@ -119,80 +99,88 @@ public class SDFExpression implements Serializable {
 		this.attributes = new ArrayList<SDFAttribute>(1);
 		this.attributes.add(attribute);
 		// TODO: Hier wird noch die Punkt-Notation ben�tigt?
-		this.expression = attribute.toPointString();
+		this.expressionString = attribute.toPointString();
 	}
 
 	private void init(String value, IAttributeResolver attributeResolver)
 			throws SDFExpressionParseException {
-		this.expression = value.trim();
+		this.expressionString = value.trim();
 		this.varCounter = 0;
-		this.variables = new HashMap<String, Variable>();
+		this.variableArrayList = new ArrayList<Variable>();
 		this.attributes = new ArrayList<SDFAttribute>();
 		this.attribute = null;
 		this.attributeResolver = attributeResolver.clone();
 
-		myParser = new JEP();
-		myParser.addStandardConstants();
-		myParser.addStandardFunctions();
-		for (CustomFunction curFunction : customFunctions) {
-			myParser.addFunction(curFunction.getName(), curFunction);
-		}
-		myParser.setAllowUndeclared(false);
+		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
+		String result = substituteAggregations(this.expressionString,
+				aliasToAggregationAttributeMapping);
 
-		String result = "";
-		Matcher m2 = aggregatePattern.matcher(value);
-
-		int start = 0;
-		while (m2.find()) {
-			String group = m2.group(1);
-			if (group == null) {
-				continue;
-			}
-			// TODO regexp zum finden der richtigen ersetzungsdoedeleien
-			Variable variable = toVariable(group);
-			result += value.substring(start, m2.start(1));
-			result += variable.getName();
-			start = m2.end(1);
-		}
-		result += value.substring(start);
-
-		Matcher m = variablePattern.matcher(result);
-		String totalResult = "";
-		start = 0;
-		while (m.find()) {
-			String group = m.group(1);
-			if (group == null || group.toUpperCase().equals("AND")
-					|| group.toUpperCase().equals("OR")
-					|| group.toUpperCase().equals("NOT")) {
-				continue;
-			}
-			// make sure it is not variable introduced for aggregate functions
-			// (__V<number>)
-			if (group.startsWith("V")) {
-				int vstart = m.start(1);
-				if (vstart > 1) {
-					String vstr = result.substring(vstart - 2, vstart);
-					if (vstr.equals("__")) {
-						continue;
-					}
-				}
-			}
-			Variable variable = toVariable(group);
-			totalResult += result.substring(start, m.start(1));
-			totalResult += variable.getName();
-			start = m.end(1);
-		}
-		totalResult += result.substring(start);
 		try {
-			myNode = myParser.parse(totalResult);
-			variableArray = this.variableArrayList
-					.toArray(new Variable[this.variableArrayList.size()]);
-			if (myNode instanceof ASTConstant) {
-				setValue(myParser.evaluate(myNode));
-			}
+			expression = MEP.parse(result);
 		} catch (ParseException e) {
-			System.out.println("Expr: " + value);
+			System.out.println("Expr: " + this.expressionString);
 			throw new SDFExpressionParseException(e);
+		}
+
+		initVariables(expression.getVariables(),
+				aliasToAggregationAttributeMapping);
+
+		if (expression instanceof Constant) {
+			setValue(expression.getValue());
+		}
+	}
+
+	private String substituteAggregations(String value,
+			Map<String, String> inverseAliasMappings) {
+		String result = "";
+		{
+			Matcher m2 = aggregatePattern.matcher(value);
+			Map<String, String> aliasMappings = new HashMap<String, String>();
+			int start = 0;
+			while (m2.find()) {
+				String group = m2.group(1);
+				if (group == null) {
+					continue;
+				}
+
+				SDFAttribute attribute = this.attributeResolver
+						.getAttribute(group);
+				if (attribute == null) {
+					System.err.println("no such attribute: " + group);
+					throw new SDFExpressionParseException("No such attribute: "
+							+ group);
+				}
+				String attributeName = attribute.getPointURI();
+				String aliasName = aliasMappings.get(attributeName);
+				if (aliasName == null) {
+					aliasName = "__V" + ++this.varCounter;
+					aliasMappings.put(attributeName, aliasName);
+					inverseAliasMappings.put(aliasName, attributeName);
+				}
+
+				result += value.substring(start, m2.start(1));
+				result += aliasName;
+				start = m2.end(1);
+			}
+			result += value.substring(start);
+		}
+		return result;
+	}
+
+	private void initVariables(Set<Variable> variables2,
+			Map<String, String> inverseAliasMappings) {
+		for (Variable var : variables2) {
+			String name = var.getIdentifier();
+			if (inverseAliasMappings.containsKey(name)) {
+				name = inverseAliasMappings.get(name);
+			}
+			SDFAttribute curAttribute = this.attributeResolver.getAttribute(name);
+			if (curAttribute == null && name == "t"){
+				this.attributes.add(new SDFAttribute(null, "t"));
+			} else {
+				this.attributes.add(curAttribute);
+			}
+			this.variableArrayList.add(var);
 		}
 	}
 
@@ -210,84 +198,9 @@ public class SDFExpression implements Serializable {
 	}
 
 
-	/**
-	 * @param URI
-	 * @param value
-	 * @param attributeResolver
-	 * @throws ParseException
-	 */
-	public SDFExpression(String URI, String value,
-			IAttributeResolver attributeResolver)
-			throws SDFExpressionParseException {
-		init(value, attributeResolver);
-	}
-
-	public SDFExpression(SDFExpression expression)
-			throws SDFExpressionParseException {
-		if (expression.attribute == null) {
-			init(expression.expression, expression.attributeResolver);
-		} else {
-			init(expression.attribute);
-		}
-		if (expression.attributePositions != null) {
-			this.attributePositions = new int[expression.attributePositions.length];
-			for (int i = 0; i < expression.attributePositions.length; i++) {
-				this.attributePositions[i] = expression.attributePositions[i];
-			}
-		}
-	}
-
-	private Variable toVariable(String token) {
-		for (Variable v : this.variableArrayList) {
-			if (v.getName() == token) {
-				return v;
-			}
-		}
-		try {
-			SDFAttribute attribute = this.attributeResolver.getAttribute(token);
-			String aliasName = null;
-
-			/**
-			 * We have to allow the variable "t" for "time" in expressions,
-			 * although time is not an attribute of a relational schema. This is
-			 * because, prediction function make use of the time attribute.
-			 * 
-			 * So, what we have to do is to check if the token equals "t" if no
-			 * attribute has been found for the token name. TODO an ABo, kann
-			 * man diese spezialbehandlung nicht irgendwie rausziehen?
-			 */
-			if (attribute == null && !token.equals("t")) {
-				System.err.println("no such attribute: " + token);
-				throw new SDFExpressionParseException("No such attribute: "
-						+ token);
-			} else if (token.equals("t")) {
-				aliasName = "t";
-				attribute = new SDFAttribute(null, "t");
-			} else {
-				aliasName = attribute.getPointURI();
-			}
-
-			Variable var = this.variables.get(aliasName);
-			if (var == null) {
-				String varName = "__V" + ++this.varCounter;
-				myParser.addVariable(varName, null);
-				var = myParser.getVar(varName);
-				this.variableArrayList.add(var);
-				this.attributes.add(attribute.clone());
-				this.variables.put(aliasName, var);
-				insertAttributePath(token);
-			}
-			return var;
-		} catch (NoSuchAttributeException e) {
-			e.printStackTrace();
-		} catch (AmgigiousAttributeException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	protected void insertAttributePath(String token) {
-		// do nothing special here...
+	
+	public Class<?> getType() {
+		return this.expression.getType();
 	}
 
 	private void setValue(Object object) {
@@ -297,18 +210,6 @@ public class SDFExpression implements Serializable {
 	@SuppressWarnings("unchecked")
 	public <T> T getValue() {
 		return (T) this.value;
-	}
-
-	public double getDouble() {
-		return (((Number) this.value)).doubleValue();
-	}
-
-	public boolean isString() {
-		return this.value instanceof String;
-	}
-
-	public boolean isNumber() {
-		return this.value instanceof Number;
 	}
 
 	@Override
@@ -322,15 +223,15 @@ public class SDFExpression implements Serializable {
 
 	@Override
 	public String toString() {
-		return this.expression;
+		return this.expressionString;
 	}
 
 	public String getExpression() {
-		return expression;
+		return expressionString;
 	}
 
 	public void bindVariables(Object... values) {
-		if (myNode instanceof ASTConstant) {
+		if (expression instanceof Constant) {
 			return;
 		}
 
@@ -339,20 +240,16 @@ public class SDFExpression implements Serializable {
 			return;
 		}
 
-		if (values.length != variableArray.length) {
+		if (values.length != variableArrayList.size()) {
 			throw new IllegalArgumentException(
 					"illegal variable bindings in expression");
 		}
 
 		for (int i = 0; i < values.length; ++i) {
-			variableArray[i].setValue(values[i]);
+			variableArrayList.get(i).bind(values[i]);
 		}
 
-		try {
-			setValue(myParser.evaluate(myNode));
-		} catch (ParseException e) {
-			throw new IllegalArgumentException(e);
-		}
+		setValue(expression.getValue());
 	}
 
 	@Override
@@ -361,8 +258,9 @@ public class SDFExpression implements Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((attribute == null) ? 0 : attribute.hashCode());
-		result = prime * result
-				+ ((expression == null) ? 0 : expression.hashCode());
+		result = prime
+				* result
+				+ ((expressionString == null) ? 0 : expressionString.hashCode());
 		return result;
 	}
 
@@ -380,10 +278,10 @@ public class SDFExpression implements Serializable {
 				return false;
 		} else if (!attribute.equals(other.attribute))
 			return false;
-		if (expression == null) {
-			if (other.expression != null)
+		if (expressionString == null) {
+			if (other.expressionString != null)
 				return false;
-		} else if (!expression.equals(other.expression))
+		} else if (!expressionString.equals(other.expressionString))
 			return false;
 		return true;
 	}

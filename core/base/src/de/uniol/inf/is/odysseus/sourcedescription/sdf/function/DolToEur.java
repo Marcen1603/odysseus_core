@@ -1,34 +1,35 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
 
-import java.util.Stack;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-import org.nfunk.jep.ParseException;
-
-public class DolToEur extends CustomFunction {
+public class DolToEur extends AbstractFunction<Double> {
 
 	private static double EXCHANGERATE = 1d / 1.55d;
 
-	public DolToEur() {
-		numberOfParameters = 1;
-	}
-
 	@Override
-	public String getName() {
+	public String getSymbol() {
 		return "DolToEur";
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void run(Stack stack) throws ParseException {
-		checkStack(stack);
-
-		double value = ((Number) stack.pop()).doubleValue();
-		value *= EXCHANGERATE;
-		stack.push(value);
 	}
 
 	public static void setExchangeRate(double value) {
 		EXCHANGERATE = value;
+	}
+
+	@Override
+	public int getArity() {
+		return 1;
+	}
+
+	@Override
+	public Double getValue() {
+		double value = ((Number) getInputValue(0)).doubleValue();
+		value *= EXCHANGERATE;
+		return value;
+	}
+
+	@Override
+	public Class<? extends Double> getType() {
+		return Double.class;
 	}
 
 }
