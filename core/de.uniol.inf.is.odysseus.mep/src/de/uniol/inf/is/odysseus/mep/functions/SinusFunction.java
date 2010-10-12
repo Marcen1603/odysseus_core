@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class SinusFunction extends AbstractFunction {
+public class SinusFunction extends AbstractFunction<Double> {
 
 	@Override
 	public int getArity() {
@@ -16,7 +16,12 @@ public class SinusFunction extends AbstractFunction {
 
 	@Override
 	public Double getValue() {
-		return Math.sin((Double) getInputValue(0));
+		return Math.sin(getNumericalInputValue(0));
+	}
+
+	@Override
+	public Class<Double> getType() {
+		return Double.class;
 	}
 
 }

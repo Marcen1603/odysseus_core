@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class ToStringFunction extends AbstractFunction {
+public class ToStringFunction extends AbstractFunction<String> {
 
 	@Override
 	public int getArity() {
@@ -16,7 +16,12 @@ public class ToStringFunction extends AbstractFunction {
 
 	@Override
 	public String getValue() {
-		return Double.toString((Double) getInputValue(0));
+		return Double.toString(getNumericalInputValue(0));
+	}
+
+	@Override
+	public Class<String> getType() {
+		return String.class;
 	}
 
 }

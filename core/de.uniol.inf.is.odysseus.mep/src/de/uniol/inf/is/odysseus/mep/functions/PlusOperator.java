@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
 
 
-public class PlusOperator extends AbstractBinaryOperator {
+public class PlusOperator extends AbstractBinaryOperator<Double> {
 
 	@Override
 	public int getPrecedence() {
@@ -17,7 +17,12 @@ public class PlusOperator extends AbstractBinaryOperator {
 
 	@Override
 	public Double getValue() {
-		return (Double)getInputValue(0) + (Double)getInputValue(1);
+		return getNumericalInputValue(0) + getNumericalInputValue(1);
+	}
+
+	@Override
+	public Class<Double> getType() {
+		return Double.class;
 	}
 
 }

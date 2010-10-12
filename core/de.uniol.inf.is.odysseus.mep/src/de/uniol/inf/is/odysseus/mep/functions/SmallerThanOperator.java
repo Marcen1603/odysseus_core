@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
 
-public class SmallerThanOperator extends AbstractBinaryOperator {
+public class SmallerThanOperator extends AbstractBinaryOperator<Boolean> {
 
 	@Override
 	public int getPrecedence() {
@@ -15,8 +15,12 @@ public class SmallerThanOperator extends AbstractBinaryOperator {
 	}
 
 	@Override
-	public Object getValue() {
-		return (Double) getInputValue(0) < (Double) getInputValue(1) ? 1.0d
-				: 0.0d;
+	public Boolean getValue() {
+		return getNumericalInputValue(0) < getNumericalInputValue(1);
+	}
+
+	@Override
+	public Class<Boolean> getType() {
+		return Boolean.class;
 	}
 }

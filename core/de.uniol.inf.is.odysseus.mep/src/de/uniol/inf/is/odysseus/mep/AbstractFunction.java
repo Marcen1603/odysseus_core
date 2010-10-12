@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public abstract class AbstractFunction implements IFunction {
+public abstract class AbstractFunction<T> implements IFunction<T> {
 
-	private IExpression[] arguments;
+	private IExpression<?>[] arguments;
 
 	@Override
-	final public void setArguments(IExpression... arguments) {
+	final public void setArguments(IExpression<?>... arguments) {
 		if (arguments.length != getArity()) {
 			throw new IllegalArgumentException(
 					"illegal number of arguments for function " + getSymbol());
@@ -18,13 +18,17 @@ public abstract class AbstractFunction implements IFunction {
 	}
 
 	@Override
-	public IExpression[] getArguments() {
+	public IExpression<?>[] getArguments() {
 		return arguments;
 	}
 
 	@SuppressWarnings("unchecked")
 	final protected <S> S getInputValue(int argumentPos) {
 		return (S) arguments[argumentPos].getValue();
+	}
+	
+	final protected Double getNumericalInputValue(int argumentPos){
+		return ((Number)arguments[argumentPos].getValue()).doubleValue();
 	}
 
 	@Override

@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.mep;
 
 
-public abstract class AbstractUnaryOperator extends AbstractFunction implements
-		IOperator {
+public abstract class AbstractUnaryOperator<T> extends AbstractFunction<T> implements
+		IOperator<T> {
 	
 	@Override
 	public boolean isBinary() {

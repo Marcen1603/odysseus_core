@@ -1,22 +1,22 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class PowerOperator extends AbstractBinaryOperator<Double> {
+public class CeilFunction extends AbstractFunction<Double> {
 
 	@Override
-	public int getPrecedence() {
+	public int getArity() {
 		return 1;
 	}
 
 	@Override
 	public String getSymbol() {
-		return "^";
+		return "ceil";
 	}
 
 	@Override
 	public Double getValue() {
-		return Math.pow(getNumericalInputValue(0), getNumericalInputValue(1));
+		return Math.ceil(getNumericalInputValue(0));
 	}
 
 	@Override

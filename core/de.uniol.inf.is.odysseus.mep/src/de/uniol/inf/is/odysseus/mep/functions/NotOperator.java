@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 
-public class NotOperator extends AbstractUnaryOperator {
+public class NotOperator extends AbstractUnaryOperator<Boolean> {
 
 	@Override
 	public int getPrecedence() {
@@ -15,8 +15,12 @@ public class NotOperator extends AbstractUnaryOperator {
 	}
 
 	@Override
-	public Double getValue() {
-		return (Double)getInputValue(0) == 0.0 ? 1.0 : 0.0;
+	public Boolean getValue() {
+		return !((Boolean) getInputValue(0));
 	}
 
+	@Override
+	public Class<Boolean> getType() {
+		return Boolean.class;
+	}
 }

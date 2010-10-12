@@ -24,12 +24,12 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		if (!MEP.containsFunction(symbol)) {
 			throw new IllegalArgumentException("no such function: " + symbol);
 		}
-		IFunction function = MEP.getFunction(symbol);
+		IFunction<?> function = MEP.getFunction(symbol);
 
 		int arity = node.jjtGetNumChildren();
-		IExpression[] expressions = new IExpression[arity];
+		IExpression<?>[] expressions = new IExpression[arity];
 		for (int i = 0; i < arity; ++i) {
-			expressions[i] = (IExpression) node.jjtGetChild(i).jjtAccept(this,
+			expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this,
 					data);
 		}
 		function.setArguments(expressions);
@@ -39,7 +39,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
 	@Override
 	public Object visit(ASTConstant node, Object data) {
-		return new Constant(node.getValue());
+		return new Constant<Object>(node.getValue());
 	}
 
 	@Override

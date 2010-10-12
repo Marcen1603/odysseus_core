@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.mep;
 
-public interface IOperator extends IExpression {
+public interface IOperator<T> extends IExpression<T> {
 
 	public enum ASSOCIATIVITY {
 		LEFT_TO_RIGHT,

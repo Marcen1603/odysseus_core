@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class ToNumberFunction extends AbstractFunction<Double> {
+public class DoubleToLongFunction extends AbstractFunction<Long> {
 
 	@Override
 	public int getArity() {
@@ -11,17 +11,17 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 
 	@Override
 	public String getSymbol() {
-		return "toNumber";
+		return "doubleToLong";
 	}
 
 	@Override
-	public Double getValue() {
-		return Double.parseDouble((String) getInputValue(0));
+	public Long getValue() {
+		return getNumericalInputValue(0).longValue();
 	}
 
 	@Override
-	public Class<Double> getType() {
-		return Double.class;
+	public Class<Long> getType() {
+		return Long.class;
 	}
 
 }

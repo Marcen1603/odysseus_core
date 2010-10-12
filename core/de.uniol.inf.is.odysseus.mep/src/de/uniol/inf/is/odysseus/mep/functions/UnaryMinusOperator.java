@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 
-public class UnaryMinusOperator extends AbstractUnaryOperator {
+public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 
 	@Override
 	public int getPrecedence() {
@@ -16,7 +16,11 @@ public class UnaryMinusOperator extends AbstractUnaryOperator {
 
 	@Override
 	public Double getValue() {
-		return -(Double)getInputValue(0); 
+		return -getNumericalInputValue(0);
 	}
 
+	@Override
+	public Class<Double> getType() {
+		return Double.class;
+	}
 }
