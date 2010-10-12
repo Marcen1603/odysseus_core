@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -232,14 +233,16 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(v, user);
+			m = visitor.getDeclaredMethod("setName", String.class);
+			m.invoke(v, name);
 			m = visitor.getDeclaredMethod("visit", ASTCreateFromDatabase.class, Object.class);
-			ISource<?> ao = (ISource<?>) m.invoke(v, node, data);
+			OutputSchemaSettable ao = (OutputSchemaSettable) m.invoke(v, node, data);
 			ao.setOutputSchema(this.attributes);
 			return ao;
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Storing plugin is missing in CQL parser.", e.getCause());
-		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing the DBTable clause", e.getCause());
+		} catch (Exception e) {			
+			throw new RuntimeException("Error while parsing the create from database clause", e.getCause());
 		}
 	}
 }

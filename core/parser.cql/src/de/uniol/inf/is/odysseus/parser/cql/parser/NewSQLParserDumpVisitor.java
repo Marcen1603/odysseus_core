@@ -514,4 +514,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTJdbcIdentifier node, Object data) {
+		return null;
+	}
+
 }

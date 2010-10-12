@@ -600,4 +600,9 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTCreateFromDatabase node, Object data) {	
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTJdbcIdentifier node, Object data) {
+		return null;
+	}
 }
