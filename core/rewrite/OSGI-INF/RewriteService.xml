@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.planmanagement.IRewrite"/>
    </service>
-   <reference bind="addRuleProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider" name="IRewriteRuleProvider" policy="static" unbind="removeRuleProvider"/>
+   <reference bind="addRuleProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider" name="IRewriteRuleProvider" policy="dynamic" unbind="removeRuleProvider"/>
 </scr:component>
