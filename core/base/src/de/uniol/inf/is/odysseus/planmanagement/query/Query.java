@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -108,7 +108,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	/**
 	 * Parameter for building this query.
 	 */
-	private QueryBuildParameter parameters = new QueryBuildParameter();
+	private QueryBuildConfiguration parameters = new QueryBuildConfiguration();
 	
 	/**
 	 * EventListener
@@ -122,45 +122,45 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	}
 
 	/**
-	 * Creates a query based on a physical plan and {@link QueryBuildParameter}
+	 * Creates a query based on a physical plan and {@link QueryBuildConfiguration}
 	 * 
 	 * @param physicalPlan
 	 *            physical operator plan
 	 * @param parameters
-	 *            {@link QueryBuildParameter} for creating the query
+	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
 	public Query(List<IPhysicalOperator> physicalPlan,
-			QueryBuildParameter parameters) {
+			QueryBuildConfiguration parameters) {
 		this("", null, physicalPlan, parameters);
 	}
 
 	/**
-	 * Creates a query based on a parser ID and {@link QueryBuildParameter}
+	 * Creates a query based on a parser ID and {@link QueryBuildConfiguration}
 	 * 
 	 * @param parserID
 	 *            ID of the parser to use
 	 * @param parameters
-	 *            {@link QueryBuildParameter} for creating the query
+	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
-	public Query(String parserID, QueryBuildParameter parameters) {
+	public Query(String parserID, QueryBuildConfiguration parameters) {
 		this(parserID, null, null, parameters);
 	}
 
 	/**
-	 * Creates a query based on a logical plan and {@link QueryBuildParameter}
+	 * Creates a query based on a logical plan and {@link QueryBuildConfiguration}
 	 * 
 	 * @param logicalPlan
 	 *            logical operator plan
 	 * @param parameters
-	 *            {@link QueryBuildParameter} for creating the query
+	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
-	public Query(ILogicalOperator logicalPlan, QueryBuildParameter parameters) {
+	public Query(ILogicalOperator logicalPlan, QueryBuildConfiguration parameters) {
 		this("", logicalPlan, null, parameters);
 	}
 
 	/**
 	 * Creates a query based on a parserID, a logical plan, a physical plan and
-	 * {@link QueryBuildParameter}
+	 * {@link QueryBuildConfiguration}
 	 * 
 	 * @param parserID
 	 *            logical operator plan
@@ -169,10 +169,10 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 * @param physicalPlan
 	 *            physical operator plan
 	 * @param parameters
-	 *            {@link QueryBuildParameter} for creating the query
+	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
 	private Query(String parserID, ILogicalOperator logicalPlan,
-			List<IPhysicalOperator> physicalPlan, QueryBuildParameter parameters) {
+			List<IPhysicalOperator> physicalPlan, QueryBuildConfiguration parameters) {
 		this.id = idCounter++;
 		this.active = true;
 		this.parameters = parameters;
@@ -595,7 +595,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 * getBuildParameter()
 	 */
 	@Override
-	public QueryBuildParameter getBuildParameter() {
+	public QueryBuildConfiguration getBuildParameter() {
 		return this.parameters;
 	}
 
@@ -651,7 +651,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	}
 
 	@Override
-	public void setBuildParameter(QueryBuildParameter parameter) {
+	public void setBuildParameter(QueryBuildConfiguration parameter) {
 		this.parameters = parameter;
 	}	
 	

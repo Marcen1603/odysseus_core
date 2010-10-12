@@ -28,7 +28,6 @@ Import-Package:
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
- de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter,
  de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules,
  de.uniol.inf.is.odysseus.planmanagement.plan,
  de.uniol.inf.is.odysseus.planmanagement.query,

@@ -62,7 +62,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planr
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterInstallMetadataListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
@@ -1196,7 +1196,7 @@ public class ExecutorConsole implements CommandProvider,
 		boolean restructureParamSet = false;
 		boolean restructure = false;
 		String query = null;
-		ArrayList<AbstractQueryBuildParameter<?>> params = new ArrayList<AbstractQueryBuildParameter<?>>();
+		ArrayList<AbstractQueryBuildSetting<?>> params = new ArrayList<AbstractQueryBuildSetting<?>>();
 
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-q")) {
@@ -1229,7 +1229,7 @@ public class ExecutorConsole implements CommandProvider,
 
 		params.add(this.trafoConfigParam);
 
-		AbstractQueryBuildParameter<?>[] paramsArray = new AbstractQueryBuildParameter[params
+		AbstractQueryBuildSetting<?>[] paramsArray = new AbstractQueryBuildSetting[params
 				.size()];
 		for (int i = 0; i < params.size(); i++) {
 			paramsArray[i] = params.get(i);

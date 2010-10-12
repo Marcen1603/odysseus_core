@@ -3,14 +3,14 @@ package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 
 /**
- * {@link AbstractQueryBuildParameter} which provides a a
+ * {@link AbstractQueryBuildSetting} which provides a a
  * {@link TransformationConfiguration} for the query.
  * 
  * @author Wolf Bauer
  * 
  */
 public final class ParameterTransformationConfiguration extends
-		AbstractQueryBuildParameter<TransformationConfiguration> {
+		AbstractQueryBuildSetting<TransformationConfiguration> {
 
 	/**
 	 * Creates a ParameterTransformationConfiguration.

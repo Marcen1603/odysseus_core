@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.monitoring.physicalplan;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -14,20 +12,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
-public class ProcessCallsMonitor extends AbstractMonitoringData<Long>
+public class ProcessCallsMonitor extends AbstractPlanMonitor<Long>
 implements IPOEventListener {
 	final Map<IPhysicalOperator, Long> processCallsPerOperator;
-	final List<IPhysicalOperator> monitoredOps;
 	long overallProcessCallCount = 0;
 
 	public ProcessCallsMonitor(IQuery target, boolean onlyRoots) {
-		super(target);
+		super(target, onlyRoots);
 		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>();
-		monitoredOps = target.getRoots();
-		if (!onlyRoots){
-			monitoredOps.addAll(target.getPhysicalChilds());
-		}
-
 		for (IPhysicalOperator p : monitoredOps) {
 			processCallsPerOperator.put(p, 0l);
 			p.subscribe(this, POEventType.ProcessDone);
@@ -35,12 +27,11 @@ implements IPOEventListener {
 	}
 
 	public ProcessCallsMonitor(ProcessCallsMonitor processCallsMonitor) {
-		super(processCallsMonitor.getTarget());
+		super(processCallsMonitor);
 		overallProcessCallCount = processCallsMonitor.overallProcessCallCount;
-		monitoredOps = new ArrayList<IPhysicalOperator>(processCallsMonitor.monitoredOps);
 		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>(processCallsMonitor.processCallsPerOperator);
 	}
-
+	
 	@Override
 	public void eventOccured(IEvent<?,?> event) {
 		POEvent poEvent = (POEvent) event;

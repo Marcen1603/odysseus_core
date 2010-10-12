@@ -26,7 +26,7 @@ public class MigrationHelper {
 	 * Finds so called pseudo sources in a subplan with op as root. Potentially
 	 * pseudo sources are operators, where isPseudoSource() is true or that are
 	 * sources only. A pseudo source is then the first operator downwards in a
-	 * row of pontentially pseudo sources before an actual source.
+	 * row of potentially pseudo sources before an actual source.
 	 * 
 	 * @param op
 	 *            Root of subplan.

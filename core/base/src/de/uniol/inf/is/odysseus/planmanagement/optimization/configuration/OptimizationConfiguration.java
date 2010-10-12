@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 
-import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractTypeSafeMap;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 
 /**
@@ -9,10 +9,28 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
  * @author Tobias Witt
  *
  */
-public class OptimizationConfiguration extends AbstractTypeSafeMap<AbstractOptimizationSetting<?>> {
+public class OptimizationConfiguration extends Configuration<AbstractOptimizationSetting<?>> {
 	
 	public OptimizationConfiguration(AbstractOptimizationSetting<?>... entries) {
 		super(entries);
+	}
+	
+	/**
+	 * Gets the current parameter for {@link ParameterDoRestruct}.
+	 * 
+	 * @return current parameter for {@link ParameterDoRestruct}
+	 */
+	public ParameterDoRestruct getParameterDoRestruct() {
+		return (ParameterDoRestruct) this.get(ParameterDoRestruct.class);
+	}
+
+	/**
+	 * Gets the current parameter for {@link ParameterQueryOptimizer}.
+	 * 
+	 * @return current parameter for {@link ParameterQueryOptimizer}
+	 */
+	public ParameterQueryOptimizer getParameterQueryOptimizer() {
+		return (ParameterQueryOptimizer) this.get(ParameterQueryOptimizer.class);
 	}
 	
 	public SettingMaxConcurrentOptimizations getSettingMaxConcurrentOptimizations() {

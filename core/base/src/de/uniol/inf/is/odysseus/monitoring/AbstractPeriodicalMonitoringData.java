@@ -9,6 +9,7 @@ abstract public class AbstractPeriodicalMonitoringData<T> extends AbstractPublis
 		this.target = target;
 	}
 
+	@Override
 	public IMonitoringDataProvider getTarget() {
 		return target;
 	}
@@ -16,6 +17,7 @@ abstract public class AbstractPeriodicalMonitoringData<T> extends AbstractPublis
 	@Override
 	public abstract AbstractPeriodicalMonitoringData<T> clone();
 	
+	@Override
 	public void cancelMonitoring() {
 		synchronized (this.subscribers) {
 			this.subscribers.clear();

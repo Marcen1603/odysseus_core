@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.configuration;
 
-import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractTypeSafeMap;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingCalculateLatency;
 
 /**
  * ExecutionConfiguration stores the configuration of an {@link IExecutor}.
@@ -10,10 +9,10 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.Se
  * @author Wolf Bauer
  *
  */
-public class ExecutionConfiguration extends AbstractTypeSafeMap<AbstractExecutionSetting<?>> {
+public class ExecutionConfiguration extends Configuration<AbstractExecutionSetting<?>> {
 
 	/**
-	 * Creates a new ExecutionConfiguration based on {@link AbstractExecutionSetting} entires.
+	 * Creates a new ExecutionConfiguration based on {@link AbstractExecutionSetting} entries.
 	 * 
 	 * @param entries
 	 */
@@ -21,15 +20,4 @@ public class ExecutionConfiguration extends AbstractTypeSafeMap<AbstractExecutio
 		super(entries);
 	}
 
-	/**
-	 * Gets the current setting for {@link SettingCalculateLatency}.
-	 * 
-	 * @return current setting for {@link SettingCalculateLatency}
-	 */
-	public SettingCalculateLatency getCalculateLatency() {
-		if(!this.contains(SettingCalculateLatency.class)) {
-			set(SettingCalculateLatency.FALSE, false);
-		}
-		return (SettingCalculateLatency) this.get(SettingCalculateLatency.class);
-	}
 }

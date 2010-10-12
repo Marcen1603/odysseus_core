@@ -30,11 +30,13 @@ public abstract class AbstractMonitoringDataProvider implements
 		this.metaDataItem = new HashMap<String, IMonitoringData>();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> IMonitoringData<T> getMonitoringData(String type) {
 		return this.metaDataItem.get(type);
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
 			long period) {
@@ -68,14 +70,17 @@ public abstract class AbstractMonitoringDataProvider implements
 
 	}
 
+	@Override
 	public Collection<String> getProvidedMonitoringData() {
 		return this.metaDataItem.keySet();
 	}
 
+	@Override
 	public boolean providesMonitoringData(String type) {
 		return this.metaDataItem.containsKey(type);
 	}
 
+	@Override
 	public void addMonitoringData(String type, IMonitoringData<?> item) {
 		getLogger().debug(
 				"Add Monitoring Data " + type + " " + item + " to " + this);
@@ -87,6 +92,7 @@ public abstract class AbstractMonitoringDataProvider implements
 		this.metaDataItem.put(type, item);
 	}
 
+	@Override
 	public void removeMonitoringData(String type) {
 		getLogger().debug("Remove Monitoring Data " + type + " from " + this);
 		this.metaDataItem.remove(type);

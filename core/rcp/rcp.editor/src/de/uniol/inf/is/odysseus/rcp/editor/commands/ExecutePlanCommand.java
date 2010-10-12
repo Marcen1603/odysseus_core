@@ -14,7 +14,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
 import de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanEditorPart;
 import de.uniol.inf.is.odysseus.rcp.editor.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
@@ -133,7 +133,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		} 
 		
 		try {
-			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), user, (AbstractQueryBuildParameter<?>) null); // TransCfg muss korrigiert werden
+			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), user, (AbstractQueryBuildSetting<?>) null); // TransCfg muss korrigiert werden
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}

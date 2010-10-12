@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
  * @author André Bolles
  *
  */
-public class ParameterDefaultRootStrategy extends AbstractQueryBuildParameter<IDefaultRootStrategy> {
+public class ParameterDefaultRootStrategy extends AbstractQueryBuildSetting<IDefaultRootStrategy> {
 
 	public ParameterDefaultRootStrategy(IDefaultRootStrategy strategy){
 		super(strategy);

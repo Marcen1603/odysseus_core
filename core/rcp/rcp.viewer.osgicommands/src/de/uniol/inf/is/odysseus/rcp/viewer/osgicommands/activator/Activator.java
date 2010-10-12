@@ -40,7 +40,7 @@ public class Activator implements BundleActivator {
 		executor = null;
 	}
 
-//	public static AbstractQueryBuildParameter<?> getTrafoConfigParam() {
+//	public static AbstractQueryBuildSetting<?> getTrafoConfigParam() {
 //		return trafoConfigParam;
 //	}
 }

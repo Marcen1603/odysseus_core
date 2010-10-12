@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.planmanagement.configuration;
 
 /**
  * Describes an object that informs other object that entries of
- * {@link AbstractTypeSafeMap} are modified.
+ * {@link Configuration} are modified.
  * 
  * @author Wolf Bauer
  * 
  * @param <T>
  */
-public interface IValueChangeHandler<T extends IMapValue<?>> {
+public interface IValueChangeHandler<T extends ISetting<?>> {
 	/**
 	 * Adds an object that should be informed if an entry is modified.
 	 * 

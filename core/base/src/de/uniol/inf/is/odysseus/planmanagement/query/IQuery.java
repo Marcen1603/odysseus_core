@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -29,6 +29,7 @@ public interface IQuery extends
 	 * 
 	 * @return ID of this query. Should be unique.
 	 */
+	@Override
 	public int getID();
 
 	/**
@@ -36,6 +37,7 @@ public interface IQuery extends
 	 * 
 	 * @return TRUE: This query will be scheduled. FALSE: else
 	 */
+	@Override
 	public boolean isActive();
 
 	/**
@@ -123,7 +125,8 @@ public interface IQuery extends
 	public List<IPhysicalOperator> getRoots();
 
 	/**
-	 * Returns the direct physical children which are necessary for the
+	 * Returns the direct physical children (
+	 * i.e. all physical operators of this query) which are necessary for the
 	 * execution of this query.
 	 * 
 	 * @return The direct physical children which are necessary for the
@@ -138,13 +141,13 @@ public interface IQuery extends
 	public void removeOwnerschip();
 
 	/**
-	 * Returns the {@link QueryBuildParameter} of this query.
+	 * Returns the {@link QueryBuildConfiguration} of this query.
 	 * 
-	 * @return The {@link QueryBuildParameter} of this query.
+	 * @return The {@link QueryBuildConfiguration} of this query.
 	 */
-	public QueryBuildParameter getBuildParameter();
+	public QueryBuildConfiguration getBuildParameter();
 
-	public void setBuildParameter(QueryBuildParameter parameter);
+	public void setBuildParameter(QueryBuildConfiguration parameter);
 	/*
 	 * (non-Javadoc)
 	 * 

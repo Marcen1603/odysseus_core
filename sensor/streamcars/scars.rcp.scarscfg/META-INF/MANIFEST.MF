@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.planmanagement.configuration,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.rcp.viewer.query,
  de.uniol.inf.is.odysseus.scars.objecttracking.metadata,

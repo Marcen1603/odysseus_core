@@ -1,6 +1,5 @@
-package de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter;
+package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 
 /**
  * Parameter which indicates if a query should be restructured.
@@ -8,7 +7,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.Ab
  * @author Wolf Bauer
  * 
  */
-public class ParameterDoRestruct extends AbstractOptimizationParameter<Boolean> {
+public class ParameterDoRestruct extends AbstractOptimizationSetting<Boolean> {
 	/**
 	 * Restructure a query.
 	 */

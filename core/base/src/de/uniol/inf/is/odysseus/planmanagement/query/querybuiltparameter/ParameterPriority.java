@@ -2,12 +2,12 @@ package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 
 
 /**
- * {@link AbstractQueryBuildParameter} which provides a priority for the query.
+ * {@link AbstractQueryBuildSetting} which provides a priority for the query.
  * 
  * @author Wolf Bauer
  * 
  */
-public  final class ParameterPriority extends AbstractQueryBuildParameter<Integer> {
+public  final class ParameterPriority extends AbstractQueryBuildSetting<Integer> {
 
 	/**
 	 * Creates a ParameterPriority.

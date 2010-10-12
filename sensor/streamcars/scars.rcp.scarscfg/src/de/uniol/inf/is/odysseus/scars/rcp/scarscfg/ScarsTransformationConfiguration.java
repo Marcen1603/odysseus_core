@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IParameterTransformationConfigurationExtension;
 import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper;
 
+
 public class ScarsTransformationConfiguration implements IParameterTransformationConfigurationExtension {
 
 	private static ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(

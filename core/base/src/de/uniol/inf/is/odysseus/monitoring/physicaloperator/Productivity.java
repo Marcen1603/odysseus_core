@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
-import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 /**

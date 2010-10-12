@@ -35,6 +35,7 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 	
 	
 
+	@Override
 	public void reset() {
 		this.writeCount = 0;
 		if (this.readCount == null){
@@ -69,6 +70,7 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 		return readCount.length;
 	}
 
+	@Override
 	public void eventOccured(IEvent<?,?> event) {
 		POEvent poEvent = (POEvent) event;
 		synchronized (this.writeCount) {

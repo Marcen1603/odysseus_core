@@ -1,29 +1,25 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query.queryrestructoptimizer;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
  * optimizer creates the physical plan for queries. Based on
- * {@link OptimizeParameter} a Rewrite is used and buffer are placed by an
+ * {@link OptimizationConfiguration} a Rewrite is used and buffer are placed by an
  * {@link IBufferPlacementStrategy}.
  * 
  * @author Wolf Bauer, Tobias Witt
@@ -32,11 +28,11 @@ import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 public class QueryRestructOptimizer implements IQueryOptimizer {
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.OptimizationConfiguration)
 	 */
 	@Override
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizeParameter parameters) throws QueryOptimizationException {
+			OptimizationConfiguration parameters) throws QueryOptimizationException {
 		ICompiler compiler = sender.getCompiler();
 		
 		if (compiler == null) {
@@ -78,11 +74,11 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter, Set<String>)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.OptimizationConfiguration, Set<String>)
 	 */
 	@Override
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizeParameter parameters, Set<String> rulesToUse) throws QueryOptimizationException {
+			OptimizationConfiguration parameters, Set<String> rulesToUse) throws QueryOptimizationException {
 		ICompiler compiler = sender.getCompiler();
 		
 		if (compiler == null) {
@@ -153,7 +149,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	@Override
 	public Map<IPhysicalOperator,ILogicalOperator> createAlternativePlans(
 			IQueryOptimizable sender, IQuery query,
-			OptimizeParameter parameters, Set<String> rulesToUse)
+			OptimizationConfiguration parameters, Set<String> rulesToUse)
 			throws QueryOptimizationException {
 		
 		throw new RuntimeException("Does not work at the moment. At Marco: Kannst du das bitte so anpassen, " +

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 
-import de.uniol.inf.is.odysseus.planmanagement.configuration.IMapValue;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Setting;
 
 /**
  * Setting for the AdvancedOptimizer.
@@ -9,21 +9,11 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.IMapValue;
  *
  * @param <E>
  */
-public class AbstractOptimizationSetting<E> implements IMapValue<E> {
-	
-	private E value = null;
-	
-	protected AbstractOptimizationSetting(E value) {
-		this.value = value;
-	}
+public class AbstractOptimizationSetting<E> extends Setting<E> {
 
-	@Override
-	public E getValue() {
-		return this.value;
+	protected AbstractOptimizationSetting(E value) {
+		super(value);
 	}
 	
-	protected void setValue(E value) {
-		this.value = value;
-	}
 
 }

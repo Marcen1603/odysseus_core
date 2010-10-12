@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.PartialPlan;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.NoTransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
 /**
  * StandardPlanOptimizer is the standard plan optimizer used by odysseus. New
@@ -55,7 +55,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 *             An {@link Exception} because no
 	 *             {@link TransformationConfiguration} is set. The
 	 *             {@link TransformationConfiguration} should be set as
-	 *             {@link QueryBuildParameter}.
+	 *             {@link QueryBuildConfiguration}.
 	 */
 	private void checkPhysikalPlan(IPlanOptimizable sender,
 			List<IQuery> queries) throws OpenFailedException,
@@ -82,12 +82,12 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 * de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer
 	 * #optimizePlan
 	 * (de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable,
-	 * de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.
-	 * OptimizeParameter, java.util.List)
+	 * de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.
+	 * OptimizationConfiguration, java.util.List)
 	 */
 	@Override
 	public IExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizeParameter parameters, List<IQuery> allQueries)
+			OptimizationConfiguration parameters, List<IQuery> allQueries)
 			throws QueryOptimizationException {
 
 		// check all queries

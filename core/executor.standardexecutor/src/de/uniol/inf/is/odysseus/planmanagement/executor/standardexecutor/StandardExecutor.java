@@ -34,17 +34,16 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -173,7 +172,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @param parserID
 	 *            ID of the parser for translation of query (e. g. CQLParser).
 	 * @param parameters
-	 *            {@link QueryBuildParameter} for the new queries.
+	 *            {@link QueryBuildConfiguration} for the new queries.
 	 * @return List of created queries.
 	 * @throws NoCompilerLoadedException
 	 *             No compiler is set.
@@ -183,7 +182,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 *             Opening an sink or source failed.
 	 */
 	private List<IQuery> createQueries(String queryStr, String parserID,
-			User user, QueryBuildParameter parameters)
+			User user, QueryBuildConfiguration parameters)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
 		getLogger().debug("Translate Queries.");
@@ -359,17 +358,17 @@ public class StandardExecutor extends AbstractExecutor {
 	}
 
 	/**
-	 * Creates {@link QueryBuildParameter} of given
-	 * {@link AbstractQueryBuildParameter}. If some parameter not set default
+	 * Creates {@link QueryBuildConfiguration} of given
+	 * {@link AbstractQueryBuildSetting}. If some parameter not set default
 	 * settings are used.
 	 * 
 	 * @param parameters
-	 *            Parameter for creating a {@link QueryBuildParameter} object.
-	 * @return {@link QueryBuildParameter} with some assured parameters.
+	 *            Parameter for creating a {@link QueryBuildConfiguration} object.
+	 * @return {@link QueryBuildConfiguration} with some assured parameters.
 	 */
-	private QueryBuildParameter getBuildParameter(
-			AbstractQueryBuildParameter<?>... parameters) {
-		QueryBuildParameter params = new QueryBuildParameter(parameters);
+	private QueryBuildConfiguration getBuildParameter(
+			AbstractQueryBuildSetting<?>... parameters) {
+		QueryBuildConfiguration params = new QueryBuildConfiguration(parameters);
 		// assure ParameterTransformationConfiguration
 		if (params.getTransformationConfiguration() == null) {
 			throw new RuntimeException(
@@ -421,11 +420,11 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
-			User user, AbstractQueryBuildParameter<?>... parameters)
+			User user, AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries. " + query);
 		try {
-			QueryBuildParameter params = getBuildParameter(parameters);
+			QueryBuildConfiguration params = getBuildParameter(parameters);
 			List<IQuery> newQueries = createQueries(query, parserID, user,
 					params);
 			addQueries(newQueries);
@@ -450,11 +449,11 @@ public class StandardExecutor extends AbstractExecutor {
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
 			User user, boolean doRestruct, Set<String> rulesToUse,
-			AbstractQueryBuildParameter<?>... parameters)
+			AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries. " + query);
 		try {
-			QueryBuildParameter params = getBuildParameter(parameters);
+			QueryBuildConfiguration params = getBuildParameter(parameters);
 			List<IQuery> newQueries = createQueries(query, parserID, user,
 					params);
 			if (rulesToUse != null && !rulesToUse.isEmpty()) {
@@ -483,11 +482,11 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	@Override
 	public int addQuery(ILogicalOperator logicalPlan, User user,
-			AbstractQueryBuildParameter<?>... parameters)
+			AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		try {
-			QueryBuildParameter params = getBuildParameter(parameters);
+			QueryBuildConfiguration params = getBuildParameter(parameters);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(logicalPlan, params);
 			query.setUser(user);
@@ -514,11 +513,11 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	@Override
 	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
-			AbstractQueryBuildParameter<?>... parameters)
+			AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		try {
-			QueryBuildParameter params = getBuildParameter(parameters);
+			QueryBuildConfiguration params = getBuildParameter(parameters);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(physicalPlan, params);
 			query.setUser(user);
@@ -935,7 +934,7 @@ public class StandardExecutor extends AbstractExecutor {
 		this.executionPlanLock.lock();
 		try {
 			setExecutionPlan(this.optimizer().preQueryMigrateOptimization(this,
-					new OptimizeParameter(ParameterDoRestruct.FALSE)));
+					new OptimizationConfiguration(ParameterDoRestruct.FALSE)));
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();

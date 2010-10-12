@@ -11,7 +11,7 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //
 //	@Override
 //	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IQuery> queries, OptimizeParameter parameter)
+//			List<IQuery> queries, OptimizationConfiguration parameter)
 //			throws QueryOptimizationException {
 //		if (!queries.isEmpty()) {
 //			for (IQuery editableQuery : queries) {
@@ -33,7 +33,7 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //	
 //	@Override
 //	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
+//			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
 //			throws QueryOptimizationException {
 //		if (!queries.isEmpty()) {
 //			for (IQuery editableQuery : queries) {
@@ -57,7 +57,7 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //	@Override
 //	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
 //			T sender, IQuery removedQuery,
-//			IExecutionPlan executionPlan, OptimizeParameter parameter)
+//			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
 //			throws QueryOptimizationException {
 //		logger.debug("preQueryRemoveOptimization");
 //		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
@@ -82,7 +82,7 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //
 //	@Override
 //	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
-//			OptimizeParameter parameter) throws QueryOptimizationException {
+//			OptimizationConfiguration parameter) throws QueryOptimizationException {
 //		// TODO Auto-generated method stub
 //		return null;
 //	}

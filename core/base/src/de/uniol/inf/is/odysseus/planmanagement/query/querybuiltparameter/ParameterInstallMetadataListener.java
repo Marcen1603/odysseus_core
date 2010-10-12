@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 
 public class ParameterInstallMetadataListener extends
-		AbstractQueryBuildParameter<Boolean> {
+		AbstractQueryBuildSetting<Boolean> {
 
 	protected ParameterInstallMetadataListener(Boolean value) {
 		super(value);

@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
@@ -35,7 +35,7 @@ public interface IQueryOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizeParameter parameters) throws QueryOptimizationException;
+			OptimizationConfiguration parameters) throws QueryOptimizationException;
 	
 	/**
 	 * Optimizes a single query and builds the physical plan.
@@ -55,7 +55,7 @@ public interface IQueryOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizeParameter parameters, Set<String> rulesToUse) throws QueryOptimizationException;
+			OptimizationConfiguration parameters, Set<String> rulesToUse) throws QueryOptimizationException;
 	
 	/**
 	 * Adds buffers corresponding to the query's
@@ -94,5 +94,5 @@ public interface IQueryOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(IQueryOptimizable sender, IQuery query,
-			OptimizeParameter parameters, Set<String> rulesToUse) throws QueryOptimizationException;
+			OptimizationConfiguration parameters, Set<String> rulesToUse) throws QueryOptimizationException;
 }

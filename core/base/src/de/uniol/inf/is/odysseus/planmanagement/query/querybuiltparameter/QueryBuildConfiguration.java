@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractTypeSafeMap;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
 
 /**
- * QueryBuildParameter provides a set of {@link AbstractQueryBuildParameter}.
+ * QueryBuildConfiguration provides a set of {@link AbstractQueryBuildSetting}.
  * Each standard Parameter has a default value. This class also provides some
  * methods for a simple access to some standard parameters.
  * 
@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractTypeSafeMap
  * @author Wolf Bauer
  * 
  */
-public class QueryBuildParameter extends
-		AbstractTypeSafeMap<AbstractQueryBuildParameter<?>> {
+public class QueryBuildConfiguration extends
+		Configuration<AbstractQueryBuildSetting<?>> {
 
 	/**
 	 * Creates a new set of parameters. If some standard values are not set in
@@ -25,7 +25,7 @@ public class QueryBuildParameter extends
 	 * @param parameters
 	 *            New parameter for this set.
 	 */
-	public QueryBuildParameter(AbstractQueryBuildParameter<?>[] parameters) {
+	public QueryBuildConfiguration(AbstractQueryBuildSetting<?>[] parameters) {
 		super(parameters);
 
 		if (!contains(ParameterTransformationConfiguration.class)) {
@@ -66,7 +66,7 @@ public class QueryBuildParameter extends
 	/**
 	 * Creates a new set of parameters with default values.
 	 */
-	public QueryBuildParameter() {
+	public QueryBuildConfiguration() {
 		this(null);
 	}
 

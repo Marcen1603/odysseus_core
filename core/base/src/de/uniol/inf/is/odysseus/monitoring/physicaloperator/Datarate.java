@@ -30,20 +30,24 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double> implement
 	}
 
 
+	@Override
 	public void reset() {
 		this.writeCount = 0;
 		this.lastTimestamp = System.currentTimeMillis();
 		this.value = new Double(0);
 	}
 
+	@Override
 	public String getType() {
 		return MonitoringDataTypes.DATARATE.name;
 	}
 
+	@Override
 	public Double getValue() {
 		return this.value;
 	}
 
+	@Override
 	public void run() {
 		synchronized (this.value) {
 			long currentTime = System.currentTimeMillis();
@@ -74,6 +78,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double> implement
 		}
 	}
 
+	@Override
 	public void eventOccured(IEvent<?,?> event) {
 		synchronized (this.value) {
 			++writeCount;

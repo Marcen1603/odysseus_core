@@ -23,6 +23,7 @@ public class ClassicSelectivity extends Selectivity {
 		super(classicSelectivity);
 	}
 
+	@Override
 	public Double getValue() {
 		return  getWriteCount()/ getReadCountProduct();
 	}

@@ -19,6 +19,7 @@ public abstract class AbstractMonitoringData<T>
 		this.target = other.target;
 	}
 
+	@Override
 	public IMonitoringDataProvider getTarget() {
 		return target;
 	}

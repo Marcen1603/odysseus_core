@@ -20,15 +20,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
 
@@ -108,7 +107,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> queries, OptimizeParameter parameter)
+			List<IQuery> queries, OptimizationConfiguration parameter)
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IQuery editableQuery : queries) {
@@ -132,7 +131,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
+			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IQuery editableQuery : queries) {
@@ -156,7 +155,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
 			T sender, IQuery removedQuery,
-			IExecutionPlan executionPlan, OptimizeParameter parameter)
+			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
 			throws QueryOptimizationException {
 		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
 				sender.getRegisteredQueries());
@@ -178,7 +177,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	
 	@Override
 	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
-			OptimizeParameter parameter) throws QueryOptimizationException {
+			OptimizationConfiguration parameter) throws QueryOptimizationException {
 		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
 				sender.getRegisteredQueries());
 		IExecutionPlan newExecutionPlan = this.planOptimizer
@@ -241,7 +240,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			getLogger().debug("Building alternative plans.");
 			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
 					sender, query, 
-					new OptimizeParameter(ParameterDoRestruct.TRUE), null);
+					new OptimizationConfiguration(ParameterDoRestruct.TRUE), null);
 			
 			// pick out optimal plan by cost analysis
 			List<IPhysicalOperator> candidates = this.executionCostModel.getCostCalculator().pickBest(

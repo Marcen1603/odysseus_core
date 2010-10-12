@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
@@ -30,6 +31,6 @@ public interface IPlanOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public IExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizeParameter parameters, List<IQuery> allQueries)
+			OptimizationConfiguration parameters, List<IQuery> allQueries)
 			throws QueryOptimizationException;
 }

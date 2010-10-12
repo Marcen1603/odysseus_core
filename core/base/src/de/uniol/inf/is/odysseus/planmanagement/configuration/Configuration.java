@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.planmanagement.configuration;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class is an type safe map. Each entry could have a value with a special
+ * This class is uses an type safe map for configuration issues. Each entry could have a value with a special
  * type. This map is for example used to provide system options, query build
  * parameter and optimization parameter.
  * 
@@ -16,18 +15,14 @@ import java.util.HashMap;
  * @param <T>
  *            type of the entries which this map accepts.
  */
-public abstract class AbstractTypeSafeMap<T extends IMapValue<?>> implements
-		IValueChangeHandler<T> {
+public class Configuration<T extends ISetting<?>> extends
+		ValueChangeHandler<T> {
 
 	/**
 	 * Map of entries which are stored.
 	 */
 	protected HashMap<Type, T> entry = new HashMap<Type, T>();
 
-	/**
-	 * List of objects which are informed if an entry value changes.
-	 */
-	private ArrayList<IValueChangeListener<T>> changeListener = new ArrayList<IValueChangeListener<T>>();
 
 	/**
 	 * Creates a new map.
@@ -35,7 +30,7 @@ public abstract class AbstractTypeSafeMap<T extends IMapValue<?>> implements
 	 * @param entries
 	 *            Entries which should be stored.
 	 */
-	public AbstractTypeSafeMap(T... entries) {
+	public Configuration(T... entries) {
 		if (entries != null) {
 			for (T hasValue : entries) {
 				set(hasValue, false);
@@ -89,33 +84,6 @@ public abstract class AbstractTypeSafeMap<T extends IMapValue<?>> implements
 	 */
 	public boolean contains(Class<?> entryType) {
 		return this.entry.containsKey(entryType);
-	}
-
-	/**
-	 * Sends a setting changed event to all registered listeners.
-	 * 
-	 * @param newEntry Entry which changed. 
-	 */
-	private void settingChanged(T newEntry) {
-		for (IValueChangeListener<T> listener : this.changeListener) {
-			listener.settingChanged(newEntry);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.configuration.IValueChangeHandler#addValueChangeListener(de.uniol.inf.is.odysseus.planmanagement.configuration.IValueChangeListener)
-	 */
-	@Override
-	public void addValueChangeListener(IValueChangeListener<T> listener) {
-		this.changeListener.add(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.configuration.IValueChangeHandler#removeValueChangeListener(de.uniol.inf.is.odysseus.planmanagement.configuration.IValueChangeListener)
-	 */
-	@Override
-	public void removeValueChangeListener(IValueChangeListener<T> listener) {
-		this.changeListener.remove(listener);
 	}
 
 	/*

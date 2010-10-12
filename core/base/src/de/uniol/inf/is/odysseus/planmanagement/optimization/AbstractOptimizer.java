@@ -13,16 +13,14 @@ import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.AbstractOptimizationSetting;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 
 /**
  * AbstractOptimizer implements base optimization functions. It manages services
@@ -227,41 +225,41 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryRemoveOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter<?>[])
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryRemoveOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
 	 */
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
 			T sender, IQuery removedQuery,
 			IExecutionPlan executionPlan,
-			AbstractOptimizationParameter<?>... parameters)
+			AbstractOptimizationSetting<?>... parameters)
 			throws QueryOptimizationException {
 		return preQueryRemoveOptimization(sender, removedQuery, executionPlan,
-				new OptimizeParameter(parameters));
+				new OptimizationConfiguration(parameters));
 	};
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter<?>[])
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
 	 */
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IQuery> newQueries,
-			AbstractOptimizationParameter<?>... parameters)
+			AbstractOptimizationSetting<?>... parameters)
 			throws QueryOptimizationException {
 		return preQueryAddOptimization(sender, newQueries,
-				new OptimizeParameter(parameters));
+				new OptimizationConfiguration(parameters));
 	};
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter<?>[])
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
 	 */
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IQuery> newQueries,
 			Set<String> rulesToUse,
-			AbstractOptimizationParameter<?>... parameters)
+			AbstractOptimizationSetting<?>... parameters)
 			throws QueryOptimizationException {
 		return preQueryAddOptimization(sender, newQueries,
-				new OptimizeParameter(parameters), rulesToUse);
+				new OptimizationConfiguration(parameters), rulesToUse);
 	};
 
 	/* (non-Javadoc)

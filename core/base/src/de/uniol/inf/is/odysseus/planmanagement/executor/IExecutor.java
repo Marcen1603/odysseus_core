@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -81,7 +81,7 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	public int addQuery(ILogicalOperator logicalPlan, User user,
-			AbstractQueryBuildParameter<?>... parameters)
+			AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException;
 
 	
@@ -116,7 +116,7 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	public Collection<Integer> addQuery(String query, String compilerID, User user,
-			AbstractQueryBuildParameter<?>... parameters)
+			AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException;
 	
 	/**
@@ -143,7 +143,7 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	public Collection<Integer> addQuery(String query, String parserID, User user,
 			boolean doRestruct,
 			Set<String> rulesToUse,
-			AbstractQueryBuildParameter<?>... parameters)
+			AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException;
 
 	/**
@@ -162,7 +162,7 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
-			AbstractQueryBuildParameter<?>... parameters)
+			AbstractQueryBuildSetting<?>... parameters)
 			throws PlanManagementException;
 	
 	public void addCompilerListener(ICompilerListener compilerListener);
