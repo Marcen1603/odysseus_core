@@ -71,15 +71,16 @@ public class PQLParserImpl implements PQLParserImplConstants {
     return result;
   }
 
-   static User user;
+  static User user;
 
-  static public User getUser(){
-        return user;
+  static public User getUser()
+  {
+    return user;
   }
 
   static public void setUser(User newUser)
   {
-        user = newUser;
+    user = newUser;
   }
 
   static final public List < IQuery > query() throws ParseException {
@@ -262,7 +263,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator op = namedOps.get(identifier.image.toUpperCase());
       if (op == null)
       {
-        {if (true) throw new IllegalArgumentException("no such operator: " + identifier.image);}
+        if (DataDictionary.getInstance().containsView(identifier.image, getUser()))
+        {
+          op = DataDictionary.getInstance().getView(identifier.image, getUser());
+        }
+        else
+        {
+          {if (true) throw new IllegalArgumentException("no such operator: " + identifier.image);}
+        }
       }
       {if (true) return op;}
         break;

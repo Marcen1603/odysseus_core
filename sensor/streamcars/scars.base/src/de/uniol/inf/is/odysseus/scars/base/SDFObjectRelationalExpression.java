@@ -20,13 +20,13 @@ public class SDFObjectRelationalExpression extends SDFExpression {
 		super(URI, value, attributeResolver);
 	}
 
-	@Override
-	protected void insertAttributePath(String token) {
-		if( attributePaths == null ) 
-			attributePaths = new ArrayList<String[]>();
-		this.attributePaths.add(token.split("\\."));
-	}
-	
+//	@Override
+//	protected void insertAttributePath(String token) {
+//		if( attributePaths == null ) 
+//			attributePaths = new ArrayList<String[]>();
+//		this.attributePaths.add(token.split("\\."));
+//	}
+//	
 	/**
 	 * 
 	 * @deprecated Wird nirgends verwendet

@@ -156,10 +156,6 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		return Collections.unmodifiableList(this.expression.getAllAttributes());
 	}
 	
-	public boolean isSetOperator(String symbol) {
-		return expression.isSetOperator(symbol);
-	}
-	
 	public boolean equals(Object other){
 		if(!(other instanceof ObjectRelationalPredicate)){
 			return false;

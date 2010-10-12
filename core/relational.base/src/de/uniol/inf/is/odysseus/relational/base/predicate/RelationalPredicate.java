@@ -127,10 +127,6 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		return Collections.unmodifiableList(this.expression.getAllAttributes());
 	}
 	
-	public boolean isSetOperator(String symbol) {
-		return expression.isSetOperator(symbol);
-	}
-	
 	public boolean equals(Object other){
 		if(!(other instanceof RelationalPredicate)){
 			return false;
