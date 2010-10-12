@@ -831,4 +831,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
+	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {		
+		return null;
+	}
+
 }

@@ -320,7 +320,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CreateFromDatabase */
         try {
-/*@egen*/	< K_DATABASE > [ "[" JdbcIdentifier() "]" ] < K_USE > < K_TABLE > Identifier() [ < K_TIME_SENSITIV > ]/*@bgen(jjtree)*/
+/*@egen*/	< K_DATABASE > [ "[" JdbcIdentifier() "]" ] < K_USE > < K_TABLE > Identifier() [ DatabaseTimeSensitiv() ]/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -335,6 +335,18 @@
             throw (ParseException)jjte000;
           }
           throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/}void DatabaseTimeSensitiv() :{/*@bgen(jjtree) DatabaseTimeSensitiv */
+  ASTDatabaseTimeSensitiv jjtn000 = new ASTDatabaseTimeSensitiv(JJTDATABASETIMESENSITIV);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DatabaseTimeSensitiv */
+        try {
+/*@egen*/	< K_TIME_SENSITIV >/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);

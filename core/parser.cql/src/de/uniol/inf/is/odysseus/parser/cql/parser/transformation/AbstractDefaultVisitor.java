@@ -165,11 +165,9 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 					+ "("
 					+ attributeResolver.getAttribute(curChild.jjtGetChild(1)
 							.toString()) + ")";
-		} catch (AmgigiousAttributeException e) {
-			// TODO Auto-generated catch block
+		} catch (AmgigiousAttributeException e) {			
 			e.printStackTrace();
 		} catch (NoSuchAttributeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "";
@@ -586,13 +584,11 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTCreateSLAStatement node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTPercentileConstraint node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}	
 
@@ -603,6 +599,11 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTJdbcIdentifier node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {	
 		return null;
 	}
 }

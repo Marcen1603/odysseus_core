@@ -45,7 +45,7 @@ public interface NewSQLParserConstants {
   /** RegularExpression Id. */
   int K_CSV = 21;
   /** RegularExpression Id. */
-  int K_DBTABLE = 22;
+  int K_DATABASE = 22;
   /** RegularExpression Id. */
   int K_DATE = 23;
   /** RegularExpression Id. */
@@ -177,81 +177,89 @@ public interface NewSQLParserConstants {
   /** RegularExpression Id. */
   int K_SUM = 87;
   /** RegularExpression Id. */
-  int K_TENANT = 88;
+  int K_TABLE = 88;
   /** RegularExpression Id. */
-  int K_TIME = 89;
+  int K_TENANT = 89;
   /** RegularExpression Id. */
-  int K_TIMEOUT = 90;
+  int K_TIME = 90;
   /** RegularExpression Id. */
-  int K_TO = 91;
+  int K_TIME_SENSITIV = 91;
   /** RegularExpression Id. */
-  int K_TUPLE = 92;
+  int K_TIMEOUT = 92;
   /** RegularExpression Id. */
-  int K_UNBOUNDED = 93;
+  int K_TO = 93;
   /** RegularExpression Id. */
-  int K_UNION = 94;
+  int K_TUPLE = 94;
   /** RegularExpression Id. */
-  int K_USER = 95;
+  int K_UNBOUNDED = 95;
   /** RegularExpression Id. */
-  int K_VALID = 96;
+  int K_UNION = 96;
   /** RegularExpression Id. */
-  int K_VIEW = 97;
+  int K_USE = 97;
   /** RegularExpression Id. */
-  int K_WEEK = 98;
+  int K_USER = 98;
   /** RegularExpression Id. */
-  int K_WHERE = 99;
+  int K_VALID = 99;
   /** RegularExpression Id. */
-  int K_WITH = 100;
+  int K_VIEW = 100;
   /** RegularExpression Id. */
-  int K_SENSOR = 101;
+  int K_WEEK = 101;
   /** RegularExpression Id. */
-  int K_ATTRIBUTE = 102;
+  int K_WHERE = 102;
   /** RegularExpression Id. */
-  int K_RECORD = 103;
+  int K_WITH = 103;
   /** RegularExpression Id. */
-  int K_LIST = 104;
+  int K_SENSOR = 104;
   /** RegularExpression Id. */
-  int S_DISTANCE = 105;
+  int K_ATTRIBUTE = 105;
   /** RegularExpression Id. */
-  int S_COMPARE = 106;
+  int K_RECORD = 106;
   /** RegularExpression Id. */
-  int S_POINT = 107;
+  int K_LIST = 107;
   /** RegularExpression Id. */
-  int S_SEGMENT = 108;
+  int S_DISTANCE = 108;
   /** RegularExpression Id. */
-  int S_LINE = 109;
+  int S_COMPARE = 109;
   /** RegularExpression Id. */
-  int S_FACET = 110;
+  int S_POINT = 110;
   /** RegularExpression Id. */
-  int S_SOLID = 111;
+  int S_SEGMENT = 111;
   /** RegularExpression Id. */
-  int FLOAT = 112;
+  int S_LINE = 112;
   /** RegularExpression Id. */
-  int INTEGER = 113;
+  int S_FACET = 113;
   /** RegularExpression Id. */
-  int DIGIT = 114;
+  int S_SOLID = 114;
   /** RegularExpression Id. */
-  int IPADDRESS = 115;
+  int FLOAT = 115;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 116;
+  int INTEGER = 116;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 117;
+  int DIGIT = 117;
   /** RegularExpression Id. */
-  int IDENTIFIER = 118;
+  int IPADDRESS = 118;
   /** RegularExpression Id. */
-  int LETTER = 119;
+  int LINE_COMMENT = 119;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 120;
+  int MULTI_LINE_COMMENT = 120;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 121;
+  int IDENTIFIER = 121;
   /** RegularExpression Id. */
-  int SQL_STRING = 122;
+  int LETTER = 122;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 123;
+  int SPECIAL_CHARS = 123;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 124;
+  int CHAR_LITERAL = 124;
   /** RegularExpression Id. */
-  int REGEXP = 125;
+  int SQL_STRING = 125;
+  /** RegularExpression Id. */
+  int QUOTED_IDENTIFIER = 126;
+  /** RegularExpression Id. */
+  int COMPARE_OPERATOR = 127;
+  /** RegularExpression Id. */
+  int REGEXP = 128;
+  /** RegularExpression Id. */
+  int JDBC_STRING = 129;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -280,12 +288,12 @@ public interface NewSQLParserConstants {
     "\"COUNT\"",
     "\"CREATE\"",
     "\"CSV\"",
-    "\"DBTABLE\"",
+    "\"DATABASE\"",
     "\"DATE\"",
     "<K_DAY>",
     "\"DB_EXECUTE\"",
-    "\"DATABASE\"",
-    "\"SCHEMA\"",
+    "\"DB_SELECT\"",
+    "\"DB_SCHEMA\"",
     "\"DEFAULT\"",
     "\"DISTINCT\"",
     "\"DETACH\"",
@@ -346,13 +354,16 @@ public interface NewSQLParserConstants {
     "\"STREAM\"",
     "\"STRING\"",
     "\"SUM\"",
+    "\"TABLE\"",
     "\"TENANT\"",
     "\"TIME\"",
+    "\"TIMESENSITIV\"",
     "\"TIMEOUT\"",
     "\"TO\"",
     "\"TUPLE\"",
     "\"UNBOUNDED\"",
     "\"UNION\"",
+    "\"USE\"",
     "\"USER\"",
     "\"VALID\"",
     "\"VIEW\"",
@@ -384,15 +395,16 @@ public interface NewSQLParserConstants {
     "<QUOTED_IDENTIFIER>",
     "<COMPARE_OPERATOR>",
     "<REGEXP>",
+    "<JDBC_STRING>",
     "\";\"",
     "\"(\"",
     "\",\"",
     "\")\"",
     "\"[\"",
+    "\"]\"",
     "\"-\"",
     "\":\"",
     "\"*\"",
-    "\"]\"",
     "\"+\"",
     "\"/\"",
     "\"^\"",
