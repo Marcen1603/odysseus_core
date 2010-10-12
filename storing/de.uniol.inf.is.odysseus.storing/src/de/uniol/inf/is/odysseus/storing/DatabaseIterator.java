@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.storing;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,12 +16,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
-
-	private static final String START_TIME_ATTRIBUTE = "MetaStartTimeValue";
+	
 	private static final int SELECT_BASH_SIZE = 10;
 
 	private String tableName;
-	private SDFAttributeList schema;
+	private SDFAttributeList schema; 
 
 	private int selectPointer = 0;
 
@@ -29,16 +29,16 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	
 	private int totalSize = 0;
 
-	/*	
-	 * // insert PreparedStatement psInsert =
-	 * conn.prepareStatement("insert into location values (?, ?)");
-	 * psInsert.setInt(1, 1956); psInsert.setString(2, "Webster St.");
-	 * psInsert.executeUpdate(); System.out.println("Inserted 1956 Webster");	
-	 */
+	private Connection connection;
 
-	public DatabaseIterator(String name, SDFAttributeList schema) {
+	private int startTimeIndex = -1;
+	private int endTimeIndex = -1;
+
+
+	public DatabaseIterator(String name, SDFAttributeList schema, Connection connection) {
 		this.schema = schema;
 		this.tableName = name;
+		this.connection = connection;
 		init();
 	}
 
@@ -51,12 +51,22 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	public String createSelectStatement() {				
 		String query = "SELECT ";
 		String delimiter = "";
+		String suffix ="";
+		int index = 0;
 		for (SDFAttribute attribute : this.schema) {
 			query = query + delimiter + attribute.getAttributeName();
 			delimiter = ", ";
 			this.attributeSize++;
+			if(attribute.getDatatype().getQualName().toUpperCase().equals("STARTTIMESTAMP")){
+				suffix = " ORDER BY "+attribute.getAttributeName()+ " ASC";
+				this.startTimeIndex  = index;
+			}
+			if(attribute.getDatatype().getQualName().toUpperCase().equals("ENDTIMESTAMP")){
+				this.endTimeIndex = index;
+			}
+			index++;
 		}
-		query = query + " FROM " + this.tableName + " ORDER BY " + START_TIME_ATTRIBUTE + " ASC";
+		query = query + " FROM " + this.tableName + suffix;
 		return query;
 	}
 
@@ -67,7 +77,7 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	public List<RelationalTuple<?>> selectGetNext() throws SQLException{
 		String query = this.preparedSelect + " offset "+selectPointer+" rows fetch next "+SELECT_BASH_SIZE+" rows only";
 		this.selectPointer=this.selectPointer+SELECT_BASH_SIZE;
-		Statement s = DatabaseServiceLoader.getConnection().createStatement();
+		Statement s = this.connection.createStatement();
 		ResultSet rs = s.executeQuery(query);
 		List<RelationalTuple<?>> liste = new ArrayList<RelationalTuple<?>>();
 		while(rs.next()) {
@@ -76,8 +86,17 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 				values[i] = rs.getObject(i+1);            			
 			}
 			RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(values);
-			tuple.setMetadata(new TimeInterval(new PointInTime(rs.getLong(this.attributeSize))));
-			
+			PointInTime startTimePT = PointInTime.getZeroTime();
+			PointInTime endTimePT = PointInTime.getInfinityTime();
+			if(this.startTimeIndex>-1){
+				long time = rs.getLong(this.startTimeIndex+1);
+				startTimePT = new PointInTime(time);
+			}
+			if(this.endTimeIndex>-1){
+				long time = rs.getLong(this.endTimeIndex+1);
+				endTimePT = new PointInTime(time);
+			}
+			tuple.setMetadata(new TimeInterval(startTimePT, endTimePT));
 			liste.add(tuple);
 		}
 		return liste;		

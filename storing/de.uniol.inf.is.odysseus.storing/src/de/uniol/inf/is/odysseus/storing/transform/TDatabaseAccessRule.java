@@ -24,7 +24,7 @@ public class TDatabaseAccessRule extends AbstractTransformationRule<DatabaseAcce
 		String accessPOName = accessAO.getSource().getURI(false);		
 		ISource<?> accessPO = null;	
 		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null){
-			accessPO = new DatabaseAccessPO(accessAO.getTable());
+			accessPO = new DatabaseAccessPO(accessAO.getTable(), accessAO.getConnection(), accessAO.isTimesensitiv());
 			accessPO.setOutputSchema(accessAO.getOutputSchema());
 			WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);			
 		}else{

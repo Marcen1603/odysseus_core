@@ -14,8 +14,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class DatabaseFill {
 
-	private static final String START_TIME_ATTRIBUTE = "MetaStartTimeValue";
-
 	private String tableName;
 	private SDFAttributeList schema;
 
@@ -33,17 +31,23 @@ public class DatabaseFill {
 			s = con.createStatement();
 			s.execute("DROP TABLE " + tableName);
 		} catch (SQLException e1) {
-			e1.printStackTrace();
+			System.err.println("kein drop, weil es nicht existierte...");
 		}
 
 		// schema
 		SDFAttributeList list = new SDFAttributeList();
-		SDFAttribute a = new SDFAttribute(tableName, "timestamp");
+		SDFAttribute a = new SDFAttribute(tableName, "timestart");
 		a.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
 		list.add(a);
+		
+		a = new SDFAttribute(tableName, "timeend");
+		a.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		list.add(a);
+		
 		a = new SDFAttribute(tableName, "name");
 		a.setDatatype(SDFDatatypeFactory.getDatatype("String"));
 		list.add(a);
+		
 		a = new SDFAttribute(tableName, "price");
 		a.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 		list.add(a);
@@ -53,12 +57,13 @@ public class DatabaseFill {
 
 		PreparedStatement ps;
 		try {
-			ps = con.prepareStatement("INSERT INTO "+tableName+" (timestamp, name, price) VALUES (?, ?, ?)");
+			ps = con.prepareStatement("INSERT INTO "+tableName+" (timestart, timeend, name, price) VALUES (?, ?, ?, ?)");
 			Random r = new Random();
 			for (int i = 0; i < 100; i++) {
-				ps.setLong(1, i * 5);
-				ps.setString(2, "Beispiel " + i);
-				ps.setDouble(3, r.nextDouble() + r.nextInt(100));
+				ps.setLong(1, i * 500);
+				ps.setLong(2, (i*500)+2);
+				ps.setString(3, "Beispiel " + i);
+				ps.setDouble(4, r.nextDouble() + r.nextInt(100));
 				ps.executeUpdate();
 			}
 			ps.close();
@@ -87,7 +92,7 @@ public class DatabaseFill {
 			query = query + delimiter + name + " " + typeString;
 			delimiter = ", ";
 		}
-		query = query + ", " + START_TIME_ATTRIBUTE + " BIGINT)";
+		query = query + ")";
 		System.out.println("CREATING TABLE: " + query);
 		try {
 			s.execute(query);

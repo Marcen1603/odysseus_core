@@ -29,12 +29,20 @@ public class FromTableVisitor {
 	public Object visit(ASTCreateFromDatabase node, Object data){
 		DatabaseAccessAO access = null;
 		if(node.jjtGetNumChildren()>1){
-			// es wurde eine db angegeben
-			String jdbc = ((ASTJdbcIdentifier)node.jjtGetChild(0)).getConnection();
-			String name = ((ASTIdentifier)node.jjtGetChild(1)).getName();
-			access = getAccessAOForJDBC(jdbc, name, false);			
+			if(node.jjtGetChild(0) instanceof ASTJdbcIdentifier){
+				String jdbc = ((ASTJdbcIdentifier)node.jjtGetChild(0)).getConnection();
+				String name = ((ASTIdentifier)node.jjtGetChild(1)).getName();
+				boolean sensitiv = false;
+				if(node.jjtGetNumChildren()==3){
+					sensitiv = true;
+				}
+				access = getAccessAOForJDBC(jdbc, name, sensitiv);		
+			}else{
+				String name = ((ASTIdentifier)node.jjtGetChild(0)).getName();			
+				access = getAccessAOForDefault(name, true);
+			}
 		}else{
-			String name = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+			String name = ((ASTIdentifier)node.jjtGetChild(0)).getName();			
 			access = getAccessAOForDefault(name, false);
 		}
 		
@@ -51,6 +59,7 @@ public class FromTableVisitor {
 	
 	private DatabaseAccessAO getAccessAOForJDBC(String jdbcString, String tableName, boolean isTimeSensitiv){
 		try {
+			System.err.println("Currently only Derby DB is allowed, because there are no other drivers...");
 			Connection con = DriverManager.getConnection(jdbcString);
 			DatabaseAccessAO dba = new DatabaseAccessAO(getSource(name), con, tableName, isTimeSensitiv);
 			return dba;
