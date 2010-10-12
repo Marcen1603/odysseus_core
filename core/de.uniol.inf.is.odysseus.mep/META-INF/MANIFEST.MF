@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MEP
+Bundle-SymbolicName: MEP
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.mep.functions
