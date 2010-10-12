@@ -594,11 +594,10 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTPercentileConstraint node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}	
 
 	@Override
-	public Object visit(ASTDbTable node, Object data) {
-		// TODO Auto-generated method stub
+	public Object visit(ASTCreateFromDatabase node, Object data) {	
 		return null;
 	}
 }

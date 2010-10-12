@@ -14,7 +14,7 @@ public interface NewSQLParserTreeConstants
   public int JJTCOMPLEXSELECTSTATEMENT = 8;
   public int JJTSELECTSTATEMENT = 9;
   public int JJTCREATESTATEMENT = 10;
-  public int JJTDBTABLE = 11;
+  public int JJTCREATEFROMDATABASE = 11;
   public int JJTCREATEVIEWSTATEMENT = 12;
   public int JJTCREATESENSOR = 13;
   public int JJTORSCHEMADEFINITION = 14;
@@ -118,7 +118,7 @@ public interface NewSQLParserTreeConstants
     "ComplexSelectStatement",
     "SelectStatement",
     "CreateStatement",
-    "DbTable",
+    "CreateFromDatabase",
     "CreateViewStatement",
     "CreateSensor",
     "ORSchemaDefinition",
@@ -210,4 +210,4 @@ public interface NewSQLParserTreeConstants
     "DropViewStatement",
   };
 }
-/* JavaCC - OriginalChecksum=a4dd1ac1c91e53eb3329a69b2d631845 (do not edit this line) */
+/* JavaCC - OriginalChecksum=6e54fde4a1ca857f7ac985835cf850bf (do not edit this line) */

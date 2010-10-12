@@ -822,7 +822,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTDbTable node, Object data) {
+	public Object visit(ASTCreateFromDatabase node, Object data) {
 		return null;
 	}
 

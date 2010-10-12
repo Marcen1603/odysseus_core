@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDbTable;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
@@ -226,13 +226,13 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		return v.visit(node, data, this);
 	}
 
-	public Object visit(ASTDbTable node, Object data) {		
+	public Object visit(ASTCreateFromDatabase node, Object data) {		
 		try {
 			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.FromTableVisitor");
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(v, user);
-			m = visitor.getDeclaredMethod("visit", ASTDbTable.class, Object.class);
+			m = visitor.getDeclaredMethod("visit", ASTCreateFromDatabase.class, Object.class);
 			ISource<?> ao = (ISource<?>) m.invoke(v, node, data);
 			ao.setOutputSchema(this.attributes);
 			return ao;

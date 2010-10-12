@@ -507,10 +507,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTPercentileConstraint node, Object data) {
 		return pvisit(node);
-	}
+	}	
 
 	@Override
-	public Object visit(ASTDbTable node, Object data) {
+	public Object visit(ASTCreateFromDatabase node, Object data) {
 		return pvisit(node);
 	}
 
