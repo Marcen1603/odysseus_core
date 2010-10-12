@@ -278,7 +278,7 @@ public static final String[] jjstrLiteralImages = {
 
 /** Lexer state names. */
 public static final String[] lexStateNames = {
-   "DEFAULT", 
+   "DEFAULT",
 };
 static final long[] jjtoToken = {
    0x1ffff361L, 
@@ -374,13 +374,13 @@ public Token getNextToken()
 
   EOFLoop :
   for (;;)
-  {   
-   try   
-   {     
+  {
+   try
+   {
       curChar = input_stream.BeginToken();
-   }     
+   }
    catch(java.io.IOException e)
-   {        
+   {
       jjmatchedKind = 0;
       matchedToken = jjFillToken();
       return matchedToken;

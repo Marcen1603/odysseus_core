@@ -6,7 +6,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   protected JJTMEPImplState jjtree = new JJTMEPImplState();public static void main(String args [])
   {
     System.out.println("Reading from standard input...");
-    System.out.print("Enter an expression like \"1+(2+3)*var;\" :");
+    System.out.print("Enter an expression like \u005c"1+(2+3)*var;\u005c" :");
     MEPImpl mep = new MEPImpl(System.in);
     try
     {
@@ -990,7 +990,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       for (int i = 0; i < jj_endpos; i++) {
         jj_expentry[i] = jj_lasttokens[i];
       }
-      jj_entries_loop: for (java.util.Iterator it = jj_expentries.iterator(); it.hasNext();) {
+      jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
         int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {
           for (int i = 0; i < jj_expentry.length; i++) {
