@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.storing.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.derby,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.logicaloperator,

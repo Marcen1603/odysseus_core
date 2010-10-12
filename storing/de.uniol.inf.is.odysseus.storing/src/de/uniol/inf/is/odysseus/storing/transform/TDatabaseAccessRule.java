@@ -3,16 +3,16 @@ package de.uniol.inf.is.odysseus.storing.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseAccessAO;
 import de.uniol.inf.is.odysseus.storing.physicaloperator.DatabaseAccessPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TDatabaseAccessRule extends AbstractTransformationRule<AccessAO>{
+public class TDatabaseAccessRule extends AbstractTransformationRule<DatabaseAccessAO>{
 
 	@Override
 	public int getPriority() {		
@@ -20,11 +20,18 @@ public class TDatabaseAccessRule extends AbstractTransformationRule<AccessAO>{
 	}
 
 	@Override
-	public void execute(AccessAO accessAO, TransformationConfiguration config) {
-		String accessPOName = accessAO.getSource().getURI(false);
-		ISource<?> accessPO = new DatabaseAccessPO(accessPOName);		
-		accessPO.setOutputSchema(accessAO.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+	public void execute(DatabaseAccessAO accessAO, TransformationConfiguration config) {
+		String accessPOName = accessAO.getSource().getURI(false);		
+		ISource<?> accessPO = null;	
+		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null){
+			accessPO = new DatabaseAccessPO(accessAO.getTable());
+			accessPO.setOutputSchema(accessAO.getOutputSchema());
+			WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);			
+		}else{
+			accessPO = WrapperPlanFactory.getAccessPlan(accessPOName);
+		}
+		
+		
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(accessAO, accessPO);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -34,18 +41,13 @@ public class TDatabaseAccessRule extends AbstractTransformationRule<AccessAO>{
 	}
 
 	@Override
-	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration config) {
-		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null){
-			if(accessAO.getSourceType().equals("databaseReading")){
-				return true;
-			}
-		}
-		return false;
+	public boolean isExecutable(DatabaseAccessAO accessAO, TransformationConfiguration config) {		
+		return true;					
 	}
 
 	@Override
 	public String getName() {
-		return "AccessAO -> DatabaseAccessAO";
+		return "DatabaseAccessAO -> DatabaseAccessPO";
 	}
 
 	@Override

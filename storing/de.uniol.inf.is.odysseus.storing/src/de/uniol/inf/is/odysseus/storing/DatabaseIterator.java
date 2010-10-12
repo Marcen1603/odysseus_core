@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -64,7 +65,7 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	}
 
 	public List<RelationalTuple<?>> selectGetNext() throws SQLException{
-		String query = this.preparedSelect + " offset "+selectPointer+" rows fetch next "+SELECT_BASH_SIZE+" rows only;";
+		String query = this.preparedSelect + " offset "+selectPointer+" rows fetch next "+SELECT_BASH_SIZE+" rows only";
 		this.selectPointer=this.selectPointer+SELECT_BASH_SIZE;
 		Statement s = DatabaseServiceLoader.getConnection().createStatement();
 		ResultSet rs = s.executeQuery(query);
@@ -72,10 +73,11 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 		while(rs.next()) {
 			Object[] values = new Object[this.attributeSize];
 			for(int i=0;i<this.attributeSize;i++){
-				values[i] = rs.getObject(i);            			
+				values[i] = rs.getObject(i+1);            			
 			}
-			RelationalTuple<? extends ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(values);
-			tuple.getMetadata().setStart(new PointInTime(rs.getLong(this.attributeSize)));
+			RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(values);
+			tuple.setMetadata(new TimeInterval(new PointInTime(rs.getLong(this.attributeSize))));
+			
 			liste.add(tuple);
 		}
 		return liste;		
@@ -106,9 +108,9 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	private int getCount(){
 		try {
 			Statement s = DatabaseServiceLoader.getConnection().createStatement();
-			ResultSet rs = s.executeQuery("SELECT count(*) FROM "+this.tableName+";");
+			ResultSet rs = s.executeQuery("SELECT count(*) FROM "+this.tableName);
 			rs.next();
-			return rs.getInt(0);
+			return rs.getInt(1);
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
