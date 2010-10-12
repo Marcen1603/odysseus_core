@@ -2,7 +2,6 @@
 package de.uniol.inf.is.odysseus.mep.impl;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class MEPImplTokenManager implements MEPImplConstants
 {
 
@@ -39,9 +38,9 @@ private int jjMoveStringLiteralDfa0_0()
       case 38:
          return jjMoveStringLiteralDfa1_0(0x4000000L);
       case 40:
-         return jjStopAtPos(0, 12);
-      case 41:
          return jjStopAtPos(0, 13);
+      case 41:
+         return jjStopAtPos(0, 12);
       case 42:
          return jjStopAtPos(0, 17);
       case 43:
@@ -272,8 +271,8 @@ static final int[] jjnextStates = {
 
 /** Token literal values. */
 public static final String[] jjstrLiteralImages = {
-"", null, null, null, null, null, null, null, null, null, null, null, "\50", 
-"\51", "\55", "\41", "\136", "\52", "\57", "\45", "\53", "\76\75", "\74\75", "\76", 
+"", null, null, null, null, null, null, null, null, null, null, null, "\51", 
+"\50", "\55", "\41", "\136", "\52", "\57", "\45", "\53", "\76\75", "\74\75", "\76", 
 "\74", "\75\75", "\46\46", "\174\174", "\54", };
 
 /** Lexer state names. */

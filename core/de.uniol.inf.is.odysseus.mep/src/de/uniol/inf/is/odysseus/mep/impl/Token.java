@@ -6,7 +6,6 @@ package de.uniol.inf.is.odysseus.mep.impl;
  * Describes the input token stream.
  */
 
-@SuppressWarnings("all")
 public class Token implements java.io.Serializable {
 
   /**

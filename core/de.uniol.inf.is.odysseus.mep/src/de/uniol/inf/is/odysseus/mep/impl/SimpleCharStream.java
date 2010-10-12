@@ -7,7 +7,6 @@ package de.uniol.inf.is.odysseus.mep.impl;
  * contain only ASCII characters (without unicode processing).
  */
 
-@SuppressWarnings("all")
 public class SimpleCharStream
 {
 /** Whether parser is static. */

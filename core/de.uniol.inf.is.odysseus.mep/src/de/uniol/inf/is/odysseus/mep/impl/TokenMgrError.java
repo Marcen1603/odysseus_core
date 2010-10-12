@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.mep.impl;
 
 /** Token Manager Error. */
-@SuppressWarnings("all")
 public class TokenMgrError extends Error
 {
 

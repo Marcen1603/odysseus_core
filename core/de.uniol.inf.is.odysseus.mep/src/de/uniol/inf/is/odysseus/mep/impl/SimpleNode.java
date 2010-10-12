@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.mep.impl;
 
 public
-@SuppressWarnings("all")
 class SimpleNode implements Node {
 
   protected Node parent;

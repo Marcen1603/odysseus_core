@@ -7,7 +7,6 @@ package de.uniol.inf.is.odysseus.mep.impl;
    between nodes. */
 
 public
-@SuppressWarnings("all")
 interface Node {
 
   /** This method is called after the node has been made the current
