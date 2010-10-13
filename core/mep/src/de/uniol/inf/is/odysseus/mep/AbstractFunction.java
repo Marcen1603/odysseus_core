@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.mep;
 import java.util.HashSet;
 import java.util.Set;
 
-
 public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	private IExpression<?>[] arguments;
@@ -26,9 +25,9 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	final protected <S> S getInputValue(int argumentPos) {
 		return (S) arguments[argumentPos].getValue();
 	}
-	
-	final protected Double getNumericalInputValue(int argumentPos){
-		return ((Number)arguments[argumentPos].getValue()).doubleValue();
+
+	final protected Double getNumericalInputValue(int argumentPos) {
+		return ((Number) arguments[argumentPos].getValue()).doubleValue();
 	}
 
 	@Override
@@ -58,5 +57,9 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 		builder.append(')');
 		return builder.toString();
+	}
+
+	public boolean isContextDependent() {
+		return false;
 	}
 }

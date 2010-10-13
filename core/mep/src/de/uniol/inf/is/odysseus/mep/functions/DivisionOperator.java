@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator;
 
 public class DivisionOperator extends AbstractBinaryOperator<Double> {
 
@@ -11,7 +12,7 @@ public class DivisionOperator extends AbstractBinaryOperator<Double> {
 
 	@Override
 	public String getSymbol() {
-		return  "/";
+		return "/";
 	}
 
 	@Override
@@ -24,4 +25,29 @@ public class DivisionOperator extends AbstractBinaryOperator<Double> {
 		return Double.class;
 	}
 
+	@Override
+	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+		return ASSOCIATIVITY.LEFT_TO_RIGHT;
+	}
+
+	@Override
+	public boolean isCommutative() {
+		return false;
+	}
+
+	@Override
+	public boolean isAssociative() {
+		return false;
+	}
+
+	@Override
+	public boolean isLeftDistributiveWith(IOperator<Double> operator) {
+		return false;
+	}
+
+	@Override
+	public boolean isRightDistributiveWith(IOperator<Double> operator) {
+		return operator.getClass() == PlusOperator.class
+				|| operator.getClass() == MinusOperator.class;
+	}
 }

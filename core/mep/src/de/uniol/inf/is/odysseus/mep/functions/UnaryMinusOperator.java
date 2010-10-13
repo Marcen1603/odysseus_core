@@ -23,4 +23,9 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 	public Class<Double> getType() {
 		return Double.class;
 	}
+
+	@Override
+	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+		return ASSOCIATIVITY.RIGHT_TO_LEFT;
+	}
 }

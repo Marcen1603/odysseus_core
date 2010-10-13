@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.mep;
 
-public class ExpressionOptimizer implements IExpressionVisitor {
+import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.OrOperator;
+
+public class ExpressionOptimizer {
 
 	public static IExpression<?> simplifyExpression(IExpression<?> expression) {
-		ExpressionOptimizer simplificator = new ExpressionOptimizer();
+		PreCalculateConstants simplificator = new PreCalculateConstants();
 		if ((Boolean) expression.acceptVisitor(simplificator, null)) {
 			return new Constant<Object>(expression.getValue());
 		} else {
@@ -11,32 +14,57 @@ public class ExpressionOptimizer implements IExpressionVisitor {
 		}
 	}
 
-	@Override
-	public Boolean visit(Variable variable, Object data) {
-		return false;
-	}
+	/**
+	 * pre calculate constant expressions 
+	 */
+	private static class PreCalculateConstants implements IExpressionVisitor {
 
-	@Override
-	public Boolean visit(Constant<?> constant, Object data) {
-		return true;
-	}
-
-	@Override
-	public Boolean visit(IFunction<?> function, Object data) {
-		if (function.getArity() == 0) {
-			return false;
+		@Override
+		public Object visit(Variable variable, Object data) {
+			return variable;
 		}
-		
-		boolean isConstant = true;
-		for (int i = 0; i < function.getArity(); ++i) {
-			if ((Boolean) function.getArguments()[i].acceptVisitor(this, data)) {
-				function.getArguments()[i] = new Constant<Object>(function
-						.getArguments()[i].getValue());
+
+		@Override
+		public Object visit(Constant<?> constant, Object data) {
+			return constant;
+		}
+
+		@Override
+		public Object visit(IFunction<?> function, Object data) {
+			boolean isAllInputsConstant = true;
+			for (int i = 0; i < function.getArity(); ++i) {
+				IExpression<?> iExpression = function.getArguments()[i];
+				function.getArguments()[i] = (IExpression<?>) iExpression
+						.acceptVisitor(this, data);
+				if (!(function.getArguments()[i] instanceof Constant)) {
+					isAllInputsConstant = false;
+				}
+			}
+			
+			if (isAllInputsConstant && !function.isContextDependent()) {
+				return new Constant<Object>(function.getValue());
+			}
+
+			if (function.getClass() == AndOperator.class) {
+				return isConstantPredicate(function.getArguments(), false) ? new Constant<Boolean>(
+						false) : function;
 			} else {
-				isConstant = false;
+				if (function.getClass() == OrOperator.class) {
+					return isConstantPredicate(function.getArguments(), true) ? new Constant<Boolean>(
+							true) : function;
+				} else {
+					return function;
+				}
 			}
 		}
-		return isConstant;
+
+		private boolean isConstantPredicate(IExpression<?>[] iExpression, Boolean value) {
+			return iExpression[0] instanceof Constant
+					&& iExpression[0].getValue().equals(value)
+					|| iExpression[1] instanceof Constant
+					&& iExpression[1].getValue().equals(value);
+		}
+
 	}
 
 }

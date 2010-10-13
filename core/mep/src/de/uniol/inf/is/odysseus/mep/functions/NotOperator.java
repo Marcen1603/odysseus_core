@@ -23,4 +23,10 @@ public class NotOperator extends AbstractUnaryOperator<Boolean> {
 	public Class<Boolean> getType() {
 		return Boolean.class;
 	}
+
+	@Override
+	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+		return ASSOCIATIVITY.RIGHT_TO_LEFT;
+	}
+
 }
