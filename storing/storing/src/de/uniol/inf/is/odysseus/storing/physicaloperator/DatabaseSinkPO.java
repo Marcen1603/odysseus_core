@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.storing.physicaloperator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
@@ -98,19 +97,13 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 
 	}
 
-	private boolean tableExists() {
-		ResultSet rs;
+	private boolean tableExists() {		
 		try {
-			rs = this.connection.getMetaData().getTables(null, null, table, null);
-			if (rs.next()) {
-				return true;
-			} else {
-				return false;
-			}
+			this.connection.createStatement().execute("SELECT count(*) FROM "+table);
+			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+			return false;
+		}		
 	}
 
 	private boolean checkDatabaseValidity() {
@@ -183,8 +176,10 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 	private void dropTable() {
 		if(tableExists()){			
 			try {
+				String query = "DROP TABLE " + table;
+				System.out.println("Dropping table: " + query);
 				Statement s = this.connection.createStatement();
-				s.execute("DROP TABLE " + table);
+				s.execute(query);
 			} catch (SQLException e1) {
 				System.err.println("Error while dropping table "+table);
 			}
@@ -210,6 +205,9 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 			return "VARCHAR(255)";
 		}
 		if (SDFDatatypes.isLong(type)) {
+			return "BIGINT";
+		}
+		if (type.getURI(false).toUpperCase().endsWith("TIMESTAMP")){
 			return "BIGINT";
 		}
 		return "VARCHAR(255)";
