@@ -2,11 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration">
-      <transformationConfiguration
-            class="de.uniol.inf.is.odysseus.rcp.viewer.objectfusionconfig.ObjectFusionParameterTransformationConfiguration"
+         point="de.uniol.inf.is.odysseus.rcp.viewer.query.buildConfiguration">
+      <queryBuildConfiguration
+            class="de.uniol.inf.is.odysseus.rcp.viewer.objectfusionconfig.ObjectFusionQueryBuildConfiguration"
             name="ObjectFusion">
-      </transformationConfiguration>
+      </queryBuildConfiguration>
    </extension>
 
 </plugin>
