@@ -18,6 +18,12 @@ public interface NewSQLParserVisitor
   public Object visit(ASTCreateFromDatabase node, Object data);
   public Object visit(ASTDatabaseTimeSensitiv node, Object data);
   public Object visit(ASTJdbcIdentifier node, Object data);
+  public Object visit(ASTInsertIntoStatement node, Object data);
+  public Object visit(ASTDatabaseTableOptions node, Object data);
+  public Object visit(ASTDatabaseCreateOption node, Object data);
+  public Object visit(ASTDatabaseTruncateOption node, Object data);
+  public Object visit(ASTIfNotExists node, Object data);
+  public Object visit(ASTSaveMetaData node, Object data);
   public Object visit(ASTCreateViewStatement node, Object data);
   public Object visit(ASTCreateSensor node, Object data);
   public Object visit(ASTORSchemaDefinition node, Object data);
@@ -107,4 +113,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTDropStreamStatement node, Object data);
   public Object visit(ASTDropViewStatement node, Object data);
 }
-/* JavaCC - OriginalChecksum=97e25b505b6ef9ddec6d74495a373434 (do not edit this line) */
+/* JavaCC - OriginalChecksum=60bee6aac06dabde824dde13329009c8 (do not edit this line) */

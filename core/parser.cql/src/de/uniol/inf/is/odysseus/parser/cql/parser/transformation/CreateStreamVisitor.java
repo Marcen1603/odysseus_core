@@ -229,7 +229,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	public Object visit(ASTCreateFromDatabase node, Object data) {		
 		try {
-			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.FromTableVisitor");
+			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(v, user);

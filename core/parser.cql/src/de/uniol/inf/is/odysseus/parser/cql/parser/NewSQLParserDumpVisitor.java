@@ -516,12 +516,42 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTJdbcIdentifier node, Object data) {
-		return null;
+		return pvisit(node);
 	}
 
 	@Override
 	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {	
-		return null;
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTInsertIntoStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSaveMetaData node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTDatabaseTableOptions node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTDatabaseCreateOption node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTDatabaseTruncateOption node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTIfNotExists node, Object data) {
+		return pvisit(node);
 	}
 
 }

@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IntersectionAO;
+import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
@@ -833,6 +834,55 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {		
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTInsertIntoStatement node, Object data) {
+		AbstractLogicalOperator op;
+		try {
+			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.DatabaseVisitor");
+			Object v = visitor.newInstance();
+			Method m = visitor.getDeclaredMethod("setUser", User.class);
+			m.invoke(v, caller);			
+			m = visitor.getDeclaredMethod("visit", ASTInsertIntoStatement.class, Object.class);
+			op = (AbstractLogicalOperator) m.invoke(v, node, data);							
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Storing plugin is missing in CQL parser.", e.getCause());
+		} catch (Exception e) {			
+			throw new RuntimeException("Error while parsing the insert into database clause", e.getCause());
+		}
+
+		Query query = new Query();
+		query.setParserId(getLanguage());		
+		query.setLogicalPlan(op);
+
+		plans.add(query);
+		return plans;
+	}
+
+	@Override
+	public Object visit(ASTSaveMetaData node, Object data) {		
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseTableOptions node, Object data) {		
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseCreateOption node, Object data) {	
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseTruncateOption node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTIfNotExists node, Object data) {	
 		return null;
 	}
 

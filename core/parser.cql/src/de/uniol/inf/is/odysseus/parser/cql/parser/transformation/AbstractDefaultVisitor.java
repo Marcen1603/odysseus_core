@@ -606,4 +606,34 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {	
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTInsertIntoStatement node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSaveMetaData node, Object data) {		
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseTableOptions node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseCreateOption node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseTruncateOption node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTIfNotExists node, Object data) {
+		return null;
+	}
 }
