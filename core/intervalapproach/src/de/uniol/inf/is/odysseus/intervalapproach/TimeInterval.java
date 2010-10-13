@@ -38,7 +38,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	}
 
 	public TimeInterval(){
-		init(new PointInTime(System.currentTimeMillis()), PointInTime.getInfinityTime());
+		init(PointInTime.getInfinityTime(), PointInTime.getInfinityTime());
 	}
 	
 	public TimeInterval(TimeInterval original) {
