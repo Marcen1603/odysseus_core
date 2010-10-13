@@ -8,30 +8,25 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class DatabaseAccessAO extends AbstractLogicalOperator implements OutputSchemaSettable {
+public class DatabaseAccessAO extends AbstractDatabaseAO implements OutputSchemaSettable {
 	
 
 	private static final long serialVersionUID = 2509860582432192501L;
 	
-	private boolean timesensitiv = false;
-	private Connection connection;
-	private String table = "";
-	
+	private boolean timesensitiv = false;		
 	protected SDFSource source = null;
 
 	private SDFAttributeList outputSchema;
 
 	public DatabaseAccessAO(SDFSource source, Connection connection, String table, boolean timesensitiv) {
-		this.timesensitiv = timesensitiv;
-		this.connection = connection;
-		this.table = table;
+		super(connection, table);
+		this.timesensitiv = timesensitiv;		
 		this.source = source;
 	}
 
 	public DatabaseAccessAO(DatabaseAccessAO original) {
-		this.timesensitiv = original.timesensitiv;
-		this.connection = original.connection;
-		this.table = original.table;
+		super(original.getConnection(), original.getTable());
+		this.timesensitiv = original.timesensitiv;		
 		this.source = original.source;
 	}
 
@@ -53,19 +48,10 @@ public class DatabaseAccessAO extends AbstractLogicalOperator implements OutputS
 	public boolean isTimesensitiv() {
 		return timesensitiv;
 	}
-
-	public Connection getConnection() {
-		return connection;
-	}
-
-	public String getTable() {
-		return table;
-	}
+	
 	
 	public SDFElement getSource(){
 		return this.source;
 	}
 	
-	
-
 }

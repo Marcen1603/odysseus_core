@@ -15,7 +15,7 @@ public class DatabaseServiceLoader {
 	
 	public void bindDatabaseService(IDatabaseService service){
 		DatabaseServiceLoader.service = service;	
-		DatabaseFill.fillDB();
+	//	DatabaseFill.fillDB();
 	}
 	
 	public void unbindDatabaseService(IDatabaseService service){
