@@ -7,30 +7,26 @@ public class ExpressionOptimizer {
 
 	public static IExpression<?> simplifyExpression(IExpression<?> expression) {
 		PreCalculateConstants simplificator = new PreCalculateConstants();
-		if ((Boolean) expression.acceptVisitor(simplificator, null)) {
-			return new Constant<Object>(expression.getValue());
-		} else {
-			return expression;
-		}
+		return (IExpression<?>) expression.acceptVisitor(simplificator, null);
 	}
 
 	/**
-	 * pre calculate constant expressions 
+	 * pre calculate constant expressions
 	 */
 	private static class PreCalculateConstants implements IExpressionVisitor {
 
 		@Override
-		public Object visit(Variable variable, Object data) {
+		public Variable visit(Variable variable, Object data) {
 			return variable;
 		}
 
 		@Override
-		public Object visit(Constant<?> constant, Object data) {
+		public Constant<?> visit(Constant<?> constant, Object data) {
 			return constant;
 		}
 
 		@Override
-		public Object visit(IFunction<?> function, Object data) {
+		public IExpression<?> visit(IFunction<?> function, Object data) {
 			boolean isAllInputsConstant = true;
 			for (int i = 0; i < function.getArity(); ++i) {
 				IExpression<?> iExpression = function.getArguments()[i];
@@ -40,7 +36,7 @@ public class ExpressionOptimizer {
 					isAllInputsConstant = false;
 				}
 			}
-			
+
 			if (isAllInputsConstant && !function.isContextDependent()) {
 				return new Constant<Object>(function.getValue());
 			}
@@ -58,7 +54,8 @@ public class ExpressionOptimizer {
 			}
 		}
 
-		private boolean isConstantPredicate(IExpression<?>[] iExpression, Boolean value) {
+		private boolean isConstantPredicate(IExpression<?>[] iExpression,
+				Boolean value) {
 			return iExpression[0] instanceof Constant
 					&& iExpression[0].getValue().equals(value)
 					|| iExpression[1] instanceof Constant

@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.CeilFunction;
 import de.uniol.inf.is.odysseus.mep.functions.DivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.DoubleToLongFunction;
@@ -17,6 +18,7 @@ import de.uniol.inf.is.odysseus.mep.functions.ModuloOperator;
 import de.uniol.inf.is.odysseus.mep.functions.MultiplicationOperator;
 import de.uniol.inf.is.odysseus.mep.functions.NotEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.OrOperator;
 import de.uniol.inf.is.odysseus.mep.functions.PlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.PowerOperator;
 import de.uniol.inf.is.odysseus.mep.functions.SinusFunction;
@@ -47,6 +49,9 @@ public class MEP {
 
 	private static Map<String, IFunction<?>> functions = new HashMap<String, IFunction<?>>();
 	static {
+		registerFunction(new AndOperator());
+		registerFunction(new OrOperator());
+		
 		registerFunction(new EqualsOperator());
 		registerFunction(new NotEqualsOperator());
 
