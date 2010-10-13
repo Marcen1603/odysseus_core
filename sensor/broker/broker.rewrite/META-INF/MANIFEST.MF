@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Rewrite
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.rewrite
-Bundle-Version: 1.0.0.0
-Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools;bundle-version="1.0.2"
-Import-Package: de.uniol.inf.is.odysseus.broker.logicaloperator,
- de.uniol.inf.is.odysseus.broker.metric,
- de.uniol.inf.is.odysseus.broker.physicaloperator
