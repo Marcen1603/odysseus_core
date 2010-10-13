@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration" name="Transformation Configuration" schema="schema/de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration.exsd"/>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.viewer.query.buildConfiguration" name="Query Build Configuration" schema="schema/de.uniol.inf.is.odysseus.rcp.viewer.query.buildConfiguration.exsd"/>
    <extension
          point="org.eclipse.ui.commands">
       <command

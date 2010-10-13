@@ -4,7 +4,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 
 /**
  * Realisiert das TRANSCFG-Schlüsselwort für den PreParser. Wenn eine
@@ -21,8 +21,8 @@ public class TransCfgPreParserKeyword implements IPreParserKeyword {
 		if (parameter.length() == 0)
 			throw new QueryTextParseException("Parameter needed for #TRANCFG");
 
-		ParameterTransformationConfigurationRegistry registry = ParameterTransformationConfigurationRegistry.getInstance();
-		if (!registry.getTransformationConfigurationNames().contains(parameter)) {
+		QueryBuildConfigurationRegistry registry = QueryBuildConfigurationRegistry.getInstance();
+		if (!registry.getQueryBuildConfigurationNames().contains(parameter)) {
 			throw new QueryTextParseException("TransformationCfg " + parameter + " not found");
 		}
 		variables.put("TRANSCFG", parameter);

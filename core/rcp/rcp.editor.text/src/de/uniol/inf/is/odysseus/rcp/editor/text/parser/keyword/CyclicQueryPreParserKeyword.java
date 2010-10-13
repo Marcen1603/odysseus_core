@@ -3,21 +3,19 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
@@ -39,7 +37,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			String transCfg = variables.get("TRANSCFG");
 			if( transCfg == null ) 
 				throw new QueryTextParseException("TransformationConfiguration not set");
-			if( ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null ) 
+			if( QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfg) == null ) 
 				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
 			
 		} catch( Exception ex ) {
@@ -47,7 +45,6 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(Map<String, String> variables, String parameter ) throws QueryTextParseException {
 
@@ -57,32 +54,28 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
 		IExecutor executor = ExecutorHandler.getExecutor();
 		ICompiler compiler = executor.getCompiler();
-		ParameterTransformationConfiguration transCfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfgID);
+		List<AbstractQueryBuildSetting<?>> transCfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfgID);
 		User user = ActiveUser.getActiveUser();
 		try {
 			List<IQuery> plans = compiler.translateQuery(queries, parserID, user);
 
-			// DEBUG: Print the logical plan.
-			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
-			AbstractGraphWalker walker = new AbstractGraphWalker();
-			for (IQuery plan : plans) {
-				System.out.println("PRINT PARTIAL PLAN: ");
-				walker.prefixWalk(plan.getLogicalPlan(), pv);
-				System.out.println(pv.getResult());
-				pv.clear();
-				walker.clearVisited();
-				System.out.println("PRINT END.");
+			// HACK
+			ParameterTransformationConfiguration cfg = null;
+			for( AbstractQueryBuildSetting<?> s : transCfg ) {
+				if( s instanceof ParameterTransformationConfiguration ) {
+					cfg = (ParameterTransformationConfiguration)s;
+					break;
+				}
 			}
-
-			// DEBUG:
-			System.out.println("ExecutorConsole: trafoConfigHelper: " + transCfg.getValue().getTransformationHelper());
-
-			// the last plan is the complete plan
-			// so transform this one
-			List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), transCfg.getValue());
-
-			int queryID = executor.addQuery(physPlan, user, transCfg);
-			executor.startQuery(queryID);
+			
+			if( cfg != null ) {
+				// the last plan is the complete plan
+				// so transform this one
+				List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), cfg.getValue());
+	
+				int queryID = executor.addQuery(physPlan, user, transCfg.toArray(new AbstractQueryBuildSetting<?>[0]));
+				executor.startQuery(queryID);
+			} 
 
 		} catch (QueryParseException e1) {
 			e1.printStackTrace();

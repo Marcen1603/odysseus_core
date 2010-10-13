@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 
 public class QueryPreParserKeyword implements IPreParserKeyword {
 
@@ -40,7 +40,7 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 			String transCfg = variables.get("TRANSCFG");
 			if (transCfg == null)
 				throw new QueryTextParseException("TransformationConfiguration not set");
-			if (ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(transCfg) == null)
+			if (QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfg) == null)
 				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
 		} catch (Exception ex) {
 			throw new QueryTextParseException("Unknown Exception during validation a query", ex);

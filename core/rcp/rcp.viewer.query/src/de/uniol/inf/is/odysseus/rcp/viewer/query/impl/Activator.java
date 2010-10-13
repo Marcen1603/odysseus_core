@@ -5,7 +5,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryHistory;
 
 /**
@@ -28,7 +28,7 @@ public class Activator extends Plugin {
 		super.start(context);
 		plugin = this;
 		
-		ParameterTransformationConfigurationRegistry.getInstance().loadExtensionList();
+		QueryBuildConfigurationRegistry.getInstance().loadExtensionList();
 	}
 
 	/*
