@@ -941,4 +941,9 @@ public class StandardExecutor extends AbstractExecutor {
 		}
 		getLogger().debug("Finished updating Execution Plan.");
 	}
+	
+	@Override
+	public String getName() {
+		return "Standard";
+	}
 }

@@ -266,4 +266,6 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 */
 	public void updateExecutionPlan() throws NoOptimizerLoadedException,
 			QueryOptimizationException;
+
+	public String getName();
 }
