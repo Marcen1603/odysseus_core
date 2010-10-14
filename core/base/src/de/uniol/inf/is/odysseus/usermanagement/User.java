@@ -3,16 +3,19 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
-
-public class User implements Serializable, Comparable<User>{
+public class User implements Serializable, Comparable<User> {
 
 	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
 	private String username;
 	private String password;
 	private Session session;
+	private List<Role> roles;
+	private List<Privilege> privileges;
 	static transient MessageDigest hash = null;
+	private boolean admin = false;
 
 	User(String username, String password) {
 		this.username = username;
@@ -32,7 +35,7 @@ public class User implements Serializable, Comparable<User>{
 
 	private String hash(String password) {
 		StringBuffer hexString = new StringBuffer();
-		if (hash == null){
+		if (hash == null) {
 			initHash();
 		}
 		if (hash != null) {
@@ -103,23 +106,67 @@ public class User implements Serializable, Comparable<User>{
 	public void setPassword(String password) {
 		this.password = hash(password);
 	}
-	
+
 	@Override
 	public String toString() {
-		return username+" "+password;
+		return username + " " + password;
 	}
-	
+
 	@Override
 	public int compareTo(User o) {
 		return this.getUsername().compareTo(o.getUsername());
 	}
 
-	public void setSession(Session session){
+	public void setSession(Session session) {
 		this.session = session;
 	}
-	
-	public Session getSession(){
+
+	public Session getSession() {
 		return this.session;
 	}
-	
+
+	void addRole(Role role) {
+		if (!this.roles.contains(role)) {
+			this.roles.add(role);
+		}
+	}
+
+	void addPrivilege(Privilege priv) {
+		if (!this.privileges.contains(priv)) {
+			this.privileges.add(priv);
+		}
+	}
+
+	void removeRole(Role role) {
+		this.roles.remove(role);
+	}
+
+	void removePrivilege(Privilege priv) {
+		for (int i = 0; i < this.privileges.size(); i++) {
+			if (this.privileges.get(i).equals(priv)) {
+				this.privileges.remove(i);
+			}
+		}
+	}
+
+	List<Role> getRoles() {
+		return this.roles;
+	}
+
+	List<Privilege> getPrivileges() {
+		return this.privileges;
+	}
+
+	void grantAdmin() {
+		this.admin = true;
+	}
+
+	void revokeAdmin() {
+		this.admin = false;
+	}
+
+	boolean isAdmin() {
+		return admin;
+	}
+
 }

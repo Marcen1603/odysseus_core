@@ -15,24 +15,25 @@ abstract public class AbstractUserManagement {
 	private IUserStore userStore = null;
 
 	private int sessionID = -1;
-	
+
 	public AbstractUserManagement(IUserStore userStore) {
-		this.userStore = userStore; 
+		this.userStore = userStore;
 	}
 
 	/**
 	 * Register new User with plain text password
+	 * 
 	 * @param username
 	 * @param password
 	 * @throws UsernameAlreadyUsedException
-	 * @throws UserStoreException 
+	 * @throws UserStoreException
 	 */
 	public void registerUser(User caller, String username, String password)
 			throws UsernameAlreadyUsedException, UserStoreException {
 		// TODO: Rechte von caller überprüfen
 		registerUserInt(username, password);
 	}
-	
+
 	protected void registerUserInt(String username, String password)
 			throws UserStoreException, UsernameAlreadyUsedException {
 		User user = userStore.getUserByName(username);
@@ -44,16 +45,16 @@ abstract public class AbstractUserManagement {
 		}
 		fireUserManagementListener();
 	}
-	
-	
+
 	/**
-	 * Register new User with plain text password
+	 * Update Users password with plain text password
+	 * 
 	 * @param username
 	 * @param password
 	 * @throws UsernameAlreadyUsedException
-	 * @throws UserStoreException 
+	 * @throws UserStoreException
 	 */
-	public void updateUser(User caller, String username, String password)
+	public void updateUserPassword(User caller, String username, String password)
 			throws UsernameNotExistException, UserStoreException {
 		// TODO: Rechte von caller überprüfen
 		User user = userStore.getUserByName(username);
@@ -65,7 +66,58 @@ abstract public class AbstractUserManagement {
 		}
 		fireUserManagementListener();
 	}
-	
+
+	/**
+	 * change User to Admin
+	 * 
+	 * @param username
+	 * @param password
+	 * @throws UsernameAlreadyUsedException
+	 * @throws UserStoreException
+	 * @throws HasNoPermissionException
+	 */
+	public void updateUserAdmin(User caller, String username)
+			throws UsernameNotExistException, UserStoreException,
+			HasNoPermissionException {
+		if (caller.isAdmin()) {
+			User storeuser = userStore.getUserByName(username);
+			if (storeuser != null) {
+				storeuser.grantAdmin();
+				userStore.storeUser(storeuser);
+			} else {
+				throw new UsernameNotExistException(username);
+			}
+			fireUserManagementListener();
+		} else {
+			throw new HasNoPermissionException(caller.getUsername());
+		}
+	}
+
+	/**
+	 * change admin to user
+	 * 
+	 * @param username
+	 * @param password
+	 * @throws UsernameAlreadyUsedException
+	 * @throws UserStoreException
+	 * @throws HasNoPermissionException
+	 */
+	public void updateAdminUser(User caller, String username)
+			throws UsernameNotExistException, UserStoreException,
+			HasNoPermissionException {
+		if (caller.isAdmin()) {
+			User storeuser = userStore.getUserByName(username);
+			if (storeuser != null) {
+				storeuser.revokeAdmin();
+				userStore.storeUser(storeuser);
+			} else {
+				throw new UsernameNotExistException(username);
+			}
+			fireUserManagementListener();
+		} else {
+			throw new HasNoPermissionException(caller.getUsername());
+		}
+	}
 
 	/**
 	 * Login user with non hash password
@@ -103,7 +155,7 @@ abstract public class AbstractUserManagement {
 		fireUserManagementListener();
 		return user;
 	}
-	
+
 	private synchronized int getSessionId() {
 		return ++sessionID;
 	}
@@ -113,43 +165,42 @@ abstract public class AbstractUserManagement {
 		user.setSession(null);
 		fireUserManagementListener();
 	}
-	
+
 	protected boolean hasNoUsers() {
 		return userStore.isEmpty();
 	}
-	
-	public void clearUserStore() throws StoreException{
+
+	public void clearUserStore() throws StoreException {
 		userStore.clear();
 	}
-	
+
 	public User findUser(String username, User caller) {
 		// Todo: Testen ob caller das darf
 		return userStore.getUserByName(username);
 	}
-	
-	public Collection<User> getUsers(){
+
+	public Collection<User> getUsers() {
 		return userStore.getUsers();
 	}
-	
+
 	private List<IUserManagementListener> listeners = new CopyOnWriteArrayList<IUserManagementListener>();
 
-	public void addTenantManagementListener(IUserManagementListener l){
-		listeners.add(l);		
+	public void addTenantManagementListener(IUserManagementListener l) {
+		listeners.add(l);
 	}
 
-	public void removeTenantManagementListener(IUserManagementListener l){
-		listeners.remove(l);		
+	public void removeTenantManagementListener(IUserManagementListener l) {
+		listeners.remove(l);
 	}
-	
-	public void fireUserManagementListener(){
-		for (IUserManagementListener l:listeners){
+
+	public void fireUserManagementListener() {
+		for (IUserManagementListener l : listeners) {
 			l.usersChangedEvent();
 		}
 	}
-	
-	public boolean isLoggedIn(String username){
+
+	public boolean isLoggedIn(String username) {
 		return loggedIn.containsKey(username);
 	}
-	
 
 }
