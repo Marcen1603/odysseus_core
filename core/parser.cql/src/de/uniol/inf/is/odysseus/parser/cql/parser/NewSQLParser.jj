@@ -66,7 +66,7 @@
                            jjtree.closeNodeScope(jjtn001, true);
                          }
                        }
-/*@egen*/           "," SQL()")"/*@bgen(jjtree)*/
+/*@egen*/           "," SQL() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
