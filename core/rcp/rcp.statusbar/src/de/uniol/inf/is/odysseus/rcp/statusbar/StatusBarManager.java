@@ -34,9 +34,9 @@ public class StatusBarManager {
 	public void setStatusLineManager( IStatusLineManager manager ) {
 		this.manager = manager;
 		
-		StatusLineContributionItem item = new StatusLineContributionItem(EXECUTOR_ID);
-		StatusLineContributionItem item2 = new StatusLineContributionItem(SCHEDULER_ID);
-		StatusLineContributionItem item3 = new StatusLineContributionItem(USER_ID);
+		StatusLineContributionItem item = new StatusLineContributionItem(EXECUTOR_ID,30); 
+		StatusLineContributionItem item2 = new StatusLineContributionItem(SCHEDULER_ID,60);
+		StatusLineContributionItem item3 = new StatusLineContributionItem(USER_ID,40);
 		manager.add(item);	
 		manager.add(item2);
 		manager.add(item3);
