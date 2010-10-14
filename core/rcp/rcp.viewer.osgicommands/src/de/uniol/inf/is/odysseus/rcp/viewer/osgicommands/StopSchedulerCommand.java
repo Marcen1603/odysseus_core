@@ -27,7 +27,7 @@ public class StopSchedulerCommand extends AbstractHandler implements IHandler {
 		if (executor != null) {
 			try {
 				executor.stopExecution();
-				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler stopped");
+				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID,"Scheduler "+executor.getCurrentSchedulingStrategy()+ " stopped");
 				StatusBarManager.getInstance().setMessage("Scheduler stopped");
 
 				// Queryview aktualisieren
