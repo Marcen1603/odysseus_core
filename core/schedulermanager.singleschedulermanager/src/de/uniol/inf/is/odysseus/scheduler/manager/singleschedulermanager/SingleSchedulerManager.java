@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Properties;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -21,6 +25,8 @@ import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
  */
 public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		IInfoProvider {
+	
+	private final String schedulingConfigFile = System.getProperty("user.home") + "/odysseus/scheduling.conf";
 
 	/**
 	 * The current active {@link IScheduler}. 
@@ -50,12 +56,37 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 		// create default scheduler
 		if (schedulers != null && strats != null) {
-			String defaultScheduler = schedulers.iterator().hasNext() ? schedulers
-					.iterator().next()
-					: null;
-			String defaultStrat = strats.iterator().hasNext() ? strats
-					.iterator().next() : null;
-			setActiveScheduler(defaultScheduler, defaultStrat, null);
+
+			Properties props = new Properties();
+			FileInputStream in;
+			try {
+				in = new FileInputStream(schedulingConfigFile);
+				props.load(in);
+				in.close();
+			} catch (Exception e) {
+				logger.info("No Scheduler-Config-File found.");
+			}
+			
+			if (!props.containsValue("defaultScheduler")){
+				// Use only defaults if no paramters are set
+				props.setProperty("defaultScheduler", schedulers.iterator().hasNext() ? schedulers
+						.iterator().next()
+						: null);
+				props.setProperty("defaultStrat", strats.iterator().hasNext() ? strats
+						.iterator().next() : null);
+				FileOutputStream out;
+				try {
+					out = new FileOutputStream(schedulingConfigFile);
+					props.store(out, "--- Scheduling Property File edit only if you know what you are doing ---");
+					out.close();
+					logger.info("New Scheduler-Config-File created");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+
+			setActiveScheduler(props.getProperty("defaultScheduler"), props.getProperty("defaultStrat"), null);
 		}
 		this.logger
 				.info("Active scheduler. " + this.activeScheduler.getClass());
