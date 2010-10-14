@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.AuroraMinLatencyFactory">
-   <property name="component.readableName" type="String" value="Aurora Min Latency (Iter)"/>
+   <property name="component.readableName" type="String" value="Aurora Min Latency"/>
    <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.AuroraFactory"/>
    <property name="aurora.strategy" type="String" value="MIN_LATENCY"/>
    <property name="execlist.useIter" type="Boolean" value="true"/>
