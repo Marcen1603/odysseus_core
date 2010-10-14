@@ -57,7 +57,7 @@ public class Activator extends Plugin {
 	// Declarative Service
 	public void bindExecutor(IExecutor ex) {
 		executor = ex;
-		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "Executor ready");
+		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "Executor "+executor.getName()+" ready");
 		StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID,"Scheduler "+executor.getCurrentSchedulingStrategy()+ " stopped");
 	}
 	
