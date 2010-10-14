@@ -3,18 +3,14 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.io.Serializable;
 import java.util.List;
 
-public class Role implements Serializable {
+public class Role extends AbstractAccessControlObject implements Serializable {
 
 	private static final long serialVersionUID = 2452410871566925898L;
 	private int ID = 0;
 	private String rolename;
-	// private List<Role> subroles;
-	private List<Privilege> privileges;
 
 	Role(String rolename, List<Privilege> privileges) {
 		this.rolename = rolename;
-		// auto id implementieren
-		// this.ID = getNewID();
 	}
 
 	Role(String rolename) {
@@ -29,32 +25,8 @@ public class Role implements Serializable {
 		return this.rolename;
 	}
 
-	// List<Role> getSubroles() {
-	// return this.subroles;
-	// }
-
-	List<Privilege> getPrivileges() {
-		return this.privileges;
-	}
-
 	void setRolename(String rolename) {
 		this.rolename = rolename;
-	}
-
-	// void addSubrole(Role newsubrole) {
-	// this.subroles.add(newsubrole);
-	// }
-
-	void addPrivilege(Privilege newprivilege) {
-		this.privileges.add(newprivilege);
-	}
-
-	// void removeSubrole(Role role) {
-	// this.subroles.remove(role);
-	// }
-
-	void removePrivilege(Privilege priv) {
-		this.privileges.remove(priv);
 	}
 
 	@Override

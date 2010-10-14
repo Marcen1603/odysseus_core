@@ -78,7 +78,7 @@ public class AccessControl {
 	 */
 	public void grantPermissionToUser(User grantUser, User user, Privilege priv)
 			throws HasNoPermissionException, StoreException {
-		if (grantUser.isAdmin()) {
+		if (grantUser.isAdmin() && user.hasPrivilege(priv) == null) {
 			try {
 				// user.addPrivilege(priv);
 				user.addPrivilege(privStore.get(priv.toString()));
@@ -105,8 +105,12 @@ public class AccessControl {
 	public void grantPermissionToUser(User grantUser, User user, Object obj,
 			List<Enum> operations) throws HasNoPermissionException,
 			StoreException {
-		Privilege priv = new Privilege(obj, operations);
-		grantPermissionToUser(grantUser, user, priv);
+		if (user.hasObject(obj) == null) {
+			// TODO Privileg mit operationen ausstatten
+			// if in Role or user speziell
+			Privilege priv = new Privilege(obj, operations);
+			grantPermissionToUser(grantUser, user, priv);
+		}
 	}
 
 	/**
@@ -165,9 +169,15 @@ public class AccessControl {
 	public void revokePermissionFromUser(User revokeUser, User user,
 			Privilege priv) throws HasNoPermissionException {
 		if (revokeUser.isAdmin()) {
-			user.removePrivilege(priv);
-			// TODO aus store entfernen ? was ist mit dem priv in anderen rollen
-			// oder usern ?
+			if (user.hasPrivilege(priv) != null) {
+				user.removePrivilege(priv);
+			}
+			Role role = user.hasPrivilegeInRole(priv);
+			if (role != null) {
+				user.removeRole(role);
+			}
+			// TODO aus store entfernen ?
+			// was ist wenn andere user das priv oder rolle nutzen ?
 			fireUserManagementListener();
 		} else {
 			throw new HasNoPermissionException(revokeUser.toString());
@@ -202,7 +212,7 @@ public class AccessControl {
 	 */
 	public void grantRoleToUser(User grantUser, Role role, User user)
 			throws HasNoPermissionException, StoreException {
-		if (grantUser.isAdmin()) {
+		if (grantUser.isAdmin() && user.hasRole(role) == null) {
 			try {
 				user.addRole(roleStore.get(role.getRolename()));
 				fireUserManagementListener();
@@ -224,7 +234,7 @@ public class AccessControl {
 	 */
 	public void revokeRoleFromUser(User revokeUser, Role role, User user)
 			throws HasNoPermissionException {
-		if (revokeUser.isAdmin()) {
+		if (revokeUser.isAdmin() && user.hasRole(role) != null) {
 			user.removeRole(role);
 			fireUserManagementListener();
 		} else {
@@ -232,18 +242,15 @@ public class AccessControl {
 		}
 	}
 
-	// public void grantRoleToRole(User grantUser, Role role, Role subrole)
-	// throws HasNoPermissionException {
-	// if (hasPermission(AccessOperationEnum.GRANT, grantUser)) {
-	// role.addSubrole(subrole);
-	// } else {
-	// throw new HasNoPermissionException(AccessOperationEnum.GRANT,
-	// grantUser.toString());
-	// }
-	// }
-
 	/**
 	 * calls UserManagement to create a User
+	 * 
+	 * @param createUser
+	 * @param username
+	 * @param passwort
+	 * @throws UsernameAlreadyUsedException
+	 * @throws UserStoreException
+	 * @throws HasNoPermissionException
 	 */
 	public void createUser(User createUser, String username, String passwort)
 			throws UsernameAlreadyUsedException, UserStoreException,
@@ -264,7 +271,7 @@ public class AccessControl {
 	public void deleteUser(User delUser, String username)
 			throws HasNoPermissionException {
 		if (delUser.isAdmin()) {
-			//
+			// TODO del user
 		} else {
 			throw new HasNoPermissionException(delUser.toString());
 
@@ -328,6 +335,7 @@ public class AccessControl {
 	public Role createRole(String rolename, List<Privilege> privileges,
 			User createUser) throws HasNoPermissionException, StoreException {
 		if (hasPermission(null, null, createUser)) {
+			// wenn role noch nicht in store
 			if (!roleStore.containsKey(rolename)) {
 				Role role = new Role(rolename, privileges);
 				roleStore.put(rolename, role);
@@ -354,6 +362,7 @@ public class AccessControl {
 			List<Enum> operations, User createUser)
 			throws HasNoPermissionException, StoreException {
 		if (hasPermission(null, null, createUser)) {
+			// wenn privilege noch nicht in store
 			if (!privStore.containsKey(privname)) {
 				Privilege priv = new Privilege(privname, obj, operations);
 				privStore.put(privname, priv);

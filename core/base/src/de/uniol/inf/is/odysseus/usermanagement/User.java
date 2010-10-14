@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-public class User implements Serializable, Comparable<User> {
+public class User extends AbstractAccessControlObject implements Serializable, Comparable<User> {
 
 	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
@@ -131,30 +131,12 @@ public class User implements Serializable, Comparable<User> {
 		}
 	}
 
-	void addPrivilege(Privilege priv) {
-		if (!this.privileges.contains(priv)) {
-			this.privileges.add(priv);
-		}
-	}
-
 	void removeRole(Role role) {
 		this.roles.remove(role);
 	}
 
-	void removePrivilege(Privilege priv) {
-		for (int i = 0; i < this.privileges.size(); i++) {
-			if (this.privileges.get(i).equals(priv)) {
-				this.privileges.remove(i);
-			}
-		}
-	}
-
 	List<Role> getRoles() {
 		return this.roles;
-	}
-
-	List<Privilege> getPrivileges() {
-		return this.privileges;
 	}
 
 	void grantAdmin() {
@@ -167,6 +149,72 @@ public class User implements Serializable, Comparable<User> {
 
 	boolean isAdmin() {
 		return admin;
+	}
+
+	/**
+	 * return the corresponding Privilege if the user has privileges on the
+	 * given object
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public Privilege hasObject(Object obj) {
+		for (Privilege priv : getPrivileges()) {
+			if (priv.getObject().equals(obj)) {
+				return priv;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * return the corresponding Privilege if the user has the given privileges
+	 * 
+	 * @param hasrole
+	 * @return
+	 */
+	public Privilege hasPrivilege(Privilege haspriv) {
+		for (Privilege priv : getPrivileges()) {
+			if (priv.equals(haspriv)) {
+				return priv;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * return the corresponding Role if the user has privileges on the given
+	 * role
+	 * 
+	 * @param hasrole
+	 * @return
+	 */
+	public Role hasRole(Role hasrole) {
+		for (Role role : getRoles()) {
+			if (role.equals(hasrole)) {
+				return role;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * return the corresponding Role if the user has privileges on the given
+	 * role
+	 * 
+	 * @param hasrole
+	 * @return
+	 */
+	public Role hasPrivilegeInRole(Privilege haspriv) {
+		// TODO was ist wenn das Privileg in meheren Rollen vorkommt ?
+		for (Role role : getRoles()) {
+			for (Privilege priv : role.getPrivileges()) {
+				if (priv.equals(haspriv)) {
+					return role;
+				}
+			}
+		}
+		return null;
 	}
 
 }
