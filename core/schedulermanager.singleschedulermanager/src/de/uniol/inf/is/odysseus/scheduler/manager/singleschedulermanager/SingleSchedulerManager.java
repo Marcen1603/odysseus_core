@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Properties;
 import java.util.Set;
@@ -83,9 +82,22 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}else{
+				// Test if this scheduler is loaded
+				if (!schedulers.contains(props.getProperty("defaultScheduler"))){
+					logger.debug(props.getProperty("defaultScheduler")+" not loaded");
+					props.setProperty("defaultScheduler", schedulers.iterator().hasNext() ? schedulers
+							.iterator().next()
+							: null);
+					logger.debug("using "+props.getProperty("defaultScheduler"));					
+				}
+				if (!strats.contains(props.getProperty("defaultStrat"))){
+					logger.debug(props.getProperty("defaultStrat")+" not loaded");
+					props.setProperty("defaultStrat", strats.iterator().hasNext() ? strats
+							.iterator().next() : null);	
+					logger.debug("using "+props.getProperty("defaultStrat"));									
+				}
 			}
-			
-
 			setActiveScheduler(props.getProperty("defaultScheduler"), props.getProperty("defaultStrat"), null);
 		}
 		this.logger
