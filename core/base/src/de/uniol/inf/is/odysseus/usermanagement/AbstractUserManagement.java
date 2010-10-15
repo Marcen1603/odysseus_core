@@ -68,58 +68,6 @@ abstract public class AbstractUserManagement {
 	}
 
 	/**
-	 * change User to Admin
-	 * 
-	 * @param username
-	 * @param password
-	 * @throws UsernameAlreadyUsedException
-	 * @throws UserStoreException
-	 * @throws HasNoPermissionException
-	 */
-	public void updateUserAdmin(User caller, String username)
-			throws UsernameNotExistException, UserStoreException,
-			HasNoPermissionException {
-		if (caller.isAdmin()) {
-			User storeuser = userStore.getUserByName(username);
-			if (storeuser != null) {
-				storeuser.grantAdmin();
-				userStore.storeUser(storeuser);
-			} else {
-				throw new UsernameNotExistException(username);
-			}
-			fireUserManagementListener();
-		} else {
-			throw new HasNoPermissionException(caller.getUsername());
-		}
-	}
-
-	/**
-	 * change admin to user
-	 * 
-	 * @param username
-	 * @param password
-	 * @throws UsernameAlreadyUsedException
-	 * @throws UserStoreException
-	 * @throws HasNoPermissionException
-	 */
-	public void updateAdminUser(User caller, String username)
-			throws UsernameNotExistException, UserStoreException,
-			HasNoPermissionException {
-		if (caller.isAdmin()) {
-			User storeuser = userStore.getUserByName(username);
-			if (storeuser != null) {
-				storeuser.revokeAdmin();
-				userStore.storeUser(storeuser);
-			} else {
-				throw new UsernameNotExistException(username);
-			}
-			fireUserManagementListener();
-		} else {
-			throw new HasNoPermissionException(caller.getUsername());
-		}
-	}
-
-	/**
 	 * Login user with non hash password
 	 * 
 	 * @param username

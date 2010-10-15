@@ -6,15 +6,16 @@ import java.util.List;
 public class Role extends AbstractAccessControlObject implements Serializable {
 
 	private static final long serialVersionUID = 2452410871566925898L;
-	private int ID = 0;
+	private final int ID;
 	private String rolename;
 
-	Role(String rolename, List<Privilege> privileges) {
+	Role(String rolename, List<Privilege> privileges, int newid) {
 		this.rolename = rolename;
+		this.ID = newid;
 	}
 
-	Role(String rolename) {
-		this(rolename, null);
+	Role(String rolename, int newid) {
+		this(rolename, null, newid);
 	}
 
 	public int getID() {
@@ -38,12 +39,12 @@ public class Role extends AbstractAccessControlObject implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Role other = (Role) obj;
-		if (rolename == null) {
-			if (other.rolename != null)
+		if (this.rolename == null) {
+			if (other.getRolename() != null)
 				return false;
-		} else if (!rolename.equals(other.rolename)) {
+		} else if (!this.rolename.equals(other.getRolename())) {
 			return false;
-		} else if (this.privileges.equals(other.privileges)) {
+		} else if (this.privileges.equals(other.getPrivileges())) {
 			return true;
 		}
 

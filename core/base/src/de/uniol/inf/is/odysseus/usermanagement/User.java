@@ -3,9 +3,11 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class User extends AbstractAccessControlObject implements Serializable, Comparable<User> {
+public class User extends AbstractAccessControlObject implements Serializable,
+		Comparable<User> {
 
 	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
@@ -13,13 +15,12 @@ public class User extends AbstractAccessControlObject implements Serializable, C
 	private String password;
 	private Session session;
 	private List<Role> roles;
-	private List<Privilege> privileges;
 	static transient MessageDigest hash = null;
-	private boolean admin = false;
 
 	User(String username, String password) {
 		this.username = username;
 		this.password = hash(password);
+		this.roles = new ArrayList<Role>();
 	}
 
 	private void initHash() {
@@ -139,49 +140,6 @@ public class User extends AbstractAccessControlObject implements Serializable, C
 		return this.roles;
 	}
 
-	void grantAdmin() {
-		this.admin = true;
-	}
-
-	void revokeAdmin() {
-		this.admin = false;
-	}
-
-	boolean isAdmin() {
-		return admin;
-	}
-
-	/**
-	 * return the corresponding Privilege if the user has privileges on the
-	 * given object
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public Privilege hasObject(Object obj) {
-		for (Privilege priv : getPrivileges()) {
-			if (priv.getObject().equals(obj)) {
-				return priv;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * return the corresponding Privilege if the user has the given privileges
-	 * 
-	 * @param hasrole
-	 * @return
-	 */
-	public Privilege hasPrivilege(Privilege haspriv) {
-		for (Privilege priv : getPrivileges()) {
-			if (priv.equals(haspriv)) {
-				return priv;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * return the corresponding Role if the user has privileges on the given
 	 * role
@@ -207,12 +165,10 @@ public class User extends AbstractAccessControlObject implements Serializable, C
 	 */
 	public Role hasPrivilegeInRole(Privilege haspriv) {
 		// TODO was ist wenn das Privileg in meheren Rollen vorkommt ?
+		// könnte egal sein, da es in dem Fall die gleichen sein sollten
 		for (Role role : getRoles()) {
-			for (Privilege priv : role.getPrivileges()) {
-				if (priv.equals(haspriv)) {
-					return role;
-				}
-			}
+			role.hasPrivilege(haspriv);
+			return role;
 		}
 		return null;
 	}

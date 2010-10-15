@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AbstractAccessControlObject {
@@ -7,7 +8,7 @@ public class AbstractAccessControlObject {
 	protected List<Privilege> privileges;
 
 	AbstractAccessControlObject() {
-
+		this.privileges = new ArrayList<Privilege>();
 	}
 
 	public List<Privilege> getPrivileges() {
@@ -27,7 +28,7 @@ public class AbstractAccessControlObject {
 			}
 		}
 	}
-	
+
 	/**
 	 * return the corresponding Privilege if the user has privileges on the
 	 * given object
