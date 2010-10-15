@@ -38,7 +38,7 @@ public class MEP {
 		SimpleNode expressionNode;
 		try {
 			expressionNode = impl.Expression();
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			throw new de.uniol.inf.is.odysseus.mep.ParseException(e);
 		}
 		ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor();
