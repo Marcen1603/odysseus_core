@@ -735,7 +735,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().updateUser(this.caller, username, password);
+			UserManagement.getInstance().updateUserPassword(this.caller, username, password);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
