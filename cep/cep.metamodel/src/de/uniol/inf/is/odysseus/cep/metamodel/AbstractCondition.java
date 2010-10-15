@@ -30,10 +30,12 @@ abstract public class AbstractCondition implements ICondition {
 	 * 
 	 * @return Transitionsbedingung als String.
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public String getEventType() {
 		return eventType;
 	}

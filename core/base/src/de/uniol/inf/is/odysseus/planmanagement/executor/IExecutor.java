@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -216,18 +217,26 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	public void setScheduler(String scheduler, String schedulerStrategy);
 
 	/**
-	 * Get the current active scheduler factory represented by an id.
+	 * Get the current active scheduler represented by an id.
 	 * 
-	 * @return current active scheduler factory represented by an id.
+	 * @return current active scheduler represented by an id.
 	 */
-	public String getCurrentScheduler();
+	public String getCurrentSchedulerID();
 
+	/**
+	 * Get the current active scheduler
+	 * 
+	 * @return current active scheduler
+	 */
+	
+	public IScheduler getCurrentScheduler();
+	
 	/**
 	 * Get the current active scheduling strategy factory represented by an id.
 	 * 
 	 * @return current active scheduling strategy factory represented by an id.
 	 */
-	public String getCurrentSchedulingStrategy();
+	public String getCurrentSchedulingStrategyID();
 
 	/**
 	 * 

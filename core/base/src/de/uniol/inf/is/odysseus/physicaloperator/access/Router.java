@@ -48,12 +48,17 @@ public class Router extends Thread {
 		return routerReceiverMap.keySet();
 	}
 	
-	public static synchronized Router getInstanceWithOutStarting()
-			throws IOException {
-		if (instance == null) {
-			instance = new Router();
-		}
-		return instance;
+	// Keine gute Idee, da der Router u.U. nie gestarted wird
+//	public static synchronized Router getInstanceWithOutStarting()
+//			throws IOException {
+//		if (instance == null) {
+//			instance = new Router();
+//		}
+//		return instance;
+//	}
+	
+	public static synchronized boolean hasInstance(){
+		return instance != null;
 	}
 
 	private Router() throws IOException {

@@ -119,13 +119,13 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	}
 
 	public void bindExecutor(IExecutor executor) {
-		getLogger().info("Binding Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
+		getLogger().info("Binding Executor: "+ executor.getCurrentSchedulerID() +" "+ executor.getCurrentSchedulingStrategyID());
 		this.executor = executor;
 	}
 	
 	public void unbindExecutor(IExecutor executor) {
 		if(this.executor == executor) {
-			getLogger().info("Unbinding Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
+			getLogger().info("Unbinding Executor: "+ executor.getCurrentSchedulerID() +" "+ executor.getCurrentSchedulingStrategyID());
 			this.executor = null;
 		}
 	}

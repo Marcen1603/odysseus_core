@@ -878,7 +878,7 @@ public class OptimizationTestConsole implements
 		Set<String> list = this.executor
 				.getRegisteredSchedulingStrategyFactories();
 		if (list != null) {
-			String current = executor.getCurrentSchedulingStrategy();
+			String current = executor.getCurrentSchedulingStrategyID();
 			ci.println("Available Scheduling strategies:");
 
 			ci.println("");
@@ -896,7 +896,7 @@ public class OptimizationTestConsole implements
 	public void _lsscheduler(CommandInterpreter ci) {
 		Set<String> list = this.executor.getRegisteredSchedulerFactories();
 		if (list != null) {
-			String current = executor.getCurrentScheduler();
+			String current = executor.getCurrentSchedulerID();
 			ci.println("Available Schedulers:");
 
 			// if (current == null) {

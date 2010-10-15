@@ -208,9 +208,10 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * 
 	 * @param eventArgs {@link ErrorEvent} to send
 	 */
-	protected void fireErrorEvent(ErrorEvent eventArgs) {
+	@Override
+	public void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
-			listener.sendErrorEvent(eventArgs);
+			listener.errorEventOccured(eventArgs);
 		}
 	}
 

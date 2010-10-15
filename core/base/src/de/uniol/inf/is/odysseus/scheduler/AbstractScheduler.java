@@ -2,8 +2,11 @@ package de.uniol.inf.is.odysseus.scheduler;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent;
+import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
@@ -13,7 +16,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractScheduler implements IScheduler{
+public abstract class AbstractScheduler extends EventHandler implements IScheduler{
 	/**
 	 * Indicates if the scheduling is started.
 	 */
@@ -35,6 +38,11 @@ public abstract class AbstractScheduler implements IScheduler{
 	 */
 	private ArrayList<IErrorEventListener> errorEventListener = new ArrayList<IErrorEventListener>();
 
+	//--- Events
+	
+	private SchedulingEvent schedulingStarted = new SchedulingEvent(this,SchedulingEventType.SCHEDULING_STARTED,"");
+	private SchedulingEvent schedulingStopped = new SchedulingEvent(this,SchedulingEventType.SCHEDULING_STOPPED,"");
+	
 	/**
 	 * Creates a new scheduler.
 	 * 
@@ -53,9 +61,10 @@ public abstract class AbstractScheduler implements IScheduler{
 	 * 
 	 * @param eventArgs {@link ErrorEvent} which should be send.
 	 */
-	protected synchronized void fireErrorEvent(ErrorEvent eventArgs) {
+	@Override
+	public synchronized void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
-			listener.sendErrorEvent(eventArgs);
+			listener.errorEventOccured(eventArgs);
 		}
 	}
 
@@ -65,6 +74,7 @@ public abstract class AbstractScheduler implements IScheduler{
 	@Override
 	public synchronized void startScheduling() {
 		this.isRunning = true;
+		fire(schedulingStarted);
 	}
 
 	/* (non-Javadoc)
@@ -73,6 +83,7 @@ public abstract class AbstractScheduler implements IScheduler{
 	@Override
 	public synchronized void stopScheduling() {
 		this.isRunning = false;
+		fire(schedulingStopped);
 	}
 
 	/* (non-Javadoc)

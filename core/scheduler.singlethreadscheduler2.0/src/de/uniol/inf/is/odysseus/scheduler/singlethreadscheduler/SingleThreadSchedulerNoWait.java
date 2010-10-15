@@ -89,7 +89,8 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 					}
 				}
 			} catch (Throwable t) {
-				t.printStackTrace();
+				//t.printStackTrace();
+				// ignore!
 			}
 		}
 	}

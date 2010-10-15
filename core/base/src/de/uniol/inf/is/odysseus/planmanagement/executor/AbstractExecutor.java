@@ -330,9 +330,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
-	protected synchronized void fireErrorEvent(ErrorEvent eventArgs) {
+	@Override
+	public
+	synchronized void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
-			listener.sendErrorEvent(eventArgs);
+			listener.errorEventOccured(eventArgs);
 		}
 	}
 
@@ -448,7 +450,10 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		try {
 			schedulerManager().stopScheduling();
 			this.executionPlan.close();
-			Router.getInstance().stopRouting();
+			// Stopp Router only if it has an instance
+			if (Router.hasInstance()){
+				Router.getInstance().stopRouting();
+			}
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
@@ -642,7 +647,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * ErrorEvent)
 	 */
 	@Override
-	public synchronized void sendErrorEvent(ErrorEvent eventArgs) {
+	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
 		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
 				"Executor exception (with inner error). ", eventArgs.getValue()));
 	}

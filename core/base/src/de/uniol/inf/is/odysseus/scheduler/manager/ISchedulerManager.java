@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.scheduler.manager;
 
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.event.IEventHandler;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
+import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 
 /**
@@ -21,7 +23,7 @@ import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
  * 
  */
 public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
-		IErrorEventListener {
+		IErrorEventListener, IEventHandler {
 	/**
 	 * Start scheduling of the registered physical plan.
 	 * 
@@ -127,12 +129,21 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	 * 
 	 * @return The active scheduler as an ID.
 	 */
-	public String getActiveScheduler();
+	public String getActiveSchedulerID();
+
+	/**
+	 * Returns the active scheduler
+	 * 
+	 * @return The active scheduler
+	 */
+	public IScheduler getActiveScheduler();
 
 	/**
 	 * Returns the active scheduling strategy as an ID.
 	 * 
 	 * @return The active scheduling strategy as an ID.
 	 */
-	public String getActiveSchedulingStrategy();
+	public String getActiveSchedulingStrategyID();
+	
+	public void schedulingsChanged();
 }

@@ -36,6 +36,7 @@ abstract public class AbstractOutputSchemeEntry implements IOutputSchemeEntry{
 	 * @param label De textuelle darstellung des Ausgabeschema-Eintrags.
 	 * @throws UndefinedExpressionLabelException Falls das Label null oder leer ist.
 	 */
+	@Override
 	public void setLabel(String label) throws UndefinedExpressionLabelException {
 		if (label == null) {
 			throw new UndefinedExpressionLabelException();
@@ -50,6 +51,7 @@ abstract public class AbstractOutputSchemeEntry implements IOutputSchemeEntry{
 	 * 
 	 * @return Das Label des Eintrags.
 	 */
+	@Override
 	public String getLabel() {
 		return this.label;
 	}

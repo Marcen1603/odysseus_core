@@ -47,7 +47,7 @@ public class StatusBarManager {
 	
 	private void setStandardMessages() {
 		setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
-		setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler stopped");
+		setMessage(StatusBarManager.SCHEDULER_ID, "No Scheduler");
 		setMessage(StatusBarManager.USER_ID, "No user logged in");
 	}
 	

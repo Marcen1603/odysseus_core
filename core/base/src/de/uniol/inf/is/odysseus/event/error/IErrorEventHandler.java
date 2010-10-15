@@ -23,4 +23,10 @@ public interface IErrorEventHandler {
 	 *            Object which should no more be informed if an error occurs.
 	 */
 	public void removeErrorEventListener(IErrorEventListener errorEventListener);
+	
+	/**
+	 *  Sends the error event to all registered listener
+	 */
+	
+	public void fireErrorEvent(ErrorEvent eventArgs);
 }

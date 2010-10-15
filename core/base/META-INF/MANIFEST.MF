@@ -61,6 +61,7 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.scheduler;version="2.0.0";uses:="org.osgi.framework,de.uniol.inf.is.odysseus.scheduler.strategy.factory",
+ de.uniol.inf.is.odysseus.scheduler.event,
  de.uniol.inf.is.odysseus.scheduler.exception;version="2.0.0",
  de.uniol.inf.is.odysseus.scheduler.manager;version="2.0.0";
   uses:="de.uniol.inf.is.odysseus.planmanagement.datastructure,

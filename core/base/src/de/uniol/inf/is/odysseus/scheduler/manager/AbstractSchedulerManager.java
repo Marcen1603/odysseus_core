@@ -10,12 +10,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory;
+import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
+import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
@@ -26,7 +29,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractSchedulerManager implements ISchedulerManager {
+public abstract class AbstractSchedulerManager extends EventHandler implements ISchedulerManager {
 
 	/**
 	 * Count of active scheduler.
@@ -55,7 +58,8 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
-
+	
+	
 	/**
 	 * Creates a new manager and initializes the logger. Used by OSGi (no
 	 * parameter allowed).
@@ -115,9 +119,10 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 * @param eventArgs
 	 *            {@link ErrorEvent} to send
 	 */
-	protected synchronized void fireErrorEvent(ErrorEvent eventArgs) {
+	@Override
+	public synchronized void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
-			listener.sendErrorEvent(eventArgs);
+			listener.errorEventOccured(eventArgs);
 		}
 	}
 
@@ -164,6 +169,9 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 		if (this.schedulingStrategyFactoryMap.get(stratName) == null) {
 			this.schedulingStrategyFactoryMap.put(stratName,
 					schedulingStrategyFactory);
+			fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULING_STRATEGY_ADDED, null));
+			// For internal processing
+			schedulingsChanged();
 		} else {
 			logger.warn("Duplicate Scheduling Strategy Name " + stratName
 					+ " !");
@@ -180,6 +188,9 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 			ISchedulingFactory schedulingStrategyFactory) {
 		this.schedulingStrategyFactoryMap.remove(schedulingStrategyFactory
 				.getName());
+		fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULING_STRATEGY_REMOVED, null));
+		// For internal processing
+		schedulingsChanged();
 	}
 
 	/*
@@ -221,7 +232,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 * ErrorEvent)
 	 */
 	@Override
-	public synchronized void sendErrorEvent(ErrorEvent eventArgs) {
+	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
 		this.logger.error("Error while scheduling.");
 
 		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
@@ -249,8 +260,6 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 */
 	@Override
 	public Set<String> getScheduler() {
-		// TODO: Sollte dies eine Kopie sein? Eigentlich nicht, da Strings
-		// immutable sind ...
 		return this.schedulerFactoryMap.keySet();
 	}
 
@@ -262,8 +271,6 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 */
 	@Override
 	public Set<String> getSchedulingStrategy() {
-		// TODO: Sollte dies eine Kopie sein? Eigentlich nicht, da Strings
-		// immutable sind ...
 		return this.schedulingStrategyFactoryMap.keySet();
 	}
 

@@ -12,5 +12,5 @@ public interface IErrorEventListener {
 	 * 
 	 * @param eventArgs The error event which occurred.
 	 */
-	public void sendErrorEvent(ErrorEvent eventArgs);
+	public void errorEventOccured(ErrorEvent eventArgs);
 }

@@ -397,7 +397,7 @@ public class ExecutorConsole implements CommandProvider,
 		Set<String> list = this.executor
 				.getRegisteredSchedulingStrategyFactories();
 		if (list != null) {
-			String current = executor.getCurrentSchedulingStrategy();
+			String current = executor.getCurrentSchedulingStrategyID();
 			ci.println("Available Scheduling strategies:");
 
 			ci.println("");
@@ -416,7 +416,7 @@ public class ExecutorConsole implements CommandProvider,
 	public void _lsscheduler(CommandInterpreter ci) {
 		Set<String> list = this.executor.getRegisteredSchedulerFactories();
 		if (list != null) {
-			String current = executor.getCurrentScheduler();
+			String current = executor.getCurrentSchedulerID();
 			ci.println("Available Schedulers:");
 
 			// if (current == null) {
@@ -1862,7 +1862,7 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	@Override
-	public void sendErrorEvent(ErrorEvent eventArgs) {
+	public void errorEventOccured(ErrorEvent eventArgs) {
 	}
 
 	public void bindPreferences(PreferencesService preferences) {

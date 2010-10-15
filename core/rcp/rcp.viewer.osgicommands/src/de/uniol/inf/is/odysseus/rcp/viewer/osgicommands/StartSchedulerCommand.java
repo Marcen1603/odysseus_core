@@ -27,7 +27,7 @@ public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 		if( executor != null ) {
 			try {
 				executor.startExecution();
-				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler "+executor.getCurrentSchedulingStrategy()+" is running");
+//				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID,executor.getCurrentSchedulerID()+" ("+executor.getCurrentSchedulingStrategyID()+ ") "+(executor.isRunning()?" running ":" stopped "));
 				StatusBarManager.getInstance().setMessage("Scheduler started");
 				
 				// Queryview aktualisieren

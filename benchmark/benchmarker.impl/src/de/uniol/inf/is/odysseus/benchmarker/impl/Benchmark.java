@@ -75,8 +75,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	}
 
 	public void activate(ComponentContext c) {
-		scheduler = executor.getCurrentScheduler();
-		schedulingStrategy = executor.getCurrentSchedulingStrategy();
+		scheduler = executor.getCurrentSchedulerID();
+		schedulingStrategy = executor.getCurrentSchedulingStrategyID();
 		bufferPlacement = "Standard Buffer Placement";
 	}
 
@@ -205,7 +205,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	}
 
 	@Override
-	public void sendErrorEvent(ErrorEvent eventArgs) {
+	public void errorEventOccured(ErrorEvent eventArgs) {
 		this.error.set(eventArgs);
 	}
 

@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -859,9 +860,9 @@ public class StandardExecutor extends AbstractExecutor {
 	 * getCurrentSchedulingStrategy()
 	 */
 	@Override
-	public String getCurrentSchedulingStrategy() {
+	public String getCurrentSchedulingStrategyID() {
 		try {
-			return schedulerManager().getActiveSchedulingStrategy();
+			return schedulerManager().getActiveSchedulingStrategyID();
 		} catch (SchedulerException e) {
 			getLogger().error(
 					"Error while using schedulerManager. Getting Active Scheduling Strategy. "
@@ -877,7 +878,19 @@ public class StandardExecutor extends AbstractExecutor {
 	 * getCurrentScheduler()
 	 */
 	@Override
-	public String getCurrentScheduler() {
+	public String getCurrentSchedulerID() {
+		try {
+			return schedulerManager().getActiveSchedulerID();
+		} catch (SchedulerException e) {
+			getLogger().error(
+					"Error while using schedulerManager. Getting Active Scheduler. "
+							+ e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public IScheduler getCurrentScheduler() {
 		try {
 			return schedulerManager().getActiveScheduler();
 		} catch (SchedulerException e) {
@@ -888,6 +901,7 @@ public class StandardExecutor extends AbstractExecutor {
 		return null;
 	}
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
