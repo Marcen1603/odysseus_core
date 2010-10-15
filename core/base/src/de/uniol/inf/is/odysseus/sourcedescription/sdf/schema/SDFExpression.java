@@ -117,8 +117,8 @@ public class SDFExpression implements Serializable {
 
 		try {
 			expression = MEP.parse(result);
-		} catch (ParseException e) {
-			System.out.println("Expr: " + this.expressionString);
+		} catch (Throwable e) {
+			System.err.println("Expr: " + this.expressionString);
 			throw new SDFExpressionParseException(e);
 		}
 
