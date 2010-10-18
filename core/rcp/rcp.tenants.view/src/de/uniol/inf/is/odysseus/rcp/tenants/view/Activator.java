@@ -37,6 +37,7 @@ public class Activator extends AbstractUIPlugin {
 				imageRegistry.put("sla", ImageDescriptor.createFromURL(bundle.getEntry("icons/document-block.png")));
 				imageRegistry.put("percentile", ImageDescriptor.createFromURL(bundle.getEntry("icons/document-tag.png")));
 				imageRegistry.put("tenant", ImageDescriptor.createFromURL(bundle.getEntry("icons/user-business.png")));
+				imageRegistry.put("role", ImageDescriptor.createFromURL(bundle.getEntry("icons/tick-small-circle.png")));
 				
 				}catch(SWTError e){
 					// Ignore :-)

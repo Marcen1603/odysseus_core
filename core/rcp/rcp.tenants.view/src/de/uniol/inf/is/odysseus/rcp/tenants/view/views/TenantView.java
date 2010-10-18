@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.usermanagement.IPercentileConstraint;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.Role;
 import de.uniol.inf.is.odysseus.usermanagement.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -53,7 +54,9 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof UserWrapper){
-				return ((UserWrapper)parentElement).users.toArray();
+				ArrayList<Object> list = new ArrayList<Object>();
+				list.addAll(((UserWrapper)parentElement).users);
+				return list.toArray();
 			}
 			if (parentElement instanceof TenantWrapper){
 				return ((TenantWrapper)parentElement).tenants.toArray();
@@ -72,6 +75,14 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 				list.addAll(t.getUsers());
 				return list.toArray();
 			}
+			if (parentElement instanceof User){
+				ArrayList<Object> list = new ArrayList<Object>();
+				User u = (User) parentElement;
+				list.addAll(u.getRoles());
+				list.addAll(u.getPrivileges());
+				return list.toArray();
+			}
+
 			if (parentElement instanceof IServiceLevelAgreement){
 				return ((IServiceLevelAgreement)parentElement).getPercentilConstraints().toArray();
 			}
@@ -99,6 +110,8 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 				return true;
 			if (element instanceof Tenant)
 				return true;
+			if (element instanceof User)
+				return true;
 			return false;
 		}
 
@@ -116,6 +129,9 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 			}			
 			if (obj instanceof User){
 				return ((User)obj).getUsername();
+			}
+			if (obj instanceof Role){
+				return "Role: "+((Role)obj).getRolename();
 			}
 			if (obj instanceof Tenant){
 				return ((Tenant)obj).getName();
@@ -142,6 +158,9 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 			}
 			if (obj instanceof Tenant){
 				return Activator.getDefault().getImageRegistry().get("tenant");				
+			}
+			if (obj instanceof Role){
+				return Activator.getDefault().getImageRegistry().get("role");				
 			}
 			if (obj instanceof IServiceLevelAgreement){
 				return Activator.getDefault().getImageRegistry().get("sla");				
