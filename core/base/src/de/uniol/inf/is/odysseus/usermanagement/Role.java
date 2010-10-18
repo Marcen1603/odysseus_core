@@ -22,7 +22,7 @@ public class Role extends AbstractAccessControlObject implements Serializable {
 		return this.ID;
 	}
 
-	String getRolename() {
+	public String getRolename() {
 		return this.rolename;
 	}
 
