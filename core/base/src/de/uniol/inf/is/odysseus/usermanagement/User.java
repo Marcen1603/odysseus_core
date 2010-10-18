@@ -136,7 +136,7 @@ public class User extends AbstractAccessControlObject implements Serializable,
 		this.roles.remove(role);
 	}
 
-	List<Role> getRoles() {
+	public List<Role> getRoles() {
 		return this.roles;
 	}
 
