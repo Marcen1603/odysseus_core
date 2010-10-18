@@ -10,20 +10,21 @@ public class Privilege implements Serializable {
 	private final int ID;
 	private String privname;
 	private Object object;
-	private List<Enum> operations;
+	private List<IUserActions> operations;
 
 	Privilege(String privname, int newid) {
-		this(privname, null, new ArrayList<Enum>(), newid);
+		this(privname, null, new ArrayList<IUserActions>(), newid);
 	}
 
-	Privilege(String privname, Object obj, List<Enum> operations, int newid) {
+	Privilege(String privname, Object obj, List<IUserActions> operations,
+			int newid) {
 		this.privname = privname;
 		this.object = obj;
 		this.operations = operations;
 		this.ID = newid;
 	}
 
-	Privilege(Object obj, List<Enum> operations, int newid) {
+	Privilege(Object obj, List<IUserActions> operations, int newid) {
 		this(obj.getClass().toString() + "_" + newid, obj, operations, newid);
 	}
 
@@ -35,7 +36,7 @@ public class Privilege implements Serializable {
 		return this.privname;
 	}
 
-	List<Enum> getOperations() {
+	List<IUserActions> getOperations() {
 		return this.operations;
 	}
 
@@ -47,8 +48,8 @@ public class Privilege implements Serializable {
 		this.object = newobj;
 	}
 
-	void addOperation(AccessOperationEnum newenum) {
-		this.operations.add(newenum);
+	void addOperation(UserManagementActions newOperations) {
+		this.operations.add(newOperations);
 	}
 
 	public Object getObject() {
