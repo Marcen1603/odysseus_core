@@ -45,9 +45,9 @@ public class SchemaIndexPath {
 		}
 		this.hasListInside = other.hasListInside;
 		this.to = other.to.clone();
-		this.indicesArray = new int[other.toArray().length];
+		this.indicesArray = new int[other.indicesArray.length];
 		for (int i = 0; i < this.indicesArray.length; i++) {
-			this.indicesArray[i] = other.toArray()[i];
+			this.indicesArray[i] = other.indicesArray[i];
 		}
 	}
 
