@@ -22,6 +22,7 @@ public class SchemaIndexPath {
 	private List<SchemaIndex> indices;
 	private boolean hasListInside = false;
 	private SDFAttribute to;
+	private int[] indicesArray;
 
 	SchemaIndexPath(List<SchemaIndex> indices, SDFAttribute attributeTo) {
 		this.indices = indices;
@@ -32,6 +33,9 @@ public class SchemaIndexPath {
 			}
 		}
 		this.to = attributeTo;
+		this.indicesArray = new int[indices.size()];
+		for (int i = 0; i < indices.size(); i++)
+			this.indicesArray[i] = indices.get(i).toInt();
 	}
 
 	SchemaIndexPath(SchemaIndexPath other) {
@@ -41,6 +45,10 @@ public class SchemaIndexPath {
 		}
 		this.hasListInside = other.hasListInside;
 		this.to = other.to.clone();
+		this.indicesArray = new int[other.toArray().length];
+		for (int i = 0; i < this.indicesArray.length; i++) {
+			this.indicesArray[i] = other.toArray()[i];
+		}
 	}
 
 	/**
@@ -103,16 +111,13 @@ public class SchemaIndexPath {
 	}
 
 	/**
-	 * Liefert eine Liste der Indices als int[]-Array. Modifikationen an dieser
-	 * Liste haben keine Auswirkungen auf das SchemaIndexPath.
+	 * Liefert eine Liste der Indices als int[]-Array. An dieser Liste dŸrfen keine
+	 * Modifikationen durchgefŸhrt werden.
 	 * 
 	 * @return int[]-Array des Pfads.
 	 */
 	public int[] toArray() {
-		int[] array = new int[indices.size()];
-		for (int i = 0; i < indices.size(); i++)
-			array[i] = indices.get(i).toInt();
-		return array;
+		return this.indicesArray;
 	}
 
 	/**
