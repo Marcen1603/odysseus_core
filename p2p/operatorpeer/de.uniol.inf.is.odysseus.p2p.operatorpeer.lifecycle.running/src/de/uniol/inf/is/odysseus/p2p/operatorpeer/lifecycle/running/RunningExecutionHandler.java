@@ -47,7 +47,7 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 				System.out.println("FÃ¼ge hinzu: "+AbstractTreeWalker.prefixWalk(s.getAo(),
 						new AlgebraPlanToStringVisitor()));
 				// TODO: User einfuegen, der diese Query ausführt
-				User user = UserManagement.getInstance().getP2PUser();
+				User user = UserManagement.getInstance().getSuperUser();
 				getFunction().addQuery(s.getAo(), user, new ParameterPriority(2));		
 			}
 		}

@@ -90,7 +90,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	private String parser = null;
 
-	User currentUser = UserManagement.getInstance().login("Console","");
+	User currentUser = UserManagement.getInstance().getSuperUser();
 
 	/**
 	 * This is the bath to files, to read queries from. This path can be set by

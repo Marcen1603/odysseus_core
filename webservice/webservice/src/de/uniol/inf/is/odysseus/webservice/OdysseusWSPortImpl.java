@@ -43,7 +43,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	public int addStatement(QueryType query) throws StatementQueryFault    { 
         try {
 			// TODO: User einfuegen, der diese Query ausführt
-        	User user = UserManagement.getInstance().login("Console","");
+        	User user = UserManagement.getInstance().getSuperUser();
 			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user
 					).iterator().next();
 			return queryID;

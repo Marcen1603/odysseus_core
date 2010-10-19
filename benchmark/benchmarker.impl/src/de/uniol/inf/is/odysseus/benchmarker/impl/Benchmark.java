@@ -48,7 +48,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private boolean extendedPostPriorisation = false;
 	private boolean useBenchmarkMemUsage = false;
 
-	private User user = UserManagement.getInstance().login("Benchmark","");
+	private User user = UserManagement.getInstance().getSuperUser();
 
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);

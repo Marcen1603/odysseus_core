@@ -78,7 +78,7 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 						// Hier wird noch das Schema der Quelle zum DataDictionary hinzugefÃ¼gt, damit der Compiler mit den Informationen arbeiten kann
 						if(DataDictionary.getInstance().getSourceType(adv.getSourceName()) != null) {
 							// TODO: User einfuegen, der diese Query ausführt
-							User user = UserManagement.getInstance().getP2PUser();
+							User user = UserManagement.getInstance().getSuperUser();
 							getExecutor().addQuery(adv.getSourceScheme(), "CQL", user, this.trafoConfigParam, new ParameterPriority(2));
 						}
 						

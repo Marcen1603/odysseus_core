@@ -121,7 +121,7 @@ public class LabdataServer {
 		DataDictionary dd = DataDictionary.getInstance();
 		try {
 			stream = dd.getEntity(streamName, UserManagement.getInstance()
-					.getTestUser());
+					.getSuperUser());
 		} catch (Exception e) {
 			// Ignore
 		}
@@ -136,13 +136,13 @@ public class LabdataServer {
 			InputStreamReader reader = new InputStreamReader(input);
 			try {
 				CQLParser.getInstance().parse(reader,
-						UserManagement.getInstance().getTestUser());
+						UserManagement.getInstance().getSuperUser());
 			} catch (QueryParseException e) {
 				e.printStackTrace();
 			}
 
 			stream = dd.getEntity(streamName, UserManagement.getInstance()
-					.getTestUser());
+					.getSuperUser());
 		}
 
 		SDFAttributeList schema = stream.getAttributes();

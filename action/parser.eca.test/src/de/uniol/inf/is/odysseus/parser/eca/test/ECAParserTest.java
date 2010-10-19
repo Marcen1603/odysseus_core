@@ -36,7 +36,7 @@ public class ECAParserTest implements CommandProvider {
 	private ExecutorConsole executerConsole;
 	private IActuatorFactory actuatorFactory;
 	private ICompiler compiler;
-	User user = UserManagement.getInstance().login("Console","");
+	User user = UserManagement.getInstance().getSuperUser();
 	
 	//set to false if u want to prevent removal of testActuators!
 	private static boolean autoRemoveActuator = true;

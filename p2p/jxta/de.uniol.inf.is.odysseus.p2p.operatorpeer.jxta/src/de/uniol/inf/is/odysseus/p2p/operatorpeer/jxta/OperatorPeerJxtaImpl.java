@@ -286,7 +286,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		for (String s : getSources().values()) {
 			try {		
 				// TODO: User einfuegen, der diese Query ausführt
-				User user = UserManagement.getInstance().getP2PUser();
+				User user = UserManagement.getInstance().getSuperUser();
 
 				aPeer.getExecutor().addQuery(s, "CQL", user, new ParameterPriority(2) );
 				

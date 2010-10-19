@@ -31,7 +31,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IExecutor executer;
 	private IActuatorFactory actuatorFactory;
 	private IActuatorBenchmark benchmark;
-	private User user = UserManagement.getInstance().login("Console","");
+	private User user = UserManagement.getInstance().getSuperUser();
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));

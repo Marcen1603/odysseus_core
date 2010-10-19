@@ -24,13 +24,6 @@ public class UserManagement extends AbstractUserManagement {
 				// TODO: testen mit Scott / tiger
 
 				if (instance.hasNoUsers()) {
-					instance.registerUserInt("Console", "");
-					instance.registerUserInt("Benchmark", "");
-					instance.registerUserInt("RCP", "");
-					instance.registerUserInt("Super", "held");
-					instance.registerUserInt("P2P", "jkhdsfkewrt");
-					instance.registerUserInt("Test", "jkhdsfkewrt");
-
 					// ------------------------------------------------
 					// create system user
 					instance.registerUserInt("System", "manager");
@@ -73,14 +66,8 @@ public class UserManagement extends AbstractUserManagement {
 		return instance;
 	}
 
-	// Hack um kurzfristig Nutzer im P2P zu erlauben und spaeter einfach wieder
-	// zu entfernen
-	public User getP2PUser() {
-		return login("P2P", "jkhdsfkewrt");
+	public User getSuperUser(){
+		return login("System", "manager");
 	}
-
-	public User getTestUser() {
-		return login("Test", "jkhdsfkewrt");
-	}
-
+	
 }
