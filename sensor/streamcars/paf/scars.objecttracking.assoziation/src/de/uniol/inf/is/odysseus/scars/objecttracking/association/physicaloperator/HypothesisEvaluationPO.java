@@ -76,32 +76,6 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 		this.gatingMode = clone.gatingMode;
 	}
 
-	public void setOldObjListPath(String oldObjListPath) {
-		this.oldObjListPath = oldObjListPath;
-	}
-
-	public void setNewObjListPath(String newObjListPath) {
-		this.newObjListPath = newObjListPath;
-	}
-
-	public String getOldObjListPath() {
-		return this.oldObjListPath;
-	}
-
-	public String getNewObjListPath() {
-		return this.newObjListPath;
-	}
-
-	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
-		this.algorithmParameter = newAlgoParameter;
-		this.associationAlgorithm
-				.initAlgorithmParameter(this.algorithmParameter);
-	}
-
-	public HashMap<String, String> getAlgorithmParameter() {
-		return this.algorithmParameter;
-	}
-
 	protected double[] getMeasurementValues(MVRelationalTuple<M> tuple,
 			TupleIndexPath tupleIndexPath) {
 		ArrayList<Double> values = new ArrayList<Double>();
@@ -232,6 +206,8 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 		this.sendPunctuation(timestamp);
 	}
 
+	/* SETTER AND GETTER */
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -269,5 +245,31 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 
 	public void setGatingMode(boolean gatingMode) {
 		this.gatingMode = gatingMode;
+	}
+
+	public void setOldObjListPath(String oldObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+	}
+
+	public void setNewObjListPath(String newObjListPath) {
+		this.newObjListPath = newObjListPath;
+	}
+
+	public String getOldObjListPath() {
+		return this.oldObjListPath;
+	}
+
+	public String getNewObjListPath() {
+		return this.newObjListPath;
+	}
+
+	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
+		this.algorithmParameter = newAlgoParameter;
+		this.associationAlgorithm
+				.initAlgorithmParameter(this.algorithmParameter);
+	}
+
+	public HashMap<String, String> getAlgorithmParameter() {
+		return this.algorithmParameter;
 	}
 }
