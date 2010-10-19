@@ -59,7 +59,7 @@ public class OptimizationTestConsole implements
 
 	OptimizationTestSink sink = null;
 	
-	User currentUser = UserManagement.getInstance().login("Console","");
+	User currentUser = UserManagement.getInstance().getSuperUser();
 	
 	/**
 	 * This is the basebath to files. This path can be set by command setPath.
