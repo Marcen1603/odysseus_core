@@ -104,15 +104,14 @@ public class StandardOptimizer extends AbstractOptimizer {
 //			IBufferPlacementStrategy bufferPlacementStrategy) {
 //		super.unbindBufferPlacementStrategy(bufferPlacementStrategy);
 //	}
-
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> queries, OptimizationConfiguration parameter)
-			throws QueryOptimizationException {
+			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
+	throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
-						parameter);
+						parameter, rulesToUse);
 				if (editableQuery.getBuildParameter().getParameterInstallMetadataListener()){
 					updateMetadataListener(editableQuery);
 				}
@@ -129,28 +128,28 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return sender.getEditableExecutionPlan();
 	}
 
-	@Override
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
-			throws QueryOptimizationException {
-		if (!queries.isEmpty()) {
-			for (IQuery editableQuery : queries) {
-				this.queryOptimizer.optimizeQuery(sender, editableQuery,
-						parameter, rulesToUse);
-				updateMetadataListener(editableQuery);
-			}
-
-			List<IQuery> newPlan = sender.getRegisteredQueries();
-			newPlan.addAll(queries);
-
-			IExecutionPlan newExecutionPlan = this.planOptimizer
-					.optimizePlan(sender, parameter, newPlan);
-
-			return newExecutionPlan;
-			
-		}
-		return sender.getEditableExecutionPlan();
-	}
+//	@Override
+//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+//			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
+//			throws QueryOptimizationException {
+//		if (!queries.isEmpty()) {
+//			for (IQuery editableQuery : queries) {
+//				this.queryOptimizer.optimizeQuery(sender, editableQuery,
+//						parameter, rulesToUse);
+//				updateMetadataListener(editableQuery);
+//			}
+//
+//			List<IQuery> newPlan = sender.getRegisteredQueries();
+//			newPlan.addAll(queries);
+//
+//			IExecutionPlan newExecutionPlan = this.planOptimizer
+//					.optimizePlan(sender, parameter, newPlan);
+//
+//			return newExecutionPlan;
+//			
+//		}
+//		return sender.getEditableExecutionPlan();
+//	}
 
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(

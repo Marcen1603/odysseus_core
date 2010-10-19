@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  * @author Wolf Bauer, Tobias Witt
  * 
  */
-public interface ICompiler extends IInfoProvider {
+public interface ICompiler extends IInfoProvider, IRewrite {
 	/**
 	 * Translates a query represented as a string into a logical plan. Multiple
 	 * queries could be represented by a ";"-separated string.
@@ -33,29 +33,6 @@ public interface ICompiler extends IInfoProvider {
 	 */
 	public List<IQuery> translateQuery(String query, String parserID, User user)
 			throws QueryParseException;
-
-	/**
-	 * Rewrites a logical plan.
-	 * 
-	 * @param logicalAlgebraList
-	 *            logical plan which should be rewrited.
-	 * @return rewrited logical plan.
-	 */
-	public ILogicalOperator restructPlan(ILogicalOperator logicalAlgebraList);
-
-	/**
-	 * Rewrites a logical plan.
-	 * 
-	 * @param logicalAlgebraList
-	 *            logical plan which should be rewrited.
-	 * @param rules
-	 *            Contains the name of the rules to use. Other rules will not be
-	 *            used.
-	 * 
-	 * @return rewrited logical plan.
-	 */
-	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan,
-			Set<String> rulesToUse);
 
 	/**
 	 * Creates semantically equivalent alternative plans.

@@ -238,17 +238,17 @@ public abstract class AbstractOptimizer implements IOptimizer {
 				new OptimizationConfiguration(parameters));
 	};
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
-	 */
-	@Override
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> newQueries,
-			AbstractOptimizationSetting<?>... parameters)
-			throws QueryOptimizationException {
-		return preQueryAddOptimization(sender, newQueries,
-				new OptimizationConfiguration(parameters));
-	};
+//	/* (non-Javadoc)
+//	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
+//	 */
+//	@Override
+//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+//			List<IQuery> newQueries,
+//			AbstractOptimizationSetting<?>... parameters)
+//			throws QueryOptimizationException {
+//		return preQueryAddOptimization(sender, newQueries,
+//				new OptimizationConfiguration(parameters));
+//	};
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])

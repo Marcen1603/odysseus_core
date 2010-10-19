@@ -226,7 +226,7 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			// optimize queries and set resulting execution plan
 			setExecutionPlan(optimizer().preQueryAddOptimization(this,
-					newQueries, ParameterDoRestruct.TRUE));
+					newQueries, null, ParameterDoRestruct.TRUE));
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
@@ -284,52 +284,6 @@ public class StandardExecutor extends AbstractExecutor {
 		}
 
 		getLogger().info("Before adding these new Queries " + newQueries);
-
-		// store optimized queries
-		for (IQuery optimizedQuery : newQueries) {
-			this.plan.addQuery(optimizedQuery);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this,
-					PlanModificationEventType.QUERY_ADDED, optimizedQuery));
-		}
-
-		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
-	}
-
-	/**
-	 * Optimize new queries, if corresponding parameter is set true and set the
-	 * resulting execution plan. After setting the execution plan all new
-	 * queries are stored in the global queries storage ({@link IPlan}).
-	 * 
-	 * @param newQueries
-	 *            Queries to process.
-	 * 
-	 * @param doRestrcut
-	 *            If true, restructuring will be done. If false, it will not.
-	 * @throws NoOptimizerLoadedException
-	 *             No optimizer is set.
-	 * @throws QueryOptimizationException
-	 *             An exception during optimization occurred.
-	 */
-	private void addQueries(List<IQuery> newQueries, boolean doRestruct)
-			throws NoOptimizerLoadedException, QueryOptimizationException {
-		getLogger().debug("Optimize Queries. Count:" + newQueries.size());
-		if (newQueries.isEmpty()) {
-			return;
-		}
-
-		// synchronize the process
-		this.executionPlanLock.lock();
-		try {
-			// optimize queries and set resulting execution plan
-			setExecutionPlan(optimizer().preQueryAddOptimization(
-					this,
-					newQueries,
-					doRestruct ? ParameterDoRestruct.TRUE
-							: ParameterDoRestruct.FALSE));
-		} finally {
-			// end synchronize of the process
-			this.executionPlanLock.unlock();
-		}
 
 		// store optimized queries
 		for (IQuery optimizedQuery : newQueries) {
@@ -459,8 +413,8 @@ public class StandardExecutor extends AbstractExecutor {
 					params);
 			if (rulesToUse != null && !rulesToUse.isEmpty()) {
 				addQueries(newQueries, doRestruct, rulesToUse);
-			} else {
-				addQueries(newQueries, doRestruct);
+//			} else {
+//				addQueries(newQueries, doRestruct);
 			}
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
@@ -546,7 +500,7 @@ public class StandardExecutor extends AbstractExecutor {
 			query.addReoptimizeListener(this);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			newQueries.add(query);
-			addQueries(newQueries, false);
+			addQueries(newQueries, false, null);
 			return query.getID();
 		} catch (Exception e) {
 			getLogger().error(

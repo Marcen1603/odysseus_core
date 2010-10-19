@@ -146,24 +146,24 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
 			throws QueryOptimizationException;
 
-	/**
-	 * Initializes an optimization if queries should be added.
-	 * 
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
-	 * @param newQueries
-	 *            Queries which should be added.
-	 * @param parameters
-	 *            Parameter for the optimization.
-	 * @return New optimized execution plan.
-	 * @throws QueryOptimizationException
-	 *             An exception occurred during optimization.
-	 */
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> newQueries,
-			AbstractOptimizationSetting<?>... parameters)
-			throws QueryOptimizationException;
+//	/**
+//	 * Initializes an optimization if queries should be added.
+//	 * 
+//	 * @param sender
+//	 *            Optimization request sender, which provides informations for
+//	 *            the optimization.
+//	 * @param newQueries
+//	 *            Queries which should be added.
+//	 * @param parameters
+//	 *            Parameter for the optimization.
+//	 * @return New optimized execution plan.
+//	 * @throws QueryOptimizationException
+//	 *             An exception occurred during optimization.
+//	 */
+//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+//			List<IQuery> newQueries,
+//			AbstractOptimizationSetting<?>... parameters)
+//			throws QueryOptimizationException;
 	
 	/**
 	 * Initializes an optimization if queries should be added.
@@ -187,23 +187,23 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 			AbstractOptimizationSetting<?>... parameters)
 			throws QueryOptimizationException;
 
-	/**
-	 * Initializes an optimization if queries should be added.
-	 * 
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
-	 * @param newQueries
-	 *            Queries which should be added.
-	 * @param parameter
-	 *            Parameter for the optimization.
-	 * @return New optimized execution plan.
-	 * @throws QueryOptimizationException
-	 *             An exception occurred during optimization.
-	 */
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> newQueries, OptimizationConfiguration parameter)
-			throws QueryOptimizationException;
+//	/**
+//	 * Initializes an optimization if queries should be added.
+//	 * 
+//	 * @param sender
+//	 *            Optimization request sender, which provides informations for
+//	 *            the optimization.
+//	 * @param newQueries
+//	 *            Queries which should be added.
+//	 * @param parameter
+//	 *            Parameter for the optimization.
+//	 * @return New optimized execution plan.
+//	 * @throws QueryOptimizationException
+//	 *             An exception occurred during optimization.
+//	 */
+//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+//			List<IQuery> newQueries, OptimizationConfiguration parameter)
+//			throws QueryOptimizationException;
 	
 	/**
 	 * Initializes an optimization if queries should be added.

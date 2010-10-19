@@ -185,21 +185,6 @@ public class StandardCompiler implements ICompiler {
 				+ " not registered.");
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#restructPlan(de.uniol.inf.is.odysseus.ILogicalOperator)
-	 */
-	@Override
-	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan) {
-		return this.rewrite.rewritePlan(logicalPlan);
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#restructPlan(de.uniol.inf.is.odysseus.ILogicalOperator)
-	 */
-	@Override
-	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan, Set<String> rulesToUse) {
-		return this.rewrite.rewritePlan(logicalPlan, rulesToUse);
-	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.ILogicalOperator, de.uniol.inf.is.odysseus.TransformationConfiguration)
@@ -243,7 +228,7 @@ public class StandardCompiler implements ICompiler {
 			ILogicalOperator logicalPlan, Set<String> rulesToUse) {
 		// TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
 		// werden, z.B. durch Join-Vertauschungen
-		ILogicalOperator p = restructPlan(logicalPlan);
+		ILogicalOperator p = rewritePlan(logicalPlan);
 		List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
 		list.add(p);
 		return list;
@@ -271,6 +256,19 @@ public class StandardCompiler implements ICompiler {
 	@Override
 	public void removeCompilerListener(ICompilerListener listener) {
 		this.listener.remove(listener);
+	}
+
+
+	@Override
+	public ILogicalOperator rewritePlan(ILogicalOperator plan) {
+		return rewrite.rewritePlan(plan);
+	}
+
+
+	@Override
+	public ILogicalOperator rewritePlan(ILogicalOperator plan,
+			Set<String> rulesToApply) {
+		return rewrite.rewritePlan(plan, rulesToApply);
 	}
 
 

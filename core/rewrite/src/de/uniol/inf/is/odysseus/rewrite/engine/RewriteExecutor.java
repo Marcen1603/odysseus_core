@@ -20,13 +20,13 @@ public class RewriteExecutor implements IRewrite {
 
 	@Override
 	public ILogicalOperator rewritePlan(ILogicalOperator plan) {
-		RewriteConfiguration conf = new RewriteConfiguration(new HashSet<String>());
-		return rewritePlan(plan, conf);
+		return rewritePlan(plan, (Set<String>)null);
 	}
 
 	@Override
 	public ILogicalOperator rewritePlan(ILogicalOperator plan, Set<String> rulesToApply) {
 		RewriteConfiguration conf = new RewriteConfiguration(new HashSet<String>());
+		if (rulesToApply != null) throw new RuntimeException("Rules to use currently not supported");
 		return rewritePlan(plan, conf);
 	}
 

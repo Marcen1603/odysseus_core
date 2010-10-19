@@ -33,43 +33,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	@Override
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
 			OptimizationConfiguration parameters) throws QueryOptimizationException {
-		ICompiler compiler = sender.getCompiler();
-		
-		if (compiler == null) {
-			throw new QueryOptimizationException("Compiler is not loaded.");
-		}
-
-		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
-
-		// if a logical rewrite should be processed.
-		ILogicalOperator sealedLogicalPlan = query
-				.getLogicalPlan();
-		
-		boolean queryShouldBeRewritten = sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE;
-		if (queryShouldBeRewritten) {
-			ILogicalOperator newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan);
-			// set new logical plan.
-			query.setLogicalPlan(newLogicalAlgebra);
-		}
-
-		// TODO: is that correct? I think this should be done if (
-		// query.getRoot() || (restruct != null && restruct == ParameterDoRestruct.TRUE)
-		//
-		// (Wolf)
-//		if (query.getRoot() == null || restruct == null
-//				|| restruct == ParameterDoRestruct.FALSE) {
-		if (query.getRoots() == null || query.getRoots().isEmpty() || queryShouldBeRewritten){
-		try {
-				// create the physical plan
-				List<IPhysicalOperator> physicalPlanRoots = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
-						.getTransformationConfiguration());
-
-				postTransformationInit(query, physicalPlanRoots);
-			} catch (Throwable e) {
-				throw new QueryOptimizationException(
-						"Exeception while initialize query.", e);
-			}
-		}
+		optimizeQuery(sender, query, parameters, null);
 	}
 	
 	
@@ -91,8 +55,9 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		ILogicalOperator sealedLogicalPlan = query
 				.getLogicalPlan();
 		
-		if (sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE) {
-			ILogicalOperator newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan, rulesToUse);
+		boolean queryShouldBeRewritten = sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE;
+		if (queryShouldBeRewritten) {
+			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(sealedLogicalPlan, rulesToUse);
 			// set new logical plan.
 			query.setLogicalPlan(newLogicalAlgebra);
 		}
@@ -103,7 +68,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		// (Wolf)
 //		if (query.getRoot() == null || restruct == null
 //				|| restruct == ParameterDoRestruct.FALSE) {
-		if (query.getRoots() == null || query.getRoots().isEmpty() || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
+		if (query.getRoots() == null || query.getRoots().isEmpty() || queryShouldBeRewritten){
 		try {
 				// create the physical plan
 				List<IPhysicalOperator> physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
