@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.nfunk.jep.JEP;
-import org.nfunk.jep.Node;
-import org.nfunk.jep.ParseException;
-
+import de.uniol.inf.is.odysseus.mep.IExpression;
+import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -28,9 +28,9 @@ public class PredictionExpression {
 	private static final String variableRegexp = "(\\p{Alpha}[\\p{Alnum}\\_:\\.]*)([^\\(\\p{Alnum}_:\\.\"]|$)";
 	private static final Pattern variablePattern = Pattern.compile(variableRegexp);
 	/** the JEP parser for executing the expression */
-	private transient JEP expressionParser;
+//	private transient JEP expressionParser;
 	/** the non-compiled expression string defined as in the grammar */
-	private String expression;
+	private String expressionString;
 	/** the input source name of the target attribute */
 	private String targetSource;
 	/** the integer array in which the targetPath is being stored, during initAttributePaths(SDFAttributeList schema) */
@@ -40,33 +40,44 @@ public class PredictionExpression {
 	/** the target value which will be set during the evaluation of this expression */
 	private Object targetValue;
 	/** A Mapping betreen source names and the corresponding variable names, which belongs to that source. */
-	private Map<String, List<String>> variables = new HashMap<String, List<String>>();
+	private Map<String, List<String>> variableSourceMapping = new HashMap<String, List<String>>();
 	/** A Mapping between all variable names and their corresponding attribute index paths. */
-	private Map<String, int[]> variablePaths = new HashMap<String, int[]>();
+	private Map<String, int[]> variablePathMapping = new HashMap<String, int[]>();
 	/** the Node object used by the JEP expression to parse and evaluate this expression string */
-	private Node node;
+//	private Node node;
+	
+	/** */
+	private IExpression<?> expression;
+	private Set<Variable> variables;
 	
 	/**
 	 * 
 	 * @param target
-	 * @param expression
+	 * @param expressionString
 	 */
-	public PredictionExpression(String target, String expression) {
+	public PredictionExpression(String target, String expressionString) {
 		this.targetVarName = target;
-		this.expression = expression.trim();
+		this.expressionString = expressionString.trim();
 		
-		expressionParser = new JEP();
-		expressionParser.setAllowUndeclared(false);
-		expressionParser.setAllowAssignment(false);
-		expressionParser.addStandardConstants();
-		expressionParser.addStandardFunctions();
+//		expressionParser = new JEP();
+//		expressionParser.setAllowUndeclared(false);
+//		expressionParser.setAllowAssignment(false);
+//		expressionParser.addStandardConstants();
+//		expressionParser.addStandardFunctions();
 		
-		aquireVariables(expression);
+		aquireVariables(expressionString);
 		aquireTargetVariable(target);
-
+		
 		try {
-			node = expressionParser.parse(expression);
-		} catch (ParseException e) { e.printStackTrace(); }
+			expression = MEP.parse(expressionString);
+			variables = expression.getVariables();
+		} catch (de.uniol.inf.is.odysseus.mep.ParseException e1) {
+			e1.printStackTrace();
+		}
+
+//		try {
+//			node = expressionParser.parse(expressionString);
+//		} catch (ParseException e) { e.printStackTrace(); }
 	}
 	
 	/**
@@ -97,13 +108,13 @@ public class PredictionExpression {
 	protected void createVariable(String variableName) {
 		String[] varSplit = variableName.split("\\.", 2);
 		String source = varSplit[0];
-		List<String> varNames = variables.get(source);
+		List<String> varNames = variableSourceMapping.get(source);
 		if(varNames == null) {
 			varNames = new ArrayList<String>();
-			variables.put(source, varNames);
+			variableSourceMapping.put(source, varNames);
 		}
 		varNames.add(variableName);
-		expressionParser.addVariable(variableName, null);
+//		expressionParser.addVariable(variableName, null);
 	}
 	
 	/**
@@ -123,7 +134,7 @@ public class PredictionExpression {
 	public void initAttributePaths(SDFAttributeList schema) {
 		String sourceName = getSourceName(schema);
 		SchemaHelper helper = new SchemaHelper(schema);
-		List<String> schemaVariables = variables.get(sourceName);
+		List<String> schemaVariables = variableSourceMapping.get(sourceName);
 		if(schemaVariables == null) {
 			//schema not requiered by expression, so simple ignore
 			return;
@@ -132,7 +143,7 @@ public class PredictionExpression {
 			SchemaIndexPath path = helper.getSchemaIndexPath(var);
 			int[] p = path.toArray();
 			replaceWithRelativeIndex(schema, p);
-			variablePaths.put(var, p);
+			variablePathMapping.put(var, p);
 		}
 		
 		if(sourceName.equals(targetSource)) {
@@ -198,7 +209,7 @@ public class PredictionExpression {
 	 * @return
 	 */
 	public List<String> getAttributeNames(SDFAttributeList schema) {
-		List<String> attrNames = variables.get(getSourceName(schema));
+		List<String> attrNames = variableSourceMapping.get(getSourceName(schema));
 		if(attrNames == null) {
 			return new ArrayList<String>();
 		}
@@ -211,7 +222,7 @@ public class PredictionExpression {
 	 * @return
 	 */
 	public int[] getAttributePath(String attrName) {
-		return variablePaths.get(attrName);
+		return variablePathMapping.get(attrName);
 	}
 	
 	/**
@@ -260,22 +271,30 @@ public class PredictionExpression {
 //		System.out.println("");
 //		System.out.print("bind: " + attrName + ", " + value + "Path: ");
 //		for(int p : path) { System.out.print(p + " "); }
-		expressionParser.addVariable(attrName, value);
+//		expressionParser.addVariable(attrName, value);
+		
+		for(Variable var : variables) {
+			if(var.getIdentifier().equals(attrName)) {
+				var.bind(value);
+			}
+		}
+		
 	}
 	
 	/**
 	 * 
 	 */
 	public void evaluate() {
-		try {
-			targetValue = expressionParser.evaluate(node);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			targetValue = expressionParser.evaluate(node);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+		targetValue = expression.getValue();
 	}
 	
 	public String getExpression() {
-		return expression;
+		return expressionString;
 	}
 
 	/**
@@ -286,7 +305,7 @@ public class PredictionExpression {
 	public void replaceVaryingAttributeIndex(SDFAttributeList schema, int index) {
 		
 		String sourceName = getSourceName(schema);
-		List<String> schemaVarNames = variables.get(sourceName);
+		List<String> schemaVarNames = variableSourceMapping.get(sourceName);
 		if(schemaVarNames == null) {
 			//schema not requiered by expression, so simple ignore
 			return;
@@ -297,7 +316,7 @@ public class PredictionExpression {
 			replaceWithRelativeIndex(schema, path);
 			replaceIndex(path, index);
 			
-			variablePaths.put(var, path);
+			variablePathMapping.put(var, path);
 		}
 		if(sourceName.equals(targetSource)) {
 			int[] path = helper.getSchemaIndexPath(targetVarName).toArray();
@@ -334,7 +353,7 @@ public class PredictionExpression {
 	public String toString() {
 		StringBuffer s = new StringBuffer();
 		s.append("Class: " + super.toString());
-		s.append("\nExpression: " + expression);
+		s.append("\nExpression: " + expressionString);
 		s.append("\nTarget: ");
 		s.append("\n\tVarName: " + targetVarName);
 		s.append("\n\tPath: ");
@@ -342,7 +361,7 @@ public class PredictionExpression {
 			s.append(index + " ");
 		}
 		s.append("\nVariablePaths:");
-		for(Entry<String, int[]> entry : variablePaths.entrySet()) {
+		for(Entry<String, int[]> entry : variablePathMapping.entrySet()) {
 			s.append("\n\t" + entry.getKey() + ": ");
 			int[] list = entry.getValue();
 			for(int index : list) {
@@ -350,10 +369,10 @@ public class PredictionExpression {
 			}
 		}
 		s.append("\nVariableValues:");
-		for(Entry<String, List<String>> entry : variables.entrySet()) {
+		for(Entry<String, List<String>> entry : variableSourceMapping.entrySet()) {
 			for(String var : entry.getValue()) {
 				s.append("\n\t"+var + " := ");
-				s.append(expressionParser.getVar(var).getValue());
+//				s.append(expressionParser.getVar(var).getValue());
 			}
 		}
 		return s.toString();
@@ -393,13 +412,13 @@ public class PredictionExpression {
 		time.add(currentTime);
 		
 		
-		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * 10";
+		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime";
 		PredictionExpression p = new PredictionExpression("a.list:obj:pos:y", expression);
 		p.initAttributePaths(scan);
 		p.initAttributePaths(time);
 		System.out.println("TEST: BEFORE INDEX REPLACE:");
 		System.out.println(p);
-		p.replaceVaryingAttributeIndex(scan, 2);
+		p.replaceVaryingAttributeIndex(scan, 0);
 		System.out.println("TEST: AFTER INDEX REPLACE:");
 		System.out.println(p);
 		
