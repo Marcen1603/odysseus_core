@@ -8,11 +8,13 @@ public abstract class AbstractParameterEditor implements IParameterEditor {
 
 	private IOperatorBuilder builder;
 	private IParameter<?> parameter;
+	private IParameterView view;
 	
 	@Override
-	public void init(IOperatorBuilder builder, IParameter<?> parameter) {
+	public void init(IOperatorBuilder builder, IParameter<?> parameter, IParameterView view) {
 		this.builder = builder;
 		this.parameter = parameter;
+		this.view = view;
 	}
 	
 	protected IOperatorBuilder getOperatorBuilder() {
@@ -29,9 +31,11 @@ public abstract class AbstractParameterEditor implements IParameterEditor {
 	
 	protected String getErrorText() {
 		StringBuilder sb = new StringBuilder();
-		for( Exception ex : getParameter().getErrors()) {
+		for( int i = 0; i < getParameter().getErrors().size(); i++ ) {
+			Exception ex = getParameter().getErrors().get(i);
+			if( i > 0 ) 
+				sb.append("\n");
 			sb.append(ex.getMessage());
-			sb.append("\n");
 		}
 		return sb.toString();
 	}
@@ -47,5 +51,8 @@ public abstract class AbstractParameterEditor implements IParameterEditor {
 		
 		return getParameter().getValue();
 	}
-	
+
+	protected IParameterView getView() {
+		return view;
+	}
 }

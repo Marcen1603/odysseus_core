@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 
 public interface IParameterEditor {
 
-	public void init( IOperatorBuilder builder, IParameter<?> parameter );
+	public void init( IOperatorBuilder builder, IParameter<?> parameter, IParameterView view );
 	public void createControl( Composite parent );
 	public void close();
 	

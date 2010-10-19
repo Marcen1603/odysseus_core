@@ -24,11 +24,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
+import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterView;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorPlanEditPart;
 
-public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener {
+public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener, IParameterView {
 
 	private static final String ERROR_PREFIX = "- ";
 	
@@ -42,12 +43,12 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	private Operator selectedOperator;
 	private OperatorEditPart selectedOperatorEditPart;
 	
-	private static ParameterViewPart instance = null;
+	private static IParameterView instance = null;
 	
 	public ParameterViewPart() {
 	}
 
-	public static ParameterViewPart getInstance() {
+	public static IParameterView getInstance() {
 		return instance;
 	}
 	
@@ -79,6 +80,10 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		updateParameterEditors();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.view.IParameterView#refresh()
+	 */
+	@Override
 	public void refresh() {
 		if( selectedOperator != null && selectedOperatorEditPart != null ) {
 			selectedOperatorEditPart.refresh();
@@ -150,7 +155,7 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 			editorParent.setLayout(new FillLayout());
 			if( ParameterEditorRegistry.getInstance().exists(parameter.getName())) {
 				IParameterEditor editor = ParameterEditorRegistry.getInstance().create(parameter.getName());
-				editor.init(builder, parameter);
+				editor.init(builder, parameter, this);
 				editor.createControl(editorParent);
 				openedParameterEditors.add(editor);
 			} else {
@@ -191,5 +196,14 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 				label.setText(ERROR_PREFIX + ex.getMessage());
 			}
 		}
+	}
+
+	@Override
+	public void layout() {
+		this.mainContainer.layout();
+		this.mandatoryContainer.layout();
+		this.optionalContainer.layout();
+		this.errorContainer.layout();
+		this.parent.layout();
 	}
 }
