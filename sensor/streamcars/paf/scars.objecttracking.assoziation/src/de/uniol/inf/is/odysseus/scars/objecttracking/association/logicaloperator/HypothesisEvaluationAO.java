@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.IAssociationAlgorithm;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -24,6 +25,8 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	private HashMap<String, String> algorithmParameter;
 	private HashMap<String, String> measurementPairs;
 
+	private IAssociationAlgorithm associationAlgorithm;
+
 	private String functionID;
 
 	public HypothesisEvaluationAO() {
@@ -39,6 +42,7 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		this.algorithmParameter = (HashMap<String, String>) copy.getAlgorithmParameter().clone();
 		this.measurementPairs = (HashMap<String, String>) copy.getMeasurementPairs().clone();
 		this.functionID = copy.getFunctionID();
+		this.associationAlgorithm = copy.getAssociationAlgorithm();
 	}
 
 	@Override
@@ -94,5 +98,13 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 
 	public void setFunctionID(String funcID) {
 		this.functionID = funcID;
+	}
+
+	public IAssociationAlgorithm getAssociationAlgorithm() {
+		return associationAlgorithm;
+	}
+
+	public void setAssociationAlgorithm(IAssociationAlgorithm associationAlgorithm) {
+		this.associationAlgorithm = associationAlgorithm;
 	}
 }

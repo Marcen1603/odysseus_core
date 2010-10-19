@@ -9,9 +9,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisEvaluationAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.AbstractHypothesisEvaluationPO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.MahalanobisDistanceEvaluationPO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.MultiDistanceEvaluationPO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.HypothesisEvaluationPO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.*;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -26,24 +25,25 @@ public class THypothesisEvaluationAORule extends AbstractTransformationRule<Hypo
 	@Override
 	public void execute(HypothesisEvaluationAO operator,
 			TransformationConfiguration config) {
-		
-		System.out.println("CREATE AbstractHypothesisEvaluationPO");
-		AbstractHypothesisEvaluationPO evaPO = null;
+
+		System.out.println("CREATE HypothesisEvaluationPO");
+		HypothesisEvaluationPO evaPO = null;
 		String functionID = operator.getFunctionID();
+		evaPO = new HypothesisEvaluationPO();
 		if (functionID.equals("MAHA")) {
-			evaPO = new MahalanobisDistanceEvaluationPO();
+			evaPO.setAssociationAlgorithm(new MahalanobisDistanceAssociation());
 		} else if (functionID.equals("MULTIDISTANCE")) {
-			evaPO = new MultiDistanceEvaluationPO();
+			evaPO.setAssociationAlgorithm(new MultiDistanceAssociation());
 		} else {
 			//Create default po to avoid crashes
 			System.out.println("Cannot resolve '" + functionID + "' to a physical operator: Creating default HypothesisEvaluationPO!");
-			evaPO = new MultiDistanceEvaluationPO();
+			evaPO.setAssociationAlgorithm(new MultiDistanceAssociation());
 		}
 		evaPO.setOldObjListPath(operator.getOldObjListPath());
 		evaPO.setNewObjListPath(operator.getNewObjListPath());
 		evaPO.setAlgorithmParameter(operator.getAlgorithmParameter());
-		evaPO.setMeasurementPairs(operator.getMeasurementPairs());
-		evaPO.initAlgorithmParameter();
+		//evaPO.setMeasurementPairs(operator.getMeasurementPairs());
+		evaPO.getAssociationAlgorithm().initAlgorithmParameter(evaPO.getAlgorithmParameter());
 		evaPO.setOutputSchema(operator.getOutputSchema());
 
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, evaPO);
@@ -54,7 +54,7 @@ public class THypothesisEvaluationAORule extends AbstractTransformationRule<Hypo
 		insert(evaPO);
 		retract(operator);
 		System.out.println("CREATE AbstractHypothesisEvaluationPO finished.");
-		
+
 	}
 
 	@Override
@@ -66,9 +66,9 @@ public class THypothesisEvaluationAORule extends AbstractTransformationRule<Hypo
 				operator.isAllPhysicalInputSet()){
 			return true;
 		}
-		
+
 		return false;
-		
+
 		// DRL-Code
 //		trafo : TransformationConfiguration( metaTypes contains "de.uniol.inf.is.odysseus.latency.ILatency" &&
 //				metaTypes contains "de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability" &&

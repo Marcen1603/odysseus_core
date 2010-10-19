@@ -7,7 +7,8 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.MahalanobisDistanceEvaluationPO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.MahalanobisDistanceAssociation;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.HypothesisEvaluationPO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
 public class TestHypothesisEvaluationPO extends TestCase{
@@ -21,8 +22,9 @@ public class TestHypothesisEvaluationPO extends TestCase{
 		paths[1] = 1;
 		paths[2] = 2;
 		paths[3] = 1;
-		MahalanobisDistanceEvaluationPO<StreamCarsMetaData<Object>> po = new MahalanobisDistanceEvaluationPO<StreamCarsMetaData<Object>>();
-		assertEquals(0d, po.evaluate(tupleNew.getMetadata().getCovariance(), paths, tupleOld.getMetadata().getCovariance(), paths, 0));
+		HypothesisEvaluationPO<StreamCarsMetaData<Object>> po = new HypothesisEvaluationPO<StreamCarsMetaData<Object>>();
+		po.setAssociationAlgorithm(new MahalanobisDistanceAssociation());
+		assertEquals(0d, po.getAssociationAlgorithm().evaluate(tupleNew.getMetadata().getCovariance(), paths, tupleOld.getMetadata().getCovariance(), paths, 0));
 	}
 
 	private MVRelationalTuple<StreamCarsMetaData<Object>> createObjectTuple() {

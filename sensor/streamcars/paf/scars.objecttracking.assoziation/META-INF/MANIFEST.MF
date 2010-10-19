@@ -28,5 +28,6 @@ Require-Bundle: Commons.Math;bundle-version="1.0.0",
  org.junit,
  wekaNew
 Export-Package: de.uniol.inf.is.odysseus.scars.objecttracking.association,
+ de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator
