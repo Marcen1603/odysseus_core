@@ -171,6 +171,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		this.delegateSink.close(callPath);
 	}
 	
+	@Override
 	public void close() {
 		this.delegateSink.close();
 	}
@@ -226,6 +227,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	}
 
+	@Override
 	public PhysicalSubscription<ISource<? extends R>> getSubscribedToSource(
 			int port) {
 		return this.delegateSink.getSubscribedToSource(port);

@@ -48,4 +48,9 @@ public interface IOwnedOperator {
 	 * @return All registered owner of this operator.
 	 */
 	public List<IOperatorOwner> getOwner();
+	
+	/**
+	 * Returns a printable String with all Owners
+	 */
+	public String getOwnerIDs();
 }

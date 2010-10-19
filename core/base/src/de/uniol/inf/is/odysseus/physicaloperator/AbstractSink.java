@@ -30,8 +30,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
 
 	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
-	// Marker fuer Rekursion
-	final private List<ISink<T>> openCalled = new CopyOnWriteArrayList<ISink<T>>();
 
 	protected int noInputPorts = -1;
 
@@ -60,22 +58,27 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	private IEventHandler eventHandler = new EventHandler();
 
+	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
 		eventHandler.subscribe(listener, type);
 	}
 
+	@Override
 	public void unsubscribe(IEventListener listener, IEventType type) {
 		eventHandler.unsubscribe(listener, type);
 	}
 
+	@Override
 	public void subscribeToAll(IEventListener listener) {
 		eventHandler.subscribeToAll(listener);
 	}
 
+	@Override
 	public void unSubscribeFromAll(IEventListener listener) {
 		eventHandler.unSubscribeFromAll(listener);
 	}
 
+	@Override
 	public void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
@@ -186,6 +189,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		// Empty Default Implementation
 	}
 
+	@Override
 	final public boolean isOpen() {
 		return this.isOpen.get();
 	}
@@ -215,6 +219,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
 
+	@Override
 	public void close(){
 		close(new ArrayList<PhysicalSubscription<ISink<?>>>());
 	}
@@ -318,6 +323,25 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
+	
+	/**
+	 * Returns a ","-separated string of the owner IDs.
+	 * 
+	 * @param owner
+	 *            Owner which have IDs.
+	 * @return ","-separated string of the owner IDs.
+	 */
+	@Override
+	public String getOwnerIDs() {
+		String result = "";
+		for (IOperatorOwner iOperatorOwner : owners) {
+			if (result != "") {
+				result += ", ";
+			}
+			result += iOperatorOwner.getID();
+		}
+		return result;
+	}
 
 	// ------------------------------------------------------------------------
 	// Subscription management
@@ -382,6 +406,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
+	@Override
 	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(
 			int port) {
 		return this.subscribedToSource.get(port);

@@ -8,9 +8,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * A PartialPlan is a part of the global execution plan. It consist of root
@@ -41,7 +41,11 @@ public class PartialPlan implements IPartialPlan {
 	 */
 	private int basePriority;
 	
-
+	/**
+	 * 
+	 */
+	private List<IQuery> partOf;
+	
 	/**
 	 *  Cache Ids for Sources to speed up getSourceID
 	 */
@@ -59,7 +63,7 @@ public class PartialPlan implements IPartialPlan {
 	 *            at runtime
 	 */
 	public PartialPlan(List<IIterableSource<?>> iterableSource,
-			List<IPhysicalOperator> roots, int basePriority) {
+			List<IPhysicalOperator> roots, int basePriority, IQuery partof, IQuery... otherParts) {
 		this.iterableSource = new ArrayList<IIterableSource<?>>(iterableSource);
 		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
 		for (int i=0;i<iterableSource.size();i++){
@@ -68,24 +72,11 @@ public class PartialPlan implements IPartialPlan {
 		this.roots = roots;
 		this.currentPriority = basePriority;
 		this.basePriority = basePriority;
-	}
-
-	/**
-	 * Returns a ","-separated string of the owner IDs.
-	 * 
-	 * @param owner
-	 *            Owner which have IDs.
-	 * @return ","-separated string of the owner IDs.
-	 */
-	private String getOwnerIDs(List<IOperatorOwner> owner) {
-		String result = "";
-		for (IOperatorOwner iOperatorOwner : owner) {
-			if (result != "") {
-				result += ", ";
-			}
-			result += iOperatorOwner.getID();
+		this.partOf = new ArrayList<IQuery>();
+		this.partOf.add(partof);
+		for (IQuery q:otherParts){
+			this.partOf.add(q);
 		}
-		return result;
 	}
 
 	/*
@@ -169,7 +160,7 @@ public class PartialPlan implements IPartialPlan {
 				result += AppEnv.LINE_SEPARATOR;
 			}
 			result += root.toString() + ", Owner: "
-					+ getOwnerIDs(root.getOwner());
+					+ root.getOwnerIDs();
 		}
 
 		result += AppEnv.LINE_SEPARATOR + "Sources:";
@@ -179,7 +170,7 @@ public class PartialPlan implements IPartialPlan {
 				result += AppEnv.LINE_SEPARATOR;
 			}
 			result += source.toString() + ", Owner: "
-					+ getOwnerIDs(source.getOwner());
+					+ source.getOwnerIDs();
 		}
 		return result;
 	}

@@ -232,6 +232,25 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return this.owner;
 	}
 
+	/**
+	 * Returns a ","-separated string of the owner IDs.
+	 * 
+	 * @param owner
+	 *            Owner which have IDs.
+	 * @return ","-separated string of the owner IDs.
+	 */
+	@Override
+	public String getOwnerIDs() {
+		String result = "";
+		for (IOperatorOwner iOperatorOwner : owner) {
+			if (result != "") {
+				result += ", ";
+			}
+			result += iOperatorOwner.getID();
+		}
+		return result;
+	}
+	
 	// "delegatable this", used for the delegate sink
 	protected ILogicalOperator getInstance() {
 		return this;

@@ -2,9 +2,7 @@ package de.uniol.inf.is.odysseus.physicaloperator;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,22 +56,27 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	private IEventHandler eventHandler = new EventHandler();
 
+	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
 		eventHandler.subscribe(listener, type);
 	}
 
+	@Override
 	public void unsubscribe(IEventListener listener, IEventType type) {
 		eventHandler.unsubscribe(listener, type);
 	}
 
+	@Override
 	public void subscribeToAll(IEventListener listener) {
 		eventHandler.subscribeToAll(listener);
 	}
 
+	@Override
 	public void unSubscribeFromAll(IEventListener listener) {
 		eventHandler.unSubscribeFromAll(listener);
 	}
 
+	@Override
 	public void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
@@ -161,6 +164,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// OPEN
 	// ------------------------------------------------------------------------
 
+	@Override
 	public boolean isOpen() {
 		return open.get();
 	}
@@ -236,6 +240,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		fire(this.pushDoneEvent);
 	}
 
+	@Override
 	public void transfer(T object) {
 		transfer(object, 0);
 	};
@@ -480,6 +485,25 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return Collections.unmodifiableList(this.owners);
 	}
 
+	/**
+	 * Returns a ","-separated string of the owner IDs.
+	 * 
+	 * @param owner
+	 *            Owner which have IDs.
+	 * @return ","-separated string of the owner IDs.
+	 */
+	@Override
+	public String getOwnerIDs() {
+		String result = "";
+		for (IOperatorOwner iOperatorOwner : owners) {
+			if (result != "") {
+				result += ", ";
+			}
+			result += iOperatorOwner.getID();
+		}
+		return result;
+	}
+	
 	// ------------------------------------------------------------------------
 	// Other Methods
 	// ------------------------------------------------------------------------
@@ -494,6 +518,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return super.hashCode();
 	}
 
+	@Override
 	abstract public AbstractSource<T> clone();
 
 }
