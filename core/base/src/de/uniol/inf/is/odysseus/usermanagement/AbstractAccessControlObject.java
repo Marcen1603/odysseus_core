@@ -15,6 +15,15 @@ public class AbstractAccessControlObject {
 		return privileges;
 	}
 
+	public Privilege getPrivilegeByName(String name) {
+		for (Privilege priv : privileges) {
+			if (priv.getPrivname().equals(name)) {
+				return priv;
+			}
+		}
+		return null;
+	}
+
 	void addPrivilege(Privilege priv) {
 		if (!this.privileges.contains(priv)) {
 			this.privileges.add(priv);

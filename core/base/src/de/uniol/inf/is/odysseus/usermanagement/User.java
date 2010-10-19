@@ -110,7 +110,7 @@ public class User extends AbstractAccessControlObject implements Serializable,
 
 	@Override
 	public String toString() {
-		return username + " " + password;
+		return username;// + " " + password;
 	}
 
 	@Override
@@ -138,6 +138,15 @@ public class User extends AbstractAccessControlObject implements Serializable,
 
 	public List<Role> getRoles() {
 		return this.roles;
+	}
+
+	public Role getRoleByName(String name) {
+		for (Role role : roles) {
+			if (role.getRolename().equals(name)) {
+				return role;
+			}
+		}
+		return null;
 	}
 
 	/**

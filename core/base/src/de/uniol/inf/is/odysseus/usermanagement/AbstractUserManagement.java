@@ -46,7 +46,7 @@ abstract public class AbstractUserManagement {
 				caller)) {
 			registerUserInt(username, password);
 		} else {
-			AccessControl.throwNoPermission("User " + caller.toString()
+			throw new HasNoPermissionException("User " + caller.toString()
 					+ " has no permission to create new user.");
 		}
 	}
@@ -86,7 +86,7 @@ abstract public class AbstractUserManagement {
 			}
 			fireUserManagementListener();
 		} else {
-			AccessControl.throwNoPermission("User " + caller.toString()
+			throw new HasNoPermissionException("User " + caller.toString()
 					+ " has no permission to update user password.");
 		}
 	}
@@ -155,6 +155,10 @@ abstract public class AbstractUserManagement {
 		return userStore.getUsers();
 	}
 
+	public boolean hasNoRoles() {
+		return this.roleStore.isEmpty();
+	}
+
 	/**
 	 * grant permission to a user. checks if grantUser is admin
 	 * 
@@ -175,7 +179,7 @@ abstract public class AbstractUserManagement {
 				e.printStackTrace();
 			}
 		} else {
-			AccessControl.throwNoPermission("User " + grantUser.toString()
+			throw new HasNoPermissionException("User " + grantUser.toString()
 					+ " has no permission to grant privileges.");
 		}
 	}
@@ -191,10 +195,9 @@ abstract public class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public void grantPermissionToUser(User grantUser, User user, Object obj,
+	public void grantPermissionToUser(User grantUser, User user, String obj,
 			List<IUserActions> operations) throws HasNoPermissionException,
 			StoreException {
-		// TODO strings
 		if (user.hasObject(obj) == null) {
 			grantPrivilegeToUser(grantUser, user,
 					createPrivilege(null, obj, operations, grantUser));
@@ -234,7 +237,20 @@ abstract public class AbstractUserManagement {
 	private List<IUserActions> getOperationEnums(Enum<ObjectSet> objectset,
 			List<String> operationnames) {
 		// TODO create new List<Enums>
-		
+		// switch objectset
+		if (objectset == ObjectSet.QUERY) {
+			System.out.println("It's a Query");
+		}
+		if (objectset == ObjectSet.SOURCE) {
+			System.out.println("It's a Source");
+		}
+		if (objectset == ObjectSet.VIEW) {
+			System.out.println("It's a View");
+		}
+		if (objectset == ObjectSet.USER) {
+			System.out.println("It's a User");
+		}
+
 		return null;
 	}
 
@@ -257,7 +273,7 @@ abstract public class AbstractUserManagement {
 				e.printStackTrace();
 			}
 		} else {
-			AccessControl.throwNoPermission("User " + grantUser.toString()
+			throw new HasNoPermissionException("User " + grantUser.toString()
 					+ " has no permission to grant a role");
 		}
 	}
@@ -273,7 +289,7 @@ abstract public class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public void grantPermissionToRole(User grantUser, Role role, Object obj,
+	public void grantPermissionToRole(User grantUser, Role role, String obj,
 			List<IUserActions> operations) throws HasNoPermissionException,
 			StoreException {
 		if (AccessControl.hasPermission(UserManagementActions.GRANT, null,
@@ -285,7 +301,7 @@ abstract public class AbstractUserManagement {
 				e.printStackTrace();
 			}
 		} else {
-			AccessControl.throwNoPermission("User " + grantUser.toString()
+			throw new HasNoPermissionException("User " + grantUser.toString()
 					+ " has no permission to grant privileges");
 		}
 	}
@@ -311,7 +327,7 @@ abstract public class AbstractUserManagement {
 			}
 			fireUserManagementListener();
 		} else {
-			AccessControl.throwNoPermission("User " + revokeUser.toString()
+			throw new HasNoPermissionException("User " + revokeUser.toString()
 					+ " has no permission to revoke privileges");
 		}
 	}
@@ -330,7 +346,7 @@ abstract public class AbstractUserManagement {
 				revokeUser)) {
 			role.removePrivilege(priv);
 		} else {
-			AccessControl.throwNoPermission("User " + revokeUser.toString()
+			throw new HasNoPermissionException("User " + revokeUser.toString()
 					+ " has no permission to revoke privileges");
 		}
 	}
@@ -355,7 +371,7 @@ abstract public class AbstractUserManagement {
 				e.printStackTrace();
 			}
 		} else {
-			AccessControl.throwNoPermission("User " + grantUser.toString()
+			throw new HasNoPermissionException("User " + grantUser.toString()
 					+ " has no permission to grant privileges");
 		}
 	}
@@ -375,7 +391,7 @@ abstract public class AbstractUserManagement {
 			user.removeRole(role);
 			fireUserManagementListener();
 		} else {
-			AccessControl.throwNoPermission("User " + revokeUser.toString()
+			throw new HasNoPermissionException("User " + revokeUser.toString()
 					+ " has no permission to revoke roles");
 		}
 	}
@@ -391,7 +407,7 @@ abstract public class AbstractUserManagement {
 				delUser)) {
 			// TODO del user
 		} else {
-			AccessControl.throwNoPermission("User " + delUser.toString()
+			throw new HasNoPermissionException("User " + delUser.toString()
 					+ " has no permission to deltete user");
 		}
 	}
@@ -417,7 +433,7 @@ abstract public class AbstractUserManagement {
 				return role;
 			}
 		} else {
-			AccessControl.throwNoPermission("User " + createUser.toString()
+			throw new HasNoPermissionException("User " + createUser.toString()
 					+ " has no permission to create new roles");
 		}
 		return null;
@@ -434,12 +450,11 @@ abstract public class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public Privilege createPrivilege(String privname, Object obj,
+	public Privilege createPrivilege(String privname, String obj,
 			List<IUserActions> operations, User createUser)
 			throws HasNoPermissionException, StoreException {
 		if (AccessControl.hasPermission(UserManagementActions.CREATEPRIV, null,
 				createUser)) {
-			// wenn privilege noch nicht in store
 			if (!privStore.containsKey(privname)) {
 				if (!privname.isEmpty() || privname == null) {
 					Privilege priv = new Privilege(privname, obj, operations,
@@ -454,10 +469,9 @@ abstract public class AbstractUserManagement {
 				}
 			}
 		} else {
-			AccessControl.throwNoPermission("User " + createUser.toString()
+			throw new HasNoPermissionException("User " + createUser.toString()
 					+ " has no permission to create new privileges");
 		}
-		// nachschauen ob name schon im store vorhanden etc.
 		return null;
 	}
 
@@ -479,6 +493,14 @@ abstract public class AbstractUserManagement {
 
 	public boolean isLoggedIn(String username) {
 		return loggedIn.containsKey(username);
+	}
+
+	public int getRoleID() {
+		return roleid;
+	}
+
+	public int getPrivID() {
+		return privid;
 	}
 
 }

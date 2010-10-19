@@ -22,7 +22,7 @@ public class AccessControl {
 	 * @param user
 	 * @return boolean
 	 */
-	public static boolean hasPermission(IUserActions operation, Object object,
+	public static boolean hasPermission(IUserActions operation, String object,
 			User user) {
 		if (user != null && operation != null) {
 			return hasOperationOnObject(operation, object, user);
@@ -40,32 +40,43 @@ public class AccessControl {
 	 * @return
 	 */
 	private static boolean hasOperationOnObject(IUserActions operation,
-			Object obj, User user) {
+			String obj, User user) {
 		// user special privs
-		for (Privilege priv : user.getPrivileges()) {
-			if (priv.getObject().equals(obj)) {
-				if (priv.getOperations().contains(operation)) {
-					return true;
-				}
-			}
-		}
-
-		// user role privs
-		for (Role role : user.getRoles()) {
-			for (Privilege priv : role.getPrivileges()) {
-				if (priv.getObject().equals(obj)) {
+		if (user.getPrivileges() != null && user.getPrivileges().size() > 0) {
+			for (Privilege priv : user.getPrivileges()) {
+				if (obj == null) {
+					if (priv.getObject() == null) {
+						if (priv.getOperations().contains(operation)) {
+							return true;
+						}
+					}
+				} else if (priv.getObject().equals(obj)) {
 					if (priv.getOperations().contains(operation)) {
 						return true;
 					}
 				}
 			}
 		}
-		return false;
-	}
 
-	static void throwNoPermission(String message)
-			throws HasNoPermissionException {
-		throw new HasNoPermissionException(message);
+		// user role privs
+		for (Role role : user.getRoles()) {
+			if (role.getPrivileges() != null && role.getPrivileges().size() > 0) {
+				for (Privilege priv : role.getPrivileges()) {
+					if (obj == null) {
+						if (priv.getObject() == null) {
+							if (priv.getOperations().contains(operation)) {
+								return true;
+							}
+						}
+					} else if (priv.getObject().equals(obj)) {
+						if (priv.getOperations().contains(operation)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 }
