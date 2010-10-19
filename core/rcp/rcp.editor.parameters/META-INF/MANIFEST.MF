@@ -4,7 +4,18 @@ Bundle-Name: Parameter
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.parameters;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
-Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor;bundle-version="1.0.0"
+Require-Bundle: org.eclipse.swt;bundle-version="3.6.1",
+ org.eclipse.ui
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.logicaloperator.builder,
- org.eclipse.swt.widgets
+ de.uniol.inf.is.odysseus.rcp.editor.parameter,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ org.eclipse.core.commands,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.jface.layout,
+ org.eclipse.jface.viewers,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui,
+ org.osgi.framework
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.parameters.activator.Activator

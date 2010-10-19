@@ -23,6 +23,16 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.IntegerParameterEditor"
             name="PORT">
       </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SchemaEditor"
+            name="SCHEMA">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.activator.Startup">
+      </startup>
    </extension>
 
 </plugin>
