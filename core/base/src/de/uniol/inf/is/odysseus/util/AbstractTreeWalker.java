@@ -8,15 +8,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 
 /**
- * @deprecated Should not be used any more. We have
- * a general graph walker, that can also walk through
- * trees. However, not all corresponding visitors have
- * been changed. 
+ * Should only be used on graphs
+ *  
  */
 @SuppressWarnings("unchecked")
 public class AbstractTreeWalker {
-	
-	
 	
 	public static <R,T extends ISubscriber, H extends ISubscription<T>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {
 		visitor.nodeAction(node);

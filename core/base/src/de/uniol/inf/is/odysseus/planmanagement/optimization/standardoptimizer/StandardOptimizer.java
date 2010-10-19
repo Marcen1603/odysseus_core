@@ -80,41 +80,19 @@ public class StandardOptimizer extends AbstractOptimizer {
 		this.migrationCostModel = null;
 	}
 	
-//	@Override
-//	public void bindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
-//		logger.debug("Bind planmigration strategy "+planMigrationStrategy);
-//		this.planMigrationStrategies.add(planMigrationStrategy);
-//		super.bindPlanMigrationStrategy(planMigrationStrategy);
-//	}
-	
-//	@Override
-//	public void unbindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
-//		this.planMigrationStrategies.remove(planMigrationStrategy);
-//		super.unbindPlanMigrationStrategy(planMigrationStrategy);
-//	}
-	
-//	@Override
-//	public void bindBufferPlacementStrategy(
-//			IBufferPlacementStrategy bufferPlacementStrategy) {
-//		super.bindBufferPlacementStrategy(bufferPlacementStrategy);
-//	}
-//	
-//	@Override
-//	public void unbindBufferPlacementStrategy(
-//			IBufferPlacementStrategy bufferPlacementStrategy) {
-//		super.unbindBufferPlacementStrategy(bufferPlacementStrategy);
-//	}
+
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
 	throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
-			for (IQuery editableQuery : queries) {
-				this.queryOptimizer.optimizeQuery(sender, editableQuery,
+			for (IQuery query : queries) {
+				this.queryOptimizer.optimizeQuery(sender, query,
 						parameter, rulesToUse);
-				if (editableQuery.getBuildParameter().getParameterInstallMetadataListener()){
-					updateMetadataListener(editableQuery);
+				if (query.getBuildParameter().getParameterInstallMetadataListener()){
+					updateMetadataListener(query);
 				}
+				
 			}
 
 			List<IQuery> newPlan = sender.getRegisteredQueries();
@@ -128,28 +106,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return sender.getEditableExecutionPlan();
 	}
 
-//	@Override
-//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
-//			throws QueryOptimizationException {
-//		if (!queries.isEmpty()) {
-//			for (IQuery editableQuery : queries) {
-//				this.queryOptimizer.optimizeQuery(sender, editableQuery,
-//						parameter, rulesToUse);
-//				updateMetadataListener(editableQuery);
-//			}
-//
-//			List<IQuery> newPlan = sender.getRegisteredQueries();
-//			newPlan.addAll(queries);
-//
-//			IExecutionPlan newExecutionPlan = this.planOptimizer
-//					.optimizePlan(sender, parameter, newPlan);
-//
-//			return newExecutionPlan;
-//			
-//		}
-//		return sender.getEditableExecutionPlan();
-//	}
+
 
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
@@ -189,10 +146,8 @@ public class StandardOptimizer extends AbstractOptimizer {
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		
-		if(0 == 0){
-			throw new RuntimeException("StandardOptimizer assumes acyclic trees, \n" +
-					"however we can have cyclic graphs. OptimizationTestConsole.e() will not work.\n" +
-					"You can remove this exception, however check that the query only contains a tree");
+		if(query.containsCycles()){
+			throw new RuntimeException("StandardOptimizer assumes acyclic trees, \n");
 		}
 		
 		getLogger().info("Start reoptimize query ID "+query.getID());

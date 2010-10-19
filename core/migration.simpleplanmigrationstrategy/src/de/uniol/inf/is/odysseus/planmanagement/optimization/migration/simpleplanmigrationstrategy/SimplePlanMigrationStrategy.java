@@ -68,10 +68,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	@Override
 	public void migrateQuery(IOptimizer sender, IQuery runningQuery,
 			List<IPhysicalOperator> newPlanRoots) throws QueryOptimizationException {
-		if(0 == 0){
-			throw new RuntimeException("Planmigration assumes acyclic trees, " +
-					"however we can have cyclic graphs. Migrations will not work.\n" +
-					"You can remove this exception, however check that the query only contains a tree");
+		if(runningQuery.containsCycles()){
+			throw new RuntimeException("Planmigration assumes acyclic trees");
 		}
 		
 		// @Marco: Bitte so umbauen, dass beachtet wird,
@@ -242,11 +240,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
-		if(0 == 0){
-			throw new RuntimeException("Planmigration assumes acyclic trees, " +
-					"however we can have cyclic graphs. Migrations will not work.\n" +
-					"You can remove this exception, however check that the query only contains a tree");
-		}
 		
 		if (logger.isDebugEnabled()) {
 			this.logger.debug("ParallelExecutionWaiter terminated.");

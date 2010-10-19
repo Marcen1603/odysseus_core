@@ -471,11 +471,6 @@ public class OptimizationTestConsole implements
 	}
 
 	public List<Measure> e(EvalQuery evalQuery, int seconds) {
-		if(0 == 0){
-			throw new RuntimeException("OptimizationTestConsole assumes acyclic trees, \n" +
-					"however we can have cyclic graphs. OptimizationTestConsole.e() will not work.\n" +
-					"You can remove this exception, however check that the query only contains a tree");
-		}
 		
 		List<Measure> measures = new ArrayList<Measure>(seconds);
 		System.out.println(evalQuery + " " + seconds);
@@ -694,12 +689,6 @@ public class OptimizationTestConsole implements
 	private void _helpMakeQueryBad(IQuery query)
 			throws OpenFailedException, NoOptimizerLoadedException,
 			QueryOptimizationException {
-		
-		if(0 == 0){
-			throw new RuntimeException("OptimizationTestConsole assumes acyclic trees, \n" +
-					"however we can have cyclic graphs. OptimizationTestConsole.e() will not work.\n" +
-					"You can remove this exception, however check that the query only contains a tree");
-		}
 		
 		System.out.println("Rebuilding Query to Bad Query");
 		IPhysicalOperator root = query.getRoots().get(0);

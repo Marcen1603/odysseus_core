@@ -167,4 +167,9 @@ public interface IQuery extends
 	
 	public boolean isOpened();
 	
+	/**
+	 * @return true if this plan contains cycles, typically the graph is cycle free
+	 */
+	public boolean containsCycles();
+	
 }

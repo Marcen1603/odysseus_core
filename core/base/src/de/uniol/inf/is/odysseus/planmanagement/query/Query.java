@@ -89,6 +89,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 * Indicates if this query is active.
 	 */
 	private boolean active;
+	
+	private boolean containsCycles = false;
 
 	/**
 	 * List of objects which respond to reoptimize requests.
@@ -654,5 +656,14 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	public void setBuildParameter(QueryBuildConfiguration parameter) {
 		this.parameters = parameter;
 	}	
+	
+	@Override
+	public boolean containsCycles() {
+		return containsCycles;
+	}
+	
+	public void setContainsCycles(boolean containsCycles){
+		this.containsCycles = containsCycles;
+	}
 	
 }
