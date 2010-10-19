@@ -28,6 +28,12 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public String getName() {
 		return this.name;
 	}
+	
+	@Override
+	public void clear() {
+		inputValue = null;
+		value = null;
+	}
 
 	@Override
 	public de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT getRequirement() {

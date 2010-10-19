@@ -26,8 +26,8 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 					throw new RuntimeException(singleParameter.getErrors().get(0));
 				}
 				list.add(singleParameter.getValue());
-				setValue(list);
 			}
+			setValue(list);
 		} catch (ClassCastException e) {
 			throw new IllegalArgumentException("wrong input for parameter "
 					+ getName() + ", List expected, got "

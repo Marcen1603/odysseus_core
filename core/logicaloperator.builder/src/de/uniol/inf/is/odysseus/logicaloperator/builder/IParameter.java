@@ -22,4 +22,5 @@ public interface IParameter<T> {
 	public boolean isMandatory();
 	public void setAttributeResolver(IAttributeResolver resolver);
 	public IAttributeResolver getAttributeResolver();
+	public void clear();
 }

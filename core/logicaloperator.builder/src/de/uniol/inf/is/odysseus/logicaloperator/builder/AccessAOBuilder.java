@@ -30,7 +30,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	public AccessAOBuilder() {
 		super(0, 0);
-		setParameters(sourceName, host, port, type, attributes);
+		setParameters(sourceName, host, port, attributes, type);
 	}
 
 	protected ILogicalOperator createOperatorInternal() {
