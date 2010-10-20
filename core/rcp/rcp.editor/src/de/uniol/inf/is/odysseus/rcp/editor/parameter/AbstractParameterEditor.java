@@ -41,7 +41,10 @@ public abstract class AbstractParameterEditor implements IParameterEditor {
 	}
 	
 	protected void setValue(Object obj) {
-		getParameter().setInputValue(obj);
+		if( obj == null ) 
+			getParameter().clear();
+		else 
+			getParameter().setInputValue(obj);
 		ParameterViewPart.getInstance().refresh();
 	}
 	

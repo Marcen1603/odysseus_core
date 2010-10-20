@@ -111,7 +111,9 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		Operator model = (Operator) getModel();
 		figure.setText(model.getOperatorBuilderName());
 		
-		if( model.getOperatorBuilder().validate() ) {
+		model.build();
+		
+		if( model.hasLogicalOperator() ) {
 			figure.unmarkError();
 			figure.setToolTip( null );
 		} else {

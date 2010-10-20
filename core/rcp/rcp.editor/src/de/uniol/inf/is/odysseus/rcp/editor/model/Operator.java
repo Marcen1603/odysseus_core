@@ -5,6 +5,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 
 public class Operator {
@@ -17,6 +18,7 @@ public class Operator {
 	public static final String PROPERTY_CONNECTION_AS_TARGET_REMOVED = "connection_tgt_remove";
 	
 	private IOperatorBuilder builder;
+	private ILogicalOperator logicalOperator;
 	private String builderName;
 	private int x = 0;
 	private int y = 0;
@@ -44,6 +46,14 @@ public class Operator {
 	
 	public String getOperatorBuilderName() {
 		return builderName;
+	}
+	
+	public ILogicalOperator getLogicalOperator() {
+		return logicalOperator;
+	}
+	
+	public boolean hasLogicalOperator() {
+		return logicalOperator != null;
 	}
 	
 	public void addConnection( OperatorConnection connection ) {
@@ -98,4 +108,39 @@ public class Operator {
 		}
 	}
 
+	private boolean onBuild = false;
+	public void build() {
+		if( !onBuild ) { // verhindert unendliche rekursive aufrufe im ablaufplan
+			onBuild = true;
+			
+			// logicalOperator aus vorgänger holen, falls möglich
+			int i = 0;
+			for( OperatorConnection connection : getConnectionsAsTarget()) {
+				Operator source = connection.getSource();
+				if( source.hasLogicalOperator() ) {
+					ILogicalOperator op = connection.getSource().getLogicalOperator();
+					builder.setInputOperator(i, op, i);
+				} else {
+					builder.setInputOperator(i, null, i); // löscht operator
+				}
+				i++;
+			}
+			
+			if( builder != null ) {
+				if( builder.validate() ) {
+					logicalOperator = builder.createOperator();
+					
+					// nachfolger auch bauen, falls möglich
+					for( OperatorConnection connection : getConnectionsAsSource() ) {
+						connection.getTarget().build();
+					}
+					
+					onBuild = false;
+					return;
+				}
+			}
+			logicalOperator = null;
+		}
+		onBuild = false;
+	}
 }

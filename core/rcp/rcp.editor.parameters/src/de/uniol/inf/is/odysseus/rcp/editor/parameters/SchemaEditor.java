@@ -190,11 +190,9 @@ public class SchemaEditor extends AbstractListParameterEditor<SDFAttribute> {
 				list.add(s);
 			}
 			
-			getListParameter().setInputValue(list);
-			getListParameter().validate();
+			setValue(list);
 		} else {
-			getListParameter().clear();
-			getListParameter().validate();
+			setValue(null);
 		}
 	}
 }

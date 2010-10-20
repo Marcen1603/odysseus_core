@@ -27,6 +27,10 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SchemaEditor"
             name="SCHEMA">
       </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.PredicateEditor"
+            name="PREDICATE">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

@@ -188,13 +188,15 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		if( errors.size() == 0) 
 			errorContainer.setVisible(false);
 		else {
-			errorContainer.setVisible(true);
 			for( Exception ex : errors ) {
 				Label label = new Label( errorContainer, SWT.WRAP);
 				label.setLayoutData(new GridData(GridData.FILL_BOTH));
 				label.setForeground(ColorConstants.red);
 				label.setText(ERROR_PREFIX + ex.getMessage());
 			}
+			errorContainer.layout();
+			mainContainer.layout();
+			errorContainer.setVisible(true);
 		}
 	}
 
