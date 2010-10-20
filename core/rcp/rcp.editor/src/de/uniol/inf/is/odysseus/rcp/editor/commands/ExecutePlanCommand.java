@@ -23,14 +23,6 @@ import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTrans
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {
-	//
-	// @SuppressWarnings("unchecked")
-	// private static ParameterTransformationConfiguration trafoConfigParam =
-	// new ParameterTransformationConfiguration(
-	// new TransformationConfiguration(
-	// new RelationalTransformationHelper(),
-	// "relational",
-	// ITimeInterval.class));
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -68,9 +60,6 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 	}
 
 	private List<String> errorTexts = new ArrayList<String>();
-//	private List<Operator> operators = new ArrayList<Operator>();
-//	private List<ILogicalOperator> logicals = new ArrayList<ILogicalOperator>();
-//	private Map<Operator, ILogicalOperator> hashMap = new HashMap<Operator, ILogicalOperator>();
 
 	private boolean validatePlan(OperatorPlan operatorPlan) {
 		errorTexts.clear();
@@ -107,83 +96,5 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		} catch (PlanManagementException ex) {
 			ex.printStackTrace();
 		}
-
-		// for( Operator op : plan.getOperators() )
-		// operators.add(op);
-		//
-		// Operator operator = findOperatorWithResolvedInputs(operators);
-		// while( operator != null ) {
-		//
-		// try {
-		// // Log operator bauen
-		// ILogicalOperator log =
-		// operator.getOperatorBuilder().createOperator();
-		// logicals.add(log);
-		// hashMap.put(operator, log);
-		//
-		// // und mit vorhandenen verbinden
-		// int sinkCounter = 0;
-		// for( OperatorConnection conn : operator.getConnectionsAsTarget()) {
-		// ILogicalOperator logOperator = hashMap.get(conn.getSource());
-		// if( logOperator == null ) {
-		// System.out.println("Fehler beim Bauen.. Source nicht gefunden");
-		// return;
-		// }
-		//
-		// log.subscribeToSource(logOperator, sinkCounter,
-		// log.getNumberOfInputs(), log.getOutputSchema());
-		// sinkCounter++;
-		// }
-		//
-		// operators.remove(operator);
-		//
-		// } catch( Exception ex ) {
-		// System.out.println("Fehler beim Bauen des Logischen Plans : ");
-		// ex.printStackTrace();
-		// return;
-		// }
-		//
-		// operator = findOperatorWithResolvedInputs(operators);
-		// }
-		//
-		// if( !operators.isEmpty() ) {
-		// System.out.println("Nach Abarbeitung ist die Liste nicht leer!");
-		// return;
-		// }
-		//
-		// try {
-		// Activator.getExecutor().addQuery(logicals.get(logicals.size()-1),
-		// user, (AbstractQueryBuildSetting<?>) null); // TransCfg muss
-		// korrigiert werden
-		// } catch (PlanManagementException e) {
-		// e.printStackTrace();
-		// }
 	}
-
-	// private Operator findOperatorWithResolvedInputs( List<Operator>
-	// candidates ) {
-	//
-	// for( Operator op : candidates ) {
-	//
-	// if( op.getConnectionsAsTarget().size() == 0 )
-	// return op;
-	// else {
-	//
-	// boolean completelyResolved = true;
-	// for( OperatorConnection conn : op.getConnectionsAsTarget() ) {
-	// if( candidates.contains(conn.getSource())) {
-	// completelyResolved = false;
-	// break;
-	// }
-	// }
-	//
-	// if( completelyResolved )
-	// return op;
-	// }
-	// }
-	//
-	// return null;
-	//
-	// }
-
 }
