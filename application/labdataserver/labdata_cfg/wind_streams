@@ -1,0 +1,20 @@
+CREATE STREAM miniSim10k(
+	reading INTEGER,
+	windspeed DOUBLE,
+	power DOUBLE
+) SOCKET localhost : 60100
+
+CREATE STREAM flapSimComplete(
+	timestamp STARTTIMESTAMP,
+	windSpeedHH DOUBLE,
+	windDir DOUBLE,
+	assPowerWT1 DOUBLE,
+	assPowerWT2 DOUBLE,
+	assPowerC DOUBLE,
+	realPowerWT1 DOUBLE,
+	realPowerWT2 DOUBLE,
+	realPowerCFree DOUBLE,
+	realPowerCRisoe DOUBLE,
+	windSpeedWT1 DOUBLE,
+	windSpeedWT2 DOUBLE
+) SOCKET localhost : 60101
