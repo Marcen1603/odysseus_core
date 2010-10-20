@@ -36,7 +36,7 @@ public class TBrokerCycleDetectionRule extends AbstractTransformationRule<Broker
 	}
 	
 	public IRuleFlowGroup getRuleFlowGroup() {
-	    return TransformRuleFlowGroup.TRANSFORMATION;
+	    return TransformRuleFlowGroup.CLEANUP;
 	}
 
 

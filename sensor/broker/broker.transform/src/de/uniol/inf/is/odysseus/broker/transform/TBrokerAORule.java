@@ -48,7 +48,7 @@ public class TBrokerAORule extends AbstractTransformationRule<BrokerAO> {
 	}
 
 	public IRuleFlowGroup getRuleFlowGroup() {
-	    return TransformRuleFlowGroup.TRANSFORMATION;
+	    return TransformRuleFlowGroup.ACCESS;
 	}
 
 }
