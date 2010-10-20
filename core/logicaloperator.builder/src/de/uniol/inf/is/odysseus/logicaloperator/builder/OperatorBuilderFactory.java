@@ -61,4 +61,8 @@ public class OperatorBuilderFactory {
 	public static IPredicateBuilder getPredicateBuilder(String predicateType) {
 		return predicateBuilders.get(predicateType);
 	}
+	
+	public static Set<String> getPredicateBuilderNames() {
+		return predicateBuilders.keySet();
+	}
 }

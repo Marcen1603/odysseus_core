@@ -82,6 +82,10 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public final void setInputValue(Object object) {
 		this.inputValue = object;
 	}
+	
+	public Object getInputValue() {
+		return this.inputValue;
+	}
 
 	@Override
 	public boolean hasValue() {

@@ -174,8 +174,12 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		if (this.maxPortCount <= inputPort) {
 			throw new IllegalArgumentException("illegal input port: " + inputPort);
 		}
-		this.inputOperators.put(inputPort, new InputOperatorItem(operator,
-				outputPort));
+		if( operator != null ) {
+			this.inputOperators.put(inputPort, new InputOperatorItem(operator,
+					outputPort));
+		} else {
+			this.inputOperators.remove(inputPort);
+		}
 	}
 	
 	public ILogicalOperator getInputOperator(int inputPort){
