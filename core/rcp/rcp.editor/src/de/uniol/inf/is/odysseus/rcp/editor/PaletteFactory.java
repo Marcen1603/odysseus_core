@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.editor;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
@@ -28,8 +30,10 @@ public class PaletteFactory {
 	}
 
 	private static void createDrawers(PaletteRoot root) {
-		Set<String> builderNames = OperatorBuilderFactory.getOperatorBuilderNames();
+		List<String> builderNames = new ArrayList<String>(OperatorBuilderFactory.getOperatorBuilderNames());
 
+		Collections.sort(builderNames);
+		
 		ImageDescriptor imageDesc = Activator.getImageDescriptor("icons/operatorIcon.png");
 		PaletteDrawer drawer = new PaletteDrawer("Operators");
 
