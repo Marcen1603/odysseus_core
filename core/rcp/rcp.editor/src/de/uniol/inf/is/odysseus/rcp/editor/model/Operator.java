@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 
 public class Operator {
@@ -128,6 +129,10 @@ public class Operator {
 			
 			if( builder != null ) {
 				if( builder.validate() ) {
+					if( logicalOperator != null ) {
+						// vorhande Verbindungen trennen
+						logicalOperator.unsubscribeFromAllSources();
+					}
 					logicalOperator = builder.createOperator();
 									
 					// nachfolger auch bauen, falls möglich

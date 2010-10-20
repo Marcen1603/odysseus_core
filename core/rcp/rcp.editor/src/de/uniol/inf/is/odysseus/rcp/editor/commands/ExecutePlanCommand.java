@@ -11,6 +11,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
@@ -90,11 +92,23 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		// für jede Senke den logischen Plan ausführen
 		try {
 			for (Operator sink : sinks) {
+				printLogicalPlan(sink.getLogicalOperator(), 0);
 				Activator.getExecutor().addQuery(sink.getLogicalOperator(), user,
 						new ParameterTransformationConfiguration(new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class)));
 			}
 		} catch (PlanManagementException ex) {
 			ex.printStackTrace();
+		}
+	}
+	
+	private void printLogicalPlan(ILogicalOperator op, int lvl) {
+		for( int i = 0; i < lvl; i++ ) 
+			System.out.print("\t");
+		
+		System.out.println(op);
+		
+		for( LogicalSubscription sub : op.getSubscribedToSource()) {
+			printLogicalPlan(sub.getTarget(), lvl + 1 );
 		}
 	}
 }
