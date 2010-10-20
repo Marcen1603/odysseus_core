@@ -45,7 +45,10 @@ public class WorkingMemory {
 		if (!isupdate) {
 			LoggerSystem.printlog(Accuracy.TRACE, "Removed from memory: \t" + o);
 		}
-		this.objects.remove(o);
+		boolean removed = this.objects.remove(o);
+		if(!removed){
+			throw new RuntimeException("Could not remove object " + o + " from working memory");
+		}
 		this.hasChanged = true;
 	}
 
