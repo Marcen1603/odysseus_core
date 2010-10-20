@@ -27,7 +27,7 @@ public class TTestAORule extends AbstractTransformationRule<TestAO>{
 		for (ILogicalOperator o:toUpdate){
 			update(o);
 		}
-		retract(config);
+		retract(operator);
 	}
 
 	@Override
