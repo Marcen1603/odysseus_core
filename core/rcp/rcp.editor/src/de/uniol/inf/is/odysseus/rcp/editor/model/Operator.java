@@ -129,7 +129,7 @@ public class Operator {
 			if( builder != null ) {
 				if( builder.validate() ) {
 					logicalOperator = builder.createOperator();
-					
+									
 					// nachfolger auch bauen, falls möglich
 					for( OperatorConnection connection : getConnectionsAsSource() ) {
 						connection.getTarget().build();
@@ -143,4 +143,5 @@ public class Operator {
 		}
 		onBuild = false;
 	}
+	
 }

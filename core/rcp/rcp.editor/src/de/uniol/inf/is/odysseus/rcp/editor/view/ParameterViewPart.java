@@ -164,6 +164,14 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 			}
 		}
 		
+		// Container unsichtbar, wenn darin keine Controls sind
+		if( mandatoryContainer.getChildren().length == 0 ) {
+			mandatoryContainer.setVisible(false);
+		}
+		if( optionalContainer.getChildren().length == 0 ) {
+			optionalContainer.setVisible(false);
+		}
+		
 		updateErrorList();
 		
 		parent.layout();
