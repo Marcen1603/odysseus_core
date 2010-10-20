@@ -27,8 +27,6 @@ public class TRelationalSlidingElementWindowTIPORule extends AbstractTransformat
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
-
-		update(transformConfig);
 		insert(windowPO);
 		retract(windowAO);
 	}

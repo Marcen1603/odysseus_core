@@ -26,9 +26,7 @@ public class TSlidingTimeWindowTIPORule extends AbstractTransformationRule<Windo
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowPO);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
-		}
-		
-		update(transformConfig);
+		}		
 		insert(windowPO);
 		retract(windowAO);
 		

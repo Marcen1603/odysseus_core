@@ -26,9 +26,7 @@ public class TSlidingAdvanceTimeWindowTIPORule extends AbstractTransformationRul
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowPO);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
-		}
-		// TODO: soll das wirklich?!
-		update(transformConfig);
+		}		
 		insert(windowPO);
 		retract(windowAO);
 
