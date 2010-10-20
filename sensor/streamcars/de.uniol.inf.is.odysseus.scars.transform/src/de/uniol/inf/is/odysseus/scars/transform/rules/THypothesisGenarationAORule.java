@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.scars.transform.rules;
 
+import java.util.Collection;
+
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.HypothesisGenerationPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -20,7 +24,21 @@ public class THypothesisGenarationAORule extends AbstractTransformationRule<Hypo
 	@Override
 	public void execute(HypothesisGenerationAO operator,
 			TransformationConfiguration config) {
-		// TODO Auto-generated method stub
+		System.out.println("DROOLS: THypothesisGeneration.drl");
+		System.out.println("CREATE HypothesisGenerationPO.");
+		HypothesisGenerationPO genPO = new HypothesisGenerationPO();
+		genPO.setNewObjListPath(operator.getNewObjListPath());
+		genPO.setOldObjListPath(operator.getOldObjListPath());
+		genPO.setOutputSchema(operator.getOutputSchema());
+
+		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, genPO);
+		for (ILogicalOperator o:toUpdate){
+			update(o);
+		}
+		
+		insert(genPO);
+		retract(operator);
+		System.out.println("CREATE HypothesisGenerationPO finished.");
 		
 	}
 
