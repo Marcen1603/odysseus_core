@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractAccessControlObject {
+public class AbstractUserManagementEntity {
 
 	protected List<Privilege> privileges;
 
-	AbstractAccessControlObject() {
+	AbstractUserManagementEntity() {
 		this.privileges = new ArrayList<Privilege>();
 	}
 
@@ -27,12 +27,14 @@ public class AbstractAccessControlObject {
 	void addPrivilege(Privilege priv) {
 		if (!this.privileges.contains(priv)) {
 			this.privileges.add(priv);
+		} else {
+
 		}
 	}
 
-	void removePrivilege(Privilege removepriv) {
+	void removePrivilege(String objecturi) {
 		for (Privilege priv : this.privileges) {
-			if (priv.equals(priv)) {
+			if (priv.getObject().equals(objecturi)) {
 				this.privileges.remove(priv);
 			}
 		}
@@ -45,9 +47,9 @@ public class AbstractAccessControlObject {
 	 * @param obj
 	 * @return
 	 */
-	public Privilege hasObject(Object obj) {
+	public Privilege hasObject(String objecturi) {
 		for (Privilege priv : this.privileges) {
-			if (priv.getObject().equals(obj)) {
+			if (priv.getObject().toString().equals(objecturi)) {
 				return priv;
 			}
 		}
@@ -60,9 +62,9 @@ public class AbstractAccessControlObject {
 	 * @param hasrole
 	 * @return
 	 */
-	public Privilege hasPrivilege(Privilege haspriv) {
+	public Privilege hasPrivilege(String objecturi) {
 		for (Privilege priv : this.privileges) {
-			if (priv.equals(haspriv)) {
+			if (priv.getObject().equals(objecturi)) {
 				return priv;
 			}
 		}

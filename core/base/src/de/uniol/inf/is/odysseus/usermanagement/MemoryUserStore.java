@@ -4,8 +4,9 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 
-public class MemoryUserStore extends MemoryStore<String, User> implements IUserStore {
-	
+public class MemoryUserStore extends MemoryStore<String, User> implements
+		IUserStore {
+
 	@Override
 	public User getUserByName(String username) {
 		return get(username);
@@ -13,7 +14,7 @@ public class MemoryUserStore extends MemoryStore<String, User> implements IUserS
 
 	@Override
 	public void storeUser(User user) {
-		put(user.getUsername(),user);
+		put(user.getUsername(), user);
 	}
 
 	@Override
@@ -21,5 +22,9 @@ public class MemoryUserStore extends MemoryStore<String, User> implements IUserS
 		return values();
 	}
 
-	
+	@Override
+	public User removeByName(String username) {
+		return remove(username);
+	}
+
 }

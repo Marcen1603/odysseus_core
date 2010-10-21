@@ -1,21 +1,16 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class Role extends AbstractAccessControlObject implements Serializable {
+public class Role extends AbstractUserManagementEntity implements Serializable {
 
 	private static final long serialVersionUID = 2452410871566925898L;
 	private final int ID;
 	private String rolename;
 
-	Role(String rolename, List<Privilege> privileges, int newid) {
+	Role(String rolename, int newid) {
 		this.rolename = rolename;
 		this.ID = newid;
-	}
-
-	Role(String rolename, int newid) {
-		this(rolename, null, newid);
 	}
 
 	public int getID() {

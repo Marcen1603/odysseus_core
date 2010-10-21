@@ -42,8 +42,8 @@ abstract public class AbstractUserManagement {
 	public void registerUser(User caller, String username, String password)
 			throws UsernameAlreadyUsedException, UserStoreException,
 			HasNoPermissionException {
-		if (AccessControl.hasPermission(UserManagementActions.CREATEUSER, null,
-				caller)) {
+		if (AccessControl.hasPermission(UserManagementActions.CREATE_USER,
+				null, caller)) {
 			registerUserInt(username, password);
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
@@ -76,7 +76,7 @@ abstract public class AbstractUserManagement {
 			throws UsernameNotExistException, UserStoreException,
 			HasNoPermissionException {
 		if (AccessControl.hasPermission(
-				UserManagementActions.UPDATEUSER_PASSWORD, null, caller)) {
+				UserManagementActions.UPDATE_USER_PASSWORD, null, caller)) {
 			User user = userStore.getUserByName(username);
 			if (user != null) {
 				user.setPassword(password);
@@ -108,9 +108,17 @@ abstract public class AbstractUserManagement {
 	 * @param username
 	 * @param password
 	 * @return
+	 * @throws HasNoPermissionException
 	 */
 	public User getUser(String username, String password) {
+		// throws HasNoPermissionException {
+		// if (AccessControl.hasPermission(UserManagementActions.GET_USER, null,
+		// caller)) {
 		return login(username, password, true);
+		// } else {
+		// throw new HasNoPermissionException("User " + caller.toString()
+		// + " has no permission to get user.");
+		// }
 	}
 
 	private User login(String username, String password,
@@ -132,108 +140,122 @@ abstract public class AbstractUserManagement {
 		return ++sessionID;
 	}
 
-	public void logout(String username) {
-		User user = loggedIn.remove(username);
-		user.setSession(null);
-		fireUserManagementListener();
+	/**
+	 * logout a user selected by name
+	 * 
+	 * @param caller
+	 * @param username
+	 * @throws HasNoPermissionException
+	 */
+	public void logout(User caller, String username)
+			throws HasNoPermissionException {
+		if (caller.getUsername().equals(username)
+				|| AccessControl.hasPermission(UserManagementActions.LOGOUT,
+						null, caller)) {
+			User user = loggedIn.remove(username);
+			user.setSession(null);
+			fireUserManagementListener();
+		} else {
+			throw new HasNoPermissionException("User " + caller.toString()
+					+ " has no permission logging out another user.");
+		}
 	}
 
 	protected boolean hasNoUsers() {
 		return userStore.isEmpty();
 	}
 
-	public void clearUserStore() throws StoreException {
-		userStore.clear();
-	}
-
-	public User findUser(String username, User caller) {
-		// Todo: Testen ob caller das darf
-		return userStore.getUserByName(username);
-	}
-
-	public Collection<User> getUsers() {
-		return userStore.getUsers();
-	}
-
-	public boolean hasNoRoles() {
+	protected boolean hasNoRoles() {
 		return this.roleStore.isEmpty();
 	}
 
+	public void clearUserStore() throws StoreException {
+		// ,HasNoPermissionException {
+		// if
+		// (AccessControl.hasPermission(UserManagementActions.CLEAR_USERSTORE,
+		// null, caller)) {
+		userStore.clear();
+		// } else {
+		// throw new HasNoPermissionException("User " + caller.toString()
+		// + " has no permission to clear userstore.");
+		// }
+	}
+
+	public User findUser(String username, User caller) {
+		// throws HasNoPermissionException {
+		// if (AccessControl.hasPermission(UserManagementActions.FIND_USER,
+		// null,
+		// caller)) {
+		return userStore.getUserByName(username);
+		// } else {
+		// throw new HasNoPermissionException("User " + caller.toString()
+		// + " has no permission for finding user.");
+		// }
+	}
+
+	public Collection<User> getUsers() {
+		// throws HasNoPermissionException {
+		// if (AccessControl.hasPermission(UserManagementActions.GET_ALL_USER,
+		// null, caller)) {
+		return userStore.getUsers();
+		// } else {
+		// throw new HasNoPermissionException("User " + caller.toString()
+		// + " has no permission to get all user.");
+		// }
+	}
+
 	/**
-	 * grant permission to a user. checks if grantUser is admin
+	 * grants permissions to a specified user- or role name
 	 * 
-	 * @param grantUser
-	 * @param user
-	 * @param priv
+	 * @param caller
+	 * @param name
+	 * @param operations
+	 * @param objecturi
 	 * @throws HasNoPermissionException
+	 * @throws StoreException
 	 */
-	public void grantPrivilegeToUser(User grantUser, User user, Privilege priv)
+	public void grantPermission(User caller, String name,
+			List<IUserActions> operations, String objecturi)
 			throws HasNoPermissionException, StoreException {
 		if (AccessControl.hasPermission(UserManagementActions.GRANT, null,
-				grantUser) && user.hasPrivilege(priv) == null) {
-			try {
-				// user.addPrivilege(priv);
-				user.addPrivilege(privStore.get(priv.getPrivname()));
-				fireUserManagementListener();
-			} catch (Exception e) {
-				e.printStackTrace();
+				caller)) {
+			AbstractUserManagementEntity entity = getEntety(name);
+			// if entity has't already rights on this object
+			if (entity.hasObject(objecturi) == null) {
+				entity.addPrivilege(createPrivilege(objecturi, entity,
+						operations, caller));
+			} else {
+				entity.getPrivilegeByName(name + "::" + objecturi)
+						.addOperations(operations);
 			}
 		} else {
-			throw new HasNoPermissionException("User " + grantUser.toString()
-					+ " has no permission to grant privileges.");
+			throw new HasNoPermissionException("User " + caller.toString()
+					+ " has no permission to grant permission.");
 		}
 	}
 
 	/**
-	 * grants permission to user with object and list of operation-enums. calls
-	 * method with privilege parameter
+	 * returns user or role whether the given name is in the userstore or
+	 * rolestore
 	 * 
-	 * @param grantUser
-	 * @param user
-	 * @param obj
-	 * @param operations
-	 * @throws HasNoPermissionException
-	 * @throws StoreException
+	 * @param name
+	 * @return AbstractUserManagementEntity
 	 */
-	public void grantPermissionToUser(User grantUser, User user, String obj,
-			List<IUserActions> operations) throws HasNoPermissionException,
-			StoreException {
-		if (user.hasObject(obj) == null) {
-			grantPrivilegeToUser(grantUser, user,
-					createPrivilege(null, obj, operations, grantUser));
+	AbstractUserManagementEntity getEntety(String name) {
+		AbstractUserManagementEntity entity = userStore.getUserByName(name);
+		if (entity == null) {
+			entity = roleStore.get(name);
 		}
+		return entity;
 	}
 
 	/**
-	 * grants permission to user with object and list of operation-enums. calls
-	 * method with privilege parameter
+	 * returns a list of actions possible for the type of object
 	 * 
-	 * @param grantUser
-	 * @param username
-	 * @param object
-	 * @param operations
-	 * @throws HasNoPermissionException
-	 * @throws StoreException
+	 * @param objectset
+	 * @param operationnames
+	 * @return
 	 */
-	public void grantPermissionToUser(User grantUser, String username,
-			Enum<ObjectSet> objectset, String object, List<String> operations)
-			throws HasNoPermissionException, StoreException {
-		User user = userStore.getUserByName(username);
-		if (operations != null && operations.size() > 0) {
-			List<IUserActions> newoperations = getOperationEnums(objectset,
-					operations);
-			if (user != null) {
-				if (user.hasObject(object) == null) {
-					grantPrivilegeToUser(
-							grantUser,
-							user,
-							createPrivilege(null, object, newoperations,
-									grantUser));
-				}
-			}
-		}
-	}
-
 	private List<IUserActions> getOperationEnums(Enum<ObjectSet> objectset,
 			List<String> operationnames) {
 		// TODO create new List<Enums>
@@ -255,99 +277,33 @@ abstract public class AbstractUserManagement {
 	}
 
 	/**
-	 * grants permission to a role. checks if grantUser has permission
+	 * revokes all permissions on an object from user or role (removes the
+	 * privilege)
 	 * 
-	 * @param grantUser
-	 * @param role
+	 * @param caller
+	 * @param name
 	 * @param priv
 	 * @throws HasNoPermissionException
 	 */
-	public void grantPrivilegeToRole(User grantUser, Role role, Privilege priv)
-			throws HasNoPermissionException, StoreException {
-		if (AccessControl.hasPermission(UserManagementActions.GRANT, null,
-				grantUser)) {
-			try {
-				// role.addPrivileges(priv);
-				role.addPrivilege(privStore.get(priv.getPrivname()));
-			} catch (Exception e) {
-				e.printStackTrace();
+	public void revokeObject(User caller, String name, String objecturi)
+			throws HasNoPermissionException {
+		if (AccessControl.hasPermission(UserManagementActions.REVOKE,
+				"UserManagement", caller)) {
+			AbstractUserManagementEntity entity = getEntety(name);
+			entity.removePrivilege(objecturi);
+			if (entity instanceof User) {
+				// remove role with permission on particular object
+				for (Role role : ((User) entity).getRoles()) {
+					role.hasPrivilege(objecturi);
+					((User) entity).removeRole(role);
+				}
+				fireUserManagementListener();
+			} else {
+				// TODO fire Listener role changed
 			}
 		} else {
-			throw new HasNoPermissionException("User " + grantUser.toString()
-					+ " has no permission to grant a role");
-		}
-	}
-
-	/**
-	 * grants permission to role with object and list of operation-enums. calls
-	 * method with privilege parameter
-	 * 
-	 * @param grantUser
-	 * @param role
-	 * @param obj
-	 * @param operations
-	 * @throws HasNoPermissionException
-	 * @throws StoreException
-	 */
-	public void grantPermissionToRole(User grantUser, Role role, String obj,
-			List<IUserActions> operations) throws HasNoPermissionException,
-			StoreException {
-		if (AccessControl.hasPermission(UserManagementActions.GRANT, null,
-				grantUser)) {
-			try {
-				grantPrivilegeToRole(grantUser, role,
-						createPrivilege(null, obj, operations, grantUser));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else {
-			throw new HasNoPermissionException("User " + grantUser.toString()
-					+ " has no permission to grant privileges");
-		}
-	}
-
-	/**
-	 * Revoke a Permission (Privilege) from a specifed User
-	 * 
-	 * @param revokeUser
-	 * @param user
-	 * @param priv
-	 * @throws HasNoPermissionException
-	 */
-	public void revokePrivilegeFromUser(User revokeUser, User user,
-			Privilege priv) throws HasNoPermissionException {
-		if (AccessControl.hasPermission(UserManagementActions.REVOKE, null,
-				revokeUser)) {
-			if (user.hasPrivilege(priv) != null) {
-				user.removePrivilege(priv);
-			}
-			Role role = user.hasPrivilegeInRole(priv);
-			if (role != null) {
-				user.removeRole(role);
-			}
-			fireUserManagementListener();
-		} else {
-			throw new HasNoPermissionException("User " + revokeUser.toString()
-					+ " has no permission to revoke privileges");
-		}
-	}
-
-	/**
-	 * Revoke a Permission (Privilege) from a specified Role
-	 * 
-	 * @param revokeUser
-	 * @param role
-	 * @param priv
-	 * @throws HasNoPermissionException
-	 */
-	public void revokePrivilegeFromRole(User revokeUser, Role role,
-			Privilege priv) throws HasNoPermissionException {
-		if (AccessControl.hasPermission(UserManagementActions.REVOKE, null,
-				revokeUser)) {
-			role.removePrivilege(priv);
-		} else {
-			throw new HasNoPermissionException("User " + revokeUser.toString()
-					+ " has no permission to revoke privileges");
+			throw new HasNoPermissionException("User " + caller.toString()
+					+ " has no permission to revoke privilege for an object");
 		}
 	}
 
@@ -360,35 +316,35 @@ abstract public class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public void grantRoleToUser(User grantUser, Role role, User user)
+	public void grantRoleToUser(User grantUser, String rolename, User user)
 			throws HasNoPermissionException, StoreException {
 		if (AccessControl.hasPermission(UserManagementActions.GRANT, null,
-				grantUser) && user.hasRole(role) == null) {
+				grantUser) && user.hasRole(rolename) == null) {
 			try {
-				user.addRole(roleStore.get(role.getRolename()));
+				user.addRole(roleStore.get(rolename));
 				fireUserManagementListener();
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		} else {
 			throw new HasNoPermissionException("User " + grantUser.toString()
-					+ " has no permission to grant privileges");
+					+ " has no permission to grant roles");
 		}
 	}
 
 	/**
-	 * Revke a Role from a specified User
+	 * revoke a role from a specified user
 	 * 
 	 * @param revokeUser
-	 * @param role
+	 * @param rolename
 	 * @param user
 	 * @throws HasNoPermissionException
 	 */
-	public void revokeRoleFromUser(User revokeUser, Role role, User user)
+	public void revokeRoleFromUser(User revokeUser, String rolename, User user)
 			throws HasNoPermissionException {
 		if (AccessControl.hasPermission(UserManagementActions.REVOKE, null,
-				revokeUser) && user.hasRole(role) != null) {
-			user.removeRole(role);
+				revokeUser) && user.hasRole(rolename) != null) {
+			user.removeRole(roleStore.get(rolename));
 			fireUserManagementListener();
 		} else {
 			throw new HasNoPermissionException("User " + revokeUser.toString()
@@ -397,15 +353,24 @@ abstract public class AbstractUserManagement {
 	}
 
 	/**
-	 * TBD: not jet implemented
+	 * deletes a user by performing a logout for the user and removing him from
+	 * userstore
 	 * 
 	 * @throws HasNoPermissionException
+	 * @throws StoreException
 	 */
 	public void deleteUser(User delUser, String username)
-			throws HasNoPermissionException {
-		if (AccessControl.hasPermission(UserManagementActions.DELETEUSER, null,
-				delUser)) {
-			// TODO del user
+			throws HasNoPermissionException, StoreException {
+		if (AccessControl.hasPermission(UserManagementActions.DELETE_USER,
+				null, delUser)) {
+			if (!username.equals("System")) {
+				// logout
+				logout(delUser, username);
+				// delete user from store
+				if (userStore.removeByName(username) != null) {
+					fireUserManagementListener();
+				}
+			}
 		} else {
 			throw new HasNoPermissionException("User " + delUser.toString()
 					+ " has no permission to deltete user");
@@ -417,23 +382,23 @@ abstract public class AbstractUserManagement {
 	 * 
 	 * @param rolename
 	 * @param privileges
-	 * @param createUser
+	 * @param caller
 	 * @return
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public Role createRole(String rolename, List<Privilege> privileges,
-			User createUser) throws HasNoPermissionException, StoreException {
-		if (AccessControl.hasPermission(UserManagementActions.CREATEROLE, null,
-				createUser)) {
+	public Role createRole(String rolename, User caller)
+			throws HasNoPermissionException, StoreException {
+		if (AccessControl.hasPermission(UserManagementActions.CREATE_ROLE,
+				null, caller)) {
 			// wenn role noch nicht in store
 			if (!roleStore.containsKey(rolename)) {
-				Role role = new Role(rolename, privileges, this.roleid++);
+				Role role = new Role(rolename, getRoleID());
 				roleStore.put(rolename, role);
 				return role;
 			}
 		} else {
-			throw new HasNoPermissionException("User " + createUser.toString()
+			throw new HasNoPermissionException("User " + caller.toString()
 					+ " has no permission to create new roles");
 		}
 		return null;
@@ -445,31 +410,26 @@ abstract public class AbstractUserManagement {
 	 * @param privname
 	 * @param obj
 	 * @param operations
-	 * @param createUser
+	 * @param caller
 	 * @return
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public Privilege createPrivilege(String privname, String obj,
-			List<IUserActions> operations, User createUser)
-			throws HasNoPermissionException, StoreException {
-		if (AccessControl.hasPermission(UserManagementActions.CREATEPRIV, null,
-				createUser)) {
-			if (!privStore.containsKey(privname)) {
-				if (!privname.isEmpty() || privname == null) {
-					Privilege priv = new Privilege(privname, obj, operations,
-							this.privid++);
-					privStore.put(priv.getPrivname(), priv);
-					return priv;
-				} else {
-					Privilege priv = new Privilege(obj, operations,
-							this.privid++);
-					privStore.put(priv.getPrivname(), priv);
-					return priv;
-				}
+	public Privilege createPrivilege(String objecturi,
+			AbstractUserManagementEntity owner, List<IUserActions> operations,
+			User caller) throws HasNoPermissionException, StoreException {
+		if (AccessControl.hasPermission(UserManagementActions.CREATE_PRIV,
+				"UserManagement", caller)) {
+			if (!privStore.containsKey(owner.toString() + "::" + objecturi)
+					&& owner.getPrivilegeByName(owner.toString() + "::"
+							+ objecturi) == null) {
+				Privilege priv = new Privilege(objecturi, owner, operations,
+						getPrivID());
+				privStore.put(priv.getPrivname(), priv);
+				return priv;
 			}
 		} else {
-			throw new HasNoPermissionException("User " + createUser.toString()
+			throw new HasNoPermissionException("User " + caller.toString()
 					+ " has no permission to create new privileges");
 		}
 		return null;
@@ -478,29 +438,51 @@ abstract public class AbstractUserManagement {
 	private List<IUserManagementListener> listeners = new CopyOnWriteArrayList<IUserManagementListener>();
 
 	public void addTenantManagementListener(IUserManagementListener l) {
+		// throws HasNoPermissionException {
+		// if (AccessControl.hasPermission(UserManagementActions.ADD_LISTENER,
+		// null, caller)) {
 		listeners.add(l);
+		// } else {
+		// throw new HasNoPermissionException("" + caller.toString()
+		// + " has no permission to add listener");
+		// }
 	}
 
-	public void removeTenantManagementListener(IUserManagementListener l) {
+	public void removeTenantManagementListener(User caller,
+			IUserManagementListener l) throws HasNoPermissionException {
+		// if
+		// (AccessControl.hasPermission(UserManagementActions.REMOVE_LISTENER,
+		// null, caller)) {
 		listeners.remove(l);
+		// } else {
+		// throw new HasNoPermissionException("" + caller.toString()
+		// + " has no permission to add listener");
+		// }
 	}
 
-	public void fireUserManagementListener() {
+	private void fireUserManagementListener() {
 		for (IUserManagementListener l : listeners) {
 			l.usersChangedEvent();
 		}
 	}
 
 	public boolean isLoggedIn(String username) {
+		// throws HasNoPermissionException {
+		// if (AccessControl.hasPermission(UserManagementActions.IS_LOGGEDIN,
+		// null, caller)) {
 		return loggedIn.containsKey(username);
+		// } else {
+		// throw new HasNoPermissionException("User " + caller.toString()
+		// + " has no permission to check loginstatus of user.");
+		// }
 	}
 
 	public int getRoleID() {
-		return roleid;
+		return roleid++;
 	}
 
 	public int getPrivID() {
-		return privid;
+		return privid++;
 	}
 
 }

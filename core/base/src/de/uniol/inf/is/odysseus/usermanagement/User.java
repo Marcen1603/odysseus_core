@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User extends AbstractAccessControlObject implements Serializable,
+public class User extends AbstractUserManagementEntity implements Serializable,
 		Comparable<User> {
 
 	private static final long serialVersionUID = -6085280063468701069L;
@@ -153,31 +153,14 @@ public class User extends AbstractAccessControlObject implements Serializable,
 	 * return the corresponding Role if the user has privileges on the given
 	 * role
 	 * 
-	 * @param hasrole
+	 * @param rolename
 	 * @return
 	 */
-	public Role hasRole(Role hasrole) {
+	public Role hasRole(String rolename) {
 		for (Role role : getRoles()) {
-			if (role.equals(hasrole)) {
+			if (role.toString().equals(rolename)) {
 				return role;
 			}
-		}
-		return null;
-	}
-
-	/**
-	 * return the corresponding Role if the user has privileges on the given
-	 * role
-	 * 
-	 * @param hasrole
-	 * @return
-	 */
-	public Role hasPrivilegeInRole(Privilege haspriv) {
-		// TODO was ist wenn das Privileg in meheren Rollen vorkommt ?
-		// könnte egal sein, da es in dem Fall die gleichen sein sollten
-		for (Role role : getRoles()) {
-			role.hasPrivilege(haspriv);
-			return role;
 		}
 		return null;
 	}

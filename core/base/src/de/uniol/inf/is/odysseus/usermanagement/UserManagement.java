@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryActions;
+
 public class UserManagement extends AbstractUserManagement {
 
 	static private UserManagement instance = null;
@@ -24,7 +26,6 @@ public class UserManagement extends AbstractUserManagement {
 				// TODO: testen mit Scott / tiger
 
 				if (instance.hasNoUsers()) {
-					// ------------------------------------------------
 					// create system user
 					instance.registerUserInt("System", "manager");
 				}
@@ -36,24 +37,32 @@ public class UserManagement extends AbstractUserManagement {
 
 					// create permissions for admin
 					List<IUserActions> adminops = new ArrayList<IUserActions>();
-					adminops.add(UserManagementActions.CREATEPRIV);
-					adminops.add(UserManagementActions.CREATEROLE);
-					adminops.add(UserManagementActions.CREATEUSER);
-					adminops.add(UserManagementActions.DELETEUSER);
-					adminops.add(UserManagementActions.GRANT);
-					adminops.add(UserManagementActions.REVOKE);
-					adminops.add(UserManagementActions.UPDATEUSER_PASSWORD);
+					adminops.addAll(UserManagementActions.getAll());
 
-					// create privilege for admin
-					Privilege adminpriv = new Privilege("adminprivs", null,
-							adminops, UserManagement.getInstance().getPrivID());
+					// create privilege for admin (kann nicht über create, da
+					// noch keine Rechte vorhanden
+					Privilege adminpriv = new Privilege("UserManagement",
+							adminrole, adminops, instance.getPrivID());
 
 					// add privilege for admin
 					adminrole.addPrivilege(adminpriv);
 
 					// add admin role to system
-					instance.findUser("System", null).addRole(adminrole);
+					instance.login("System", "manager").addRole(adminrole);
 
+					// ------------------------------------------------
+					// create DataDictoinary Role
+					Role ddrole = new Role("datadictionary", UserManagement
+							.getInstance().getRoleID());
+					// create permission for admin
+					List<IUserActions> admindatadic = new ArrayList<IUserActions>();
+					admindatadic.addAll(DataDictionaryActions.getAll());
+					// create DataDic Priv and add to Role
+					ddrole.addPrivilege(instance.createPrivilege(
+							"DataDictionary", ddrole, admindatadic,
+							instance.login("System", "manager")));
+					// add to system
+					instance.login("System", "manager").addRole(ddrole);
 				}
 
 			} catch (UsernameAlreadyUsedException e) {
@@ -66,8 +75,8 @@ public class UserManagement extends AbstractUserManagement {
 		return instance;
 	}
 
-	public User getSuperUser(){
+	public User getSuperUser() {
 		return login("System", "manager");
 	}
-	
+
 }

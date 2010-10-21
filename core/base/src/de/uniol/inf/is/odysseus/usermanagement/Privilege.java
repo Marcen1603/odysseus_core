@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Privilege implements Serializable {
@@ -9,23 +8,17 @@ public class Privilege implements Serializable {
 	private static final long serialVersionUID = -1623632077911032763L;
 	private final int ID;
 	private String privname;
+	private final AbstractUserManagementEntity owner;
 	private String objecturi;
 	private List<IUserActions> operations;
 
-	Privilege(String privname, int newid) {
-		this(privname, null, new ArrayList<IUserActions>(), newid);
-	}
-
-	Privilege(String privname, String obj, List<IUserActions> operations,
-			int newid) {
-		this.privname = privname;
-		this.objecturi = obj;
+	Privilege(String objecturi, AbstractUserManagementEntity owner,
+			List<IUserActions> operations, int privid) {
+		this.ID = privid;
+		this.objecturi = objecturi;
 		this.operations = operations;
-		this.ID = newid;
-	}
-
-	Privilege(String obj, List<IUserActions> operations, int newid) {
-		this(obj + "_" + newid, obj, operations, newid);
+		this.owner = owner;
+		this.privname = owner + "::" + objecturi;
 	}
 
 	public int getID() {
@@ -34,6 +27,17 @@ public class Privilege implements Serializable {
 
 	public String getPrivname() {
 		return this.privname;
+	}
+
+	public String getOwner() {
+		return this.owner.toString();
+	}
+
+	public boolean ownerIsUser() {
+		if (this.owner instanceof User) {
+			return true;
+		}
+		return false;
 	}
 
 	public List<IUserActions> getOperations() {
@@ -48,29 +52,29 @@ public class Privilege implements Serializable {
 		this.objecturi = newobj;
 	}
 
-	void addOperation(UserManagementActions newOperation) {
+	public void addOperations(List<IUserActions> operations) {
+		for (IUserActions action : operations) {
+			if (!this.operations.contains(action)) {
+				addOperation(action);
+			}
+		}
+	}
+
+	void addOperation(IUserActions newOperation) {
 		this.operations.add(newOperation);
 	}
 
+	/**
+	 * return the object uri
+	 * 
+	 * @return
+	 */
 	public Object getObject() {
 		return this.objecturi;
 	}
 
 	public String toString() {
 		return this.privname;
-	}
-
-	/**
-	 * checks for identical ID.
-	 * 
-	 * @param priv
-	 * @return
-	 */
-	public boolean equals(Privilege priv) {
-		if (this.ID == priv.getID()) {
-			return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -82,15 +86,8 @@ public class Privilege implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Privilege other = (Privilege) obj;
-		if (this.ID != other.getID()) {
+		if (this.objecturi != other.getObject()) {
 			return false;
-		} else if (this.privname == null) {
-			if (other.getPrivname() != null)
-				return false;
-		} else if (!this.privname.equals(other.getPrivname())) {
-			return false;
-		} else if (this.operations.equals(other.getOperations())) {
-			return true;
 		}
 
 		return true;

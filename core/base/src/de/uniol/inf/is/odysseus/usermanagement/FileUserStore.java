@@ -6,12 +6,13 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.store.FileStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
 
-public class FileUserStore extends FileStore<String,User> implements IUserStore {
-	
-	public FileUserStore(String path) throws IOException{
+public class FileUserStore extends FileStore<String, User> implements
+		IUserStore {
+
+	public FileUserStore(String path) throws IOException {
 		super(path);
 	}
-	
+
 	@Override
 	public User getUserByName(String username) {
 		return get(username);
@@ -20,7 +21,7 @@ public class FileUserStore extends FileStore<String,User> implements IUserStore 
 	@Override
 	public void storeUser(User user) throws UserStoreException {
 		try {
-			put(user.getUsername(),user);
+			put(user.getUsername(), user);
 		} catch (StoreException e) {
 			throw new UserStoreException(e);
 		}
@@ -31,6 +32,9 @@ public class FileUserStore extends FileStore<String,User> implements IUserStore 
 		return values();
 	}
 
-	
+	@Override
+	public User removeByName(String username) throws StoreException {
+		return remove(username);
+	}
 
 }

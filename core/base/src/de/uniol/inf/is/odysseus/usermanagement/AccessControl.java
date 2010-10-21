@@ -35,22 +35,16 @@ public class AccessControl {
 	 * returns true if given opererion found for the given object
 	 * 
 	 * @param operation
-	 * @param obj
+	 * @param objecturi
 	 * @param user
 	 * @return
 	 */
 	private static boolean hasOperationOnObject(IUserActions operation,
-			String obj, User user) {
+			String objecturi, User user) {
 		// user special privs
 		if (user.getPrivileges() != null && user.getPrivileges().size() > 0) {
 			for (Privilege priv : user.getPrivileges()) {
-				if (obj == null) {
-					if (priv.getObject() == null) {
-						if (priv.getOperations().contains(operation)) {
-							return true;
-						}
-					}
-				} else if (priv.getObject().equals(obj)) {
+				if (priv.getObject().equals(objecturi)) {
 					if (priv.getOperations().contains(operation)) {
 						return true;
 					}
@@ -62,13 +56,7 @@ public class AccessControl {
 		for (Role role : user.getRoles()) {
 			if (role.getPrivileges() != null && role.getPrivileges().size() > 0) {
 				for (Privilege priv : role.getPrivileges()) {
-					if (obj == null) {
-						if (priv.getObject() == null) {
-							if (priv.getOperations().contains(operation)) {
-								return true;
-							}
-						}
-					} else if (priv.getObject().equals(obj)) {
+					if (priv.getObject().equals(objecturi)) {
 						if (priv.getOperations().contains(operation)) {
 							return true;
 						}
@@ -78,5 +66,4 @@ public class AccessControl {
 		}
 		return false;
 	}
-
 }
