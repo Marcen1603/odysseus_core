@@ -43,6 +43,18 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 		return variables;
 	}
+	
+	@Override
+	public Variable getVariable(String name) {
+		Set<Variable> variables = getVariables();
+		for(Variable curVar : variables){
+			if (curVar.getIdentifier().equals(name)) {
+				return curVar;
+			}
+		}
+		return null;
+	}
+	
 
 	@Override
 	public String toString() {

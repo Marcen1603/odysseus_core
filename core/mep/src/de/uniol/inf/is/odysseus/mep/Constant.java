@@ -37,4 +37,9 @@ public class Constant<T> implements IExpression<T> {
 	public Class<? extends T> getType() {
 		return (Class<? extends T>) value.getClass();
 	}
+
+	@Override
+	public Variable getVariable(String name) {
+		return null;
+	}
 }

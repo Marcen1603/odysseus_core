@@ -56,6 +56,11 @@ public class Variable implements IExpression<Object> {
 	}
 	
 	@Override
+	public Variable getVariable(String varName) {
+		return this.identifier.equals(varName) ? this : null;
+	}
+	
+	@Override
 	public Class<?> getType() {
 		return type;
 	}
