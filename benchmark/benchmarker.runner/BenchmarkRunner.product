@@ -7,6 +7,7 @@
    </configIni>
 
    <launcherArgs>
+      <programArgs>-console -query &quot;a=nexmark:bid2&quot; -query_language PQL -max_results 10 -wait_config 1000</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
@@ -22,28 +23,27 @@
    </launcher>
 
    <vm>
-      <windows>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/OSGi%Minimum-1.2</windows>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/OSGi%Minimum-1.2</windows>
    </vm>
 
    <plugins>
-      <plugin id="Classloading_Utils"/>
-      <plugin id="JepModified"/>
+      <plugin id="MEP"/>
       <plugin id="com.springsource.org.apache.log4j"/>
       <plugin id="com.springsource.slf4j.api"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
-      <plugin id="de.uniol.inf.is.drools.osgi_path_scanner" fragment="true"/>
-      <plugin id="de.uniol.inf.is.drools.osgi_rule_agent"/>
       <plugin id="de.uniol.inf.is.logicaloperator.builder"/>
-      <plugin id="de.uniol.inf.is.odysseus.args"/>
       <plugin id="de.uniol.inf.is.odysseus"/>
+      <plugin id="de.uniol.inf.is.odysseus.args"/>
+      <plugin id="de.uniol.inf.is.odysseus.benchmark.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.impl"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.runner"/>
+      <plugin id="de.uniol.inf.is.odysseus.interval.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.interval_latency"/>
       <plugin id="de.uniol.inf.is.odysseus.interval_latency_priority"/>
       <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
       <plugin id="de.uniol.inf.is.odysseus.latency"/>
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.base"/>
+      <plugin id="de.uniol.inf.is.odysseus.latency.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
@@ -51,107 +51,40 @@
       <plugin id="de.uniol.inf.is.odysseus.parser.pql.priority"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardexecutioncostmodel"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel"/>
       <plugin id="de.uniol.inf.is.odysseus.priority"/>
       <plugin id="de.uniol.inf.is.odysseus.priority_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational.rewrite"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.benchmark" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.drools"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.priority" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.relational" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.relational_priority" fragment="true"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational_interval.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.rewrite"/>
+      <plugin id="de.uniol.inf.is.odysseus.ruleengine"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.benchmark" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.drools"/>
+      <plugin id="de.uniol.inf.is.odysseus.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.helper.relational"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.interval" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.priority" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.priority_interval" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.relational" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.relational_interval" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.relational_priority" fragment="true"/>
-      <plugin id="de.uniol.org.drools"/>
       <plugin id="log4jproperties" fragment="true"/>
-      <plugin id="org.apache.cxf"/>
-      <plugin id="org.eclipse.compare.core"/>
-      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.apache.commons.collections"/>
       <plugin id="org.eclipse.core.contenttype"/>
-      <plugin id="org.eclipse.core.databinding"/>
-      <plugin id="org.eclipse.core.databinding.observable"/>
-      <plugin id="org.eclipse.core.databinding.property"/>
-      <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
-      <plugin id="org.eclipse.core.variables"/>
-      <plugin id="org.eclipse.ecf"/>
-      <plugin id="org.eclipse.ecf.filetransfer"/>
-      <plugin id="org.eclipse.ecf.identity"/>
-      <plugin id="org.eclipse.ecf.provider.filetransfer"/>
-      <plugin id="org.eclipse.ecf.provider.filetransfer.ssl" fragment="true"/>
-      <plugin id="org.eclipse.ecf.ssl" fragment="true"/>
       <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.ds"/>
-      <plugin id="org.eclipse.equinox.p2.console"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
-      <plugin id="org.eclipse.equinox.security"/>
-      <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
-      <plugin id="org.eclipse.equinox.simpleconfigurator"/>
       <plugin id="org.eclipse.equinox.util"/>
-      <plugin id="org.eclipse.help"/>
-      <plugin id="org.eclipse.jface"/>
-      <plugin id="org.eclipse.jface.databinding"/>
-      <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.eclipse.persistence.jpa.equinox.weaving" fragment="true"/>
-      <plugin id="org.eclipse.text"/>
-      <plugin id="org.hamcrest.core"/>
-      <plugin id="org.junit4"/>
-      <plugin id="org.sat4j.core"/>
-      <plugin id="org.sat4j.pb"/>
       <plugin id="org.simpleframework.xml"/>
    </plugins>
 
-   <configurations>
-      <plugin id="de.uniol.inf.is.drools.osgi_rule_agent" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.args" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.benchmarker" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.benchmarker.impl" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.benchmarker.runner" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.interval_latency" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.interval_latency_priority" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.intervalapproach" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.latency" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.base" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.parser.cql" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.priority" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.priority_interval" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.relational.base" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.relational_interval" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.drools" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.transformation.drools" autoStart="true" startLevel="0" />
-      <plugin id="de.uniol.org.drools" autoStart="false" startLevel="0" />
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
-   </configurations>
 
 </product>

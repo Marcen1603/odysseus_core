@@ -23,6 +23,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 	private static final String DEFAULT_OUT_FILE = "result.xml";
 	private static final int DEFAULT_WAIT = 0;
+	private static final Integer DEFAULT_WAIT_CONFIG = 0;
 
 	/*
 	 * (non-Javadoc)
@@ -39,8 +40,8 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		try {
 			initArgs(arguments, args);
 
-			ServiceTracker t = new ServiceTracker(ctx, IBenchmark.class
-					.getName(), null);
+			ServiceTracker t = new ServiceTracker(ctx,
+					IBenchmark.class.getName(), null);
 			t.open();
 			int wait = arguments.hasParameter(WAIT) ? arguments
 					.getInteger(WAIT) : DEFAULT_WAIT;
@@ -48,6 +49,11 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			if (benchmark == null) {
 				throw new Exception("cannot find benchmark service");
 			}
+
+			int waitConfig = arguments.hasParameter(WAIT_CONFIG) ? arguments
+					.getInteger(WAIT_CONFIG) : DEFAULT_WAIT_CONFIG;
+
+			Thread.sleep(waitConfig);
 
 			configureBenchmark(benchmark, arguments);
 
@@ -104,6 +110,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String WAIT = "-wait";
 	private static final String MEMORY_USAGE = "-memUsage";
 	private static final String NO_METADATA = "-no_metadata";
+	private static final String WAIT_CONFIG = "-wait_config";
 
 	// private static Logger logger =
 	// LoggerFactory.getLogger(BenchmarkStarter.class);
@@ -225,6 +232,12 @@ public class OdysseusBenchmarkRunner implements IApplication {
 						"<time in ms> - wait for time ms for the benchmarker to become available (default is infinite waiting)");
 		arguments
 				.addBoolean(NO_METADATA, " - don't create MetadataCreationPOs");
+
+		arguments
+				.addInteger(
+						WAIT_CONFIG,
+						REQUIREMENT.OPTIONAL,
+						"<time in ms> - add waiting time before the benchmarker gets configured, so optional services can be loaded (default is 0).");
 		arguments.parse(args);
 	}
 }

@@ -20,15 +20,14 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.planmanagement.ITransformationHelper;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.SameDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -40,7 +39,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private String dataType;
 	private IBenchmarkResultFactory<ILatency> resultFactory;
 	private String[] metadataTypes;
-	private ArrayList<IQueryBuildSetting> buildParameters;
+	private ArrayList<IQueryBuildSetting<?>> buildParameters;
 	private List<Pair<String, String>> queries;
 	private boolean usePunctuations;
 	private boolean useLoadShedding;
@@ -63,7 +62,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		this.maxResults = -1;
 		this.buildParameters = null;
 		this.queries = new ArrayList<Pair<String, String>>();
-		this.buildParameters = new ArrayList<IQueryBuildSetting>();
+		this.buildParameters = new ArrayList<IQueryBuildSetting<?>>();
 		this.metadataTypes = new String[] { ITimeInterval.class.getName(),
 				ILatency.class.getName() };
 		this.resultFactory = new LatencyBenchmarkResultFactory();
@@ -85,8 +84,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return this.queries;
 	}
 
-	public void addBuildParameters(IQueryBuildSetting... parameters) {
-		for (IQueryBuildSetting parameter : parameters) {
+	public void addBuildParameters(IQueryBuildSetting<?>... parameters) {
+		for (IQueryBuildSetting<?> parameter : parameters) {
 			this.buildParameters.add(parameter);
 		}
 	}
@@ -100,7 +99,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return metadataTypes;
 	}
 
-	public List<IQueryBuildSetting> getBuildParameters() {
+	public List<IQueryBuildSetting<?>> getBuildParameters() {
 		return this.buildParameters;
 	}
 
@@ -112,14 +111,16 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 		IBenchmarkResult<ILatency> result = resultFactory
 				.createBenchmarkResult();
-		BenchmarkSink sink = new BenchmarkSink<ILatency>(result, maxResults);
+		BenchmarkSink<ILatency> sink = new BenchmarkSink<ILatency>(result,
+				maxResults);
 		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
 		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
 
 		IntegrationPipe integration = new IntegrationPipe();
 		integration.subscribeSink(latency, 0, 0, latency.getOutputSchema());
 
-		TransformationConfiguration trafoConfig = new TransformationConfiguration( dataType, getMetadataTypes());
+		TransformationConfiguration trafoConfig = new TransformationConfiguration(
+				dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
 		trafoConfig.setOption("useExtendedPostPriorisation",
@@ -142,25 +143,26 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 			executor.addErrorEventListener(this);
 
-			ArrayList<IQueryBuildSetting> parameters = new ArrayList<IQueryBuildSetting>();
+			ArrayList<IQueryBuildSetting<?>> parameters = new ArrayList<IQueryBuildSetting<?>>();
 			parameters
 					.add(new ParameterTransformationConfiguration(trafoConfig));
 			parameters.addAll(getBuildParameters());
-			int i = 0;
-			ParameterDefaultRoot defaultRoot = null;
+
 			for (Pair<String, String> query : getQueries()) {
-				parameters.remove(defaultRoot);
-				defaultRoot = new ParameterDefaultRoot(integration, i);
-				parameters.add(defaultRoot);
-				parameters.add(new ParameterDefaultRootStrategy(
-						new SameDefaultRootStrategy()));
-				executor
-						.addQuery(
-								query.getE2(),
-								query.getE1(),
-								user,
-								parameters
-										.toArray(new IQueryBuildSetting[0]));
+				executor.addQuery(query.getE2(), query.getE1(), user,
+						parameters.toArray(new IQueryBuildSetting[0]));
+			}
+			int i = 0;
+			for (IPhysicalOperator curRoot : executor.getExecutionPlan()
+					.getRoots()) {
+				ISource<?> source = (ISource<?>) curRoot;
+				source.subscribeSink(integration, i++, 0,
+						source.getOutputSchema());
+			}
+			try {
+				sink.open();
+			} catch (OpenFailedException e) {
+				throw new BenchmarkException(e);
 			}
 			result.setStartTime(System.nanoTime());
 			executor.startExecution();
@@ -191,8 +193,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			try {
 				this.executor.addQuery(s, "CQL", user,
 						new ParameterTransformationConfiguration(
-								new TransformationConfiguration(
-										"relational", ITimeInterval.class)));
+								new TransformationConfiguration("relational",
+										ITimeInterval.class)));
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}
