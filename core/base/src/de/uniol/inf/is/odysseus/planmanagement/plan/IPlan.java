@@ -64,10 +64,4 @@ public interface IPlan extends
 	 */
 	public IQuery removeQuery(int queryID);
 
-	/**
-	 * Returns a list of all registered modifiable queries.
-	 * 
-	 * @return A list of all registered modifiable queries.
-	 */
-	public ArrayList<IQuery> getEdittableQueries();
 }

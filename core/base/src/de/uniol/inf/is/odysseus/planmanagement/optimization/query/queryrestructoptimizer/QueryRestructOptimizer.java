@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRestruct;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -27,14 +27,14 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
  */
 public class QueryRestructOptimizer implements IQueryOptimizer {
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.OptimizationConfiguration)
-	 */
-	@Override
-	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizationConfiguration parameters) throws QueryOptimizationException {
-		optimizeQuery(sender, query, parameters, null);
-	}
+//	/* (non-Javadoc)
+//	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.OptimizationConfiguration)
+//	 */
+//	@Override
+//	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
+//			OptimizationConfiguration parameters) throws QueryOptimizationException {
+//		optimizeQuery(sender, query, parameters, null);
+//	}
 	
 	
 	/* (non-Javadoc)
@@ -42,22 +42,24 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	 */
 	@Override
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizationConfiguration parameters, Set<String> rulesToUse) throws QueryOptimizationException {
-		ICompiler compiler = sender.getCompiler();
-		
-		if (compiler == null) {
+			OptimizationConfiguration parameters) throws QueryOptimizationException {
+		ICompiler compiler = null;
+			
+		try{
+			compiler = sender.getCompiler();
+		}catch(Exception e) {
 			throw new QueryOptimizationException("Compiler is not loaded.");
 		}
 
-		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
+		ParameterDoRewrite restruct = parameters.getParameterDoRewrite();
 
 		// if a logical rewrite should be processed.
 		ILogicalOperator sealedLogicalPlan = query
 				.getLogicalPlan();
 		
-		boolean queryShouldBeRewritten = sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE;
+		boolean queryShouldBeRewritten = sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRewrite.TRUE;
 		if (queryShouldBeRewritten) {
-			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(sealedLogicalPlan, rulesToUse);
+			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(sealedLogicalPlan, parameters);
 			// set new logical plan.
 			query.setLogicalPlan(newLogicalAlgebra);
 		}

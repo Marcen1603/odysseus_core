@@ -8,7 +8,7 @@ public class ParserIDKeywordGroup implements IKeywordGroup {
 	@Override
 	public String[] getKeywords() {
 		try {
-			return ExecutorHandler.getExecutor().getSupportedQueryParser().toArray(new String[0]);
+			return ExecutorHandler.getExecutor().getSupportedQueryParsers().toArray(new String[0]);
 		} catch( Exception ex ) {
 			return new String[] { // Notlösung
 				"CQL", "PQL", "PQLHack"	

@@ -11,6 +11,7 @@ public class RuleProvider implements ITransformRuleProvider{
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
+		rules.add(new TInitPredicateRule());
 		rules.add(new TAccessAORelationalInputRule());
 		rules.add(new TAccessAOAtomicDataRule());
 		rules.add(new TAccessAORelationalByteBufferRule());

@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -35,7 +34,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static IExecutor executor;
 	private static IActuatorFactory actuatorFactory;
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
+			new TransformationConfiguration("relational", ITimeInterval.class));
 	
 	/* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*

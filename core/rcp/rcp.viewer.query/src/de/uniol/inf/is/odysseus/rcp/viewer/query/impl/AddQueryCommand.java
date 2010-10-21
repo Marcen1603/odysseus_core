@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
@@ -35,7 +35,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		
 		final IExecutor executor = Activator.getExecutor();
 		if (executor != null) {
-			final List<AbstractQueryBuildSetting<?>> cfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(parameterTransformationConfigurationName);
+			final List<IQueryBuildSetting> cfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(parameterTransformationConfigurationName);
 			if (cfg == null) {
 				logger.error("ParameterTransformationConfiguration " + parameterTransformationConfigurationName + " nicht gefunden");
 				return null;
@@ -45,7 +45,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 				@Override
 				public void run() {
 					try {
-						executor.addQuery(queryToExecute, parserToUse, user, cfg.toArray(new AbstractQueryBuildSetting<?>[0]) );
+						executor.addQuery(queryToExecute, parserToUse, user, cfg.toArray(new IQueryBuildSetting[0]) );
 						StatusBarManager.getInstance().setMessage("Query successfully added");
 					} catch (Exception e) {
 						new ExceptionWindow(e);

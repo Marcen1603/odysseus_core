@@ -1,12 +1,9 @@
 package de.uniol.inf.is.odysseus.planmanagement;
 
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 
 
 public interface IRewrite {
-	public ILogicalOperator rewritePlan(ILogicalOperator plan);
-
-	public ILogicalOperator rewritePlan(ILogicalOperator plan, Set<String> rulesToApply);
+	public ILogicalOperator rewritePlan(ILogicalOperator plan, OptimizationConfiguration conf);
 }

@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanop
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
+
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -50,10 +52,11 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 *             {@link TransformationConfiguration} is set. The
 	 *             {@link TransformationConfiguration} should be set as
 	 *             {@link QueryBuildConfiguration}.
+	 * @throws CompilerException 
 	 */
 	private void checkPhysikalPlan(IPlanOptimizable sender, List<IQuery> queries)
 			throws OpenFailedException, TransformationException,
-			NoTransformationConfiguration {
+			NoTransformationConfiguration, CompilerException {
 
 		// check each query
 		for (IQuery query : queries) {

@@ -13,9 +13,11 @@ import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.AbstractOptimizationSetting;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.IOptimizationSetting;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
@@ -64,6 +66,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	private Map<String, IPlanMigrationStrategy> planMigrationStrategies = new HashMap<String, IPlanMigrationStrategy>();
 
+	private IPlanExecutionCostModel executionCostModel;
+	private IPlanMigrationCostModel migrationCostModel;
+	
 	/**
 	 * List of error event listener. If an error occurs these objects should be informed.
 	 */
@@ -169,6 +174,30 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		this.planMigrationStrategies.remove(planMigrationStrategy.getName());
 	}
 
+	public void bindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
+		this.executionCostModel = executionCostModel;
+	}
+	
+	public void unbindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
+		this.executionCostModel = null;
+	}
+	
+	public IPlanExecutionCostModel getExecutionCostModel() {
+		return executionCostModel;
+	}
+	
+	public void bindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
+		this.migrationCostModel = migrationCostModel;
+	}
+	
+	public void unbindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
+		this.migrationCostModel = null;
+	}
+	
+	public IPlanMigrationCostModel getMigrationCostModel() {
+		return migrationCostModel;
+	}
+	
 	/**
 	 * Get a formated info string for object. if object not null
 	 * 
@@ -232,37 +261,24 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
 			T sender, IQuery removedQuery,
 			IExecutionPlan executionPlan,
-			AbstractOptimizationSetting<?>... parameters)
+			IOptimizationSetting<?>... parameters)
 			throws QueryOptimizationException {
 		return preQueryRemoveOptimization(sender, removedQuery, executionPlan,
 				new OptimizationConfiguration(parameters));
 	};
 
-//	/* (non-Javadoc)
-//	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
-//	 */
-//	@Override
-//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IQuery> newQueries,
-//			AbstractOptimizationSetting<?>... parameters)
-//			throws QueryOptimizationException {
-//		return preQueryAddOptimization(sender, newQueries,
-//				new OptimizationConfiguration(parameters));
-//	};
-	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
 	 */
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IQuery> newQueries,
-			Set<String> rulesToUse,
-			AbstractOptimizationSetting<?>... parameters)
+			IOptimizationSetting... parameters)
 			throws QueryOptimizationException {
 		return preQueryAddOptimization(sender, newQueries,
-				new OptimizationConfiguration(parameters), rulesToUse);
+				new OptimizationConfiguration(parameters));
 	};
-
+	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */

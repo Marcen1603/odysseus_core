@@ -1,13 +1,15 @@
 package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Setting;
+
 
 /**
- * {@link AbstractQueryBuildSetting} which provides a priority for the query.
+ * {@link IQueryBuildSetting} which provides a priority for the query.
  * 
  * @author Wolf Bauer
  * 
  */
-public  final class ParameterPriority extends AbstractQueryBuildSetting<Integer> {
+public  final class ParameterPriority extends Setting<Integer> implements IQueryBuildSetting<Integer> {
 
 	/**
 	 * Creates a ParameterPriority.

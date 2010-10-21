@@ -25,7 +25,7 @@ public class ParserPreParserKeyword implements IPreParserKeyword {
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
 		try {
-			if (!executor.getSupportedQueryParser().contains(parameter)) {
+			if (!executor.getSupportedQueryParsers().contains(parameter)) {
 				throw new QueryTextParseException("Parser " + parameter + " does not exist");
 			}
 			variables.put("PARSER", parameter);

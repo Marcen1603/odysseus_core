@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.AbstractExecutionSetting;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Setting;
+import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.IExecutionSetting;
 
 /**
  * Setting which indicates if the data latency should be calculated.
@@ -8,7 +9,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.AbstractEx
  * @author Wolf Bauer
  * 
  */
-public class SettingCalculateLatency extends AbstractExecutionSetting<Boolean> {
+public class SettingCalculateLatency extends Setting<Boolean> implements IExecutionSetting<Boolean> {
 
 	/**
 	 * Calculate the data latency.

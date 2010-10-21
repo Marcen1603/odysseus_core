@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +20,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRestruct;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -32,11 +29,8 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
 
 /**
- * The {@link StandardOptimizer} installs monitoring points in physical plans.
- * On reoptimize requests, the optimizer initiates a plan migration to a more
- * effient plan.
  * 
- * @author Tobias Witt
+ * @author Wolf Bauer, Tobias Witt, Marco Grawunder
  * 
  */
 public class StandardOptimizer extends AbstractOptimizer {
@@ -50,9 +44,6 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return _logger;
 	}
 	
-	private IPlanExecutionCostModel executionCostModel;
-	private IPlanMigrationCostModel migrationCostModel;
-	
 	private Map<Integer, PlanMigrationContext> optimizationContext;
 	private Queue<IQuery> pendingRequests;
 	
@@ -60,42 +51,25 @@ public class StandardOptimizer extends AbstractOptimizer {
 	
 	public StandardOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
-//		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategy>();
 		this.pendingRequests = new LinkedList<IQuery>();
-	}
-	
-	public void bindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
-		this.executionCostModel = executionCostModel;
-	}
-	
-	public void unbindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
-		this.executionCostModel = null;
-	}
-	
-	public void bindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
-		this.migrationCostModel = migrationCostModel;
-	}
-	
-	public void unbindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
-		this.migrationCostModel = null;
 	}
 	
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> queries, OptimizationConfiguration parameter, Set<String> rulesToUse)
+			List<IQuery> queries, OptimizationConfiguration parameter)
 	throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IQuery query : queries) {
 				this.queryOptimizer.optimizeQuery(sender, query,
-						parameter, rulesToUse);
+						parameter);
 				if (query.getBuildParameter().getParameterInstallMetadataListener()){
 					updateMetadataListener(query);
 				}
 				
 			}
 
-			List<IQuery> newPlan = sender.getRegisteredQueries();
+			List<IQuery> newPlan = sender.getQueries();
 			newPlan.addAll(queries);
 
 			IExecutionPlan newExecutionPlan = this.planOptimizer
@@ -103,7 +77,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 			return newExecutionPlan;
 		}
-		return sender.getEditableExecutionPlan();
+		return sender.getExecutionPlan();
 	}
 
 
@@ -114,7 +88,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
 			throws QueryOptimizationException {
 		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
-				sender.getRegisteredQueries());
+				sender.getQueries());
 		newPlan.remove(removedQuery);
 
 		IExecutionPlan newExecutionPlan = this.planOptimizer
@@ -135,7 +109,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
 			OptimizationConfiguration parameter) throws QueryOptimizationException {
 		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
-				sender.getRegisteredQueries());
+				sender.getQueries());
 		IExecutionPlan newExecutionPlan = this.planOptimizer
 			.optimizePlan(sender, parameter, newPlan);
 		return newExecutionPlan;
@@ -194,10 +168,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 			getLogger().debug("Building alternative plans.");
 			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
 					sender, query, 
-					new OptimizationConfiguration(ParameterDoRestruct.TRUE), null);
+					new OptimizationConfiguration(ParameterDoRewrite.TRUE), null);
 			
 			// pick out optimal plan by cost analysis
-			List<IPhysicalOperator> candidates = this.executionCostModel.getCostCalculator().pickBest(
+			List<IPhysicalOperator> candidates = this.getExecutionCostModel().getCostCalculator().pickBest(
 					alternatives.keySet(), this.configuration.getSettingComparePlanCandidates().getValue());
 			if (candidates.isEmpty()) {
 				getLogger().info("No alternative plans for query ID "+query.getID());
@@ -213,7 +187,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 				}
 			}
 			// pick near optimal plan with acceptable migration cost
-			PlanMigration optimalMigration = this.migrationCostModel.getCostCalculator().pickBest(migrationCandidates);
+			PlanMigration optimalMigration = this.getMigrationCostModel().getCostCalculator().pickBest(migrationCandidates);
 			context.setRoot(optimalMigration.getNewPlan());
 			context.setLogicalPlan(alternatives.get(optimalMigration.getNewPlan()));
 			context.setSender(sender);
@@ -277,7 +251,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public IExecutionPlan reoptimize(IOptimizable sender,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
-		for (IQuery query : sender.getRegisteredQueries()) {
+		for (IQuery query : sender.getQueries()) {
 			reoptimize(sender, query, executionPlan);
 		}
 		return executionPlan;
@@ -288,5 +262,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			this.pendingRequests.poll().reoptimize();
 		}
 	}
+
+
 
 }

@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
+import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
@@ -37,10 +37,10 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planr
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -68,7 +68,7 @@ public class OptimizationTestConsole implements
 
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class, ILatency.class));
+			new TransformationConfiguration("relational", ITimeInterval.class, ILatency.class));
 
 	private String currentScheduler;
 
@@ -80,10 +80,14 @@ public class OptimizationTestConsole implements
 		this.executor = executor;
 		System.out.println("executor gebunden");
 		this.executor.addCompilerListener(this);
-		System.out.println("Compiler "+executor.getCompiler());
-		if (executor.getCompiler() != null){
-			System.out.println("Rewrite Bound : "+executor.getCompiler().isRewriteBound());
-			System.out.println("Transformation Bound :"+executor.getCompiler().isTransformationBound());
+		try{
+			System.out.println("Compiler "+executor.getCompiler());
+			if (executor.getCompiler() != null){
+				System.out.println("Rewrite Bound : "+executor.getCompiler().isRewriteBound());
+				System.out.println("Transformation Bound :"+executor.getCompiler().isTransformationBound());
+			}
+		}catch(Exception e){
+			
 		}
 	}
 
@@ -812,16 +816,16 @@ public class OptimizationTestConsole implements
 			try {
 				String bufferName = args[0];
 				Set<String> list = this.executor
-						.getRegisteredBufferPlacementStrategies();
+						.getRegisteredBufferPlacementStrategiesIDs();
 				if (list.contains(bufferName)) {
 					this.executor.getConfiguration().set(
-							new SettingBufferPlacementStrategy(bufferName));
+							new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName)));
 					ci.println("Strategy " + bufferName + " set.");
 					currentBuffer = bufferName;
 					return;
 				} else {
 					this.executor.getConfiguration().set(
-							new SettingBufferPlacementStrategy(null));
+							new ParameterBufferPlacementStrategy(null));
 					if ("no strategy".equalsIgnoreCase(bufferName)) {
 						ci.println("Current strategy removed.");
 					} else {
@@ -841,10 +845,10 @@ public class OptimizationTestConsole implements
 
 	public void _lsbuffer(CommandInterpreter ci) {
 		Set<String> bufferList = this.executor
-				.getRegisteredBufferPlacementStrategies();
+				.getRegisteredBufferPlacementStrategiesIDs();
 		if (bufferList != null) {
 			String current = (String) this.executor.getConfiguration().get(
-					SettingBufferPlacementStrategy.class).getValue();
+					ParameterBufferPlacementStrategy.class).getValue().getName();
 			ci.println("Available bufferplacement strategies:");
 			if (current == null) {
 				System.out.print("no strategy - SELECTED");
@@ -865,7 +869,7 @@ public class OptimizationTestConsole implements
 
 	public void _lsschedulingstrategies(CommandInterpreter ci) {
 		Set<String> list = this.executor
-				.getRegisteredSchedulingStrategyFactories();
+				.getRegisteredSchedulingStrategies();
 		if (list != null) {
 			String current = executor.getCurrentSchedulingStrategyID();
 			ci.println("Available Scheduling strategies:");
@@ -883,7 +887,7 @@ public class OptimizationTestConsole implements
 	}
 
 	public void _lsscheduler(CommandInterpreter ci) {
-		Set<String> list = this.executor.getRegisteredSchedulerFactories();
+		Set<String> list = this.executor.getRegisteredSchedulers();
 		if (list != null) {
 			String current = executor.getCurrentSchedulerID();
 			ci.println("Available Schedulers:");
@@ -915,7 +919,7 @@ public class OptimizationTestConsole implements
 	public void _lsparser(CommandInterpreter ci) {
 		Set<String> parserList = null;
 		try {
-			parserList = this.executor.getSupportedQueryParser();
+			parserList = this.executor.getSupportedQueryParsers();
 			// "Set" Default-Parser
 			if (parser == null && parserList.size() > 0) {
 				parser = parserList.iterator().next();
@@ -940,7 +944,7 @@ public class OptimizationTestConsole implements
 		String[] args = support.getArgs(ci);
 		if (args != null && args.length > 0) {
 			try {
-				if (this.executor.getSupportedQueryParser().contains(args[0])) {
+				if (this.executor.getSupportedQueryParsers().contains(args[0])) {
 					this.parser = args[0];
 					ci.println("New parser: " + args[0]);
 				} else {

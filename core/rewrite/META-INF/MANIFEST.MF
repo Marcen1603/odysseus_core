@@ -19,3 +19,4 @@ Service-Component: OSGI-INF/RewriteService.xml
 Export-Package: de.uniol.inf.is.odysseus.rewrite.engine,
  de.uniol.inf.is.odysseus.rewrite.flow,
  de.uniol.inf.is.odysseus.rewrite.rule
+Require-Bundle: de.uniol.inf.is.odysseus

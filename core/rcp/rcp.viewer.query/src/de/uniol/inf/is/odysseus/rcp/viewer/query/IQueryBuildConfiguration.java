@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.rcp.viewer.query;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
 public interface IQueryBuildConfiguration {
 
-	public List<AbstractQueryBuildSetting<?>> get();
+	public List<IQueryBuildSetting> get();
 }

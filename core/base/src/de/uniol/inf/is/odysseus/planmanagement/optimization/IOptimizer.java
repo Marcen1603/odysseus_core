@@ -6,10 +6,11 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.AbstractOptimizationSetting;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.IOptimizationSetting;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
@@ -120,7 +121,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
 			T sender, IQuery removedQuery,
 			IExecutionPlan executionPlan,
-			AbstractOptimizationSetting<?>... parameters)
+			IOptimizationSetting<?>... parameters)
 			throws QueryOptimizationException;
 
 	/**
@@ -146,64 +147,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
 			throws QueryOptimizationException;
 
-//	/**
-//	 * Initializes an optimization if queries should be added.
-//	 * 
-//	 * @param sender
-//	 *            Optimization request sender, which provides informations for
-//	 *            the optimization.
-//	 * @param newQueries
-//	 *            Queries which should be added.
-//	 * @param parameters
-//	 *            Parameter for the optimization.
-//	 * @return New optimized execution plan.
-//	 * @throws QueryOptimizationException
-//	 *             An exception occurred during optimization.
-//	 */
-//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IQuery> newQueries,
-//			AbstractOptimizationSetting<?>... parameters)
-//			throws QueryOptimizationException;
-	
-	/**
-	 * Initializes an optimization if queries should be added.
-	 * 
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
-	 * @param newQueries
-	 *            Queries which should be added.
-	 * @param parameters
-	 *            Parameter for the optimization.
-	 * @param rulesToUse Contains the name of the rules to use during optimization.
-	 *            Rules that are not contained in this set are not used during optimization.
-	 * @return New optimized execution plan.
-	 * @throws QueryOptimizationException
-	 *             An exception occurred during optimization.
-	 */
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> queries,
-			Set<String> rulesToUse,
-			AbstractOptimizationSetting<?>... parameters)
-			throws QueryOptimizationException;
 
-//	/**
-//	 * Initializes an optimization if queries should be added.
-//	 * 
-//	 * @param sender
-//	 *            Optimization request sender, which provides informations for
-//	 *            the optimization.
-//	 * @param newQueries
-//	 *            Queries which should be added.
-//	 * @param parameter
-//	 *            Parameter for the optimization.
-//	 * @return New optimized execution plan.
-//	 * @throws QueryOptimizationException
-//	 *             An exception occurred during optimization.
-//	 */
-//	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IQuery> newQueries, OptimizationConfiguration parameter)
-//			throws QueryOptimizationException;
 	
 	/**
 	 * Initializes an optimization if queries should be added.
@@ -222,7 +166,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IQuery> newQueries, OptimizationConfiguration parameter, Set<String> rulesToUse)
+			List<IQuery> newQueries, OptimizationConfiguration parameter)
 			throws QueryOptimizationException;
 	
 	/**
@@ -252,4 +196,8 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 */
 	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
 			OptimizationConfiguration parameter) throws QueryOptimizationException;
+
+	IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IQuery> newQueries, IOptimizationSetting... parameters)
+			throws QueryOptimizationException;
 }

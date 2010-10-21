@@ -36,6 +36,7 @@ public class Startup implements IStartup {
 				ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
 				imageRegistry.put("metadata", ImageDescriptor.createFromURL(bundle.getEntry("icons/metadata.gif")));
 				imageRegistry.put("attribute", ImageDescriptor.createFromURL(bundle.getEntry("icons/status.png")));
+				imageRegistry.put("predicate", ImageDescriptor.createFromURL(bundle.getEntry("icons/status.png")));
 				imageRegistry.put("schema", ImageDescriptor.createFromURL(bundle.getEntry("icons/odata.png")));
 				imageRegistry.put("pipe_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/task.png")));
 				imageRegistry.put("sink_icon", ImageDescriptor.createFromURL(bundle.getEntry("icons/monitor.png")));

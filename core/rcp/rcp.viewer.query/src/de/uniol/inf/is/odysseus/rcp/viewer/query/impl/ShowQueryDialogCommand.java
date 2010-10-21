@@ -234,7 +234,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		try {
 			IExecutor executor = Activator.getExecutor();
 			boolean lastFound = false;
-			for (String parserID : executor.getSupportedQueryParser()) {
+			for (String parserID : executor.getSupportedQueryParsers()) {
 				parserCombo.add(parserID);
 				if (parserID.equals(lastParser))
 					lastFound = true;

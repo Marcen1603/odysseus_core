@@ -1,14 +1,16 @@
 package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Setting;
+
 
 /**
- * {@link AbstractQueryBuildSetting} which provides an ID of the parser which
+ * {@link IQueryBuildSetting} which provides an ID of the parser which
  * should be used for translating the query.
  * 
  * @author Wolf Bauer
  * 
  */
-public class ParameterParserID extends AbstractQueryBuildSetting<String> {
+public class ParameterParserID extends Setting<String> implements IQueryBuildSetting<String> {
 
 	/**
 	 * Creates a ParameterParserID.

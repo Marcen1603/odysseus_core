@@ -139,13 +139,6 @@ public class Plan implements IPlan {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getEdittableQueries()
-	 */
-	@Override
-	public ArrayList<IQuery> getEdittableQueries() {
-		return new ArrayList<IQuery>(this.queries.values());
-	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getRoots()
@@ -154,7 +147,7 @@ public class Plan implements IPlan {
 	public ArrayList<IPhysicalOperator> getRoots() {
 		ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 
-		for (IQuery query : getEdittableQueries()) {
+		for (IQuery query : getQueries()) {
 			for(IPhysicalOperator curRoot: query.getRoots()){
 				if (!roots.contains(curRoot)) {
 					roots.add(curRoot);

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Setting;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 
 /**
@@ -9,8 +10,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimize
  * @author Wolf Bauer
  * 
  */
-public class ParameterQueryOptimizer extends
-		AbstractOptimizationSetting<IQueryOptimizer> {
+public class ParameterQueryOptimizer extends Setting<IQueryOptimizer> implements
+		IOptimizationSetting<IQueryOptimizer> {
 
 	/**
 	 * Creates a new ParameterQueryOptimizer with a specific query optimizer.

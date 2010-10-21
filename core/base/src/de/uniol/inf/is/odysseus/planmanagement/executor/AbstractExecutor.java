@@ -10,12 +10,15 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
+
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
+import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
@@ -37,6 +40,7 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
@@ -129,42 +133,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	protected ISystemMonitorFactory systemMonitorFactory = null;
 
-	/**
-	 * setExecutionPlan setzt den aktuellen Ausführungsplan und aktualisiert das
-	 * Scheduling.
-	 * 
-	 * @param newExecutionPlan
-	 *            neuer Ausführungsplan
-	 */
-	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
-
-		if (newExecutionPlan != null
-				&& !newExecutionPlan.equals(this.executionPlan)) {
-			try {
-				executionPlanLock.lock();
-				getLogger().info("Set execution plan.");
-				// Init current execution plan with newExecutionPlan
-				this.executionPlan.initWith(newExecutionPlan);
-				if (isRunning()) {
-					getLogger().info("Set execution plan. Open");
-					this.executionPlan.open();
-				}
-				getLogger().info("Set execution plan. Refresh Scheduling");
-				schedulerManager().refreshScheduling(this);
-				getLogger().info("New execution plan set.");
-			} catch (Exception e) {
-				e.printStackTrace();
-				getLogger().error(
-						"Error while setting new execution plan. "
-								+ e.getMessage());
-				fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
-						"Error while setting new execution plan. ", e));
-			} finally {
-				executionPlanLock.unlock();
-			}
-		}
-	}
-
+	
+	// --------------------------------------------------------------------------------------
+	// Constructors/Initialization
+	// --------------------------------------------------------------------------------------
+	
 	/**
 	 * Standard-Construktor. Initialisiert die Ausführungsumgebung.
 	 */
@@ -177,167 +150,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 					"Error activate executor. Error: " + e.getMessage());
 		}
 	}
-
-	/**
-	 * bindOptimizer bindet einen Optimierer ein
-	 * 
-	 * @param optimizer
-	 *            neuer Optimierer
-	 */
-	public void bindOptimizer(IOptimizer optimizer) {
-		this.optimizer = optimizer;
-		this.optimizer.addErrorEventListener(this);
-	}
-
-	/**
-	 * unbindOptimizer entfernt einen Optimierer
-	 * 
-	 * @param optimizer
-	 *            zu entfernender Optimierer
-	 */
-	public void unbindOptimizer(IOptimizer optimizer) {
-		if (this.optimizer == optimizer) {
-			this.optimizer = null;
-		}
-	}
-
-	/**
-	 * optimizer liefert der aktuelle Optimierer zurück. Sollte keiner vorhanden
-	 * sein, wird eine Exception geworfen.
-	 * 
-	 * @return aktueller Optimierer
-	 * @throws NoOptimizerLoadedException
-	 */
-	protected IOptimizer optimizer() throws NoOptimizerLoadedException {
-		if (this.optimizer != null) {
-			return this.optimizer;
-		}
-
-		throw new NoOptimizerLoadedException();
-	}
-
-	/**
-	 * bindSchedulerManager bindet einen Scheduling-Manager ein
-	 * 
-	 * @param schedulerManager
-	 *            neuer Scheduling-Manager
-	 */
-	public void bindSchedulerManager(ISchedulerManager schedulerManager) {
-		this.schedulerManager = schedulerManager;
-		this.schedulerManager.addErrorEventListener(this);
-	}
-
-	/**
-	 * unbindSchedulerManager entfernt einen Scheduling-Manager
-	 * 
-	 * @param schedulerManager
-	 *            zu entfernender Scheduling-Manager
-	 */
-	public void unbindSchedulerManager(ISchedulerManager schedulerManager) {
-		if (this.schedulerManager == schedulerManager) {
-			this.schedulerManager = null;
-		}
-	}
-
-	/**
-	 * schedulerManager liefert den aktuellen Scheduling-Manager. Sollte keiner
-	 * registriert sein, wird eine Exception geworfen.
-	 * 
-	 * @return aktueller Scheduling-Manager
-	 * @throws SchedulerException
-	 */
-	protected ISchedulerManager schedulerManager() throws SchedulerException {
-		if (this.schedulerManager != null) {
-			return this.schedulerManager;
-		}
-
-		throw new SchedulerException();
-	}
-
-	/**
-	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
-	 * 
-	 * @param compiler
-	 *            neue Anfragebearbeitungs-Komponente
-	 */
-	public void bindCompiler(ICompiler compiler) {
-		this.compiler = compiler;
-		for (ICompilerListener l : compilerListener) {
-			compiler.addCompilerListener(l);
-		}
-	}
-
-	/**
-	 * unbindCompiler entfernt eine Anfragebearbeitungs-Komponente
-	 * 
-	 * @param compiler
-	 *            zu entfernende Anfragebearbeitungs-Komponente
-	 */
-	public void unbindCompiler(ICompiler compiler) {
-		for (ICompilerListener l : compilerListener) {
-			compiler.removeCompilerListener(l);
-		}
-		if (this.compiler == compiler) {
-			this.compiler = null;
-		}
-	}
-
-	/**
-	 * compiler liefert die aktuelle Anfragebearbeitungs-Komponente
-	 * 
-	 * @return die aktuelle Anfragebearbeitungs-Komponente
-	 * @throws NoCompilerLoadedException
-	 */
-	protected ICompiler compiler() throws NoCompilerLoadedException {
-		if (this.compiler != null) {
-			return this.compiler;
-		}
-
-		throw new NoCompilerLoadedException();
-	}
-
-	/**
-	 * firePlanModificationEvent sendet ein Plan-Bearbeitungs-Event an alle
-	 * registrierten Listener.
-	 * 
-	 * @param eventArgs
-	 *            zu sendendes Event
-	 */
-	protected synchronized void firePlanModificationEvent(
-			AbstractPlanModificationEvent<?> eventArgs) {
-		for (IPlanModificationListener listener : this.planModificationListener) {
-			listener.planModificationEvent(eventArgs);
-		}
-	}
-
-	/**
-	 * firePlanExecutionEvent sendet ein Plan-Scheduling-Event an alle
-	 * registrierten Listener.
-	 * 
-	 * @param eventArgs
-	 *            zu sendendes Event
-	 */
-	protected synchronized void firePlanExecutionEvent(
-			AbstractPlanExecutionEvent<?> eventArgs) {
-		for (IPlanExecutionListener listener : this.planExecutionListener) {
-			listener.planExecutionEvent(eventArgs);
-		}
-	}
-
-	/**
-	 * fireErrorEvent sendet ein Fehler-Event an alle registrierten Listener.
-	 * 
-	 * @param eventArgs
-	 *            zu sendendes Event
-	 */
-	@Override
-	public
-	synchronized void fireErrorEvent(ErrorEvent eventArgs) {
-		for (IErrorEventListener listener : this.errorEventListener) {
-			listener.errorEventOccured(eventArgs);
-		}
-	}
-
+	
 	/**
 	 * initializeIntern Innerhalb dieser Funktion kÃ¶nnen spezifische
 	 * Initialisierungen vorgenommen werden. Dies wird von initialize
@@ -388,18 +201,233 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 		getLogger().debug("Stop initializing Executor.");
 	}
-
-	/*
-	 * (non-Javadoc)
+	
+	// ----------------------------------------------------------------------------------------
+	// OSGI-Framework spezific
+	// ----------------------------------------------------------------------------------------
+	
+	/**
+	 * bindOptimizer bindet einen Optimierer ein
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable#
-	 * getSchedulerManager()
+	 * @param optimizer
+	 *            neuer Optimierer
+	 */
+	public void bindOptimizer(IOptimizer optimizer) {
+		this.optimizer = optimizer;
+		this.optimizer.addErrorEventListener(this);
+	}
+
+	/**
+	 * unbindOptimizer entfernt einen Optimierer
+	 * 
+	 * @param optimizer
+	 *            zu entfernender Optimierer
+	 */
+	public void unbindOptimizer(IOptimizer optimizer) {
+		if (this.optimizer == optimizer) {
+			this.optimizer = null;
+		}
+	}
+	
+	/**
+	 * bindSchedulerManager bindet einen Scheduling-Manager ein
+	 * 
+	 * @param schedulerManager
+	 *            neuer Scheduling-Manager
+	 */
+	public void bindSchedulerManager(ISchedulerManager schedulerManager) {
+		this.schedulerManager = schedulerManager;
+		this.schedulerManager.addErrorEventListener(this);
+	}
+
+	/**
+	 * unbindSchedulerManager entfernt einen Scheduling-Manager
+	 * 
+	 * @param schedulerManager
+	 *            zu entfernender Scheduling-Manager
+	 */
+	public void unbindSchedulerManager(ISchedulerManager schedulerManager) {
+		if (this.schedulerManager == schedulerManager) {
+			this.schedulerManager = null;
+		}
+	}
+
+	/**
+	 * compiler liefert die aktuelle Anfragebearbeitungs-Komponente
+	 * 
+	 * @return die aktuelle Anfragebearbeitungs-Komponente
+	 * @throws NoCompilerLoadedException
+	 */
+	protected ICompiler compiler() throws NoCompilerLoadedException {
+		if (this.compiler != null) {
+			return this.compiler;
+		}
+
+		throw new NoCompilerLoadedException();
+	}
+	
+	/**
+	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
+	 * 
+	 * @param compiler
+	 *            neue Anfragebearbeitungs-Komponente
+	 */
+	public void bindCompiler(ICompiler compiler) {
+		this.compiler = compiler;
+		for (ICompilerListener l : compilerListener) {
+			compiler.addCompilerListener(l);
+		}
+	}
+	
+	/**
+	 * unbindCompiler entfernt eine Anfragebearbeitungs-Komponente
+	 * 
+	 * @param compiler
+	 *            zu entfernende Anfragebearbeitungs-Komponente
+	 */
+	public void unbindCompiler(ICompiler compiler) {
+		for (ICompilerListener l : compilerListener) {
+			compiler.removeCompilerListener(l);
+		}
+		if (this.compiler == compiler) {
+			this.compiler = null;
+		}
+	}
+	
+	// ----------------------------------------------------------------------------------------
+	// Getter/Setter
+	// ----------------------------------------------------------------------------------------
+	/**
+	 * optimizer liefert der aktuelle Optimierer zurück. Sollte keiner vorhanden
+	 * sein, wird eine Exception geworfen.
+	 * 
+	 * @return aktueller Optimierer
+	 * @throws NoOptimizerLoadedException
 	 */
 	@Override
-	public ISchedulerManager getSchedulerManager() {
-		return this.schedulerManager;
+	public IOptimizer getOptimizer() throws NoOptimizerLoadedException {
+		if (this.optimizer != null) {
+			return this.optimizer;
+		}
+
+		throw new NoOptimizerLoadedException();
 	}
+	
+	/**
+	 * schedulerManager liefert den aktuellen Scheduling-Manager. Sollte keiner
+	 * registriert sein, wird eine Exception geworfen.
+	 * 
+	 * @return aktueller Scheduling-Manager
+	 * @throws SchedulerException
+	 */
+	@Override
+	public ISchedulerManager getSchedulerManager() throws SchedulerException {
+		if (this.schedulerManager != null) {
+			return this.schedulerManager;
+		}
+
+		throw new SchedulerException();
+	}
+
+	@Override
+	public ICompiler getCompiler() throws CompilerException{
+		if (this.compiler != null){
+			return this.compiler;
+		}
+		throw new CompilerException();
+	}
+
+	// ----------------------------------------------------------------------------------------
+	// Execution Plan
+	// ----------------------------------------------------------------------------------------
+
+	
+	/**
+	 * setExecutionPlan setzt den aktuellen Ausführungsplan und aktualisiert das
+	 * Scheduling.
+	 * 
+	 * @param newExecutionPlan
+	 *            neuer Ausführungsplan
+	 */
+	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
+
+		if (newExecutionPlan != null
+				&& !newExecutionPlan.equals(this.executionPlan)) {
+			try {
+				executionPlanLock.lock();
+				getLogger().info("Set execution plan.");
+				// Init current execution plan with newExecutionPlan
+				this.executionPlan.initWith(newExecutionPlan);
+				if (isRunning()) {
+					getLogger().info("Set execution plan. Open");
+					this.executionPlan.open();
+				}
+				getLogger().info("Set execution plan. Refresh Scheduling");
+				getSchedulerManager().refreshScheduling(this);
+				getLogger().info("New execution plan set.");
+			} catch (Exception e) {
+				e.printStackTrace();
+				getLogger().error(
+						"Error while setting new execution plan. "
+								+ e.getMessage());
+				fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
+						"Error while setting new execution plan. ", e));
+			} finally {
+				executionPlanLock.unlock();
+			}
+		}
+	}
+
+
+	// ----------------------------------------------------------------------------------------
+	// Events
+	// ----------------------------------------------------------------------------------------
+
+	/**
+	 * firePlanModificationEvent sendet ein Plan-Bearbeitungs-Event an alle
+	 * registrierten Listener.
+	 * 
+	 * @param eventArgs
+	 *            zu sendendes Event
+	 */
+	protected synchronized void firePlanModificationEvent(
+			AbstractPlanModificationEvent<?> eventArgs) {
+		for (IPlanModificationListener listener : this.planModificationListener) {
+			listener.planModificationEvent(eventArgs);
+		}
+	}
+
+	/**
+	 * firePlanExecutionEvent sendet ein Plan-Scheduling-Event an alle
+	 * registrierten Listener.
+	 * 
+	 * @param eventArgs
+	 *            zu sendendes Event
+	 */
+	protected synchronized void firePlanExecutionEvent(
+			AbstractPlanExecutionEvent<?> eventArgs) {
+		for (IPlanExecutionListener listener : this.planExecutionListener) {
+			listener.planExecutionEvent(eventArgs);
+		}
+	}
+
+	/**
+	 * fireErrorEvent sendet ein Fehler-Event an alle registrierten Listener.
+	 * 
+	 * @param eventArgs
+	 *            zu sendendes Event
+	 */
+	@Override
+	public
+	synchronized void fireErrorEvent(ErrorEvent eventArgs) {
+		for (IErrorEventListener listener : this.errorEventListener) {
+			listener.errorEventOccured(eventArgs);
+		}
+	}
+
+
+
+
 
 	/*
 	 * (non-Javadoc)
@@ -424,7 +452,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			firePlanExecutionEvent(new PlanExecutionEvent(this,
 					PlanExecutionEventType.EXECUTION_PREPARED));
 
-			schedulerManager().startScheduling();
+			getSchedulerManager().startScheduling();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
@@ -448,7 +476,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 		getLogger().info("Stop Scheduler.");
 		try {
-			schedulerManager().stopScheduling();
+			getSchedulerManager().stopScheduling();
 			this.executionPlan.close();
 			// Stopp Router only if it has an instance
 			if (Router.hasInstance()){
@@ -473,7 +501,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	@Override
 	public boolean isRunning() throws SchedulerException {
 		try {
-			return schedulerManager().isRunning();
+			return getSchedulerManager().isRunning();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
@@ -490,22 +518,6 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		return this.executionPlan;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable
-	 * #getCompiler()
-	 */
-	@Override
-	public ICompiler getCompiler() {
-		try {
-			return compiler();
-		} catch (Exception e) {
-			getLogger().error(e.getMessage());
-		}
-		return null;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -598,7 +610,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * getSupportedQueryParser()
 	 */
 	@Override
-	public Set<String> getSupportedQueryParser()
+	public Set<String> getSupportedQueryParsers()
 			throws NoCompilerLoadedException {
 		ICompiler c = compiler();
 		return c.getSupportedQueryParser();
@@ -677,6 +689,12 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		if (compiler != null) {
 			compiler.addCompilerListener(compilerListener);
 		} // else will be done if compiler is bound
+	}
+	
+	@Override
+	public void setDefaultBufferPlacementStrategy(String strategy) {
+		IBufferPlacementStrategy strat = this.getBufferPlacementStrategy(strategy);
+		this.configuration.set(new ParameterBufferPlacementStrategy(strat));
 	}
 
 }

@@ -52,22 +52,22 @@ import de.uniol.inf.is.odysseus.planmanagement.ITransformationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterInstallMetadataListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
@@ -247,7 +247,7 @@ public class ExecutorConsole implements CommandProvider,
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration(
-					new RelationalTransformationHelper(), "relational",
+					 "relational",
 					ITimeInterval.class));
 
 	private LinkedList<Command> currentCommands;
@@ -265,15 +265,17 @@ public class ExecutorConsole implements CommandProvider,
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
 		this.executor.addCompilerListener(this);
-
-		System.out.println(executor.getCompiler());
-		if (executor.getCompiler() != null) {
-			System.out.println("Rewrite Bound : "
-					+ executor.getCompiler().isRewriteBound());
-			System.out.println("Transformation Bound :"
-					+ executor.getCompiler().isTransformationBound());
+		try{
+			System.out.println(executor.getCompiler());
+			if (executor.getCompiler() != null) {
+				System.out.println("Rewrite Bound : "
+						+ executor.getCompiler().isRewriteBound());
+				System.out.println("Transformation Bound :"
+						+ executor.getCompiler().isTransformationBound());
+			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-
 		// Typically no compiler is loaded here, so the following
 		// code will always break
 
@@ -304,7 +306,7 @@ public class ExecutorConsole implements CommandProvider,
 			return parser;
 		}
 
-		Iterator<String> parsers = this.executor.getSupportedQueryParser()
+		Iterator<String> parsers = this.executor.getSupportedQueryParsers()
 				.iterator();
 		if (parsers != null && parsers.hasNext()) {
 			this.parser = parsers.next();
@@ -326,7 +328,7 @@ public class ExecutorConsole implements CommandProvider,
 	public void _lsparser(CommandInterpreter ci) {
 		Set<String> parserList = null;
 		try {
-			parserList = this.executor.getSupportedQueryParser();
+			parserList = this.executor.getSupportedQueryParsers();
 			// "Set" Default-Parser
 			if (parser == null && parserList.size() > 0) {
 				parser = parserList.iterator().next();
@@ -353,7 +355,7 @@ public class ExecutorConsole implements CommandProvider,
 		addCommand(args);
 		if (args != null && args.length > 0) {
 			try {
-				if (this.executor.getSupportedQueryParser().contains(args[0])) {
+				if (this.executor.getSupportedQueryParsers().contains(args[0])) {
 					this.parser = args[0];
 					ci.println("New parser: " + args[0]);
 				} else {
@@ -370,10 +372,10 @@ public class ExecutorConsole implements CommandProvider,
 	@Help(description = "show available buffer placement strategies")
 	public void _lsbuffer(CommandInterpreter ci) {
 		Set<String> bufferList = this.executor
-				.getRegisteredBufferPlacementStrategies();
+				.getRegisteredBufferPlacementStrategiesIDs();
 		if (bufferList != null) {
 			String current = (String) this.executor.getConfiguration().get(
-					SettingBufferPlacementStrategy.class).getValue();
+					ParameterBufferPlacementStrategy.class).getValue().getName();
 			ci.println("Available bufferplacement strategies:");
 			if (current == null) {
 				System.out.print("no strategy - SELECTED");
@@ -395,7 +397,7 @@ public class ExecutorConsole implements CommandProvider,
 	@Help(description = "show available scheduling strategies")
 	public void _lsschedulingstrategies(CommandInterpreter ci) {
 		Set<String> list = this.executor
-				.getRegisteredSchedulingStrategyFactories();
+				.getRegisteredSchedulingStrategies();
 		if (list != null) {
 			String current = executor.getCurrentSchedulingStrategyID();
 			ci.println("Available Scheduling strategies:");
@@ -414,7 +416,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	@Help(description = "show available schedulers")
 	public void _lsscheduler(CommandInterpreter ci) {
-		Set<String> list = this.executor.getRegisteredSchedulerFactories();
+		Set<String> list = this.executor.getRegisteredSchedulers();
 		if (list != null) {
 			String current = executor.getCurrentSchedulerID();
 			ci.println("Available Schedulers:");
@@ -452,15 +454,15 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				String bufferName = args[0];
 				Set<String> list = this.executor
-						.getRegisteredBufferPlacementStrategies();
+						.getRegisteredBufferPlacementStrategiesIDs();
 				if (list.contains(bufferName)) {
 					this.executor.getConfiguration().set(
-							new SettingBufferPlacementStrategy(bufferName));
+							new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName)));
 					ci.println("Strategy " + bufferName + " set.");
 					return;
 				} else {
 					this.executor.getConfiguration().set(
-							new SettingBufferPlacementStrategy(null));
+							new ParameterBufferPlacementStrategy(null));
 					if ("no strategy".equalsIgnoreCase(bufferName)) {
 						ci.println("Current strategy removed.");
 					} else {
@@ -850,11 +852,11 @@ public class ExecutorConsole implements CommandProvider,
 				TransformationConfiguration trafoConfig;
 				if (usePriority) {
 					trafoConfig = new TransformationConfiguration(
-							new RelationalTransformationHelper(), "relational",
+							 "relational",
 							ITimeInterval.class, IPriority.class);
 				} else {
 					trafoConfig = new TransformationConfiguration(
-							new RelationalTransformationHelper(), "relational",
+							"relational",
 							ITimeInterval.class);
 
 				}
@@ -892,7 +894,7 @@ public class ExecutorConsole implements CommandProvider,
 							"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain");
 				} else {
 					trafoConfig = new TransformationConfiguration(
-							new RelationalTransformationHelper(), "relational",
+							 "relational",
 							ITimeInterval.class);
 
 				}
@@ -1141,8 +1143,9 @@ public class ExecutorConsole implements CommandProvider,
 				return;
 			}
 
-			ICompiler compiler = this.executor.getCompiler();
+			
 			try {
+				ICompiler compiler = this.executor.getCompiler();
 				List<IQuery> plans = compiler.translateQuery(queries, parser(), currentUser);
 
 				// DEBUG: Print the logical plan.
@@ -1193,10 +1196,9 @@ public class ExecutorConsole implements CommandProvider,
 			throws PlanManagementException, Exception {
 
 		boolean eclipseConsole = false;
-		boolean restructureParamSet = false;
 		boolean restructure = false;
 		String query = null;
-		ArrayList<AbstractQueryBuildSetting<?>> params = new ArrayList<AbstractQueryBuildSetting<?>>();
+		ArrayList<IQueryBuildSetting> params = new ArrayList<IQueryBuildSetting>();
 
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-q")) {
@@ -1205,7 +1207,6 @@ public class ExecutorConsole implements CommandProvider,
 			} else if (args[i].equalsIgnoreCase("E")) {
 				eclipseConsole = true;
 			} else if (args[i].equalsIgnoreCase("-r")) {
-				restructureParamSet = true;
 				restructure = Boolean.getBoolean(args[i + 1]);
 				i++;
 			} else if (args[i].equalsIgnoreCase("S")) {
@@ -1228,8 +1229,9 @@ public class ExecutorConsole implements CommandProvider,
 		}
 
 		params.add(this.trafoConfigParam);
+		params.add(restructure?ParameterDoRewrite.TRUE:ParameterDoRewrite.FALSE);
 
-		AbstractQueryBuildSetting<?>[] paramsArray = new AbstractQueryBuildSetting[params
+		IQueryBuildSetting[] paramsArray = new IQueryBuildSetting[params
 				.size()];
 		for (int i = 0; i < params.size(); i++) {
 			paramsArray[i] = params.get(i);
@@ -1238,132 +1240,10 @@ public class ExecutorConsole implements CommandProvider,
 		if (eclipseConsole) {
 			this.addQueryWithEclipseConsoleOutput(query);
 			return;
-		}
-		if (!eclipseConsole && !restructureParamSet) {
+		}else{
 			this.executor.addQuery(query, parser(), currentUser, paramsArray);
 			return;
 		}
-		if (!eclipseConsole && restructureParamSet) {
-			if (restructure) {
-				this.executor.addQuery(query, parser(), currentUser,
-						paramsArray);
-				return;
-			} else {
-				this.executor.addQuery(query, parser(), currentUser, false,
-						null, paramsArray);
-				return;
-			}
-		}
-
-		// // a CREATE statement has no arguments
-		// // a QUERY statement does have to have arguments
-		// if (args.length == 1) {
-		// this.executor.addQuery(args[0], parser(), currentUser,
-		// this.trafoConfigParam);
-		// }
-		// // a QUERY statement can have arguments
-		// else if (args.length == 2) {
-		// // the second argument can be for sink, so 'S'
-		// // or it can be for doRestruct, so 'true' or 'false'
-		// if (args[1].equalsIgnoreCase("S")) {
-		// this.executor.addQuery(args[0], parser(), currentUser,
-		// new ParameterDefaultRoot(new MySink()),
-		// this.trafoConfigParam);
-		// } else if (args[1].equalsIgnoreCase("E")) {
-		// this.addQueryWithEclipseConsoleOutput(args[0]);
-		// } else if (args[1].equalsIgnoreCase("TRUE")) {
-		// this.executor
-		// .addQuery(args[0], parser(), currentUser, this.trafoConfigParam);
-		// } else if (args[1].equalsIgnoreCase("FALSE")) {
-		// this.executor.addQuery(args[0], parser(), currentUser, false, null,
-		// this.trafoConfigParam);
-		// }
-		// } else if (args.length == 3) {
-		// if (args[1].toUpperCase().equals("S")) {
-		// // the thrid argument is setting the restructuring mode.
-		// if (args[2].equalsIgnoreCase("TRUE")
-		// || args[2].equalsIgnoreCase("FALSE")) {
-		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
-		// .equalsIgnoreCase("TRUE") ? true : false, null,
-		// new ParameterDefaultRoot(new MySink()),
-		// this.trafoConfigParam);
-		// }
-		// // the third argument are the rule names, restructuring is set
-		// // per default to true
-		// else {
-		// StringTokenizer tokens = new StringTokenizer(args[2], ",",
-		// false);
-		// Set<String> ruleNames = new HashSet<String>();
-		// while (tokens.hasMoreTokens()) {
-		// ruleNames.add(tokens.nextToken());
-		// }
-		//
-		// this.executor.addQuery(args[0], parser(), currentUser, true,
-		// ruleNames,
-		// new ParameterDefaultRoot(new MySink()),
-		// this.trafoConfigParam);
-		// }
-		// } else {
-		//
-		// if (args[1].equalsIgnoreCase("TRUE")
-		// || args[1].equalsIgnoreCase("FALSE")) {
-		//
-		// StringTokenizer tokens = new StringTokenizer(args[2], ",",
-		// false);
-		// Set<String> ruleNames = new HashSet<String>();
-		// while (tokens.hasMoreTokens()) {
-		// ruleNames.add(tokens.nextToken());
-		// }
-		//
-		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
-		// .equalsIgnoreCase("TRUE") ? true : false,
-		// ruleNames, this.trafoConfigParam);
-		//
-		// } else {
-		// StringTokenizer tokens = new StringTokenizer(args[2], ",",
-		// false);
-		// Set<String> ruleNames = new HashSet<String>();
-		// while (tokens.hasMoreTokens()) {
-		// ruleNames.add(tokens.nextToken());
-		// }
-		//
-		// this.executor.addQuery(args[0], parser(), currentUser, true,
-		// ruleNames,
-		// this.trafoConfigParam);
-		// }
-		// }
-		// }
-
-		// the following is not allowed any more
-		// } else if (args.length == 4) {
-		// if (args[1].equalsIgnoreCase("S")) {
-		// // get the rule names
-		// StringTokenizer tokens = new StringTokenizer(args[3], ",",
-		// false);
-		// Set<String> ruleNames = new HashSet<String>();
-		// while (tokens.hasMoreTokens()) {
-		// ruleNames.add(tokens.nextToken());
-		// }
-		//
-		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
-		// .equalsIgnoreCase("TRUE") ? true : false, ruleNames,
-		// new ParameterDefaultRoot(new MySink()),
-		// this.trafoConfigParam);
-		// } else {
-		// // get the rule names
-		// StringTokenizer tokens = new StringTokenizer(args[3], ",",
-		// false);
-		// Set<String> ruleNames = new HashSet<String>();
-		// while (tokens.hasMoreTokens()) {
-		// ruleNames.add(tokens.nextToken());
-		// }
-		//
-		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
-		// .equalsIgnoreCase("TRUE") ? true : false, ruleNames,
-		// this.trafoConfigParam);
-		// }
-		// }
-
 	}
 
 	@Help(parameter = "<path>", description = "Sets the path from which to read files."

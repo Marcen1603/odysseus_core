@@ -365,9 +365,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 		if (manager.getNetPeerGroup() == null) {
 			try {
-				if (!manager.isStarted()) {
+	//			if (!manager.isStarted()) {
 					manager.startNetwork();
-				}
+//				}
 			} catch (PeerGroupException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

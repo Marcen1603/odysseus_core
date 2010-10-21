@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -94,7 +95,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 		try {
 			ILogicalOperator ao = walker.start();
-			Query query = new Query();
+			IQuery query = new Query();
 			query.setParserId(getLanguage());
 			query.setLogicalPlan(ao);
 			retList.add(query);

@@ -1,14 +1,15 @@
 package de.uniol.inf.is.odysseus.rewrite.engine;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.planmanagement.IRewrite;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.IOptimizationSetting;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterRewriteRulesToUse;
 import de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -19,21 +20,12 @@ public class RewriteExecutor implements IRewrite {
 	private static final String LOGGER_NAME = "rewrite";
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan) {
-		return rewritePlan(plan, (Set<String>)null);
-	}
-
-	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan, Set<String> rulesToApply) {
-		RewriteConfiguration conf = new RewriteConfiguration(new HashSet<String>());
-		if (rulesToApply != null) throw new RuntimeException("Rules to use currently not supported");
-		return rewritePlan(plan, conf);
-	}
-
-	private ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf) {
+	public ILogicalOperator rewritePlan(ILogicalOperator plan, OptimizationConfiguration conf) {
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting rewriting...");
 		RewriteInventory rewriteInventory = new RewriteInventory(RewriteInventory.getInstance());
-		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory);
+		
+		RewriteConfiguration rwConf = new RewriteConfiguration(conf.getParameterRewriteRulesToUse()!=null?conf.getParameterRewriteRulesToUse().getValue():null);
+		RewriteEnvironment env = new RewriteEnvironment(rwConf, rewriteInventory);
 		TopAO top = new TopAO();
 		plan.subscribeSink(top, 0, 0, plan.getOutputSchema());
 

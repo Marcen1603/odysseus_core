@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *            Datentyp
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
-		extends AbstractPipe<T, T> {
+		extends AbstractPipe<T, T> implements IHasPredicate{
 	private static Logger _logger =  null;
 	
 	private static Logger getLogger(){
@@ -52,10 +53,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	private int otherport = 0;
 
+	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
 
+	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		this.outputSchema = outputSchema;
 	}
@@ -121,6 +124,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	public IPredicate<? super T> getJoinPredicate() {
 		return joinPredicate;
+	}
+	
+	@Override
+	public IPredicate getPredicate() {
+		return getJoinPredicate();
 	}
 
 	public void setJoinPredicate(IPredicate<? super T> joinPredicate) {

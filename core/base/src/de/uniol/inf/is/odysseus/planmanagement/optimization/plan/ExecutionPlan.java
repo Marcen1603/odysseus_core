@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * EditableExecutionPlan is an object which is used to store an execution plan.
@@ -160,12 +161,15 @@ public class ExecutionPlan implements IExecutionPlan {
 		this.setRoots(newExecutionPlan.getRoots());
 	}
 
+	@Override
 	public void setRoots(List<IPhysicalOperator> roots) {
 		this.roots = roots;
 	}
 
+	@Override
 	public List<IPhysicalOperator> getRoots() {
 		return roots;
 	}
+
 
 }

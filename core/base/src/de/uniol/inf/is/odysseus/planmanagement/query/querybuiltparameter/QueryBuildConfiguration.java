@@ -4,9 +4,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 
 /**
- * QueryBuildConfiguration provides a set of {@link AbstractQueryBuildSetting}.
+ * QueryBuildConfiguration provides a set of {@link IQueryBuildSetting}.
  * Each standard Parameter has a default value. This class also provides some
  * methods for a simple access to some standard parameters.
  * 
@@ -16,7 +17,7 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
  * 
  */
 public class QueryBuildConfiguration extends
-		Configuration<AbstractQueryBuildSetting<?>> {
+		Configuration<IQueryBuildSetting<?>> {
 
 	/**
 	 * Creates a new set of parameters. If some standard values are not set in
@@ -25,7 +26,7 @@ public class QueryBuildConfiguration extends
 	 * @param parameters
 	 *            New parameter for this set.
 	 */
-	public QueryBuildConfiguration(AbstractQueryBuildSetting<?>[] parameters) {
+	public QueryBuildConfiguration(IQueryBuildSetting[] parameters) {
 		super(parameters);
 
 		if (!contains(ParameterTransformationConfiguration.class)) {
@@ -60,6 +61,9 @@ public class QueryBuildConfiguration extends
 		}
 		if(!contains(ParameterInstallMetadataListener.class)){
 			set(new ParameterInstallMetadataListener(false));
+		}
+		if (!contains(ParameterDoRewrite.class)){
+			set(ParameterDoRewrite.TRUE);
 		}
 	}
 

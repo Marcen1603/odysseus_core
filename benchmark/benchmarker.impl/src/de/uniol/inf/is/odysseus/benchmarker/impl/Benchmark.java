@@ -24,12 +24,11 @@ import de.uniol.inf.is.odysseus.planmanagement.ITransformationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.SameDefaultRootStrategy;
-import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -41,7 +40,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private String dataType;
 	private IBenchmarkResultFactory<ILatency> resultFactory;
 	private String[] metadataTypes;
-	private ArrayList<AbstractQueryBuildSetting<?>> buildParameters;
+	private ArrayList<IQueryBuildSetting> buildParameters;
 	private List<Pair<String, String>> queries;
 	private boolean usePunctuations;
 	private boolean useLoadShedding;
@@ -57,7 +56,6 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private IExecutor executor;
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
 
-	private ITransformationHelper transformHelper;
 	private boolean noMetadataCreation;
 
 	public Benchmark() {
@@ -65,13 +63,12 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		this.maxResults = -1;
 		this.buildParameters = null;
 		this.queries = new ArrayList<Pair<String, String>>();
-		this.buildParameters = new ArrayList<AbstractQueryBuildSetting<?>>();
+		this.buildParameters = new ArrayList<IQueryBuildSetting>();
 		this.metadataTypes = new String[] { ITimeInterval.class.getName(),
 				ILatency.class.getName() };
 		this.resultFactory = new LatencyBenchmarkResultFactory();
 		this.usePunctuations = false;
 		this.useLoadShedding = false;
-		this.transformHelper = new RelationalTransformationHelper();
 	}
 
 	public void activate(ComponentContext c) {
@@ -88,8 +85,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return this.queries;
 	}
 
-	public void addBuildParameters(AbstractQueryBuildSetting<?>... parameters) {
-		for (AbstractQueryBuildSetting<?> parameter : parameters) {
+	public void addBuildParameters(IQueryBuildSetting... parameters) {
+		for (IQueryBuildSetting parameter : parameters) {
 			this.buildParameters.add(parameter);
 		}
 	}
@@ -103,7 +100,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return metadataTypes;
 	}
 
-	public List<AbstractQueryBuildSetting<?>> getBuildParameters() {
+	public List<IQueryBuildSetting> getBuildParameters() {
 		return this.buildParameters;
 	}
 
@@ -122,8 +119,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		IntegrationPipe integration = new IntegrationPipe();
 		integration.subscribeSink(latency, 0, 0, latency.getOutputSchema());
 
-		TransformationConfiguration trafoConfig = new TransformationConfiguration(
-				this.transformHelper, dataType, getMetadataTypes());
+		TransformationConfiguration trafoConfig = new TransformationConfiguration( dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
 		trafoConfig.setOption("useExtendedPostPriorisation",
@@ -146,7 +142,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 			executor.addErrorEventListener(this);
 
-			ArrayList<AbstractQueryBuildSetting<?>> parameters = new ArrayList<AbstractQueryBuildSetting<?>>();
+			ArrayList<IQueryBuildSetting> parameters = new ArrayList<IQueryBuildSetting>();
 			parameters
 					.add(new ParameterTransformationConfiguration(trafoConfig));
 			parameters.addAll(getBuildParameters());
@@ -164,7 +160,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 								query.getE1(),
 								user,
 								parameters
-										.toArray(new AbstractQueryBuildSetting<?>[0]));
+										.toArray(new IQueryBuildSetting[0]));
 			}
 			result.setStartTime(System.nanoTime());
 			executor.startExecution();
@@ -196,7 +192,6 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				this.executor.addQuery(s, "CQL", user,
 						new ParameterTransformationConfiguration(
 								new TransformationConfiguration(
-										new RelationalTransformationHelper(),
 										"relational", ITimeInterval.class)));
 			} catch (PlanManagementException e) {
 				e.printStackTrace();

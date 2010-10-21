@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization;
 
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
@@ -15,12 +16,12 @@ public interface IPlanMigratable {
 	 * 
 	 * @return the current execution plan.
 	 */
-	public IExecutionPlan getEditableExecutionPlan();
+	public IExecutionPlan getExecutionPlan();
 
 	/**
 	 * Returns the current selected {@link ISchedulerManager}.
 	 * 
 	 * @return the current selected {@link ISchedulerManager}.
 	 */
-	public ISchedulerManager getSchedulerManager();
+	ISchedulerManager getSchedulerManager() throws SchedulerException;
 }

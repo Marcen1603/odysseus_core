@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 
-import java.util.List;
+import java.util.Set;
 
-public class ParameterRewriteRulesToUse extends
-		AbstractQueryBuildSetting<List<String>> {
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Setting;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.IOptimizationSetting;
 
-	protected ParameterRewriteRulesToUse(List<String> value) {
+public class ParameterRewriteRulesToUse extends Setting<Set<String>> implements 
+		IQueryBuildSetting<Set<String>>, IOptimizationSetting<Set<String>> {
+
+	protected ParameterRewriteRulesToUse(Set<String> value) {
 		super(value);
 	}
 

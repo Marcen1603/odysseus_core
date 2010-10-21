@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
@@ -18,6 +19,7 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
@@ -177,7 +179,7 @@ public class StandardCompiler implements ICompiler {
 	public List<IQuery> translateQuery(String query,
 			String parserID, User user) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
-			return (List<IQuery>) this.parserList.get(parserID)
+			return this.parserList.get(parserID)
 					.parse(query, user);
 		}
 
@@ -202,6 +204,12 @@ public class StandardCompiler implements ICompiler {
 		return this.transformation.transform(copyPlan, transformationConfiguration);
 	}
 
+	@Override
+	public void transform(IQuery query,
+			TransformationConfiguration transformationConfiguration) throws TransformationException {
+		query.initializePhysicalRoots(this.transformation.transform(query.getLogicalPlan(), transformationConfiguration));
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#getSupportedQueryParser()
 	 */
@@ -225,10 +233,10 @@ public class StandardCompiler implements ICompiler {
 
 	@Override
 	public List<ILogicalOperator> createAlternativePlans(
-			ILogicalOperator logicalPlan, Set<String> rulesToUse) {
+			ILogicalOperator logicalPlan, OptimizationConfiguration conf) {
 		// TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
 		// werden, z.B. durch Join-Vertauschungen
-		ILogicalOperator p = rewritePlan(logicalPlan);
+		ILogicalOperator p = rewritePlan(logicalPlan, conf);
 		List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
 		list.add(p);
 		return list;
@@ -260,16 +268,21 @@ public class StandardCompiler implements ICompiler {
 
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan) {
-		return rewrite.rewritePlan(plan);
+	public ILogicalOperator rewritePlan(ILogicalOperator plan, OptimizationConfiguration conf) {
+		return rewrite.rewritePlan(plan, conf);
 	}
 
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan,
-			Set<String> rulesToApply) {
-		return rewrite.rewritePlan(plan, rulesToApply);
+	public List<IQuery> translateAndTransformQuery(String query,
+			String parserID, User user, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
+		List<IQuery> translate = translateQuery(query, parserID, user);
+		for (IQuery q:translate){
+			transform(q, transformationConfiguration);
+		}
+		return translate;
 	}
+
 
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper;
@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformatio
 
 public class ObjectFusionQueryBuildConfiguration implements IQueryBuildConfiguration {
 	
-	private List<AbstractQueryBuildSetting<?>> settings = new ArrayList<AbstractQueryBuildSetting<?>>();
+	private List<IQueryBuildSetting> settings = new ArrayList<IQueryBuildSetting>();
 	
 	public ObjectFusionQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
@@ -29,7 +29,7 @@ public class ObjectFusionQueryBuildConfiguration implements IQueryBuildConfigura
 	}
 
 	@Override
-	public List<AbstractQueryBuildSetting<?>> get() {
+	public List<IQueryBuildSetting> get() {
 		return settings;
 	}
 }

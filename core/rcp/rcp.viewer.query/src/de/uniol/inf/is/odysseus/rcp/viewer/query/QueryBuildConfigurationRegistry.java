@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
 public class QueryBuildConfigurationRegistry {
 
@@ -19,7 +19,7 @@ public class QueryBuildConfigurationRegistry {
 	
 	private static QueryBuildConfigurationRegistry instance;
 	
-	private Map<String, List<AbstractQueryBuildSetting<?>>> queryBuildConfigs = new HashMap<String, List<AbstractQueryBuildSetting<?>>>();
+	private Map<String, List<IQueryBuildSetting>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting>>();
 	
 	private QueryBuildConfigurationRegistry() {
 		
@@ -53,7 +53,7 @@ public class QueryBuildConfigurationRegistry {
 		return queryBuildConfigs.keySet();
 	}
 	
-	public List<AbstractQueryBuildSetting<?>> getQueryBuildConfiguration( String name ) {
+	public List<IQueryBuildSetting> getQueryBuildConfiguration( String name ) {
 		return queryBuildConfigs.get(name);
 	}
 }

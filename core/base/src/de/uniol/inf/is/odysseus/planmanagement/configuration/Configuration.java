@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.configuration;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -86,6 +87,10 @@ public class Configuration<T extends ISetting<?>> extends
 		return this.entry.containsKey(entryType);
 	}
 
+	public Collection<T> values(){
+		return this.entry.values();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

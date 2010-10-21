@@ -6,6 +6,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -34,18 +35,20 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	public List<IQuery> translateQuery(String query, String parserID, User user)
 			throws QueryParseException;
 
+	public List<IQuery> translateAndTransformQuery(String query, String parserID, User user,
+			TransformationConfiguration transformationConfiguration)
+			throws QueryParseException, TransformationException;
 	/**
 	 * Creates semantically equivalent alternative plans.
 	 * 
 	 * @param logicalPlan
 	 *            logical plan for which alternatives should be generated.
-	 * @param rules
-	 *            Contains the name of the rules to use. Other rules will not be
-	 *            used.
+	 * @param conf 
+	 * 			 OptimizationConfiguration
 	 * @return list of possible alternatives, excluding the given plan.
 	 */
 	public List<ILogicalOperator> createAlternativePlans(
-			ILogicalOperator logicalPlan, Set<String> rulesToUse);
+			ILogicalOperator logicalPlan, OptimizationConfiguration conf);
 
 	/**
 	 * Transforms a logical plan into a physical representation.
@@ -63,6 +66,8 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException;
+	
+	public void transform(IQuery query, TransformationConfiguration transformationConfiguration) throws TransformationException;
 
 	/**
 	 * Transforms a logical plan into several semantically equivalent physical

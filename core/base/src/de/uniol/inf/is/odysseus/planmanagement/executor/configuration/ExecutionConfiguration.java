@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.configuration;
 
 import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingBufferPlacementStrategy;
 
 /**
  * ExecutionConfiguration stores the configuration of an {@link IExecutor}.
@@ -10,30 +9,17 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.Se
  * @author Wolf Bauer
  *
  */
-public class ExecutionConfiguration extends Configuration<AbstractExecutionSetting<?>> {
+public class ExecutionConfiguration extends Configuration<IExecutionSetting<?>> {
 
 	
 	/**
-	 * Creates a new ExecutionConfiguration based on {@link AbstractExecutionSetting} entries.
+	 * Creates a new ExecutionConfiguration based on {@link IExecutionSetting} entries.
 	 * 
 	 * @param entries
 	 */
-	public ExecutionConfiguration(AbstractExecutionSetting<?>... entries) {
+	public ExecutionConfiguration(IExecutionSetting<?>... entries) {
 		super(entries);
 		
 	}
-
-	public String getBufferPlacementStrategy(){
-		SettingBufferPlacementStrategy s = get(SettingBufferPlacementStrategy.class);
-		if (s != null){
-			return s.getValue();			
-		}
-		return null;
-	}
-	
-	
-	
-	
-	
 
 }

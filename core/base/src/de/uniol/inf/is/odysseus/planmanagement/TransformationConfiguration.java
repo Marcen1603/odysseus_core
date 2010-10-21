@@ -34,6 +34,26 @@ public class TransformationConfiguration {
 		this.transformHelper = transformHelper;
 	}
 
+	public TransformationConfiguration(String dataType, String... metaTypes) {
+		this.dataType = dataType;
+		this.metaTypes = toSet(metaTypes);
+		this.options = new HashMap<String, Object>();	
+		this.transformHelper = new StandardTransformationHelper();
+	}
+
+	public TransformationConfiguration(final String dataType,
+			Class<? extends IMetaAttribute>... metaTypes) {
+		this.dataType = dataType;
+		HashSet<String> tmp = new HashSet<String>();
+		for(Class<? extends IMetaAttribute> type : metaTypes) {
+			tmp.add(type.getName());
+		}
+		this.metaTypes = Collections.unmodifiableSet(tmp);
+		this.options = new HashMap<String, Object>();
+		this.transformHelper = new StandardTransformationHelper();
+	}
+
+	
 	public boolean metaTypesEqual(String... types) {
 		return metaTypes.equals(toSet(types));
 	}

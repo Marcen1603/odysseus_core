@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 
 import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.ISetting;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterRewriteRulesToUse;
 
 /**
  * OptimizationConfiguration holds the configuration of an {@link IOptimizer}.
@@ -9,19 +11,31 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
  * @author Tobias Witt
  *
  */
-public class OptimizationConfiguration extends Configuration<AbstractOptimizationSetting<?>> {
+public class OptimizationConfiguration extends Configuration<IOptimizationSetting<?>> {
 	
-	public OptimizationConfiguration(AbstractOptimizationSetting<?>... entries) {
+	public OptimizationConfiguration(IOptimizationSetting<?>... entries) {
 		super(entries);
 	}
 	
+	public OptimizationConfiguration(ISetting[] iSettings) {
+		for (ISetting s:iSettings){
+			if (s instanceof IOptimizationSetting<?>){
+				set((IOptimizationSetting)s);
+			}
+		}
+	}
+
 	/**
-	 * Gets the current parameter for {@link ParameterDoRestruct}.
+	 * Gets the current parameter for {@link ParameterDoRewrite}.
 	 * 
-	 * @return current parameter for {@link ParameterDoRestruct}
+	 * @return current parameter for {@link ParameterDoRewrite}
 	 */
-	public ParameterDoRestruct getParameterDoRestruct() {
-		return (ParameterDoRestruct) this.get(ParameterDoRestruct.class);
+	public ParameterDoRewrite getParameterDoRewrite() {
+		return (ParameterDoRewrite) this.get(ParameterDoRewrite.class);
+	}
+	
+	public ParameterRewriteRulesToUse getParameterRewriteRulesToUse(){
+		return (ParameterRewriteRulesToUse) this.get(ParameterRewriteRulesToUse.class);
 	}
 
 	/**

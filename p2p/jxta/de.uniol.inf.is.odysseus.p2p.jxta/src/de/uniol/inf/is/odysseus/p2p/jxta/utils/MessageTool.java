@@ -155,7 +155,7 @@ public class MessageTool {
 		
 		for(String elem : messageElements.keySet()) {
 			if(messageElements.get(elem) instanceof String) {
-				response.addMessageElement(namespace, new StringMessageElement(elem, (CharSequence) messageElements.get(elem), null));
+				response.addMessageElement(namespace, new StringMessageElement(elem, (String) messageElements.get(elem), null));
 			}
 			else if(messageElements.get(elem) instanceof PeerAdvertisement) {
 				TextDocumentMessageElement peerAdv = new TextDocumentMessageElement(

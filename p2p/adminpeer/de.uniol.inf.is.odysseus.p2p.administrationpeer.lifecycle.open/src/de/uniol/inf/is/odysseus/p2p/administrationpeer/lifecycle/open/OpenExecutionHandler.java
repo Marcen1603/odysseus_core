@@ -56,7 +56,7 @@ public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer,
 			}			
 			try {
 			//Restrukturierung des Operatorplans
-			ILogicalOperator restructPlan = getFunction().rewritePlan(plan.get(0).getLogicalPlan());
+			ILogicalOperator restructPlan = getFunction().rewritePlan(plan.get(0).getLogicalPlan(), null);
 			getExecutionListenerCallback().getQuery().setLogicalOperatorplan(restructPlan);
 			} catch (Exception e) {
 				e.printStackTrace();

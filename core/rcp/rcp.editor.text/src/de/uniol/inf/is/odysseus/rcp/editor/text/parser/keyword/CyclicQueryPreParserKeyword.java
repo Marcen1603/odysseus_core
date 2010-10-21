@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.rcp.editor.text.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
@@ -32,7 +32,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			String parserID = variables.get("PARSER");
 			if( parserID == null ) 
 				throw new QueryTextParseException("Parser not set");
-			if( !executor.getSupportedQueryParser().contains(parserID))
+			if( !executor.getSupportedQueryParsers().contains(parserID))
 				throw new QueryTextParseException("Parser " + parserID + " not found");
 			String transCfg = variables.get("TRANSCFG");
 			if( transCfg == null ) 
@@ -53,15 +53,16 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 		String transCfgID = variables.get("TRANSCFG");
 
 		IExecutor executor = ExecutorHandler.getExecutor();
-		ICompiler compiler = executor.getCompiler();
-		List<AbstractQueryBuildSetting<?>> transCfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfgID);
+		
+		List<IQueryBuildSetting> transCfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfgID);
 		User user = ActiveUser.getActiveUser();
 		try {
+			ICompiler compiler = executor.getCompiler();
 			List<IQuery> plans = compiler.translateQuery(queries, parserID, user);
-
+			
 			// HACK
 			ParameterTransformationConfiguration cfg = null;
-			for( AbstractQueryBuildSetting<?> s : transCfg ) {
+			for( IQueryBuildSetting s : transCfg ) {
 				if( s instanceof ParameterTransformationConfiguration ) {
 					cfg = (ParameterTransformationConfiguration)s;
 					break;
@@ -73,7 +74,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 				// so transform this one
 				List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), cfg.getValue());
 	
-				int queryID = executor.addQuery(physPlan, user, transCfg.toArray(new AbstractQueryBuildSetting<?>[0]));
+				int queryID = executor.addQuery(physPlan, user, transCfg.toArray(new IQueryBuildSetting[0]));
 				executor.startQuery(queryID);
 			} 
 

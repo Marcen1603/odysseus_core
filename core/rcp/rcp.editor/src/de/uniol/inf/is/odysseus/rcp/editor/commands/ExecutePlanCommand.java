@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.rcp.editor.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
-import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {
@@ -94,7 +93,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 			for (Operator sink : sinks) {
 				printLogicalPlan(sink.getLogicalOperator(), 0);
 				Activator.getExecutor().addQuery(sink.getLogicalOperator(), user,
-						new ParameterTransformationConfiguration(new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class)));
+						new ParameterTransformationConfiguration(new TransformationConfiguration("relational", ITimeInterval.class)));
 			}
 		} catch (PlanManagementException ex) {
 			ex.printStackTrace();

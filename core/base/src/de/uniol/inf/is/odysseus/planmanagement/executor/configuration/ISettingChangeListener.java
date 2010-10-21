@@ -8,5 +8,5 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.IValueChangeListene
  * @author Wolf Bauer
  *
  */
-public interface ISettingChangeListener extends IValueChangeListener<AbstractExecutionSetting<?>> {
+public interface ISettingChangeListener extends IValueChangeListener<IExecutionSetting<?>> {
 }

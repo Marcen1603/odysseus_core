@@ -35,7 +35,7 @@ public class QueryPreParserKeyword implements IPreParserKeyword {
 			String parserID = variables.get("PARSER");
 			if (parserID == null)
 				throw new QueryTextParseException("Parser not set");
-			if (!executor.getSupportedQueryParser().contains(parserID))
+			if (!executor.getSupportedQueryParsers().contains(parserID))
 				throw new QueryTextParseException("Parser " + parserID + " not found");
 			String transCfg = variables.get("TRANSCFG");
 			if (transCfg == null)

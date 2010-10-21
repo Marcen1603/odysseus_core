@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
@@ -22,25 +24,25 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.AbstractQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
- * IExecutor stellt die Hauptschnittstelle für externe Anwendungen zu Odysseus
+ * IExecutor stellt die Hauptschnittstelle fuer externe Anwendungen zu Odysseus
  * da. Es werden Funktionen zur Bearbeitung von Anfragen, Steuerung der
- * Ausführung und Konfigurationen zur Verfügung gestellt. Weiterhin bietet diese
- * Schnittstelle diverse Möglichkeit, um Nachrichten über Änderungen innerhalb
+ * Ausfuehrung und Konfigurationen zur Verfuegung gestellt. Weiterhin bietet diese
+ * Schnittstelle diverse Moeglichkeit, um Nachrichten ueber aenderungen innerhalb
  * von Odysseus zu erhalten.
  * 
- * @author wolf
+ * @author Wolf Bauer
  * 
  */
-public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
-		IInfoProvider, IErrorEventHandler, IErrorEventListener {
+public interface IExecutor extends IPlanManager, IPlanScheduling,
+		IInfoProvider, IErrorEventHandler, IErrorEventListener, IOptimizable {
 	/**
-	 * initialize initialisiert die AUsführungsumgebung. ggf. gehen Anfragen,
+	 * initialize initialisiert die Ausfuehrungsumgebung. ggf. gehen Anfragen,
 	 * Pläne und Einstellungen verloren.
 	 * 
 	 * @throws ExecutorInitializeException
@@ -49,30 +51,57 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 
 	/**
 	 * getConfiguration liefert die aktuelle Konfiguration der
-	 * AUsführungsumgebung.
+	 * AUsfuehrungsumgebung.
 	 * 
 	 * @return die aktuelle Konfiguration der AUsführungsumgebung
 	 */
 	public ExecutionConfiguration getConfiguration();
 
 	/**
-	 * getSupportedQueryParser liefert alle IDs der zur Verfügung stehenden
-	 * Parser zur Übersetzung von Anfragen, die als Zeichenkette vorliegen.
+	 * getSupportedQueryParser liefert alle IDs der zur Verfuegung stehenden
+	 * Parser zur uebersetzung von Anfragen, die als Zeichenkette vorliegen.
 	 * 
-	 * @return Liste aller IDs der zur Verfügung stehenden Parser zur
-	 *         Übersetzung von Anfragen, die als Zeichenkette vorliegen
+	 * @return Liste aller IDs der zur Verfuegung stehenden Parser zur
+	 *         uebersetzung von Anfragen, die als Zeichenkette vorliegen
 	 * @throws PlanManagementException
 	 */
-	public Set<String> getSupportedQueryParser()
+	public Set<String> getSupportedQueryParsers()
 			throws PlanManagementException;
 
 	/**
-	 * addQuery fügt Odysseus eine Anfrage hinzu, die als logischer Plan
-	 * vorliegt. Es kann sein, dass die Anfrage nicht direkt der Auführung
-	 * hinzugefügt wird (bspw. bei interner asychronen Optimierung). Die
-	 * zurückgebegen ID ist daher nur vorläufig. Erst beim Empfangen des
-	 * Hinzufügen-Events kann davon ausgegangen werden, dass die Anfrage
-	 * hinzugefügt wurde.
+	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als Zeichenkette vorliegt.
+	 * 
+	 * @param query
+	 *            Anfrage in Form einer Zeichenkette
+	 * @param parserID
+	 *            ID des zu verwendenden Parsers, ueberschreibt einen evtl. vorhandenen Eintrag in parameters
+	 * @param parameters
+	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
+	 * @return vorläufige ID der neuen Anfrage
+	 * @throws PlanManagementException
+	 */
+	public Collection<Integer> addQuery(String query, String parserID, User user,
+			IQueryBuildSetting... parameters)
+			throws PlanManagementException;
+
+	/**
+	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als Zeichenkette vorliegt.
+	 * 
+	 * @param query
+	 *            Anfrage in Form einer Zeichenkette
+	 * @param parameters
+	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
+	 * @return vorläufige ID der neuen Anfrage
+	 * @throws PlanManagementException
+	 */
+	public Collection<Integer> addQuery(String query, User user,
+			IQueryBuildSetting... parameters)
+			throws PlanManagementException;
+
+	
+	/**
+	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als logischer Plan
+	 * vorliegt. 
 	 * 
 	 * @param logicalPlan
 	 *            logischer Plan der Anfrage
@@ -82,78 +111,12 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	public int addQuery(ILogicalOperator logicalPlan, User user,
-			AbstractQueryBuildSetting<?>... parameters)
-			throws PlanManagementException;
-
-	
-	
-	/**
-	 * addQuery f�gt Odysseus eine Anfrage hinzu, die bereits als Query
-	 * vorliegt. Es kann sein, dass die Anfrage nicht direkt der Auf�hrung
-	 * hinzugef�gt wird (bspw. bei interner asychronen Optimierung). Die
-	 * zur�ckgebegen ID ist daher nur vorl�ufig. Erst beim Empfangen des
-	 * Hinzuf�en-Events kann davon ausgegangen werden, dass die Anfrage
-	 * hinzugef�gt wurde.
-	 * 
-	 * @param query die query
-	 * @return vorl�ufige ID der neuen Anfrage
-	 * @throws PlanManagementException
-	 */	
-	public int addQuery(Query query) throws PlanManagementException;
-	/**
-	 * addQuery fügt Odysseus eine Anfrage hinzu, die als Zeichenkette vorliegt.
-	 * Es kann sein, dass die Anfrage nicht direkt der Auführung hinzugefügt
-	 * wird (bspw. bei interner asychronen Optimierung). Die zurückgebegen ID
-	 * ist daher nur vorläufig. Erst beim Empfangen des Hinzufügen-Events kann
-	 * davon ausgegangen werden, dass die Anfrage hinzugefügt wurde.
-	 * 
-	 * @param query
-	 *            Anfrage in Form einer Zeichenkette
-	 * @param compilerID
-	 *            ID des zu verwendenden Parsers
-	 * @param parameters
-	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
-	 * @return vorläufige ID der neuen Anfrage
-	 * @throws PlanManagementException
-	 */
-	public Collection<Integer> addQuery(String query, String compilerID, User user,
-			AbstractQueryBuildSetting<?>... parameters)
-			throws PlanManagementException;
-	
-	/**
-	 * addQuery fügt Odysseus eine Anfrage hinzu, die als Zeichenkette vorliegt.
-	 * Es kann sein, dass die Anfrage nicht direkt der Auführung hinzugefügt
-	 * wird (bspw. bei interner asychronen Optimierung). Die zurückgebegen ID
-	 * ist daher nur vorläufig. Erst beim Empfangen des Hinzufügen-Events kann
-	 * davon ausgegangen werden, dass die Anfrage hinzugefügt wurde.
-	 * 
-	 * @param query
-	 *            Anfrage in Form einer Zeichenkette
-	 * @param compilerID
-	 *            ID des zu verwendenden Parsers
-	 * @param doRestruct
-	 *            If true, the query plan will be restructured, if false, it will not.
-	 * @param rulesToUse
-	 *            Contains the names of the rules to be used for restructuring. Other
-	 *            rules will not be used.
-	 * @param parameters
-	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
-	 * @return vorläufige ID der neuen Anfrage
-	 * @throws PlanManagementException
-	 */
-	public Collection<Integer> addQuery(String query, String parserID, User user,
-			boolean doRestruct,
-			Set<String> rulesToUse,
-			AbstractQueryBuildSetting<?>... parameters)
+			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 
 	/**
-	 * addQuery fügt Odysseus eine Anfrage hinzu, die als physischer Plan
-	 * vorliegt. Es kann sein, dass die Anfrage nicht direkt der Auführung
-	 * hinzugefügt wird (bspw. bei interner asychronen Optimierung). Die
-	 * zurückgebegen ID ist daher nur vorläufig. Erst beim Empfangen des
-	 * Hinzufügen-Events kann davon ausgegangen werden, dass die Anfrage
-	 * hinzugefügt wurde.
+	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als physischer Plan
+	 * vorliegt. 
 	 * 
 	 * @param physicalPlan
 	 *            physischer Plan der neuen Anfrage
@@ -163,12 +126,10 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
-			AbstractQueryBuildSetting<?>... parameters)
+			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 	
 	public void addCompilerListener(ICompilerListener compilerListener);
-
-	// --- Moved vom AdvancedExecutor, easier handling
 	
 	/**
 	 * Provides a Set of registered buffer placement strategies represented by
@@ -177,7 +138,8 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 * @return Set of registered buffer placement strategies represented by an
 	 *         id
 	 */
-	public Set<String> getRegisteredBufferPlacementStrategies();
+	public Set<String> getRegisteredBufferPlacementStrategiesIDs();
+	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID);
 
 	/**
 	 * Set the buffer placement strategy which should be used.
@@ -188,23 +150,23 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	public void setDefaultBufferPlacementStrategy(String strategy);
 
 	/**
-	 * Provides a Set of registered scheduling strategy factories represented by
+	 * Provides a Set of registered scheduling strategy strategies represented by
 	 * an id.
 	 * 
-	 * @return Set of registered scheduling strategy factories represented by an
+	 * @return Set of registered scheduling strategy strategies represented by an
 	 *         id
 	 */
-	public Set<String> getRegisteredSchedulingStrategyFactories();
+	public Set<String> getRegisteredSchedulingStrategies();
 
 	/**
-	 * Provides a Set of registered scheduler factories represented by an id.
+	 * Provides a Set of registered schedulers represented by an id.
 	 * 
-	 * @return Set of registered scheduler factories represented by an id
+	 * @return Set of registered schedulers represented by an id
 	 */
-	public Set<String> getRegisteredSchedulerFactories();
+	public Set<String> getRegisteredSchedulers();
 
 	/**
-	 * Sets the the scheduler factory with a scheduling strategy factory which
+	 * Sets the the scheduler with a scheduling strategy which
 	 * should be used for creating concrete scheduler.
 	 * 
 	 * @param scheduler
@@ -277,4 +239,10 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 			QueryOptimizationException;
 
 	public String getName();
+
+	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
+
+	ArrayList<IQuery> getQueries();
+
+
 }

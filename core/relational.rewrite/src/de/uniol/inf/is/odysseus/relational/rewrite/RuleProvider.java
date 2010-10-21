@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RDeleteProjectionWithoutFunctionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RDeleteSelectionWithoutPredicate;
-import de.uniol.inf.is.odysseus.relational.rewrite.rules.RInitPredicatesRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionJoinRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSplitSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionRenameRule;
@@ -24,7 +23,6 @@ public class RuleProvider implements IRewriteRuleProvider {
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new RDeleteProjectionWithoutFunctionRule());
 		rules.add(new RDeleteSelectionWithoutPredicate());
-		rules.add(new RInitPredicatesRule());
 		rules.add(new RMergeSelectionJoinRule());
 		rules.add(new RSplitSelectionRule());
 		rules.add(new RSwitchProjectionRenameRule());

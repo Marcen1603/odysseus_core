@@ -13,7 +13,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.transformation.helper.relational,
  de.uniol.inf.is.odysseus.usermanagement,
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework;version="1.3.0"

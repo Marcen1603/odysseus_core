@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -30,6 +30,10 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 
 		if (element instanceof SDFAttributeList) {
 			return Activator.getDefault().getImageRegistry().get("schema");
+		}
+		
+		if (element instanceof IPredicate){
+			return Activator.getDefault().getImageRegistry().get("predicate");
 		}
 		
 		if (element instanceof SDFAttribute){
@@ -82,6 +86,11 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 		if (element != null && element instanceof SDFAttributeList){				
 			return "OutputSchema";
 		}
+
+		if (element != null && element instanceof IPredicate){				
+			return element.toString();
+		}
+
 		if (element != null && element instanceof SDFAttribute){
 			SDFAttribute a = (SDFAttribute) element;
 			StringBuffer name = new StringBuffer(a.getPointURI());

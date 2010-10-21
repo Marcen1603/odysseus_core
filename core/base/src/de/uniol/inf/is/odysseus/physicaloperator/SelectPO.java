@@ -6,11 +6,12 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class SelectPO<T> extends AbstractPipe<T, T> {
+public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 
 	private IPredicate<? super T> predicate;
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
 	
+	@Override
 	public IPredicate<? super T> getPredicate() {
 		return predicate;
 	}
@@ -82,6 +83,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 //		return true;
 //	}
 
+	@Override
 	public String toString(){
 		return super.toString() + " predicate: " + this.getPredicate().toString(); 
 	}

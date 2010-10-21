@@ -12,7 +12,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 
@@ -36,12 +36,12 @@ public class SetStandardBuffPlacementCommand extends AbstractHandler implements
 
 		IExecutor executor = Activator.getExecutor();
 
-		Set<String> list = executor.getRegisteredBufferPlacementStrategies();
+		Set<String> list = executor.getRegisteredBufferPlacementStrategiesIDs();
 		String bufferName = "Standard Buffer Placement";
 		if (list.contains(bufferName)) {
 			ExecutionConfiguration conf = executor.getConfiguration();
 			conf.set(
-					new SettingBufferPlacementStrategy(bufferName));
+					new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName)));
 			System.out.println("Strategy " + bufferName + " set.");
 
 		}

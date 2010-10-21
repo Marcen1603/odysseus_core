@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-
 /**
  * SimplePlanMigrationStrategy transfers a currently running physical plan into
  * a new given plan that has empty operator states. Therefore, both plans are
@@ -51,7 +50,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		this.logger = LoggerFactory
 				.getLogger(SimplePlanMigrationStrategy.class);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Simple Plan Migration Strategy";
@@ -67,11 +66,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void migrateQuery(IOptimizer sender, IQuery runningQuery,
-			List<IPhysicalOperator> newPlanRoots) throws QueryOptimizationException {
-		if(runningQuery.containsCycles()){
+			List<IPhysicalOperator> newPlanRoots)
+			throws QueryOptimizationException {
+		if (runningQuery.containsCycles()) {
 			throw new RuntimeException("Planmigration assumes acyclic trees");
 		}
-		
+
 		// @Marco: Bitte so umbauen, dass beachtet wird,
 		// dass ein Anfrageplan mehrere Roots haben kann.
 		this.logger.debug("Start planmigration.");
@@ -121,7 +121,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		this.logger.debug("Preparing plan for parallel execution.");
 		// insert buffers before sources
 		for (ISource<?> source : oldPlanSources) {
-			this.logger.debug("Insert Blocking-Buffer after source " +source);
+			this.logger.debug("Insert Blocking-Buffer after source " + source);
 			BlockingBuffer buffer = new BlockingBuffer(true);
 			try {
 				buffer.open();
@@ -151,12 +151,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			this.logger.debug("Insert Blocking-Buffer after source ... done");
 		}
 
-		this.logger.debug("Adding False Select to new Plan " );
+		this.logger.debug("Adding False Select to new Plan ");
 		// 'merge' operator at top, discarding tuples of new plan
 		// realized with base operators union and select with falsepredicate
 		IPipe<?, ?> select = null;
 		select = new SelectPO(new FalsePredicate());
-		((SelectPO)select).setHeartbeatGenerationStrategy(new DefaultHeartbeatGeneration());
+		((SelectPO) select)
+				.setHeartbeatGenerationStrategy(new DefaultHeartbeatGeneration());
 		select.setOutputSchema(lastOperatorNewPlan.getOutputSchema());
 		IPipe<?, ?> union = null;
 		// only interval approach like in TUnionTIPO.drl supported
@@ -175,13 +176,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		context.setSelect(select);
 		context.setUnion(union);
 		context.setOldPlanRoot(oldPlanRoot);
-		
-		this.logger.debug("Merging Plans " );
+
+		this.logger.debug("Merging Plans ");
 
 		PhysicalRestructHelper.removeSubscription(oldPlanRoot,
 				lastOperatorOldPlan);
-		PhysicalRestructHelper.replaceChild(newPlanRoots.get(0), lastOperatorNewPlan,
-				union);
+		PhysicalRestructHelper.replaceChild(newPlanRoots.get(0),
+				lastOperatorNewPlan, union);
 		PhysicalRestructHelper.appendOperator(select, lastOperatorNewPlan);
 		PhysicalRestructHelper.appendBinaryOperator(union, lastOperatorOldPlan,
 				select);
@@ -193,22 +194,24 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// Union geht, muss nur diese Zeile und in finishedParallelExecution
 		// markierte
 		// Zeilen entfernt werden.
-		// Anm (MG). Es werder hier die Teilpläne zusammen an die Senke gehängt.Dann
+		// Anm (MG). Es werder hier die Teilpläne zusammen an die Senke
+		// gehängt.Dann
 		// stimmt aber u.U. die Ausgabereihenfolge der Tupel nicht mehr!!
-		//PhysicalRestructHelper.appendOperator(oldPlanRoot, lastOperatorOldPlan);
+		// PhysicalRestructHelper.appendOperator(oldPlanRoot,
+		// lastOperatorOldPlan);
 		// Workaround Ende
-		
+
 		// open auf dem neuen Plan aufrufen
-		this.logger.debug("Calling open on new Plan " );
+		this.logger.debug("Calling open on new Plan ");
 		synchronized (union) {
 			try {
 				union.open();
 			} catch (OpenFailedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			}			
+			}
 		}
-		this.logger.debug("Calling open on new Plan ... done" );
+		this.logger.debug("Calling open on new Plan ... done");
 
 		this.logger.debug("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(newPlanRoots.get(0),
@@ -216,12 +219,19 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// execute plans for at least 'w_max' (longest window duration)
 		this.logger.debug("Initializing parallel execution plan.");
-		try {
-			runningQuery.initializePhysicalRoots(newPlanRoots);
-		} catch (OpenFailedException e) {
-			throw new QueryOptimizationException(
-					"Failed to initialize parallel execution plan.", e);
+
+		runningQuery.initializePhysicalRoots(newPlanRoots);
+
+		for (IPhysicalOperator op : newPlanRoots) {
+			if (op.isSink()) {
+				try {
+					((ISink) op).open();
+				} catch (OpenFailedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+
 		// resume by unblocking buffers
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
 			buffer.unblock();
@@ -240,7 +250,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
-		
+
 		if (logger.isDebugEnabled()) {
 			this.logger.debug("ParallelExecutionWaiter terminated.");
 			// activate blocking buffers
@@ -248,39 +258,41 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					+ " input buffers.");
 		}
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
-			logger.debug("Blocking buffer "+buffer);
+			logger.debug("Blocking buffer " + buffer);
 			buffer.block();
-			logger.debug("Blocking buffer "+buffer+" done.");
+			logger.debug("Blocking buffer " + buffer + " done.");
 		}
 
 		// drain all tuples out of plans
 		this.logger.debug("Draining tuples out of plans.");
-		MigrationHelper.drainTuples(context.getRunningQuery().getRoots().get(0));
+		MigrationHelper
+				.drainTuples(context.getRunningQuery().getRoots().get(0));
 
 		// remove old plan, keep buffers
 		// top operators
 		this.logger.debug("Deinitializing parallel execution plan.");
-		PhysicalRestructHelper.replaceChild(context.getNewPlanRoot(), context
-				.getUnion(), context.getLastOperatorNewPlan());
-		PhysicalRestructHelper.removeSubscription(context.getUnion(), context
-				.getLastOperatorOldPlan());
-		PhysicalRestructHelper.removeSubscription(context.getUnion(), context
-				.getSelect());
-		PhysicalRestructHelper.removeSubscription(context.getSelect(), context
-				.getLastOperatorNewPlan());
+		PhysicalRestructHelper.replaceChild(context.getNewPlanRoot(),
+				context.getUnion(), context.getLastOperatorNewPlan());
+		PhysicalRestructHelper.removeSubscription(context.getUnion(),
+				context.getLastOperatorOldPlan());
+		PhysicalRestructHelper.removeSubscription(context.getUnion(),
+				context.getSelect());
+		PhysicalRestructHelper.removeSubscription(context.getSelect(),
+				context.getLastOperatorNewPlan());
 
 		// TODO Workaround s.o.
-//		PhysicalRestructHelper.removeSubscription(context.getOldPlanRoot(),
-//				context.getLastOperatorOldPlan());
-//		PhysicalRestructHelper.removeSubscription(context.getNewPlanRoot(),
-//				context.getLastOperatorNewPlan());
-//		PhysicalRestructHelper.appendOperator(context.getOldPlanRoot(), context
-//				.getLastOperatorNewPlan());
-//		try {
-//			context.getRunningQuery().setRoot(context.getOldPlanRoot());
-//		} catch (OpenFailedException e1) {
-//			e1.printStackTrace();
-//		}
+		// PhysicalRestructHelper.removeSubscription(context.getOldPlanRoot(),
+		// context.getLastOperatorOldPlan());
+		// PhysicalRestructHelper.removeSubscription(context.getNewPlanRoot(),
+		// context.getLastOperatorNewPlan());
+		// PhysicalRestructHelper.appendOperator(context.getOldPlanRoot(),
+		// context
+		// .getLastOperatorNewPlan());
+		// try {
+		// context.getRunningQuery().setRoot(context.getOldPlanRoot());
+		// } catch (OpenFailedException e1) {
+		// e1.printStackTrace();
+		// }
 		// Workaround Ende
 
 		// remove connection from buffers to old plan
@@ -314,20 +326,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 
 		// TODO: Warum dies? Die Anfrage ist doch schon drin, oder?
-		
-		// set and initialize new physical plan
-		// adds query as operator owner, too
-		try {
-			context.getRunningQuery().initializePhysicalRoots(
-					context.getRunningQuery().getRoots());
-		} catch (OpenFailedException e) {
-			this.logger.error("Failed to initialize new execution plan.", e);
-		}
+
+		context.getRunningQuery().initializePhysicalRoots(
+				context.getRunningQuery().getRoots());
 
 		// remove buffers, thereby resuming query processing
 		this.logger.debug("Removing buffers.");
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
-			this.logger.debug("Remove buffer "+buffer);
+			this.logger.debug("Remove buffer " + buffer);
 			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
 			List<ISink<?>> sinks = new ArrayList<ISink<?>>();
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
@@ -342,7 +348,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				PhysicalRestructHelper.removeSubscription(sink, buffer);
 			}
 			buffer.removeOwner(context.getRunningQuery());
-			this.logger.debug("Remove buffer "+buffer+" done.");
+			this.logger.debug("Remove buffer " + buffer + " done.");
 		}
 
 		// new plan is ready and running

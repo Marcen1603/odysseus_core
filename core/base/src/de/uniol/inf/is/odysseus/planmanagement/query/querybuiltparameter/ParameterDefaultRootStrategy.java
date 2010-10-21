@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 
+import de.uniol.inf.is.odysseus.planmanagement.configuration.Setting;
+
 /**
  * Since a query can have more than one root,
  * this class encapsulates strategies for
@@ -18,7 +20,7 @@ package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
  * @author André Bolles
  *
  */
-public class ParameterDefaultRootStrategy extends AbstractQueryBuildSetting<IDefaultRootStrategy> {
+public class ParameterDefaultRootStrategy extends Setting<IDefaultRootStrategy> implements IQueryBuildSetting<IDefaultRootStrategy> {
 
 	public ParameterDefaultRootStrategy(IDefaultRootStrategy strategy){
 		super(strategy);

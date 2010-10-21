@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
@@ -44,6 +45,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 //				for( SDFAttribute attr : node.getModelNode().getContent().getOutputSchema())
 //					children.add(attr);
 				children.add( node.getModelNode().getContent().getOutputSchema());
+			}
+			if (node.getModelNode().getContent() instanceof IHasPredicate){
+				children.add(((IHasPredicate)node.getModelNode().getContent()).getPredicate());
 			}
 			StringBuffer owner = new StringBuffer("Part of Query: ");
 			for(IOperatorOwner o: node.getModelNode().getContent().getOwner()){
