@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Classloading_Utils
-Bundle-SymbolicName: Classloading_Utils
-Bundle-Version: 1.0.0
-Export-Package: org.dynamicjava.osgi.classloading_utils,
- org.dynamicjava.osgi.classloading_utils.internal
-Import-Package: org.osgi.framework;version="1.5.0"
