@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.CeilFunction;
+import de.uniol.inf.is.odysseus.mep.functions.CosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.DivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.DoubleToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.EqualsOperator;
@@ -77,6 +78,7 @@ public class MEP {
 		registerFunction(new FloorFunction());
 		registerFunction(new IfFunction());
 		registerFunction(new SinusFunction());
+		registerFunction(new CosinusFunction());
 		registerFunction(new ToNumberFunction());
 		registerFunction(new ToStringFunction());
 	}
