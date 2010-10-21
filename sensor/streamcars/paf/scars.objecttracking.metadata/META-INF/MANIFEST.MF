@@ -4,7 +4,6 @@ Bundle-Name: Metadata
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.metadata
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,

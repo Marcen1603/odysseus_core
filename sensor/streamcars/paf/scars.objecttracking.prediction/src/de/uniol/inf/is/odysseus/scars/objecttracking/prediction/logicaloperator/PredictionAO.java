@@ -57,7 +57,7 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 	
 	public void initNeededAttributeIndices(SDFAttributeList right,String objListPathName ) {
 		SchemaHelper helper = new SchemaHelper(right);
-		this.objListPath = helper.getSchemaIndexPath(objListPathName).toArray();
+		this.objListPath = helper.getSchemaIndexPath(objListPathName).toArray(true);
 	}
 	
 	@SuppressWarnings("unchecked")

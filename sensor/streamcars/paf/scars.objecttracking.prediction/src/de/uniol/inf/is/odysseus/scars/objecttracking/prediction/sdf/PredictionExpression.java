@@ -141,14 +141,14 @@ public class PredictionExpression {
 		}
 		for(String var : schemaVariables) {
 			SchemaIndexPath path = helper.getSchemaIndexPath(var);
-			int[] p = path.toArray();
+			int[] p = path.toArray(true);
 			replaceWithRelativeIndex(schema, p);
 			variablePathMapping.put(var, p);
 		}
 		
 		if(sourceName.equals(targetSource)) {
 			SchemaIndexPath path = helper.getSchemaIndexPath(targetVarName);
-			int[] p = path.toArray();
+			int[]p = path.toArray(true);
 			replaceWithRelativeIndex(schema, p);
 			targetPath = p;
 		}
@@ -191,6 +191,7 @@ public class PredictionExpression {
 		SDFAttributeList current = schema;
 		for(int index=0; index<indices.length; index++) {
 			SDFAttribute attr = current.get(indices[index]);
+
 			if(isListBefore) {
 				indices[index] = -1;
 				isListBefore = false;
@@ -312,14 +313,14 @@ public class PredictionExpression {
 		}
 		SchemaHelper helper = new SchemaHelper(schema);
 		for(String var : schemaVarNames) {
-			int[] path = helper.getSchemaIndexPath(var).toArray();
+			int[] path = helper.getSchemaIndexPath(var).toArray(true);
 			replaceWithRelativeIndex(schema, path);
 			replaceIndex(path, index);
 			
 			variablePathMapping.put(var, path);
 		}
 		if(sourceName.equals(targetSource)) {
-			int[] path = helper.getSchemaIndexPath(targetVarName).toArray();
+			int[] path = helper.getSchemaIndexPath(targetVarName).toArray(true);
 			replaceWithRelativeIndex(schema, path);
 			replaceIndex(path, index);
 			

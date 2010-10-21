@@ -11,12 +11,16 @@ public class RuleProvider implements ITransformRuleProvider {
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
-		rules.add(new TBrokerAccessAORule());
-		rules.add(new TBrokerAOExistsRule());
-		rules.add(new TBrokerAORule());
-		rules.add(new TBrokerCycleDetectionRule());
-		rules.add(new TBrokerJoinTIPORule());
-		rules.add(new TMetricAORule());
+		try{
+			rules.add(new TBrokerAccessAORule());
+			rules.add(new TBrokerAOExistsRule());
+			rules.add(new TBrokerAORule());
+			rules.add(new TBrokerCycleDetectionRule());
+			rules.add(new TBrokerJoinTIPORule());
+			rules.add(new TMetricAORule());
+		}catch(Throwable t){
+			t.printStackTrace();
+		}
 		return rules;
 	}
 

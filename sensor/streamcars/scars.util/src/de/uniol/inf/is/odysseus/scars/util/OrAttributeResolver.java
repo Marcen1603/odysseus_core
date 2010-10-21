@@ -28,7 +28,7 @@ public class OrAttributeResolver {
 	
 	public static int[] getAttributePath( SDFAttributeList schema, String absoluteAttributeName ) {
 		SchemaHelper helper = new SchemaHelper(schema);
-		return helper.getSchemaIndexPath(absoluteAttributeName).toArray();
+		return helper.getSchemaIndexPath(absoluteAttributeName).toArray(false);
 	}
 	
 	public static int getIndexOf( SDFAttributeList list, String attributeName ) {

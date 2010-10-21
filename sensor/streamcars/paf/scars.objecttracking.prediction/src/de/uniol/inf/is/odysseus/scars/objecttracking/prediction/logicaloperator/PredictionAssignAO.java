@@ -34,7 +34,7 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	
 	public void initListPath(SDFAttributeList inputSchema, String absoluteListNamePath) {
 		SchemaHelper helper = new SchemaHelper(inputSchema);
-		pathToList = helper.getSchemaIndexPath(absoluteListNamePath).toArray();
+		pathToList = helper.getSchemaIndexPath(absoluteListNamePath).toArray(true);
 	}
 	
 	public int[] getPathToList() {

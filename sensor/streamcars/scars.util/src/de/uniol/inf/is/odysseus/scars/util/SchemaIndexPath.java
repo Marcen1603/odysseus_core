@@ -34,8 +34,16 @@ public class SchemaIndexPath {
 		}
 		this.to = attributeTo;
 		this.indicesArray = new int[indices.size()];
-		for (int i = 0; i < indices.size(); i++)
+		for (int i = 0; i < indices.size(); i++){
 			this.indicesArray[i] = indices.get(i).toInt();
+		}
+		
+		for(int i : this.indicesArray){
+			if(i == -1){
+				@SuppressWarnings("unused")
+				int v = 0;
+			}
+		}
 	}
 
 	SchemaIndexPath(SchemaIndexPath other) {
@@ -48,6 +56,13 @@ public class SchemaIndexPath {
 		this.indicesArray = new int[other.indicesArray.length];
 		for (int i = 0; i < this.indicesArray.length; i++) {
 			this.indicesArray[i] = other.indicesArray[i];
+		}
+		
+		for(int i : this.indicesArray){
+			if(i == -1){
+				@SuppressWarnings("unused")
+				int v = 0;
+			}
 		}
 	}
 
@@ -116,8 +131,15 @@ public class SchemaIndexPath {
 	 * 
 	 * @return int[]-Array des Pfads.
 	 */
-	public int[] toArray() {
-		return this.indicesArray;
+	public int[] toArray(boolean getCopy) {
+		if(getCopy){
+			int[] copy = new int[this.indicesArray.length];
+			System.arraycopy(this.indicesArray, 0, copy, 0, this.indicesArray.length);
+			return copy;
+		}
+		else{
+			return this.indicesArray;
+		}
 	}
 
 	/**
