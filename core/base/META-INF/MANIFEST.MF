@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.Activator
 Import-Package: 
+ de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.mep,
  org.apache.commons.collections.map,
  org.apache.log4j;version="1.2.15",
@@ -45,7 +46,6 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
  de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement,
- de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy,
  de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
  de.uniol.inf.is.odysseus.planmanagement.optimization.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization.migration,
@@ -55,7 +55,6 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration,
  de.uniol.inf.is.odysseus.planmanagement.optimization.query,
  de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules,
- de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer,
  de.uniol.inf.is.odysseus.planmanagement.plan,
  de.uniol.inf.is.odysseus.planmanagement.query,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
@@ -81,5 +80,4 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,
  de.uniol.inf.is.odysseus.usermanagement,
  de.uniol.inf.is.odysseus.util
-Service-Component: OSGI-INF/StandardCompiler.xml, OSGI-INF/StandardPlanOptimizer.xml,OSGI-INF/StandardOptimizer.xml, OSGI-INF/QueryRestructOptimizer.xml, OSGI-INF/NoBuffersStrategy.xml, OSGI-INF/StandardBufferPlacementStrategy.xml, OSGI-INF/NoPlanMigrationStrategy.xml
 Bundle-ActivationPolicy: lazy

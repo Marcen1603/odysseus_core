@@ -133,11 +133,10 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	protected ISystemMonitorFactory systemMonitorFactory = null;
 
-	
 	// --------------------------------------------------------------------------------------
 	// Constructors/Initialization
 	// --------------------------------------------------------------------------------------
-	
+
 	/**
 	 * Standard-Construktor. Initialisiert die Ausführungsumgebung.
 	 */
@@ -150,7 +149,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 					"Error activate executor. Error: " + e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * initializeIntern Innerhalb dieser Funktion kÃ¶nnen spezifische
 	 * Initialisierungen vorgenommen werden. Dies wird von initialize
@@ -201,11 +200,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 		getLogger().debug("Stop initializing Executor.");
 	}
-	
+
 	// ----------------------------------------------------------------------------------------
 	// OSGI-Framework spezific
 	// ----------------------------------------------------------------------------------------
-	
+
 	/**
 	 * bindOptimizer bindet einen Optimierer ein
 	 * 
@@ -215,6 +214,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	public void bindOptimizer(IOptimizer optimizer) {
 		this.optimizer = optimizer;
 		this.optimizer.addErrorEventListener(this);
+		getLogger().debug("Optimizer bound " + optimizer);
 	}
 
 	/**
@@ -226,9 +226,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	public void unbindOptimizer(IOptimizer optimizer) {
 		if (this.optimizer == optimizer) {
 			this.optimizer = null;
+			getLogger().debug("Optimizer unbound " + optimizer);
 		}
+
 	}
-	
+
 	/**
 	 * bindSchedulerManager bindet einen Scheduling-Manager ein
 	 * 
@@ -238,6 +240,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	public void bindSchedulerManager(ISchedulerManager schedulerManager) {
 		this.schedulerManager = schedulerManager;
 		this.schedulerManager.addErrorEventListener(this);
+		getLogger().debug("Schedulermanager bound " + schedulerManager);
 	}
 
 	/**
@@ -249,23 +252,10 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	public void unbindSchedulerManager(ISchedulerManager schedulerManager) {
 		if (this.schedulerManager == schedulerManager) {
 			this.schedulerManager = null;
+			getLogger().debug("Schedulermanager unbound " + schedulerManager);
 		}
 	}
 
-	/**
-	 * compiler liefert die aktuelle Anfragebearbeitungs-Komponente
-	 * 
-	 * @return die aktuelle Anfragebearbeitungs-Komponente
-	 * @throws NoCompilerLoadedException
-	 */
-	protected ICompiler compiler() throws NoCompilerLoadedException {
-		if (this.compiler != null) {
-			return this.compiler;
-		}
-
-		throw new NoCompilerLoadedException();
-	}
-	
 	/**
 	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
 	 * 
@@ -277,8 +267,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		for (ICompilerListener l : compilerListener) {
 			compiler.addCompilerListener(l);
 		}
+		getLogger().debug("Compiler bound " + compiler);
 	}
-	
+
 	/**
 	 * unbindCompiler entfernt eine Anfragebearbeitungs-Komponente
 	 * 
@@ -291,9 +282,10 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 		if (this.compiler == compiler) {
 			this.compiler = null;
+			getLogger().debug("Compiler unbound " + compiler);
 		}
 	}
-	
+
 	// ----------------------------------------------------------------------------------------
 	// Getter/Setter
 	// ----------------------------------------------------------------------------------------
@@ -312,7 +304,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 		throw new NoOptimizerLoadedException();
 	}
-	
+
 	/**
 	 * schedulerManager liefert den aktuellen Scheduling-Manager. Sollte keiner
 	 * registriert sein, wird eine Exception geworfen.
@@ -330,18 +322,17 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	}
 
 	@Override
-	public ICompiler getCompiler() throws CompilerException{
-		if (this.compiler != null){
+	public ICompiler getCompiler() throws NoCompilerLoadedException {
+		if (this.compiler != null) {
 			return this.compiler;
 		}
-		throw new CompilerException();
+		throw new NoCompilerLoadedException();
 	}
 
 	// ----------------------------------------------------------------------------------------
 	// Execution Plan
 	// ----------------------------------------------------------------------------------------
 
-	
 	/**
 	 * setExecutionPlan setzt den aktuellen Ausführungsplan und aktualisiert das
 	 * Scheduling.
@@ -377,7 +368,6 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			}
 		}
 	}
-
 
 	// ----------------------------------------------------------------------------------------
 	// Events
@@ -418,16 +408,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 *            zu sendendes Event
 	 */
 	@Override
-	public
-	synchronized void fireErrorEvent(ErrorEvent eventArgs) {
+	public synchronized void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
 			listener.errorEventOccured(eventArgs);
 		}
 	}
-
-
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -479,7 +464,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			getSchedulerManager().stopScheduling();
 			this.executionPlan.close();
 			// Stopp Router only if it has an instance
-			if (Router.hasInstance()){
+			if (Router.hasInstance()) {
 				Router.getInstance().stopRouting();
 			}
 		} catch (Exception e) {
@@ -517,7 +502,6 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	public IExecutionPlan getExecutionPlan() {
 		return this.executionPlan;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -612,16 +596,15 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	@Override
 	public Set<String> getSupportedQueryParsers()
 			throws NoCompilerLoadedException {
-		ICompiler c = compiler();
+		ICompiler c;
+		c = getCompiler();
 		return c.getSupportedQueryParser();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.event.error.IErrorEventHandler
-	 * #
+	 * @see de.uniol.inf.is.odysseus.event.error.IErrorEventHandler #
 	 * addErrorEventListener(de.uniol.inf.is.odysseus.planmanagement.event.
 	 * error.IErrorEventListener)
 	 */
@@ -637,9 +620,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.event.error.IErrorEventHandler
-	 * #
+	 * @see de.uniol.inf.is.odysseus.event.error.IErrorEventHandler #
 	 * removeErrorEventListener(de.uniol.inf.is.odysseus.planmanagement.event
 	 * .error.IErrorEventListener)
 	 */
@@ -653,10 +634,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.event.error.IErrorEventListener
-	 * #sendErrorEvent(de.uniol.inf.is.odysseus.event.error.
-	 * ErrorEvent)
+	 * @see de.uniol.inf.is.odysseus.event.error.IErrorEventListener
+	 * #sendErrorEvent(de.uniol.inf.is.odysseus.event.error. ErrorEvent)
 	 */
 	@Override
 	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
@@ -690,10 +669,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			compiler.addCompilerListener(compilerListener);
 		} // else will be done if compiler is bound
 	}
-	
+
 	@Override
 	public void setDefaultBufferPlacementStrategy(String strategy) {
-		IBufferPlacementStrategy strat = this.getBufferPlacementStrategy(strategy);
+		IBufferPlacementStrategy strat = this
+				.getBufferPlacementStrategy(strategy);
 		this.configuration.set(new ParameterBufferPlacementStrategy(strat));
 	}
 
