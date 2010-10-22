@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler">
+   <implementation class="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler.StandardCompiler"/>
+   <reference bind="bindTransformation" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.ITransformation" name="ITransformation" policy="static" unbind="unbindTransformation"/>
+   <reference bind="bindParser" cardinality="0..n" interface="de.uniol.inf.is.odysseus.planmanagement.IQueryParser" name="IQueryParser" policy="dynamic" unbind="unbindParser"/>
+   <reference bind="bindRewrite" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.IRewrite" name="IRewrite" policy="dynamic" unbind="unbindRewrite"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.ICompiler"/>
+   </service>
+</scr:component>
