@@ -64,6 +64,10 @@ public class Privilege implements Serializable {
 		this.operations.add(newOperation);
 	}
 
+	public void removeOperations(List<IUserActions> operations) {
+		this.operations.removeAll(operations);
+	}
+
 	/**
 	 * return the object uri
 	 * 
@@ -92,4 +96,5 @@ public class Privilege implements Serializable {
 
 		return true;
 	}
+
 }
