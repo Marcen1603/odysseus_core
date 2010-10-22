@@ -60,7 +60,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 	protected static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(AbstractExecutor.class);
 		}
 		return _logger;
 	}
