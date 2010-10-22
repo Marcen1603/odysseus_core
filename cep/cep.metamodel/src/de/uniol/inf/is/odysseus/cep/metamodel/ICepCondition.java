@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 
-public interface ICondition extends IExpression{
+public interface ICepCondition extends ICepExpression<Boolean>{
 
 	/**
 	 * Setzt die Transitionsbedingung.

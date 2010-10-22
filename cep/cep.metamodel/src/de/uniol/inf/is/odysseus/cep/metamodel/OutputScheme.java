@@ -10,13 +10,13 @@ import java.util.LinkedList;
  */
 public class OutputScheme {
 
-	private LinkedList<AbstractOutputSchemeEntry> entries;
+	private LinkedList<IOutputSchemeEntry> entries;
 
 	/**
 	 * Erzeugt ein neues leeres Ausgabeschema
 	 */
 	public OutputScheme() {
-		this.entries = new LinkedList<AbstractOutputSchemeEntry>();
+		this.entries = new LinkedList<IOutputSchemeEntry>();
 	}
 
 	/**
@@ -28,7 +28,7 @@ public class OutputScheme {
 	 *            Ausgaben des komplexen Events beschreiben. Darf nicht null
 	 *            sein.
 	 */
-	public OutputScheme(LinkedList<AbstractOutputSchemeEntry> entries) {
+	public OutputScheme(LinkedList<IOutputSchemeEntry> entries) {
 		this.entries = entries;
 	}
 
@@ -37,24 +37,24 @@ public class OutputScheme {
 	 * 
 	 * @return Liste von Ausdrücken, die die auszugebenden Werte definieren.
 	 */
-	public LinkedList<AbstractOutputSchemeEntry> getEntries() {
+	public LinkedList<IOutputSchemeEntry> getEntries() {
 		return entries;
 	}
 	
-	public void setEntries(LinkedList<AbstractOutputSchemeEntry> entries) {
+	public void setEntries(LinkedList<IOutputSchemeEntry> entries) {
 		this.entries = entries;
 	}
 
 	public String toString(String indent) {
 		String str = indent + "OutputScheme: " + this.hashCode();
 		indent += "  ";
-		for (AbstractOutputSchemeEntry entry : this.entries) {
-			str += entry.toString(indent);
+		for (IOutputSchemeEntry entry : this.entries) {
+			str += entry.toString();
 		}
 		return str;
 	}
 
-	public void append(AbstractOutputSchemeEntry e) {
+	public void append(IOutputSchemeEntry e) {
 		entries.add(e);
 	}
 	

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -164,7 +165,8 @@ public class StateMachine<E> {
 			//System.out.println("State "+s.getId());
 			for (Transition t: s.getTransitions()){
 				//System.out.println("Transition "+t.getId());
-				for (CepVariable var: t.getCondition().getVarNames()){
+				Set<CepVariable> varnames = t.getCondition().getVarNames();
+				for (CepVariable var: varnames){
 			//		System.out.println("Variable "+v);
 //					if (var.getStateIdentifier() == null){
 //						var.setStateIdentifier(s.getId());

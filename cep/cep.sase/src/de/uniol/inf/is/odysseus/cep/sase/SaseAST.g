@@ -26,8 +26,8 @@ options {
 	import de.uniol.inf.is.odysseus.cep.metamodel.State;
 	import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 	import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalJEPCondition;
-	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalJEPOutputSchemeEntry;
+	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPCondition;
+	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPOutputSchemeEntry;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 	import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -222,23 +222,23 @@ List<State> states = new LinkedList<State>();
          State source = states.get(i);
          State dest = states.get(i + 1);
          if (source.getId().endsWith("[i]")) {
-           RelationalJEPCondition con = new RelationalJEPCondition("");
+           RelationalMEPCondition con = new RelationalMEPCondition("");
            con.setEventType(source.getType());
            con.setEventPort(sourceNames.indexOf(source.getType()));
            // TODO: Ist das mit dem EAction.discard immer richtig?
            source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.discard));
-           con = new RelationalJEPCondition("");
+           con = new RelationalMEPCondition("");
            con.setEventType(source.getType());
            con.setEventPort(sourceNames.indexOf(source.getType()));
            source.addTransition(new Transition(source.getId()+ "_take", source,con, EAction.consumeBufferWrite));
          } else {
-            RelationalJEPCondition con = new RelationalJEPCondition("");
+            RelationalMEPCondition con = new RelationalMEPCondition("");
             con.setEventType(source.getType());
             con.setEventPort(sourceNames.indexOf(source.getType()));
             source.addTransition(new Transition(source.getId()+ "_begin", dest, con,EAction.consumeBufferWrite));
          }
          if (i > 0 && i < states.size() - 1) {
-            RelationalJEPCondition con = new RelationalJEPCondition("");
+            RelationalMEPCondition con = new RelationalMEPCondition("");
             con.setEventType(source.getType());
             con.setEventPort(sourceNames.indexOf(source.getType()));
             // Ignore auf sich selbst!
@@ -570,7 +570,7 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
   :
   ^(RETURN attributeTerm[retAttr]*)
   {
-    RelationalJEPOutputSchemeEntry e = null;
+    RelationalMEPOutputSchemeEntry e = null;
     OutputScheme scheme = new OutputScheme();
     SDFAttributeList attrList = new SDFAttributeList();
     for (PathAttribute p : retAttr) {
@@ -583,7 +583,7 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
         i = "-1";
       }
       String path = p.getPath();
-      e = new RelationalJEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
+      e = new RelationalMEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
           + "." + path));
       scheme.append(e);
       SDFAttribute attr = new SDFAttribute(e.getLabel());

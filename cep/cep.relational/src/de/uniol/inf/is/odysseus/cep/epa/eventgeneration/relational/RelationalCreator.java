@@ -42,7 +42,7 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 			 * getValueAsObject jedes beliebige Objekt über einen JEp-Ausdruck
 			 * weitergegeben werden (siehe JEPTest.java)
 			 */
-			attributes[i] = outputscheme.getEntries().get(i).getValueAsObject();
+			attributes[i] = outputscheme.getEntries().get(i).getValue();
 		}
 
 		RelationalTuple<TimeInterval> ret = new RelationalTuple<TimeInterval>(attributes);

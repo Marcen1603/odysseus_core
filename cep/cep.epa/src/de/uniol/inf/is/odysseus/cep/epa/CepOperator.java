@@ -17,10 +17,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
-import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
-import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
@@ -118,13 +115,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		// this.branchingBuffer = new BranchingBuffer<R>();
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferFunction = outputTransferFunction;
-		if (validate) {
-			Validator<R> validator = new Validator<R>();
-			ValidationResult result = validator.validate(stateMachine);
-			if (!result.isValid()) {
-				throw new InvalidStateMachineException(result);
-			}
-		}
 	}
 
 	public CepOperator(CepOperator<R, W> cepOperator) {

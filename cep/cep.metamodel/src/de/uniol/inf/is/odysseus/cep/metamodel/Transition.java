@@ -25,7 +25,7 @@ public class Transition {
 	/**
 	 * Die Transitionsbedingung
 	 */
-	private ICondition condition;
+	private ICepCondition condition;
 	/**
 	 * Die Automatenausgabe / Aktion für die Transition
 	 */
@@ -50,7 +50,7 @@ public class Transition {
 	 *            Die Aktion, die für eine erfüllte Transitionsbedingung
 	 *            ausgeführt wird.
 	 */
-	public Transition(String id, State nextState, ICondition condition,
+	public Transition(String id, State nextState, ICepCondition condition,
 			EAction action) {
 		this.id = id;
 		this.nextState = nextState;
@@ -109,7 +109,7 @@ public class Transition {
 	 * 
 	 * @return Die Transitionsbedingung.
 	 */
-	public ICondition getCondition() {
+	public ICepCondition getCondition() {
 		return condition;
 	}
 

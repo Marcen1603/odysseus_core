@@ -6,7 +6,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
-abstract public class AbstractCondition implements ICondition {
+abstract public class AbstractCondition implements ICepCondition {
 
 	/**
 	 * Textuelle Repraesentation der Transitionsbedingung.
