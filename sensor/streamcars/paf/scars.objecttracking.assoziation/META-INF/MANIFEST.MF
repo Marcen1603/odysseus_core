@@ -25,8 +25,7 @@ Import-Package: de.uniol.inf.is.odysseus,
 Require-Bundle: Commons.Math;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.objecttracking,
- org.junit,
- wekaNew
+ org.junit
 Export-Package: de.uniol.inf.is.odysseus.scars.objecttracking.association,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator,
