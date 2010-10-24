@@ -96,19 +96,18 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		if( selection instanceof IStructuredSelection ) {
 			IStructuredSelection structSelection = (IStructuredSelection)selection;
 			
-			if( structSelection.size() > 1 ) {
-				return;
-			}
+			if( structSelection.size() == 1 ) {
 			
-			Object selectedObject = structSelection.getFirstElement();
-			if( selectedObject instanceof OperatorPlanEditPart ) {
-				selectedOperator = null;
-				selectedOperatorEditPart = null;				
-			} else if( selectedObject instanceof OperatorEditPart ) {
-				selectedOperator = (Operator)((OperatorEditPart)selectedObject).getModel();
-				selectedOperatorEditPart = ((OperatorEditPart)selectedObject);
+				Object selectedObject = structSelection.getFirstElement();
+				if( selectedObject instanceof OperatorEditPart ) {
+					selectedOperator = (Operator)((OperatorEditPart)selectedObject).getModel();
+					selectedOperatorEditPart = ((OperatorEditPart)selectedObject);
+					return;
+				}
 			}
 		}
+		selectedOperator = null;
+		selectedOperatorEditPart = null;
 		return;
 	}
 	
