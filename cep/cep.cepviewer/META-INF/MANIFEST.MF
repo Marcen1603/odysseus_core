@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CEP-Perspective
+Bundle-SymbolicName: cepviewer.perspective;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.cep.cepviewer.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Christian Menne
+Import-Package: org.eclipse.draw2d,
+ org.eclipse.draw2d.geometry
