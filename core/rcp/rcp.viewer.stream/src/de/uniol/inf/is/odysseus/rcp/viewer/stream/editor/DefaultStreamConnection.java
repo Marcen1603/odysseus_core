@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamElementListener;
@@ -167,5 +168,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 		}
 	}
 
-
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		return false;
+	}
 }

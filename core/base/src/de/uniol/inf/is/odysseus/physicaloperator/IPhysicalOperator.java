@@ -18,6 +18,8 @@ public interface IPhysicalOperator extends IOwnedOperator,
 
 	boolean isPipe();
 	
+	boolean isSemanticallyEqual(IPhysicalOperator ipo);
+	
 	/**
 	 * Name for Operator (Visual Identification) 
 	 */

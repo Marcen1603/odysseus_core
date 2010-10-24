@@ -57,5 +57,16 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 	public void processPunctuation(PointInTime timestamp, int port) {	
 		sendPunctuation(timestamp);
 	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof MetadataCreationPO)) {
+			return false;
+		}
+		MetadataCreationPO mdcpo = (MetadataCreationPO) ipo;
+		if(this.getSubscribedToSource().equals(mdcpo.getSubscribedToSource()) && (this.getType().toString().equals(mdcpo.getType().toString()))) {
+			return true;
+		}
+		return false;
+	}
 
 }

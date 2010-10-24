@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.IHasPredicate;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -278,6 +279,19 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
 		this.areas[port^1].purgeElementsBefore(timestamp);
 		this.transferFunction.newHeartbeat(timestamp, port);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof JoinTIPO)) {
+			return false;
+		}
+		JoinTIPO jtipo = (JoinTIPO) ipo;
+		if(this.getSubscribedToSource().equals(jtipo.getSubscribedToSource()) &&
+				this.getJoinPredicate().equals(jtipo.getJoinPredicate()) &&
+				this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

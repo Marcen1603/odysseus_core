@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
@@ -84,6 +85,19 @@ public class PriorityPO<K extends IPriority & ITimeInterval, T extends IMetaAttr
 	@Override
 	public PriorityPO<K, T> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof PriorityPO)) {
+			return false;
+		}
+		PriorityPO ppo = (PriorityPO) ipo;
+		if(this.getSubscribedToSource().equals(ppo.getSubscribedToSource()) &&
+				this.getDefaultPriority() == ppo.getDefaultPriority() &&
+				this.priorites.equals(ppo.priorites)) {
+			return true;
+		}
+		return false;
 	}
 
 }

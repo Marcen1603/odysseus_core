@@ -56,6 +56,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
 			callCloseOnChildren(callPath);
 		}
+		
+		public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
+		}
 
 	};
 
@@ -296,5 +300,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
 	}
+	
+	public boolean delegatedIsSemanticallyEqual(IPhysicalOperator ipo) {
+		return process_isSemanticallyEqual(ipo);
+	}
+	abstract public boolean process_isSemanticallyEqual(IPhysicalOperator ipo);
 
 }

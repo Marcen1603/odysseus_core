@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -56,4 +57,21 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		sendPunctuation(timestamp);
 	}	
 	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof RelationalProjectPO)) {
+			return false;
+		}
+		RelationalProjectPO rppo = (RelationalProjectPO) ipo;
+		if(this.getSubscribedToSource().equals(rppo.getSubscribedToSource()) &&
+				this.restrictList.length == rppo.restrictList.length) {
+			for(int i = 0; i<this.restrictList.length; i++) {
+				if(this.restrictList[i] != rppo.restrictList[i]) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

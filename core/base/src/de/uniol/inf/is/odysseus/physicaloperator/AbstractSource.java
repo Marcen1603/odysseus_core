@@ -520,5 +520,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	abstract public AbstractSource<T> clone();
+	
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(! (ipo instanceof ISource || ipo instanceof IPipe)) return false;
+		if(! this.getOutputSchema().equals(((ISource)ipo).getOutputSchema())) {
+			return false;
+		}
+		return process_isSemanticallyEqual(ipo);
+	}
+	
+	abstract public boolean process_isSemanticallyEqual(IPhysicalOperator ipo);
 
 }

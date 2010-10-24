@@ -44,4 +44,16 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 		transferFunction.newHeartbeat(timestamp, port);
 	}
 	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof UnionPO)) {
+			return false;
+		}
+		UnionPO upo = (UnionPO) ipo;
+		if(this.getSubscribedToSource().equals(upo.getSubscribedToSource())) {
+			// Sicherheitshalber erst einmal false
+			//return true;
+			return false;
+		}
+		return false;
+	}
 }

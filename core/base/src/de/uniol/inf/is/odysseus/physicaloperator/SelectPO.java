@@ -101,5 +101,17 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 			IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
 	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof SelectPO)) {
+			return false;
+		}
+		SelectPO spo = (SelectPO) ipo;
+		// Predicates don't match
+		if(!this.predicate.equals(spo.getPredicate())) return false;
+		// Different sources
+		if(!this.getSubscribedToSource().equals(spo.getSubscribedToSource())) return false;
+		return true;
+	}
 }
 

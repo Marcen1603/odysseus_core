@@ -5,6 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -78,6 +79,28 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {	
 		sendPunctuation(timestamp);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof RelationalMapPO)) {
+			return false;
+		}
+		RelationalMapPO rmpo = (RelationalMapPO) ipo;
+		if(this.getSubscribedToSource().equals(rmpo.getSubscribedToSource()) &&
+					this.schema.compareTo(rmpo.schema) == 0) {
+			if(this.expressions.length == rmpo.expressions.length) {
+				for(int i=0; i<this.expressions.length; i++) {
+					if(!this.expressions[i].equals(rmpo.expressions[i])) {
+						return false;
+					}
+				}
+			} else {
+				return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

@@ -54,5 +54,13 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 	public int hashCode() {
 		return 17 * this.getLeft().hashCode() * 19 * this.getRight().hashCode();
 	}
+	
+	public boolean equals(IPredicate pred) {
+		if(!(pred instanceof AndPredicate)) {
+			return false;
+		}
+		AndPredicate ap = (AndPredicate) pred;
+		return this.getLeft().equals(ap.getLeft()) && this.getRight().equals(ap.getRight());
+	}
 
 }

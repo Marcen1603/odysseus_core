@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 public class PostPrioritizationPO<K extends IPriority & ITimeInterval, T extends IMetaAttributeContainer<? extends K>>
 		extends AbstractPipe<T, T> {
@@ -45,6 +46,17 @@ public class PostPrioritizationPO<K extends IPriority & ITimeInterval, T extends
 
 	public void setPrioritizedElementsSweepArea(IPostPrioritizationArea<T> sa) {
 		this.prioritizedElements = sa;
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof PostPrioritizationPO)) {
+			return false;
+		}
+		PostPrioritizationPO pppo = (PostPrioritizationPO) ipo;
+		if(this.getSubscribedToSource().equals(pppo.getSubscribedToSource())) {
+			return true;
+		}
+		return false;
 	}
 
 }

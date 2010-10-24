@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.intervalapproach.predicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>>{
 
@@ -27,5 +28,9 @@ public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeConta
 	
 	public static StartsBeforePredicate getInstance(){
 		return instance;
+	}
+	
+	public boolean equals(IPredicate pred) {
+		return (pred instanceof StartsBeforePredicate);
 	}
 }

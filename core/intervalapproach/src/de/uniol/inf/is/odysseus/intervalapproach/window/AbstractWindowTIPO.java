@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IWindow;
 
 public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
@@ -59,5 +60,17 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {	
 		sendPunctuation(timestamp);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof AbstractWindowTIPO) || !this.getClass().toString().equals(ipo.getClass().toString())) {
+			return false;
+		}
+		AbstractWindowTIPO awtipo = (AbstractWindowTIPO) ipo;
+		if(this.getSubscribedToSource().equals(awtipo.getSubscribedToSource()) &&
+				this.windowAO.equals(awtipo.getWindowAO())) {
+			return true;
+		}
+		return false;
 	}
 }

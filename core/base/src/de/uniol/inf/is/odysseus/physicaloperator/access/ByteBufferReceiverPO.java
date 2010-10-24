@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
@@ -150,5 +151,16 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 	@Override
 	public String getSourceName() {
 		return toString();
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof ByteBufferReceiverPO)) {
+			return false;
+		}
+		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
+		if(this.handler.equals(bbrpo.handler) && this.port == bbrpo.port && this.host.equals(bbrpo.host)) {
+			return true;
+		}
+		return false;
 	}
 }

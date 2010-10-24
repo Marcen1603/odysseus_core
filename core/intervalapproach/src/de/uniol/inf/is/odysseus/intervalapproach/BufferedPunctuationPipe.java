@@ -16,7 +16,9 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterablePipe;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.BufferedPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
@@ -181,6 +183,17 @@ public class BufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M ext
 	public void processPunctuation(PointInTime timestamp, int port) {
 //		System.out.println("Process Punc: " + p++);
 		this.punctuations.addLast(timestamp);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof BufferedPunctuationPipe)) {
+			return false;
+		}
+		BufferedPunctuationPipe bpp = (BufferedPunctuationPipe) ipo;
+		if(this.getSubscribedToSource().equals(bpp.getSubscribedToSource())) {
+			return true;
+		}
+		return false;
 	}
 
 }

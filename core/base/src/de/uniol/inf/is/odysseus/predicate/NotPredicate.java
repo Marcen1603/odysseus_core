@@ -39,4 +39,11 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
 	public String toString() {
 		return "NOT (" + getChild() + ")";
 	}
+	
+	public boolean equals(IPredicate pred) {
+		if(!(pred instanceof NotPredicate)) {
+			return false;
+		}
+		return true;
+	}
 }

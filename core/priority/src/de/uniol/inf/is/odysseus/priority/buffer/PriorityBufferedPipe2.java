@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterablePipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
@@ -157,5 +158,15 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 		throw new RuntimeException("not implemented...");
 	}
 
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof PriorityBufferedPipe2)) {
+			return false;
+		}
+		PriorityBufferedPipe2 pbp2 = (PriorityBufferedPipe2) ipo;
+		if(this.getSubscribedToSource().equals(pbp2.getSubscribedToSource())) {
+			return true;
+		}
+		return false;
+	}
 
 }

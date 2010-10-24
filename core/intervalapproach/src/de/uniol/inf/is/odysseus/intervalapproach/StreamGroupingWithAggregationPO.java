@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.GroupingHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -283,6 +284,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		createOutput(timestamp);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		return false;
 	}
 
 }

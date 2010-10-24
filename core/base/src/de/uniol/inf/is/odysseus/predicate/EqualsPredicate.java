@@ -24,4 +24,11 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 	public EqualsPredicate<T> clone() {
 		return predicate;
 	}
+	
+	public boolean equals(IPredicate pred) {
+		if(!(pred instanceof EqualsPredicate)) {
+			return false;
+		}
+		return true;
+	}
 }

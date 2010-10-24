@@ -8,6 +8,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -153,5 +154,18 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	// nur testweise zum Evaluieren
 	public SDFExpression getExpression() {
 		return expression;
+	}
+	
+	@Override
+	public boolean contains(AbstractPredicate<RelationalTuple<?>> pred) {
+		if(pred instanceof RelationalPredicate) {
+			System.out.println("Blablabla: " + ((RelationalPredicate) pred).getExpression().toString());
+		}
+		return true;
+		
+	}
+	
+	public boolean equals(IPredicate pred) {
+		return this.equals((Object)pred);
 	}
 }

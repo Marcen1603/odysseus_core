@@ -46,4 +46,16 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 	public void processPunctuation(PointInTime timestamp, int port) {	
 		sendPunctuation(timestamp);
 	}
+
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof MetadataUpdatePO)) {
+			return false;
+		}
+		MetadataUpdatePO mdupo = (MetadataUpdatePO) ipo;
+		if(this.getSubscribedToSource().equals(mdupo.getSubscribedToSource()) &&
+				this.metadataFactory.equals(mdupo.metadataFactory)) {
+			return true;
+		}
+		return false;
+	}
 }

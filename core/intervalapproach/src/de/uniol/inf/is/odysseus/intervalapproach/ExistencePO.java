@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -293,6 +294,17 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
 		this.areas[port^1].purgeElementsBefore(timestamp);
 		this.transferFunction.newHeartbeat(timestamp, port);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof ExistencePO)) {
+			return false;
+		}
+		ExistencePO epo = (ExistencePO) ipo;
+		if(this.getSubscribedToSource().equals(epo.getSubscribedToSource()) && this.joinPredicate.equals(epo.joinPredicate)) {
+			return true;
+		}
+		return false;
 	}
 
 }

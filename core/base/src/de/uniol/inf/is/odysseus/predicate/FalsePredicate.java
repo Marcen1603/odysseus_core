@@ -31,5 +31,12 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
 	public AbstractPredicate<T> clone() {
 		return new FalsePredicate<T>(this);
 	}
+	
+	public boolean equals(IPredicate pred) {
+		if(!(pred instanceof FalsePredicate)) {
+			return false;
+		}
+		return true;
+	}
 
 }

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 
 /**
@@ -132,6 +133,17 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		sendPunctuation(timestamp);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof DuplicateEliminationTIPO)) {
+			return false;
+		}
+		DuplicateEliminationTIPO bpp = (DuplicateEliminationTIPO) ipo;
+		if(this.getSubscribedToSource().equals(bpp.getSubscribedToSource())) {
+			return true;
+		}
+		return false;
 	}
 
 }

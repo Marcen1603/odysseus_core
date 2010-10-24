@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -163,6 +164,10 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public boolean equals(IPredicate pred) {
+		return this.equals((Object)pred);
 	}
 
 }

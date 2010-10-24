@@ -434,5 +434,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	
 	@Override
 	abstract public AbstractSink<T> clone();
-
+	
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(! (ipo instanceof ISink || ipo instanceof IPipe)) return false;
+		return process_isSemanticallyEqual(ipo);
+	}
+	
+	abstract public boolean process_isSemanticallyEqual(IPhysicalOperator ipo);
 }

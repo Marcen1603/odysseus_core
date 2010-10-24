@@ -18,4 +18,8 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
 		return new TruePredicate<T>();
 	}
 	
+	public boolean equals(IPredicate pred) {
+		return (pred instanceof TruePredicate);
+	}
+	
 }

@@ -66,6 +66,23 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 	public void processPunctuation(PointInTime timestamp, int port) {
 		sendPunctuation(timestamp);
 	}
-
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof SplitPO)) {
+			return false;
+		}
+		SplitPO spo = (SplitPO) ipo;
+		if(this.getSubscribedToSource().equals(spo.getSubscribedToSource()) &&
+				this.predicates.size() == spo.predicates.size()) {
+			for(int i = 0; i<this.predicates.size(); i++) {
+				if(!this.predicates.get(i).equals(spo.predicates.get(i))) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 }

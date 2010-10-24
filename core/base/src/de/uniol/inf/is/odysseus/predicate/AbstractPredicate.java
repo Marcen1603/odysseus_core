@@ -28,4 +28,6 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	abstract public AbstractPredicate<T> clone();
 	
 	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
+	
+	public boolean contains(AbstractPredicate<T> pred) {return true;}
 }

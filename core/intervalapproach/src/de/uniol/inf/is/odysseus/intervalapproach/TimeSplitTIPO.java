@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 public class TimeSplitTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractPipe<T, T> {
@@ -45,4 +46,15 @@ public class TimeSplitTIPO<T extends IMetaAttributeContainer<? extends ITimeInte
 		sendPunctuation(timestamp);
 	}
 
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof TimeSplitTIPO)) {
+			return false;
+		}
+		TimeSplitTIPO tstipo = (TimeSplitTIPO) ipo;
+		if(this.getSubscribedToSource().equals(tstipo.getSubscribedToSource()) &&
+				this.size == tstipo.size) {
+			return true;
+		}
+		return false;
+	}
 }

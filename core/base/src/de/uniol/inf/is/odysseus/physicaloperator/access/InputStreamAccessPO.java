@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> extends
@@ -81,6 +82,17 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 	@Override
 	public InputStreamAccessPO<In, Out> clone(){
 		return new InputStreamAccessPO<In, Out>(this);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof InputStreamAccessPO)) {
+			return false;
+		}
+		InputStreamAccessPO isapo = (InputStreamAccessPO) ipo;
+		if(this.host.equals(isapo.host) && this.port == isapo.port) {
+			return true;
+		}
+		return false;
 	}
 
 

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.osgicommands;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 public class MySink extends AbstractSink<Object> {
 
@@ -20,5 +21,8 @@ public class MySink extends AbstractSink<Object> {
 		System.out.println("Port:" + port + ", PUNCTUATION: " + timestamp);
 	}
 
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		return false;
+	}
 	
 }

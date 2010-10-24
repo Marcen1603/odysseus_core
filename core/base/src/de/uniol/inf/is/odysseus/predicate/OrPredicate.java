@@ -52,4 +52,14 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 	public int hashCode(){
 		return 19 * this.getLeft().hashCode() + 19 * this.getRight().hashCode();
 	}
+	
+	public boolean equals(IPredicate pred) {
+		if(!(pred instanceof OrPredicate)) {
+			return false;
+		}
+		OrPredicate op = (OrPredicate) pred;
+		// The Order of the Predicates shouldn't matter
+		return (this.getLeft().equals(op.getLeft()) && this.getRight().equals(op.getRight()))
+		|| (this.getLeft().equals(op.getRight()) && this.getRight().equals(op.getLeft()));
+	}
 }

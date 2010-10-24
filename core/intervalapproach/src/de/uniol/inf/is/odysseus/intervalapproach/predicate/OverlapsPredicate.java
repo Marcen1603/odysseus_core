@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
  * Singleton because no object state is needed
@@ -40,4 +41,10 @@ public class OverlapsPredicate extends
 	private OverlapsPredicate() {
 	}
 
+	public boolean equals(IPredicate pred) {
+		if(!(pred instanceof OverlapsPredicate)) {
+			return false;
+		}
+		return true;
+	}
 }

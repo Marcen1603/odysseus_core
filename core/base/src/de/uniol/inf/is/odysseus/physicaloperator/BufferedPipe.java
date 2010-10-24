@@ -154,5 +154,16 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	public void processPunctuation(PointInTime timestamp, int port) {
 		this.heartbeat.set(timestamp);
 	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof BufferedPipe)) {
+			return false;
+		}
+		BufferedPipe bp = (BufferedPipe) ipo;
+		if(this.getSubscribedToSource().equals(bp.getSubscribedToSource())) {
+			return true;
+		}
+		return false;
+	}
 
 }

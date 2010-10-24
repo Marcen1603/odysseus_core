@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterablePipe;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
@@ -184,6 +185,17 @@ public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M ex
 	public void processPunctuation(PointInTime timestamp, int port) {
 //		System.out.println("Process Punc: " + p++);
 		this.punctuations.addLast(timestamp);
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof BufferedPunctuationPipe2)) {
+			return false;
+		}
+		BufferedPunctuationPipe2 bpp2 = (BufferedPunctuationPipe2) ipo;
+		if(this.getSubscribedToSource().equals(bpp2.getSubscribedToSource())) {
+			return true;
+		}
+		return false;
 	}
 
 }

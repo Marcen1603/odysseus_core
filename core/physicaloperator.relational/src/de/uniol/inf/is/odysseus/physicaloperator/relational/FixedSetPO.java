@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 
@@ -47,6 +48,10 @@ public final class FixedSetPO<T extends IMetaAttributeContainer<? extends IClone
 	@Override
 	public FixedSetPO<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		return false;
 	}
 
 }

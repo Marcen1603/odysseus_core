@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
@@ -43,6 +44,8 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	private IAtomicDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
+	
+	private SDFAttributeList schema;
 
 	private boolean p2p = false;
 	public boolean connectToPipe = false;
@@ -62,6 +65,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
 		createDataReader(schema);
+		this.schema = schema;
 	}
 
 	private void createDataReader(SDFAttributeList schema) {
@@ -218,6 +222,17 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	@Override
 	public AtomicDataInputStreamAccessPO<M> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(!(ipo instanceof AtomicDataInputStreamAccessPO)) {
+			return false;
+		}
+		AtomicDataInputStreamAccessPO adisapo = (AtomicDataInputStreamAccessPO) ipo;
+		if(this.hostName.equals(adisapo.hostName) && this.port == adisapo.port && this.schema.equals(adisapo.schema)) {
+			return true;
+		}
+		return false;
 	}
 
 }

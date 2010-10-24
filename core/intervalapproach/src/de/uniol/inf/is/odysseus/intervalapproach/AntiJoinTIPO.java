@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
@@ -331,5 +332,12 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
+	}
+	
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if(ipo instanceof AntiJoinTIPO && this.getSubscribedToSource().equals(((AntiJoinTIPO) ipo).getSubscribedToSource())) {
+			return true;
+		}
+		return false;
 	}
 }
