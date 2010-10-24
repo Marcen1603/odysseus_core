@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 
 public class Operator {
@@ -116,6 +116,7 @@ public class Operator {
 			
 			// logicalOperator aus vorgänger holen, falls möglich
 			int i = 0;
+			((AbstractOperatorBuilder)builder).clearInputOperators();
 			for( OperatorConnection connection : getConnectionsAsTarget()) {
 				Operator source = connection.getSource();
 				if( source.hasLogicalOperator() ) {
