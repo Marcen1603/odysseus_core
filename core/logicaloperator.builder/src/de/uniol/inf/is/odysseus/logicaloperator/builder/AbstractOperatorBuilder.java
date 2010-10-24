@@ -186,6 +186,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		return this.inputOperators.get(inputPort).operator;
 	}
 	
+	public void clearInputOperators() {
+		this.inputOperators.clear();
+	}
+	
 	public boolean hasInputOperator(int inputPort) {
 		return this.inputOperators.containsKey(inputPort);
 	}
