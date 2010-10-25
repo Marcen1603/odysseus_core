@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractUserManagementEntity {
+abstract class AbstractUserManagementEntity {
 
 	protected List<Privilege> privileges;
 
@@ -15,9 +15,9 @@ public class AbstractUserManagementEntity {
 		return privileges;
 	}
 
-	public Privilege getPrivilegeByName(String name) {
+	public Privilege getPrivilegeByObject(String objecturi) {
 		for (Privilege priv : privileges) {
-			if (priv.getPrivname().equals(name)) {
+			if (priv.getObject().equals(objecturi)) {
 				return priv;
 			}
 		}

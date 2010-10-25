@@ -22,7 +22,7 @@ public class AccessControl {
 	 * @param user
 	 * @return boolean
 	 */
-	public static boolean hasPermission(IUserActions operation, String object,
+	public static boolean hasPermission(IUserAction operation, String object,
 			User user) {
 		if (user != null && operation != null) {
 			return hasOperationOnObject(operation, object, user);
@@ -39,7 +39,7 @@ public class AccessControl {
 	 * @param user
 	 * @return
 	 */
-	private static boolean hasOperationOnObject(IUserActions operation,
+	private static boolean hasOperationOnObject(IUserAction operation,
 			String objecturi, User user) {
 		// user special privs
 		if (user.getPrivileges() != null && user.getPrivileges().size() > 0) {

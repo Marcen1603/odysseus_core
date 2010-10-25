@@ -10,10 +10,10 @@ public class Privilege implements Serializable {
 	private String privname;
 	private final AbstractUserManagementEntity owner;
 	private String objecturi;
-	private List<IUserActions> operations;
+	private List<IUserAction> operations;
 
 	Privilege(String objecturi, AbstractUserManagementEntity owner,
-			List<IUserActions> operations, int privid) {
+			List<IUserAction> operations, int privid) {
 		this.ID = privid;
 		this.objecturi = objecturi;
 		this.operations = operations;
@@ -40,7 +40,7 @@ public class Privilege implements Serializable {
 		return false;
 	}
 
-	public List<IUserActions> getOperations() {
+	public List<IUserAction> getOperations() {
 		return this.operations;
 	}
 
@@ -52,19 +52,19 @@ public class Privilege implements Serializable {
 		this.objecturi = newobj;
 	}
 
-	public void addOperations(List<IUserActions> operations) {
-		for (IUserActions action : operations) {
+	public void addOperations(List<IUserAction> operations) {
+		for (IUserAction action : operations) {
 			if (!this.operations.contains(action)) {
 				addOperation(action);
 			}
 		}
 	}
 
-	void addOperation(IUserActions newOperation) {
+	void addOperation(IUserAction newOperation) {
 		this.operations.add(newOperation);
 	}
 
-	public void removeOperations(List<IUserActions> operations) {
+	public void removeOperations(List<IUserAction> operations) {
 		this.operations.removeAll(operations);
 	}
 
@@ -95,6 +95,13 @@ public class Privilege implements Serializable {
 		}
 
 		return true;
+	}
+
+	public boolean isEmpty() {
+		if (this.operations.isEmpty()) {
+			return true;
+		}
+		return false;
 	}
 
 }
