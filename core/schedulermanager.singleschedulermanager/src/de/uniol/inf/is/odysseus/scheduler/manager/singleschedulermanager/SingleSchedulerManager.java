@@ -5,17 +5,19 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
+import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
-import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
-import de.uniol.inf.is.odysseus.event.EventHandler;
-import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 
 
 /**
@@ -29,6 +31,15 @@ import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerM
 public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		IInfoProvider {
 
+	static Logger _logger = null;
+	
+	static synchronized Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(SingleSchedulerManager.class);
+		}
+		return _logger;
+	}
+	
 	private final String schedulingConfigFile = System.getProperty("user.home")
 			+ "/odysseus/scheduling.conf";
 
