@@ -7,12 +7,12 @@ public class Variable implements IExpression<Object> {
 	private Object value;
 	private final String identifier;
 	private final Class<?> type;
-	
+
 	public Variable(String id) {
 		this.identifier = id;
 		this.type = Object.class;
 	}
-	
+
 	public Variable(String id, Class<?> type) {
 		this.identifier = id;
 		this.type = type;
@@ -23,6 +23,9 @@ public class Variable implements IExpression<Object> {
 	}
 
 	public void bind(Object value) {
+		if (value instanceof Number) {
+			value = ((Number) value).doubleValue();
+		}
 		this.value = value;
 	}
 
@@ -44,22 +47,22 @@ public class Variable implements IExpression<Object> {
 	public boolean equals(Object obj) {
 		return ((Variable) obj).identifier.equals(this.identifier);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return this.identifier.hashCode();
 	}
-	
+
 	@Override
 	public Set<Variable> getVariables() {
 		return Collections.singleton(this);
 	}
-	
+
 	@Override
 	public Variable getVariable(String varName) {
 		return this.identifier.equals(varName) ? this : null;
 	}
-	
+
 	@Override
 	public Class<?> getType() {
 		return type;
