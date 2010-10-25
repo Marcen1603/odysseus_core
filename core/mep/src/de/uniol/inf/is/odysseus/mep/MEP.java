@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.mep.functions.ToStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
-import de.uniol.inf.is.odysseus.mep.impl.ParseException;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
 public class MEP {

@@ -64,4 +64,34 @@ public class Variable implements IExpression<Object> {
 	public Class<?> getType() {
 		return type;
 	}
+
+	@Override
+	public boolean isVariable() {
+		return true;
+	}
+
+	@Override
+	public boolean isFunction() {
+		return false;
+	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public Variable toVariable() {
+		return this;
+	}
+
+	@Override
+	public IFunction<Object> toFunction() {
+		throw new RuntimeException("cannot convert Variable to IFunction");
+	}
+
+	@Override
+	public Constant<Object> toConstant() {
+		throw new RuntimeException("cannot convert Variable to Constant");
+	}
 }

@@ -42,4 +42,34 @@ public class Constant<T> implements IExpression<T> {
 	public Variable getVariable(String name) {
 		return null;
 	}
+	
+	@Override
+	public boolean isVariable() {
+		return false;
+	}
+
+	@Override
+	public boolean isFunction() {
+		return false;
+	}
+
+	@Override
+	public boolean isConstant() {
+		return true;
+	}
+
+	@Override
+	public Variable toVariable() {
+		throw new RuntimeException("cannot convert Constant to Variable");
+	}
+
+	@Override
+	public IFunction<T> toFunction() {
+		throw new RuntimeException("cannot convert Constant to IFunction");
+	}
+
+	@Override
+	public Constant<T> toConstant() {
+		return this;
+	}
 }

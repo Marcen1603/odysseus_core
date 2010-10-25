@@ -15,6 +15,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 		this.arguments = arguments;
 	}
+	
+	@Override
+	public void setArgument(int argumentPosition, IExpression<?> argument) {
+		this.arguments[argumentPosition] = argument;
+	}
 
 	@Override
 	public IExpression<?>[] getArguments() {
@@ -73,5 +78,40 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	public boolean isContextDependent() {
 		return false;
+	}
+	
+	@Override
+	public IExpression<?> getArgument(int argumentPosition) {
+		return this.arguments[argumentPosition];
+	}
+	
+	@Override
+	public boolean isVariable() {
+		return false;
+	}
+
+	@Override
+	public boolean isFunction() {
+		return true;
+	}
+
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public Variable toVariable() {
+		throw new RuntimeException("cannot convert IFunction to Variable");
+	}
+
+	@Override
+	public IFunction<T> toFunction() {
+		return this;
+	}
+
+	@Override
+	public Constant<T> toConstant() {
+		throw new RuntimeException("cannot convert IFunction to Constant");
 	}
 }
