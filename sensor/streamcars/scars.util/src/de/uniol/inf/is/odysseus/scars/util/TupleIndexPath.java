@@ -183,8 +183,15 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	 * 
 	 * @return Int-Array
 	 */
-	public int[] toArray() {
-		return this.indicesArray;
+	public int[] toArray(boolean getCopy) {
+		if(getCopy){
+			int[] copy = new int[this.indicesArray.length];
+			System.arraycopy(this.indicesArray, 0, copy, 0, this.indicesArray.length);
+			return copy;
+		}
+		else{
+			return this.indicesArray;
+		}
 	}
 
 	@Override

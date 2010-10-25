@@ -56,9 +56,9 @@ public class InitializationFunction<M extends IGain & IProbability & IPrediction
 	
 		ConnectionList newObjConList = new ConnectionList();
 		
-		int [] newpath = newTupleIndexPath.toArray();
+		int [] newpath = newTupleIndexPath.toArray(false);
 		
-		int [] oldpath = oldTupleIndexPath.toArray();
+		int [] oldpath = oldTupleIndexPath.toArray(false);
 		
 		for (int i=0; i<= newList.getAttributeCount()-1; i++) {
 		
