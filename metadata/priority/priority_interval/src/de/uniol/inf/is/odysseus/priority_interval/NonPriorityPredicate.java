@@ -35,5 +35,10 @@ public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IP
 	public NonPriorityPredicate<T> clone() {
 		return new NonPriorityPredicate<T>();
 	}
+	
+	@Override
+	public boolean equals(IPredicate<T> pred) {
+		return pred instanceof NonPriorityPredicate;
+	}
 
 }
