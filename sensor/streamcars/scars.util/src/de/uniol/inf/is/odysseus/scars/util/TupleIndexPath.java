@@ -32,7 +32,6 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	private List<TupleIndex> indices;
 	private SchemaIndexPath schemaIndexPath;
 	private List<Integer> listIndices;
-	private int[] indicesArray;
 
 	public static TupleIndexPath fromIntArray(int[] array, MVRelationalTuple<?> tuple, SchemaIndexPath path) {
 		
@@ -63,9 +62,6 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 			if (idx.isList())
 				this.listIndices.add(i);
 		}
-		this.indicesArray = new int[indices.size()];
-		for (int i = 0; i < indices.size(); i++)
-			this.indicesArray[i] = indices.get(i).toInt();
 	}
 
 	// Interner Konstruktor
@@ -78,9 +74,6 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		this.listIndices = new ArrayList<Integer>();
 		for (Integer i : other.listIndices)
 			this.listIndices.add(i);
-		this.indicesArray = new int[other.indicesArray.length];
-		for (int i = 0; i < this.indicesArray.length; i++)
-			this.indicesArray[i] = other.indicesArray[i];
 	}
 
 	/**
