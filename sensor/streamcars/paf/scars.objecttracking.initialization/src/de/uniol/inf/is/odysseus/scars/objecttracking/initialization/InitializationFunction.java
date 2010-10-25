@@ -17,8 +17,6 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 
 /**
  * @author dtwumasi
@@ -56,9 +54,9 @@ public class InitializationFunction<M extends IGain & IProbability & IPrediction
 	
 		ConnectionList newObjConList = new ConnectionList();
 		
-		int [] newpath = newTupleIndexPath.toArray(false);
+		int [] newpath = newTupleIndexPath.toArray();
 		
-		int [] oldpath = oldTupleIndexPath.toArray(false);
+		int [] oldpath = oldTupleIndexPath.toArray();
 		
 		for (int i=0; i<= newList.getAttributeCount()-1; i++) {
 		

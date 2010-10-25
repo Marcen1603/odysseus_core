@@ -162,8 +162,8 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 							.getMetadata()
 							.getConnectionList()
 							.getRatingForElementPair(
-									scannedTupleInfo.tupleIndexPath.toArray(false),
-									predictedTupleInfo.tupleIndexPath.toArray(false));
+									scannedTupleInfo.tupleIndexPath.toArray(),
+									predictedTupleInfo.tupleIndexPath.toArray());
 
 					double value = this.associationAlgorithm.evaluate(
 							scannedObject.getMetadata().getCovariance(),
@@ -176,8 +176,8 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 
 					if (currentRating != value) {
 						newObjConList.add(new Connection(
-								scannedTupleInfo.tupleIndexPath.toArray(true),
-								predictedTupleInfo.tupleIndexPath.toArray(true),
+								scannedTupleInfo.tupleIndexPath.toArray(),
+								predictedTupleInfo.tupleIndexPath.toArray(),
 								value));
 					}
 				}
