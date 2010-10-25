@@ -181,7 +181,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		for (int i = 0; i < this.indices.size(); i++) {
 			indexArray[i] = this.indices.get(i).toInt();
 		}
-		return toArray();
+		return indexArray;
 	}
 
 	@Override
