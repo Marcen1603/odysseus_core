@@ -17,18 +17,20 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.rcp.tenants.view.Activator;
+import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.IPercentileConstraint;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.Privilege;
 import de.uniol.inf.is.odysseus.usermanagement.Role;
 import de.uniol.inf.is.odysseus.usermanagement.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
-
-public class TenantView extends ViewPart implements IUserManagementListener, ITenantManagementListener{
+public class TenantView extends ViewPart implements IUserManagementListener,
+		ITenantManagementListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -53,38 +55,52 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof UserWrapper){
+			if (parentElement instanceof UserWrapper) {
 				ArrayList<Object> list = new ArrayList<Object>();
-				list.addAll(((UserWrapper)parentElement).users);
+				list.addAll(((UserWrapper) parentElement).users);
 				return list.toArray();
 			}
-			if (parentElement instanceof TenantWrapper){
-				return ((TenantWrapper)parentElement).tenants.toArray();
+			if (parentElement instanceof TenantWrapper) {
+				return ((TenantWrapper) parentElement).tenants.toArray();
 			}
 
-			if (parentElement instanceof List){
+			if (parentElement instanceof List) {
 				return ((List<?>) parentElement).toArray();
 			}
-			if (parentElement instanceof Collection){
+			if (parentElement instanceof Collection) {
 				return ((Collection<?>) parentElement).toArray();
 			}
-			if (parentElement instanceof Tenant){
+			if (parentElement instanceof Tenant) {
 				ArrayList<Object> list = new ArrayList<Object>();
 				Tenant t = (Tenant) parentElement;
 				list.add(t.getServiceLevelAgreement());
 				list.addAll(t.getUsers());
 				return list.toArray();
 			}
-			if (parentElement instanceof User){
+			if (parentElement instanceof User) {
 				ArrayList<Object> list = new ArrayList<Object>();
 				User u = (User) parentElement;
 				list.addAll(u.getRoles());
 				list.addAll(u.getPrivileges());
 				return list.toArray();
 			}
+			// new
+			if (parentElement instanceof Role) {
+				ArrayList<Object> list = new ArrayList<Object>();
+				Role r = (Role) parentElement;
+				list.addAll(r.getPrivileges());
+				return list.toArray();
+			}
+			if (parentElement instanceof Privilege) {
+				ArrayList<Object> list = new ArrayList<Object>();
+				Privilege p = (Privilege) parentElement;
+				list.addAll(p.getOperations());
+				return list.toArray();
+			}
 
-			if (parentElement instanceof IServiceLevelAgreement){
-				return ((IServiceLevelAgreement)parentElement).getPercentilConstraints().toArray();
+			if (parentElement instanceof IServiceLevelAgreement) {
+				return ((IServiceLevelAgreement) parentElement)
+						.getPercentilConstraints().toArray();
 			}
 			return null;
 		}
@@ -96,10 +112,10 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 
 		@Override
 		public boolean hasChildren(Object element) {
-			if (element instanceof UserWrapper){
+			if (element instanceof UserWrapper) {
 				return true;
 			}
-			if (element instanceof TenantWrapper){
+			if (element instanceof TenantWrapper) {
 				return true;
 			}
 			if (element instanceof Collection)
@@ -112,6 +128,11 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 				return true;
 			if (element instanceof User)
 				return true;
+			// new
+			if (element instanceof Role)
+				return true;
+			if (element instanceof Privilege)
+				return true;
 			return false;
 		}
 
@@ -120,56 +141,62 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 	class ViewLabelProvider extends LabelProvider {
 
 		public String getText(Object obj) {
-		
-			if (obj instanceof TenantWrapper){
+
+			if (obj instanceof TenantWrapper) {
 				return "Tenants";
 			}
-			if (obj instanceof UserWrapper){
+			if (obj instanceof UserWrapper) {
 				return "User";
-			}			
-			if (obj instanceof User){
-				return ((User)obj).getUsername();
 			}
-			if (obj instanceof Role){
-				return "Role: "+((Role)obj).getRolename();
+			if (obj instanceof User) {
+				return ((User) obj).getUsername();
 			}
-			if (obj instanceof Tenant){
-				return ((Tenant)obj).getName();
+			if (obj instanceof Role) {
+				return "Role: " + ((Role) obj).getRolename();
 			}
-			if (obj instanceof IServiceLevelAgreement){
-				return "SLA "+((IServiceLevelAgreement)obj).getName();
+			if (obj instanceof Privilege) {
+				return "Role: " + ((Privilege) obj).getPrivname();
+			}
+			if (obj instanceof Tenant) {
+				return ((Tenant) obj).getName();
+			}
+			if (obj instanceof IServiceLevelAgreement) {
+				return "SLA " + ((IServiceLevelAgreement) obj).getName();
 			}
 			return obj.toString();
 		}
 
 		public Image getImage(Object obj) {
-			if (obj instanceof UserWrapper){
+			if (obj instanceof UserWrapper) {
 				return Activator.getDefault().getImageRegistry().get("users");
-			}	
-			if (obj instanceof TenantWrapper){
+			}
+			if (obj instanceof TenantWrapper) {
 				return Activator.getDefault().getImageRegistry().get("users");
-			}	
-			if (obj instanceof User){
-				if (UserManagement.getInstance().isLoggedIn(((User)obj).getUsername())){
-					return Activator.getDefault().getImageRegistry().get("loggedinuser");
-				}else{
-					return Activator.getDefault().getImageRegistry().get("user");				
+			}
+			if (obj instanceof User) {
+				if (UserManagement.getInstance().isLoggedIn(
+						((User) obj).getUsername())) {
+					return Activator.getDefault().getImageRegistry()
+							.get("loggedinuser");
+				} else {
+					return Activator.getDefault().getImageRegistry()
+							.get("user");
 				}
 			}
-			if (obj instanceof Tenant){
-				return Activator.getDefault().getImageRegistry().get("tenant");				
+			if (obj instanceof Tenant) {
+				return Activator.getDefault().getImageRegistry().get("tenant");
 			}
-			if (obj instanceof Role){
-				return Activator.getDefault().getImageRegistry().get("role");				
+			if (obj instanceof Role) {
+				return Activator.getDefault().getImageRegistry().get("role");
 			}
-			if (obj instanceof IServiceLevelAgreement){
-				return Activator.getDefault().getImageRegistry().get("sla");				
+			if (obj instanceof IServiceLevelAgreement) {
+				return Activator.getDefault().getImageRegistry().get("sla");
 			}
-			if (obj instanceof IPercentileConstraint){
-				return Activator.getDefault().getImageRegistry().get("percentile");				
+			if (obj instanceof IPercentileConstraint) {
+				return Activator.getDefault().getImageRegistry()
+						.get("percentile");
 			}
 
-			
 			String imageKey = ISharedImages.IMG_OBJ_FILE;
 			if (obj instanceof Tenant)
 				imageKey = ISharedImages.IMG_OBJ_FOLDER;
@@ -177,21 +204,30 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 					.getImage(imageKey);
 		}
 	}
-	
+
 	public void refresh() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				List<Object> l = new ArrayList<Object>();
-				l.add(new TenantWrapper(TenantManagement.getInstance().getTenants()));
-				l.add(new UserWrapper(UserManagement.getInstance().getUsers()));
+				l.add(new TenantWrapper(TenantManagement.getInstance()
+						.getTenants()));
+				try {
+					l.add(new UserWrapper(
+							UserManagement.getInstance()
+									.getUsers(
+											UserManagement.getInstance()
+													.getSuperUser())));
+				} catch (HasNoPermissionException e) {
+					new RuntimeException(e);
+				}
 				viewer.setInput(l);
 			}
 
 		});
 	}
-	
+
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
@@ -204,7 +240,7 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 
 		UserManagement.getInstance().addTenantManagementListener(this);
 		TenantManagement.getInstance().addTenantManagementListener(this);
-		
+
 		// Create the help context id for the viewer's control
 		PlatformUI
 				.getWorkbench()
@@ -228,22 +264,27 @@ public class TenantView extends ViewPart implements IUserManagementListener, ITe
 
 	@Override
 	public void usersChangedEvent() {
-		refresh();	
+		refresh();
+	}
+
+	@Override
+	public void roleChangedEvent() {
+		refresh();
 	}
 }
 
-class UserWrapper{
+class UserWrapper {
 	public Collection<User> users;
-	
+
 	public UserWrapper(Collection<User> users) {
 		this.users = users;
 	}
 }
 
-class TenantWrapper{
+class TenantWrapper {
 	public Collection<Tenant> tenants;
-	
-	public TenantWrapper(Collection<Tenant> tenants){
+
+	public TenantWrapper(Collection<Tenant> tenants) {
 		this.tenants = tenants;
 	}
 }
