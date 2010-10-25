@@ -10,24 +10,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.latency.ILatency;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaDataInitializer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -38,9 +26,6 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	protected MVRelationalTuple<M> buffer;
 	private SDFAttributeList outputSchema;
 
-	private StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>> metadataCreator;
-
-	
 	public JDVEAccessMVPO(int pPort) {
 		this.port = pPort;
 	}
@@ -59,7 +44,6 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	protected void process_open() throws OpenFailedException {
 		try {
 			data = new JDVEData<M>(this.port, outputSchema);
-			metadataCreator = new StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>>(outputSchema);
 		} catch (SocketException ex) {
 			throw new OpenFailedException(ex);
 		}
@@ -114,44 +98,10 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 		if (buffer != null) {
 			
 			MVRelationalTuple<M> tuple = this.buffer.clone();
-			Class<M> clazz = (Class<M>) MetadataRegistry.getMetadataType(toStringSet(ITimeInterval.class, IPredictionFunctionKey.class, ILatency.class, IProbability.class, IApplicationTime.class,
-					IConnectionContainer.class, IGain.class));
-
-			assignMetadata(clazz, tuple);
-			metadataCreator.updateMetadata((MVRelationalTuple<StreamCarsMetaData<Object>>) tuple);
 
 			transfer(tuple);
-//			sendPunctuation(new PointInTime(data.getLastTimestamp()));
 		}
 		buffer = null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void assignMetadata(Class<M> clazz, Object tuple ){
-		try {
-			if( tuple instanceof IMetaAttributeContainer ) {
-				((IMetaAttributeContainer<M>)tuple).setMetadata(clazz.newInstance());
-			}
-			if( tuple instanceof MVRelationalTuple<?>) {
-				MVRelationalTuple<M> t = (MVRelationalTuple<M>) tuple;
-				for( int i = 0; i < t.getAttributeCount(); i++ ) {
-					assignMetadata(clazz, t.getAttribute(i));
-				}
-			}
-		} catch( IllegalAccessException ex ) {
-			ex.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private static HashSet<String> toStringSet(
-			Class<? extends IMetaAttribute>... combinationOf) {
-		HashSet<String> typeSet = new HashSet<String>();
-		for (Class<?> c : combinationOf) {
-			typeSet.add(c.getName());
-		}
-		return typeSet;
 	}
 	
 	/**
