@@ -89,8 +89,9 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 					}
 				}
 			} catch (Throwable t) {
-				//t.printStackTrace();
-				// ignore!
+				// TODO: Message to Caller
+				t.printStackTrace();
+				throw new SchedulingException(t);
 			}
 		}
 	}
@@ -103,6 +104,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 			this.s = s;
 		}
 
+		@Override
 		public void run() {
 			sourceThreads.add(this);
 			logger.debug("Added Source "+s);

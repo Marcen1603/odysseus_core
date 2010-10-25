@@ -118,7 +118,9 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 					}
 				}
 			} catch (Throwable t) {
+				// TODO: Message to Caller
 				t.printStackTrace();
+				throw new SchedulingException(t);
 			}
 		}
 

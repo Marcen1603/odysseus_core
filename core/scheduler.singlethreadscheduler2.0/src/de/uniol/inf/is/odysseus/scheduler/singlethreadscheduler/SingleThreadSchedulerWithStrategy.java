@@ -218,8 +218,9 @@ class ExecutorThread extends Thread {
 				}
 			}
 		} catch (Throwable t) {
-			//TODO das is mist so, muss an executor gemeldet werden
+			// TODO: Message to Caller
 			t.printStackTrace();
+			throw new SchedulingException(t);
 		}
 	}
 }
