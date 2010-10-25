@@ -75,6 +75,28 @@ public class StandardExecutor extends AbstractExecutor {
 		return _logger;
 	}
 
+	// ----------------------------------------------------------------------------------------
+	// OSGI-Framework
+	// ----------------------------------------------------------------------------------------
+
+	/**
+	 * OSGi-Method: Is called when this object will be activated by OSGi (after
+	 * constructor and bind-methods). This method can be used to configure this
+	 * object.
+	 */
+	public void activate() {
+		// store buffer placement strategy in the configuration
+		Iterator<String> iter;
+		if (getRegisteredBufferPlacementStrategiesIDs() != null
+				&& (iter = getRegisteredBufferPlacementStrategiesIDs().iterator())
+						.hasNext()) {
+			this.configuration.set(new ParameterBufferPlacementStrategy(getBufferPlacementStrategy(iter
+					.next())));
+		} else {
+			this.configuration.set(new ParameterBufferPlacementStrategy());
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
