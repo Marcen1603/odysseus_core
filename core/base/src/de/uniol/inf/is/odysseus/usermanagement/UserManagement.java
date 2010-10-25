@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryActions;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryAction;
 
 public class UserManagement extends AbstractUserManagement {
 
@@ -33,8 +33,8 @@ public class UserManagement extends AbstractUserManagement {
 							.getInstance().getRoleID());
 
 					// create permissions for admin
-					List<IUserActions> adminops = new ArrayList<IUserActions>();
-					adminops.addAll(UserManagementActions.getAll());
+					List<IUserAction> adminops = new ArrayList<IUserAction>();
+					adminops.addAll(UserManagementAction.getAll());
 
 					// create privilege for admin (kann nicht über create, da
 					// noch keine Rechte vorhanden
@@ -52,8 +52,8 @@ public class UserManagement extends AbstractUserManagement {
 					Role ddrole = new Role("datadictionary", UserManagement
 							.getInstance().getRoleID());
 					// create permission for admin
-					List<IUserActions> admindatadic = new ArrayList<IUserActions>();
-					admindatadic.addAll(DataDictionaryActions.getAll());
+					List<IUserAction> admindatadic = new ArrayList<IUserAction>();
+					admindatadic.addAll(DataDictionaryAction.getAll());
 					// create DataDic Priv and add to Role
 					ddrole.addPrivilege(instance.createPrivilege(
 							"DataDictionary", ddrole, admindatadic,
