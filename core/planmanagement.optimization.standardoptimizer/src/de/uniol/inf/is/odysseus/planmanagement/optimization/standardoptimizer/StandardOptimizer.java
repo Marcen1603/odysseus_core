@@ -168,7 +168,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			getLogger().debug("Building alternative plans.");
 			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
 					sender, query, 
-					new OptimizationConfiguration(ParameterDoRewrite.TRUE), null);
+					new OptimizationConfiguration(ParameterDoRewrite.TRUE));
 			
 			// pick out optimal plan by cost analysis
 			List<IPhysicalOperator> candidates = this.getExecutionCostModel().getCostCalculator().pickBest(

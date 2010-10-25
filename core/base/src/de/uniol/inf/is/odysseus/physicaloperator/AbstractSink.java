@@ -440,5 +440,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return process_isSemanticallyEqual(ipo);
 	}
 	
-	abstract public boolean process_isSemanticallyEqual(IPhysicalOperator ipo);
-}
+	// TODO: Make abstract again and implement in Children
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo){
+		return false;
+	}}

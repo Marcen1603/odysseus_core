@@ -462,7 +462,7 @@ public class ExecutorConsole implements CommandProvider,
 					return;
 				} else {
 					this.executor.getConfiguration().set(
-							new ParameterBufferPlacementStrategy(null));
+							new ParameterBufferPlacementStrategy());
 					if ("no strategy".equalsIgnoreCase(bufferName)) {
 						ci.println("Current strategy removed.");
 					} else {

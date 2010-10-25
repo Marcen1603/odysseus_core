@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
@@ -134,7 +135,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				wait(1000);
 			}
 
-			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
+			//executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
 			if (useBenchmarkMemUsage) {
 				this.avgMemListener = new AvgBenchmarkMemUsageListener();
@@ -147,6 +148,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			parameters
 					.add(new ParameterTransformationConfiguration(trafoConfig));
 			parameters.addAll(getBuildParameters());
+			parameters.add(new ParameterBufferPlacementStrategy(bufferPlacement));
 
 			for (Pair<String, String> query : getQueries()) {
 				executor.addQuery(query.getE2(), query.getE1(), user,

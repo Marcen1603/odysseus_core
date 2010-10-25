@@ -116,7 +116,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	@Override
 	public Map<IPhysicalOperator,ILogicalOperator> createAlternativePlans(
 			IQueryOptimizable sender, IQuery query,
-			OptimizationConfiguration parameters, Set<String> rulesToUse)
+			OptimizationConfiguration parameters)
 			throws QueryOptimizationException {
 		
 		throw new RuntimeException("Does not work at the moment. At Marco: Kannst du das bitte so anpassen, " +

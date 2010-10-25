@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.query;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -11,7 +10,6 @@ import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
@@ -42,6 +40,9 @@ public interface IQueryOptimizer {
 	 * Adds buffers corresponding to the query's
 	 * {@link IBufferPlacementStrategy} and initializes the physical plan.
 	 * 
+	 * @param sender
+	 *            Optimize requester which provides informations for the
+	 *            optimization.
 	 * @param query
 	 *            The query that should be post-initialized.
 	 * @param physicalPlan
@@ -75,5 +76,5 @@ public interface IQueryOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(IQueryOptimizable sender, IQuery query,
-			OptimizationConfiguration parameters, Set<String> rulesToUse) throws QueryOptimizationException;
+			OptimizationConfiguration parameters) throws QueryOptimizationException;
 }

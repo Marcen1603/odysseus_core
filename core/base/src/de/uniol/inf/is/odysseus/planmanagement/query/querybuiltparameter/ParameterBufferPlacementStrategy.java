@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.IExecution
 public class ParameterBufferPlacementStrategy extends Setting<IBufferPlacementStrategy> implements
 		IQueryBuildSetting<IBufferPlacementStrategy>, IExecutionSetting<IBufferPlacementStrategy> {
 
+	private String name;
+
 	/**
 	 * Creates a ParameterBufferPlacementStrategy.
 	 * 
@@ -23,4 +25,18 @@ public class ParameterBufferPlacementStrategy extends Setting<IBufferPlacementSt
 	public ParameterBufferPlacementStrategy(IBufferPlacementStrategy object) {
 		super(object);
 	}
+	
+	public ParameterBufferPlacementStrategy(){
+		super(null);
+	}
+	
+	public ParameterBufferPlacementStrategy(String name){
+		super(null);
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
 }

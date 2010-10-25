@@ -70,33 +70,10 @@ public class StandardExecutor extends AbstractExecutor {
 
 	protected static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(StandardExecutor.class);
 		}
 		return _logger;
 	}
-
-	// ----------------------------------------------------------------------------------------
-	// OSGI-Framework
-	// ----------------------------------------------------------------------------------------
-
-	/**
-	 * OSGi-Method: Is called when this object will be activated by OSGi (after
-	 * constructor and bind-methods). This method can be used to configure this
-	 * object.
-	 */
-	public void activate() {
-		// store buffer placement strategy in the configuration
-		Iterator<String> iter;
-		if (getRegisteredBufferPlacementStrategiesIDs() != null
-				&& (iter = getRegisteredBufferPlacementStrategiesIDs().iterator())
-						.hasNext()) {
-			this.configuration.set(new ParameterBufferPlacementStrategy(getBufferPlacementStrategy(iter
-					.next())));
-		} else {
-			this.configuration.set(new ParameterBufferPlacementStrategy(null));
-		}
-	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -287,6 +264,12 @@ public class StandardExecutor extends AbstractExecutor {
 		if (params.getTransformationConfiguration() == null) {
 			throw new RuntimeException(
 					"No transformation configuration set. Abort query execution.");
+		}
+		// Parameter can be delayed as String --> Replace with strategy
+ 		ParameterBufferPlacementStrategy bufferPlacement = params.getBufferPlacementParameter();
+		if (bufferPlacement != null && bufferPlacement.getValue() == null && bufferPlacement.getName() != null){
+			bufferPlacement = new ParameterBufferPlacementStrategy(getBufferPlacementStrategy(bufferPlacement.getName()));
+			params.set(bufferPlacement);
 		}
 		return params;
 	}

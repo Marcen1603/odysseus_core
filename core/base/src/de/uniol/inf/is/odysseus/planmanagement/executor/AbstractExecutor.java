@@ -10,8 +10,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.CompilerException;
-
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
@@ -39,7 +37,6 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
@@ -670,11 +667,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		} // else will be done if compiler is bound
 	}
 
-	@Override
-	public void setDefaultBufferPlacementStrategy(String strategy) {
-		IBufferPlacementStrategy strat = this
-				.getBufferPlacementStrategy(strategy);
-		this.configuration.set(new ParameterBufferPlacementStrategy(strat));
-	}
+//	@Override
+//	public void setDefaultBufferPlacementStrategy(String strategy) {
+//		IBufferPlacementStrategy strat = this
+//				.getBufferPlacementStrategy(strategy);
+//		this.configuration.set(new ParameterBufferPlacementStrategy(strat));
+//	}
 
 }

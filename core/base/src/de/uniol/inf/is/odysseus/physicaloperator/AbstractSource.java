@@ -521,6 +521,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	abstract public AbstractSource<T> clone();
 	
+	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(! (ipo instanceof ISource || ipo instanceof IPipe)) return false;
 		if(! this.getOutputSchema().equals(((ISource)ipo).getOutputSchema())) {
@@ -529,6 +530,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return process_isSemanticallyEqual(ipo);
 	}
 	
-	abstract public boolean process_isSemanticallyEqual(IPhysicalOperator ipo);
-
+	// TODO: Make abstract again and implement in Children
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo){
+		return false;
+	}
 }

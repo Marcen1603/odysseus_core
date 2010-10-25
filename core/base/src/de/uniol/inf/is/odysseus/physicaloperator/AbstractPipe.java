@@ -304,6 +304,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public boolean delegatedIsSemanticallyEqual(IPhysicalOperator ipo) {
 		return process_isSemanticallyEqual(ipo);
 	}
-	abstract public boolean process_isSemanticallyEqual(IPhysicalOperator ipo);
+
 
 }

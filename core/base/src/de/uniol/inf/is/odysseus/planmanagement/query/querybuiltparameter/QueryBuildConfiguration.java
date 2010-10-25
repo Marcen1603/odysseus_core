@@ -53,7 +53,7 @@ public class QueryBuildConfiguration extends
 		}
 
 		if (!contains(ParameterBufferPlacementStrategy.class)) {
-			set(new ParameterBufferPlacementStrategy(null));
+			set(new ParameterBufferPlacementStrategy());
 		}
 
 		if (!contains(ParameterPriority.class)) {
@@ -126,9 +126,12 @@ public class QueryBuildConfiguration extends
 	 * 
 	 * @return An {@link IBufferPlacementStrategy} for creating the query.
 	 */
-	public IBufferPlacementStrategy getBufferPlacementStrategy() {
-		return (IBufferPlacementStrategy) get(
-				ParameterBufferPlacementStrategy.class).getValue();
+	public ParameterBufferPlacementStrategy getBufferPlacementParameter() {
+		return get(ParameterBufferPlacementStrategy.class);
+	}
+	
+	public IBufferPlacementStrategy getBufferPlacementStrategy(){
+		return getBufferPlacementParameter().getValue();
 	}
 	
 	public boolean getParameterInstallMetadataListener(){

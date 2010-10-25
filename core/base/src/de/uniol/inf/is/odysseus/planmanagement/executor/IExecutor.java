@@ -141,13 +141,13 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs();
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID);
 
-	/**
-	 * Set the buffer placement strategy which should be used.
-	 * 
-	 * @param strategy
-	 *            new buffer placement strategy which should be used.
-	 */
-	public void setDefaultBufferPlacementStrategy(String strategy);
+//	/**
+//	 * Set the buffer placement strategy which should be used.
+//	 * 
+//	 * @param strategy
+//	 *            new buffer placement strategy which should be used.
+//	 */
+//	public void setDefaultBufferPlacementStrategy(String strategy);
 
 	/**
 	 * Provides a Set of registered scheduling strategy strategies represented by
