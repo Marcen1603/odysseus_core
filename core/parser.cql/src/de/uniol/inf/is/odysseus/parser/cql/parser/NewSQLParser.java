@@ -50,8 +50,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           throw new ParseException();
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 129:
-          jj_consume_token(129);
+        case 134:
+          jj_consume_token(134);
           break;
         default:
           jj_la1[0] = jj_gen;
@@ -69,7 +69,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         case K_OSGI:
         case K_REMOVE:
         case K_SELECT:
-        case 130:
+        case 135:
           ;
           break;
         default:
@@ -110,7 +110,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_DB_EXECUTE);
-      jj_consume_token(130);
+      jj_consume_token(135);
                          ASTDatabase jjtn001 = new ASTDatabase(JJTDATABASE);
                          boolean jjtc001 = true;
                          jjtree.openNodeScope(jjtn001);
@@ -135,9 +135,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
                            jjtree.closeNodeScope(jjtn001, true);
                          }
       }
-      jj_consume_token(131);
+      jj_consume_token(136);
       SQL();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -166,7 +166,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_DB_SELECT);
-      jj_consume_token(130);
+      jj_consume_token(135);
                         ASTDatabase jjtn001 = new ASTDatabase(JJTDATABASE);
                         boolean jjtc001 = true;
                         jjtree.openNodeScope(jjtn001);
@@ -191,7 +191,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
                           jjtree.closeNodeScope(jjtn001, true);
                         }
       }
-      jj_consume_token(131);
+      jj_consume_token(136);
       label_2:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -226,10 +226,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
                                                       jjtree.closeNodeScope(jjtn002, true);
                                                     }
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
       }
       SQL();
-      jj_consume_token(132);
+      jj_consume_token(137);
       jj_consume_token(K_AS);
                      ASTAS jjtn003 = new ASTAS(JJTAS);
                      boolean jjtc003 = true;
@@ -366,10 +366,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           ;
         }
         break;
-      case 130:
-        jj_consume_token(130);
+      case 135:
+        jj_consume_token(135);
         ComplexSelectStatement();
-        jj_consume_token(132);
+        jj_consume_token(137);
         break;
       default:
         jj_la1[7] = jj_gen;
@@ -485,9 +485,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         }
         jj_consume_token(K_STREAM);
         Identifier();
-        jj_consume_token(130);
+        jj_consume_token(135);
         AttributeDefinitions();
-        jj_consume_token(132);
+        jj_consume_token(137);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_CHANNEL:
         case K_CSV:
@@ -511,14 +511,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
               jj_consume_token(-1);
               throw new ParseException();
             }
-            jj_consume_token(130);
+            jj_consume_token(135);
             if (jj_2_16(2)) {
               TimedTuples();
             } else {
               switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
               case K_DB_EXECUTE:
               case K_SELECT:
-              case 130:
+              case 135:
                 PriorizedStatement();
                 break;
               default:
@@ -527,7 +527,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
                 throw new ParseException();
               }
             }
-            jj_consume_token(132);
+            jj_consume_token(137);
             break;
           case K_DATABASE:
             CreateFromDatabase();
@@ -592,10 +592,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     try {
       jj_consume_token(K_DATABASE);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 133:
-        jj_consume_token(133);
+      case 138:
+        jj_consume_token(138);
         JdbcIdentifier();
-        jj_consume_token(134);
+        jj_consume_token(139);
         break;
       default:
         jj_la1[18] = jj_gen;
@@ -613,23 +613,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         ;
       }
     } catch (Throwable jjte000) {
-          if (jjtc000) {
-            jjtree.clearNodeScope(jjtn000);
-            jjtc000 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte000 instanceof RuntimeException) {
-            {if (true) throw (RuntimeException)jjte000;}
-          }
-          if (jjte000 instanceof ParseException) {
-            {if (true) throw (ParseException)jjte000;}
-          }
-          {if (true) throw (Error)jjte000;}
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -641,9 +641,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     try {
       jj_consume_token(K_TIME_SENSITIV);
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -676,9 +676,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_DATABASE:
         jj_consume_token(K_DATABASE);
-        jj_consume_token(133);
+        jj_consume_token(138);
         JdbcIdentifier();
-        jj_consume_token(134);
+        jj_consume_token(139);
         break;
       default:
         jj_la1[20] = jj_gen;
@@ -694,23 +694,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       }
       ComplexSelectStatement();
     } catch (Throwable jjte000) {
-          if (jjtc000) {
-            jjtree.clearNodeScope(jjtn000);
-            jjtc000 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte000 instanceof RuntimeException) {
-            {if (true) throw (RuntimeException)jjte000;}
-          }
-          if (jjte000 instanceof ParseException) {
-            {if (true) throw (ParseException)jjte000;}
-          }
-          {if (true) throw (Error)jjte000;}
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -736,23 +736,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         throw new ParseException();
       }
     } catch (Throwable jjte000) {
-           if (jjtc000) {
-             jjtree.clearNodeScope(jjtn000);
-             jjtc000 = false;
-           } else {
-             jjtree.popNode();
-           }
-           if (jjte000 instanceof RuntimeException) {
-             {if (true) throw (RuntimeException)jjte000;}
-           }
-           if (jjte000 instanceof ParseException) {
-             {if (true) throw (ParseException)jjte000;}
-           }
-           {if (true) throw (Error)jjte000;}
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
     } finally {
-           if (jjtc000) {
-             jjtree.closeNodeScope(jjtn000, true);
-           }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -773,23 +773,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         ;
       }
     } catch (Throwable jjte000) {
-           if (jjtc000) {
-             jjtree.clearNodeScope(jjtn000);
-             jjtc000 = false;
-           } else {
-             jjtree.popNode();
-           }
-           if (jjte000 instanceof RuntimeException) {
-             {if (true) throw (RuntimeException)jjte000;}
-           }
-           if (jjte000 instanceof ParseException) {
-             {if (true) throw (ParseException)jjte000;}
-           }
-           {if (true) throw (Error)jjte000;}
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
     } finally {
-           if (jjtc000) {
-             jjtree.closeNodeScope(jjtn000, true);
-           }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -802,23 +802,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_consume_token(K_TRUNCATE);
       Identifier();
     } catch (Throwable jjte000) {
-          if (jjtc000) {
-            jjtree.clearNodeScope(jjtn000);
-            jjtc000 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte000 instanceof RuntimeException) {
-            {if (true) throw (RuntimeException)jjte000;}
-          }
-          if (jjte000 instanceof ParseException) {
-            {if (true) throw (ParseException)jjte000;}
-          }
-          {if (true) throw (Error)jjte000;}
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -832,9 +832,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_consume_token(K_NOT);
       jj_consume_token(K_EXISTS);
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -847,9 +847,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_consume_token(K_WITH);
       jj_consume_token(K_METADATA);
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -863,9 +863,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_consume_token(K_VIEW);
       Identifier();
       jj_consume_token(K_FROM);
-      jj_consume_token(130);
+      jj_consume_token(135);
       PriorizedStatement();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -896,9 +896,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_consume_token(K_CREATE);
       jj_consume_token(K_SENSOR);
       Identifier();
-      jj_consume_token(130);
+      jj_consume_token(135);
       ORSchemaDefinition();
-      jj_consume_token(132);
+      jj_consume_token(137);
       jj_consume_token(K_FROM);
       Channel();
     } catch (Throwable jjte000) {
@@ -971,9 +971,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_RECORD);
-      jj_consume_token(130);
+      jj_consume_token(135);
       Identifier();
-      jj_consume_token(131);
+      jj_consume_token(136);
       label_3:
       while (true) {
         RecordEntryDefinition();
@@ -988,7 +988,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           break label_3;
         }
       }
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1059,9 +1059,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_LIST);
-      jj_consume_token(130);
+      jj_consume_token(135);
       Identifier();
-      jj_consume_token(131);
+      jj_consume_token(136);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_ATTRIBUTE:
         label_4:
@@ -1110,7 +1110,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1139,11 +1139,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_ATTRIBUTE);
-      jj_consume_token(130);
+      jj_consume_token(135);
       Identifier();
-      jj_consume_token(131);
+      jj_consume_token(136);
       AttributeType();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1175,14 +1175,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       label_7:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[31] = jj_gen;
           break label_7;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         AttributeDefinition();
       }
     } catch (Throwable jjte000) {
@@ -1245,14 +1245,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[32] = jj_gen;
           break label_8;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         TimedTuple();
       }
     } catch (Throwable jjte000) {
@@ -1282,11 +1282,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(130);
+      jj_consume_token(135);
       TimeInterval();
-      jj_consume_token(131);
+      jj_consume_token(136);
       SimpleTuple();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1315,17 +1315,17 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);Token t;
   Token t2 = null;
     try {
-      jj_consume_token(133);
+      jj_consume_token(138);
       t = jj_consume_token(INTEGER);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 131:
-        jj_consume_token(131);
+      case 136:
+        jj_consume_token(136);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case INTEGER:
           t2 = jj_consume_token(INTEGER);
           break;
-        case 135:
-          jj_consume_token(135);
+        case 140:
+          jj_consume_token(140);
           break;
         default:
           jj_la1[33] = jj_gen;
@@ -1337,7 +1337,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         jj_la1[34] = jj_gen;
         ;
       }
-      jj_consume_token(132);
+      jj_consume_token(137);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     if (t2 == null)
@@ -1386,8 +1386,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       }
       Host();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 136:
-        jj_consume_token(136);
+      case 141:
+        jj_consume_token(141);
         break;
       default:
         jj_la1[37] = jj_gen;
@@ -1446,8 +1446,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       }
       Host();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 136:
-        jj_consume_token(136);
+      case 141:
+        jj_consume_token(141);
         break;
       default:
         jj_la1[40] = jj_gen;
@@ -1484,8 +1484,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_consume_token(K_CHANNEL);
       Host();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 136:
-        jj_consume_token(136);
+      case 141:
+        jj_consume_token(141);
         break;
       default:
         jj_la1[41] = jj_gen;
@@ -1583,14 +1583,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       label_9:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[43] = jj_gen;
           break label_9;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         Value();
       }
     } catch (Throwable jjte000) {
@@ -1845,32 +1845,32 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     try {
       jj_consume_token(K_SELECT);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 137:
+      case 142:
         SelectAll();
         break;
+      case K_AVG:
+      case K_COUNT:
+      case K_MAX:
+      case K_MIN:
+      case K_SUM:
       case FLOAT:
       case INTEGER:
       case IDENTIFIER:
       case CHAR_LITERAL:
-      case 130:
       case 135:
-      case 139:
       case 140:
-      case 141:
-      case 142:
-      case 143:
         RenamedExpression();
         label_11:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 131:
+          case 136:
             ;
             break;
           default:
             jj_la1[50] = jj_gen;
             break label_11;
           }
-          jj_consume_token(131);
+          jj_consume_token(136);
           RenamedExpression();
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1973,14 +1973,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       label_12:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[54] = jj_gen;
           break label_12;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         Source();
       }
     } catch (Throwable jjte000) {
@@ -2045,14 +2045,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       label_13:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[55] = jj_gen;
           break label_13;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         Identifier();
       }
     } catch (Throwable jjte000) {
@@ -2111,7 +2111,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(137);
+      jj_consume_token(142);
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -2187,24 +2187,24 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   ArrayList curRow;
     try {
       jj_consume_token(K_MATRIX);
-      jj_consume_token(133);
+      jj_consume_token(138);
       curRow = CovarianceRow();
     rows.add(curRow);
       label_14:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 129:
+        case 134:
           ;
           break;
         default:
           jj_la1[57] = jj_gen;
           break label_14;
         }
-        jj_consume_token(129);
+        jj_consume_token(134);
         curRow = CovarianceRow();
       rows.add(curRow);
       }
-      jj_consume_token(134);
+      jj_consume_token(139);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtn000.setMatrix(rows);
@@ -2244,20 +2244,20 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         case K_NOT:
           NotPredicate();
           break;
+        case K_AVG:
+        case K_COUNT:
         case K_EXISTS:
+        case K_MAX:
+        case K_MIN:
         case K_PROB:
+        case K_SUM:
         case FLOAT:
         case INTEGER:
         case IDENTIFIER:
         case CHAR_LITERAL:
-        case 130:
-        case 133:
         case 135:
-        case 139:
+        case 138:
         case 140:
-        case 141:
-        case 142:
-        case 143:
           SimplePredicate();
           break;
         default:
@@ -2294,9 +2294,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       if (jj_2_19(2147483647)) {
-        jj_consume_token(130);
+        jj_consume_token(135);
         Predicate();
-        jj_consume_token(132);
+        jj_consume_token(137);
       } else if (jj_2_20(2147483647)) {
         QuantificationPredicate();
       } else if (jj_2_21(2147483647)) {
@@ -2407,23 +2407,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   Token compOp;
     try {
       jj_consume_token(K_PROB);
-      jj_consume_token(130);
+      jj_consume_token(135);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 130:
-        jj_consume_token(130);
+      case 135:
+        jj_consume_token(135);
+        MatrixExpression();
+        jj_consume_token(142);
+        Identifier();
+        jj_consume_token(143);
         MatrixExpression();
         jj_consume_token(137);
-        Identifier();
-        jj_consume_token(138);
-        MatrixExpression();
-        jj_consume_token(132);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 135:
-          jj_consume_token(135);
+        case 140:
+          jj_consume_token(140);
           jjtn000.setCovOperandType(ASTProbabilityPredicate.OperandTypes.MINUS);
           break;
-        case 138:
-          jj_consume_token(138);
+        case 143:
+          jj_consume_token(143);
           jjtn000.setCovOperandType(ASTProbabilityPredicate.OperandTypes.PLUS);
           break;
         default:
@@ -2431,20 +2431,20 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           jj_consume_token(-1);
           throw new ParseException();
         }
-        jj_consume_token(130);
+        jj_consume_token(135);
+        MatrixExpression();
+        jj_consume_token(142);
+        Identifier();
+        jj_consume_token(143);
         MatrixExpression();
         jj_consume_token(137);
-        Identifier();
-        jj_consume_token(138);
-        MatrixExpression();
-        jj_consume_token(132);
         jjtn000.setJoinPredicate(true);
         break;
       case K_MATRIX:
         MatrixExpression();
-        jj_consume_token(137);
+        jj_consume_token(142);
         Identifier();
-        jj_consume_token(138);
+        jj_consume_token(143);
         MatrixExpression();
       jjtn000.setJoinPredicate(false);
         break;
@@ -2453,15 +2453,15 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(131);
-      jj_consume_token(133);
+      jj_consume_token(136);
+      jj_consume_token(138);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FLOAT:
         intervalStart = jj_consume_token(FLOAT);
       xLow.add(Double.parseDouble(intervalStart.image));
         break;
-      case 135:
-        intervalStart = jj_consume_token(135);
+      case 140:
+        intervalStart = jj_consume_token(140);
         jj_consume_token(K_INFTY);
       xLow.add(Double.MIN_VALUE);
         break;
@@ -2470,7 +2470,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(131);
+      jj_consume_token(136);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FLOAT:
         intervalEnd = jj_consume_token(FLOAT);
@@ -2485,26 +2485,26 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(134);
+      jj_consume_token(139);
       label_15:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[64] = jj_gen;
           break label_15;
         }
-        jj_consume_token(131);
-        jj_consume_token(133);
+        jj_consume_token(136);
+        jj_consume_token(138);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case FLOAT:
           intervalStart = jj_consume_token(FLOAT);
         xLow.add(Double.parseDouble(intervalStart.image));
           break;
-        case 135:
-          intervalStart = jj_consume_token(135);
+        case 140:
+          intervalStart = jj_consume_token(140);
           jj_consume_token(K_INFTY);
         xLow.add(Double.MIN_VALUE);
           break;
@@ -2513,7 +2513,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           jj_consume_token(-1);
           throw new ParseException();
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case FLOAT:
           intervalEnd = jj_consume_token(FLOAT);
@@ -2528,12 +2528,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           jj_consume_token(-1);
           throw new ParseException();
         }
-        jj_consume_token(134);
+        jj_consume_token(139);
       }
-      jj_consume_token(129);
+      jj_consume_token(134);
       compOp = jj_consume_token(COMPARE_OPERATOR);
       prob = jj_consume_token(FLOAT);
-      jj_consume_token(132);
+      jj_consume_token(137);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtn000.setXLow(xLow);
@@ -2690,7 +2690,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           case INTEGER:
           case IDENTIFIER:
           case CHAR_LITERAL:
-          case 133:
+          case 138:
             InPredicate();
             break;
           default:
@@ -2734,10 +2734,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         TupleSet();
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 130:
-          jj_consume_token(130);
+        case 135:
+          jj_consume_token(135);
           ComplexSelectStatement();
-          jj_consume_token(132);
+          jj_consume_token(137);
           break;
         default:
           jj_la1[69] = jj_gen;
@@ -2779,10 +2779,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         TupleSet();
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 130:
-          jj_consume_token(130);
+        case 135:
+          jj_consume_token(135);
           ComplexSelectStatement();
-          jj_consume_token(132);
+          jj_consume_token(137);
           break;
         default:
           jj_la1[70] = jj_gen;
@@ -2823,10 +2823,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         TupleSet();
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 130:
-          jj_consume_token(130);
+        case 135:
+          jj_consume_token(135);
           ComplexSelectStatement();
-          jj_consume_token(132);
+          jj_consume_token(137);
           break;
         default:
           jj_la1[71] = jj_gen;
@@ -2862,9 +2862,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_EXISTS);
-      jj_consume_token(130);
+      jj_consume_token(135);
       ComplexSelectStatement();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2902,12 +2902,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         } else {
           break label_16;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         ElementPriority();
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 131:
-        jj_consume_token(131);
+      case 136:
+        jj_consume_token(136);
         DefaultPriority();
         break;
       default:
@@ -3009,8 +3009,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       case IDENTIFIER:
         Identifier();
         break;
-      case 133:
-        jj_consume_token(133);
+      case 138:
+        jj_consume_token(138);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case FLOAT:
         case INTEGER:
@@ -3028,14 +3028,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         label_17:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 131:
+          case 136:
             ;
             break;
           default:
             jj_la1[74] = jj_gen;
             break label_17;
           }
-          jj_consume_token(131);
+          jj_consume_token(136);
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case FLOAT:
           case INTEGER:
@@ -3051,7 +3051,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
             throw new ParseException();
           }
         }
-        jj_consume_token(134);
+        jj_consume_token(139);
         break;
       default:
         jj_la1[76] = jj_gen;
@@ -3129,22 +3129,22 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(130);
+      jj_consume_token(135);
       Tuple();
       label_18:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[79] = jj_gen;
           break label_18;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         Tuple();
       }
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -3204,17 +3204,17 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         Expression();
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_AVG:
+        case K_COUNT:
+        case K_MAX:
+        case K_MIN:
+        case K_SUM:
         case FLOAT:
         case INTEGER:
         case IDENTIFIER:
         case CHAR_LITERAL:
-        case 130:
         case 135:
-        case 139:
         case 140:
-        case 141:
-        case 142:
-        case 143:
           SimpleToken();
           break;
         default:
@@ -3266,16 +3266,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           FunctionExpression();
         } else {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 130:
-            jj_consume_token(130);
+          case 135:
+            jj_consume_token(135);
             Expression();
-            jj_consume_token(132);
+            jj_consume_token(137);
             break;
           case IDENTIFIER:
-          case 135:
+          case 140:
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case 135:
-              jj_consume_token(135);
+            case 140:
+              jj_consume_token(140);
       jjtn000.setMinus(true);
               break;
             default:
@@ -3342,38 +3342,38 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jjtree.closeNodeScope(jjtn001, true);
     }
       }
-      jj_consume_token(130);
+      jj_consume_token(135);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_AVG:
+      case K_COUNT:
       case K_EXISTS:
+      case K_MAX:
+      case K_MIN:
       case K_NOT:
       case K_PROB:
+      case K_SUM:
       case FLOAT:
       case INTEGER:
       case IDENTIFIER:
       case CHAR_LITERAL:
-      case 130:
-      case 133:
       case 135:
-      case 139:
+      case 138:
       case 140:
-      case 141:
-      case 142:
-      case 143:
         if (jj_2_32(2147483647)) {
           Predicate();
         } else {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_AVG:
+          case K_COUNT:
+          case K_MAX:
+          case K_MIN:
+          case K_SUM:
           case FLOAT:
           case INTEGER:
           case IDENTIFIER:
           case CHAR_LITERAL:
-          case 130:
           case 135:
-          case 139:
           case 140:
-          case 141:
-          case 142:
-          case 143:
             Expression();
             break;
           default:
@@ -3385,29 +3385,29 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         label_19:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 131:
+          case 136:
             ;
             break;
           default:
             jj_la1[86] = jj_gen;
             break label_19;
           }
-          jj_consume_token(131);
+          jj_consume_token(136);
           if (jj_2_33(2147483647)) {
             Predicate();
           } else {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case K_AVG:
+            case K_COUNT:
+            case K_MAX:
+            case K_MIN:
+            case K_SUM:
             case FLOAT:
             case INTEGER:
             case IDENTIFIER:
             case CHAR_LITERAL:
-            case 130:
             case 135:
-            case 139:
             case 140:
-            case 141:
-            case 142:
-            case 143:
               Expression();
               break;
             default:
@@ -3422,7 +3422,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         jj_la1[88] = jj_gen;
         ;
       }
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -3451,9 +3451,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       AggregateFunction();
-      jj_consume_token(130);
+      jj_consume_token(135);
       Identifier();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -3482,20 +3482,20 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 139:
-        t = jj_consume_token(139);
+      case K_AVG:
+        t = jj_consume_token(K_AVG);
         break;
-      case 140:
-        t = jj_consume_token(140);
+      case K_COUNT:
+        t = jj_consume_token(K_COUNT);
         break;
-      case 141:
-        t = jj_consume_token(141);
+      case K_MAX:
+        t = jj_consume_token(K_MAX);
         break;
-      case 142:
-        t = jj_consume_token(142);
+      case K_MIN:
+        t = jj_consume_token(K_MIN);
         break;
-      case 143:
-        t = jj_consume_token(143);
+      case K_SUM:
+        t = jj_consume_token(K_SUM);
         break;
       default:
         jj_la1[89] = jj_gen;
@@ -3514,16 +3514,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static final public String MathOperator() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 137:
-      jj_consume_token(137);
+    case 142:
+      jj_consume_token(142);
     {if (true) return "*";}
       break;
-    case 138:
-      jj_consume_token(138);
+    case 143:
+      jj_consume_token(143);
     {if (true) return "+";}
       break;
-    case 135:
-      jj_consume_token(135);
+    case 140:
+      jj_consume_token(140);
     {if (true) return "-";}
       break;
     case 144:
@@ -3549,9 +3549,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_DISTINCT);
-      jj_consume_token(130);
+      jj_consume_token(135);
       Identifier();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -3603,7 +3603,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     try {
       Identifier();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 133:
+      case 138:
         Window();
         break;
       default:
@@ -3669,11 +3669,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(130);
+      jj_consume_token(135);
       ComplexSelectStatement();
-      jj_consume_token(132);
+      jj_consume_token(137);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 133:
+      case 138:
         Window();
         break;
       default:
@@ -3727,9 +3727,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static final public void Window() throws ParseException {
-    jj_consume_token(133);
+    jj_consume_token(138);
     StreamSQLWindow();
-    jj_consume_token(134);
+    jj_consume_token(139);
   }
 
   static final public void StreamSQLWindow() throws ParseException {
@@ -3833,14 +3833,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       label_20:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[100] = jj_gen;
           break label_20;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         Identifier();
       }
     } catch (Throwable jjte000) {
@@ -4072,7 +4072,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_consume_token(K_CREATE);
       jj_consume_token(K_BROKER);
       Identifier();
-      jj_consume_token(130);
+      jj_consume_token(135);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDENTIFIER:
         AttributeDefinitions();
@@ -4087,11 +4087,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(132);
+      jj_consume_token(137);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_QUEUE:
         jj_consume_token(K_QUEUE);
-        jj_consume_token(130);
+        jj_consume_token(135);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case IDENTIFIER:
           AttributeDefinitions();
@@ -4106,7 +4106,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           jj_consume_token(-1);
           throw new ParseException();
         }
-        jj_consume_token(132);
+        jj_consume_token(137);
         break;
       default:
         jj_la1[104] = jj_gen;
@@ -4141,7 +4141,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     try {
       jj_consume_token(K_BROKER);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 130:
+      case 135:
         BrokerAsSource();
         break;
       case IDENTIFIER:
@@ -4187,9 +4187,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(130);
+      jj_consume_token(135);
       ComplexSelectStatement();
-      jj_consume_token(132);
+      jj_consume_token(137);
       jj_consume_token(K_AS);
       Identifier();
     } catch (Throwable jjte000) {
@@ -4312,9 +4312,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     try {
       jj_consume_token(K_QUEUE);
       jj_consume_token(K_BY);
-      jj_consume_token(130);
+      jj_consume_token(135);
       ComplexSelectStatement();
-      jj_consume_token(132);
+      jj_consume_token(137);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -4454,14 +4454,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       label_21:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 131:
+        case 136:
           ;
           break;
         default:
           jj_la1[111] = jj_gen;
           break label_21;
         }
-        jj_consume_token(131);
+        jj_consume_token(136);
         PercentileConstraint();
       }
     } catch (Throwable jjte000) {
@@ -4491,15 +4491,15 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(130);
+      jj_consume_token(135);
       Number();
-      jj_consume_token(131);
+      jj_consume_token(136);
       Number();
-      jj_consume_token(131);
+      jj_consume_token(136);
       Number();
-      jj_consume_token(132);
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
+      jj_consume_token(137);
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
 
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -4944,13 +4944,37 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     finally { jj_save(35, xla); }
   }
 
+  static private boolean jj_3R_214() {
+    if (jj_scan_token(K_WEEK)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_213() {
+    if (jj_scan_token(K_DAY)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_144() {
+    if (jj_scan_token(K_QUEUE)) return true;
+    if (jj_scan_token(K_BY)) return true;
+    if (jj_scan_token(135)) return true;
+    if (jj_3R_56()) return true;
+    if (jj_scan_token(137)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_212() {
     if (jj_scan_token(K_HOUR)) return true;
     return false;
   }
 
-  static private boolean jj_3R_57() {
-    if (jj_3R_110()) return true;
+  static private boolean jj_3R_169() {
+    if (jj_3R_117()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_60() {
+    if (jj_3R_112()) return true;
     return false;
   }
 
@@ -4961,6 +4985,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static private boolean jj_3R_211() {
     if (jj_scan_token(K_MINUTE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_16() {
+    if (jj_3R_37()) return true;
     return false;
   }
 
@@ -5005,16 +5034,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_169() {
-    if (jj_3R_117()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_60() {
-    if (jj_3R_112()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_201() {
     if (jj_3R_87()) return true;
     Token xsp;
@@ -5023,17 +5042,24 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
+  static private boolean jj_3R_194() {
+    if (jj_3R_136()) return true;
+    if (jj_scan_token(136)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_142() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     if (jj_scan_token(K_AS)) return true;
     if (jj_3R_62()) return true;
     return false;
   }
 
-  static private boolean jj_3_16() {
-    if (jj_3R_37()) return true;
+  static private boolean jj_3R_147() {
+    if (jj_3R_173()) return true;
+    if (jj_3R_56()) return true;
     return false;
   }
 
@@ -5067,20 +5093,38 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_194() {
-    if (jj_3R_136()) return true;
-    if (jj_scan_token(131)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_165() {
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_188()) {
     jj_scanpos = xsp;
     if (jj_3R_189()) return true;
     }
+    return false;
+  }
+
+  static private boolean jj_3R_23() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_59()) {
+    jj_scanpos = xsp;
+    if (jj_3R_60()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_59() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(20)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(13)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(6)) return true;
+    }
+    }
+    if (jj_scan_token(K_STREAM)) return true;
     return false;
   }
 
@@ -5112,83 +5156,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_147() {
-    if (jj_3R_173()) return true;
-    if (jj_3R_56()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_163() {
     if (jj_3R_162()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_134() {
-    if (jj_scan_token(133)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_163()) {
-    jj_scanpos = xsp;
-    if (jj_3R_164()) return true;
-    }
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_165()) { jj_scanpos = xsp; break; }
-    }
-    if (jj_scan_token(134)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_133() {
-    if (jj_3R_62()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_132() {
-    if (jj_3R_162()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_23() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_59()) {
-    jj_scanpos = xsp;
-    if (jj_3R_60()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_59() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(18)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(13)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(6)) return true;
-    }
-    }
-    if (jj_scan_token(K_STREAM)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_81() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_132()) {
-    jj_scanpos = xsp;
-    if (jj_3R_133()) {
-    jj_scanpos = xsp;
-    if (jj_3R_134()) return true;
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_178() {
-    if (jj_3R_87()) return true;
-    if (jj_scan_token(K_DEFAULT)) return true;
     return false;
   }
 
@@ -5207,23 +5176,49 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3_28() {
-    if (jj_scan_token(131)) return true;
-    if (jj_3R_47()) return true;
+  static private boolean jj_3R_134() {
+    if (jj_scan_token(138)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_163()) {
+    jj_scanpos = xsp;
+    if (jj_3R_164()) return true;
+    }
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_165()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(139)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_133() {
+    if (jj_3R_62()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_132() {
+    if (jj_3R_162()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_81() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_132()) {
+    jj_scanpos = xsp;
+    if (jj_3R_133()) {
+    jj_scanpos = xsp;
+    if (jj_3R_134()) return true;
+    }
+    }
     return false;
   }
 
   static private boolean jj_3R_109() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_47() {
-    if (jj_3R_87()) return true;
-    if (jj_scan_token(K_WHERE)) return true;
-    if (jj_3R_40()) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
@@ -5245,26 +5240,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_35() {
-    if (jj_scan_token(K_CREATE)) return true;
-    if (jj_scan_token(K_BROKER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_158() {
-    if (jj_scan_token(131)) return true;
-    if (jj_3R_178()) return true;
+  static private boolean jj_3R_178() {
+    if (jj_3R_87()) return true;
+    if (jj_scan_token(K_DEFAULT)) return true;
     return false;
   }
 
   static private boolean jj_3R_55() {
     if (jj_3R_107()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_157() {
-    if (jj_scan_token(131)) return true;
-    if (jj_3R_47()) return true;
     return false;
   }
 
@@ -5277,6 +5260,42 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     if (jj_3R_57()) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_3R_58()) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3_28() {
+    if (jj_scan_token(136)) return true;
+    if (jj_3R_47()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_47() {
+    if (jj_3R_87()) return true;
+    if (jj_scan_token(K_WHERE)) return true;
+    if (jj_3R_40()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_35() {
+    if (jj_scan_token(K_CREATE)) return true;
+    if (jj_scan_token(K_BROKER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_158() {
+    if (jj_scan_token(136)) return true;
+    if (jj_3R_178()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_145() {
+    if (jj_scan_token(SQL_STRING)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_157() {
+    if (jj_scan_token(136)) return true;
+    if (jj_3R_47()) return true;
     return false;
   }
 
@@ -5305,28 +5324,55 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_145() {
-    if (jj_scan_token(SQL_STRING)) return true;
+  static private boolean jj_3R_177() {
+    if (jj_scan_token(K_DB_SELECT)) return true;
+    if (jj_scan_token(135)) return true;
+    if (jj_3R_62()) return true;
+    if (jj_scan_token(136)) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_194()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_3R_145()) return true;
+    if (jj_scan_token(137)) return true;
+    if (jj_scan_token(K_AS)) return true;
+    if (jj_3R_62()) return true;
     return false;
   }
 
   static private boolean jj_3R_128() {
     if (jj_scan_token(K_EXISTS)) return true;
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
   static private boolean jj_3R_161() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
   static private boolean jj_3R_80() {
     if (jj_scan_token(S_COMPARE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_15() {
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_107() {
+    if (jj_scan_token(K_DB_EXECUTE)) return true;
+    if (jj_scan_token(135)) return true;
+    if (jj_3R_62()) return true;
+    if (jj_scan_token(136)) return true;
+    if (jj_3R_145()) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
@@ -5337,23 +5383,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static private boolean jj_3_26() {
     if (jj_3R_46()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_177() {
-    if (jj_scan_token(K_DB_SELECT)) return true;
-    if (jj_scan_token(130)) return true;
-    if (jj_3R_62()) return true;
-    if (jj_scan_token(131)) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_194()) { jj_scanpos = xsp; break; }
-    }
-    if (jj_3R_145()) return true;
-    if (jj_scan_token(132)) return true;
-    if (jj_scan_token(K_AS)) return true;
-    if (jj_3R_62()) return true;
     return false;
   }
 
@@ -5369,30 +5398,20 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3_15() {
-    if (jj_3R_36()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_107() {
-    if (jj_scan_token(K_DB_EXECUTE)) return true;
-    if (jj_scan_token(130)) return true;
-    if (jj_3R_62()) return true;
-    if (jj_scan_token(131)) return true;
-    if (jj_3R_145()) return true;
-    if (jj_scan_token(132)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_85() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
   static private boolean jj_3R_79() {
     if (jj_scan_token(COMPARE_OPERATOR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_14() {
+    if (jj_3R_35()) return true;
     return false;
   }
 
@@ -5403,6 +5422,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static private boolean jj_3_25() {
     if (jj_3R_46()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_13() {
+    if (jj_3R_34()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_12() {
+    if (jj_3R_33()) return true;
     return false;
   }
 
@@ -5419,25 +5448,30 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
+  static private boolean jj_3_11() {
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_10() {
+    if (jj_3R_31()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_136() {
     if (jj_scan_token(CHAR_LITERAL)) return true;
     return false;
   }
 
-  static private boolean jj_3_14() {
-    if (jj_3R_35()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_83() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
-  static private boolean jj_3_13() {
-    if (jj_3R_34()) return true;
+  static private boolean jj_3_9() {
+    if (jj_3R_30()) return true;
     return false;
   }
 
@@ -5446,8 +5480,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3_12() {
-    if (jj_3R_33()) return true;
+  static private boolean jj_3_8() {
+    if (jj_3R_29()) return true;
     return false;
   }
 
@@ -5456,8 +5490,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3_11() {
-    if (jj_3R_32()) return true;
+  static private boolean jj_3_7() {
+    if (jj_3R_28()) return true;
     return false;
   }
 
@@ -5479,18 +5513,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3_10() {
-    if (jj_3R_31()) return true;
+  static private boolean jj_3_1() {
+    if (jj_3R_22()) return true;
     return false;
   }
 
-  static private boolean jj_3_9() {
-    if (jj_3R_30()) return true;
+  static private boolean jj_3_6() {
+    if (jj_3R_27()) return true;
     return false;
   }
 
-  static private boolean jj_3_8() {
-    if (jj_3R_29()) return true;
+  static private boolean jj_3_5() {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    if (jj_3R_25()) return true;
     return false;
   }
 
@@ -5499,18 +5538,18 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_135() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(114)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(115)) return true;
-    }
+  static private boolean jj_3_3() {
+    if (jj_3R_24()) return true;
     return false;
   }
 
-  static private boolean jj_3_7() {
-    if (jj_3R_28()) return true;
+  static private boolean jj_3R_135() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(119)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(120)) return true;
+    }
     return false;
   }
 
@@ -5519,13 +5558,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3_1() {
-    if (jj_3R_22()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_6() {
-    if (jj_3R_27()) return true;
+  static private boolean jj_3_2() {
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -5555,29 +5589,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3_5() {
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_4() {
-    if (jj_3R_25()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_3() {
-    if (jj_3R_24()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_127() {
     if (jj_scan_token(K_NOT)) return true;
     if (jj_3R_40()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -5654,7 +5668,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_215() {
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     if (jj_3R_62()) return true;
     return false;
   }
@@ -5670,7 +5684,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_198() {
-    if (jj_scan_token(135)) return true;
+    if (jj_scan_token(140)) return true;
     if (jj_scan_token(K_INFTY)) return true;
     return false;
   }
@@ -5686,21 +5700,21 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_185() {
-    if (jj_scan_token(131)) return true;
-    if (jj_scan_token(133)) return true;
+    if (jj_scan_token(136)) return true;
+    if (jj_scan_token(138)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_197()) {
     jj_scanpos = xsp;
     if (jj_3R_198()) return true;
     }
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     xsp = jj_scanpos;
     if (jj_3R_199()) {
     jj_scanpos = xsp;
     if (jj_3R_200()) return true;
     }
-    if (jj_scan_token(134)) return true;
+    if (jj_scan_token(139)) return true;
     return false;
   }
 
@@ -5732,7 +5746,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_182() {
-    if (jj_scan_token(135)) return true;
+    if (jj_scan_token(140)) return true;
     if (jj_scan_token(K_INFTY)) return true;
     return false;
   }
@@ -5755,9 +5769,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static private boolean jj_3R_180() {
     if (jj_3R_175()) return true;
-    if (jj_scan_token(137)) return true;
+    if (jj_scan_token(142)) return true;
     if (jj_3R_62()) return true;
-    if (jj_scan_token(138)) return true;
+    if (jj_scan_token(143)) return true;
     if (jj_3R_175()) return true;
     return false;
   }
@@ -5769,7 +5783,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     if (jj_3R_201()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(88)) {
+    if (jj_scan_token(93)) {
     jj_scanpos = xsp;
     if (jj_3R_202()) return true;
     }
@@ -5793,7 +5807,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_196() {
-    if (jj_scan_token(138)) return true;
+    if (jj_scan_token(143)) return true;
     return false;
   }
 
@@ -5803,50 +5817,50 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_195() {
-    if (jj_scan_token(135)) return true;
+    if (jj_scan_token(140)) return true;
     return false;
   }
 
   static private boolean jj_3R_141() {
-    if (jj_scan_token(133)) return true;
+    if (jj_scan_token(138)) return true;
     if (jj_3R_168()) return true;
-    if (jj_scan_token(134)) return true;
+    if (jj_scan_token(139)) return true;
     return false;
   }
 
   static private boolean jj_3R_179() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
+    if (jj_3R_175()) return true;
+    if (jj_scan_token(142)) return true;
+    if (jj_3R_62()) return true;
+    if (jj_scan_token(143)) return true;
     if (jj_3R_175()) return true;
     if (jj_scan_token(137)) return true;
-    if (jj_3R_62()) return true;
-    if (jj_scan_token(138)) return true;
-    if (jj_3R_175()) return true;
-    if (jj_scan_token(132)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_195()) {
     jj_scanpos = xsp;
     if (jj_3R_196()) return true;
     }
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
+    if (jj_3R_175()) return true;
+    if (jj_scan_token(142)) return true;
+    if (jj_3R_62()) return true;
+    if (jj_scan_token(143)) return true;
     if (jj_3R_175()) return true;
     if (jj_scan_token(137)) return true;
-    if (jj_3R_62()) return true;
-    if (jj_scan_token(138)) return true;
-    if (jj_3R_175()) return true;
-    if (jj_scan_token(132)) return true;
     return false;
   }
 
   static private boolean jj_3R_121() {
-    if (jj_scan_token(133)) return true;
+    if (jj_scan_token(138)) return true;
     return false;
   }
 
   static private boolean jj_3R_53() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_103()) jj_scanpos = xsp;
@@ -5862,35 +5876,35 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static private boolean jj_3R_159() {
     if (jj_scan_token(K_PROB)) return true;
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_179()) {
     jj_scanpos = xsp;
     if (jj_3R_180()) return true;
     }
-    if (jj_scan_token(131)) return true;
-    if (jj_scan_token(133)) return true;
+    if (jj_scan_token(136)) return true;
+    if (jj_scan_token(138)) return true;
     xsp = jj_scanpos;
     if (jj_3R_181()) {
     jj_scanpos = xsp;
     if (jj_3R_182()) return true;
     }
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     xsp = jj_scanpos;
     if (jj_3R_183()) {
     jj_scanpos = xsp;
     if (jj_3R_184()) return true;
     }
-    if (jj_scan_token(134)) return true;
+    if (jj_scan_token(139)) return true;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_185()) { jj_scanpos = xsp; break; }
     }
-    if (jj_scan_token(129)) return true;
+    if (jj_scan_token(134)) return true;
     if (jj_scan_token(COMPARE_OPERATOR)) return true;
     if (jj_scan_token(FLOAT)) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
@@ -5910,7 +5924,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_68() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_121()) return true;
     return false;
   }
@@ -5991,7 +6005,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3_19() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_40()) return true;
     return false;
   }
@@ -6046,9 +6060,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_122() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_40()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
@@ -6063,7 +6077,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_96() {
-    if (jj_scan_token(135)) return true;
+    if (jj_scan_token(140)) return true;
     return false;
   }
 
@@ -6078,7 +6092,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_95() {
-    if (jj_scan_token(138)) return true;
+    if (jj_scan_token(143)) return true;
     return false;
   }
 
@@ -6128,12 +6142,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_94() {
-    if (jj_scan_token(137)) return true;
+    if (jj_scan_token(142)) return true;
     return false;
   }
 
   static private boolean jj_3R_193() {
-    if (jj_scan_token(129)) return true;
+    if (jj_scan_token(134)) return true;
     if (jj_3R_192()) return true;
     return false;
   }
@@ -6152,15 +6166,15 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   static private boolean jj_3R_99() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(139)) {
+    if (jj_scan_token(14)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(140)) {
+    if (jj_scan_token(19)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(141)) {
+    if (jj_scan_token(53)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(142)) {
+    if (jj_scan_token(56)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(143)) return true;
+    if (jj_scan_token(90)) return true;
     }
     }
     }
@@ -6170,14 +6184,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static private boolean jj_3R_175() {
     if (jj_scan_token(K_MATRIX)) return true;
-    if (jj_scan_token(133)) return true;
+    if (jj_scan_token(138)) return true;
     if (jj_3R_192()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_193()) { jj_scanpos = xsp; break; }
     }
-    if (jj_scan_token(134)) return true;
+    if (jj_scan_token(139)) return true;
     return false;
   }
 
@@ -6188,9 +6202,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 
   static private boolean jj_3R_50() {
     if (jj_3R_99()) return true;
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_62()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
@@ -6217,24 +6231,24 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
+  static private boolean jj_3R_66() {
+    if (jj_3R_119()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_25() {
     if (jj_scan_token(K_DROP)) return true;
     if (jj_scan_token(K_VIEW)) return true;
     return false;
   }
 
-  static private boolean jj_3R_66() {
-    if (jj_3R_119()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_148() {
-    if (jj_scan_token(137)) return true;
+    if (jj_scan_token(142)) return true;
     return false;
   }
 
   static private boolean jj_3R_140() {
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_166()) {
@@ -6280,32 +6294,32 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
+  static private boolean jj_3R_51() {
+    if (jj_3R_62()) return true;
+    if (jj_scan_token(135)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_100()) jj_scanpos = xsp;
+    if (jj_scan_token(137)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_24() {
     Token xsp;
     xsp = jj_scanpos;
+    if (jj_scan_token(32)) {
+    jj_scanpos = xsp;
     if (jj_scan_token(30)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(28)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(73)) return true;
+    if (jj_scan_token(77)) return true;
     }
     }
     if (jj_scan_token(K_STREAM)) return true;
     return false;
   }
 
-  static private boolean jj_3R_51() {
-    if (jj_3R_62()) return true;
-    if (jj_scan_token(130)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_100()) jj_scanpos = xsp;
-    if (jj_scan_token(132)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_156() {
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     if (jj_3R_62()) return true;
     return false;
   }
@@ -6313,12 +6327,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   static private boolean jj_3R_26() {
     if (jj_scan_token(K_CREATE)) return true;
     if (jj_scan_token(K_VIEW)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_32() {
-    if (jj_scan_token(K_REMOVE)) return true;
-    if (jj_scan_token(K_USER)) return true;
     return false;
   }
 
@@ -6331,6 +6339,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       xsp = jj_scanpos;
       if (jj_3R_156()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  static private boolean jj_3R_32() {
+    if (jj_scan_token(K_REMOVE)) return true;
+    if (jj_scan_token(K_USER)) return true;
     return false;
   }
 
@@ -6350,19 +6364,19 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_137() {
-    if (jj_scan_token(135)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_31() {
-    if (jj_scan_token(K_ADD)) return true;
-    if (jj_scan_token(K_USER)) return true;
+    if (jj_scan_token(140)) return true;
     return false;
   }
 
   static private boolean jj_3R_117() {
     if (jj_scan_token(K_WHERE)) return true;
     if (jj_3R_40()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_31() {
+    if (jj_scan_token(K_ADD)) return true;
+    if (jj_scan_token(K_USER)) return true;
     return false;
   }
 
@@ -6374,15 +6388,20 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
+  static private boolean jj_3R_172() {
+    if (jj_3R_120()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_92() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_78()) return true;
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
     return false;
   }
 
   static private boolean jj_3R_116() {
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     if (jj_3R_115()) return true;
     return false;
   }
@@ -6457,11 +6476,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_172() {
-    if (jj_3R_120()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_64() {
     if (jj_3R_117()) return true;
     return false;
@@ -6481,8 +6495,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   }
 
   static private boolean jj_3R_150() {
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     if (jj_3R_149()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_171() {
+    if (jj_3R_119()) return true;
     return false;
   }
 
@@ -6532,11 +6551,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
-  static private boolean jj_3R_171() {
-    if (jj_3R_119()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_61() {
     if (jj_scan_token(K_SELECT)) return true;
     Token xsp;
@@ -6554,21 +6568,31 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     return false;
   }
 
+  static private boolean jj_3R_58() {
+    if (jj_3R_111()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_86() {
-    if (jj_scan_token(131)) return true;
+    if (jj_scan_token(136)) return true;
     if (jj_3R_81()) return true;
     return false;
   }
 
   static private boolean jj_3R_46() {
-    if (jj_scan_token(130)) return true;
+    if (jj_scan_token(135)) return true;
     if (jj_3R_81()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_86()) { jj_scanpos = xsp; break; }
     }
-    if (jj_scan_token(132)) return true;
+    if (jj_scan_token(137)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_170() {
+    if (jj_3R_118()) return true;
     return false;
   }
 
@@ -6581,18 +6605,18 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
   static private boolean jj_3R_173() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(95)) {
+    if (jj_scan_token(100)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(44)) {
+    if (jj_scan_token(46)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(53)) return true;
+    if (jj_scan_token(57)) return true;
     }
     }
     return false;
   }
 
-  static private boolean jj_3R_58() {
-    if (jj_3R_111()) return true;
+  static private boolean jj_3R_57() {
+    if (jj_3R_110()) return true;
     return false;
   }
 
@@ -6600,30 +6624,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     if (jj_scan_token(K_METRIC)) return true;
     if (jj_scan_token(K_ON)) return true;
     if (jj_3R_62()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_214() {
-    if (jj_scan_token(K_WEEK)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_170() {
-    if (jj_3R_118()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_213() {
-    if (jj_scan_token(K_DAY)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_144() {
-    if (jj_scan_token(K_QUEUE)) return true;
-    if (jj_scan_token(K_BY)) return true;
-    if (jj_scan_token(130)) return true;
-    if (jj_3R_56()) return true;
-    if (jj_scan_token(132)) return true;
     return false;
   }
 
@@ -6653,19 +6653,19 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       jj_la1_init_4();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x50842140,0x0,0x800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x42040,0x0,0x800000,0x190000,0x190000,0x42040,0x0,0x0,0x100000,0x0,0x40000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20000000,0xa0200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400000,0x400000,0x0,0x20,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1000000,0x0,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x50000000,};
+      jj_la1_0 = new int[] {0x0,0x42102140,0x0,0x2000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x102040,0x0,0x2000000,0x620000,0x620000,0x102040,0x0,0x0,0x400000,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000000,0x80800000,0x0,0x0,0x0,0x0,0x0,0x0,0x84000,0x0,0x0,0x1000,0x0,0x84000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1000000,0x1000000,0x0,0x20,0x84000,0x0,0x0,0x0,0x84000,0x0,0x84000,0x84000,0x84000,0x0,0x4000000,0x0,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x80000400,0x0,0x0,0x0,0x100000,0x201000,0x0,0x0,0x8,0x10,0x0,0x0,0x4,0x0,0x4,0x4,0x80000000,0x0,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800000,0x800000,0x0,0x800000,0x800000,0x0,0x0,0x0,0x0,0x0,0x20802,0x820802,0x0,0x0,0x201000,0x0,0x40000,0x40000,0x0,0x0,0x0,0x0,0x0,0x2000001,0x0,0x0,0x40000,0x0,0x200,0x0,0x0,0x200,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400020,0x400020,0x0,0x100,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2000001,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x10,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x1001,0x0,0x0,0x0,0x800000,0x2004000,0x0,0x0,0x20,0x40,0x0,0x0,0x10,0x0,0x10,0x10,0x0,0x0,0x0,0x0,0x0,0x0,0x200,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8000000,0x8000000,0x0,0x8000000,0x8000000,0x0,0x0,0x0,0x0,0x0,0x82008,0x808200a,0x0,0x0,0x2004000,0x0,0x100000,0x100000,0x1200000,0x0,0x0,0x0,0x0,0x21200004,0x0,0x0,0x100000,0x0,0x800,0x0,0x0,0x800,0x4,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4000080,0x4000080,0x0,0x400,0x1200000,0x0,0x0,0x0,0x1200000,0x0,0x1200000,0x21200004,0x1200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20,0x40,0x0,0x0,0x1,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x1200,0x0,0x0,0x4,0x0,0x80000000,0x1000,0x0,0x0,0x0,0x2000,0x0,0x0,0x1000,0x44000,0x44000,0x0,0x0,0x2000000,0x0,0x0,0x10000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20000000,0x20000000,0x0,0x20000000,0x20000000,0x0,0x0,0x0,0x0,0x0,0x0,0x280000,0x0,0x0,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800,0x800,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x21000000,0x20000,0x2,0x0,0x40008000,0x0,0x0,0x0,0x0,0x10,0x0,0x10,0x0,0x0,0x0,0x2000,0x0,0x200,};
+      jj_la1_2 = new int[] {0x0,0x12008,0x0,0x0,0x40,0x0,0x0,0x10000,0x0,0x0,0x0,0x20000,0x0,0x0,0x10000,0x440000,0x440000,0x8,0x0,0x40000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2800000,0x0,0x0,0x0,0x0,0x0,0x0,0x4000000,0x0,0x0,0x0,0x0,0x4000080,0x80,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8000,0x8000,0x0,0x0,0x4000000,0x0,0x0,0x0,0x4000000,0x0,0x4000000,0x4000080,0x4000000,0x0,0x0,0x0,0x0,0x0,0x20000000,0x200000,0x20,0x0,0x80000,0x0,0x0,0x0,0x0,0x100,0x0,0x100,0x0,0x0,0x0,0x20000,0x0,0x2000,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0x8000000,0x0,0x0,0x0,0x0,0x0,0x20,0x0,0x0,0x0,0x0,0x40,0x0,0x40,0x40,0x0,0x0,0x0,0x0,0x40,0x1000000,0x0,0x700,0x700,0x700,0x100,0x200,0x400,0x700,0x0,0x0,0x80000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1200000,0x0,0x80c0000,0x0,0x0,0x40000,0x1000000,0x0,0x0,0x0,0x0,0x90c0000,0x0,0x0,0x0,0x0,0x90c0000,0x0,0x0,0x0,0x40000,0x40000,0x0,0x40000,0x40000,0x0,0x90c0000,0x0,0x0,0x0,0x0,0x90c0000,0x0,0x90c0000,0x90c0000,0x10,0x10,0x0,0x0,0x90c0000,0x0,0x80c0000,0x1000000,0x90c0000,0x0,0x90c0000,0x90c0000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0xc0000,0x1000700,0x1000700,0x0,0x1000000,0x0,0x20,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x10,0x0,0x400,0x0,0x0,0x0,0x0,0x800,0x0,0x800,0x800,0x0,0x0,0x0,0x0,0x800,0x20000002,0x0,0xe000,0xe000,0xe000,0x2000,0x4000,0x8000,0xe000,0x0,0x0,0x1000000,0x0,0x4,0x4,0x0,0x4,0x4,0x0,0x0,0x24000000,0x0,0x1800000,0x0,0x0,0x800000,0x20000000,0x10,0x0,0x0,0x0,0x21800000,0x0,0x0,0x0,0x0,0x21800000,0x0,0x0,0x0,0x800000,0x800000,0x0,0x800000,0x800000,0x0,0x21800000,0x0,0x0,0x0,0x0,0x21800000,0x0,0x21800000,0x21800000,0x200,0x200,0x0,0x0,0x21800000,0x0,0x1800000,0x20000000,0x21800000,0x0,0x21800000,0x21800000,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x80,0x8,0x0,0x1800000,0x2000e000,0x2000e000,0x0,0x20000000,0x0,0x400,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_4() {
-      jj_la1_4 = new int[] {0x2,0x4,0x0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x20,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x8,0x80,0x8,0x0,0x0,0x100,0x0,0x0,0x100,0x100,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0xfa84,0x8,0x8,0x0,0x2,0xf8a4,0x0,0x480,0x4,0x80,0x0,0x8,0x80,0x0,0x0,0x20,0x4,0x4,0x4,0x8,0x0,0x8,0x0,0x20,0x0,0x0,0x8,0x0,0xf884,0x80,0x0,0x84,0xf884,0x8,0xf884,0xf8a4,0xf800,0x30680,0x0,0x20,0x0,0x20,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x4,0x0,0x0,0x0,0x0,0x0,0x8,0x0,};
+      jj_la1_4 = new int[] {0x40,0x80,0x1,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x400,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100,0x100,0x1000,0x100,0x0,0x0,0x2000,0x0,0x0,0x2000,0x2000,0x0,0x100,0x1,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x5081,0x100,0x100,0x0,0x40,0x1481,0x0,0x9000,0x80,0x1000,0x0,0x100,0x1000,0x0,0x0,0x401,0x80,0x80,0x80,0x100,0x1,0x100,0x1,0x401,0x0,0x0,0x100,0x0,0x1081,0x1000,0x1,0x1080,0x1081,0x100,0x1081,0x1481,0x0,0x3d000,0x0,0x400,0x0,0x400,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x0,0x0,0x100,0x0,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[36];
   static private boolean jj_rescan = false;
