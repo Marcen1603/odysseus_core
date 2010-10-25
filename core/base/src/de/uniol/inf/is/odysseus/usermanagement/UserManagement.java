@@ -21,9 +21,6 @@ public class UserManagement extends AbstractUserManagement {
 				instance = new UserManagement(new FileUserStore(
 						System.getProperty("user.home")
 								+ "/odysseus/users.store"));
-				// TODO: Spaeter entfernen
-
-				// TODO: testen mit Scott / tiger
 
 				if (instance.hasNoUsers()) {
 					// create system user

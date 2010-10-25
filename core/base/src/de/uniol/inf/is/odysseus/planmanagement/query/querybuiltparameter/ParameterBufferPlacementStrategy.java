@@ -39,4 +39,9 @@ public class ParameterBufferPlacementStrategy extends Setting<IBufferPlacementSt
 		return name;
 	}
 	
+	@Override
+	public String toString() {
+		return super.toString()+" name "+name;
+	}
+	
 }

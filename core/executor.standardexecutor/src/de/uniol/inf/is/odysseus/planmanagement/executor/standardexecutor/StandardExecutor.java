@@ -65,7 +65,7 @@ public class StandardExecutor extends AbstractExecutor {
 	// ----------------------------------------------------------------------------------------
 	// Logging
 	// ----------------------------------------------------------------------------------------
-	
+
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {
@@ -88,20 +88,19 @@ public class StandardExecutor extends AbstractExecutor {
 		// store buffer placement strategy in the configuration
 		Iterator<String> iter;
 		if (getRegisteredBufferPlacementStrategiesIDs() != null
-				&& (iter = getRegisteredBufferPlacementStrategiesIDs().iterator())
-						.hasNext()) {
-			this.configuration.set(new ParameterBufferPlacementStrategy(getBufferPlacementStrategy(iter
-					.next())));
+				&& (iter = getRegisteredBufferPlacementStrategiesIDs()
+						.iterator()).hasNext()) {
+			this.configuration.set(new ParameterBufferPlacementStrategy(
+					getBufferPlacementStrategy(iter.next())));
 		} else {
 			this.configuration.set(new ParameterBufferPlacementStrategy());
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
 	 */
 	@Override
 	public String getInfos() {
@@ -183,13 +182,14 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private List<IQuery> createQueries(String queryStr,
-			User user, QueryBuildConfiguration parameters)
+	private List<IQuery> createQueries(String queryStr, User user,
+			QueryBuildConfiguration parameters)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
 		getLogger().debug("Translate Queries.");
 		// translate query and build logical plans
-		List<IQuery> queries = getCompiler().translateQuery(queryStr, parameters.getParserID(), user);
+		List<IQuery> queries = getCompiler().translateQuery(queryStr,
+				parameters.getParserID(), user);
 		getLogger().trace("Number of queries: " + queries.size());
 		// create for each logical plan an intern query
 		for (IQuery query : queries) {
@@ -215,8 +215,9 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private void addQueries(List<IQuery> newQueries, OptimizationConfiguration conf)
-			throws NoOptimizerLoadedException, QueryOptimizationException {
+	private void addQueries(List<IQuery> newQueries,
+			OptimizationConfiguration conf) throws NoOptimizerLoadedException,
+			QueryOptimizationException {
 		getLogger().debug("Optimize Queries. Count:" + newQueries.size());
 		if (newQueries.isEmpty()) {
 			return;
@@ -227,16 +228,17 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			// optimize queries and set resulting execution plan
 			IExecutionPlan exep = getOptimizer().preQueryAddOptimization(this,
-					newQueries,conf);
+					newQueries, conf);
 			setExecutionPlan(exep);
-			
-			//Einbindung der furchtbar experimentellen ersten Versuche des Query-Sharings
-			
-			//IQuerySharingOptimizer qso = new StandardQuerySharingOptimizer();
-			//newQueries = qso.eliminateIdenticalQueries(newQueries, this.plan);
-			//plan = qso.applyQuerySharing(this, plan);
-			
-			
+
+			// Einbindung der furchtbar experimentellen ersten Versuche des
+			// Query-Sharings
+
+			// IQuerySharingOptimizer qso = new StandardQuerySharingOptimizer();
+			// newQueries = qso.eliminateIdenticalQueries(newQueries,
+			// this.plan);
+			// plan = qso.applyQuerySharing(this, plan);
+
 			// store optimized queries
 
 			for (IQuery optimizedQuery : newQueries) {
@@ -252,7 +254,6 @@ public class StandardExecutor extends AbstractExecutor {
 
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
 	}
-
 
 	/**
 	 * Returns a ID list of the given queries.
@@ -273,29 +274,36 @@ public class StandardExecutor extends AbstractExecutor {
 
 	/**
 	 * Creates {@link QueryBuildConfiguration} of given
-	 * {@link IQueryBuildSetting}. If some parameter not set default
-	 * settings are used.
+	 * {@link IQueryBuildSetting}. If some parameter not set default settings
+	 * are used.
 	 * 
 	 * @param parameters
-	 *            Parameter for creating a {@link QueryBuildConfiguration} object.
+	 *            Parameter for creating a {@link QueryBuildConfiguration}
+	 *            object.
 	 * @return {@link QueryBuildConfiguration} with some assured parameters.
 	 */
-	private QueryBuildConfiguration getBuildParameter(
+	private QueryBuildConfiguration validateBuildParameters(
 			IQueryBuildSetting... parameters) {
-		QueryBuildConfiguration params = new QueryBuildConfiguration(parameters);
+		return validateBuildParameters(new QueryBuildConfiguration(parameters));
+	}
+	
+	private QueryBuildConfiguration validateBuildParameters(
+			QueryBuildConfiguration params) {
 		if (params.getTransformationConfiguration() == null) {
 			throw new RuntimeException(
 					"No transformation configuration set. Abort query execution.");
 		}
 		// Parameter can be delayed as String --> Replace with strategy
- 		ParameterBufferPlacementStrategy bufferPlacement = params.getBufferPlacementParameter();
-		if (bufferPlacement != null && bufferPlacement.getValue() == null && bufferPlacement.getName() != null){
-			bufferPlacement = new ParameterBufferPlacementStrategy(getBufferPlacementStrategy(bufferPlacement.getName()));
+		ParameterBufferPlacementStrategy bufferPlacement = params
+				.getBufferPlacementParameter();
+		if (bufferPlacement != null && bufferPlacement.getValue() == null
+				&& bufferPlacement.getName() != null) {
+			bufferPlacement = new ParameterBufferPlacementStrategy(
+					getBufferPlacementStrategy(bufferPlacement.getName()));
 			params.set(bufferPlacement);
 		}
-		return params;
+		return params;		
 	}
-
 	/**
 	 * Get a {@link IBufferPlacementStrategy} by an ID.
 	 * {@link IBufferPlacementStrategy} services are managed by the optimization
@@ -326,18 +334,17 @@ public class StandardExecutor extends AbstractExecutor {
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(java
-	 * .lang.String, java.lang.String,
-	 * de.uniol.inf.is.odysseus.planmanagement
+	 * .lang.String, java.lang.String, de.uniol.inf.is.odysseus.planmanagement
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
-	private Collection<Integer> addQuery(String query,
-			User user, QueryBuildConfiguration parameters)
-			throws PlanManagementException {
+	private Collection<Integer> addQuery(String query, User user,
+			QueryBuildConfiguration parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries. " + query);
+		validateBuildParameters(parameters);
 		try {
-			List<IQuery> newQueries = createQueries(query, user,
-					parameters);
-			addQueries(newQueries, new OptimizationConfiguration(parameters.values().toArray(new Setting[0])));
+			List<IQuery> newQueries = createQueries(query, user, parameters);
+			addQueries(newQueries, new OptimizationConfiguration(parameters
+					.values().toArray(new Setting[0])));
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
 			getLogger().error(
@@ -346,23 +353,21 @@ public class StandardExecutor extends AbstractExecutor {
 			throw new QueryAddException(e);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(java
-	 * .lang.String, java.lang.String,
-	 * de.uniol.inf.is.odysseus.planmanagement
+	 * .lang.String, java.lang.String, de.uniol.inf.is.odysseus.planmanagement
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<Integer> addQuery(String query,
-			User user, IQueryBuildSetting... parameters)
-			throws PlanManagementException {
-		return addQuery(query, user, new QueryBuildConfiguration(parameters));
+	public Collection<Integer> addQuery(String query, User user,
+			IQueryBuildSetting... parameters) throws PlanManagementException {
+		return addQuery(query, user, validateBuildParameters(parameters));
 	}
-	
+
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
 			User user, IQueryBuildSetting... parameters)
@@ -371,26 +376,22 @@ public class StandardExecutor extends AbstractExecutor {
 		conf.set(new ParameterParserID(parserID));
 		return addQuery(query, user, conf);
 	}
-	
-
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de
-	 * .uniol.inf.is.odysseus.base.ILogicalOperator,
-	 * de.uniol.inf.is.odysseus
+	 * .uniol.inf.is.odysseus.base.ILogicalOperator, de.uniol.inf.is.odysseus
 	 * .planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter
 	 * <?>[])
 	 */
 	@Override
 	public int addQuery(ILogicalOperator logicalPlan, User user,
-			IQueryBuildSetting... parameters)
-			throws PlanManagementException {
+			IQueryBuildSetting... parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		try {
-			QueryBuildConfiguration params = getBuildParameter(parameters);
+			QueryBuildConfiguration params = validateBuildParameters(parameters);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(logicalPlan, params);
 			query.setUser(user);
@@ -410,18 +411,16 @@ public class StandardExecutor extends AbstractExecutor {
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de
-	 * .uniol.inf.is.odysseus.base.IPhysicalOperator,
-	 * de.uniol.inf.is.odysseus
+	 * .uniol.inf.is.odysseus.base.IPhysicalOperator, de.uniol.inf.is.odysseus
 	 * .planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter
 	 * <?>[])
 	 */
 	@Override
 	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
-			IQueryBuildSetting... parameters)
-			throws PlanManagementException {
+			IQueryBuildSetting... parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		try {
-			QueryBuildConfiguration params = getBuildParameter(parameters);
+			QueryBuildConfiguration params = validateBuildParameters(parameters);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(physicalPlan, params);
 			query.setUser(user);
@@ -436,11 +435,12 @@ public class StandardExecutor extends AbstractExecutor {
 		}
 	}
 
-	private OptimizationConfiguration getOptimizationParameters(IQueryBuildSetting[] parameters) {
-		OptimizationConfiguration conf = new OptimizationConfiguration(parameters);
+	private OptimizationConfiguration getOptimizationParameters(
+			IQueryBuildSetting[] parameters) {
+		OptimizationConfiguration conf = new OptimizationConfiguration(
+				parameters);
 		return conf;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -464,8 +464,8 @@ public class StandardExecutor extends AbstractExecutor {
 				getLogger().info(
 						"Try to aquire executionPlanLock (Currently "
 								+ executionPlanLock.getHoldCount() + "). done");
-				setExecutionPlan(getOptimizer().preQueryRemoveOptimization(this,
-						queryToRemove, this.executionPlan));
+				setExecutionPlan(getOptimizer().preQueryRemoveOptimization(
+						this, queryToRemove, this.executionPlan));
 				stopQuery(queryToRemove.getID());
 				getLogger().info("Removing Query " + queryToRemove.getID());
 				this.plan.removeQuery(queryToRemove.getID());
@@ -548,7 +548,7 @@ public class StandardExecutor extends AbstractExecutor {
 		getLogger().info("Stop a query (ID: " + queryID + ").");
 
 		Query queryToStop = (Query) this.plan.getQuery(queryID);
-	
+
 		try {
 			this.executionPlanLock.lock();
 			setExecutionPlan(getOptimizer().preStopOptimization(queryToStop,
@@ -575,7 +575,7 @@ public class StandardExecutor extends AbstractExecutor {
 					"Query not stopped. An Error while optimizing occurd (ID: "
 							+ queryID + ")." + e.getMessage());
 			throw new RuntimeException(e);
-			//return;
+			// return;
 		} finally {
 			this.executionPlanLock.unlock();
 		}
@@ -596,8 +596,8 @@ public class StandardExecutor extends AbstractExecutor {
 		try {
 			if (sender instanceof Query) {
 				this.executionPlanLock.lock();
-				setExecutionPlan(getOptimizer().reoptimize(this, (IQuery) sender,
-						this.executionPlan));
+				setExecutionPlan(getOptimizer().reoptimize(this,
+						(IQuery) sender, this.executionPlan));
 
 				getLogger().debug("Query " + sender.getID() + " reoptimized.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
@@ -621,11 +621,8 @@ public class StandardExecutor extends AbstractExecutor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener
-	 * #
-	 * reoptimizeRequest(de.uniol.inf.is.odysseus.planmanagement.plan.IPlan
-	 * )
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener
+	 * # reoptimizeRequest(de.uniol.inf.is.odysseus.planmanagement.plan.IPlan )
 	 */
 	@Override
 	public void reoptimizeRequest(IPlan sender) {
@@ -731,8 +728,8 @@ public class StandardExecutor extends AbstractExecutor {
 	@Override
 	public void setScheduler(String scheduler, String schedulerStrategy) {
 		try {
-			getSchedulerManager().setActiveScheduler(scheduler, schedulerStrategy,
-					this);
+			getSchedulerManager().setActiveScheduler(scheduler,
+					schedulerStrategy, this);
 		} catch (SchedulerException e) {
 			getLogger().error(
 					"Error while using schedulerManager. Setting Scheduler. "
@@ -788,7 +785,6 @@ public class StandardExecutor extends AbstractExecutor {
 		return null;
 	}
 
-
 	@Override
 	public OptimizationConfiguration getOptimizerConfiguration()
 			throws NoOptimizerLoadedException {
@@ -822,7 +818,8 @@ public class StandardExecutor extends AbstractExecutor {
 		// synchronize the process
 		this.executionPlanLock.lock();
 		try {
-			setExecutionPlan(this.getOptimizer().preQueryMigrateOptimization(this,
+			setExecutionPlan(this.getOptimizer().preQueryMigrateOptimization(
+					this,
 					new OptimizationConfiguration(ParameterDoRewrite.FALSE)));
 		} finally {
 			// end synchronize of the process
@@ -830,7 +827,7 @@ public class StandardExecutor extends AbstractExecutor {
 		}
 		getLogger().debug("Finished updating Execution Plan.");
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Standard";
