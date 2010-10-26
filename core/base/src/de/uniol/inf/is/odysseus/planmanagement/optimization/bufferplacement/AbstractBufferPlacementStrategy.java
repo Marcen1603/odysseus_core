@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 
 /**
  * 
@@ -52,6 +51,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 	@SuppressWarnings("unchecked")
 	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
 			PhysicalSubscription<? extends ISource<?>> s) {
+		getLogger().debug("Place Buffer "+buffer+" sink "+sink );
 		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(),
 				s.getSourceOutPort(), s.getSchema());
 		buffer.subscribeSink(sink, s.getSinkInPort(), 0, s.getSchema());
@@ -85,14 +85,14 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
 				if (s.getTarget().isSink()) {
-					if (s.getTarget() instanceof IBuffer || s.getTarget() instanceof MetadataCreationPO) {
+					if (s.getTarget() instanceof IBuffer) {
 						// if there are already buffers in the subplan
 						// we don't want to insert additional ones
 						continue;
 					}
 					ISink<?> childSink = (ISink<?>) s.getTarget();
 					sinks.push(childSink);
-					if (bufferNeeded(subscriptions, childSink)) {
+					if (bufferNeeded(subscriptions, childSink, sink)) {
 						IBuffer buffer = createNewBuffer();
 						placeBuffer(buffer, sink, s);
 					}
@@ -112,6 +112,6 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 	abstract protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
-			ISink<?> childSink);
+			ISink<?> childSink, ISink<?> sink);
 
 }
