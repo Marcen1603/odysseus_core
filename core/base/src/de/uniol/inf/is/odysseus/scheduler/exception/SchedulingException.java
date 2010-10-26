@@ -21,8 +21,10 @@ public class SchedulingException extends RuntimeException {
 	public SchedulingException(String message) {
 		super(message);
 	}
-	
-	public SchedulingException( Throwable t ) {
+
+	public SchedulingException(Throwable t) {
 		super(t);
 	}
+	
+	
 }
