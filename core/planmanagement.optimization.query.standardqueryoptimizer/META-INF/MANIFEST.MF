@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
 Service-Component: OSGI-INF/StandardQueryOptimizer.xml
+Import-Package: org.slf4j

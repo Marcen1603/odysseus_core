@@ -1,6 +1,10 @@
-package de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy;
+package de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy;
 
 import java.util.Collection;
+
+/**
+ * Places buffers before metadata creation po
+ */
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,30 +16,22 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 
-/**
- *  
- * @author Jonas Jacobi, Marco Grawunder
- *
- */
-public class StandardBufferPlacementStrategy 
-	   extends	AbstractBufferPlacementStrategy {
- 
+public class SourceBufferPlacementStrategy extends AbstractBufferPlacementStrategy{
+	         
+	
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(SourceBufferPlacementStrategy.class);
 		}
 		return _logger;
 	}
 	
 	@Override
-	protected boolean bufferNeeded(
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
-			ISink<?> childSink, ISink<?> sink) {
-		return !(sink instanceof MetadataCreationPO);
+	public String getName() {
+		return "Source Buffer Placement";
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,15 +43,18 @@ public class StandardBufferPlacementStrategy
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
-		// do nothing. It's only a standard placement strategy.
+		// do nothing.
 	}
 
-	
-	
 	@Override
-	public String getName() {
-		return "Standard Buffer Placement";
+	protected boolean bufferNeeded(
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
+			ISink<?> childSink, ISink<?> sink) {
+		boolean setBuffer = sink instanceof MetadataCreationPO;
+		if (setBuffer){
+			getLogger().debug(childSink+" "+sink+" true");
+		}
+		return setBuffer;
 	}
-
 
 }

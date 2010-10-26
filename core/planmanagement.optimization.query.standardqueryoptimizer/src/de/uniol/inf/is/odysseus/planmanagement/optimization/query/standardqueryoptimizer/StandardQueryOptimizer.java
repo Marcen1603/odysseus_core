@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardquery
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -27,6 +29,16 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
  */
 public class StandardQueryOptimizer implements IQueryOptimizer {
 
+	
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(StandardQueryOptimizer.class);
+		}
+		return _logger;
+	}
+	
 //	/* (non-Javadoc)
 //	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.OptimizationConfiguration)
 //	 */
@@ -101,9 +113,11 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		IBufferPlacementStrategy bufferPlacementStrategy = query
 				.getBuildParameter().getBufferPlacementStrategy();
 		
+		
 		// add Buffer
 		if (bufferPlacementStrategy != null) {
 			try {
+				getLogger().debug("Adding Buffers with Strategy "+bufferPlacementStrategy.getName());
 				bufferPlacementStrategy.addBuffers(physicalPlan);
 			} catch (Exception e) {
 				throw new QueryOptimizationException(
