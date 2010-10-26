@@ -199,9 +199,8 @@ abstract class AbstractUserManagement {
 			throws HasNoPermissionException {
 		if (AccessControl.hasPermission(UserManagementAction.GET_ALL_USER,
 				null, caller)
-				|| AccessControl.hasPermission(UserManagementAction
-						.hasSuperAction(UserManagementAction.GET_ALL_USER),
-						null, caller)) {
+				|| hasSuperOperation(UserManagementAction.GET_ALL_USER, null,
+						caller)) {
 			return userStore.getUsers();
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
@@ -228,10 +227,8 @@ abstract class AbstractUserManagement {
 		// caller hat object
 		&& caller.hasObject(objecturi) != null)
 		// hat user superPermission von permission
-		|| AccessControl
-				.hasPermission(UserManagementAction
-						.hasSuperAction(UserManagementAction.GRANT),
-						"UserManagement", caller))) {
+		|| hasSuperOperation(UserManagementAction.GRANT, "UserManagement",
+				caller))) {
 			AbstractUserManagementEntity entity = getEntity(name);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) == null) {
@@ -263,8 +260,7 @@ abstract class AbstractUserManagement {
 				// caller hat object
 				&& caller.hasObject(objecturi) != null)
 				// hat user superPermission von permission
-				|| AccessControl.hasPermission(UserManagementAction
-						.hasSuperAction(UserManagementAction.GRANT),
+				|| hasSuperOperation(UserManagementAction.GRANT,
 						"UserManagement", caller))) {
 			AbstractUserManagementEntity entity = getEntity(name);
 			// if entity has't already rights on this object
@@ -324,10 +320,8 @@ abstract class AbstractUserManagement {
 		if (!caller.toString().equals(name)
 				&& ((AccessControl.hasPermission(UserManagementAction.REVOKE,
 						"UserManagement", caller) && caller
-						.hasObject(objecturi) != null) || AccessControl
-						.hasPermission(UserManagementAction
-								.hasSuperAction(UserManagementAction.REVOKE),
-								objecturi, caller))) {
+						.hasObject(objecturi) != null) || hasSuperOperation(
+						UserManagementAction.REVOKE, objecturi, caller))) {
 			AbstractUserManagementEntity entity = getEntity(name);
 			entity.removePrivilege(objecturi);
 			if (entity instanceof User) {
@@ -363,8 +357,7 @@ abstract class AbstractUserManagement {
 				// ist in der rolle
 				&& caller.hasRole(rolename) != null)
 				// hat superPermission
-				|| AccessControl.hasPermission(UserManagementAction
-						.hasSuperAction(UserManagementAction.GRANT),
+				|| hasSuperOperation(UserManagementAction.GRANT,
 						"UserManagement", caller))) {
 			User user = this.userStore.getUserByName(username);
 			if (user.hasRole(rolename) == null) {
@@ -381,8 +374,13 @@ abstract class AbstractUserManagement {
 		}
 	}
 
-	//TODO create hasSuperAction methode
-	
+	// TODO create hasSuperAction methode
+	private boolean hasSuperOperation(UserManagementAction operation,
+			String object, User user) {
+		return AccessControl.hasPermission(
+				UserManagementAction.hasSuperAction(operation), object, user);
+	}
+
 	/**
 	 * revoke a role from a specified user
 	 * 
@@ -395,8 +393,7 @@ abstract class AbstractUserManagement {
 			throws HasNoPermissionException {
 		if ((AccessControl.hasPermission(UserManagementAction.REVOKE,
 				"UserManagement", caller) && user.hasRole(rolename) != null)
-				|| AccessControl.hasPermission(UserManagementAction
-						.hasSuperAction(UserManagementAction.REVOKE),
+				|| hasSuperOperation(UserManagementAction.REVOKE,
 						"UserManagement", caller)) {
 			user.removeRole(roleStore.get(rolename));
 			fireUserManagementListener();
