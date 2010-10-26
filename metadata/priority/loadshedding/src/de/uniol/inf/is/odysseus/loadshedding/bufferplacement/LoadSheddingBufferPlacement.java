@@ -21,7 +21,7 @@ public class LoadSheddingBufferPlacement extends
 	@Override
 	protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
-			ISink<?> childSink) {
+			ISink<?> childSink, ISink<?> sink) {
 
 		if (childSink instanceof PriorityPO) {
 			placeLoadShedder = true;

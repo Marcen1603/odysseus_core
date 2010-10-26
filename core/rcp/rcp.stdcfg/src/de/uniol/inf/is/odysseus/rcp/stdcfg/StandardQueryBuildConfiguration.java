@@ -21,7 +21,8 @@ public class StandardQueryBuildConfiguration implements
 				new TransformationConfiguration(
 						"relational", 
 						ITimeInterval.class)));
-		settings.add(new ParameterBufferPlacementStrategy("Standard Buffer Placement"));
+		//settings.add(new ParameterBufferPlacementStrategy("Standard Buffer Placement"));
+		settings.add(new ParameterBufferPlacementStrategy("Source Buffer Placement"));
 	}
 
 	@Override
