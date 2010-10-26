@@ -70,6 +70,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 
 		@Override
 		public void run() {
+			this.setName("ExecutorThread");
 			try {
 				while (!isInterrupted())  {
 					Iterator<IScheduling> part = parts.iterator();
@@ -175,6 +176,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 			// Create for each partial plan an own scheduling strategy.
 			// These strategies are used for scheduling partial plans.
 			logger.debug("setPartialPlans create new Parts");
+			try {
 			for (IPartialPlan partialPlan : partialPlans) {
 				final IScheduling scheduling = schedulingFactory.create(
 						partialPlan, partialPlan.getCurrentPriority());
@@ -182,6 +184,10 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 					this.parts.add(scheduling);
 					parts.notifyAll();
 				}
+			}
+			} catch( Throwable t ) {
+				t.printStackTrace();
+				throw new RuntimeException(t);
 			}
 			// }
 			// restart ExecutorThread, if terminated before
