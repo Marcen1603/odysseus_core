@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tenants View
+Bundle-Name: Tenants and User View
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.tenants.view; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.tenants.view.Activator
@@ -11,3 +11,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.rcp.user,
  de.uniol.inf.is.odysseus.usermanagement
+
