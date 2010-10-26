@@ -37,8 +37,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimizer.StandardQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
