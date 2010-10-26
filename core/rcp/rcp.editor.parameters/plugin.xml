@@ -4,7 +4,7 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SourceParameterEditor"
             name="SOURCE">
       </editor>
       <editor

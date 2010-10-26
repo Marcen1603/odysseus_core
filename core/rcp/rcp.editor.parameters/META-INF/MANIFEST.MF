@@ -7,7 +7,8 @@ Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.swt,
  org.eclipse.ui
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.logicaloperator,
+Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.logicaloperator.builder,
  de.uniol.inf.is.odysseus.rcp.editor.parameter,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
