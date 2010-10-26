@@ -11,9 +11,9 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQueryS
 public class Activator implements BundleActivator {
 	
 	public void start(BundleContext context) throws Exception {
-		Dictionary<String, String> properties = new Hashtable<String,String>();
-		context.registerService(IQuerySharingOptimizer.class.getName(), new StandardQuerySharingOptimizer(),properties);
-		System.out.println("Query-Sharing-Bundle started");
+		//Dictionary<String, String> properties = new Hashtable<String,String>();
+		//context.registerService(IQuerySharingOptimizer.class.getName(), new StandardQuerySharingOptimizer(),properties);
+		//System.out.println("Query-Sharing-Bundle started");
 	}
 
 	public void stop(BundleContext context) throws Exception {

@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoa
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
@@ -129,6 +130,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * System Monitor Komponente
 	 */
 	protected ISystemMonitorFactory systemMonitorFactory = null;
+	
+	/**
+	 * optional Query-Sharing-Component
+	 */
+	protected IQuerySharingOptimizer querySharingOptimizer = null;
 
 	// --------------------------------------------------------------------------------------
 	// Constructors/Initialization
@@ -282,6 +288,30 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			getLogger().debug("Compiler unbound " + compiler);
 		}
 	}
+	
+	/**
+	 * bindQuerySharingOptimizer bindet eine Querysharing-Komponente ein
+	 * 
+	 * @param querySharingOptimizer
+	 *            neue Querysharing-Komponente
+	 */
+	public void bindQuerySharingOptimizer(IQuerySharingOptimizer querySharingOptimizer) {
+		this.querySharingOptimizer = querySharingOptimizer;
+		getLogger().debug("QuerysharingOptimizer bound " + querySharingOptimizer);
+	}
+
+	/**
+	 * unbindQuerysharingOptimizer entfernt eine Querysharing-Komponente
+	 * 
+	 * @param querySharingOptimizer
+	 *            zu entfernende Querysharing-Komponente
+	 */
+	public void unbindQuerySharingOptimizer(IQuerySharingOptimizer querySharingOptimizer) {
+		if (this.querySharingOptimizer == querySharingOptimizer) {
+			this.querySharingOptimizer = null;
+			getLogger().debug("QuerysharingOptimizer unbound " + querySharingOptimizer);
+		}
+	}
 
 	// ----------------------------------------------------------------------------------------
 	// Getter/Setter
@@ -324,6 +354,21 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			return this.compiler;
 		}
 		throw new NoCompilerLoadedException();
+	}
+	
+	/**
+	 * QuerySharingOptimizer liefert den aktuellen QuerySharingOpzimizer.
+	 * 
+	 * @return aktueller QuerySharingOptimizer
+	 * 
+	 */
+	@Override
+	public IQuerySharingOptimizer getQuerySharingOptimizer()  {
+		if (this.querySharingOptimizer != null) {
+			return this.querySharingOptimizer;
+		}
+
+		return null;
 	}
 
 	// ----------------------------------------------------------------------------------------

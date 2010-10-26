@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
@@ -241,7 +242,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	public String getName();
 
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
-
+	IQuerySharingOptimizer getQuerySharingOptimizer();
 	ArrayList<IQuery> getQueries();
 
 

@@ -3,10 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Querysharing
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimizer.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing,
  de.uniol.inf.is.odysseus.planmanagement.plan,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  org.eclipse.osgi.framework.console;version="1.0.0",
@@ -15,5 +15,4 @@ Import-Package: de.uniol.inf.is.odysseus.physicaloperator,
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/*.xml
 Require-Bundle: de.uniol.inf.is.odysseus
-Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing,
- de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimizer
+Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimizer

@@ -25,7 +25,6 @@ Import-Package: de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.scheduler.manager;version="2.0.0",
  de.uniol.inf.is.odysseus.usermanagement,
- org.osgi.framework,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
 Service-Component: OSGI-INF/StandardExecutor.xml
