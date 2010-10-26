@@ -9,4 +9,5 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.usermanagement
+Import-Package: de.uniol.inf.is.odysseus.rcp.user,
+ de.uniol.inf.is.odysseus.usermanagement

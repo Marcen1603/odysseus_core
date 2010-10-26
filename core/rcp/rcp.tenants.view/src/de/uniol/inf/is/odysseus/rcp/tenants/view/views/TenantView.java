@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.usermanagement.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 
 public class TenantView extends ViewPart implements IUserManagementListener,
 		ITenantManagementListener {
@@ -217,10 +218,11 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 					l.add(new UserWrapper(
 							UserManagement.getInstance()
 									.getUsers(
-											UserManagement.getInstance()
-													.getSuperUser())));
+											ActiveUser.getActiveUser())));
 				} catch (HasNoPermissionException e) {
-					new RuntimeException(e);
+					// If user has no rights to view all users, only the
+					// current user is shown
+					l.add(ActiveUser.getActiveUser());
 				}
 				viewer.setInput(l);
 			}
