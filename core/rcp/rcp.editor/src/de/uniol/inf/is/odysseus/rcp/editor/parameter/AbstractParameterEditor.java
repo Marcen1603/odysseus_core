@@ -49,10 +49,11 @@ public abstract class AbstractParameterEditor implements IParameterEditor {
 	}
 	
 	protected Object getValue() {
-		if( !validate() ) 
+		try {
+			return getParameter().getValue();
+		} catch( RuntimeException ex ) {
 			return null;
-		
-		return getParameter().getValue();
+		}
 	}
 
 	protected IParameterView getView() {

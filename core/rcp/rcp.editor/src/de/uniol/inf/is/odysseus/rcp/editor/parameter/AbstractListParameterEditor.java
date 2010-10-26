@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.parameter;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ListParameter;
@@ -22,6 +24,15 @@ public abstract class AbstractListParameterEditor<T> extends AbstractParameterEd
 	
 	protected ListParameter<T> getListParameter() {
 		return listParameter;
+	}
+	
+	@Override
+	protected List<T> getValue() {
+		try {
+			return listParameter.getValue();
+		} catch( RuntimeException ex ) {
+			return null;
+		}
 	}
 	
 }
