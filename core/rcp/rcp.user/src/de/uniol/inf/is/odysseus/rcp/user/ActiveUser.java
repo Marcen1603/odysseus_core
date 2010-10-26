@@ -19,7 +19,7 @@ public class ActiveUser {
 		StatusBarManager.getInstance().setMessage(StatusBarManager.USER_ID, user.getUsername());
 	}
 	
-	public static User getActiveUser() {
+	public static User getActiveUser() { // TODO: Bessere Bezeichnung
 		return activeUser;
 	}
 }
