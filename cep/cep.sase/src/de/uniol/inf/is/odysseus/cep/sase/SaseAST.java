@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-10-27 11:56:27
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-10-27 14:25:49
 
 	package de.uniol.inf.is.odysseus.cep.sase; 
 	import java.util.LinkedList;
@@ -131,10 +131,8 @@ public class SaseAST extends TreeParser {
         }
         
 
-    @Override
-	public String[] getTokenNames() { return SaseAST.tokenNames; }
-    @Override
-	public String getGrammarFileName() { return "C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g"; }
+    public String[] getTokenNames() { return SaseAST.tokenNames; }
+    public String getGrammarFileName() { return "C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g"; }
 
 
 

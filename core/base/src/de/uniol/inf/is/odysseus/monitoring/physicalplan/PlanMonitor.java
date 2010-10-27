@@ -14,7 +14,7 @@ public class PlanMonitor extends AbstractPlanMonitor<Double> {
 		this.monitoringType = monitoringType;
 		for (IPhysicalOperator p : monitoredOps) {
 			if (!p.providesMonitoringData(monitoringType)){
-				MonitoringDataTypes.createMetadata(monitoringType, p);
+				p.addMonitoringData(monitoringType, MonitoringDataTypes.createMetadata(monitoringType, p));
 			}
 			if (monitoringPeriod > 0){
 				p.getMonitoringData(monitoringType, monitoringPeriod);

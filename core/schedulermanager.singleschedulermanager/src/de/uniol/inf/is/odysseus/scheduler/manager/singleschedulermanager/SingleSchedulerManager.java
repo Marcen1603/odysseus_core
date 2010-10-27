@@ -68,7 +68,6 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * constructor and bind-methods). This method can be used to configure this
 	 * object.
 	 */
-	@SuppressWarnings("unused")
 	private void activate() {
 		this.logger.info("Activate schedulererManager.");
 		Set<String> schedulers = getScheduler();

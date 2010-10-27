@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2010-10-27 11:56:29
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2010-10-27 14:25:51
  
 	package de.uniol.inf.is.odysseus.cep.sase; 
 
@@ -117,16 +117,13 @@ public class SaseParser extends Parser {
         return adaptor;
     }
 
-    @Override
-	public String[] getTokenNames() { return SaseParser.tokenNames; }
-    @Override
-	public String getGrammarFileName() { return "C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g"; }
+    public String[] getTokenNames() { return SaseParser.tokenNames; }
+    public String getGrammarFileName() { return "C:\\development\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g"; }
 
 
     public static class start_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "start"
@@ -212,8 +209,7 @@ public class SaseParser extends Parser {
 
     public static class createStmt_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "createStmt"
@@ -259,7 +255,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: queryStmt, NAME
+            // elements: NAME, queryStmt
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -308,8 +304,7 @@ public class SaseParser extends Parser {
 
     public static class queryStmt_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "queryStmt"
@@ -415,7 +410,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: returnPart, wherePart, patternPart, withinPart
+            // elements: patternPart, withinPart, wherePart, returnPart
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -481,8 +476,7 @@ public class SaseParser extends Parser {
 
     public static class withinPart_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "withinPart"
@@ -539,7 +533,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: timeunit, WITHIN, NUMBER
+            // elements: NUMBER, WITHIN, timeunit
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -593,8 +587,7 @@ public class SaseParser extends Parser {
 
     public static class timeunit_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "timeunit"
@@ -650,8 +643,7 @@ public class SaseParser extends Parser {
 
     public static class wherePart_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "wherePart"
@@ -739,7 +731,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: whereExpressions, WHERE, skipPart
+                    // elements: skipPart, whereExpressions, WHERE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -783,7 +775,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: WHERE, whereExpressions
+                    // elements: whereExpressions, WHERE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -833,8 +825,7 @@ public class SaseParser extends Parser {
 
     public static class skipPart_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "skipPart"
@@ -883,7 +874,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: skipMethod, parameterList
+            // elements: parameterList, skipMethod
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -931,8 +922,7 @@ public class SaseParser extends Parser {
 
     public static class skipMethod_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "skipMethod"
@@ -988,8 +978,7 @@ public class SaseParser extends Parser {
 
     public static class patternPart_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "patternPart"
@@ -1069,8 +1058,7 @@ public class SaseParser extends Parser {
 
     public static class returnPart_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "returnPart"
@@ -1195,8 +1183,7 @@ public class SaseParser extends Parser {
 
     public static class patternDecl_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "patternDecl"
@@ -1280,7 +1267,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: SEQ, stateDef
+            // elements: stateDef, SEQ
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1333,8 +1320,7 @@ public class SaseParser extends Parser {
 
     public static class stateDef_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "stateDef"
@@ -1527,7 +1513,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: NOTSIGN, ktypeDefinition
+                    // elements: ktypeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1665,7 +1651,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: NOTSIGN, ktypeDefinition
+                    // elements: ktypeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1737,7 +1723,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: typeDefinition, NOTSIGN
+                    // elements: NOTSIGN, typeDefinition
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1793,8 +1779,7 @@ public class SaseParser extends Parser {
 
     public static class typeDefinition_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "typeDefinition"
@@ -1851,8 +1836,7 @@ public class SaseParser extends Parser {
 
     public static class ktypeDefinition_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "ktypeDefinition"
@@ -1912,8 +1896,7 @@ public class SaseParser extends Parser {
 
     public static class parameterList_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "parameterList"
@@ -2032,8 +2015,7 @@ public class SaseParser extends Parser {
 
     public static class attributeName_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "attributeName"
@@ -2183,8 +2165,7 @@ public class SaseParser extends Parser {
 
     public static class kAttributeName_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "kAttributeName"
@@ -2239,8 +2220,7 @@ public class SaseParser extends Parser {
 
     public static class sAttributeName_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "sAttributeName"
@@ -2289,8 +2269,7 @@ public class SaseParser extends Parser {
 
     public static class kAttributeUsage_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "kAttributeUsage"
@@ -2581,8 +2560,7 @@ public class SaseParser extends Parser {
 
     public static class current_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "current"
@@ -2649,8 +2627,7 @@ public class SaseParser extends Parser {
 
     public static class first_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "first"
@@ -2717,8 +2694,7 @@ public class SaseParser extends Parser {
 
     public static class last_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "last"
@@ -2799,8 +2775,7 @@ public class SaseParser extends Parser {
 
     public static class len_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "len"
@@ -2877,8 +2852,7 @@ public class SaseParser extends Parser {
 
     public static class whereExpressions_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "whereExpressions"
@@ -3036,8 +3010,7 @@ public class SaseParser extends Parser {
 
     public static class expression_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "expression"
@@ -3278,7 +3251,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: mathExpression, sAttributeName
+                    // elements: sAttributeName, mathExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3329,8 +3302,7 @@ public class SaseParser extends Parser {
 
     public static class mathExpression_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "mathExpression"
@@ -3459,8 +3431,7 @@ public class SaseParser extends Parser {
 
     public static class mult_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "mult"
@@ -3589,8 +3560,7 @@ public class SaseParser extends Parser {
 
     public static class term_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "term"
@@ -3713,8 +3683,7 @@ public class SaseParser extends Parser {
 
     public static class attributeTerm_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "attributeTerm"
@@ -3808,7 +3777,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: NAME, kAttributeUsage
+                    // elements: kAttributeUsage, NAME
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3852,7 +3821,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: aName, member
+                    // elements: member, aName
                     // token labels: member, aName
                     // rule labels: retval
                     // token list labels: 
@@ -3905,8 +3874,7 @@ public class SaseParser extends Parser {
 
     public static class aggregation_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "aggregation"
@@ -4080,7 +4048,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: aggop, member, var
+                    // elements: aggop, var, member
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4162,7 +4130,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: aggop, member, var
+                    // elements: aggop, var, member
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4221,8 +4189,7 @@ public class SaseParser extends Parser {
 
     public static class aggop_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "aggop"
@@ -4278,8 +4245,7 @@ public class SaseParser extends Parser {
 
     public static class value_return extends ParserRuleReturnScope {
         CommonTree tree;
-        @Override
-		public Object getTree() { return tree; }
+        public Object getTree() { return tree; }
     };
 
     // $ANTLR start "value"

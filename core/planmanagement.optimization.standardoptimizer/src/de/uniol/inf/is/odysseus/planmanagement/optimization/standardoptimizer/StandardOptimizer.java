@@ -29,14 +29,13 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
-
 /**
  * 
  * @author Wolf Bauer, Tobias Witt, Marco Grawunder
  * 
  */
 public class StandardOptimizer extends AbstractOptimizer {
-	
+
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {
@@ -45,245 +44,273 @@ public class StandardOptimizer extends AbstractOptimizer {
 		}
 		return _logger;
 	}
-	
+
 	private Map<Integer, PlanMigrationContext> optimizationContext;
 	private Queue<IQuery> pendingRequests;
-	
+
 	public static final long MONITORING_PERIOD = 30000;
-	
+
 	public StandardOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 		this.pendingRequests = new LinkedList<IQuery>();
 	}
-	
 
 	@Override
-	public IExecutionPlan optimize(IOptimizable sender,
-			List<IQuery> queries, OptimizationConfiguration parameter)
-	throws QueryOptimizationException {
+	public IExecutionPlan optimize(IOptimizable sender, List<IQuery> queries,
+			OptimizationConfiguration parameter)
+			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IQuery query : queries) {
-				this.queryOptimizer.optimizeQuery(sender, query,
-						parameter);				
+				this.queryOptimizer.optimizeQuery(sender, query, parameter);
+				
+				if (query.getBuildParameter()
+						.getParameterInstallMetadataListener()) {
+					updateMetadataListener(query, true);
+				}
 			}
-
 			List<IQuery> newPlan = sender.getQueries();
 			newPlan.addAll(queries);
 
-			IExecutionPlan newExecutionPlan = this.planOptimizer
-					.optimizePlan(sender, parameter, newPlan);
+			IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
+					sender, parameter, newPlan);
 
 			return newExecutionPlan;
 		}
 		return sender.getExecutionPlan();
 	}
 
-
-
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
-			T sender, IQuery removedQuery,
-			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
+			T sender, IQuery removedQuery, IExecutionPlan executionPlan,
+			OptimizationConfiguration parameter)
 			throws QueryOptimizationException {
-		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
-				sender.getQueries());
+		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
 		newPlan.remove(removedQuery);
 
-		IExecutionPlan newExecutionPlan = this.planOptimizer
-				.optimizePlan(sender, parameter, newPlan);
+		IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
+				sender, parameter, newPlan);
 
 		return newExecutionPlan;
 	}
-	
-	@Override
-	public IExecutionPlan beforeQueryStart(IQuery queryToStart,
-			IExecutionPlan executionPlan) throws QueryOptimizationException {
-		if (queryToStart.getBuildParameter().getParameterInstallMetadataListener()){
-			updateMetadataListener(queryToStart, true);
-		}
-		return super.beforeQueryStart(queryToStart, executionPlan);
-	}
-	
-	@Override
-	public IExecutionPlan beforeQueryStop(IQuery queryToStop,
-			IExecutionPlan execPlan) throws QueryOptimizationException {
-		if (queryToStop.getBuildParameter().getParameterInstallMetadataListener()){
-			updateMetadataListener(queryToStop, false);
-		}		
-		return super.beforeQueryStop(queryToStop, execPlan);
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void updateMetadataListener(IQuery query, boolean add) {
 		// the graph walker walks through the whole plan
 		// so we can start at the first root of the plan
 		// and all roots will be visited.
-		if (add){
-			query.addPlanMonitor(MonitoringDataTypes.DATARATE.name, new PlanMonitor(query,false, MonitoringDataTypes.DATARATE.name, MONITORING_PERIOD));
-			query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name, new PlanMonitor(query,false, MonitoringDataTypes.SELECTIVITY.name,-1));
-		}else{
-			new AbstractGraphWalker().prefixWalkPhysical(query.getRoots().get(0), new RemoveMetadataListenerVisitor());			
+		if (add) {
+			query.addPlanMonitor(MonitoringDataTypes.DATARATE.name,
+					new PlanMonitor(query, false,
+							MonitoringDataTypes.DATARATE.name,
+							MONITORING_PERIOD));
+			query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name,
+					new PlanMonitor(query, false,
+							MonitoringDataTypes.SELECTIVITY.name, -1));
+		} else {
+			new AbstractGraphWalker().prefixWalkPhysical(query.getRoots()
+					.get(0), new RemoveMetadataListenerVisitor());
 		}
 	}
-	
+
 	@Override
 	public IExecutionPlan beforeQueryMigration(IOptimizable sender,
-			OptimizationConfiguration parameter) throws QueryOptimizationException {
-		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
-				sender.getQueries());
-		IExecutionPlan newExecutionPlan = this.planOptimizer
-			.optimizePlan(sender, parameter, newPlan);
+			OptimizationConfiguration parameter)
+			throws QueryOptimizationException {
+		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
+		IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
+				sender, parameter, newPlan);
 		return newExecutionPlan;
 	}
-	
+
 	@Override
 	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
-			IExecutionPlan executionPlan)
-			throws QueryOptimizationException {
-		
-		if(query.containsCycles()){
-			throw new RuntimeException("StandardOptimizer assumes acyclic trees, \n");
+			IExecutionPlan executionPlan) throws QueryOptimizationException {
+
+		if (query.containsCycles()) {
+			throw new RuntimeException(
+					"StandardOptimizer assumes acyclic trees, \n");
 		}
-		
-		getLogger().info("Start reoptimize query ID "+query.getID());
-		
+
+		getLogger().info("Start reoptimize query ID " + query.getID());
+
 		if (this.getRegisteredPlanMigrationStrategies().isEmpty()) {
-			getLogger().warn("No plan migration strategies available. Aborting.");
+			getLogger().warn(
+					"No plan migration strategies available. Aborting.");
 			return executionPlan;
 		}
-		
+
 		// high system load test
 		try {
-			ISystemMonitor monitor = ((IExecutor)sender).getDefaultSystemMonitor();
+			ISystemMonitor monitor = ((IExecutor) sender)
+					.getDefaultSystemMonitor();
 			double cpuLoad = monitor.getAverageCPULoad();
 			double memLoad = monitor.getHeapMemoryUsage();
-			if (cpuLoad >= this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()) {
-				queueRequest(query, "System CPU load is currently too high ("+cpuLoad+").");
-				new LowSystemLoadWaiter(((IExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
-						this, this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()*0.8,
-						this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()*0.8);
+			if (cpuLoad >= this.configuration
+					.getSettingRefuseOptimizationAtCpuLoad().getValue()) {
+				queueRequest(query, "System CPU load is currently too high ("
+						+ cpuLoad + ").");
+				new LowSystemLoadWaiter(
+						((IExecutor) sender)
+								.newSystemMonitor(MONITORING_PERIOD),
+						this, this.configuration
+								.getSettingRefuseOptimizationAtCpuLoad()
+								.getValue() * 0.8, this.configuration
+								.getSettingRefuseOptimizationAtMemoryLoad()
+								.getValue() * 0.8);
 				return executionPlan;
 			}
-			if (memLoad >= this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()) {
-				queueRequest(query, "System memory load is currently too high ("+memLoad+").");
-				new LowSystemLoadWaiter(((IExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
-						this, this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()*0.8,
-						this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()*0.8);
+			if (memLoad >= this.configuration
+					.getSettingRefuseOptimizationAtMemoryLoad().getValue()) {
+				queueRequest(query,
+						"System memory load is currently too high (" + memLoad
+								+ ").");
+				new LowSystemLoadWaiter(
+						((IExecutor) sender)
+								.newSystemMonitor(MONITORING_PERIOD),
+						this, this.configuration
+								.getSettingRefuseOptimizationAtCpuLoad()
+								.getValue() * 0.8, this.configuration
+								.getSettingRefuseOptimizationAtMemoryLoad()
+								.getValue() * 0.8);
 				return executionPlan;
 			}
-		} catch (NoSystemMonitorLoadedException e1) {}
-		
+		} catch (NoSystemMonitorLoadedException e1) {
+		}
+
 		// optimization lock on query
 		if (this.optimizationContext.containsKey(query.getID())) {
-			getLogger().warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
+			getLogger().warn(
+					"Aborted reoptimization. Query with ID " + query.getID()
+							+ " is currently getting optimized.");
 			return executionPlan;
-		} else if (this.optimizationContext.size() >= this.configuration.getSettingMaxConcurrentOptimizations().getValue()) {
-			queueRequest(query, "There are currently "+this.optimizationContext.size()+" optimizations running.");
+		} else if (this.optimizationContext.size() >= this.configuration
+				.getSettingMaxConcurrentOptimizations().getValue()) {
+			queueRequest(query, "There are currently "
+					+ this.optimizationContext.size()
+					+ " optimizations running.");
 			return executionPlan;
 		}
 		PlanMigrationContext context = new PlanMigrationContext(query);
 		this.optimizationContext.put(query.getID(), context);
-		
+
 		try {
 			// build alternative physical plans
 			getLogger().debug("Building alternative plans.");
-			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
-					sender, query, 
-					new OptimizationConfiguration(ParameterDoRewrite.TRUE));
-			
+			Map<IPhysicalOperator, ILogicalOperator> alternatives = this.queryOptimizer
+					.createAlternativePlans(sender, query,
+							new OptimizationConfiguration(
+									ParameterDoRewrite.TRUE));
+
 			// pick out optimal plan by cost analysis
-			List<IPhysicalOperator> candidates = this.getExecutionCostModel().getCostCalculator().pickBest(
-					alternatives.keySet(), this.configuration.getSettingComparePlanCandidates().getValue());
+			List<IPhysicalOperator> candidates = this
+					.getExecutionCostModel()
+					.getCostCalculator()
+					.pickBest(
+							alternatives.keySet(),
+							this.configuration
+									.getSettingComparePlanCandidates()
+									.getValue());
 			if (candidates.isEmpty()) {
-				getLogger().info("No alternative plans for query ID "+query.getID());
+				getLogger().info(
+						"No alternative plans for query ID " + query.getID());
 				this.optimizationContext.remove(query.getID());
 				return executionPlan;
 			}
-			
+
 			// calculate migration overhead with every registered strategy
 			List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
 			for (IPhysicalOperator cPlan : candidates) {
-				for (String strategy : this.getRegisteredPlanMigrationStrategies()) {
-					migrationCandidates.add(new PlanMigration(query.getRoots().get(0), cPlan, getPlanMigrationStrategy(strategy)));
+				for (String strategy : this
+						.getRegisteredPlanMigrationStrategies()) {
+					migrationCandidates
+							.add(new PlanMigration(query.getRoots().get(0),
+									cPlan, getPlanMigrationStrategy(strategy)));
 				}
 			}
 			// pick near optimal plan with acceptable migration cost
-			PlanMigration optimalMigration = this.getMigrationCostModel().getCostCalculator().pickBest(migrationCandidates);
+			PlanMigration optimalMigration = this.getMigrationCostModel()
+					.getCostCalculator().pickBest(migrationCandidates);
 			context.setRoot(optimalMigration.getNewPlan());
-			context.setLogicalPlan(alternatives.get(optimalMigration.getNewPlan()));
+			context.setLogicalPlan(alternatives.get(optimalMigration
+					.getNewPlan()));
 			context.setSender(sender);
-			
-			// start migration to new plan 
-			getLogger().info("Start migration to new physical plan (query ID "+query.getID()+")");
+
+			// start migration to new plan
+			getLogger().info(
+					"Start migration to new physical plan (query ID "
+							+ query.getID() + ")");
 			ArrayList<IPhysicalOperator> listOfRoots = new ArrayList<IPhysicalOperator>();
 			listOfRoots.add(optimalMigration.getNewPlan());
-			optimalMigration.getStrategy().migrateQuery(this, query, listOfRoots);
-			
-			((IExecutor)sender).updateExecutionPlan();
-			
+			optimalMigration.getStrategy().migrateQuery(this, query,
+					listOfRoots);
+
+			((IExecutor) sender).updateExecutionPlan();
+
 			// wait for migration end callback
-			getLogger().info("Plan migration running (query ID "+query.getID()+")");
-			
+			getLogger().info(
+					"Plan migration running (query ID " + query.getID() + ")");
+
 		} catch (Exception e) {
-			//this.optimizationContext.remove(query.getID());
-			getLogger().warn("Reoptimization failed. (query ID "+query.getID()+")",e);
+			// this.optimizationContext.remove(query.getID());
+			getLogger().warn(
+					"Reoptimization failed. (query ID " + query.getID() + ")",
+					e);
 		}
-		
+
 		return executionPlan;
 	}
 
 	@Override
 	public void handleFinishedMigration(IQuery query) {
-		PlanMigrationContext context = this.optimizationContext.get(query.getID());
+		PlanMigrationContext context = this.optimizationContext.get(query
+				.getID());
 
 		try {
 			// set new logical plan
 			query.setLogicalPlan(context.getLogicalPlan());
-			
+
 			// update execution plan
-			((IExecutor)context.getSender()).updateExecutionPlan();
-			
+			((IExecutor) context.getSender()).updateExecutionPlan();
+
 			// reinstall metadata listener
-			updateMetadataListener(query,true);
+			updateMetadataListener(query, true);
 
 			// remove lock and context
 			this.optimizationContext.remove(query.getID());
-			getLogger().info("Finished plan migration (query ID "
-					+ query.getID() + ")");
-			
+			getLogger().info(
+					"Finished plan migration (query ID " + query.getID() + ")");
+
 			// handle pending requests
 			processPendingRequests();
 
 		} catch (Exception e) {
 			// this.optimizationContext.remove(sender.getID());
-			getLogger().warn("Reoptimization failed. (query ID "
-					+ query.getID() + ")", e);
+			getLogger().warn(
+					"Reoptimization failed. (query ID " + query.getID() + ")",
+					e);
 		}
 	}
-	
+
 	private void queueRequest(IQuery query, String reason) {
-		getLogger().warn("Reoptimization request queued. "+reason);
+		getLogger().warn("Reoptimization request queued. " + reason);
 		if (!this.pendingRequests.contains(query)) {
 			this.pendingRequests.offer(query);
 		}
 	}
-	
+
 	@Override
 	public IExecutionPlan reoptimize(IOptimizable sender,
-			IExecutionPlan executionPlan)
-			throws QueryOptimizationException {
+			IExecutionPlan executionPlan) throws QueryOptimizationException {
 		for (IQuery query : sender.getQueries()) {
 			reoptimize(sender, query, executionPlan);
 		}
 		return executionPlan;
 	}
-	
+
 	void processPendingRequests() {
 		if (!this.pendingRequests.isEmpty()) {
 			this.pendingRequests.poll().reoptimize();
 		}
 	}
-
-
 
 }
