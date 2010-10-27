@@ -5,10 +5,11 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.objecttracking.rewrite
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.objecttracking.rewrite.Activator
 Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.logicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.util,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
+ de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.rewrite.engine,
  de.uniol.inf.is.odysseus.rewrite.flow,
  de.uniol.inf.is.odysseus.rewrite.rule,

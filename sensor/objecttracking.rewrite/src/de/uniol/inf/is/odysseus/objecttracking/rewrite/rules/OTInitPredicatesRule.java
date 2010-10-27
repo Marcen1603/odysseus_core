@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.objecttracking.rewrite.rules;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.IHasRangePredicates;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateInitializer;
-import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
