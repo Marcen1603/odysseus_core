@@ -1,30 +1,32 @@
 package de.uniol.inf.is.odysseus.monitoring.physicalplan;
 
+import de.uniol.inf.is.odysseus.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public class PlanMonitor extends AbstractPlanMonitor<Double> {
 
-	final String monitoringType;
-
 	public PlanMonitor(IQuery target, boolean onlyRoots, String monitoringType,
 			long monitoringPeriod) {
-		super(target, onlyRoots);
-		this.monitoringType = monitoringType;
+		super(target, onlyRoots, monitoringType);
 		for (IPhysicalOperator p : monitoredOps) {
-			if (!p.providesMonitoringData(monitoringType)){
-				p.addMonitoringData(monitoringType, MonitoringDataTypes.createMetadata(monitoringType, p));
-			}
-			if (monitoringPeriod > 0){
-				p.getMonitoringData(monitoringType, monitoringPeriod);
+			if (monitoringPeriod <= 0) {
+				if (!p.providesMonitoringData(monitoringType)) {
+					p.addMonitoringData(monitoringType, MonitoringDataTypes
+							.createMetadata(monitoringType, p));
+				}
+			} else {
+				p.getMonitoringData(
+						(IPeriodicalMonitoringData) MonitoringDataTypes
+								.createMetadata(monitoringType, p),
+						monitoringPeriod);
 			}
 		}
 	}
 
 	public PlanMonitor(PlanMonitor monitor) {
 		super(monitor);
-		this.monitoringType = monitor.monitoringType;
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class PlanMonitor extends AbstractPlanMonitor<Double> {
 
 	@Override
 	public void reset() {
-		reset(monitoringType);
+		reset(getType());
 	}
 
 	@Override
@@ -44,14 +46,13 @@ public class PlanMonitor extends AbstractPlanMonitor<Double> {
 
 	@Override
 	public Double getValue(IPhysicalOperator operator) {
-		return getValue(operator, monitoringType);
-	}
-	
-	protected void reset(String type){
-		for (IPhysicalOperator p : monitoredOps) {
-			p.getMonitoringData(type).reset();
-		}				
+		return getValue(operator, getType());
 	}
 
+	protected void reset(String type) {
+		for (IPhysicalOperator p : monitoredOps) {
+			p.getMonitoringData(type).reset();
+		}
+	}
 
 }

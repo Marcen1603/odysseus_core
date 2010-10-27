@@ -1,7 +1,12 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -15,11 +20,20 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
  * This structure is used for communication between plan management,
  * optimization and scheduling.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Marco Grawunder
  * 
  */
 public class ExecutionPlan implements IExecutionPlan {
 
+	static Logger _logger = null;
+	static Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(ExecutionPlan.class);
+		}
+		return _logger;
+	}
+	
+	
 	/**
 	 * Describes if the physical operators are opened.
 	 */
@@ -35,7 +49,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	protected List<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
 
-	private List<IPhysicalOperator> roots;
+	private Set<IPhysicalOperator> roots = null;
 
 	/**
 	 * Describes if the physical operators are opened.
@@ -79,6 +93,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	public void setPartialPlans(List<IPartialPlan> patialPlans) {
 		this.open = false;
 		this.partialPlans = patialPlans;
+		updateRoots();
 	}
 
 	/*
@@ -102,24 +117,19 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public void open() throws OpenFailedException {
 		if (!isOpen()) {
-			// Call only if theres a plan to execute
-			if (roots != null) {
-				for (IPhysicalOperator root : roots) {
-					if (root.isSink()){
-						((ISink<?>)root).open();
-					}else{
-						throw new IllegalArgumentException("Open cannot be called on a source");
-					}
+			Set<IPhysicalOperator> roots = getRoots();
+			getLogger().debug("Calling Open for "+roots);
+			for (IPhysicalOperator root : roots) {
+				if (root.isSink()) {
+					((ISink<?>) root).open();
+				} else {
+					throw new IllegalArgumentException(
+							"Open() cannot be called on a source -->" + root);
 				}
 
-				// for (IPartialPlan partialPlan : this.partialPlans) {
-				// for (ISink<?> root : partialPlan.getRoots()) {
-				// root.open();
-				// }
-				// }
-				this.open = true;
 			}
 		}
+
 	}
 
 	/*
@@ -131,15 +141,18 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public void close() {
 		if (isOpen()) {
+			List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 			for (IPartialPlan partialPlan : this.partialPlans) {
-				for (IPhysicalOperator root : partialPlan.getRoots()) {
-					if (root.isSink()){
-						((ISink<?>)root).close();	
-					}else{
-						throw new IllegalArgumentException("Close cannot be called on a source");
-					}
-					
+				roots.addAll(partialPlan.getQueryRoots());
+			}
+			for (IPhysicalOperator root : roots) {
+				if (root.isSink()) {
+					((ISink<?>) root).close();
+				} else {
+					throw new IllegalArgumentException(
+							"Close() cannot be called on a source -->" + root);
 				}
+
 			}
 		}
 	}
@@ -148,8 +161,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan #
-	 * initWith
-	 * (de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan )
+	 * initWith (de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan )
 	 */
 	@Override
 	public void initWith(IExecutionPlan newExecutionPlan) {
@@ -157,18 +169,27 @@ public class ExecutionPlan implements IExecutionPlan {
 				.getPartialPlans()));
 		this.setLeafSources(new ArrayList<IIterableSource<?>>(newExecutionPlan
 				.getLeafSources()));
-		this.setRoots(newExecutionPlan.getRoots());
+		// this.setRoots(newExecutionPlan.getRoots());
 	}
 
+	// @Override
+	// public void setRoots(List<IPhysicalOperator> roots) {
+	// this.roots = roots;
+	// }
+	//
 	@Override
-	public void setRoots(List<IPhysicalOperator> roots) {
-		this.roots = roots;
-	}
-
-	@Override
-	public List<IPhysicalOperator> getRoots() {
+	public Set<IPhysicalOperator> getRoots() {
+		if (roots == null) {
+			updateRoots();
+		}
 		return roots;
 	}
 
+	private void updateRoots() {
+		roots = new HashSet<IPhysicalOperator>();
+		for (IPartialPlan partialPlan : this.partialPlans) {
+			roots.addAll(partialPlan.getQueryRoots());
+		}
+	}
 
 }

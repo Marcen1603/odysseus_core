@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 public class Productivity extends Selectivity {
 
 	public Productivity(IPhysicalOperator po, int sourceCount) {
-		super(po, sourceCount);	
+		super(po, sourceCount, MonitoringDataTypes.PRODUCTIVITY.name);	
 	}
 
 	public Productivity(Productivity productivity) {
@@ -22,11 +22,6 @@ public class Productivity extends Selectivity {
 	@Override
 	public Double getValue() {
 		return getWriteCount()/getReadCountSum();
-	}
-
-	@Override
-	public String getType() {
-		return MonitoringDataTypes.PRODUCTIVITY.name;
 	}
 
 	@Override

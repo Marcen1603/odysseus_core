@@ -17,8 +17,8 @@ implements IPOEventListener {
 	final Map<IPhysicalOperator, Long> processCallsPerOperator;
 	long overallProcessCallCount = 0;
 
-	public ProcessCallsMonitor(IQuery target, boolean onlyRoots) {
-		super(target, onlyRoots);
+	public ProcessCallsMonitor(IQuery target, boolean onlyRoots, String type) {
+		super(target, onlyRoots, type);
 		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>();
 		for (IPhysicalOperator p : monitoredOps) {
 			processCallsPerOperator.put(p, 0l);

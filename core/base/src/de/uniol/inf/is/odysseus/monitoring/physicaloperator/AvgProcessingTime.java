@@ -15,15 +15,15 @@ public class AvgProcessingTime extends AbstractMonitoringData<Double> implements
 	private long runCount = 0;
 
 	public AvgProcessingTime(){
-		super();
+		super(MonitoringDataTypes.AVERAGE_PROCESSING_TIME.name);
 	}
 	
 	public AvgProcessingTime(IPhysicalOperator target) {
-		setTarget(target);
+		super(target, MonitoringDataTypes.AVERAGE_PROCESSING_TIME.name);
 	}
 
 	public AvgProcessingTime(AvgProcessingTime avgProcessingTime) {
-		setTarget(avgProcessingTime.getTarget());
+		super(avgProcessingTime);
 		this.start = avgProcessingTime.start;
 		this.lastRun = avgProcessingTime.lastRun;
 		this.runSum = avgProcessingTime.runSum;
@@ -45,11 +45,6 @@ public class AvgProcessingTime extends AbstractMonitoringData<Double> implements
 			runCount++;
 			runSum += lastRun;
 		}
-	}
-
-	@Override
-	public String getType() {
-		return MonitoringDataTypes.PROCESSING_COST.name;
 	}
 
 	@Override

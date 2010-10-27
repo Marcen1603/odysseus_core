@@ -49,4 +49,8 @@ public class StaticValueMonitoringData<T> implements IMonitoringData<T> {
 	public void cancelMonitoring() {
 	}
 	
+	@Override
+	public void setType(String type) {
+		this.type = type;
+	}
 }

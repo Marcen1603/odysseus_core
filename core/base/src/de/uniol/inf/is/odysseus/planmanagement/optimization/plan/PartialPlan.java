@@ -35,19 +35,19 @@ public class PartialPlan implements IPartialPlan {
 	 * Priority with which the objects should be scheduled.
 	 */
 	private int currentPriority;
-	
+
 	/**
 	 * Priority at creation time
 	 */
 	private int basePriority;
-	
+
 	/**
 	 * 
 	 */
 	private List<IQuery> partOf;
-	
+
 	/**
-	 *  Cache Ids for Sources to speed up getSourceID
+	 * Cache Ids for Sources to speed up getSourceID
 	 */
 	private Map<IIterableSource<?>, Integer> sourceIds;
 
@@ -59,22 +59,25 @@ public class PartialPlan implements IPartialPlan {
 	 * @param roots
 	 *            Roots which should be scheduled.
 	 * @param basePriority
-	 *            Initial priority with which the objects should be scheduled. Real priorty can change
-	 *            at runtime
+	 *            Initial priority with which the objects should be scheduled.
+	 *            Real priorty can change at runtime
 	 */
 	public PartialPlan(List<IIterableSource<?>> iterableSource,
-			List<IPhysicalOperator> roots, int basePriority, IQuery partof, IQuery... otherParts) {
+			List<IPhysicalOperator> roots, int basePriority, IQuery partof,
+			IQuery... otherParts) {
 		this.iterableSource = new ArrayList<IIterableSource<?>>(iterableSource);
 		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
-		for (int i=0;i<iterableSource.size();i++){
-			sourceIds.put(iterableSource.get(i), i); // Iterator does not garantee order ... (?)
+		for (int i = 0; i < iterableSource.size(); i++) {
+			sourceIds.put(iterableSource.get(i), i); // Iterator does not
+														// garantee order ...
+														// (?)
 		}
 		this.roots = roots;
 		this.currentPriority = basePriority;
 		this.basePriority = basePriority;
 		this.partOf = new ArrayList<IQuery>();
 		this.partOf.add(partof);
-		for (IQuery q:otherParts){
+		for (IQuery q : otherParts) {
 			this.partOf.add(q);
 		}
 	}
@@ -94,23 +97,29 @@ public class PartialPlan implements IPartialPlan {
 	public IIterableSource<?> getIterableSource(int id) {
 		return iterableSource.get(id);
 	}
-	
+
 	@Override
 	public int getSourceId(IIterableSource<?> source) {
 		return sourceIds.get(source);
 	}
 
-	
-	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.plan.IPartialPlan#getRoots
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IPartialPlan#getRoots
 	 * ()
 	 */
 	@Override
 	public List<IPhysicalOperator> getRoots() {
+		return roots;
+	}
+
+	@Override
+	public List<IPhysicalOperator> getQueryRoots() {
+		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		for (IQuery q : partOf) {
+			roots.addAll(q.getRoots());
+		}
 		return roots;
 	}
 
@@ -130,12 +139,12 @@ public class PartialPlan implements IPartialPlan {
 	public void setCurrentPriority(int newPriority) {
 		this.currentPriority = newPriority;
 	}
-	
+
 	@Override
 	public int getBasePriority() {
 		return this.basePriority;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -159,8 +168,7 @@ public class PartialPlan implements IPartialPlan {
 			if (result != "") {
 				result += AppEnv.LINE_SEPARATOR;
 			}
-			result += root.toString() + ", Owner: "
-					+ root.getOwnerIDs();
+			result += root.toString() + ", Owner: " + root.getOwnerIDs();
 		}
 
 		result += AppEnv.LINE_SEPARATOR + "Sources:";
@@ -169,8 +177,7 @@ public class PartialPlan implements IPartialPlan {
 			if (result != "") {
 				result += AppEnv.LINE_SEPARATOR;
 			}
-			result += source.toString() + ", Owner: "
-					+ source.getOwnerIDs();
+			result += source.toString() + ", Owner: " + source.getOwnerIDs();
 		}
 		return result;
 	}

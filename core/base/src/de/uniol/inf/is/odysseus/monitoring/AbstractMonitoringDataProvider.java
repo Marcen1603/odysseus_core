@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMonitoringDataProvider implements
 		IMonitoringDataProvider {
-	
+
 	static Logger _logger = null;
 
 	static private Logger getLogger() {
@@ -37,10 +37,43 @@ public abstract class AbstractMonitoringDataProvider implements
 	}
 
 	@Override
+	public <T> IPeriodicalMonitoringData<T> getMonitoringData(
+			IPeriodicalMonitoringData item, long period) {
+		IPeriodicalMonitoringData pitem = (IPeriodicalMonitoringData) metaDataItem
+				.get(item.getType());
+		if (pitem != null) {
+			return pitem;
+		}
+
+		String key = getKeyString(item.getType(),period);
+
+		pitem = (IPeriodicalMonitoringData) item.clone();
+		pitem.reset();
+		this.metaDataItem.put(key, pitem);
+		pitem.setType(key);
+
+		ScheduledFuture future = MonitoringDataScheduler.getInstance()
+				.scheduleAtFixedRate(pitem, 0, period, TimeUnit.MILLISECONDS);
+
+		// Speichere Item und Future in Scheduler, damit das Item spaeter
+		// wieder
+		// angehalten / geloescht werden kann.
+		MonitoringDataScheduler.getInstance().addStartedPeriodicalMetadataItem(
+				pitem, future);
+		return pitem;
+
+	}
+
+	private String getKeyString(String type, long period){
+		return type + " (p=" + period+" ms)";
+	}
+	
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
 			long period) {
-		String key = type + " Period" + period;
+		String key = getKeyString(type,period);
+
 
 		IMonitoringData<T> item = this.metaDataItem.get(key);
 		if (item != null) {
@@ -53,6 +86,7 @@ public abstract class AbstractMonitoringDataProvider implements
 			pitem = (IPeriodicalMonitoringData<T>) item.clone();
 			pitem.reset();
 			this.metaDataItem.put(key, pitem);
+			pitem.setType(key);
 
 			ScheduledFuture future = MonitoringDataScheduler.getInstance()
 					.scheduleAtFixedRate(pitem, 0, period,
@@ -105,6 +139,4 @@ public abstract class AbstractMonitoringDataProvider implements
 		}
 		metaDataItem.clear();
 	}
-
-
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.planmanagement.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -232,6 +233,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 */
 	@Override
 	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> roots) {
+		getLogger().debug("setRoots "+roots);
 		this.roots = roots;
 
 		// evaluate built parameter
@@ -274,7 +276,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 				//this.roots = newRoots;
 			}
 		}
-
+		getLogger().debug("setRoots "+roots);
 		return this.roots;
 	}
 
@@ -591,7 +593,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 */
 	@Override
 	public List<IPhysicalOperator> getRoots() {
-		return this.roots;
+		if (roots != null){
+			return Collections.unmodifiableList(this.roots);	
+		}else{
+			return null;
+		}
+		
 	}
 
 	/*

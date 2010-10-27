@@ -9,22 +9,22 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T> implements IPlanMonitor<T> {
 
-	final List<IPhysicalOperator> monitoredOps;
+	final List<IPhysicalOperator> monitoredOps = new ArrayList<IPhysicalOperator>();
 	private boolean onlyRoots;
 	
 	
-	public AbstractPlanMonitor(IQuery target, boolean onlyRoots){
-		super(target);
+	public AbstractPlanMonitor(IQuery target, boolean onlyRoots, String type){
+		super(target,type);
 		this.onlyRoots = onlyRoots;
-		monitoredOps = target.getRoots();
+		monitoredOps.addAll(target.getRoots());
 		if (!onlyRoots){
 			monitoredOps.addAll(target.getPhysicalChilds());
 		}
 	}
 		
 	public AbstractPlanMonitor(AbstractPlanMonitor monitor) {
-		super(monitor.getTarget());
-		monitoredOps = new ArrayList<IPhysicalOperator>(monitor.monitoredOps);
+		super(monitor.getTarget(), monitor.getType());
+		monitoredOps.addAll(monitor.monitoredOps);
 		onlyRoots = monitor.onlyRoots;
 	}
 

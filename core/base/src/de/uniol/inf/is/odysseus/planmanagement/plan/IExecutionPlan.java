@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.plan;
 
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -18,7 +19,7 @@ public interface IExecutionPlan {
 	public void open() throws OpenFailedException;
 
 	public void initWith(IExecutionPlan newExecutionPlan);
-	public List<IPhysicalOperator> getRoots();
-	public void setRoots(List<IPhysicalOperator> roots);
+	public Set<IPhysicalOperator> getRoots();
+//	public void setRoots(List<IPhysicalOperator> roots);
 	
 }

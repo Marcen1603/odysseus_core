@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.IClone;
 
 public interface IMonitoringData<T> extends IClone{
 	public String getType();
+	public void setType(String type);
 
 	public IMonitoringDataProvider getTarget();
 

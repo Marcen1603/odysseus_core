@@ -4,19 +4,23 @@ public abstract class AbstractMonitoringData<T>
 		implements IMonitoringData<T> {
 
 	private IMonitoringDataProvider target;
+	String type = null;
 	
-	public AbstractMonitoringData(){
+	public AbstractMonitoringData(String type){
 		super();
 		this.target = null;
+		setType(type);
 	}
 	
-	public AbstractMonitoringData(IMonitoringDataProvider target) {
+	public AbstractMonitoringData(IMonitoringDataProvider target, String type) {
 		super();
 		this.target = target;
+		this.type = type;
 	}
 
 	public AbstractMonitoringData(AbstractMonitoringData<T> other) {
 		this.target = other.target;
+		this.type = other.type;
 	}
 
 	@Override
@@ -36,8 +40,12 @@ public abstract class AbstractMonitoringData<T>
 	}
 	
 	@Override
-	public String getType() {
-		return this.getClass().getSimpleName();
+	final public String getType() {
+		return type;
 	}
-
+	
+	@Override
+	public void setType(String type) {
+		this.type = type;
+	}
 }

@@ -16,13 +16,13 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double> implement
 	private Double value;
 
 	public Datarate(IPhysicalOperator target) {
-		super(target);
+		super(target, MonitoringDataTypes.DATARATE.name);
 		reset();
 		target.subscribe(this, POEventType.ProcessDone);
 	}
 
 	public Datarate(Datarate datarate) {
-		super(datarate.getTarget());
+		super(datarate.getTarget(),MonitoringDataTypes.DATARATE.name);
 		this.writeCount = datarate.writeCount;
 		this.lastTimestamp = datarate.lastTimestamp;
 		this.value = datarate.value;
@@ -35,11 +35,6 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double> implement
 		this.writeCount = 0;
 		this.lastTimestamp = System.currentTimeMillis();
 		this.value = new Double(0);
-	}
-
-	@Override
-	public String getType() {
-		return MonitoringDataTypes.DATARATE.name;
 	}
 
 	@Override

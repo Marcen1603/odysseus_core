@@ -11,7 +11,11 @@ public interface IMonitoringDataProvider {
 
 	public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
 			long period);
+	public <T> IPeriodicalMonitoringData<T> getMonitoringData(
+				IPeriodicalMonitoringData item, long period);
+
 
 	public void addMonitoringData(String type, IMonitoringData<?> item);
 	public void removeMonitoringData(String type);
+
 }

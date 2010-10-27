@@ -17,8 +17,8 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 	private int readCountSum;
 	private int sourceCount;
 
-	public Selectivity(IPhysicalOperator target, int sourceCount) {
-		super(target);
+	public Selectivity(IPhysicalOperator target, int sourceCount, String type) {
+		super(target, type);
 		this.sourceCount = sourceCount;
 		reset();
 		target.subscribe(this, POEventType.PushDone);

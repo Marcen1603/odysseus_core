@@ -97,7 +97,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 					"Error while optimizer checking Queries.", e);
 		}
 
-		ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		//ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 		ArrayList<IPartialPlan> partialPlans = new ArrayList<IPartialPlan>();
 		ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
 		ArrayList<IIterableSource<?>> partialPlanSources;
@@ -107,7 +107,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// ignored.
 		for (IQuery query : allQueries) {
 			partialPlanSources = new ArrayList<IIterableSource<?>>();
-			roots.addAll(query.getRoots());
+			//roots.addAll(query.getRoots());
 
 			// store all new iterable sources as global sources and all
 			// pipes as PartialPlan sources.
@@ -144,7 +144,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		ExecutionPlan newPlan = new ExecutionPlan();
 		newPlan.setPartialPlans(partialPlans);
 		newPlan.setLeafSources(leafSources);
-		newPlan.setRoots(roots);
+		//newPlan.setRoots(roots);
 
 		return newPlan;
 	}

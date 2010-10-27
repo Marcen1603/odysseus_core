@@ -20,4 +20,5 @@ public interface IPartialPlan {
 	
 	@Override
 	public String toString();
+	List<IPhysicalOperator> getQueryRoots();
 }

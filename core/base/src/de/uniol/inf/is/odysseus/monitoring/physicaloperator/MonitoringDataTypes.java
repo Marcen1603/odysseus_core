@@ -13,7 +13,8 @@ public enum MonitoringDataTypes {
 	SELECTIVITY("selectivity"),  ESTIMATED_SELECTIVITY("estimated selectivity"),
 	PRODUCTIVITY("productivity"), ESTIMATED_PRODUCTIVITY("estimated productivity"),
 	PROCESSING_COST("processing cost"), ESTIMATED_PROCESSING_COST("estimated processing cost"),
-	DATARATE("datarate"), ESTIMATED_DATARATE("estimated datarate"),ELEMENTS_READ("elements read");
+	DATARATE("datarate"), ESTIMATED_DATARATE("estimated datarate"),ELEMENTS_READ("elements read"),
+	AVERAGE_PROCESSING_TIME("average processing time");
 
 	protected static Logger _logger = null;
 

@@ -11,7 +11,7 @@ public class ElementsRead extends AbstractMonitoringData<Long> implements IPOEve
 	private long readCount;
 	
 	public ElementsRead(IPhysicalOperator target) {
-		super(target);
+		super(target, MonitoringDataTypes.ELEMENTS_READ.name);
 		reset();
 		target.subscribe(this, POEventType.ProcessDone);
 	}
@@ -24,11 +24,6 @@ public class ElementsRead extends AbstractMonitoringData<Long> implements IPOEve
 	@Override
 	public void reset() {
 		this.readCount = 0;
-	}
-
-	@Override
-	public String getType() {
-		return MonitoringDataTypes.ELEMENTS_READ.name;
 	}
 
 	@Override

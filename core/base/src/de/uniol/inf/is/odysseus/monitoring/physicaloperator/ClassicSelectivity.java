@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 public class ClassicSelectivity extends Selectivity {
 
 	public ClassicSelectivity(IPhysicalOperator po, int inputPorts) {
-		super(po, inputPorts);
+		super(po, inputPorts, MonitoringDataTypes.SELECTIVITY.name);
 	}
 
 	public ClassicSelectivity(ClassicSelectivity classicSelectivity) {
@@ -26,11 +26,6 @@ public class ClassicSelectivity extends Selectivity {
 	@Override
 	public Double getValue() {
 		return  getWriteCount()/ getReadCountProduct();
-	}
-
-	@Override
-	public String getType() {
-		return MonitoringDataTypes.SELECTIVITY.name;
 	}
 
 	@Override
