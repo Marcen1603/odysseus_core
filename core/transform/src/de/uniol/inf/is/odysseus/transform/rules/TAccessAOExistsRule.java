@@ -1,10 +1,7 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import java.util.Collection;
-
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -26,10 +23,7 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 		ISource<?> accessPO = WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI());
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafo = " + trafo);
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
-		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO,accessPO);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
+		replace(accessAO, accessPO, trafo);		
 		insert(accessPO);
 		retract(accessAO);
 		

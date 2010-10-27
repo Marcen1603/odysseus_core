@@ -57,26 +57,8 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource> {
 						update(op);
 					}
 				}
-		}
-		
-		// ABo: The new MetadataCreationPO must be inserted into the working memory, if not already done
-		// this metadataCreationPO will be used by other rules
-		// The check, if the metadataCreationPO is already inserted, must be done here. It cannot be
-		// done in the first loop of the then-clause, since this rule could have been used by other queries
-		// that created the metadataCreationPOs but could not add it to the working memory of this query.
-		//boolean alreadyInserted = false;
-		//for(MetadataCreationPO mPO : (List<MetadataCreationPO>) metadataCreationPOs){
-		//	if(mPO == po){
-		//		alreadyInserted = true;
-		//	}
-		//}
-		
-		//if(!alreadyInserted){
-		//	insert(po);
-		//}
-		
-		insert(po);
-		
+		}	
+		insert(po);		
 		retract(source);		
 	}
 

@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SplitAO;
 import de.uniol.inf.is.odysseus.physicaloperator.SplitPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -17,14 +14,13 @@ public class TSplitAORule extends AbstractTransformationRule<SplitAO> {
 		return 0;
 	}
 
+	
 	@Override
 	public void execute(SplitAO splitAO, TransformationConfiguration transformConfig) {
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		SplitPO splitPO = new SplitPO(splitAO.getPredicates());
 		splitPO.setOutputSchema(splitAO.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(splitAO, splitPO);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
+		replace(splitAO, splitPO, transformConfig);
 		retract(splitAO);
 
 	}
