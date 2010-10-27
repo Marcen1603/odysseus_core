@@ -6,8 +6,10 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.relational.rewrite.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
+ de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.rewrite.engine,

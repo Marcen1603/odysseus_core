@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.planmanagement.IRewrite;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -18,12 +18,11 @@ public class RewriteExecutor implements IRewrite {
 	private static final String LOGGER_NAME = "rewrite";
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan, OptimizationConfiguration conf) {
+	public ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf) {
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting rewriting...");
 		RewriteInventory rewriteInventory = new RewriteInventory(RewriteInventory.getInstance());
 		
-		RewriteConfiguration rwConf = new RewriteConfiguration(conf.getParameterRewriteRulesToUse()!=null?conf.getParameterRewriteRulesToUse().getValue():null);
-		RewriteEnvironment env = new RewriteEnvironment(rwConf, rewriteInventory);
+		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory);
 		TopAO top = new TopAO();
 		plan.subscribeSink(top, 0, 0, plan.getOutputSchema());
 

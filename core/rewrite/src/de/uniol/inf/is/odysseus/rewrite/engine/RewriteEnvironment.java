@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rewrite.engine;
 
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.ruleengine.system.AbstractWorkingEnvironment;
 

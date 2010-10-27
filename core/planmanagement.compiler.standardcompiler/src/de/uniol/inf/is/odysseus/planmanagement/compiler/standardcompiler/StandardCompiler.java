@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
@@ -235,7 +236,7 @@ public class StandardCompiler implements ICompiler {
 			ILogicalOperator logicalPlan, OptimizationConfiguration conf) {
 		// TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
 		// werden, z.B. durch Join-Vertauschungen
-		ILogicalOperator p = rewritePlan(logicalPlan, conf);
+		ILogicalOperator p = rewritePlan(logicalPlan, conf.getRewriteConfiguration());
 		List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
 		list.add(p);
 		return list;
@@ -267,7 +268,7 @@ public class StandardCompiler implements ICompiler {
 
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan, OptimizationConfiguration conf) {
+	public ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf) {
 		return rewrite.rewritePlan(plan, conf);
 	}
 

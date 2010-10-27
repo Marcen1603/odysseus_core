@@ -71,7 +71,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		
 		boolean queryShouldBeRewritten = sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRewrite.TRUE;
 		if (queryShouldBeRewritten) {
-			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(sealedLogicalPlan, parameters);
+			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(sealedLogicalPlan, parameters.getRewriteConfiguration());
 			// set new logical plan.
 			query.setLogicalPlan(newLogicalAlgebra);
 		}

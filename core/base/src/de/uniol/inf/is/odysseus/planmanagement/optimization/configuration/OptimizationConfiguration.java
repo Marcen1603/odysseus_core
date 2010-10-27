@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.ISetting;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterRewriteRulesToUse;
 
 /**
  * OptimizationConfiguration holds the configuration of an {@link IOptimizer}.
@@ -34,8 +33,11 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 		return (ParameterDoRewrite) this.get(ParameterDoRewrite.class);
 	}
 	
-	public ParameterRewriteRulesToUse getParameterRewriteRulesToUse(){
-		return (ParameterRewriteRulesToUse) this.get(ParameterRewriteRulesToUse.class);
+	public RewriteConfiguration getRewriteConfiguration(){
+		if (!this.contains(RewriteConfiguration.class)) {
+			set(new RewriteConfiguration());
+		}
+		return (RewriteConfiguration) this.get(RewriteConfiguration.class);
 	}
 
 	/**

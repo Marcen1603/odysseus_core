@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import de.uniol.inf.is.odysseus.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.rewrite.engine.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
