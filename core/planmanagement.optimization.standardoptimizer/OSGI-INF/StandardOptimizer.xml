@@ -2,8 +2,8 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer">
    <implementation class="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer.StandardOptimizer"/>
    <reference bind="bindBufferPlacementStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy" name="IBufferPlacementStrategy" policy="dynamic" unbind="unbindBufferPlacementStrategy"/>
-   <reference bind="bindPlanOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer" name="IPlanOptimizer" policy="dynamic" unbind="unbindPlanOptimizer"/>
-   <reference bind="bindQueryOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer" name="IQueryOptimizer" policy="dynamic" unbind="unbindQueryOptimizer"/>
+   <reference bind="bindPlanOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer" name="IPlanOptimizer" policy="dynamic" unbind="unbindPlanOptimizer"/>
+   <reference bind="bindQueryOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer" name="IQueryOptimizer" policy="dynamic" unbind="unbindQueryOptimizer"/>
    <reference bind="bindPlanMigrationStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy" name="IPlanMigrationStrategy" policy="dynamic" unbind="unbindPlanMigrationStrategy"/> 
    <reference bind="bindExecutionCostModel" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel" name="IPlanExecutionCostModel" policy="dynamic" unbind="unbindExecutionCostModel"/>
    <reference bind="bindMigrationCostModel" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel" name="IPlanMigrationCostModel" policy="dynamic" unbind="unbindMigrationCostModel"/>
