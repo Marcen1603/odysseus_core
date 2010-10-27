@@ -6,6 +6,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PunctuationAO extends UnaryLogicalOp{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9158544782511839463L;
 	int punctuationCount;
 	
 	public PunctuationAO(){

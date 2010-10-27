@@ -9,6 +9,11 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1540830902126498827L;
+
 	public OrRangePredicate(IRangePredicate<T> left, IRangePredicate<T> right){
 		super(left, right);
 	}

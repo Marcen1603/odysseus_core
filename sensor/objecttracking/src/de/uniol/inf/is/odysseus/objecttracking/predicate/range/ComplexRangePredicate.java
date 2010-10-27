@@ -5,6 +5,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class ComplexRangePredicate<T> extends
 		AbstractRangePredicate<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6498295738653383555L;
 	protected IRangePredicate<T> left;
 	public IRangePredicate<T> getLeft() {
 		return left;

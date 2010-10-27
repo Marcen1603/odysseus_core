@@ -33,6 +33,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 @SuppressWarnings("unchecked")
 public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 713204745616875842L;
+
 	private SDFAttributeListExtended outputSchema;
 	
 	private boolean initialized;

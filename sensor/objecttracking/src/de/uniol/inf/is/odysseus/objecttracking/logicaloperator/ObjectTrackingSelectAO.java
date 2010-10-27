@@ -33,6 +33,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredicates{
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1841611544564621233L;
+
 	private boolean initialized;
 	
 	/**

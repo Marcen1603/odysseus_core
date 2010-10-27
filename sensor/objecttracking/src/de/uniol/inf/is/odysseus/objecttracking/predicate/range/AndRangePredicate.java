@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 
 public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 
+	private static final long serialVersionUID = 5713674399965934142L;
+
 	public AndRangePredicate(IRangePredicate<T> left, IRangePredicate<T> right){
 		super(left, right);
 	}
