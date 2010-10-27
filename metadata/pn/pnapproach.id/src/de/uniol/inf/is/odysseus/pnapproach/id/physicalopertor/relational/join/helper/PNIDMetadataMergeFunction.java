@@ -61,6 +61,7 @@ public class PNIDMetadataMergeFunction implements IPNMetadataMergeFunction<IPosN
 		return pn;
 	}
 	
+	@Override
 	public IPosNeg createNegativeResult(IPosNeg mdata, Order order){
 		IPosNeg clone;
 		clone = (IPosNeg)mdata.clone();
@@ -86,9 +87,11 @@ public class PNIDMetadataMergeFunction implements IPNMetadataMergeFunction<IPosN
 		return clone;
 	}
 	
+	@Override
 	public void init(){
 	}
 	
+	@Override
 	public PNIDMetadataMergeFunction clone() {
 		return new PNIDMetadataMergeFunction(this);
 	}

@@ -12,6 +12,7 @@ public class ClosedExecutionHandler<F> extends AbstractExecutionHandler<Abstract
 		setProvidedLifecycle(Lifecycle.TERMINATED);
 	}
 	
+	@Override
 	public IExecutionHandler<AbstractPeer,F> clone()  {
 		IExecutionHandler<AbstractPeer,F> handler = new ClosedExecutionHandler<F>();
 		handler.setFunction(getFunction());

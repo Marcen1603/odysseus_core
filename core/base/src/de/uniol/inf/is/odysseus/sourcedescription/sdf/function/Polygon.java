@@ -25,6 +25,7 @@ public class Polygon extends AbstractFunction<Double> {
 		return "polygon";
 	}
 
+	@Override
 	public Double getValue() {
 
 		// get the parameters from the stack

@@ -238,6 +238,7 @@ Serializable, Cloneable, Comparable {
 		 * 
 		 * @return String the type of advertisement
 		 */
+		@Override
 		public String getAdvertisementType() {
 			return SourceAdvertisement.getAdvertisementType();
 		}
@@ -249,6 +250,7 @@ Serializable, Cloneable, Comparable {
 		 * @return The instance of <CODE>Advertisement</CODE> or null if it
 		 *         could not be created.
 		 */
+		@Override
 		public Advertisement newInstance() {
 			return new SourceAdvertisement();
 		}

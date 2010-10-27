@@ -84,6 +84,7 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 		return new InputStreamAccessPO<In, Out>(this);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof InputStreamAccessPO)) {
 			return false;

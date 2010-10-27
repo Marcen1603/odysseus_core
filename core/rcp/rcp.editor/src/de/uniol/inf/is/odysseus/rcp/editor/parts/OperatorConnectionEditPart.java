@@ -40,6 +40,7 @@ public class OperatorConnectionEditPart extends AbstractConnectionEditPart {
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
 		installEditPolicy(EditPolicy.CONNECTION_ROLE, new ConnectionEditPolicy() {
+			@Override
 			protected Command getDeleteCommand(GroupRequest request) {
 				OperatorConnection conn = (OperatorConnection)getHost().getModel();
 				return new ConnectionDeleteCommand(conn);

@@ -36,7 +36,8 @@ public class IncomingTIOverlappingLeftPartialTI extends Update {
         this.setName("testIncomingTIOverlappingLeftPartialTI");
     }
     
-    @Before
+    @Override
+	@Before
     public void setUp() throws Exception {
         super.setUp();
     }

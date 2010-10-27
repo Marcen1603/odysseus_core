@@ -27,6 +27,7 @@ public interface IInputStreamSyncArea<T extends IMetaAttributeContainer<?>> exte
 
 	public int size();
 
+	@Override
 	public IInputStreamSyncArea<T> clone();
 	
 	public void newHeartbeat(PointInTime heartbeat, int inPort);	

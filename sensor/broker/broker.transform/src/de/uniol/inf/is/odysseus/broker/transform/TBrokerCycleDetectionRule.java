@@ -35,6 +35,7 @@ public class TBrokerCycleDetectionRule extends AbstractTransformationRule<Broker
 		return "Detecting Cycles Rule";
 	}
 	
+	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 	    return TransformRuleFlowGroup.CLEANUP;
 	}

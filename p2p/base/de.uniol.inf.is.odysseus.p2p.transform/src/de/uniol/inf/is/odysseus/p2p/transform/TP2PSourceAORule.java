@@ -40,6 +40,7 @@ public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
 		return "P2PSourceAO -> P2PInputStreamAccessPO";
 	}
 
+	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}

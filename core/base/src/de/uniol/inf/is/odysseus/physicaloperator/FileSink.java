@@ -71,6 +71,7 @@ public class FileSink extends AbstractSink<Object> {
 	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof FileSink)) {
 			return false;

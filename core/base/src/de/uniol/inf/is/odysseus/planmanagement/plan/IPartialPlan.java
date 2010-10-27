@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 
 public interface IPartialPlan {
 	public List<IIterableSource<?>> getIterableSource();
@@ -16,7 +15,9 @@ public interface IPartialPlan {
 	public void setCurrentPriority(int newPriority);
 	public int getBasePriority();
 
+	@Override
 	public int hashCode();
 	
+	@Override
 	public String toString();
 }

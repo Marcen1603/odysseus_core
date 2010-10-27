@@ -23,10 +23,12 @@ public class Probability implements IProbability{
 		}
 	}
 	
+	@Override
 	public double[][] getCovariance(){
 		return cov;
 	}
 	
+	@Override
 	public void setCovariance(double[][] sigma){
 		this.cov = sigma;
 	}

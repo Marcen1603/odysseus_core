@@ -153,6 +153,7 @@ public class DescriptiveStatistics {
 		this.sum += otherStats.sum;
 	}
 	
+	@Override
 	public String toString(){
 		this.prepareStats();
 		String str = "";

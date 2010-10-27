@@ -48,6 +48,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		super(configurer);
 	}
 
+	@Override
 	protected void makeActions(final IWorkbenchWindow window) {
 		newShortlistAction = ContributionItemFactory.NEW_WIZARD_SHORTLIST.create(window);
 		
@@ -88,6 +89,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		register(closeAllPerspectivesAction);
 	}
 
+	@Override
 	protected void fillMenuBar(IMenuManager menuBar) {
 		MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
 		MenuManager newMenu = new MenuManager("New", ActionFactory.NEW.getId());

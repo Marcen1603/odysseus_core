@@ -48,6 +48,7 @@ public abstract class AbstractMainWindow extends JFrame implements ActionListene
 	//Thin-Peer spezifisch
 	public abstract void addResult(String queryId, Object o);	
 	public abstract void addTab(String queryId, String queryAsString);
+	@Override
 	public abstract void actionPerformed(ActionEvent e);
 	public abstract void addAdminPeer(String queryId, String adminPeer);
 

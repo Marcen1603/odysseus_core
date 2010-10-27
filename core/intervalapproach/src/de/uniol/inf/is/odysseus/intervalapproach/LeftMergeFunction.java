@@ -23,6 +23,7 @@ public abstract class LeftMergeFunction<T extends IClone> implements  IDataMerge
 		this.resultSchema = mf.resultSchema.clone();
 	}
 	
+	@Override
 	public T merge(T left, T right){
 		return leftMerge(left, right);
 	}
@@ -31,6 +32,7 @@ public abstract class LeftMergeFunction<T extends IClone> implements  IDataMerge
 	
 	public abstract T createLeftFilledUp(T left);
 	
+	@Override
 	public LeftMergeFunction<T> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}

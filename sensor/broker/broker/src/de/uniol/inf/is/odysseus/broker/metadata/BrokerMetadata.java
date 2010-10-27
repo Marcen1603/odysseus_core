@@ -16,6 +16,7 @@ public class BrokerMetadata extends TimeInterval implements IBrokerInterval {
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.intervalapproach.TimeInterval#clone()
 	 */
+	@Override
 	public BrokerMetadata clone(){
 		BrokerMetadata clone = new BrokerMetadata();		
 		return clone;

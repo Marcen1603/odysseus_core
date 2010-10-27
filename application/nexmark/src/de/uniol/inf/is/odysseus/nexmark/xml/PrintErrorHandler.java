@@ -25,6 +25,7 @@ public class PrintErrorHandler implements ErrorHandler {
 	/**
 	 * Prints a warning message.
 	 */
+	@Override
 	public void warning(SAXParseException e) throws SAXException {
 		System.err.print("WARNING: ");
 		printLocation(e);
@@ -34,6 +35,7 @@ public class PrintErrorHandler implements ErrorHandler {
 	/**
 	 * Prints information about a parsing error.
 	 */
+	@Override
 	public void error(SAXParseException e) throws SAXException {
 		System.err.print("ERROR: ");
 		printLocation(e);
@@ -43,6 +45,7 @@ public class PrintErrorHandler implements ErrorHandler {
 	/**
 	 * Prints information about a fatal parsing error and throws the exception.
 	 */
+	@Override
 	public void fatalError(SAXParseException e) throws SAXException {
 		System.err.print("FATAL ERROR: ");
 		printLocation(e);

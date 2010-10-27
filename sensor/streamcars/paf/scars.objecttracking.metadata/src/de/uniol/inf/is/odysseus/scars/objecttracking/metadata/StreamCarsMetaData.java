@@ -30,10 +30,12 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 
 	private ConnectionList connectionList;
 
+	@Override
 	public void setConnectionList(ConnectionList list) {
 		this.connectionList = list;
 	}
 
+	@Override
 	public ConnectionList getConnectionList() {
 		return this.connectionList;
 	}

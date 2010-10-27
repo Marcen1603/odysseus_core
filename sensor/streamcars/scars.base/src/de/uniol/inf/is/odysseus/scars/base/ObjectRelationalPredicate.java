@@ -119,6 +119,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
 	}
 
+	@Override
 	public boolean evaluate(MVRelationalTuple<?> input) {
 		Object[] values = new Object[this.attributePaths.length];
 		TupleHelper th = new TupleHelper(input);
@@ -130,6 +131,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		return (Boolean) this.expression.getValue();
 	}
 
+	@Override
 	public boolean evaluate(MVRelationalTuple<?> left, MVRelationalTuple<?> right) {
 		Object[] values = new Object[this.attributePaths.length];
 		for (int i = 0; i < values.length; ++i) {
@@ -152,10 +154,12 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		return this.expression.toString();
 	}
 
+	@Override
 	public List<SDFAttribute> getAttributes() {
 		return Collections.unmodifiableList(this.expression.getAllAttributes());
 	}
 	
+	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof ObjectRelationalPredicate)){
 			return false;
@@ -165,6 +169,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		}
 	}
 	
+	@Override
 	public int hashCode(){
 		return 23 * this.expression.hashCode();
 	}

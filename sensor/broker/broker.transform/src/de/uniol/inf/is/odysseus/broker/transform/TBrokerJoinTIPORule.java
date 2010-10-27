@@ -62,6 +62,7 @@ public class TBrokerJoinTIPORule extends AbstractTransformationRule<JoinAO> {
 		return "JoinAO -> JoinTIPO (Broker)";
 	}
 
+	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}

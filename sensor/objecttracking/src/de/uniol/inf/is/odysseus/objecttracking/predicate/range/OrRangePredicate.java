@@ -22,6 +22,7 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 	 * be to expensive for stream processing. It will be
 	 * faster to compare some more intervals.
 	 */
+	@Override
 	public List<ITimeInterval> evaluate(T input){
 		List<ITimeInterval> resultRanges = new ArrayList<ITimeInterval>();
 		List<ITimeInterval> leftRanges = this.left.evaluate(input);
@@ -45,6 +46,7 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 	 * be to expensive for stream processing. It will be
 	 * faster to compare some more intervals.
 	 */
+	@Override
 	public List<ITimeInterval> evaluate(T left, T right){
 		List<ITimeInterval> resultRanges = new ArrayList<ITimeInterval>();
 		List<ITimeInterval> leftRanges = this.left.evaluate(left, right);
@@ -58,6 +60,7 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 		return resultRanges;
 	}
 	
+	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof OrRangePredicate)){
 			return false;
@@ -67,10 +70,12 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 		}
 	}
 	
+	@Override
 	public int hashCode(){
 		return 53 * this.left.hashCode() + 41 * this.right.hashCode();
 	}
 	
+	@Override
 	public String toString(){
 		return this.left.toString() + " OR " + this.right.toString();
 	}

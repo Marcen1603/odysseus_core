@@ -38,6 +38,7 @@ public class CEPAutomataView extends ViewPart {
 	 * @param parent
 	 *            is the widget which contains the automata view.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		Canvas canvas = new Canvas(parent, 0);
 
@@ -99,6 +100,7 @@ public class CEPAutomataView extends ViewPart {
 	/**
 	 * This method is called to set the focus to this view.
 	 */
+	@Override
 	public void setFocus() {
 	}
 

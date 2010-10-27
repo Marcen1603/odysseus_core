@@ -29,6 +29,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 	// Wie lange ist eine Ausschreibung gültig.
 	private int VALID = 15000;
 
+	@Override
 	public void publishQuerySpezification(String queryId, String query,
 			String language) {
 

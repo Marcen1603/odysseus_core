@@ -67,11 +67,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return "CQL";
 	}
 
+	@Override
 	public synchronized List<IQuery> parse(String query, User user) throws QueryParseException {
 		this.caller = user;
 		return parse(new StringReader(query), user);
 	}
 
+	@Override
 	public synchronized List<IQuery> parse(Reader reader, User user) throws QueryParseException {
 		this.caller = user;
 		try {
@@ -96,10 +98,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		this.caller = user;
 	}
 
+	@Override
 	public Object visit(ASTStatement node, Object data) {
 		return node.childrenAccept(this, null);
 	}
 
+	@Override
 	public Object visit(ASTPriorizedStatement node, Object data) {
 		AbstractLogicalOperator op;
 		Integer priority = 0;
@@ -142,6 +146,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return plans;
 	}
 
+	@Override
 	public Object visit(ASTComplexSelectStatement node, Object data) {
 		if (node.jjtGetNumChildren() == 1) {
 			return node.jjtGetChild(0).jjtAccept(this, data);
@@ -179,6 +184,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return setOperator;
 	}
 
+	@Override
 	public Object visit(ASTSelectStatement statement, Object data) {
 		try {
 			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller);
@@ -220,6 +226,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
+	@Override
 	public Object visit(ASTCreateStatement node, Object data) {
 		CreateStreamVisitor v = new CreateStreamVisitor(caller);
 		return v.visit(node, data);
@@ -231,6 +238,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return v.visit(node, data);
 	}
 
+	@Override
 	public Object visit(ASTPriority node, Object data) {
 		return node.getPriority();
 	}
@@ -268,6 +276,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		// und rechtem Schema initialisiert werden.
 	}
 
+	@Override
 	public Object visit(SimpleNode node, Object data) {
 		return null;
 	}
@@ -276,170 +285,212 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAttributeDefinitions node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAttributeDefinition node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTimedTuples node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTimedTuple node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTimeInterval node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSimpleTuple node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAttributeType node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSetOperator node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSelectClause node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTFromClause node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTWhereClause node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTGroupByClause node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTHavingClause node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTRenamedExpression node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAS node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTPredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSimplePredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTOrPredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAndPredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTNotPredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAnyPredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAllPredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTInPredicate node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTExists node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTuple node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTupleSet node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTQuantificationOperator node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTExpression node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSimpleToken node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTFunctionExpression node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAggregateExpression node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAggregateFunction node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTDistinctExpression node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTStreamSQLWindow node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTPartition node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAdvance node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSlide node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTIdentifier node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTInteger node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTNumber node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTString node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTCompareOperator node, Object data) {
 		return null;
 	}

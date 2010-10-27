@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
@@ -93,6 +91,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		return this.predFct.predictData(schema, object, t);
 	}
 
+	@Override
 	public M predictMetadata(SDFAttributeList schema, T object, PointInTime t) {
 		// if there is no prediction function,
 		// return the original metadata
@@ -103,6 +102,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		return this.predFct.predictMetadata(schema, object, t);
 	}
 
+	@Override
 	public T predictAll(SDFAttributeList schema, T object, PointInTime t) {
 		return this.predFct.predictAll(schema, object, t);
 	}

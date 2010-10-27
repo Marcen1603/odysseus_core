@@ -35,7 +35,8 @@ public class IncomingTIContainedInPartialTI extends Update {
         this.setName("testIncomingTIContainedInPartialTI");
     }
 
-   @Before
+   @Override
+@Before
    public void setUp() throws Exception {
        super.setUp();
    }

@@ -20,15 +20,18 @@ public class ASTAnyPredicate extends AbstractQuantificationPredicate {
 		return visitor.visit(this, data);
 	}
 
+	@Override
 	public ASTComplexSelectStatement getQuery() {
 		return (ASTComplexSelectStatement) jjtGetChild(2);
 	}
 
+	@Override
 	public SDFCompareOperator getCompareOperator() {
 		return AbstractDefaultVisitor.toCompareOperator(jjtGetChild(1)
 				.toString());
 	}
 
+	@Override
 	public ASTTuple getTuple() {
 		return (ASTTuple) jjtGetChild(0);
 	}

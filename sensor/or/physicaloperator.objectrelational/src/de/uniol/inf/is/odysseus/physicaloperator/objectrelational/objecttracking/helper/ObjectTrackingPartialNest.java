@@ -58,6 +58,7 @@ public class ObjectTrackingPartialNest<M extends ObjectTrackingMetadata<Object>>
 	 * The clone method is essential for splitting and merging of 
 	 * partial nests. 
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public ObjectTrackingPartialNest<M> clone() {
 		ObjectTrackingPartialNest<M> klone = new ObjectTrackingPartialNest<M>();
@@ -80,6 +81,7 @@ public class ObjectTrackingPartialNest<M extends ObjectTrackingMetadata<Object>>
 		return partial.size();
 	}
 	
+	@Override
 	public String toString(){
 		return this.getMetadata().getStreamTime().toString() + " Size: " + this.getSize();
 	}

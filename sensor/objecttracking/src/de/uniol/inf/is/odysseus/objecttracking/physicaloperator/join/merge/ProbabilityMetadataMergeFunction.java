@@ -26,6 +26,7 @@ public class ProbabilityMetadataMergeFunction<M extends IProbability> implements
 		}
 	}
 	
+	@Override
 	public ProbabilityMetadataMergeFunction<M> clone(){
 		return new ProbabilityMetadataMergeFunction<M>(this);
 	}

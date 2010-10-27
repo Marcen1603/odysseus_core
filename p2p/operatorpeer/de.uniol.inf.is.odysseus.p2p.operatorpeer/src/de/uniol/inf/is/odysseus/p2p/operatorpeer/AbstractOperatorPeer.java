@@ -169,6 +169,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 
 	protected abstract void startNetwork();
 
+	@Override
 	public void startPeer() {
 		startNetwork();
 		startGui();
@@ -208,6 +209,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	
 	protected abstract void stopNetwork();
 
+	@Override
 	public void stopPeer() {
 		stopNetwork();
 	}

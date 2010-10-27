@@ -42,6 +42,7 @@ public class TMetricAORule extends AbstractTransformationRule<MetricMeasureAO> {
 		return "MetricMeasureAO -> MetricMeasurePO";
 	}
 
+	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}

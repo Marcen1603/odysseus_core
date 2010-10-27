@@ -34,14 +34,16 @@ public class BpelServiceImpl implements BpelService {
 	/* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.bpel.service.BpelService#getCorrelation(java.lang.String  uri )*
      */
-    public java.lang.String getCorrelation(java.lang.String uri) { 
+    @Override
+	public java.lang.String getCorrelation(java.lang.String uri) { 
        return ""+uri.hashCode()+System.currentTimeMillis();
     }
 
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.bpel.service.BpelService#checkIfMachineIsMaintained(int  tool )*
      */
-    public int checkIfMachineIsMaintained(int machine) { 
+    @Override
+	public int checkIfMachineIsMaintained(int machine) { 
         Integer maintainedBy = this.maintainedMachines.get(machine);
         if (maintainedBy == null){
         	this.maintainedMachines.put(machine, 1);

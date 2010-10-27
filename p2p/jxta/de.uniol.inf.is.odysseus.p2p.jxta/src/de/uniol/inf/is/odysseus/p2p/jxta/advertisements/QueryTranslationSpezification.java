@@ -249,6 +249,7 @@ public class QueryTranslationSpezification extends Advertisement implements
 		 * 
 		 * @return String the type of advertisement
 		 */
+		@Override
 		public String getAdvertisementType() {
 			return QueryTranslationSpezification.getAdvertisementType();
 		}
@@ -260,6 +261,7 @@ public class QueryTranslationSpezification extends Advertisement implements
 		 * @return The instance of <CODE>Advertisement</CODE> or null if it
 		 *         could not be created.
 		 */
+		@Override
 		public Advertisement newInstance() {
 			return new QueryTranslationSpezification();
 		}

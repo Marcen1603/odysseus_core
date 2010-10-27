@@ -6,8 +6,10 @@ public abstract class AbstractHashFunctionWrapper<T> {
 		this.element = element;
 	}
 
+	@Override
 	abstract public int hashCode();
 
+	@Override
 	public boolean equals(Object o) {
 		return this.element.equals(o);
 	}

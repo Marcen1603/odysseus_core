@@ -38,6 +38,7 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 		return new MetadataUpdatePO<M,T>(this);
 	}
 	
+	@Override
 	public String toString(){
 		return super.toString() + " updateFac: " + this.metadataFactory.getClass();
 	}
@@ -47,6 +48,7 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 		sendPunctuation(timestamp);
 	}
 
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof MetadataUpdatePO)) {
 			return false;

@@ -1,11 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.sources.view.activator;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.SWTError;
 import org.eclipse.ui.IStartup;
-import org.eclipse.ui.PlatformUI;
-import org.osgi.framework.Bundle;
 
 public class StartUp implements IStartup {
 

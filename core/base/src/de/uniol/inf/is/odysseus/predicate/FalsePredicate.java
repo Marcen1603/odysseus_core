@@ -32,6 +32,7 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
 		return new FalsePredicate<T>(this);
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof FalsePredicate)) {
 			return false;

@@ -1,18 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.priorityscheduler.AbstractDynamicPriorityPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
-import de.uniol.inf.is.odysseus.usermanagement.NotInitializedException;
-import de.uniol.inf.is.odysseus.usermanagement.Tenant;
-import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
-import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class SimpleSLAScheduler extends AbstractDynamicPriorityPlanScheduling {
 

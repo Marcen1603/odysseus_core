@@ -81,4 +81,9 @@ implements IPOEventListener {
 	public AbstractMonitoringData<Long> clone() {
 		return new ProcessCallsMonitor(this);
 	}
+
+	@Override
+	public Long getValue(IPhysicalOperator operator) {
+		return processCallsPerOperator.get(operator);
+	}
 }

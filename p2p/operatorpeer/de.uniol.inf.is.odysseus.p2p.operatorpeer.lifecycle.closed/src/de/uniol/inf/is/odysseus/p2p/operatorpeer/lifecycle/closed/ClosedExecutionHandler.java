@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 
 public class ClosedExecutionHandler<F> extends AbstractExecutionHandler<AbstractPeer, F> {
 
+	@Override
 	public IExecutionHandler<AbstractPeer,F> clone()  {
 		IExecutionHandler<AbstractPeer,F> handler = new ClosedExecutionHandler<F>();
 		handler.setFunction(getFunction());

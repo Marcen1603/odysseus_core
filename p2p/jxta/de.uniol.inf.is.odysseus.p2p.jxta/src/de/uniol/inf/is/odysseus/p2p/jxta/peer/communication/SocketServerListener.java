@@ -26,6 +26,7 @@ public class SocketServerListener implements ISocketServerListener {
 		setaPeer(aPeer);
 	}
 
+	@Override
 	public void run() {
 		JxtaServerSocket serverSocket = null;
 		try {

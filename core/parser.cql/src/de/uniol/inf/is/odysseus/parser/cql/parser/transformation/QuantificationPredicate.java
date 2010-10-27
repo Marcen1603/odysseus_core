@@ -27,10 +27,12 @@ public class QuantificationPredicate extends
 		this.astPredicate = pred.astPredicate;
 	}
 
+	@Override
 	public boolean evaluate(RelationalTuple<?> input) {
 		throw new RuntimeException("Not implemented");
 	}
 
+	@Override
 	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
 		throw new RuntimeException("Not implemented");
 	}
@@ -48,6 +50,7 @@ public class QuantificationPredicate extends
 		return new QuantificationPredicate(this);
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof QuantificationPredicate)) {
 			return false;

@@ -19,6 +19,7 @@ public class PQLParserTest implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		try {
 			OperatorBuilderFactory.putOperatorBuilderType("muh", MuhBuilder.class);
@@ -38,6 +39,7 @@ public class PQLParserTest implements BundleActivator {
 	 * @see
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 	}
 

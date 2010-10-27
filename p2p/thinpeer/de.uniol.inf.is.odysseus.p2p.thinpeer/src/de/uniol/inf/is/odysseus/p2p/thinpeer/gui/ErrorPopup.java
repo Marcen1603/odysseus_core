@@ -18,6 +18,7 @@ public class ErrorPopup extends javax.swing.JDialog implements ActionListener {
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				ErrorPopup inst = new ErrorPopup("test");
 				inst.setVisible(true);

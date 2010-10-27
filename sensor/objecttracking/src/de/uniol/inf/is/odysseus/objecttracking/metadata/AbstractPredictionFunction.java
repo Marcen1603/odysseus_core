@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AbstractPredictionFunction<T extends MetaAttributeContainer<M>, M extends IMetaAttribute> implements IPredictionFunction<T, M>{
 	
+	@Override
 	public T predictAll(SDFAttributeList schema, T object, PointInTime t){
 		T predictedData = this.predictData(schema, object, t);
 		predictedData.setMetadata(this.predictMetadata(schema, object, t));

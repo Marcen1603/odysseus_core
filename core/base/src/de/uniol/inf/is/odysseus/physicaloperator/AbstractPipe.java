@@ -57,6 +57,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			callCloseOnChildren(callPath);
 		}
 		
+		@Override
 		public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
 		}

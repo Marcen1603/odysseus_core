@@ -32,6 +32,7 @@ public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Com
 		return 0;
 	}
 	
+	@Override
 	public ComparablePair<T1, T2> clone() {
 		return new ComparablePair<T1, T2>(this);
 	}

@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
+import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
+import de.uniol.inf.is.odysseus.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
@@ -112,14 +114,15 @@ public class StandardOptimizer extends AbstractOptimizer {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void updateMetadataListener(IQuery editableQuery, boolean add) {
+	private void updateMetadataListener(IQuery query, boolean add) {
 		// the graph walker walks through the whole plan
 		// so we can start at the first root of the plan
 		// and all roots will be visited.
 		if (add){
-			new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoots().get(0), new InstallMetadataListenerVisitor());
+			query.addPlanMonitor(MonitoringDataTypes.DATARATE.name, new PlanMonitor(query,false, MonitoringDataTypes.DATARATE.name, MONITORING_PERIOD));
+			query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name, new PlanMonitor(query,false, MonitoringDataTypes.SELECTIVITY.name,-1));
 		}else{
-			new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoots().get(0), new RemoveMetadataListenerVisitor());			
+			new AbstractGraphWalker().prefixWalkPhysical(query.getRoots().get(0), new RemoveMetadataListenerVisitor());			
 		}
 	}
 	

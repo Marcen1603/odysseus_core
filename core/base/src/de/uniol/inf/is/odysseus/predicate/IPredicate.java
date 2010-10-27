@@ -14,6 +14,7 @@ public interface IPredicate<T> extends IClone, Serializable {
 
 	boolean evaluate(T left, T right);
 
+	@Override
 	public IPredicate<T> clone();
 
 	public void init();

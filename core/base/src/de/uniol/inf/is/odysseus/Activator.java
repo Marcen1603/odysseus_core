@@ -22,7 +22,8 @@ public class Activator implements BundleActivator {
      * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
      * )
      */
-    public void start(BundleContext context) throws Exception {
+    @Override
+	public void start(BundleContext context) throws Exception {
         // Add default Functions
     	bundleContext = context;
     	for(IFunction function : functions) {
@@ -39,7 +40,8 @@ public class Activator implements BundleActivator {
      * @see
      * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(BundleContext context) throws Exception {
+    @Override
+	public void stop(BundleContext context) throws Exception {
     	for(IFunction function : functions) {
     		MEP.unregisterFunction(function.getSymbol());
     	}

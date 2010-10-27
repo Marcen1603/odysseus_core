@@ -18,10 +18,12 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 	@Element(name = "statistics")
 	private DescriptiveStatistics desc = new DescriptiveStatistics();
 
+	@Override
 	public void setStartTime(long start) {
 		this.startTime = start;
 	}
 
+	@Override
 	public void setEndTime(long end) {
 		this.endTime = end;
 	}
@@ -32,18 +34,22 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 		this.duration = this.getDuration();
 	}
 
+	@Override
 	public long getDuration() {
 		return this.endTime - this.startTime;
 	}
 
+	@Override
 	public void add(T object) {
 		++size;
 	}
 
+	@Override
 	public long size() {
 		return size;
 	}
 
+	@Override
 	public DescriptiveStatistics getStatistics() {
 		return this.desc;
 	}

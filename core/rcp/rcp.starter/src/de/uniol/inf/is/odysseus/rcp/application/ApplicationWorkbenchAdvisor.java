@@ -11,11 +11,13 @@ import de.uniol.inf.is.odysseus.rcp.user.Login;
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
+	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
 			IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(configurer);
 	}
 
+	@Override
 	public String getInitialWindowPerspectiveId() {
 		return IObserverPerspectiveConstants.PERSPECTIVE_ID;
 	}

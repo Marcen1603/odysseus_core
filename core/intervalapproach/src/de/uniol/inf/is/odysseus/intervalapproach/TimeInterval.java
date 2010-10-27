@@ -67,6 +67,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return end.isInfinite();
 	}
 
+	@Override
 	public void setEnd(PointInTime end) {
 		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
@@ -366,6 +367,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	 * Endzeitpunkte der Intervalle betrachtet
 	 * 
 	 */
+	@Override
 	public int compareTo(ITimeInterval toCompare) {
 		int s = this.getStart().compareTo(toCompare.getStart());
 		if (s == 0) { // Wenn Startpunkte gleich sind, die Endpunkte
@@ -375,10 +377,12 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return s;
 	}
 
+	@Override
 	public PointInTime getStart() {
 		return start;
 	}
 
+	@Override
 	public void setStart(PointInTime start) {
 		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
@@ -388,6 +392,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		this.start = start;
 	}
 
+	@Override
 	public PointInTime getEnd() {
 		return end;
 	}
@@ -398,11 +403,13 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return getStart().toString() + "|" + getEnd().toString();
 	}
 
+	@Override
 	public String toString(PointInTime baseTime) {
 		return "[" + getStart().minus(baseTime).toString() + ","
 				+ getEnd().minus(baseTime).toString() + ")";
 	}
 
+	@Override
 	public boolean isValid() {
 		PointInTime current = PointInTime.currentPointInTime();
 		return this.getStart().beforeOrEquals(current)

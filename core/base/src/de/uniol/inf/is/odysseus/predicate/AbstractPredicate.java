@@ -15,6 +15,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 
 	private static final long serialVersionUID = -2182745249884399237L;
 
+	@Override
 	public void init(){
 	}
 
@@ -25,8 +26,10 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	public AbstractPredicate(AbstractPredicate<T> pred) {
 	}
 	
+	@Override
 	abstract public AbstractPredicate<T> clone();
 	
+	@Override
 	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
 	
 	public boolean contains(AbstractPredicate<T> pred) {return true;}

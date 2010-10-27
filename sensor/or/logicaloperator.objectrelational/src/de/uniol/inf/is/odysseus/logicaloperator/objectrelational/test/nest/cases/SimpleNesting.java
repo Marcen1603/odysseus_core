@@ -40,7 +40,8 @@ public class SimpleNesting extends TestCase {
         this.setName("simpleNesting");
     }
     
-    @Before
+    @Override
+	@Before
     public void setUp() {
         SDFAttributeList inputSchema;       
         this.fixture = new SimpleNestingFixture();

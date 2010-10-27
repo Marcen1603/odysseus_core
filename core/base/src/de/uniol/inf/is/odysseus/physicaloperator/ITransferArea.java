@@ -36,6 +36,7 @@ public interface ITransferArea<R extends IMetaAttributeContainer<?>, W extends I
 
 	public int size();
 
+	@Override
 	public ITransferArea<R,W> clone();
 	
 	public void newHeartbeat(PointInTime heartbeat, int inPort);	

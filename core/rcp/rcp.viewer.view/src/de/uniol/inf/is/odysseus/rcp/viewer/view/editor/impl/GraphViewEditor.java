@@ -176,6 +176,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 		return input.getGraphView();
 	}
 
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
 			if (outlinePage == null) {

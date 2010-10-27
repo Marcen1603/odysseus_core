@@ -7,6 +7,7 @@ public interface IOdysseusNodeView extends INodeView<IPhysicalOperator> {
 
 	public void connect();
 	public void disconnect();
+	@Override
 	public IOdysseusNodeModel getModelNode();
 	
 }

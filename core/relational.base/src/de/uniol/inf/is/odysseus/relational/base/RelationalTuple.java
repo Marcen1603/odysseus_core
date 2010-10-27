@@ -149,6 +149,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 * ansonsten positiv Es wird maximal die kleinere Anzahl der Felder
 	 * verglichen
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public final int compareTo(RelationalTuple c) {
 		int min = c.getAttributeCount();

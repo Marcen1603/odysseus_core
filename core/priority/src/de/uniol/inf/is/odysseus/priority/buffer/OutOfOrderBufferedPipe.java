@@ -42,6 +42,7 @@ public class OutOfOrderBufferedPipe<T extends IMetaAttributeContainer<? extends 
 		return this.buffer.element().getMetadata().getPriority();
 	}
 
+	@Override
 	public OutOfOrderBufferedPipe<T> clone() {
 		return new OutOfOrderBufferedPipe<T>(this);
 	}

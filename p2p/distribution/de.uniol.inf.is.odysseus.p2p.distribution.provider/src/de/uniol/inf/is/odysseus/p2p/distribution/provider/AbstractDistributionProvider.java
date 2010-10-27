@@ -34,6 +34,7 @@ public abstract class AbstractDistributionProvider<R> implements IDistributionPr
 		this.peer = (AbstractPeer) peer;
 	}
 	
+	@Override
 	public abstract void distributePlan(Query q, R serverResponse);
 	
 	@Override

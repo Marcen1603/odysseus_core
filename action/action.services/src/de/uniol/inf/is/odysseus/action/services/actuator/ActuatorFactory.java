@@ -39,6 +39,7 @@ public class ActuatorFactory implements IActuatorFactory{
 		this.actuatorManager.put(manager.getName(), manager);
 	}
 	
+	@Override
 	public IActuator createActuator (String name, String actuatorDescription, String managerName) 
 		throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
@@ -50,6 +51,7 @@ public class ActuatorFactory implements IActuatorFactory{
 		throw new ActuatorException("Actuator manager not bound yet");
 	}
 	
+	@Override
 	public IActuator getActuator (String actuatorName, String managerName) throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
@@ -58,11 +60,13 @@ public class ActuatorFactory implements IActuatorFactory{
 		throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
 	}
 	
+	@Override
 	public Map<String, IActuatorManager> getActuatorManagers() {
 		return actuatorManager;
 	}
 
 	
+	@Override
 	public List<ActionMethod> getFullSchema(String actuatorName, String managerName) throws ActuatorException{
 		return this.getActuator(actuatorName, managerName).getFullSchema();
 	}

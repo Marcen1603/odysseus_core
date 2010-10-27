@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * EditableExecutionPlan is an object which is used to store an execution plan.

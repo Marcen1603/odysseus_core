@@ -20,16 +20,21 @@ class SimpleNode implements Node {
     parser = p;
   }
 
-  public void jjtOpen() {
+  @Override
+public void jjtOpen() {
   }
 
-  public void jjtClose() {
+  @Override
+public void jjtClose() {
   }
 
-  public void jjtSetParent(Node n) { parent = n; }
-  public Node jjtGetParent() { return parent; }
+  @Override
+public void jjtSetParent(Node n) { parent = n; }
+  @Override
+public Node jjtGetParent() { return parent; }
 
-  public void jjtAddChild(Node n, int i) {
+  @Override
+public void jjtAddChild(Node n, int i) {
     if (children == null) {
       children = new Node[i + 1];
     } else if (i >= children.length) {
@@ -40,11 +45,13 @@ class SimpleNode implements Node {
     children[i] = n;
   }
 
-  public Node jjtGetChild(int i) {
+  @Override
+public Node jjtGetChild(int i) {
     return children[i];
   }
 
-  public int jjtGetNumChildren() {
+  @Override
+public int jjtGetNumChildren() {
     return (children == null) ? 0 : children.length;
   }
 
@@ -52,7 +59,8 @@ class SimpleNode implements Node {
   public Object jjtGetValue() { return value; }
 
   /** Accept the visitor. **/
-  public Object jjtAccept(ProceduralExpressionParserVisitor visitor, Object data)
+  @Override
+public Object jjtAccept(ProceduralExpressionParserVisitor visitor, Object data)
 {
     return visitor.visit(this, data);
   }
@@ -74,7 +82,8 @@ class SimpleNode implements Node {
      toString(String), otherwise overriding toString() is probably all
      you need to do. */
 
-  public String toString() { return ProceduralExpressionParserTreeConstants.jjtNodeName[id]; }
+  @Override
+public String toString() { return ProceduralExpressionParserTreeConstants.jjtNodeName[id]; }
   public String toString(String prefix) { return prefix + toString(); }
 
   /* Override this method if you want to customize how the node dumps

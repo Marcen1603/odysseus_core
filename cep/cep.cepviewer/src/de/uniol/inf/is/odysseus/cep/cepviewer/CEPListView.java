@@ -54,6 +54,7 @@ public class CEPListView extends ViewPart {
 	 * @param parent
 	 *            is the widget which contains the list view.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		// set the layout
@@ -123,6 +124,7 @@ public class CEPListView extends ViewPart {
 	/**
 	 * This method is called to set the focus to this view.
 	 */
+	@Override
 	public void setFocus() {
 		this.tabMenu.setFocus();
 	}

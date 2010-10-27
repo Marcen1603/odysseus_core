@@ -43,6 +43,7 @@ public class Update extends TestCase {
 	    );
 	}
 	
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		List<ObjectRelationalTuple<TimeInterval>> tuples;

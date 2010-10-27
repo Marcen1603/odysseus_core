@@ -308,6 +308,7 @@ public class NestPO<T extends IMetaAttribute> extends
 		return this.q.poll();
 	}
 
+	@Override
 	public boolean isDone() {
 		return (q.size() == 0);
 	}
@@ -324,7 +325,8 @@ public class NestPO<T extends IMetaAttribute> extends
     	return this.inputSchema;
     }
 
-    public SDFAttributeList getOutputSchema() {
+    @Override
+	public SDFAttributeList getOutputSchema() {
     	return this.outputSchema;
     }
 

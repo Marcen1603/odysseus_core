@@ -9,10 +9,12 @@ public class SDFEqualOperator implements SDFCompareOperator {
 		return "==";
 	}
 
+	@Override
 	public String getXMLRepresentation() {
 		return toString();
 	}
 	
+	@Override
 	public boolean evaluate(Object o1, Object o2) {
 		return o1.equals(o2);
 	}

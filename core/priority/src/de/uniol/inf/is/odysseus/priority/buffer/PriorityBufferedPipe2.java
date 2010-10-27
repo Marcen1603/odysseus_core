@@ -158,6 +158,7 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 		throw new RuntimeException("not implemented...");
 	}
 
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof PriorityBufferedPipe2)) {
 			return false;

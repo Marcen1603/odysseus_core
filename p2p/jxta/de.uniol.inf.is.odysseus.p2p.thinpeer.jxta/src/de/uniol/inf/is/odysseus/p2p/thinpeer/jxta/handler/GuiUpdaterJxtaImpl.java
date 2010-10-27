@@ -16,6 +16,7 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 	public GuiUpdaterJxtaImpl() {
 	}
 
+	@Override
 	public void run() {
 
 		while (true) {

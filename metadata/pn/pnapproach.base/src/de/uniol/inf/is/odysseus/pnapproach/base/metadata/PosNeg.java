@@ -46,26 +46,32 @@ public class PosNeg implements IPosNeg{
 //		}
 	}
 	
+	@Override
 	public ElementType getElementType(){
 		return this.type;
 	}
 	
+	@Override
 	public void setElementType(ElementType type){
 		this.type = type;
 	}
 	
+	@Override
 	public List<Long> getID(){
 		return this.id;
 	}
 	
+	@Override
 	public void setID(List<Long> id){
 		this.id = id;
 	}
 	
+	@Override
 	public PointInTime getTimestamp(){
 		return this.timestamp;
 	}
 	
+	@Override
 	public void setTimestamp(PointInTime timestamp){
 		this.timestamp = timestamp;
 	}
@@ -83,6 +89,7 @@ public class PosNeg implements IPosNeg{
 		return new PosNeg(this);
 	}
 	
+	@Override
 	public int compareTo(IPosNeg pn2){
 		if(this.timestamp.before(pn2.getTimestamp())){
 			return -1;

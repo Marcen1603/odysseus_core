@@ -22,6 +22,7 @@ public class Application implements IApplication {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
+	@Override
 	public Object start(IApplicationContext context) {
 		this.display = new Display();
 		this.shell = AuctionMonitor.getInstance().runApplication(display);
@@ -34,6 +35,7 @@ public class Application implements IApplication {
 		return IApplication.EXIT_OK;
 	}
 	
+	@Override
 	public void stop() {
 		if (this.shell != null && !this.shell.isDisposed()){
 			this.display.syncExec(new Runnable() {

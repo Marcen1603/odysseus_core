@@ -45,6 +45,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		return this.requirement == REQUIREMENT.MANDATORY;
 	}
 
+	@Override
 	public List<Exception> getErrors() {
 		return this.errors;
 	}

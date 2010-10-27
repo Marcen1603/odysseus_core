@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterView;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
-import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorPlanEditPart;
 
 public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener, IParameterView {
 

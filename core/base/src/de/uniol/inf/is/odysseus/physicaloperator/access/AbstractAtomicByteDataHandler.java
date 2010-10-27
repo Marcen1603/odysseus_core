@@ -6,6 +6,7 @@ public abstract class AbstractAtomicByteDataHandler implements IAtomicByteDataHa
 
 	private BufferedInputStream stream;
 		
+	@Override
 	public void setStream(BufferedInputStream stream) {
 		this.stream = stream;
 	}

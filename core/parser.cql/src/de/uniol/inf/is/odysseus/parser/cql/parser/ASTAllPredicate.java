@@ -25,6 +25,7 @@ public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.IExistencePredicate#getTuple()
 	 */
+	@Override
 	public ASTTuple getTuple() {
 		return (ASTTuple) jjtGetChild(0);
 	}
@@ -34,6 +35,7 @@ public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.IExistencePredicate#getCompareOperator()
 	 */
+	@Override
 	public SDFCompareOperator getCompareOperator() {
 		return AbstractDefaultVisitor
 				.toInverseCompareOperator(jjtGetChild(1).toString());
@@ -44,6 +46,7 @@ public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.IExistencePredicate#getQuery()
 	 */
+	@Override
 	public ASTComplexSelectStatement getQuery() {
 		return (ASTComplexSelectStatement) jjtGetChild(2);
 	}

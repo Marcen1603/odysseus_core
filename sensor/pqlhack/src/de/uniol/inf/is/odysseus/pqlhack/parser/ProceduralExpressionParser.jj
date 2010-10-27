@@ -19,7 +19,7 @@ options {
 
 PARSER_BEGIN(ProceduralExpressionParser)
 package de.uniol.inf.is.odysseus.pqlhack.parser;
-
+@SuppressWarnings("all")
 public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExpressionParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected static JJTProceduralExpressionParserState jjtree = new JJTProceduralExpressionParserState();
 

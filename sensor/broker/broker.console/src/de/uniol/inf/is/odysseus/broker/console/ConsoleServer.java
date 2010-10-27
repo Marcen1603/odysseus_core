@@ -18,6 +18,7 @@ public class ConsoleServer {
 
 	public int registerView(final String[] attributes) {
 		Display.getDefault().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				int givenPort = ViewController.getInstance().createNewView(
 						attributes);
@@ -29,6 +30,7 @@ public class ConsoleServer {
 
 	public void sendTuple(final int port, final String[] values) {
 		Display.getDefault().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				ViewController.getInstance().sendTuple(port, values);
 			}

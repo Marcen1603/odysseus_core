@@ -46,6 +46,7 @@ public class TimeSplitTIPO<T extends IMetaAttributeContainer<? extends ITimeInte
 		sendPunctuation(timestamp);
 	}
 
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof TimeSplitTIPO)) {
 			return false;

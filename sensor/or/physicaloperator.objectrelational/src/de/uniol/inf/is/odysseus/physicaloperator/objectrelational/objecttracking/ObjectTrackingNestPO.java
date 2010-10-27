@@ -286,6 +286,7 @@ public class ObjectTrackingNestPO
 	 * @param object
 	 * @param port
 	 */	
+	@Override
 	final protected void process_next(
 		MVRelationalTuple<M> incomingTuple, 
 		int port
@@ -350,6 +351,7 @@ public class ObjectTrackingNestPO
 		}
 	}
 	
+	@Override
 	protected void process_close() {
 		System.out.println(
 		    "ObjectTrackingNestPO closed: " + 
@@ -391,6 +393,7 @@ public class ObjectTrackingNestPO
 		return this.q.poll();
 	}
 
+	@Override
 	public boolean isDone() {
 		return this.getSubscribedToSource().get(0).isDone();
 	}
@@ -929,7 +932,8 @@ public class ObjectTrackingNestPO
     	return this.inputSchema;
     }
 
-    public SDFAttributeList getOutputSchema() {
+    @Override
+	public SDFAttributeList getOutputSchema() {
     	return this.outputSchema;
     }
 

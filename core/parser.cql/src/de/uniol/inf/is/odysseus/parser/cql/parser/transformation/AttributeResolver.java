@@ -62,6 +62,7 @@ public class AttributeResolver implements IAttributeResolver {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.transformation.IAttributeResolver#getAttribute(java.lang.String)
 	 */
+	@Override
 	public SDFAttribute getAttribute(String name) {
 		String[] parts = name.split("\\.", 2);
 		SDFAttribute result = null;
@@ -146,6 +147,7 @@ public class AttributeResolver implements IAttributeResolver {
 		return "Sources "+sources+" attributes"+attributes;
 	}
 	
+	@Override
 	public AttributeResolver clone()  {
 		return new AttributeResolver(this);
 	}

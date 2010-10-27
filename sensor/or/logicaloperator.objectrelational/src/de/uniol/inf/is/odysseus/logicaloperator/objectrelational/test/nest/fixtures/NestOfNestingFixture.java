@@ -11,7 +11,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  */
 public class NestOfNestingFixture extends SimpleNestingFixture {
  
-   public SDFAttribute getA2() {
+   @Override
+public SDFAttribute getA2() {
         SDFAttribute a2 = new SDFAttribute("input", "a2");
         a2.setDatatype(SDFDatatypeFactory.getDatatype("String"));
         

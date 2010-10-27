@@ -60,6 +60,7 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 	}
 
 
+	@Override
 	public ByteBuffer getByteBuffer(){
 		return byteBuffer;
 	}

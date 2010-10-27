@@ -15,11 +15,13 @@ public class AfterPredicate<M extends IPosNeg> extends AbstractPredicate<IMetaAt
 	private static final long serialVersionUID = 1L;
 	public static AfterPredicate theInstance = new AfterPredicate();
 	
+	@Override
 	@Deprecated
 	public boolean evaluate(IMetaAttributeContainer<M> e){
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<M> e1, IMetaAttributeContainer<M> e2){
 		return e1.getMetadata().getTimestamp().after(e2.getMetadata().getTimestamp());
 	}

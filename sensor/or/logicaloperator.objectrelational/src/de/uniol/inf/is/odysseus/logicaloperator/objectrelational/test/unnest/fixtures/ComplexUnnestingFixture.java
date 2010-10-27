@@ -7,7 +7,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public class ComplexUnnestingFixture extends SimpleUnnestingFixture {
     
-    public SDFAttributeList getInputSchema() {
+    @Override
+	public SDFAttributeList getInputSchema() {
         SDFAttribute[] attrs = {         
             this.getAx(),
             this.getN()
@@ -15,7 +16,8 @@ public class ComplexUnnestingFixture extends SimpleUnnestingFixture {
         return new SDFAttributeList(attrs);
     }
     
-    public SDFAttribute getA2() {
+    @Override
+	public SDFAttribute getA2() {
         SDFAttribute A2 = new SDFAttribute("input", "a2");
         A2.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
         return A2;

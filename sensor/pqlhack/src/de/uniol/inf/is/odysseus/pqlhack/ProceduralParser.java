@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTLogicalPlan;
@@ -23,6 +22,8 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.CreateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitAttributesVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitBrokerVisitor;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+
+@SuppressWarnings("all")
 
 public class ProceduralParser implements IQueryParser {
 

@@ -9,11 +9,13 @@ abstract public class Count<T> extends AbstractAggregateFunction<T> {
 		super("COUNT");
 	}
 	
+	@Override
 	public IPartialAggregate<T> init(T in) {
 		IPartialAggregate<T> pa = new CountPartialAggregate<T>(1); 
 		return pa;
 	}
 
+	@Override
 	public synchronized IPartialAggregate<T> merge(IPartialAggregate<T> p, T toMerge, boolean createNew) {
 		CountPartialAggregate<T> pa = null;
 		if (createNew){

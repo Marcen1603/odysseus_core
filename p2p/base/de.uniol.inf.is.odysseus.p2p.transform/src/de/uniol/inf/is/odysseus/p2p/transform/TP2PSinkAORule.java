@@ -39,6 +39,7 @@ public class TP2PSinkAORule extends AbstractTransformationRule<P2PSinkAO> {
 		return "P2pSinkAO -> P2pSinkPO";
 	}
 	
+	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 	    return TransformRuleFlowGroup.TRANSFORMATION;
 	}

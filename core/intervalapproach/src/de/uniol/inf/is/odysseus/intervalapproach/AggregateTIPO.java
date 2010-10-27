@@ -41,6 +41,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			this.element_agg = element_agg;
 		}
 
+		@Override
 		public int compareTo(_Point p2) {
 			int c = this.p.compareTo(p2.p);
 			if (c == 0) {

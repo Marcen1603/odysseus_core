@@ -85,6 +85,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		propagateDone();
 	}
 
+	@Override
 	public void process(ByteBuffer buffer) {
 		try {
 			while (buffer.remaining() > 0) {
@@ -153,6 +154,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		return toString();
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof ByteBufferReceiverPO)) {
 			return false;

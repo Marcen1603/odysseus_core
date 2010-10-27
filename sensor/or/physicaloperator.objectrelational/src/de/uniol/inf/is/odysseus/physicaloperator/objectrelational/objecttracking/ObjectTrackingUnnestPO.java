@@ -87,21 +87,24 @@ public class ObjectTrackingUnnestPO
     	this.q = unnestPO.q.clone();
     }
     
-    public void process_done() {
+    @Override
+	public void process_done() {
     	System.out.println(
     		"ObjectTrackingUnnestPO done: " + 
     		System.nanoTime()
     	);
     }
     
-    protected void process_close() {
+    @Override
+	protected void process_close() {
     	System.out.println(
     		"ObjectTrackingUnnestPO closed: " + 
     		System.nanoTime()
     	);
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	protected void process_next(
     	RelationalTuple<T> inputrel, 
     	int port
@@ -176,7 +179,8 @@ public class ObjectTrackingUnnestPO
         return this.q.poll();
     }
     
-    public boolean isDone() {
+    @Override
+	public boolean isDone() {
        	return (this.q.size() == 0);
     }        
     
@@ -184,7 +188,8 @@ public class ObjectTrackingUnnestPO
         return this.inputSchema;
     }
 
-    public SDFAttributeList getOutputSchema() {
+    @Override
+	public SDFAttributeList getOutputSchema() {
         return this.outputSchema;
     }
 

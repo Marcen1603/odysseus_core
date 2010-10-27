@@ -35,7 +35,8 @@ public class Step extends Update {
         this.setName("testStep");
     }
     
-    @Before
+    @Override
+	@Before
     public void setUp() throws Exception {
         super.setUp();
     }

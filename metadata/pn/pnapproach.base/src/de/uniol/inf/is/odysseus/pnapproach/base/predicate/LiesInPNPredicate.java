@@ -19,6 +19,7 @@ public class LiesInPNPredicate extends AbstractPredicate<IMetaAttributeContainer
 		this.t_end = t_end;
 	}
 	
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends IPosNeg> left, IMetaAttributeContainer<? extends IPosNeg> right){
 		if(left.getMetadata().getTimestamp().afterOrEquals(this.t_start) &&
 				left.getMetadata().getTimestamp().beforeOrEquals(this.t_end)){
@@ -30,6 +31,7 @@ public class LiesInPNPredicate extends AbstractPredicate<IMetaAttributeContainer
 	/**
 	 * @deprecated This method is not supported by this predicate.
 	 */
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends IPosNeg> input) {
 		throw new UnsupportedOperationException();
 	}

@@ -144,7 +144,8 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
     }
     
     
-    public final void process_close(){
+    @Override
+	public final void process_close(){
     }
 
 	@Override

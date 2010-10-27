@@ -87,6 +87,7 @@ public class PriorityPO<K extends IPriority & ITimeInterval, T extends IMetaAttr
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof PriorityPO)) {
 			return false;

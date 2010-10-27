@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
@@ -61,10 +60,12 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 
 	private int otherport = 0;
 
+	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
 
+	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		this.outputSchema = outputSchema;
 	}
@@ -296,6 +297,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 		this.transferFunction.newHeartbeat(timestamp, port);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof ExistencePO)) {
 			return false;

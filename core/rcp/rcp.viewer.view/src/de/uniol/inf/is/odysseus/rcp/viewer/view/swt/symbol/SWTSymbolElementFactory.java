@@ -70,6 +70,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		
 	}
 
+	@Override
 	public ISymbolElement<C> createDefaultSymbolElement() {
 		SWTRectSymbolElement<C> ele = new SWTRectSymbolElement<C>( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ));
 		return ele;

@@ -14,7 +14,8 @@ class ASTString extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(ProceduralExpressionParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(ProceduralExpressionParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
   
@@ -28,7 +29,8 @@ class ASTString extends SimpleNode {
 		  return this.value;
 	  }
 	  
-	  public String toString(){
+	  @Override
+	public String toString(){
 		  return this.value;
 	  }
 }

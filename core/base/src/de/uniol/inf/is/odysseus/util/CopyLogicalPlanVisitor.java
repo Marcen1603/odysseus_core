@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.ISubscriber;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 
 /**
  * Copies every logical operator in a query plan and connects them with

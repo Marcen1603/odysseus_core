@@ -26,5 +26,6 @@ public abstract class AbstractRelationalMergeFunction<T extends RelationalTuple<
 	}
 	
 	
+	@Override
 	public abstract AbstractRelationalMergeFunction<T, M> clone();
 }

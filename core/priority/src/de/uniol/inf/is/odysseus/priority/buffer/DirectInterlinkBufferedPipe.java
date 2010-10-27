@@ -47,6 +47,7 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 		}
 	}
 
+	@Override
 	public DirectInterlinkBufferedPipe<T> clone() {
 		return new DirectInterlinkBufferedPipe<T>(this);
 	}

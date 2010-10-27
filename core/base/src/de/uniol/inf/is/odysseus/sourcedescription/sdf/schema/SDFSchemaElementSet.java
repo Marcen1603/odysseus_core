@@ -68,31 +68,38 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 		}
 	}
 
+	@Override
 	public void add(int index, T element) {
 		elements.add(index, element);
 	}
 
+	@Override
 	public boolean add(T o) {
 		return elements.add(o);
 	}
 
+	@Override
 	public boolean addAll(Collection<? extends T> c) {
 		return elements.addAll(c);
 	}
 
+	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
 		return elements.addAll(index, c);
 	}
 
+	@Override
 	public void clear() {
 		elements.clear();
 	}
 
 
+	@Override
 	public boolean contains(Object elem) {
 		return elements.contains(elem);
 	}
 
+	@Override
 	public boolean containsAll(Collection<?> c) {
 		return elements.containsAll(c);
 	}
@@ -103,6 +110,7 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 		return elements.equals(o);
 	}
 
+	@Override
 	public T get(int index) {
 		return elements.get(index);
 	}
@@ -112,63 +120,78 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 		return elements.hashCode();
 	}
 
+	@Override
 	public int indexOf(Object elem) {
 		return elements.indexOf(elem);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}
 
+	@Override
 	public int lastIndexOf(Object elem) {
 		return elements.lastIndexOf(elem);
 	}
 
+	@Override
 	public ListIterator<T> listIterator() {
 		return elements.listIterator();
 	}
 
+	@Override
 	public ListIterator<T> listIterator(int index) {
 		return elements.listIterator(index);
 	}
 
+	@Override
 	public T remove(int index) {
 		return elements.remove(index);
 	}
 
+	@Override
 	public boolean remove(Object o) {
 		return elements.remove(o);
 	}
 
+	@Override
 	public boolean removeAll(Collection<?> c) {
 		return elements.removeAll(c);
 	}
 
+	@Override
 	public boolean retainAll(Collection<?> c) {
 		return elements.retainAll(c);
 	}
 
+	@Override
 	public T set(int index, T element) {
 		return elements.set(index, element);
 	}
 
+	@Override
 	public int size() {
 		return elements.size();
 	}
 
+	@Override
 	public List<T> subList(int fromIndex, int toIndex) {
 		return elements.subList(fromIndex, toIndex);
 	}
 
+	@Override
 	public Object[] toArray() {
 		return elements.toArray();
 	}
 
+	@Override
 	@SuppressWarnings("hiding")
 	public <T> T[] toArray(T[] a) {
 		return elements.toArray(a);
 	}
 
+	@Override
 	public Iterator<T> iterator() {
 		return elements.iterator();
 	}

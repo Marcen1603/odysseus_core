@@ -37,5 +37,6 @@ public interface IPredictionFunction<T extends MetaAttributeContainer<M>, M exte
 	
 	public void initVariables();
 	
+	@Override
 	public IPredictionFunction<T, M> clone();
 }

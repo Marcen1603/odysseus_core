@@ -12,10 +12,12 @@ public class Priority implements IPriority{
 		this.prio = original.prio;
 	}
 	
+	@Override
 	public byte getPriority(){
 		return this.prio;
 	}
 	
+	@Override
 	public void setPriority(byte prio){
 		this.prio = prio;
 	}

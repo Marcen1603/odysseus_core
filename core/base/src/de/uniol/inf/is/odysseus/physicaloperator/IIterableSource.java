@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
-import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-
 /**
  * An iterator interface for plain sources or buffers.
  * While {@link #hasNext()} may block until data is available
@@ -64,16 +62,19 @@ public interface IIterableSource<T> extends ISource<T> {
 	 * Indicates if the operator is currently blocked (i.e. does not produce elements)
 	 * @return
 	 */
+	@Override
 	public boolean isBlocked();
 
 	/**
 	 * Block operator
 	 */
+	@Override
 	public void block();
 	
 	/**
 	 * unblock operator
 	 */
+	@Override
 	public void unblock();
 }
 

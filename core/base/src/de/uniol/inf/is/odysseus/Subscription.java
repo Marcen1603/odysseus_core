@@ -47,6 +47,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		this.schema = inputSchema;
 	}
 	
+	@Override
 	public SDFAttributeList getSchema() {
 		return schema;
 	}

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.base;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;

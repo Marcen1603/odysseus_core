@@ -40,18 +40,21 @@ public class Solution implements ISolution{
 		this.solution = solution.solution;
 	}
 	
+	@Override
 	public SDFExpression getVariable() {
 		return variable;
 	}
 	public void setVariable(SDFExpression variable) {
 		this.variable = variable;
 	}
+	@Override
 	public String getCompareOperator() {
 		return compareOperator;
 	}
 	public void setCompareOperator(String compareOperator) {
 		this.compareOperator = compareOperator;
 	}
+	@Override
 	public SDFExpression getSolution() {
 		return solution;
 	}
@@ -59,14 +62,17 @@ public class Solution implements ISolution{
 		this.solution = solution;
 	}
 	
+	@Override
 	public Solution clone(){
 		return new Solution(this);
 	}
 	
+	@Override
 	public boolean isFull(){
 		return this.isFull;
 	}
 	
+	@Override
 	public boolean isEmpty(){
 		return this.isEmpty;
 	}
@@ -85,6 +91,7 @@ public class Solution implements ISolution{
 		}
 	}
 	
+	@Override
 	public String toString(){
 		if(this.isEmpty){
 			return "{}";

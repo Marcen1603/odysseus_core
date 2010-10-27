@@ -20,10 +20,12 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 		super(pred);
 	}
 
+	@Override
 	public boolean evaluate(T input) {
 		return getLeft().evaluate(input) && getRight().evaluate(input);
 	}
 
+	@Override
 	public boolean evaluate(T left, T right) {
 		return getLeft().evaluate(left, right)
 				&& getRight().evaluate(left, right);
@@ -40,6 +42,7 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 				+ ")";
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other) {
 		if (!(other instanceof AndPredicate)) {
@@ -51,10 +54,12 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 		}
 	}
 
+	@Override
 	public int hashCode() {
 		return 17 * this.getLeft().hashCode() * 19 * this.getRight().hashCode();
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof AndPredicate)) {
 			return false;

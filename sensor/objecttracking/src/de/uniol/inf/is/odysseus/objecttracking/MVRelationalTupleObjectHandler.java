@@ -60,6 +60,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	}
 
 
+	@Override
 	public ByteBuffer getByteBuffer(){
 		return byteBuffer;
 	}

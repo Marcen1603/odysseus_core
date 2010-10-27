@@ -7,12 +7,13 @@ import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
-public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T> {
+public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T> implements IPlanMonitor<T> {
 
 	final List<IPhysicalOperator> monitoredOps;
 	private boolean onlyRoots;
 	
-	public AbstractPlanMonitor(IQuery target, boolean onlyRoots) {
+	
+	public AbstractPlanMonitor(IQuery target, boolean onlyRoots){
 		super(target);
 		this.onlyRoots = onlyRoots;
 		monitoredOps = target.getRoots();
@@ -20,14 +21,15 @@ public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T> {
 			monitoredOps.addAll(target.getPhysicalChilds());
 		}
 	}
-	
+		
 	public AbstractPlanMonitor(AbstractPlanMonitor monitor) {
 		super(monitor.getTarget());
 		monitoredOps = new ArrayList<IPhysicalOperator>(monitor.monitoredOps);
 		onlyRoots = monitor.onlyRoots;
 	}
 
-	protected boolean treatsOnlyRoots() {
+	@Override
+	public boolean treatsOnlyRoots() {
 		return onlyRoots;
 	}
 
@@ -36,5 +38,12 @@ public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T> {
 	public IQuery getTarget() {
 		return (IQuery) super.getTarget();
 	}
+	
+	@Override
+	public T getValue(IPhysicalOperator operator, String type) {
+		return (T) operator.getMonitoringData(type).getValue();
+	}
+	
+	abstract public T getValue(IPhysicalOperator operator);
 
 }

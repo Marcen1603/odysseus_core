@@ -35,6 +35,7 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttributeCont
 	public void process_open() {
 	}
 
+	@Override
 	public void process_close() {
 	}
 

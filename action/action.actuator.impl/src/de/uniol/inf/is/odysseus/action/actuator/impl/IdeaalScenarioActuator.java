@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapter
  * @author Simon Flandergan
  *
  */
+@SuppressWarnings("unused")
 public class IdeaalScenarioActuator {
 	private boolean personLyingBed = false;
 	private boolean personStoodUp = false;
@@ -27,6 +28,7 @@ public class IdeaalScenarioActuator {
 	
 	private static final String LIGHT_OFFICE_OFF = "12/0/0";//"13/0/2";
 	private static final String LIGHT_BEDROOM = "10/0/3";
+	
 	
 	private static final int DIM_VAL = 40;
 	

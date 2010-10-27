@@ -68,10 +68,12 @@ public class StandardSystemMonitor implements ISystemMonitor {
 		this.periodCounter = 1;
 	}
 	
+	@Override
 	public void initialize() {
 		initialize(1000L);
 	}
 	
+	@Override
 	public void initialize(long measurePeriod) {
 		this.measurePeriod = measurePeriod;
 		this.last = new HashMap<Long, Long>();
@@ -106,6 +108,7 @@ public class StandardSystemMonitor implements ISystemMonitor {
 		this.loadUpdaterThread.start();
 	}
 	
+	@Override
 	public void stop() {
 		if (this.loadUpdater != null) {
 			this.loadUpdater.stop();
@@ -149,19 +152,23 @@ public class StandardSystemMonitor implements ISystemMonitor {
 		return sum;
 	}
 	
+	@Override
 	public double getAverageCPULoad() {
 		return this.avgLoad;
 	}
 	
+	@Override
 	public double getHeapMemoryUsage() {
 		MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 		return (double)usage.getUsed() * 100.0 / (double)usage.getMax();
 	}
 	
+	@Override
 	public double getAverageMemoryUsage(){
 		return this.avgMem;
 	}
 	
+	@Override
 	public double getMaxMemoryUsage(){
 		return this.maxMem;
 	}
@@ -172,10 +179,12 @@ public class StandardSystemMonitor implements ISystemMonitor {
 		return heapMem.getUsed() + nonHeapMem.getUsed();
 	}
 	
+	@Override
 	public void addListener(ISystemMonitorListener listener) {
 		this.listeners.add(listener);
 	}
 	
+	@Override
 	public void removeListener(ISystemMonitorListener listener) {
 		this.listeners.remove(listener);
 		if (this.listeners.isEmpty()) {

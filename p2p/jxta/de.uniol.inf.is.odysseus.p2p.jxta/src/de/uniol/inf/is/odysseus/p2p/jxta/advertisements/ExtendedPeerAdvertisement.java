@@ -232,6 +232,7 @@ public class ExtendedPeerAdvertisement extends Advertisement implements
 		 * 
 		 * @return String the type of advertisement
 		 */
+		@Override
 		public String getAdvertisementType() {
 			return ExtendedPeerAdvertisement.getAdvertisementType();
 		}
@@ -243,6 +244,7 @@ public class ExtendedPeerAdvertisement extends Advertisement implements
 		 * @return The instance of <CODE>Advertisement</CODE> or null if it
 		 *         could not be created.
 		 */
+		@Override
 		public Advertisement newInstance() {
 			return new ExtendedPeerAdvertisement();
 		}

@@ -80,6 +80,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 * This method recalcs the outputSchema according to the output attributes of this operator
 	 * and the input schema of the preceding operator.
 	 */
+	@Override
 	public SDFAttributeList getOutputSchema(){
 		SDFAttributeListExtended newOutputSchema = new SDFAttributeListExtended(outAttributes);
 		SDFAttributeListExtended inputSchema = (SDFAttributeListExtended)this.getSubscribedToSource(0).getSchema();
@@ -154,6 +155,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 * of the attributes.
 	 * @return
 	 */
+	@Override
 	public int[] determineRestrictList(){
 		return ProjectAO.calcRestrictList(this.getInputSchema(), this.getOutputSchema());
 	}

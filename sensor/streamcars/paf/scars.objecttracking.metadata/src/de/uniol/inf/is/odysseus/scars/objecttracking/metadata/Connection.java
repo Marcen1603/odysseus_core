@@ -27,26 +27,32 @@ public class Connection implements IConnection {
 		System.arraycopy(copy.getRightPath(), 0, this.rightPath, 0, copy.getRightPath().length);
 	}
 
+	@Override
 	public int[] getLeftPath() {
 		return this.leftPath;
 	}
 
+	@Override
 	public int[] getRightPath() {
 		return this.rightPath;
 	}
 
+	@Override
 	public void setLeftPath(int[] newleft) {
 		this.leftPath = newleft;
 	}
 
+	@Override
 	public void setRightPath(int[] newright) {
 		this.rightPath = newright;
 	}
 
+	@Override
 	public double getRating() {
 		return this.rating;
 	}
 
+	@Override
 	public void setRating(double newrating) {
 		this.rating = newrating;
 	}

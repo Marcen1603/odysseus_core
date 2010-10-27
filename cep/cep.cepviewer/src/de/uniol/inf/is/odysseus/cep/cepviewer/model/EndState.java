@@ -45,6 +45,7 @@ public class EndState extends State {
 	 * @param g
 	 *            is the object that allows to draw on a surface.
 	 */
+	@Override
 	public void paintFigure(Graphics g) {
 		Rectangle r = bounds;
 		Font f = new Font(this.parent.getShell().getDisplay(), "Arial", 15,

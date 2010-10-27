@@ -18,6 +18,7 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
 		return new TruePredicate<T>();
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		return (pred instanceof TruePredicate);
 	}

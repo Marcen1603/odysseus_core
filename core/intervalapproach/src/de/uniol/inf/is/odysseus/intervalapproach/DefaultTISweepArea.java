@@ -155,6 +155,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		return null;
 	}
 
+	@Override
 	public int compareTo(DefaultTISweepArea<T> other) {
 		if (this.getMinTs().before(other.getMinTs())) {
 			return -1;

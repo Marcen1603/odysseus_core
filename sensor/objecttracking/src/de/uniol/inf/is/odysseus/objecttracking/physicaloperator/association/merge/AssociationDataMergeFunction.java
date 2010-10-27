@@ -40,6 +40,7 @@ public class AssociationDataMergeFunction<M extends IProbability & IPredictionFu
 		this.schema = original.schema.clone();
 	}
 	
+	@Override
 	public AssociationDataMergeFunction<M> clone(){
 		return new AssociationDataMergeFunction<M>(this);
 	}

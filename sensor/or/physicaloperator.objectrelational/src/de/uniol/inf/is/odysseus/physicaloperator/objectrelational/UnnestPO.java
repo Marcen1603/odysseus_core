@@ -148,7 +148,8 @@ public class UnnestPO<T extends ITimeInterval> extends
         return this.q.poll();
     }
     
-    public boolean isDone() {
+    @Override
+	public boolean isDone() {
         return this.q.size() == 0;
     }
     
@@ -156,7 +157,8 @@ public class UnnestPO<T extends ITimeInterval> extends
         return this.inputSchema;
     }
 
-    public SDFAttributeList getOutputSchema() {
+    @Override
+	public SDFAttributeList getOutputSchema() {
         return this.outputSchema;
     }
 

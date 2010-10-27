@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.scars.testdata.provider.FilterFunctionTestData;
  * @author mase
  *
  */
+@SuppressWarnings("unused")
 public class KalmanCorrectStateCovarianceFunctionTest<M extends IProbability & IConnectionContainer & IGain, K> {
 	
 	private KalmanCorrectStateCovarianceFunction covarianceFunction;

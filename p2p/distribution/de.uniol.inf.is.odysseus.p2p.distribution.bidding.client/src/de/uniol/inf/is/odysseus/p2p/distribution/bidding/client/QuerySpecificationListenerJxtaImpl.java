@@ -33,6 +33,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 		return specifications;
 	}
 
+	@Override
 	public void run() {
 		while (true) {
 			try {

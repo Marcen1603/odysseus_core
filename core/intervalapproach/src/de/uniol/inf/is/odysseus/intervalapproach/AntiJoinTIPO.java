@@ -334,6 +334,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(ipo instanceof AntiJoinTIPO && this.getSubscribedToSource().equals(((AntiJoinTIPO) ipo).getSubscribedToSource())) {
 			return true;

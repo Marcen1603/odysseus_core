@@ -183,10 +183,12 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		
 	}
 	
+	@Override
 	public SDFAttributeList getOutputSchema(){
 		return this.outputSchema;
 	}
 	
+	@Override
 	public void setOutputSchema(SDFAttributeList outSchema){
 		this.outputSchema = outSchema;
 	}

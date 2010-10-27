@@ -20,11 +20,13 @@ public class OdysseusNodeView extends DefaultNodeView<IPhysicalOperator> impleme
 		return (IOdysseusNodeModel)super.getModelNode();
 	}
 
+	@Override
 	public void connect() {
 		if( getModelNode() != null ) 
 			getModelNode().addNodeModelChangeListener( this );
 	}
 	
+	@Override
 	public void disconnect() {
 		if( getModelNode() != null ) 
 			getModelNode().removeNodeModelChangeListener( this );

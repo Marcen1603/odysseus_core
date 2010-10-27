@@ -78,6 +78,7 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 	 * 
 	 * @return
 	 */
+	@Override
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		Iterator<T> li = elements.iterator();
@@ -275,6 +276,7 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 		return count;
 	}
 	
+	@Override
 	public DefaultPNSweepArea<T> clone(){
 		return new DefaultPNSweepArea<T>(this);
 	}

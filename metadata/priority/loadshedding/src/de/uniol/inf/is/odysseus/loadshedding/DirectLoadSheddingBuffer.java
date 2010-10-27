@@ -68,6 +68,7 @@ extends DirectInterlinkBufferedPipe<T> {
 		this.weight = weight;
 	}	
 	
+	@Override
 	public DirectLoadSheddingBuffer<T> clone(){
 		return new DirectLoadSheddingBuffer<T>(this);
 	}

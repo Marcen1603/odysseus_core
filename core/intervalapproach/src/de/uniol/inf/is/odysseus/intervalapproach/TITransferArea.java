@@ -36,6 +36,7 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 		outputQueue.addAll(tiTransferFunction.outputQueue);
 	}
 
+	@Override
 	public void setSourcePo(AbstractSource<W> po) {
 		this.po = po;
 	}
@@ -74,6 +75,7 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 		return outputQueue.size();
 	}
 
+	@Override
 	public TITransferArea<R,W> clone() {
 		return new TITransferArea<R,W>(this);
 	}

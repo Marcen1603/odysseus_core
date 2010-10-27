@@ -9,10 +9,12 @@ public class SDFLowerOrEqualThanOperator implements SDFCompareOperator {
 		return "<=";
 	}
 	
+	@Override
 	public String getXMLRepresentation() {
 		return "&lt;=";
 	}
 
+	@Override
 	public boolean evaluate(Object o1, Object o2) {
 		if (o1 instanceof String) {
 			return ((String)o1).compareTo((String) o2) <= 0;

@@ -58,6 +58,7 @@ public class GroupId extends TestCase {
 		}
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		

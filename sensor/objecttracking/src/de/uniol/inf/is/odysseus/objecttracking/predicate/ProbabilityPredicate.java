@@ -157,6 +157,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		}
 	}
 	
+	@Override
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;

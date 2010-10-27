@@ -34,6 +34,7 @@ public class ApplicationTime implements IApplicationTime{
 		}
 	}
 	
+	@Override
 	public ApplicationTime clone() {
 		return new ApplicationTime(this);
 	}

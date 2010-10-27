@@ -10,11 +10,13 @@ public class Activator implements BundleActivator {
 
 	static BundleContext context;
 
+	@Override
 	public void start(BundleContext c) throws Exception {	    
 	    //TestRunner.run(new AllTests());
 		context = c;
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {}
 	
 	static BundleContext getContext(){

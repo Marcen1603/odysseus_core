@@ -40,7 +40,8 @@ public class NestOfNesting extends TestCase  {
         this.setName("nestOfNesting");
     }
     
-    @Before
+    @Override
+	@Before
     public void setUp() throws Exception {               
         this.nestAo = new NestAO();
         this.fixture = new NestOfNestingFixture();

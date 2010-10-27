@@ -27,14 +27,17 @@ public class MessageConsoleAppender extends AppenderSkeleton {
 		this.layout = new PatternLayout(DEFAULT_CONVERSION_PATTERN);
 	}
 
+	@Override
 	public void close() {
 		this.closed = true;
 	}
 
+	@Override
 	public boolean requiresLayout() {
 		return true;
 	}
 
+	@Override
 	public void append(LoggingEvent event) {
 		String text = this.layout.format(event);
 		String trace[];

@@ -48,6 +48,7 @@ public class PostPrioritizationPO<K extends IPriority & ITimeInterval, T extends
 		this.prioritizedElements = sa;
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof PostPrioritizationPO)) {
 			return false;

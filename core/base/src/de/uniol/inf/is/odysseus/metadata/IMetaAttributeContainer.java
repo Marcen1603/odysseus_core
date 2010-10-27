@@ -10,5 +10,6 @@ import de.uniol.inf.is.odysseus.IClone;
 public interface IMetaAttributeContainer<T extends IMetaAttribute> extends IClone, Serializable {
 	public T getMetadata();
 	public void setMetadata(T metadata);
+	@Override
 	public IMetaAttributeContainer<T> clone();
 }

@@ -33,6 +33,7 @@ public class TwoGroupingAttributeNest extends TestCase {
 	 * @throws Exception
 	 * 
 	 */
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		Factory fixtures;

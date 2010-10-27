@@ -76,6 +76,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		return builder.toString();
 	}
 
+	@Override
 	public boolean isContextDependent() {
 		return false;
 	}

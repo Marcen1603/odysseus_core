@@ -33,12 +33,14 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 		this.pausedPlans = new HashSet<IScheduling>(other.pausedPlans);
 	}
 
+	@Override
 	public void addPlan(IScheduling plan) {
 		planList.add(plan);
 		plan.addSchedulingEventListener(this);
 		planIterator = null;
 	}
 
+	@Override
 	public void clear() {
 		planIterator = null;
 		pausedPlans.clear();
@@ -52,10 +54,12 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 		}
 	}
 
+	@Override
 	public int planCount() {
 		return planList.size();
 	}
 
+	@Override
 	public IScheduling nextPlan() {
 		if (planIterator == null || !planIterator.hasNext()) {
 			planIterator = planList.iterator();

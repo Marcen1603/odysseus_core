@@ -5,9 +5,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 
 public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer> extends
     AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -32,7 +30,8 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
   
   
   
-  protected void process_next(MVRelationalTuple<M> object, int port) {
+  @Override
+protected void process_next(MVRelationalTuple<M> object, int port) {
     object = computeAll(object);
     // transfer to broker
     transfer(object);

@@ -25,6 +25,7 @@ public class PredictionKeyMetadataMergeFunction<M extends IPredictionFunctionKey
 		super();
 	}
 	
+	@Override
 	public PredictionKeyMetadataMergeFunction<M> clone() {
 		return new PredictionKeyMetadataMergeFunction<M>(this);
 	}

@@ -28,6 +28,7 @@ public class DataExtractor implements IDataExtractor{
 		this.extractors.put(extractor.getName(), extractor);
 	}
 	
+	@Override
 	public Object extractAttribute(Object element, Object attributeIdentifier, String type, SDFAttributeList schema) throws DataextractionException{
 		IAttributeExtractor extractor = this.extractors.get(type);
 		if (extractor == null){

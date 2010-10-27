@@ -34,7 +34,8 @@ public class IncomingTIEqualPartialTI extends Update {
         this.setName("testIncomingTIEqualPartialTI");
     }
     
-    @Before
+    @Override
+	@Before
     public void setUp() throws Exception {
         super.setUp();
     }

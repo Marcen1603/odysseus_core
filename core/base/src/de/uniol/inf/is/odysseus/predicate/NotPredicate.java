@@ -22,10 +22,12 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
 		return this.predicate;
 	}
 
+	@Override
 	public boolean evaluate(T input) {
 		return !this.predicate.evaluate(input);
 	}
 
+	@Override
 	public boolean evaluate(T left, T right) {
 		return !this.predicate.evaluate(left, right);
 	}
@@ -40,6 +42,7 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
 		return "NOT (" + getChild() + ")";
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof NotPredicate)) {
 			return false;

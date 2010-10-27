@@ -21,6 +21,7 @@ public class MySink extends AbstractSink<Object> {
 //		System.out.println("Port:" + port + ", PUNCTUATION: " + timestamp);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
 	}

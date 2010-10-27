@@ -18,10 +18,12 @@ public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeConta
 		return this;
 	}
 	
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> elem){
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left, IMetaAttributeContainer<? extends ITimeInterval> right){
 		return left.getMetadata().getStart().beforeOrEquals(right.getMetadata().getStart());
 	}
@@ -30,6 +32,7 @@ public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeConta
 		return instance;
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		return (pred instanceof StartsBeforePredicate);
 	}

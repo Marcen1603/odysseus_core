@@ -42,10 +42,12 @@ public class StateTreeItem extends Item {
 		return this.item.getItemCount();
 	}
 
+	@Override
 	public void setImage(Image image) {
 		this.item.setImage(image);
 	}
 
+	@Override
 	public void setText(String string) {
 		if (this.item.getItemCount() > 1) {
 			this.item.setText(string + " (" + this.item.getItemCount() + ")");

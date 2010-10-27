@@ -23,10 +23,12 @@ public class TotallyAfterPredicate extends AbstractPredicate<IMetaAttributeConta
 	private static final long serialVersionUID = 1432746295344925590L;
 	private static final TotallyAfterPredicate predicate = new TotallyAfterPredicate();
 
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> input) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left,
 			IMetaAttributeContainer<? extends ITimeInterval> right) {
 		return TimeInterval.totallyAfter(left.getMetadata(), right
@@ -46,6 +48,7 @@ public class TotallyAfterPredicate extends AbstractPredicate<IMetaAttributeConta
 
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		return (pred instanceof TotallyAfterPredicate);
 	}

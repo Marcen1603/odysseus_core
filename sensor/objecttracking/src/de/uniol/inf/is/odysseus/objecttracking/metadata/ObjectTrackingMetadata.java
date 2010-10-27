@@ -19,30 +19,37 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 	IApplicationTime appTime;
 	ITimeInterval streamTime;
 	
+	@Override
 	public int compareTo(ITimeInterval arg0) {
 		return streamTime.compareTo(arg0);
 	}
 
+	@Override
 	public PointInTime getEnd() {
 		return streamTime.getEnd();
 	}
 
+	@Override
 	public PointInTime getStart() {
 		return streamTime.getStart();
 	}
 
+	@Override
 	public boolean isValid() {
 		return streamTime.isValid();
 	}
 
+	@Override
 	public void setEnd(PointInTime point) {
 		streamTime.setEnd(point);
 	}
 
+	@Override
 	public void setStart(PointInTime point) {
 		streamTime.setStart(point);
 	}
 
+	@Override
 	public String toString(PointInTime baseTime) {
 		return streamTime.toString(baseTime);
 	}
@@ -142,6 +149,7 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 		
 	}
 	
+	@Override
 	public ObjectTrackingMetadata<K> clone() {
 		return new ObjectTrackingMetadata<K>(this);
 	}

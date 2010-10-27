@@ -19,6 +19,8 @@ options {
 PARSER_BEGIN(ProceduralExpressionParser)
 package de.uniol.inf.is.odysseus.pqlhack.parser;
 
+@SuppressWarnings("all")
+
 public class ProceduralExpressionParser{} PARSER_END(ProceduralExpressionParser)
 
 SKIP :

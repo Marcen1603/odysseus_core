@@ -77,6 +77,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		bufferPlacement = "Standard Buffer Placement";
 	}
 
+	@Override
 	public void addQuery(String language, String query) {
 		this.queries.add(new Pair<String, String>(language, query));
 	}
@@ -91,11 +92,13 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		}
 	}
 
+	@Override
 	public void setMetadataTypes(String... types) {
 		this.metadataTypes = Arrays.copyOf(types, types.length + 1);
 		this.metadataTypes[metadataTypes.length - 1] = ILatency.class.getName();
 	}
 
+	@Override
 	public String[] getMetadataTypes() {
 		return metadataTypes;
 	}
@@ -268,6 +271,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 	}
 
+	@Override
 	public DescriptiveStatistics getMemUsageStatistics() {
 		return this.avgMemListener.getMemUsageStatistics();
 	}

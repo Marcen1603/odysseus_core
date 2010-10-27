@@ -9,6 +9,7 @@ public class PriorityPredicate extends
 
 	private static final long serialVersionUID = -8530604545098107300L;
 
+	@Override
 	public PriorityPredicate clone() {
 		return this;
 	}

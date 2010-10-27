@@ -122,6 +122,7 @@ public class SchemaHelper {
 		return newList;
 	}
 	
+	@Override
 	public SchemaHelper clone() {
 		return new SchemaHelper(this);
 	}

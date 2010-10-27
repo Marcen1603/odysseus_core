@@ -20,14 +20,17 @@ public class ASTExists extends AbstractQuantificationPredicate {
 		return visitor.visit(this, data);
 	}
 
+	@Override
 	public ASTComplexSelectStatement getQuery() {
 		return (ASTComplexSelectStatement) jjtGetChild(2);
 	}
 
+	@Override
 	public SDFCompareOperator getCompareOperator() {
 		return null;
 	}
 
+	@Override
 	public ASTTuple getTuple() {
 		return null;
 	}

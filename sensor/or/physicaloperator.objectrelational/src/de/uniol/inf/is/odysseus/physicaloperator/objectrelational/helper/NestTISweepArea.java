@@ -28,6 +28,7 @@ public class NestTISweepArea extends
 		return this.groupingValues;
 	}
 	
+	@Override
 	public NestTISweepArea clone() {
 	    return new NestTISweepArea(this);
 	}

@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 /**
  * @author dtwumasi
@@ -42,6 +41,7 @@ public abstract class AbstractInitializationFunction<M extends IGain & IProbabil
 		this.parameters.put(key, value);
 	}
 	
+	@Override
 	public abstract AbstractInitializationFunction clone();
 
 }

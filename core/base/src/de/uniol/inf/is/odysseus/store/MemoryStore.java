@@ -40,6 +40,7 @@ public class MemoryStore<IDType extends Comparable<?>,STORETYPE> implements ISto
 		return elements.containsKey(key);
 	}
 	
+	@Override
 	public STORETYPE remove(IDType id) {
 		return elements.remove(id);
 	}

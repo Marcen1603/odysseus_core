@@ -351,6 +351,7 @@ public class PredictionExpression {
 		return schema.getAttribute(0).getSourceName();
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer s = new StringBuffer();
 		s.append("Class: " + super.toString());

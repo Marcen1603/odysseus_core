@@ -43,6 +43,7 @@ public class PNMetaMergeFunction implements IMetadataMergeFunction<IPosNeg> {
 		return pn;
 	}
 	
+	@Override
 	public void init(){
 	}
 

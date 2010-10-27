@@ -95,6 +95,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
 	}
 
+	@Override
 	public boolean evaluate(RelationalTuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
@@ -104,6 +105,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		return (Boolean) this.expression.getValue();
 	}
 
+	@Override
 	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
@@ -124,10 +126,12 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		return this.expression.toString();
 	}
 
+	@Override
 	public List<SDFAttribute> getAttributes() {
 		return Collections.unmodifiableList(this.expression.getAllAttributes());
 	}
 	
+	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof RelationalPredicate)){
 			return false;
@@ -137,6 +141,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		}
 	}
 	
+	@Override
 	public int hashCode(){
 		return 23 * this.expression.hashCode();
 	}
@@ -165,6 +170,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		return this.equals((Object)pred);
 	}

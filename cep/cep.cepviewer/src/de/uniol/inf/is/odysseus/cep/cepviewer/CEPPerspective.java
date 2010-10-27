@@ -25,6 +25,7 @@ public class CEPPerspective implements IPerspectiveFactory {
 	 * @param myLayout
 	 *            is the layout of the perspective
 	 */
+	@Override
 	public void createInitialLayout(IPageLayout myLayout) {
 
 		// deactive the editor area

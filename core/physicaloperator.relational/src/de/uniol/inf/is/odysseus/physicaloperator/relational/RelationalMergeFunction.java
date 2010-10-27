@@ -24,6 +24,7 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 	}
 	
 
+	@Override
 	public RelationalTuple<M> merge(RelationalTuple<M> left,
 			RelationalTuple<M> right) {
 		Object[] newAttributes = super.mergeAttributes(left != null ? left.getAttributes(): null, 
@@ -32,9 +33,11 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 		return r;
 	}
 	
+	@Override
 	public void init(){
 	}
 	
+	@Override
 	public RelationalMergeFunction<M> clone(){
 		return new RelationalMergeFunction<M>(this);
 	}

@@ -231,6 +231,7 @@ public class StateMachine<E> {
 		return windowSize;
 	}
 	
+	@Override
 	public String toString() {
 		String str = "StateMachine: " + this.hashCode() + " ";
 		str += states;
@@ -309,6 +310,7 @@ public class StateMachine<E> {
 		}
 	}
 	
+	@Override
 	public StateMachine<E> clone()  {
 		// Eine StateMachine zu clonen macht keinen Sinn! Probleme sind die Transitionen die
 		// wieder States haben und dann nicht zu den hier geclonten passen würden.

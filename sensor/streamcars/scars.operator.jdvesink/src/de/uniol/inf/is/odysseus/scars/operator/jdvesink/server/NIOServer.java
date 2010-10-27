@@ -66,7 +66,8 @@ public class NIOServer extends Thread implements IServer {
         }
     }
 
-    public void sendData(ByteBuffer buffer) {
+    @Override
+	public void sendData(ByteBuffer buffer) {
     	try {
     		if (this.isConnected()) {
     			this.socketChannel.write(buffer);
@@ -89,7 +90,8 @@ public class NIOServer extends Thread implements IServer {
     	return false;
     }
     
-    public void close() {
+    @Override
+	public void close() {
     	try {
 			this.socket.close();
 		} catch (IOException e) {

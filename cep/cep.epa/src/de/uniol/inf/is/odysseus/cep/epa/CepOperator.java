@@ -74,7 +74,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	/**
 	 * Referenz auf die globale, automatenübergreifende Symboltabelle
 	 */
-	private SymbolTable<R> symTab;
+	//private SymbolTable<R> symTab;
 
 	/**
 	 * leerer Standardkonstruktor

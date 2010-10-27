@@ -34,6 +34,7 @@ public class PriorityDataCreationFunction<K extends IMetaAttribute,T extends IMe
 		return false;
 	}
 	
+	@Override
 	public PriorityDataCreationFunction<K,T> clone() {
 		return new PriorityDataCreationFunction<K, T>(type);
 	}

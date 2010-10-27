@@ -144,6 +144,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#process_next
 	 * (java.lang.Object, int)
 	 */
+	@Override
 	protected void process_next(T object, int port) {
 		printDebug("-----------------------------------------");
 		// Determine the current transaction type

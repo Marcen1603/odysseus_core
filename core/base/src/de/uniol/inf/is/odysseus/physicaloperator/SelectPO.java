@@ -102,6 +102,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof SelectPO)) {
 			return false;

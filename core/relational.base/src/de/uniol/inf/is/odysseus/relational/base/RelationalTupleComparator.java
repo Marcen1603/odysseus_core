@@ -17,6 +17,7 @@ import java.util.Comparator;
 @SuppressWarnings("unchecked")
 public class RelationalTupleComparator implements Comparator {
 
+	@Override
 	public int compare(Object p0, Object p1) {
 		return ((RelationalTuple<?>) p0).compareTo((RelationalTuple<?>) p1);
 	}

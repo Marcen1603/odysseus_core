@@ -64,6 +64,7 @@ public class PartialNest<M extends ITimeInterval>
 	 * The clone method is essential for splitting and merging of 
 	 * partial nests. 
 	 */
+	@Override
 	public PartialNest<TimeInterval> clone() {
 		PartialNest<TimeInterval> klone = new PartialNest<TimeInterval>();
 		for(ObjectRelationalTuple<TimeInterval> t : this.getNest()) {

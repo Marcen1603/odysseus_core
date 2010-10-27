@@ -1,12 +1,8 @@
 package de.uniol.inf.is.odysseus.scars.operator.test.po;
 
-import org.osgi.util.tracker.ServiceTracker;
-
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
-import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 public class TestPO<T> extends AbstractPipe<T, T>{
 
@@ -26,6 +22,7 @@ public class TestPO<T> extends AbstractPipe<T, T>{
 		return OutputMode.INPUT;
 	}
 	
+	@Override
 	public void process_open(){
 //		ServiceTracker tracker = new ServiceTracker(Activator.bc, ISystemMonitorFactory.class.getName(), null);
 //		tracker.open();
@@ -39,6 +36,7 @@ public class TestPO<T> extends AbstractPipe<T, T>{
 		transfer(object);
 	}
 	
+	@Override
 	public void process_done(){
 //		LoggerHelper.getInstance(this.name).info("AvgMem: " + this.monitor.getAverageMemoryUsage());
 //		LoggerHelper.getInstance(this.name).info("MaxMem: " + this.monitor.getMaxMemoryUsage());

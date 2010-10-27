@@ -21,7 +21,8 @@ public class DirectAttributeResolver implements IAttributeResolver {
         this.schema = directAttributeResolver.schema.clone();
     }
 
-    public SDFAttribute getAttribute(String name)
+    @Override
+	public SDFAttribute getAttribute(String name)
             throws AmgigiousAttributeException, NoSuchAttributeException {
         String[] parts = name.split("\\.", 2);
         SDFAttribute found = null;

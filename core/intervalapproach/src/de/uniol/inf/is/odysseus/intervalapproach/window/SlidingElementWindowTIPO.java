@@ -88,6 +88,7 @@ public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInt
 	public void process_open(){
 	}
 	
+	@Override
 	public void process_close(){
 	}
 	

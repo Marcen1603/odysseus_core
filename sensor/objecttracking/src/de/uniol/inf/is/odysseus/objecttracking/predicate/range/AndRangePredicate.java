@@ -20,6 +20,7 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 	 * right predicate: 	  |-|---|-| |--|--    |---|---
 	 * 			  			  | |   | | |  |      |   |
 	 */
+	@Override
 	public List<ITimeInterval> evaluate(T input){
 		List<ITimeInterval> resultRanges = new ArrayList<ITimeInterval>();
 		List<ITimeInterval> leftRanges = this.left.evaluate(input);
@@ -55,6 +56,7 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 	 * right predicate: 	  |-|---|-| |--|--    |---|---
 	 * 			  			  | |   | | |  |      |   |
 	 */
+	@Override
 	public List<ITimeInterval> evaluate(T left, T right){
 		List<ITimeInterval> resultRanges = new ArrayList<ITimeInterval>();
 		List<ITimeInterval> leftRanges = this.left.evaluate(left, right);
@@ -86,6 +88,7 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 		return resultRanges;
 	}
 	
+	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof AndRangePredicate)){
 			return false;
@@ -95,10 +98,12 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 		}
 	}
 	
+	@Override
 	public int hashCode(){
 		return 53 * this.left.hashCode() * 41 * this.right.hashCode();
 	}
 	
+	@Override
 	public String toString(){
 		return this.left.toString() + " AND " + this.right.toString();
 	}

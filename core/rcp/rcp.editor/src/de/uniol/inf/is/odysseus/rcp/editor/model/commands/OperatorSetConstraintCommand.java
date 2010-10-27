@@ -24,22 +24,26 @@ public class OperatorSetConstraintCommand extends Command {
 		setLabel("move / resize");
 	}
 
+	@Override
 	public boolean canExecute() {
 		Object type = request.getType();
 		return (RequestConstants.REQ_MOVE.equals(type) || RequestConstants.REQ_MOVE_CHILDREN.equals(type) || RequestConstants.REQ_RESIZE.equals(type) || RequestConstants.REQ_RESIZE_CHILDREN
 				.equals(type));
 	}
 
+	@Override
 	public void execute() {
 		oldBounds = new Rectangle(operator.getX(), operator.getY(), -1, -1);
 		redo();
 	}
 
+	@Override
 	public void redo() {
 		operator.setX(newBounds.x);
 		operator.setY(newBounds.y);
 	}
 
+	@Override
 	public void undo() {
 		operator.setX(oldBounds.x);
 		operator.setY(oldBounds.y);

@@ -52,6 +52,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 		return copyflow;
 	}
 
+	@Override
 	public void addRuleFlowGroup(IRuleFlowGroup group) {
 		if (!this.ruleBase.containsKey(group)) {
 			this.ruleBase.put(group, new PriorityQueue<IRule<?, ?>>());
@@ -92,6 +93,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 		return workFlow.iterator();
 	}
 
+	@Override
 	public Iterator<IRule<?, ?>> iteratorRules(IRuleFlowGroup group) {
 		// A PriorityQueue does not guaranty a particular order for the iterator
 		// (like workFlow.get(group).iterator())!!

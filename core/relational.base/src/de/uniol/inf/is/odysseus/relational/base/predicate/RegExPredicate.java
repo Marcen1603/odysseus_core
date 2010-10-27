@@ -166,6 +166,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		return this.equals((Object)pred);
 	}

@@ -15,6 +15,7 @@ public interface ITimeInterval extends IMetaAttribute, Comparable<ITimeInterval>
 //	public void setTimeInterval(PointInTime start, PointInTime end);
 //	public void setTimeInterval(ITimeInterval ti);
 	public boolean isValid();
+	@Override
 	public ITimeInterval clone();
 	public String toString(PointInTime baseTime);
 }

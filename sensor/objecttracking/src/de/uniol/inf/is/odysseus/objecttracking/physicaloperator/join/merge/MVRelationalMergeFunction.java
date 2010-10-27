@@ -24,9 +24,11 @@ public class MVRelationalMergeFunction<M extends IProbability> extends AbstractR
 		return r;
 	}
 	
+	@Override
 	public void init(){
 	}
 	
+	@Override
 	public MVRelationalMergeFunction<M> clone(){
 		return new MVRelationalMergeFunction<M>(this);
 	}

@@ -55,6 +55,7 @@ public class RelationalRestructHelper {
 		final HashSet<String> sources = new HashSet<String>();
 		visitPredicates((IPredicate<?>) predicate,
 				new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
+					@Override
 					public void call(IPredicate<?> pred) {
 						List<SDFAttribute> attributes = ((IRelationalPredicate) pred)
 								.getAttributes();
@@ -101,6 +102,7 @@ public class RelationalRestructHelper {
 		final boolean[] retValue = new boolean[] { true };
 		RelationalRestructHelper.visitPredicates(predicate,
 				new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
+					@Override
 					public void call(IPredicate<?> predicate) {
 						if (predicate instanceof IRelationalPredicate) {
 							IRelationalPredicate relPred = (IRelationalPredicate) predicate;
@@ -275,6 +277,7 @@ public class RelationalRestructHelper {
 		Collection<ILogicalOperator> ret = RestructHelper.simpleOperatorSwitch(father, son);
 		visitPredicates(select.getPredicate(),
 				new IUnaryFunctor<IPredicate<?>>() {
+					@Override
 					public void call(IPredicate<?> curPred) {
 						List<SDFAttribute> attributes = ((IRelationalPredicate) curPred)
 								.getAttributes();

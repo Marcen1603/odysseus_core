@@ -155,6 +155,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		this.heartbeat.set(timestamp);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof BufferedPipe)) {
 			return false;

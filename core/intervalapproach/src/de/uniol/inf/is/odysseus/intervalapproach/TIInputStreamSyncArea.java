@@ -31,6 +31,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 	protected IProcessInternal<T> po;
 	private PriorityQueue<Pair<T, Integer>> inputQueue = new PriorityQueue<Pair<T, Integer>>(
 			10, new Comparator<Pair<T, Integer>>() {
+				@Override
 				public int compare(Pair<T, Integer> left, Pair<T, Integer> right) {
 					return left.getE1().getMetadata()
 							.compareTo(right.getE1().getMetadata());
@@ -54,6 +55,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 		inputQueue.addAll(tiTransferFunction.inputQueue);
 	}
 
+	@Override
 	public void setSink(IProcessInternal<T> po) {
 		this.po = po;
 	}
@@ -87,6 +89,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 		return inputQueue.size();
 	}
 
+	@Override
 	public TIInputStreamSyncArea<T> clone() {
 		return new TIInputStreamSyncArea<T>(this);
 	}

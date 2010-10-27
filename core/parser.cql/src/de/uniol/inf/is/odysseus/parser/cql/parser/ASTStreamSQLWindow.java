@@ -10,6 +10,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 	private Long slide;
 	private boolean isUnbounded = false;
 
+	@Override
 	public Long getSlide() {
 		return slide;
 	}

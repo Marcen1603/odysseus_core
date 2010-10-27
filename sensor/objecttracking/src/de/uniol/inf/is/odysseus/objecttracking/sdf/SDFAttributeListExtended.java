@@ -95,6 +95,7 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
 	}
 	
+	@Override
 	public SDFAttributeListExtended clone(){
 		return new SDFAttributeListExtended(this);
 	}

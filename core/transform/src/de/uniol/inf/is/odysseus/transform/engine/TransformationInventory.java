@@ -28,10 +28,12 @@ public class TransformationInventory extends AbstractInventory {
 		return instance;
 	}
 	
+	@Override
 	public AbstractInventory getCurrentInstance(){
 		return getInstance();
 	}
 	
+	@Override
 	public String getInventoryName(){
 		return "Transform";
 	}	

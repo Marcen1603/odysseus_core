@@ -8,6 +8,7 @@ public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 
 	private ObjectInputStream stream;
 		
+	@Override
 	public void setStream(ObjectInputStream stream) {
 		this.stream = stream;
 	}

@@ -168,6 +168,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 		}
 	}
 
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
 	}

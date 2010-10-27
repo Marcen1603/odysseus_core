@@ -158,6 +158,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		return null;
 	}
 
+	@Override
 	public int compareTo(PointInTime toCompare) {
 		if (equals(toCompare)) {
 			return 0;

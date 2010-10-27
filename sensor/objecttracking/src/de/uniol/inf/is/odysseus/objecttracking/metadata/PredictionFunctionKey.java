@@ -27,10 +27,12 @@ public class PredictionFunctionKey<T> implements IPredictionFunctionKey<T> {
 		this.key = key;
 	}
 
+	@Override
 	public PredictionFunctionKey<T> clone(){
 		return new PredictionFunctionKey<T>(this);
 	}
 	
+	@Override
 	public String toString(){
 		if(this.key != null) {
 			return this.key.toString();

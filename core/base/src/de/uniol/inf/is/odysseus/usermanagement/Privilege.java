@@ -77,6 +77,7 @@ public class Privilege implements Serializable {
 		return this.objecturi;
 	}
 
+	@Override
 	public String toString() {
 		return this.privname;
 	}

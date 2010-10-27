@@ -85,6 +85,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	@Override
 	protected PaletteViewerProvider createPaletteViewerProvider() {
 		return new PaletteViewerProvider(getEditDomain()) {
+			@Override
 			protected void configurePaletteViewer(PaletteViewer viewer) {
 				super.configurePaletteViewer(viewer);
 				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
@@ -94,6 +95,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 
 	private TransferDropTargetListener createTransferDropTargetListener() {
 		return new TemplateTransferDropTargetListener(getGraphicalViewer()) {
+			@Override
 			protected CreationFactory getFactory(Object template) {
 				if (template instanceof String)
 					return new OperatorFactory((String) template);

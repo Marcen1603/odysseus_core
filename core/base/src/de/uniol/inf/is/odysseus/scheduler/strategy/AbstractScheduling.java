@@ -156,6 +156,7 @@ public abstract class AbstractScheduling implements IScheduling,
 
 	public abstract boolean isDone();
 
+	@Override
 	public IPartialPlan getPlan() {
 		return plan;
 	};

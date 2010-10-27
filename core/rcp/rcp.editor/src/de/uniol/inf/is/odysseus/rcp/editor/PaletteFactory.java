@@ -66,12 +66,14 @@ public class PaletteFactory {
 		// Add (solid-line) connection tool
 		ImageDescriptor imageDesc = Activator.getImageDescriptor("icons/connection.gif");
 		tool = new ConnectionCreationToolEntry("Connection", "Create a connection", new CreationFactory() {
+			@Override
 			public Object getNewObject() {
 				return null;
 			}
 
 			// see ShapeEditPart#createEditPolicies()
 			// this is abused to transmit the desired line style
+			@Override
 			public Object getObjectType() {
 				return new Integer(Graphics.LINE_SOLID);
 			}

@@ -61,6 +61,7 @@ public class Merge extends TestCase {
 	    this.setName("merge");
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws Exception {

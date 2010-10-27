@@ -142,6 +142,7 @@ public class Transition {
 		this.action = action;
 	}
 
+	@Override
 	public String toString() {
 		String str =   "T: " + this.id;
 		str += ":="+condition;

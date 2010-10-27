@@ -29,6 +29,7 @@ public class Variable implements IExpression<Object> {
 		this.value = value;
 	}
 
+	@Override
 	public Object getValue() {
 		return this.value;
 	}

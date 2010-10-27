@@ -180,6 +180,7 @@ public class SocketSensorClient extends ISourceClient {
 		}
 	}
 	
+	@Override
 	public SDFAttributeList getSchema() {
 		return schema;
 	}

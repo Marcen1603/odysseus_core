@@ -114,6 +114,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		
 	}
 
+	@Override
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
 		this.attributePositions = new HashMap<IPredicate, int[]>();
 		this.fromRightChannel = new HashMap<IPredicate, boolean[]>();
@@ -180,6 +181,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	}
 	
 	
+	@Override
 	public List<ITimeInterval> evaluate(RelationalTuple<M> input) {
 		this.evaluationCount++;
 		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
@@ -235,6 +237,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		return intervals;
 	}
 
+	@Override
 	public List<ITimeInterval> evaluate(RelationalTuple<M> left, RelationalTuple<M> right) {
 		this.evaluationCount++;
 		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
@@ -371,6 +374,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof RelationalRangePredicate)){
 			return false;
@@ -380,6 +384,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		}
 	}
 	
+	@Override
 	public int hashCode(){
 		return 53 * this.solutions.hashCode();
 	}

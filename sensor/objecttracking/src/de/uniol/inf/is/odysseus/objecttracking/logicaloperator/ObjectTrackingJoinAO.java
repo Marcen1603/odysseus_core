@@ -51,6 +51,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	 */
 	private Map<IPredicate, IRangePredicate> rangePredicates;
 	
+	@Override
 	public Map<IPredicate, IRangePredicate> getRangePredicates() {
 		return rangePredicates;
 	}

@@ -29,6 +29,7 @@ public class CreateOutputTuple extends TestCase {
 	    this.setName("createTuple");
 	}
 	
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		

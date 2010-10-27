@@ -39,6 +39,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	/* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
      */
+	@Override
 	public int addStatement(QueryType query) throws StatementQueryFault    { 
         try {
 			// TODO: User einfuegen, der diese Query ausführt
@@ -74,7 +75,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createActuator(de.uniol.inf.is.odysseus.webservice.ActuatorInformation  actuator )*
      */
-    public java.lang.String createActuator(ActuatorInformation actuator) throws ActuatorFault    {  
+    @Override
+	public java.lang.String createActuator(ActuatorInformation actuator) throws ActuatorFault    {  
     	try {
     		String actuatorName = actuator.getActuatorName();
     		if (actuatorName == null || actuatorName.trim().length() == 0){
@@ -99,7 +101,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSource(de.uniol.inf.is.odysseus.webservice.SourceSchema  sourceDescription )*
      */
-    public java.lang.String createSource(SourceDescription sourceDescription) throws CreateSourceFault    { 
+    @Override
+	public java.lang.String createSource(SourceDescription sourceDescription) throws CreateSourceFault    { 
     	try {
     		SourceSchema schema = sourceDescription.getSourceSchema();
     		String query = null;
@@ -138,7 +141,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#getSchema(java.lang.String  id )*
      */
-    public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
+    @Override
+	public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
         try {
         	IQuery query = executor.getSealedPlan().getQuery(Integer.valueOf(queryID));
         	SDFAttributeList outputSchema = query.getLogicalPlan().getOutputSchema();
@@ -169,7 +173,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeActuator(de.uniol.inf.is.odysseus.webservice.ActuatorReducedInformation  actuator )*
      */
-    public java.lang.String removeActuator(ActuatorReducedInformation actuator) throws NonExistingActuatorFault    { 
+    @Override
+	public java.lang.String removeActuator(ActuatorReducedInformation actuator) throws NonExistingActuatorFault    { 
         try {
         	actuatorFactory.removeActuator(actuator.getActuatorName(), actuator.getManagerName());
         	return "";
@@ -184,7 +189,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeStatement(java.math.BigInteger  queryID )*
      */
-    public java.lang.String removeStatement(java.math.BigInteger queryID) throws NonExistingStatementFault    {  
+    @Override
+	public java.lang.String removeStatement(java.math.BigInteger queryID) throws NonExistingStatementFault    {  
         try {
         	executor.removeQuery(queryID.intValue());
         	return "";
@@ -199,7 +205,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#getActuatorSchema(de.uniol.inf.is.odysseus.webservice.ActuatorReducedInformation  actuator )*
      */
-    public de.uniol.inf.is.odysseus.webservice.ActuatorSchemaArray getActuatorSchema(ActuatorReducedInformation actuator) throws ActuatorDoesNotExistFault    {
+    @Override
+	public de.uniol.inf.is.odysseus.webservice.ActuatorSchemaArray getActuatorSchema(ActuatorReducedInformation actuator) throws ActuatorDoesNotExistFault    {
 		try {
 			IActuator refActuator = actuatorFactory.getActuator(actuator.getActuatorName(),actuator.getManagerName());
 			

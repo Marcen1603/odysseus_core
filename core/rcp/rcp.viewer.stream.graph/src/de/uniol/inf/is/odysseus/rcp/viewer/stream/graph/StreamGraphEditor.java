@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class StreamGraphEditor implements IStreamEditorType {
 

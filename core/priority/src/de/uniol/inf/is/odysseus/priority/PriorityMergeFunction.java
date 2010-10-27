@@ -16,6 +16,7 @@ public class PriorityMergeFunction implements
 						: inRight.getPriority());
 	}
 	
+	@Override
 	public PriorityMergeFunction clone() {
 		return new PriorityMergeFunction();
 	}

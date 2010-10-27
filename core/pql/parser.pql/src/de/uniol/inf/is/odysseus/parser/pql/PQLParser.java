@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class PQLParser implements IQueryParser {

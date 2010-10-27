@@ -18,7 +18,7 @@ options {
 
 PARSER_BEGIN(MapleResultParser) 
 	package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes;
-
+@SuppressWarnings("all")
 	public class MapleResultParser{}
 
 PARSER_END(MapleResultParser)

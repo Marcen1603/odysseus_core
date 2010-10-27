@@ -30,6 +30,7 @@ public class NormalTreeList extends AbstractTreeList {
 	 * @param stateMachineInstance
 	 *            is an state machine instance
 	 */
+	@Override
 	public void addStateMachineInstance(StateMachineInstance stateMachineInstance) {
 		StateTreeItem item = new StateTreeItem(this.getTree(), SWT.NONE, stateMachineInstance);
 		item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());

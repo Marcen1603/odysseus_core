@@ -281,6 +281,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		this.transferFunction.newHeartbeat(timestamp, port);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof JoinTIPO)) {
 			return false;

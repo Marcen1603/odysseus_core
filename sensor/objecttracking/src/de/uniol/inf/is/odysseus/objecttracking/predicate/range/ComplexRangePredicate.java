@@ -30,6 +30,7 @@ public abstract class ComplexRangePredicate<T> extends
 		this.right = right;
 	}
 	
+	@Override
 	public ComplexRangePredicate<T> clone(){
 		ComplexRangePredicate<T> newPred = (ComplexRangePredicate<T>)super.clone();
 		newPred.left = this.left.clone();
@@ -37,6 +38,7 @@ public abstract class ComplexRangePredicate<T> extends
 		return newPred;
 	}
 	
+	@Override
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
 		this.left.init(leftSchema, rightSchema);
 		this.right.init(leftSchema, rightSchema);

@@ -17,6 +17,7 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void start(BundleContext context) throws Exception {
 		MetadataRegistry.addMetadataType(ObjectTrackingMetadata.class, ITimeInterval.class, IProbability.class, ILatency.class, IPredictionFunctionKey.class, IApplicationTime.class);
@@ -26,6 +27,7 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void stop(BundleContext context) throws Exception {
 		MetadataRegistry.removeCombinedMetadataType(ObjectTrackingMetadata.class);

@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 
@@ -32,6 +31,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 		return _logger;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan instanceof IBuffer) {

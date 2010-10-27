@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event;
 
 import de.uniol.inf.is.odysseus.event.AbstractEvent;
-import de.uniol.inf.is.odysseus.event.IEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
 
 /**

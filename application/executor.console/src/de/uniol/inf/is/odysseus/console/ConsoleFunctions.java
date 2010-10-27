@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;

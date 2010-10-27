@@ -4,27 +4,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.ISubscribable;
-import de.uniol.inf.is.odysseus.ISubscriber;
 import de.uniol.inf.is.odysseus.ISubscription;
-import de.uniol.inf.is.odysseus.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
+	@Override
 	public IPlan applyQuerySharing(IPlanOptimizable sender, IPlan oldPlan) {
 
 		// Holen der Queries
@@ -95,6 +89,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		return oldPlan;
 	}
 
+	@Override
 	public List<IQuery> eliminateIdenticalQueries(List<IQuery> newQueries,
 			IPlan oldPlan) {
 		List<IQuery> registeredQueries = oldPlan.getQueries();

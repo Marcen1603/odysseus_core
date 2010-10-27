@@ -191,6 +191,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 *             auch kein Problem sein, da man ohnehin zwei verschiedene Intervalle hat
 	 *             (Application Time und Transaction Time)
 	 */
+	@Override
 	@Deprecated
 	public MVRelationalTuple<M> predictData(SDFAttributeList schema, MVRelationalTuple<M> object, PointInTime t){	
 		counter++;
@@ -288,6 +289,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		}
 	}
 	
+	@Override
 	public M predictMetadata(SDFAttributeList schem, MVRelationalTuple<M> object, PointInTime t){
 		long start = System.currentTimeMillis();
 		// if the PointInTime t is not in the interval, during which the expressions are applicable,
@@ -490,6 +492,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 * 
 	 * @return
 	 */
+	@Override
 	@Deprecated
 	public void initVariables(){
 		this.variables = new int[this.expressions.length][];
@@ -503,10 +506,12 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	/**
 	 * @return the initialized variable positions
 	 */
+	@Override
 	public int[][] getVariables(){
 		return this.variables;
 	}
 	
+	@Override
 	public void setVariables(int[][] vars){
 		this.variables = vars;
 	}
@@ -557,6 +562,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		return this.expressions;
 	}
 	
+	@Override
 	public void setRestrictList(int[] restrictList){
 		this.restrictList = restrictList;
 	}

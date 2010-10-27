@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author dtwumasi
  *
  */
+@SuppressWarnings("unused")
 public class KalmanCorrectStateEstimatePOTest<K> {
 
 	private AbstractDataUpdateFunction abstractDataUpdateFunction;

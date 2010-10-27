@@ -9,11 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateCovarianceFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.FilterCovarianceUpdatePO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.FilterGainPO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
@@ -24,6 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author dtwumasi
  *
  */
+@SuppressWarnings("unused")
 public class FilterCovarianceUpdatePOTest<K> {
 	
 	private FilterCovarianceUpdatePO covarianceUpdatePO;
@@ -35,6 +34,7 @@ public class FilterCovarianceUpdatePOTest<K> {
 	private MVRelationalTuple<StreamCarsMetaData<K>> resultTuple;
 	
 	private MVRelationalTuple<StreamCarsMetaData<K>> expectedTuple;
+	
 	
 	private SDFAttributeList outputSchema;
 	

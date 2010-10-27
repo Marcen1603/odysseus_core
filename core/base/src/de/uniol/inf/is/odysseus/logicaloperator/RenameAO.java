@@ -35,6 +35,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable{
 		return outputSchema;
 	}
 	
+	@Override
 	public AbstractLogicalOperator clone() {
 		return new RenameAO(this);
 	}

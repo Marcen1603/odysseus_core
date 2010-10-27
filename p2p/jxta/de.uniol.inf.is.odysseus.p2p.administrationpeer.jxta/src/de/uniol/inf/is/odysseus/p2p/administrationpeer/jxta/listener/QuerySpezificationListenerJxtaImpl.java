@@ -50,6 +50,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 		
 	}
 
+	@Override
 	public void run() {
 		while (true) {
 			try {

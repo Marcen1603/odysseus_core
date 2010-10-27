@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.priority_interval;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;

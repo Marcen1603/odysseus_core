@@ -33,6 +33,7 @@ public class Activator extends Plugin {
 		super.start(context);
 		plugin = this;
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				for (Bundle bundle : context.getBundles()) {
 					boolean isFragment = bundle.getHeaders().get(

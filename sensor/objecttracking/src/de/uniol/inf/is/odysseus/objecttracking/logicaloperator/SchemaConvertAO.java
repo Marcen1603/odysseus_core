@@ -42,6 +42,7 @@ public class SchemaConvertAO extends RenameAO{
 		return outputSchema;
 	}
 	
+	@Override
 	public AbstractLogicalOperator clone() {
 		return new SchemaConvertAO(this);
 	}

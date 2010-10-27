@@ -62,6 +62,7 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 		sendPunctuation(timestamp);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof AbstractWindowTIPO) || !this.getClass().toString().equals(ipo.getClass().toString())) {
 			return false;

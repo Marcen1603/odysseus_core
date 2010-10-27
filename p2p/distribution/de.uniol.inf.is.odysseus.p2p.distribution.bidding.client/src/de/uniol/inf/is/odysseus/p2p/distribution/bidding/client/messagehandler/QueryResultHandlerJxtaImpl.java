@@ -25,6 +25,7 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 		this.queries = hashMap;
 	}
 	
+	@Override
 	public void handleMessage(Object _msg, String _namespace) {
 		Message msg = (Message) _msg;
 

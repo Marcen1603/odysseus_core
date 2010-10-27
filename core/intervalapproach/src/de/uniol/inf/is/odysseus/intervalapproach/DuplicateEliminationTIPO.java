@@ -122,6 +122,7 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 	public final void process_open(){
 	}
 	
+	@Override
 	public final void process_close(){
 	}
 	
@@ -135,6 +136,7 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 		sendPunctuation(timestamp);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof DuplicateEliminationTIPO)) {
 			return false;

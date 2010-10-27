@@ -34,6 +34,7 @@ public class KalmanGainFunction<M extends IProbability & IGain > extends Abstrac
 		this.setParameters(parameters);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void compute(Connection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters) {
 

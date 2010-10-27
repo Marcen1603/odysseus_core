@@ -3,25 +3,19 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterablePipe;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.BufferedPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 /**
  * This buffered pipe works the same way as BufferedPipe despite of the fact,
@@ -185,6 +179,7 @@ public class BufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M ext
 		this.punctuations.addLast(timestamp);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof BufferedPunctuationPipe)) {
 			return false;

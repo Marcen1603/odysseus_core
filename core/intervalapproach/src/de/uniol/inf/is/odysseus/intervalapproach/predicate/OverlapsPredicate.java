@@ -24,10 +24,12 @@ public class OverlapsPredicate extends
 		return predicate;
 	}
 
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> input) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left,
 			IMetaAttributeContainer<? extends ITimeInterval> right) {
 		return TimeInterval.overlaps(left.getMetadata(), right.getMetadata());
@@ -41,6 +43,7 @@ public class OverlapsPredicate extends
 	private OverlapsPredicate() {
 	}
 
+	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof OverlapsPredicate)) {
 			return false;

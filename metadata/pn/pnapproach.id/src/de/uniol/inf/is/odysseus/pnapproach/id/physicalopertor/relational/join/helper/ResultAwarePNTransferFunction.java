@@ -39,6 +39,7 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, R extends IMetaAtt
 		po = (ResultAwareJoinPNIDPO<M,W>) source;
 	}
 
+	@Override
 	public void init(AbstractSource<W> po){
 		throw new UnsupportedOperationException("Method not supported for this kind of transfer function.\n" +
 				"Use init(ResultAwareJoinPNIDPO instead.");
@@ -92,10 +93,12 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, R extends IMetaAtt
 		return counter;
 	}
 	
+	@Override
 	public int size(){
 		return sweepArea.size();
 	}
 	
+	@Override
 	public ResultAwarePNTransferFunction<M,R,W> clone() {
 		return new ResultAwarePNTransferFunction<M,R,W>(this);
 	}

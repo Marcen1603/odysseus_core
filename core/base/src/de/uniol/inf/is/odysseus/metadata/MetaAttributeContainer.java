@@ -29,6 +29,7 @@ public class MetaAttributeContainer<T extends IMetaAttribute> implements IMetaAt
 	 * 
 	 * @see de.uniol.inf.is.dynaquest.queryexecution.po.base.IMetaAttribute#getMetadata()
 	 */
+	@Override
 	public final T getMetadata() {
 		return metadata;
 	}
@@ -38,6 +39,7 @@ public class MetaAttributeContainer<T extends IMetaAttribute> implements IMetaAt
 		return new MetaAttributeContainer<T>(this);
 	}
 
+	@Override
 	public void setMetadata(T metadata) {
 		this.metadata = metadata;
 	}

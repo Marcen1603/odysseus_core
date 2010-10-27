@@ -40,12 +40,14 @@ public class RelationalAvgSum extends AvgSum<RelationalTuple<?>>{
 	
 
 	
+	@Override
 	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple in) {
 		AvgSumPartialAggregate<RelationalTuple<?>> pa = 
 			new AvgSumPartialAggregate<RelationalTuple<?>>(((Number)in.getAttribute(pos)).doubleValue(),1);
 		return pa;
 	}
 
+	@Override
 	public IPartialAggregate<RelationalTuple<?>> merge(IPartialAggregate p, RelationalTuple toMerge, boolean createNew) {
 		AvgSumPartialAggregate<RelationalTuple> pa = null;
 		if (createNew){
@@ -65,6 +67,7 @@ public class RelationalAvgSum extends AvgSum<RelationalTuple<?>>{
 		return pa;
 	}
 	
+	@Override
 	public RelationalTuple evaluate(IPartialAggregate p) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
 		RelationalTuple r = new RelationalTuple(1);

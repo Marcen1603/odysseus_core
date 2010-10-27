@@ -58,6 +58,7 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		sendPunctuation(timestamp);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof MetadataCreationPO)) {
 			return false;

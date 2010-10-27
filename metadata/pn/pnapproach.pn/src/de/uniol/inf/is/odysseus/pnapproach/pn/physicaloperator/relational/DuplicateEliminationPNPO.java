@@ -117,6 +117,7 @@ public class DuplicateEliminationPNPO<T extends IMetaAttributeContainer<? extend
 	public final void process_open(){
 	}
 	
+	@Override
 	public final void process_close(){
 	}
 	

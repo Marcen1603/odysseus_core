@@ -25,6 +25,7 @@ public class NestOfNesting extends TestCase {
 	   this.setName("nestOfNesting");
 	}
 	
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		

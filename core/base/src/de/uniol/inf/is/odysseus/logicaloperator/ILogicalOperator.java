@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public interface ILogicalOperator extends IOwnedOperator, 
 	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone, Serializable{
 
+	@Override
 	public ILogicalOperator clone();
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced);
 	public SDFAttributeList getOutputSchema();

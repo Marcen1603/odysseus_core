@@ -38,6 +38,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				MainWindow inst = new MainWindow();
 				inst.setLocationRelativeTo(null);

@@ -49,6 +49,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 			this.element = element;
 		}
 
+		@Override
 		public boolean hasNext() {
 			if (this.currentElement != null) {
 				return true;
@@ -77,6 +78,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 			return false;
 		}
 
+		@Override
 		public T next() {
 			if (this.currentElement != null) {
 				T tmpElement = this.currentElement;
@@ -91,6 +93,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 			}
 		}
 
+		@Override
 		public void remove() {
 			this.it.remove();
 		}
@@ -117,6 +120,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		this.removePredicate = area.removePredicate.clone();
 	}
 	
+	@Override
 	public void insert(T s) {
 		if (this.comparator == null) {
 			this.elements.add(s);
@@ -133,10 +137,12 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		this.elements.addFirst(s);
 	}
 
+	@Override
 	public Iterator<T> query(T element, Order order) {
 		return new QueryIterator(element, order);
 	}
 
+	@Override
 	public Iterator<T> queryCopy(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
 		switch (order) {
@@ -158,6 +164,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		return result.iterator();
 	}
 
+	@Override
 	public Iterator<T> extractElements(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
 		Iterator<T> it = this.elements.iterator();
@@ -184,6 +191,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		return result.iterator();
 	}
 
+	@Override
 	public void purgeElements(T element, Order order) {
 		Iterator<T> it = this.elements.iterator();
 		switch (order) {
@@ -208,42 +216,52 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		return removePredicate;
 	}
 
+	@Override
 	public void setRemovePredicate(IPredicate<? super T> removePredicate) {
 		this.removePredicate = removePredicate;
 	}
 
+	@Override
 	public IPredicate<? super T> getQueryPredicate() {
 		return queryPredicate;
 	}
 
+	@Override
 	public void setQueryPredicate(IPredicate<? super T> updatePredicate) {
 		this.queryPredicate = updatePredicate;
 	}
 
+	@Override
 	final public boolean isEmpty() {
 		return this.elements.isEmpty();
 	}
 
+	@Override
 	final public int size() {
 		return this.elements.size();
 	}
 
+	@Override
 	final public void clear() {
 		this.elements.clear();
 	}
 
+	@Override
 	final public Iterator<T> iterator() {
 		return this.elements.iterator();
 	}
 
+	@Override
 	public boolean remove(T element) {
 		return this.elements.remove(element);
 	}
 
+	@Override
 	public T peek() {
 		return this.elements.peek();
 	}
 	
+	@Override
 	public T poll() {
 		return this.elements.poll();
 	}
@@ -254,6 +272,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	 * @param toBeInserted
 	 *            the elements to be inserted
 	 */
+	@Override
 	public void insertAll(List<T> toBeInserted) {
 		if (toBeInserted.isEmpty()) {
 			return;
@@ -280,6 +299,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	 * @param toBeRemoved
 	 *            the elements to be removed
 	 */
+	@Override
 	public void removeAll(List<T> toBeRemoved) {
 		this.elements.removeAll(toBeRemoved);
 	}
@@ -295,11 +315,13 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		return buf.toString();
 	}
 	
+	@Override
 	public void init(){
 		this.queryPredicate.init();
 		this.removePredicate.init();
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public AbstractSweepArea<T> clone() {
 		AbstractSweepArea<T> sa;

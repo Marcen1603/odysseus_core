@@ -95,6 +95,7 @@ public class SchemaIndex {
 	 * 
 	 * @return Tiefe Kopie der aktuellen Instanz.
 	 */
+	@Override
 	public SchemaIndex clone() {
 		return new SchemaIndex(this);
 	}

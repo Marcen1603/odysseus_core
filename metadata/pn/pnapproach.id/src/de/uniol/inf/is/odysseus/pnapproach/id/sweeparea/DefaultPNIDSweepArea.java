@@ -78,6 +78,7 @@ public class DefaultPNIDSweepArea<T extends IMetaAttributeContainer<? extends IP
 	 * 
 	 * @return
 	 */
+	@Override
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		Iterator<T> li = elements.iterator();

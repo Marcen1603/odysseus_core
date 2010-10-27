@@ -58,12 +58,14 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 			
 		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new GraphicalNodeEditPolicy() {
 
+			@Override
 			protected Command getConnectionCompleteCommand(CreateConnectionRequest request) {
 				ConnectionCreateCommand cmd = (ConnectionCreateCommand) request.getStartCommand();
 				cmd.setTarget((Operator) getHost().getModel());
 				return cmd;
 			}
 
+			@Override
 			protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
 				Operator source = (Operator) getHost().getModel();
 				ConnectionCreateCommand cmd = new ConnectionCreateCommand(source);
@@ -71,10 +73,12 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 				return cmd;
 			}
 
+			@Override
 			protected Command getReconnectSourceCommand(ReconnectRequest request) {
 				return null;
 			}
 
+			@Override
 			protected Command getReconnectTargetCommand(ReconnectRequest request) {
 				return null;
 			}
@@ -155,6 +159,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
 	 * .ConnectionEditPart)
 	 */
+	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {
 		return getConnectionAnchor();
 	}
@@ -166,6 +171,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
 	 * .Request)
 	 */
+	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(Request request) {
 		return getConnectionAnchor();
 	}
@@ -177,6 +183,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
 	 * .ConnectionEditPart)
 	 */
+	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
 		return getConnectionAnchor();
 	}
@@ -188,6 +195,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
 	 * .Request)
 	 */
+	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(Request request) {
 		return getConnectionAnchor();
 	}

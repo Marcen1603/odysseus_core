@@ -6,10 +6,12 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 	@SuppressWarnings("unchecked")
 	private static EqualsPredicate predicate;
 
+	@Override
 	public boolean evaluate(T input) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean evaluate(T left, T right) {
 		return left.equals(right);
 	}
@@ -25,6 +27,7 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 		return predicate;
 	}
 	
+	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof EqualsPredicate)) {
 			return false;

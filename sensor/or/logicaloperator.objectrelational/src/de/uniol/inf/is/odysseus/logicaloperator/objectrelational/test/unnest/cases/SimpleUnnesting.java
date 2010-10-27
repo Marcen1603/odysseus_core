@@ -38,7 +38,8 @@ public class SimpleUnnesting extends TestCase {
         this.setName("simpleUnnesting");
     }
     
-    @Before
+    @Override
+	@Before
     public void setUp() throws Exception {
         SDFAttributeList inputSchema;
         

@@ -106,6 +106,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		sourceListenerThread.start();
 	}
 
+	@Override
 	public void startPeer() {
 		startNetwork();
 		init();
@@ -116,6 +117,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		startSourceListener();
 	}
 
+	@Override
 	public void stopPeer() {
 		stopNetwork();
 	}

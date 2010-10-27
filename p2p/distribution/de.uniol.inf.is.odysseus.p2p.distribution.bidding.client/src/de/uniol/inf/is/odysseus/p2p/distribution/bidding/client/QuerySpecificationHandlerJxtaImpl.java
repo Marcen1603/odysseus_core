@@ -144,6 +144,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		return aPeer;
 	}
 	
+	@Override
 	public IQuerySelectionStrategy getQuerySelectionStrategy() {
 		return querySelectionStrategy;
 	}

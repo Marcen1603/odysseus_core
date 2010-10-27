@@ -8,5 +8,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractSensorAccessPO<T extends IMetaAttributeContainer<M>, M extends IMetaAttribute> extends
 		AbstractIterableSource<T> {
 	
+	@Override
 	public abstract SDFAttributeList getOutputSchema();
 }

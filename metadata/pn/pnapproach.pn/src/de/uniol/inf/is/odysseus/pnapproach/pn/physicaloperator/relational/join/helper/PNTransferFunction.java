@@ -29,6 +29,7 @@ public class PNTransferFunction<R extends IMetaAttributeContainer<? extends IPos
 		this.sweepArea = pnTransferFunction.sweepArea.clone();
 	}
 
+	@Override
 	public void init(AbstractSource<W> po) {
 		this.po = po;
 		this.minTs[0] = PointInTime.getZeroTime();
@@ -75,10 +76,12 @@ public class PNTransferFunction<R extends IMetaAttributeContainer<? extends IPos
 		return counter;
 	}
 	
+	@Override
 	public int size(){
 		return sweepArea.size();
 	}
 	
+	@Override
 	public PNTransferFunction<R,W> clone() {
 		return new PNTransferFunction<R,W>(this);
 	}

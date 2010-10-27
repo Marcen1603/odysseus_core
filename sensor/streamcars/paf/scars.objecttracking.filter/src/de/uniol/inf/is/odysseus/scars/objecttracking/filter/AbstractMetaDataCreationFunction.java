@@ -31,6 +31,7 @@ public abstract class AbstractMetaDataCreationFunction<M extends IGain & IProbab
 		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
 	}
 
+	@Override
 	public abstract AbstractMetaDataCreationFunction<M> clone();
 
 	/**

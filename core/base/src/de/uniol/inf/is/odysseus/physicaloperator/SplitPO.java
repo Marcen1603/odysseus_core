@@ -67,6 +67,7 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 		sendPunctuation(timestamp);
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof SplitPO)) {
 			return false;

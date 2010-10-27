@@ -80,6 +80,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPredicate
 	 * ()
 	 */
+	@Override
 	@SuppressWarnings({ "rawtypes" })
 	public IPredicate getPredicate() {
 		return predicate;
@@ -92,6 +93,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#setPredicate
 	 * (de.uniol.inf.is.odysseus.predicate.IPredicate)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes") 
 	public void setPredicate(IPredicate predicate) {
 		this.predicate = predicate;
@@ -104,6 +106,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getInputSchema
 	 * (int)
 	 */
+	@Override
 	public SDFAttributeList getInputSchema(int pos) {
 		LogicalSubscription s = subscribedToSource.get(pos);
 		SDFAttributeList ret = null;
@@ -139,6 +142,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPOName
 	 * ()
 	 */
+	@Override
 	public String getName() {
 		if (name == null) {
 			return this.getClass().getSimpleName();
@@ -164,6 +168,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#setPOName
 	 * (java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -175,18 +180,21 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#setPhysInputPO
 	 * (int, de.uniol.inf.is.odysseus.IPhysicalOperator)
 	 */
+	@Override
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
 		this.physInputOperators.put(subscription.getSinkInPort(), subscription
 				.getTarget());
 	}
 
+	@Override
 	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
 		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort,
 				sourceOutPort, schema));
 	}
 
+	@Override
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo() {
 		return physSubscriptionTo.values();
 	}
@@ -203,6 +211,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPhysInputPO
 	 * (int)
 	 */
+	@Override
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port) {
 		return this.physSubscriptionTo.get(port);
 	}

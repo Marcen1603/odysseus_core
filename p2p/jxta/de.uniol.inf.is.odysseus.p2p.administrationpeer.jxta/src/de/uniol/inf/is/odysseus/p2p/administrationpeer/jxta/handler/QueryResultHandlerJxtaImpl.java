@@ -25,6 +25,7 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 		this.sender = sender;
 	}
 
+	@Override
 	public void handleMessage(Object _msg, String _namespace) {
 		
 

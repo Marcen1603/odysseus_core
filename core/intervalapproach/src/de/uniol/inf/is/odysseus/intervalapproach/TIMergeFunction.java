@@ -20,6 +20,7 @@ public class TIMergeFunction implements
 		
 	}
 
+	@Override
 	public ITimeInterval mergeMetadata(
 			ITimeInterval left,
 			ITimeInterval right) {
@@ -30,6 +31,7 @@ public class TIMergeFunction implements
 		return instance;
 	}
 	
+	@Override
 	public void init(){
 	}
 	

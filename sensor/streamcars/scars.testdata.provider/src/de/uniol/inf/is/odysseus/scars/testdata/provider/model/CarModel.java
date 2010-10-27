@@ -173,6 +173,7 @@ public class CarModel {
 		this.setLength(other.getLength());
 	}
 	
+	@Override
 	public String toString() {
 		String str = "Car\n";
 		str += "  type:     " + this.type +"\n";

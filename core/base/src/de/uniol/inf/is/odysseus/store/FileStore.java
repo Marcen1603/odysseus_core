@@ -77,10 +77,12 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		out.close();
 	}
 
+	@Override
 	public STORETYPE get(IDType id) {
 		return cache.get(id);
 	}
 
+	@Override
 	public void put(IDType id, STORETYPE elem) throws StoreException {
 		cache.put(id, elem);
 		try {
@@ -90,6 +92,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		}
 	}
 
+	@Override
 	public void clear() throws StoreException {
 		cache.clear();
 		try {
@@ -99,6 +102,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		}
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return cache.isEmpty();
 	}

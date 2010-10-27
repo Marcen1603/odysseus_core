@@ -29,6 +29,7 @@ public class CEPQueryView extends ViewPart {
 	 * @param parent
 	 *            is the widget which contains the query view.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		// just show its name.
 		Label label = new Label(parent, SWT.NONE);
@@ -38,6 +39,7 @@ public class CEPQueryView extends ViewPart {
 	/**
 	 * This method is called to set the focus to this view.
 	 */
+	@Override
 	public void setFocus() {
 	}
 

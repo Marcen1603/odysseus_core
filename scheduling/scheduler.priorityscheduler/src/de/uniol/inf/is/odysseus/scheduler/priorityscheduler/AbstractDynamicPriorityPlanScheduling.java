@@ -23,6 +23,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialP
 
 	
 	abstract protected void updatePriorities(IScheduling current);
+	@Override
 	abstract public AbstractDynamicPriorityPlanScheduling clone();
 	
 

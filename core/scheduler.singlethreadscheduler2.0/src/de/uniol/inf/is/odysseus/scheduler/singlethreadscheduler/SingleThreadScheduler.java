@@ -148,6 +148,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			this.s = s;
 		}
 
+		@Override
 		public void run() {
 			sourceThreads.add(this);
 			logger.debug("Added Source "+s);

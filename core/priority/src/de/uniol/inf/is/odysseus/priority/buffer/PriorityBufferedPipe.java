@@ -57,6 +57,7 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 		return obj.getMetadata().getPriority();
 	}
 
+	@Override
 	public PriorityBufferedPipe<T> clone() {
 		return new PriorityBufferedPipe<T>(this);
 	}

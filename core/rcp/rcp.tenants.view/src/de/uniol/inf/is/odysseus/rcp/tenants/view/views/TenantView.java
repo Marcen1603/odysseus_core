@@ -43,9 +43,11 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 	class ViewContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
@@ -141,6 +143,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 
 	class ViewLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText(Object obj) {
 
 			if (obj instanceof TenantWrapper) {
@@ -167,6 +170,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 			return obj.toString();
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof UserWrapper) {
 				return Activator.getDefault().getImageRegistry().get("users");
@@ -234,6 +238,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
@@ -255,6 +260,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

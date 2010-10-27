@@ -8,6 +8,7 @@ public abstract class AbstractEventReader<R,W> implements IEventReader<R,W>{
 		this.type = type;
 	}
 
+	@Override
 	public String getType() {
 		return type;
 	}

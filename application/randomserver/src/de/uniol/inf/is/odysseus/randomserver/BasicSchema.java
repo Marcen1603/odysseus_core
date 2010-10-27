@@ -47,6 +47,7 @@ public class BasicSchema {
 		return this.attributes;
 	}
 	
+	@Override
 	public String toString(){
 		String val = "";
 		String del = "";

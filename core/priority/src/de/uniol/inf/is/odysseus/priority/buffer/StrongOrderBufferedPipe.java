@@ -26,6 +26,7 @@ public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends
 		this(strongOrderBufferedPipe.buffers.length);
 	}
 
+	@Override
 	protected void process_next(T object, int port) {
 		byte prio = object.getMetadata().getPriority();
 		synchronized (this.buffer) {

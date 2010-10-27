@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.function.estimateupdate;
 
-import java.util.ArrayList;
-
-
 import org.junit.Before;
 import org.junit.Test;
 import junit.framework.TestCase;
@@ -29,6 +26,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @param <StreamCarsMetaData>
  *
  */
+@SuppressWarnings("unused")
 public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 
 	private AbstractDataUpdateFunction correctStateEstimateFunction;
@@ -59,6 +57,7 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 	/**
 	 * @throws java.lang.Exception
 	 */
+	@Override
 	@Before
 	public void setUp() throws Exception {
 	

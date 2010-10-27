@@ -33,7 +33,8 @@ public class IncomingTIContainsPartialTI extends Update {
         this.setName("testIncomingTIContainsPartialTI");
     }
     
-    @Before
+    @Override
+	@Before
     public void setUp() throws Exception {
         super.setUp();
     }

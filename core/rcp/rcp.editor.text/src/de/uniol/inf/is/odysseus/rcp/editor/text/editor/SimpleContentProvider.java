@@ -15,6 +15,7 @@ public class SimpleContentProvider implements ITreeContentProvider {
 	private StringTreeRoot input;
 	private ReplacementLeaf replaceLeaf;
 	
+	@Override
 	public void dispose() {}
 
 	@Override

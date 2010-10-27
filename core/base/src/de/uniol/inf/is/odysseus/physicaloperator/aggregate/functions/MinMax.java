@@ -13,10 +13,12 @@ abstract public class MinMax<T extends Comparable<T>> extends AbstractAggregateF
 	}
 		
 	
+	@Override
 	public IPartialAggregate<T> init(T in) {
 		return new ElementPartialAggregate<T>(in);
 	}
 
+	@Override
 	public IPartialAggregate<T> merge(IPartialAggregate<T> p, T toMerge, boolean createNew) {
 		ElementPartialAggregate<T> pa = null;
 		if (createNew){
@@ -36,6 +38,7 @@ abstract public class MinMax<T extends Comparable<T>> extends AbstractAggregateF
 		return pa;
 	}
 
+	@Override
 	public T evaluate(IPartialAggregate<T> p) {
 		ElementPartialAggregate<T> pa = (ElementPartialAggregate<T>) p;
 		return pa.getElem();

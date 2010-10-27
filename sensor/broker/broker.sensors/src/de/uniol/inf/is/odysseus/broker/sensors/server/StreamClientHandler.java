@@ -51,6 +51,7 @@ public class StreamClientHandler extends Thread {
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
+	@Override
 	public void run() {
 		while (true) {
 			long currentTime =  System.currentTimeMillis();

@@ -152,6 +152,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		}
 	}
 
+	@Override
 	protected T merge(T left, T right, Order order) {
 //		if (logger.isTraceEnabled()) {
 //			logger.trace("LeftJoinTIPO (" + hashCode() + ") start merging: " + left

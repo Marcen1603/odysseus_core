@@ -114,6 +114,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 		return predictionFunctions.keySet().iterator();
 	}
 	
+	@Override
 	public PredictionFunctionContainer<M> clone() {
 		return new PredictionFunctionContainer<M>(this);
 	}

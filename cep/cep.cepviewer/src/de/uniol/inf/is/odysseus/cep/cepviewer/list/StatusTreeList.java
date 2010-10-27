@@ -43,6 +43,7 @@ public class StatusTreeList extends AbstractTreeList {
 	 * @param stateMachineInstance
 	 *            is an state machine instance
 	 */
+	@Override
 	public void addStateMachineInstance(StateMachineInstance stateMachineInstance) {
 		for (TreeItem statusItem : this.getTree().getItems()) {
 			if (statusItem.getText().contains("" + Status.RUNNING.getName())) {

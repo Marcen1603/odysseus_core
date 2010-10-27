@@ -50,6 +50,7 @@ public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNe
 		return count;
 	}
 	
+	@Override
 	public PNAwareSweepArea<T> clone(){
 		return new PNAwareSweepArea<T>(this);
 	}

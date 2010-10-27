@@ -15,7 +15,8 @@ public class Activator implements BundleActivator {
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
-    public void start(BundleContext c) throws Exception {       
+    @Override
+	public void start(BundleContext c) throws Exception {       
         context = c;
     }
 
@@ -23,7 +24,8 @@ public class Activator implements BundleActivator {
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(BundleContext context) throws Exception {
+    @Override
+	public void stop(BundleContext context) throws Exception {
     }
     
     static BundleContext getContext(){

@@ -15,6 +15,7 @@ public class JoinAOBuilder extends AbstractOperatorBuilder {
 		setParameters(predicateParameter);
 	}
 
+	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		JoinAO joinAO = new JoinAO();
 		if(predicateParameter.hasValue()){

@@ -50,6 +50,7 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ISubscriber<ILog
 		this.wasup = true;
 	}
 	
+	@Override
 	public String getResult() {
 		if (this.wasup) {
 			this.builder.append(" )");	

@@ -46,8 +46,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	private boolean isDone;
 	
 	private SDFAttributeList schema;
-
-	private boolean p2p = false;
+	
 	public boolean connectToPipe = false;
 	private Socket socket;
 
@@ -224,6 +223,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof AtomicDataInputStreamAccessPO)) {
 			return false;

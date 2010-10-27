@@ -16,6 +16,7 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 	
 	
 
+	@Override
 	public void setCurrentWorkingMemory(WorkingMemory wm) {
 		this.currentWorkingMemory = wm;
 	}

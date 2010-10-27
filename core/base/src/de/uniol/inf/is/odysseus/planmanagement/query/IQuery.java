@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.planmanagement.query;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
+import de.uniol.inf.is.odysseus.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 /**
  * Describes an object which represents a basic query in odyessus.
@@ -96,5 +96,11 @@ public interface IQuery extends ILogicalQuery, IMonitoringDataProvider {
 	 *         free
 	 */
 	public boolean containsCycles();
+
+	/**
+	 * Monitor for plans
+	 * @param planMonitor
+	 */
+	public void addPlanMonitor(String name, PlanMonitor planMonitor);
 
 }

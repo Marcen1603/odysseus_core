@@ -66,93 +66,113 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		return null;
 	}
 
+	@Override
 	public Object visit(SimpleNode node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTSelectClause node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTFromClause node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTWhereClause node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTGroupByClause node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTHavingClause node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTSimplePredicate node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTExpression node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTSimpleToken node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTAggregateExpression node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTAggregateFunction node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTDistinctExpression node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTAS node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTIdentifier node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTInteger node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTNumber node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTCompareOperator node, Object data) {
 		return node.childrenAccept(this, data);
 
 	}
 
+	@Override
 	public Object visit(ASTSetOperator node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTStatement node, Object data) {
 		return node.childrenAccept(this, data);
 	}
@@ -174,6 +194,7 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	}
 
+	@Override
 	public Object visit(ASTRenamedExpression node, Object data) {
 		return node.childrenAccept(this, data);
 	}
@@ -190,116 +211,144 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		return childNode;
 	}
 
+	@Override
 	public Object visit(ASTFunctionExpression node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTString node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTAdvance node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTSlide node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTAnyPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTAllPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTInPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTExists node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTTuple node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTTupleSet node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTQuantificationOperator node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTPartition node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTStreamSQLWindow node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTOrPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTAndPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTNotPredicate node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
 	public Object visit(ASTCreateStatement node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAttributeDefinitions node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAttributeDefinition node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTimedTuples node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTimedTuple node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTTimeInterval node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSimpleTuple node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTAttributeType node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTPriority node, Object data) {
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTPriorizedStatement node, Object data) {
 
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTComplexSelectStatement node, Object data) {
 
 		return null;
 	}
 
+	@Override
 	public Object visit(ASTSelectStatement node, Object data) {
 		return node.childrenAccept(this, data);
 	}

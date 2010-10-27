@@ -21,11 +21,13 @@ public class SlidingTimeWindowPredicate<T extends IMetaAttributeContainer<? exte
 		this.windowSize = old.windowSize;
 	}
 
+	@Override
 	@Deprecated
 	public boolean evaluate(T object){
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
 	public boolean evaluate(T left, T right){
 		PointInTime end = new PointInTime(right.getMetadata().getTimestamp().sum(this.windowSize, 0));
 		if(end.beforeOrEquals(left.getMetadata().getTimestamp())){

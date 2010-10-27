@@ -233,6 +233,7 @@ public class SchemaIndexPath {
 	 * 
 	 * @return Tiefe Kopie dieser SchemaIndexPath-Instanz.
 	 */
+	@Override
 	public SchemaIndexPath clone() {
 		return new SchemaIndexPath(this);
 	}

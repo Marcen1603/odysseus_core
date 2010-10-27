@@ -31,6 +31,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	 * @seeorg.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.
 	 * IApplicationContext)
 	 */
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[]) context.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
@@ -90,6 +91,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	 * 
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
+	@Override
 	public void stop() {
 		// nothing to do
 	}

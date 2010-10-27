@@ -57,6 +57,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		sendPunctuation(timestamp);
 	}	
 	
+	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof RelationalProjectPO)) {
 			return false;

@@ -28,6 +28,7 @@ public class ObjectTrackingNestTISweepArea<M extends ObjectTrackingMetadata<Obje
 		return this.groupingValues;
 	}
 	
+	@Override
 	public ObjectTrackingNestTISweepArea<M> clone() {
 	    return new ObjectTrackingNestTISweepArea<M>(this);
 	}

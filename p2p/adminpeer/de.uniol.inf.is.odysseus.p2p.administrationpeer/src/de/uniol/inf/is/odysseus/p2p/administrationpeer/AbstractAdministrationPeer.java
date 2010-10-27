@@ -200,6 +200,7 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 
 	protected abstract void startNetwork();
 
+	@Override
 	public void startPeer() {
 		startNetwork();
 		init();
@@ -284,6 +285,7 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	
 	protected abstract void initHotPeerStrategy();
 	
+	@Override
 	public void stopPeer() {
 		stopNetwork();
 	}

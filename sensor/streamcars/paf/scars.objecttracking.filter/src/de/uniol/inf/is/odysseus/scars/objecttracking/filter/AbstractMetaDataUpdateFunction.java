@@ -28,6 +28,7 @@ public abstract class AbstractMetaDataUpdateFunction<M extends IProbability> {
 		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
 	}
 	
+	@Override
 	public abstract AbstractMetaDataUpdateFunction<M> clone();
 		
 	

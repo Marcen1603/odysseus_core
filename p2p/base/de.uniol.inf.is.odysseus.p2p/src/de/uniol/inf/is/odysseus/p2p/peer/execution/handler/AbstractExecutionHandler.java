@@ -72,10 +72,12 @@ public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandle
 		return function;
 	}
 	
+	@Override
 	public void setPeer(P peer) {
 		this.peer = peer;
 	}
 	
+	@Override
 	public void setFunction(F function) {
 		this.function = function;
 	}

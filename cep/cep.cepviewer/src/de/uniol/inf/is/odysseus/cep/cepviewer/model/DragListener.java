@@ -36,6 +36,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
+	@Override
 	public void mouseReleased(MouseEvent event) {
 
 		// delete
@@ -58,6 +59,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
+	@Override
 	public void mouseDoubleClicked(MouseEvent event) {
 	}
 
@@ -67,6 +69,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
+	@Override
 	public void mousePressed(MouseEvent event) {
 
 		// If the is no state registered to be dragged, register it.
@@ -87,6 +90,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
+	@Override
 	public void mouseDragged(MouseEvent event) {
 
 		// null check to avoid exception

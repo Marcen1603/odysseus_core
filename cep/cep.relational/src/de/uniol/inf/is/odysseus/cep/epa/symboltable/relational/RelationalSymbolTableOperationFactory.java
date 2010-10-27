@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggreg
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAvgSum;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalCount;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMinMax;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalSymbolTableOperationFactory implements
 		ISymbolTableOperationFactory {

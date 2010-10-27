@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.LiesInPredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.predicate.StartsBeforePredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
@@ -135,6 +134,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 		}
 	}
 
+	@Override
 	public void process_close() {
 	}
 }

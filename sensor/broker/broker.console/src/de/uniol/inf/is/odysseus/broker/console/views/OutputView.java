@@ -42,6 +42,7 @@ public class OutputView extends ViewPart implements IContentListener {
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		
 		tabFolder = new TabFolder(parent, SWT.BORDER);		
@@ -87,6 +88,7 @@ public class OutputView extends ViewPart implements IContentListener {
 
 	}
 
+	@Override
 	public void setFocus() {
 	}
 
@@ -117,6 +119,7 @@ public class OutputView extends ViewPart implements IContentListener {
 	private void makeActions() {
 		// clear current table
 		clearTableAction = new Action() {
+			@Override
 			public void run() {
 				int index = OutputView.this.tabFolder.getSelectionIndex();
 				if (index >= 0) {
@@ -134,6 +137,7 @@ public class OutputView extends ViewPart implements IContentListener {
 						ISharedImages.IMG_ETOOL_CLEAR_DISABLED));
 
 		removeAllQeueriesAction = new Action() {
+			@Override
 			public void run() {
 				OutputView.this.clearAll();
 
@@ -182,6 +186,7 @@ public class OutputView extends ViewPart implements IContentListener {
 
 	}
 
+	@Override
 	public void dispose() {		
 		ViewController.getInstance().removeContentListener(this);
 		this.tabViews.clear();

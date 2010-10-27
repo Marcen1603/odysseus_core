@@ -126,6 +126,7 @@ public class ObjectRelationalTuple
 		return restrictCreation(createNew, newAttrs);	
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public int compareTo(ObjectRelationalTuple<T> tuple) {
 		int min = tuple.getAttributeCount();
@@ -183,6 +184,7 @@ public class ObjectRelationalTuple
 		return this.compareTo((ObjectRelationalTuple) o) == 0;
 	}
 
+	@Override
 	public ObjectRelationalTuple<T> clone() {
 		return new ObjectRelationalTuple<T>(this);
 	}

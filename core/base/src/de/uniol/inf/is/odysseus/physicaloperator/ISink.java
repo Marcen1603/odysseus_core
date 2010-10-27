@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
 import java.util.Collection;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.ISubscriber;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
