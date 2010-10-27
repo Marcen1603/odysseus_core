@@ -248,7 +248,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStartOptimization(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan preStartOptimization(IQuery queryToStart,
+	public IExecutionPlan beforeQueryStart(IQuery queryToStart,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		return executionPlan;
@@ -258,12 +258,12 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryRemoveOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
 	 */
 	@Override
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
+	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
 			T sender, IQuery removedQuery,
 			IExecutionPlan executionPlan,
 			IOptimizationSetting<?>... parameters)
 			throws QueryOptimizationException {
-		return preQueryRemoveOptimization(sender, removedQuery, executionPlan,
+		return beforeQueryRemove(sender, removedQuery, executionPlan,
 				new OptimizationConfiguration(parameters));
 	};
 
@@ -271,11 +271,11 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
 	 */
 	@Override
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+	public IExecutionPlan optimize(IOptimizable sender,
 			List<IQuery> newQueries,
 			IOptimizationSetting... parameters)
 			throws QueryOptimizationException {
-		return preQueryAddOptimization(sender, newQueries,
+		return optimize(sender, newQueries,
 				new OptimizationConfiguration(parameters));
 	};
 	
@@ -303,7 +303,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStopOptimization(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan preStopOptimization(IQuery queryToStop,
+	public IExecutionPlan beforeQueryStop(IQuery queryToStop,
 			IExecutionPlan execPlan) throws QueryOptimizationException {
 		return execPlan;
 	}

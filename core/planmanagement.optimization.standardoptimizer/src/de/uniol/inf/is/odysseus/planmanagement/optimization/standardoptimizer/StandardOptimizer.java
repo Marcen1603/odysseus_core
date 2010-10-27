@@ -56,7 +56,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	
 
 	@Override
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+	public IExecutionPlan optimize(IOptimizable sender,
 			List<IQuery> queries, OptimizationConfiguration parameter)
 	throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
@@ -83,7 +83,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 
 	@Override
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
+	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
 			T sender, IQuery removedQuery,
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
 			throws QueryOptimizationException {
@@ -106,7 +106,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	}
 	
 	@Override
-	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
+	public IExecutionPlan beforeQueryMigration(IOptimizable sender,
 			OptimizationConfiguration parameter) throws QueryOptimizationException {
 		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
 				sender.getQueries());

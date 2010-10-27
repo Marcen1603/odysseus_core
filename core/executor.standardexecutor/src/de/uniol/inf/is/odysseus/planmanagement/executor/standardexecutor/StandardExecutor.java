@@ -37,7 +37,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -225,7 +224,7 @@ public class StandardExecutor extends AbstractExecutor {
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			IExecutionPlan exep = getOptimizer().preQueryAddOptimization(this,
+			IExecutionPlan exep = getOptimizer().optimize(this,
 					newQueries, conf);
 			setExecutionPlan(exep);
 
@@ -464,7 +463,7 @@ public class StandardExecutor extends AbstractExecutor {
 				getLogger().info(
 						"Try to aquire executionPlanLock (Currently "
 								+ executionPlanLock.getHoldCount() + "). done");
-				setExecutionPlan(getOptimizer().preQueryRemoveOptimization(
+				setExecutionPlan(getOptimizer().beforeQueryRemove(
 						this, queryToRemove, this.executionPlan));
 				stopQuery(queryToRemove.getID());
 				getLogger().info("Removing Query " + queryToRemove.getID());
@@ -506,7 +505,7 @@ public class StandardExecutor extends AbstractExecutor {
 
 		try {
 			this.executionPlanLock.lock();
-			setExecutionPlan(getOptimizer().preStartOptimization(queryToStart,
+			setExecutionPlan(getOptimizer().beforeQueryStart(queryToStart,
 					this.executionPlan));
 			queryToStart.start();
 			if (isRunning()) {
@@ -551,7 +550,7 @@ public class StandardExecutor extends AbstractExecutor {
 
 		try {
 			this.executionPlanLock.lock();
-			setExecutionPlan(getOptimizer().preStopOptimization(queryToStop,
+			setExecutionPlan(getOptimizer().beforeQueryStop(queryToStop,
 					this.executionPlan));
 			queryToStop.stop();
 			if (isRunning()) {
@@ -818,7 +817,7 @@ public class StandardExecutor extends AbstractExecutor {
 		// synchronize the process
 		this.executionPlanLock.lock();
 		try {
-			setExecutionPlan(this.getOptimizer().preQueryMigrateOptimization(
+			setExecutionPlan(this.getOptimizer().beforeQueryMigration(
 					this,
 					new OptimizationConfiguration(ParameterDoRewrite.FALSE)));
 		} finally {
