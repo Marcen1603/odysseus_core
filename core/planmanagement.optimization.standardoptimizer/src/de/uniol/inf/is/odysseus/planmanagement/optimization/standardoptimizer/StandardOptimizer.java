@@ -62,11 +62,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		if (!queries.isEmpty()) {
 			for (IQuery query : queries) {
 				this.queryOptimizer.optimizeQuery(sender, query,
-						parameter);
-				if (query.getBuildParameter().getParameterInstallMetadataListener()){
-					updateMetadataListener(query);
-				}
-				
+						parameter);				
 			}
 
 			List<IQuery> newPlan = sender.getQueries();
@@ -97,12 +93,34 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return newExecutionPlan;
 	}
 	
+	@Override
+	public IExecutionPlan beforeQueryStart(IQuery queryToStart,
+			IExecutionPlan executionPlan) throws QueryOptimizationException {
+		if (queryToStart.getBuildParameter().getParameterInstallMetadataListener()){
+			updateMetadataListener(queryToStart, true);
+		}
+		return super.beforeQueryStart(queryToStart, executionPlan);
+	}
+	
+	@Override
+	public IExecutionPlan beforeQueryStop(IQuery queryToStop,
+			IExecutionPlan execPlan) throws QueryOptimizationException {
+		if (queryToStop.getBuildParameter().getParameterInstallMetadataListener()){
+			updateMetadataListener(queryToStop, false);
+		}		
+		return super.beforeQueryStop(queryToStop, execPlan);
+	}
+	
 	@SuppressWarnings("unchecked")
-	private void updateMetadataListener(IQuery editableQuery) {
+	private void updateMetadataListener(IQuery editableQuery, boolean add) {
 		// the graph walker walks through the whole plan
 		// so we can start at the first root of the plan
 		// and all roots will be visited.
-		new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoots().get(0), new InstallMetadataListenerVisitor());
+		if (add){
+			new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoots().get(0), new InstallMetadataListenerVisitor());
+		}else{
+			new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoots().get(0), new RemoveMetadataListenerVisitor());			
+		}
 	}
 	
 	@Override
@@ -223,7 +241,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			((IExecutor)context.getSender()).updateExecutionPlan();
 			
 			// reinstall metadata listener
-			updateMetadataListener(query);
+			updateMetadataListener(query,true);
 
 			// remove lock and context
 			this.optimizationContext.remove(query.getID());
