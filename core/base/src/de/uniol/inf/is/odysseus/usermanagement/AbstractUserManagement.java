@@ -42,12 +42,16 @@ abstract class AbstractUserManagement {
 	public void registerUser(User caller, String username, String password)
 			throws UsernameAlreadyUsedException, UserStoreException,
 			HasNoPermissionException {
-		if (AccessControl.hasPermission(UserManagementAction.CREATE_USER,
-				"UserManagement", caller)) {
-			registerUserInt(username, password);
-		} else {
-			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to create new user.");
+		try {
+			if (AccessControl.hasPermission(UserManagementAction.CREATE_USER,
+					"UserManagement", caller)) {
+				registerUserInt(username, password);
+			} else {
+				throw new HasNoPermissionException("User " + caller.toString()
+						+ " has no permission to create new user.");
+			}
+		} catch (HasNoPermissionException e) {
+			new RuntimeException(e);
 		}
 	}
 
@@ -198,9 +202,9 @@ abstract class AbstractUserManagement {
 	public Collection<User> getUsers(User caller)
 			throws HasNoPermissionException {
 		if (AccessControl.hasPermission(UserManagementAction.GET_ALL_USER,
-				null, caller)
-				|| hasSuperOperation(UserManagementAction.GET_ALL_USER, null,
-						caller)) {
+				"UserManagement", caller)
+				|| hasSuperOperation(UserManagementAction.GET_ALL_USER,
+						"UserManagement", caller)) {
 			return userStore.getUsers();
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
