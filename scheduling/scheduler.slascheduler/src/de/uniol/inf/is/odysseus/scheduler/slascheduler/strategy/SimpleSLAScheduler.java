@@ -13,12 +13,17 @@ import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 
 public class SimpleSLAScheduler extends AbstractDynamicPriorityPlanScheduling {
 
-	
-	public SimpleSLAScheduler(SimpleSLAScheduler simpleSLAScheduler) {
-		super(simpleSLAScheduler);
+	public enum PrioCalcMethod {MAX, SUM, AVG}
+	private PrioCalcMethod method;
+
+	public SimpleSLAScheduler(PrioCalcMethod method) {
+		super();
+		this.method = method;
 	}
 
-	public SimpleSLAScheduler() {
+	public SimpleSLAScheduler(SimpleSLAScheduler simpleSLAScheduler ) {
+		super(simpleSLAScheduler);
+		this.method = simpleSLAScheduler.method;
 	}
 	
 	@Override
@@ -46,44 +51,50 @@ public class SimpleSLAScheduler extends AbstractDynamicPriorityPlanScheduling {
 				// Calc Prio for current Scheduling, based
 				// on all queries
 				// e.g. with Max
-				double max = 0;
-				for (IQuery q:is.getPlan().getQueries()){
-					max = Math.max(max, calcedUrg.get(q));
+				double prio = 0;
+				switch(method){
+				case MAX:
+					prio = calcPrioMax(calcedUrg, is);
+					break;
+				case SUM:
+					prio = calcPrioSum(calcedUrg, is);
+					break;
+				case AVG:
+					prio = calcPrioAvg(calcedUrg, is);
+					break;
 				}
+				
 				// Set max as new prio
-				is.getPlan().setCurrentPriority((long)Math.round(max*100));
+				is.getPlan().setCurrentPriority((long)Math.round(prio*100));
 			}
 		}
-		
-		
-		
-		// Jetzt für alle zu schedulden Plaene die entsprechenden SLAs
-		// identifizieren
-		// TODO: STATISCH BERECHNEN
-//		synchronized (queue) {
-//			for (IScheduling scheduling : queue) {
-//				IPartialPlan plan = scheduling.getPlan();
-//				List<IPhysicalOperator> roots = plan.getRoots();
-//				for (IPhysicalOperator r:roots){
-//					// TODO: Ermitteln wie  die currentSLAConformance ist
-//					double currentSLAConformance = 0.5; 
-//					List<IOperatorOwner> owners = r.getOwner();
-//					for (IOperatorOwner owner: owners){
-//						if (owner instanceof IQuery){
-//							User user = ((IQuery)owner).getUser();
-// 							Tenant t = TenantManagement.getInstance().getTenant(user);
-//							IServiceLevelAgreement sla = t.getServiceLevelAgreement();
-//							try {
-//								double urge = sla.getMaxOcMg(currentSLAConformance);
-//							} catch (NotInitializedException e) {
-//								e.printStackTrace();
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
+	}
 
+	// Calc Prio with maximum
+	private double calcPrioMax(Map<IQuery, Double> calcedUrg, IScheduling is) {
+		double prio = 0;
+		for (IQuery q:is.getPlan().getQueries()){
+			prio = Math.max(prio, calcedUrg.get(q));
+		}
+		return prio;
+	}
+
+	// Calc Prio as sum
+	private double calcPrioSum(Map<IQuery, Double> calcedUrg, IScheduling is) {
+		double prio = 0;
+		for (IQuery q:is.getPlan().getQueries()){
+			prio = + calcedUrg.get(q);
+		}
+		return prio;
+	}
+	
+	// Calc Prio as avg
+	private double calcPrioAvg(Map<IQuery, Double> calcedUrg, IScheduling is) {
+		double prio = 0;
+		for (IQuery q:is.getPlan().getQueries()){
+			prio = + calcedUrg.get(q);
+		}
+		return prio/calcedUrg.size();
 	}
 
 	@Override

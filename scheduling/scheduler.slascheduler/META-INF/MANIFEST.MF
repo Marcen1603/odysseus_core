@@ -6,5 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.scheduler.priorityscheduler,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
- de.uniol.inf.is.odysseus.scheduler.strategy
+ de.uniol.inf.is.odysseus.scheduler.strategy,
+ org.osgi.service.component
 Require-Bundle: de.uniol.inf.is.odysseus
+Service-Component: OSGI-INF/SimpleSLASchedulerMAX.xml

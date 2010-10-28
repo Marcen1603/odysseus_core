@@ -31,7 +31,7 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 		if (DataDictionary.getInstance().containsView(viewName, user)) {
 			throw new RuntimeException("ambigious name of view: " + viewName);
 		}
-		DataDictionary.getInstance().addSourceType(viewName, "RelationalStreaming");
+		DataDictionary.getInstance().addSourceType(viewName, "RelationalStreaming", user);
 		DataDictionary.getInstance().setLogicalView(viewName, operator, user);
 		
 		return null;

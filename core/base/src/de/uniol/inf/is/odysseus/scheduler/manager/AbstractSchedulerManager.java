@@ -134,7 +134,7 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 	 */
 	public void bindSchedulerFactory(ISchedulerFactory schedulerFactory) {
 		String sName = schedulerFactory.getName();
-		logger.info("activate " + sName);
+		logger.info("activate Scheduler " + sName);
 		if (this.schedulerFactoryMap.get(sName) == null) {
 			this.schedulerFactoryMap.put(sName, schedulerFactory);
 		} else {
@@ -152,7 +152,7 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 		if (schedulerFactory!= null && schedulerFactory.getName()!=null){
 			this.schedulerFactoryMap.remove(schedulerFactory.getName());
 		}else{
-			logger.error("Trying to unbound "+schedulerFactory);
+			logger.error("Trying to unbound Scheduler "+schedulerFactory);
 		}
 	}
 
@@ -165,7 +165,7 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 	public void bindSchedulingStrategyFactory(
 			ISchedulingFactory schedulingStrategyFactory) {
 		String stratName = schedulingStrategyFactory.getName();
-		logger.info("activate " + stratName);
+		logger.info("activate Strategy " + stratName);
 		if (this.schedulingStrategyFactoryMap.get(stratName) == null) {
 			this.schedulingStrategyFactoryMap.put(stratName,
 					schedulingStrategyFactory);

@@ -143,7 +143,7 @@ public class DataDictionary {
 		return ret;
 	}
 
-	public void addSourceType(String sourcename, String sourcetype) {
+	public void addSourceType(String sourcename, String sourcetype, User user) {
 		try {
 			sourceTypeMap.put(sourcename, sourcetype);
 		} catch (StoreException e) {

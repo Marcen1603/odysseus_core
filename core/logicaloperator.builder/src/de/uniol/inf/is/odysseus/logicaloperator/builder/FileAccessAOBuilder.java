@@ -63,7 +63,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 		SDFAttributeList schema = new SDFAttributeList(attributeList);
 		sdfEntity.setAttributes(schema);
 		
-		DataDictionary.getInstance().addSourceType(sourceName, "RelationalStreaming");
+		DataDictionary.getInstance().addSourceType(sourceName, "RelationalStreaming", getCaller());
 		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, getCaller());
 		
 		

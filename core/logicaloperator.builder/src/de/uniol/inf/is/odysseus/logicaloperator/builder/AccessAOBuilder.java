@@ -52,7 +52,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		sdfEntity.setAttributes(schema);
 
 		DataDictionary.getInstance().addSourceType(sourceName,
-				"RelationalStreaming");
+				"RelationalStreaming", getCaller());
 		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, getCaller());
 
 		AccessAO ao = new AccessAO(sdfSource);
