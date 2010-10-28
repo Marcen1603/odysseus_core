@@ -5,4 +5,4 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.instal
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
-Service-Component: RuleService.xml
+Service-Component: PostOptimizationAction.xml
