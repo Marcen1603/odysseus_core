@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.store.FileStore;
 import de.uniol.inf.is.odysseus.store.IStore;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
+import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
+import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
@@ -49,7 +51,9 @@ public class DataDictionary {
 	final private IStore<String, User> viewFromUser;
 	final private IStore<String, ILogicalOperator> logicalViewDefinitions;
 	final private IStore<String, SDFEntity> entityMap;
+	final private IStore<String, User> entityFromUser;
 	final private IStore<String, String> sourceTypeMap;
+	final private IStore<String, User> sourceFromUser;
 
 	public void clear() {
 		try {
@@ -75,12 +79,18 @@ public class DataDictionary {
 						+ "entities.store");
 				sourceTypeMap = new FileStore<String, String>(filePrefix
 						+ "sourceTypeMap.store");
+				entityFromUser = new FileStore<String, User>(filePrefix
+						+ "entityFromUser.store");
+				sourceFromUser = new FileStore<String, User>(filePrefix
+						+ "sourceFromUser.store");
 			} else {
 				viewDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewFromUser = new MemoryStore<String, User>();
 				logicalViewDefinitions = new MemoryStore<String, ILogicalOperator>();
 				entityMap = new MemoryStore<String, SDFEntity>();
+				entityFromUser = new MemoryStore<String, User>();
 				sourceTypeMap = new MemoryStore<String, String>();
+				sourceFromUser = new MemoryStore<String, User>();
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -130,8 +140,20 @@ public class DataDictionary {
 	public void addEntity(String uri, SDFEntity entity, User user) {
 		try {
 			this.entityMap.put(uri, entity);
+			this.entityFromUser.put(uri, user);
 		} catch (StoreException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	public User getUserForEntity(String entityuri, User caller)
+			throws HasNoPermissionException {
+		if (AccessControl.hasPermission(DataDictionaryAction.GET_ENTITY_USER,
+				"DataDictionary", caller)) {
+			return this.entityFromUser.get(entityuri);
+		} else {
+			throw new HasNoPermissionException("User " + caller.toString()
+					+ " has no permission to get entity owner");
 		}
 	}
 
@@ -143,13 +165,33 @@ public class DataDictionary {
 		return ret;
 	}
 
-	public void addSourceType(String sourcename, String sourcetype, User user) {
+	public void addSourceType(String sourcename, String sourcetype, User user){
+//			throws HasNoPermissionException {
 		try {
-			sourceTypeMap.put(sourcename, sourcetype);
+//			if (AccessControl
+//					.hasPermission(DataDictionaryAction.ADD_SOURCETYPE,
+//							"DataDictionary", user)) {
+				sourceTypeMap.put(sourcename, sourcetype);
+				sourceFromUser.put(sourcename, user);
+//			} else {
+//				throw new HasNoPermissionException("User " + user.toString()
+//						+ " has no permission to add sourcetypes.");
+//			}
 		} catch (StoreException e) {
 			new RuntimeException(e);
 		}
 
+	}
+
+	public User getUserForSource(String sourcename, User caller)
+			throws HasNoPermissionException {
+		if (AccessControl.hasPermission(DataDictionaryAction.GET_SOURCE_USER,
+				"DataDictionary", caller)) {
+			return this.sourceFromUser.get(sourcename);
+		} else {
+			throw new HasNoPermissionException("User " + caller.toString()
+					+ " has no permission to get source owner");
+		}
 	}
 
 	public String getSourceType(String sourcename) throws SQLException {
