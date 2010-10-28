@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.storing.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.storing.physicaloperator.DatabaseSinkPO;
@@ -18,13 +17,10 @@ public class TDatabaseSinkAORule extends AbstractTransformationRule<DatabaseSink
 	}
 
 	@Override
-	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {
-		DatabaseSinkPO dbSinkPO = new DatabaseSinkPO(operator.getConnection(), operator.getTable(), operator.isSaveMetaData(), operator.isCreate(),operator.isTruncate(), operator.isIfnotexists());
+	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {		
+		DatabaseSinkPO<?> dbSinkPO = new DatabaseSinkPO<RelationalTuple<ITimeInterval>>(operator.getConnection(), operator.getTable(), operator.isSaveMetaData(), operator.isCreate(),operator.isTruncate(), operator.isIfnotexists());
 		dbSinkPO.setOutputSchema(operator.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, dbSinkPO);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
+		replace(operator, dbSinkPO, config);		
 		retract(operator);
 		
 	}
