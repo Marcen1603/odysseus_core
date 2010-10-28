@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public interface IPartialPlan {
 	public List<IIterableSource<?>> getIterableSource();
@@ -11,9 +12,9 @@ public interface IPartialPlan {
 	public int getSourceId(IIterableSource<?> source);
 	public List<IPhysicalOperator> getRoots();
 	
-	public int getCurrentPriority();
-	public void setCurrentPriority(int newPriority);
-	public int getBasePriority();
+	public long getCurrentPriority();
+	public void setCurrentPriority(long newPriority);
+	public long getBasePriority();
 
 	@Override
 	public int hashCode();
@@ -21,4 +22,5 @@ public interface IPartialPlan {
 	@Override
 	public String toString();
 	List<IPhysicalOperator> getQueryRoots();
+	List<IQuery> getQueries();
 }

@@ -6,8 +6,8 @@ public class CurrentPlanPriorityComperator implements Comparator<IScheduling> {
 
 	@Override
 	public int compare(IScheduling p1, IScheduling p2) {
-		int p1Priority = p1.getPlan().getCurrentPriority();
-		int p2priority = p2.getPlan().getCurrentPriority();
+		long p1Priority = p1.getPlan().getCurrentPriority();
+		long p2priority = p2.getPlan().getCurrentPriority();
 		if (p1Priority < p2priority){
 			return 1;
 		}

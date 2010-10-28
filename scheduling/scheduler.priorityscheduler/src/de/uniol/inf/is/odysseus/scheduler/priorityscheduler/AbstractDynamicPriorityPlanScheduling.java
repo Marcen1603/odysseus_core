@@ -2,7 +2,11 @@ package de.uniol.inf.is.odysseus.scheduler.priorityscheduler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
@@ -10,7 +14,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener {
 
-	protected final ArrayList<IScheduling> queue;
+	protected final List<IScheduling> queue;
 
 	public AbstractDynamicPriorityPlanScheduling() {
 		queue = new ArrayList<IScheduling>();

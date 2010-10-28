@@ -34,12 +34,12 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * Priority with which the objects should be scheduled.
 	 */
-	private int currentPriority;
+	private long currentPriority;
 
 	/**
 	 * Priority at creation time
 	 */
-	private int basePriority;
+	private long basePriority;
 
 	/**
 	 * 
@@ -122,7 +122,12 @@ public class PartialPlan implements IPartialPlan {
 		}
 		return roots;
 	}
-
+	
+	@Override
+	public List<IQuery> getQueries(){
+		return Collections.unmodifiableList(partOf);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -131,17 +136,17 @@ public class PartialPlan implements IPartialPlan {
 	 * ()
 	 */
 	@Override
-	public int getCurrentPriority() {
+	public long getCurrentPriority() {
 		return this.currentPriority;
 	}
 
 	@Override
-	public void setCurrentPriority(int newPriority) {
+	public void setCurrentPriority(long newPriority) {
 		this.currentPriority = newPriority;
 	}
 
 	@Override
-	public int getBasePriority() {
+	public long getBasePriority() {
 		return this.basePriority;
 	}
 

@@ -31,8 +31,8 @@ public class SimpleDynamicPriorityPlanScheduling extends
 	
 	@Override
 	protected void updatePriorities(IScheduling current) {
-		int currentPriority = current.getPlan().getCurrentPriority();
-		int newPrio = currentPriority - 1;
+		long currentPriority = current.getPlan().getCurrentPriority();
+		long newPrio = currentPriority - 1;
 		if (newPrio < minPrio) {
 			newPrio = current.getPlan().getBasePriority();
 		}
@@ -41,10 +41,10 @@ public class SimpleDynamicPriorityPlanScheduling extends
 		}
 	}
 
-	private void updatePriorityCurrent(IScheduling current, int prio) {
+	private void updatePriorityCurrent(IScheduling current, long prio) {
 		synchronized (queue) {
 			IPartialPlan curPlan = current.getPlan();
-			int currentPriority = curPlan.getCurrentPriority();
+			long currentPriority = curPlan.getCurrentPriority();
 			curPlan.setCurrentPriority(prio);
 			int pos = queue.indexOf(current);
 			int nextPos = pos;

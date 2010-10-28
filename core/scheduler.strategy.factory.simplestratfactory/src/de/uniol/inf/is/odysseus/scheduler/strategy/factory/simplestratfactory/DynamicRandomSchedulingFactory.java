@@ -15,7 +15,7 @@ public class DynamicRandomSchedulingFactory extends AbstractSchedulingFactory {
 	}
 	
 	@Override
-	public IScheduling create(IPartialPlan plan, int priority) {
+	public IScheduling create(IPartialPlan plan, long priority) {
 		return new DynamicRandomScheduling(plan);
 	}
 

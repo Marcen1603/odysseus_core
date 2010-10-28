@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
-import de.uniol.inf.is.odysseus.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -121,7 +120,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	
 	Map<String,IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
 
-	public Map<String, IPlanMonitor<?>> planmonitors = new HashMap<String, IPlanMonitor<?>>();	
+	public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();	
 
 
 	public Query() {
@@ -679,7 +678,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	
 	
 	@Override
-	public void addPlanMonitor(String name, PlanMonitor planMonitor) {
+	public void addPlanMonitor(String name, IPlanMonitor planMonitor) {
 		this.planmonitors.put(name, planMonitor);	
+	}
+	
+	@Override
+	public IPlanMonitor getPlanMonitor(String name) {
+		return this.planmonitors.get(name);
 	}
 }

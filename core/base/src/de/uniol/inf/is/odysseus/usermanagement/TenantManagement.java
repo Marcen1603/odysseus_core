@@ -128,6 +128,14 @@ public class TenantManagement {
 	public Tenant getTenant(User user, User caller) {
 		return users.get(user.getUsername());
 	}
+	
+	public IServiceLevelAgreement getSLAForUser(User user){
+		Tenant tenant = users.get(user.getUsername());
+		if (tenant != null){
+			return tenant.getServiceLevelAgreement();
+		}
+		return null;
+	}
 
 	public Collection<Tenant> getTenants() {	
 		return Collections.unmodifiableCollection(registeredTenants.values());

@@ -25,7 +25,7 @@ public class RoundRobinFactory extends AbstractSchedulingFactory {
 	}
 
 	@Override
-	public IScheduling create(IPartialPlan plan, int priority) {
+	public IScheduling create(IPartialPlan plan, long priority) {
 		return new RoundRobinScheduling(plan);
 	}
 	

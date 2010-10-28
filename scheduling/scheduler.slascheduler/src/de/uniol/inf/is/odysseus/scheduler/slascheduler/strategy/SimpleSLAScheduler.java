@@ -1,17 +1,62 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.priorityscheduler.AbstractDynamicPriorityPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
+import de.uniol.inf.is.odysseus.usermanagement.NotInitializedException;
+import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 
 public class SimpleSLAScheduler extends AbstractDynamicPriorityPlanScheduling {
 
+	
 	public SimpleSLAScheduler(SimpleSLAScheduler simpleSLAScheduler) {
 		super(simpleSLAScheduler);
 	}
 
+	public SimpleSLAScheduler() {
+	}
+	
 	@Override
 	protected void updatePriorities(IScheduling current) {
-		// Der aktuelle interessiert gar nicht
+		// Current Plan is irrelevant
+		synchronized(queue){
+			Map<IQuery, Double> calcedUrg = new HashMap<IQuery, Double>();
+			for (IScheduling is:queue){
+				// Calc prio for each query
+				for (IQuery q:is.getPlan().getQueries()){
+					// A query can be part of more than one scheduling
+					// and only needs to be calced ones
+					if (calcedUrg.containsKey(q)) continue;
+					
+					IPlanMonitor<Double> monitor = q.getPlanMonitor("SLAMonitor");
+					IServiceLevelAgreement sla = TenantManagement.getInstance().getSLAForUser(q.getUser()); 
+					double urge = 0.0;
+					try {
+						urge = sla.getMaxOcMg(monitor.getValue());
+					} catch (NotInitializedException e) {
+						throw new RuntimeException(e);
+					}
+					calcedUrg.put(q,urge);
+				}
+				// Calc Prio for current Scheduling, based
+				// on all queries
+				// e.g. with Max
+				double max = 0;
+				for (IQuery q:is.getPlan().getQueries()){
+					max = Math.max(max, calcedUrg.get(q));
+				}
+				// Set max as new prio
+				is.getPlan().setCurrentPriority((long)Math.round(max*100));
+			}
+		}
+		
+		
+		
 		// Jetzt für alle zu schedulden Plaene die entsprechenden SLAs
 		// identifizieren
 		// TODO: STATISCH BERECHNEN

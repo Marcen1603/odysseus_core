@@ -13,7 +13,7 @@ public class StaticPriorityPlanScheduling implements IPartialPlanScheduling {
 
 	List<List<IScheduling>> plans = Collections
 			.synchronizedList(new ArrayList<List<IScheduling>>());
-	HashMap<Integer, Integer> curPositions = new HashMap<Integer, Integer>();
+	HashMap<Long, Integer> curPositions = new HashMap<Long, Integer>();
 
 	public StaticPriorityPlanScheduling() {
 	}
@@ -24,7 +24,7 @@ public class StaticPriorityPlanScheduling implements IPartialPlanScheduling {
 		this.plans = Collections
 				.synchronizedList(new ArrayList<List<IScheduling>>(
 						staticPriorityPlanScheduling.plans));
-		this.curPositions = (HashMap<Integer, Integer>) staticPriorityPlanScheduling.curPositions
+		this.curPositions = (HashMap<Long, Integer>) staticPriorityPlanScheduling.curPositions
 				.clone();
 	}
 
@@ -33,10 +33,10 @@ public class StaticPriorityPlanScheduling implements IPartialPlanScheduling {
 		synchronized (plans) {
 			ListIterator<List<IScheduling>> li = plans.listIterator();
 
-			int basePriority = scheduling.getPlan().getBasePriority();
+			long basePriority = scheduling.getPlan().getBasePriority();
 			while (li.hasNext()) {
 				List<IScheduling> next = li.next();
-				int nextBasePriority = next.get(0).getPlan().getBasePriority();
+				long nextBasePriority = next.get(0).getPlan().getBasePriority();
 				if (nextBasePriority == basePriority) {
 					next.add(scheduling);
 					return;
@@ -65,7 +65,7 @@ public class StaticPriorityPlanScheduling implements IPartialPlanScheduling {
 	public IScheduling nextPlan() {
 		synchronized (plans) {
 			for (List<IScheduling> scheduling : plans) {
-				int basePriority = scheduling.get(0).getPlan()
+				long basePriority = scheduling.get(0).getPlan()
 						.getBasePriority();
 				int curPosition = curPositions.get(basePriority);
 				int size = scheduling.size();
@@ -93,7 +93,7 @@ public class StaticPriorityPlanScheduling implements IPartialPlanScheduling {
 
 	@Override
 	public void removePlan(IScheduling plan) {
-		int priority = plan.getPlan().getBasePriority();
+		long priority = plan.getPlan().getBasePriority();
 		synchronized (plans) {
 			for (List<IScheduling> scheduling : plans) {
 				if (scheduling.get(0).getPlan().getBasePriority() == priority) {
