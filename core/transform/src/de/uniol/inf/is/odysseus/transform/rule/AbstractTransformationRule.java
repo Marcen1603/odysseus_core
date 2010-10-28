@@ -18,11 +18,11 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T,Trans
 	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator, TransformationConfiguration transformationConfig){
 		
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>();
-		if(newOperator instanceof IPipe){
+		if(newOperator.isPipe()){
 			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (IPipe<?, ?>)newOperator);
-		}else if(newOperator instanceof ISource){
+		}else if(newOperator.isSource()){
 			toUpdate =  transformationConfig.getTransformationHelper().replace(oldOperator, (ISource<?>)newOperator);
-		}else if(newOperator instanceof ISink){
+		}else if(newOperator.isSink()){
 			toUpdate=  transformationConfig.getTransformationHelper().replace(oldOperator, (ISink<?>)newOperator);
 		}else{
 			LoggerSystem.printlog("ERROR");
