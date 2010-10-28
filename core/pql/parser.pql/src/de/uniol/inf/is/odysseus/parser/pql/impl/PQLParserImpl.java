@@ -216,7 +216,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       }
       SDFEntity entity = new SDFEntity(nameStr);
       entity.setAttributes(op.getOutputSchema());
-      DataDictionary.getInstance().addSourceType(nameStr, "RelationalStreaming");
+      DataDictionary.getInstance().addSourceType(nameStr, "RelationalStreaming", getUser());
       DataDictionary.getInstance().addEntity(nameStr, entity, getUser());
       dd.setView(nameStr, op, user);
       //get access operator for view, so other operators don't get subscribed
