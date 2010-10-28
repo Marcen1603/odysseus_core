@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
-import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
@@ -21,13 +19,13 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimitzationAction;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
 /**
  * 
@@ -52,7 +50,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	public StandardOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
-		this.pendingRequests = new LinkedList<IQuery>();
+		this.pendingRequests = new LinkedList<IQuery>();		
 	}
 
 	@Override
@@ -63,10 +61,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			for (IQuery query : queries) {
 				this.queryOptimizer.optimizeQuery(sender, query, parameter);
 				
-				if (query.getBuildParameter()
-						.getParameterInstallMetadataListener()) {
-					updateMetadataListener(query, true);
-				}
+				doPostOptimizationActions(query, parameter);
 			}
 			List<IQuery> newPlan = sender.getQueries();
 			newPlan.addAll(queries);
@@ -93,24 +88,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return newExecutionPlan;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void updateMetadataListener(IQuery query, boolean add) {
-		// the graph walker walks through the whole plan
-		// so we can start at the first root of the plan
-		// and all roots will be visited.
-		if (add) {
-			query.addPlanMonitor(MonitoringDataTypes.DATARATE.name,
-					new PlanMonitor(query, false,
-							MonitoringDataTypes.DATARATE.name,
-							MONITORING_PERIOD));
-			query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name,
-					new PlanMonitor(query, false,
-							MonitoringDataTypes.SELECTIVITY.name, -1));
-		} else {
-			new AbstractGraphWalker().prefixWalkPhysical(query.getRoots()
-					.get(0), new RemoveMetadataListenerVisitor());
-		}
-	}
+
 
 	@Override
 	public IExecutionPlan beforeQueryMigration(IOptimizable sender,
@@ -273,7 +251,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			((IExecutor) context.getSender()).updateExecutionPlan();
 
 			// reinstall metadata listener
-			updateMetadataListener(query, true);
+			doPostOptimizationActions(query, null);
 
 			// remove lock and context
 			this.optimizationContext.remove(query.getID());

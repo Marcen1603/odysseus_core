@@ -52,6 +52,11 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	protected Map<String, IBufferPlacementStrategy> bufferPlacementStrategies = new HashMap<String, IBufferPlacementStrategy>();
 
 	/**
+	 * List of PostOptimizationActions
+	 */
+	private List<IPostOptimitzationAction> postOptimizationActions = new ArrayList<IPostOptimitzationAction>();
+	
+	/**
 	 * Registered plan optimization service.
 	 */
 	protected IPlanOptimizer planOptimizer;
@@ -113,6 +118,23 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 	}
 
+	public void bindPostOptimazationAction(
+			IPostOptimitzationAction postOptimitzationAction) {
+		getLogger().debug("bindPostOptimazationAction "+postOptimitzationAction);
+		synchronized (this.postOptimizationActions) {
+			this.postOptimizationActions.add(postOptimitzationAction);
+		}
+	}
+	
+	public void unBindPostOptimazationAction(
+			IPostOptimitzationAction postOptimitzationAction) {
+		getLogger().debug("unBindPostOptimazationAction "+postOptimitzationAction);
+		synchronized (this.postOptimizationActions) {
+			this.postOptimizationActions.remove(postOptimitzationAction);
+		}
+	}
+
+	
 	/**
 	 * Method to bind a {@link IPlanOptimizer}. Used by OSGi.
 	 * 
@@ -278,6 +300,12 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return optimize(sender, newQueries,
 				new OptimizationConfiguration(parameters));
 	};
+	
+	protected void doPostOptimizationActions(IQuery query, OptimizationConfiguration parameter) {
+		for (IPostOptimitzationAction action: postOptimizationActions){
+			action.run(query, parameter);
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
