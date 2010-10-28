@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
