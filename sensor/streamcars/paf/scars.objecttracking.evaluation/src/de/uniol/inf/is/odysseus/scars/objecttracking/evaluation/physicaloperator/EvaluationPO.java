@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
@@ -143,8 +143,8 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 //				if( blubb.contains(obj))
 //					filteringObjList.add((MVRelationalTuple<M>)obj);
 //			}
-			for( Connection conn : connectionList ) {
-				filteringObjList.add((MVRelationalTuple<M>) helper.getObject(conn.getLeftPath()));
+			for( IConnection conn : connectionList ) {
+				filteringObjList.add((MVRelationalTuple<M>) conn.getLeftPath().getTupleObject());
 			}
 		}
 		// Temp. Broker

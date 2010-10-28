@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
@@ -214,6 +214,7 @@ public class ScarsXMLProfiler {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addMetadata(Element parent, MVRelationalTuple<?> tuple) {
 		Object metadata = tuple.getMetadata();
 		Element metaDataElement = new Element("METADATA");
@@ -282,29 +283,15 @@ public class ScarsXMLProfiler {
 	public void addConnectionList(Element parent, IConnectionContainer connectionContainer) {
 		Element conListEle = new Element("CONNECTIONLIST");
 		ConnectionList conList = connectionContainer.getConnectionList();
-		for(Connection con : conList) {
+		for(IConnection con : conList) {
 			Element conEle = new Element("CONNECTION");
 			conEle.setAttribute("rating", String.valueOf(con.getRating()));
 
 			Element conEleOldPath = new Element("OLDPATH");
 			Element conEleNewPath = new Element("NEWPATH");
 
-			String conEleOldPathText = "";
-			String conEleNewPathText = "";
-
-			for(int i=0; i<con.getLeftPath().length; i++) {
-				conEleOldPathText += con.getLeftPath()[i];
-				if(i != con.getLeftPath().length-1) {
-					conEleOldPathText += ", ";
-				}
-			}
-
-			for(int i=0; i<con.getRightPath().length; i++) {
-				conEleNewPathText += con.getRightPath()[i];
-				if(i != con.getRightPath().length-1) {
-					conEleNewPathText += ", ";
-				}
-			}
+			String conEleOldPathText = con.getLeftPath().toString();
+			String conEleNewPathText = con.getRightPath().toString();
 
 			conEleOldPath.setText(conEleOldPathText);
 			conEleNewPath.setText(conEleNewPathText);
@@ -380,7 +367,6 @@ public class ScarsXMLProfiler {
 		try {
 			op.output(root, System.out);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

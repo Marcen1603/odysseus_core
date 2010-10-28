@@ -11,11 +11,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -27,12 +24,12 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 
 	private AbstractDataUpdateFunction<M> dataUpdateFunction;
 
-	private SchemaHelper schemaHelper;
-	private SchemaIndexPath oldObjectListPath;
-	private SchemaIndexPath newObjectListPath;
-	private SchemaIndexPath newObjPath;
-	private SchemaIndexPath oldObjPath;
-	private TupleHelper tupleHelper;
+//	private SchemaHelper schemaHelper;
+//	private SchemaIndexPath oldObjectListPath;
+//	private SchemaIndexPath newObjectListPath;
+//	private SchemaIndexPath newObjPath;
+//	private SchemaIndexPath oldObjPath;
+//	private TupleHelper tupleHelper;
 	SDFAttributeList inputSchema;
 
 	public FilterEstimateUpdatePO() {
@@ -50,26 +47,26 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 
 		super.process_open();
 		inputSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema();
-		this.schemaHelper = new SchemaHelper(inputSchema);
+//		this.schemaHelper = new SchemaHelper(inputSchema);
 
-		this.newObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath());
-		this.newObjPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath() + SchemaHelper.ATTRIBUTE_SEPARATOR
-				+ this.newObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
+//		this.newObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath());
+//		this.newObjPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath() + SchemaHelper.ATTRIBUTE_SEPARATOR
+//				+ this.newObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
 
-		this.oldObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getOldObjListPath());
-		this.oldObjPath = this.schemaHelper.getSchemaIndexPath(this.getOldObjListPath() + SchemaHelper.ATTRIBUTE_SEPARATOR
-				+ this.oldObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
+//		this.oldObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getOldObjListPath());
+//		this.oldObjPath = this.schemaHelper.getSchemaIndexPath(this.getOldObjListPath() + SchemaHelper.ATTRIBUTE_SEPARATOR
+//				+ this.oldObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
 	}
 
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
 		// list of connections
-		ArrayList<Connection> objConList = object.getMetadata().getConnectionList();
+		ArrayList<IConnection> objConList = object.getMetadata().getConnectionList();
 
 		// traverse connection list and filter
-		for (Connection connected : objConList) {
-			compute(TupleIndexPath.fromIntArray(connected.getLeftPath(), object, this.newObjPath), TupleIndexPath.fromIntArray(connected.getRightPath(), object, this.oldObjPath));
+		for (IConnection connected : objConList) {
+			compute(connected.getLeftPath(), connected.getRightPath());
 		}
 
 		/*

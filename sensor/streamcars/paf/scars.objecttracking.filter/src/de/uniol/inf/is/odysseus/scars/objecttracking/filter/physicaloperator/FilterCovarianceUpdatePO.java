@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 
 /**
@@ -27,7 +27,7 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
     this.setMetaDataUpdateFunction(copy.getUpdateMetaDataFunction().clone());
   }
 
-	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
+	public void compute(IConnection connected, MVRelationalTuple<M> tuple) {
     metaDataUpdateFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
   }
 
@@ -36,10 +36,10 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
     // list of connections
-    ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
+    ArrayList<IConnection> tmpConList = object.getMetadata().getConnectionList();
 
     // traverse connection list and filter
-    for (Connection connected : tmpConList) {
+    for (IConnection connected : tmpConList) {
 		compute(connected, object);
     }
 

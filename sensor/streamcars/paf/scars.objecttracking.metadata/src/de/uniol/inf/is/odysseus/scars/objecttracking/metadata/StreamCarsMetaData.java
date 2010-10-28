@@ -52,30 +52,17 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 			sb.append("no connections");
 		} else {
 			sb.append("connections[");
-			for(Connection con : this.connectionList) {
+			for(IConnection con : this.connectionList) {
 				sb.append("(");
 				sb.append(String.valueOf(con.getRating()));
 				sb.append(": ");
-				sb.append(arrayToString(con.getLeftPath()));
+				sb.append(con.getLeftPath());
 				sb.append("-->");
-				sb.append(arrayToString(con.getRightPath()));
+				sb.append(con.getRightPath());
 			}
 			sb.append("]");
 		}
 
-		sb.append("}");
-		return sb.toString();
-	}
-	
-	private static String arrayToString( int[] array ) {
-		if( array == null ) return "null";
-		StringBuilder sb = new StringBuilder();
-		sb.append("{");
-		for( int i = 0; i < array.length; i++ ) { 
-			sb.append(i);
-			if( i != array.length - 1 ) 
-				sb.append(",");
-		}
 		sb.append("}");
 		return sb.toString();
 	}

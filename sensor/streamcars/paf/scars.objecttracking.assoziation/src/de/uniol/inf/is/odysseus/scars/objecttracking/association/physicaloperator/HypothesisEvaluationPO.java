@@ -12,10 +12,10 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.IAss
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.MultiDistanceAssociation;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
@@ -44,7 +44,7 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 	private SchemaIndexPath predictedObjectListPath;
 	private SchemaIndexPath scannedObjectListPath;
 
-	private TupleHelper tupleHelper;
+//	private TupleHelper tupleHelper;
 
 	private IAssociationAlgorithm associationAlgorithm;
 
@@ -131,16 +131,16 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 		if (gatingMode
 				&& this.getAssociationAlgorithm() instanceof MultiDistanceAssociation) {
 
-			this.tupleHelper = new TupleHelper(object);
+//			this.tupleHelper = new TupleHelper(object);
 
-			for (Connection con : object.getMetadata().getConnectionList()) {
+			for (IConnection con : object.getMetadata().getConnectionList()) {
 				double currentRating = con.getRating();
 
 				double value = this.associationAlgorithm.evaluate(
-						((MVRelationalTuple<M>) tupleHelper.getObject(con.getLeftPath())).getMetadata().getCovariance(),
-						this.getMeasurementValues((MVRelationalTuple<M>) tupleHelper.getObject(con.getLeftPath()), TupleIndexPath.fromIntArray(con.getLeftPath(), object, this.scannedObjectListPath)),
-						((MVRelationalTuple<M>) tupleHelper.getObject(con.getRightPath())).getMetadata().getCovariance(),
-						this.getMeasurementValues((MVRelationalTuple<M>) tupleHelper.getObject(con.getRightPath()), TupleIndexPath.fromIntArray(con.getRightPath(), object, this.predictedObjectListPath)),
+						((MVRelationalTuple<M>) con.getLeftPath().getTupleObject()).getMetadata().getCovariance(),
+						this.getMeasurementValues((MVRelationalTuple<M>) con.getLeftPath().getTupleObject(), con.getLeftPath()),
+						((MVRelationalTuple<M>) con.getRightPath().getTupleObject()).getMetadata().getCovariance(),
+						this.getMeasurementValues((MVRelationalTuple<M>) con.getRightPath().getTupleObject(), con.getRightPath()),
 						currentRating);
 
 				con.setRating(value);
@@ -162,8 +162,8 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 							.getMetadata()
 							.getConnectionList()
 							.getRatingForElementPair(
-									scannedTupleInfo.tupleIndexPath.toArray(),
-									predictedTupleInfo.tupleIndexPath.toArray());
+									scannedTupleInfo.tupleIndexPath,
+									predictedTupleInfo.tupleIndexPath);
 
 					double value = this.associationAlgorithm.evaluate(
 							scannedObject.getMetadata().getCovariance(),
@@ -176,8 +176,8 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 
 					if (currentRating != value) {
 						newObjConList.add(new Connection(
-								scannedTupleInfo.tupleIndexPath.toArray(),
-								predictedTupleInfo.tupleIndexPath.toArray(),
+								scannedTupleInfo.tupleIndexPath,
+								predictedTupleInfo.tupleIndexPath,
 								value));
 					}
 				}
@@ -191,7 +191,7 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 		if (debugMode) {
 			System.out
 					.println("######################### CONNECTIONS: #########################");
-			for (Connection con : object.getMetadata().getConnectionList()) {
+			for (IConnection con : object.getMetadata().getConnectionList()) {
 				System.out.println("CON: [" + con.getLeftPath() + "] <-> ["
 						+ con.getRightPath() + "] RATING: [" + con.getRating()
 						+ "]");

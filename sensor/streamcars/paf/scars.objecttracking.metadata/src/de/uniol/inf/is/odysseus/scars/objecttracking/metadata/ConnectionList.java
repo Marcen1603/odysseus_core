@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 /**
  * ConnectionList is a special ArrayList which contains rated connections. It brings some functions
@@ -9,7 +13,7 @@ import java.util.ArrayList;
  * @author Volker Janz
  *
  */
-public class ConnectionList extends ArrayList<Connection> {
+public class ConnectionList extends ArrayList<IConnection> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,21 +49,13 @@ public class ConnectionList extends ArrayList<Connection> {
 		return tmplist;
 	}
 
-	public ArrayList<int[]> getAllElements() {
-		ArrayList<int[]> tmpList = new ArrayList<int[]>();
-		int[] leftElement;
-		int[] rightElement;
-		for (int i = 0; i < this.size(); i++) {
-			leftElement = this.get(i).getLeftPath();
-			rightElement = this.get(i).getRightPath();
-			if(!tmpList.contains(leftElement)) {
-				tmpList.add(leftElement);
-			}
-			if(!tmpList.contains(rightElement)) {
-				tmpList.add(rightElement);
-			}
+	public Set<TupleIndexPath> getAllElements() {
+		Set<TupleIndexPath> set = new HashSet<TupleIndexPath>();
+		for( IConnection c : this ) {
+			set.add(c.getLeftPath());
+			set.add(c.getRightPath());
 		}
-		return tmpList;
+		return set;
 	}
 
 	/**
@@ -68,30 +64,12 @@ public class ConnectionList extends ArrayList<Connection> {
 	 * @param rightPath rightPath
 	 * @return The rating of the specific pair - returns 0 if it�s not found in connection list. So 0 is the default value for a new connection.
 	 */
-	public double getRatingForElementPair(int[] leftPath, int[] rightPath) {
-		for(Connection con : this) {
-			if( cmpArrays( con.getLeftPath(), leftPath) && cmpArrays(con.getRightPath(), rightPath)) {
-//			if(con.getLeftPath().equals(leftPath) && con.getRightPath().equals(rightPath)) {
+	public double getRatingForElementPair(TupleIndexPath leftPath, TupleIndexPath rightPath) {
+		for(IConnection con : this) {
+			if( con.getLeftPath().equals(leftPath) && con.getRightPath().equals(rightPath)) {
 				return con.getRating();
 			}
 		}
 		return -1;
-	}
-
-	private boolean cmpArrays( int[] a, int[] b ) {
-		if( a == null ) {
-			if( b == null ) {
-				return true;
-			}
-			return false;
-		}
-		
-		if( a.length != b.length ) return false;
-		
-		for( int i = 0; i < a.length; i++ ) 
-			if( a[i] != b[i] ) 
-				return false;
-		
-		return true;
 	}
 }

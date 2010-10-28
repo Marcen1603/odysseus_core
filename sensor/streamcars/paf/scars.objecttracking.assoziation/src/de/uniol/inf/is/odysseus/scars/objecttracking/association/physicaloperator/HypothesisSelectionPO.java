@@ -11,12 +11,11 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 
@@ -71,13 +70,13 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 	 */
 	private ConnectionList matchObjects(MVRelationalTuple<M> mainTuple, ConnectionList connectionList) {
 
-		TupleHelper tupleHelper = new TupleHelper(mainTuple);
-		Map<MVRelationalTuple<M>, List<Connection>> connections = new HashMap<MVRelationalTuple<M>, List<Connection>>();
+//		TupleHelper tupleHelper = new TupleHelper(mainTuple);
+		Map<MVRelationalTuple<M>, List<IConnection>> connections = new HashMap<MVRelationalTuple<M>, List<IConnection>>();
 
-		for (Connection connection : connectionList) {
+		for (IConnection connection : connectionList) {
 			@SuppressWarnings("unchecked")
-			MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) tupleHelper.getObject(connection.getLeftPath());
-			List<Connection> tuples = new ArrayList<Connection>();
+			MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) connection.getLeftPath().getTupleObject();
+			List<IConnection> tuples = new ArrayList<IConnection>();
 			if (!connections.containsKey(tuple)) {
 				tuples.add(connection);
 				connections.put(tuple, tuples);
@@ -89,12 +88,12 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		return getSingleMatchingList(connections, mainTuple);
 	}
 
-	private ConnectionList getSingleMatchingList(Map<MVRelationalTuple<M>, List<Connection>> connections, MVRelationalTuple<M> mainTuple) {
-		Map<MVRelationalTuple<M>, Connection> singleMatchingTuples = new HashMap<MVRelationalTuple<M>, Connection>();
+	private ConnectionList getSingleMatchingList(Map<MVRelationalTuple<M>, List<IConnection>> connections, MVRelationalTuple<M> mainTuple) {
+		Map<MVRelationalTuple<M>, IConnection> singleMatchingTuples = new HashMap<MVRelationalTuple<M>, IConnection>();
 
 		for (MVRelationalTuple<M> matchingTuple : connections.keySet()) {
-			Connection connection = null;
-			for (Connection connectionComparator : connections.get(matchingTuple)) {
+			IConnection connection = null;
+			for (IConnection connectionComparator : connections.get(matchingTuple)) {
 				if (connection == null) {
 					connection = connectionComparator;
 				} else if (connectionComparator.getRating() > connection.getRating()) {
@@ -106,12 +105,12 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			}
 		}
 
-		TupleHelper tupleHelper = new TupleHelper(mainTuple);
+//		TupleHelper tupleHelper = new TupleHelper(mainTuple);
 		List<MVRelationalTuple<M>> removeTupleList = new ArrayList<MVRelationalTuple<M>>();
 		for (MVRelationalTuple<M> tuple : singleMatchingTuples.keySet()) {
 			for (MVRelationalTuple<M> tuple2 : singleMatchingTuples.keySet()) {
 				if (tuple != tuple2) {
-					if (tupleHelper.getObject(singleMatchingTuples.get(tuple).getRightPath()) == tupleHelper.getObject(singleMatchingTuples.get(tuple2).getRightPath())) {
+					if (singleMatchingTuples.get(tuple).getRightPath().getTupleObject() == singleMatchingTuples.get(tuple2).getRightPath().getTupleObject()) {
 						if (singleMatchingTuples.get(tuple).getRating() > singleMatchingTuples.get(tuple2).getRating()) {
 							removeTupleList.add(tuple2);
 						} else {
@@ -136,9 +135,9 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 
 	private List<Object> getDifferenceSet(MVRelationalTuple<M> mainTuple, TupleIndexPath baseObjects, ConnectionList matchedObjects) {
 		List<Object> tupleList = new ArrayList<Object>();
-		TupleHelper tupleHelper = new TupleHelper(mainTuple);
-		for (int[] obj : matchedObjects.getAllElements()) {
-			tupleList.add(tupleHelper.getObject(obj));
+//		TupleHelper tupleHelper = new TupleHelper(mainTuple);
+		for (TupleIndexPath obj : matchedObjects.getAllElements()) {
+			tupleList.add(obj.getTupleObject());
 		}
 		List<Object> result = new ArrayList<Object>();
 

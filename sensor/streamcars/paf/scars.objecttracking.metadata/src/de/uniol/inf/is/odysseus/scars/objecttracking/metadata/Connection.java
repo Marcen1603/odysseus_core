@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+
 /**
  * This class represents a rated connection between two objects. It could be used to define the connections between cars within
  * the association process in the objecttracking architecture.
@@ -9,41 +11,38 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
  */
 public class Connection implements IConnection {
 
-	private int[] leftPath;
-	private int[] rightPath;
+	private TupleIndexPath leftPath;
+	private TupleIndexPath rightPath;
 	private double rating;
 
-	public Connection(int[] leftPath, int[] rightPath, double rating) {
+	public Connection(TupleIndexPath leftPath, TupleIndexPath rightPath, double rating) {
 		this.leftPath = leftPath;
 		this.rightPath = rightPath;
 		this.rating = rating;
 	}
 
 	public Connection(Connection copy) {
-		this.leftPath = new int[copy.getLeftPath().length];
-		this.rightPath = new int[copy.getRightPath().length];
-		                         
-		System.arraycopy(copy.getLeftPath(), 0, this.leftPath, 0, copy.getLeftPath().length);
-		System.arraycopy(copy.getRightPath(), 0, this.rightPath, 0, copy.getRightPath().length);
+		this.leftPath = copy.getLeftPath().clone();
+		this.rightPath = copy.getRightPath().clone();
 	}
 
 	@Override
-	public int[] getLeftPath() {
+	public TupleIndexPath getLeftPath() {
 		return this.leftPath;
 	}
 
 	@Override
-	public int[] getRightPath() {
+	public TupleIndexPath getRightPath() {
 		return this.rightPath;
 	}
 
 	@Override
-	public void setLeftPath(int[] newleft) {
+	public void setLeftPath(TupleIndexPath newleft) {
 		this.leftPath = newleft;
 	}
 
 	@Override
-	public void setRightPath(int[] newright) {
+	public void setRightPath(TupleIndexPath newright) {
 		this.rightPath = newright;
 	}
 

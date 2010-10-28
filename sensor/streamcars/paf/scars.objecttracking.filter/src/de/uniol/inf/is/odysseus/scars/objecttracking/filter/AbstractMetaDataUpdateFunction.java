@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 
 /**
  * @author dtwumasi
@@ -39,7 +39,7 @@ public abstract class AbstractMetaDataUpdateFunction<M extends IProbability> {
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(Connection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters);
+	public abstract void compute(IConnection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters);
 
 	/**
 	 * @param parameters the parameters needed for computation

@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+
 /**
  * This class represents an interface for an rated connection between two objects. It could be used to define the
  * connections between cars within the association process in the objecttracking architecture.
@@ -9,11 +11,11 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
  */
 public interface IConnection {
 
-	public int[] getLeftPath();
-	public int[] getRightPath();
+	public TupleIndexPath getLeftPath();
+	public TupleIndexPath getRightPath();
 
-	public void setLeftPath(int[] newleft);
-	public void setRightPath(int[] newright);
+	public void setLeftPath(TupleIndexPath newleft);
+	public void setRightPath(TupleIndexPath newright);
 
 	public double getRating();
 	public void setRating(double newrating);

@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 
@@ -29,7 +29,7 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer & IGain>
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 	}
 
-	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
+	public void compute(IConnection connected, MVRelationalTuple<M> tuple) {
 		metaDataCreationFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
 	}
 	
@@ -42,7 +42,7 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer & IGain>
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
 		// traverse connection list and filter
-		for (Connection connected : object.getMetadata().getConnectionList()) {
+		for (IConnection connected : object.getMetadata().getConnectionList()) {
 			compute(connected, object);
 		}
 

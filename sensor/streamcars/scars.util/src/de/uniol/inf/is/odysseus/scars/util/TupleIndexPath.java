@@ -33,23 +33,23 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	private SchemaIndexPath schemaIndexPath;
 	private List<Integer> listIndices;
 
-	public static TupleIndexPath fromIntArray(int[] array, MVRelationalTuple<?> tuple, SchemaIndexPath path) {
-		
-		List<TupleIndex> indices = new ArrayList<TupleIndex>();
-		
-		Object parent = tuple;
-		for (int i = 0; i < path.getSchemaIndices().size(); i++) {
-			
-			TupleIndex index = new TupleIndex((MVRelationalTuple<?>) parent, array[i], path.getSchemaIndex(i).getAttribute());
-			indices.add(index);
-			if (parent instanceof MVRelationalTuple)
-				parent = ((MVRelationalTuple<?>) parent).getAttribute(path.getSchemaIndex(i).toInt());
-			else
-				throw new RuntimeException("Corrupted SchemaIndexPath: " + path);
-		}		
-		
-		return new TupleIndexPath(indices, path); 
-	}
+//	public static TupleIndexPath fromIntArray(int[] array, MVRelationalTuple<?> tuple, SchemaIndexPath path) {
+//		
+//		List<TupleIndex> indices = new ArrayList<TupleIndex>();
+//		
+//		Object parent = tuple;
+//		for (int i = 0; i < path.getSchemaIndices().size(); i++) {
+//			
+//			TupleIndex index = new TupleIndex((MVRelationalTuple<?>) parent, array[i], path.getSchemaIndex(i).getAttribute());
+//			indices.add(index);
+//			if (parent instanceof MVRelationalTuple)
+//				parent = ((MVRelationalTuple<?>) parent).getAttribute(path.getSchemaIndex(i).toInt());
+//			else
+//				throw new RuntimeException("Corrupted SchemaIndexPath: " + path);
+//		}		
+//		
+//		return new TupleIndexPath(indices, path); 
+//	}
 	
 	// Interner Konstruktor
 	TupleIndexPath(List<TupleIndex> indices, SchemaIndexPath schemaIndexPath) {
@@ -76,6 +76,14 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 			this.listIndices.add(i);
 	}
 
+	public TupleIndexPath appendClone( int index ) {
+		TupleIndexPath c = clone();
+		SchemaIndexPath path = c.schemaIndexPath.appendClone(index);
+		c.indices.add(new TupleIndex((MVRelationalTuple<?>)c.getLastTupleIndex().getValue(), index, path.getAttribute()));
+		c.listIndices.add(index);
+		return c;
+	}
+	
 	/**
 	 * Liefert die Indices des Pfades als Liste von TupleIndex zurück. Damit
 	 * können genauere Informationen zu jedem Pfadschritt abgerufen werden. Die
@@ -172,7 +180,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	}
 
 	/**
-	 * Liefert den Pfad als int-Array zurück. Darf nicht ver�ndert werden!
+	 * Liefert den Pfad als int-Array zurück. Darf nicht ver�ndert werden!
 	 * 
 	 * @return Int-Array
 	 */

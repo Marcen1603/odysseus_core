@@ -74,6 +74,20 @@ public class SchemaIndexPath {
 	public int getLength() {
 		return indices.size();
 	}
+	
+	public SchemaIndexPath appendClone( int index ) {
+		List<SchemaIndex> i = new ArrayList<SchemaIndex>(indices);
+		SDFAttribute att = to;
+		if( att.getDatatype().getURIWithoutQualName().equals("List")) {// eine Liste?
+			i.add(new SchemaIndex(index, att.getSubattribute(0)));
+			SDFAttribute att2 = to.getSubattribute(0);
+			return new SchemaIndexPath(i, att2);
+		} else {
+			i.add(new SchemaIndex(index, att.getSubattribute(index)));
+			SDFAttribute att2 = to.getSubattribute(index);
+			return new SchemaIndexPath(i, att2);
+		}
+	}
 
 	/**
 	 * Gibt zurÃ¼ck, ob sich innerhalb des Pfades ein Listenattribut befindet.
@@ -126,8 +140,8 @@ public class SchemaIndexPath {
 	}
 
 	/**
-	 * Liefert eine Liste der Indices als int[]-Array. An dieser Liste dŸrfen keine
-	 * Modifikationen durchgefŸhrt werden.
+	 * Liefert eine Liste der Indices als int[]-Array. An dieser Liste dï¿½rfen keine
+	 * Modifikationen durchgefï¿½hrt werden.
 	 * 
 	 * @return int[]-Array des Pfads.
 	 */

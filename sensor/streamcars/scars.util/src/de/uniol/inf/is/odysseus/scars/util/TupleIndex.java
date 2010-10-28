@@ -114,4 +114,14 @@ public class TupleIndex {
 	public TupleIndex clone() {
 		return new TupleIndex(this);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof TupleIndex))
+			return false;
+		
+		if( obj == this ) return true;
+		
+		return valueIndex == ((TupleIndex)obj).valueIndex;
+	}
 }

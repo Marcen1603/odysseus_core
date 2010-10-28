@@ -10,7 +10,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
@@ -36,11 +36,11 @@ public class KalmanGainFunction<M extends IProbability & IGain > extends Abstrac
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void compute(Connection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters) {
+	public void compute(IConnection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters) {
 
 		TupleHelper tHelper = new TupleHelper(tuple);
-		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getRightPath());
-		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getLeftPath());
+		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)connected.getRightPath().getTupleObject();
+		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)connected.getLeftPath().getTupleObject();
 
 		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
