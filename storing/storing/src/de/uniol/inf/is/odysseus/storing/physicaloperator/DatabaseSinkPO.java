@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
-public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
+public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T> {
 
 	private static final int SELECT_BASH_SIZE = 10;
 	private Queue<RelationalTuple<?>> values = new LinkedList<RelationalTuple<?>>();
@@ -26,7 +26,14 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 	private boolean create = false;
 	private boolean ifnotexists = false;
 	private boolean truncate = false;
+	private boolean opened = false;
 
+	
+	public DatabaseSinkPO(Connection connection, String table){
+		this(connection, table, true, true, false, true);
+	}
+	
+	
 	public DatabaseSinkPO(Connection connection, String table, boolean savemetadata, boolean create, boolean truncate, boolean ifnotexists) {
 		this.connection = connection;
 		this.table = table;
@@ -36,7 +43,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 		this.savemetadata = savemetadata;
 	}
 
-	public DatabaseSinkPO(DatabaseSinkPO o) {
+	public DatabaseSinkPO(DatabaseSinkPO<T> o) {
 		this.connection = o.connection;
 		this.table = o.table;
 		this.create = o.create;
@@ -47,7 +54,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-
+		this.opened = true;
 		// CREATE TABLE
 		if (create) {
 			// IF NOT EXISTS
@@ -56,9 +63,13 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 				if (!tableExists()) {
 					createTable();
 				} else {
-					dropTable();
-					createTable();
+					// nothing, because only create if NOT exists!
+//					dropTable();
+//					createTable();
 				}
+			}else{
+				dropTable();
+				createTable();
 			}
 		} else {
 			if (truncate) {
@@ -116,7 +127,15 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 	}
 
 	@Override
-	protected void process_next(RelationalTuple<?> object, int port, boolean isReadOnly) {
+	protected void process_next(T object, int port, boolean isReadOnly) {
+		if(!opened){
+			System.out.println("Not opened!!");
+			try {
+				process_open();
+			} catch (OpenFailedException e) {				
+				e.printStackTrace();
+			}
+		}
 		synchronized (values) {
 			values.offer(object);
 			if (values.size() >= SELECT_BASH_SIZE) {
@@ -141,8 +160,8 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<?>> {
 	}
 
 	@Override
-	public DatabaseSinkPO clone() {
-		return new DatabaseSinkPO(this);
+	public DatabaseSinkPO<T> clone() {
+		return new DatabaseSinkPO<T>(this);
 	}
 
 	private void createTable() {
