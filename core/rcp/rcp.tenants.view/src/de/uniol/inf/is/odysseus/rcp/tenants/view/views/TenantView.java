@@ -159,7 +159,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 				return "Role: " + ((Role) obj).getRolename();
 			}
 			if (obj instanceof Privilege) {
-				return "Role: " + ((Privilege) obj).getPrivname();
+				return "Privilege: " + ((Privilege) obj).getPrivname();
 			}
 			if (obj instanceof Tenant) {
 				return ((Tenant) obj).getName();

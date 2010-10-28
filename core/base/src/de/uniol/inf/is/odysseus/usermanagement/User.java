@@ -158,7 +158,7 @@ public class User extends AbstractUserManagementEntity implements Serializable,
 	 */
 	public Role hasRole(String rolename) {
 		for (Role role : getRoles()) {
-			if (role.toString().equals(rolename)) {
+			if (role.getRolename().equals(rolename)) {
 				return role;
 			}
 		}

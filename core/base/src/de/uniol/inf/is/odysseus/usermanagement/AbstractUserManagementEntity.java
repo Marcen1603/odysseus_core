@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract class AbstractUserManagementEntity {
+abstract class AbstractUserManagementEntity implements Serializable {
 
+	private static final long serialVersionUID = 6486357855125784276L;
 	protected List<Privilege> privileges;
 
 	AbstractUserManagementEntity() {
@@ -12,16 +14,7 @@ abstract class AbstractUserManagementEntity {
 	}
 
 	public List<Privilege> getPrivileges() {
-		return privileges;
-	}
-
-	public Privilege getPrivilegeByObject(String objecturi) {
-		for (Privilege priv : privileges) {
-			if (priv.getObject().equals(objecturi)) {
-				return priv;
-			}
-		}
-		return null;
+		return this.privileges;
 	}
 
 	void addPrivilege(Privilege priv) {
@@ -48,21 +41,6 @@ abstract class AbstractUserManagementEntity {
 	 * @return
 	 */
 	public Privilege hasObject(String objecturi) {
-		for (Privilege priv : this.privileges) {
-			if (priv.getObject().toString().equals(objecturi)) {
-				return priv;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * return the corresponding Privilege if the user has the given privileges
-	 * 
-	 * @param hasrole
-	 * @return
-	 */
-	public Privilege hasPrivilege(String objecturi) {
 		for (Privilege priv : this.privileges) {
 			if (priv.getObject().equals(objecturi)) {
 				return priv;
