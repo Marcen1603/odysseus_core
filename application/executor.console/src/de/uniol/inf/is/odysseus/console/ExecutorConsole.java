@@ -65,7 +65,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterInstallMetadataListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -1220,11 +1219,6 @@ public class ExecutorConsole implements CommandProvider,
 			} else if (args[i].equalsIgnoreCase("-m")) {
 				boolean withMeta = Boolean.getBoolean(args[i + 1]);
 				i++;
-				if (withMeta) {
-					params.add(ParameterInstallMetadataListener.TRUE);
-				} else {
-					params.add(ParameterInstallMetadataListener.FALSE);
-				}
 			}
 		}
 

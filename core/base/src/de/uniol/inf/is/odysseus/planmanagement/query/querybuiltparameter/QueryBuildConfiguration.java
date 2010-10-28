@@ -59,9 +59,6 @@ public class QueryBuildConfiguration extends
 		if (!contains(ParameterPriority.class)) {
 			set(new ParameterPriority(0));
 		}
-		if(!contains(ParameterInstallMetadataListener.class)){
-			set(new ParameterInstallMetadataListener(false));
-		}
 		if (!contains(ParameterDoRewrite.class)){
 			set(ParameterDoRewrite.TRUE);
 		}
@@ -132,10 +129,6 @@ public class QueryBuildConfiguration extends
 	
 	public IBufferPlacementStrategy getBufferPlacementStrategy(){
 		return getBufferPlacementParameter().getValue();
-	}
-	
-	public boolean getParameterInstallMetadataListener(){
-		return ((ParameterInstallMetadataListener)get(ParameterInstallMetadataListener.class)).getValue();
 	}
 	
 	public IDefaultRootStrategy getDefaultRootStrategy(){
