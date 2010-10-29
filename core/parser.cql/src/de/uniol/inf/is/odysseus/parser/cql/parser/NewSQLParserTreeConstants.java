@@ -105,13 +105,14 @@ public interface NewSQLParserTreeConstants
   public int JJTMETRIC = 99;
   public int JJTCREATEUSERSTATEMENT = 100;
   public int JJTALTERUSERSTATEMENT = 101;
-  public int JJTCREATESLASTATEMENT = 102;
-  public int JJTPERCENTILECONSTRAINT = 103;
-  public int JJTCREATETENANTSTATEMENT = 104;
-  public int JJTADDUSERTOTENANTSTATEMENT = 105;
-  public int JJTREMOVEUSERFROMTENANTSTATEMENT = 106;
-  public int JJTDROPSTREAMSTATEMENT = 107;
-  public int JJTDROPVIEWSTATEMENT = 108;
+  public int JJTDROPUSERSTATEMENT = 102;
+  public int JJTCREATESLASTATEMENT = 103;
+  public int JJTPERCENTILECONSTRAINT = 104;
+  public int JJTCREATETENANTSTATEMENT = 105;
+  public int JJTADDUSERTOTENANTSTATEMENT = 106;
+  public int JJTREMOVEUSERFROMTENANTSTATEMENT = 107;
+  public int JJTDROPSTREAMSTATEMENT = 108;
+  public int JJTDROPVIEWSTATEMENT = 109;
 
 
   public String[] jjtNodeName = {
@@ -217,6 +218,7 @@ public interface NewSQLParserTreeConstants
     "Metric",
     "CreateUserStatement",
     "AlterUserStatement",
+    "DropUserStatement",
     "CreateSLAStatement",
     "PercentileConstraint",
     "CreateTenantStatement",
@@ -226,4 +228,4 @@ public interface NewSQLParserTreeConstants
     "DropViewStatement",
   };
 }
-/* JavaCC - OriginalChecksum=d0a6370f1eb337d1f06fdf9a0d877f73 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f550aa4594f681ab9c9e937a91d94c55 (do not edit this line) */
