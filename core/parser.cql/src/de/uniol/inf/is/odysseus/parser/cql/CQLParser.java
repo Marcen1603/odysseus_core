@@ -1004,7 +1004,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTDropUserStatement node, Object data) {
 		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
-			UserManagement.getInstance().removeUser(userName, caller);
+			UserManagement.getInstance().deleteUser(caller, userName);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} 
