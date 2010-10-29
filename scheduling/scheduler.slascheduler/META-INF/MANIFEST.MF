@@ -4,8 +4,7 @@ Bundle-Name: SLA Scheduler
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.slascheduler
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.scheduler.priorityscheduler,
- de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
+Import-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy,
  org.osgi.service.component
 Require-Bundle: de.uniol.inf.is.odysseus
