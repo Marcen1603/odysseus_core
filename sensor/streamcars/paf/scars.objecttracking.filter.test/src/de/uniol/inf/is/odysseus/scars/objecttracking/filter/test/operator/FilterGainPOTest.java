@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.FilterGainPO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.testdata.provider.FilterFunctionTestData;
 
 /**
  * @author dtwumasi

@@ -8,11 +8,11 @@ import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.AbstractInitializationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.InitializationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.testdata.provider.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
