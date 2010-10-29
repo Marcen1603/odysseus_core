@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
+import de.uniol.inf.is.odysseus.usermanagement.IllegalServiceLevelDefinition;
 import de.uniol.inf.is.odysseus.usermanagement.PercentileConstraintOverlapException;
 import de.uniol.inf.is.odysseus.usermanagement.PercentileContraint;
 import de.uniol.inf.is.odysseus.usermanagement.ServiceLevelAgreement;
@@ -910,6 +911,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				e.printStackTrace();
 			}
 		}
+		try {
+			sla.init();
+		} catch (IllegalServiceLevelDefinition e) {
+			throw new RuntimeException(e);
+		}
 		TenantManagement.getInstance().addSLA(slaName, sla);
 		return null;
 	}
@@ -992,6 +998,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTIfNotExists node, Object data) {
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTDropUserStatement node, Object data) {
+		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		try {
+			UserManagement.getInstance().removeUser(userName, caller);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} 
+		return null;	
 	}
 
 }

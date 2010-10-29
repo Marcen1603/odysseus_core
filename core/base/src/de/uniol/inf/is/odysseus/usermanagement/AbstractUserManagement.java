@@ -48,11 +48,23 @@ abstract class AbstractUserManagement {
 				registerUserInt(username, password);
 			} else {
 				throw new HasNoPermissionException("User " + caller.toString()
-						+ " has no permission to create new user.");
+						+ " has no permission to create new users.");
 			}
 		} catch (HasNoPermissionException e) {
 			new RuntimeException(e);
 		}
+	}
+
+	public void removeUser(String username, User caller)
+			throws HasNoPermissionException, StoreException {
+		if (AccessControl.hasPermission(UserManagementAction.DELETE_USER,
+				"UserManagement", caller)) {
+			this.userStore.removeByName(username);
+		} else {
+			throw new HasNoPermissionException("User " + caller.toString()
+					+ " has no permission to remove users.");
+		}
+		fireUserManagementListener();
 	}
 
 	protected void registerUserInt(String username, String password)

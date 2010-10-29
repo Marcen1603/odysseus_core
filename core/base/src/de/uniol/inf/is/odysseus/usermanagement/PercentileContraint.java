@@ -12,8 +12,13 @@ public class PercentileContraint implements
 
 	public PercentileContraint(double highSlaConformanceLevel,
 			double lowSlaConformanceLevel, double penalty, boolean highInside) {
-		this.highSlaConformanceLevel = highSlaConformanceLevel;
-		this.lowSlaConformanceLevel = lowSlaConformanceLevel;
+		if (highSlaConformanceLevel > lowSlaConformanceLevel){
+			this.highSlaConformanceLevel = highSlaConformanceLevel;
+			this.lowSlaConformanceLevel = lowSlaConformanceLevel;
+		}else{
+			this.highSlaConformanceLevel = lowSlaConformanceLevel;
+			this.lowSlaConformanceLevel = highSlaConformanceLevel;			
+		}
 		this.width = highSlaConformanceLevel-lowSlaConformanceLevel;
 		this.penalty = penalty;
 		this.highInside = highInside;

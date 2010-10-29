@@ -685,4 +685,10 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTIfNotExists node, Object data) {
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTDropUserStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
