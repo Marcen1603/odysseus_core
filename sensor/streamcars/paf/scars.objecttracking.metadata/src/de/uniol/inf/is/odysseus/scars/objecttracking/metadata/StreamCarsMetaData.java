@@ -48,6 +48,7 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("StreamCarsMetaData{");
+		sb.append("Latency: " + (this.getLatency()) + " | ");
 		if(this.connectionList == null || this.connectionList.size() == 0){
 			sb.append("no connections");
 		} else {

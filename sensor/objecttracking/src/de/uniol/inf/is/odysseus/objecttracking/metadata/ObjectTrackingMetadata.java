@@ -51,7 +51,7 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 
 	@Override
 	public String toString(PointInTime baseTime) {
-		return streamTime.toString(baseTime);
+		return "ObjectTrackingMetadata: StreamTime = " + streamTime.toString(baseTime) + " | Latency = " + this.lat.getLatency();
 	}
 
 	public ObjectTrackingMetadata(){

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author Hauke
  * @author Sven
  */
-public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer & ITimeInterval>
+public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer & ITimeInterval & ILatency>
 		extends AbstractMetadataUpdater<M, MVRelationalTuple<M>> {
 	// set by constructor/initMetadata
 	// used by updateMetadata
@@ -152,12 +153,17 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 		this.initProbabilityMetaDataOfTuple(tupleGiven);
 		this.initAssoziationMetaData(tupleGiven);
 		this.initTimeStampMetaData(tupleGiven);
+		this.initLatencyData(tupleGiven);
 		// invoke more tuple metadata initializers here
 	}
 
 	private void initTimeStampMetaData(MVRelationalTuple<M> tupleGiven) {
 		PointInTime p = new PointInTime( (Long)path.toTupleIndexPath(tupleGiven).getTupleObject());
 		tupleGiven.getMetadata().setStart(p);
+	}
+	
+	private void initLatencyData(MVRelationalTuple<M> tupleGiven){
+		tupleGiven.getMetadata().setLatencyStart(System.nanoTime());
 	}
 
 	private void initAssoziationMetaData(MVRelationalTuple<M> tupleGiven) {
