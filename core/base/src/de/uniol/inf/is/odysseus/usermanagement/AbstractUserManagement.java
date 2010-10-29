@@ -55,18 +55,6 @@ abstract class AbstractUserManagement {
 		}
 	}
 
-	public void removeUser(String username, User caller)
-			throws HasNoPermissionException, StoreException {
-		if (AccessControl.hasPermission(UserManagementAction.DELETE_USER,
-				"UserManagement", caller)) {
-			this.userStore.removeByName(username);
-		} else {
-			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to remove users.");
-		}
-		fireUserManagementListener();
-	}
-
 	protected void registerUserInt(String username, String password)
 			throws UserStoreException, UsernameAlreadyUsedException {
 		User user = this.userStore.getUserByName(username);
