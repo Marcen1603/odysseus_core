@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class Login {
 
+	@SuppressWarnings("deprecation")
 	public static void login(Shell parent, boolean forceShow, boolean cancelOK) {
 		// Daten aus Prefs holen
 		String username = LoginPreferencesManager.getInstance().getUsername();

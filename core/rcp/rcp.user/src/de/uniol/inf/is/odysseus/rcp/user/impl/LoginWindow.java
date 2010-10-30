@@ -140,6 +140,7 @@ public class LoginWindow {
 		okButton.setText(OK_BUTTON_TEXT);
 		okButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		okButton.addSelectionListener(new SelectionAdapter() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
