@@ -97,6 +97,14 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.CyclicQueryPreParserKeyword"
             name="CYCLICQUERY">
       </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LoginUserPreParserKeyword"
+            name="LOGIN">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LogoutUserPreParserKeyword"
+            name="LOGOUT">
+      </PreParserKeyword>
    </extension>
    <extension
          point="de.uniol.inf.is.odysseus.rcp.editor.Keyword">
@@ -106,9 +114,6 @@
             colorG="0"
             colorR="255"
             name="ParserIDs">
-         <keyword
-               name="de.uniol.inf.is.odysseus.rcp.editor.text.keyword4">
-         </keyword>
       </group>
       <group
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.TransCfgKeywordGroup"
@@ -116,9 +121,6 @@
             colorG="0"
             colorR="255"
             name="TransCfgs">
-         <keyword
-               name="de.uniol.inf.is.odysseus.rcp.editor.text.keyword5">
-         </keyword>
       </group>
    </extension>
 
