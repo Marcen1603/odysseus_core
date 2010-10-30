@@ -1,18 +1,15 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.function.estimateupdate;
 
-import org.junit.Before;
-import org.junit.Test;
 import junit.framework.TestCase;
 
-
+import org.junit.Before;
+import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.FilterFunctionTestData;
-
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
@@ -120,7 +117,7 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 	public  void test() {
 	
 		
-		Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
+		IConnection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 		
 		correctStateEstimateFunction.compute(scannedTupleIndexPath, predictedTupleIndexPath, null );
 	

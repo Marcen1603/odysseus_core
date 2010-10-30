@@ -5,19 +5,17 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.function.gainf
 
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import junit.framework.TestCase;
-
-
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.FilterFunctionTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 
 
 /**
@@ -71,8 +69,8 @@ public class KalmanGainFunctionTest<K> extends TestCase  {
 
 
 
-		Connection[] objConList = new Connection[expectedTuple.getMetadata().getConnectionList().toArray().length];
-		ArrayList<Connection> tmpConList = expectedTuple.getMetadata().getConnectionList();
+		IConnection[] objConList = new IConnection[expectedTuple.getMetadata().getConnectionList().toArray().length];
+		ArrayList<IConnection> tmpConList = expectedTuple.getMetadata().getConnectionList();
 
 		for(int i = 0; i < objConList.length; i++) {
 			objConList[i] = tmpConList.get(i);
@@ -93,7 +91,7 @@ public class KalmanGainFunctionTest<K> extends TestCase  {
 	@Test
 	public  void test() {
 		
-	Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
+	IConnection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 	
 	gainfunction.compute(connected,measurementTuple, null);
 	
