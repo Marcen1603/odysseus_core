@@ -35,7 +35,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		
 		final IExecutor executor = Activator.getExecutor();
 		if (executor != null) {
-			final List<IQueryBuildSetting> cfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(parameterTransformationConfigurationName);
+			final List<IQueryBuildSetting<?>> cfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(parameterTransformationConfigurationName);
 			if (cfg == null) {
 				logger.error("ParameterTransformationConfiguration " + parameterTransformationConfigurationName + " nicht gefunden");
 				return null;

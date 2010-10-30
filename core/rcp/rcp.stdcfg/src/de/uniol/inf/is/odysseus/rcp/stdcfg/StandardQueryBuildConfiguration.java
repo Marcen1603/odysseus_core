@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryBuildConfiguration;
 public class StandardQueryBuildConfiguration implements
 		IQueryBuildConfiguration {
 
-	private List<IQueryBuildSetting> settings = new ArrayList<IQueryBuildSetting>();
+	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
 	
 	@SuppressWarnings("unchecked")
 	public StandardQueryBuildConfiguration() {
@@ -26,7 +26,7 @@ public class StandardQueryBuildConfiguration implements
 	}
 
 	@Override
-	public List<IQueryBuildSetting> get() {
+	public List<IQueryBuildSetting<?>> get() {
 		return settings;
 	}
 

@@ -54,7 +54,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
 		IExecutor executor = ExecutorHandler.getExecutor();
 		
-		List<IQueryBuildSetting> transCfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfgID);
+		List<IQueryBuildSetting<?>> transCfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfgID);
 		User user = ActiveUser.getActiveUser();
 		try {
 			ICompiler compiler = executor.getCompiler();
@@ -62,7 +62,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			
 			// HACK
 			ParameterTransformationConfiguration cfg = null;
-			for( IQueryBuildSetting s : transCfg ) {
+			for( IQueryBuildSetting<?> s : transCfg ) {
 				if( s instanceof ParameterTransformationConfiguration ) {
 					cfg = (ParameterTransformationConfiguration)s;
 					break;

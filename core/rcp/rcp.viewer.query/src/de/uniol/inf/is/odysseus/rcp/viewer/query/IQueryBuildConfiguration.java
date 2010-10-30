@@ -6,5 +6,5 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryB
 
 public interface IQueryBuildConfiguration {
 
-	public List<IQueryBuildSetting> get();
+	public List<IQueryBuildSetting<?>> get();
 }

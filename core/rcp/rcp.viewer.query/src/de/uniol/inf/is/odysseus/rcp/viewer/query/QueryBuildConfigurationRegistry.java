@@ -19,7 +19,7 @@ public class QueryBuildConfigurationRegistry {
 	
 	private static QueryBuildConfigurationRegistry instance;
 	
-	private Map<String, List<IQueryBuildSetting>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting>>();
+	private Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting<?>>>();
 	
 	private QueryBuildConfigurationRegistry() {
 		
@@ -53,7 +53,7 @@ public class QueryBuildConfigurationRegistry {
 		return queryBuildConfigs.keySet();
 	}
 	
-	public List<IQueryBuildSetting> getQueryBuildConfiguration( String name ) {
+	public List<IQueryBuildSetting<?>> getQueryBuildConfiguration( String name ) {
 		return queryBuildConfigs.get(name);
 	}
 }

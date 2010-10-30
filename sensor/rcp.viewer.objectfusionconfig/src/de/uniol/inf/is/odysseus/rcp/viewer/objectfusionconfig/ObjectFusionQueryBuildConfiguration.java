@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformatio
 
 public class ObjectFusionQueryBuildConfiguration implements IQueryBuildConfiguration {
 	
-	private List<IQueryBuildSetting> settings = new ArrayList<IQueryBuildSetting>();
+	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
 	
 	public ObjectFusionQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
@@ -29,7 +29,7 @@ public class ObjectFusionQueryBuildConfiguration implements IQueryBuildConfigura
 	}
 
 	@Override
-	public List<IQueryBuildSetting> get() {
+	public List<IQueryBuildSetting<?>> get() {
 		return settings;
 	}
 }
