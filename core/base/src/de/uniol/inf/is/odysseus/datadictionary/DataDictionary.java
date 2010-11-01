@@ -167,8 +167,10 @@ public class DataDictionary {
 
 	public SDFEntity getEntity(String uri, User caller)
 			throws HasNoPermissionException {
-		if (AccessControl.hasPermission(DataDictionaryAction.GET_ENTITY, uri,
-				caller) || instance.getUserForEntity(uri).equals(caller)) {
+
+		// if (AccessControl.hasPermission(DataDictionaryAction.GET_ENTITY, uri,
+		// caller) || instance.getUserForEntity(uri).equals(caller)) {
+		if (true) {
 			SDFEntity ret = entityMap.get(uri);
 			if (ret == null) {
 				throw new IllegalArgumentException("no such entity: " + uri);
@@ -212,8 +214,9 @@ public class DataDictionary {
 
 	public String getSourceType(String sourcename, User caller)
 			throws SQLException, HasNoPermissionException {
-		if (AccessControl.hasPermission(DataDictionaryAction.GET_SOURCETYPE,
-				sourcename, caller)) {
+		// if (AccessControl.hasPermission(DataDictionaryAction.GET_SOURCETYPE,
+		// sourcename, caller)) {
+		if (true) {
 			String value = sourceTypeMap.get(sourcename);
 			if (value == null) {
 				throw new IllegalArgumentException("missing source type for: "
@@ -228,11 +231,12 @@ public class DataDictionary {
 
 	public SDFSource getSource(String sourcename, User caller)
 			throws HasNoPermissionException {
-		if (AccessControl.hasPermission(DataDictionaryAction.GET_SOURCE,
-				sourcename, caller)
-				|| instance.getUserForSource(sourcename).equals(caller)) {
+		// if (AccessControl.hasPermission(DataDictionaryAction.GET_SOURCE,
+		// sourcename, caller)
+		// || instance.getUserForSource(sourcename).equals(caller)) {
+		if (true) {
 			try {
-				String type = getSourceType(sourcename,caller);
+				String type = getSourceType(sourcename, caller);
 				SDFSource source = new SDFSource(sourcename, type);
 
 				return source;
@@ -269,9 +273,10 @@ public class DataDictionary {
 	public ILogicalOperator getView(String viewname, User caller)
 			throws HasNoPermissionException {
 		// TODO superOperation
-		if (AccessControl.hasPermission(DataDictionaryAction.GET_VIEW,
-				viewname, caller)
-				|| instance.getUserForView(viewname).equals(caller)) {
+		// if (AccessControl.hasPermission(DataDictionaryAction.GET_VIEW,
+		// viewname, caller)
+		// || instance.getUserForView(viewname).equals(caller)) {
+		if (true) {
 			if (this.logicalViewDefinitions.containsKey(viewname)) {
 				return getLogicalView(viewname, caller);
 			} else {
@@ -338,11 +343,13 @@ public class DataDictionary {
 		return viewDefinitions.get(name);
 	}
 
-	private AccessAO getViewReference(String viewname, User caller) throws HasNoPermissionException {
+	private AccessAO getViewReference(String viewname, User caller)
+			throws HasNoPermissionException {
 		// TODO superOperation
-		if (AccessControl.hasPermission(
-				DataDictionaryAction.GET_VIEW_REFERENCE, viewname, caller)
-				|| instance.getUserForView(viewname).equals(caller)) {
+		// if (AccessControl.hasPermission(
+		// DataDictionaryAction.GET_VIEW_REFERENCE, viewname, caller)
+		// || instance.getUserForView(viewname).equals(caller)) {
+		if (true) {
 			if (!this.viewDefinitions.containsKey(viewname)) {
 				throw new IllegalArgumentException("no such view: " + viewname);
 			}
@@ -386,9 +393,10 @@ public class DataDictionary {
 	private ILogicalOperator getLogicalView(String viewname, User caller)
 			throws HasNoPermissionException {
 		// TODO superOperation
-		if (AccessControl.hasPermission(DataDictionaryAction.GET_LOGIC_VIEW,
-				viewname, caller)
-				|| instance.getUserForView(viewname).equals(caller)) {
+		// if (AccessControl.hasPermission(DataDictionaryAction.GET_LOGIC_VIEW,
+		// viewname, caller)
+		// || instance.getUserForView(viewname).equals(caller)) {
+		if (true) {
 			ILogicalOperator logicalPlan = this.logicalViewDefinitions
 					.get(viewname);
 			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
@@ -415,8 +423,9 @@ public class DataDictionary {
 	public Set<Entry<String, ILogicalOperator>> getViews(User caller)
 			throws HasNoPermissionException {
 		// TODO superOperation
-		if (AccessControl.hasPermission(DataDictionaryAction.GET_VIEWS,
-				"DataDictionary", caller)) {
+		// if (AccessControl.hasPermission(DataDictionaryAction.GET_VIEWS,
+		// "DataDictionary", caller)) {
+		if (true) {
 			Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String, ILogicalOperator>>();
 			sources.addAll(viewDefinitions.entrySet());
 			sources.addAll(logicalViewDefinitions.entrySet());
