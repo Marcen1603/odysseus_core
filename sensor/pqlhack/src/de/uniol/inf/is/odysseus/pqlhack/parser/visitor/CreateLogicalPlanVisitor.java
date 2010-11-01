@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBufferOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDistanceObjectSelectorOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDistanceObjectSelectorOp_Andre;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
@@ -111,6 +112,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionEx
 import de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.logicaloperator.TemporaryDataBouncerAO;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.logicaloperator.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.objectselector.logicaloperator.DistanceObjectSelectorAO;
+import de.uniol.inf.is.odysseus.scars.operator.objectselector.logicaloperator.DistanceObjectSelectorAOAndre;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.scars.xmlprofiler.logicaloperator.XMLProfilerAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
@@ -2037,7 +2039,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	public Object visit(ASTDistanceObjectSelectorOp node, Object data) {
 		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
-	  DistanceObjectSelectorAO ao = new DistanceObjectSelectorAO();
+		DistanceObjectSelectorAO ao = new DistanceObjectSelectorAO();
 
 		ArrayList newData = new ArrayList();
 		newData.add(attrRes);
@@ -2093,6 +2095,113 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}
 		// set threshold
 		ao.setDistanceThresholdYRight(threshold);
+
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTDistanceObjectSelectorOp_Andre node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+		DistanceObjectSelectorAOAndre ao = new DistanceObjectSelectorAOAndre(attrRes);
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		// Assoziations Objektpfad
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		ao.setTrackedObjectList(identifier.getName());
+		
+		
+		// add predicates		
+		String condStr1 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) > 0.0";
+		SDFObjectRelationalExpression cond1Expr = new SDFObjectRelationalExpression("", condStr1, attrRes);
+		IPredicate cond1 = new ObjectRelationalPredicate(cond1Expr);
+		String solStr1 = "(10000 - streamCarsBroker.scan:cars:car:posx) / ((cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001))";
+		SDFObjectRelationalExpression sol1 = new SDFObjectRelationalExpression("", solStr1, attrRes);
+		
+		String condStr2 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) < 0.0";
+		SDFObjectRelationalExpression cond2Expr = new SDFObjectRelationalExpression("", condStr2, attrRes);
+		IPredicate cond2 = new ObjectRelationalPredicate(cond2Expr);
+		String solStr2 = solStr1;
+		SDFObjectRelationalExpression sol2 = new SDFObjectRelationalExpression("", solStr2, attrRes);
+		
+		String condStr3 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) == 0 AND streamCarsBroker.scan:cars:car:posx < 10000";
+		SDFObjectRelationalExpression cond3Expr = new SDFObjectRelationalExpression("", condStr3, attrRes);
+		IPredicate cond3 = new ObjectRelationalPredicate(cond3Expr);
+		String solStr3 = "1 < 2";
+		SDFObjectRelationalExpression sol3 = new SDFObjectRelationalExpression("", solStr3, attrRes);
+		
+		String condStr4 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) == 0 AND streamCarsBroker.scan:cars:car:posx > 10000";
+		SDFObjectRelationalExpression cond4Expr = new SDFObjectRelationalExpression("", condStr4, attrRes);
+		IPredicate cond4 = new ObjectRelationalPredicate(cond4Expr);
+		String solStr4 = "1 > 2";
+		SDFObjectRelationalExpression sol4 = new SDFObjectRelationalExpression("", solStr4, attrRes);
+		
+		initPredicate(cond1, childOp.getOutputSchema(), null);
+		initPredicate(cond2, childOp.getOutputSchema(), null);
+		initPredicate(cond3, childOp.getOutputSchema(), null);
+		initPredicate(cond4, childOp.getOutputSchema(), null);
+		
+		HashMap<IPredicate, SDFObjectRelationalExpression> solutions = new HashMap<IPredicate, SDFObjectRelationalExpression>();
+		solutions.put(cond1, sol1);
+		solutions.put(cond2, sol2);
+		solutions.put(cond3, sol3);
+		solutions.put(cond4, sol4);
+		
+		ao.setSolutions(solutions);
+		
+//		
+//		identifier = (ASTIdentifier) node.jjtGetChild(2);
+//		ao.setTrackedObjectX(identifier.getName());
+//		
+//		identifier = (ASTIdentifier) node.jjtGetChild(3);
+//		ao.setTrackedObjectY(identifier.getName());
+//		
+//		// get threshold
+//		ASTNumber number = (ASTNumber) node.jjtGetChild(4);
+//		Double threshold = 0.0;
+//		try {
+//			threshold = new Double(number.getValue());
+//		} catch (Exception e) {
+//		}
+//		// set threshold
+//		ao.setDistanceThresholdXLeft(threshold);
+//		
+//		number = (ASTNumber) node.jjtGetChild(5);
+//		threshold = 0.0;
+//		try {
+//			threshold = new Double(number.getValue());
+//		} catch (Exception e) {
+//		}
+//		// set threshold
+//		ao.setDistanceThresholdXRight(threshold);
+//		
+//		number = (ASTNumber) node.jjtGetChild(6);
+//		threshold = 0.0;
+//		try {
+//			threshold = new Double(number.getValue());
+//		} catch (Exception e) {
+//		}
+//		// set threshold
+//		ao.setDistanceThresholdYLeft(threshold);
+//		
+//		number = (ASTNumber) node.jjtGetChild(7);
+//		threshold = 0.0;
+//		try {
+//			threshold = new Double(number.getValue());
+//		} catch (Exception e) {
+//		}
+//		// set threshold
+//		ao.setDistanceThresholdYRight(threshold);
 
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));

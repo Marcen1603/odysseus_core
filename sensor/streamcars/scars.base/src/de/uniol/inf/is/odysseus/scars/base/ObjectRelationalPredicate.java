@@ -86,7 +86,10 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 			else{
 				boolean found = findAttribute(a.getSubattributes(), attr, path);
 				if(!found){
-					path.remove((Integer)i);
+					path.remove(path.size() - 1); // remove the last entry, because it is wrong
+				}
+				else{
+					return true;
 				}
 			}
 			// FIXME: Diese Methode muss rekursiv funktionieren.

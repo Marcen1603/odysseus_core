@@ -19,7 +19,9 @@ options {
 
 PARSER_BEGIN(ProceduralExpressionParser)
 package de.uniol.inf.is.odysseus.pqlhack.parser;
+
 @SuppressWarnings("all")
+
 public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExpressionParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected static JJTProceduralExpressionParserState jjtree = new JJTProceduralExpressionParserState();
 
@@ -91,6 +93,7 @@ TOKEN : /* Keywords */ {
 |   <K_JDVE_SINK: "JDVE-SINK">
 | 	<K_SCARS_XML_PROFILER: "SCARS-XML-PROFILER">
 |   <K_DISTANCE_OBJECT_SELECTOR: "DISTANCE-OBJECT-SELECTOR">
+| 	<K_DISTANCE_OBJECT_SELECTOR_ANDRE: "DISTANCE-OBJECT-SELECTOR-ANDRE" >
 }
 
 TOKEN:{
@@ -242,7 +245,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	TmpDataBouncerOp() |
 	JDVESinkOp() |
 	ScarsXMLProfilerOp() |
-	DistanceObjectSelectorOp()/*@bgen(jjtree)*/
+	DistanceObjectSelectorOp()|
+	DistanceObjectSelectorOp_Andre()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1997,3 +2001,32 @@ void DistanceObjectSelectorOp(): {/*@bgen(jjtree) DistanceObjectSelectorOp */
   }
 /*@egen*/
 }
+
+void DistanceObjectSelectorOp_Andre():{/*@bgen(jjtree) DistanceObjectSelectorOp_Andre */
+  ASTDistanceObjectSelectorOp_Andre jjtn000 = new ASTDistanceObjectSelectorOp_Andre(JJTDISTANCEOBJECTSELECTOROP_ANDRE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DistanceObjectSelectorOp_Andre */
+  try {
+/*@egen*/
+  < K_DISTANCE_OBJECT_SELECTOR_ANDRE > "(" AlgebraOp() "," Identifier() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}

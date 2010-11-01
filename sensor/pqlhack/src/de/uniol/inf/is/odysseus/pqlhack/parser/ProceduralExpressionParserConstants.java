@@ -119,27 +119,29 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_DISTANCE_OBJECT_SELECTOR = 58;
   /** RegularExpression Id. */
-  int IDENTIFIER = 59;
+  int K_DISTANCE_OBJECT_SELECTOR_ANDRE = 59;
   /** RegularExpression Id. */
-  int LETTER = 60;
+  int IDENTIFIER = 60;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 61;
+  int LETTER = 61;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 62;
+  int SPECIAL_CHARS = 62;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 63;
+  int CHAR_LITERAL = 63;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 64;
+  int QUOTED_IDENTIFIER = 64;
   /** RegularExpression Id. */
-  int REGEXP = 65;
+  int COMPARE_OPERATOR = 65;
   /** RegularExpression Id. */
-  int FLOAT = 66;
+  int REGEXP = 66;
   /** RegularExpression Id. */
-  int INTEGER = 67;
+  int FLOAT = 67;
   /** RegularExpression Id. */
-  int DIGIT = 68;
+  int INTEGER = 68;
   /** RegularExpression Id. */
-  int IPADDRESS = 69;
+  int DIGIT = 69;
+  /** RegularExpression Id. */
+  int IPADDRESS = 70;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -205,6 +207,7 @@ public interface ProceduralExpressionParserConstants {
     "\"JDVE-SINK\"",
     "\"SCARS-XML-PROFILER\"",
     "\"DISTANCE-OBJECT-SELECTOR\"",
+    "\"DISTANCE-OBJECT-SELECTOR-ANDRE\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

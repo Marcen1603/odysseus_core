@@ -62,6 +62,7 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTJDVESINKOP = 56;
   public int JJTSCARSXMLPROFILEROP = 57;
   public int JJTDISTANCEOBJECTSELECTOROP = 58;
+  public int JJTDISTANCEOBJECTSELECTOROP_ANDRE = 59;
 
 
   public String[] jjtNodeName = {
@@ -124,6 +125,7 @@ public interface ProceduralExpressionParserTreeConstants
     "JDVESinkOp",
     "ScarsXMLProfilerOp",
     "DistanceObjectSelectorOp",
+    "DistanceObjectSelectorOp_Andre",
   };
 }
-/* JavaCC - OriginalChecksum=d0db441b30457d82cee6d0a5f46f4860 (do not edit this line) */
+/* JavaCC - OriginalChecksum=6e17652cbacf36d447d7e7ff146a91f2 (do not edit this line) */

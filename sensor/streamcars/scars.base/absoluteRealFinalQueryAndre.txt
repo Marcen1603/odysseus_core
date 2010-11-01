@@ -1,0 +1,231 @@
+#DEFINE bufferType      Punct
+
+
+#DEFINE brokerSourceName1   streamCarsBroker // QuellenName
+#DEFINE brokerScan1         streamCarsBroker.scan
+#DEFINE brokerListName1     streamCarsBroker.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+
+#DEFINE brokerSourceName2   streamCarsBroker2 // QuellenName
+#DEFINE brokerScan2         streamCarsBroker2.scan
+#DEFINE brokerListName2     streamCarsBroker2.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+
+#DEFINE sensorSource    ACCESS(radarSensor) // Quellenoperator(!) des Sensors
+#DEFINE sensorScan      radarSensor.scan // Attributname der Liste der Autos in der Sensorquelle
+#DEFINE sensorListName  radarSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
+
+#DEFINE assoScanned     radarSensor.scan:scannedObjects
+#DEFINE assoPedicted    radarSensor.scan:predictedObjects
+#DEFINE assoSourceName1 selectionSrc
+#DEFINE assoSource1     ASSOCIATION-SRC(selectionSrc, 0)
+#DEFINE assoSourceName2 selectionSrc2
+#DEFINE assoSource2     ASSOCIATION-SRC(selectionSrc2, 0)
+#DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
+#DEFINE assoParam1      threshold := 5; operator := LESSEQUAL;
+#DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
+#DEFINE assoParam2      distanceFunction := EUCLIDEAN; gatingMode := true;
+
+#DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
+
+#DEFINE bouncerVal      7.1
+#DEFINE tempEvaluationVal 7.3
+#DEFINE evaluationVal   7.1
+
+#PARSER PQLHack
+#TRANSCFG StreamCars
+#CYCLICQUERY
+LOGICAL PLAN :
+ASSOCIATION-SEL(
+    ASSOCIATION-EVAL (
+        ASSOCIATION-EVAL (
+            ASSOCIATION-GEN (     
+                 BUFFER( 
+                    ${sensorSource},
+                    ${bufferType} 
+                 ),
+                 PREDICTION(
+                    BUFFER( 
+                        ${sensorSource}, // Timestamp aus Sensor
+                        ${bufferType} 
+                    ),
+                    SET-PREDICTION-OR(
+                        BUFFER(
+                            BROKER(${brokerSourceName1}, // Brokerdaten 
+                                    QUEUE( // Zeitgeber für den Broker
+                                        BUFFER(
+                                           ${sensorSource},
+                                           ${bufferType} 
+                                        )
+                                    )
+                            ),
+                            ${bufferType} 
+                        ),
+                        ${brokerListName1},
+                        ${brokerListName1}:car:posx := ${brokerListName1}:car:posx +
+                            (cos(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan1}:timestamp)) * 0.001 ;
+                        ${brokerListName1}:car:posy := ${brokerListName1}:car:posy +
+                            (sin(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan1}:timestamp)) * 0.001 ;
+                        ${brokerListName1}:car:posz := ${brokerListName1}:car:posz ;
+                        WHERE ${brokerListName1}:car:id >= 0 ;                        
+                    ),
+                    ${brokerListName1}
+                 ),
+                 ${sensorListName},
+                 ${brokerListName1}
+            ),
+            ${assoAlgo1},
+            ${assoParam1},
+            ${assoScanned},
+            ${assoPedicted}
+        ),
+        ${assoAlgo2},
+        ${assoParam2},
+        ${assoScanned},
+        ${assoPedicted}
+    ),
+    ${assoSourceName1},
+    ${assoScanned},
+    ${assoPedicted}
+);
+
+BROKER( 
+    ${brokerSourceName1}, 
+    EVALUATE(
+        ASSOCIATION-SRC(
+            ${assoSourceName1},
+            2
+        ),
+        ${assoPedicted},
+        FILTER-ESTIMATE(
+            FILTER-COVARIANCE(
+                FILTER-GAIN(
+                    ASSOCIATION-SRC(
+                        ${assoSourceName1},
+                        1
+                    ),
+                    ${filterAlgo}
+                ),
+                ${filterAlgo}
+            ),
+            ${assoScanned},
+            ${assoPedicted},
+            ${filterAlgo}
+        ),
+        ${assoPedicted},
+        TMP-DATA-BOUNCER(
+            BUFFER(
+                BROKER( ${brokerSourceName2}),
+                ${bufferType}
+            ),
+            ${brokerListName2},
+            ${bouncerVal},
+            LESS
+        ),
+        ${brokerListName2},
+        ${evaluationVal}
+    )
+);
+
+ASSOCIATION-SEL(
+    ASSOCIATION-EVAL (
+        ASSOCIATION-EVAL (
+            ASSOCIATION-GEN (
+                BUFFER(
+                    ${assoSource1},
+                    ${bufferType}
+                ),
+                PREDICTION(
+                    BUFFER(
+                        ${assoSource1}, // Timestamp aus Sensor
+                        ${bufferType}
+                    ),
+                    SET-PREDICTION-OR(
+                        TMP-DATA-BOUNCER(
+                            BUFFER(
+                                BROKER(${brokerSourceName2}, // Brokerdaten 
+                                        QUEUE( // Zeitgeber für den Broker
+                                               ${assoSource1}
+                                        )
+                                ),
+                                ${bufferType} 
+                            ),
+                            ${brokerListName2},
+                            ${bouncerVal},
+                            GREATEREQUAL
+                        ),
+                        ${brokerListName2},
+                        ${brokerListName2}:car:posx := ${brokerListName2}:car:posx +
+                            (cos(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
+                        ${brokerListName2}:car:posy := ${brokerListName2}:car:posy +
+                            (sin(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
+                        ${brokerListName2}:car:posz := ${brokerListName2}:car:posz ;
+                        WHERE ${brokerListName2}:car:id >= 0 ; 
+                    ),
+                    ${brokerListName2}
+                ),
+                ${assoScanned},
+                ${brokerListName2}
+            ),
+            ${assoAlgo1},
+            ${assoParam1},
+            ${assoScanned},
+            ${assoPedicted}
+        ),
+        ${assoAlgo2},
+        ${assoParam2},
+        ${assoScanned},
+        ${assoPedicted}
+    ),
+    ${assoSourceName2},
+    ${assoScanned},
+    ${assoPedicted}
+);
+
+BROKER( 
+    ${brokerSourceName2}, 
+    EVALUATE(
+        ASSOCIATION-SRC(
+            ${assoSourceName2},
+            2
+        ),
+        ${assoPedicted},
+        FILTER-ESTIMATE(
+            FILTER-COVARIANCE(
+                FILTER-GAIN(
+                    ASSOCIATION-SRC(
+                        ${assoSourceName2},
+                        1
+                    ),
+                    ${filterAlgo}
+                ),
+                ${filterAlgo}
+            ),
+            ${assoScanned},
+            ${assoPedicted},
+            ${filterAlgo}
+        ),
+        ${assoPedicted},
+        ASSOCIATION-SRC(
+            ${assoSourceName2},
+            0
+        ),
+        ${assoScanned},
+        ${tempEvaluationVal}
+    )
+);
+
+JDVE-SINK(
+    TESTOP(
+        DISTANCE-OBJECT-SELECTOR-Andre(
+            BROKER(${brokerSourceName1}),
+            ${brokerListName1}
+        ),
+        Bla
+    ),
+    192.168.0.42,
+    5005,
+    udp
+);
