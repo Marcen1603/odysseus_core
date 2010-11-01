@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+
 public class AccessControl {
 
 	static private AccessControl instance = null;
@@ -24,8 +26,34 @@ public class AccessControl {
 	 */
 	public static boolean hasPermission(IUserAction operation, String object,
 			User user) {
+		// TODO Session Zeitstempel + aktuallisieren
 		if (user != null && operation != null) {
 			return hasOperationOnObject(operation, object, user);
+		}
+		return false;
+	}
+
+	/**
+	 * returns true if username equals creator of the given objecturi
+	 * 
+	 * @param username
+	 * @param objecturi
+	 * @return
+	 */
+	public static boolean isCreatorOfObject(String username, String objecturi) {
+		try {
+			String user = DataDictionary.getInstance().getUserForEntity(
+					objecturi);
+			if (user.isEmpty()) {
+				user = DataDictionary.getInstance().getUserForSource(objecturi);
+			}
+			if (!user.isEmpty()) {
+				if (user.equals(username)) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			new RuntimeException(e);
 		}
 		return false;
 	}

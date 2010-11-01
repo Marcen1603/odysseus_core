@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -227,23 +228,29 @@ abstract class AbstractUserManagement {
 	 * @throws StoreException
 	 */
 	public void grantPermission(User caller, String entityname,
-			List<IUserAction> operations, String objecturi)
+			IUserAction operation, String objecturi)
 			throws HasNoPermissionException, StoreException {
-		// TODO auf object owner prüfen ?
 		if (((AccessControl.hasPermission(UserManagementAction.GRANT,
 				"UserManagement", caller)
-		// caller hat object
-		&& caller.hasObject(objecturi) != null)
+		// caller has object
+				&& caller.hasObject(objecturi) != null
+				// is creator of Object || (obj is UM || DD)
+				&& ((objecturi.equals("UserManagement") || objecturi
+						.equals("DataDictionary")) || AccessControl
+						.isCreatorOfObject(caller.getUsername(), objecturi))
+		// caller has permission he want to grant
+		&& AccessControl.hasPermission(operation, objecturi, caller))
 		// hat user superPermission von permission
 		|| hasSuperOperation(UserManagementAction.GRANT, "UserManagement",
 				caller))) {
+
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) == null) {
 				entity.addPrivilege(createPrivilege(objecturi, entity,
-						operations, caller));
+						operation, caller));
 			} else {
-				entity.hasObject(objecturi).addOperations(operations);
+				entity.hasObject(objecturi).addOperation(operation);
 			}
 			if (entity instanceof User) {
 				fireUserManagementListener();
@@ -256,28 +263,29 @@ abstract class AbstractUserManagement {
 		}
 	}
 
-	public void revokePermission(User caller, String name,
-			List<IUserAction> operations, String objecturi)
+	public void revokePermission(User caller, String entityname,
+			IUserAction operation, String objecturi)
 			throws HasNoPermissionException {
-		// TODO auf object owner prüfen ?
-		// TODO remove obj, hiermit -> siehe revokePermissionForObject
-		if (!caller.toString().equals(name)
+		if (!caller.toString().equals(entityname)
 				&& ((AccessControl.hasPermission(UserManagementAction.GRANT,
 						"UserManagement", caller)
 				// caller hat object
-				&& caller.hasObject(objecturi) != null)
+						&& caller.hasObject(objecturi) != null
+				// user is owner of object
+				&& AccessControl.isCreatorOfObject(caller.getUsername(),
+						objecturi))
 				// hat user superPermission von permission
 				|| hasSuperOperation(UserManagementAction.GRANT,
 						"UserManagement", caller))) {
-			AbstractUserManagementEntity entity = getEntity(name);
+			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) != null) {
-				entity.hasObject(objecturi).removeOperations(operations);
+				entity.hasObject(objecturi).removeOperation(operation);
 				// wenn Priv leer dann loeschen
 				if (entity.hasObject(objecturi).isEmpty()) {
 					entity.removePrivilege(objecturi);
 					try {
-						this.privStore.remove(name + "::" + objecturi);
+						this.privStore.remove(entityname + "::" + objecturi);
 					} catch (StoreException e) {
 						new RuntimeException(e);
 					}
@@ -315,21 +323,21 @@ abstract class AbstractUserManagement {
 	 * privilege)
 	 * 
 	 * @param caller
-	 * @param name
+	 * @param entityname
 	 * @param priv
 	 * @throws HasNoPermissionException
 	 */
-	public void revokePrivilegeForObject(User caller, String name,
+	public void revokePrivilegeForObject(User caller, String entityname,
 			String objecturi) throws HasNoPermissionException {
 		// TODO siehe revokePermission
 		// geht nicht mit revokePermissions, da man nicht weiß, welche
 		// permissions enthalten sind
-		if (!caller.toString().equals(name)
+		if (!caller.toString().equals(entityname)
 				&& ((AccessControl.hasPermission(UserManagementAction.REVOKE,
 						"UserManagement", caller) && caller
 						.hasObject(objecturi) != null) || hasSuperOperation(
 						UserManagementAction.REVOKE, objecturi, caller))) {
-			AbstractUserManagementEntity entity = getEntity(name);
+			AbstractUserManagementEntity entity = getEntity(entityname);
 			entity.removePrivilege(objecturi);
 			if (entity instanceof User) {
 				// TODO remove role with permission on particular object ?
@@ -367,22 +375,32 @@ abstract class AbstractUserManagement {
 				caller))) {
 			User user = this.userStore.getUserByName(username);
 			Role role = this.roleStore.get(rolename);
-			if (user.hasRole(rolename) == null && role != null) {
-				try {
-					System.out.println(role.getRolename());
-					user.addRole(role);
-					fireUserManagementListener();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+			if (user.hasRole(rolename) == null) {
+				if (role != null) {
+					try {
+						System.out.println(role.getRolename());
+						user.addRole(role);
+						fireUserManagementListener();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
 				}
 			}
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to grant roles");
+					+ " has no permission to grant this role");
 		}
 	}
 
-	// TODO create hasSuperAction methode
+	/**
+	 * returns true if the given user has higher permission as the given
+	 * operation
+	 * 
+	 * @param operation
+	 * @param object
+	 * @param user
+	 * @return boolean
+	 */
 	private boolean hasSuperOperation(UserManagementAction operation,
 			String object, User user) {
 		return AccessControl.hasPermission(
@@ -399,8 +417,8 @@ abstract class AbstractUserManagement {
 	 */
 	public void revokeRole(User caller, String rolename, String username)
 			throws HasNoPermissionException {
-		if (AccessControl.hasPermission(UserManagementAction.REVOKE,
-				"UserManagement", caller)
+		if ((AccessControl.hasPermission(UserManagementAction.REVOKE,
+				"UserManagement", caller) && caller.hasRole(rolename) != null)
 				|| hasSuperOperation(UserManagementAction.REVOKE,
 						"UserManagement", caller)
 				// caller kann sich nicht selbst entfernen
@@ -412,7 +430,7 @@ abstract class AbstractUserManagement {
 			}
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to revoke roles");
+					+ " has no permission to revoke this role");
 		}
 	}
 
@@ -456,8 +474,7 @@ abstract class AbstractUserManagement {
 				this.privStore.remove(priv.getPrivname());
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new RuntimeException(e);
 		}
 	}
 
@@ -543,9 +560,18 @@ abstract class AbstractUserManagement {
 		return null;
 	}
 
+	public Privilege createPrivilege(String objecturi,
+			AbstractUserManagementEntity owner, IUserAction operation,
+			User caller) throws HasNoPermissionException, StoreException {
+		List<IUserAction> operations = new ArrayList<IUserAction>();
+		operations.add(operation);
+		return createPrivilege(objecturi, owner, operations, caller);
+	}
+
 	private List<IUserManagementListener> listeners = new CopyOnWriteArrayList<IUserManagementListener>();
 
 	public void addTenantManagementListener(IUserManagementListener l) {
+		// TODO weg
 		// throws HasNoPermissionException {
 		// if (AccessControl.hasPermission(UserManagementActions.ADD_LISTENER,
 		// null, caller)) {
@@ -558,6 +584,7 @@ abstract class AbstractUserManagement {
 
 	public void removeTenantManagementListener(User caller,
 			IUserManagementListener l) throws HasNoPermissionException {
+		// TODO weg
 		// if
 		// (AccessControl.hasPermission(UserManagementActions.REMOVE_LISTENER,
 		// null, caller)) {
@@ -581,6 +608,7 @@ abstract class AbstractUserManagement {
 	}
 
 	public boolean isLoggedIn(String username) {
+		// TODO weg ?
 		// throws HasNoPermissionException {
 		// if (AccessControl.hasPermission(UserManagementActions.IS_LOGGEDIN,
 		// null, caller)) {
