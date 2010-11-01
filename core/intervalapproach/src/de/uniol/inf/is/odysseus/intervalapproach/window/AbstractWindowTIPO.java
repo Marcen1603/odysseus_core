@@ -2,29 +2,36 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IWindow;
 
+
 public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractPipe<T, T> implements IWindow {
 	protected final long windowSize;
 	protected final long windowAdvance;
-	protected final WindowAO windowAO;
+	protected final WindowType windowType;
+	protected final boolean partitioned;
 	
 	public AbstractWindowTIPO(WindowAO ao) {
 		this.windowSize = ao.getWindowSize();
 		this.windowAdvance = ao.getWindowAdvance();
-		this.windowAO = ao;
+		//this.windowAO = ao;
+		this.windowType = ao.getWindowType();
+		this.partitioned = ao.isPartitioned();
 		setName(getName()+" s="+windowSize+" a="+windowAdvance);
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
 		this.windowSize = window.windowSize;
 		this.windowAdvance = window.windowAdvance;
-		this.windowAO = window.windowAO.clone();
+		//this.windowAO = window.windowAO.clone();
+		this.windowType = window.windowType;
+		this.partitioned = window.partitioned;
 	}
 
 	@Override
@@ -36,24 +43,24 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 		return windowAdvance;
 	}
 	
-	public WindowAO getWindowAO() {
-		return windowAO;
-	}
+//	public WindowAO getWindowAO() {
+//		return windowAO;
+//	}
 	
 	@Override
-	public WindowType getWindowType() {
-		switch (this.windowAO.getWindowType()) {
+	public WindowContentType getWindowContentType() {
+		switch (windowType) {
 		case PERIODIC_TIME_WINDOW:
 		case SLIDING_TIME_WINDOW:
 		case JUMPING_TIME_WINDOW:
 		case FIXED_TIME_WINDOW:
-			return WindowType.TIME_BASED;
+			return WindowContentType.TIME_BASED;
 		case PERIODIC_TUPLE_WINDOW:
 		case SLIDING_TUPLE_WINDOW:
 		case JUMPING_TUPLE_WINDOW:
-			return WindowType.ELEMENT_BASED;
+			return WindowContentType.ELEMENT_BASED;
 		default:
-			return WindowType.OTHER;
+			return WindowContentType.OTHER;
 		}
 	}
 	
@@ -68,10 +75,14 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 			return false;
 		}
 		AbstractWindowTIPO awtipo = (AbstractWindowTIPO) ipo;
-		if(this.getSubscribedToSource().equals(awtipo.getSubscribedToSource()) &&
-				this.windowAO.equals(awtipo.getWindowAO())) {
-			return true;
-		}
+//		if(this.getSubscribedToSource().equals(awtipo.getSubscribedToSource()) &&
+//				this.windowAO.equals(awtipo.getWindowAO())) {
+//			return true;
+//		}
 		return false;
+	}
+	
+	public boolean isPartitioned() {
+		return partitioned;
 	}
 }

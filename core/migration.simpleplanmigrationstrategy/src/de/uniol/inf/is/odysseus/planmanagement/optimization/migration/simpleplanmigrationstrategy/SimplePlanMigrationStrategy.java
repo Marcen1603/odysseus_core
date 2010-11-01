@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.UnionPO;
 import de.uniol.inf.is.odysseus.planmanagement.IWindow;
-import de.uniol.inf.is.odysseus.planmanagement.IWindow.WindowType;
+import de.uniol.inf.is.odysseus.planmanagement.IWindow.WindowContentType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -106,7 +106,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// get longest window
 		IWindow wMax = MigrationHelper.getLongestWindow(lastOperatorNewPlan);
-		if (wMax != null && wMax.getWindowType() != WindowType.TIME_BASED) {
+		if (wMax != null && wMax.getWindowContentType() != WindowContentType.TIME_BASED) {
 			throw new QueryOptimizationException(
 					"Only time based windows are supported.");
 		}
@@ -242,7 +242,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			this.logger
 					.debug("No windows, can finish parallel execution instantly.");
 			finishedParallelExecution(context);
-		} else if (wMax.getWindowType() == WindowType.TIME_BASED) {
+		} else if (wMax.getWindowContentType() == WindowContentType.TIME_BASED) {
 			new Thread(new ParallelExecutionWaiter(this, context)).start();
 			this.logger.debug("ParallelExecutionWaiter started with "
 					+ wMax.getWindowSize() + "ms waiting period.");

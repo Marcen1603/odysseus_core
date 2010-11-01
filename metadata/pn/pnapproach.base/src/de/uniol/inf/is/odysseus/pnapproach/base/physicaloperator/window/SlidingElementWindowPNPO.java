@@ -61,8 +61,8 @@ public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>
 	}
 	
 	@Override
-	public WindowType getWindowType() {
-		return WindowType.ELEMENT_BASED;
+	public WindowContentType getWindowContentType() {
+		return WindowContentType.ELEMENT_BASED;
 	}
 
 	@Override

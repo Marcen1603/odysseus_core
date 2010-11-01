@@ -22,40 +22,40 @@ public class RelationalSlidingElementWindowTIPO extends
 	int maxId = 0;
 	private Map<Integer, List<RelationalTuple<ITimeInterval>>> buffers = null;
 	private DefaultTISweepArea<RelationalTuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<RelationalTuple<ITimeInterval>>();
-
-	public RelationalSlidingElementWindowTIPO(
-			SlidingElementWindowTIPO<RelationalTuple<ITimeInterval>> po) {
-		super(po);
-		init();
-	}
+//
+//	public RelationalSlidingElementWindowTIPO(
+//			RelationalSlidingElementWindowTIPO po) {
+//		super(po);
+//		
+//		init();
+//	}
 
 	public RelationalSlidingElementWindowTIPO(WindowAO ao) {
 		super(ao);
-		init();
+		init(ao);
 	}
 
 	@Override
 	public void process_open() {
-		init();
+		keyMap = new HashMap<RelationalTuple<ITimeInterval>, Integer>();
+		buffers = new HashMap<Integer, List<RelationalTuple<ITimeInterval>>>();
 	}
 
-	private void init() {
-		List<SDFAttribute> grAttribs = windowAO.getPartitionBy();
+	private void init(WindowAO ao) {
+		List<SDFAttribute> grAttribs = ao.getPartitionBy();
 		if (grAttribs != null && grAttribs.size() > 0) {
 			gRestrict = new int[grAttribs.size()];
 			for (int i = 0; i < grAttribs.size(); i++) {
-				gRestrict[i] = windowAO.getInputSchema().indexOf(
+				gRestrict[i] = ao.getInputSchema().indexOf(
 						grAttribs.get(i));
 			}
 		}
-		keyMap = new HashMap<RelationalTuple<ITimeInterval>, Integer>();
-		buffers = new HashMap<Integer, List<RelationalTuple<ITimeInterval>>>();
 	}
 
 	@Override
 	protected synchronized void process_next(
 			RelationalTuple<ITimeInterval> object, int port) {
-		if (windowAO.isPartitioned()) {
+		if (isPartitioned()) {
 			int bufferId = getGroupID(object);
 			List<RelationalTuple<ITimeInterval>> buffer = buffers.get(bufferId);
 			if (buffer == null) {

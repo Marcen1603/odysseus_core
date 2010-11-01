@@ -117,8 +117,8 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 	protected abstract PointInTime calcWindowEnd(PointInTime startTimestamp);
 
 	@Override
-	public WindowType getWindowType() {
-		return WindowType.TIME_BASED;
+	public WindowContentType getWindowContentType() {
+		return WindowContentType.TIME_BASED;
 	}
 
 }

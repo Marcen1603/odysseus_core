@@ -7,11 +7,11 @@ package de.uniol.inf.is.odysseus.planmanagement;
  *
  */
 public interface IWindow {
-	public enum WindowType {
+	public enum WindowContentType {
 		ELEMENT_BASED,
 		TIME_BASED,
 		OTHER
 	};
 	public long getWindowSize();
-	public WindowType getWindowType();
+	public WindowContentType getWindowContentType();
 }
