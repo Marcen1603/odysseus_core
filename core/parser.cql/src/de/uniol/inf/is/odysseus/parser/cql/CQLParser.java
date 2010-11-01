@@ -38,7 +38,10 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.store.StoreException;
+import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
+import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
 import de.uniol.inf.is.odysseus.usermanagement.IllegalServiceLevelDefinition;
 import de.uniol.inf.is.odysseus.usermanagement.PercentileConstraintOverlapException;
 import de.uniol.inf.is.odysseus.usermanagement.PercentileContraint;
@@ -47,6 +50,7 @@ import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.TenantNotFoundException;
 import de.uniol.inf.is.odysseus.usermanagement.TooManyUsersException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.UserActionFactory;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
@@ -842,7 +846,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTDropStreamStatement node, Object data) {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		// TODO: Darf der Nutzer das
 		DataDictionary.getInstance().removeView(streamname, caller);
 		return null;
 	}
@@ -850,7 +853,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTDropViewStatement node, Object data) {
 		String viewname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		// TODO: Darf der Nutzer das
 		DataDictionary.getInstance().removeView(viewname, caller);
 		return null;
 	}
@@ -1007,8 +1009,99 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			UserManagement.getInstance().deleteUser(caller, userName);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} 
-		return null;	
+		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCreateRoleStatement node, Object data) {
+		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		try {
+			UserManagement.getInstance().createRole(rolename, caller);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDropRoleStatement node, Object data) {
+		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		try {
+			UserManagement.getInstance().deleteRole(rolename, caller);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTGrantStatement node, Object data) {
+		List<String> rights = (List<String>) node.jjtGetChild(0).jjtAccept(
+				this, data);
+		// Validate if rights are User Actions
+		List<IUserAction> operations = new ArrayList<IUserAction>();
+		for (String r : rights) {
+			IUserAction action = UserActionFactory.valueOf(r);
+			if (action != null){
+				operations.add(action);
+			}else{
+				throw new RuntimeException("Right "+r+" not defined.");
+			}
+		}
+
+		List<String> objects = null;
+		String user = null;
+		if (node.jjtGetNumChildren() == 3) {
+			objects = (List<String>) node.jjtGetChild(1).jjtAccept(this, data);
+			user = ((ASTIdentifier) node.jjtGetChild(2)).getName();	
+		} else {
+			user = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		}
+		for (IUserAction action: operations){
+
+			if (UserActionFactory.needsNoObject(action)){
+				String object = UserActionFactory.getAliasObject(action);
+				try {
+					UserManagement.getInstance().grantPermission(caller, user,
+							action, object);
+				} catch (HasNoPermissionException e) {
+					throw new RuntimeException(e);
+				} catch (StoreException e) {
+					throw new RuntimeException(e);
+				}		
+			}else{
+					
+				for (String entityname : objects) {
+					try {
+						UserManagement.getInstance().grantPermission(caller, user,
+								action, entityname);
+					} catch (HasNoPermissionException e) {
+						throw new RuntimeException(e);
+					} catch (StoreException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+			
+		}
+
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTRevokeStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTIdentifierList node, Object data) {
+		List<String> identifier = new ArrayList<String>();
+		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+			identifier.add(((ASTIdentifier) node.jjtGetChild(i)).getName());
+		}
+		return identifier;
 	}
 
 }

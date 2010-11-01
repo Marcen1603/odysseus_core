@@ -113,5 +113,10 @@ public interface NewSQLParserVisitor
   public Object visit(ASTRemoveUserFromTenantStatement node, Object data);
   public Object visit(ASTDropStreamStatement node, Object data);
   public Object visit(ASTDropViewStatement node, Object data);
+  public Object visit(ASTCreateRoleStatement node, Object data);
+  public Object visit(ASTDropRoleStatement node, Object data);
+  public Object visit(ASTGrantStatement node, Object data);
+  public Object visit(ASTIdentifierList node, Object data);
+  public Object visit(ASTRevokeStatement node, Object data);
 }
-/* JavaCC - OriginalChecksum=3002ce9b7359bcada8140d8a029e0930 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e393d2d78e05e81f64b9842f94254146 (do not edit this line) */

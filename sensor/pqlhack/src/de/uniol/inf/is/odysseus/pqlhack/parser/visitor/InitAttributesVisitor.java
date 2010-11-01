@@ -27,21 +27,21 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	private Map<SDFSource, AccessAO> sources;
 	private Map<SDFSource, BrokerAO> brokers;
 	private AttributeResolver attributeResolver;
-	private User user;
+	private User caller;
 	
 	public InitAttributesVisitor(User user){
 		super();
 		this.attributeResolver = new AttributeResolver();
 		this.sources = new HashMap<SDFSource, AccessAO>();
 		this.brokers = new HashMap<SDFSource, BrokerAO>();
-		this.user = user;
+		this.caller = user;
 	}
 	
 	@Override
 	public Object visit(ASTAccessOp node, Object data){
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
-		SDFSource source = DataDictionary.getInstance().getSource(sourceString);
+		SDFSource source = DataDictionary.getInstance().getSource(sourceString, caller);
 		relationalStreamingSource(node, source, sourceString);
 
 		return null;
@@ -55,7 +55,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		AccessAO access = this.sources.get(source);
 		if (access == null) {
 			
-			access = (AccessAO)DataDictionary.getInstance().getView(sourceName, user);
+			access = (AccessAO)DataDictionary.getInstance().getView(sourceName, caller);
 //			access = new AccessAO();
 //			access.setSource(new SDFSource(sourceName,""));
 //			access.setOutputSchema(DataDictionary.getInstance().getViewOutputSchema(sourceName));
@@ -94,7 +94,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	public Object visit(ASTBrokerOp node, Object data){
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();		
-		SDFSource source = DataDictionary.getInstance().getSource(sourceString);
+		SDFSource source = DataDictionary.getInstance().getSource(sourceString, caller);
 		brokerStreamingSource(node, source, sourceString);
 
 		return node.childrenAccept(this, data);

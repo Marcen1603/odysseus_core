@@ -40,10 +40,10 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  */
 public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
-	private User user;
+	private User caller;
 
 	public CreateStreamVisitor(User user) {
-		this.user = user;
+		this.caller = user;
 	}
 
 	public String getName() {
@@ -80,8 +80,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data);
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().addSourceType(name, "RelationalStreaming", user);
-		DataDictionary.getInstance().addEntity(name, entity, user);
+		DataDictionary.getInstance().addSourceType(name, "RelationalStreaming", caller);
+		DataDictionary.getInstance().addEntity(name, entity, caller);
 
 		for (int i = 2; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
@@ -93,9 +93,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTTimedTuples node, Object data) {
-		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary.getInstance().getSource(name), node.getTuples(attributes));
+		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary.getInstance().getSource(name, caller), node.getTuples(attributes));
 		newPO.setOutputSchema(attributes);
-		DataDictionary.getInstance().setView(name, newPO, user);
+		DataDictionary.getInstance().setView(name, newPO, caller);
 		return null;
 	}
 
@@ -118,7 +118,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		operator = addTimestampAO(operator);
 
-		DataDictionary.getInstance().setView(name, operator, user);
+		DataDictionary.getInstance().setView(name, operator, caller);
 		return null;
 	}
 
@@ -191,7 +191,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
-		DataDictionary.getInstance().setView(name, op, user);
+		DataDictionary.getInstance().setView(name, op, caller);
 		return data;
 	}
 
@@ -208,7 +208,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		AccessAO source = new AccessAO(new SDFSource(name, "RelationalByteBufferAccessPO"));
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
-		DataDictionary.getInstance().setView(name, op, user);
+		DataDictionary.getInstance().setView(name, op, caller);
 		return data;
 	}
 
@@ -222,7 +222,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			e.printStackTrace();
 		}
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
-		v.setUser(user);
+		v.setUser(caller);
 		return v.visit(node, data, this);
 	}
 
@@ -232,7 +232,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", User.class);
-			m.invoke(v, user);
+			m.invoke(v, caller);
 			m = visitor.getDeclaredMethod("setName", String.class);
 			m.invoke(v, name);
 			m = visitor.getDeclaredMethod("visit", ASTCreateFromDatabase.class, Object.class);

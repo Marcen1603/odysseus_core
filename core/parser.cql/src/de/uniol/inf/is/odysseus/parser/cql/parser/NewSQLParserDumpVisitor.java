@@ -609,4 +609,29 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTCreateRoleStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTDropRoleStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTGrantStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTRevokeStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTIdentifierList node, Object data) {
+		return pvisit(node);
+	}
+
 }

@@ -10,6 +10,7 @@ import org.eclipse.ui.part.ViewPart;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 
 public class SourcesViewPart extends ViewPart implements IDataDictionaryListener {
 
@@ -51,7 +52,7 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 
 			@Override
 			public void run() {
-				getTreeViewer().setInput(getDataDictionary().getViews());
+				getTreeViewer().setInput(getDataDictionary().getViews(ActiveUser.getActiveUser()));
 			}
 			
 		});

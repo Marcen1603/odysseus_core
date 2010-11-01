@@ -45,7 +45,7 @@ abstract class AbstractUserManagement {
 			HasNoPermissionException {
 		try {
 			if (AccessControl.hasPermission(UserManagementAction.CREATE_USER,
-					"UserManagement", caller)) {
+					UserManagementAction.alias, caller)) {
 				registerUserInt(username, password);
 			} else {
 				throw new HasNoPermissionException("User " + caller.toString()
@@ -84,7 +84,7 @@ abstract class AbstractUserManagement {
 			throws UsernameNotExistException, UserStoreException,
 			HasNoPermissionException {
 		if (AccessControl.hasPermission(
-				UserManagementAction.UPDATE_USER_PASSWORD, "UserManagement",
+				UserManagementAction.UPDATE_USER_PASSWORD, UserManagementAction.alias,
 				caller)
 				|| caller.toString().equals(username)) {
 			User user = this.userStore.getUserByName(username);
@@ -158,7 +158,7 @@ abstract class AbstractUserManagement {
 		// TODO StreamSQL statemant zum logout
 		if (caller.getUsername().equals(username)
 				|| AccessControl.hasPermission(UserManagementAction.LOGOUT,
-						"UserManagement", caller)) {
+						UserManagementAction.alias, caller)) {
 			User user = loggedIn.remove(username);
 			if (user != null) {
 				user.setSession(null);
@@ -207,9 +207,9 @@ abstract class AbstractUserManagement {
 	public Collection<User> getUsers(User caller)
 			throws HasNoPermissionException {
 		if (AccessControl.hasPermission(UserManagementAction.GET_ALL_USER,
-				"UserManagement", caller)
+				UserManagementAction.alias, caller)
 				|| hasSuperOperation(UserManagementAction.GET_ALL_USER,
-						"UserManagement", caller)) {
+						UserManagementAction.alias, caller)) {
 			return this.userStore.getUsers();
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
@@ -231,17 +231,17 @@ abstract class AbstractUserManagement {
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException, StoreException {
 		if (((AccessControl.hasPermission(UserManagementAction.GRANT,
-				"UserManagement", caller)
+				UserManagementAction.alias, caller)
 		// caller has object
 				&& caller.hasObject(objecturi) != null
 				// is creator of Object || (obj is UM || DD)
-				&& ((objecturi.equals("UserManagement") || objecturi
+				&& ((objecturi.equals(UserManagementAction.alias) || objecturi
 						.equals("DataDictionary")) || AccessControl
 						.isCreatorOfObject(caller.getUsername(), objecturi))
 		// caller has permission he want to grant
 		&& AccessControl.hasPermission(operation, objecturi, caller))
 		// hat user superPermission von permission
-		|| hasSuperOperation(UserManagementAction.GRANT, "UserManagement",
+		|| hasSuperOperation(UserManagementAction.GRANT, UserManagementAction.alias,
 				caller))) {
 
 			AbstractUserManagementEntity entity = getEntity(entityname);
@@ -268,7 +268,7 @@ abstract class AbstractUserManagement {
 			throws HasNoPermissionException {
 		if (!caller.toString().equals(entityname)
 				&& ((AccessControl.hasPermission(UserManagementAction.GRANT,
-						"UserManagement", caller)
+						UserManagementAction.alias, caller)
 				// caller hat object
 						&& caller.hasObject(objecturi) != null
 				// user is owner of object
@@ -276,7 +276,7 @@ abstract class AbstractUserManagement {
 						objecturi))
 				// hat user superPermission von permission
 				|| hasSuperOperation(UserManagementAction.GRANT,
-						"UserManagement", caller))) {
+						UserManagementAction.alias, caller))) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) != null) {
@@ -334,7 +334,7 @@ abstract class AbstractUserManagement {
 		// permissions enthalten sind
 		if (!caller.toString().equals(entityname)
 				&& ((AccessControl.hasPermission(UserManagementAction.REVOKE,
-						"UserManagement", caller) && caller
+						UserManagementAction.alias, caller) && caller
 						.hasObject(objecturi) != null) || hasSuperOperation(
 						UserManagementAction.REVOKE, objecturi, caller))) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
@@ -367,11 +367,11 @@ abstract class AbstractUserManagement {
 	public void grantRole(User caller, String rolename, String username)
 			throws HasNoPermissionException, StoreException {
 		if (((AccessControl.hasPermission(UserManagementAction.GRANT,
-				"UserManagement", caller)
+				UserManagementAction.alias, caller)
 		// ist in der rolle
 		&& caller.hasRole(rolename) != null)
 		// hat superPermission
-		|| hasSuperOperation(UserManagementAction.GRANT, "UserManagement",
+		|| hasSuperOperation(UserManagementAction.GRANT, UserManagementAction.alias,
 				caller))) {
 			User user = this.userStore.getUserByName(username);
 			Role role = this.roleStore.get(rolename);
@@ -418,9 +418,9 @@ abstract class AbstractUserManagement {
 	public void revokeRole(User caller, String rolename, String username)
 			throws HasNoPermissionException {
 		if ((AccessControl.hasPermission(UserManagementAction.REVOKE,
-				"UserManagement", caller) && caller.hasRole(rolename) != null)
+				UserManagementAction.alias, caller) && caller.hasRole(rolename) != null)
 				|| hasSuperOperation(UserManagementAction.REVOKE,
-						"UserManagement", caller)
+						UserManagementAction.alias, caller)
 				// caller kann sich nicht selbst entfernen
 				&& !caller.getUsername().equals(username)) {
 			User user = this.userStore.getUserByName(username);
@@ -445,7 +445,7 @@ abstract class AbstractUserManagement {
 			throws HasNoPermissionException, StoreException {
 		if (!caller.toString().equals(username)
 				&& AccessControl.hasPermission(
-						UserManagementAction.DELETE_USER, "UserManagement",
+						UserManagementAction.DELETE_USER, UserManagementAction.alias,
 						caller)) {
 			if (!username.equals("System")) {
 				// logout
@@ -491,7 +491,7 @@ abstract class AbstractUserManagement {
 	public Role createRole(String rolename, User caller)
 			throws HasNoPermissionException, StoreException {
 		if (AccessControl.hasPermission(UserManagementAction.CREATE_ROLE,
-				"UserManagement", caller)) {
+				UserManagementAction.alias, caller)) {
 			// wenn role noch nicht in store
 			if (!this.roleStore.containsKey(rolename)) {
 				Role role = new Role(rolename, getRoleID());
@@ -509,7 +509,7 @@ abstract class AbstractUserManagement {
 	public void deleteRole(String rolename, User caller)
 			throws HasNoPermissionException, StoreException {
 		if (AccessControl.hasPermission(UserManagementAction.DELETE_ROLE,
-				"UserManagement", caller)) {
+				UserManagementAction.alias, caller)) {
 			// wenn role noch nicht in store
 			if (this.roleStore.containsKey(rolename)) {
 				for (User user : this.userStore.getUsers()) {
@@ -544,7 +544,7 @@ abstract class AbstractUserManagement {
 			AbstractUserManagementEntity owner, List<IUserAction> operations,
 			User caller) throws HasNoPermissionException, StoreException {
 		if (AccessControl.hasPermission(UserManagementAction.CREATE_PRIV,
-				"UserManagement", caller)) {
+				UserManagementAction.alias, caller)) {
 			if (!this.privStore
 					.containsKey(owner.toString() + "::" + objecturi)
 					&& owner.hasObject(objecturi) == null) {

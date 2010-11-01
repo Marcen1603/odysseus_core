@@ -32,12 +32,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private Map<SDFSource, ILogicalOperator> sources;
 
-	private User user;
+	private User caller;
 
 	public CreateAccessAOVisitor(User user) {
 		super();
 		init();
-		this.user = user;
+		this.caller = user;
 	}
 
 	public final void init() {
@@ -53,7 +53,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSimpleSource node, Object data) {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
-		SDFSource source = DataDictionary.getInstance().getSource(sourceString);
+		SDFSource source = DataDictionary.getInstance().getSource(sourceString, caller);
 		if (source.getSourceType().equals("RelationalStreaming")) {
 			relationalStreamingSource(node, source, sourceString);
 			return null;
@@ -142,7 +142,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private void relationalStreamingSource(ASTSimpleSource node,
 			SDFSource source, String sourceName) {
-		ILogicalOperator access = DataDictionary.getInstance().getView(sourceName, user);
+		ILogicalOperator access = DataDictionary.getInstance().getView(sourceName, caller);
 		
 
 		ILogicalOperator inputOp = access;

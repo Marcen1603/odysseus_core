@@ -9,6 +9,8 @@ public enum UserManagementAction implements IUserAction {
 
 	static List<IUserAction> all;
 
+	static final String alias = "UserManagement";
+	
 	public synchronized static List<IUserAction> getAll() {
 		if (all == null) {
 			all = new ArrayList<IUserAction>();
@@ -33,6 +35,13 @@ public enum UserManagementAction implements IUserAction {
 		default:
 			return null;
 		}
+	}
+	
+	// TODO: weiter füllen
+	public static boolean needsNoObject(IUserAction action) {
+		return action == CREATE_USER || 
+			   action == DELETE_USER ||
+			   action == GET_ALL_USER;
 	}
 
 }

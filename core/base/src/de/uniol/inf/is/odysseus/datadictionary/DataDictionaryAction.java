@@ -20,6 +20,8 @@ public enum DataDictionaryAction implements IUserAction {
 
 	static List<IUserAction> all;
 
+	public static final String alias = "DataDictionary";
+	
 	public synchronized static List<IUserAction> getAll() {
 		if (all == null) {
 			all = new ArrayList<IUserAction>();
@@ -51,5 +53,10 @@ public enum DataDictionaryAction implements IUserAction {
 		default:
 			return null;
 		}
+	}
+
+	// TODO: Füllen
+	public static boolean needsNoObject(IUserAction action) {
+		return false;
 	}
 }

@@ -3,15 +3,17 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.queryselection;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 	private static int MAXQUERIES = 10;
@@ -27,8 +29,9 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 		collectSourcesFromPlan(subplan.getAo(), sources);
 		if(!sources.isEmpty()) {
 			for(AccessAO ao : sources) {
-				
-				if(DataDictionary.getInstance().getSource(ao.getSource().getURI())== null) {
+
+				User user = UserManagement.getInstance().getSuperUser();
+				if(DataDictionary.getInstance().getSource(ao.getSource().getURI(), user)== null) {
 					return false;
 				}
 			}
