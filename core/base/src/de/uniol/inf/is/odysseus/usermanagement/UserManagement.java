@@ -17,10 +17,10 @@ public class UserManagement extends AbstractUserManagement {
 		if (instance == null) {
 
 			try {
-				// instance = new UserManagement(new MemoryUserStore());
-				instance = new UserManagement(new FileUserStore(
-						System.getProperty("user.home")
-								+ "/odysseus/users.store"));
+				 instance = new UserManagement(new MemoryUserStore());
+//				instance = new UserManagement(new FileUserStore(
+//						System.getProperty("user.home")
+//								+ "/odysseus/users.store"));
 
 				if (instance.hasNoUsers()) {
 					// create system user
