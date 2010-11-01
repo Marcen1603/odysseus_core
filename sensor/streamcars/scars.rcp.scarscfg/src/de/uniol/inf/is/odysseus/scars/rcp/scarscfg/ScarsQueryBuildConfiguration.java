@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformatio
 
 public class ScarsQueryBuildConfiguration implements IQueryBuildConfiguration {
 
-	private List<IQueryBuildSetting> settings = new ArrayList<IQueryBuildSetting>();
+	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
 	
 	public ScarsQueryBuildConfiguration() {
 		TransformationConfiguration cfg = new TransformationConfiguration(
@@ -36,7 +36,7 @@ public class ScarsQueryBuildConfiguration implements IQueryBuildConfiguration {
 	}
 
 	@Override
-	public List<IQueryBuildSetting> get() {
+	public List<IQueryBuildSetting<?>> get() {
 		return settings;
 	}
 		
