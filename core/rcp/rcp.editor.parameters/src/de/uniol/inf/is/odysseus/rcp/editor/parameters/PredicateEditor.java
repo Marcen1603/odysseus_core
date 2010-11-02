@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.parameters;
 
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -44,15 +46,29 @@ public class PredicateEditor extends AbstractParameterEditor implements
 		typeCombo = new Combo(container, SWT.READ_ONLY);
 		typeCombo.setLayoutData( new GridData(GridData.FILL_HORIZONTAL));
 		int i = 0;
-		for( String s : OperatorBuilderFactory.getPredicateBuilderNames() ) {
-			typeCombo.add(s);
-			if( item != null && s.equals(item.getPredicateType()))
-				typeCombo.select(i);
-			i++;
-		}
-		if( item == null ) 
-			typeCombo.select(0);
 		
+		// Comboliste mit Factorynames der Predicates füllen
+		Set<String> builderNames = OperatorBuilderFactory.getPredicateBuilderNames();
+		if( !builderNames.isEmpty()) {
+			for( String s : builderNames ) {
+				typeCombo.add(s);
+				// Comboauswahl auf ausgewählten Wert setzen
+				if( item != null && s.equals(item.getPredicateType()))
+					typeCombo.select(i);
+				i++;
+			}
+			// Den ersten auswählen, wenn noch nichts ausgewählt wurde
+			// (z.B. der Logische Operator gerade angelegt wurde)
+			if( item == null ) 
+				typeCombo.select(0);
+			
+		} else {
+			// Keine PredicateBuilder registriert. Dies als Warnung ausgeben
+			typeCombo.add("No predicatetypes registered");
+			typeCombo.setEnabled(false);
+		}
+		
+		// Prädikat-label und Eingabeform
 		predLabel = new Label(container, SWT.NONE);
 		predLabel.setText("Predicate");
 		
@@ -63,6 +79,7 @@ public class PredicateEditor extends AbstractParameterEditor implements
 			predText.setText("");
 		
 		predText.setLayoutData( new GridData(GridData.FILL_HORIZONTAL));
+		// bei jeder Änderung versuchen es zu speichern
 		predText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
