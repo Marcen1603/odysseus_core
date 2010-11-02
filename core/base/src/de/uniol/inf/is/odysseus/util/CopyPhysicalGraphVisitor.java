@@ -28,9 +28,7 @@ public class CopyPhysicalGraphVisitor<T extends IPhysicalOperator> implements IG
 	}
 	
 	@Override
-	public void afterFromSinkToSourceAction(T sink, T source) {
-		// TODO Auto-generated method stub
-		
+	public void afterFromSinkToSourceAction(T sink, T source) {		
 	}
 
 	@Override
