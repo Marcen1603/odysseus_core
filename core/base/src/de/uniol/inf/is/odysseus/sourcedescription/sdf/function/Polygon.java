@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class Polygon extends AbstractFunction<Double> {
 
+	@SuppressWarnings("unused")
 	private static Double RADIUS = 6367000.0;
 
 	@Override
