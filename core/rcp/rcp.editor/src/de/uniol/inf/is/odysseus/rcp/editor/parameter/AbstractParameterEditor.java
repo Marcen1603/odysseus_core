@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.parameter;
 
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
-import de.uniol.inf.is.odysseus.rcp.editor.view.ParameterViewPart;
 
 public abstract class AbstractParameterEditor implements IParameterEditor {
 
@@ -45,7 +44,7 @@ public abstract class AbstractParameterEditor implements IParameterEditor {
 			getParameter().clear();
 		else 
 			getParameter().setInputValue(obj);
-		ParameterViewPart.getInstance().refresh();
+		view.refresh();
 	}
 	
 	protected Object getValue() {

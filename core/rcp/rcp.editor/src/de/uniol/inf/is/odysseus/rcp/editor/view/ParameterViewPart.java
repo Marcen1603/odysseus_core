@@ -42,15 +42,9 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	private Operator selectedOperator;
 	private OperatorEditPart selectedOperatorEditPart;
 	
-	private static IParameterView instance = null;
-	
 	public ParameterViewPart() {
 	}
 
-	public static IParameterView getInstance() {
-		return instance;
-	}
-	
 	@Override
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
@@ -59,16 +53,8 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		updateParameterEditors();
 	
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
-		
-		instance = this;
 	}
 	
-	@Override
-	public void dispose() {
-		instance = null;
-		super.dispose();
-	}
-
 	@Override
 	public void setFocus() {
 
