@@ -30,6 +30,9 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	 */
 	public void unsubscribeFromSource(S subscription);
 	
+	/**
+	 * Unsubscribes from alle Subscribed Sources
+	 */
 	public void unsubscribeFromAllSources();
 	
 	/**
