@@ -149,6 +149,16 @@
                   visible="true">
             </separator>
             <command
+                  commandId="org.eclipse.ui.window.customizePerspective"
+                  label="Customize Perspective..."
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.window.savePerspective"
+                  label="Save Perspective As..."
+                  style="push">
+            </command>
+            <command
                   commandId="org.eclipse.ui.window.resetPerspective"
                   label="Reset Perspective..."
                   style="push">
