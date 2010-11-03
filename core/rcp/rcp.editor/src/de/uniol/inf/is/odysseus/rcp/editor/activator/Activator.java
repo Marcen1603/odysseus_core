@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 public class Activator extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.editor"; //$NON-NLS-1$
-
+	
 	private static Activator plugin;
 	private final Logger logger = LoggerFactory.getLogger(Activator.class);
 	private static IExecutor executor = null;
@@ -59,6 +59,7 @@ public class Activator extends AbstractUIPlugin {
 		return executor;
 	}
 	
+	// Löst die Extensions für die Parametereditoren auf
 	private void resolveExtensions() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ILogicalPlanEditorConstants.PARAMETER_EDITOR_EXTENSION_ID);
 		for( int i = 0; i < elements.length; i++ ) {
@@ -66,7 +67,9 @@ public class Activator extends AbstractUIPlugin {
 			try {
 				IParameterEditor editor = (IParameterEditor)element.createExecutableExtension("class");
 				String attrName = element.getAttribute("name");
-				ParameterEditorRegistry.getInstance().register(attrName, editor.getClass());
+				String opName = element.getAttribute("operator");
+				String finalName = opName + ParameterEditorRegistry.NAME_SEPARATOR + attrName;
+				ParameterEditorRegistry.getInstance().register(finalName, editor.getClass());
 			} catch( CoreException ex ) {
 				logger.error(ex.getMessage(), ex);
 			}

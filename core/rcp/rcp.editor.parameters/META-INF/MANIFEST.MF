@@ -22,3 +22,4 @@ Import-Package: de.uniol.inf.is.odysseus.datadictionary,
  org.eclipse.ui,
  org.osgi.framework
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.parameters.activator.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

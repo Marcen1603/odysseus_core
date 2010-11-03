@@ -137,8 +137,13 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 			
 			editorParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			editorParent.setLayout(new FillLayout());
-			if( ParameterEditorRegistry.getInstance().exists(parameter.getName())) {
-				IParameterEditor editor = ParameterEditorRegistry.getInstance().create(parameter.getName());
+			
+			String editorName = selectedOperator.getOperatorBuilderName() + 
+				ParameterEditorRegistry.NAME_SEPARATOR + 
+				parameter.getName();
+			
+			if( ParameterEditorRegistry.getInstance().exists(editorName)) {
+				IParameterEditor editor = ParameterEditorRegistry.getInstance().create(editorName);
 				editor.init(builder, parameter, this);
 				editor.createControl(editorParent);
 				openedParameterEditors.add(editor);

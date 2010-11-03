@@ -5,39 +5,48 @@
          point="de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor">
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SourceParameterEditor"
-            name="SOURCE">
+            name="SOURCE"
+            operator="ACCESS">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
-            name="TYPE">
+            name="TYPE"
+            operator="ACCESS">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.LongParameterEditor"
-            name="SIZE">
+            name="SIZE"
+            operator="ACCESS">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
-            name="HOST">
+            name="HOST"
+            operator="ACCESS">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.IntegerParameterEditor"
-            name="PORT">
+            name="PORT"
+            operator="ACCESS">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SchemaEditor"
-            name="SCHEMA">
+            name="SCHEMA"
+            operator="ACCESS">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.PredicateEditor"
-            name="PREDICATE">
+            name="PREDICATE"
+            operator="SELECT">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AttributesEditor"
-            name="ATTRIBUTES">
+            name="ATTRIBUTES"
+            operator="PROJECT">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AliasesEditor"
-            name="ALIASES">
+            name="ALIASES"
+            operator="RENAME">
       </editor>
    </extension>
    <extension

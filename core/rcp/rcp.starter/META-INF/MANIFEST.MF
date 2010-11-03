@@ -16,3 +16,4 @@ Import-Package: de.uniol.inf.is.odysseus.usermanagement,
  de.uniol.inf.is.odysseus.rcp.user,
  org.apache.log4j,
  org.apache.log4j.spi
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

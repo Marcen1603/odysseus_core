@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class ParameterEditorRegistry {
 
+	public static final String NAME_SEPARATOR = "__";
+	
 	private static ParameterEditorRegistry instance;
 	
 	private final Map<String, Class<? extends IParameterEditor>> editors = new HashMap<String, Class<? extends IParameterEditor>>();
