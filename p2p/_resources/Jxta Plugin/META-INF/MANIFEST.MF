@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Jxta Plugin
+Bundle-Name: Jxta_Plugin
 Bundle-SymbolicName: Jxta_Plugin
 Bundle-Version: 1.0.0
 Bundle-ClassPath: bcprov-jdk14.jar,
