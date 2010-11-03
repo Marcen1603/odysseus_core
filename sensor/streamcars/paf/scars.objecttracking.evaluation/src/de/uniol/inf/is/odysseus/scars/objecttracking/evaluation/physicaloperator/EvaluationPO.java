@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
-public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
+public class EvaluationPO<M extends IProbability & ILatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String associationObjListPath;
@@ -227,9 +228,9 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 			association[1] = new MVRelationalTuple<M>(tuples);
 	
 			MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-			base.setMetadata(resultTuple.getMetadata());
+			base.setMetadata(resultTuple.getMetadata() );
 			base.setAttribute(0, new MVRelationalTuple<M>(association));
-					
+			
 			// Transfer the generated tuple
 			transfer(base);
 	//		boolAsso = false;
@@ -262,7 +263,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 			tuple.setAttribute(1, new MVRelationalTuple<M>(0));
 			
 			base.setAttribute(0, tuple);
-			base.setMetadata( (M) new StreamCarsMetaData());
+			base.setMetadata( (M) new StreamCarsMetaData()); // Böse
 			base.getMetadata().setStart(new PointInTime(timestamp));
 			transfer(base);
 		}

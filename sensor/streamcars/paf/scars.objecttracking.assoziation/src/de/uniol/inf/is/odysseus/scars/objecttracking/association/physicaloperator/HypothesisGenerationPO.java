@@ -120,7 +120,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		}
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-		base.setMetadata(scannedObject.getMetadata());
+		base.setMetadata((M)scannedObject.getMetadata().clone());
 		base.setAttribute(0, new MVRelationalTuple<M>(association));
 
 		return base;
