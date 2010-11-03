@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -19,7 +21,6 @@ import de.uniol.inf.is.odysseus.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
-
 /**
  * Standard {@link ISchedulerManager} for odysseus. The manger uses OSGi
  * services for scheduling modules. Only one {@link IScheduler} is active at the
@@ -32,14 +33,14 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		IInfoProvider {
 
 	static Logger _logger = null;
-	
-	static synchronized Logger getLogger(){
-		if (_logger == null){
+
+	static synchronized Logger getLogger() {
+		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(SingleSchedulerManager.class);
 		}
 		return _logger;
 	}
-	
+
 	private final String schedulingConfigFile = System.getProperty("user.home")
 			+ "/odysseus/scheduling.conf";
 
@@ -79,15 +80,27 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		// create default scheduler
 		if (schedulers != null && strats != null) {
 
-			FileInputStream in;
 			try {
+				File f = new File(schedulingConfigFile);
+				if (!f.exists()) {
+					File d = f.getParentFile();
+					if (d != null) {
+						d.mkdirs();
+					}
+					f.createNewFile();
+					System.out.println("Created new File "
+							+ f.getAbsolutePath());
+				} else {
+					System.out.println("Read from file " + f.getAbsolutePath());
+				}
+				FileInputStream in;
 				in = new FileInputStream(schedulingConfigFile);
 				props.load(in);
 				in.close();
-			} catch (Exception e) {
-				logger.info("No Scheduler-Config-File found.");
+
 				if (props.getProperty("defaultScheduler") == null
 						|| props.getProperty("defaultScheduler").length() == 0) {
+					logger.info("No Scheduler-Config-File found.");
 					props.setProperty("defaultScheduler", schedulers.iterator()
 							.hasNext() ? schedulers.iterator().next() : null);
 					props.setProperty("defaultStrat", strats.iterator()
@@ -104,15 +117,16 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 					}
 				}
 
+				defaultScheduler = props.getProperty("defaultScheduler");
+				defaultStrat = props.getProperty("defaultStrat");
+
+				setActiveScheduler(defaultScheduler, defaultStrat, null);
+
+				this.logger.info("Active scheduler. "
+						+ this.activeScheduler.getClass());
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-			defaultScheduler = props.getProperty("defaultScheduler");
-			defaultStrat = props.getProperty("defaultStrat");
-
-			setActiveScheduler(defaultScheduler, defaultStrat, null);
-
-			this.logger.info("Active scheduler. "
-					+ this.activeScheduler.getClass());
 		}
 		activated = true;
 	}
@@ -129,7 +143,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 			String schedulingStrategyToSet, IScheduleable scheduleInfos) {
 		Set<String> schedulers = getScheduler();
 		Set<String> strats = getSchedulingStrategy();
-		
+
 		// Test if this scheduler is loaded
 		if (!schedulers.contains(schedulerToSet)) {
 			logger.debug(schedulerToSet + " not loaded (now)");
@@ -141,20 +155,24 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		if (!strats.contains(schedulingStrategyToSet)) {
 			logger.debug(schedulingStrategyToSet + " not loaded (now)");
 			configSchedulingDirty = true;
-			schedulingStrategyToSet = strats.iterator().hasNext() ? strats.iterator()
-					.next() : null;
+			schedulingStrategyToSet = strats.iterator().hasNext() ? strats
+					.iterator().next() : null;
 			logger.debug("using default " + schedulingStrategyToSet);
 		}
-		
+
 		try {
-			if (this.activeScheduler != null){
-				fire(new SchedulerManagerEvent(this,SchedulerManagerEventType.SCHEDULER_REMOVED,this.activeScheduler));
+			if (this.activeScheduler != null) {
+				fire(new SchedulerManagerEvent(this,
+						SchedulerManagerEventType.SCHEDULER_REMOVED,
+						this.activeScheduler));
 			}
 			// create a new scheduler an set the error listener
 			this.activeScheduler = createScheduler(schedulerToSet,
 					schedulingStrategyToSet);
 			this.activeScheduler.addErrorEventListener(this);
-			fire(new SchedulerManagerEvent(this,SchedulerManagerEventType.SCHEDULER_SET,this.activeScheduler));
+			fire(new SchedulerManagerEvent(this,
+					SchedulerManagerEventType.SCHEDULER_SET,
+					this.activeScheduler));
 			this.activeSchedulingStrategy = schedulingStrategyToSet;
 			this.activeSchedulerString = schedulerToSet;
 		} catch (Exception e) {
@@ -289,7 +307,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	public String getActiveSchedulerID() {
 		return activeSchedulerString;
 	}
-	
+
 	@Override
 	public IScheduler getActiveScheduler() {
 		return activeScheduler;
@@ -306,43 +324,43 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		return activeSchedulingStrategy;
 	}
 
-
 	@Override
 	public synchronized void schedulingsChanged() {
-		logger.debug("SchedulingChanged "+configSchedulerDirty+" "+configSchedulingDirty);
+		logger.debug("SchedulingChanged " + configSchedulerDirty + " "
+				+ configSchedulingDirty);
 		if (configSchedulerDirty || configSchedulingDirty) {
-	
+
 			Set<String> schedulers = getScheduler();
 			Set<String> strats = getSchedulingStrategy();
-			//logger.debug(""+strats);
+			// logger.debug(""+strats);
 			String defaultScheduler = props.getProperty("defaultScheduler");
 			String defaultStrat = props.getProperty("defaultStrat");
-			//logger.debug(" "+defaultScheduler+" "+defaultStrat);
-			
-			if (configSchedulerDirty){
+			// logger.debug(" "+defaultScheduler+" "+defaultStrat);
+
+			if (configSchedulerDirty) {
 				// Test if this scheduler is loaded
 				if (!schedulers.contains(defaultScheduler)) {
 					configSchedulerDirty = true;
 					defaultScheduler = schedulers.iterator().hasNext() ? schedulers
 							.iterator().next() : null;
-				}else{
+				} else {
 					configSchedulerDirty = false;
-					logger.debug("using Scheduler " + defaultScheduler);				
-				}				
-			}
-			
-			if (configSchedulingDirty){
-				if (!strats.contains(defaultStrat)) {
-					configSchedulingDirty = true;
-					defaultStrat = strats.iterator().hasNext() ? strats.iterator()
-							.next() : null;
-				}else{
-					configSchedulingDirty = false;
-					logger.debug("Using Strategy "+ defaultStrat);
+					logger.debug("using Scheduler " + defaultScheduler);
 				}
 			}
 
-			if (!configSchedulerDirty && !configSchedulingDirty){
+			if (configSchedulingDirty) {
+				if (!strats.contains(defaultStrat)) {
+					configSchedulingDirty = true;
+					defaultStrat = strats.iterator().hasNext() ? strats
+							.iterator().next() : null;
+				} else {
+					configSchedulingDirty = false;
+					logger.debug("Using Strategy " + defaultStrat);
+				}
+			}
+
+			if (!configSchedulerDirty && !configSchedulingDirty) {
 				setActiveScheduler(defaultScheduler, defaultStrat, null);
 			}
 		}
