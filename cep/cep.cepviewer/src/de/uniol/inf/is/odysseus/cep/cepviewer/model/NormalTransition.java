@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.model;
 
-import org.eclipse.draw2d.ManhattanConnectionRouter;
+import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.PolylineDecoration;
 
@@ -9,23 +9,23 @@ import org.eclipse.draw2d.PolylineDecoration;
  * 
  * @author Christian
  */
-public class Transition extends PolylineConnection {
+public class NormalTransition extends PolylineConnection {
 	
 	/**
 	 * This is the constructor.
 	 */
-	public Transition() {
+	public NormalTransition() {
 		
 		// set the layout of the connection to resemble an arrow
 		setTargetDecoration(new PolylineDecoration());
 
 		// set the connection router which avoids crossing states
-		setConnectionRouter(new ManhattanConnectionRouter());
+//		setConnectionRouter(new ManhattanConnectionRouter());
 		
 		// set the connection router which avoids overlapping of connections
 //		setConnectionRouter(new FanRouter());
 		
 		// set the connection router which directly connects two the anchors
-//		setConnectionRouter(ConnectionRouter.NULL);
+		setConnectionRouter(ConnectionRouter.NULL);
 	}
 }

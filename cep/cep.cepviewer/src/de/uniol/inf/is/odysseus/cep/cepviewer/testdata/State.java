@@ -1,15 +1,17 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.testdata;
 
+import java.util.ArrayList;
+
 public class State {
 
 	private int id;
-	private Transition[] transition;
+	private ArrayList<Transition> transition;
 	private boolean accepting;
 	private int transNumber;
 	
 	public State(int id, boolean accepting) {
 		this.id = id;
-		this.transition = new Transition[4];
+		this.transition = new ArrayList<Transition>();
 		this.accepting = accepting;
 		this.transNumber = 0;
 	}
@@ -18,7 +20,7 @@ public class State {
 		return id;
 	}
 
-	public Transition[] getTransition() {
+	public ArrayList<Transition> getTransition() {
 		return transition;
 	}
 
@@ -27,7 +29,7 @@ public class State {
 	}
 	
 	public void addTransition(Transition newTransition) {
-		transition[transNumber] = newTransition;
+		transition.add(newTransition);
 		transNumber++;
 	}
 	

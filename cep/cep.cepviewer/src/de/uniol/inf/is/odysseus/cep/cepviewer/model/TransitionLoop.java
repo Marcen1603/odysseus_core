@@ -30,7 +30,7 @@ public class TransitionLoop extends PolylineConnection {
 	 * @param state is the state which this loop belongs to.
 	 * @param style defines the layout of the loop
 	 */
-	public TransitionLoop(NormalState state, int style) {
+	public TransitionLoop(AutomataState state, int style) {
 		
 		// set the layout of the connection to resemble an arrow
 		setTargetDecoration(new PolylineDecoration());
@@ -44,18 +44,18 @@ public class TransitionLoop extends PolylineConnection {
 			case 0:
 				list.add(new AbsoluteBendpoint(state.getLocation().x, state
 						.getLocation().y - 20));
-				list.add(new AbsoluteBendpoint(state.getLocation().x + State.SIZE / 2,
+				list.add(new AbsoluteBendpoint(state.getLocation().x + AbstractState.SIZE / 2,
 						state.getLocation().y - 40));
-				list.add(new AbsoluteBendpoint(state.getLocation().x + State.SIZE,
+				list.add(new AbsoluteBendpoint(state.getLocation().x + AbstractState.SIZE,
 						state.getLocation().y - 20));
 				break;
 			case 1:
 				list.add(new AbsoluteBendpoint(state.getLocation().x, state
-						.getLocation().y+ State.SIZE + 20));
-				list.add(new AbsoluteBendpoint(state.getLocation().x + State.SIZE / 2,
-						state.getLocation().y + State.SIZE + 40));
-				list.add(new AbsoluteBendpoint(state.getLocation().x + State.SIZE,
-						state.getLocation().y + State.SIZE + 20));
+						.getLocation().y+ AbstractState.SIZE + 20));
+				list.add(new AbsoluteBendpoint(state.getLocation().x + AbstractState.SIZE / 2,
+						state.getLocation().y + AbstractState.SIZE + 40));
+				list.add(new AbsoluteBendpoint(state.getLocation().x + AbstractState.SIZE,
+						state.getLocation().y + AbstractState.SIZE + 20));
 				break;
 			default:
 				break;

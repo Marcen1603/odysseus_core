@@ -31,9 +31,10 @@ public class NormalTreeList extends AbstractTreeList {
 	 *            is an state machine instance
 	 */
 	@Override
-	public void addStateMachineInstance(StateMachineInstance stateMachineInstance) {
-		StateTreeItem item = new StateTreeItem(this.getTree(), SWT.NONE, stateMachineInstance);
-		item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());
+	public void addStateMachineInstance(StateMachineInstance instance) {
+		this.getMachineList().add(instance);
+		StateTreeItem item = new StateTreeItem(this.getTree(), SWT.NONE, instance);
+		item.setText(instance.getMachine().getString() + ": " + instance.getInstanceId());
 		this.setStatusImage(item);
 	}
 

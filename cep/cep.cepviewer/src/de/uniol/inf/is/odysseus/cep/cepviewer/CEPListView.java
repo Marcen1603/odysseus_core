@@ -128,5 +128,5 @@ public class CEPListView extends ViewPart {
 	public void setFocus() {
 		this.tabMenu.setFocus();
 	}
-
+	
 }

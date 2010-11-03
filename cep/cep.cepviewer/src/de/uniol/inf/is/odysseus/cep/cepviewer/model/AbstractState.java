@@ -9,7 +9,7 @@ import org.eclipse.draw2d.Figure;
  * 
  * @author Christian
  */
-public abstract class State extends Figure {
+public abstract class AbstractState extends Figure {
 
 	// contains the anchors that are used as a source for a transition
 	protected Hashtable<String, Anchor> transTargets = new Hashtable<String, Anchor>();

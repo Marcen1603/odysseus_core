@@ -1,12 +1,18 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.ICEPViewListener;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractState;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.AutomataDiagram;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.DragListener;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.EndState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.NormalState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.State;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.Transition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.AutomataState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.NormalTransition;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.TransitionLoop;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Action;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.State;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Transition;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -24,6 +30,15 @@ public class CEPAutomataView extends ViewPart {
 	// The id of this view.
 	public static final String ID = "MyView.mainView";
 
+	private Composite parent;
+	
+	private AutomataDiagram diagram;
+
+	private State currentState;
+	
+	private int stateCount;
+	
+
 	/**
 	 * This is the constructor.
 	 */
@@ -40,61 +55,71 @@ public class CEPAutomataView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		Canvas canvas = new Canvas(parent, 0);
+		this.parent = parent;
+		CEPViewAgent.getInstance().addCEPEventListener(new ICEPViewListener() {
+			public void cepEventOccurred(CEPViewEvent event) {
+				clearView();
+				showAutomata((StateMachineInstance) event.getContent());
+			}
+		});
+		Canvas canvas = new Canvas(this.parent, 0);
 
 		// create the basic struktur of an automata diagram
 		LightweightSystem lws = new LightweightSystem(canvas);
-		AutomataDiagram diagram = new AutomataDiagram();
-		lws.setContents(diagram);
+		this.diagram = new AutomataDiagram();
+		lws.setContents(this.diagram);
+	}
 
-		// create the states (the example automata starts here)
-		NormalState start = new NormalState(parent);
-		start.setText("S0");
-		start.setBounds(new Rectangle(50, 50, State.SIZE, State.SIZE));
-		NormalState dec = new NormalState(parent);
-		dec.setText("S12");
-		dec.setBounds(new Rectangle(150, 50, State.SIZE, State.SIZE));
-		NormalState proc = new NormalState(parent);
-		proc.setText("S2");
-		proc.setBounds(new Rectangle(250, 50, State.SIZE, State.SIZE));
-		EndState stop = new EndState(parent);
-		stop.setText("S3");
-		stop.setBounds(new Rectangle(350, 50, State.SIZE, State.SIZE));
+	public void showAutomata(StateMachineInstance instance) {
+		this.currentState = instance.getCurrentState();
+		State nextState = instance.getMachine().getStates()[0];
+		AutomataState state = this.createNewState(nextState);
+		this.createTransitions(state, nextState);
+	}
+	
+	private void createTransitions(AutomataState oldState, State nextState) {
+		try{
+		for (Transition nextTrans : nextState.getTransition()) {
+			if (nextTrans.getNextState().equals(nextState)) {
+				TransitionLoop loop;
+				if (nextTrans.getAction().equals(Action.CONSUME)) {
+					loop = new TransitionLoop(oldState, TransitionLoop.TAKE_LOOP);
+					loop.setSourceAnchor(oldState.getTakeOutAnchor());
+					loop.setTargetAnchor(oldState.getTakeInAnchor());
+				} else {
+					loop = new TransitionLoop(oldState, TransitionLoop.IGNORE_LOOP);
+					loop.setSourceAnchor(oldState.getIgnoreOutAnchor());
+					loop.setTargetAnchor(oldState.getIgnoreInAnchor());
+				}
+				this.diagram.add(loop);
+			} else {
+				AutomataState newState = createNewState(nextTrans.getNextState());
+				NormalTransition path = new NormalTransition();
+				path.setSourceAnchor(oldState.getOutAnchor());
+				path.setTargetAnchor(newState.getInAnchor());
+				this.diagram.add(path);
+				this.createTransitions(newState, nextTrans.getNextState());
+			}
+		}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	private AutomataState createNewState(State rootState) {
+		AutomataState newState = new AutomataState(this.parent, rootState, this.currentState.equals(rootState), rootState.isAccepting());
+		newState.setText("S" + rootState.getId());
+		newState.setBounds(new Rectangle(50 + (100 * this.stateCount), 50,
+				AbstractState.SIZE, AbstractState.SIZE));
+		this.diagram.add(newState);
+		new DragListener(newState);
+		this.stateCount++;
+		return newState;
+	}
 
-		// create all transitions
-		Transition path1 = new Transition();
-		path1.setSourceAnchor(start.getOutAnchor());
-		path1.setTargetAnchor(dec.getInAnchor());
-		Transition path2 = new Transition();
-		path2.setSourceAnchor(dec.getOutAnchor());
-		path2.setTargetAnchor(proc.getInAnchor());
-		Transition path3 = new Transition();
-		path3.setSourceAnchor(proc.getOutAnchor());
-		path3.setTargetAnchor(stop.getInAnchor());
-		TransitionLoop loopA = new TransitionLoop(dec, TransitionLoop.TAKE_LOOP);
-		loopA.setSourceAnchor(dec.getTakeOutAnchor());
-		loopA.setTargetAnchor(dec.getTakeInAnchor());
-		TransitionLoop loopB = new TransitionLoop(dec,
-				TransitionLoop.IGNORE_LOOP);
-		loopB.setSourceAnchor(dec.getIgnoreOutAnchor());
-		loopB.setTargetAnchor(dec.getIgnoreInAnchor());
-
-		// add all components to the diagram
-		diagram.add(start);
-		diagram.add(dec);
-		diagram.add(proc);
-		diagram.add(stop);
-		diagram.add(path1);
-		diagram.add(path2);
-		diagram.add(path3);
-		diagram.add(loopA);
-		diagram.add(loopB);
-
-		// add drag and drop feature to the states
-		new DragListener(start);
-		new DragListener(proc);
-		new DragListener(dec);
-		new DragListener(stop);
+	private void clearView() {
+		this.diagram.removeAll();
+		this.stateCount = 0;
 	}
 
 	/**

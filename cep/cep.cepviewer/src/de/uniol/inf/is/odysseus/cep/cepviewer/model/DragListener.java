@@ -17,7 +17,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	// is the initial point for calculating the new position
 	private Point initialPoint;
 	// is the state that is currently draged
-	private State draggingState;
+	private AbstractState draggingState;
 
 	/**
 	 * This is the constructor.
@@ -25,7 +25,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param state
 	 *            is the state which should feature drag and drop
 	 */
-	public DragListener(State state) {
+	public DragListener(AbstractState state) {
 		state.addMouseMotionListener(this);
 		state.addMouseListener(this);
 	}
@@ -75,7 +75,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 		// If the is no state registered to be dragged, register it.
 		if (initialPoint == null) {
 			this.initialPoint = event.getLocation();
-			this.draggingState = (State) event.getSource();
+			this.draggingState = (AbstractState) event.getSource();
 		}
 	}
 
@@ -96,7 +96,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 		// null check to avoid exception
 		if (this.initialPoint != null) {
 
-			// calculatwe the new position of the state
+			// calculate the new position of the state
 			Point newPoint = event.getLocation();
 			Dimension d = newPoint.getDifference(this.initialPoint);
 			this.initialPoint = newPoint;

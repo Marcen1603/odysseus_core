@@ -7,12 +7,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.State;
+
 /**
  * This class defines a normal state.
  * 
  * @author Christian
  */
-public class NormalState extends State {
+public class AutomataState extends AbstractState {
 
 	// holds the widget that inherits this state
 	private Composite parent;
@@ -24,6 +26,12 @@ public class NormalState extends State {
 	protected Anchor takeOutAnchor;
 	protected Anchor ignoreInAnchor;
 	protected Anchor ignoreOutAnchor;
+	
+	private State state;
+	
+	private boolean isActive;
+	
+	private boolean isEndState;
 
 	/**
 	 * This is the constructor
@@ -31,8 +39,11 @@ public class NormalState extends State {
 	 * @param parent
 	 *            is the widget which contains this state.
 	 */
-	public NormalState(Composite parent) {
+	public AutomataState(Composite parent, State state, boolean isActive, boolean isAccepting) {
+		this.state = state;
 		this.parent = parent;
+		this.isActive = isActive;
+		this.isEndState = isAccepting;
 
 		// create an name all anchors
 		this.inAnchor = new Anchor(this);
@@ -66,16 +77,25 @@ public class NormalState extends State {
 		Rectangle r = bounds;
 		Font f = new Font(this.parent.getShell().getDisplay(), "Arial", 15,
 				SWT.BOLD | SWT.ITALIC);
+		if(isActive) {
+			g.setForegroundColor(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		}
 		g.setFont(f);
 		g.setLineWidth(3);
 		g.drawOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
-
+		if(this.isEndState) {
+			g.drawOval(r.x + 5, r.y + 5, r.width - 11, r.height - 11);
+		}
 		// paint the name on the location based on its length
 		if (name.length() > 2) {
 			g.drawText(name, r.x + (r.width / 5), r.y + (r.height / 3));
 		} else {
 			g.drawText(name, r.x + (r.width / 3), r.y + (r.height / 3));
 		}
+	}
+	
+	public void changeColor() {
+		
 	}
 
 	/**
@@ -131,5 +151,9 @@ public class NormalState extends State {
 	public Anchor getIgnoreOutAnchor() {
 		return ignoreOutAnchor;
 	}
-
+	
+	public State getState() {
+		return this.state;
+	}
+	
 }

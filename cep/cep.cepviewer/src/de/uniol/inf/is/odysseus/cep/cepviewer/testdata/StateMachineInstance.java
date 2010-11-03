@@ -24,4 +24,8 @@ public class StateMachineInstance {
 		return currentState;
 	}
 
+	public void setCurrentState(State currentState) {
+		this.currentState = currentState;
+	}
+
 }
