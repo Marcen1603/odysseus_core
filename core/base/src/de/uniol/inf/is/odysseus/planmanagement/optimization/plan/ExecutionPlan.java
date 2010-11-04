@@ -37,7 +37,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	/**
 	 * Describes if the physical operators are opened.
 	 */
-	protected boolean open;
+	private boolean open;
 
 	/**
 	 * List of all parts of this execution plan. Used for scheduling.
@@ -50,15 +50,6 @@ public class ExecutionPlan implements IExecutionPlan {
 	protected List<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
 
 	private Set<IPhysicalOperator> roots = null;
-
-	/**
-	 * Describes if the physical operators are opened.
-	 * 
-	 * @return physical operators are opened or not.
-	 */
-	protected boolean isOpen() {
-		return open;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -116,7 +107,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public void open() throws OpenFailedException {
-		if (!isOpen()) {
+		if (!open) {
 			Set<IPhysicalOperator> roots = getRoots();
 			getLogger().debug("Calling Open for "+roots);
 			for (IPhysicalOperator root : roots) {
@@ -128,6 +119,7 @@ public class ExecutionPlan implements IExecutionPlan {
 				}
 
 			}
+			open = true;
 		}
 
 	}
@@ -140,7 +132,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public void close() {
-		if (isOpen()) {
+		if (open) {
 			List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 			for (IPartialPlan partialPlan : this.partialPlans) {
 				roots.addAll(partialPlan.getQueryRoots());
@@ -154,6 +146,7 @@ public class ExecutionPlan implements IExecutionPlan {
 				}
 
 			}
+			open = false;
 		}
 	}
 
@@ -169,13 +162,8 @@ public class ExecutionPlan implements IExecutionPlan {
 				.getPartialPlans()));
 		this.setLeafSources(new ArrayList<IIterableSource<?>>(newExecutionPlan
 				.getLeafSources()));
-		// this.setRoots(newExecutionPlan.getRoots());
 	}
 
-	// @Override
-	// public void setRoots(List<IPhysicalOperator> roots) {
-	// this.roots = roots;
-	// }
 	//
 	@Override
 	public Set<IPhysicalOperator> getRoots() {
