@@ -3,8 +3,7 @@ package de.uniol.inf.is.odysseus.scars.operator.jdvesink.physicaloperator;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Collections;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
@@ -24,38 +23,39 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval & ILatency>
-extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-	
+		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+
 	public static final String SERVER_TYPE_UDP = "udp";
 	public static final String SERVER_TYPE_SOCKET = "socket";
-	
+
 	private IServer server;
 	private int port;
 	private String serverType;
 	private String hostAdress;
-	
+
 	// timing stuff
-	private List<Long> objecttrackingLatencies;
+	private ArrayList<Long> objecttrackingLatencies;
 	private int countMax = 300;
-	
+
 	public JDVESinkPO(String hostAdress, int port, String serverType) {
 		this.port = port;
 		this.hostAdress = hostAdress;
 		this.serverType = serverType;
 		this.objecttrackingLatencies = new ArrayList<Long>();
 	}
-	
+
 	public JDVESinkPO(JDVESinkPO<M> sink) {
 		this.port = sink.port;
 		this.server = sink.server;
 		this.hostAdress = sink.hostAdress;
 		this.serverType = sink.serverType;
-		this.objecttrackingLatencies = new ArrayList<Long>(sink.objecttrackingLatencies);
+		this.objecttrackingLatencies = new ArrayList<Long>(
+				sink.objecttrackingLatencies);
 	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		
+
 	}
 
 	@Override
@@ -72,19 +72,23 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
-		if(objecttrackingLatencies.size() < countMax) {
-			objecttrackingLatencies.add(object.getMetadata().getObjectTrackingLatency());
+		if (objecttrackingLatencies.size() < countMax) {
+			objecttrackingLatencies.add(object.getMetadata()
+					.getObjectTrackingLatency());
+			System.out.println("######### OBJECT TRACKING LATENCY (TUPLE) [" + objecttrackingLatencies.size() + "] -> " + String.valueOf(objecttrackingLatencies.get(objecttrackingLatencies.size()-1)) + " #########");
 		} else {
-			
+			Collections.sort(objecttrackingLatencies);
+			long objLatency = this.median(objecttrackingLatencies);
+			System.out.println("######### OBJECT TRACKING LATENCY (MEDIAN) -> " + String.valueOf(objLatency) + " #########");
+			this.objecttrackingLatencies.clear();
 		}
 
-		
 		// iterate over schema and calculate size of byte buffer
 		int bufferSize = 0;
 		SDFAttributeList schema = this.getSubscribedToSource(0).getSchema();
 		TupleIterator iterator = new TupleIterator(object, schema);
 		for (TupleInfo info : iterator) {
-			//atomare typen beachten, komplexe �bergehen
+			// atomare typen beachten, komplexe �bergehen
 			if (!info.isTuple) {
 				if (info.tupleObject instanceof Integer) {
 					bufferSize += 4;
@@ -95,24 +99,25 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 				} else if (info.tupleObject instanceof Double) {
 					bufferSize += 8;
 				} else if (info.tupleObject instanceof String) {
-					bufferSize += ((String)info.tupleObject).length();
+					bufferSize += ((String) info.tupleObject).length();
 				} else if (info.tupleObject instanceof Byte) {
 					bufferSize++;
 				} else if (info.tupleObject instanceof Character) {
 					bufferSize++;
 				}
 			} else {
-				if (info.attribute.getDatatype().getURIWithoutQualName().equals("List")) {
+				if (info.attribute.getDatatype().getURIWithoutQualName()
+						.equals("List")) {
 					bufferSize += 4;
 				}
 			}
 		}
 		transfer(object);
-		
-		//Allocate byte buffer
+
+		// Allocate byte buffer
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
-		
+
 		// iterate over tuple and write elementary data to byte buffer
 		iterator = new TupleIterator(object, schema);
 		for (TupleInfo info : iterator) {
@@ -126,22 +131,23 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 				} else if (info.tupleObject instanceof Double) {
 					buffer.putDouble((Double) info.tupleObject);
 				} else if (info.tupleObject instanceof String) {
-					String str = (String)info.tupleObject;
+					String str = (String) info.tupleObject;
 					for (int i = 0; i < str.length(); i++) {
 						buffer.putChar(str.charAt(i));
 					}
 				} else if (info.tupleObject instanceof Byte) {
 					buffer.put((Byte) info.tupleObject);
 				} else if (info.tupleObject instanceof Character) {
-					buffer.putChar((Character)info.tupleObject);
+					buffer.putChar((Character) info.tupleObject);
 				}
-			} else if (info.attribute.getDatatype().getURIWithoutQualName().equals("List")) {
+			} else if (info.attribute.getDatatype().getURIWithoutQualName()
+					.equals("List")) {
 				@SuppressWarnings("unchecked")
 				MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) info.tupleObject;
 				buffer.putInt(tuple.getAttributeCount());
 			}
 		}
-		
+
 		// push byte buffer to server
 		buffer.flip();
 		this.server.sendData(buffer);
@@ -163,4 +169,14 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 		return new JDVESinkPO<M>(this);
 	}
 
+	// ================================================ median
+	public long median(ArrayList<Long> m) {
+		int middle = m.size() / 2;
+		if (m.size() % 2 == 1) {
+			return m.get(middle);
+		} else {
+			long median = (m.get(middle - 1) + m.get(middle)) / 2;
+			return median;
+		}
+	}
 }
