@@ -108,12 +108,12 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 	private long currentStartObjTrackingTime;
 
 	@Override
-	public void setStart() {
+	public void setObjectTrackingLatencyStart() {
 		this.currentStartObjTrackingTime = System.nanoTime();
 	}
 
 	@Override
-	public void setEnd() {
+	public void setObjectTrackingLatencyEnd() {
 		this.currentObjectTrackingLatency += (System.nanoTime() - this.currentStartObjTrackingTime);
 	}
 

@@ -5,8 +5,8 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 
 public interface IObjectTrackingLatency extends IMetaAttribute {
 
-	public void setStart();
-	public void setEnd();
+	public void setObjectTrackingLatencyStart();
+	public void setObjectTrackingLatencyEnd();
 	public long getObjectTrackingLatency();
 	@Override
 	public ILatency clone();
