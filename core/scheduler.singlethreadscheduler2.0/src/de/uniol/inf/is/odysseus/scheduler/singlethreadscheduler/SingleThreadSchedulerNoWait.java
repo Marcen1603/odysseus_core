@@ -167,7 +167,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 	 * .List)
 	 */
 	@Override
-	public void setPartialPlans(List<IPartialPlan> partialPlans) {
+	public synchronized void setPartialPlans(List<IPartialPlan> partialPlans) {
 		logger.debug("setPartialPlans");
 		if (partialPlans != null) {
 			logger.debug("setPartialPlans clear");

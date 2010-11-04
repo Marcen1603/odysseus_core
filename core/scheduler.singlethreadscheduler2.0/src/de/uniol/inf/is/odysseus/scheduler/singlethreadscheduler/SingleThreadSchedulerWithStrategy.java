@@ -97,7 +97,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 	 * .List)
 	 */
 	@Override
-	public void setPartialPlans(List<IPartialPlan> partialPlans) {
+	public synchronized void setPartialPlans(List<IPartialPlan> partialPlans) {
 		logger.debug("Setting new Plans to schedule :"+partialPlans);
 		this.planScheduling.clear();
 

@@ -225,7 +225,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * .List)
 	 */
 	@Override
-	public void setPartialPlans(List<IPartialPlan> partialPlans) {
+	public synchronized void setPartialPlans(List<IPartialPlan> partialPlans) {
 		logger.debug("setPartialPlans");
 		if (partialPlans != null) {
 //			synchronized (this.parts) {
