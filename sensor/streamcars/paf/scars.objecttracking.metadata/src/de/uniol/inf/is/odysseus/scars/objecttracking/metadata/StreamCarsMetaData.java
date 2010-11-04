@@ -24,6 +24,8 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 		super(data);
 		this.connectionList = data.connectionList;
 		this.gain = copyArray(data.gain);
+		this.currentObjectTrackingLatency = data.currentObjectTrackingLatency;
+		this.currentStartObjTrackingTime = data.currentStartObjTrackingTime;
 	}
 
 	/* ############### CONNECTIONCONTAINER ################ */
