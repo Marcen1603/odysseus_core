@@ -8,11 +8,12 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
-public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String objListPath;
 	private double threshold;
@@ -45,6 +46,7 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval> exte
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> obj, int port) {
+		obj.getMetadata().setObjectTrackingLatencyStart();
 		MVRelationalTuple<M> object = obj.clone();
 
 		SchemaHelper sh = new SchemaHelper(getSubscribedToSource(0).getSchema());
@@ -98,8 +100,10 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval> exte
 
 		// Falls NICHTS weitergeleitet wird -> punctuation senden
 		if(transferCarListArrayList.size() == 0) {
+			obj.getMetadata().setObjectTrackingLatencyEnd();
 			sendPunctuation(timestamp);
 		} else {
+			obj.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(object);
 		}
 	}
