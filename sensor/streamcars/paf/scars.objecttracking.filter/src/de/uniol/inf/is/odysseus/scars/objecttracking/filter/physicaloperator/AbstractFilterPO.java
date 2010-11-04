@@ -6,8 +6,9 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 
-public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer> extends
+public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends
     AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
   // path to new and old objects
@@ -32,8 +33,10 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
   
   @Override
 protected void process_next(MVRelationalTuple<M> object, int port) {
+	  object.getMetadata().setObjectTrackingLatencyStart();
     object = computeAll(object);
     // transfer to broker
+    object.getMetadata().setObjectTrackingLatencyEnd();
     transfer(object);
   }
   

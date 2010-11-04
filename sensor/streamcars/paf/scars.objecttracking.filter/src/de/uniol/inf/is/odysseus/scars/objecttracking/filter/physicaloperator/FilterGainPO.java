@@ -11,13 +11,14 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCrea
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 
 /**
  * @author dtwumasi
  * @param <StreamCarsMetaData>
  * 
  */
-public class FilterGainPO<M extends IProbability & IConnectionContainer & IGain> extends AbstractFilterPO<M> {
+public class FilterGainPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer & IGain> extends AbstractFilterPO<M> {
 
 	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
 	public FilterGainPO() {
