@@ -18,7 +18,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	protected Object inputValue;
 
 	public AbstractParameter(String name, REQUIREMENT requirement) {
-		this.name = name;
+		this.name = name.toUpperCase();
 		this.requirement = requirement;
 		value = null;
 		this.errors = new ArrayList<Exception>(1);
