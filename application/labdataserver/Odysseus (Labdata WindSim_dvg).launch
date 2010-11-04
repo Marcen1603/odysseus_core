@@ -6,13 +6,13 @@
 <stringAttribute key="bootstrap" value=""/>
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="clearConfig" value="true"/>
-<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/ideaal_bett1"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Odysseus (Labdata WindSim_dvg)"/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
 <intAttribute key="default_start_level" value="4"/>
 <booleanAttribute key="includeOptional" value="false"/>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-<mapEntry key="labdata_cfg" value="labdata_cfg/labdataserver_ideaal_bett1.ini"/>
+<mapEntry key="labdata_cfg" value="labdata_cfg/labdataserver_dvg_flapSim.ini"/>
 </mapAttribute>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
@@ -28,5 +28,5 @@
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="de.uniol.inf.is.odysseus.labdataserver@default:default,de.uniol.inf.is.odysseus.logicaloperator.relational@default:default,Commons.Math@default:default,de.uniol.inf.is.odysseus.objecttracking.parser@default:false,de.uniol.inf.is.odysseus.broker@default:default,MatLab@default:default,de.uniol.inf.is.odysseus.broker.parser.cql@default:false,com.springsource.org.apache.log4j@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,de.uniol.inf.is.odysseus.interval_latency@default:default,de.uniol.inf.is.odysseus.latency@default:default,MEP@default:default,de.uniol.inf.is.odysseus.parser.cql@default:default,log4jproperties@default:false,de.uniol.inf.is.odysseus.intervalapproach@default:default,org.apache.commons.collections@default:default,de.uniol.inf.is.odysseus@default:default,de.uniol.inf.is.odysseus.physicaloperator.relational@default:default,com.Ostermillerutils.csvparser@default:default,de.uniol.inf.is.odysseus.objecttracking@default:default,de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor@default:default,de.uniol.inf.is.odysseus.objectrelational.base@default:default,com.maplesoft@default:default"/>
+<stringAttribute key="workspace_bundles" value="de.uniol.inf.is.odysseus.labdataserver@default:default,de.uniol.inf.is.odysseus.logicaloperator.relational@default:default,Commons.Math@default:default,com.springsource.slf4j.log4j@default:false,de.uniol.inf.is.odysseus.objecttracking.parser@default:false,de.uniol.inf.is.odysseus.broker@default:default,MatLab@default:default,de.uniol.inf.is.odysseus.broker.parser.cql@default:false,com.springsource.org.apache.log4j@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,de.uniol.inf.is.odysseus.interval_latency@default:default,com.springsource.slf4j.api@default:default,de.uniol.inf.is.odysseus.latency@default:default,MEP@default:default,de.uniol.inf.is.odysseus.parser.cql@default:default,log4jproperties@default:false,de.uniol.inf.is.odysseus.intervalapproach@default:default,org.apache.commons.collections@default:default,de.uniol.inf.is.odysseus@default:default,de.uniol.inf.is.odysseus.physicaloperator.relational@default:default,com.Ostermillerutils.csvparser@default:default,de.uniol.inf.is.odysseus.objecttracking@default:default,de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor@default:default,de.uniol.inf.is.odysseus.objectrelational.base@default:default,com.maplesoft@default:default"/>
 </launchConfiguration>

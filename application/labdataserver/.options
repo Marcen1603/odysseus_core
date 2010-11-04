@@ -1,4 +1,4 @@
 org.eclipse.osgi/debug=true
 org.eclipse.osgi/debug/loader=false
 org.eclipse.osgi/debug/events=false
-org.eclipse.osgi/debug/services=false
+org.eclipse.osgi/debug/services=true
