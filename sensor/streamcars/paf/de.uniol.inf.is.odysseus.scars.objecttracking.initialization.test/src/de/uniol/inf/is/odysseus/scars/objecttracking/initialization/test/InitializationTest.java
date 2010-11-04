@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.FilterFunctionTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test2.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.AbstractInitializationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.initialization.InitializationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
