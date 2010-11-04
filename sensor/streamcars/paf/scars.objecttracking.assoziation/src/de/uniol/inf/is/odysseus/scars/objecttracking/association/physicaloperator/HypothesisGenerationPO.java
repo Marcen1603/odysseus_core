@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
@@ -23,18 +24,18 @@ import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
  * @author Volker Janz
  *
  */
-public class HypothesisGenerationPO<M extends IProbability & IConnectionContainer & ITimeInterval> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisGenerationPO<M extends IProbability & IConnectionContainer & ITimeInterval & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String oldObjListPath;
 	private String newObjListPath;
 	StreamCollector streamCollector;
-	
+
 	private SchemaHelper helper;
 	private SchemaHelper helper2;
 	private SchemaIndexPath timePathFromScannedData;
 	private SchemaIndexPath carsFromscannedData;
 	private SchemaIndexPath carsFromPredictedData;
-	
+
 	public HypothesisGenerationPO() {
 		super();
 	}
@@ -51,7 +52,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		streamCollector = new StreamCollector(getSubscribedToSource().size());
 		helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		helper2 = new SchemaHelper(getSubscribedToSource(1).getSchema());
-		
+
 		timePathFromScannedData = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
 		carsFromscannedData = helper.getSchemaIndexPath(this.newObjListPath);
 		carsFromPredictedData = helper2.getSchemaIndexPath(this.oldObjListPath);
@@ -61,7 +62,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	public void processPunctuation(PointInTime timestamp, int port) {
 		if( port == 0 ) // von dort sollte keine Punctuation kommen...
 			throw new IllegalArgumentException("HypothesisGenerationPO recieved Punctuation on Port 0");
-		
+
 		// Punctuation aus Port 1 heißt, dass die Prediction nix hat
 		streamCollector.recieve(timestamp, port);
 		if( streamCollector.isReady() )
@@ -72,22 +73,24 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	private void send(List<Object> next) {
 		Object obj0 = next.get(0); // Port 0
 		Object obj1 = next.get(1); // Port 1
-		
+
 		// An Port 0 haben wir immer einen Tupel aus der Quelle/Selection
 		MVRelationalTuple<M> scannedTuple = (MVRelationalTuple<M>)obj0;
-		
+
 		// Und an Port1 aus Prediction?
 		if( obj1 instanceof MVRelationalTuple) {
 			// Ein Tupel!
 			MVRelationalTuple<M> predictedTuple = (MVRelationalTuple<M>)obj1;
-			
+
 			// Normale Function ausführen... wir haben Daten zum Senden
 			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, predictedTuple);
+			output.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(output);
-			
+
 		} else {
 			// Eine Punctuation! Prediction hat nix
 			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, null);
+			output.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(output);
 		}
 	}
@@ -98,6 +101,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	 */
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		object.getMetadata().setObjectTrackingLatencyStart();
 		streamCollector.recieve(object, port);
 		if( streamCollector.isReady())
 			send(streamCollector.getNext());

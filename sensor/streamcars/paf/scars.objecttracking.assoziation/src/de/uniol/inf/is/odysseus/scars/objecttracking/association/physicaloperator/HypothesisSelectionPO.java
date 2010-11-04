@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
@@ -22,12 +23,12 @@ import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 /**
  * Diese Klasse sorgt dafuer, dass nur noch eindeutige Zuordnungen
  * weitergeleitet werden
- * 
+ *
  * @author N da G
- * 
+ *
  * @param <M>
  */
-public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & IConnectionContainer & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String oldObjListPath;
 	private String newObjListPath;
@@ -167,17 +168,18 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		
+		object.getMetadata().setObjectTrackingLatencyStart();
 		// PORT: 1, get matched objects
 		ConnectionList matchedObjects = matchObjects(object, object.getMetadata().getConnectionList());
 		if( matchedObjects.size() > 0 ) {
 			object.getMetadata().setConnectionList(matchedObjects);
 //			hasDublicates(object);
+			object.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(object.clone(), 1);
 		} else {
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 1);
 		}
-		
+
 		// PORT: 0, get new not matching objects
 		List<Object> scannedNotMatchedObjects = getDifferenceSet(object, this.scannedObjectListPath.toTupleIndexPath(object), matchedObjects);
 		MVRelationalTuple<M> scannedTuple = new MVRelationalTuple<M>(scannedNotMatchedObjects.size());
@@ -190,12 +192,12 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		objArray[0] = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName()).toTupleIndexPath(object).getTupleObject();
 		objArray[1] = scannedTuple;
 		base.setAttribute(0, new MVRelationalTuple<M>(objArray));
-		
-		
+
+
 //		hasDublicates(base);
-		
+		base.getMetadata().setObjectTrackingLatencyEnd();
 		transfer(base.clone(), 0);
-		
+
 //		MVRelationalTuple<M> scannedNotMatchedTuple = new MVRelationalTuple<M>(object); // Timo: Wieso wird das Ursprungsobjekt geklont?
 //		TupleIndexPath scannedObjectTuplePath = this.scannedObjectListPath.toTupleIndexPath(scannedNotMatchedTuple);
 //		scannedObjectTuplePath.setTupleObject(scannedTuple);
@@ -212,16 +214,18 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath.toTupleIndexPath(predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedTuple);
 //			hasDublicates(predictedNotMatchedTuple);
+			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(predictedNotMatchedTuple.clone(), 2);
 		} else {
+			object.getMetadata().setObjectTrackingLatencyEnd();
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 2);
 		}
 	}
-//	
+//
 //	private void hasDublicates( MVRelationalTuple<?> list ) {
-//		
+//
 //		MVRelationalTuple<?> cars = ((MVRelationalTuple<?>)list.getAttribute(0)).getAttribute(1);
-//		
+//
 //		for( int i = 0; i < cars.getAttributeCount(); i++ ) {
 //			for( int o = 0; o < cars.getAttributeCount(); o++ ) {
 //				if( i != o ) {
@@ -233,7 +237,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 //				}
 //			}
 //		}
-//		
+//
 //	}
 
 	@Override

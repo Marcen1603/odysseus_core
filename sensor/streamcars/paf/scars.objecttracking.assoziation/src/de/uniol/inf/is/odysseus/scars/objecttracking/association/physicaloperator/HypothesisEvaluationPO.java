@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  *
  * @param <M>
  */
-public class HypothesisEvaluationPO<M extends IProbability & IConnectionContainer>
+public class HypothesisEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency >
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	// if debugMode is true the connections will be send to the console
@@ -121,6 +122,7 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		object.getMetadata().setObjectTrackingLatencyStart();
 		TupleIndexPath scannedTupleIndexPath = this.getScannedObjectListPath()
 				.toTupleIndexPath(object);
 		TupleIndexPath predictedTupleIndexPath = this
@@ -197,7 +199,7 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 						+ "]");
 			}
 		}
-
+		object.getMetadata().setObjectTrackingLatencyEnd();
 		transfer(object);
 	}
 
