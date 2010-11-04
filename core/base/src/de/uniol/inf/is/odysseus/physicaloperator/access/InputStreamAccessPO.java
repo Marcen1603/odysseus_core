@@ -70,9 +70,10 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 			return true;
 		} catch (EOFException e) {
 			propagateDone();
+			e.printStackTrace();
 			return false;
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			// TODO fehlerzustand irgendwie signalisieren?
 			propagateDone();
 			return false;
