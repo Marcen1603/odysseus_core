@@ -35,6 +35,7 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 
 	// timing stuff
 	private ArrayList<Long> objecttrackingLatencies;
+	private ArrayList<Long> odysseusLatencies;
 	private int countMax = 300;
 
 	public JDVESinkPO(String hostAdress, int port, String serverType) {
@@ -42,6 +43,7 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.hostAdress = hostAdress;
 		this.serverType = serverType;
 		this.objecttrackingLatencies = new ArrayList<Long>();
+		this.odysseusLatencies = new ArrayList<Long>();
 	}
 
 	public JDVESinkPO(JDVESinkPO<M> sink) {
@@ -49,8 +51,10 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.server = sink.server;
 		this.hostAdress = sink.hostAdress;
 		this.serverType = sink.serverType;
-		this.objecttrackingLatencies = new ArrayList<Long>(
-				sink.objecttrackingLatencies);
+		this.odysseusLatencies = new ArrayList<Long>(
+				sink.odysseusLatencies);
+		this.odysseusLatencies = new ArrayList<Long>(
+				sink.odysseusLatencies);
 	}
 
 	@Override
@@ -72,6 +76,17 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
+
+		if (odysseusLatencies.size() < countMax) {
+			odysseusLatencies.add(object.getMetadata().getLatency());
+			System.out.println("######### ODYSSEUS LATENCY (TUPLE) [" + odysseusLatencies.size() + "] -> " + String.valueOf(odysseusLatencies.get(odysseusLatencies.size()-1)) + " #########");
+		} else {
+			Collections.sort(odysseusLatencies);
+			long odyLatency = this.median(odysseusLatencies);
+			System.out.println("######### ODYSSEUS LATENCY (MEDIAN) -> " + String.valueOf(odyLatency) + " #########");
+			this.odysseusLatencies.clear();
+		}
+
 		if (objecttrackingLatencies.size() < countMax) {
 			objecttrackingLatencies.add(object.getMetadata()
 					.getObjectTrackingLatency());
