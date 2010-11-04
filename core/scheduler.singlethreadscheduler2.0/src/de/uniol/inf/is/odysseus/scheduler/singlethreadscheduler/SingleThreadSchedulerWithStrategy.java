@@ -179,6 +179,8 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 			super.stopScheduling();
 		}
 
+		logger.error(e.getMessage());
+		
 		// send an ErrorEvent to all listenern
 		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR, new Exception(e)));
 	}

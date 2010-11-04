@@ -308,7 +308,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		if (!this.sourceThreads.contains(t)) {
 			super.stopScheduling();
 		}
-
+		logger.error(e.getMessage());
 		// send an ErrorEvent to all listenern
 		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR, new Exception(e)));
 	}
