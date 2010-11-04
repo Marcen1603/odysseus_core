@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.scars.operator.jdvesink.physicaloperator;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
@@ -13,6 +15,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.DatagramServer;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.IServer;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.NIOServer;
@@ -20,7 +23,7 @@ import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class JDVESinkPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval & ILatency>
+public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval & ILatency>
 extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	
 	public static final String SERVER_TYPE_UDP = "udp";
@@ -31,10 +34,15 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	private String serverType;
 	private String hostAdress;
 	
+	// timing stuff
+	private List<Long> objecttrackingLatencies;
+	private int countMax = 300;
+	
 	public JDVESinkPO(String hostAdress, int port, String serverType) {
 		this.port = port;
 		this.hostAdress = hostAdress;
 		this.serverType = serverType;
+		this.objecttrackingLatencies = new ArrayList<Long>();
 	}
 	
 	public JDVESinkPO(JDVESinkPO<M> sink) {
@@ -42,6 +50,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 		this.server = sink.server;
 		this.hostAdress = sink.hostAdress;
 		this.serverType = sink.serverType;
+		this.objecttrackingLatencies = new ArrayList<Long>(sink.objecttrackingLatencies);
 	}
 
 	@Override
@@ -63,6 +72,12 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
+		if(objecttrackingLatencies.size() < countMax) {
+			objecttrackingLatencies.add(object.getMetadata().getObjectTrackingLatency());
+		} else {
+			
+		}
+
 		
 		// iterate over schema and calculate size of byte buffer
 		int bufferSize = 0;
