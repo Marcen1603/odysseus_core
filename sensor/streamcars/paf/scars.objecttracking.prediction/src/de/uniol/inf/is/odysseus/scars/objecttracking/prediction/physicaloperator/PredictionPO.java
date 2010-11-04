@@ -2,14 +2,15 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperato
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
@@ -19,7 +20,7 @@ import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTrackingLatency &  IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private int[] objListPath;
 	private SchemaIndexPath currentTimeSchemaPath;
@@ -69,6 +70,7 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		object.getMetadata().setObjectTrackingLatencyStart();
 		synchronized (this) {
 			streamCollector.recieve(object, port);
 			if( streamCollector.isReady() )
@@ -89,7 +91,9 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 			if( obj1 instanceof MVRelationalTuple ) {
 				// Port 1 hat Tupel
 				MVRelationalTuple<M> currentScanTuple = ((MVRelationalTuple<M>)obj1).clone();
-				transfer( predictData(currentTimeTuple, currentScanTuple) );
+				MVRelationalTuple<M> predictedTuple = predictData(currentTimeTuple, currentScanTuple);
+				predictedTuple.getMetadata().setObjectTrackingLatencyEnd();
+				transfer( predictedTuple );
 				
 			} else {
 				// Port 1 hat Punctuation
