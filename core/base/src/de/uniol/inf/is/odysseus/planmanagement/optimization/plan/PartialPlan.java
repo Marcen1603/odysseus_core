@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
@@ -21,6 +24,14 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
  * 
  */
 public class PartialPlan implements IPartialPlan {
+	
+	static Logger _logger;
+	static synchronized Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(PartialPlan.class);
+		}
+		return _logger;
+	}
 	/**
 	 * Sources which should be scheduled.
 	 */
@@ -82,6 +93,12 @@ public class PartialPlan implements IPartialPlan {
 		}
 	}
 
+	
+	@Override
+	public boolean hasIteratableSources() {
+		return iterableSource != null && iterableSource.size()>0;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,10 +133,12 @@ public class PartialPlan implements IPartialPlan {
 
 	@Override
 	public List<IPhysicalOperator> getQueryRoots() {
+
 		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 		for (IQuery q : partOf) {
 			roots.addAll(q.getRoots());
 		}
+		getLogger().debug("get Query Roots "+roots);
 		return roots;
 	}
 	
@@ -186,4 +205,6 @@ public class PartialPlan implements IPartialPlan {
 		}
 		return result;
 	}
+
+	
 }

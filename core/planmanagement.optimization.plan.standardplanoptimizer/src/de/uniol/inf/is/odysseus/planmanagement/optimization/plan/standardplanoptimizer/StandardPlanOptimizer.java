@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +51,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 *             {@link TransformationConfiguration} is set. The
 	 *             {@link TransformationConfiguration} should be set as
 	 *             {@link QueryBuildConfiguration}.
-	 * @throws CompilerException 
+	 * @throws CompilerException
 	 */
 	private void checkPhysikalPlan(IPlanOptimizable sender, List<IQuery> queries)
 			throws OpenFailedException, TransformationException,
@@ -97,7 +96,8 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 					"Error while optimizer checking Queries.", e);
 		}
 
-		//ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		// ArrayList<IPhysicalOperator> roots = new
+		// ArrayList<IPhysicalOperator>();
 		ArrayList<IPartialPlan> partialPlans = new ArrayList<IPartialPlan>();
 		ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
 		ArrayList<IIterableSource<?>> partialPlanSources;
@@ -107,18 +107,18 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// ignored.
 		for (IQuery query : allQueries) {
 			partialPlanSources = new ArrayList<IIterableSource<?>>();
-			//roots.addAll(query.getRoots());
+			// roots.addAll(query.getRoots());
 
 			// store all new iterable sources as global sources and all
 			// pipes as PartialPlan sources.
-			List<IPhysicalOperator> queryOps = new ArrayList(
+			List<IPhysicalOperator> queryOps = new ArrayList<IPhysicalOperator>(
 					query.getPhysicalChilds());
 			queryOps.addAll(query.getRoots());
 
 			for (IPhysicalOperator operator : queryOps) {
 				IIterableSource<?> iterableSource = null;
 				if (operator instanceof IIterableSource) {
-					iterableSource = (IIterableSource) operator;
+					iterableSource = (IIterableSource<?>) operator;
 					// IterableSource is a Pipe
 					if (iterableSource.isSink()
 							&& !partialPlanSources.contains(iterableSource)) {
@@ -133,10 +133,8 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 			}
 
 			// create a PartialPlan for this query
-			if (!partialPlanSources.isEmpty()) {
-				partialPlans.add(new PartialPlan(partialPlanSources, query
-						.getRoots(), query.getPriority(), query));
-			}
+			partialPlans.add(new PartialPlan(partialPlanSources, query
+					.getRoots(), query.getPriority(), query));
 
 		} // for (IQuery query : allQueries)
 
@@ -144,7 +142,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		ExecutionPlan newPlan = new ExecutionPlan();
 		newPlan.setPartialPlans(partialPlans);
 		newPlan.setLeafSources(leafSources);
-		//newPlan.setRoots(roots);
+		// newPlan.setRoots(roots);
 
 		return newPlan;
 	}

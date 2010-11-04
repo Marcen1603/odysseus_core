@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,31 +27,52 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 public class ExecutionPlan implements IExecutionPlan {
 
 	static Logger _logger = null;
-	static Logger getLogger(){
-		if (_logger == null){
+
+	static Logger getLogger() {
+		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(ExecutionPlan.class);
 		}
 		return _logger;
 	}
-	
-	
+
 	/**
 	 * Describes if the physical operators are opened.
 	 */
-	private boolean open;
+	private boolean open = false;
 
 	/**
 	 * List of all parts of this execution plan. Used for scheduling.
 	 */
-	protected List<IPartialPlan> partialPlans = new ArrayList<IPartialPlan>();
+	final List<IPartialPlan> partialPlans;
+
+	/**
+	 * List of all parts of this execution plan. Used for scheduling.
+	 */
+	final List<IPartialPlan> partialPlansNotToSchedule;
 
 	/**
 	 * List of all leaf sources that need to be scheduled periodically.
 	 */
-	protected List<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
+	final List<IIterableSource<?>> leafSources;
 
 	private Set<IPhysicalOperator> roots = null;
 
+	public ExecutionPlan(){ 
+		partialPlans = new ArrayList<IPartialPlan>();
+		partialPlansNotToSchedule = new ArrayList<IPartialPlan>();
+		leafSources = new ArrayList<IIterableSource<?>>();
+	}
+	
+	public ExecutionPlan(ExecutionPlan otherPlan){
+		this.open = otherPlan.open;
+		this.leafSources = new ArrayList<IIterableSource<?>>(otherPlan.leafSources);
+		this.partialPlans = new ArrayList<IPartialPlan>(otherPlan.partialPlans);
+		this.partialPlansNotToSchedule = new ArrayList<IPartialPlan>(otherPlan.partialPlans);
+		if (otherPlan.roots != null){
+			this.roots = new HashSet<IPhysicalOperator>(otherPlan.roots);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,7 +93,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public List<IIterableSource<?>> getLeafSources() {
-		return this.leafSources;
+		return Collections.unmodifiableList(this.leafSources);
 	}
 
 	/*
@@ -83,8 +105,17 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public void setPartialPlans(List<IPartialPlan> patialPlans) {
 		this.open = false;
-		this.partialPlans = patialPlans;
+		this.partialPlans.clear();
+		this.partialPlansNotToSchedule.clear();
+		for (IPartialPlan plan : patialPlans) {
+			if (plan.hasIteratableSources()) {
+				this.partialPlans.add(plan);
+			} else {
+				this.partialPlansNotToSchedule.add(plan);
+			}
+		}
 		updateRoots();
+
 	}
 
 	/*
@@ -96,7 +127,8 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public void setLeafSources(List<IIterableSource<?>> leafSources) {
 		this.open = false;
-		this.leafSources = leafSources;
+		this.leafSources.clear();
+		this.leafSources.addAll(leafSources);
 	}
 
 	/*
@@ -109,7 +141,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	public void open() throws OpenFailedException {
 		if (!open) {
 			Set<IPhysicalOperator> roots = getRoots();
-			getLogger().debug("Calling Open for "+roots);
+			getLogger().debug("Calling Open for " + roots);
 			for (IPhysicalOperator root : roots) {
 				if (root.isSink()) {
 					((ISink<?>) root).open();
@@ -150,27 +182,12 @@ public class ExecutionPlan implements IExecutionPlan {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan #
-	 * initWith (de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan )
-	 */
-	@Override
-	public void initWith(IExecutionPlan newExecutionPlan) {
-		this.setPartialPlans(new ArrayList<IPartialPlan>(newExecutionPlan
-				.getPartialPlans()));
-		this.setLeafSources(new ArrayList<IIterableSource<?>>(newExecutionPlan
-				.getLeafSources()));
-	}
-
-	//
 	@Override
 	public Set<IPhysicalOperator> getRoots() {
 		if (roots == null) {
 			updateRoots();
 		}
-		return roots;
+		return Collections.unmodifiableSet(roots);
 	}
 
 	private void updateRoots() {
@@ -178,6 +195,14 @@ public class ExecutionPlan implements IExecutionPlan {
 		for (IPartialPlan partialPlan : this.partialPlans) {
 			roots.addAll(partialPlan.getQueryRoots());
 		}
+		for (IPartialPlan partialPlan : this.partialPlansNotToSchedule) {
+			roots.addAll(partialPlan.getQueryRoots());
+		}		
+	}
+	
+	@Override
+	public IExecutionPlan clone(){
+		return new ExecutionPlan(this);
 	}
 
 }

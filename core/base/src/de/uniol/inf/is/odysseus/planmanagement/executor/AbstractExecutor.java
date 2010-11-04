@@ -388,7 +388,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				executionPlanLock.lock();
 				getLogger().info("Set execution plan.");
 				// Init current execution plan with newExecutionPlan
-				this.executionPlan.initWith(newExecutionPlan);
+				this.executionPlan = newExecutionPlan.clone();
 				if (isRunning()) {
 					getLogger().info("Set execution plan. Open");
 					this.executionPlan.open();

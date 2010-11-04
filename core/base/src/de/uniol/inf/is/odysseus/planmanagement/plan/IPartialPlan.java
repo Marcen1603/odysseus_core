@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public interface IPartialPlan {
 	public List<IIterableSource<?>> getIterableSource();
+	public boolean hasIteratableSources();
 	public IIterableSource<?> getIterableSource(int id);
 	public int getSourceId(IIterableSource<?> source);
 	public List<IPhysicalOperator> getRoots();
