@@ -15,13 +15,14 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
-public class EvaluationPO<M extends IProbability & ILatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
+public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String associationObjListPath;
@@ -232,6 +233,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IPredictionFunctio
 			base.setAttribute(0, new MVRelationalTuple<M>(association));
 			
 			// Transfer the generated tuple
+			base.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(base);
 	//		boolAsso = false;
 	//		boolAssoEmpty = false;
@@ -265,6 +267,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IPredictionFunctio
 			base.setAttribute(0, tuple);
 			base.setMetadata( (M) new StreamCarsMetaData()); // Böse
 			base.getMetadata().setStart(new PointInTime(timestamp));
+			base.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(base);
 		}
 	}
@@ -285,6 +288,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IPredictionFunctio
 //	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		object.getMetadata().setObjectTrackingLatencyStart();
 		streamCollector.recieve(object, port);
 		if( streamCollector.isReady())
 			send( streamCollector.getNext() );
