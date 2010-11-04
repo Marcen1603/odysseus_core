@@ -10,8 +10,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
  * @author Volker Janz
  *
  */
-public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements 
-	IConnectionContainer, IGain {
+public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
+	IConnectionContainer, IGain, IObjectTrackingLatency {
 
 	/* ############### KONSTRUKTOREN ################ */
 
@@ -19,7 +19,7 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 		super();
 		this.connectionList = new ConnectionList();
 	}
-	
+
 	public StreamCarsMetaData( StreamCarsMetaData<K> data ) {
 		super(data);
 		this.connectionList = data.connectionList;
@@ -80,25 +80,47 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 	public double[][] getGain() {
 		return this.gain;
 	}
-	
+
 	private double[][] copyArray( double[][] toCopy ) {
 		if( toCopy == null ) return null;
-		
+
 		double[][] copy = new double[toCopy.length][];
 		for( int i = 0; i < toCopy.length; i++ ) {
 			copy[i] = new double[toCopy[i].length];
-			
+
 			for( int j = 0; j < toCopy[i].length; j++ ) {
 				copy[i][j] = toCopy[i][j];
 			}
-			
+
 		}
-		
+
 		return copy;
 	}
 
 	@Override
 	public void setGain(double[][] newGain) {
 		this.gain = newGain;
+	}
+
+	/* ############### OBJECTTRACKINGLATENCY ################ */
+
+	private long currentObjectTrackingLatency;
+	private long currentStartObjTrackingTime;
+
+	@Override
+	public void setStart() {
+		this.currentStartObjTrackingTime = System.nanoTime();
+	}
+
+	@Override
+	public void setEnd() {
+		this.currentObjectTrackingLatency += (System.nanoTime() - this.currentStartObjTrackingTime);
+	}
+
+	@Override
+	public long getObjectTrackingLatency() {
+		long retVal = this.currentObjectTrackingLatency;
+		this.currentObjectTrackingLatency = 0;
+		return retVal;
 	}
 }

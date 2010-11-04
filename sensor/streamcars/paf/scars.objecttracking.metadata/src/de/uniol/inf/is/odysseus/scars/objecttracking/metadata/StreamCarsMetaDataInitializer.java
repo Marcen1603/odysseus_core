@@ -25,11 +25,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * project group StreamCars.
  * <p>
  * See public methods for details.
- * 
+ *
  * @author Hauke
  * @author Sven
  */
-public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer & ITimeInterval & ILatency>
+public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer & ITimeInterval & ILatency >
 		extends AbstractMetadataUpdater<M, MVRelationalTuple<M>> {
 	// set by constructor/initMetadata
 	// used by updateMetadata
@@ -56,7 +56,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	 * {@link #updateMetaData(MVRelationalTuple)} is set to the covariance list
 	 * of each measurement value attribute found in the schema respectively (see
 	 * {@link SDFAttribute#getCovariance()}).
-	 * 
+	 *
 	 * @param schema
 	 *            the schema, used to initialize meta data, NOTE: has to be the
 	 *            schema of the tuples which shall be initialized by this
@@ -139,7 +139,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	 * <p>
 	 * NOTE: It is assumed that the schema used to initialize this object
 	 * represents the schema of the tuple initialized by this method.
-	 * 
+	 *
 	 * @param tuple
 	 *            tuple of which meta data (M) should be initialized, NOTE: has
 	 *            to match schema given to constructor!
@@ -161,7 +161,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 		PointInTime p = new PointInTime( (Long)path.toTupleIndexPath(tupleGiven).getTupleObject());
 		tupleGiven.getMetadata().setStart(p);
 	}
-	
+
 	private void initLatencyData(MVRelationalTuple<M> tupleGiven){
 		tupleGiven.getMetadata().setLatencyStart(System.nanoTime());
 	}

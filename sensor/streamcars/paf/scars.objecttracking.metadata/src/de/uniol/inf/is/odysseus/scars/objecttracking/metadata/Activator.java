@@ -26,14 +26,15 @@ public class Activator implements BundleActivator {
 	@SuppressWarnings("unchecked")
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		MetadataRegistry.addMetadataType(StreamCarsMetaData.class, 
-				ITimeInterval.class, 
-				IPredictionFunctionKey.class, 
-				ILatency.class, 
-				IProbability.class, 
-				IApplicationTime.class, 
+		MetadataRegistry.addMetadataType(StreamCarsMetaData.class,
+				ITimeInterval.class,
+				IPredictionFunctionKey.class,
+				ILatency.class,
+				IProbability.class,
+				IApplicationTime.class,
 				IConnectionContainer.class,
-				IGain.class);
+				IGain.class,
+				IObjectTrackingLatency.class);
 
 	}
 
