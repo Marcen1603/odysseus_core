@@ -54,8 +54,8 @@ public class WorkingMemory {
 
 	public void updateObject(Object o) {
 		LoggerSystem.printlog(Accuracy.TRACE, "Update memory: \t" + o);
-		removeObject(o, true);
-		insertObject(o, true);
+//		removeObject(o, true);
+//		insertObject(o, true);
 	}
 
 	public void process() {
