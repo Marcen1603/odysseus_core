@@ -112,12 +112,12 @@ public class SensorObject implements IStreamType{
 		a = new SDFAttribute("type");
 		a.setDatatype(SDFDatatypeFactory.getDatatype("String"));
 		schema.add(a);
-		a = new SDFAttribute("position_x");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
-		schema.add(a);
-		a = new SDFAttribute("position_y");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
-		schema.add(a);
+//		a = new SDFAttribute("position_x");
+//		a.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+//		schema.add(a);
+//		a = new SDFAttribute("position_y");
+//		a.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+//		schema.add(a);
 		return schema;
 	}
 
@@ -126,12 +126,12 @@ public class SensorObject implements IStreamType{
 	 */
 	@Override
 	public RelationalTuple<ITimeInterval> getNextTuple(long currentTime) {	
-		tuple.setAttribute(0, System.currentTimeMillis());
+		tuple.setAttribute(0, currentTime);
 		tuple.setAttribute(1, currentId);
 		tuple.setAttribute(2, run);
 		tuple.setAttribute(3, this.type);
-		tuple.setAttribute(4, currentPosX);
-		tuple.setAttribute(5, currentPosY);
+//		tuple.setAttribute(4, currentPosX);
+//		tuple.setAttribute(5, currentPosY);
 		tuple.setMetadata(new TimeInterval(new PointInTime(currentTime)));		
 		currentId = (currentId+1)%numberOfObjects;
 		currentPosX = currentPosX+1.0d;
