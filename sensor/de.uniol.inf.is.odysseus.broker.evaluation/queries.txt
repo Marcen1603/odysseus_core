@@ -1,0 +1,17 @@
+#PARSER PQL
+#TRANSCFG BrokerConfig
+#QUERY
+video3 = access({source = 'video2'})
+windowop = WINDOW({size = 5, advance = 1, type = 'tuple'}, video3)
+left = SELECT({predicate=RelationalPredicate('id%2=0')}, windowop)
+right = SELECT({predicate=RelationalPredicate('id%2=1')}, windowop)
+cycleop = FREQCYCLE({NUM=2}, left, right)
+up = SELECT({predicate=RelationalPredicate('id>0')}, cycleop)
+
+
+
+
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+CREATE STREAM video2 (timestamp STARTTIMESTAMP, id INTEGER, interval LONG, type STRING) CHANNEL localhost : 65057
