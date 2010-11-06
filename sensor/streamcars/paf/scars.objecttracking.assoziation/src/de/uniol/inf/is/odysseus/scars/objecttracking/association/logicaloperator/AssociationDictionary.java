@@ -23,10 +23,7 @@ public class AssociationDictionary {
   }
 
   public HypothesisSelectionAO<?> getSource(String srcName) {
-    if (this.sources.containsKey(srcName)) {
-      return this.sources.get(srcName);
-    }
-    return null;
+	  return this.sources.get(srcName);
   }
   
   public void clear(){
