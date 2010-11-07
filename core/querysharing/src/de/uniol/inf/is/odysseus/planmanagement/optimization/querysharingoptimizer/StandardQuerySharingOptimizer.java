@@ -2,20 +2,32 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimiz
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.ISubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Plan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.IExpression;
+import de.uniol.inf.is.odysseus.mep.IFunction;
+import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.functions.*;
 
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	@Override
@@ -72,108 +84,244 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Anwenden der Änderungen auf den alten Plan
 
-		// Spielplatz
-
-		// for(IQuery currentQuery : queries) {
-		// for (IPhysicalOperator po : currentQuery.getPhysicalChilds()) {
-		// if(po instanceof SelectPO) {
-		// System.out.println(po.getName());
-		// SelectPO<?> spo = (SelectPO<?>) po;
-		// IPredicate ip = spo.getPredicate();
-		// System.out.println("----------------" + "\n" + ip.toString() + "\n" +
-		// "--------------");
-		// //ip.contains(ip);
-		// }
-		// }
-		// }
 		return oldPlan;
 	}
 
-	@Override
-	public List<IQuery> eliminateIdenticalQueries(List<IQuery> newQueries,
-			IPlan oldPlan) {
-		List<IQuery> registeredQueries = oldPlan.getQueries();
-		for (IQuery currentQuery : newQueries) {
-			for (IQuery currentRegisteredQuery : registeredQueries) {
-				if (isEqualQuery(currentQuery, currentRegisteredQuery)) {
-					// neue query mit den gleichen physischen ops wie die alte
-					// registrieren
+	
+	public IPlan eliminateIdenticalOperators(IPlan oldPlan, List<IQuery> newQueries) {
+		List<IPhysicalOperator> newOps = new ArrayList<IPhysicalOperator>();
+		List<IPhysicalOperator> ipos =  new ArrayList<IPhysicalOperator>();
+
+		// Sammeln aller im Plan enthaltenen physischen Operatoren
+		//System.out.println("ALLE Queries:");
+		for(IQuery q : oldPlan.getQueries()) {
+			//System.out.println(q.getQueryText());
+			for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
+				if(!ipos.contains(ipo)) {
+					ipos.add(ipo);
 				}
 			}
 		}
-		return newQueries;
-	}
-
-	private boolean isEqualQuery(IQuery q1, IQuery q2) {
-		boolean res = true;
-
-		List<IPhysicalOperator> q1pos = q1.getPhysicalChilds();
-		List<IPhysicalOperator> q2pos = q2.getPhysicalChilds();
-		if (q1pos.size() != q2pos.size()) {
-			return false;
+		
+		// Sammeln aller in den NEUEN Queries enthaltenen physischen Operatoren
+		//System.out.println("NEUE Queries:");
+		for(IQuery q : newQueries) {
+			//System.out.println(q.getQueryText());
+			for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
+				if(!newOps.contains(ipo)) {
+					newOps.add(ipo);
+				}
+			}
 		}
-		for (IPhysicalOperator curq1 : q1pos) {
-			boolean foundmatch = false;
-			for (IPhysicalOperator curq2 : q2pos) {
-				if(curq1.isSemanticallyEqual(curq2)) {
-					foundmatch = true;
-					if(curq1 instanceof IPipe) {
-						Collection<ISubscription> sinks = ((IPipe)curq1).getSubscriptions();
-						for(ISubscription sub : sinks) {
-							ISink s = (ISink)sub.getTarget();
-							SDFAttributeList schema = sub.getSchema();
-							int sinkInPort = sub.getSinkInPort();
-							//Eigentlich sollte man den Sourceport von dem anderen operator herausfinden anstatt aus der zu ersetztenden subscpription...
-							int sourceOutPort = sub.getSourceOutPort();
-							
-							s.unsubscribeFromSource(sub);
-							s.subscribeToSource(curq2, sinkInPort, sourceOutPort, schema);
-						}
-						Collection<ISubscription> sources = ((IPipe)curq1).getSubscribedToSource();
-						for(ISubscription sub : sources) {
-							ISource s = (ISource)sub.getTarget();
-							s.unsubscribeSink(sub);
-						}
-						curq1.removeOwner(q1);
-						curq2.addOwner(q1);
-						((Query)q1).replaceOperator(curq1, curq2);
+		
+		int size = ipos.size();
+		
+		//MEP-Spielplatz (ersetzt die Eingänge von Select-Operatoren mit kleiner-als-Prädikat
+		for(int i = 0; i<size-1; i++) {
+			for(int j = i+1; j<size; j++) {
+				
+				IPhysicalOperator op1 = ipos.get(i);
+				IPhysicalOperator op2 = ipos.get(j);
+				if(op1 instanceof SelectPO && op2 instanceof SelectPO) {
+					SelectPO<?> spo1 = (SelectPO)op1;
+					SelectPO<?> spo2 = (SelectPO)op2;
+					if(this.reUseSelectPO(spo1, spo2)) {
+						i=-1;
+						break;
+					}
+
+				}
+			}
+		}
+		
+		// Vergleich der physischen Operatoren auf semantische Äquivalenz bzw. Austauschbarkeit der Quellen
+		for(int i = 0; i<size-1; i++) {
+			for(int j = i+1; j<size; j++) {
+				IPhysicalOperator op1 = ipos.get(i);
+				IPhysicalOperator op2 = ipos.get(j);
+				
+				//Schritt 1: Entfernen von identischen Operatoren
+				
+				// Operatoren sind semantisch gleiche Pipes, nicht identisch und der zu ersetzende Operator gehört zu einer neuen Query
+				if(op1 instanceof IPipe
+						&& !op1.getName().equals(op2.getName())
+						&& op1.isSemanticallyEqual(op2)) {
+					// Keiner der Operatoren ist neu bzw. zum Austausch berechtigt
+					if(!newOps.contains(op1) && !newOps.contains(op2)) {
+						break;
+					// Der erste Operator ist nicht neu, der zweite allerdings schon
+					} else if (!newOps.contains(op1)) {
+						IPhysicalOperator temp = op1;
+						op1 = op2;
+						op2 = temp;
+					}
+					//System.out.println("Found match!!!");
+					//System.out.println(op1.toString());
+					//System.out.println(op2.toString());
+
+					// Austausch von Operatoren
+					
+					// Holen sämtlicher Subscriptions von bei dem zu ersetzenden Operator angemeldeten sinks
+					Collection<ISubscription> sinks = new ArrayList(((IPipe)op1).getSubscriptions());
+					
+					// Ersetzen des Eingangsoperators bei allen angeschlossenen sinks
+					for(ISubscription sub : sinks) {
+						ISink s = (ISink)sub.getTarget();
+
+						// debug
+						System.out.println("S-Name: " + s.getName());
+						System.out.println("op1-Name: " + op1.getName());
+						
+						// Schema- und Portinformationen der alten Verbindung in Erfahrung bringen
+						SDFAttributeList schema = sub.getSchema();
+						int sinkInPort = sub.getSinkInPort();
+						int sourceOutPort = sub.getSourceOutPort();
+
+						// Subscription löschen
+						((IPipe)op1).unsubscribeSink(sub);
+						System.out.println(s.getName() + " unsubscribed from " + op1.getName());
+						
+						// mit den Informationen der alten Subscription den Ersatzoperator beim Sink anmelden
+						//s.subscribeToSource(op2, sinkInPort, sourceOutPort, schema);
+						((ISource)op2).subscribeSink(s, sinkInPort, sourceOutPort, schema);
+
+
 					}
 					
-					System.out.println("Found match!!!");
-					System.out.println(curq1.toString());
-					System.out.println(curq2.toString());
+					// Holen der Quellen, bei denen der zu ersetzende Operator bislang angemeldet war
+					// (Sind die gleichen wie von op2, ansonsten hätte op2.isSemanticallyEqual(op2) false ergeben)
+					Collection<ISubscription<IPhysicalOperator>> sources = new ArrayList<ISubscription<IPhysicalOperator>>(((IPipe)op1).getSubscribedToSource());
+					for(ISubscription<?> sub : sources) {
+						ISource s = (ISource)sub.getTarget();
+						s.unsubscribeSink(sub);
+						((ISink)op1).unsubscribeFromSource(sub);
+
+					}
+					
+					// Ersetzen des Operators in den einzelnen Queries, die als Besitzer eingetragen waren
+					List<IOperatorOwner> owner = new ArrayList(op1.getOwner());
+					int noOwners = owner.size();
+					for(int k = 0; k<noOwners; k++) {
+						IOperatorOwner oo = owner.get(k);
+						((Query)oo).replaceOperator(op1, op2);
+						((Query)oo).replaceRoot(op1, op2);
+					}						
+					//Entfernen des ersetzten Operators aus der Liste
+					ipos.remove(op1);
+					newOps.remove(op1);
+					
+					// Reiteration (möglicherweise neue identische Operatoren)
+					size--;
+					i=-1;
 					break;
+
 				}
 				
-				SDFAttributeList attlist1 = curq1.getOutputSchema();
-				SDFAttributeList attlist2 = curq2.getOutputSchema();
+				// Schritt 2: Tauschen von Eingangsquellen bei Operatoren, deren Ergebnis
+				// im Ergebnis anderer Operatoren enthalten ist
+				
+				//Operatoren sind verschiedene Pipes und op1 ist in op2 enthalten MOMENTAN NOCH IMMER FALSE
+				if(op1 instanceof AbstractPipe && op2 instanceof IPipe
+						&& !op1.getName().equals(op2.getName())
+						&& ((AbstractPipe<?,?>)op1).isContainedIn((IPipe)op2)) {
+					
+					
+					
+					// Operator ist Teil des alten Plans und darf seine Inputs nicht tauschen
+					if(!newOps.contains(op1)) {
+						break;
+					}
+					
+					this.replaceInput(op1, op2);
+					// Reiteration (möglicherweise neue identische Operatoren)
 
-//				if (curq1.getClass().equals(curq2.getClass())
-//						&& attlist1.compareTo(attlist2) == 0) {
-//					System.out.println("Found match!!!");
-//					System.out.println("PO1:");
-//					for (SDFAttribute a : attlist1) {
-//						System.out.println(a.toString());
-//					}
-//					System.out.println("PO2:");
-//					for (SDFAttribute b : attlist2) {
-//						System.out.println(b.toString());
-//					}
-//
-//					foundmatch = true;
-//
-//					System.out.println(curq1.toString());
-//					System.out.println(curq2.toString());
-//					break;
-//				}
-			}
-			if (!foundmatch) {
-				return false;
+					i=-1;
+					break;
+				}
 			}
 		}
 
-		return res;
+
+		return oldPlan;
 	}
+	
+	//Zum Testen des MEP-Parsers
+	//Prüft momentan zwei SelectPOs und benutzt das Ergebnis des einen als Eingang des anderen, wenn beide als Prädikat einen kleiner-als-Ausdruck haben
+	private boolean reUseSelectPO(SelectPO spo1, SelectPO spo2) {
+		//Liefert false, falls die Operatoren auf unterschiedlichen Quellen operieren
+		if(!spo1.hasSameSources(spo2)) {
+			return false;
+		}
+		IPredicate<?> p1 = spo1.getPredicate();
+		IPredicate<?> p2 = spo2.getPredicate();
+		if(p1 instanceof RelationalPredicate && p2 instanceof RelationalPredicate) {
+			RelationalPredicate rp1 = (RelationalPredicate)p1;
+			RelationalPredicate rp2 = (RelationalPredicate)p2;
+			try {
+				IExpression<?> ex1 = MEP.parse(rp1.getExpression().getExpression());
+				IExpression<?> ex2 = MEP.parse(rp2.getExpression().getExpression());
+				if(ex1.getType().equals(ex2.getType())) {
+					if(ex1.isFunction()) {
+						if(ex1 instanceof AbstractFunction) {
+							AbstractFunction<?> af1 = (AbstractFunction) ex1;
+							AbstractFunction<?> af2 = (AbstractFunction) ex2;
+							
+							if(af1.getSymbol().equals("<") && af2.getSymbol().equals("<")) {
+								if(rp1.getAttributes().get(0).compareTo(rp2.getAttributes().get(0)) == 0) {
+									System.out.println(af1.getArgument(1));
+									if(Double.parseDouble(af1.getArgument(1).toString()) < Double.parseDouble(af2.getArgument(1).toString())) {
+										System.out.println("CHECKPOINT 1");
+										// Operator ist Teil des alten Plans und darf seine Inputs nicht tauschen
+										//if(!newOps.contains(op1)) {
+										//	break;
+										//}
+										this.replaceInput(spo1, spo2);
+										return true;
+										
+									} else if(Double.parseDouble(af2.getArgument(1).toString()) < Double.parseDouble(af1.getArgument(1).toString())) {
+										this.replaceInput(spo2, spo1);
+										return true;
+									}
+								}
+							}
+						}
+
+					}
+				}
+				
+			} catch(Exception e) {
+				System.out.println(e);
+			}
+		}
+		return false;
+		
+	}
+	/**
+	 * Ersetzt die bisherige Quelle von op1 mit op2
+	 * @param op1
+	 * @param op2
+	 */
+	private void replaceInput(IPhysicalOperator op1, IPhysicalOperator op2) {
+		// Ersetzen der Quelle von op1 mit op2
+		Collection<ISubscription> sources = new ArrayList(((IPipe)op1).getSubscribedToSource());
+		for(ISubscription sub : sources) {
+			ISource s = (ISource)sub.getTarget();
+			s.unsubscribeSink(sub);
+			((ISink)op1).unsubscribeFromSource(sub);
+			((IPipe)op2).subscribeSink(op1,sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+		}
+		
+		// Hinzufügen des op2-Operators in den einzelnen Queries, die als Besitzer von op1 eingetragen sind
+		// (Denn dieser Operator ist nun Teil der Query, da er als Eingang für op1 dient.
+		List<IOperatorOwner> owner = new ArrayList<IOperatorOwner>(op1.getOwner());
+		int noOwners = owner.size();
+		for(int k = 0; k<noOwners; k++) {
+			IOperatorOwner oo = owner.get(k);
+			((Query)oo).addChild(op2);
+
+		}						
+	}
+	
 
 	private QSGraph interleavedExecutionAlgorithm(QSGraph g) {
 		List<Vertice> vertices = g.getVertices();
