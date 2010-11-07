@@ -6,6 +6,9 @@ import org.eclipse.draw2d.MouseMotionListener;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
+
 /**
  * This class defines the drag and drop listener used by the automata view.
  * 
@@ -76,6 +79,13 @@ public class DragListener extends MouseMotionListener.Stub implements
 		if (initialPoint == null) {
 			this.initialPoint = event.getLocation();
 			this.draggingState = (AbstractState) event.getSource();
+		}
+		
+		// notify the CEPStateView to show the details of the selected state
+		try{
+		CEPViewAgent.getInstance().fireCEPEvent(CEPViewEvent.STATE_SELECTED, (AbstractState) event.getSource());
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 

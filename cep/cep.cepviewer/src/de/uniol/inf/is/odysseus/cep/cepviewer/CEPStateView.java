@@ -5,6 +5,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
+import de.uniol.inf.is.odysseus.cep.cepviewer.event.ICEPViewListener;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractState;
+
 /**
  * This class defines the state view which should hold the information of the
  * selected state.
@@ -32,8 +37,17 @@ public class CEPStateView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		// just show its name.
-		Label label = new Label(parent, SWT.NONE);
+		final Label label = new Label(parent, SWT.NONE);
 		label.setText("StateView");
+		CEPViewAgent.getInstance().addCEPEventListener(new ICEPViewListener() {
+			public void cepEventOccurred(CEPViewEvent event) {
+				if (event.getType() == CEPViewEvent.STATE_SELECTED) {
+					label.setText(((AbstractState) event.getContent())
+							.getState().getId()
+							+ "");
+				}
+			}
+		});
 	}
 
 	/**

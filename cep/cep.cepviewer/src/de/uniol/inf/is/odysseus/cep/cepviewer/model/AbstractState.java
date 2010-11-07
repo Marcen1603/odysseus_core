@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.cep.cepviewer.model;
 import java.util.Hashtable;
 
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.Label;
+
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.State;
 
 /**
  * This abstract class defines a state.
@@ -18,7 +21,15 @@ public abstract class AbstractState extends Figure {
 	protected Hashtable<String, Anchor> transSources = new Hashtable<String, Anchor>();
 
 	// holds the name of a state
-	protected String name;
+	protected String identifier;
+	
+	private State state;
+	
+	public AbstractState(String name, State state) {
+		this.identifier = name;
+		this.state = state;
+		this.setToolTip(new Label("State " + this.identifier));
+	}
 
 	/**
 	 * This constant holds the size of a state.
@@ -31,9 +42,13 @@ public abstract class AbstractState extends Figure {
 	 * @param name
 	 *            is the new name 
 	 */
-	public void setText(String name) {
-		this.name = name;
+	public void setName(String name) {
+		this.identifier = name;
 		repaint();
+	}
+	
+	public State getState() {
+		return this.state;
 	}
 	
 }

@@ -59,7 +59,6 @@ public abstract class AbstractTreeList extends Composite {
 				TreeItem item = tree.getSelection()[0];
 				StateMachineInstance instance = machineList.get(tree.indexOf(item));
 				CEPViewAgent.getInstance().fireCEPEvent(CEPViewEvent.ITEM_SELECTED, instance);
-				System.out.println(instance.getMachine().getString() + ": " + instance.getInstanceId());
 			}
 		});
 	}

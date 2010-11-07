@@ -28,7 +28,7 @@ public class StateMachineInstancesTestData {
 		StateMachine statemachine = new StateMachine(stateArrayA, "Anfrage 1");
 		StateMachineInstance instance = new StateMachineInstance(statemachine,
 				1);
-		instance.setCurrentState(stateA2);
+		instance.setCurrentState(stateA3);
 		addStateMachine(instance);
 		// Automat 2
 		State stateB1 = new State(0, false);

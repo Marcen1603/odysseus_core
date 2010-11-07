@@ -30,11 +30,11 @@ public class StatusTreeList extends AbstractTreeList {
 	public StatusTreeList(Composite parent, int style) {
 		super(parent, style);
 		itemR = new StateTreeItem(this.getTree(), SWT.NONE);
-		itemR.setText(Status.RUNNING.getName());
+		itemR.setText(Status.RUNNING.toString());
 		itemF = new StateTreeItem(this.getTree(), SWT.NONE);
-		itemF.setText(Status.FINISHED.getName());
+		itemF.setText(Status.FINISHED.toString());
 		itemA = new StateTreeItem(this.getTree(), SWT.NONE);
-		itemA.setText(Status.ABORTED.getName());
+		itemA.setText(Status.ABORTED.toString());
 	}
 
 	/**
@@ -45,8 +45,14 @@ public class StatusTreeList extends AbstractTreeList {
 	 */
 	@Override
 	public void addStateMachineInstance(StateMachineInstance stateMachineInstance) {
+		Status status = null;
+		if(stateMachineInstance.getCurrentState().isAccepting()) {
+			status = Status.FINISHED;
+		} else if(!stateMachineInstance.getCurrentState().isAccepting()) {
+			status = Status.RUNNING;
+		}
 		for (TreeItem statusItem : this.getTree().getItems()) {
-			if (statusItem.getText().contains("" + Status.RUNNING.getName())) {
+			if (statusItem.getText().contains(status.toString())) {
 				StateTreeItem item = new StateTreeItem(statusItem, SWT.NONE, stateMachineInstance);
 				item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());
 				this.setStatusImage(item);

@@ -29,6 +29,8 @@ public class CEPAutomataView extends ViewPart {
 
 	// The id of this view.
 	public static final String ID = "MyView.mainView";
+	
+	private final int STATE_X_SPACING = 100;
 
 	private Composite parent;
 	
@@ -58,8 +60,10 @@ public class CEPAutomataView extends ViewPart {
 		this.parent = parent;
 		CEPViewAgent.getInstance().addCEPEventListener(new ICEPViewListener() {
 			public void cepEventOccurred(CEPViewEvent event) {
-				clearView();
-				showAutomata((StateMachineInstance) event.getContent());
+				if (event.getType() == CEPViewEvent.ITEM_SELECTED) {
+					clearView();
+					showAutomata((StateMachineInstance) event.getContent());
+				}
 			}
 		});
 		Canvas canvas = new Canvas(this.parent, 0);
@@ -78,38 +82,27 @@ public class CEPAutomataView extends ViewPart {
 	}
 	
 	private void createTransitions(AutomataState oldState, State nextState) {
-		try{
 		for (Transition nextTrans : nextState.getTransition()) {
 			if (nextTrans.getNextState().equals(nextState)) {
 				TransitionLoop loop;
 				if (nextTrans.getAction().equals(Action.CONSUME)) {
-					loop = new TransitionLoop(oldState, TransitionLoop.TAKE_LOOP);
-					loop.setSourceAnchor(oldState.getTakeOutAnchor());
-					loop.setTargetAnchor(oldState.getTakeInAnchor());
+					loop = new TransitionLoop(oldState.getTakeOutAnchor(), oldState.getTakeInAnchor(), oldState, TransitionLoop.TAKE_LOOP);
 				} else {
-					loop = new TransitionLoop(oldState, TransitionLoop.IGNORE_LOOP);
-					loop.setSourceAnchor(oldState.getIgnoreOutAnchor());
-					loop.setTargetAnchor(oldState.getIgnoreInAnchor());
+					loop = new TransitionLoop(oldState.getIgnoreOutAnchor(), oldState.getIgnoreInAnchor(), oldState, TransitionLoop.IGNORE_LOOP);
 				}
 				this.diagram.add(loop);
 			} else {
 				AutomataState newState = createNewState(nextTrans.getNextState());
-				NormalTransition path = new NormalTransition();
-				path.setSourceAnchor(oldState.getOutAnchor());
-				path.setTargetAnchor(newState.getInAnchor());
+				NormalTransition path = new NormalTransition(oldState.getOutAnchor(), newState.getInAnchor());
 				this.diagram.add(path);
 				this.createTransitions(newState, nextTrans.getNextState());
 			}
 		}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 	}
 	
 	private AutomataState createNewState(State rootState) {
-		AutomataState newState = new AutomataState(this.parent, rootState, this.currentState.equals(rootState), rootState.isAccepting());
-		newState.setText("S" + rootState.getId());
-		newState.setBounds(new Rectangle(50 + (100 * this.stateCount), 50,
+		AutomataState newState = new AutomataState(this.parent, "S" + rootState.getId(), rootState, this.currentState.equals(rootState), rootState.isAccepting());
+		newState.setBounds(new Rectangle(STATE_X_SPACING * (this.stateCount + 1), (this.diagram.getSize().height - AbstractState.SIZE )/ 2,
 				AbstractState.SIZE, AbstractState.SIZE));
 		this.diagram.add(newState);
 		new DragListener(newState);

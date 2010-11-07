@@ -6,6 +6,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.State;
 
@@ -27,8 +28,6 @@ public class AutomataState extends AbstractState {
 	protected Anchor ignoreInAnchor;
 	protected Anchor ignoreOutAnchor;
 	
-	private State state;
-	
 	private boolean isActive;
 	
 	private boolean isEndState;
@@ -39,12 +38,13 @@ public class AutomataState extends AbstractState {
 	 * @param parent
 	 *            is the widget which contains this state.
 	 */
-	public AutomataState(Composite parent, State state, boolean isActive, boolean isAccepting) {
-		this.state = state;
+	public AutomataState(Composite parent, String name, State state, boolean isActive, boolean isAccepting) {
+		super(name, state);
+		this.setOpaque(false);
 		this.parent = parent;
 		this.isActive = isActive;
 		this.isEndState = isAccepting;
-
+		
 		// create an name all anchors
 		this.inAnchor = new Anchor(this);
 		this.inAnchor.place = new Point(0, 1);
@@ -74,28 +74,31 @@ public class AutomataState extends AbstractState {
 	 */
 	@Override
 	public void paintFigure(Graphics g) {
+		Display display = this.parent.getDisplay();
 		Rectangle r = bounds;
-		Font f = new Font(this.parent.getShell().getDisplay(), "Arial", 15,
+		Font f = new Font(display, "Arial", 15,
 				SWT.BOLD | SWT.ITALIC);
-		if(isActive) {
-			g.setForegroundColor(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
-		}
 		g.setFont(f);
 		g.setLineWidth(3);
-		g.drawOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+		if(isActive) {
+			g.setBackgroundColor(display.getSystemColor(SWT.COLOR_BLUE));
+		}
 		if(this.isEndState) {
+			g.fillOval(r.x + 5, r.y + 5, r.width - 11, r.height - 11);
 			g.drawOval(r.x + 5, r.y + 5, r.width - 11, r.height - 11);
+		} else {
+			g.fillOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+		}
+		g.drawOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+		if(isActive) {
+			g.setForegroundColor(display.getSystemColor(SWT.COLOR_WHITE));
 		}
 		// paint the name on the location based on its length
-		if (name.length() > 2) {
-			g.drawText(name, r.x + (r.width / 5), r.y + (r.height / 3));
+		if (identifier.length() > 2) {
+			g.drawText(identifier, r.x + (r.width / 5), r.y + (r.height / 3));
 		} else {
-			g.drawText(name, r.x + (r.width / 3), r.y + (r.height / 3));
+			g.drawText(identifier, r.x + (r.width / 3), r.y + (r.height / 3));
 		}
-	}
-	
-	public void changeColor() {
-		
 	}
 
 	/**
@@ -150,10 +153,6 @@ public class AutomataState extends AbstractState {
 	 */
 	public Anchor getIgnoreOutAnchor() {
 		return ignoreOutAnchor;
-	}
-	
-	public State getState() {
-		return this.state;
 	}
 	
 }
