@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -228,14 +229,7 @@ public class StandardExecutor extends AbstractExecutor {
 					newQueries, conf);
 			setExecutionPlan(exep);
 
-			// Einbindung der furchtbar experimentellen ersten Versuche des
-			// Query-Sharings
-			//IQuerySharingOptimizer qso = getQuerySharingOptimizer();
-			//if(qso != null) {
-				// newQueries = qso.eliminateIdenticalQueries(newQueries,
-				// this.plan);
-				// plan = qso.applyQuerySharing(this, plan);
-			//}
+
 			
 
 			// store optimized queries
@@ -245,6 +239,14 @@ public class StandardExecutor extends AbstractExecutor {
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 			}
+			
+			// Einbindung des Query-Sharing-Optimizers zur Optimierung des Plans
+			// (noch in der Entwicklungsphase)
+
+			//IQuerySharingOptimizer qso = getQuerySharingOptimizer();
+			//if(qso != null) {
+			//	this.plan = qso.eliminateIdenticalOperators(this.plan, newQueries);
+			//}
 
 		} finally {
 			// end synchronize of the process
