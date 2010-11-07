@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
@@ -53,6 +54,14 @@ public class QuantificationPredicate extends
 	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof QuantificationPredicate)) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof QuantificationPredicate)) {
 			return false;
 		}
 		return true;
