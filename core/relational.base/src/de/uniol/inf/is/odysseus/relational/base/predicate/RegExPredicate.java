@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -169,6 +170,15 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 	@Override
 	public boolean equals(IPredicate pred) {
 		return this.equals((Object)pred);
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof RegExPredicate)) {
+			return false;
+		}
+		//TODO: richtig implementieren
+		return false;
 	}
 
 }

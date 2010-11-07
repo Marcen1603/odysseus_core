@@ -162,16 +162,23 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	}
 	
 	@Override
-	public boolean contains(AbstractPredicate<RelationalTuple<?>> pred) {
-		if(pred instanceof RelationalPredicate) {
-			System.out.println("Blablabla: " + ((RelationalPredicate) pred).getExpression().toString());
-		}
-		return true;
-		
+	public boolean equals(IPredicate pred) {
+		return this.equals((Object)pred);
 	}
 	
 	@Override
-	public boolean equals(IPredicate pred) {
-		return this.equals((Object)pred);
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof RelationalPredicate)) {
+			return false;
+		}
+//		RelationalPredicate rp = (RelationalPredicate)o;
+//		SDFExpression e1 = this.expression;
+//		SDFExpression e2 = rp.expression;
+//		System.out.println("EXPRESSION E1: " + e1.getExpression());
+//		System.out.println("EXPRESSION E2: " + e2.getExpression());
+//		for(SDFAttribute a : e1.getAllAttributes()) {
+//			System.out.println(a.toPointString());
+//		}
+		return false;
 	}
 }
