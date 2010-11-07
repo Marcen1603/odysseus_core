@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
@@ -46,6 +47,14 @@ public class OverlapsPredicate extends
 	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof OverlapsPredicate)) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof OverlapsPredicate)) {
 			return false;
 		}
 		return true;

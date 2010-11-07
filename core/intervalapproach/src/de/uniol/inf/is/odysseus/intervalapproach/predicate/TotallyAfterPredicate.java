@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
@@ -51,6 +52,14 @@ public class TotallyAfterPredicate extends AbstractPredicate<IMetaAttributeConta
 	@Override
 	public boolean equals(IPredicate pred) {
 		return (pred instanceof TotallyAfterPredicate);
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof TotallyAfterPredicate)) {
+			return false;
+		}
+		return true;
 	}
 
 }

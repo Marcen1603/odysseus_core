@@ -36,4 +36,12 @@ public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeConta
 	public boolean equals(IPredicate pred) {
 		return (pred instanceof StartsBeforePredicate);
 	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof StartsBeforePredicate)) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -12,10 +12,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -286,10 +289,35 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		if(!(ipo instanceof JoinTIPO)) {
 			return false;
 		}
-		JoinTIPO jtipo = (JoinTIPO) ipo;
-		if(this.getSubscribedToSource().equals(jtipo.getSubscribedToSource()) &&
-				this.getJoinPredicate().equals(jtipo.getJoinPredicate()) &&
+		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ipo;
+		
+		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
+		if(!this.hasSameSources(jtipo)) {
+			return false;
+		}
+		
+		// Vergleichen des Join-Prädikats und des Output-Schemas
+		if(this.getJoinPredicate().equals(jtipo.getJoinPredicate()) &&
 				this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isContainedIn(IPipe<T,T> ip) {
+		if(!(ip instanceof JoinTIPO)) {
+			return false;
+		}
+		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ip;
+		
+		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
+		if(!this.hasSameSources(jtipo)) {
+			return false;
+		}
+		
+		// Vergleichen des Join-Prädikats
+		if(this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate())) {
 			return true;
 		}
 		return false;

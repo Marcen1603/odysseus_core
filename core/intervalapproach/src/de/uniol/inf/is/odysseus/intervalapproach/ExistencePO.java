@@ -303,7 +303,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 			return false;
 		}
 		ExistencePO epo = (ExistencePO) ipo;
-		if(this.getSubscribedToSource().equals(epo.getSubscribedToSource()) && this.joinPredicate.equals(epo.joinPredicate)) {
+		if(this.hasSameSources(epo) && this.joinPredicate.equals(epo.joinPredicate)) {
 			return true;
 		}
 		return false;

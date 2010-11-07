@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.IWindow;
 
 
@@ -74,11 +76,23 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 		if(!(ipo instanceof AbstractWindowTIPO) || !this.getClass().toString().equals(ipo.getClass().toString())) {
 			return false;
 		}
-		AbstractWindowTIPO awtipo = (AbstractWindowTIPO) ipo;
-//		if(this.getSubscribedToSource().equals(awtipo.getSubscribedToSource()) &&
-//				this.windowAO.equals(awtipo.getWindowAO())) {
-//			return true;
-//		}
+		
+		//System.out.println("SAME WINDOWS - Step 1");
+		//System.out.println(this.getClass().toString());
+		//System.out.println(ipo.getClass().toString());
+		AbstractWindowTIPO<T> awtipo = (AbstractWindowTIPO<T>) ipo;
+		
+		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
+		if(!this.hasSameSources(awtipo)) {
+			return false;
+		}
+		//System.out.println("SAME WINDOWS - Step 2");
+		if(this.windowSize == awtipo.windowSize
+				&& this.windowAdvance == awtipo.windowAdvance
+				&& this.windowType.compareTo(awtipo.windowType) == 0) {
+			//System.out.println("SAME WINDOWS - Step 3");
+			return true;
+		}
 		return false;
 	}
 	

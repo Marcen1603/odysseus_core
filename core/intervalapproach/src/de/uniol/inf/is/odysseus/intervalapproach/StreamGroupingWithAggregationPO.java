@@ -285,10 +285,5 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	public void processPunctuation(PointInTime timestamp, int port) {
 		createOutput(timestamp);
 	}
-	
-	@Override
-	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		return false;
-	}
 
 }
