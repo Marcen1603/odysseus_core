@@ -62,8 +62,8 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		if(!(ipo instanceof RelationalProjectPO)) {
 			return false;
 		}
-		RelationalProjectPO rppo = (RelationalProjectPO) ipo;
-		if(this.getSubscribedToSource().equals(rppo.getSubscribedToSource()) &&
+		RelationalProjectPO<T> rppo = (RelationalProjectPO<T>) ipo;
+		if(this.hasSameSources(ipo) &&
 				this.restrictList.length == rppo.restrictList.length) {
 			for(int i = 0; i<this.restrictList.length; i++) {
 				if(this.restrictList[i] != rppo.restrictList[i]) {
