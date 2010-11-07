@@ -43,8 +43,16 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
 	}
 	
 	@Override
-	public boolean equals(IPredicate pred) {
+	public boolean equals(IPredicate<T> pred) {
 		if(!(pred instanceof NotPredicate)) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof NotPredicate)) {
 			return false;
 		}
 		return true;

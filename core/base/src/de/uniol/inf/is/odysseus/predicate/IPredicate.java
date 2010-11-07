@@ -22,4 +22,5 @@ public interface IPredicate<T> extends IClone, Serializable {
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated);
 	
 	public boolean equals(IPredicate<T> pred);
+	boolean isContainedIn(Object o);
 }

@@ -370,7 +370,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 		}
 	}
 
-	private void addChild(IPhysicalOperator child) {
+	public void addChild(IPhysicalOperator child) {
 		if (!this.physicalChilds.contains(child)) {
 			this.physicalChilds.add(child);
 			child.addOwner(this);
@@ -685,5 +685,22 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	@Override
 	public IPlanMonitor getPlanMonitor(String name) {
 		return this.planmonitors.get(name);
+	}
+
+	/**
+	 * Replaces a Root in the Query with another Physical Operator
+	 * 
+	 * @param oldRoot The root that is being replaced
+	 * @param newRoot The replacement for the old root
+	 * 
+	 */
+	public void replaceRoot(IPhysicalOperator oldRoot, IPhysicalOperator newRoot) {
+
+		if(this.roots.contains(oldRoot)) {
+			ArrayList<IPhysicalOperator> oldRoots = new ArrayList<IPhysicalOperator>(this.roots);
+			oldRoots.remove(oldRoot);
+			oldRoots.add(newRoot);
+			this.setRoots(oldRoots);			
+		}
 	}
 }

@@ -32,11 +32,14 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	@Override
 	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
 	
-	public boolean contains(AbstractPredicate<T> pred) {return true;}
-	
 	// TODO: IMplement in Child Classes... 
 	@Override
 	public boolean equals(IPredicate<T> pred) {
+		return false;
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
 		return false;
 	}
 }

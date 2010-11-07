@@ -104,15 +104,26 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof SelectPO)) {
+		if(!(ipo instanceof SelectPO<?>)) {
 			return false;
 		}
-		SelectPO spo = (SelectPO) ipo;
+		SelectPO<T> spo = (SelectPO<T>) ipo;
 		// Predicates don't match
 		if(!this.predicate.equals(spo.getPredicate())) return false;
 		// Different sources
-		if(!this.getSubscribedToSource().equals(spo.getSubscribedToSource())) return false;
+		if(!this.hasSameSources(spo)) return false;
 		return true;
+	}
+	
+	@Override
+	public boolean isContainedIn(IPipe<T,T> ip) {
+		if(!(ip instanceof SelectPO) || !this.hasSameSources(ip)) {
+			return false;
+		}
+		if(this.predicate.isContainedIn(((SelectPO<T>)ip).predicate)) {
+			
+		}
+		return false;
 	}
 }
 

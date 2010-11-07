@@ -58,13 +58,18 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 	}
 	
 	@Override
-	public boolean equals(IPredicate pred) {
+	public boolean equals(IPredicate<T> pred) {
 		if(!(pred instanceof OrPredicate)) {
 			return false;
 		}
-		OrPredicate op = (OrPredicate) pred;
+		OrPredicate<T> op = (OrPredicate<T>) pred;
 		// The Order of the Predicates shouldn't matter
 		return (this.getLeft().equals(op.getLeft()) && this.getRight().equals(op.getRight()))
 		|| (this.getLeft().equals(op.getRight()) && this.getRight().equals(op.getLeft()));
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		return false;
 	}
 }

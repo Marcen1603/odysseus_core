@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -304,6 +305,51 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	
 	public boolean delegatedIsSemanticallyEqual(IPhysicalOperator ipo) {
 		return process_isSemanticallyEqual(ipo);
+	}
+	
+	/**
+	 * Liefert true, falls zwei Pipes die gleichen Quellen haben und die
+	 * entsprechenden Verbindungen die gleichen SinkIn- bzw. Sourceout-Ports nutzen.
+	 * 
+	 * @param o
+	 *            zu überprüfendes Objekt (idealerweise eine AbstractPipe)
+	 */
+	public boolean hasSameSources(Object o) {
+		// Abbruch, falls das zu überprüfende Objekt keine AbstractPipe ist
+		if(!(o instanceof AbstractPipe)) {
+			return false;
+		}
+		AbstractPipe<R,W> other = (AbstractPipe<R,W>) o;
+
+		Collection<PhysicalSubscription<ISource<? extends R>>> thisSubs = this.getSubscribedToSource();
+		Collection<PhysicalSubscription<ISource<? extends R>>> otherSubs = other.getSubscribedToSource();
+		
+		// Unterschiedlich viele Quellen
+		if(thisSubs.size() != otherSubs.size()) {
+			return false;
+		}
+		// Iteration über die Subscriptions zu Quellen
+		for(PhysicalSubscription<?> s1 : thisSubs) {
+			boolean foundmatch = false;
+			for(PhysicalSubscription<?> s2 : otherSubs) {
+				// Subscription enthält gleiche Quelle und gleiche Ports
+				if(((ISource<?>)s1.getTarget()).getName().equals(((ISource<?>)s2.getTarget()).getName()) &&
+						s1.getSinkInPort() == s2.getSinkInPort() &&
+						s1.getSourceOutPort() == s2.getSourceOutPort() &&
+						s1.getSchema().compareTo(s2.getSchema()) == 0) {
+					foundmatch = true;
+				}
+			}
+			// Operatoren haben mindestens eine unterschiedliche Quelle
+			if(!foundmatch) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isContainedIn(IPipe<R,W> ip) {
+		return false;
 	}
 
 

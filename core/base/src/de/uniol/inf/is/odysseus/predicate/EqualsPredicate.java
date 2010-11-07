@@ -34,4 +34,12 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 		}
 		return true;
 	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof EqualsPredicate)) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.collection.FESortedPair;
@@ -13,6 +14,9 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IEvaluator;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IInitializer;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IMerger;
@@ -175,5 +179,78 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
             ret.put(e.getKey(), value);
         }
         return ret;
+    }
+    
+    @Override
+    public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+    	if(!(ipo instanceof AggregatePO)) {
+    		return false;
+    	}
+		
+		AggregatePO<M,R,A> apo = (AggregatePO<M,R,A>) ipo;
+		
+		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
+		if(!this.hasSameSources(ipo)) {
+			return false;
+		}
+		System.out.println(this.groupingHelper.getClass().toString());
+		System.out.println(apo.groupingHelper.getClass().toString());
+		if(this.groupingHelper.getClass().toString().equals(apo.groupingHelper.getClass().toString())
+				&& this.inputSchema.compareTo(apo.inputSchema) == 0
+				&& this.outputSchema.compareTo(apo.outputSchema) == 0) {
+			
+			// Vergleich der groupingAttributes
+			for(SDFAttribute a : this.groupingAttributes) {
+				boolean foundmatch = false;
+				for(SDFAttribute b : apo.groupingAttributes) {
+					if(a.compareTo(b) == 0) {
+						foundmatch = true;
+					}
+				}
+				if(!foundmatch) {
+					return false;
+				}
+			}
+			
+			
+			Set<SDFAttributeList> s1 = this.aggregations.keySet();
+			Set<SDFAttributeList> s2 = apo.aggregations.keySet();
+			if(s1.size() != s2.size()) {
+				return false;
+			}
+			
+			for(SDFAttributeList a : s1) {
+				boolean foundmatch = false;
+				for(SDFAttributeList b : s2) {
+					// Gleichen Key gefunden
+					if(a.compareTo(b) == 0) {
+						// Vergleichen der Werte
+						Map<AggregateFunction, SDFAttribute> m1 = this.aggregations.get(a);
+						Map<AggregateFunction, SDFAttribute> m2 = apo.aggregations.get(b);
+						Set<AggregateFunction> k1 = m1.keySet();
+						Set<AggregateFunction> k2 = m2.keySet();
+						if(k1.size() != k2.size()) {
+							return false;
+						}
+						for(AggregateFunction af1 : k1) {
+							for(AggregateFunction af2 : k2) {
+								if(af1.compareTo(af2) == 0) {
+									if(m1.get(af1).compareTo(m2.get(af2)) == 0) {
+										foundmatch = true;
+									}
+								}
+							}
+						}
+						
+					}
+				}
+				if(!foundmatch) {
+					return false;
+				}
+			}
+			return true;
+		}
+    	
+    	return false;
     }
 }

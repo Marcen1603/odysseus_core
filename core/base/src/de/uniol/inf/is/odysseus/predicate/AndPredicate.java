@@ -60,12 +60,26 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 	}
 	
 	@Override
-	public boolean equals(IPredicate pred) {
+	public boolean equals(IPredicate<T> pred) {
 		if(!(pred instanceof AndPredicate)) {
 			return false;
 		}
-		AndPredicate ap = (AndPredicate) pred;
+		AndPredicate<T> ap = (AndPredicate<T>) pred;
 		return this.getLeft().equals(ap.getLeft()) && this.getRight().equals(ap.getRight());
+	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		if(!(o instanceof AndPredicate)) {
+			return false;
+		}
+		AndPredicate<T> ap = (AndPredicate<T>) o;
+		IPredicate<? super T> left = this.getLeft();
+		if(this.getLeft().isContainedIn(ap.getLeft()) &&
+				this.getRight().isContainedIn(ap.getRight())) {
+			return true;
+		}
+		return false;
 	}
 
 }
