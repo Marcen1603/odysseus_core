@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -28,39 +27,39 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 	private String associationObjListPath;
 	private String filteringObjListPath;
 	private String brokerObjListPath;
-	
-//	private PointInTimeSweepArea<M> sweepAssociation;
-//	private PointInTimeSweepArea<M> sweepFiltering;
-//	private PointInTimeSweepArea<M> sweepBroker;
-//
-//	private long associationTime = -1;
-//	private long filteringTime = -1;
-//	private long brokerTime = -1;
-//	
-//	private long timestamp = -1;
-//
-//	private boolean boolAsso = false;
-//	private boolean boolFilter = false;
-//	private boolean boolBroker = false;
-//
-//	private boolean boolAssoEmpty = false;
-//	private boolean boolFilterEmpty = false;
-//	private boolean boolBrokerEmpty = false;
+
+	// private PointInTimeSweepArea<M> sweepAssociation;
+	// private PointInTimeSweepArea<M> sweepFiltering;
+	// private PointInTimeSweepArea<M> sweepBroker;
+	//
+	// private long associationTime = -1;
+	// private long filteringTime = -1;
+	// private long brokerTime = -1;
+	//
+	// private long timestamp = -1;
+	//
+	// private boolean boolAsso = false;
+	// private boolean boolFilter = false;
+	// private boolean boolBroker = false;
+	//
+	// private boolean boolAssoEmpty = false;
+	// private boolean boolFilterEmpty = false;
+	// private boolean boolBrokerEmpty = false;
 
 	private double threshold;
-	
+
 	private StreamCollector streamCollector;
 	private SchemaHelper shAssociationInput;
-	private SchemaHelper shFilteringInput;
+	// private SchemaHelper shFilteringInput;
 	private SchemaHelper shSecondBrokerInput;
-	
+
 	private SchemaHelper helper;
 
 	public EvaluationPO() {
 		super();
-//		this.sweepAssociation = new PointInTimeSweepArea<M>();
-//		this.sweepFiltering = new PointInTimeSweepArea<M>();
-//		this.sweepBroker = new PointInTimeSweepArea<M>();
+		// this.sweepAssociation = new PointInTimeSweepArea<M>();
+		// this.sweepFiltering = new PointInTimeSweepArea<M>();
+		// this.sweepBroker = new PointInTimeSweepArea<M>();
 	}
 
 	public EvaluationPO(EvaluationPO<M> copy) {
@@ -69,17 +68,23 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		this.filteringObjListPath = copy.filteringObjListPath;
 		this.brokerObjListPath = copy.brokerObjListPath;
 		this.threshold = copy.getThreshold();
-//		this.sweepAssociation =  (PointInTimeSweepArea<M>) copy.sweepAssociation.clone();
-//		this.sweepFiltering =  (PointInTimeSweepArea<M>) copy.sweepFiltering.clone();
-//		this.sweepBroker =  (PointInTimeSweepArea<M>) copy.sweepBroker.clone();
+		// this.sweepAssociation = (PointInTimeSweepArea<M>)
+		// copy.sweepAssociation.clone();
+		// this.sweepFiltering = (PointInTimeSweepArea<M>)
+		// copy.sweepFiltering.clone();
+		// this.sweepBroker = (PointInTimeSweepArea<M>)
+		// copy.sweepBroker.clone();
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		shAssociationInput = new SchemaHelper(getSubscribedToSource(0).getSchema());
-		shFilteringInput = new SchemaHelper(getSubscribedToSource(1).getSchema());
-		shSecondBrokerInput = new SchemaHelper(getSubscribedToSource(2).getSchema());
+		shAssociationInput = new SchemaHelper(getSubscribedToSource(0)
+				.getSchema());
+		// shFilteringInput = new SchemaHelper(getSubscribedToSource(1)
+		//		.getSchema());
+		shSecondBrokerInput = new SchemaHelper(getSubscribedToSource(2)
+				.getSchema());
 
 		streamCollector = new StreamCollector(getSubscribedToSource().size());
 		helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
@@ -88,271 +93,281 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		streamCollector.recieve(timestamp, port);
-		if( streamCollector.isReady())
-			send( streamCollector.getNext() );
-		
-//		if(port == 0 && !boolAsso) {
-//			this.associationTime = timestamp.getMainPoint();
-//		} else if (port == 1 && !boolFilter) {
-//			this.filteringTime = timestamp.getMainPoint();
-//		} else if (port == 2 && !boolBroker) {
-//			this.brokerTime = timestamp.getMainPoint();
-//		}
-//		
-//		if(timestamp.getMainPoint() > this.timestamp && this.associationTime != -1 && this.filteringTime != -1 && this.brokerTime != -1) {
-//			this.sendPunctuation(timestamp);
-//			this.timestamp = timestamp.getMainPoint();
-//		}
+		if (streamCollector.isReady())
+			send(streamCollector.getNext());
+
+		// if(port == 0 && !boolAsso) {
+		// this.associationTime = timestamp.getMainPoint();
+		// } else if (port == 1 && !boolFilter) {
+		// this.filteringTime = timestamp.getMainPoint();
+		// } else if (port == 2 && !boolBroker) {
+		// this.brokerTime = timestamp.getMainPoint();
+		// }
+		//
+		// if(timestamp.getMainPoint() > this.timestamp && this.associationTime
+		// != -1 && this.filteringTime != -1 && this.brokerTime != -1) {
+		// this.sendPunctuation(timestamp);
+		// this.timestamp = timestamp.getMainPoint();
+		// }
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void send(List<Object> next) {
 		Object obj0 = next.get(0); // Assoziation
-		Object obj1 = next.get(1); // Filter 
+		Object obj1 = next.get(1); // Filter
 		Object obj2 = next.get(2); // Temp. Broker
 
 		ArrayList<MVRelationalTuple<M>> combinedListChildTmp = new ArrayList<MVRelationalTuple<M>>();
 		MVRelationalTuple<M> resultTuple = null;
-		
-		
+
 		List<MVRelationalTuple<M>> associationObjList = new ArrayList<MVRelationalTuple<M>>();
 		List<MVRelationalTuple<M>> filteringObjList = new ArrayList<MVRelationalTuple<M>>();
 		List<MVRelationalTuple<M>> brokerObjList = new ArrayList<MVRelationalTuple<M>>();
 
 		// Association
-		if(obj0 instanceof MVRelationalTuple) {
-			MVRelationalTuple<M> associationMainObject = (MVRelationalTuple<M>)obj0;
+		if (obj0 instanceof MVRelationalTuple) {
+			MVRelationalTuple<M> associationMainObject = (MVRelationalTuple<M>) obj0;
 			resultTuple = new MVRelationalTuple<M>(associationMainObject);
-			MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput.getSchemaIndexPath(this.associationObjListPath).toTupleIndexPath(associationMainObject).getTupleObject();
+			MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput
+					.getSchemaIndexPath(this.associationObjListPath)
+					.toTupleIndexPath(associationMainObject).getTupleObject();
 			for (Object obj : associationListObject.getAttributes()) {
-				associationObjList.add((MVRelationalTuple<M>)obj);
+				associationObjList.add((MVRelationalTuple<M>) obj);
 			}
 		}
 		// Filter
-		if(obj1 instanceof MVRelationalTuple ) {
-					
-			MVRelationalTuple<M> filteringMainObject = (MVRelationalTuple<M>)obj1;
-			
-			ConnectionList connectionList =filteringMainObject.getMetadata().getConnectionList();
-//			ArrayList<MVRelationalTuple<?>> blubb = new ArrayList<MVRelationalTuple<?>>();
-			TupleHelper helper = new TupleHelper(filteringMainObject);
-//			for( Connection conn : connectionList ) {
-//				blubb.add((MVRelationalTuple<?>) helper.getObject(conn.getLeftPath()));
-//			}
+		if (obj1 instanceof MVRelationalTuple) {
+
+			MVRelationalTuple<M> filteringMainObject = (MVRelationalTuple<M>) obj1;
+
+			ConnectionList connectionList = filteringMainObject.getMetadata()
+					.getConnectionList();
+			// ArrayList<MVRelationalTuple<?>> blubb = new
+			// ArrayList<MVRelationalTuple<?>>();
+			// TupleHelper helper = new TupleHelper(filteringMainObject);
+			// for( Connection conn : connectionList ) {
+			// blubb.add((MVRelationalTuple<?>)
+			// helper.getObject(conn.getLeftPath()));
+			// }
 			resultTuple = new MVRelationalTuple<M>(filteringMainObject);
-//			MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>) shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
-//			for (Object obj : filteringListObject.getAttributes()) {
-//				if( blubb.contains(obj))
-//					filteringObjList.add((MVRelationalTuple<M>)obj);
-//			}
-			for( IConnection conn : connectionList ) {
-				filteringObjList.add((MVRelationalTuple<M>) conn.getLeftPath().getTupleObject());
+			// MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>)
+			// shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
+			// for (Object obj : filteringListObject.getAttributes()) {
+			// if( blubb.contains(obj))
+			// filteringObjList.add((MVRelationalTuple<M>)obj);
+			// }
+			for (IConnection conn : connectionList) {
+				filteringObjList.add((MVRelationalTuple<M>) conn.getLeftPath()
+						.getTupleObject());
 			}
 		}
 		// Temp. Broker
-		if(obj2 instanceof MVRelationalTuple) {
-			MVRelationalTuple<M> brokerMainObject = (MVRelationalTuple<M>)obj2;
+		if (obj2 instanceof MVRelationalTuple) {
+			MVRelationalTuple<M> brokerMainObject = (MVRelationalTuple<M>) obj2;
 			resultTuple = new MVRelationalTuple<M>(brokerMainObject);
-			MVRelationalTuple<M> brokerListObject = (MVRelationalTuple<M>) shSecondBrokerInput.getSchemaIndexPath(this.brokerObjListPath).toTupleIndexPath(brokerMainObject).getTupleObject();
+			MVRelationalTuple<M> brokerListObject = (MVRelationalTuple<M>) shSecondBrokerInput
+					.getSchemaIndexPath(this.brokerObjListPath)
+					.toTupleIndexPath(brokerMainObject).getTupleObject();
 			for (Object obj : brokerListObject.getAttributes()) {
-				brokerObjList.add((MVRelationalTuple<M>)obj);
+				brokerObjList.add((MVRelationalTuple<M>) obj);
 			}
 		}
 
 		// Do the evaluation
 		double val = 0;
 
-		if(brokerObjList != null) {
-			for(MVRelationalTuple<M> tuple : brokerObjList) {
-				if( !isTupleInList(tuple, combinedListChildTmp)) {
-					val = 0;
-					double[][] cov = tuple.getMetadata().getCovariance();
-					for(int i = 0; i < cov.length; i++) {
-						val += cov[i][i];
-					}
-					if(val < this.threshold) {
-						combinedListChildTmp.add(tuple);
-					}
+		if (brokerObjList != null) {
+			for (MVRelationalTuple<M> tuple : brokerObjList) {
+				val = 0;
+				double[][] cov = tuple.getMetadata().getCovariance();
+				for (int i = 0; i < cov.length; i++) {
+					val += cov[i][i];
+				}
+				if (val < this.threshold) {
+					combinedListChildTmp.add(tuple);
 				}
 			}
 		}
 
-		if(associationObjList != null) {
-			for(MVRelationalTuple<M> tuple : associationObjList) {
-				if( !isTupleInList(tuple, combinedListChildTmp)) {
-					val = 0;
-					double[][] cov = tuple.getMetadata().getCovariance();
-					for(int i = 0; i < cov.length; i++) {
-						val += cov[i][i];
-					}
-					if(val < this.threshold) {
-						combinedListChildTmp.add(tuple);
-					}
+		if (associationObjList != null) {
+			for (MVRelationalTuple<M> tuple : associationObjList) {
+				val = 0;
+				double[][] cov = tuple.getMetadata().getCovariance();
+				for (int i = 0; i < cov.length; i++) {
+					val += cov[i][i];
+				}
+				if (val < this.threshold) {
+					combinedListChildTmp.add(tuple);
 				}
 			}
 		}
 
-		if(filteringObjList != null) {
-			for(MVRelationalTuple<M> tuple : filteringObjList) {
-				if( !isTupleInList(tuple, combinedListChildTmp)) {
-					val = 0;
-					double[][] cov = tuple.getMetadata().getCovariance();
-					for(int i = 0; i < cov.length; i++) {
-						val += cov[i][i];
-					}
-					if(val < this.threshold) {
-						combinedListChildTmp.add(tuple);
-					}
+		if (filteringObjList != null) {
+			for (MVRelationalTuple<M> tuple : filteringObjList) {
+				val = 0;
+				double[][] cov = tuple.getMetadata().getCovariance();
+				for (int i = 0; i < cov.length; i++) {
+					val += cov[i][i];
+				}
+				if (val < this.threshold) {
+					combinedListChildTmp.add(tuple);
 				}
 			}
 		}
 
 		// Generate the output tuple
-		if( combinedListChildTmp.size() > 0 ) {
-			MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(combinedListChildTmp.size());
+		if (combinedListChildTmp.size() > 0) {
+			MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(
+					combinedListChildTmp.size());
 			int counter = 0;
 			for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
 				tuples.setAttribute(counter++, mvRelationalTuple);
 			}
-		//	SchemaIndexPath schemaPath = schemaHelper.getSchemaIndexPath(resultRemovePath);
-	//		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(resultTuple);
-		//	tuplePath.setTupleObject(new MVRelationalTuple<IProbability>(tuples));
-			
-			
+			// SchemaIndexPath schemaPath =
+			// schemaHelper.getSchemaIndexPath(resultRemovePath);
+			// TupleIndexPath tuplePath =
+			// schemaPath.toTupleIndexPath(resultTuple);
+			// tuplePath.setTupleObject(new
+			// MVRelationalTuple<IProbability>(tuples));
+
 			Object[] association = new Object[2];
-	
+
 			// get timestamp path from scanned data
-			SchemaIndexPath path = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
-			association[0] = path.toTupleIndexPath(resultTuple).getTupleObject();
-	
+			SchemaIndexPath path = helper.getSchemaIndexPath(helper
+					.getStartTimestampFullAttributeName());
+			association[0] = path.toTupleIndexPath(resultTuple)
+					.getTupleObject();
+
 			// get scanned objects
 			association[1] = new MVRelationalTuple<M>(tuples);
-	
+
 			MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-			base.setMetadata(resultTuple.getMetadata() );
+			base.setMetadata(resultTuple.getMetadata());
 			base.setAttribute(0, new MVRelationalTuple<M>(association));
-			
+
 			// Transfer the generated tuple
 			base.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(base);
-	//		boolAsso = false;
-	//		boolAssoEmpty = false;
-	//		boolFilter = false;
-	//		boolFilterEmpty = false;
-	//		boolBroker = false;
-	//		boolBrokerEmpty = false;
-	//		associationTime = -1;
-	//		filteringTime = -1;
-	//		brokerTime = -1;
+			// boolAsso = false;
+			// boolAssoEmpty = false;
+			// boolFilter = false;
+			// boolFilterEmpty = false;
+			// boolBroker = false;
+			// boolBrokerEmpty = false;
+			// associationTime = -1;
+			// filteringTime = -1;
+			// brokerTime = -1;
 		} else {
 			// Zeitstempel holen
 			Long timestamp;
-			if( obj0 instanceof PointInTime)
-				timestamp = ((PointInTime)obj0).getMainPoint();
-			else if( obj1 instanceof PointInTime )
-				timestamp = ((PointInTime)obj1).getMainPoint();
-			else if( obj2 instanceof PointInTime )
-				timestamp = ((PointInTime)obj2).getMainPoint();
+			if (obj0 instanceof PointInTime)
+				timestamp = ((PointInTime) obj0).getMainPoint();
+			else if (obj1 instanceof PointInTime)
+				timestamp = ((PointInTime) obj1).getMainPoint();
+			else if (obj2 instanceof PointInTime)
+				timestamp = ((PointInTime) obj2).getMainPoint();
 			else
-				throw new IllegalArgumentException("Could not determine timestamp!");
-			
-//			sendPunctuation(new PointInTime(timestamp));
+				throw new IllegalArgumentException(
+						"Could not determine timestamp!");
+
+			// sendPunctuation(new PointInTime(timestamp));
 			// Leere Liste senden
 			MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-			
+
 			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(2);
 			tuple.setAttribute(0, new Long(timestamp));
 			tuple.setAttribute(1, new MVRelationalTuple<M>(0));
-			
+
 			base.setAttribute(0, tuple);
-			base.setMetadata( (M) new StreamCarsMetaData()); // Böse
+			base.setMetadata((M) new StreamCarsMetaData()); // Böse
 			base.getMetadata().setStart(new PointInTime(timestamp));
 			base.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(base);
 		}
 	}
-	
-	private boolean isTupleInList( MVRelationalTuple<M> tuple, List<MVRelationalTuple<M>> list ) {
-//		for( MVRelationalTuple<M> t : list ) {
-//			if(tuple.getAttribute(1).equals(t.getAttribute(1))) // ID-Vergleich
-//				return true;
-//		}
-		return false;
-	}
 
 	/*
-	 * Port 0: Objekte aus der Assoziation
-	 * Port 1: Objekte aus der Filterung
+	 * Port 0: Objekte aus der Assoziation Port 1: Objekte aus der Filterung
 	 * Port 2: Objekte aus dem temporaeren Broker
 	 */
-//	@SuppressWarnings("unchecked")
+	// @SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
 		streamCollector.recieve(object, port);
-		if( streamCollector.isReady())
-			send( streamCollector.getNext() );
+		if (streamCollector.isReady())
+			send(streamCollector.getNext());
 		// Instanciate needed helper classes
-//		SchemaHelper shAssociationInput = new SchemaHelper(getSubscribedToSource(0).getSchema());
-//		SchemaHelper shFilteringInput = new SchemaHelper(getSubscribedToSource(1).getSchema());
-//		SchemaHelper shSecondBrokerInput = new SchemaHelper(getSubscribedToSource(2).getSchema());
+		// SchemaHelper shAssociationInput = new
+		// SchemaHelper(getSubscribedToSource(0).getSchema());
+		// SchemaHelper shFilteringInput = new
+		// SchemaHelper(getSubscribedToSource(1).getSchema());
+		// SchemaHelper shSecondBrokerInput = new
+		// SchemaHelper(getSubscribedToSource(2).getSchema());
 
 		// Create temporary objects that will be filled with "correct" tuples.
-		// The temporary objects will be converted to a scan object that can be transfered at the end of process_next.
+		// The temporary objects will be converted to a scan object that can be
+		// transfered at the end of process_next.
 
 		// Fill the sweep areas according to the port
-//		switch(port) {
-//			case 0: this.sweepAssociation.insert(object); break;
-//			case 1: this.sweepFiltering.insert(object); break;
-//			case 2: this.sweepBroker.insert(object); break;
-//		}
-//
-//		// Remove invalid objects from the sweep areas
-//		this.sweepAssociation.purgeElements(object, Order.LeftRight);
-//		this.sweepFiltering.purgeElements(object, Order.LeftRight);
-//		this.sweepBroker.purgeElements(object, Order.LeftRight);
-//		
-//		if(this.sweepAssociation.isEmpty()){
-//			this.boolAsso = false;
-//		}
-//		if(this.sweepBroker.isEmpty()) {
-//			this.boolBroker = false;
-//		}
-//		if(this.sweepFiltering.isEmpty()) {
-//			this.boolFilter = false;
-//		}
-//
-//		// Get iterators with valid objects according to the timestamp of the current object
-//		Iterator<MVRelationalTuple<M>> itAssociation = sweepAssociation.query(object, Order.LeftRight);
-//		Iterator<MVRelationalTuple<M>> itFiltering = sweepFiltering.query(object, Order.LeftRight);
-//		Iterator<MVRelationalTuple<M>> itBroker = sweepBroker.query(object, Order.LeftRight);
-//
-//		if(!itAssociation.hasNext()) {
-//			if(associationTime != -1) {
-//				boolAssoEmpty = true;
-//			}
-//		} else {
-//			boolAsso = true;
-//		}
-//
-//		if(!itFiltering.hasNext()) {
-//			if(filteringTime != -1) {
-//				boolFilterEmpty = true;
-//			}
-//		} else {
-//			boolFilter = true;
-//		}
-//
-//		if(!itBroker.hasNext()) {
-//			if(brokerTime != -1) {
-//				boolBrokerEmpty = true;
-//			}
-//		} else {
-//			boolBroker = true;
-//		}
+		// switch(port) {
+		// case 0: this.sweepAssociation.insert(object); break;
+		// case 1: this.sweepFiltering.insert(object); break;
+		// case 2: this.sweepBroker.insert(object); break;
+		// }
+		//
+		// // Remove invalid objects from the sweep areas
+		// this.sweepAssociation.purgeElements(object, Order.LeftRight);
+		// this.sweepFiltering.purgeElements(object, Order.LeftRight);
+		// this.sweepBroker.purgeElements(object, Order.LeftRight);
+		//
+		// if(this.sweepAssociation.isEmpty()){
+		// this.boolAsso = false;
+		// }
+		// if(this.sweepBroker.isEmpty()) {
+		// this.boolBroker = false;
+		// }
+		// if(this.sweepFiltering.isEmpty()) {
+		// this.boolFilter = false;
+		// }
+		//
+		// // Get iterators with valid objects according to the timestamp of the
+		// current object
+		// Iterator<MVRelationalTuple<M>> itAssociation =
+		// sweepAssociation.query(object, Order.LeftRight);
+		// Iterator<MVRelationalTuple<M>> itFiltering =
+		// sweepFiltering.query(object, Order.LeftRight);
+		// Iterator<MVRelationalTuple<M>> itBroker = sweepBroker.query(object,
+		// Order.LeftRight);
+		//
+		// if(!itAssociation.hasNext()) {
+		// if(associationTime != -1) {
+		// boolAssoEmpty = true;
+		// }
+		// } else {
+		// boolAsso = true;
+		// }
+		//
+		// if(!itFiltering.hasNext()) {
+		// if(filteringTime != -1) {
+		// boolFilterEmpty = true;
+		// }
+		// } else {
+		// boolFilter = true;
+		// }
+		//
+		// if(!itBroker.hasNext()) {
+		// if(brokerTime != -1) {
+		// boolBrokerEmpty = true;
+		// }
+		// } else {
+		// boolBroker = true;
+		// }
 
-		// Check if there is a complete input -> one list from every port (so that it can be evaluated)
-//		if((boolAsso || boolAssoEmpty)&&(boolFilter || boolFilterEmpty)&&(boolBroker || boolBrokerEmpty)) {
+		// Check if there is a complete input -> one list from every port (so
+		// that it can be evaluated)
+		// if((boolAsso || boolAssoEmpty)&&(boolFilter ||
+		// boolFilterEmpty)&&(boolBroker || boolBrokerEmpty)) {
 
 	}
 
