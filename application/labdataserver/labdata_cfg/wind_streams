@@ -1,9 +1,3 @@
-CREATE STREAM miniSim10k(
-	reading INTEGER,
-	windspeed DOUBLE,
-	power DOUBLE
-) SOCKET localhost : 60100
-
 CREATE STREAM flapSimComplete(
 	timestamp STARTTIMESTAMP,
 	windSpeedHH DOUBLE,
@@ -18,3 +12,9 @@ CREATE STREAM flapSimComplete(
 	windSpeedWT1 DOUBLE,
 	windSpeedWT2 DOUBLE
 ) SOCKET localhost : 60101
+
+CREATE STREAM meteoSim(
+	timestamp STARTTIMESTAMP,
+	pressure DOUBLE,
+	temperature DOUBLE
+) SOCKET localhost : 60102
