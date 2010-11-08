@@ -2,8 +2,9 @@ package de.uniol.inf.is.odysseus.scars.operator.jdvesink.physicaloperator;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
+
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
@@ -36,8 +37,8 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	private String hostAdress;
 
 	// timing stuff
-	private ArrayList<Long> objecttrackingLatencies;
-	private ArrayList<Long> odysseusLatencies;
+	private LinkedList<Long> objecttrackingLatencies;
+	private LinkedList<Long> odysseusLatencies;
 	private int countMax = 300;
 	private boolean performanceOutputOdy = false;
 	private boolean performanceOutputObj = false;
@@ -46,8 +47,8 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.port = port;
 		this.hostAdress = hostAdress;
 		this.serverType = serverType;
-		this.objecttrackingLatencies = new ArrayList<Long>();
-		this.odysseusLatencies = new ArrayList<Long>();
+		this.objecttrackingLatencies = new LinkedList<Long>();
+		this.odysseusLatencies = new LinkedList<Long>();
 		this.performanceOutputOdy = false;
 		this.performanceOutputObj = false;
 	}
@@ -59,9 +60,9 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.server = sink.server;
 		this.hostAdress = sink.hostAdress;
 		this.serverType = sink.serverType;
-		this.odysseusLatencies = new ArrayList<Long>(
+		this.odysseusLatencies = new LinkedList<Long>(
 				sink.odysseusLatencies);
-		this.odysseusLatencies = new ArrayList<Long>(
+		this.odysseusLatencies = new LinkedList<Long>(
 				sink.odysseusLatencies);
 	}
 
@@ -84,13 +85,13 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		SDFAttributeList schema = new SDFAttributeList();
-		SDFAttribute attr0 = new SDFAttribute("Odysseus latency");
+		SDFAttribute attr0 = new SDFAttribute("Odysseus latency meridian");
 		attr0.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-		SDFAttribute attr1 = new SDFAttribute("Objecttracking latency");
+		SDFAttribute attr1 = new SDFAttribute("Objecttracking latency meridian");
 		attr1.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-		SDFAttribute attr2 = new SDFAttribute("Odysseus latency meridian");
+		SDFAttribute attr2 = new SDFAttribute("Odysseus latency");
 		attr2.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-		SDFAttribute attr3 = new SDFAttribute("Objecttracking latency meridian");
+		SDFAttribute attr3 = new SDFAttribute("Objecttracking latency");
 		attr3.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
 		schema.add(attr0);
 		schema.add(attr1);
@@ -104,38 +105,37 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		object.getMetadata().setLatencyEnd(System.nanoTime());
 
 		// Create new output tuple for graphical performance output
-		// 1 -> actual odysseus latency
-		// 2 -> actual objecttracking latency
-		// 3 -> odysseus latency meridian
-		// 4 -> objecttracking latency meridian
+		// 1 -> odysseus latency meridian
+		// 2 -> objecttracking latency meridian
+		// 3 -> actual odysseus latency
+		// 4 -> actual objecttracking latency
 		MVRelationalTuple<M> output = new MVRelationalTuple<M>(4);
+		output.setMetadata(object.getMetadata());
 
 		if(odysseusLatencies.size() == this.countMax) {
-			odysseusLatencies.remove(0);
+			odysseusLatencies.removeFirst();
 		}
 
 		if(objecttrackingLatencies.size() == this.countMax) {
-			objecttrackingLatencies.remove(0);
+			objecttrackingLatencies.removeFirst();
 		}
 
 		odysseusLatencies.add(object.getMetadata().getLatency());
 		objecttrackingLatencies.add(object.getMetadata().getObjectTrackingLatency());
 
 		// actual odysseus latency
-		output.setMetadata(object.getMetadata());
-		output.setAttribute(0, odysseusLatencies.get(odysseusLatencies.size()-1));
+		output.setAttribute(2, odysseusLatencies.getLast());
 
 		// actual objecttracking latency
-		output.setMetadata(object.getMetadata());
-		output.setAttribute(1, objecttrackingLatencies.get(objecttrackingLatencies.size()-1));
+		output.setAttribute(3, objecttrackingLatencies.getLast());
 
 		// odysseus latency meridian
 		Collections.sort(odysseusLatencies);
-		output.setAttribute(2, this.median(odysseusLatencies));
+		output.setAttribute(0, this.median(odysseusLatencies));
 
 		// objecttracking latency meridian
 		Collections.sort(objecttrackingLatencies);
-		output.setAttribute(3, this.median(objecttrackingLatencies));
+		output.setAttribute(1, this.median(objecttrackingLatencies));
 
 		transfer(output);
 
@@ -241,7 +241,7 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	}
 
 	// ================================================ median
-	public long median(ArrayList<Long> m) {
+	public long median(LinkedList<Long> m) {
 		int middle = m.size() / 2;
 		if (m.size() % 2 == 1) {
 			return m.get(middle);
