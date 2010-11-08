@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.IAssociationAlgorithm;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.MahalanobisDistanceAssociation;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.MultiDistanceAssociation;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
@@ -123,6 +124,12 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
+		if(this.getAssociationAlgorithm() instanceof MahalanobisDistanceAssociation) {
+			object.getMetadata().setObjectTrackingLatencyStart("Association Evaluation - Mahalanobis");
+		} else if(this.getAssociationAlgorithm() instanceof MultiDistanceAssociation) {
+			object.getMetadata().setObjectTrackingLatencyStart("Association Evaluation - Multi Distance");
+		}
+
 		TupleIndexPath scannedTupleIndexPath = this.getScannedObjectListPath()
 				.toTupleIndexPath(object);
 		TupleIndexPath predictedTupleIndexPath = this
@@ -199,6 +206,13 @@ public class HypothesisEvaluationPO<M extends IProbability & IConnectionContaine
 						+ "]");
 			}
 		}
+
+		if(this.getAssociationAlgorithm() instanceof MahalanobisDistanceAssociation) {
+			object.getMetadata().setObjectTrackingLatencyEnd("Association Evaluation - Mahalanobis");
+		} else if(this.getAssociationAlgorithm() instanceof MultiDistanceAssociation) {
+			object.getMetadata().setObjectTrackingLatencyEnd("Association Evaluation - Multi Distance");
+		}
+
 		object.getMetadata().setObjectTrackingLatencyEnd();
 		transfer(object);
 	}

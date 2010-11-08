@@ -166,14 +166,17 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		throw new IllegalArgumentException("HypothesisSelectionPO recieved a punctuation!");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
+		object.getMetadata().setObjectTrackingLatencyStart("Association Selection");
 		// PORT: 1, get matched objects
 		ConnectionList matchedObjects = matchObjects(object, object.getMetadata().getConnectionList());
 		if( matchedObjects.size() > 0 ) {
 			object.getMetadata().setConnectionList(matchedObjects);
 //			hasDublicates(object);
+			object.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 			object.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(object.clone(), 1);
 		} else {
@@ -195,6 +198,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 
 
 //		hasDublicates(base);
+		base.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 		base.getMetadata().setObjectTrackingLatencyEnd();
 		transfer(base.clone(), 0);
 
@@ -214,9 +218,11 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath.toTupleIndexPath(predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedTuple);
 //			hasDublicates(predictedNotMatchedTuple);
+			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(predictedNotMatchedTuple.clone(), 2);
 		} else {
+			object.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 			object.getMetadata().setObjectTrackingLatencyEnd();
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 2);
 		}

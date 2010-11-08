@@ -39,9 +39,24 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	// timing stuff
 	private LinkedList<Long> objecttrackingLatencies;
 	private LinkedList<Long> odysseusLatencies;
+
+	private LinkedList<Long> predAssLatencies;
+	private LinkedList<Long> predLatencies;
+	private LinkedList<Long> hypoSelLatencies;
+	private LinkedList<Long> hypoGenLatencies;
+	private LinkedList<Long> hypoEvalMahaLatencies;
+	private LinkedList<Long> hypoEvalMultiLatencies;
+
 	private int countMax = 300;
 	private boolean performanceOutputOdy = false;
 	private boolean performanceOutputObj = false;
+
+	private boolean performanceOutputPredAss = false;
+	private boolean performanceOutputPred = false;
+	private boolean performanceOutputHypoSel = false;
+	private boolean performanceOutputHypoGen = false;
+	private boolean performanceOutputHypoEvalMaha = false;
+	private boolean performanceOutputHypoEvalMulti = false;
 
 	public JDVESinkPO(String hostAdress, int port, String serverType) {
 		this.port = port;
@@ -49,13 +64,31 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.serverType = serverType;
 		this.objecttrackingLatencies = new LinkedList<Long>();
 		this.odysseusLatencies = new LinkedList<Long>();
+		this.hypoSelLatencies = new LinkedList<Long>();
+		this.hypoGenLatencies = new LinkedList<Long>();
+		this.hypoEvalMahaLatencies = new LinkedList<Long>();
+		this.hypoEvalMultiLatencies = new LinkedList<Long>();
+		this.predAssLatencies = new LinkedList<Long>();
+		this.predLatencies = new LinkedList<Long>();
 		this.performanceOutputOdy = false;
 		this.performanceOutputObj = false;
+		this.performanceOutputHypoSel = false;
+		this.performanceOutputHypoGen = false;
+		this.performanceOutputHypoEvalMaha = false;
+		this.performanceOutputHypoEvalMulti = false;
+		this.performanceOutputPred = false;
+		this.performanceOutputPredAss = false;
 	}
 
 	public JDVESinkPO(JDVESinkPO<M> sink) {
 		this.performanceOutputOdy = sink.performanceOutputOdy;
 		this.performanceOutputObj = sink.performanceOutputObj;
+		this.performanceOutputHypoSel = sink.performanceOutputHypoSel;
+		this.performanceOutputHypoGen = sink.performanceOutputHypoGen;
+		this.performanceOutputHypoEvalMaha = sink.performanceOutputHypoEvalMaha;
+		this.performanceOutputHypoEvalMulti = sink.performanceOutputHypoEvalMulti;
+		this.performanceOutputPredAss = sink.performanceOutputPredAss;
+		this.performanceOutputPred = sink.performanceOutputPred;
 		this.port = sink.port;
 		this.server = sink.server;
 		this.hostAdress = sink.hostAdress;
@@ -64,6 +97,18 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 				sink.odysseusLatencies);
 		this.odysseusLatencies = new LinkedList<Long>(
 				sink.odysseusLatencies);
+		this.hypoSelLatencies = new LinkedList<Long>(
+				sink.hypoSelLatencies);
+		this.hypoGenLatencies = new LinkedList<Long>(
+				sink.hypoGenLatencies);
+		this.hypoEvalMahaLatencies = new LinkedList<Long>(
+				sink.hypoEvalMahaLatencies);
+		this.hypoEvalMultiLatencies = new LinkedList<Long>(
+				sink.hypoEvalMultiLatencies);
+		this.predLatencies = new LinkedList<Long>(
+				sink.predLatencies);
+		this.predAssLatencies = new LinkedList<Long>(
+				sink.predAssLatencies);
 	}
 
 	@Override
@@ -85,9 +130,9 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		SDFAttributeList schema = new SDFAttributeList();
-		SDFAttribute attr0 = new SDFAttribute("Odysseus latency meridian");
+		SDFAttribute attr0 = new SDFAttribute("Odysseus latency median");
 		attr0.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-		SDFAttribute attr1 = new SDFAttribute("Objecttracking latency meridian");
+		SDFAttribute attr1 = new SDFAttribute("Objecttracking latency median");
 		attr1.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
 		SDFAttribute attr2 = new SDFAttribute("Odysseus latency");
 		attr2.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
@@ -104,6 +149,14 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
 
+//		Association Selection
+//		Association Generation
+//		Association Evaluation - Mahalanobis
+//		Association Evaluation - Multi Distance
+//		Prediction Assign
+//		Prediction
+
+
 		// Create new output tuple for graphical performance output
 		// 1 -> odysseus latency meridian
 		// 2 -> objecttracking latency meridian
@@ -111,6 +164,11 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		// 4 -> actual objecttracking latency
 		MVRelationalTuple<M> output = new MVRelationalTuple<M>(4);
 		output.setMetadata(object.getMetadata());
+
+		// the lists which contain the performance values should only contain <= countMax elements
+		// so if there are countMax elements, remove the oldest
+
+		// overall performance
 
 		if(odysseusLatencies.size() == this.countMax) {
 			odysseusLatencies.removeFirst();
@@ -120,8 +178,42 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 			objecttrackingLatencies.removeFirst();
 		}
 
+		// operator performance
+
+		if(predAssLatencies.size() == this.countMax) {
+			predAssLatencies.removeFirst();
+		}
+
+		if(predLatencies.size() == this.countMax) {
+			predLatencies.removeFirst();
+		}
+
+		if(hypoSelLatencies.size() == this.countMax) {
+			hypoSelLatencies.removeFirst();
+		}
+
+		if(hypoGenLatencies.size() == this.countMax) {
+			hypoGenLatencies.removeFirst();
+		}
+
+		if(hypoEvalMahaLatencies.size() == this.countMax) {
+			hypoEvalMahaLatencies.removeFirst();
+		}
+
+		if(hypoEvalMultiLatencies.size() == this.countMax) {
+			hypoEvalMultiLatencies.removeFirst();
+		}
+
 		odysseusLatencies.add(object.getMetadata().getLatency());
 		objecttrackingLatencies.add(object.getMetadata().getObjectTrackingLatency());
+
+		// operator latencies
+		predLatencies.add(object.getMetadata().getObjectTrackingLatency("Prediction"));
+		predAssLatencies.add(object.getMetadata().getObjectTrackingLatency("Prediction Assign"));
+		hypoSelLatencies.add(object.getMetadata().getObjectTrackingLatency("Association Selection"));
+		hypoGenLatencies.add(object.getMetadata().getObjectTrackingLatency("Association Generation"));
+		hypoEvalMahaLatencies.add(object.getMetadata().getObjectTrackingLatency("Association Evaluation - Mahalanobis"));
+		hypoEvalMultiLatencies.add(object.getMetadata().getObjectTrackingLatency("Association Evaluation - Multi Distance"));
 
 		// actual odysseus latency
 		output.setAttribute(2, odysseusLatencies.getLast());
@@ -129,29 +221,75 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		// actual objecttracking latency
 		output.setAttribute(3, objecttrackingLatencies.getLast());
 
-		// odysseus latency meridian
+		// odysseus latency median
 		Collections.sort(odysseusLatencies);
 		output.setAttribute(0, this.median(odysseusLatencies));
 
-		// objecttracking latency meridian
+		// objecttracking latency median
 		Collections.sort(objecttrackingLatencies);
 		output.setAttribute(1, this.median(objecttrackingLatencies));
 
 		transfer(output);
 
+		// overall performance output
+
 		if(odysseusLatencies.size() == countMax && !this.performanceOutputOdy) {
 			Collections.sort(odysseusLatencies);
 			long odyLatency = this.median(odysseusLatencies);
-			System.out.println("######### ODYSSEUS LATENCY (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(odyLatency) + " #########");
+			System.out.println("######### ODYSSEUS LATENCY (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(odyLatency))/1000000) + "ms (" + String.valueOf(odyLatency) + " ns) #########");
 			this.performanceOutputOdy = true;
 		}
 
 		if(objecttrackingLatencies.size() == countMax && !this.performanceOutputObj) {
 			Collections.sort(objecttrackingLatencies);
 			long objLatency = this.median(objecttrackingLatencies);
-			System.out.println("######### OBJECT TRACKING LATENCY (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(objLatency) + " #########");
+			System.out.println("######### OBJECT TRACKING LATENCY (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(objLatency))/1000000) + "ms (" + String.valueOf(objLatency) + " ns) #########");
 			this.performanceOutputObj = true;
 		}
+
+		// ###### operator performance output
+
+		// ## PREDICTION (PredictionAssignPO, PredictionPO)
+
+		if(predAssLatencies.size() == countMax && !this.performanceOutputPredAss) {
+			Collections.sort(predAssLatencies);
+			System.out.println("######### OBJECT TRACKING : PredictionAssignPO (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(predAssLatencies)))/1000000) + "ms (" + String.valueOf(this.median(predAssLatencies)) + " ns) #########");
+			this.performanceOutputPredAss = true;
+		}
+
+		if(predLatencies.size() == countMax && !this.performanceOutputPred) {
+			Collections.sort(predLatencies);
+			System.out.println("######### OBJECT TRACKING : PredictionPO (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(predLatencies)))/1000000) + "ms (" + String.valueOf(this.median(predLatencies)) + " ns) #########");
+			this.performanceOutputPred = true;
+		}
+
+		// ## ASSOCIATION (HypothesisGenerationPO, HypothesisEvaluationPO (for each algorithm), HypothesisSelectionPO)
+
+		if(hypoGenLatencies.size() == countMax && !this.performanceOutputHypoGen) {
+			Collections.sort(hypoGenLatencies);
+			System.out.println("######### OBJECT TRACKING : HypothesisGenerationPO (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(hypoGenLatencies)))/1000000) + "ms (" + String.valueOf(this.median(hypoGenLatencies)) + " ns) #########");
+			this.performanceOutputHypoGen = true;
+		}
+
+		if(hypoSelLatencies.size() == countMax && !this.performanceOutputHypoSel) {
+			Collections.sort(hypoSelLatencies);
+			System.out.println("######### OBJECT TRACKING : HypothesisSelectionPO (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(hypoSelLatencies)))/1000000) + "ms (" + String.valueOf(this.median(hypoSelLatencies)) + " ns) #########");
+			this.performanceOutputHypoSel = true;
+		}
+
+		if(hypoEvalMahaLatencies.size() == countMax && !this.performanceOutputHypoEvalMaha) {
+			Collections.sort(hypoEvalMahaLatencies);
+			System.out.println("######### OBJECT TRACKING : HypothesisEvaluationPO : MahalanobisDistance (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(hypoEvalMahaLatencies)))/1000000) + "ms (" + String.valueOf(this.median(hypoEvalMahaLatencies)) + " ns) #########");
+			this.performanceOutputHypoEvalMaha = true;
+		}
+
+		if(hypoEvalMultiLatencies.size() == countMax && !this.performanceOutputHypoEvalMulti) {
+			Collections.sort(hypoEvalMultiLatencies);
+			System.out.println("######### OBJECT TRACKING : HypothesisEvaluationPO : MultiDistance (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(hypoEvalMultiLatencies)))/1000000) + "ms (" + String.valueOf(this.median(hypoEvalMultiLatencies)) + " ns) #########");
+			this.performanceOutputHypoEvalMulti = true;
+		}
+
+		// ## FILTERING ()
 
 
 		// iterate over schema and calculate size of byte buffer

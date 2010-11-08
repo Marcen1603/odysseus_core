@@ -64,25 +64,26 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 		currentTimeSchemaPath = helper1.getSchemaIndexPath(helper1.getStartTimestampFullAttributeName());
 		SchemaHelper helper2 = new SchemaHelper(scanSchema);
 		currentScanTimeSchemaPath = helper2.getSchemaIndexPath(helper2.getStartTimestampFullAttributeName());
-		
+
 		streamCollector = new StreamCollector(getSubscribedToSource().size());
 	}
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
+		object.getMetadata().setObjectTrackingLatencyStart("Prediction");
 		synchronized (this) {
 			streamCollector.recieve(object, port);
 			if( streamCollector.isReady() )
 				send(streamCollector.getNext());
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void send( List<Object> objects ) {
 		Object obj0 = objects.get(0); // Port 0 - Timetupel/Punctuation
 		Object obj1 = objects.get(1); // Port 1 - Brokertupel/Punctuation
-		
+
 		// An Port 0 sind nur Tupel.. (s. processPunctuation())
 		// trotzdem Checken
 		if( obj0 instanceof MVRelationalTuple) {
@@ -92,9 +93,10 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 				// Port 1 hat Tupel
 				MVRelationalTuple<M> currentScanTuple = ((MVRelationalTuple<M>)obj1).clone();
 				MVRelationalTuple<M> predictedTuple = predictData(currentTimeTuple, currentScanTuple);
+				predictedTuple.getMetadata().setObjectTrackingLatencyEnd("Prediction");
 				predictedTuple.getMetadata().setObjectTrackingLatencyEnd();
 				transfer( predictedTuple );
-				
+
 			} else {
 				// Port 1 hat Punctuation
 				// --> Broker hat (noch) nix
@@ -141,9 +143,9 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		synchronized (this) {
-			if( port == 0) // Wir ignorieren Punctuations von der Zeitseite aus. Die Tupel selbst geben uns die Zeit. 
+			if( port == 0) // Wir ignorieren Punctuations von der Zeitseite aus. Die Tupel selbst geben uns die Zeit.
 				return;
-			
+
 			streamCollector.recieve(timestamp, port);
 			if( streamCollector.isReady())
 				send(streamCollector.getNext());

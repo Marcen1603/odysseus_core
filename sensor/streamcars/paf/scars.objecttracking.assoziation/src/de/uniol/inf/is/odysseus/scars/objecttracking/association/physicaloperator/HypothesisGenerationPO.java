@@ -84,12 +84,14 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 			// Normale Function ausführen... wir haben Daten zum Senden
 			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, predictedTuple);
+			output.getMetadata().setObjectTrackingLatencyEnd("Association Generation");
 			output.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(output);
 
 		} else {
 			// Eine Punctuation! Prediction hat nix
 			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, null);
+			output.getMetadata().setObjectTrackingLatencyEnd("Association Generation");
 			output.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(output);
 		}
@@ -102,11 +104,14 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
+		object.getMetadata().setObjectTrackingLatencyStart("Association Generation");
+
 		streamCollector.recieve(object, port);
 		if( streamCollector.isReady())
 			send(streamCollector.getNext());
 	}
 
+	@SuppressWarnings("unchecked")
 	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {
 		Object[] association = new Object[3];
 

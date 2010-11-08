@@ -9,4 +9,8 @@ public interface IObjectTrackingLatency extends IMetaAttribute, IClone {
 	public void setObjectTrackingLatencyEnd();
 	public long getObjectTrackingLatency();
 
+	public void setObjectTrackingLatencyStart(String operatorId);
+	public void setObjectTrackingLatencyEnd(String operatorId);
+	public long getObjectTrackingLatency(String operatorId);
+
 }

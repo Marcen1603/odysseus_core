@@ -12,26 +12,26 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.Pre
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 public class PredictionAssignPO<M extends ITimeInterval & IProbability & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-	
+
 	private PredictionFunctionContainer<M> predictionFunctions;
 	private int[] pathToList;
-	
+
 	public PredictionAssignPO() {
 		super();
 	}
-	
+
 	public void init(int[] pathToList, PredictionFunctionContainer<M> predictionFunctions) {
 		this.pathToList = pathToList;
 		this.predictionFunctions = predictionFunctions;
 	}
-	
+
 	public PredictionAssignPO(PredictionAssignPO<M> copy) {
 		super(copy);
 		predictionFunctions = new PredictionFunctionContainer<M>(copy.predictionFunctions);
 		this.pathToList = new int[copy.pathToList.length];
 		System.arraycopy(copy.pathToList, 0, this.pathToList, 0, copy.pathToList.length);
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -41,9 +41,10 @@ public class PredictionAssignPO<M extends ITimeInterval & IProbability & IObject
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
+		object.getMetadata().setObjectTrackingLatencyStart("Prediction Assign");
 		TupleHelper helper = new TupleHelper(object);
 		Object listObj = helper.getObject(pathToList);
-		
+
 		if(listObj instanceof MVRelationalTuple<?>) {
 			Object[] objList = ((MVRelationalTuple<?>) listObj).getAttributes();
 			if( objList.length == 0 ) {
@@ -54,12 +55,13 @@ public class PredictionAssignPO<M extends ITimeInterval & IProbability & IObject
 				evaluatePredicateKey((MVRelationalTuple<M>)mvObj);
 			}
 		}
+		object.getMetadata().setObjectTrackingLatencyEnd("Prediction Assign");
 		object.getMetadata().setObjectTrackingLatencyEnd();
 		transfer(object);
 		return;
-		
+
 	}
-	
+
 	private void evaluatePredicateKey(MVRelationalTuple<M> tuple) {
 		for(IPredicate<MVRelationalTuple<M>> pred : predictionFunctions) {
 			if(pred.evaluate(tuple)) {
@@ -76,7 +78,7 @@ public class PredictionAssignPO<M extends ITimeInterval & IProbability & IObject
 	public void processPunctuation(PointInTime timestamp, int port) {
 		this.sendPunctuation(timestamp);
 	}
-	
+
 	@Override
 	public PredictionAssignPO<M> clone() {
 		return new PredictionAssignPO<M>(this);
