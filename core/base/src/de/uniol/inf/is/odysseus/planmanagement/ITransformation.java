@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public interface ITransformation {
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config) throws TransformationException;
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config, User caller) throws TransformationException;
 }

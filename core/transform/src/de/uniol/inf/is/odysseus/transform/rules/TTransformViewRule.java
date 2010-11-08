@@ -29,14 +29,14 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 		System.out.println("Transform view: " + accessAO);
 		String sourceName = accessAO.getSource().getURI(false);
 		//ILogicalOperator cPlan = AbstractTreeWalker.prefixWalk($view, new CopyLogicalPlanVisitor());
-		ILogicalOperator view = DataDictionary.getInstance().getViewForTransformation(accessAO.getSource().getURI());
+		ILogicalOperator view = DataDictionary.getInstance().getViewForTransformation(accessAO.getSource().getURI(), getCaller());
 		ILogicalOperator cPlan = view;
 
 		ITransformation transformation = new TransformationExecutor();
 		
 		ArrayList<IPhysicalOperator> roots = null;
 		try {
-			roots = transformation.transform(cPlan, transformConfig);
+			roots = transformation.transform(cPlan, transformConfig, getCaller());
 		} catch (TransformationException e) {		
 			e.printStackTrace();
 		}
@@ -77,7 +77,7 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI(false))==null){
-			ILogicalOperator view = DataDictionary.getInstance().getViewForTransformation(accessAO.getSource().getURI());
+			ILogicalOperator view = DataDictionary.getInstance().getViewForTransformation(accessAO.getSource().getURI(), getCaller());
 			if(view!=null){		
 				if(view.getSubscribedToSource().size()!=1 || (!view.getSubscribedToSource(0).getTarget().equals(accessAO))){
 					return true;

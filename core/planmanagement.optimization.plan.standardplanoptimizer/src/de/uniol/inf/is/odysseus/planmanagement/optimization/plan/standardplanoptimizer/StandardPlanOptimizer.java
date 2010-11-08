@@ -65,7 +65,8 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 						.transform(
 								query.getLogicalPlan(),
 								query.getBuildParameter()
-										.getTransformationConfiguration());
+										.getTransformationConfiguration(),
+										query.getUser());
 
 				query.initializePhysicalRoots(physicalPlan);
 			}

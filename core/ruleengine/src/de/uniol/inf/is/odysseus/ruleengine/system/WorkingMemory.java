@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class WorkingMemory {
 	
@@ -21,8 +22,11 @@ public class WorkingMemory {
 	private List<Object> objects = new ArrayList<Object>();
 	private volatile boolean hasChanged = false;
 
-	public WorkingMemory(IWorkingEnvironment<?> env) {
+	private User caller;
+
+	public WorkingMemory(IWorkingEnvironment<?> env, User caller) {
 		this.env = env;
+		this.caller = caller;
 	}
 
 	public void removeObject(Object o) {
@@ -160,6 +164,10 @@ public class WorkingMemory {
 		}
 		
 		return out;
+	}
+
+	public User getCaller() {
+		return caller;
 	}
 
 }

@@ -72,7 +72,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			if( cfg != null ) {
 				// the last plan is the complete plan
 				// so transform this one
-				List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), cfg.getValue());
+				List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), cfg.getValue(), ActiveUser.getActiveUser());
 	
 				int queryID = executor.addQuery(physPlan, user, transCfg.toArray(new IQueryBuildSetting[0]));
 				executor.startQuery(queryID);

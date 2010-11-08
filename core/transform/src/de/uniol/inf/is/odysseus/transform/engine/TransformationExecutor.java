@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
@@ -32,7 +33,7 @@ public class TransformationExecutor implements ITransformation {
 	}
 
 	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config) throws TransformationException {		
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config, User caller) throws TransformationException {		
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting transformation of " + op + "...");		
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Before transformation: \n"+planPrinter.createString(op));
@@ -51,7 +52,7 @@ public class TransformationExecutor implements ITransformation {
 		
 
 		TransformationInventory concreteTransformInvent = new TransformationInventory(TransformationInventory.getInstance());
-		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent);
+		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent, caller);
 
 		addLogicalOperator(top, list, env);
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules...");

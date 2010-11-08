@@ -1168,7 +1168,7 @@ public class ExecutorConsole implements CommandProvider,
 				// so transform this one
 				List<IPhysicalOperator> physPlan = compiler.transform(plans
 						.get(plans.size() - 1).getLogicalPlan(),
-						this.trafoConfigParam.getValue());
+						this.trafoConfigParam.getValue(), currentUser);
 
 				int queryID = this.executor.addQuery(physPlan, currentUser,
 						this.trafoConfigParam);

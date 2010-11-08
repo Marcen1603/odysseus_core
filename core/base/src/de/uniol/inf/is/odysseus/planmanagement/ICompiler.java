@@ -64,7 +64,7 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 *             query.
 	 */
 	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
-			TransformationConfiguration transformationConfiguration)
+			TransformationConfiguration transformationConfiguration, User caller)
 			throws TransformationException;
 	
 	public void transform(IQuery query, TransformationConfiguration transformationConfiguration) throws TransformationException;
@@ -88,7 +88,7 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 */
 	public List<List<IPhysicalOperator>> transformWithAlternatives(
 			ILogicalOperator logicalPlan,
-			TransformationConfiguration transformationConfiguration)
+			TransformationConfiguration transformationConfiguration, User caller)
 			throws TransformationException;
 
 	/**

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.ruleengine.rule;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 import de.uniol.inf.is.odysseus.ruleengine.system.WorkingMemory;
 
@@ -73,6 +74,10 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 		}
 	}
 
+	protected User getCaller(){
+		return this.getCurrentWorkingMemory().getCaller();
+	}
+	
 	@Override
 	public String toString() {
 		return this.getName() + " (" + getClass().getName() + ") - "+super.hashCode();

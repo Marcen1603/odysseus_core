@@ -338,7 +338,7 @@ public class DataDictionary {
 		}
 	}
 
-	public ILogicalOperator getViewForTransformation(String name) {
+	public ILogicalOperator getViewForTransformation(String name, User caller) {
 		// TODO abfrage ?
 		return viewDefinitions.get(name);
 	}

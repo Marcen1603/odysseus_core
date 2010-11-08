@@ -86,7 +86,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		try {
 				// create the physical plan
 				List<IPhysicalOperator> physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
-						.getTransformationConfiguration());
+						.getTransformationConfiguration(), query.getUser());
 
 				postTransformationInit(query, physicalPlan);
 			} catch (Throwable e) {

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.ruleengine.system;
 
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironment<T> {
 	
@@ -8,10 +9,10 @@ public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironme
 	private WorkingMemory workingMemory;
 	private IRuleFlow ruleFlow;
 	
-	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow){
+	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow, User caller){
 		this.configuration = config;
 		this.ruleFlow = ruleflow;
-		this.workingMemory = new WorkingMemory(this);
+		this.workingMemory = new WorkingMemory(this, caller);
 	}
 	
 	@Override

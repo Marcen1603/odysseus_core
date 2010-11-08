@@ -194,20 +194,20 @@ public class StandardCompiler implements ICompiler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
-			TransformationConfiguration transformationConfiguration)
+			TransformationConfiguration transformationConfiguration, User caller)
 			throws TransformationException {
 		// create working copy of plan
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
 		AbstractGraphWalker walker = new AbstractGraphWalker();
 		walker.prefixWalk(logicalPlan, copyVisitor);
 		ILogicalOperator copyPlan = copyVisitor.getResult();
-		return this.transformation.transform(copyPlan, transformationConfiguration);
+		return this.transformation.transform(copyPlan, transformationConfiguration, caller);
 	}
 
 	@Override
 	public void transform(IQuery query,
 			TransformationConfiguration transformationConfiguration) throws TransformationException {
-		query.initializePhysicalRoots(this.transformation.transform(query.getLogicalPlan(), transformationConfiguration));
+		query.initializePhysicalRoots(this.transformation.transform(query.getLogicalPlan(), transformationConfiguration, query.getUser()));
 	}
 	
 	/* (non-Javadoc)
@@ -245,12 +245,12 @@ public class StandardCompiler implements ICompiler {
 	@Override
 	public List<List<IPhysicalOperator>> transformWithAlternatives(
 			ILogicalOperator logicalPlan,
-			TransformationConfiguration transformationConfiguration)
+			TransformationConfiguration transformationConfiguration, User caller)
 			throws TransformationException {
 		// TODO mehrere Alternativen muessen generiert werden, z.B. durch
 		// verschiedene Join-Implementationen
 		ArrayList<IPhysicalOperator> p = transform(logicalPlan,
-				transformationConfiguration);
+				transformationConfiguration, caller);
 		List<List<IPhysicalOperator>> list = new ArrayList<List<IPhysicalOperator>>(1);
 		list.add(p);
 		return list;
