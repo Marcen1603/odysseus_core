@@ -47,7 +47,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	/** The list for all waiting timestamps from queue streams. */
 	private PriorityQueue<TransactionTS> timestampList = new PriorityQueue<TransactionTS>();
 
-	private PointInTime waitingFor = PointInTime.getZeroTime();
+	private PointInTime waitingFor = null;
 
 	/** The queue schema. */
 	private SDFAttributeList queueSchema;
@@ -188,7 +188,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		// object.toString() + "  (" + this + ")");
 		printDebug("Minimum is: " + this.min);
 		printDebug("Minimum TS is: " + this.minTSList);
-		
+		printDebug("Waiting for: "+this.waitingFor);
 
 		contentChanged = false;
 		// if the broker is not in waiting mode...
