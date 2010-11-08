@@ -359,9 +359,12 @@ public class PredictionExpression {
 		s.append("\nTarget: ");
 		s.append("\n\tVarName: " + targetVarName);
 		s.append("\n\tPath: ");
-		for(int index : targetPath) {
-			s.append(index + " ");
+		if(targetPath != null) {
+			for(int index : targetPath) {
+				s.append(index + " ");
+			}
 		}
+
 		s.append("\nVariablePaths:");
 		for(Entry<String, int[]> entry : variablePathMapping.entrySet()) {
 			s.append("\n\t" + entry.getKey() + ": ");
@@ -415,6 +418,7 @@ public class PredictionExpression {
 		
 		
 		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime";
+		expression = "1.5";
 		PredictionExpression p = new PredictionExpression("a.list:obj:pos:y", expression);
 		p.initAttributePaths(scan);
 		p.initAttributePaths(time);
@@ -431,7 +435,7 @@ public class PredictionExpression {
 		
 		p.evaluate();
 		System.out.println("TEST: AFTER PREDICTION:");
-		System.out.println(p.getTargetValue());
+		System.out.println("##########value: " + p.getTargetValue());
 		System.out.println(p);
 	}
 }
