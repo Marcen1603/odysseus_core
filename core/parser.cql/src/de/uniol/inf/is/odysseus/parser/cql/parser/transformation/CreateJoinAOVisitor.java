@@ -8,12 +8,12 @@ import java.util.Stack;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO.Type;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO.Type;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 //creates join operators
 //visit returns the topmost operator of an operator tree:
@@ -55,9 +56,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
+	private User caller;
 
-	public CreateJoinAOVisitor() {
+	public CreateJoinAOVisitor(User caller) {
 		super();
+		this.caller = caller;
 	}
 
 	public void init(AttributeResolver attributeResolver) {
@@ -333,6 +336,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AbstractLogicalOperator subquery(ASTComplexSelectStatement query) {
 		CQLParser v = new CQLParser();
+		v.setUser(caller);
 		return (AbstractLogicalOperator) v.visit(query, null);
 	}
 

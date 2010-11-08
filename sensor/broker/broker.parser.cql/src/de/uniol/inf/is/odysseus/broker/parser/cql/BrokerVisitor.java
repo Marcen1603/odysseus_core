@@ -45,13 +45,13 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  */
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
-	private User user;
+	private User caller;
 
 	public BrokerVisitor() {
 	}
 	
 	public void setUser(User user){
-		this.user = user;
+		this.caller = user;
 	}
 	
 	/*
@@ -75,6 +75,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 				if (node.jjtGetChild(1) instanceof ASTBrokerQueue) {
 					ASTComplexSelectStatement statement = (ASTComplexSelectStatement) node.jjtGetChild(1).jjtGetChild(0);
 					CQLParser parser = new CQLParser();
+					parser.setUser(caller);
 					AbstractLogicalOperator topOfQueue = (AbstractLogicalOperator) parser.visit(statement, null);
 					if (readFromBroker != null) {
 						// queue - writing is always on port 1
@@ -116,6 +117,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		// parse the nested substatement
 		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node.jjtGetChild(0);
 		CQLParser v = new CQLParser();
+		v.setUser(caller);
 		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
 
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
@@ -127,10 +129,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		// connect the source to broker
 		broker.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		// make it accessible like a normal source
-		DataDictionary.getInstance().addSourceType(name, "brokerStreaming", user);
+		DataDictionary.getInstance().addSourceType(name, "brokerStreaming", caller);
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(broker.getOutputSchema());
-		DataDictionary.getInstance().addEntity(name, entity, user);
+		DataDictionary.getInstance().addEntity(name, entity, caller);
 		return broker;
 
 	}
@@ -196,6 +198,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 		// parse first nested statement
 		CQLParser v = new CQLParser();
+		v.setUser(caller);
 		AbstractLogicalOperator topOfSelectStatementOperator = (AbstractLogicalOperator) v.visit(statement, null);
 
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
@@ -283,10 +286,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// make it accessible like a normal source
-		DataDictionary.getInstance().addSourceType(brokerName, "brokerStreaming", user);
+		DataDictionary.getInstance().addSourceType(brokerName, "brokerStreaming", caller);
 		SDFEntity entity = new SDFEntity(brokerName);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().addEntity(brokerName, entity, user);
+		DataDictionary.getInstance().addEntity(brokerName, entity, caller);
 		// create the broker
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		broker.setSchema(attributes);
@@ -298,7 +301,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		BrokerDictionary.getInstance().setLogicalPlan(brokerName, broker);
 
 		// Is this necessary any more?
-		DataDictionary.getInstance().setLogicalView(brokerName, broker, user);
+		DataDictionary.getInstance().setLogicalView(brokerName, broker, caller);
 
 		return broker;
 	}

@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class DatabaseVisitor {
 
-	private User user;
+	private User caller;
 	private String name;
 
 	public void setName(String name) {
@@ -32,7 +32,7 @@ public class DatabaseVisitor {
 	}
 
 	public void setUser(User user) {
-		this.user = user;
+		this.caller = user;
 	}
 
 	public Object visit(ASTCreateFromDatabase node, Object data) {
@@ -56,7 +56,7 @@ public class DatabaseVisitor {
 		}
 
 		// ***************
-		DataDictionary.getInstance().setView(name, access, user);
+		DataDictionary.getInstance().setView(name, access, caller);
 		return access;
 	}
 
@@ -133,6 +133,7 @@ public class DatabaseVisitor {
 		int last = node.jjtGetNumChildren() - 1;
 		selectStatement = (ASTComplexSelectStatement) node.jjtGetChild(last);
 		CQLParser v = new CQLParser();
+		v.setUser(caller);
 		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(selectStatement, null);
 		DatabaseSinkAO dbSink = new DatabaseSinkAO(conn, name, savemetadata, create, truncate, ifnotexists);
 		result.subscribeSink(dbSink, 0, 0, result.getOutputSchema());

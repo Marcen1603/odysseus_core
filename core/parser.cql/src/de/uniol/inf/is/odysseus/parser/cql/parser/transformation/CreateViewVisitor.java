@@ -13,10 +13,10 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class CreateViewVisitor extends AbstractDefaultVisitor {
 
-	private User user;
+	private User caller;
 
 	public CreateViewVisitor(User user) {
-		this.user = user;
+		this.caller = user;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -26,13 +26,14 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 		String viewName = nameNode.getName();
 		
 		CQLParser parser = new CQLParser();
+		parser.setUser(caller);
 		ILogicalOperator operator = ((List<IQuery>) parser.visit((ASTPriorizedStatement) node.jjtGetChild(1), null)).get(0).getLogicalPlan();
 		
-		if (DataDictionary.getInstance().containsView(viewName, user)) {
+		if (DataDictionary.getInstance().containsView(viewName, caller)) {
 			throw new RuntimeException("ambigious name of view: " + viewName);
 		}
-		DataDictionary.getInstance().addSourceType(viewName, "RelationalStreaming", user);
-		DataDictionary.getInstance().setLogicalView(viewName, operator, user);
+		DataDictionary.getInstance().addSourceType(viewName, "RelationalStreaming", caller);
+		DataDictionary.getInstance().setLogicalView(viewName, operator, caller);
 		
 		return null;
 	}

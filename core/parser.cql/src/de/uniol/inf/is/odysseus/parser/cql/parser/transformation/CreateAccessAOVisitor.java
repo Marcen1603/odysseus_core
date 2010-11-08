@@ -224,6 +224,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
 				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
+		v.setUser(caller);
 		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
 				childNode, null);
 
