@@ -104,6 +104,14 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		// 4 -> objecttracking latency meridian
 		MVRelationalTuple<M> output = new MVRelationalTuple<M>(4);
 
+		if(odysseusLatencies.size() == this.countMax) {
+			odysseusLatencies.remove(0);
+		}
+
+		if(objecttrackingLatencies.size() == this.countMax) {
+			objecttrackingLatencies.remove(0);
+		}
+
 		odysseusLatencies.add(object.getMetadata().getLatency());
 		objecttrackingLatencies.add(object.getMetadata().getObjectTrackingLatency());
 
@@ -128,15 +136,13 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		if(odysseusLatencies.size() == countMax) {
 			Collections.sort(odysseusLatencies);
 			long odyLatency = this.median(odysseusLatencies);
-			System.out.println("######### ODYSSEUS LATENCY (MEDIAN) -> " + String.valueOf(odyLatency) + " #########");
-			this.odysseusLatencies.clear();
+			System.out.println("######### ODYSSEUS LATENCY (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(odyLatency) + " #########");
 		}
 
 		if(objecttrackingLatencies.size() == countMax) {
 			Collections.sort(objecttrackingLatencies);
 			long objLatency = this.median(objecttrackingLatencies);
-			System.out.println("######### OBJECT TRACKING LATENCY (MEDIAN) -> " + String.valueOf(objLatency) + " #########");
-			this.objecttrackingLatencies.clear();
+			System.out.println("######### OBJECT TRACKING LATENCY (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(objLatency) + " #########");
 		}
 
 
