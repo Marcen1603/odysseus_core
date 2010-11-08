@@ -20,7 +20,9 @@ import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.IServer;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.NIOServer;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval & ILatency>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -74,29 +76,97 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	}
 
 	@Override
+	public SDFAttributeList getOutputSchema() {
+		SDFAttributeList schema = new SDFAttributeList();
+		SDFAttribute attr0 = new SDFAttribute("Odysseus latency");
+		attr0.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		SDFAttribute attr1 = new SDFAttribute("Objecttracking latency");
+		attr1.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		SDFAttribute attr2 = new SDFAttribute("Odysseus latency meridian");
+		attr2.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		SDFAttribute attr3 = new SDFAttribute("Objecttracking latency meridian");
+		attr3.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		schema.add(attr0);
+		schema.add(attr1);
+		schema.add(attr2);
+		schema.add(attr3);
+		return schema;
+	}
+
+	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
 
-		if (odysseusLatencies.size() < countMax) {
-			odysseusLatencies.add(object.getMetadata().getLatency());
-			System.out.println("######### ODYSSEUS LATENCY (TUPLE) [" + odysseusLatencies.size() + "] -> " + String.valueOf(odysseusLatencies.get(odysseusLatencies.size()-1)) + " #########");
-		} else {
+		// Create new output tuple for graphical performance output
+		// 1 -> actual odysseus latency
+		// 2 -> actual objecttracking latency
+		// 3 -> odysseus latency meridian
+		// 4 -> objecttracking latency meridian
+		MVRelationalTuple<M> output = new MVRelationalTuple<M>(4);
+
+		odysseusLatencies.add(object.getMetadata().getLatency());
+		objecttrackingLatencies.add(object.getMetadata().getObjectTrackingLatency());
+
+		// actual odysseus latency
+		output.setMetadata(object.getMetadata());
+		output.setAttribute(0, odysseusLatencies.get(odysseusLatencies.size()-1));
+
+		// actual objecttracking latency
+		output.setMetadata(object.getMetadata());
+		output.setAttribute(1, objecttrackingLatencies.get(objecttrackingLatencies.size()-1));
+
+		// odysseus latency meridian
+		Collections.sort(odysseusLatencies);
+		output.setAttribute(2, this.median(odysseusLatencies));
+
+		// objecttracking latency meridian
+		Collections.sort(objecttrackingLatencies);
+		output.setAttribute(3, this.median(objecttrackingLatencies));
+
+		transfer(output);
+
+		if(odysseusLatencies.size() == countMax) {
 			Collections.sort(odysseusLatencies);
 			long odyLatency = this.median(odysseusLatencies);
 			System.out.println("######### ODYSSEUS LATENCY (MEDIAN) -> " + String.valueOf(odyLatency) + " #########");
 			this.odysseusLatencies.clear();
 		}
 
-		if (objecttrackingLatencies.size() < countMax) {
-			objecttrackingLatencies.add(object.getMetadata()
-					.getObjectTrackingLatency());
-			System.out.println("######### OBJECT TRACKING LATENCY (TUPLE) [" + objecttrackingLatencies.size() + "] -> " + String.valueOf(objecttrackingLatencies.get(objecttrackingLatencies.size()-1)) + " #########");
-		} else {
+		if(objecttrackingLatencies.size() == countMax) {
 			Collections.sort(objecttrackingLatencies);
 			long objLatency = this.median(objecttrackingLatencies);
 			System.out.println("######### OBJECT TRACKING LATENCY (MEDIAN) -> " + String.valueOf(objLatency) + " #########");
 			this.objecttrackingLatencies.clear();
 		}
+
+
+
+
+//		if (odysseusLatencies.size() < countMax) {
+//			odysseusLatencies.add(object.getMetadata().getLatency());
+//			System.out.println("######### ODYSSEUS LATENCY (TUPLE) [" + odysseusLatencies.size() + "] -> " + String.valueOf(odysseusLatencies.get(odysseusLatencies.size()-1)) + " #########");
+//			MVRelationalTuple<M> output = new MVRelationalTuple<M>(1);
+//			output.setMetadata(object.getMetadata());
+//			output.setAttribute(0, odysseusLatencies.get(odysseusLatencies.size()-1));
+//			transfer(output);
+//		} else {
+//			Collections.sort(odysseusLatencies);
+//			long odyLatency = this.median(odysseusLatencies);
+//			System.out.println("######### ODYSSEUS LATENCY (MEDIAN) -> " + String.valueOf(odyLatency) + " #########");
+//			this.odysseusLatencies.clear();
+//		}
+//
+//		if (objecttrackingLatencies.size() < countMax) {
+//			objecttrackingLatencies.add(object.getMetadata()
+//					.getObjectTrackingLatency());
+//			System.out.println("######### OBJECT TRACKING LATENCY (TUPLE) [" + objecttrackingLatencies.size() + "] -> " + String.valueOf(objecttrackingLatencies.get(objecttrackingLatencies.size()-1)) + " #########");
+//		} else {
+//			Collections.sort(objecttrackingLatencies);
+//			long objLatency = this.median(objecttrackingLatencies);
+//			System.out.println("######### OBJECT TRACKING LATENCY (MEDIAN) -> " + String.valueOf(objLatency) + " #########");
+//			this.objecttrackingLatencies.clear();
+//		}
+
 
 		// iterate over schema and calculate size of byte buffer
 		int bufferSize = 0;
@@ -127,7 +197,7 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 				}
 			}
 		}
-		transfer(object);
+		//transfer(object);
 
 		// Allocate byte buffer
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
