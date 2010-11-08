@@ -66,8 +66,9 @@ public class PredictionExpression {
 //		expressionParser.addStandardFunctions();
 		
 		aquireVariables(expressionString);
-		aquireTargetVariable(target);
-		
+		if(target != null) {
+			aquireTargetVariable(target);
+		}
 		try {
 			expression = MEP.parse(expressionString);
 			variables = expression.getVariables();
@@ -377,7 +378,7 @@ public class PredictionExpression {
 		for(Entry<String, List<String>> entry : variableSourceMapping.entrySet()) {
 			for(String var : entry.getValue()) {
 				s.append("\n\t"+var + " := ");
-//				s.append(expressionParser.getVar(var).getValue());
+				s.append(expression.getVariable(var).getValue());
 			}
 		}
 		return s.toString();
@@ -418,8 +419,8 @@ public class PredictionExpression {
 		
 		
 		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime";
-		expression = "1.5";
-		PredictionExpression p = new PredictionExpression("a.list:obj:pos:y", expression);
+//		expression = "1.5";
+		PredictionExpression p = new PredictionExpression(null, expression);
 		p.initAttributePaths(scan);
 		p.initAttributePaths(time);
 		System.out.println("TEST: BEFORE INDEX REPLACE:");
