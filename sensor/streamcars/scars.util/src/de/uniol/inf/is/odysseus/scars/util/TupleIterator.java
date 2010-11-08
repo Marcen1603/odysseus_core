@@ -274,7 +274,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 			for (int i = 0; i < start.getSchemaIndices().size(); i++) {
 				schemaIndices.push(start.getSchemaIndex(i));
 
-				tupleIndices.push(new TupleIndex((MVRelationalTuple<?>) parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
+				tupleIndices.push(new TupleIndex(schemaIndices.peek().toInt()));
 				if (parent instanceof MVRelationalTuple)
 					parent = ((MVRelationalTuple<?>) parent).getAttribute(schemaIndices.peek().toInt());
 				else
@@ -337,7 +337,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 					parent = tuple;
 
 				if (parent instanceof MVRelationalTuple) {
-					tupleIndices.push(new TupleIndex((MVRelationalTuple<?>) parent, entry.index, schemaIndices.peek().getAttribute()));
+					tupleIndices.push(new TupleIndex(entry.index));
 				} else {
 					// something wrong
 					throw new RuntimeException("Programming error");
@@ -371,7 +371,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 		for( int i = 0; i < tupleIndices.size(); i++ )
 			lst.add(tupleIndices.get(i).clone());
 		
-		return new TupleIndexPath(lst, getSchemaIndexPath());
+		return new TupleIndexPath(tuple, lst, getSchemaIndexPath());
 	}
 
 	private boolean isFinished() {

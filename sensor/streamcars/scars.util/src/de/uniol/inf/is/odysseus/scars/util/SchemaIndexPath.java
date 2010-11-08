@@ -169,13 +169,13 @@ public class SchemaIndexPath {
 		List<TupleIndex> list = new ArrayList<TupleIndex>();
 		Object parent = tuple;
 		for (int i = 0; i < indices.size(); i++) {
-			TupleIndex idx = new TupleIndex(((MVRelationalTuple<?>) parent), indices.get(i).toInt(), indices.get(i).getAttribute());
+			TupleIndex idx = new TupleIndex(indices.get(i).toInt());
 			list.add(idx);
 
 			if (parent instanceof MVRelationalTuple)
 				parent = ((MVRelationalTuple<?>) parent).getAttribute(indices.get(i).toInt());
 		}
-		return new TupleIndexPath(list, this);
+		return new TupleIndexPath(tuple, list, this);
 	}
 
 	/**

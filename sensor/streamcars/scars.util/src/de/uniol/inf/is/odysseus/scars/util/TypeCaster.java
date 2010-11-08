@@ -12,7 +12,7 @@ public class TypeCaster {
 			if( toClass instanceof Float ) {
 				return new Float( castedValue );
 			} else if( toClass instanceof Integer ) {
-				return new Integer(castedValue.toString());
+				return castedValue.intValue();
 			} else if( toClass instanceof Long ) {
 				return new Long(castedValue.toString());
 			} else {

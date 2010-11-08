@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.util;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 /**
  * Repräsentiert einen Indexeintrag in einem Tupelpfad. Der Indexeintrag
@@ -19,34 +17,15 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
  */
 public class TupleIndex {
 
-	private MVRelationalTuple<?> parent;
 	private int valueIndex;
-	private SDFAttribute attribute;
-	private Object value;
 
 	// Interner Konstruktor
-	TupleIndex(MVRelationalTuple<?> parent, int valueIndex, SDFAttribute attribute) {
-		this.parent = parent;
+	TupleIndex(int valueIndex) {
 		this.valueIndex = valueIndex;
-		this.attribute = attribute;
-		this.value = this.parent.getAttribute(this.valueIndex);
 	}
 
 	TupleIndex(TupleIndex other) {
-		this.parent = other.getParent();
 		this.valueIndex = other.valueIndex;
-		this.attribute = other.attribute;
-		this.value = other.value;
-	}
-
-	/**
-	 * Liefert den übergeordneten MVRelationalTuple<?>, worin der Indexeintrag
-	 * verweist. Der Index kann über getValueIndex() geliefert werden.
-	 * 
-	 * @return Übergeordnetes MVRelationalTuple<?>
-	 */
-	public MVRelationalTuple<?> getParent() {
-		return parent;
 	}
 
 	/**
@@ -58,38 +37,6 @@ public class TupleIndex {
 	 */
 	public int getValueIndex() {
 		return valueIndex;
-	}
-
-	/**
-	 * Liefert den tatsächlichen Wert im Tupel. Dieser Befehl ist äquivalent zu
-	 * <code>index.getParent().getAttribute(index.getValueIndex())</code>
-	 * 
-	 * @return Wert des Tupels.
-	 */
-	public Object getValue() {
-		return value;
-	}
-
-	/**
-	 * Setzt den tatsächlichen Wert im Tupel. Es ist darauf zu achten, dass der
-	 * Typ des Wertes mit dem alten Wert übereinstimmt. Dies wird in der Methode
-	 * nicht geprüft.
-	 * 
-	 * @param obj
-	 *            Neuer Wert.
-	 */
-	public void setValue(Object obj) {
-		parent.setAttribute(valueIndex, obj);
-	}
-
-	/**
-	 * Liefert zu diesem Tupelobjekt korrespondierende Schemaobjekt. Darüber
-	 * lassen sich genaue Schemainformationen über das Tupelobjekt abrufen.
-	 * 
-	 * @return Korrespondierendes Schemaobjekt.
-	 */
-	public SDFAttribute getAttribute() {
-		return attribute;
 	}
 
 	/**
