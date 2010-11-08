@@ -34,6 +34,7 @@
                label="File">
             <command
                   commandId="org.eclipse.ui.newWizard"
+                  id="new"
                   label="New..."
                   style="push">
             </command>
