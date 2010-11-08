@@ -110,12 +110,16 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 			sourceThreads.add(this);
 			logger.debug("Added Source "+s);
 			while (!isInterrupted() && s.isOpen() && !s.isDone()) {
-				while (s.hasNext()) {
-					s.transferNext();
+				try{
+					while (s.hasNext()) {
+						s.transferNext();
+					}
+				}catch(Exception e){
+					e.printStackTrace();
 				}
 				Thread.yield();
 			}
-			logger.debug("Removed Source "+s);
+			logger.debug("Removed Source "+s+" interrupted "+isInterrupted()+" open "+s.isOpen()+" done "+s.isDone());
 			sourceThreads.remove(this);
 		}
 

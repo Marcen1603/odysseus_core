@@ -40,5 +40,11 @@ public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IP
 	public boolean equals(IPredicate<T> pred) {
 		return pred instanceof NonPriorityPredicate;
 	}
+	
+	@Override
+	public boolean isContainedIn(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
