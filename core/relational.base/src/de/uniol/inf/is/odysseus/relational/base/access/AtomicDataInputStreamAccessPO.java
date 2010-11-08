@@ -72,20 +72,18 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			if (uri.equals("INTEGER")) {
-				this.dataReader[i++] = new IntegerHandler();
-			} else if (uri.equals("LONG") || uri.endsWith("TIMESTAMP")) {
-				this.dataReader[i++] = new LongHandler();
-			} else {
-				String upperCaseURI = uri.toUpperCase();
+			String upperCaseURI = uri.toUpperCase();
 				if (upperCaseURI.equals("DOUBLE") || uri.equals("MV")) {
 					this.dataReader[i++] = new DoubleHandler();
 				} else if (upperCaseURI.equals("STRING")) {
 					this.dataReader[i++] = new StringHandler();
+				} else if (upperCaseURI.equals("INTEGER")) {
+					this.dataReader[i++] = new IntegerHandler();	
+				} else if (upperCaseURI.equals("LONG")||upperCaseURI.endsWith("TIMESTAMP")) {
+					this.dataReader[i++] = new LongHandler();
 				} else {
 					throw new RuntimeException("illegal datatype " + upperCaseURI);
 				}
-			}
 		}
 	}
 
