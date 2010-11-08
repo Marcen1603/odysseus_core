@@ -99,27 +99,27 @@ public class MultiDistanceAssociation implements IAssociationAlgorithm {
 
 		// 1st instance
 
-		double[] vals = new double[data.numAttributes()];
-
-		for (int i = 0; i < scannedObjMesurementValues.length; i++) {
-			vals[i] = scannedObjMesurementValues[i];
-		}
+//		double[] vals = new double[data.numAttributes()];
+//
+//		for (int i = 0; i < scannedObjMesurementValues.length; i++) {
+//			vals[i] = scannedObjMesurementValues[i];
+//		}
 
 		Instance scannedObjInstance = new DenseInstance(
-				scannedObjMesurementValues.length, vals);
+				scannedObjMesurementValues.length, scannedObjMesurementValues);
 
 		data.add(scannedObjInstance);
 
 		// 2nd instance
 
-		vals = new double[data.numAttributes()];
-
-		for (int i = 0; i < predictedObjMesurementValues.length; i++) {
-			vals[i] = predictedObjMesurementValues[i];
-		}
+//		vals = new double[data.numAttributes()];
+//
+//		for (int i = 0; i < predictedObjMesurementValues.length; i++) {
+//			vals[i] = predictedObjMesurementValues[i];
+//		}
 
 		Instance predictedObjInstance = new DenseInstance(
-				predictedObjMesurementValues.length, vals);
+				predictedObjMesurementValues.length, predictedObjMesurementValues);
 
 		data.add(predictedObjInstance);
 
