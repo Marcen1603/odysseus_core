@@ -55,6 +55,11 @@ public class PredictionExpression {
 	 * @param target
 	 * @param expressionString
 	 */
+	public PredictionExpression(String expressionString) {
+		this(null, expressionString);
+	}
+	
+	
 	public PredictionExpression(String target, String expressionString) {
 		this.targetVarName = target;
 		this.expressionString = expressionString.trim();
