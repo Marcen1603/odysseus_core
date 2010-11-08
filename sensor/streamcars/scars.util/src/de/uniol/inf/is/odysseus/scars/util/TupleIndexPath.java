@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
  */
 public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 
-	private List<TupleIndex> indices;
+	private List<Integer> indices;
 	private SchemaIndexPath schemaIndexPath;
 	private List<Integer> listIndices;
 	private MVRelationalTuple<?> completeTuple;
@@ -53,7 +53,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 //	}
 	
 	// Interner Konstruktor
-	TupleIndexPath(MVRelationalTuple<?> completeTuple, List<TupleIndex> indices, SchemaIndexPath schemaIndexPath) {
+	TupleIndexPath(MVRelationalTuple<?> completeTuple, List<Integer> indices, SchemaIndexPath schemaIndexPath) {
 		this.indices = indices;
 		this.schemaIndexPath = schemaIndexPath;
 		this.listIndices = new ArrayList<Integer>();
@@ -68,9 +68,9 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 
 	// Interner Konstruktor
 	TupleIndexPath(TupleIndexPath other) {
-		this.indices = new ArrayList<TupleIndex>();
+		this.indices = new ArrayList<Integer>();
 		for (int i = 0; i < other.indices.size(); i++) {
-			indices.add(other.indices.get(i).clone());
+			indices.add(other.indices.get(i));
 		}
 		this.schemaIndexPath = other.schemaIndexPath;
 		this.listIndices = new ArrayList<Integer>();
@@ -81,7 +81,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 
 	public TupleIndexPath appendClone( int index ) {
 		TupleIndexPath c = clone();
-		c.indices.add(new TupleIndex(index));
+		c.indices.add(index);
 		c.listIndices.add(index);
 		return c;
 	}
@@ -93,7 +93,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	 * 
 	 * @return Liste von TupleIndex
 	 */
-	public List<TupleIndex> getTupleIndices() {
+	public List<Integer> getTupleIndices() {
 		return Collections.unmodifiableList(indices);
 	}
 
@@ -104,7 +104,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	 *            Index im Pfad.
 	 * @return Index im Tuple.
 	 */
-	public TupleIndex getTupleIndex(int index) {
+	public int getTupleIndex(int index) {
 		return indices.get(index);
 	}
 
@@ -113,7 +113,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	 * 
 	 * @return Letzten Tupleindex.
 	 */
-	public TupleIndex getLastTupleIndex() {
+	public int getLastTupleIndex() {
 		return getTupleIndex(indices.size() - 1);
 	}
 
@@ -178,9 +178,9 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	 *            Neuer Wert
 	 */
 	public void setTupleObject(Object obj) {
-		List<TupleIndex> subList = this.indices.subList(0, this.indices.size() - 1);
+		List<Integer> subList = this.indices.subList(0, this.indices.size() - 1);
 		MVRelationalTuple<?> tuple = (MVRelationalTuple<?>)getTupleObject(subList, completeTuple);
-		tuple.setAttribute(this.indices.get(this.indices.size()-1).toInt(), obj);
+		tuple.setAttribute(this.indices.get(this.indices.size()-1), obj);
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	public int[] toArray() {
 		int[] indexArray = new int[this.indices.size()];
 		for (int i = 0; i < this.indices.size(); i++) {
-			indexArray[i] = this.indices.get(i).toInt();
+			indexArray[i] = this.indices.get(i);
 		}
 		return indexArray;
 	}
@@ -247,16 +247,16 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	void nextStep(int listNumber) {
 		int listIndex = listIndices.get(listNumber);
 
-		List<TupleIndex> subList = indices.subList(0, listIndex + 1);
+		List<Integer> subList = indices.subList(0, listIndex + 1);
 		MVRelationalTuple<?> obj = (MVRelationalTuple<?>) getTupleObject(subList, completeTuple);
-		int index = indices.get(listIndex + 1).getValueIndex();
+		int index = indices.get(listIndex + 1);
 		int maxIndex = obj.getAttributeCount();
 		index++;
 
 		if (index >= maxIndex)
 			done = true;
 		else {
-			indices.set(listIndex + 1, new TupleIndex(index));
+			indices.set(listIndex + 1, index);
 		}
 	}
 
@@ -272,14 +272,14 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		}
 		int lastListIndex = listIndices.get(listIndices.size() - 1);
 
-		List<TupleIndex> subList = indices.subList(0, lastListIndex + 1);
+		List<Integer> subList = indices.subList(0, lastListIndex + 1);
 		MVRelationalTuple<?> obj = (MVRelationalTuple<?>) getTupleObject(subList, completeTuple);
 		if( obj.getAttributeCount() == 0) {
 			return false;
 		}
 		if (lastListIndex == indices.size() - 1) {
 			SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getSubattribute(0);
-			indices.add(new TupleIndex(0));
+			indices.add(0);
 			List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
 			List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();
 			newIdx.addAll(idx);
@@ -287,7 +287,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 			schemaIndexPath = new SchemaIndexPath(newIdx, lastAttribute);
 		}
 
-		int actIndex = indices.get(lastListIndex + 1).getValueIndex();
+		int actIndex = indices.get(lastListIndex + 1);
 		int maxIndex = obj.getAttributeCount();
 
 		return actIndex < maxIndex;
@@ -317,11 +317,11 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		return new TupleIndexPath(this);
 	}
 	
-	private static Object getTupleObject(List<TupleIndex> path, MVRelationalTuple<?> completeTuple ) {
+	private static Object getTupleObject(List<Integer> path, MVRelationalTuple<?> completeTuple ) {
 		Object actObject = completeTuple;
 		for( int i = 0; i < path.size(); i++) {
 			if( actObject instanceof MVRelationalTuple) {
-				actObject = ((MVRelationalTuple<?>)actObject).getAttribute(path.get(i).toInt());
+				actObject = ((MVRelationalTuple<?>)actObject).getAttribute(path.get(i));
 			}
 		}
 		return actObject;

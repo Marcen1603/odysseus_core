@@ -166,11 +166,10 @@ public class SchemaIndexPath {
 	 * @return TupelIndexPfad
 	 */
 	public TupleIndexPath toTupleIndexPath(MVRelationalTuple<?> tuple) {
-		List<TupleIndex> list = new ArrayList<TupleIndex>();
+		List<Integer> list = new ArrayList<Integer>();
 		Object parent = tuple;
 		for (int i = 0; i < indices.size(); i++) {
-			TupleIndex idx = new TupleIndex(indices.get(i).toInt());
-			list.add(idx);
+			list.add(indices.get(i).toInt());
 
 			if (parent instanceof MVRelationalTuple)
 				parent = ((MVRelationalTuple<?>) parent).getAttribute(indices.get(i).toInt());
