@@ -4,6 +4,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -121,6 +123,19 @@ public class LoginWindow {
 		passwordInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		passwordInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		passwordInput.setEchoChar('*');
+		passwordInput.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if( e.keyCode == 13 ) {
+					closeWindow();
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			
+		});
 	}
 	
 	private void markRed() {
@@ -140,43 +155,9 @@ public class LoginWindow {
 		okButton.setText(OK_BUTTON_TEXT);
 		okButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		okButton.addSelectionListener(new SelectionAdapter() {
-			@SuppressWarnings("deprecation")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					User user = UserManagement.getInstance().login(usernameInput.getText(), passwordInput.getText());
-					if( user == null ) {
-						markRed();
-						return;
-					}
-					LoginPreferencesManager.getInstance().setUsername(user.getUsername());
-					LoginPreferencesManager.getInstance().setPasswordMD5(user.getPassword());
-					LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
-					LoginPreferencesManager.getInstance().save();
-					ActiveUser.setActiveUser(user);
-					StatusBarManager.getInstance().setMessage("Logged in as " + user.getUsername());
-					loginOK = true;
-					wnd.dispose();
-				} catch( RuntimeException ex ) {
-					ex.printStackTrace();
-					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.YES | SWT.NO);
-				    box.setMessage("An error occured during validating the user.\n" +
-				    				"Probably the user-store is corrupted. Should the user-store\n" +
-				    				"be deleted?");
-				    box.setText("Error");
-				    if( box.open() == SWT.YES) {
-				    	try {
-							UserManagement.getInstance().clearUserStore();
-							box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_INFORMATION | SWT.OK );
-						    box.setMessage("User-store is now deleted. Please restart Odysseus RCP.");
-						    box.setText("Information");
-						    box.open();
-						} catch (Exception ex2) {
-							ex.printStackTrace();
-						} 
-				    }
-				    System.exit(1);
-				}
+				closeWindow();
 			}
 		});
 		
@@ -189,5 +170,43 @@ public class LoginWindow {
 				wnd.dispose();
 			}
 		});
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void closeWindow() {
+		try {
+			User user = UserManagement.getInstance().login(usernameInput.getText(), passwordInput.getText());
+			if( user == null ) {
+				markRed();
+				return;
+			}
+			LoginPreferencesManager.getInstance().setUsername(user.getUsername());
+			LoginPreferencesManager.getInstance().setPasswordMD5(user.getPassword());
+			LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
+			LoginPreferencesManager.getInstance().save();
+			ActiveUser.setActiveUser(user);
+			StatusBarManager.getInstance().setMessage("Logged in as " + user.getUsername());
+			loginOK = true;
+			wnd.dispose();
+		} catch( RuntimeException ex ) {
+			ex.printStackTrace();
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.YES | SWT.NO);
+		    box.setMessage("An error occured during validating the user.\n" +
+		    				"Probably the user-store is corrupted. Should the user-store\n" +
+		    				"be deleted?");
+		    box.setText("Error");
+		    if( box.open() == SWT.YES) {
+		    	try {
+					UserManagement.getInstance().clearUserStore();
+					box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_INFORMATION | SWT.OK );
+				    box.setMessage("User-store is now deleted. Please restart Odysseus RCP.");
+				    box.setText("Information");
+				    box.open();
+				} catch (Exception ex2) {
+					ex.printStackTrace();
+				} 
+		    }
+		    System.exit(1);
+		}
 	}
 }
