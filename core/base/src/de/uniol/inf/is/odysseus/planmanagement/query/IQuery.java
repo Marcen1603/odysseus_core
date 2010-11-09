@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.query;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
@@ -101,12 +102,20 @@ public interface IQuery extends ILogicalQuery, IMonitoringDataProvider {
 	 * Set Monitor for plans
 	 * @param planMonitor
 	 */
+	@SuppressWarnings("rawtypes")
 	public void addPlanMonitor(String name, IPlanMonitor planMonitor);
 
 	/**
 	 * Get Monitor for plans
 	 * @param planMonitor
 	 */
+	@SuppressWarnings("rawtypes")
 	public IPlanMonitor getPlanMonitor(String name);
+	
+	/**
+	 * Get List of all plan monitors
+	 */
+	@SuppressWarnings("rawtypes")
+	public Collection<IPlanMonitor> getPlanMonitors();
 
 }

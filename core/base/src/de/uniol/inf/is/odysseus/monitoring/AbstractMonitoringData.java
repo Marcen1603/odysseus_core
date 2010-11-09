@@ -48,4 +48,9 @@ public abstract class AbstractMonitoringData<T>
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	@Override
+	public String toString() {
+		return "PlanMonitor " + type;
+	}
 }

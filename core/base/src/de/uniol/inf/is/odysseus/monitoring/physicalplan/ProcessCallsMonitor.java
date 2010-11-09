@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.monitoring.physicalplan;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
@@ -16,14 +15,16 @@ public class ProcessCallsMonitor extends AbstractPlanMonitor<Long>
 implements IPOEventListener {
 	final Map<IPhysicalOperator, Long> processCallsPerOperator;
 	long overallProcessCallCount = 0;
+	private boolean relativeCallCount;
 
-	public ProcessCallsMonitor(IQuery target, boolean onlyRoots, String type) {
+	public ProcessCallsMonitor(IQuery target, boolean onlyRoots, String type, boolean relativeCallCount) {
 		super(target, onlyRoots, type);
 		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>();
 		for (IPhysicalOperator p : monitoredOps) {
 			processCallsPerOperator.put(p, 0l);
 			p.subscribe(this, POEventType.ProcessDone);
 		}
+		this.relativeCallCount = relativeCallCount;
 	}
 
 	public ProcessCallsMonitor(ProcessCallsMonitor processCallsMonitor) {
@@ -44,7 +45,7 @@ implements IPOEventListener {
 	}
 
 	public Long getProcessCallsForOperator(IPhysicalOperator op) {
-		return processCallsPerOperator.get(op);
+		return relativeCallCount?overallProcessCallCount/processCallsPerOperator.size():processCallsPerOperator.get(op);
 	}
 	
 	public long getOverallProcessCallCount() {
@@ -54,12 +55,12 @@ implements IPOEventListener {
 	@Override
 	public String toString() {
 		StringBuffer b = new StringBuffer(this.getClass().getSimpleName());
-		b.append("OverallCount " + overallProcessCallCount + "\n");
-		for (Entry<IPhysicalOperator, Long> p : processCallsPerOperator.entrySet()) {
-			b.append("--> " + p.getKey() + " = " + p.getValue() + " "
-					+ (overallProcessCallCount > 0 ? (p.getValue() / overallProcessCallCount) : 0)
-					+ "\n");
-		}
+		b.append(" sum=" + overallProcessCallCount + " /#ops="+ overallProcessCallCount/processCallsPerOperator.size() + "\n");
+//		for (Entry<IPhysicalOperator, Long> p : processCallsPerOperator.entrySet()) {
+//			b.append("--> " + p.getKey() + " = " + p.getValue() + " "
+//					+ (overallProcessCallCount > 0 ? (p.getValue() / overallProcessCallCount) : 0)
+//					+ "\n");
+//		}
 		return b.toString();
 	}
 

@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.queryview.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -43,6 +45,8 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 
 	public QueryViewPart() {}
 
+	Timer refreshTimer = null;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		
@@ -76,7 +80,7 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 				cell.setText(text);
 			}
 		});
-		tableColumnLayout.setColumnData(statusColumn.getColumn(), new ColumnWeightData(10,50,true));
+		tableColumnLayout.setColumnData(statusColumn.getColumn(), new ColumnWeightData(5,25,true));
 		
 		TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		priorityColumn.getColumn().setText("Priority");
@@ -87,7 +91,7 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 				cell.setText(String.valueOf(((IQuery) cell.getElement()).getPriority()));
 			}
 		});
-		tableColumnLayout.setColumnData(priorityColumn.getColumn(), new ColumnWeightData(10,50,true));
+		tableColumnLayout.setColumnData(priorityColumn.getColumn(), new ColumnWeightData(5,25,true));
 		
 		TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		parserIdColumn.getColumn().setText("Parser");
@@ -98,7 +102,7 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 				cell.setText(((IQuery) cell.getElement()).getParserId());
 			}
 		});
-		tableColumnLayout.setColumnData(parserIdColumn.getColumn(), new ColumnWeightData(10,50,true));
+		tableColumnLayout.setColumnData(parserIdColumn.getColumn(), new ColumnWeightData(5,25,true));
 
 		TableViewerColumn userColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		userColumn.getColumn().setText("User");
@@ -113,10 +117,10 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 					cell.setText("[No user]");
 			}
 		});
-		tableColumnLayout.setColumnData(userColumn.getColumn(), new ColumnWeightData(20,75,true));
+		tableColumnLayout.setColumnData(userColumn.getColumn(), new ColumnWeightData(5,25,true));
 		
 		TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		queryTextColumn.getColumn().setText("Query");
+		queryTextColumn.getColumn().setText("Query text");
 //		queryTextColumn.getColumn().setWidth(400);
 		queryTextColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -133,6 +137,19 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 			}
 		});
 		tableColumnLayout.setColumnData(queryTextColumn.getColumn(), new ColumnWeightData(80,200,true));
+		
+		TableViewerColumn monitorColumn = new TableViewerColumn( tableViewer, SWT.NONE ) ;
+		monitorColumn.getColumn().setText("Monitors");
+//		monitorColumn.getColumn().setWidth(100);
+		monitorColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				String text =  ((IQuery)cell.getElement()).getPlanMonitors()+"";
+				cell.setText(text);
+			}
+		});
+		tableColumnLayout.setColumnData(monitorColumn.getColumn(), new ColumnWeightData(10,50,true));
+		
 		
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(queries);
@@ -182,8 +199,21 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 			}
 
 		});
-
+			
 		t.start();
+		
+		refreshTimer = new Timer();
+		refreshTimer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				try{
+					refreshTable();
+				}catch(Exception e){
+					this.cancel();
+				}
+			}
+		}, 1000, 1000);
 	}
 
 	@Override

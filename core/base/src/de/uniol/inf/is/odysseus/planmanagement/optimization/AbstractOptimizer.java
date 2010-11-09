@@ -303,6 +303,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	
 	protected void doPostOptimizationActions(IQuery query, OptimizationConfiguration parameter) {
 		for (IPostOptimitzationAction action: postOptimizationActions){
+			getLogger().debug("Do PostOptimizationAction "+action);
 			action.run(query, parameter);
 		}
 	}

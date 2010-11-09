@@ -677,14 +677,21 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	}
 	
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void addPlanMonitor(String name, IPlanMonitor planMonitor) {
 		this.planmonitors.put(name, planMonitor);	
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public IPlanMonitor getPlanMonitor(String name) {
 		return this.planmonitors.get(name);
+	}
+	
+	@Override
+	public Collection<IPlanMonitor> getPlanMonitors(){
+		return Collections.unmodifiableCollection(planmonitors.values());
 	}
 
 	/**

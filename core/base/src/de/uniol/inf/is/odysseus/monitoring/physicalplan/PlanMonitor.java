@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public class PlanMonitor extends AbstractPlanMonitor<Double> {
 
+	@SuppressWarnings("rawtypes")
 	public PlanMonitor(IQuery target, boolean onlyRoots, String monitoringType,
 			long monitoringPeriod) {
 		super(target, onlyRoots, monitoringType);
@@ -54,5 +55,5 @@ public class PlanMonitor extends AbstractPlanMonitor<Double> {
 			p.getMonitoringData(type).reset();
 		}
 	}
-
+	
 }
