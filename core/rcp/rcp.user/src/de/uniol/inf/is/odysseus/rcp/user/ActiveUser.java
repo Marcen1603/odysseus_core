@@ -13,13 +13,13 @@ public class ActiveUser {
 		
 	}
 	
-	public static void setActiveUser( User user ) {
+	public synchronized static void setActiveUser( User user ) {
 		Assert.isNotNull(user, "user");
 		activeUser = user;
 		StatusBarManager.getInstance().setMessage(StatusBarManager.USER_ID, user.getUsername());
 	}
 	
-	public static User getActiveUser() { // TODO: Bessere Bezeichnung
+	public synchronized static User getActiveUser() { // TODO: Bessere Bezeichnung
 		return activeUser;
 	}
 }
