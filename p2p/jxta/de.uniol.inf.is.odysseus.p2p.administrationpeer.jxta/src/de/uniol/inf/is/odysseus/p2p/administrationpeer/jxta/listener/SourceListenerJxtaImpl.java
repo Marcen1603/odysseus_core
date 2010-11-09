@@ -20,18 +20,19 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
- * Operator-Peers mit Quellen werden separat ausgeschrieben, so dass diese gesondert gesucht und eingetragen werden
+ * Operator-Peers mit Quellen werden separat ausgeschrieben, so dass diese
+ * gesondert gesucht und eingetragen werden
  * 
  * @author Mart KÃ¶hler
- *
+ * 
  */
-public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListener {
+public class SourceListenerJxtaImpl implements ISourceListener,
+		DiscoveryListener {
 
-	
-	private int WAIT_TIME=10000;
-	
+	private int WAIT_TIME = 10000;
+
 	private IExecutor executor;
-	
+
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration("relational", ITimeInterval.class));
 
@@ -39,9 +40,9 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 		return executor;
 	}
 
-	public SourceListenerJxtaImpl(){
+	public SourceListenerJxtaImpl() {
 	}
-	
+
 	public SourceListenerJxtaImpl(IExecutor executor) {
 		this.executor = executor;
 	}
@@ -53,9 +54,11 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			AdministrationPeerJxtaImpl.getInstance().getDiscoveryService().getRemoteAdvertisements(null,
-					DiscoveryService.ADV, "sourceName", "*", 20,
-					this);
+			AdministrationPeerJxtaImpl
+					.getInstance()
+					.getDiscoveryService()
+					.getRemoteAdvertisements(null, DiscoveryService.ADV,
+							"sourceName", "*", 20, this);
 		}
 	}
 
@@ -69,18 +72,24 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 			while (en.hasMoreElements()) {
 				try {
 					Object source = en.nextElement();
-					if (source instanceof SourceAdvertisement ){
+					if (source instanceof SourceAdvertisement) {
 						adv = (SourceAdvertisement) source;
-						AdministrationPeerJxtaImpl.getInstance().getSources().put(adv.getSourceName(), adv);
-						// Hier wird noch das Schema der Quelle zum DataDictionary hinzugefÃ¼gt, damit der Compiler mit den Informationen arbeiten kann
+						AdministrationPeerJxtaImpl.getInstance().getSources()
+								.put(adv.getSourceName(), adv);
+						// Hier wird noch das Schema der Quelle zum
+						// DataDictionary hinzugefÃ¼gt, damit der Compiler mit
+						// den Informationen arbeiten kann
 						User user = UserManagement.getInstance().getSuperUser();
-						if(DataDictionary.getInstance().getSourceType(adv.getSourceName(),user) != null) {
-							// TODO: User einfuegen, der diese Query ausführt
-							getExecutor().addQuery(adv.getSourceScheme(), "CQL", user, this.trafoConfigParam, new ParameterPriority(2));
-						}
-						
-					}
-					else{
+						// TODO: Was sollte das?
+						// if(DataDictionary.getInstance().getSourceType(adv.getSourceName(),user)
+						// != null) {
+						// TODO: User einfuegen, der diese Query ausführt
+						getExecutor().addQuery(adv.getSourceScheme(), "CQL",
+								user, this.trafoConfigParam,
+								new ParameterPriority(2));
+						// }
+
+					} else {
 						return;
 					}
 				} catch (Exception e) {
