@@ -63,8 +63,8 @@ public class StreamClientHandler extends Thread {
 			currentTime++;
 
 			try {
-				transferTuple(currentTime);
 				sleep(this.streamType.getWaitingMillis());
+				transferTuple(currentTime*this.streamType.getWaitingMillis());
 				itemCount++;
 			} catch (IOException e) {
 				this.println("Client closed connection");

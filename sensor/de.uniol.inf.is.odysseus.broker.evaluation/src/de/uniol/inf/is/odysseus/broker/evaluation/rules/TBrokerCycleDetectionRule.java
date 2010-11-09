@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.broker.evaluation.rules;
 
-import de.uniol.inf.is.odysseus.broker.evaluation.physicaloperator.BrokerPO;
 import de.uniol.inf.is.odysseus.broker.evaluation.physicaloperator.BrokerWrapperPlanFactory;
 import de.uniol.inf.is.odysseus.broker.evaluation.transaction.TransactionDetector;
+import de.uniol.inf.is.odysseus.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TBrokerCycleDetectionRule extends AbstractTransformationRule<BrokerPO<?>> {
+public class TBrokerCycleDetectionRule extends AbstractTransformationRule<TopAO> {
 
 	@Override
 	public int getPriority() {		
@@ -18,7 +18,7 @@ public class TBrokerCycleDetectionRule extends AbstractTransformationRule<Broker
 	}
 
 	@Override
-	public void execute(BrokerPO<?> operator, TransformationConfiguration transformConfig) {		
+	public void execute(TopAO operator, TransformationConfiguration transformConfig) {		
 		LoggerSystem.printlog(Accuracy.DEBUG, "Searching for cycles and reorganize broker transactions..."); 
 		TransactionDetector.reorganizeTransactions(BrokerWrapperPlanFactory.getAllBrokerPOs());		
 		LoggerSystem.printlog(Accuracy.DEBUG, "Searching done"); 
@@ -26,7 +26,7 @@ public class TBrokerCycleDetectionRule extends AbstractTransformationRule<Broker
 	}
 
 	@Override
-	public boolean isExecutable(BrokerPO<?> operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(TopAO operator, TransformationConfiguration transformConfig) {
 		return (!BrokerWrapperPlanFactory.isEmpty());
 	}
 

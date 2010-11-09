@@ -62,7 +62,7 @@ public class UpdateEvaluationPO<T extends IMetaAttributeContainer<ITimeInterval>
 		if(this.number==1){
 			nl = "\n";
 		}
-		System.out.print(time+nl);
+		System.out.print("EvalPO No. " + this.number + ":" + (time+nl));
 		waitedTime = waitedTime + time;
 		if (numberOfItems > items) {
 			printResults();
@@ -92,6 +92,7 @@ public class UpdateEvaluationPO<T extends IMetaAttributeContainer<ITimeInterval>
 
 	@Override
 	protected void process_next(T object, int port) {
+		
 		if (isFirst) {
 			transfer(object, dataOutPort);
 			isFirst = false;
@@ -100,11 +101,13 @@ public class UpdateEvaluationPO<T extends IMetaAttributeContainer<ITimeInterval>
 
 		// DATA
 		if (port == 1) {
+			System.out.println("Process NewData UpdateEval No: " + this.number + " TS: " + object.getMetadata().getStart());
 			processNew();
 			liste.add(object);
 			transfer(object, queueOutPort);
 
 		} else {
+			System.out.println("Process OldData UpdateEval No: " + this.number + " TS: " + object.getMetadata().getStart());
 			// answer
 			processAnswer();
 			synchronized (liste) {

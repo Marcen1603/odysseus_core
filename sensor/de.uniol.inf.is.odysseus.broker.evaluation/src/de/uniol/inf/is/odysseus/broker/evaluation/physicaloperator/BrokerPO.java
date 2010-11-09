@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalComparator;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -59,13 +59,13 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IMetaAttributeContainer<ITimeInterval>>());
 
 	/** Assigns each writing stream a tsmin to save the minimum timestamp. */
-	private PointInTime tsmin[] = new PointInTime[0];
+	private PointInTime tsmin[] = null; //new PointInTime[0];
 
 	/**
 	 * The min is the minimum time of all writing streams except of cyclic
 	 * streams.
 	 */
-	private PointInTime min = PointInTime.getZeroTime();
+	private PointInTime min = null; //PointInTime.getZeroTime();
 
 	/**
 	 * The min is the minimum time of all timestamp streams except of cyclic
@@ -108,6 +108,22 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		// set to position 1 -> evaluate attribute "id"
 		this.sweepArea.setQueryPredicate(new BrokerQueryPredicate<T>());
 		this.sweepArea.setRemovePredicate(new BrokerRemovePredicate<T>());
+		this.initTSMin();
+	}
+	
+	private boolean firstElem = true;
+	private void initTSMin(){
+//		List<PhysicalSubscription<ISource<? extends T>>> sources = this.getSubscribedToSource();
+//		int writePortCounter = 0;
+//		for(PhysicalSubscription<ISource<? extends T>> sub: sources){
+//			int port = sub.getSinkInPort();
+//			WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.getName(), port);
+//			if(type == WriteTransaction.Continuous || type == WriteTransaction.Cyclic){
+//				writePortCounter++;
+//			}
+//		}
+		
+		this.tsmin = new PointInTime[4];
 	}
 
 	/**
@@ -145,12 +161,12 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe#process_next
 	 * (java.lang.Object, int)
 	 */
-	protected synchronized void process_next(T object, int port) {
+	protected synchronized void process_next(T object, int port) {	
 		printDebug("-----------------------------------------");
 
 		// Determine the current transaction type
 		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
-		printDebug("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
+		printDebug(System.currentTimeMillis() + " -> Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
 		// setting the minimum time for the current port
 		this.setMinTS(port, object.getMetadata().getStart());
 
@@ -432,15 +448,14 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private PointInTime getMinimum() {
 		PointInTime min = null;
 		for (int i = 0; i < tsmin.length; i++) {
-			// if
-			// (BrokerDictionary.getInstance().getWriteTypeForPort(this.getIdentifier(),
-			// i) != WriteTransaction.Timestamp) {
-			if (tsmin[i] != null) {
-				if (min == null || tsmin[i].before(min)) {
-					min = tsmin[i];
+			if(BrokerDictionary.getInstance().getWriteTypeForPort(this.getIdentifier(),i) != WriteTransaction.Timestamp) {
+				if (tsmin[i] != null) {
+					if (min == null || tsmin[i].before(min)) {
+						min = tsmin[i];
+					}
+				} else {
+					return null;
 				}
-			} else {
-				return null;
 			}
 		}
 		return min;

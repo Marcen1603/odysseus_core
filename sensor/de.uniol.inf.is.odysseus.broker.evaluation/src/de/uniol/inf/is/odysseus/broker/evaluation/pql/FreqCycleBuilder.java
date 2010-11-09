@@ -58,9 +58,9 @@ public class FreqCycleBuilder extends AbstractOperatorBuilder {
 		BrokerDictionary.getInstance().setReadTypeForPort(name, 0, ReadTransaction.Continuous);
 		
 		for(int i=1;i<=super.getInputOperatorCount();i++){
-			int procTime = 50000000;
+			int procTime = 16000000;
 			if(i==1){
-				procTime = 100000000;
+				procTime = 16000000;
 			}
 			
 			ILogicalOperator input = super.getInputOperator(i-1);
