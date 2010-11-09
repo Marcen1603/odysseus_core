@@ -622,7 +622,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * ()
 	 */
 	@Override
-	public IPlan getSealedPlan() throws PlanManagementException {
+	public IPlan getPlan() throws PlanManagementException {
 		return this.plan;
 	}
 

@@ -81,6 +81,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
+	@SuppressWarnings("rawtypes")
 	public Collection<Integer> addQuery(String query, String parserID, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
@@ -95,6 +96,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
+	@SuppressWarnings("rawtypes")
 	public Collection<Integer> addQuery(String query, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
@@ -111,6 +113,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
+	@SuppressWarnings("rawtypes")
 	public int addQuery(ILogicalOperator logicalPlan, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
@@ -126,6 +129,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
+	@SuppressWarnings("rawtypes")
 	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;

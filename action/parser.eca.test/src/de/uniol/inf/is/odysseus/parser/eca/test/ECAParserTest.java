@@ -185,7 +185,7 @@ public class ECAParserTest implements CommandProvider {
 		//check physical operators
 		int queryID = this.executor.addQuery(logicalPlan, user, new ParameterParserID("ECA"));
 		ci.println("	*Testcase3: Check if physical plan is correct");
-		IPlan plan = this.executor.getSealedPlan();
+		IPlan plan = this.executor.getPlan();
 		IQuery installedQuery = plan.getQuery(queryID);
 		IPhysicalOperator physicalOp = installedQuery.getRoots().get(0);
 		if (! (physicalOp.getClass() == EventTriggerPO.class)){

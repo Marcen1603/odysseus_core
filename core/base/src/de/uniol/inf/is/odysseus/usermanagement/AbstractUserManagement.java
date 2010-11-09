@@ -133,7 +133,7 @@ abstract class AbstractUserManagement {
 				user = null;
 			} else {
 				loggedIn.put(username, user);
-				System.out.println("User " + username + " logged in!");
+				//System.out.println("User " + username + " logged in!");
 				user.setSession(new Session(getSessionId()));
 			}
 		}
@@ -543,11 +543,11 @@ abstract class AbstractUserManagement {
 
 	private List<IUserManagementListener> listeners = new CopyOnWriteArrayList<IUserManagementListener>();
 
-	public void addTenantManagementListener(IUserManagementListener l) {
+	public void addUserManagementListener(IUserManagementListener l) {
 		listeners.add(l);
 	}
 
-	public void removeTenantManagementListener(User caller,
+	public void removeUserManagementListener(User caller,
 			IUserManagementListener l) throws HasNoPermissionException {
 		listeners.remove(l);
 	}

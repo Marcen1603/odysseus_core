@@ -245,7 +245,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 		viewer.setLabelProvider(new ViewLabelProvider());
 		refresh();
 
-		UserManagement.getInstance().addTenantManagementListener(this);
+		UserManagement.getInstance().addUserManagementListener(this);
 		TenantManagement.getInstance().addTenantManagementListener(this);
 
 		// Create the help context id for the viewer's control

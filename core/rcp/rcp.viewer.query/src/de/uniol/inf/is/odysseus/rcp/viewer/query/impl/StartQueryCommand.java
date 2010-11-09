@@ -15,7 +15,9 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
+import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 
 public class StartQueryCommand extends AbstractHandler implements IHandler {
 
@@ -49,12 +51,16 @@ public class StartQueryCommand extends AbstractHandler implements IHandler {
 				@Override
 				public void run() {
 					try {
-						executor.startQuery(qID2);
+						executor.startQuery(qID2, ActiveUser.getActiveUser());
 						StatusBarManager.getInstance().setMessage("Query started");
 					} catch (PlanManagementException e) {
 						new ExceptionWindow(e);
 						e.printStackTrace();
+					} catch (HasNoPermissionException e){
+						new ExceptionWindow(e);
+						e.printStackTrace();
 					}
+					
 				}
 			});
 			t.setDaemon(true);

@@ -11,27 +11,32 @@ import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
-public class SourcesViewPart extends ViewPart implements IDataDictionaryListener {
+public class SourcesViewPart extends ViewPart implements
+		IDataDictionaryListener, IUserManagementListener {
 
 	private TreeViewer viewer;
-	
+
 	public SourcesViewPart() {
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout( new FillLayout() );
-		
-		setTreeViewer( new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE) );
+		parent.setLayout(new FillLayout());
+
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.SINGLE));
 		getTreeViewer().setContentProvider(new SourcesContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesLabelProvider());
 		refresh();
 		getDataDictionary().addListener(this);
-		
+		UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 	}
-	
+
 	@Override
 	public void dispose() {
 		getDataDictionary().removeListener(this);
@@ -46,34 +51,55 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 	public TreeViewer getTreeViewer() {
 		return viewer;
 	}
-	
+
 	public void refresh() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				getTreeViewer().setInput(getDataDictionary().getViews(ActiveUser.getActiveUser()));
+				try {
+					getTreeViewer().setInput(
+							getDataDictionary().getViews(
+									ActiveUser.getActiveUser()));
+				} catch (Exception e) {
+					getTreeViewer().setInput("NOTHING");
+					e.printStackTrace();// ?
+				}
 			}
-			
+
 		});
 	}
-	
+
 	public DataDictionary getDataDictionary() {
 		return DataDictionary.getInstance();
 	}
 	
-	protected void setTreeViewer( TreeViewer viewer ) {
+
+	protected void setTreeViewer(TreeViewer viewer) {
 		this.viewer = viewer;
 	}
 
 	@Override
-	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(DataDictionary sender, String name,
+			ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(DataDictionary sender, String name,
+			ILogicalOperator op) {
 		refresh();
 	}
+
+	@Override
+	public void usersChangedEvent() {
+		refresh();
+	}
+
+	@Override
+	public void roleChangedEvent() {
+		refresh();		
+	}
+
 
 }

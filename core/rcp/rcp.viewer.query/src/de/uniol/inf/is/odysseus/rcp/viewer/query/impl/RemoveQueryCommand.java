@@ -14,7 +14,9 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
+import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 
 public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
 
@@ -47,9 +49,12 @@ public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
 				@Override
 				public void run() {
 					try {
-						executor.removeQuery(qID2);
+						executor.removeQuery(qID2, ActiveUser.getActiveUser());
 						StatusBarManager.getInstance().setMessage("Query removed successfully");
 					} catch (PlanManagementException e) {
+						new ExceptionWindow(e);
+						e.printStackTrace();
+					} catch (HasNoPermissionException e){
 						new ExceptionWindow(e);
 						e.printStackTrace();
 					}

@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryAction;
+import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorAction;
 
 public class UserManagement extends AbstractUserManagement {
 
@@ -35,13 +33,13 @@ public class UserManagement extends AbstractUserManagement {
 							.getInstance().getRoleID());
 
 					// create permissions for admin_temp
-					List<IUserAction> adminops = new ArrayList<IUserAction>();
-					adminops.addAll(UserManagementAction.getAll());
+//					List<IUserAction> adminops = new ArrayList<IUserAction>();
+//					adminops.addAll(UserManagementAction.getAll());
 
 					// create privilege for admin (kann nicht über create, da
 					// noch keine Rechte vorhanden
 					Privilege adminpriv = new Privilege("UserManagement",
-							adminrole, adminops, instance.getPrivID());
+							adminrole, UserManagementAction.getAll(), instance.getPrivID());
 
 					// add privilege for admin_temp
 					adminrole.addPrivilege(adminpriv);
@@ -53,16 +51,24 @@ public class UserManagement extends AbstractUserManagement {
 					// create DataDictoinary Role
 					instance.createRole("datadictionary", sys);
 					// create permission for admin
-					List<IUserAction> admindatadic = new ArrayList<IUserAction>();
-					admindatadic.addAll(DataDictionaryAction.getAll());
 					// create DataDic Priv and add to Role
-					for (IUserAction action : admindatadic) {
+					for (IUserAction action : DataDictionaryAction.getAll()) {
 						instance.grantPermission(sys, "datadictionary", action,
-								"DataDictionary");
+								DataDictionaryAction.alias);
 					}
 					// add to system
 					instance.grantRole(sys, "datadictionary", "System");
 
+					// -----------------------------------------------------
+					// create ExecutorRole
+					instance.createRole("queryexecutor", sys);
+					for (IUserAction action : ExecutorAction.getAll()) {
+						instance.grantPermission(sys, "queryexecutor", action,
+								ExecutorAction.alias);
+					}
+					// add to system
+					instance.grantRole(sys, "queryexecutor", "System");
+					
 					// ----- TEST ----
 					// instance.createRole("admin",
 					// instance.login("System", "manager"));

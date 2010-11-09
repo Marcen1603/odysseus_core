@@ -144,7 +144,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     @Override
 	public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
         try {
-        	IQuery query = executor.getSealedPlan().getQuery(Integer.valueOf(queryID));
+        	IQuery query = executor.getPlan().getQuery(Integer.valueOf(queryID));
         	SDFAttributeList outputSchema = query.getLogicalPlan().getOutputSchema();
         	ObjectFactory factory = new ObjectFactory();
         	
@@ -192,7 +192,9 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     @Override
 	public java.lang.String removeStatement(java.math.BigInteger queryID) throws NonExistingStatementFault    {  
         try {
-        	executor.removeQuery(queryID.intValue());
+			// TODO: User einfuegen, der diese Query entfernen will
+        	User user = UserManagement.getInstance().getSuperUser();
+        	executor.removeQuery(queryID.intValue(), user);
         	return "";
         }catch (Exception e){
         	ObjectFactory factory = new ObjectFactory();

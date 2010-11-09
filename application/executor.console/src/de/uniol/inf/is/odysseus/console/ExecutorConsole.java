@@ -633,7 +633,7 @@ public class ExecutorConsole implements CommandProvider,
 			StringBuffer buff = new StringBuffer();
 			ci.println("Physical plan of all roots: ");
 			int count = 1;
-			for (IPhysicalOperator root : this.executor.getSealedPlan()
+			for (IPhysicalOperator root : this.executor.getPlan()
 					.getRoots()) {
 				buff = new StringBuffer();
 				if (root.isSink()) {
@@ -665,7 +665,7 @@ public class ExecutorConsole implements CommandProvider,
 			}
 
 			try {
-				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
+				IQuery query = this.executor.getPlan().getQuery(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -698,7 +698,7 @@ public class ExecutorConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
+				IQuery query = this.executor.getPlan().getQuery(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -1172,7 +1172,7 @@ public class ExecutorConsole implements CommandProvider,
 
 				int queryID = this.executor.addQuery(physPlan, currentUser,
 						this.trafoConfigParam);
-				this.executor.startQuery(queryID);
+				this.executor.startQuery(queryID, currentUser);
 
 			} catch (QueryParseException e1) {
 				e1.printStackTrace();
@@ -1262,7 +1262,7 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			System.out
 					.println("Current registered queries (ID | STARTED | PARSERID):");
-			for (IQuery query : this.executor.getSealedPlan().getQueries()) {
+			for (IQuery query : this.executor.getPlan().getQueries()) {
 				ci.println(query.getID() + " | " + query.isActive() + " | "
 						+ query.getParserId());
 			}
@@ -1288,7 +1288,7 @@ public class ExecutorConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				this.executor.removeQuery(qnum);
+				this.executor.removeQuery(qnum, currentUser);
 			} catch (Exception e) {
 				ci.println(e.getMessage());
 			}
@@ -1382,7 +1382,7 @@ public class ExecutorConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				this.executor.startQuery(qnum);
+				this.executor.startQuery(qnum, currentUser);
 			} catch (Exception e) {
 				ci.println(e.getMessage());
 			}
@@ -1824,12 +1824,12 @@ public class ExecutorConsole implements CommandProvider,
 
 		try {
 			if (this.reoptimizeTimer != null) {
-				this.executor.getSealedPlan().removeReoptimzeRule(
+				this.executor.getPlan().removeReoptimzeRule(
 						this.reoptimizeTimer);
 				ci.println("Old ReoptimizeTimer removed.");
 			}
 			this.reoptimizeTimer = new ReoptimizeTimer(period);
-			this.executor.getSealedPlan()
+			this.executor.getPlan()
 					.addReoptimzeRule(this.reoptimizeTimer);
 			ci
 					.println("ReoptimizeTimer with " + period
@@ -1848,7 +1848,7 @@ public class ExecutorConsole implements CommandProvider,
 			return;
 		}
 		try {
-			this.executor.getSealedPlan().removeReoptimzeRule(
+			this.executor.getPlan().removeReoptimzeRule(
 					this.reoptimizeTimer);
 			this.reoptimizeTimer = null;
 			ci.println("ReoptimizeTimer removed.");
