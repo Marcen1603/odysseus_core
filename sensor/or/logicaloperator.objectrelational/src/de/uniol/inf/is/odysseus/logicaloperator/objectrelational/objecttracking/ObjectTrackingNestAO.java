@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
