@@ -35,7 +35,7 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * Sources which should be scheduled.
 	 */
-	private ArrayList<IIterableSource<?>> iterableSource;
+	private ArrayList<IIterableSource<?>> iterableSources;
 
 	/**
 	 * Roots which should be scheduled.
@@ -65,7 +65,7 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * Creates a new PartialPlan.
 	 * 
-	 * @param iterableSource
+	 * @param iterableSources
 	 *            Sources which should be scheduled.
 	 * @param roots
 	 *            Roots which should be scheduled.
@@ -73,13 +73,13 @@ public class PartialPlan implements IPartialPlan {
 	 *            Initial priority with which the objects should be scheduled.
 	 *            Real priorty can change at runtime
 	 */
-	public PartialPlan(List<IIterableSource<?>> iterableSource,
+	public PartialPlan(List<IIterableSource<?>> iterableSources,
 			List<IPhysicalOperator> roots, int basePriority, IQuery partof,
 			IQuery... otherParts) {
-		this.iterableSource = new ArrayList<IIterableSource<?>>(iterableSource);
+		this.iterableSources = new ArrayList<IIterableSource<?>>(iterableSources);
 		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
-		for (int i = 0; i < iterableSource.size(); i++) {
-			sourceIds.put(iterableSource.get(i), i); // Iterator does not
+		for (int i = 0; i < iterableSources.size(); i++) {
+			sourceIds.put(iterableSources.get(i), i); // Iterator does not
 														// garantee order ...
 														// (?)
 		}
@@ -96,7 +96,7 @@ public class PartialPlan implements IPartialPlan {
 	
 	@Override
 	public boolean hasIteratableSources() {
-		return iterableSource != null && iterableSource.size()>0;
+		return iterableSources != null && iterableSources.size()>0;
 	}
 	
 	/*
@@ -106,13 +106,13 @@ public class PartialPlan implements IPartialPlan {
 	 * getIterableSource()
 	 */
 	@Override
-	public List<IIterableSource<?>> getIterableSource() {
-		return Collections.unmodifiableList(iterableSource);
+	public List<IIterableSource<?>> getIterableSources() {
+		return Collections.unmodifiableList(iterableSources);
 	}
 
 	@Override
 	public IIterableSource<?> getIterableSource(int id) {
-		return iterableSource.get(id);
+		return iterableSources.get(id);
 	}
 
 	@Override
@@ -169,15 +169,6 @@ public class PartialPlan implements IPartialPlan {
 		return this.basePriority;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return iterableSource.hashCode();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -197,7 +188,7 @@ public class PartialPlan implements IPartialPlan {
 
 		result += AppEnv.LINE_SEPARATOR + "Sources:";
 
-		for (IIterableSource<?> source : iterableSource) {
+		for (IIterableSource<?> source : iterableSources) {
 			if (result != "") {
 				result += AppEnv.LINE_SEPARATOR;
 			}

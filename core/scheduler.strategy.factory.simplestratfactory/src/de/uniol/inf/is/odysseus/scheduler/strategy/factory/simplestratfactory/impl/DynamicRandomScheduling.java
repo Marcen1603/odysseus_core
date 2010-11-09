@@ -37,7 +37,7 @@ public class DynamicRandomScheduling extends AbstractDynamicScheduling {
 	@Override
 	public void applyChangedPlan()
 	{
-		operators = new LinkedList<IIterableSource<?>>(this.plan.getIterableSource());
+		operators = new LinkedList<IIterableSource<?>>(this.plan.getIterableSources());
 	}
 	
 }

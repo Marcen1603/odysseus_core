@@ -710,4 +710,9 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 			this.setRoots(oldRoots);			
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "Query "+getID();
+	}
 }

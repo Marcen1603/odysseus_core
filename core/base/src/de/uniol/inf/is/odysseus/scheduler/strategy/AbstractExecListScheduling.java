@@ -31,7 +31,7 @@ abstract public class AbstractExecListScheduling extends
 		super(plan);
 		executionList = calculateExecutionList(plan);
 		// Nur die Operatoren im Plan d�rfen gescheduled werden (in den abgeleiten Methoden Aufruf entfernen)
-		executionList.retainAll(plan.getIterableSource());
+		executionList.retainAll(plan.getIterableSources());
 		iterator = executionList.iterator();
 	}
 

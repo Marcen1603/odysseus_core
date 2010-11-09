@@ -21,7 +21,7 @@ public class AuroraMinLatency extends AbstractExecListScheduling {
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(
 			IPartialPlan plan) {
-		List<IIterableSource<?>> toSchedule = plan.getIterableSource();
+		List<IIterableSource<?>> toSchedule = plan.getIterableSources();
 
 		List<IIterableSource<?>> execList = init(toSchedule);
 

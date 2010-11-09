@@ -13,7 +13,7 @@ abstract public class AbstractDynamicScheduling extends
 	
 	public AbstractDynamicScheduling(IPartialPlan plan) {
 		super(plan);
-		operators = new LinkedList<IIterableSource<?>>(plan.getIterableSource());
+		operators = new LinkedList<IIterableSource<?>>(plan.getIterableSources());
 	}
 	
 	@Override

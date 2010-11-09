@@ -19,7 +19,7 @@ public class RoundRobinScheduling extends AbstractExecListScheduling {
 
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(IPartialPlan operators) {
-		return new LinkedList<IIterableSource<?>>(operators.getIterableSource());
+		return new LinkedList<IIterableSource<?>>(operators.getIterableSources());
 	}
 	
 	@Override

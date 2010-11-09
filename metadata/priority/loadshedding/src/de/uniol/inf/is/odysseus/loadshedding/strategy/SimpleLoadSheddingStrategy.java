@@ -18,7 +18,7 @@ public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
 		
 		double processingSteps = 0;
 		
-		for(int i=0; i < plan.getIterableSource().size(); i++) {
+		for(int i=0; i < plan.getIterableSources().size(); i++) {
 			processingSteps += 1;
 		}
 		

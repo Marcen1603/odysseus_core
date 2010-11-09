@@ -68,9 +68,9 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	protected void prepareSources() {
-		logger.debug("Prepare Sources " + plan.getIterableSource());
+		logger.debug("Prepare Sources " + plan.getIterableSources());
 
-		for (int bitIndex = 0; bitIndex < plan.getIterableSource().size(); bitIndex++) {
+		for (int bitIndex = 0; bitIndex < plan.getIterableSources().size(); bitIndex++) {
 			plan.getIterableSource(bitIndex).subscribe(this,
 					POEventType.ProcessDone);
 			plan.getIterableSource(bitIndex).subscribe(this,

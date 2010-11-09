@@ -64,7 +64,7 @@ public class GreedyScheduling extends AbstractExecListScheduling {
 		Helper h = new Helper();
 		PriorityQueue<FESortedPair<Double,IIterableSource<?>>> prios = new PriorityQueue<FESortedPair<Double,IIterableSource<?>>>();
 		
-		for (IIterableSource<?>s: plan.getIterableSource()) {
+		for (IIterableSource<?>s: plan.getIterableSources()) {
 			calcVirtOpCosts(virtualOps.get(s), h);
 			double priority = (1.0d - h.selectivity) /h.cost;
 			prios.add(new FESortedPair<Double, IIterableSource<?>>(priority, s));	

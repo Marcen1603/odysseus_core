@@ -11,6 +11,14 @@
             name="Query View"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.queryview.view.PartialPlanViewPart"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.queryview.partialplans"
+            name="Partial Plans View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

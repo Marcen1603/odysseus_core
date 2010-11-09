@@ -44,14 +44,18 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling, ISchedulingEv
 				// Calc prio for each query
 				for (IQuery q : is.getPlan().getQueries()) {
 					// A query can be part of more than one scheduling
-					// and only needs to be calced ones
+					// and only needs to be calculated ones
 					if (calcedUrg.containsKey(q))
 						continue;
 
+					@SuppressWarnings("unchecked")
 					IPlanMonitor<Double> monitor = q
-							.getPlanMonitor("SLAMonitor");
+							.getPlanMonitor("SLA Monitor");
 					IServiceLevelAgreement sla = TenantManagement.getInstance()
 							.getSLAForUser(q.getUser());
+					// Im Prinzip müsste man jetzt testen, ob es eine SLA für diesen
+					// User gibt ... auf der anderen Seiten macht es keinen SInn, diesen
+					// Scheduler zu waehlen, wenn man kein SLA hat ...
 					double urge = 0.0;
 					try {
 						urge = sla.getMaxOcMg(monitor.getValue());
@@ -125,7 +129,8 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling, ISchedulingEv
 	public void addPlan(IScheduling scheduling) {
 		synchronized (queue) {
 			queue.add(scheduling);
-			Collections.sort(queue, new CurrentPlanPriorityComperator());
+			// Wird nicht benötigt, da eh in jedem Durchlauf sortiert werden muss
+//			Collections.sort(queue, new CurrentPlanPriorityComperator());
 			scheduling.addSchedulingEventListener(this);
 		}
 	}

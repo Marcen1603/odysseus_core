@@ -22,7 +22,7 @@ public class StaticRandomScheduling extends AbstractExecListScheduling {
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(
 			IPartialPlan operators) {
-		List<IIterableSource<?>> ops = new LinkedList<IIterableSource<?>>(operators.getIterableSource());
+		List<IIterableSource<?>> ops = new LinkedList<IIterableSource<?>>(operators.getIterableSources());
 		List<IIterableSource<?>> execList = new LinkedList<IIterableSource<?>>();
 		Random rnd = new Random(System.currentTimeMillis());
 		int size = ops.size(); 
