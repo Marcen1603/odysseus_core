@@ -2,7 +2,8 @@ package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
 
-public class Role extends AbstractUserManagementEntity implements Serializable {
+public final class Role extends AbstractUserManagementEntity implements
+		Serializable {
 
 	private static final long serialVersionUID = 2452410871566925898L;
 	private final int ID;

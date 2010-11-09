@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User extends AbstractUserManagementEntity implements Serializable,
+public final class User extends AbstractUserManagementEntity implements Serializable,
 		Comparable<User> {
 
 	private static final long serialVersionUID = -6085280063468701069L;
@@ -14,13 +14,23 @@ public class User extends AbstractUserManagementEntity implements Serializable,
 	private String username;
 	private String password;
 	private Session session;
+	private boolean active;
 	private List<Role> roles;
 	static transient MessageDigest hash = null;
 
 	User(String username, String password) {
+		this.active = true;
 		this.username = username;
 		this.password = hash(password);
 		this.roles = new ArrayList<Role>();
+	}
+
+	protected void deaktivateUser() {
+		this.active = false;
+	}
+
+	public boolean isActiv() {
+		return this.active;
 	}
 
 	private void initHash() {

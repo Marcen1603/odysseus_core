@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.io.Serializable;
 import java.util.List;
 
-public class Privilege implements Serializable {
+public final class Privilege implements Serializable {
 
 	private static final long serialVersionUID = -1623632077911032763L;
 	private final int ID;
@@ -13,10 +13,10 @@ public class Privilege implements Serializable {
 	private List<IUserAction> operations;
 
 	Privilege(String objecturi, AbstractUserManagementEntity owner,
-			List<IUserAction> operations, int privid) {
+			List<IUserAction> operation, int privid) {
 		this.ID = privid;
 		this.objecturi = objecturi;
-		this.operations = operations;
+		this.operations = operation;
 		this.owner = owner;
 		this.privname = owner + "::" + objecturi;
 	}

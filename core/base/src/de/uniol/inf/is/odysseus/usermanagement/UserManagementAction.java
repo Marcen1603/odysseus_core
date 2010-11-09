@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum UserManagementAction implements IUserAction {
-	// TODO kommentieren
-	INSTANCE, GRANT, GRANT_ALL, REVOKE, REVOKE_ALL, CREATE_USER, DELETE_USER, GET_USER, GET_ALL_USER, UPDATE_USER_PASSWORD, CREATE_ROLE, CREATE_PRIV, LOGOUT, CLEAR_USERSTORE, FIND_USER, IS_LOGGEDIN, ADD_LISTENER, REMOVE_LISTENER, DELETE_ROLE, CREATE_ALL;
+	CREATE_USER, ALTER_USER, DELETE_USER,
+
+	CREATE_ROLE, DELETE_ROLE,
+
+	GRANT, GRANT_ALL, REVOKE, REVOKE_ALL, GRANT_ROLE, REVOKE_ROLE,
+
+	LOGOUT, GET_ALL_USER, GET_ALL;
 
 	static List<IUserAction> all;
-
 	static final String alias = "UserManagement";
-	
+
 	public synchronized static List<IUserAction> getAll() {
 		if (all == null) {
 			all = new ArrayList<IUserAction>();
@@ -26,8 +30,8 @@ public enum UserManagementAction implements IUserAction {
 	public synchronized static IUserAction hasSuperAction(
 			UserManagementAction action) {
 		switch (action) {
-		case GET_USER:
-			return GET_ALL_USER;
+		case GET_ALL_USER:
+			return GET_ALL;
 		case GRANT:
 			return GRANT_ALL;
 		case REVOKE:
@@ -36,12 +40,36 @@ public enum UserManagementAction implements IUserAction {
 			return null;
 		}
 	}
-	
-	// TODO: weiter füllen
+
 	public static boolean needsNoObject(IUserAction action) {
-		return action == CREATE_USER || 
-			   action == DELETE_USER ||
-			   action == GET_ALL_USER;
+		switch ((UserManagementAction) action) {
+		case CREATE_USER:
+			return true;
+		case CREATE_ROLE:
+			return true;
+		case ALTER_USER:
+			return true;
+		case DELETE_USER:
+			return true;
+		case DELETE_ROLE:
+			return true;
+		case GRANT_ALL:
+			return true;
+		case GRANT_ROLE:
+			return true;
+		case REVOKE_ALL:
+			return true;
+		case REVOKE_ROLE:
+			return true;
+		case GET_ALL_USER:
+			return true;
+		case GET_ALL:
+			return true;
+		case LOGOUT:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 }

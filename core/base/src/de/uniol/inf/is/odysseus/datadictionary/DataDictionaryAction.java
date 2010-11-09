@@ -6,22 +6,17 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
 
 public enum DataDictionaryAction implements IUserAction {
-	CLEAR, INSTANCE,
+	ADD_ENTITY, GET_ENTITY, REMOVE_ENTITY,
 
-	ADD_ENTITY, GET_ENTITY, GET_ALL_ENTITY,
+	ADD_SOURCETYPE, GET_SOURCE, REMOVE_SOURCE,
 
-	ADD_SOURCETYPE, GET_SOURCETYPE, GET_SOURCE, GET_ALL_SOURCE,
+	ADD_VIEW, GET_VIEW, REMOVE_VIEW, ADD_LOGICAL_VIEW,
 
-	SET_VIEW, GET_VIEW, GET_VIEWS, REMOVE_VIEW, CLEAR_VIEWS, SET_LOGIC_VIEW, GET_LOGIC_VIEW, 
-	REMOVE_LOGIC_VIEW, GET_VIEW_FOR_TRANSORM, GET_VIEW_REFERENCE, IS_LOGIC_VIEW, HAS_VIEW, 
-	CONTAINS_VIEWS, GET_USER_FOR_VIEWS, GET_ALL_VIEWS,
-
-	EMPTY_SOURCETYPE_MAP;
+	GET_ALL, REMOVE_ALL;
 
 	static List<IUserAction> all;
-
 	public static final String alias = "DataDictionary";
-	
+
 	public synchronized static List<IUserAction> getAll() {
 		if (all == null) {
 			all = new ArrayList<IUserAction>();
@@ -34,29 +29,35 @@ public enum DataDictionaryAction implements IUserAction {
 		return all;
 	}
 
-	public IUserAction hasSuperAction(DataDictionaryAction action) {
+	public static IUserAction hasSuperAction(DataDictionaryAction action) {
 		switch (action) {
 		case GET_ENTITY:
-			return GET_ALL_ENTITY;
+			return GET_ALL;
 		case GET_SOURCE:
-			return GET_ALL_SOURCE;
+			return GET_ALL;
 		case GET_VIEW:
-			return GET_ALL_VIEWS;
-		case GET_VIEWS:
-			return GET_ALL_VIEWS;
-		case GET_LOGIC_VIEW:
-			return GET_ALL_VIEWS;
-		case GET_VIEW_FOR_TRANSORM:
-			return GET_ALL_VIEWS;
-		case GET_VIEW_REFERENCE:
-			return GET_ALL_VIEWS;
+			return GET_ALL;
+		case REMOVE_VIEW:
+			return REMOVE_ALL;
+		case REMOVE_ENTITY:
+			return REMOVE_ALL;
+		case REMOVE_SOURCE:
+			return REMOVE_ALL;
 		default:
 			return null;
 		}
 	}
 
-	// TODO: Füllen
 	public static boolean needsNoObject(IUserAction action) {
-		return false;
+		switch ((DataDictionaryAction) action) {
+		case ADD_ENTITY:
+			return true;
+		case ADD_VIEW:
+			return true;
+		case ADD_LOGICAL_VIEW:
+			return true;
+		default:
+			return false;
+		}
 	}
 }

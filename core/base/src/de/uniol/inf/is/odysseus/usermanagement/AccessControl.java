@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.usermanagement;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 
-public class AccessControl {
+public final class AccessControl {
 
 	static private AccessControl instance = null;
 
@@ -26,9 +26,34 @@ public class AccessControl {
 	 */
 	public static boolean hasPermission(IUserAction operation, String object,
 			User user) {
-		// TODO Session Zeitstempel + aktuallisieren
-		if (user != null && operation != null) {
-			return hasOperationOnObject(operation, object, user);
+		if (user != null) {
+			if (operation != null) {
+				if (sessionTimestamp(user)) {
+					return hasOperationOnObject(operation, object, user);
+				}
+			}
+			return false;
+		} else {
+			throw new NullUserException("User is null.");
+		}
+	}
+
+	/**
+	 * checks if the user session is timed out
+	 * 
+	 * @param user
+	 * @return boolean
+	 */
+	private static boolean sessionTimestamp(User user) {
+		// Session Zeitstempel
+		long now = System.currentTimeMillis()
+				- user.getSession().getTimestamp();
+		long dif = now / 60000;
+		// Session jünger als 4 Std. (in Minuten)
+		if (dif < 240.0) {
+			// Session aktuallisieren
+			user.getSession().setTimestamp();
+			return true;
 		}
 		return false;
 	}
@@ -41,21 +66,56 @@ public class AccessControl {
 	 * @return
 	 */
 	public static boolean isCreatorOfObject(String username, String objecturi) {
-		try {
-			String user = DataDictionary.getInstance().getUserForEntity(
-					objecturi);
-			if (user.isEmpty()) {
-				user = DataDictionary.getInstance().getUserForSource(objecturi);
-			}
-			if (!user.isEmpty()) {
-				if (user.equals(username)) {
-					return true;
+		if (!username.isEmpty()) {
+			try {
+				String user = DataDictionary.getInstance().getUserForEntity(
+						objecturi);
+				if (user.isEmpty()) {
+					user = DataDictionary.getInstance().getUserForSource(
+							objecturi);
 				}
+				if (user.isEmpty()) {
+					user = DataDictionary.getInstance()
+							.getUserForView(objecturi).getUsername();
+				}
+				if (!user.isEmpty()) {
+					if (user.equals(username)) {
+						return true;
+					}
+				}
+			} catch (Exception e) {
+				new RuntimeException(e);
 			}
-		} catch (Exception e) {
-			new RuntimeException(e);
+			return false;
+		} else {
+			throw new NullUserException("Username is empty.");
 		}
-		return false;
+	}
+
+	/**
+	 * returns true if username euqlas creator of the given view
+	 * 
+	 * @param username
+	 * @param viewname
+	 * @return
+	 */
+	public static boolean isCreatorOfView(String username, String viewname) {
+		if (!username.isEmpty()) {
+			try {
+				String user = DataDictionary.getInstance()
+						.getUserForView(viewname).getUsername();
+				if (!user.isEmpty()) {
+					if (user.equals(username)) {
+						return true;
+					}
+				}
+			} catch (Exception e) {
+				new RuntimeException(e);
+			}
+			return false;
+		} else {
+			throw new NullUserException("Username is empty.");
+		}
 	}
 
 	/**

@@ -23,7 +23,7 @@ abstract class AbstractUserManagement {
 
 	private int sessionID = -1;
 
-	public AbstractUserManagement(IUserStore userStore) {
+	protected AbstractUserManagement(IUserStore userStore) {
 		this.userStore = userStore;
 		this.roleStore = new MemoryStore<String, Role>();
 		this.privStore = new MemoryStore<String, Privilege>();
@@ -83,9 +83,8 @@ abstract class AbstractUserManagement {
 	public void updateUserPassword(User caller, String username, String password)
 			throws UsernameNotExistException, UserStoreException,
 			HasNoPermissionException {
-		if (AccessControl.hasPermission(
-				UserManagementAction.UPDATE_USER_PASSWORD, UserManagementAction.alias,
-				caller)
+		if (AccessControl.hasPermission(UserManagementAction.ALTER_USER,
+				UserManagementAction.alias, caller)
 				|| caller.toString().equals(username)) {
 			User user = this.userStore.getUserByName(username);
 			if (user != null) {
@@ -155,7 +154,6 @@ abstract class AbstractUserManagement {
 	 */
 	public boolean logout(User caller, String username)
 			throws HasNoPermissionException {
-		// TODO StreamSQL statemant zum logout
 		if (caller.getUsername().equals(username)
 				|| AccessControl.hasPermission(UserManagementAction.LOGOUT,
 						UserManagementAction.alias, caller)) {
@@ -181,34 +179,18 @@ abstract class AbstractUserManagement {
 
 	@Deprecated
 	public void clearUserStore() throws StoreException {
-		// ,HasNoPermissionException {
-		// if
-		// (AccessControl.hasPermission(UserManagementActions.CLEAR_USERSTORE,
-		// null, caller)) {
 		this.userStore.clear();
-		// } else {
-		// throw new HasNoPermissionException("User " + caller.toString()
-		// + " has no permission to clear userstore.");
-		// }
 	}
 
 	public User findUser(String username, User caller) {
-		// throws HasNoPermissionException {
-		// if (AccessControl.hasPermission(UserManagementActions.FIND_USER,
-		// null,
-		// caller)) {
 		return this.userStore.getUserByName(username);
-		// } else {
-		// throw new HasNoPermissionException("User " + caller.toString()
-		// + " has no permission for finding user.");
-		// }
 	}
 
 	public Collection<User> getUsers(User caller)
 			throws HasNoPermissionException {
 		if (AccessControl.hasPermission(UserManagementAction.GET_ALL_USER,
 				UserManagementAction.alias, caller)
-				|| hasSuperOperation(UserManagementAction.GET_ALL_USER,
+				|| hasSuperOperation(UserManagementAction.GET_ALL,
 						UserManagementAction.alias, caller)) {
 			return this.userStore.getUsers();
 		} else {
@@ -241,8 +223,8 @@ abstract class AbstractUserManagement {
 		// caller has permission he want to grant
 		&& AccessControl.hasPermission(operation, objecturi, caller))
 		// hat user superPermission von permission
-		|| hasSuperOperation(UserManagementAction.GRANT, UserManagementAction.alias,
-				caller))) {
+		|| hasSuperOperation(UserManagementAction.GRANT,
+				UserManagementAction.alias, caller))) {
 
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
@@ -329,14 +311,12 @@ abstract class AbstractUserManagement {
 	 */
 	public void revokePrivilegeForObject(User caller, String entityname,
 			String objecturi) throws HasNoPermissionException {
-		// TODO siehe revokePermission
-		// geht nicht mit revokePermissions, da man nicht weiﬂ, welche
-		// permissions enthalten sind
 		if (!caller.toString().equals(entityname)
 				&& ((AccessControl.hasPermission(UserManagementAction.REVOKE,
 						UserManagementAction.alias, caller) && caller
 						.hasObject(objecturi) != null) || hasSuperOperation(
-						UserManagementAction.REVOKE, objecturi, caller))) {
+						UserManagementAction.REVOKE,
+						UserManagementAction.alias, caller))) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			entity.removePrivilege(objecturi);
 			if (entity instanceof User) {
@@ -371,8 +351,8 @@ abstract class AbstractUserManagement {
 		// ist in der rolle
 		&& caller.hasRole(rolename) != null)
 		// hat superPermission
-		|| hasSuperOperation(UserManagementAction.GRANT, UserManagementAction.alias,
-				caller))) {
+		|| hasSuperOperation(UserManagementAction.GRANT,
+				UserManagementAction.alias, caller))) {
 			User user = this.userStore.getUserByName(username);
 			Role role = this.roleStore.get(rolename);
 			if (user.hasRole(rolename) == null) {
@@ -445,8 +425,8 @@ abstract class AbstractUserManagement {
 			throws HasNoPermissionException, StoreException {
 		if (!caller.toString().equals(username)
 				&& AccessControl.hasPermission(
-						UserManagementAction.DELETE_USER, UserManagementAction.alias,
-						caller)) {
+						UserManagementAction.DELETE_USER,
+						UserManagementAction.alias, caller)) {
 			if (!username.equals("System")) {
 				// logout
 				if (logout(caller, username)) {
@@ -540,27 +520,20 @@ abstract class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public Privilege createPrivilege(String objecturi,
+	private Privilege createPrivilege(String objecturi,
 			AbstractUserManagementEntity owner, List<IUserAction> operations,
-			User caller) throws HasNoPermissionException, StoreException {
-		if (AccessControl.hasPermission(UserManagementAction.CREATE_PRIV,
-				UserManagementAction.alias, caller)) {
-			if (!this.privStore
-					.containsKey(owner.toString() + "::" + objecturi)
-					&& owner.hasObject(objecturi) == null) {
-				Privilege priv = new Privilege(objecturi, owner, operations,
-						getPrivID());
-				this.privStore.put(priv.getPrivname(), priv);
-				return priv;
-			}
-		} else {
-			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to create new privileges");
+			User caller) throws StoreException {
+		if (!this.privStore.containsKey(owner.toString() + "::" + objecturi)
+				&& owner.hasObject(objecturi) == null) {
+			Privilege priv = new Privilege(objecturi, owner, operations,
+					getPrivID());
+			this.privStore.put(priv.getPrivname(), priv);
+			return priv;
 		}
 		return null;
 	}
 
-	public Privilege createPrivilege(String objecturi,
+	private Privilege createPrivilege(String objecturi,
 			AbstractUserManagementEntity owner, IUserAction operation,
 			User caller) throws HasNoPermissionException, StoreException {
 		List<IUserAction> operations = new ArrayList<IUserAction>();
@@ -571,28 +544,12 @@ abstract class AbstractUserManagement {
 	private List<IUserManagementListener> listeners = new CopyOnWriteArrayList<IUserManagementListener>();
 
 	public void addTenantManagementListener(IUserManagementListener l) {
-		// TODO weg
-		// throws HasNoPermissionException {
-		// if (AccessControl.hasPermission(UserManagementActions.ADD_LISTENER,
-		// null, caller)) {
 		listeners.add(l);
-		// } else {
-		// throw new HasNoPermissionException("" + caller.toString()
-		// + " has no permission to add listener");
-		// }
 	}
 
 	public void removeTenantManagementListener(User caller,
 			IUserManagementListener l) throws HasNoPermissionException {
-		// TODO weg
-		// if
-		// (AccessControl.hasPermission(UserManagementActions.REMOVE_LISTENER,
-		// null, caller)) {
 		listeners.remove(l);
-		// } else {
-		// throw new HasNoPermissionException("" + caller.toString()
-		// + " has no permission to add listener");
-		// }
 	}
 
 	private void fireUserManagementListener() {
@@ -608,22 +565,14 @@ abstract class AbstractUserManagement {
 	}
 
 	public boolean isLoggedIn(String username) {
-		// TODO weg ?
-		// throws HasNoPermissionException {
-		// if (AccessControl.hasPermission(UserManagementActions.IS_LOGGEDIN,
-		// null, caller)) {
 		return loggedIn.containsKey(username);
-		// } else {
-		// throw new HasNoPermissionException("User " + caller.toString()
-		// + " has no permission to check loginstatus of user.");
-		// }
 	}
 
-	public int getRoleID() {
+	protected int getRoleID() {
 		return roleid++;
 	}
 
-	public int getPrivID() {
+	protected int getPrivID() {
 		return privid++;
 	}
 
