@@ -21,12 +21,12 @@ public class AutomataState extends AbstractState {
 	private Composite parent;
 
 	// the anchors of this state
-	protected Anchor inAnchor;
-	protected Anchor outAnchor;
-	protected Anchor takeInAnchor;
-	protected Anchor takeOutAnchor;
-	protected Anchor ignoreInAnchor;
-	protected Anchor ignoreOutAnchor;
+	private Anchor inAnchor;
+	private Anchor outAnchor;
+	private Anchor takeInAnchor;
+	private Anchor takeOutAnchor;
+	private Anchor ignoreInAnchor;
+	private Anchor ignoreOutAnchor;
 	
 	private boolean isActive;
 	
@@ -94,10 +94,10 @@ public class AutomataState extends AbstractState {
 			g.setForegroundColor(display.getSystemColor(SWT.COLOR_WHITE));
 		}
 		// paint the name on the location based on its length
-		if (identifier.length() > 2) {
-			g.drawText(identifier, r.x + (r.width / 5), r.y + (r.height / 3));
+		if (name.length() < 2) {
+			g.drawText(name, r.x + (r.width / 5), r.y + (r.height / 3));
 		} else {
-			g.drawText(identifier, r.x + (r.width / 3), r.y + (r.height / 3));
+			g.drawText(name, r.x + (r.width / 3), r.y + (r.height / 3));
 		}
 	}
 

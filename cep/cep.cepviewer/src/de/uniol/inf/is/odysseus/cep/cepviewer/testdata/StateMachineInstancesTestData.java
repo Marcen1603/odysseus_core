@@ -18,9 +18,9 @@ public class StateMachineInstancesTestData {
 		Condition condA2 = new Condition("time - time' < 12 and !(id == id')");
 		Condition condA3 = new Condition(
 				"location == EXIT and id == id' and time - time' < 12");
-		Transition transA1 = new Transition(0, stateA2, condA1, Action.CONSUME);
-		Transition transA2 = new Transition(0, stateA2, condA2, Action.DISCARD);
-		Transition transA3 = new Transition(1, stateA3, condA3, Action.CONSUME);
+		Transition transA1 = new Transition(0, stateA2, condA1, EAction.consumeBufferWrite);
+		Transition transA2 = new Transition(0, stateA2, condA2, EAction.discard);
+		Transition transA3 = new Transition(1, stateA3, condA3, EAction.consumeBufferWrite);
 		stateA1.addTransition(transA1);
 		stateA2.addTransition(transA2);
 		stateA2.addTransition(transA3);
@@ -41,11 +41,11 @@ public class StateMachineInstancesTestData {
 				"location == EXIT and id == id' and time - time' < 12");
 		Condition condB4 = new Condition(
 		"lol");
-		Transition transB1 = new Transition(0, stateB2, condB1, Action.CONSUME);
-		Transition transB2 = new Transition(0, stateB2, condB2, Action.DISCARD);
-		Transition transB3 = new Transition(1, stateB3, condB3, Action.CONSUME);
-		Transition transB4 = new Transition(0, stateB4, condB4, Action.CONSUME);
-		Transition transB5 = new Transition(1, stateB2, condB3, Action.CONSUME);
+		Transition transB1 = new Transition(0, stateB2, condB1, EAction.consumeBufferWrite);
+		Transition transB2 = new Transition(0, stateB2, condB2, EAction.discard);
+		Transition transB3 = new Transition(1, stateB3, condB3, EAction.consumeBufferWrite);
+		Transition transB4 = new Transition(0, stateB4, condB4, EAction.consumeBufferWrite);
+		Transition transB5 = new Transition(1, stateB2, condB3, EAction.consumeBufferWrite);
 		stateB1.addTransition(transB1);
 		stateB2.addTransition(transB2);
 		stateB2.addTransition(transB3);

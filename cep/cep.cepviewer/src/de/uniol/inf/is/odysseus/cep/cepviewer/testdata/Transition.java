@@ -5,10 +5,10 @@ public class Transition {
 	private int id;
 	private State nextState;
 	private Condition condition;
-	private Action action;
+	private EAction action;
 	
 	public Transition(int id, State nextState, Condition condition,
-			Action action) {
+			EAction action) {
 		this.id = id;
 		this.nextState = nextState;
 		this.condition = condition;
@@ -27,7 +27,7 @@ public class Transition {
 		return condition;
 	}
 
-	public Action getAction() {
+	public EAction getAction() {
 		return action;
 	}
 	

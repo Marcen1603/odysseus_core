@@ -43,8 +43,7 @@ public class CEPStateView extends ViewPart {
 			public void cepEventOccurred(CEPViewEvent event) {
 				if (event.getType() == CEPViewEvent.STATE_SELECTED) {
 					label.setText(((AbstractState) event.getContent())
-							.getState().getId()
-							+ "");
+							.getName() + "");
 				}
 			}
 		});

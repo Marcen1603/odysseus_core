@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.model.DragListener;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.AutomataState;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.NormalTransition;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.TransitionLoop;
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Action;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.EAction;
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.State;
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Transition;
@@ -84,16 +84,16 @@ public class CEPAutomataView extends ViewPart {
 	private void createTransitions(AutomataState oldState, State nextState) {
 		for (Transition nextTrans : nextState.getTransition()) {
 			if (nextTrans.getNextState().equals(nextState)) {
-				TransitionLoop loop;
-				if (nextTrans.getAction().equals(Action.CONSUME)) {
-					loop = new TransitionLoop(oldState.getTakeOutAnchor(), oldState.getTakeInAnchor(), oldState, TransitionLoop.TAKE_LOOP);
-				} else {
-					loop = new TransitionLoop(oldState.getIgnoreOutAnchor(), oldState.getIgnoreInAnchor(), oldState, TransitionLoop.IGNORE_LOOP);
+				TransitionLoop loop = null;
+				if(nextTrans.getAction() == EAction.consumeBufferWrite) {
+					loop = new TransitionLoop(oldState.getTakeOutAnchor(), oldState.getTakeInAnchor(), nextTrans, oldState);
+				} else if(nextTrans.getAction() == EAction.discard) {
+					loop = new TransitionLoop(oldState.getIgnoreOutAnchor(), oldState.getIgnoreInAnchor(), nextTrans, oldState);
 				}
 				this.diagram.add(loop);
 			} else {
 				AutomataState newState = createNewState(nextTrans.getNextState());
-				NormalTransition path = new NormalTransition(oldState.getOutAnchor(), newState.getInAnchor());
+				NormalTransition path = new NormalTransition(oldState.getOutAnchor(), newState.getInAnchor(), nextTrans);
 				this.diagram.add(path);
 				this.createTransitions(newState, nextTrans.getNextState());
 			}
