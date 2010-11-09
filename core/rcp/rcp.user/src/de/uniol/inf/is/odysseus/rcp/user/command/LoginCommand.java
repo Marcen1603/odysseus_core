@@ -13,7 +13,7 @@ public class LoginCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		Login.login(HandlerUtil.getActiveShell(event), true, true);
+		Login.loginWindow(HandlerUtil.getActiveShell(event), true, true);
 		
 		return null;
 	}

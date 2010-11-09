@@ -14,15 +14,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
+import de.uniol.inf.is.odysseus.rcp.user.Login;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class LoginWindow {
 	
@@ -128,7 +124,7 @@ public class LoginWindow {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if( e.keyCode == 13 ) {
-					closeWindow();
+					tryToLogin();
 				}
 			}
 
@@ -157,7 +153,7 @@ public class LoginWindow {
 		okButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				closeWindow();
+				tryToLogin();
 			}
 		});
 		
@@ -172,41 +168,24 @@ public class LoginWindow {
 		});
 	}
 	
-	@SuppressWarnings("deprecation")
-	private void closeWindow() {
-		try {
-			User user = UserManagement.getInstance().login(usernameInput.getText(), passwordInput.getText());
-			if( user == null ) {
-				markRed();
-				return;
-			}
+	// versucht, sich mit den eingegebenen Daten anzumelden
+	private void tryToLogin() {
+		// password ist klartext, daher false
+		User user = Login.realLogin(usernameInput.getText(), passwordInput.getText(), false);
+		if( user != null ) {
+			// anmeldung ok
+			loginOK = true;
+			
+			// einstellungen speichern
 			LoginPreferencesManager.getInstance().setUsername(user.getUsername());
 			LoginPreferencesManager.getInstance().setPasswordMD5(user.getPassword());
 			LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
 			LoginPreferencesManager.getInstance().save();
-			ActiveUser.setActiveUser(user);
-			StatusBarManager.getInstance().setMessage("Logged in as " + user.getUsername());
-			loginOK = true;
 			wnd.dispose();
-		} catch( RuntimeException ex ) {
-			ex.printStackTrace();
-			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.YES | SWT.NO);
-		    box.setMessage("An error occured during validating the user.\n" +
-		    				"Probably the user-store is corrupted. Should the user-store\n" +
-		    				"be deleted?");
-		    box.setText("Error");
-		    if( box.open() == SWT.YES) {
-		    	try {
-					UserManagement.getInstance().clearUserStore();
-					box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_INFORMATION | SWT.OK );
-				    box.setMessage("User-store is now deleted. Please restart Odysseus RCP.");
-				    box.setText("Information");
-				    box.open();
-				} catch (Exception ex2) {
-					ex.printStackTrace();
-				} 
-		    }
-		    System.exit(1);
+		} else {
+			// anmeldung nicht ok
+			loginOK = false;
+			markRed();
 		}
 	}
 }

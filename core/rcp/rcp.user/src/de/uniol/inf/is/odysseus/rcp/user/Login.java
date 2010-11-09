@@ -13,55 +13,55 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class Login {
 
-	@SuppressWarnings("deprecation")
-	public static void login(Shell parent, boolean forceShow, boolean cancelOK) {
+	public static void loginWindow(Shell parent, boolean forceShow, boolean cancelOK) {
 		// Daten aus Prefs holen
 		String username = LoginPreferencesManager.getInstance().getUsername();
 		String password = LoginPreferencesManager.getInstance().getPasswordMD5();
 
-		// Daten ok?
-		if (username.length() > 0 && password.length() > 0) {
-
-			if (!forceShow && LoginPreferencesManager.getInstance().getAutoLogin()) {
-				// Automatisch anmelden
-				try {
-					User user = UserManagement.getInstance().getUser(username, password);
-					if (user != null) {
-						// anmelden ok
-						ActiveUser.setActiveUser(user);
-						StatusBarManager.getInstance().setMessage("Automatically logged in as " + username);
-						return;
-					}
-				} catch( RuntimeException ex ) {
-					ex.printStackTrace();
-					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.YES | SWT.NO);
-				    box.setMessage("An error occured during validating the user.\n" +
-				    				"Probably the user-store is corrupted. Should the user-store\n" +
-				    				"be deleted?");
-				    box.setText("Error");
-				    if( box.open() == SWT.YES) {
-				    	try {
-							UserManagement.getInstance().clearUserStore();
-							box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_INFORMATION | SWT.OK );
-						    box.setMessage("User-store is now deleted. Please restart Odysseus RCP.");
-						    box.setText("Information");
-						    box.open();
-						} catch (Exception ex2) {
-							ex.printStackTrace();
-						} 
-				    }
-				    System.exit(1);
-				}
+		// Daten ok und automatisches anmelden erlaubt?
+		if (username.length() > 0 && password.length() > 0 && !forceShow && LoginPreferencesManager.getInstance().getAutoLogin()) {
+			// Automatisch anmelden (password ist md5)
+			if (realLogin(username, password, true) == null) {
+				// fehlerhafte anmeldung..
+				// Fenster anzeigen, damit der Nutzer das
+				// korrigieren kann.
+				LoginWindow wnd = new LoginWindow(parent, username, cancelOK);
+				wnd.show();
 			}
-			// fehlerhafte anmeldung..
-			LoginWindow wnd = new LoginWindow(parent, username, cancelOK);
-			wnd.show();
-
 		} else {
 			// Leeres Loginfenster
 			LoginWindow wnd = new LoginWindow(parent, cancelOK);
 			wnd.show();
 		}
 
+	}
+
+	public static User realLogin(String username, String password, boolean passwordIsMD5) {
+		try {
+			User user = null;
+			if( passwordIsMD5 ) {
+				user = UserManagement.getInstance().getUser(username, password);
+			} else {
+				user = UserManagement.getInstance().login(username, password);
+			}
+			
+			if (user != null) {
+				// anmelden ok
+				ActiveUser.setActiveUser(user);
+				StatusBarManager.getInstance().setMessage("Automatically logged in as " + username);
+				return user;
+			}
+			return null;
+		} catch (RuntimeException ex) {
+			ex.printStackTrace();
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK );
+			box.setMessage("An error occured during validating the user.\n" 
+					+ "Please contact your administrator. The application\n" 
+					+ "will be closed.");
+			box.setText("Error");
+			box.open();
+			System.exit(0); // programm beenden
+		}
+		return null;
 	}
 }
