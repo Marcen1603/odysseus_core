@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
-import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
