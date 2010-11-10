@@ -58,17 +58,17 @@ public class DataDictionary {
 	final private IStore<String, String> sourceTypeMap;
 	final private IStore<String, User> sourceFromUser;
 
-	@Deprecated
-	public void clear() {
-		try {
-			this.viewDefinitions.clear();
-			this.logicalViewDefinitions.clear();
-			this.entityMap.clear();
-			this.sourceTypeMap.clear();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+//	@Deprecated
+//	public void clear() {
+//		try {
+//			this.viewDefinitions.clear();
+//			this.logicalViewDefinitions.clear();
+//			this.entityMap.clear();
+//			this.sourceTypeMap.clear();
+//		} catch (Exception e) {
+//			throw new RuntimeException(e);
+//		}
+//	}
 
 	private DataDictionary() {
 		try {

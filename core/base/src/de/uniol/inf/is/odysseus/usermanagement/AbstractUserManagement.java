@@ -177,10 +177,10 @@ abstract class AbstractUserManagement {
 		return this.roleStore.isEmpty();
 	}
 
-	@Deprecated
-	public void clearUserStore() throws StoreException {
-		this.userStore.clear();
-	}
+//	@Deprecated
+//	public void clearUserStore() throws StoreException {
+//		this.userStore.clear();
+//	}
 
 	public User findUser(String username, User caller) {
 		return this.userStore.getUserByName(username);

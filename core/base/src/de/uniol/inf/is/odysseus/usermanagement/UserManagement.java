@@ -130,6 +130,21 @@ public class UserManagement extends AbstractUserManagement {
 					// "DataDictionary");
 					// instance.deleteUser(sys, "Tester");
 
+					// Create Default Role for users
+					instance.createRole("DSUser", sys);
+					// Anfragen erstellen und entfernen
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_ENTITY, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_ENTITY, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_LOGICAL_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_SOURCETYPE, DataDictionaryAction.alias);
+					// Anfrage verwalten
+					instance.grantPermission(sys, "DSUser", ExecutorAction.ADD_QUERY, ExecutorAction.alias);
+					instance.grantPermission(sys, "DSUser", ExecutorAction.START_QUERY, ExecutorAction.alias);
+					instance.grantPermission(sys, "DSUser", ExecutorAction.STOP_QUERY, ExecutorAction.alias);
+					instance.grantPermission(sys, "DSUser", ExecutorAction.REMOVE_QUERY, ExecutorAction.alias);
+					
 				}
 
 			} catch (UsernameAlreadyUsedException e) {
