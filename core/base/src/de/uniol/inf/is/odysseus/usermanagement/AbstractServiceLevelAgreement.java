@@ -35,7 +35,6 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 	@Override
 	public void init() throws IllegalServiceLevelDefinition{
 		Collections.sort(pcs);
-		System.out.println(this);
 		// More than one Percentile
 		if (pcs.size() <= 1){
 			throw new IllegalServiceLevelDefinition("More than one percentile contstraint required");

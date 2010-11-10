@@ -133,7 +133,6 @@ abstract class AbstractUserManagement {
 				user = null;
 			} else {
 				loggedIn.put(username, user);
-				//System.out.println("User " + username + " logged in!");
 				user.setSession(new Session(getSessionId()));
 			}
 		}
@@ -358,7 +357,6 @@ abstract class AbstractUserManagement {
 			if (user.hasRole(rolename) == null) {
 				if (role != null) {
 					try {
-						//System.out.println(role.getRolename());
 						user.addRole(role);
 						fireUserManagementListener();
 					} catch (Exception e) {
@@ -449,8 +447,6 @@ abstract class AbstractUserManagement {
 			throws StoreException {
 		try {
 			for (Privilege priv : entity.getPrivileges()) {
-//				System.out.println("Privilege: " + priv.getPrivname()
-//						+ " deleted.");
 				this.privStore.remove(priv.getPrivname());
 			}
 		} catch (Exception e) {

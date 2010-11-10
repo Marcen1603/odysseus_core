@@ -53,7 +53,6 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			try {
 				while ((key = (IDType) in.readObject()) != null) {
 					STORETYPE element = (STORETYPE) in.readObject();
-					// System.out.println("READ "+key+" "+element);
 					cache.put(key, element);
 				}
 			} catch (ClassNotFoundException e) {
