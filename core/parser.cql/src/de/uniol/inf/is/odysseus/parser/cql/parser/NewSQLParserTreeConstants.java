@@ -115,9 +115,11 @@ public interface NewSQLParserTreeConstants
   public int JJTDROPVIEWSTATEMENT = 109;
   public int JJTCREATEROLESTATEMENT = 110;
   public int JJTDROPROLESTATEMENT = 111;
-  public int JJTGRANTSTATEMENT = 112;
-  public int JJTIDENTIFIERLIST = 113;
-  public int JJTREVOKESTATEMENT = 114;
+  public int JJTGRANTROLESTATEMENT = 112;
+  public int JJTREVOKEROLESTATEMENT = 113;
+  public int JJTGRANTSTATEMENT = 114;
+  public int JJTIDENTIFIERLIST = 115;
+  public int JJTREVOKESTATEMENT = 116;
 
 
   public String[] jjtNodeName = {
@@ -233,9 +235,11 @@ public interface NewSQLParserTreeConstants
     "DropViewStatement",
     "CreateRoleStatement",
     "DropRoleStatement",
+    "GrantRoleStatement",
+    "RevokeRoleStatement",
     "GrantStatement",
     "IdentifierList",
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=d141fdd30a0b98970f60db2089e1bd1e (do not edit this line) */
+/* JavaCC - OriginalChecksum=e4146e7c0fbaef94f766958fd612bda4 (do not edit this line) */
