@@ -130,4 +130,9 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 	public String getName() {
 		return name;
 	}
+	
+	@Override
+	public boolean isInitialized() {
+		return initialized;
+	}
 }

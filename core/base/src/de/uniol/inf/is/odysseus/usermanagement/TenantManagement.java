@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.store.FileStore;
 import de.uniol.inf.is.odysseus.store.IStore;
+import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
 
 public class TenantManagement {
@@ -48,11 +49,18 @@ public class TenantManagement {
 
 	private TenantManagement() {
 		try {
-			registeredTenants = new FileStore<String, Tenant>(filePrefix
-					+ "tenants.store");
-			users = new FileStore<String, Tenant>(filePrefix + "userTenant.store");
-			slas = new FileStore<String, IServiceLevelAgreement>(filePrefix
-					+ "slas.store");
+			boolean useFileStore = false; 
+			if (useFileStore){
+				registeredTenants = new FileStore<String, Tenant>(filePrefix
+						+ "tenants.store");
+				users = new FileStore<String, Tenant>(filePrefix + "userTenant.store");
+				slas = new FileStore<String, IServiceLevelAgreement>(filePrefix
+						+ "slas.store");
+			}else{
+				registeredTenants = new MemoryStore<String, Tenant>();
+				users = new MemoryStore<String, Tenant>();
+				slas = new MemoryStore<String, IServiceLevelAgreement>();
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

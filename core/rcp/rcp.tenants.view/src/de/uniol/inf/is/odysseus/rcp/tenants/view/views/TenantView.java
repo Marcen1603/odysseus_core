@@ -165,7 +165,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 				return ((Tenant) obj).getName();
 			}
 			if (obj instanceof IServiceLevelAgreement) {
-				return "SLA " + ((IServiceLevelAgreement) obj).getName();
+				return "SLA " + ((IServiceLevelAgreement) obj).getName() +" initialized "+ ((IServiceLevelAgreement) obj).isInitialized();
 			}
 			return obj.toString();
 		}

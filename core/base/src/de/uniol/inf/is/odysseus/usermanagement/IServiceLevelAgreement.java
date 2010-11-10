@@ -19,5 +19,5 @@ public interface IServiceLevelAgreement extends Serializable{
 	void setMaxUsers(int maxUsers);
 	public List<IPercentileConstraint> getPercentilConstraints();
 	public String getName();
-
+	public boolean isInitialized();
 }

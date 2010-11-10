@@ -46,7 +46,6 @@ public class DataDictionary {
 
 	static private String filePrefix = System.getProperty("user.home")
 			+ "/odysseus/";
-	private boolean useFileStore = false;
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
 
@@ -72,6 +71,7 @@ public class DataDictionary {
 
 	private DataDictionary() {
 		try {
+			boolean useFileStore = false;
 			if (useFileStore) {
 				viewDefinitions = new FileStore<String, ILogicalOperator>(
 						filePrefix + "viewDefinitions.store");
