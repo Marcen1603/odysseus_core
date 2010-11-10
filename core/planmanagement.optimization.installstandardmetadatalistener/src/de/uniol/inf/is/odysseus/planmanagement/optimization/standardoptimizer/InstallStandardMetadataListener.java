@@ -2,11 +2,11 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer;
 
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.PlanMonitor;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimitzationAction;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
-public class InstallStandardMetadataListener implements IPostOptimitzationAction {
+public class InstallStandardMetadataListener implements IPostOptimizationAction {
 
 	// TODO: Konfigurierbar machen
 	private static long MONITORING_PERIOD = 30000;

@@ -54,7 +54,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	/**
 	 * List of PostOptimizationActions
 	 */
-	private List<IPostOptimitzationAction> postOptimizationActions = new ArrayList<IPostOptimitzationAction>();
+	private List<IPostOptimizationAction> postOptimizationActions = new ArrayList<IPostOptimizationAction>();
 	
 	/**
 	 * Registered plan optimization service.
@@ -118,19 +118,19 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 	}
 
-	public void bindPostOptimazationAction(
-			IPostOptimitzationAction postOptimitzationAction) {
-		getLogger().debug("bindPostOptimazationAction "+postOptimitzationAction);
+	public void bindPostOptimizationAction(
+			IPostOptimizationAction postOptimizationAction) {
+		getLogger().debug("bindPostOptimazationAction "+postOptimizationAction);
 		synchronized (this.postOptimizationActions) {
-			this.postOptimizationActions.add(postOptimitzationAction);
+			this.postOptimizationActions.add(postOptimizationAction);
 		}
 	}
 	
 	public void unBindPostOptimazationAction(
-			IPostOptimitzationAction postOptimitzationAction) {
-		getLogger().debug("unBindPostOptimazationAction "+postOptimitzationAction);
+			IPostOptimizationAction postOptimizationAction) {
+		getLogger().debug("unBindPostOptimazationAction "+postOptimizationAction);
 		synchronized (this.postOptimizationActions) {
-			this.postOptimizationActions.remove(postOptimitzationAction);
+			this.postOptimizationActions.remove(postOptimizationAction);
 		}
 	}
 
@@ -302,7 +302,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	};
 	
 	protected void doPostOptimizationActions(IQuery query, OptimizationConfiguration parameter) {
-		for (IPostOptimitzationAction action: postOptimizationActions){
+		for (IPostOptimizationAction action: postOptimizationActions){
 			getLogger().debug("Do PostOptimizationAction "+action);
 			action.run(query, parameter);
 		}
