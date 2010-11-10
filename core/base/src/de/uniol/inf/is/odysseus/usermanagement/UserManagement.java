@@ -72,10 +72,10 @@ public class UserManagement extends AbstractUserManagement {
 					// ----- TEST ----
 					// instance.createRole("admin",
 					// instance.login("System", "manager"));
-					System.out.println("USER TEST");
+					//System.out.println("USER TEST");
 					// create user
 					instance.registerUser(sys, "Tester", "test");
-					System.out.println("User Tester angelegt.");
+					//System.out.println("User Tester angelegt.");
 					instance.grantPermission(sys, "Tester",
 							UserManagementAction.CREATE_USER, "UserManagement");
 					// instance.grantPermission(sys, "Tester",
@@ -88,12 +88,12 @@ public class UserManagement extends AbstractUserManagement {
 					// "test"),
 					// "Joe", UserManagementAction.CREATE_USER,
 					// "UserManagement");
-					System.out.println("add permission 'ADD_ENTITY'");
+					//System.out.println("add permission 'ADD_ENTITY'");
 					instance.grantPermission(sys, "Tester",
 							DataDictionaryAction.ADD_ENTITY,
 							DataDictionaryAction.alias);
-					System.out
-							.println("add permission ADD_SOURCETYPE on existing objekt");
+				//	System.out
+							//.println("add permission ADD_SOURCETYPE on existing objekt");
 					instance.grantPermission(sys, "Tester",
 							DataDictionaryAction.ADD_SOURCETYPE,
 							DataDictionaryAction.alias);

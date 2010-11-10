@@ -358,7 +358,7 @@ abstract class AbstractUserManagement {
 			if (user.hasRole(rolename) == null) {
 				if (role != null) {
 					try {
-						System.out.println(role.getRolename());
+						//System.out.println(role.getRolename());
 						user.addRole(role);
 						fireUserManagementListener();
 					} catch (Exception e) {
@@ -449,8 +449,8 @@ abstract class AbstractUserManagement {
 			throws StoreException {
 		try {
 			for (Privilege priv : entity.getPrivileges()) {
-				System.out.println("Privilege: " + priv.getPrivname()
-						+ " deleted.");
+//				System.out.println("Privilege: " + priv.getPrivname()
+//						+ " deleted.");
 				this.privStore.remove(priv.getPrivname());
 			}
 		} catch (Exception e) {
