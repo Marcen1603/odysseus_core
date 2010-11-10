@@ -246,7 +246,8 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 
 			@Override
 			public void run() {
-				tableViewer.refresh();
+				if( !tableViewer.getControl().isDisposed())
+					tableViewer.refresh();
 			}
 
 		});
