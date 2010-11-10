@@ -7,5 +7,6 @@ public interface IPlanMonitor<T> extends IMonitoringData<T> {
 
 	public boolean treatsOnlyRoots();
 	public T getValue(IPhysicalOperator operator, String type);
+	public double getDoubleValue();
 
 }

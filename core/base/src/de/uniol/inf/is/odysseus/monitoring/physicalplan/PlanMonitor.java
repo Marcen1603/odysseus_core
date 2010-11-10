@@ -36,6 +36,11 @@ public class PlanMonitor extends AbstractPlanMonitor<Double> {
 	}
 
 	@Override
+	public double getDoubleValue() {
+		return 0;
+	}
+	
+	@Override
 	public void reset() {
 		reset(getType());
 	}
