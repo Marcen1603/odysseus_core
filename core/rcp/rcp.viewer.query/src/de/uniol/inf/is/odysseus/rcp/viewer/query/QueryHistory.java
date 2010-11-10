@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.query;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -36,7 +37,8 @@ public final class QueryHistory {
 		}
 		
 	}
-	public static final String HISTORY_FILENAME = ".queryHistory";
+	public static final String HISTORY_FILENAME = System.getProperty("user.home")
+	+ "/odysseus/.queryHistory";
 	public static final String SEPARATOR = "###";
 	public static final String PARSER = "[PARSER]";
 
@@ -61,6 +63,19 @@ public final class QueryHistory {
 		String line = "";
 
 		try {
+			
+			File ff = new File(HISTORY_FILENAME);
+			if (!ff.exists()) {
+				File d = ff.getParentFile();
+				if (d != null) {
+					d.mkdirs();
+				}
+				ff.createNewFile();
+				System.out.println("Created new File " + ff.getAbsolutePath());
+			} else {
+				System.out.println("Read from file " + ff.getAbsolutePath());
+			}
+			
 			f = new BufferedReader(new FileReader(HISTORY_FILENAME));
 
 			String actualQuery = null;
