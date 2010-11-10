@@ -44,8 +44,8 @@ implements IPOEventListener {
 		}
 	}
 
-	public Long getProcessCallsForOperator(IPhysicalOperator op) {
-		return relativeCallCount?overallProcessCallCount/processCallsPerOperator.size():processCallsPerOperator.get(op);
+	public long getProcessCallsForOperator(IPhysicalOperator op) {
+		return processCallsPerOperator.get(op);
 	}
 	
 	public long getOverallProcessCallCount() {
@@ -66,7 +66,11 @@ implements IPOEventListener {
 
 	@Override
 	public Long getValue()  {
-		return overallProcessCallCount;
+		return relativeCallCount?(overallProcessCallCount/processCallsPerOperator.size()):overallProcessCallCount;
+	}
+	
+	public double getDoubleValue(){
+		return relativeCallCount?(overallProcessCallCount*1.0/processCallsPerOperator.size()):overallProcessCallCount*1.0;		
 	}
 
 	@Override

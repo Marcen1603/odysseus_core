@@ -134,12 +134,13 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 	 */
 	public void bindSchedulerFactory(ISchedulerFactory schedulerFactory) {
 		String sName = schedulerFactory.getName();
-		logger.info("activate Scheduler " + sName);
+		logger.info("bind Scheduler " + sName);
 		if (this.schedulerFactoryMap.get(sName) == null) {
 			this.schedulerFactoryMap.put(sName, schedulerFactory);
 		} else {
 			logger.warn("Duplicate Scheduling Name " + sName + " !");
 		}
+		schedulingsChanged();
 	}
 
 	/**

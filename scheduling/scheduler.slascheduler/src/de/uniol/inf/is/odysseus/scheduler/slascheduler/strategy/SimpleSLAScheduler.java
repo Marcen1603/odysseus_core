@@ -16,10 +16,11 @@ import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.NotInitializedException;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 
-public class SimpleSLAScheduler implements IPartialPlanScheduling, ISchedulingEventListener{
+public class SimpleSLAScheduler implements IPartialPlanScheduling,
+		ISchedulingEventListener {
 
 	protected final List<IScheduling> queue;
-	
+
 	public enum PrioCalcMethod {
 		MAX, SUM, AVG
 	}
@@ -39,51 +40,58 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling, ISchedulingEv
 	@Override
 	public IScheduling nextPlan() {
 		synchronized (queue) {
-			Map<IQuery, Double> calcedUrg = new HashMap<IQuery, Double>();
-			for (IScheduling is : queue) {
-				// Calc prio for each query
-				for (IQuery q : is.getPlan().getQueries()) {
-					// A query can be part of more than one scheduling
-					// and only needs to be calculated ones
-					if (calcedUrg.containsKey(q))
-						continue;
+			if (queue.size() > 0) {
+				Map<IQuery, Double> calcedUrg = new HashMap<IQuery, Double>();
+				for (IScheduling is : queue) {
+					// Calc prio for each query
+					for (IQuery q : is.getPlan().getQueries()) {
+						// A query can be part of more than one scheduling
+						// and only needs to be calculated ones
+						if (calcedUrg.containsKey(q))
+							continue;
 
-					@SuppressWarnings("unchecked")
-					IPlanMonitor<Double> monitor = q
-							.getPlanMonitor("SLA Monitor");
-					IServiceLevelAgreement sla = TenantManagement.getInstance()
-							.getSLAForUser(q.getUser());
-					// Im Prinzip müsste man jetzt testen, ob es eine SLA für diesen
-					// User gibt ... auf der anderen Seiten macht es keinen SInn, diesen
-					// Scheduler zu waehlen, wenn man kein SLA hat ...
-					double urge = 0.0;
-					try {
-						urge = sla.getMaxOcMg(monitor.getValue());
-					} catch (NotInitializedException e) {
-						throw new RuntimeException(e);
+						@SuppressWarnings("unchecked")
+						IPlanMonitor<Double> monitor = q
+								.getPlanMonitor("SLA Monitor");
+						IServiceLevelAgreement sla = TenantManagement
+								.getInstance().getSLAForUser(q.getUser());
+						// Im Prinzip müsste man jetzt testen, ob es eine SLA
+						// für diesen
+						// User gibt ... auf der anderen Seiten macht es keinen
+						// SInn, diesen
+						// Scheduler zu waehlen, wenn man kein SLA hat ...
+						double urge = 0.0;
+						try {
+							urge = sla.getMaxOcMg(monitor.getValue());
+						} catch (NotInitializedException e) {
+							throw new RuntimeException(e);
+						}
+						calcedUrg.put(q, urge);
 					}
-					calcedUrg.put(q, urge);
+					// Calc Prio for current Scheduling, based
+					// on all queries
+					// e.g. with Max
+					double prio = 0;
+					switch (method) {
+					case MAX:
+						prio = calcPrioMax(calcedUrg, is);
+						break;
+					case SUM:
+						prio = calcPrioSum(calcedUrg, is);
+						break;
+					case AVG:
+						prio = calcPrioAvg(calcedUrg, is);
+						break;
+					}
+					// Set max as new prio
+					is.getPlan().setCurrentPriority(
+							(long) Math.round(prio * 100));
 				}
-				// Calc Prio for current Scheduling, based
-				// on all queries
-				// e.g. with Max
-				double prio = 0;
-				switch (method) {
-				case MAX:
-					prio = calcPrioMax(calcedUrg, is);
-					break;
-				case SUM:
-					prio = calcPrioSum(calcedUrg, is);
-					break;
-				case AVG:
-					prio = calcPrioAvg(calcedUrg, is);
-					break;
-				}
-				// Set max as new prio
-				is.getPlan().setCurrentPriority((long) Math.round(prio * 100));
+				Collections.sort(queue, new CurrentPlanPriorityComperator());
+				return queue.get(0);
+			} else {
+				return null;
 			}
-			Collections.sort(queue, new CurrentPlanPriorityComperator());
-			return queue.get(0);
 		}
 	}
 
@@ -122,15 +130,16 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling, ISchedulingEv
 	@Override
 	public void clear() {
 		queue.clear();
-		
+
 	}
 
 	@Override
 	public void addPlan(IScheduling scheduling) {
 		synchronized (queue) {
 			queue.add(scheduling);
-			// Wird nicht benötigt, da eh in jedem Durchlauf sortiert werden muss
-//			Collections.sort(queue, new CurrentPlanPriorityComperator());
+			// Wird nicht benötigt, da eh in jedem Durchlauf sortiert werden
+			// muss
+			// Collections.sort(queue, new CurrentPlanPriorityComperator());
 			scheduling.addSchedulingEventListener(this);
 		}
 	}

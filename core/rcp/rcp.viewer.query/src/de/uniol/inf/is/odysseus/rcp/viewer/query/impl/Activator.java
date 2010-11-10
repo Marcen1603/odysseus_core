@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.query.impl;
 
+
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 
 import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventListener;
@@ -19,6 +23,8 @@ import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventT
  */
 public class Activator extends Plugin implements IEventListener {
 
+	static Logger logger = LoggerFactory.getLogger(Activator.class);
+	
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.query";
 	private static Activator plugin;
 	private static IExecutor executor = null;
@@ -82,12 +88,19 @@ public class Activator extends Plugin implements IEventListener {
 	// Declarative Service
 	public void unbindExecutor(IExecutor ex) {
 		executor = null;
-		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID,
-				"No executor found");
+		try{
+			StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID,
+			"No executor found");
+		}catch(Exception e){
+			//ignore
+		}
 	}
 
 	@Override
 	public void eventOccured(IEvent<?, ?> event) {
+		
+		logger.debug(""+event);
+		
 		if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED){
 			((SchedulerManagerEvent)event).getValue().unSubscribeFromAll(this);
 		}else if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET){
@@ -104,6 +117,7 @@ public class Activator extends Plugin implements IEventListener {
 				e.printStackTrace();
 			}
 		}
+		
 
 	}
 

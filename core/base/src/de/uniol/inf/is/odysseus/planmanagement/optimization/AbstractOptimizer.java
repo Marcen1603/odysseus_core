@@ -126,9 +126,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 	}
 	
-	public void unBindPostOptimazationAction(
+	public void unbindPostOptimizationAction(
 			IPostOptimizationAction postOptimizationAction) {
-		getLogger().debug("unBindPostOptimazationAction "+postOptimizationAction);
+		getLogger().debug("unbindPostOptimizationAction "+postOptimizationAction);
 		synchronized (this.postOptimizationActions) {
 			this.postOptimizationActions.remove(postOptimizationAction);
 		}

@@ -166,6 +166,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 						SchedulerManagerEventType.SCHEDULER_REMOVED,
 						this.activeScheduler));
 			}
+			logger.debug("Set active Scheduler "+schedulerToSet+" ("+schedulingStrategyToSet+")");
 			// create a new scheduler an set the error listener
 			this.activeScheduler = createScheduler(schedulerToSet,
 					schedulingStrategyToSet);
@@ -356,11 +357,12 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 							.iterator().next() : null;
 				} else {
 					configSchedulingDirty = false;
-					logger.debug("Using Strategy " + defaultStrat);
+					logger.debug("Using Scheduling Strategy " + defaultStrat);
 				}
 			}
 
 			if (!configSchedulerDirty && !configSchedulingDirty) {
+				logger.debug("Set Scheduler "+defaultScheduler+" "+defaultStrat);
 				setActiveScheduler(defaultScheduler, defaultStrat, null);
 			}
 		}

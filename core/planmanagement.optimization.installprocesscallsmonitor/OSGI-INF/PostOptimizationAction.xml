@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor">
    <implementation class="de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor.InstallProcessCallsMonitor"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimitzationAction"/>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimizationAction"/>
    </service>
 </scr:component>
