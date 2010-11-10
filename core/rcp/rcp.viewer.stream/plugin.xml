@@ -80,6 +80,11 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.StreamMenuFactory"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.StreamMenuFactory"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor">
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

@@ -39,6 +39,14 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 	private static final int MIN_SELECTRECT = 5;
 	private static final int SCROLL_SPEED = 20;
 	
+	// 1 = linke Maustaste
+	// 2 = Mittlere Maustaste
+	// 3 = rechte Maustaste
+	private static final int MOUSE_SELECT_BUTTON1 = 1;
+	private static final int MOUSE_SELECT_BUTTON2 = 3;
+	private static final int MOUSE_DRAG_BUTTON = 2;
+	private static final int MOUSE_BORDER_BUTTON = 1;
+	
 	private RenderRange renderRange = new RenderRange();
 	private final Canvas canvas;
 
@@ -51,7 +59,7 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 	private ArrayList<Vector> dragObject = new ArrayList<Vector>();
 	private Vector dragGraph = new Vector(0,0);
 	
-	private boolean rightMouseButtonPressed = false;
+	private boolean mouseDragButtonPressed = false;
 	
 	private int width;
 	private int height;
@@ -370,8 +378,8 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 		
 		dragStart = new Vector(e.x, e.y);
 		
-		// Linke Maustaste
-		if( e.button == 1 ) {
+		// Linke Maustaste oder rechte Maustaste
+		if( e.button == MOUSE_SELECT_BUTTON1 || e.button == MOUSE_SELECT_BUTTON2 ) {
 			
 			// Geklickten Knoten suchen
 			final INodeView<C> clickedNode = getNodeFromPosition(e.x, e.y);
@@ -409,15 +417,15 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 				// Knoten ziehen
 				draggedNode.add( clickedNode );
 				dragObject.add( clickedNode.getPosition() );
-			} else {
+			} else if( e.button == MOUSE_BORDER_BUTTON ) {
 				// Rahmen ziehen
 				nodeSelector.unselectAll();
 				selectRect = new Rectangle(e.x, e.y, 0, 0);
 			}
-		} else if( e.button == 3 ) {
+		} else if( e.button == MOUSE_DRAG_BUTTON ) { // mittlere Maustaste
 			
 			// Graphen ziehen
-			rightMouseButtonPressed = true;
+			mouseDragButtonPressed = true;
 			dragGraph = getGraphOffset();
 		}
 		refreshView();
@@ -427,7 +435,7 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 	public void mouseUp( MouseEvent e ) {
 		
 		// Auswahlrechteck auswerten
-		if( e.button == 1 ) {
+		if( e.button == MOUSE_BORDER_BUTTON ) {
 			draggedNode.clear();
 			dragObject.clear();
 			if( selectRect != null && Math.abs( selectRect.width ) > MIN_SELECTRECT && Math.abs(selectRect.height) > MIN_SELECTRECT) {
@@ -473,8 +481,8 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 			}	
 			selectRect = null;
 		}
-		else if( e.button == 3 ) 
-			rightMouseButtonPressed = false;
+		else if( e.button == MOUSE_DRAG_BUTTON ) 
+			mouseDragButtonPressed = false;
 	}
 
 	@Override
@@ -496,7 +504,7 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 			selectRect.height = e.y - selectRect.y;
 			refreshView();
 		}
-		else if( rightMouseButtonPressed ) {
+		else if( mouseDragButtonPressed ) {
 			// Ziehe Graphen
 			setGraphOffset( dragGraph.add( distanceRel ));
 			if( !canvas.isFocusControl() )

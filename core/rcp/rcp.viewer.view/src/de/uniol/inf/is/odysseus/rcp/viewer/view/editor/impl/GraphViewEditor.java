@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -14,6 +15,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISelectionListener;
@@ -91,6 +93,14 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 
 		getSite().setSelectionProvider(this);
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		
+		// Contextmenü registrieren
+		MenuManager menuManager = new MenuManager();
+		Menu contextMenu = menuManager.createContextMenu(renderManager.getCanvas());
+		// Set the MenuManager
+		renderManager.getCanvas().setMenu(contextMenu);
+		getSite().registerContextMenu(menuManager, this);
+
 	}
 
 	@Override
