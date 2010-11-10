@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryAction;
 import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorAction;
 
@@ -15,10 +16,11 @@ public class UserManagement extends AbstractUserManagement {
 		if (instance == null) {
 
 			try {
-				instance = new UserManagement(new MemoryUserStore());
-				// instance = new UserManagement(new FileUserStore(
-				// System.getProperty("user.home")
-				// + "/odysseus/users.store"));
+				if (OdysseusDefaults.storeUsers){
+					 instance = new UserManagement(new FileUserStore(OdysseusDefaults.userStoreFilename));
+				}else{
+					instance = new UserManagement(new MemoryUserStore());
+				}
 
 				if (instance.hasNoUsers()) {
 					// create system user

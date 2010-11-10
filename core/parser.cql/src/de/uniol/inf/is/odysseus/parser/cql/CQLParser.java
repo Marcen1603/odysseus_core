@@ -1082,7 +1082,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public Object visit(ASTGrantRoleStatement node, Object data) {
 		if (node.jjtGetNumChildren() == 2) {
@@ -1119,7 +1119,5 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 		return identifier;
 	}
-
-
 
 }

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.store.FileStore;
 import de.uniol.inf.is.odysseus.store.IStore;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
@@ -40,22 +41,16 @@ public class TenantManagement {
 		return instance;
 	}
 
-	static private String filePrefix = System.getProperty("user.home")
-			+ "/odysseus/";
-
 	final private IStore<String, Tenant> registeredTenants;
 	final private IStore<String, Tenant> users;
 	final private IStore<String, IServiceLevelAgreement> slas;
 
 	private TenantManagement() {
 		try {
-			boolean useFileStore = false; 
-			if (useFileStore){
-				registeredTenants = new FileStore<String, Tenant>(filePrefix
-						+ "tenants.store");
-				users = new FileStore<String, Tenant>(filePrefix + "userTenant.store");
-				slas = new FileStore<String, IServiceLevelAgreement>(filePrefix
-						+ "slas.store");
+			if (OdysseusDefaults.storeTenants){
+				registeredTenants = new FileStore<String, Tenant>(OdysseusDefaults.tenantsFilename);
+				users = new FileStore<String, Tenant>(OdysseusDefaults.userTenantFilename);
+				slas = new FileStore<String, IServiceLevelAgreement>(OdysseusDefaults.slasFilename);
 			}else{
 				registeredTenants = new MemoryStore<String, Tenant>();
 				users = new MemoryStore<String, Tenant>();

@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
@@ -40,9 +40,6 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		}
 		return _logger;
 	}
-
-	private final String schedulingConfigFile = System.getProperty("user.home")
-			+ "/odysseus/scheduling.conf";
 
 	/**
 	 * The current active {@link IScheduler}.
@@ -81,20 +78,9 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		if (schedulers != null && strats != null) {
 
 			try {
-				File f = new File(schedulingConfigFile);
-				if (!f.exists()) {
-					File d = f.getParentFile();
-					if (d != null) {
-						d.mkdirs();
-					}
-					f.createNewFile();
-					System.out.println("Created new File "
-							+ f.getAbsolutePath());
-				} else {
-					System.out.println("Read from file " + f.getAbsolutePath());
-				}
+				File f = OdysseusDefaults.openOrCreateFile(OdysseusDefaults.schedulingConfigFile);
 				FileInputStream in;
-				in = new FileInputStream(schedulingConfigFile);
+				in = new FileInputStream(f);
 				props.load(in);
 				in.close();
 
@@ -107,7 +93,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 							.hasNext() ? strats.iterator().next() : null);
 					FileOutputStream out;
 					try {
-						out = new FileOutputStream(schedulingConfigFile);
+						out = new FileOutputStream(OdysseusDefaults.schedulingConfigFile);
 						props.store(out,
 								"--- Scheduling Property File edit only if you know what you are doing ---");
 						out.close();

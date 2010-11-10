@@ -11,6 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
@@ -44,9 +45,6 @@ public class DataDictionary {
 
 	static private DataDictionary instance = null;
 
-	static private String filePrefix = System.getProperty("user.home")
-			+ "/odysseus/";
-
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
 
 	final private IStore<String, ILogicalOperator> viewDefinitions;
@@ -57,36 +55,17 @@ public class DataDictionary {
 	final private IStore<String, String> sourceTypeMap;
 	final private IStore<String, User> sourceFromUser;
 
-//	@Deprecated
-//	public void clear() {
-//		try {
-//			this.viewDefinitions.clear();
-//			this.logicalViewDefinitions.clear();
-//			this.entityMap.clear();
-//			this.sourceTypeMap.clear();
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
 
 	private DataDictionary() {
 		try {
-			boolean useFileStore = false;
-			if (useFileStore) {
-				viewDefinitions = new FileStore<String, ILogicalOperator>(
-						filePrefix + "viewDefinitions.store");
-				viewFromUser = new FileStore<String, User>(filePrefix
-						+ "viewFromUser.store");
-				logicalViewDefinitions = new FileStore<String, ILogicalOperator>(
-						filePrefix + "logicalViewDefinitions.store");
-				entityMap = new FileStore<String, SDFEntity>(filePrefix
-						+ "entities.store");
-				sourceTypeMap = new FileStore<String, String>(filePrefix
-						+ "sourceTypeMap.store");
-				entityFromUser = new FileStore<String, User>(filePrefix
-						+ "entityFromUser.store");
-				sourceFromUser = new FileStore<String, User>(filePrefix
-						+ "sourceFromUser.store");
+			if (OdysseusDefaults.storeDataDictionary) {
+				viewDefinitions = new FileStore<String, ILogicalOperator>(OdysseusDefaults.viewDefinitionsFilename);
+				viewFromUser = new FileStore<String, User>(OdysseusDefaults.viewFromUserFilename);
+				logicalViewDefinitions = new FileStore<String, ILogicalOperator>(OdysseusDefaults.logicalViewDefinitionsFilename);
+				entityMap = new FileStore<String, SDFEntity>(OdysseusDefaults.entitiesFilename);
+				sourceTypeMap = new FileStore<String, String>(OdysseusDefaults.sourceTypeMapFilename);
+				entityFromUser = new FileStore<String, User>(OdysseusDefaults.entityFromUserFilename);
+				sourceFromUser = new FileStore<String, User>(OdysseusDefaults.sourceFromUserFilename);
 			} else {
 				viewDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewFromUser = new MemoryStore<String, User>();

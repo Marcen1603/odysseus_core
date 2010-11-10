@@ -62,7 +62,7 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 						// Scheduler zu waehlen, wenn man kein SLA hat ...
 						double urge = 0.0;
 						try {
-							urge = sla.getMaxOcMg(monitor.getValue());
+							urge = sla.getMaxOcMg(monitor.getDoubleValue());
 						} catch (NotInitializedException e) {
 							throw new RuntimeException(e);
 						}
