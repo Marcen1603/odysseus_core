@@ -83,7 +83,7 @@
       <menuContribution
             allPopups="false"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.StreamMenuFactory"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor">
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor?after=additions">
       </menuContribution>
    </extension>
    <extension

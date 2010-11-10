@@ -30,6 +30,16 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Startup">
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor">
+         <separator
+               name="additions">
+         </separator>
+      </menuContribution>
+   </extension>
 
 
 </plugin>
