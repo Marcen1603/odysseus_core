@@ -31,7 +31,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
-		Login.login(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), false, false);
+		Login.loginWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), false, false);
 		
 		// Log4j-Ausgaben in Console umleiten
 		// Init der Message Console
