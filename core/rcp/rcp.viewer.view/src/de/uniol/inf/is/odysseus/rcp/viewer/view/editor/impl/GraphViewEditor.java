@@ -90,7 +90,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 		renderManager.setDisplayedGraph(input.getGraphView());
 		renderManager.resetPositions();
 		renderManager.getSelector().addSelectListener(this);
-
+		
 		getSite().setSelectionProvider(this);
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		

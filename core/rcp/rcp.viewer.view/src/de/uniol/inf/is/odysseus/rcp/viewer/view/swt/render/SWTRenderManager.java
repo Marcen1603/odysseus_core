@@ -66,8 +66,8 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 	
 	private Rectangle selectRect;
 	
-	private int updateInterval = 1000; // in ms
-	private Thread updaterThread;
+//	private int updateInterval = 1000; // in ms
+//	private Thread updaterThread;
 	
 	private SWTSymbolRenderer<C> renderer;
 	private IGraphView<C> graphView;
@@ -82,14 +82,9 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 		this.renderer = new SWTSymbolRenderer< C >();
 		this.nodePositioner = nodePositioner;
 		comp.setLayout(new FillLayout());
-		this.canvas = new Canvas(comp, SWT.BORDER);
-		Display.getDefault().asyncExec(new Runnable() {
-			
-			@Override
-			public void run() {
-				SWTRenderManager.this.canvas.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-			}
-		});
+		this.canvas = new Canvas(comp, SWT.BORDER );
+		this.canvas.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		this.canvas.setSize(1000, 1000);
 		
 		
 		canvas.addListener( SWT.Resize, new Listener() {
@@ -142,42 +137,43 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 		canvas.addMouseMoveListener(this);
 		canvas.addMouseWheelListener(this);
 		
-		updaterThread = new Thread( new Runnable() {
-			@Override
-			public void run() {
-				
-				while( true ) {
-					if( Display.getDefault().isDisposed())
-						break;
-					
-					Display.getDefault().asyncExec( new Runnable() {
-
-						@Override
-						public void run() {
-						renderer.update(graphView);
-							refreshView();
-						}
-						
-					});
-					
-					try {
-						Thread.sleep( updateInterval );
-					} catch( InterruptedException ex ) {}
-				}
-				
-			}			
-		});
-		updaterThread.start();
+//		updaterThread = new Thread( new Runnable() {
+//			@Override
+//			public void run() {
+//				
+//				while( true ) {
+//					if( Display.getDefault().isDisposed())
+//						break;
+//					
+//					Display.getDefault().asyncExec( new Runnable() {
+//
+//						@Override
+//						public void run() {
+//						renderer.update(graphView);
+//							refreshView();
+//						}
+//						
+//					});
+//					
+//					try {
+//						Thread.sleep( updateInterval );
+//					} catch( InterruptedException ex ) {}
+//				}
+//				
+//			}			
+//		});
+//		updaterThread.start();
 	}
 	
 	public void setUpdateInterval( int interval ) {
 		if( interval < 10 ) 
 			interval = 10;
-		updateInterval = interval;
+//		updateInterval = interval;
 	}
 	
 	public int getUpdateInterval() {
-		return updateInterval;
+//		return updateInterval;
+		return 0;
 	}
 
 	
@@ -352,7 +348,7 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 	public void refreshView() {
 		if( canvas.isDisposed() )
 			return;
-		
+				
 		canvas.redraw();
 	}
 	
@@ -381,46 +377,52 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 		// Linke Maustaste oder rechte Maustaste
 		if( e.button == MOUSE_SELECT_BUTTON1 || e.button == MOUSE_SELECT_BUTTON2 ) {
 			
-			// Geklickten Knoten suchen
-			final INodeView<C> clickedNode = getNodeFromPosition(e.x, e.y);
-			final Collection<INodeView<C>> selectedNodes = nodeSelector.getSelected();
-			
-			// Geklickter Knoten schon ausgewählt?
-			if( selectedNodes.contains( clickedNode ) ) {
+			if( (e.stateMask & SWT.CTRL) == 0 ) {
+				// Geklickten Knoten suchen
+				final INodeView<C> clickedNode = getNodeFromPosition(e.x, e.y);
+				final Collection<INodeView<C>> selectedNodes = nodeSelector.getSelected();
 				
-				// Alle ausgewählten Knoten ziehen
-				for( INodeView<C> selectedNode : selectedNodes ) {
-					draggedNode.add( selectedNode );
-					dragObject.add( selectedNode.getPosition() );
-				}
-				return;
-			}
-			
-			if( clickedNode != null ) {
-				if( (e.stateMask & SWT.SHIFT) != 0 ) {
-					if( selectedNodes.size() == 1 && !selectedNodes.contains( clickedNode )) {
-						
-						// Pfad auswählen
-						INodeView<C>[] nodeDisplays = selectedNodes.toArray( new INodeView[0] );
-						
-						nodeSelector.unselectAll();
-						if( !nodeSelector.selectPath( nodeDisplays[0], clickedNode )) {
-							return;
-						}
+				// Geklickter Knoten schon ausgewählt?
+				if( selectedNodes.contains( clickedNode ) ) {
+					
+					// Alle ausgewählten Knoten ziehen
+					for( INodeView<C> selectedNode : selectedNodes ) {
+						draggedNode.add( selectedNode );
+						dragObject.add( selectedNode.getPosition() );
 					}
-				} else if( (e.stateMask & SWT.CTRL) == 0 )
+					return;
+				}
+				
+				if( clickedNode != null ) {
+					if( (e.stateMask & SWT.SHIFT) != 0 ) {
+						if( selectedNodes.size() == 1 && !selectedNodes.contains( clickedNode )) {
+							
+							// Pfad auswählen
+							INodeView<C>[] nodeDisplays = selectedNodes.toArray( new INodeView[0] );
+							
+							nodeSelector.unselectAll();
+							if( !nodeSelector.selectPath( nodeDisplays[0], clickedNode )) {
+								return;
+							}
+						}
+					} else if( (e.stateMask & SWT.CTRL) == 0 )
+						nodeSelector.unselectAll();
+					
+					// Geklickten Knoten auswählen
+					nodeSelector.select( clickedNode );
+					
+					// Knoten ziehen
+					draggedNode.add( clickedNode );
+					dragObject.add( clickedNode.getPosition() );
+				} else if( e.button == MOUSE_BORDER_BUTTON ) {
+					// Rahmen ziehen
 					nodeSelector.unselectAll();
-				
-				// Geklickten Knoten auswählen
-				nodeSelector.select( clickedNode );
-				
-				// Knoten ziehen
-				draggedNode.add( clickedNode );
-				dragObject.add( clickedNode.getPosition() );
-			} else if( e.button == MOUSE_BORDER_BUTTON ) {
-				// Rahmen ziehen
-				nodeSelector.unselectAll();
-				selectRect = new Rectangle(e.x, e.y, 0, 0);
+					selectRect = new Rectangle(e.x, e.y, 0, 0);
+				}
+			} else {
+				// STRG gedr�ckt... Ziehen
+				mouseDragButtonPressed = true;
+				dragGraph = getGraphOffset();
 			}
 		} else if( e.button == MOUSE_DRAG_BUTTON ) { // mittlere Maustaste
 			
@@ -433,7 +435,11 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 
 	@Override
 	public void mouseUp( MouseEvent e ) {
-		
+		// Linke Maustaste oder rechte Maustaste
+		if( (e.button == MOUSE_SELECT_BUTTON1 || e.button == MOUSE_SELECT_BUTTON2) && mouseDragButtonPressed ) {
+			mouseDragButtonPressed = false;
+		}
+
 		// Auswahlrechteck auswerten
 		if( e.button == MOUSE_BORDER_BUTTON ) {
 			draggedNode.clear();
