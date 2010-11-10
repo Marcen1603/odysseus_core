@@ -1036,6 +1036,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object visit(ASTGrantStatement node, Object data) {
 		List<String> rights = (List<String>) node.jjtGetChild(0).jjtAccept(
 				this, data);
@@ -1043,10 +1044,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		List<IUserAction> operations = new ArrayList<IUserAction>();
 		for (String r : rights) {
 			IUserAction action = UserActionFactory.valueOf(r);
-			if (action != null){
+			if (action != null) {
 				operations.add(action);
-			}else{
-				throw new RuntimeException("Right "+r+" not defined.");
+			} else {
+				throw new RuntimeException("Right " + r + " not defined.");
 			}
 		}
 
@@ -1054,36 +1055,23 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String user = null;
 		if (node.jjtGetNumChildren() == 3) {
 			objects = (List<String>) node.jjtGetChild(1).jjtAccept(this, data);
-			user = ((ASTIdentifier) node.jjtGetChild(2)).getName();	
+			user = ((ASTIdentifier) node.jjtGetChild(2)).getName();
 		} else {
 			user = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		}
-		for (IUserAction action: operations){
+		for (IUserAction action : operations) {
 
-			if (UserActionFactory.needsNoObject(action)){
+			if (UserActionFactory.needsNoObject(action)) {
 				String object = UserActionFactory.getAliasObject(action);
-				try {
-					UserManagement.getInstance().grantPermission(caller, user,
-							action, object);
-				} catch (HasNoPermissionException e) {
-					throw new RuntimeException(e);
-				} catch (StoreException e) {
-					throw new RuntimeException(e);
-				}		
-			}else{
-					
+				UserManagement.getInstance().grantPermission(caller, user,
+						action, object);
+			} else {
 				for (String entityname : objects) {
-					try {
-						UserManagement.getInstance().grantPermission(caller, user,
-								action, entityname);
-					} catch (HasNoPermissionException e) {
-						throw new RuntimeException(e);
-					} catch (StoreException e) {
-						throw new RuntimeException(e);
-					}
+					UserManagement.getInstance().grantPermission(caller, user,
+							action, entityname);
 				}
 			}
-			
+
 		}
 
 		return null;
@@ -1092,6 +1080,34 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTRevokeStatement node, Object data) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Object visit(ASTGrantRoleStatement node, Object data) {
+		if (node.jjtGetNumChildren() == 2) {
+			@SuppressWarnings("unchecked")
+			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(
+					this, data);
+			String user = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+			for (String rolename : roles) {
+				UserManagement.getInstance().grantRole(caller, rolename, user);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTRevokeRoleStatement node, Object data) {
+		if (node.jjtGetNumChildren() == 2) {
+			@SuppressWarnings("unchecked")
+			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(
+					this, data);
+			String user = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+			for (String rolename : roles) {
+				UserManagement.getInstance().revokeRole(caller, rolename, user);
+			}
+		}
 		return null;
 	}
 
@@ -1103,5 +1119,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 		return identifier;
 	}
+
+
 
 }

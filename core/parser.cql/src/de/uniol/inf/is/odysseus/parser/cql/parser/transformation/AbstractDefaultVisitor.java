@@ -722,4 +722,16 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTGrantRoleStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTRevokeRoleStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
