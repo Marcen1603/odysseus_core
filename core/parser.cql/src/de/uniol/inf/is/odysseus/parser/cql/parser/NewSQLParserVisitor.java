@@ -43,6 +43,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTCSVSource node, Object data);
   public Object visit(ASTSimpleTuple node, Object data);
   public Object visit(ASTAttributeType node, Object data);
+  public Object visit(ASTMVCovarianceRow node, Object data);
   public Object visit(ASTCovarianceRow node, Object data);
   public Object visit(ASTDateFormat node, Object data);
   public Object visit(ASTSetOperator node, Object data);
@@ -121,4 +122,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data);
   public Object visit(ASTRevokeStatement node, Object data);
 }
-/* JavaCC - OriginalChecksum=9074834f36e1f6512d574fbdc2cd29ea (do not edit this line) */
+/* JavaCC - OriginalChecksum=5fa29c438884e0bc9efae9628d86b560 (do not edit this line) */

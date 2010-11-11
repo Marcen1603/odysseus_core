@@ -529,7 +529,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CreateSensor */
   try {
-/*@egen*/  < K_CREATE > < K_SENSOR > Identifier() "(" ORSchemaDefinition() ")" < K_FROM > Channel()/*@bgen(jjtree)*/
+/*@egen*/  < K_CREATE > < K_SENSOR > Identifier() "(" ORSchemaDefinition() "," Identifier() ")" < K_FROM > Channel()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -983,12 +983,7 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.setType("String");  }| < K_MV >  (    < K_INTEGER >    {      jjtn000.setType("MV Integer");    }  | < K_FLOAT >    {      jjtn000.setType("MV Float");    }  | < K_DOUBLE >    {      jjtn000.setType("MV");    }  | < K_LONG >    {      jjtn000.setType("MV Long");    }  )  covList = CovarianceRow()/*@bgen(jjtree)*/
-  {
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-  }
-/*@egen*/  {    jjtn000.setRow(covList);  }| < K_DATE > format = DateFormat()/*@bgen(jjtree)*/
+/*@egen*/  {    jjtn000.setType("String");  }| < K_MV >  (    < K_INTEGER >    {      jjtn000.setType("MV Integer");    }  | < K_FLOAT >    {      jjtn000.setType("MV Float");    }  | < K_DOUBLE >    {      jjtn000.setType("MV");    }  | < K_LONG >    {      jjtn000.setType("MV Long");    }  ) [ MVCovarianceRow() ]| < K_DATE > format = DateFormat()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -1023,7 +1018,33 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/  /*| < S_POINT >  {    jjtThis.setType("Point3D");  }| < S_SEGMENT >  {    jjtThis.setType("Segment3D");  }| < S_LINE >  {    jjtThis.setType("Line3D");  }| < S_FACET >  {    jjtThis.setType("Facet3D");  }| < S_SOLID >  {    jjtThis.setType("Solid3D");  }*/}ArrayList CovarianceRow() :{/*@bgen(jjtree) CovarianceRow */
+/*@egen*/  /*| < S_POINT >  {    jjtThis.setType("Point3D");  }| < S_SEGMENT >  {    jjtThis.setType("Segment3D");  }| < S_LINE >  {    jjtThis.setType("Line3D");  }| < S_FACET >  {    jjtThis.setType("Facet3D");  }| < S_SOLID >  {    jjtThis.setType("Solid3D");  }*/}void MVCovarianceRow() :{/*@bgen(jjtree) MVCovarianceRow */
+  ASTMVCovarianceRow jjtn000 = new ASTMVCovarianceRow(JJTMVCOVARIANCEROW);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) MVCovarianceRow */
+  try {
+/*@egen*/  "(" Expression() ("," Expression() )* ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}ArrayList CovarianceRow() :{/*@bgen(jjtree) CovarianceRow */
   ASTCovarianceRow jjtn000 = new ASTCovarianceRow(JJTCOVARIANCEROW);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -1046,7 +1067,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  String ret;  Token t;}{/*@bgen(jjtree) DateFormat */
   try {
-/*@egen*/  // permitted: <Year Expression> <Time Expression>  // or <Year Expression>  // or <Time Expression>  t = < IDENTIFIER >  {    ret = t.image;  }  // evtl. noch ein Identifier f\u00ef\u00bf\u00bdr die Zeit  (t = < IDENTIFIER >  {    ret += " " + t.image;  }  )?/*@bgen(jjtree)*/
+/*@egen*/  // permitted: <Year Expression> <Time Expression>  // or <Year Expression>  // or <Time Expression>  t = < IDENTIFIER >  {    ret = t.image;  }  // evtl. noch ein Identifier f\ufffdr die Zeit  (t = < IDENTIFIER >  {    ret += " " + t.image;  }  )?/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
