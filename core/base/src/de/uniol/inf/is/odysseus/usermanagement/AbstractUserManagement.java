@@ -22,6 +22,8 @@ abstract class AbstractUserManagement {
 	private int privid = 0;
 
 	private int sessionID = -1;
+	
+	// TODO: sortieren
 
 	protected AbstractUserManagement(IUserStore userStore) {
 		this.userStore = userStore;
@@ -208,6 +210,7 @@ abstract class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
+	// TODO: methode für if anlegen
 	public void grantPermission(User caller, String entityname,
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException, StoreException {
@@ -244,6 +247,8 @@ abstract class AbstractUserManagement {
 		}
 	}
 
+	// TODO: methode für if anlegen
+	// TODO: java doc
 	public void revokePermission(User caller, String entityname,
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException {
@@ -308,6 +313,7 @@ abstract class AbstractUserManagement {
 	 * @param priv
 	 * @throws HasNoPermissionException
 	 */
+	// TODO: methode für if anlegen
 	public void revokePrivilegeForObject(User caller, String entityname,
 			String objecturi) throws HasNoPermissionException {
 		if (!caller.toString().equals(entityname)
@@ -343,6 +349,7 @@ abstract class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
+	// TODO: methode für if anlegen
 	public void grantRole(User caller, String rolename, String username)
 			throws HasNoPermissionException, StoreException {
 		if (((AccessControl.hasPermission(UserManagementAction.GRANT,
@@ -393,6 +400,7 @@ abstract class AbstractUserManagement {
 	 * @param user
 	 * @throws HasNoPermissionException
 	 */
+	// TODO: methode für if anlegen
 	public void revokeRole(User caller, String rolename, String username)
 			throws HasNoPermissionException {
 		if ((AccessControl.hasPermission(UserManagementAction.REVOKE,
