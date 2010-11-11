@@ -383,7 +383,7 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 				final Collection<INodeView<C>> selectedNodes = nodeSelector.getSelected();
 				
 				// Geklickter Knoten schon ausgewählt?
-				if( selectedNodes.contains( clickedNode ) ) {
+				if( selectedNodes.contains( clickedNode ) && e.button == MOUSE_SELECT_BUTTON1) {
 					
 					// Alle ausgewählten Knoten ziehen
 					for( INodeView<C> selectedNode : selectedNodes ) {
