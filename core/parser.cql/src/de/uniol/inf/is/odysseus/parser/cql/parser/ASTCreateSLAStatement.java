@@ -4,6 +4,9 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
 class ASTCreateSLAStatement extends SimpleNode {
+
+  Long limit;
+	
   public ASTCreateSLAStatement(int id) {
     super(id);
   }
@@ -12,10 +15,18 @@ class ASTCreateSLAStatement extends SimpleNode {
     super(p, id);
   }
 
-
   /** Accept the visitor. **/
   public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public void setLimit(Long limit) {
+	this.limit = limit;
+  }
+  
+  public Long getLimit() {
+	return limit;
+}
+  
 }
 /* JavaCC - OriginalChecksum=e98cfb459b487ef76ae88a39200d8000 (do not edit this line) */

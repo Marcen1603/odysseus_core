@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.usermanagement.PercentileContraint;
 import de.uniol.inf.is.odysseus.usermanagement.ServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.TenantNotFoundException;
+import de.uniol.inf.is.odysseus.usermanagement.TimeBasedServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.TooManyUsersException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserActionFactory;
@@ -897,10 +898,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTCreateSLAStatement node, Object data) {
 		String slaName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		// TODO: Anpassen, das hier erstmal nur zum Testen
-		String monitorType = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		PercentileContraint pc = null;
-		IServiceLevelAgreement sla = new ServiceLevelAgreement(slaName);
+		IServiceLevelAgreement sla = null;
+		if (node.getLimit() > 0) {
+			sla = new TimeBasedServiceLevelAgreement(slaName, node.getLimit());
+		} else {
+			sla = new ServiceLevelAgreement(slaName);
+		}
 		for (int i = 2; i < node.jjtGetNumChildren(); i++) {
 			pc = (PercentileContraint) node.jjtGetChild(i)
 					.jjtAccept(this, data);

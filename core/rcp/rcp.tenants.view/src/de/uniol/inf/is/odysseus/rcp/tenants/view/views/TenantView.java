@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.IPercentileConstraint;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.ITimeBasedServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.Privilege;
 import de.uniol.inf.is.odysseus.usermanagement.Role;
@@ -165,7 +166,12 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 				return ((Tenant) obj).getName();
 			}
 			if (obj instanceof IServiceLevelAgreement) {
-				return "SLA " + ((IServiceLevelAgreement) obj).getName() +" initialized "+ ((IServiceLevelAgreement) obj).isInitialized();
+				StringBuffer ret = new StringBuffer("SLA ").append(((IServiceLevelAgreement) obj).getName()).append(" initialized ").append(((IServiceLevelAgreement) obj).isInitialized());
+				if (obj instanceof ITimeBasedServiceLevelAgreement){
+					ret.append("Time: ");
+					ret.append(((ITimeBasedServiceLevelAgreement)obj).getTimeperiod());
+				}
+				return ret.toString();
 			}
 			return obj.toString();
 		}
