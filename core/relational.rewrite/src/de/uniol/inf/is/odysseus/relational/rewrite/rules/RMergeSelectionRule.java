@@ -57,7 +57,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.SWITCH;
+		return RewriteRuleFlowGroup.CLEANUP;
 	}
 
 }
