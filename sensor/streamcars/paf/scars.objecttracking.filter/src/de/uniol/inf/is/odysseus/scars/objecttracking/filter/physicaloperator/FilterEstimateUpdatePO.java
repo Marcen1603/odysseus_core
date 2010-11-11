@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author dtwumasi
- * 
+ *
  */
 public class FilterEstimateUpdatePO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractFilterPO<M> {
 
@@ -61,7 +61,7 @@ public class FilterEstimateUpdatePO<M extends IProbability & IObjectTrackingLate
 
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
-
+		object.getMetadata().setObjectTrackingLatencyStart("Filter Est Update");
 		// list of connections
 		ArrayList<IConnection> objConList = object.getMetadata().getConnectionList();
 
@@ -73,26 +73,27 @@ public class FilterEstimateUpdatePO<M extends IProbability & IObjectTrackingLate
 		/*
 		 * MVRelationalTuple<M> oldList = (MVRelationalTuple<M>)
 		 * oldObjectListPath .toTupleIndexPath(object).getTupleObject();
-		 * 
+		 *
 		 * String timeStampName = schemaHelper
 		 * .getStartTimestampFullAttributeName(); // SDFAttribute timestamp =
 		 * schemaHelper.getAttribute(timeStampName); Object timeStamp =
 		 * schemaHelper.getSchemaIndexPath(timeStampName)
 		 * .toTupleIndexPath(object).getTupleObject();
-		 * 
+		 *
 		 * MVRelationalTuple<M> newObject = new MVRelationalTuple<M>(1);
-		 * 
+		 *
 		 * newObject.setMetadata(object.getMetadata()); MVRelationalTuple<M>
 		 * scan = new MVRelationalTuple<M>(2);
-		 * 
+		 *
 		 * scan.setAttribute(0, timeStamp); scan.setAttribute(1, oldList);
-		 * 
+		 *
 		 * newObject.setAttribute(0, scan);
-		 * 
+		 *
 		 * tupleHelper = new TupleHelper(object);
-		 * 
+		 *
 		 * return newObject;
 		 */
+		object.getMetadata().setObjectTrackingLatencyEnd("Filter Est Update");
 		return object;
 	}
 

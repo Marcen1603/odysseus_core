@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLat
 /**
  * @author dtwumasi
  * @param <StreamCarsMetaData>
- * 
+ *
  */
 public class FilterGainPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer & IGain> extends AbstractFilterPO<M> {
 
@@ -33,7 +33,7 @@ public class FilterGainPO<M extends IProbability & IObjectTrackingLatency & ICon
 	public void compute(IConnection connected, MVRelationalTuple<M> tuple) {
 		metaDataCreationFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
@@ -41,12 +41,12 @@ public class FilterGainPO<M extends IProbability & IObjectTrackingLatency & ICon
 
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
-
+		object.getMetadata().setObjectTrackingLatencyStart("Filter Gain");
 		// traverse connection list and filter
 		for (IConnection connected : object.getMetadata().getConnectionList()) {
 			compute(connected, object);
 		}
-
+		object.getMetadata().setObjectTrackingLatencyEnd("Filter Gain");
 		return object;
 	}
 

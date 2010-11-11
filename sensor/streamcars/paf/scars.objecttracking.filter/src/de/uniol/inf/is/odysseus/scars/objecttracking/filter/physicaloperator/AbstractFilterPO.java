@@ -8,72 +8,69 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 
-public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends
-    AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer>
+		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-  // path to new and old objects
-  private String oldObjListPath;
-  private String newObjListPath;
+	// path to new and old objects
+	private String oldObjListPath;
+	private String newObjListPath;
 
-  // optional parameters for the filter function. Not used right now
-  private HashMap<Enum, Object> parameters;
+	// optional parameters for the filter function. Not used right now
+	private HashMap<Enum, Object> parameters;
 
-  public AbstractFilterPO() {
-	 super(); 
-  }
-  
-  public AbstractFilterPO(AbstractFilterPO<M> copy) {
-	  super(copy);
-	  this.setNewObjListPath(new String(copy.getNewObjListPath()));
-	  this.setOldObjListPath(new String(copy.getOldObjListPath()));
-	  this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
-  }
-  
-  
-  
-  @Override
-protected void process_next(MVRelationalTuple<M> object, int port) {
-	  object.getMetadata().setObjectTrackingLatencyStart();
-    object = computeAll(object);
-    // transfer to broker
-    object.getMetadata().setObjectTrackingLatencyEnd();
-    transfer(object);
-  }
-  
-  public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
-  
-  
-  @Override
-  public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
+	public AbstractFilterPO() {
+		super();
+	}
 
-  @Override
-  public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
-    return OutputMode.MODIFIED_INPUT;
-  }
-  
-  // Getter & Setter
+	public AbstractFilterPO(AbstractFilterPO<M> copy) {
+		super(copy);
+		this.setNewObjListPath(new String(copy.getNewObjListPath()));
+		this.setOldObjListPath(new String(copy.getOldObjListPath()));
+		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+	}
 
-  public String getOldObjListPath() {
-    return this.oldObjListPath;
-  }
-  
-  public void setOldObjListPath(String oldObjListPath) {
-    this.oldObjListPath = oldObjListPath;
-  }
+	@Override
+	protected void process_next(MVRelationalTuple<M> object, int port) {
+		object.getMetadata().setObjectTrackingLatencyStart();
+		object = computeAll(object);
+		// transfer to broker
+		object.getMetadata().setObjectTrackingLatencyEnd();
+		transfer(object);
+	}
 
-  public String getNewObjListPath() {
-    return this.newObjListPath;
-  }
+	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
 
-  public void setNewObjListPath(String newObjListPath) {
-    this.newObjListPath = newObjListPath;
-  }
-  
-  public HashMap<Enum, Object> getParameters() {
-	return parameters;
-  }
+	@Override
+	public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
 
-  public void setParameters(HashMap<Enum, Object> parameters) {
-    this.parameters = parameters;
-  }
+	@Override
+	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
+	}
+
+	// Getter & Setter
+
+	public String getOldObjListPath() {
+		return this.oldObjListPath;
+	}
+
+	public void setOldObjListPath(String oldObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+	}
+
+	public String getNewObjListPath() {
+		return this.newObjListPath;
+	}
+
+	public void setNewObjListPath(String newObjListPath) {
+		this.newObjListPath = newObjListPath;
+	}
+
+	public HashMap<Enum, Object> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(HashMap<Enum, Object> parameters) {
+		this.parameters = parameters;
+	}
 }

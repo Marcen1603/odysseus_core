@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLat
 
 /**
  * @author dtwumasi
- * 
+ *
  */
 public class FilterCovarianceUpdatePO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractFilterPO<M> {
 
@@ -32,10 +32,10 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IObjectTrackingLa
     metaDataUpdateFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
   }
 
-  
+
   @Override
   public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
-
+	object.getMetadata().setObjectTrackingLatencyStart("Filter Cov Update");
     // list of connections
     ArrayList<IConnection> tmpConList = object.getMetadata().getConnectionList();
 
@@ -44,6 +44,7 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IObjectTrackingLa
 		compute(connected, object);
     }
 
+    object.getMetadata().setObjectTrackingLatencyEnd("Filter Cov Update");
     return object;
   }
 
@@ -56,8 +57,8 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IObjectTrackingLa
   public void processPunctuation(PointInTime timestamp, int port) {
 	  this.sendPunctuation(timestamp);
   }
-  
-  
+
+
   // Getter & Setter
 
   public AbstractMetaDataUpdateFunction<M> getUpdateMetaDataFunction() {
