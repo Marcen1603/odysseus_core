@@ -412,8 +412,10 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 					nodeSelector.select( clickedNode );
 					
 					// Knoten ziehen
-					draggedNode.add( clickedNode );
-					dragObject.add( clickedNode.getPosition() );
+					if( e.button == MOUSE_SELECT_BUTTON1) {
+						draggedNode.add( clickedNode );
+						dragObject.add( clickedNode.getPosition() );
+					}
 				} else if( e.button == MOUSE_BORDER_BUTTON ) {
 					// Rahmen ziehen
 					nodeSelector.unselectAll();
