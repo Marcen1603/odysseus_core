@@ -3,8 +3,10 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -25,7 +27,7 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 		MAX, SUM, AVG
 	}
 
-	private PrioCalcMethod method;
+	protected PrioCalcMethod method;
 
 	public SimpleSLAScheduler(PrioCalcMethod method) {
 		queue = new ArrayList<IScheduling>();
@@ -42,9 +44,21 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 		synchronized (queue) {
 			if (queue.size() > 0) {
 				Map<IQuery, Double> calcedUrg = new HashMap<IQuery, Double>();
+				// 1. Step: Get all queries and Calc Sum of all MonitoringValues 
+				Set<IQuery> allQueries = new HashSet<IQuery>();
+				double sum = 0;
+				for (IScheduling is : queue){
+					for(IQuery q:is.getPlan().getQueries()) {
+						allQueries.add(q);
+						@SuppressWarnings("unchecked")
+						IPlanMonitor<Double> monitor = q.getPlanMonitor("SLA Monitor");
+						sum += monitor.getDoubleValue(); 
+					}
+				}
+				// 2. Step: Calc Prio for each PartialPlan
 				for (IScheduling is : queue) {
 					// Calc prio for each query
-					for (IQuery q : is.getPlan().getQueries()) {
+					for (IQuery q: is.getPlan().getQueries()){
 						// A query can be part of more than one scheduling
 						// and only needs to be calculated ones
 						if (calcedUrg.containsKey(q))
@@ -62,7 +76,7 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 						// Scheduler zu waehlen, wenn man kein SLA hat ...
 						double urge = 0.0;
 						try {
-							urge = sla.getMaxOcMg(monitor.getDoubleValue());
+							urge = sla.getMaxOcMg(monitor.getDoubleValue()/sum);
 						} catch (NotInitializedException e) {
 							throw new RuntimeException(e);
 						}
@@ -96,7 +110,7 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 	}
 
 	// Calc Prio with maximum
-	private double calcPrioMax(Map<IQuery, Double> calcedUrg, IScheduling is) {
+	protected double calcPrioMax(Map<IQuery, Double> calcedUrg, IScheduling is) {
 		double prio = 0;
 		for (IQuery q : is.getPlan().getQueries()) {
 			prio = Math.max(prio, calcedUrg.get(q));
@@ -105,7 +119,7 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 	}
 
 	// Calc Prio as sum
-	private double calcPrioSum(Map<IQuery, Double> calcedUrg, IScheduling is) {
+	protected double calcPrioSum(Map<IQuery, Double> calcedUrg, IScheduling is) {
 		double prio = 0;
 		for (IQuery q : is.getPlan().getQueries()) {
 			prio = +calcedUrg.get(q);
@@ -114,7 +128,7 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 	}
 
 	// Calc Prio as avg
-	private double calcPrioAvg(Map<IQuery, Double> calcedUrg, IScheduling is) {
+	protected double calcPrioAvg(Map<IQuery, Double> calcedUrg, IScheduling is) {
 		double prio = 0;
 		for (IQuery q : is.getPlan().getQueries()) {
 			prio = +calcedUrg.get(q);
