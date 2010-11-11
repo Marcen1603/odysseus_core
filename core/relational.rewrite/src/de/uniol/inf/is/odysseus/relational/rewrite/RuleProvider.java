@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RDeleteProjectionWithoutFunctionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RDeleteSelectionWithoutPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionJoinRule;
+import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSplitSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionRenameRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionWindowRule;
@@ -24,6 +25,7 @@ public class RuleProvider implements IRewriteRuleProvider {
 		rules.add(new RDeleteProjectionWithoutFunctionRule());
 		rules.add(new RDeleteSelectionWithoutPredicate());
 		rules.add(new RMergeSelectionJoinRule());
+		rules.add(new RMergeSelectionRule());
 		rules.add(new RSplitSelectionRule());
 		rules.add(new RSwitchProjectionRenameRule());
 		rules.add(new RSwitchProjectionWindowRule());
