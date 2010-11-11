@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.scars.testdata.provider.extended.carModel;
 
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IDefaultCalcModel;
 
-
 public class DefaultCarModel implements ICarModel {
 
 	private int type;// Fahrzeugtyp: immer Wert 4
@@ -19,7 +18,7 @@ public class DefaultCarModel implements ICarModel {
 	private float width; // l�nge des autos in m
 
 	private IDefaultCalcModel calcModel;
-	
+
 	public DefaultCarModel(int id, IDefaultCalcModel calcModel) {
 		this.type = 4;
 		this.id = id;
@@ -37,7 +36,7 @@ public class DefaultCarModel implements ICarModel {
 		this.posz = this.calcModel.initPosz();
 		this.velocity = this.calcModel.initVelocity();
 	}
-	
+
 	public DefaultCarModel(DefaultCarModel clone) {
 		this.heading = clone.heading;
 		this.id = clone.id;
@@ -156,7 +155,7 @@ public class DefaultCarModel implements ICarModel {
 	public void setCalcModel(IDefaultCalcModel calcModel) {
 		this.calcModel = calcModel;
 	}
-	
+
 	/**
 	 * setzt die Werte eines Autos auf die Werte eines anderen Autos
 	 */
@@ -174,23 +173,23 @@ public class DefaultCarModel implements ICarModel {
 		this.setWidth(tempModel.getWidth());
 		this.setLength(tempModel.getLength());
 	}
-	
+
 	@Override
 	public String toString() {
 		String str = "Car\n";
-		str += "  type:     " + this.type +"\n";
-		str += "  id:       " + this.id +"\n";
-		str += "  laneid:   " + this.laneid +"\n";
-		str += "  x:        " + this.posx +"\n";
-		str += "  y:        " + this.posy +"\n";
-		str += "  z:        " + this.posz +"\n";
-		str += "  roll:     " + this.roll +"\n";
-		str += "  pitch:    " + this.pitch +"\n";
-		str += "  heading:  " + this.heading +"\n";
-		str += "  velocity: " + this.velocity +"\n";
-		str += "  length:   " + this.length +"\n";
-		str += "  width:    " + this.width +"\n";
-		
+		str += "  type:     " + this.type + "\n";
+		str += "  id:       " + this.id + "\n";
+		str += "  laneid:   " + this.laneid + "\n";
+		str += "  x:        " + this.posx + "\n";
+		str += "  y:        " + this.posy + "\n";
+		str += "  z:        " + this.posz + "\n";
+		str += "  roll:     " + this.roll + "\n";
+		str += "  pitch:    " + this.pitch + "\n";
+		str += "  heading:  " + this.heading + "\n";
+		str += "  velocity: " + this.velocity + "\n";
+		str += "  length:   " + this.length + "\n";
+		str += "  width:    " + this.width + "\n";
+
 		return str;
 	}
 
@@ -198,8 +197,15 @@ public class DefaultCarModel implements ICarModel {
 	public Object clone() {
 		return new DefaultCarModel(this);
 	}
-	
-	
+
+	/**
+	 * TODO remove this from DefaultCarModel and create IVisibility interface to
+	 * provide several visbility implementations to make different ranges of
+	 * vision possible!!
+	 */
+	@Override
+	public boolean isVisible() {
+		return false;
+	}
 
 }
-

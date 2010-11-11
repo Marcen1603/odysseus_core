@@ -20,8 +20,6 @@ public interface IDefaultCalcModel extends IGenericCalcModel {
 
 	public void calculateVelocity();
 
-	public void calculateAll();
-
 	public int initLaneid();
 
 	public float initPosx();

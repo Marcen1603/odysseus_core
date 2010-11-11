@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
 
+import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.carModel.ICarModel;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.schema.ISchemaGenerator;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.schema.SchemaGeneratorFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -21,6 +25,24 @@ public class ExtendedProvider implements IProvider {
 
 	// local fields:
 	private ISchemaGenerator schemaGenerator;
+
+	/**
+	 * max number of cars in a scan
+	 */
+	private int numOfCars;
+	/**
+	 * delay between initialization of two cars (in ms)
+	 */
+	private int delay;
+	private long currentTimeStamp;
+
+	/**
+	 * returns a unique id for a car and makes sure, that a car with a certain
+	 * id doesn't return to the visual range directly after leaving it
+	 */
+	private Queue<Integer> idQueue;
+
+	private ArrayList<ICarModel> state;
 
 	/**
 	 * creates a new object instance according to the given options
@@ -47,9 +69,29 @@ public class ExtendedProvider implements IProvider {
 
 	}
 
+	/**
+	 * TODO not implemented yet
+	 */
 	@Override
 	public Object nextTuple() {
-		// TODO Auto-generated method stub
+		// calculate new state
+		for (ICarModel model : this.state) {
+			model.getCalcModel().calculateAll();
+		}
+		
+		// check if cars are in visual range
+		Iterator<ICarModel> iterator = this.state.iterator();
+		while (iterator.hasNext()) {
+			ICarModel carModel = iterator.next();
+			if (!carModel.isVisible()) {
+				this.idQueue.offer(carModel.getId());
+				iterator.remove();
+			}
+		}
+		
+		// ggf. mit neuen Autos auffüllen
+		// tupel aus carModel bauen
+
 		return null;
 	}
 
