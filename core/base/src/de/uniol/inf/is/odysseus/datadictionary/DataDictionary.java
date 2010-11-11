@@ -384,7 +384,7 @@ public class DataDictionary {
 	public void setLogicalView(String viewname, ILogicalOperator topOperator,
 			User caller) throws HasNoPermissionException {
 		if (AccessControl.hasPermission(DataDictionaryAction.ADD_LOGICAL_VIEW,
-				viewname, caller)
+				DataDictionaryAction.alias, caller)
 				|| AccessControl
 						.isCreatorOfView(caller.getUsername(), viewname)) {
 			if (logicalViewDefinitions.containsKey(viewname)) {
