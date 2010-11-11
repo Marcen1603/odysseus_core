@@ -24,13 +24,14 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 		this.operatorLatencies = new HashMap<String, Long>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public StreamCarsMetaData( StreamCarsMetaData<K> data ) {
 		super(data);
 		this.connectionList = data.connectionList;
 		this.gain = copyArray(data.gain);
 		this.currentObjectTrackingLatency = data.currentObjectTrackingLatency;
 		this.currentStartObjTrackingTime = data.currentStartObjTrackingTime;
-		this.operatorLatencies = new HashMap<String, Long>(data.operatorLatencies);
+		this.operatorLatencies = new HashMap<String, Long>((HashMap<String, Long>) data.operatorLatencies.clone());
 	}
 
 	/* ############### CONNECTIONCONTAINER ################ */
@@ -135,30 +136,36 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 
 	@Override
 	public void setObjectTrackingLatencyStart(String operatorId) {
-		if(operatorLatencies.containsKey(operatorId)) {
-			operatorLatencies.remove(operatorId);
-		}
 		operatorLatencies.put(operatorId, System.nanoTime());
+//		System.out.println("setObjectTrackingLatencyStart: " + operatorId + "; Time: " + System.nanoTime());
 	}
 
 	@Override
 	public void setObjectTrackingLatencyEnd(String operatorId) {
 		if(operatorLatencies.containsKey(operatorId)) {
 			Long newVal = new Long(System.nanoTime() - operatorLatencies.get(operatorId).longValue());
-			operatorLatencies.remove(operatorId);
 			operatorLatencies.put(operatorId, newVal);
+//			System.out.println("setObjectTrackingLatencyEnd: " + operatorId + "; New value: " + newVal);
 		}
 	}
 
 	@Override
 	public long getObjectTrackingLatency(String operatorId) {
+//		System.out.println("getObjectTrackingLatency: " + operatorId + "; IsThere?!: " + operatorLatencies.containsKey(operatorId));
 		Long lat;
 		if(operatorLatencies.containsKey(operatorId)) {
 			lat = new Long(operatorLatencies.get(operatorId).longValue());
-			operatorLatencies.remove(operatorId);
 		} else {
 			lat = new Long(-1);
 		}
 		return lat;
+	}
+
+	public HashMap<String, Long> getOperatorLatencies() {
+		return operatorLatencies;
+	}
+
+	public void setOperatorLatencies(HashMap<String, Long> operatorLatencies) {
+		this.operatorLatencies = operatorLatencies;
 	}
 }

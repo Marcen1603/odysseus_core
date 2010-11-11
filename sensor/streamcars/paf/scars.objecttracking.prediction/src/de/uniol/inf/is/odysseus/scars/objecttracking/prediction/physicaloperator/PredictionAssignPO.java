@@ -58,7 +58,7 @@ public class PredictionAssignPO<M extends ITimeInterval & IProbability & IObject
 		object.getMetadata().setObjectTrackingLatencyEnd("Prediction Assign");
 		object.getMetadata().setObjectTrackingLatencyEnd();
 		transfer(object);
-		return;
+//		return;
 
 	}
 

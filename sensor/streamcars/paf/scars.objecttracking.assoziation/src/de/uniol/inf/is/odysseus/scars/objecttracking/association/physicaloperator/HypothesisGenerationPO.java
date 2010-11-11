@@ -76,6 +76,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 		// An Port 0 haben wir immer einen Tupel aus der Quelle/Selection
 		MVRelationalTuple<M> scannedTuple = (MVRelationalTuple<M>)obj0;
+		scannedTuple.getMetadata().setObjectTrackingLatencyStart();
+		scannedTuple.getMetadata().setObjectTrackingLatencyStart("Association Generation");
 
 		// Und an Port1 aus Prediction?
 		if( obj1 instanceof MVRelationalTuple) {
@@ -103,12 +105,12 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	 */
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		object.getMetadata().setObjectTrackingLatencyStart();
-		object.getMetadata().setObjectTrackingLatencyStart("Association Generation");
-
-		streamCollector.recieve(object, port);
-		if( streamCollector.isReady())
-			send(streamCollector.getNext());
+		synchronized (this) {
+			streamCollector.recieve(object, port);
+			if( streamCollector.isReady()) {
+				send(streamCollector.getNext());
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -130,6 +132,10 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setMetadata((M)scannedObject.getMetadata().clone());
+		if(predictedObject != null) {
+			base.getMetadata().getOperatorLatencies().put("Prediction Assign", predictedObject.getMetadata().getOperatorLatencies().get("Prediction Assign"));
+			base.getMetadata().getOperatorLatencies().put("Prediction", predictedObject.getMetadata().getOperatorLatencies().get("Prediction"));
+		}
 		base.setAttribute(0, new MVRelationalTuple<M>(association));
 
 		return base;

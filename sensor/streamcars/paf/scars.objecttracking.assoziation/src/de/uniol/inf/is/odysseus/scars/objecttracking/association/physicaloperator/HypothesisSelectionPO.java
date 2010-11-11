@@ -176,9 +176,10 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		if( matchedObjects.size() > 0 ) {
 			object.getMetadata().setConnectionList(matchedObjects);
 //			hasDublicates(object);
-			object.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
-			object.getMetadata().setObjectTrackingLatencyEnd();
-			transfer(object.clone(), 1);
+			MVRelationalTuple<M> tmpObject = object.clone();
+			tmpObject.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
+			tmpObject.getMetadata().setObjectTrackingLatencyEnd();
+			transfer(tmpObject, 1);
 		} else {
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 1);
 		}
@@ -214,7 +215,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			for (int i = 0; i < predictedNotMatchedObjects.size(); i++) {
 				predictedTuple.setAttribute(i, predictedNotMatchedObjects.get(i));
 			}
-			MVRelationalTuple<M> predictedNotMatchedTuple = new MVRelationalTuple<M>(object);
+			MVRelationalTuple<M> predictedNotMatchedTuple = object.clone();
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath.toTupleIndexPath(predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedTuple);
 //			hasDublicates(predictedNotMatchedTuple);
@@ -222,8 +223,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(predictedNotMatchedTuple.clone(), 2);
 		} else {
-			object.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
-			object.getMetadata().setObjectTrackingLatencyEnd();
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 2);
 		}
 	}

@@ -70,12 +70,11 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		object.getMetadata().setObjectTrackingLatencyStart();
-		object.getMetadata().setObjectTrackingLatencyStart("Prediction");
 		synchronized (this) {
 			streamCollector.recieve(object, port);
-			if( streamCollector.isReady() )
+			if( streamCollector.isReady() ) {
 				send(streamCollector.getNext());
+			}
 		}
 	}
 
@@ -92,9 +91,13 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 			if( obj1 instanceof MVRelationalTuple ) {
 				// Port 1 hat Tupel
 				MVRelationalTuple<M> currentScanTuple = ((MVRelationalTuple<M>)obj1).clone();
+
+				currentScanTuple.getMetadata().setObjectTrackingLatencyStart();
+				currentScanTuple.getMetadata().setObjectTrackingLatencyStart("Prediction");
+
 				MVRelationalTuple<M> predictedTuple = predictData(currentTimeTuple, currentScanTuple);
-				predictedTuple.getMetadata().setObjectTrackingLatencyEnd("Prediction");
 				predictedTuple.getMetadata().setObjectTrackingLatencyEnd();
+				predictedTuple.getMetadata().setObjectTrackingLatencyEnd("Prediction");
 				transfer( predictedTuple );
 
 			} else {
