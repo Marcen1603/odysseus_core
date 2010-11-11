@@ -46,6 +46,9 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	private LinkedList<Long> hypoGenLatencies;
 	private LinkedList<Long> hypoEvalMahaLatencies;
 	private LinkedList<Long> hypoEvalMultiLatencies;
+	private LinkedList<Long> filterCovUpdateLatencies;
+	private LinkedList<Long> filterEstUpdateLatencies;
+	private LinkedList<Long> filterGainUpdateLatencies;
 
 	private int countMax = 300;
 	private boolean performanceOutputOdy = false;
@@ -57,6 +60,9 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	private boolean performanceOutputHypoGen = false;
 	private boolean performanceOutputHypoEvalMaha = false;
 	private boolean performanceOutputHypoEvalMulti = false;
+	private boolean performanceOutputFilterCovUpdate = false;
+	private boolean performanceOutputFilterEstUpdate = false;
+	private boolean performanceOutputFilterGain = false;
 
 	public JDVESinkPO(String hostAdress, int port, String serverType) {
 		this.port = port;
@@ -70,6 +76,9 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.hypoEvalMultiLatencies = new LinkedList<Long>();
 		this.predAssLatencies = new LinkedList<Long>();
 		this.predLatencies = new LinkedList<Long>();
+		this.filterCovUpdateLatencies = new LinkedList<Long>();
+		this.filterEstUpdateLatencies = new LinkedList<Long>();
+		this.filterGainUpdateLatencies = new LinkedList<Long>();
 		this.performanceOutputOdy = false;
 		this.performanceOutputObj = false;
 		this.performanceOutputHypoSel = false;
@@ -78,6 +87,9 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.performanceOutputHypoEvalMulti = false;
 		this.performanceOutputPred = false;
 		this.performanceOutputPredAss = false;
+		this.performanceOutputFilterCovUpdate = false;
+		this.performanceOutputFilterEstUpdate = false;
+		this.performanceOutputFilterGain = false;
 	}
 
 	public JDVESinkPO(JDVESinkPO<M> sink) {
@@ -89,6 +101,10 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		this.performanceOutputHypoEvalMulti = sink.performanceOutputHypoEvalMulti;
 		this.performanceOutputPredAss = sink.performanceOutputPredAss;
 		this.performanceOutputPred = sink.performanceOutputPred;
+		this.performanceOutputFilterCovUpdate = sink.performanceOutputFilterCovUpdate;
+		this.performanceOutputFilterEstUpdate = sink.performanceOutputFilterEstUpdate;
+		this.performanceOutputFilterGain = sink.performanceOutputFilterGain;
+
 		this.port = sink.port;
 		this.server = sink.server;
 		this.hostAdress = sink.hostAdress;
@@ -109,6 +125,12 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 				sink.predLatencies);
 		this.predAssLatencies = new LinkedList<Long>(
 				sink.predAssLatencies);
+		this.filterCovUpdateLatencies = new LinkedList<Long>(
+				sink.filterCovUpdateLatencies);
+		this.filterEstUpdateLatencies = new LinkedList<Long>(
+				sink.filterEstUpdateLatencies);
+		this.filterGainUpdateLatencies = new LinkedList<Long>(
+				sink.filterGainUpdateLatencies);
 	}
 
 	@Override
@@ -204,6 +226,18 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 			hypoEvalMultiLatencies.removeFirst();
 		}
 
+		if(filterCovUpdateLatencies.size() == this.countMax) {
+			filterCovUpdateLatencies.removeFirst();
+		}
+
+		if(filterEstUpdateLatencies.size() == this.countMax) {
+			filterEstUpdateLatencies.removeFirst();
+		}
+
+		if(filterGainUpdateLatencies.size() == this.countMax) {
+			filterGainUpdateLatencies.removeFirst();
+		}
+
 		odysseusLatencies.add(object.getMetadata().getLatency());
 		objecttrackingLatencies.add(object.getMetadata().getObjectTrackingLatency());
 
@@ -214,6 +248,9 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		hypoGenLatencies.add(object.getMetadata().getObjectTrackingLatency("Association Generation"));
 		hypoEvalMahaLatencies.add(object.getMetadata().getObjectTrackingLatency("Association Evaluation - Mahalanobis"));
 		hypoEvalMultiLatencies.add(object.getMetadata().getObjectTrackingLatency("Association Evaluation - Multi Distance"));
+		filterCovUpdateLatencies.add(object.getMetadata().getObjectTrackingLatency("Filter Cov Update"));
+		filterEstUpdateLatencies.add(object.getMetadata().getObjectTrackingLatency("Filter Est Update"));
+		filterGainUpdateLatencies.add(object.getMetadata().getObjectTrackingLatency("Filter Gain"));
 
 		// actual odysseus latency
 		output.setAttribute(2, odysseusLatencies.getLast());
@@ -289,8 +326,25 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 			this.performanceOutputHypoEvalMulti = true;
 		}
 
-		// ## FILTERING ()
+		// ## FILTERING (FilterCovarianceUpdatePO, FilterEstimateUpdatePO, FilterGainPO)
 
+		if(filterCovUpdateLatencies.size() == countMax && !this.performanceOutputFilterCovUpdate) {
+			Collections.sort(filterCovUpdateLatencies);
+			System.out.println("######### OBJECT TRACKING : FilterCovarianceUpdatePO (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(filterCovUpdateLatencies)))/1000000) + "ms (" + String.valueOf(this.median(filterCovUpdateLatencies)) + " ns) #########");
+			this.performanceOutputFilterCovUpdate = true;
+		}
+
+		if(filterEstUpdateLatencies.size() == countMax && !this.performanceOutputFilterEstUpdate) {
+			Collections.sort(filterEstUpdateLatencies);
+			System.out.println("######### OBJECT TRACKING : FilterEstimateUpdatePO (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(filterEstUpdateLatencies)))/1000000) + "ms (" + String.valueOf(this.median(filterEstUpdateLatencies)) + " ns) #########");
+			this.performanceOutputFilterEstUpdate = true;
+		}
+
+		if(filterGainUpdateLatencies.size() == countMax && !this.performanceOutputFilterGain) {
+			Collections.sort(filterGainUpdateLatencies);
+			System.out.println("######### OBJECT TRACKING : FilterGainPO (MEDIAN) [after " + this.countMax + "] -> " + String.valueOf(Float.valueOf(String.valueOf(this.median(filterGainUpdateLatencies)))/1000000) + "ms (" + String.valueOf(this.median(filterGainUpdateLatencies)) + " ns) #########");
+			this.performanceOutputFilterGain = true;
+		}
 
 		// iterate over schema and calculate size of byte buffer
 		int bufferSize = 0;
