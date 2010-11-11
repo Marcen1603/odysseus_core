@@ -21,35 +21,8 @@ public final class Privilege implements Serializable {
 		this.privname = owner + "::" + objecturi;
 	}
 
-	public int getID() {
-		return this.ID;
-	}
-
-	public String getPrivname() {
-		return this.privname;
-	}
-
-	public String getOwner() {
-		return this.owner.toString();
-	}
-
-	public boolean ownerIsUser() {
-		if (this.owner instanceof User) {
-			return true;
-		}
-		return false;
-	}
-
-	public List<IUserAction> getOperations() {
-		return this.operations;
-	}
-
-	void setPrivname(String newprivname) {
-		this.privname = newprivname;
-	}
-
-	void setObject(String newobj) {
-		this.objecturi = newobj;
+	void addOperation(IUserAction newOperation) {
+		this.operations.add(newOperation);
 	}
 
 	public void addOperations(List<IUserAction> operations) {
@@ -58,32 +31,6 @@ public final class Privilege implements Serializable {
 				addOperation(action);
 			}
 		}
-	}
-
-	void addOperation(IUserAction newOperation) {
-		this.operations.add(newOperation);
-	}
-
-	public void removeOperations(List<IUserAction> operations) {
-		this.operations.removeAll(operations);
-	}
-
-	public void removeOperation(IUserAction operation) {
-		this.operations.remove(operation);
-	}
-
-	/**
-	 * return the object uri
-	 * 
-	 * @return
-	 */
-	public Object getObject() {
-		return this.objecturi;
-	}
-
-	@Override
-	public String toString() {
-		return this.privname;
 	}
 
 	@Override
@@ -102,11 +49,64 @@ public final class Privilege implements Serializable {
 		return true;
 	}
 
+	public int getID() {
+		return this.ID;
+	}
+
+	/**
+	 * return the object uri
+	 * 
+	 * @return
+	 */
+	public Object getObject() {
+		return this.objecturi;
+	}
+
+	public List<IUserAction> getOperations() {
+		return this.operations;
+	}
+
+	public String getOwner() {
+		return this.owner.toString();
+	}
+
+	public String getPrivname() {
+		return this.privname;
+	}
+
 	public boolean isEmpty() {
 		if (this.operations.isEmpty()) {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean ownerIsUser() {
+		if (this.owner instanceof User) {
+			return true;
+		}
+		return false;
+	}
+
+	public void removeOperation(IUserAction operation) {
+		this.operations.remove(operation);
+	}
+
+	public void removeOperations(List<IUserAction> operations) {
+		this.operations.removeAll(operations);
+	}
+
+	void setObject(String newobj) {
+		this.objecturi = newobj;
+	}
+
+	void setPrivname(String newprivname) {
+		this.privname = newprivname;
+	}
+
+	@Override
+	public String toString() {
+		return this.privname;
 	}
 
 }

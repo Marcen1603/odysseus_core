@@ -25,23 +25,61 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 		this.roles = new ArrayList<Role>();
 	}
 
+	void addRole(Role role) {
+		if (!this.roles.contains(role)) {
+			this.roles.add(role);
+		}
+	}
+
+	@Override
+	public int compareTo(User o) {
+		return this.getUsername().compareTo(o.getUsername());
+	}
+
 	protected void deaktivateUser() {
 		this.active = false;
 	}
 
-	public boolean isActiv() {
-		return this.active;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
 	}
 
-	private void initHash() {
-		try {
-			synchronized (User.class) {
-				if (hash == null) {
-					hash = MessageDigest.getInstance(hashFunction);
-				}
+	public String getPassword() {
+		return password;
+	}
+
+	public Role getRoleByName(String name) {
+		for (Role role : roles) {
+			if (role.getRolename().equals(name)) {
+				return role;
 			}
-		} catch (NoSuchAlgorithmException e) {
 		}
+		return null;
+	}
+
+	public List<Role> getRoles() {
+		return this.roles;
+	}
+
+	public Session getSession() {
+		return this.session;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 	private String hash(String password) {
@@ -67,14 +105,6 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 		}
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -82,81 +112,6 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 		result = prime * result
 				+ ((username == null) ? 0 : username.hashCode());
 		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (username == null) {
-			if (other.username != null)
-				return false;
-		} else if (!username.equals(other.username))
-			return false;
-		return true;
-	}
-
-	public boolean validatePassword(String password, boolean passwordIsHash) {
-		if (passwordIsHash) {
-			return password.equals(this.password);
-		} else {
-			String h = hash(password);
-			return this.password.equals(h);
-		}
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = hash(password);
-	}
-
-	@Override
-	public String toString() {
-		return username;// + " " + password;
-	}
-
-	@Override
-	public int compareTo(User o) {
-		return this.getUsername().compareTo(o.getUsername());
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
-
-	public Session getSession() {
-		return this.session;
-	}
-
-	void addRole(Role role) {
-		if (!this.roles.contains(role)) {
-			this.roles.add(role);
-		}
-	}
-
-	void removeRole(Role role) {
-		this.roles.remove(role);
-	}
-
-	public List<Role> getRoles() {
-		return this.roles;
-	}
-
-	public Role getRoleByName(String name) {
-		for (Role role : roles) {
-			if (role.getRolename().equals(name)) {
-				return role;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -173,6 +128,51 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 			}
 		}
 		return null;
+	}
+
+	private void initHash() {
+		try {
+			synchronized (User.class) {
+				if (hash == null) {
+					hash = MessageDigest.getInstance(hashFunction);
+				}
+			}
+		} catch (NoSuchAlgorithmException e) {
+		}
+	}
+
+	public boolean isActiv() {
+		return this.active;
+	}
+
+	void removeRole(Role role) {
+		this.roles.remove(role);
+	}
+
+	public void setPassword(String password) {
+		this.password = hash(password);
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	@Override
+	public String toString() {
+		return username;// + " " + password;
+	}
+
+	public boolean validatePassword(String password, boolean passwordIsHash) {
+		if (passwordIsHash) {
+			return password.equals(this.password);
+		} else {
+			String h = hash(password);
+			return this.password.equals(h);
+		}
 	}
 
 }

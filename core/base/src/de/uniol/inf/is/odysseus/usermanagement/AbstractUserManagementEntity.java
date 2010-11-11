@@ -13,10 +13,6 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		this.privileges = new ArrayList<Privilege>();
 	}
 
-	public List<Privilege> getPrivileges() {
-		return this.privileges;
-	}
-
 	void addPrivilege(Privilege priv) {
 		if (!this.privileges.contains(priv)) {
 			this.privileges.add(priv);
@@ -25,12 +21,8 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		}
 	}
 
-	void removePrivilege(String objecturi) {
-		for (Privilege priv : this.privileges) {
-			if (priv.getObject().equals(objecturi)) {
-				this.privileges.remove(priv);
-			}
-		}
+	public List<Privilege> getPrivileges() {
+		return this.privileges;
 	}
 
 	/**
@@ -47,6 +39,14 @@ abstract class AbstractUserManagementEntity implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	void removePrivilege(String objecturi) {
+		for (Privilege priv : this.privileges) {
+			if (priv.getObject().equals(objecturi)) {
+				this.privileges.remove(priv);
+			}
+		}
 	}
 
 }

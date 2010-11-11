@@ -14,18 +14,6 @@ public final class Role extends AbstractUserManagementEntity implements
 		this.ID = newid;
 	}
 
-	public int getID() {
-		return this.ID;
-	}
-
-	public String getRolename() {
-		return this.rolename;
-	}
-
-	void setRolename(String rolename) {
-		this.rolename = rolename;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -45,6 +33,18 @@ public final class Role extends AbstractUserManagementEntity implements
 		}
 
 		return true;
+	}
+
+	public int getID() {
+		return this.ID;
+	}
+
+	public String getRolename() {
+		return this.rolename;
+	}
+
+	void setRolename(String rolename) {
+		this.rolename = rolename;
 	}
 
 	@Override
