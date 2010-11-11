@@ -5,15 +5,12 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.test;
 import java.util.ArrayList;
 import java.util.List;
 
-//import junit.framework.TestCase;
-//import org.junit.Test;
-
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.LinearPredictionFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IPredictionFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.LinearPredictionFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;

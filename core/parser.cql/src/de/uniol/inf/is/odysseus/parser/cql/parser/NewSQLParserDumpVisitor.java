@@ -644,4 +644,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTMVCovarianceRow node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

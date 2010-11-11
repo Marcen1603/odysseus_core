@@ -38,8 +38,6 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.store.StoreException;
-import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
 import de.uniol.inf.is.odysseus.usermanagement.IllegalServiceLevelDefinition;
@@ -1118,6 +1116,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			identifier.add(((ASTIdentifier) node.jjtGetChild(i)).getName());
 		}
 		return identifier;
+	}
+
+	@Override
+	public Object visit(ASTMVCovarianceRow node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

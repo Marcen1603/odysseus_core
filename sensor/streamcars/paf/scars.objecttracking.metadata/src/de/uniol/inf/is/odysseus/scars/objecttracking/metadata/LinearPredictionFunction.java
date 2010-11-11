@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata;
+package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import java.util.Arrays;
 
@@ -7,7 +7,6 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.util.CovarianceMapper;
 import de.uniol.inf.is.odysseus.scars.util.TypeCaster;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -207,21 +206,4 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	public PredictionExpression[] getExpressions() {
 		return expressions;
 	}
-	
-	private void printMatrix(String description, double[][] m) {
-		System.out.println(description);
-		for(int row = 0; row < m.length; row++) {
-			System.out.println();
-			for(int col = 0; col <m[0].length; col++) {
-				System.out.print(m[row][col] +"\t");
-			}
-		}
-		System.out.println();
-	}
-
-
-
-
-
-
 }

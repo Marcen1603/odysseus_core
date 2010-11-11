@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf;
+package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import java.util.ArrayList;
 import java.util.HashMap;

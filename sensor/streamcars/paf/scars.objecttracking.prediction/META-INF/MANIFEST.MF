@@ -8,9 +8,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.logicaloperator,
- de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
@@ -20,14 +18,8 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.scars.objecttracking.metadata,
  de.uniol.inf.is.odysseus.scars.util,
- de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
- org.junit,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator,
- de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator,
- de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf,
- de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata
-Require-Bundle: Commons.Math;bundle-version="1.0.0",
- org.junit
+ de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator

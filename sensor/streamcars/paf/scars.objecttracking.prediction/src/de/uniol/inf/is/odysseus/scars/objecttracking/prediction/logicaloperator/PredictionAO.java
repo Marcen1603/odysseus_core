@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IPredictionFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

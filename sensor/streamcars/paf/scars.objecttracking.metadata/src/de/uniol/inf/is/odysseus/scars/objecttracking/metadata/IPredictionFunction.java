@@ -1,8 +1,7 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata;
+package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface IPredictionFunction<M extends IProbability> {

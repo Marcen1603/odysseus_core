@@ -3,19 +3,20 @@ package de.uniol.inf.is.odysseus.scars.transform.rules;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.ILatency;
-import de.uniol.inf.is.odysseus.metadata.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataUpdatePO;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaDataInitializer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings("all")
 public class TMetadataInitLatencyProbabilityStreamCarsRule extends AbstractTransformationRule<MetadataCreationPO>{
 
 	@Override
@@ -24,6 +25,7 @@ public class TMetadataInitLatencyProbabilityStreamCarsRule extends AbstractTrans
 	}
 
 	@Override
+	@SuppressWarnings("all")
 	public void execute(MetadataCreationPO operator,
 			TransformationConfiguration config) {
 		
@@ -51,7 +53,15 @@ public class TMetadataInitLatencyProbabilityStreamCarsRule extends AbstractTrans
 		
 		SDFAttributeList outputSchema = operator.getOutputSchema();
 
-		IMetadataUpdater mFac = new StreamCarsMetaDataInitializer(outputSchema);
+		StreamCarsMetaDataInitializer mFac = new StreamCarsMetaDataInitializer(outputSchema);
+		
+		try {
+			AbstractSensorAccessPO<?, ?> src = (AbstractSensorAccessPO<?, ?>) operator.getSubscribedToSource(0).getTarget();
+			mFac.setObjectListPath(src.getObjectListPath());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
 		MetadataUpdatePO muPO = new MetadataUpdatePO( mFac );
 		muPO.setOutputSchema(outputSchema);
 		
@@ -67,6 +77,7 @@ public class TMetadataInitLatencyProbabilityStreamCarsRule extends AbstractTrans
 	}
 
 	@Override
+	@SuppressWarnings("all")
 	public boolean isExecutable(MetadataCreationPO operator,
 			TransformationConfiguration config) {
 		if(config.getMetaTypes().contains(ILatency.class.getCanonicalName()) &&

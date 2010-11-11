@@ -34,15 +34,15 @@ public class TestFactory
     
     // create covariance lists for each measurement attribute
     
-    ArrayList<Double> maList0 = new ArrayList<Double>();
+    ArrayList<String> maList0 = new ArrayList<String>();
     for (double wert : TestFactory.testCovMatrix[0])
     {
-      maList0.add(new Double(wert));
+      maList0.add(String.valueOf(wert));
     }
-    ArrayList<Double> maList1 = new ArrayList<Double>();
+    ArrayList<String> maList1 = new ArrayList<String>();
     for (double wert : TestFactory.testCovMatrix[1])
     {
-      maList1.add(new Double(wert));
+      maList1.add(String.valueOf(wert));
     }
     
     // create datatypes

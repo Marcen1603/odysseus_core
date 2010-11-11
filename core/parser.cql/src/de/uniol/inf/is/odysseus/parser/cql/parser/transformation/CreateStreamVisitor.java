@@ -173,7 +173,12 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		if (SDFDatatypes.isDate(attribute.getDatatype())) {
 			attribute.addDtConstraint("format", astAttrType.getDateFormat());
 		}
-		attribute.setCovariance(astAttrType.getRow());
+		if (SDFDatatypes.isMeasurementValue(attribute.getDatatype())
+				&& astAttrType.jjtGetNumChildren() > 0) {
+			attribute
+					.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+
+		}
 		this.attributes.add(attribute);
 		return data;
 	}

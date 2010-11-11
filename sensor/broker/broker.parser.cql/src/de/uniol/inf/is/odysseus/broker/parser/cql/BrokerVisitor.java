@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.broker.parser.cql;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
@@ -254,7 +256,12 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 				if (SDFDatatypes.isDate(attribute.getDatatype())) {
 					attribute.addDtConstraint("format", astAttrType.getDateFormat());
 				}
-				attribute.setCovariance(astAttrType.getRow());
+				if (SDFDatatypes.isMeasurementValue(attribute.getDatatype())
+						&& astAttrType.jjtGetNumChildren() > 0) {
+					attribute
+							.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+
+				}
 				attributes.add(attribute);
 			}
 		}
@@ -275,7 +282,12 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 						if (SDFDatatypes.isDate(attribute.getDatatype())) {
 							attribute.addDtConstraint("format", astAttrType.getDateFormat());
 						}
-						attribute.setCovariance(astAttrType.getRow());
+						if (SDFDatatypes.isMeasurementValue(attribute.getDatatype())
+								&& astAttrType.jjtGetNumChildren() > 0) {
+							attribute
+									.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+
+						}
 						metaAttributes.add(attribute);
 					}
 				} else if( node.jjtGetChild(2) instanceof ASTORSchemaDefinition) {
@@ -385,7 +397,12 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		
 		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName);
 		attribute.setDatatype(astAttrType.getType());
-		attribute.setCovariance(astAttrType.getRow());
+		if (SDFDatatypes.isMeasurementValue(attribute.getDatatype())
+				&& astAttrType.jjtGetNumChildren() > 0) {
+			attribute
+					.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+
+		}
 		if (SDFDatatypes.isDate(attribute.getDatatype())) 
 			attribute.addDtConstraint("format", astAttrType.getDateFormat());
 		

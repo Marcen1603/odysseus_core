@@ -4,15 +4,10 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.HypothesisSelectionPO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-
 public class TestHypothesisSelectionPO extends TestCase{
 
 	@Test
 	public void testPO() {
-		HypothesisSelectionPO<StreamCarsMetaData<Object>> po = new HypothesisSelectionPO<StreamCarsMetaData<Object>>();
-
 		double[][] evalMatrix = new double[3][3];
 		evalMatrix[0][0] = 0;
 		evalMatrix[0][1] = 10;

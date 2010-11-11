@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
@@ -11,13 +8,9 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.SchemaInfo;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIterator;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
@@ -25,17 +18,22 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * project group StreamCars.
  * <p>
  * See public methods for details.
- *
+ * 
  * @author Hauke
  * @author Sven
  */
-public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer & ITimeInterval & ILatency >
+public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer & ITimeInterval & ILatency>
 		extends AbstractMetadataUpdater<M, MVRelationalTuple<M>> {
 	// set by constructor/initMetadata
 	// used by updateMetadata
+	private CovarianceExpressionMatrix covarianceExpressionMatrix;
+
 	private SDFAttributeList schema;
-	private SchemaIndexPath path;
-	private double[][] covMatrix = null;
+	private SchemaIndexPath timeStampSchemaIndexPath;
+	private String objectListPath = "";
+	private SchemaHelper schemaHelper;
+
+	private SchemaIndexPath objListSchemaIndexPath;
 
 	/**
 	 * Creates a StreamCarsMetaDataInitializer object and initializes the meta
@@ -56,7 +54,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	 * {@link #updateMetaData(MVRelationalTuple)} is set to the covariance list
 	 * of each measurement value attribute found in the schema respectively (see
 	 * {@link SDFAttribute#getCovariance()}).
-	 *
+	 * 
 	 * @param schema
 	 *            the schema, used to initialize meta data, NOTE: has to be the
 	 *            schema of the tuples which shall be initialized by this
@@ -64,70 +62,14 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	 */
 	public StreamCarsMetaDataInitializer(SDFAttributeList schema) {
 		this.schema = schema;
-		SchemaHelper hlp = new SchemaHelper(schema);
-		String name = hlp.getStartTimestampFullAttributeName();
-		path = hlp.getSchemaIndexPath(name);
-		this.initMetaData();
-	}
 
-	private void initMetaData() {
-		this.initProbabilityMetaData();
-		// invoke more StreamCars meta data initializers here
-	}
+		this.schemaHelper = new SchemaHelper(schema);
+		this.timeStampSchemaIndexPath = this.schemaHelper
+				.getSchemaIndexPath(this.schemaHelper
+						.getStartTimestampFullAttributeName());
 
-	private void initProbabilityMetaData() {
-		//
-		// get measurement attributes of schema given to constructor
-		//
-
-		// go through all attributes in schema
-		List<SDFAttribute> mAttrs = new ArrayList<SDFAttribute>();
-		for (SchemaInfo info : new SchemaIterator(this.schema)) {
-
-			// get next schema attribute from iterator
-			SDFAttribute attr = info.attribute;
-
-			// if current attribute is measurement attribute
-			SDFDatatype type = attr.getDatatype();
-			// Notiz: SDFDatatype.isXXX(SDFDatatype) sollte false liefern, falls
-			// übergebener
-			// SDFDatatype null ist!
-			if (type != null && SDFDatatypes.isMeasurementValue(type)) {
-
-				// save attribute for later use
-				mAttrs.add(attr);
-			}
-		}
-
-		//
-		// initialize covariance matrix meta attribute
-		//
-
-		// number_of_measurement_attributes * number_of_measurement_attributes
-		this.covMatrix = new double[mAttrs.size()][mAttrs.size()];
-
-		// current row of covariance matrix (corresponds to current measurement
-		// attribute)
-		int row = 0;
-
-		// work through all measurement attributes saved before
-		for (SDFAttribute mAttr : mAttrs) {
-
-			// get covariance list out of attribute
-			List<?> covarianceList = mAttr.getCovariance();
-
-			// initialize current matrix row with covariance list
-			for (int i = 0; i < covarianceList.size(); ++i) {
-				// a ClassCastException being thrown by the following line
-				// means that the covariance list of a measurement value
-				// attribute
-				// does not entirely contain double objects (type Double)
-				this.covMatrix[row][i] = (Double) covarianceList.get(i);
-			}
-
-			// next row
-			row++;
-		}
+		this.covarianceExpressionMatrix = new CovarianceExpressionMatrix(
+				this.schema);
 	}
 
 	/**
@@ -139,7 +81,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	 * <p>
 	 * NOTE: It is assumed that the schema used to initialize this object
 	 * represents the schema of the tuple initialized by this method.
-	 *
+	 * 
 	 * @param tuple
 	 *            tuple of which meta data (M) should be initialized, NOTE: has
 	 *            to match schema given to constructor!
@@ -158,11 +100,12 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	}
 
 	private void initTimeStampMetaData(MVRelationalTuple<M> tupleGiven) {
-		PointInTime p = new PointInTime( (Long)path.toTupleIndexPath(tupleGiven).getTupleObject());
+		PointInTime p = new PointInTime((Long) timeStampSchemaIndexPath
+				.toTupleIndexPath(tupleGiven).getTupleObject());
 		tupleGiven.getMetadata().setStart(p);
 	}
 
-	private void initLatencyData(MVRelationalTuple<M> tupleGiven){
+	private void initLatencyData(MVRelationalTuple<M> tupleGiven) {
 		tupleGiven.getMetadata().setLatencyStart(System.nanoTime());
 	}
 
@@ -171,45 +114,33 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	}
 
 	private void initProbabilityMetaDataOfTuple(MVRelationalTuple<M> tupleGiven) {
-		//
-		// set covariance matrix of tuple given
-		// (workaround since tuple iterator does not take tuple given itself as
-		// an
-		// element)
-		//
+		if (this.objListSchemaIndexPath == null) {
+			this.objListSchemaIndexPath = this.schemaHelper
+					.getSchemaIndexPath(this.objectListPath);
+		}
 
-		IProbability iProbabilityMetaData = tupleGiven.getMetadata();
-		iProbabilityMetaData.setCovariance(this.covMatrix);
+		TupleIndexPath objectListTupleIndexPath = this.objListSchemaIndexPath
+				.toTupleIndexPath(tupleGiven);
+		if (objectListTupleIndexPath != null) {
+			@SuppressWarnings("unchecked")
+			MVRelationalTuple<M> objList = (MVRelationalTuple<M>) objectListTupleIndexPath
+					.getTupleObject();
 
-		//
-		// set covariance matrix of tuples in tuple given
-		//
+			this.covarianceExpressionMatrix.setRootTuple(tupleGiven);
 
-		// navigate through all tuples in tuple given
-		// use schema given to constructor as root schema
-		for (TupleInfo info : new TupleIterator(tupleGiven, this.schema)) {
-
-			// get next tuple object from iterator
-			Object tupleObject = info.tupleObject;
-
-			// if it is a tuple (could also be a double, int, etc.)
-			if (tupleObject instanceof MVRelationalTuple<?>) {
-				MVRelationalTuple<?> tuple = (MVRelationalTuple<?>) tupleObject;
-
-				// then get probability meta data of tuple
-				Object metadataObject = tuple.getMetadata();
-				// we know that the tuple cant't contain any meta data but
-				// probability
-				// meta data (type IProbability), since it says so in
-				// declaration
-				// of MVRelationalTuple
-				iProbabilityMetaData = (IProbability) metadataObject;
-
-				// set covariance matrix to the one set by initMetadataItself
-				// a NullPointerException thrown by this line
-				// means that meta data creation failed
-				iProbabilityMetaData.setCovariance(this.covMatrix);
+			for (int k = 0; k < objList.getAttributeCount(); k++) {
+				MVRelationalTuple<M> object = objList.getAttribute(k);
+				object.getMetadata().setCovariance(
+						this.covarianceExpressionMatrix.calculateMatrix(k));
 			}
 		}
+	}
+
+	public String getObjectListPath() {
+		return this.objectListPath;
+	}
+
+	public void setObjectListPath(String objectListPath) {
+		this.objectListPath = objectListPath;
 	}
 }

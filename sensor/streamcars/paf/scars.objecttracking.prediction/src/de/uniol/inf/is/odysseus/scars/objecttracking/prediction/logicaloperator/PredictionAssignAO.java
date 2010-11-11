@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

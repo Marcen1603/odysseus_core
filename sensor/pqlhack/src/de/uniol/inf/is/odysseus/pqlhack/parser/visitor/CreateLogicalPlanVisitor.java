@@ -106,9 +106,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterCovarianceUpdateAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterEstimateUpdateAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterGainAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.logicaloperator.TemporaryDataBouncerAO;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.logicaloperator.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.objectselector.logicaloperator.DistanceObjectSelectorAO;

@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperatorFactory;
@@ -185,7 +188,7 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 					+ "("
 					+ attributeResolver.getAttribute(curChild.jjtGetChild(1)
 							.toString()) + ")";
-		} catch (AmgigiousAttributeException e) {			
+		} catch (AmgigiousAttributeException e) {
 			e.printStackTrace();
 		} catch (NoSuchAttributeException e) {
 			e.printStackTrace();
@@ -518,12 +521,12 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTBrokerSource node, Object data) {	
+	public Object visit(ASTBrokerSource node, Object data) {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTBrokerSelectInto node, Object data) {		
+	public Object visit(ASTBrokerSelectInto node, Object data) {
 		return null;
 	}
 
@@ -639,10 +642,10 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTPercentileConstraint node, Object data) {
 		return null;
-	}	
+	}
 
 	@Override
-	public Object visit(ASTCreateFromDatabase node, Object data) {	
+	public Object visit(ASTCreateFromDatabase node, Object data) {
 		return null;
 	}
 
@@ -652,7 +655,7 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {	
+	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {
 		return null;
 	}
 
@@ -662,7 +665,7 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSaveMetaData node, Object data) {		
+	public Object visit(ASTSaveMetaData node, Object data) {
 		return null;
 	}
 
@@ -710,7 +713,6 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		return null;
 	}
 
-
 	@Override
 	public Object visit(ASTRevokeStatement node, Object data) {
 		// TODO Auto-generated method stub
@@ -733,5 +735,14 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTRevokeRoleStatement node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTMVCovarianceRow node, Object data) {
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+			list.add(node.jjtGetChild(i).toString().trim());
+		}
+		return list;
 	}
 }

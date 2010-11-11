@@ -72,8 +72,7 @@ public class Provider implements IProvider {
 	@Override
 	public MVRelationalTuple<?> nextTuple() {
 		/**
-		 * TODO
-		 * Kollisionserkennung?
+		 * TODO Kollisionserkennung?
 		 */
 		this.currentTimeStamp += this.delay;
 
@@ -82,7 +81,7 @@ public class Provider implements IProvider {
 			cm.getCalcModel().calculateAll();
 		}
 
-		//Prüfen ob Auto im Sichtbereich
+		// Prüfen ob Auto im Sichtbereich
 		Iterator<CarModel> iterator = this.state.iterator();
 		while (iterator.hasNext()) {
 			CarModel cm = iterator.next();
@@ -95,8 +94,10 @@ public class Provider implements IProvider {
 		// ggf. mit neuen Autos auffüllen
 		if (this.state.size() < this.numOfCars) {
 			if (this.freeEntranceSlot()) {
-				ICalculationModel calcModel = CalculationModelFactory.getInstance().getCalculationModel(
-						CalculationModelFactory.OVERTAKE_CALCULATION_MODEL);
+				ICalculationModel calcModel = CalculationModelFactory
+						.getInstance()
+						.getCalculationModel(
+								CalculationModelFactory.OVERTAKE_CALCULATION_MODEL);
 				calcModel.init(new Float(1.5));
 				calcModel.setDelay(this.delay);
 				Integer id = idQueue.poll();
@@ -110,48 +111,48 @@ public class Provider implements IProvider {
 		MVRelationalTuple<?> scan = createTuple(2);
 		root.setAttribute(0, scan);
 
-//		MVRelationalTuple<?> timestamp = createTuple(1);
-//		timestamp.setAttribute(0, this.currentTimeStamp);
+		// MVRelationalTuple<?> timestamp = createTuple(1);
+		// timestamp.setAttribute(0, this.currentTimeStamp);
 
 		MVRelationalTuple<?> cars = createTuple(this.state.size());
 		for (int i = 0; i < this.state.size(); i++) {
 			CarModel cm = this.state.get(i);
 
-//			MVRelationalTuple<?> type = createTuple(1);
-//			type.setAttribute(0, cm.getType());
-//
-//			MVRelationalTuple<?> id = createTuple(1);
-//			id.setAttribute(0, cm.getId());
-//
-//			MVRelationalTuple<?> laneid = createTuple(1);
-//			laneid.setAttribute(0, cm.getLaneid());
-//
-//			MVRelationalTuple<?> posx = createTuple(1);
-//			posx.setAttribute(0, cm.getPosx());
-//
-//			MVRelationalTuple<?> posy = createTuple(1);
-//			posy.setAttribute(0, cm.getPosy());
-//
-//			MVRelationalTuple<?> posz = createTuple(1);
-//			posz.setAttribute(0, cm.getPosz());
-//
-//			MVRelationalTuple<?> roll = createTuple(1);
-//			roll.setAttribute(0, cm.getRoll());
-//
-//			MVRelationalTuple<?> pitch = createTuple(1);
-//			pitch.setAttribute(0, cm.getPitch());
-//
-//			MVRelationalTuple<?> heading = createTuple(1);
-//			heading.setAttribute(0, cm.getHeading());
-//
-//			MVRelationalTuple<?> velocity = createTuple(1);
-//			velocity.setAttribute(0, cm.getVelocity());
-//
-//			MVRelationalTuple<?> length = createTuple(1);
-//			length.setAttribute(0, cm.getLength());
-//
-//			MVRelationalTuple<?> width = createTuple(1);
-//			width.setAttribute(0, cm.getWidth());
+			// MVRelationalTuple<?> type = createTuple(1);
+			// type.setAttribute(0, cm.getType());
+			//
+			// MVRelationalTuple<?> id = createTuple(1);
+			// id.setAttribute(0, cm.getId());
+			//
+			// MVRelationalTuple<?> laneid = createTuple(1);
+			// laneid.setAttribute(0, cm.getLaneid());
+			//
+			// MVRelationalTuple<?> posx = createTuple(1);
+			// posx.setAttribute(0, cm.getPosx());
+			//
+			// MVRelationalTuple<?> posy = createTuple(1);
+			// posy.setAttribute(0, cm.getPosy());
+			//
+			// MVRelationalTuple<?> posz = createTuple(1);
+			// posz.setAttribute(0, cm.getPosz());
+			//
+			// MVRelationalTuple<?> roll = createTuple(1);
+			// roll.setAttribute(0, cm.getRoll());
+			//
+			// MVRelationalTuple<?> pitch = createTuple(1);
+			// pitch.setAttribute(0, cm.getPitch());
+			//
+			// MVRelationalTuple<?> heading = createTuple(1);
+			// heading.setAttribute(0, cm.getHeading());
+			//
+			// MVRelationalTuple<?> velocity = createTuple(1);
+			// velocity.setAttribute(0, cm.getVelocity());
+			//
+			// MVRelationalTuple<?> length = createTuple(1);
+			// length.setAttribute(0, cm.getLength());
+			//
+			// MVRelationalTuple<?> width = createTuple(1);
+			// width.setAttribute(0, cm.getWidth());
 
 			MVRelationalTuple<?> car = createTuple(12);
 			car.setAttribute(0, cm.getType());
@@ -169,30 +170,18 @@ public class Provider implements IProvider {
 
 			cars.setAttribute(i, car);
 		}
-		
-		scan.setAttribute(0,  this.currentTimeStamp);
+
+		scan.setAttribute(0, this.currentTimeStamp);
 		scan.setAttribute(1, cars);
-		
-		//this.printCarModels();
+
+		// this.printCarModels();
 
 		return root;
 	}
 
-	private void printCarModels() {
-		if (this.currentTimeStamp % 1000 == 0) {
-			System.out.println();
-			for (int i = 0; i < 80; i++)
-				System.out.print("*");
-			System.out.println();
-			System.out.println("Timestamp: " + this.currentTimeStamp);
-			for (CarModel cm : this.state) {
-				System.out.println(cm);
-			}
-		}
-	}
-
 	/**
 	 * Prüft, ob genug Platz für ein weiteres Auto ist
+	 * 
 	 * @return
 	 */
 	private boolean freeEntranceSlot() {
@@ -232,8 +221,8 @@ public class Provider implements IProvider {
 
 	@Override
 	public SDFAttributeList getSchema(String sourceName) {
-		double mvValue = 1.0;
-		double mvCorrelationValue = 0.0; 
+		String mvValue = "1.0";
+		String mvCorrelationValue = "0.0";
 		SDFAttribute type = new SDFAttribute(sourceName, "type");
 		type.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 
@@ -245,31 +234,80 @@ public class Provider implements IProvider {
 
 		SDFAttribute posx = new SDFAttribute(sourceName, "posx");
 		posx.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		posx.setCovariance(Arrays.asList(new Double[] {mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
+		posx.setCovariance(Arrays.asList(new String[] {
+				mvValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue }));
 
 		SDFAttribute posy = new SDFAttribute(sourceName, "posy");
 		posy.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		posy.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
+		posy.setCovariance(Arrays.asList(new String[] {
+			mvCorrelationValue,
+			mvValue,
+			mvCorrelationValue,
+			mvCorrelationValue,
+			mvCorrelationValue,
+			mvCorrelationValue,
+			mvCorrelationValue }));
 
 		SDFAttribute posz = new SDFAttribute(sourceName, "posz");
 		posz.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		posz.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
+		posz.setCovariance(Arrays.asList(new String[] {
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue }));
 
 		SDFAttribute roll = new SDFAttribute(sourceName, "roll");
 		roll.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		roll.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue}));
+		roll.setCovariance(Arrays.asList(new String[] {
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue }));
 
 		SDFAttribute pitch = new SDFAttribute(sourceName, "pitch");
 		pitch.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		pitch.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue, mvCorrelationValue}));
+		pitch.setCovariance(Arrays.asList(new String[] {
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvValue,
+				mvCorrelationValue,
+				mvCorrelationValue }));
 
 		SDFAttribute heading = new SDFAttribute(sourceName, "heading");
 		heading.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		heading.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue}));
+		heading.setCovariance(Arrays.asList(new String[] {
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvValue,
+				mvCorrelationValue }));
 
 		SDFAttribute velocity = new SDFAttribute(sourceName, "velocity");
 		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		velocity.setCovariance(Arrays.asList(new Double[] {mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvCorrelationValue, mvValue}));
+		velocity.setCovariance(Arrays.asList(new String[] {
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvCorrelationValue,
+				mvValue}));
 
 		SDFAttribute length = new SDFAttribute(sourceName, "length");
 		length.setDatatype(SDFDatatypeFactory.getDatatype("Float"));
@@ -295,7 +333,7 @@ public class Provider implements IProvider {
 		SDFAttribute cars = new SDFAttribute(sourceName, "cars");
 		cars.setDatatype(SDFDatatypeFactory.getDatatype("List"));
 		cars.addSubattribute(car);
-		
+
 		SDFAttribute timestamp = new SDFAttribute(sourceName, "timestamp");
 		timestamp.setDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
 
@@ -307,7 +345,6 @@ public class Provider implements IProvider {
 		SDFAttributeListExtended schema = new SDFAttributeListExtended();
 		schema.add(scan);
 
-		
 		return schema;
 	}
 

@@ -95,19 +95,8 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 		return new DummyAccessMVPO<M>(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
-		Class<M> clazz = (Class<M>) MetadataRegistry.getMetadataType(toStringSet(ITimeInterval.class, 
-				IPredictionFunctionKey.class, 
-				ILatency.class, 
-				IProbability.class, 
-				IApplicationTime.class, 
-				IConnectionContainer.class,
-				IGain.class));
-		
-		assignMetadata(clazz, this.buffer);
-		metadataCreator.updateMetadata((MVRelationalTuple<StreamCarsMetaData<Object>>)this.buffer);
 		transfer(this.buffer);
 		this.buffer = null;
 		lastTime = System.currentTimeMillis();

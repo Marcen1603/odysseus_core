@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata;
+package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 
 
 
