@@ -51,6 +51,13 @@ public class StreamClientHandler extends Thread {
 		this.relationalTupleHandler = new RelationalTupleObjectHandler<ITimeInterval>(this.streamType.getSchema());
 	}
 
+	private static long start = -1;
+	
+	private void sleepUntil(long fixedTime){
+		while (System.currentTimeMillis() < fixedTime)
+				;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -58,13 +65,19 @@ public class StreamClientHandler extends Thread {
 	 */
 	@Override
 	public void run() {
+		if(start == -1){
+			start = System.currentTimeMillis() + 20000;
+		}
+		this.sleepUntil(start);
+		
 		long currentTime = 0L;
 		while (true) {
 			currentTime++;
 
 			try {
 				sleep(this.streamType.getWaitingMillis());
-				transferTuple(currentTime*this.streamType.getWaitingMillis());
+				transferTuple(System.currentTimeMillis() - start);
+//				transferTuple(currentTime*this.streamType.getWaitingMillis());
 				itemCount++;
 			} catch (IOException e) {
 				this.println("Client closed connection");
