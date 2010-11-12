@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
+import java.util.Date;
 
 final public class Session implements Serializable {
 
@@ -25,7 +26,7 @@ final public class Session implements Serializable {
 
 	@Override
 	public String toString() {
-		return key+" "+timestamp;
+		return key+" "+new Date(timestamp);
 	}
 	
 }

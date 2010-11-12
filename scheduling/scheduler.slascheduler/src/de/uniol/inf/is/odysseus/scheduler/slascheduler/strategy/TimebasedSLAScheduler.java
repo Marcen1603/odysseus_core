@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -21,6 +22,10 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	public TimebasedSLAScheduler(TimebasedSLAScheduler timebasedSLAScheduler) {
 		super(timebasedSLAScheduler);
 		schedulingHistory = new HashMap<IScheduling, ScheduleMeta>();
+		for (Entry<IScheduling, ScheduleMeta> h : timebasedSLAScheduler.schedulingHistory
+				.entrySet()) {
+			schedulingHistory.put(h.getKey(), new ScheduleMeta(h.getValue()));
+		}
 	}
 
 	public TimebasedSLAScheduler(PrioCalcMethod method) {
@@ -30,8 +35,11 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 
 	@Override
 	public void addPlan(IScheduling scheduling) {
-		super.addPlan(scheduling);
-		schedulingHistory.put(scheduling, new ScheduleMeta(-1, 0, 0));
+		synchronized (queue) {
+			queue.add(scheduling);
+			scheduling.addSchedulingEventListener(this);
+			schedulingHistory.put(scheduling, new ScheduleMeta(-1, 0, 0));
+		}
 	}
 
 	@Override
@@ -45,29 +53,33 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 				// 2. Step: Calc Prio for each PartialPlan
 				for (IScheduling is : queue) {
 					ScheduleMeta scheduleMeta = schedulingHistory.get(is);
-					double value = scheduleMeta.inTimeCount
-							/ (scheduleMeta.allSchedulingsCount * 1.0);
+					double value = scheduleMeta.allSchedulingsCount > 0 ? scheduleMeta.inTimeCount
+							/ (scheduleMeta.allSchedulingsCount * 1.0)
+							: 0;
 					// Calc prio for each query
+					IServiceLevelAgreement sla = null;
 					for (IQuery q : is.getPlan().getQueries()) {
-						// A query can be part of more than one scheduling
-						// and only needs to be calculated ones
-						if (calcedUrg.containsKey(q))
-							continue;
-
-						IServiceLevelAgreement sla = TenantManagement
-								.getInstance().getSLAForUser(q.getUser());
-						if (((ITimeBasedServiceLevelAgreement) sla)
-								.getTimeperiod() < minTimePeriod) {
-							minTimePeriod = ((ITimeBasedServiceLevelAgreement) sla)
-									.getTimeperiod();
-						}
-						double urge = 0.0;
 						try {
+							// A query can be part of more than one scheduling
+							// and only needs to be calculated ones
+							if (calcedUrg.containsKey(q))
+								continue;
+
+							sla = TenantManagement.getInstance().getSLAForUser(
+									q.getUser());
+							if (((ITimeBasedServiceLevelAgreement) sla)
+									.getTimeperiod() < minTimePeriod) {
+								minTimePeriod = ((ITimeBasedServiceLevelAgreement) sla)
+										.getTimeperiod();
+							}
+							double urge = 0.0;
 							urge = sla.getMaxOcMg(value);
-						} catch (NotInitializedException e) {
+							calcedUrg.put(q, urge);
+						} catch (Exception e) {
+							e.printStackTrace();
 							throw new RuntimeException(e);
 						}
-						calcedUrg.put(q, urge);
+
 					}
 					// Calc Prio for current Scheduling, based
 					// on all queries
@@ -125,6 +137,12 @@ class ScheduleMeta {
 		this.lastSchedule = lastSchedule;
 		this.inTimeCount = inTimeCount;
 		this.allSchedulingsCount = allSchedulingsCount;
+	}
+
+	public ScheduleMeta(ScheduleMeta value) {
+		this.lastSchedule = value.lastSchedule;
+		this.inTimeCount = value.inTimeCount;
+		this.allSchedulingsCount = value.allSchedulingsCount;
 	}
 
 }
