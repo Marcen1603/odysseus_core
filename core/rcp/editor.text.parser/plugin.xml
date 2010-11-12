@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword" name="PreParserKeyword" schema="schema/de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword.exsd"/>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword">
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ParserPreParserKeyword"
+            name="PARSER">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.TransCfgPreParserKeyword"
+            name="TRANSCFG">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.QueryPreParserKeyword"
+            name="QUERY">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.CyclicQueryPreParserKeyword"
+            name="CYCLICQUERY">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LoginUserPreParserKeyword"
+            name="LOGIN">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LogoutUserPreParserKeyword"
+            name="LOGOUT">
+      </PreParserKeyword>
+   </extension>
+</plugin>
