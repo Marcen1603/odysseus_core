@@ -14,18 +14,68 @@ CREATE SENSOR radarSensor (
                 ATTRIBUTE(type, INTEGER)
                 ATTRIBUTE(id, INTEGER)
                 ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        1.0 0.2 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.2 1.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 1.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 1.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 1.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 1.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 1.0)
+                ATTRIBUTE(posx, MV FLOAT       (radarSensor.scan:cars:car:posx*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          ) 
+                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
+                                                radarSensor.scan:cars:car:posy*10/100 ,  
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:posz*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(roll, MV FLOAT      ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:roll*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(pitch, MV FLOAT     ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:pitch*10/100 ,  
+                                                0.0 ,
+                                                0.0 )
+                         )
+                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:heading*10/100 , 
+                                                0.0 )
+                         )
+                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:velocity*10/100 )
+                         )
                 ATTRIBUTE(length, FLOAT)
                 ATTRIBUTE(width, FLOAT)
             )
         )
-    )
+    ),
+    radarSensor.scan:cars
 ) FROM CHANNEL ${ip}
 
 #QUERY
@@ -37,13 +87,62 @@ CREATE BROKER streamCarsBroker (
                 ATTRIBUTE(type, INTEGER)
                 ATTRIBUTE(id, INTEGER)
                 ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        1.0 0.2 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.2 1.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 1.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 1.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 1.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 1.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 1.0)
+                ATTRIBUTE(posx, MV FLOAT       (radarSensor.scan:cars:car:posx*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          ) 
+                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
+                                                radarSensor.scan:cars:car:posy*10/100 ,  
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:posz*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(roll, MV FLOAT      ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:roll*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(pitch, MV FLOAT     ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:pitch*10/100 ,  
+                                                0.0 ,
+                                                0.0 )
+                         )
+                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:heading*10/100 , 
+                                                0.0 )
+                         )
+                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:velocity*10/100 )
+                         )
                 ATTRIBUTE(length, FLOAT)
                 ATTRIBUTE(width, FLOAT)
             )
@@ -57,15 +156,64 @@ CREATE BROKER streamCarsBroker (
                 ATTRIBUTE(type, INTEGER)
                 ATTRIBUTE(id, INTEGER)
                 ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        1.0 0.2 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.2 1.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 1.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 1.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 1.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 1.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 1.0)
+                ATTRIBUTE(posx, MV FLOAT       (radarSensor.scan:cars:car:posx*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          ) 
+                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
+                                                radarSensor.scan:cars:car:posy*10/100 ,  
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:posz*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(roll, MV FLOAT      ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:roll*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(pitch, MV FLOAT     ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:pitch*10/100 ,  
+                                                0.0 ,
+                                                0.0 )
+                         )
+                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:heading*10/100 , 
+                                                0.0 )
+                         )
+                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:velocity*10/100 )
+                         )
                 ATTRIBUTE(length, FLOAT)
-                ATTRIBUTE(width, FLOAT) 
+                ATTRIBUTE(width, FLOAT)
             )
         )
     )
@@ -80,13 +228,62 @@ CREATE BROKER streamCarsBroker2 (
                 ATTRIBUTE(type, INTEGER)
                 ATTRIBUTE(id, INTEGER)
                 ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        1.0 0.2 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.2 1.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 1.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 1.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 1.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 1.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 1.0)
+                ATTRIBUTE(posx, MV FLOAT       (radarSensor.scan:cars:car:posx*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          ) 
+                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
+                                                radarSensor.scan:cars:car:posy*10/100 ,  
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:posz*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(roll, MV FLOAT      ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:roll*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(pitch, MV FLOAT     ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:pitch*10/100 ,  
+                                                0.0 ,
+                                                0.0 )
+                         )
+                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:heading*10/100 , 
+                                                0.0 )
+                         )
+                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:velocity*10/100 )
+                         )
                 ATTRIBUTE(length, FLOAT)
                 ATTRIBUTE(width, FLOAT)
             )
@@ -100,13 +297,62 @@ CREATE BROKER streamCarsBroker2 (
                 ATTRIBUTE(type, INTEGER)
                 ATTRIBUTE(id, INTEGER)
                 ATTRIBUTE(laneid, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT        1.0 0.2 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posy, MV FLOAT        0.2 1.0 0.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(posz, MV FLOAT        0.0 0.0 1.0 0.0 0.0 0.0 0.0)
-                ATTRIBUTE(roll, MV FLOAT        0.0 0.0 0.0 1.0 0.0 0.0 0.0)
-                ATTRIBUTE(pitch, MV FLOAT       0.0 0.0 0.0 0.0 1.0 0.0 0.0)
-                ATTRIBUTE(heading, MV FLOAT     0.0 0.0 0.0 0.0 0.0 1.0 0.0)
-                ATTRIBUTE(velocity, MV FLOAT    0.0 0.0 0.0 0.0 0.0 0.0 1.0)
+                ATTRIBUTE(posx, MV FLOAT       (radarSensor.scan:cars:car:posx*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          ) 
+                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
+                                                radarSensor.scan:cars:car:posy*10/100 ,  
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:posz*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(roll, MV FLOAT      ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:roll*10/100 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(pitch, MV FLOAT     ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:pitch*10/100 ,  
+                                                0.0 ,
+                                                0.0 )
+                         )
+                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:heading*10/100 , 
+                                                0.0 )
+                         )
+                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:velocity*10/100 )
+                         )
                 ATTRIBUTE(length, FLOAT)
                 ATTRIBUTE(width, FLOAT)
             )
