@@ -29,7 +29,7 @@ public class UserManagement extends AbstractUserManagement {
 
 				if (instance.hasNoRoles()) {
 					User sys = instance.login("System", "manager", false);
-					
+									
 					// create admin Role
 					Role adminrole = new Role("sys_admin", UserManagement
 							.getInstance().getRoleID());
@@ -49,6 +49,9 @@ public class UserManagement extends AbstractUserManagement {
 					// add admin role to system
 					sys.addRole(adminrole);
 
+					// create public group
+					instance.createGroup("Public", sys);
+					
 					// ------------------------------------------------
 					// create DataDictoinary Role
 					instance.createRole("datadictionary", sys);
@@ -118,6 +121,11 @@ public class UserManagement extends AbstractUserManagement {
 			}
 		}
 		return instance;
+	}
+
+	public void createGroup(String string, User sys) {
+		Role r = createRole(string, sys);
+		r.setGroup(true);
 	}
 
 	public User getSuperUser() {

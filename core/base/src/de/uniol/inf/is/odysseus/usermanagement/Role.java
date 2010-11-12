@@ -8,6 +8,7 @@ public final class Role extends AbstractUserManagementEntity implements
 	private static final long serialVersionUID = 2452410871566925898L;
 	private final int ID;
 	private String rolename;
+	private boolean isGroup;
 
 	Role(String rolename, int newid) {
 		this.rolename = rolename;
@@ -50,6 +51,14 @@ public final class Role extends AbstractUserManagementEntity implements
 	@Override
 	public String toString() {
 		return this.rolename;
+	}
+
+	public void setGroup(boolean isGroup) {
+		this.isGroup = isGroup; 
+	}
+	
+	public boolean isGroup() {
+		return isGroup;
 	}
 
 }

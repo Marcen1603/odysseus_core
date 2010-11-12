@@ -64,6 +64,7 @@ abstract class AbstractUserManagement {
 		if (user == null) {
 			user = new User(username, password);
 			this.userStore.storeUser(user);
+			//user.addRole(roleStore.get("Public"));
 		} else {
 			throw new UsernameAlreadyUsedException();
 		}
