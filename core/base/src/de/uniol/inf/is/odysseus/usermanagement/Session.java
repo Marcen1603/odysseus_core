@@ -11,11 +11,11 @@ final public class Session implements Serializable {
 	Session(int key) {
 		synchronized (this) {
 			this.key = key;
-			setTimestamp();
+			updateTimestamp();
 		}
 	}
 
-	synchronized void setTimestamp() {
+	synchronized void updateTimestamp() {
 		this.timestamp = System.currentTimeMillis();
 	}
 
@@ -23,4 +23,9 @@ final public class Session implements Serializable {
 		return this.timestamp;
 	}
 
+	@Override
+	public String toString() {
+		return key+" "+timestamp;
+	}
+	
 }

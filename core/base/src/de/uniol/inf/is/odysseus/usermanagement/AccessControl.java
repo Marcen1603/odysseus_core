@@ -53,7 +53,7 @@ public final class AccessControl {
 			// Session jünger als 4 Std. (in Minuten)
 			if (dif < OdysseusDefaults.sessionTimeout) {
 				// Session aktuallisieren
-				user.getSession().setTimestamp();
+				user.getSession().updateTimestamp();
 				return true;
 			}
 			throw new HasNoPermissionException("User "+user+" session timeout. Login again ");			
