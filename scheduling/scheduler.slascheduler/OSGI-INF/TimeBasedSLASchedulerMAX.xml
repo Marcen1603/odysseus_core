@@ -6,5 +6,5 @@
    </service>
    <property name="calcMethod" type="String" value="MAX"/>
       <property name="kind" type="String" value="time"/>
-   <property name="component.readableName" type="String" value="Simple SLA Scheduler MAX"/>
+   <property name="component.readableName" type="String" value="Time based SLA scheduler max"/>
 </scr:component>
