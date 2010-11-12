@@ -28,6 +28,8 @@ public class OdysseusDefaults {
 	public static String sourceFromUserFilename = odysseusHome+"sourceFromUser.store";
 
 	public static String schedulingConfigFile = odysseusHome+"scheduling.conf";
+
+	public static long sessionTimeout = 240*60000; // Milliseconds
 	
 	static public File openOrCreateFile(String path) throws IOException{
 		File f = new File(path);

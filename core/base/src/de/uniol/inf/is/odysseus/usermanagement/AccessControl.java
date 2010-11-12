@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 
 public final class AccessControl {
@@ -45,17 +46,19 @@ public final class AccessControl {
 	 * @return boolean
 	 */
 	private static boolean sessionTimestamp(User user) {
-		// Session Zeitstempel
-		long now = System.currentTimeMillis()
-				- user.getSession().getTimestamp();
-		long dif = now / 60000;
-		// Session jünger als 4 Std. (in Minuten)
-		if (dif < 240.0) {
-			// Session aktuallisieren
-			user.getSession().setTimestamp();
-			return true;
+		if (user.getSession() != null) {
+			// Session Zeitstempel
+			long dif = System.currentTimeMillis()
+					- user.getSession().getTimestamp();
+			// Session jünger als 4 Std. (in Minuten)
+			if (dif < OdysseusDefaults.sessionTimeout) {
+				// Session aktuallisieren
+				user.getSession().setTimestamp();
+				return true;
+			}
+			throw new HasNoPermissionException("User "+user+" session timeout. Login again ");			
 		}
-		return false;
+		throw new HasNoPermissionException("User "+user+" has no valid session ");
 	}
 
 	/**
