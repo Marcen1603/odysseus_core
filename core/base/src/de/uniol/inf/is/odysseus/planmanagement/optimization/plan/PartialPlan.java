@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,14 +25,16 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
  * 
  */
 public class PartialPlan implements IPartialPlan {
-	
+
 	static Logger _logger;
-	static synchronized Logger getLogger(){
-		if (_logger == null){
+
+	static synchronized Logger getLogger() {
+		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(PartialPlan.class);
 		}
 		return _logger;
 	}
+
 	/**
 	 * Sources which should be scheduled.
 	 */
@@ -76,8 +79,9 @@ public class PartialPlan implements IPartialPlan {
 	public PartialPlan(List<IIterableSource<?>> iterableSources,
 			List<IPhysicalOperator> roots, int basePriority, IQuery partof,
 			IQuery... otherParts) {
-		this.iterableSources = new ArrayList<IIterableSource<?>>(iterableSources);
-		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
+		this.iterableSources = new ArrayList<IIterableSource<?>>(
+				iterableSources);
+		this.sourceIds = new  IdentityHashMap<IIterableSource<?>, Integer>();
 		for (int i = 0; i < iterableSources.size(); i++) {
 			sourceIds.put(iterableSources.get(i), i); // Iterator does not
 														// garantee order ...
@@ -93,12 +97,11 @@ public class PartialPlan implements IPartialPlan {
 		}
 	}
 
-	
 	@Override
 	public boolean hasIteratableSources() {
-		return iterableSources != null && iterableSources.size()>0;
+		return iterableSources != null && iterableSources.size() > 0;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,8 +119,9 @@ public class PartialPlan implements IPartialPlan {
 	}
 
 	@Override
-	public int getSourceId(IIterableSource<?> source) {
-		return sourceIds.get(source);
+	public synchronized int getSourceId(IIterableSource<?> source) {
+		Integer id = sourceIds.get(source);
+		return id != null?id:-1;
 	}
 
 	/*
@@ -128,7 +132,7 @@ public class PartialPlan implements IPartialPlan {
 	 */
 	@Override
 	public List<IPhysicalOperator> getRoots() {
-		return roots;
+		return Collections.unmodifiableList(roots);
 	}
 
 	@Override
@@ -138,15 +142,15 @@ public class PartialPlan implements IPartialPlan {
 		for (IQuery q : partOf) {
 			roots.addAll(q.getRoots());
 		}
-		getLogger().debug("get Query Roots "+roots);
+		getLogger().debug("get Query Roots " + roots);
 		return roots;
 	}
-	
+
 	@Override
-	public List<IQuery> getQueries(){
+	public List<IQuery> getQueries() {
 		return Collections.unmodifiableList(partOf);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -168,7 +172,6 @@ public class PartialPlan implements IPartialPlan {
 	public long getBasePriority() {
 		return this.basePriority;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -197,5 +200,4 @@ public class PartialPlan implements IPartialPlan {
 		return result;
 	}
 
-	
 }

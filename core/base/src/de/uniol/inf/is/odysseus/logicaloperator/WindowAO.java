@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
@@ -93,7 +94,7 @@ public class WindowAO extends UnaryLogicalOp {
 	}
 
 	public List<SDFAttribute> getPartitionBy() {
-		return partitionedBy;
+		return Collections.unmodifiableList(partitionedBy);
 	}
 
 	public boolean isPartitioned() {

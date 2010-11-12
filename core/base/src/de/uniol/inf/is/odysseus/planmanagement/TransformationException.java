@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -32,7 +33,7 @@ public class TransformationException extends Exception {
 	}
 
 	public List<ILogicalOperator> getUntranslatedOperators() {
-		return untranslatedOperators;
+		return Collections.unmodifiableList(untranslatedOperators);
 	}
 
 	public TransformationConfiguration getConfig() {

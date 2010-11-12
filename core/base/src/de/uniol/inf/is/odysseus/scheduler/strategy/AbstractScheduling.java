@@ -78,7 +78,7 @@ public abstract class AbstractScheduling implements IScheduling,
 			plan.getIterableSource(bitIndex).subscribe(this,
 					POEventType.Blocked);
 			plan.getIterableSource(bitIndex).subscribe(this,
-					POEventType.CloseDone);			
+					POEventType.CloseDone);
 			schedulable.set(bitIndex, true);
 			notBlocked.set(bitIndex, true);
 		}
@@ -101,7 +101,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		IIterableSource<?> nextSource = nextSource();
 		while (!this.blocked && !this.schedulingPaused && nextSource != null
 				&& System.currentTimeMillis() < endTime) {
-//			 System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" n="+nextSource.hasNext());	
+			// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" n="+nextSource.hasNext());
 			if (nextSource.isDone()) {
 				sourceDone(nextSource);
 			} else if (nextSource.isBlocked()) {
@@ -120,7 +120,13 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	private void updateSchedulable(IIterableSource<?> nextSource) {
-		schedulable.set(plan.getSourceId(nextSource), false);
+		int id = plan.getSourceId(nextSource);
+		// TODO: Warum tauchen hier Sources auf, die nicht Teil des Planes sind??
+		if (id > 0) {
+			schedulable.set(id, false);
+		}else{
+			logger.warn(nextSource+" not Part of plan "+plan.getIterableSources());
+		}
 		if (schedulable.cardinality() == 0) {
 			if (schedulingPaused == false) {
 				schedulingPaused = true;
@@ -139,8 +145,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		if (notBlocked.cardinality() == 0) {
 			if (blocked == false) {
 				blocked = true;
-				logger
-						.debug("Processing blocked because all operators are blocked");
+				logger.debug("Processing blocked because all operators are blocked");
 				synchronized (schedulingEventListener) {
 					for (ISchedulingEventListener l : schedulingEventListener) {
 						l.nothingToSchedule(this);
@@ -178,13 +183,13 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	@Override
-	public void eventOccured(IEvent<?,?> poEvent) {
+	public void eventOccured(IEvent<?, ?> poEvent) {
 		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSender();
 		int index = plan.getSourceId(s);
-		if (poEvent.getEventType() == POEventType.CloseDone){
+		if (poEvent.getEventType() == POEventType.CloseDone) {
 			sourceDone(s);
 
-		}else{
+		} else {
 			synchronized (notBlocked) {
 				if (poEvent.getEventType() == POEventType.Blocked) {
 					// System.out.println(poEvent);
@@ -228,7 +233,7 @@ public abstract class AbstractScheduling implements IScheduling,
 	public boolean isSchedulingPaused() {
 		return schedulingPaused;
 	}
-	
+
 	@Override
 	public boolean isSchedulable() {
 		return this.schedulable.cardinality() > 0;

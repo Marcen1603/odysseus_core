@@ -72,7 +72,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
     }
 
     public List<SDFAttribute> getGroupingAttribute() {
-        return groupingAttributes;
+        return Collections.unmodifiableList(groupingAttributes);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
@@ -21,7 +22,7 @@ public class SplitAO extends UnaryLogicalOp {
 	}
 
 	public List<IPredicate<?>> getPredicates() {
-		return predicates;
+		return Collections.unmodifiableList(predicates);
 	}
 
 	public void setPredicates(List<IPredicate<?>> predicates) {

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +134,7 @@ public class AggregateAO extends UnaryLogicalOp {
     }
 
     public List<SDFAttribute> getGroupingAttributes() {
-        return groupingAttributes;
+        return Collections.unmodifiableList(groupingAttributes);
     }
 
     @Override

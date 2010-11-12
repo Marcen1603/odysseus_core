@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -26,7 +27,7 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	public List<SDFExpression> getExpressions() {
-		return expressions;
+		return Collections.unmodifiableList(expressions);
 	}
 
 	private void calcOutputSchema() {

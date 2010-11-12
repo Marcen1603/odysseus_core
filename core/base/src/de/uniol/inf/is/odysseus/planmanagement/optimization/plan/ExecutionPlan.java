@@ -81,7 +81,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public List<IPartialPlan> getPartialPlans() {
-		return this.partialPlans;
+		return Collections.unmodifiableList(this.partialPlans);
 	}
 
 	/*

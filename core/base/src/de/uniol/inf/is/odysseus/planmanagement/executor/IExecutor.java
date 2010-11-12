@@ -248,7 +248,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
 	IQuerySharingOptimizer getQuerySharingOptimizer();
 	@Override
-	ArrayList<IQuery> getQueries();
+	List<IQuery> getQueries();
 
 
 }

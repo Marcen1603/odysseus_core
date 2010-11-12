@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.logicaloperator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -238,7 +239,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public List<IOperatorOwner> getOwner() {
-		return this.owner;
+		return Collections.unmodifiableList(this.owner);
 	}
 
 	/**

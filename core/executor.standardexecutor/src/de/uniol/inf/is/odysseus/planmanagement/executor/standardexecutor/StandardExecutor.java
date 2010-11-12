@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -694,8 +695,8 @@ public class StandardExecutor extends AbstractExecutor {
 	 * #getRegisteredQueries()
 	 */
 	@Override
-	public ArrayList<IQuery> getQueries() {
-		return this.plan.getQueries();
+	public List<IQuery> getQueries() {
+		return Collections.unmodifiableList(this.plan.getQueries());
 	}
 
 	/*
