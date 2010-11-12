@@ -39,7 +39,7 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 		if (pcs.size() <= 1){
 			throw new IllegalServiceLevelDefinition("More than one percentile contstraint required");
 		}
-		if (!(pcs.get(0).getHighSlaConformanceLevel() == 1.0 && pcs.get(pcs.size()-1).getLowSlaConformanceLevel() == 0.0)){
+		if (!(pcs.get(0).getHighSlaConformanceLevel() == 1.0 && pcs.get(0).highInside() && pcs.get(pcs.size()-1).getLowSlaConformanceLevel() == 0.0)){
 			throw new IllegalServiceLevelDefinition("Range not covered completly");
 		}
 		// Calc Deltas for SLAs		

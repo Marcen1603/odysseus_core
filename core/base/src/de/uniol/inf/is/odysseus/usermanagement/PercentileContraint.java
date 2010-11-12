@@ -25,7 +25,7 @@ public class PercentileContraint implements
 	}
 
 	public PercentileContraint(double high, double low, double penalty) {
-		this(high,low,penalty,false);
+		this(high,low,penalty,(high==1.0 || low==1.0));
 	}
 
 	@Override
@@ -71,5 +71,10 @@ public class PercentileContraint implements
 	@Override
 	public double getWidth() {
 		return width;
+	}
+	
+	@Override
+	public boolean highInside() {
+		return highInside;
 	}
 }

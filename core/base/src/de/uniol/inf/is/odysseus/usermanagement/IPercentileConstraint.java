@@ -10,5 +10,6 @@ public interface IPercentileConstraint extends Comparable<IPercentileConstraint>
 	public double getPenalty();
 	public boolean contains(double currentSLAConformance);
 	public boolean overlaps(IPercentileConstraint pc);
+	public boolean highInside();
 
 }

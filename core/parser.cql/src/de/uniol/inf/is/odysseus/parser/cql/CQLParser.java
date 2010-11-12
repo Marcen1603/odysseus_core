@@ -908,18 +908,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		for (int i = 2; i < node.jjtGetNumChildren(); i++) {
 			pc = (PercentileContraint) node.jjtGetChild(i)
 					.jjtAccept(this, data);
-			try {
-				sla.addPercentilConstraint(pc);
-			} catch (PercentileConstraintOverlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sla.addPercentilConstraint(pc);
 		}
-		try {
-			sla.init();
-		} catch (IllegalServiceLevelDefinition e) {
-			throw new RuntimeException(e);
-		}
+		sla.init();
 		TenantManagement.getInstance().addSLA(slaName, sla);
 		return null;
 	}
