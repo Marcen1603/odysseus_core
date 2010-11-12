@@ -3,9 +3,11 @@ package de.uniol.inf.is.odysseus.rcp.exception;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -14,6 +16,8 @@ import org.eclipse.ui.PlatformUI;
 
 public class ExceptionWindow {
 
+	private Text stackTrace = null;
+	
 	public ExceptionWindow(final Exception ex) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec( new Runnable() {
 
@@ -25,7 +29,7 @@ public class ExceptionWindow {
 		});
 	}
 	
-	protected void createWindow(Exception ex) {
+	protected void createWindow(final Exception ex) {
 
 		final Shell shell;
 		if( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null ) 
@@ -33,33 +37,30 @@ public class ExceptionWindow {
 		else
 			shell = new Shell();
 		
-		shell.setMinimumSize(400, 500);
 		shell.setText("Exception");
-		
 
 		GridLayout gl = new GridLayout();
-		gl.numColumns = 2;
+		gl.numColumns = 3;
 		shell.setLayout(gl);
 
 		Label label = new Label(shell, SWT.NONE);
 		label.setText("An error has occured: " + ex.getClass().getSimpleName());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 3;
 		label.setLayoutData(data);
 
 		Label message = new Label(shell, SWT.NONE);
 		message.setText(ex.getMessage() != null ? ex.getMessage() : "null");
 		message.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 3;
 		message.setLayoutData(data);
-
-		Text stackTrace = new Text(shell, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		stackTrace.setEditable(false);
-		data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 2;
-		stackTrace.setLayoutData(data);
-		stackTrace.setText(getStackTraceText(ex));
+		
+		final Composite placeHolder = new Composite( shell, SWT.NONE);
+		data = new GridData( GridData.FILL_HORIZONTAL );
+		data.horizontalSpan = 3;
+		placeHolder.setLayoutData(data);
+		placeHolder.setLayout(new FillLayout());
 		
 		Button closeButton = new Button( shell, SWT.PUSH );
 		data = new GridData( GridData.FILL_HORIZONTAL);
@@ -72,6 +73,26 @@ public class ExceptionWindow {
 				shell.dispose();
 				
 				PlatformUI.getWorkbench().close();
+			}
+		});
+		
+		final Button stackTraceButton = new Button( shell, SWT.PUSH );
+		data = new GridData( GridData.FILL_HORIZONTAL);
+		stackTraceButton.setLayoutData(data);
+		stackTraceButton.setText("Show StackTrace");
+		stackTraceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( stackTrace != null ) {
+					// Stacktrace wird schon angezeigt --> ausblenden
+					hideStackTrace(placeHolder);
+					stackTraceButton.setText("Show StackTrace");
+				} else {
+					// Stacktrace noch unsichtbar --> einblenden
+					showStackTrace(placeHolder, ex);
+					stackTraceButton.setText("Hide StackTrace");
+				}
+				layoutShell(shell);
 			}
 		});
 		
@@ -89,7 +110,26 @@ public class ExceptionWindow {
 		shell.pack();
 		shell.open();
 	}
-
+	
+	protected void layoutShell(Shell shell) {
+		shell.pack();
+		shell.layout();
+	}
+	
+	protected void showStackTrace(Composite comp, Exception ex) {
+		Text stackTrace = new Text(comp, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
+		stackTrace.setText(getStackTraceText(ex));
+		
+		this.stackTrace = stackTrace;
+	}
+	
+	protected void hideStackTrace( Composite comp ) {
+		if( stackTrace != null ) {
+			stackTrace.dispose();
+			stackTrace = null;
+		}
+	}
+	
 	protected String getStackTraceText(Exception ex) {
 		StackTraceElement[] stack = ex.getStackTrace();
 
