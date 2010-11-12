@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
+package de.uniol.inf.is.odysseus.rcp.editor.text.groups;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.IKeywordGroup;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;

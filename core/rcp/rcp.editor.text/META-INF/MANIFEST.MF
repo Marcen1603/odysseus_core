@@ -18,6 +18,7 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
  de.uniol.inf.is.odysseus.planmanagement.query,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.rcp.editor.text.parser,
  de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.user,
  de.uniol.inf.is.odysseus.rcp.viewer.query,
@@ -34,3 +35,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.eclipse.ui.views.contentoutline
 Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text
 Service-Component: OSGI-INF/Executor.xml
+

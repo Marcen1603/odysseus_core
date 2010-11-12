@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.Keyword" name="Query Editor Keywords " schema="schema/de.uniol.inf.is.odysseus.rcp.editor.Keyword.exsd"/>
-   <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword" name="PreParserKeyword" schema="schema/de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -80,43 +79,16 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword">
-      <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ParserPreParserKeyword"
-            name="PARSER">
-      </PreParserKeyword>
-      <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.TransCfgPreParserKeyword"
-            name="TRANSCFG">
-      </PreParserKeyword>
-      <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.QueryPreParserKeyword"
-            name="QUERY">
-      </PreParserKeyword>
-      <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.CyclicQueryPreParserKeyword"
-            name="CYCLICQUERY">
-      </PreParserKeyword>
-      <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LoginUserPreParserKeyword"
-            name="LOGIN">
-      </PreParserKeyword>
-      <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LogoutUserPreParserKeyword"
-            name="LOGOUT">
-      </PreParserKeyword>
-   </extension>
-   <extension
          point="de.uniol.inf.is.odysseus.rcp.editor.Keyword">
       <group
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ParserIDKeywordGroup"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.groups.ParserIDKeywordGroup"
             colorB="255"
             colorG="0"
             colorR="255"
             name="ParserIDs">
       </group>
       <group
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.TransCfgKeywordGroup"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.groups.TransCfgKeywordGroup"
             colorB="255"
             colorG="0"
             colorR="255"
