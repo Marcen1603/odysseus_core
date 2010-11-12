@@ -28,7 +28,7 @@ public class UserManagement extends AbstractUserManagement {
 				}
 
 				if (instance.hasNoRoles()) {
-					User sys = instance.login("System", "manager");
+					User sys = instance.login("System", "manager", false);
 
 					// create admin Role
 					Role adminrole = new Role("sys_admin", UserManagement
@@ -95,6 +95,13 @@ public class UserManagement extends AbstractUserManagement {
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_VIEW, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_VIEW, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_SOURCETYPE, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_ENTITY, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_SOURCE, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_VIEW_FOR_TRANFORMATION, DataDictionaryAction.alias);
+					// TODO: Spaeter wieder entfernen:
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_ALL, DataDictionaryAction.alias);
+
 					// Anfrage verwalten
 					instance.grantPermission(sys, "DSUser", ExecutorAction.ADD_QUERY, ExecutorAction.alias);
 					instance.grantPermission(sys, "DSUser", ExecutorAction.START_QUERY, ExecutorAction.alias);
@@ -114,7 +121,7 @@ public class UserManagement extends AbstractUserManagement {
 	}
 
 	public User getSuperUser() {
-		return login("System", "manager");
+		return login("System", "manager", false);
 	}
 
 }

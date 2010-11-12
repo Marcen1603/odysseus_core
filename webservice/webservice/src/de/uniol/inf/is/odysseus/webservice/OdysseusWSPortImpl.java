@@ -126,7 +126,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     			query = sourceDescription.getSourceString();
     		}
 			// TODO: User einfuegen, der diese Query ausführt
-    		User user = UserManagement.getInstance().login("Console","");
+    		User user = UserManagement.getInstance().login("Console","", false);
     		executor.addQuery(query, "CQL", user);
     		return "";
     	}catch (Exception e){

@@ -102,39 +102,16 @@ abstract class AbstractUserManagement {
 		}
 	}
 
-	/**
-	 * Login user with non hash password
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 */
-	public User login(String username, String password) {
-		// no restric
-		return login(username, password, false);
-	}
-
-	/**
-	 * Get user with hash password
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 * @throws HasNoPermissionException
-	 */
-	public User getUser(String username, String password) {
-		// no restric
-		return login(username, password, true);
-	}
-
-	private User login(String username, String password,
+	public User login(String username, String password,
 			boolean passwordIsHashed) {
 		User user = this.userStore.getUserByName(username);
 		if (user != null) {
 			if (!user.validatePassword(password, passwordIsHashed)) {
 				user = null;
 			} else {
-				loggedIn.put(username, user);
+				synchronized (loggedIn) {
+					loggedIn.put(username, user);					
+				}
 				user.setSession(new Session(getSessionId()));
 			}
 		}
@@ -569,7 +546,9 @@ abstract class AbstractUserManagement {
 	}
 
 	public boolean isLoggedIn(String username) {
-		return loggedIn.containsKey(username);
+		synchronized(loggedIn){
+			return loggedIn.containsKey(username); // Test auf Session?
+		}
 	}
 
 	protected int getRoleID() {

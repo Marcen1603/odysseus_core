@@ -13,13 +13,16 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class Login {
 
-	public static void loginWindow(Shell parent, boolean forceShow, boolean cancelOK) {
+	public static void loginWindow(Shell parent, boolean forceShow,
+			boolean cancelOK) {
 		// Daten aus Prefs holen
 		String username = LoginPreferencesManager.getInstance().getUsername();
-		String password = LoginPreferencesManager.getInstance().getPasswordMD5();
+		String password = LoginPreferencesManager.getInstance()
+				.getPasswordMD5();
 
 		// Daten ok und automatisches anmelden erlaubt?
-		if (username.length() > 0 && password.length() > 0 && !forceShow && LoginPreferencesManager.getInstance().getAutoLogin()) {
+		if (username.length() > 0 && password.length() > 0 && !forceShow
+				&& LoginPreferencesManager.getInstance().getAutoLogin()) {
 			// Automatisch anmelden (password ist md5)
 			if (realLogin(username, password, true) == null) {
 				// fehlerhafte anmeldung..
@@ -36,27 +39,28 @@ public class Login {
 
 	}
 
-	public static User realLogin(String username, String password, boolean passwordIsMD5) {
+	public static User realLogin(String username, String password,
+			boolean passwordIsMD5) {
 		try {
 			User user = null;
-			if( passwordIsMD5 ) {
-				user = UserManagement.getInstance().getUser(username, password);
-			} else {
-				user = UserManagement.getInstance().login(username, password);
-			}
-			
+			user = UserManagement.getInstance().login(username, password,
+					passwordIsMD5);
+
 			if (user != null) {
 				// anmelden ok
 				ActiveUser.setActiveUser(user);
-				StatusBarManager.getInstance().setMessage("Automatically logged in as " + username);
+				StatusBarManager.getInstance().setMessage(
+						"Automatically logged in as " + username);
 				return user;
 			}
 			return null;
 		} catch (RuntimeException ex) {
 			ex.printStackTrace();
-			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK );
-			box.setMessage("An error occured during validating the user.\n" 
-					+ "Please contact your administrator. The application\n" 
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR
+					| SWT.OK);
+			box.setMessage("An error occured during validating the user.\n"
+					+ "Please contact your administrator. The application\n"
 					+ "will be closed.");
 			box.setText("Error");
 			box.open();

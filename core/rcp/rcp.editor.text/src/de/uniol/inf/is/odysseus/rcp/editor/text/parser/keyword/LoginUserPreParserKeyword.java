@@ -21,7 +21,7 @@ public class LoginUserPreParserKeyword implements IPreParserKeyword {
 		String password = para[1];
 		
 		// Prüfen, ob mit User eingeloggt werden könnte
-		User user = UserManagement.getInstance().login(userName, password);
+		User user = UserManagement.getInstance().login(userName, password, false);
 		if( user == null ) {
 			throw new QueryTextParseException("Login with user " + userName + " failed");
 		} else {
@@ -41,7 +41,7 @@ public class LoginUserPreParserKeyword implements IPreParserKeyword {
 		String userName = para[0];
 		String password = para[1];
 		
-		User user = UserManagement.getInstance().login(userName, password);
+		User user = UserManagement.getInstance().login(userName, password, false);
 		
 		// Alten Nutzer für LOGOUT merken
 		UserStack.push(ActiveUser.getActiveUser());
