@@ -63,7 +63,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 				
 				doPostOptimizationActions(query, parameter);
 			}
-			List<IQuery> newPlan = sender.getQueries();
+			List<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
 			newPlan.addAll(queries);
 
 			IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
