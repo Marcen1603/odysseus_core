@@ -101,8 +101,6 @@ public class UserManagement extends AbstractUserManagement {
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_ENTITY, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_SOURCE, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_VIEW, DataDictionaryAction.alias);
-					// TODO: Spaeter wieder entfernen:
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_ALL, DataDictionaryAction.alias);
 
 					// Anfrage verwalten
 					instance.grantPermission(sys, "DSUser", ExecutorAction.ADD_QUERY, ExecutorAction.alias);

@@ -275,8 +275,8 @@ public class DataDictionary {
 				return null;
 			}
 		} else {
-			throw new HasNoPermissionException(
-					"has no permission to get source '" + sourcename + "'.");
+			throw new HasNoPermissionException(caller+
+					" has no permission to get source '" + sourcename + "'.");
 		}
 	}
 
