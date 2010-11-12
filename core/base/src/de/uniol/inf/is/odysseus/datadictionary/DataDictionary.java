@@ -191,19 +191,19 @@ public class DataDictionary {
 				|| hasSuperOperation(action, DataDictionaryAction.alias, caller);
 	}
 
-	@Deprecated
-	public void clearViews() {
-		for (Entry<String, ILogicalOperator> entry : this.viewDefinitions
-				.entrySet())
-			fireRemoveEvent(entry.getKey(), entry.getValue());
-
-		try {
-			this.viewDefinitions.clear();
-		} catch (StoreException e) {
-			throw new RuntimeException(e);
-		}
-
-	}
+//	@Deprecated
+//	public void clearViews() {
+//		for (Entry<String, ILogicalOperator> entry : this.viewDefinitions
+//				.entrySet())
+//			fireRemoveEvent(entry.getKey(), entry.getValue());
+//
+//		try {
+//			this.viewDefinitions.clear();
+//		} catch (StoreException e) {
+//			throw new RuntimeException(e);
+//		}
+//
+//	}
 
 	// no restric
 	public boolean containsView(String viewName, User user) {
@@ -334,7 +334,7 @@ public class DataDictionary {
 
 	public ILogicalOperator getViewForTransformation(String name, User caller) {
 		if (allowedToAccessView(name, caller,
-				DataDictionaryAction.GET_VIEW_FOR_TRANFORMATION)) {
+				DataDictionaryAction.GET_VIEW)) {
 			return viewDefinitions.get(name);
 		} else {
 			throw new HasNoPermissionException("User " + caller.getUsername()

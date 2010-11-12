@@ -10,7 +10,7 @@ public enum DataDictionaryAction implements IUserAction {
 
 	ADD_SOURCETYPE, GET_SOURCE, REMOVE_SOURCE,
 
-	ADD_VIEW, GET_VIEW, REMOVE_VIEW, ADD_LOGICAL_VIEW, GET_VIEW_FOR_TRANFORMATION,
+	ADD_VIEW, GET_VIEW, REMOVE_VIEW, ADD_LOGICAL_VIEW,
 
 	GET_ALL, REMOVE_ALL;
 
@@ -36,8 +36,6 @@ public enum DataDictionaryAction implements IUserAction {
 		case GET_SOURCE:
 			return GET_ALL;
 		case GET_VIEW:
-			return GET_ALL;
-		case GET_VIEW_FOR_TRANFORMATION:
 			return GET_ALL;
 		case REMOVE_VIEW:
 			return REMOVE_ALL;

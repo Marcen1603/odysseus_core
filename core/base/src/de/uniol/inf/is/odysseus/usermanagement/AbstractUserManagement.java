@@ -22,7 +22,7 @@ abstract class AbstractUserManagement {
 	private int privid = 0;
 
 	private int sessionID = -1;
-	
+
 	// TODO: sortieren
 
 	protected AbstractUserManagement(IUserStore userStore) {
@@ -103,15 +103,14 @@ abstract class AbstractUserManagement {
 		}
 	}
 
-	public User login(String username, String password,
-			boolean passwordIsHashed) {
+	public User login(String username, String password, boolean passwordIsHashed) {
 		User user = this.userStore.getUserByName(username);
 		if (user != null) {
 			if (!user.validatePassword(password, passwordIsHashed)) {
 				user = null;
 			} else {
 				synchronized (loggedIn) {
-					loggedIn.put(username, user);					
+					loggedIn.put(username, user);
 				}
 				user.setSession(new Session(getSessionId()));
 			}
@@ -156,10 +155,10 @@ abstract class AbstractUserManagement {
 		return this.roleStore.isEmpty();
 	}
 
-//	@Deprecated
-//	public void clearUserStore() throws StoreException {
-//		this.userStore.clear();
-//	}
+	// @Deprecated
+	// public void clearUserStore() throws StoreException {
+	// this.userStore.clear();
+	// }
 
 	public User findUser(String username, User caller) {
 		return this.userStore.getUserByName(username);
@@ -547,7 +546,7 @@ abstract class AbstractUserManagement {
 	}
 
 	public boolean isLoggedIn(String username) {
-		synchronized(loggedIn){
+		synchronized (loggedIn) {
 			return loggedIn.containsKey(username); // Test auf Session?
 		}
 	}
