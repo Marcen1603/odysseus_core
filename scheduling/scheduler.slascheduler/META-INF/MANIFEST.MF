@@ -8,4 +8,4 @@ Import-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy,
  org.osgi.service.component
 Require-Bundle: de.uniol.inf.is.odysseus
-Service-Component: OSGI-INF/SimpleSLASchedulerMAX.xml
+Service-Component: OSGI-INF/SimpleSLASchedulerMAX.xml, OSGI-INF/TimeBasedSLASchedulerMAX.xml
