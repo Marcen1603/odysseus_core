@@ -37,6 +37,8 @@ public enum DataDictionaryAction implements IUserAction {
 			return GET_ALL;
 		case GET_VIEW:
 			return GET_ALL;
+		case GET_VIEW_FOR_TRANFORMATION:
+			return GET_ALL;
 		case REMOVE_VIEW:
 			return REMOVE_ALL;
 		case REMOVE_ENTITY:
