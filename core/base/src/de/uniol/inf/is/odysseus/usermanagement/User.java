@@ -26,7 +26,7 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 	}
 
 	void addRole(Role role) {
-		if (!this.roles.contains(role)) {
+		if (role != null && !this.roles.contains(role)) {
 			this.roles.add(role);
 		}
 	}
