@@ -108,11 +108,15 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 			return false;
 		}
 		SelectPO<T> spo = (SelectPO<T>) ipo;
-		// Predicates don't match
-		if(!this.predicate.equals(spo.getPredicate())) return false;
 		// Different sources
 		if(!this.hasSameSources(spo)) return false;
-		return true;
+		// Predicates match
+		if(this.predicate.equals(spo.getPredicate())
+				|| (this.predicate.isContainedIn(spo.getPredicate()) && spo.getPredicate().isContainedIn(this.predicate))) {
+			return true;
+		}
+
+		return false;
 	}
 	
 	@Override
@@ -121,7 +125,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 			return false;
 		}
 		if(this.predicate.isContainedIn(((SelectPO<T>)ip).predicate)) {
-			
+			return true;
 		}
 		return false;
 	}

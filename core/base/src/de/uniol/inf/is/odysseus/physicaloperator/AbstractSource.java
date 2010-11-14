@@ -528,7 +528,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 	
 	// TODO: Make abstract again and implement in Children
-	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo){
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
 	}
 }

@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.predicate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Jonas Jacobi
  */
@@ -70,16 +73,68 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 	
 	@Override
 	public boolean isContainedIn(Object o) {
-		if(!(o instanceof AndPredicate)) {
+		// Falls o ein Oder-Prädikat, überhaupt kein Prädikat oder eines der beiden Argumente des And-Prädikats ein Oder-Prädikat ist, wird false zurück gegeben
+		if(o instanceof OrPredicate || !(o instanceof IPredicate) || this.getLeft() instanceof OrPredicate || this.getRight() instanceof OrPredicate) {
 			return false;
 		}
-		AndPredicate<T> ap = (AndPredicate<T>) o;
-		IPredicate<? super T> left = this.getLeft();
-		if(this.getLeft().isContainedIn(ap.getLeft()) &&
-				this.getRight().isContainedIn(ap.getRight())) {
+		
+		// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist (Zusätzliche Verschärfung bestehender Prädikate)
+		if(!(o instanceof AndPredicate) && (this.getLeft().isContainedIn(o)
+			|| this.getRight().isContainedIn(o))) {
 			return true;
 		}
+		// Falls es sich beim anderen Prädikat ebenfalls um ein AndPredicate handelt, müssen beide Prädikate verglichen werden (inklusiver aller "Unterprädikate")
+		if(o instanceof AndPredicate) {
+			AndPredicate<T> ap = (AndPredicate<T>) o;
+
+//			if((this.getLeft().isContainedIn(ap.getLeft())
+//					&& this.getRight().isContainedIn(ap.getRight()))
+//					|| (this.getLeft().isContainedIn(ap.getRight())
+//							&& this.getRight().isContainedIn(ap.getLeft()))) {
+//				return true;
+//			}
+			
+			ArrayList<IPredicate<?>> a = extractAllPredicates(this);
+			ArrayList<IPredicate<?>> b = extractAllPredicates(ap);
+			if(b.size()>a.size()) {
+				return false;
+			}
+			for(IPredicate<?> predb : b) {
+				if(predb instanceof OrPredicate) {
+					return false;
+				}
+				boolean foundmatch = false;
+				for(IPredicate<?> preda : a) {
+					if(preda instanceof OrPredicate) {
+						return false;
+					}
+					if(preda.isContainedIn(predb)) {
+						foundmatch = true;
+					}
+				}
+				if(!foundmatch) {
+					return false;
+				}
+			}
+			return true;
+		}
+	
 		return false;
+	}
+	
+	private ArrayList<IPredicate<?>> extractAllPredicates(AndPredicate<?> ap) {
+		ArrayList<IPredicate<?>> a = new ArrayList<IPredicate<?>>();
+		if(ap.getLeft() instanceof AndPredicate) {
+			a.addAll(ap.extractAllPredicates((AndPredicate<?>)ap.getLeft()));
+		} else {
+			a.add(ap.getLeft());
+		}
+		if(ap.getRight() instanceof AndPredicate) {
+			a.addAll(extractAllPredicates((AndPredicate<?>)ap.getRight()));
+		} else {
+			a.add(ap.getRight());
+		}
+		return a;
 	}
 
 }
