@@ -116,128 +116,65 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		
 		int size = ipos.size();
 		
-		//MEP-Spielplatz (ersetzt die Eingänge von Select-Operatoren mit kleiner-als-Prädikat
-		for(int i = 0; i<size-1; i++) {
-			for(int j = i+1; j<size; j++) {
-				
-				IPhysicalOperator op1 = ipos.get(i);
-				IPhysicalOperator op2 = ipos.get(j);
-				if(op1 instanceof SelectPO && op2 instanceof SelectPO) {
-					SelectPO<?> spo1 = (SelectPO)op1;
-					SelectPO<?> spo2 = (SelectPO)op2;
-					if(this.reUseSelectPO(spo1, spo2)) {
-						i=-1;
-						break;
-					}
-
-				}
-			}
-		}
-		
 		// Vergleich der physischen Operatoren auf semantische Äquivalenz bzw. Austauschbarkeit der Quellen
 		for(int i = 0; i<size-1; i++) {
 			for(int j = i+1; j<size; j++) {
 				IPhysicalOperator op1 = ipos.get(i);
 				IPhysicalOperator op2 = ipos.get(j);
-				
-				//Schritt 1: Entfernen von identischen Operatoren
-				
-				// Operatoren sind semantisch gleiche Pipes, nicht identisch und der zu ersetzende Operator gehört zu einer neuen Query
-				if(op1 instanceof IPipe
-						&& !op1.getName().equals(op2.getName())
-						&& op1.isSemanticallyEqual(op2)) {
-					// Keiner der Operatoren ist neu bzw. zum Austausch berechtigt
-					if(!newOps.contains(op1) && !newOps.contains(op2)) {
+				//Einer der Operatoren ist zum Austausch berechtigt un es ist nicht und derselbe
+				if((newOps.contains(op1) || newOps.contains(op2))
+						&& !op1.getName().equals(op2.getName())) {
+
+
+					//Schritt 1: Entfernen von identischen Operatoren
+
+					// Operatoren sind semantisch gleiche Pipes
+					if(op1 instanceof IPipe
+							&& op1.isSemanticallyEqual(op2)) {
+						// Der erste Operator ist nicht neu, der zweite allerdings schon
+						if (!newOps.contains(op1)) {
+							IPhysicalOperator temp = op1;
+							op1 = op2;
+							op2 = temp;
+						}
+						System.out.println("Found match!!!");
+						System.out.println(op1.toString());
+						System.out.println(op2.toString());
+
+						this.replaceOperator(op1, op2);
+						//Entfernen des ersetzten Operators aus der Liste
+						ipos.remove(op1);
+						newOps.remove(op1);
+
+						// Reiteration (möglicherweise neue identische Operatoren)
+						size--;
+						i=-1;
+						//break;
+
+					}
+
+					// Schritt 2: Tauschen von Eingangsquellen bei Operatoren, deren Ergebnis
+					// im Ergebnis anderer Operatoren enthalten ist
+
+					// op1 ist in op2 enthalten 
+					if(op1 instanceof AbstractPipe && op2 instanceof IPipe
+							&& ((AbstractPipe<?,?>)op1).isContainedIn((IPipe)op2) && newOps.contains(op1)) {
+						this.replaceInput(op1, op2);
+						// Reiteration (möglicherweise neue identische Operatoren)
+						i=-1;
 						break;
-					// Der erste Operator ist nicht neu, der zweite allerdings schon
-					} else if (!newOps.contains(op1)) {
-						IPhysicalOperator temp = op1;
-						op1 = op2;
-						op2 = temp;
-					}
-					//System.out.println("Found match!!!");
-					//System.out.println(op1.toString());
-					//System.out.println(op2.toString());
-
-					// Austausch von Operatoren
-					
-					// Holen sämtlicher Subscriptions von bei dem zu ersetzenden Operator angemeldeten sinks
-					Collection<ISubscription> sinks = new ArrayList(((IPipe)op1).getSubscriptions());
-					
-					// Ersetzen des Eingangsoperators bei allen angeschlossenen sinks
-					for(ISubscription sub : sinks) {
-						ISink s = (ISink)sub.getTarget();
-
-						// debug
-						System.out.println("S-Name: " + s.getName());
-						System.out.println("op1-Name: " + op1.getName());
-						
-						// Schema- und Portinformationen der alten Verbindung in Erfahrung bringen
-						SDFAttributeList schema = sub.getSchema();
-						int sinkInPort = sub.getSinkInPort();
-						int sourceOutPort = sub.getSourceOutPort();
-
-						// Subscription löschen
-						((IPipe)op1).unsubscribeSink(sub);
-						System.out.println(s.getName() + " unsubscribed from " + op1.getName());
-						
-						// mit den Informationen der alten Subscription den Ersatzoperator beim Sink anmelden
-						//s.subscribeToSource(op2, sinkInPort, sourceOutPort, schema);
-						((ISource)op2).subscribeSink(s, sinkInPort, sourceOutPort, schema);
-
+						// op2 ist in op1 enthalten 
+					} else if(op1 instanceof AbstractPipe && op2 instanceof IPipe
+							&& ((AbstractPipe<?,?>)op2).isContainedIn((IPipe)op1) && newOps.contains(op2)) {
+						this.replaceInput(op2, op1);
+						// Reiteration (möglicherweise neue identische Operatoren)
+						i=-1;
+						break;
 
 					}
-					
-					// Holen der Quellen, bei denen der zu ersetzende Operator bislang angemeldet war
-					// (Sind die gleichen wie von op2, ansonsten hätte op2.isSemanticallyEqual(op2) false ergeben)
-					Collection<ISubscription<IPhysicalOperator>> sources = new ArrayList<ISubscription<IPhysicalOperator>>(((IPipe)op1).getSubscribedToSource());
-					for(ISubscription<?> sub : sources) {
-						ISource s = (ISource)sub.getTarget();
-						s.unsubscribeSink(sub);
-						((ISink)op1).unsubscribeFromSource(sub);
-
-					}
-					
-					// Ersetzen des Operators in den einzelnen Queries, die als Besitzer eingetragen waren
-					List<IOperatorOwner> owner = new ArrayList(op1.getOwner());
-					int noOwners = owner.size();
-					for(int k = 0; k<noOwners; k++) {
-						IOperatorOwner oo = owner.get(k);
-						((Query)oo).replaceOperator(op1, op2);
-						((Query)oo).replaceRoot(op1, op2);
-					}						
-					//Entfernen des ersetzten Operators aus der Liste
-					ipos.remove(op1);
-					newOps.remove(op1);
-					
-					// Reiteration (möglicherweise neue identische Operatoren)
-					size--;
-					i=-1;
-					break;
 
 				}
-				
-				// Schritt 2: Tauschen von Eingangsquellen bei Operatoren, deren Ergebnis
-				// im Ergebnis anderer Operatoren enthalten ist
-				
-				//Operatoren sind verschiedene Pipes und op1 ist in op2 enthalten MOMENTAN NOCH IMMER FALSE
-				if(op1 instanceof AbstractPipe && op2 instanceof IPipe
-						&& !op1.getName().equals(op2.getName())
-						&& ((AbstractPipe<?,?>)op1).isContainedIn((IPipe)op2)) {
-					
-					
-					
-					// Operator ist Teil des alten Plans und darf seine Inputs nicht tauschen
-					if(!newOps.contains(op1)) {
-						break;
-					}
-					
-					this.replaceInput(op1, op2);
-					// Reiteration (möglicherweise neue identische Operatoren)
 
-					i=-1;
-					break;
-				}
 			}
 		}
 
@@ -245,57 +182,59 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		return oldPlan;
 	}
 	
-	//Zum Testen des MEP-Parsers
-	//Prüft momentan zwei SelectPOs und benutzt das Ergebnis des einen als Eingang des anderen, wenn beide als Prädikat einen kleiner-als-Ausdruck haben
-	private boolean reUseSelectPO(SelectPO spo1, SelectPO spo2) {
-		//Liefert false, falls die Operatoren auf unterschiedlichen Quellen operieren
-		if(!spo1.hasSameSources(spo2)) {
-			return false;
-		}
-		IPredicate<?> p1 = spo1.getPredicate();
-		IPredicate<?> p2 = spo2.getPredicate();
-		if(p1 instanceof RelationalPredicate && p2 instanceof RelationalPredicate) {
-			RelationalPredicate rp1 = (RelationalPredicate)p1;
-			RelationalPredicate rp2 = (RelationalPredicate)p2;
-			try {
-				IExpression<?> ex1 = MEP.parse(rp1.getExpression().getExpression());
-				IExpression<?> ex2 = MEP.parse(rp2.getExpression().getExpression());
-				if(ex1.getType().equals(ex2.getType())) {
-					if(ex1.isFunction()) {
-						if(ex1 instanceof AbstractFunction) {
-							AbstractFunction<?> af1 = (AbstractFunction) ex1;
-							AbstractFunction<?> af2 = (AbstractFunction) ex2;
-							
-							if(af1.getSymbol().equals("<") && af2.getSymbol().equals("<")) {
-								if(rp1.getAttributes().get(0).compareTo(rp2.getAttributes().get(0)) == 0) {
-									System.out.println(af1.getArgument(1));
-									if(Double.parseDouble(af1.getArgument(1).toString()) < Double.parseDouble(af2.getArgument(1).toString())) {
-										System.out.println("CHECKPOINT 1");
-										// Operator ist Teil des alten Plans und darf seine Inputs nicht tauschen
-										//if(!newOps.contains(op1)) {
-										//	break;
-										//}
-										this.replaceInput(spo1, spo2);
-										return true;
-										
-									} else if(Double.parseDouble(af2.getArgument(1).toString()) < Double.parseDouble(af1.getArgument(1).toString())) {
-										this.replaceInput(spo2, spo1);
-										return true;
-									}
-								}
-							}
-						}
+	private void replaceOperator(IPhysicalOperator op1, IPhysicalOperator op2) {
+		// Austausch von Operatoren
+		
+		// Holen sämtlicher Subscriptions von bei dem zu ersetzenden Operator angemeldeten sinks
+		Collection<ISubscription> sinks = new ArrayList(((IPipe)op1).getSubscriptions());
+		
+		// Ersetzen des Eingangsoperators bei allen angeschlossenen sinks
+		for(ISubscription sub : sinks) {
+			ISink s = (ISink)sub.getTarget();
 
-					}
-				}
-				
-			} catch(Exception e) {
-				System.out.println(e);
-			}
+			// debug
+			System.out.println("S-Name: " + s.getName());
+			System.out.println("op1-Name: " + op1.getName());
+			
+			// Schema- und Portinformationen der alten Verbindung in Erfahrung bringen
+			SDFAttributeList schema = sub.getSchema();
+			int sinkInPort = sub.getSinkInPort();
+			int sourceOutPort = sub.getSourceOutPort();
+
+			// Subscription löschen
+			((IPipe)op1).unsubscribeSink(sub);
+			System.out.println(s.getName() + " unsubscribed from " + op1.getName());
+			
+			// mit den Informationen der alten Subscription den Ersatzoperator beim Sink anmelden
+			//s.subscribeToSource(op2, sinkInPort, sourceOutPort, schema);
+			((ISource)op2).subscribeSink(s, sinkInPort, sourceOutPort, schema);
+
+
 		}
-		return false;
+		
+		// Holen der Quellen, bei denen der zu ersetzende Operator bislang angemeldet war
+		// (Sind die gleichen wie von op2, ansonsten hätte op2.isSemanticallyEqual(op2) false ergeben)
+		Collection<ISubscription<IPhysicalOperator>> sources = new ArrayList<ISubscription<IPhysicalOperator>>(((IPipe)op1).getSubscribedToSource());
+		for(ISubscription<?> sub : sources) {
+			ISource s = (ISource)sub.getTarget();
+			s.unsubscribeSink(sub);
+			((ISink)op1).unsubscribeFromSource(sub);
+
+		}
+		
+		// Ersetzen des Operators in den einzelnen Queries, die als Besitzer eingetragen waren
+		List<IOperatorOwner> owner = new ArrayList(op1.getOwner());
+		int noOwners = owner.size();
+		for(int k = 0; k<noOwners; k++) {
+			IOperatorOwner oo = owner.get(k);
+			((Query)oo).replaceOperator(op1, op2);
+			((Query)oo).replaceRoot(op1, op2);
+		}
+		
+		System.out.println(op1.getName() + "has been replaced by" + op2.getName());
 		
 	}
+
 	/**
 	 * Ersetzt die bisherige Quelle von op1 mit op2
 	 * @param op1
