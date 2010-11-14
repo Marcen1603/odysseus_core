@@ -16,6 +16,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstancesTestData;
+//import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 
 /**
  * This class defines the list view.
@@ -95,13 +96,13 @@ public class CEPListView extends ViewPart {
 		setInfoData();
 
 		// add the test data
-		addStateMschine();
+		addStateMaschine();
 	}
 
 	/**
 	 * This method adds the state machines to test view
 	 */
-	public void addStateMschine() {
+	public void addStateMaschine() {
 		for (StateMachineInstance instance : this.testdata.getMachines()) {
 			this.normalList.addStateMachineInstance(instance);
 			this.queryList.addStateMachineInstance(instance);
@@ -109,6 +110,21 @@ public class CEPListView extends ViewPart {
 			setInfoData();
 		}
 	}
+	
+//	@SuppressWarnings("unchecked")
+//	public void addStateMaschine(CepOperator operator) {
+//		operator.addCEPEventListener(new CEPEventListener() {
+//			public void eventOccurred(CEPEvent event) {
+//				// event handling
+//			}
+//		});
+//		for (Object instance : operator.getInstances()) {
+//			this.normalList.addStateMachineInstance((StateMachineInstance) instance);
+//			this.queryList.addStateMachineInstance((StateMachineInstance) instance);
+//			this.statusList.addStateMachineInstance((StateMachineInstance) instance);
+//		}
+//		setInfoData();
+//	}
 
 	/**
 	 * This method should update the infoLabel.
