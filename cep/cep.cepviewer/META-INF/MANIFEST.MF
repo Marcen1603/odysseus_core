@@ -10,5 +10,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Christian Menne
 Import-Package: de.uniol.inf.is.odysseus.cep.epa,
+ de.uniol.inf.is.odysseus.cep.metamodel,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.metadata,
  org.eclipse.draw2d,
  org.eclipse.draw2d.geometry
+Export-Package: de.uniol.inf.is.odysseus.cep.cepviewer

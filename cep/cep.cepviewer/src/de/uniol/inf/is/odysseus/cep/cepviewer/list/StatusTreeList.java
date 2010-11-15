@@ -4,8 +4,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Status;
+
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+
 
 /**
  * This class defines the status tree list.
@@ -45,19 +48,19 @@ public class StatusTreeList extends AbstractTreeList {
 	 */
 	@Override
 	public void addStateMachineInstance(StateMachineInstance stateMachineInstance) {
-		Status status = null;
-		if(stateMachineInstance.getCurrentState().isAccepting()) {
-			status = Status.FINISHED;
-		} else if(!stateMachineInstance.getCurrentState().isAccepting()) {
-			status = Status.RUNNING;
-		}
-		for (TreeItem statusItem : this.getTree().getItems()) {
-			if (statusItem.getText().contains(status.toString())) {
-				StateTreeItem item = new StateTreeItem(statusItem, SWT.NONE, stateMachineInstance);
-				item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());
-				this.setStatusImage(item);
-			}
-		}
+//		Status status = null;
+//		if(stateMachineInstance.getCurrentState().isAccepting()) {
+//			status = Status.FINISHED;
+//		} else if(!stateMachineInstance.getCurrentState().isAccepting()) {
+//			status = Status.RUNNING;
+//		}
+//		for (TreeItem statusItem : this.getTree().getItems()) {
+//			if (statusItem.getText().contains(status.toString())) {
+//				StateTreeItem item = new StateTreeItem(statusItem, SWT.NONE, stateMachineInstance);
+//				item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());
+//				this.setStatusImage(item);
+//			}
+//		}
 	}
 	
 	/**

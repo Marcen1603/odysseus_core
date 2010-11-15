@@ -16,7 +16,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
 import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
 import de.uniol.inf.is.odysseus.cep.cepviewer.event.ICEPViewListener;
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
 
 /**
  * This abstract Class defines a tree list.

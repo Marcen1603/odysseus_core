@@ -14,9 +14,10 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstancesTestData;
-//import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstancesTestData;
+import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 /**
  * This class defines the list view.
@@ -29,13 +30,13 @@ public class CEPListView extends ViewPart {
 	public static final String ID = "MyView.listView";
 
 	// This variable holds the test data for the list view.
-	private StateMachineInstancesTestData testdata = new StateMachineInstancesTestData();
+//	private StateMachineInstancesTestData testdata = new StateMachineInstancesTestData();
 
 	// These are widgets for the list view.
 	private TabFolder tabMenu;
-	private NormalTreeList normalList;
-	private QueryTreeList queryList;
-	private StatusTreeList statusList;
+	private static NormalTreeList normalList;
+	private static QueryTreeList queryList;
+	private static StatusTreeList statusList;
 	private TabItem normalListItem;
 	private TabItem queryListItem;
 	private TabItem statusListItem;
@@ -93,49 +94,49 @@ public class CEPListView extends ViewPart {
 		this.infoLabel = new Label(parent, SWT.CENTER);
 		this.infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.END, true,
 				false));
-		setInfoData();
+//		setInfoData();
 
 		// add the test data
-		addStateMaschine();
+//		addStateMaschine();
 	}
 
-	/**
-	 * This method adds the state machines to test view
-	 */
-	public void addStateMaschine() {
-		for (StateMachineInstance instance : this.testdata.getMachines()) {
-			this.normalList.addStateMachineInstance(instance);
-			this.queryList.addStateMachineInstance(instance);
-			this.statusList.addStateMachineInstance(instance);
-			setInfoData();
-		}
-	}
+//	/**
+//	 * This method adds the state machines to test view
+//	 */
+//	public void addStateMaschine() {
+//		for (StateMachineInstance instance : this.testdata.getMachines()) {
+//			this.normalList.addStateMachineInstance(instance);
+//			this.queryList.addStateMachineInstance(instance);
+//			this.statusList.addStateMachineInstance(instance);
+//			setInfoData();
+//		}
+//	}
 	
-//	@SuppressWarnings("unchecked")
-//	public void addStateMaschine(CepOperator operator) {
+	@SuppressWarnings("unchecked")
+	public static void addStateMaschine(CepOperator operator) {
 //		operator.addCEPEventListener(new CEPEventListener() {
 //			public void eventOccurred(CEPEvent event) {
 //				// event handling
 //			}
 //		});
-//		for (Object instance : operator.getInstances()) {
-//			this.normalList.addStateMachineInstance((StateMachineInstance) instance);
-//			this.queryList.addStateMachineInstance((StateMachineInstance) instance);
-//			this.statusList.addStateMachineInstance((StateMachineInstance) instance);
-//		}
+		for (Object instance : operator.getInstances()) {
+			normalList.addStateMachineInstance((StateMachineInstance) instance);
+//			queryList.addStateMachineInstance((StateMachineInstance) instance);
+//			statusList.addStateMachineInstance((StateMachineInstance) instance);
+		}
 //		setInfoData();
-//	}
-
-	/**
-	 * This method should update the infoLabel.
-	 */
-	public void setInfoData() {
-		String infotext = this.statusList.getNumberOfRunning() + " running ; "
-				+ this.statusList.getNumberOfFinished() + " finished ; "
-				+ this.statusList.getNumberOfAborted() + " aborted";
-		this.infoLabel.setText(infotext);
-		this.infoLabel.pack();
 	}
+
+//	/**
+//	 * This method should update the infoLabel.
+//	 */
+//	private static void setInfoData() {
+//		String infotext = this.statusList.getNumberOfRunning() + " running ; "
+//				+ this.statusList.getNumberOfFinished() + " finished ; "
+//				+ this.statusList.getNumberOfAborted() + " aborted";
+//		this.infoLabel.setText(infotext);
+//		this.infoLabel.pack();
+//	}
 
 	/**
 	 * This method is called to set the focus to this view.
