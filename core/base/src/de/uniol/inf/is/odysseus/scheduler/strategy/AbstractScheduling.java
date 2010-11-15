@@ -121,7 +121,6 @@ public abstract class AbstractScheduling implements IScheduling,
 
 	private void updateSchedulable(IIterableSource<?> nextSource) {
 		int id = plan.getSourceId(nextSource);
-		// TODO: Warum tauchen hier Sources auf, die nicht Teil des Planes sind??
 		if (id >= 0) {
 			schedulable.set(id, false);
 		}else{
