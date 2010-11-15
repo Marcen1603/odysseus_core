@@ -31,6 +31,8 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationEvalOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionEvalOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionGateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationGenOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSelOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
@@ -100,6 +102,8 @@ import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.AssociationDictionary;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisEvaluationAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisExpressionEvaluationAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisExpressionGatingAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.EvaluationAO;
@@ -2206,6 +2210,65 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));
 
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTAssociationExpressionEvalOp node, Object data) {
+
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+		HypothesisExpressionEvaluationAO ao = new HypothesisExpressionEvaluationAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		ao.setPredObjListPath(identifier.getName());
+		
+		identifier = (ASTIdentifier) node.jjtGetChild(2);
+		ao.setScanObjListPath(identifier.getName());
+		
+		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
+		ao.setExpressionString(expression.toString());
+		
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+		
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTAssociationExpressionGateOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+		HypothesisExpressionGatingAO ao = new HypothesisExpressionGatingAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		ao.setPredObjListPath(identifier.getName());
+		
+		identifier = (ASTIdentifier) node.jjtGetChild(2);
+		ao.setScanObjListPath(identifier.getName());
+		
+		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
+		ao.setExpressionString(expression.toString());
+		
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+		
 		return data;
 	}
 

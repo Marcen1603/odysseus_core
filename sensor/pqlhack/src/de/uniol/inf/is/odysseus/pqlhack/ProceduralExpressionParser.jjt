@@ -90,6 +90,8 @@ TOKEN : /* Keywords */ {
 | 	<K_SCARS_XML_PROFILER: "SCARS-XML-PROFILER">
 |   <K_DISTANCE_OBJECT_SELECTOR: "DISTANCE-OBJECT-SELECTOR">
 | 	<K_DISTANCE_OBJECT_SELECTOR_ANDRE: "DISTANCE-OBJECT-SELECTOR-ANDRE" >
+|   <K_ASSOCIATION_EXP_EVAL: "ASSOCIATION-EXP-EVAL">
+|   <K_ASSOCIATION_EXP_GATE: "ASSOCIATION-EXP-GATE">
 }
 
 TOKEN:{
@@ -174,7 +176,9 @@ void AlgebraOp():{}{
 	JDVESinkOp() |
 	ScarsXMLProfilerOp() |
 	DistanceObjectSelectorOp()|
-	DistanceObjectSelectorOp_Andre()
+	DistanceObjectSelectorOp_Andre() |
+	AssociationExpressionGateOp() |
+	AssociationExpressionEvalOp()
 }
 
 void TestOp(): {}{
@@ -443,7 +447,7 @@ void AssociationGenOp(): {} {
   <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ")"}
 
 void AssociationEvalOp(): {} {
-  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier() ( "," KeyValueList() )? ")"
+  <K_ASSOCIATION_EVAL> "(" AlgebraOp()	"," Identifier() "," KeyValueList()	"," Identifier() "," Identifier() ( "," KeyValueList() )? ")"
 }
 
 void AssociationSelOp(): {} {
@@ -489,3 +493,19 @@ void DistanceObjectSelectorOp(): {}
 
 void DistanceObjectSelectorOp_Andre():{}{
   < K_DISTANCE_OBJECT_SELECTOR_ANDRE > "(" AlgebraOp() "," Identifier() ")"}
+
+void AssociationExpressionEvalOp(): {} {
+  <K_ASSOCIATION_EXP_EVAL> "("
+  	AlgebraOp() ","
+  	Identifier() ","
+  	Identifier() ","
+  	Expression() ")"
+}
+
+void AssociationExpressionGateOp(): {} {
+  <K_ASSOCIATION_EXP_GATE> "("
+  	AlgebraOp() ","
+  	Identifier() ","
+  	Identifier() ","
+  	Expression() ")"
+}

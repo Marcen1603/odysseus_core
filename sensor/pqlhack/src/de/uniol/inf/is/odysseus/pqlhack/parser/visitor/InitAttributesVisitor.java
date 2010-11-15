@@ -42,6 +42,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		SDFSource source = DataDictionary.getInstance().createSDFSource(sourceString);
+		
 		relationalStreamingSource(node, source, sourceString);
 
 		return null;

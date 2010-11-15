@@ -94,6 +94,8 @@ TOKEN : /* Keywords */ {
 | 	<K_SCARS_XML_PROFILER: "SCARS-XML-PROFILER">
 |   <K_DISTANCE_OBJECT_SELECTOR: "DISTANCE-OBJECT-SELECTOR">
 | 	<K_DISTANCE_OBJECT_SELECTOR_ANDRE: "DISTANCE-OBJECT-SELECTOR-ANDRE" >
+|   <K_ASSOCIATION_EXP_EVAL: "ASSOCIATION-EXP-EVAL">
+|   <K_ASSOCIATION_EXP_GATE: "ASSOCIATION-EXP-GATE">
 }
 
 TOKEN:{
@@ -246,7 +248,9 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	JDVESinkOp() |
 	ScarsXMLProfilerOp() |
 	DistanceObjectSelectorOp()|
-	DistanceObjectSelectorOp_Andre()/*@bgen(jjtree)*/
+	DistanceObjectSelectorOp_Andre() |
+	AssociationExpressionGateOp() |
+	AssociationExpressionEvalOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1678,7 +1682,7 @@ void AssociationEvalOp(): {/*@bgen(jjtree) AssociationEvalOp */
 /*@egen*/} {/*@bgen(jjtree) AssociationEvalOp */
   try {
 /*@egen*/
-  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier() ( "," KeyValueList() )? ")"/*@bgen(jjtree)*/
+  <K_ASSOCIATION_EVAL> "(" AlgebraOp()	"," Identifier() "," KeyValueList()	"," Identifier() "," Identifier() ( "," KeyValueList() )? ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2030,3 +2034,71 @@ void DistanceObjectSelectorOp_Andre():{/*@bgen(jjtree) DistanceObjectSelectorOp_
     }
   }
 /*@egen*/}
+
+void AssociationExpressionEvalOp(): {/*@bgen(jjtree) AssociationExpressionEvalOp */
+  ASTAssociationExpressionEvalOp jjtn000 = new ASTAssociationExpressionEvalOp(JJTASSOCIATIONEXPRESSIONEVALOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) AssociationExpressionEvalOp */
+  try {
+/*@egen*/
+  <K_ASSOCIATION_EXP_EVAL> "("
+  	AlgebraOp() ","
+  	Identifier() ","
+  	Identifier() ","
+  	Expression() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+
+void AssociationExpressionGateOp(): {/*@bgen(jjtree) AssociationExpressionGateOp */
+  ASTAssociationExpressionGateOp jjtn000 = new ASTAssociationExpressionGateOp(JJTASSOCIATIONEXPRESSIONGATEOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) AssociationExpressionGateOp */
+  try {
+/*@egen*/
+  <K_ASSOCIATION_EXP_GATE> "("
+  	AlgebraOp() ","
+  	Identifier() ","
+  	Identifier() ","
+  	Expression() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}

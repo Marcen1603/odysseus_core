@@ -4,6 +4,8 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationEvalOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionEvalOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionGateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationGenOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSelOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
@@ -405,6 +407,16 @@ public Object visit(ASTDistanceObjectSelectorOp node, Object data) {
 @Override
 public Object visit(ASTDistanceObjectSelectorOp_Andre node, Object data) {
 	// TODO Auto-generated method stub
+	return node.childrenAccept(this, data);
+}
+
+@Override
+public Object visit(ASTAssociationExpressionEvalOp node, Object data) {
+	return node.childrenAccept(this, data);
+}
+
+@Override
+public Object visit(ASTAssociationExpressionGateOp node, Object data) {
 	return node.childrenAccept(this, data);
 }
 

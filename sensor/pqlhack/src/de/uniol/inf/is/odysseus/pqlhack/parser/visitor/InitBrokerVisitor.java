@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationEvalOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionEvalOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionGateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationGenOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSelOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
@@ -586,6 +588,18 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTDistanceObjectSelectorOp_Andre node, Object data) {
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTAssociationExpressionEvalOp node, Object data) {
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTAssociationExpressionGateOp node, Object data) {
 		((ArrayList)data).set(0, true);
 		return node.childrenAccept(this, data);
 	}
