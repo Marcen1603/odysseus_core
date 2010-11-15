@@ -50,7 +50,7 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	private LinkedList<Long> filterEstUpdateLatencies;
 	private LinkedList<Long> filterGainUpdateLatencies;
 
-	private int countMax = 300;
+	private int countMax = 2000;
 	private boolean performanceOutputOdy = false;
 	private boolean performanceOutputObj = false;
 
