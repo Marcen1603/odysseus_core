@@ -455,9 +455,7 @@ public class DataDictionary {
 	public void setLogicalView(String viewname, ILogicalOperator topOperator,
 			User caller) {
 		if (AccessControl.hasPermission(DataDictionaryAction.ADD_LOGICAL_VIEW,
-				viewname, caller)
-				|| AccessControl
-						.isCreatorOfView(caller.getUsername(), viewname)) {
+				DataDictionaryAction.alias, caller)) {
 			if (logicalViewDefinitions.containsKey(viewname)) {
 				throw new RuntimeException("View " + viewname
 						+ " already exists. Drop First");
