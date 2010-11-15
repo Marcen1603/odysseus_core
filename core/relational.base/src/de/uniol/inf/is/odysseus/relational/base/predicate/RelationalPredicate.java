@@ -224,8 +224,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 								|| (symbol2.equals("<") && c1 < c2))) {
 							return true;
 						}
-						// Funktion ist-gleich
-						if(symbol1.equals("==") && symbol2.equals("==") && c1.compareTo(c2) == 0) {
+						// Funktion ist-gleich oder ist-nicht-gleich
+						if(((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
 							return true;
 						}
 						// Funktion größer-als
@@ -256,8 +256,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 								|| (symbol2.equals("<") && c1 > c2))) {
 							return true;
 						}
-						// Funktion ist-gleich
-						if(symbol1.equals("==") && symbol2.equals("==") && c1.compareTo(c2) == 0) {
+						// Funktion ist-gleich oder ist-nicht-gleich
+						if(((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
 							return true;
 						}
 						// Funktion größer-als
@@ -286,8 +286,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 								|| (symbol2.equals(">=")) && c1 <= c2) {
 							return true;
 						}
-						// Funktion ist-gleich
-						if(symbol1.equals("==") && symbol2.equals("==") && c1.compareTo(c2) == 0) {
+						// Funktion ist-gleich oder ist-nicht-gleich
+						if(((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
 							return true;
 						}
 						// F1 größer-als, F2 kleiner-als oder kleiner-gleich-als
@@ -319,8 +319,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 							return true;
 						}
 						
-						// Funktion ist-gleich
-						if(symbol1.equals("==") && symbol2.equals("==") && c1.compareTo(c2) == 0) {
+						// Funktion ist-gleich oder ist-nicht-gleich
+						if(((symbol1.equals("==") && symbol2.equals("==")) || (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
 							return true;
 						}
 
@@ -347,6 +347,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 						if((symbol1.equals("<") && symbol2.equals("<"))
 								|| (symbol1.equals("<=") && symbol2.equals("<="))
 								|| (symbol1.equals("==") && symbol2.equals("=="))
+								|| (symbol1.equals("!=") && symbol2.equals("!="))
 								|| (symbol1.equals(">=") && symbol2.equals(">="))
 								|| (symbol1.equals(">") && symbol2.equals(">"))){
 							return true;
@@ -357,6 +358,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 						if((symbol1.equals("<") && symbol2.equals(">"))
 								|| (symbol1.equals("<=") && symbol2.equals(">="))
 								|| (symbol1.equals("==") && symbol2.equals("=="))
+								|| (symbol1.equals("!=") && symbol2.equals("!="))
 								|| (symbol1.equals(">=") && symbol2.equals("<="))
 								|| (symbol1.equals(">") && symbol2.equals("<"))) {
 							return true;
