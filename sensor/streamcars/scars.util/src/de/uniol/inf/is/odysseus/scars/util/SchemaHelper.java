@@ -68,6 +68,10 @@ public class SchemaHelper {
 		return p.getAttribute();
 	}
 	
+	public boolean existsAttribute( String fullAttributeName ) {
+		return paths.containsKey(fullAttributeName);
+	}
+	
 	public Collection<String> getAttributeNames() {
 		return Collections.unmodifiableCollection(paths.keySet());
 	}
