@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * Sources which should be scheduled.
 	 */
-	private ArrayList<IIterableSource<?>> iterableSources;
+	final private ArrayList<IIterableSource<?>> iterableSources;
 
 	/**
 	 * Roots which should be scheduled.
@@ -63,7 +62,7 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * Cache Ids for Sources to speed up getSourceID
 	 */
-	private Map<IIterableSource<?>, Integer> sourceIds;
+	final private Map<IIterableSource<?>, Integer> sourceIds;
 
 	/**
 	 * Creates a new PartialPlan.
@@ -81,7 +80,7 @@ public class PartialPlan implements IPartialPlan {
 			IQuery... otherParts) {
 		this.iterableSources = new ArrayList<IIterableSource<?>>(
 				iterableSources);
-		this.sourceIds = new  IdentityHashMap<IIterableSource<?>, Integer>();
+		this.sourceIds = new  HashMap<IIterableSource<?>, Integer>();
 		for (int i = 0; i < iterableSources.size(); i++) {
 			sourceIds.put(iterableSources.get(i), i); // Iterator does not
 														// garantee order ...

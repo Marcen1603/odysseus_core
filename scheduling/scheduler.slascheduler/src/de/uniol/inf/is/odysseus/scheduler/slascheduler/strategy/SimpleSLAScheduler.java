@@ -143,8 +143,10 @@ public class SimpleSLAScheduler implements IPartialPlanScheduling,
 
 	@Override
 	public void clear() {
+		for (IScheduling e : queue){
+			e.removeSchedulingEventListener(this);
+		}
 		queue.clear();
-
 	}
 
 	@Override

@@ -344,7 +344,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	private Collection<Integer> addQuery(String query, User user,
 			QueryBuildConfiguration parameters) throws PlanManagementException {
-		getLogger().info("Start adding Queries. " + query);
+		getLogger().info("Start adding Queries. " + query+ "for user "+user.getUsername());
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
 		validateBuildParameters(parameters);
 		try {
@@ -357,6 +357,8 @@ public class StandardExecutor extends AbstractExecutor {
 					"Error adding Queries. Details: " + e.getMessage());
 			e.printStackTrace();
 			throw new QueryAddException(e);
+		}finally{
+			getLogger().info("Adding Queries. " + query+ "for user "+user.getUsername()+" done.");
 		}
 	}
 

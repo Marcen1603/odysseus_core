@@ -41,6 +41,9 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialP
 	@Override
 	public void clear() {
 		synchronized (queue) {
+			for (IScheduling s:queue){
+				s.removeSchedulingEventListener(this);
+			}
 			queue.clear();
 		}
 	}

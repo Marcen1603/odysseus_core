@@ -23,6 +23,8 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 	final private Set<IScheduling> pausedPlans;
 	private Iterator<IScheduling> planIterator = null;
 
+	private IScheduling currentPlan;
+	
 	public RoundRobinPlanScheduling() {
 		planList = new ArrayList<IScheduling>();
 		pausedPlans = new HashSet<IScheduling>();
@@ -43,14 +45,18 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 	@Override
 	public void clear() {
 		planIterator = null;
+		for (IScheduling plan: planList){
+			plan.removeSchedulingEventListener(this);
+		}
 		pausedPlans.clear();
 		planList.clear();
 	}
 
 	@Override
 	public void removePlan(IScheduling plan) {
-		if (planIterator != null) {
+		if (planIterator != null && plan == currentPlan) {
 			planIterator.remove();
+			currentPlan.removeSchedulingEventListener(this);
 		}
 	}
 
@@ -76,9 +82,9 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 				}
 			}
 			while (planIterator.hasNext()) {
-				IScheduling plan = planIterator.next();
-				if (plan.isSchedulable()) {
-					return plan;
+				currentPlan = planIterator.next();
+				if (currentPlan.isSchedulable()) {
+					return currentPlan;
 				}
 			}
 		}
