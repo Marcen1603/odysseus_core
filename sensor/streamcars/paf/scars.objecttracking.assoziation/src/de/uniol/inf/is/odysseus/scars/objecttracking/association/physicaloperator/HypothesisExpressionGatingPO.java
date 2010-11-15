@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
  * @param <M>
  */
 
-public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency>
+public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String scanObjListPath;
@@ -35,17 +35,17 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	private SchemaIndexPath predictedObjectListPath;
 	private SchemaIndexPath scannedObjectListPath;
 
-	public HypothesisExpressionEvaluationPO() {
+	public HypothesisExpressionGatingPO() {
 		super();
 	}
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		return new HypothesisExpressionEvaluationPO<M>(this);
+		return new HypothesisExpressionGatingPO<M>(this);
 	}
 
-	public HypothesisExpressionEvaluationPO(
-			HypothesisExpressionEvaluationPO<M> clone) {
+	public HypothesisExpressionGatingPO(
+			HypothesisExpressionGatingPO<M> clone) {
 		super(clone);
 	}
 
