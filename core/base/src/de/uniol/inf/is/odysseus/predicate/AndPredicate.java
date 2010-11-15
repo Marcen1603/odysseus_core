@@ -87,18 +87,13 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 		if(o instanceof AndPredicate) {
 			AndPredicate<T> ap = (AndPredicate<T>) o;
 
-//			if((this.getLeft().isContainedIn(ap.getLeft())
-//					&& this.getRight().isContainedIn(ap.getRight()))
-//					|| (this.getLeft().isContainedIn(ap.getRight())
-//							&& this.getRight().isContainedIn(ap.getLeft()))) {
-//				return true;
-//			}
+
 			
 			ArrayList<IPredicate<?>> a = extractAllPredicates(this);
 			ArrayList<IPredicate<?>> b = extractAllPredicates(ap);
-			if(b.size()>a.size()) {
-				return false;
-			}
+
+			// Für JEDES Prädikat aus dem anderen AndPredicate muss ein enthaltenes Prädikat in diesem AndPredicate gefunden werden
+			// (Nur weitere Verschärfungen sind zulässig, deshalb darf keine Bedingung des anderen Prädikats stärker sein)
 			for(IPredicate<?> predb : b) {
 				if(predb instanceof OrPredicate) {
 					return false;
