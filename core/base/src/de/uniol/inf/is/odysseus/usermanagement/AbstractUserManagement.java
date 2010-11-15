@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryAction;
 import de.uniol.inf.is.odysseus.store.IStore;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
@@ -24,6 +25,7 @@ abstract class AbstractUserManagement {
 	private int sessionID = -1;
 
 	// TODO: sortieren
+	// TODO: Java doc
 
 	protected AbstractUserManagement(IUserStore userStore) {
 		this.userStore = userStore;
@@ -187,24 +189,11 @@ abstract class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	// TODO: methode für if anlegen
 	public void grantPermission(User caller, String entityname,
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException, StoreException {
-		if (((AccessControl.hasPermission(UserManagementAction.GRANT,
-				UserManagementAction.alias, caller)
-		// caller has object
-				&& caller.hasObject(objecturi) != null
-				// is creator of Object || (obj is UM || DD)
-				&& ((objecturi.equals(UserManagementAction.alias) || objecturi
-						.equals("DataDictionary")) || AccessControl
-						.isCreatorOfObject(caller.getUsername(), objecturi))
-		// caller has permission he want to grant
-		&& AccessControl.hasPermission(operation, objecturi, caller))
-		// hat user superPermission von permission
-		|| hasSuperOperation(UserManagementAction.GRANT,
-				UserManagementAction.alias, caller))) {
-
+		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
+				UserManagementAction.GRANT)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) == null) {
@@ -218,28 +207,21 @@ abstract class AbstractUserManagement {
 			} else {
 				fireRoleChangedEvent();
 			}
+
+			// vergibt zusammenhängende Rechte
+			dependingGrants(caller, entityname, operation, objecturi);
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
 					+ " has no permission to grant permission.");
 		}
 	}
 
-	// TODO: methode für if anlegen
 	// TODO: java doc
 	public void revokePermission(User caller, String entityname,
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException {
-		if (!caller.toString().equals(entityname)
-				&& ((AccessControl.hasPermission(UserManagementAction.GRANT,
-						UserManagementAction.alias, caller)
-				// caller hat object
-						&& caller.hasObject(objecturi) != null
-				// user is owner of object
-				&& AccessControl.isCreatorOfObject(caller.getUsername(),
-						objecturi))
-				// hat user superPermission von permission
-				|| hasSuperOperation(UserManagementAction.GRANT,
-						UserManagementAction.alias, caller))) {
+		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
+				UserManagementAction.REVOKE)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) != null) {
@@ -282,6 +264,34 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
+	 * checks if the given user has permission to perform a certain action on a
+	 * given object.
+	 * 
+	 * @param caller
+	 * @param entityname
+	 * @param objecturi
+	 * @param action
+	 * @return boolean
+	 */
+	private boolean hasGrantOrRevokeAccess(User caller, String entityname,
+			String objecturi, IUserAction action) {
+		if (!caller.toString().equals(entityname)
+				&& ((AccessControl.hasPermission((UserManagementAction) action,
+						UserManagementAction.alias, caller)
+				// caller hat object
+						&& caller.hasObject(objecturi) != null
+				// user is owner of object
+				&& AccessControl.isCreatorOfObject(caller.getUsername(),
+						objecturi))
+				// hat user superPermission von permission
+				|| hasSuperOperation((UserManagementAction) action,
+						UserManagementAction.alias, caller))) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * revokes all permissions on an object from user or role (removes the
 	 * privilege)
 	 * 
@@ -290,15 +300,10 @@ abstract class AbstractUserManagement {
 	 * @param priv
 	 * @throws HasNoPermissionException
 	 */
-	// TODO: methode für if anlegen
 	public void revokePrivilegeForObject(User caller, String entityname,
 			String objecturi) throws HasNoPermissionException {
-		if (!caller.toString().equals(entityname)
-				&& ((AccessControl.hasPermission(UserManagementAction.REVOKE,
-						UserManagementAction.alias, caller) && caller
-						.hasObject(objecturi) != null) || hasSuperOperation(
-						UserManagementAction.REVOKE,
-						UserManagementAction.alias, caller))) {
+		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
+				UserManagementAction.REVOKE)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			entity.removePrivilege(objecturi);
 			if (entity instanceof User) {
@@ -326,16 +331,10 @@ abstract class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	// TODO: methode für if anlegen
 	public void grantRole(User caller, String rolename, String username)
 			throws HasNoPermissionException, StoreException {
-		if (((AccessControl.hasPermission(UserManagementAction.GRANT,
-				UserManagementAction.alias, caller)
-		// ist in der rolle
-		&& caller.hasRole(rolename) != null)
-		// hat superPermission
-		|| hasSuperOperation(UserManagementAction.GRANT,
-				UserManagementAction.alias, caller))) {
+		if (hasGrantAndRevokeOnRoleAccess(caller, username, rolename,
+				UserManagementAction.GRANT_ROLE)) {
 			User user = this.userStore.getUserByName(username);
 			Role role = this.roleStore.get(rolename);
 			if (user.hasRole(rolename) == null) {
@@ -370,6 +369,43 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
+	 * checks if the given user has permission to perform a certain action on a
+	 * given rolen. the role is specified by name.
+	 * 
+	 * @param caller
+	 * @param username
+	 * @param rolename
+	 * @param action
+	 * @return boolean
+	 */
+	private boolean hasGrantAndRevokeOnRoleAccess(User caller, String username,
+			String rolename, IUserAction action) {
+		if ((AccessControl.hasPermission((UserManagementAction) action,
+				UserManagementAction.alias, caller)
+		// ist in der rolle
+				&& caller.hasRole(rolename) != null)
+				|| hasSuperOperation((UserManagementAction) action,
+						UserManagementAction.alias, caller)
+				// caller kann sich nicht selbst entfernen
+				&& !caller.getUsername().equals(username)) {
+			return true;
+		}
+		return false;
+	}
+
+	// TODO: zusammenhänge granten
+	private void dependingGrants(User caller, String entityname,
+			IUserAction action, String objecturi) {
+		switch ((DataDictionaryAction) action) {
+		case GET_STREAM:
+			this.grantPermission(caller, entityname,
+					DataDictionaryAction.GET_ENTITY, objecturi);
+		default:
+			;
+		}
+	}
+
+	/**
 	 * revoke a role from a specified user
 	 * 
 	 * @param caller
@@ -377,15 +413,10 @@ abstract class AbstractUserManagement {
 	 * @param user
 	 * @throws HasNoPermissionException
 	 */
-	// TODO: methode für if anlegen
 	public void revokeRole(User caller, String rolename, String username)
 			throws HasNoPermissionException {
-		if ((AccessControl.hasPermission(UserManagementAction.REVOKE,
-				UserManagementAction.alias, caller) && caller.hasRole(rolename) != null)
-				|| hasSuperOperation(UserManagementAction.REVOKE,
-						UserManagementAction.alias, caller)
-				// caller kann sich nicht selbst entfernen
-				&& !caller.getUsername().equals(username)) {
+		if (hasGrantAndRevokeOnRoleAccess(caller, username, rolename,
+				UserManagementAction.REVOKE_ROLE)) {
 			User user = this.userStore.getUserByName(username);
 			if (user.hasRole(rolename) != null) {
 				user.removeRole(this.roleStore.get(rolename));
