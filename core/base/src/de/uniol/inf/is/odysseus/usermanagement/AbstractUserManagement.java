@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryAction;
+import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorAction;
 import de.uniol.inf.is.odysseus.store.IStore;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
@@ -396,12 +397,26 @@ abstract class AbstractUserManagement {
 	// TODO: zusammenhänge granten
 	private void dependingGrants(User caller, String entityname,
 			IUserAction action, String objecturi) {
-		switch ((DataDictionaryAction) action) {
-		case GET_STREAM:
-			this.grantPermission(caller, entityname,
-					DataDictionaryAction.GET_ENTITY, objecturi);
-		default:
-			;
+		if (action instanceof DataDictionaryAction) {
+			switch ((DataDictionaryAction) action) {
+			case GET_STREAM:
+				this.grantPermission(caller, entityname,
+						DataDictionaryAction.GET_ENTITY, objecturi);
+			default:
+				;
+			}
+		}
+		if (action instanceof UserManagementAction) {
+			switch ((UserManagementAction) action) {
+			default:
+				;
+			}
+		}
+		if (action instanceof ExecutorAction) {
+			switch ((ExecutorAction) action) {
+			default:
+				;
+			}
 		}
 	}
 
