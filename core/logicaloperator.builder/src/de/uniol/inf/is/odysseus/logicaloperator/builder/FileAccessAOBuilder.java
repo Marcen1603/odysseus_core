@@ -46,13 +46,13 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		String sourceName = this.sourceName.getValue();
-		if (DataDictionary.getInstance().containsView(sourceName, getCaller())) {
-			return DataDictionary.getInstance().getView(sourceName, getCaller());
+		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
+			return DataDictionary.getInstance().getViewOrStream(sourceName, getCaller());
 		}
 		
 		FileAccessAO ao = createNewFileAccessAO(sourceName);
 		
-		DataDictionary.getInstance().setView(sourceName,ao, getCaller());
+		DataDictionary.getInstance().setStream(sourceName,ao, getCaller());
 		return ao;
 	}
 	
@@ -63,7 +63,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 		SDFAttributeList schema = new SDFAttributeList(attributeList);
 		sdfEntity.setAttributes(schema);
 		
-		DataDictionary.getInstance().addSourceType(sourceName, "RelationalStreaming", getCaller());
+		DataDictionary.getInstance().addSourceType(sourceName, "RelationalStreaming");
 		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, getCaller());
 		
 		
@@ -84,7 +84,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 		if(delay.getValue() == null)
 			delay.setInputValue(0l);
 			
-		if (DataDictionary.getInstance().containsView(sourceName, getCaller())) {
+		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
 			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
 				addError(new IllegalArgumentException("view " + sourceName
 						+ " already exists"));

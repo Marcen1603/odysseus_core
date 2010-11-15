@@ -94,13 +94,12 @@ public class UserManagement extends AbstractUserManagement {
 					// Anfragen erstellen und entfernen
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_ENTITY, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_ENTITY, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_LOGICAL_VIEW, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_STREAM, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_VIEW, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_SOURCETYPE, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_ENTITY, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_SOURCE, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_STREAM, DataDictionaryAction.alias);
 
 					// Anfrage verwalten
 					instance.grantPermission(sys, "DSUser", ExecutorAction.ADD_QUERY, ExecutorAction.alias);

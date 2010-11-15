@@ -29,11 +29,11 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 		parser.setUser(caller);
 		ILogicalOperator operator = ((List<IQuery>) parser.visit((ASTPriorizedStatement) node.jjtGetChild(1), null)).get(0).getLogicalPlan();
 		
-		if (DataDictionary.getInstance().containsView(viewName, caller)) {
+		if (DataDictionary.getInstance().containsViewOrStream(viewName, caller)) {
 			throw new RuntimeException("ambigious name of view: " + viewName);
 		}
-		DataDictionary.getInstance().addSourceType(viewName, "RelationalStreaming", caller);
-		DataDictionary.getInstance().setLogicalView(viewName, operator, caller);
+		DataDictionary.getInstance().addSourceType(viewName, "RelationalStreaming");
+		DataDictionary.getInstance().setView(viewName, operator, caller);
 		
 		return null;
 	}

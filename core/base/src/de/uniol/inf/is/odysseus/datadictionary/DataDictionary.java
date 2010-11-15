@@ -31,9 +31,6 @@ import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 public class DataDictionary {
 
-	// TODO: REMOVE Entity
-	// TODO: REMOVE Source (queries? entities?)
-
 	protected static Logger _logger = null;
 
 	static private DataDictionary instance = null;
@@ -54,45 +51,44 @@ public class DataDictionary {
 	}
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
+	final private IStore<String, ILogicalOperator> streamDefinitions;
+	final private IStore<String, User> viewOrStreamFromUser;
 	final private IStore<String, ILogicalOperator> viewDefinitions;
-	final private IStore<String, User> viewFromUser;
-	final private IStore<String, ILogicalOperator> logicalViewDefinitions;
 	final private IStore<String, SDFEntity> entityMap;
 	final private IStore<String, User> entityFromUser;
 	final private IStore<String, String> sourceTypeMap;
 
-	final private IStore<String, User> sourceFromUser;
-
 	private DataDictionary() {
 		try {
 			if (OdysseusDefaults.storeDataDictionary) {
+				streamDefinitions = new FileStore<String, ILogicalOperator>(
+						OdysseusDefaults.streamDefinitionsFilename);
+				viewOrStreamFromUser = new FileStore<String, User>(
+						OdysseusDefaults.streamOrViewFromUserFilename);
 				viewDefinitions = new FileStore<String, ILogicalOperator>(
 						OdysseusDefaults.viewDefinitionsFilename);
-				viewFromUser = new FileStore<String, User>(
-						OdysseusDefaults.viewFromUserFilename);
-				logicalViewDefinitions = new FileStore<String, ILogicalOperator>(
-						OdysseusDefaults.logicalViewDefinitionsFilename);
 				entityMap = new FileStore<String, SDFEntity>(
 						OdysseusDefaults.entitiesFilename);
 				sourceTypeMap = new FileStore<String, String>(
 						OdysseusDefaults.sourceTypeMapFilename);
 				entityFromUser = new FileStore<String, User>(
 						OdysseusDefaults.entityFromUserFilename);
-				sourceFromUser = new FileStore<String, User>(
-						OdysseusDefaults.sourceFromUserFilename);
 			} else {
+				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
+				viewOrStreamFromUser = new MemoryStore<String, User>();
 				viewDefinitions = new MemoryStore<String, ILogicalOperator>();
-				viewFromUser = new MemoryStore<String, User>();
-				logicalViewDefinitions = new MemoryStore<String, ILogicalOperator>();
 				entityMap = new MemoryStore<String, SDFEntity>();
 				entityFromUser = new MemoryStore<String, User>();
 				sourceTypeMap = new MemoryStore<String, String>();
-				sourceFromUser = new MemoryStore<String, User>();
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
+
+	// ----------------------------------------------------------------------------
+	// Entity Management
+	// ----------------------------------------------------------------------------
 
 	public void addEntity(String uri, SDFEntity entity, User user)
 			throws HasNoPermissionException {
@@ -123,40 +119,261 @@ public class DataDictionary {
 		}
 	}
 
-	public void addListener(IDataDictionaryListener listener) {
-		if (listener == null)
-			throw new IllegalArgumentException("listener is null");
-
-		if (!listeners.contains(listener))
-			listeners.add(listener);
+	public SDFEntity getEntity(String uri, User caller)
+			throws HasNoPermissionException {
+		if (allowedToAccessObjects(uri, caller, DataDictionaryAction.GET_ENTITY)) {
+			SDFEntity ret = entityMap.get(uri);
+			if (ret == null) {
+				throw new IllegalArgumentException("no such entity: " + uri);
+			}
+			return ret;
+		} else {
+			throw new HasNoPermissionException("User " + caller.getUsername()
+					+ " has no permission to get entity '" + uri + "'.");
+		}
 	}
 
-	public void addSourceType(String sourcename, String sourcetype, User user) {
+	// TODO: REMOVE Entity
+
+	/**
+	 * returns the username for the given entityname
+	 * 
+	 * @param entityuri
+	 * @return Username
+	 * @throws HasNoPermissionException
+	 */
+	// no restric
+	public String getUserForEntity(String entityuri) {
+		return this.entityFromUser.get(entityuri).getUsername();
+	}
+	
+	
+	// ----------------------------------------------------------------------------
+	// Source Management
+	// ----------------------------------------------------------------------------
+
+	
+	public void addSourceType(String sourcename, String sourcetype) {
+		sourceTypeMap.put(sourcename, sourcetype);
+	}
+
+	private String getSourceType(String sourcename) throws SQLException {
+		String value = sourceTypeMap.get(sourcename);
+		if (value == null) {
+			throw new IllegalArgumentException("missing source type for: "
+					+ sourcename);
+		}
+		return value;
+	}
+
+	public SDFSource createSDFSource(String sourcename) {
 		try {
-			if (AccessControl.hasPermission(
-					DataDictionaryAction.ADD_SOURCETYPE,
-					DataDictionaryAction.alias, user)) {
+			String type = getSourceType(sourcename);
+			SDFSource source = new SDFSource(sourcename, type);
 
-				sourceTypeMap.put(sourcename, sourcetype);
-				sourceFromUser.put(sourcename, user);
+			return source;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	// no restric
+	public boolean emptySourceTypeMap() {
+		return sourceTypeMap.isEmpty();
+	}
 
-				// Recht auf die Source
-				User system = UserManagement.getInstance().getSuperUser();
-				UserManagement.getInstance().grantPermission(system,
-						user.getUsername(), DataDictionaryAction.GET_SOURCE,
-						sourcename);
-				UserManagement.getInstance().grantPermission(system,
-						user.getUsername(), DataDictionaryAction.REMOVE_SOURCE,
-						sourcename);
-			} else {
-				throw new HasNoPermissionException("User " + user.toString()
-						+ " has no permission to add sourcetypes.");
+	// ------------------------------------------------------------------------
+	// View Management
+	// ------------------------------------------------------------------------
+
+	public void setView(String viewname, ILogicalOperator topOperator,
+			User caller) {
+		if (AccessControl.hasPermission(DataDictionaryAction.ADD_VIEW,
+				DataDictionaryAction.alias, caller)) {
+			if (viewDefinitions.containsKey(viewname)) {
+				throw new RuntimeException("View " + viewname
+						+ " already exists. Drop First");
+			}
+			try {
+				this.viewDefinitions.put(viewname, topOperator);
+				viewOrStreamFromUser.put(viewname, caller);
+			} catch (StoreException e) {
+				throw new RuntimeException(e);
+			}
+			fireAddEvent(viewname, topOperator);
+		} else {
+			throw new HasNoPermissionException("User " + caller.getUsername()
+					+ " has no permission to add a view.");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	// no restric
+	private ILogicalOperator getView(String viewname, User caller) {
+		ILogicalOperator logicalPlan = this.viewDefinitions.get(viewname);
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+		@SuppressWarnings("rawtypes")
+		AbstractGraphWalker walker = new AbstractGraphWalker();
+		walker.prefixWalk(logicalPlan, copyVisitor);
+		return copyVisitor.getResult();
+	}
+
+	
+	private ILogicalOperator removeView(String viewname, User caller) {
+		ILogicalOperator op;
+		try {
+			op = viewDefinitions.remove(viewname);
+			if (op != null) {
+				viewOrStreamFromUser.remove(viewname);
 			}
 		} catch (StoreException e) {
-			new RuntimeException(e);
+			throw new RuntimeException(e);
+		}
+		if (op != null)
+			fireRemoveEvent(viewname, op);
+		return op;
+	}
+	
+	// no restric
+	public boolean isView(String name) {
+		return this.viewDefinitions.containsKey(name);
+	}
+
+	// ------------------------------------------------------------------------
+	// Stream Management
+	// ------------------------------------------------------------------------
+
+	public void setStream(String streamname, ILogicalOperator plan, User caller) {
+		if (AccessControl.hasPermission(DataDictionaryAction.ADD_STREAM,
+				DataDictionaryAction.alias, caller)) {
+			if (streamDefinitions.containsKey(streamname)) {
+				throw new RuntimeException("Stream " + streamname
+						+ " already exists. Remove First");
+			}
+			try {
+				streamDefinitions.put(streamname, plan);
+				viewOrStreamFromUser.put(streamname, caller);
+
+				// Rechte
+				User system = UserManagement.getInstance().getSuperUser();
+				UserManagement.getInstance().grantPermission(system,
+						caller.getUsername(), DataDictionaryAction.GET_STREAM,
+						streamname);
+				UserManagement.getInstance().grantPermission(system,
+						caller.getUsername(),
+						DataDictionaryAction.REMOVE_STREAM, streamname);
+			} catch (StoreException e) {
+				throw new RuntimeException(e);
+			}
+			fireAddEvent(streamname, plan);
+		} else {
+			throw new HasNoPermissionException("User " + caller.getUsername()
+					+ " has no permission to set a new view.");
+		}
+	}
+
+	// no restric
+	private AccessAO getStream(String viewname, User caller) {
+		if (!this.streamDefinitions.containsKey(viewname)) {
+			throw new IllegalArgumentException("no such view: " + viewname);
 		}
 
+		SDFSource source = createSDFSource(viewname);
+		AccessAO ao = new AccessAO(source);
+
+		SDFEntity entity = getEntity(viewname, caller);
+		ao.setOutputSchema(entity.getAttributes());
+
+		return ao;
 	}
+
+	public ILogicalOperator getStreamForTransformation(String name, User caller) {
+		checkViewAccess(name, caller, DataDictionaryAction.GET_STREAM);
+		return streamDefinitions.get(name);
+	}
+	
+	// no restric
+	public boolean hasStream(String name, User user) {
+		return streamDefinitions.containsKey(name);
+	}
+	
+	// ------------------------------------------------------------------------
+	// Access View or Streams
+	// ------------------------------------------------------------------------
+
+	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(User caller) {
+		Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String, ILogicalOperator>>();
+
+		for (Entry<String, ILogicalOperator> viewEntry : streamDefinitions
+				.entrySet()) {
+			try {
+				checkViewAccess(viewEntry.getKey(), caller,
+						DataDictionaryAction.GET_STREAM);
+				sources.add(viewEntry);
+			} catch (HasNoPermissionException e) {
+				// ignore
+			}
+		}
+		for (Entry<String, ILogicalOperator> viewEntry : viewDefinitions
+				.entrySet()) {
+			try {
+				checkViewAccess(viewEntry.getKey(), caller,
+						DataDictionaryAction.GET_STREAM);
+				sources.add(viewEntry);
+			} catch (HasNoPermissionException e) {
+				// ignore
+			}
+		}
+		if (sources.isEmpty()) {
+			throw new HasNoPermissionException("User " + caller.getUsername()
+					+ " has no permission on any View.");
+		}
+		return sources;
+	}
+	
+	public ILogicalOperator getViewOrStream(String viewname, User caller) {
+		if (this.viewDefinitions.containsKey(viewname)) {
+			checkViewAccess(viewname, caller, DataDictionaryAction.GET_STREAM);
+			return getView(viewname, caller);
+		} else {
+			checkViewAccess(viewname, caller, DataDictionaryAction.GET_STREAM);
+			return getStream(viewname, caller);
+		}
+	}
+
+	public ILogicalOperator removeViewOrStream(String viewname, User caller) {
+		if (this.viewDefinitions.containsKey(viewname)) {
+			checkViewAccess(viewname, caller, DataDictionaryAction.REMOVE_VIEW);
+			return removeView(viewname, caller);
+		} else {
+			ILogicalOperator op;
+			checkViewAccess(viewname, caller,
+					DataDictionaryAction.REMOVE_STREAM);
+			op = streamDefinitions.remove(viewname);
+			if (op != null) {
+				viewOrStreamFromUser.remove(viewname);
+			}
+			if (op != null)
+				fireRemoveEvent(viewname, op);
+			return op;
+		}
+	}
+
+	// no restric
+	public boolean containsViewOrStream(String viewName, User user) {
+		return this.streamDefinitions.containsKey(viewName)
+				|| this.viewDefinitions.containsKey(viewName);
+	}
+	
+	// no restric
+	public User getUserForViewOrStream(String view) {
+		return viewOrStreamFromUser.get(view);
+	}
+
+	// ----------------------------------------------------------------------------
+	// Rights Management
+	// ----------------------------------------------------------------------------
 
 	/**
 	 * return true if the given user has permission to access the given object
@@ -183,37 +400,50 @@ public class DataDictionary {
 	 * @param action
 	 * @return boolean
 	 */
-	private boolean allowedToAccessView(String key, User caller,
+	private void checkViewAccess(String viewOrSource, User caller,
 			DataDictionaryAction action) {
-		return AccessControl.hasPermission(action, key, caller)
-				// is owner
-				|| AccessControl.isCreatorOfView(caller.getUsername(), key)
-				|| hasSuperOperation(action, DataDictionaryAction.alias, caller);
+		if (AccessControl.hasPermission(action, viewOrSource, caller)
+		// is owner
+				|| AccessControl.isCreatorOfView(caller.getUsername(),
+						viewOrSource)
+				|| hasSuperOperation(action, DataDictionaryAction.alias, caller)) {
+			return;
+		}
+		throw new HasNoPermissionException("User " + caller.getUsername()
+				+ " has not the right " + action + " on Source/View '"
+				+ viewOrSource);
+	}
+	
+	/**
+	 * returns true if the given user has higher permission as the given
+	 * operation
+	 * 
+	 * @param operation
+	 * @param object
+	 * @param user
+	 * @return boolean
+	 */
+	public boolean hasSuperOperation(DataDictionaryAction operation,
+			String object, User user) {
+		return AccessControl.hasPermission(
+				DataDictionaryAction.hasSuperAction(operation), object, user);
 	}
 
-//	@Deprecated
-//	public void clearViews() {
-//		for (Entry<String, ILogicalOperator> entry : this.viewDefinitions
-//				.entrySet())
-//			fireRemoveEvent(entry.getKey(), entry.getValue());
-//
-//		try {
-//			this.viewDefinitions.clear();
-//		} catch (StoreException e) {
-//			throw new RuntimeException(e);
-//		}
-//
-//	}
+	// ----------------------------------------------------------------------------
+	// Listener Management
+	// ----------------------------------------------------------------------------
 
-	// no restric
-	public boolean containsView(String viewName, User user) {
-		return this.viewDefinitions.containsKey(viewName)
-				|| this.logicalViewDefinitions.containsKey(viewName);
+	public void addListener(IDataDictionaryListener listener) {
+		if (listener == null)
+			throw new IllegalArgumentException("listener is null");
+
+		if (!listeners.contains(listener))
+			listeners.add(listener);
 	}
 
-	// no restric
-	public boolean emptySourceTypeMap() {
-		return sourceTypeMap.isEmpty();
+	// no restirc
+	public void removeListener(IDataDictionaryListener listener) {
+		listeners.remove(listener);
 	}
 
 	private void fireAddEvent(String name, ILogicalOperator op) {
@@ -233,272 +463,6 @@ public class DataDictionary {
 			} catch (Exception ex) {
 				getLogger().error("Error during executing listener", ex);
 			}
-		}
-	}
-
-	public SDFEntity getEntity(String uri, User caller)
-			throws HasNoPermissionException {
-		if (allowedToAccessObjects(uri, caller, DataDictionaryAction.GET_ENTITY)) {
-			SDFEntity ret = entityMap.get(uri);
-			if (ret == null) {
-				throw new IllegalArgumentException("no such entity: " + uri);
-			}
-			return ret;
-		} else {
-			throw new HasNoPermissionException("User " + caller.getUsername()
-					+ " has no permission to get entity '" + uri + "'.");
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	// no restric
-	private ILogicalOperator getLogicalView(String viewname, User caller) {
-		ILogicalOperator logicalPlan = this.logicalViewDefinitions
-				.get(viewname);
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
-		@SuppressWarnings("rawtypes")
-		AbstractGraphWalker walker = new AbstractGraphWalker();
-		walker.prefixWalk(logicalPlan, copyVisitor);
-		return copyVisitor.getResult();
-	}
-
-	public SDFSource getSource(String sourcename, User caller) {
-		if (allowedToAccessObjects(sourcename, caller,
-				DataDictionaryAction.GET_SOURCE)) {
-			try {
-				String type = getSourceType(sourcename, caller);
-				SDFSource source = new SDFSource(sourcename, type);
-
-				return source;
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
-			}
-		} else {
-			throw new HasNoPermissionException(caller+
-					" has no permission to get source '" + sourcename + "'.");
-		}
-	}
-
-	private String getSourceType(String sourcename, User caller)
-			throws SQLException {
-		String value = sourceTypeMap.get(sourcename);
-		if (value == null) {
-			throw new IllegalArgumentException("missing source type for: "
-					+ sourcename);
-		}
-		return value;
-	}
-
-	/**
-	 * returns the username for the given entityname
-	 * 
-	 * @param entityuri
-	 * @return Username
-	 * @throws HasNoPermissionException
-	 */
-	// no restric
-	public String getUserForEntity(String entityuri) {
-		return this.entityFromUser.get(entityuri).getUsername();
-	}
-
-	/**
-	 * returns the username for the given sourcename
-	 * 
-	 * @param sourcename
-	 * @return Username
-	 * @throws HasNoPermissionException
-	 */
-	// no restric
-	public String getUserForSource(String sourcename) {
-		return this.sourceFromUser.get(sourcename).getUsername();
-	}
-
-	// no restric
-	public User getUserForView(String view) {
-		return viewFromUser.get(view);
-	}
-
-	public ILogicalOperator getView(String viewname, User caller) {
-		if (allowedToAccessView(viewname, caller, DataDictionaryAction.GET_VIEW)) {
-			if (this.logicalViewDefinitions.containsKey(viewname)) {
-				return getLogicalView(viewname, caller);
-			} else {
-				return getViewReference(viewname, caller);
-			}
-		} else {
-			throw new HasNoPermissionException("User " + caller.getUsername()
-					+ " has no permission to get this view '" + viewname + "'.");
-		}
-	}
-
-	public ILogicalOperator getViewForTransformation(String name, User caller) {
-		if (allowedToAccessView(name, caller,
-				DataDictionaryAction.GET_VIEW)) {
-			return viewDefinitions.get(name);
-		} else {
-			throw new HasNoPermissionException("User " + caller.getUsername()
-					+ " has no permission to get view '" + name
-					+ "' for transformation.");
-		}
-	}
-
-	// no restric
-	private AccessAO getViewReference(String viewname, User caller) {
-		if (!this.viewDefinitions.containsKey(viewname)) {
-			throw new IllegalArgumentException("no such view: " + viewname);
-		}
-
-		SDFSource source = getSource(viewname, caller);
-		AccessAO ao = new AccessAO(source);
-
-		SDFEntity entity = getEntity(viewname, caller);
-		ao.setOutputSchema(entity.getAttributes());
-
-		return ao;
-	}
-
-	public Set<Entry<String, ILogicalOperator>> getViews(User caller) {
-		Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String, ILogicalOperator>>();
-
-		for (Entry<String, ILogicalOperator> viewEntry : viewDefinitions
-				.entrySet()) {
-			if (allowedToAccessView(viewEntry.getKey(), caller,
-					DataDictionaryAction.GET_VIEW)) {
-				sources.add(viewEntry);
-			}
-		}
-		for (Entry<String, ILogicalOperator> viewEntry : logicalViewDefinitions
-				.entrySet()) {
-			if (allowedToAccessView(viewEntry.getKey(), caller,
-					DataDictionaryAction.GET_VIEW)) {
-				sources.add(viewEntry);
-			}
-		}
-		if (sources.isEmpty()) {
-			throw new HasNoPermissionException("User " + caller.getUsername()
-					+ " has no permission on any View.");
-		}
-		return sources;
-	}
-
-	/**
-	 * returns true if the given user has higher permission as the given
-	 * operation
-	 * 
-	 * @param operation
-	 * @param object
-	 * @param user
-	 * @return boolean
-	 */
-	public boolean hasSuperOperation(DataDictionaryAction operation,
-			String object, User user) {
-		return AccessControl.hasPermission(
-				DataDictionaryAction.hasSuperAction(operation), object, user);
-	}
-
-	// no restric
-	public boolean hasView(String name, User user) {
-		return viewDefinitions.containsKey(name);
-	}
-
-	// no restric
-	public boolean isLogicalView(String name) {
-		return this.logicalViewDefinitions.containsKey(name);
-	}
-
-	// no restirc
-	public void removeListener(IDataDictionaryListener listener) {
-		listeners.remove(listener);
-	}
-
-	private ILogicalOperator removeLogicalView(String viewname, User caller) {
-		ILogicalOperator op;
-		try {
-			op = logicalViewDefinitions.remove(viewname);
-			if (op != null) {
-				viewFromUser.remove(viewname);
-			}
-		} catch (StoreException e) {
-			throw new RuntimeException(e);
-		}
-		if (op != null)
-			fireRemoveEvent(viewname, op);
-		return op;
-	}
-
-	public ILogicalOperator removeView(String viewname, User caller) {
-		if (allowedToAccessView(viewname, caller,
-				DataDictionaryAction.REMOVE_VIEW)) {
-			if (this.logicalViewDefinitions.containsKey(viewname)) {
-				return removeLogicalView(viewname, caller);
-			} else {
-				ILogicalOperator op;
-				try {
-					op = viewDefinitions.remove(viewname);
-					if (op != null) {
-						viewFromUser.remove(viewname);
-					}
-				} catch (StoreException e) {
-					throw new RuntimeException(e);
-				}
-				if (op != null)
-					fireRemoveEvent(viewname, op);
-				return op;
-			}
-		} else {
-			throw new HasNoPermissionException("User " + caller.getUsername()
-					+ " has no permission to remove this view.");
-		}
-	}
-
-	public void setLogicalView(String viewname, ILogicalOperator topOperator,
-			User caller) {
-		if (AccessControl.hasPermission(DataDictionaryAction.ADD_LOGICAL_VIEW,
-				DataDictionaryAction.alias, caller)) {
-			if (logicalViewDefinitions.containsKey(viewname)) {
-				throw new RuntimeException("View " + viewname
-						+ " already exists. Drop First");
-			}
-			try {
-				this.logicalViewDefinitions.put(viewname, topOperator);
-				viewFromUser.put(viewname, caller);
-			} catch (StoreException e) {
-				throw new RuntimeException(e);
-			}
-			fireAddEvent(viewname, topOperator);
-		} else {
-			throw new HasNoPermissionException("User " + caller.getUsername()
-					+ " has no permission to add a logical view.");
-		}
-	}
-
-	public void setView(String viewname, ILogicalOperator plan, User caller) {
-		if (AccessControl.hasPermission(DataDictionaryAction.ADD_VIEW,
-				DataDictionaryAction.alias, caller)) {
-			if (viewDefinitions.containsKey(viewname)) {
-				throw new RuntimeException("View " + viewname
-						+ " already exists. Remove First");
-			}
-			try {
-				viewDefinitions.put(viewname, plan);
-				viewFromUser.put(viewname, caller);
-
-				// Rechte
-				User system = UserManagement.getInstance().getSuperUser();
-				UserManagement.getInstance().grantPermission(system,
-						caller.getUsername(), DataDictionaryAction.GET_VIEW,
-						viewname);
-				UserManagement.getInstance().grantPermission(system,
-						caller.getUsername(), DataDictionaryAction.REMOVE_VIEW,
-						viewname);
-			} catch (StoreException e) {
-				throw new RuntimeException(e);
-			}
-			fireAddEvent(viewname, plan);
-		} else {
-			throw new HasNoPermissionException("User " + caller.getUsername()
-					+ " has no permission to set a new view.");
 		}
 	}
 

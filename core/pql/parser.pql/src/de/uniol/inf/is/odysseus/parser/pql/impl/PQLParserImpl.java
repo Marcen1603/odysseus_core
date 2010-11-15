@@ -210,18 +210,18 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       nameStr = name.image;
       DataDictionary dd = DataDictionary.getInstance();
-      if (dd.containsView(nameStr, getUser()))
+      if (dd.containsViewOrStream(nameStr, getUser()))
       {
         {if (true) throw new IllegalArgumentException("multiple definition of view '" + nameStr + "'");}
       }
       SDFEntity entity = new SDFEntity(nameStr);
       entity.setAttributes(op.getOutputSchema());
-      DataDictionary.getInstance().addSourceType(nameStr, "RelationalStreaming", getUser());
+      DataDictionary.getInstance().addSourceType(nameStr, "RelationalStreaming");
       DataDictionary.getInstance().addEntity(nameStr, entity, getUser());
       dd.setView(nameStr, op, user);
       //get access operator for view, so other operators don't get subscribed
       //to top operator of the view
-      op = dd.getView(nameStr, getUser());
+      op = dd.getViewOrStream(nameStr, getUser());
     }
     namedOpParameters.put(nameStr.toUpperCase(), parameters);
     namedOps.put(nameStr.toUpperCase(), op);
@@ -263,9 +263,9 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator op = namedOps.get(identifier.image.toUpperCase());
       if (op == null)
       {
-        if (DataDictionary.getInstance().containsView(identifier.image, getUser()))
+        if (DataDictionary.getInstance().containsViewOrStream(identifier.image, getUser()))
         {
-          op = DataDictionary.getInstance().getView(identifier.image, getUser());
+          op = DataDictionary.getInstance().getViewOrStream(identifier.image, getUser());
         }
         else
         {

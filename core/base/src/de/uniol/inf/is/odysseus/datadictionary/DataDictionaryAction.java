@@ -8,9 +8,9 @@ import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
 public enum DataDictionaryAction implements IUserAction {
 	ADD_ENTITY, GET_ENTITY, REMOVE_ENTITY,
 
-	ADD_SOURCETYPE, GET_SOURCE, REMOVE_SOURCE,
+	ADD_SOURCETYPE, 
 
-	ADD_VIEW, GET_VIEW, REMOVE_VIEW, ADD_LOGICAL_VIEW,
+	ADD_STREAM, GET_STREAM, REMOVE_STREAM, REMOVE_VIEW, ADD_VIEW, GET_VIEW, 
 
 	GET_ALL, REMOVE_ALL;
 
@@ -33,15 +33,11 @@ public enum DataDictionaryAction implements IUserAction {
 		switch (action) {
 		case GET_ENTITY:
 			return GET_ALL;
-		case GET_SOURCE:
-			return GET_ALL;
-		case GET_VIEW:
+		case GET_STREAM:
 			return GET_ALL;
 		case REMOVE_VIEW:
 			return REMOVE_ALL;
 		case REMOVE_ENTITY:
-			return REMOVE_ALL;
-		case REMOVE_SOURCE:
 			return REMOVE_ALL;
 		default:
 			return null;
@@ -52,9 +48,9 @@ public enum DataDictionaryAction implements IUserAction {
 		switch ((DataDictionaryAction) action) {
 		case ADD_ENTITY:
 			return true;
-		case ADD_VIEW:
+		case ADD_STREAM:
 			return true;
-		case ADD_LOGICAL_VIEW:
+		case ADD_VIEW:
 			return true;
 		default:
 			return false;

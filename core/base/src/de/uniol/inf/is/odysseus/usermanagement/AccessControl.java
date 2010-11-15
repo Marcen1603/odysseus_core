@@ -74,12 +74,8 @@ public final class AccessControl {
 				String user = DataDictionary.getInstance().getUserForEntity(
 						objecturi);
 				if (user.isEmpty()) {
-					user = DataDictionary.getInstance().getUserForSource(
-							objecturi);
-				}
-				if (user.isEmpty()) {
 					user = DataDictionary.getInstance()
-							.getUserForView(objecturi).getUsername();
+							.getUserForViewOrStream(objecturi).getUsername();
 				}
 				if (!user.isEmpty()) {
 					if (user.equals(username)) {
@@ -106,7 +102,7 @@ public final class AccessControl {
 		if (!username.isEmpty()) {
 			try {
 				String user = DataDictionary.getInstance()
-						.getUserForView(viewname).getUsername();
+						.getUserForViewOrStream(viewname).getUsername();
 				if (!user.isEmpty()) {
 					if (user.equals(username)) {
 						return true;

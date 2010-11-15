@@ -56,7 +56,7 @@ public class DatabaseVisitor {
 		}
 
 		// ***************
-		DataDictionary.getInstance().setView(name, access, caller);
+		DataDictionary.getInstance().setStream(name, access, caller);
 		return access;
 	}
 

@@ -1276,7 +1276,7 @@ public class ExecutorConsole implements CommandProvider,
 		addCommand();
 		System.out.println("Current registered sources");
 		for (Entry<String, ILogicalOperator> e : DataDictionary.getInstance()
-				.getViews(currentUser)) {
+				.getStreamsAndViews(currentUser)) {
 			ci.println(e.getKey() + " | " + e.getValue());
 		}
 	}

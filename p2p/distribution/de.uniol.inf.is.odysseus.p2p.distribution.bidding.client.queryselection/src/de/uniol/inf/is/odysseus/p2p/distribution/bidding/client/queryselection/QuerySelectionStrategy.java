@@ -31,7 +31,7 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 			for(AccessAO ao : sources) {
 
 				User user = UserManagement.getInstance().getSuperUser();
-				if(DataDictionary.getInstance().getSource(ao.getSource().getURI(), user)== null) {
+				if(DataDictionary.getInstance().createSDFSource(ao.getSource().getURI())== null) {
 					return false;
 				}
 			}

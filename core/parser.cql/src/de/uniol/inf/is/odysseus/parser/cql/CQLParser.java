@@ -845,14 +845,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTDropStreamStatement node, Object data) {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		DataDictionary.getInstance().removeView(streamname, caller);
+		DataDictionary.getInstance().removeViewOrStream(streamname, caller);
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDropViewStatement node, Object data) {
 		String viewname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		DataDictionary.getInstance().removeView(viewname, caller);
+		DataDictionary.getInstance().removeViewOrStream(viewname, caller);
 		return null;
 	}
 

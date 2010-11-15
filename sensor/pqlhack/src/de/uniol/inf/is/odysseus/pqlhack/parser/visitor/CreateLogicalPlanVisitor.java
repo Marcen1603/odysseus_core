@@ -415,7 +415,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		if (((ArrayList) data).get(1) == null) {
 			((ArrayList) data).remove(1);
-			((ArrayList) data).add(DataDictionary.getInstance().getView(((ASTIdentifier) node.jjtGetChild(0)).getName(), user));
+			((ArrayList) data).add(DataDictionary.getInstance().getViewOrStream(((ASTIdentifier) node.jjtGetChild(0)).getName(), user));
 		}
 
 		((ArrayList) data).add(new Integer(0));

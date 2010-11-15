@@ -41,7 +41,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 		User user = UserManagement.getInstance().getSuperUser();		// Wollen jede View bzw. Quelle ausschreiben
 		for (Entry<String, ILogicalOperator> v : DataDictionary.getInstance()
-				.getViews(user)) {
+				.getStreamsAndViews(user)) {
 //			P2PSinkAO p2ppipe = null;
 //			PipeAdvertisement pipeAdv = null;
 			if(v.getValue() instanceof AccessAO) {

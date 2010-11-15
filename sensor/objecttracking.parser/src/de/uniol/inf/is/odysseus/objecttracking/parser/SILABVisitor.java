@@ -55,7 +55,7 @@ public class SILABVisitor implements IVisitor{
 			
 //		}
 		ILogicalOperator op = addTimestampAO(source, source.getOutputSchema());
-		DataDictionary.getInstance().setView(((CreateStreamVisitor)baseObject).getName(), op, user);
+		DataDictionary.getInstance().setStream(((CreateStreamVisitor)baseObject).getName(), op, user);
 		return data;
 		
 	}

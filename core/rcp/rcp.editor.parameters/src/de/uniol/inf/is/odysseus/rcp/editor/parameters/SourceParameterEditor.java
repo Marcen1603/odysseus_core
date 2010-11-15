@@ -23,7 +23,7 @@ public class SourceParameterEditor extends SimpleParameterEditor<String> impleme
 		final Combo combo = new Combo(parent, SWT.BORDER);
 
 		// Liste der Quellen
-		for( Entry<String, ILogicalOperator> e : DataDictionary.getInstance().getViews(ActiveUser.getActiveUser())) {
+		for( Entry<String, ILogicalOperator> e : DataDictionary.getInstance().getStreamsAndViews(ActiveUser.getActiveUser())) {
 			combo.add(e.getKey());
 		}
 		

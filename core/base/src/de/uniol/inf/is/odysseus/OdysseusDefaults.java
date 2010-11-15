@@ -19,9 +19,9 @@ public class OdysseusDefaults {
 	public static String slasFilename = odysseusHome+"slas.store";
 	
 	public static boolean storeDataDictionary = false;
-	public static String viewDefinitionsFilename = odysseusHome+"viewDefinitions.store";
-	public static String viewFromUserFilename = odysseusHome+"viewFromUser.store";
-	public static String logicalViewDefinitionsFilename = odysseusHome+"logicalViewDefinitions.store";
+	public static String streamDefinitionsFilename = odysseusHome+"viewDefinitions.store";
+	public static String streamOrViewFromUserFilename = odysseusHome+"viewFromUser.store";
+	public static String viewDefinitionsFilename = odysseusHome+"logicalViewDefinitions.store";
 	public static String entitiesFilename = odysseusHome+"entities.store";
 	public static String sourceTypeMapFilename = odysseusHome+"sourceTypeMap.store";
 	public static String entityFromUserFilename = odysseusHome+"entityFromUser.store";

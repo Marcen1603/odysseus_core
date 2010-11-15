@@ -80,7 +80,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data);
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().addSourceType(name, "RelationalStreaming", caller);
+		DataDictionary.getInstance().addSourceType(name, "RelationalStreaming");
 		DataDictionary.getInstance().addEntity(name, entity, caller);
 
 		for (int i = 2; i < node.jjtGetNumChildren(); ++i) {
@@ -93,9 +93,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTTimedTuples node, Object data) {
-		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary.getInstance().getSource(name, caller), node.getTuples(attributes));
+		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary.getInstance().createSDFSource(name), node.getTuples(attributes));
 		newPO.setOutputSchema(attributes);
-		DataDictionary.getInstance().setView(name, newPO, caller);
+		DataDictionary.getInstance().setStream(name, newPO, caller);
 		return null;
 	}
 
@@ -119,7 +119,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		operator = addTimestampAO(operator);
 
-		DataDictionary.getInstance().setView(name, operator, caller);
+		DataDictionary.getInstance().setStream(name, operator, caller);
 		return null;
 	}
 
@@ -197,7 +197,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
-		DataDictionary.getInstance().setView(name, op, caller);
+		DataDictionary.getInstance().setStream(name, op, caller);
 		return data;
 	}
 
@@ -214,7 +214,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		AccessAO source = new AccessAO(new SDFSource(name, "RelationalByteBufferAccessPO"));
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
-		DataDictionary.getInstance().setView(name, op, caller);
+		DataDictionary.getInstance().setStream(name, op, caller);
 		return data;
 	}
 

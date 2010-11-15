@@ -131,7 +131,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		// connect the source to broker
 		broker.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		// make it accessible like a normal source
-		DataDictionary.getInstance().addSourceType(name, "brokerStreaming", caller);
+		DataDictionary.getInstance().addSourceType(name, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(broker.getOutputSchema());
 		DataDictionary.getInstance().addEntity(name, entity, caller);
@@ -298,7 +298,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// make it accessible like a normal source
-		DataDictionary.getInstance().addSourceType(brokerName, "brokerStreaming", caller);
+		DataDictionary.getInstance().addSourceType(brokerName, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(brokerName);
 		entity.setAttributes(attributes);
 		DataDictionary.getInstance().addEntity(brokerName, entity, caller);
@@ -313,7 +313,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		BrokerDictionary.getInstance().setLogicalPlan(brokerName, broker);
 
 		// Is this necessary any more?
-		DataDictionary.getInstance().setLogicalView(brokerName, broker, caller);
+		DataDictionary.getInstance().setView(brokerName, broker, caller);
 
 		return broker;
 	}

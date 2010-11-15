@@ -36,7 +36,7 @@ public class SourcesLabelProvider implements ILabelProvider {
 		if (element instanceof Entry) {
 			@SuppressWarnings("unchecked")
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
-			if (DataDictionary.getInstance().isLogicalView(entry.getKey())){
+			if (DataDictionary.getInstance().isView(entry.getKey())){
 				return Activator.getDefault().getImageRegistry().get("view");				
 			}else{
 				return Activator.getDefault().getImageRegistry().get("source");
@@ -57,7 +57,7 @@ public class SourcesLabelProvider implements ILabelProvider {
 			sb.append(entry.getKey()).append(" [")
 					.append(entry.getValue().getClass().getSimpleName())
 					.append("]");
-			User user = DataDictionary.getInstance().getUserForView(
+			User user = DataDictionary.getInstance().getUserForViewOrStream(
 					entry.getKey());
 			if (user != null) {
 				sb.append(" created by ").append(user.getUsername());

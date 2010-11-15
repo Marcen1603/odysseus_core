@@ -166,7 +166,7 @@ catch(RecognitionException e){
 start returns [ILogicalOperator op]
   :
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
-  {	DataDictionary.getInstance().setLogicalView(n.getText(), q, user);
+  {	DataDictionary.getInstance().setView(n.getText(), q, user);
 	  getLogger().debug("Created New View "+n+" "+q);
 	  $op = q;}
   | o=query {$op = o;} // Only Query
@@ -191,7 +191,7 @@ query returns [ILogicalOperator op]
     int port = 0;
     for (String sn : sourceNames) {
       getLogger().debug("Bind "+sn+" to Port "+port);      
-      ILogicalOperator ao = DataDictionary.getInstance().getView(sn, user);
+      ILogicalOperator ao = DataDictionary.getInstance().getViewOrStream(sn, user);
       if (ao != null) {
         cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
         cepAo.setInputTypeName(port, sn);

@@ -57,7 +57,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(ex);
 		DataDictionary.getInstance().addSourceType(name,
-				"ObjectRelationalStreaming", user);
+				"ObjectRelationalStreaming");
 		DataDictionary.getInstance().addEntity(name, entity, user);
 
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist
@@ -69,7 +69,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		source.setHost(host);
 		source.setOutputSchema(ex);
 		source.setObjectListPath(objectListPath);
-		DataDictionary.getInstance().setLogicalView(name, source, user);
+		DataDictionary.getInstance().setView(name, source, user);
 		return null;
 	}
 

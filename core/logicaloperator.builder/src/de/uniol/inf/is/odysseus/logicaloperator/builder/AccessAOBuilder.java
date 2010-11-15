@@ -36,8 +36,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		String sourceName = this.sourceName.getValue();
-		if (DataDictionary.getInstance().containsView(sourceName, getCaller())) {
-			return DataDictionary.getInstance().getView(sourceName, getCaller());
+		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
+			return DataDictionary.getInstance().getViewOrStream(sourceName, getCaller());
 		}
 		AccessAO ao = createNewAccessAO(sourceName);
 
@@ -52,7 +52,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		sdfEntity.setAttributes(schema);
 
 		DataDictionary.getInstance().addSourceType(sourceName,
-				"RelationalStreaming", getCaller());
+				"RelationalStreaming");
 		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, getCaller());
 
 		AccessAO ao = new AccessAO(sdfSource);
@@ -66,7 +66,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	protected boolean internalValidation() {
 		String sourceName = this.sourceName.getValue();
 
-		if (DataDictionary.getInstance().containsView(sourceName, getCaller())) {
+		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
 			if (host.hasValue() || type.hasValue() || port.hasValue()
 					|| attributes.hasValue()) {
 				addError(new IllegalArgumentException("view " + sourceName

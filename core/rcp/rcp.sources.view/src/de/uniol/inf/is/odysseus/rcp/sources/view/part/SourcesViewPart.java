@@ -58,7 +58,7 @@ public class SourcesViewPart extends ViewPart implements
 			public void run() {
 				try {
 					getTreeViewer().setInput(
-							getDataDictionary().getViews(
+							getDataDictionary().getStreamsAndViews(
 									ActiveUser.getActiveUser()));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
