@@ -5,16 +5,14 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.MahalanobisDistanceAssociation;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms.MultiDistanceAssociation;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 
@@ -32,8 +30,11 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 	private PredictionExpression expression;
 	private String expressionString;
 	private SchemaHelper schemaHelper;
-	private SchemaIndexPath predictedObjectListPath;
-	private SchemaIndexPath scannedObjectListPath;
+	private String predictedObjectListPath;
+	private String scannedObjectListPath;
+	private SchemaIndexPath predictedObjectListSIPath;
+	private SchemaIndexPath scannedObjectListSIPath;
+	private TupleHelper tupleHelper;
 
 	public HypothesisExpressionGatingPO() {
 		super();
@@ -44,8 +45,7 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		return new HypothesisExpressionGatingPO<M>(this);
 	}
 
-	public HypothesisExpressionGatingPO(
-			HypothesisExpressionGatingPO<M> clone) {
+	public HypothesisExpressionGatingPO(HypothesisExpressionGatingPO<M> clone) {
 		super(clone);
 	}
 
@@ -55,18 +55,18 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		this.expression = new PredictionExpression(this.expressionString);
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
-		this.setScannedObjectListPath(this.schemaHelper
+		this.setScannedObjectListSIPath(this.schemaHelper
 				.getSchemaIndexPath(this.scanObjListPath));
-		this.setPredictedObjectListPath(this.schemaHelper
+		this.setPredictedObjectListSIPath(this.schemaHelper
 				.getSchemaIndexPath(this.predObjListPath));
 	}
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		TupleIndexPath scannedTupleIndexPath = this.getScannedObjectListPath()
+		TupleIndexPath scannedTupleIndexPath = this.getScannedObjectListSIPath()
 				.toTupleIndexPath(object);
 		TupleIndexPath predictedTupleIndexPath = this
-				.getPredictedObjectListPath().toTupleIndexPath(object);
+				.getPredictedObjectListSIPath().toTupleIndexPath(object);
 
 		ConnectionList newObjConList = new ConnectionList();
 
@@ -114,31 +114,6 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 
 	/* SETTER AND GETTER */
 
-	public SchemaHelper getSchemaHelper() {
-		return schemaHelper;
-	}
-
-	public void setSchemaHelper(SchemaHelper schemaHelper) {
-		this.schemaHelper = schemaHelper;
-	}
-
-	public SchemaIndexPath getPredictedObjectListPath() {
-		return predictedObjectListPath;
-	}
-
-	public void setPredictedObjectListPath(
-			SchemaIndexPath predictedObjectListPath) {
-		this.predictedObjectListPath = predictedObjectListPath;
-	}
-
-	public SchemaIndexPath getScannedObjectListPath() {
-		return scannedObjectListPath;
-	}
-
-	public void setScannedObjectListPath(SchemaIndexPath scannedObjectListPath) {
-		this.scannedObjectListPath = scannedObjectListPath;
-	}
-
 	public String getScanObjListPath() {
 		return scanObjListPath;
 	}
@@ -171,4 +146,52 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		this.expressionString = expressionString;
 	}
 
+	public SchemaHelper getSchemaHelper() {
+		return schemaHelper;
+	}
+
+	public void setSchemaHelper(SchemaHelper schemaHelper) {
+		this.schemaHelper = schemaHelper;
+	}
+
+	public String getPredictedObjectListPath() {
+		return predictedObjectListPath;
+	}
+
+	public void setPredictedObjectListPath(String predictedObjectListPath) {
+		this.predictedObjectListPath = predictedObjectListPath;
+	}
+
+	public String getScannedObjectListPath() {
+		return scannedObjectListPath;
+	}
+
+	public void setScannedObjectListPath(String scannedObjectListPath) {
+		this.scannedObjectListPath = scannedObjectListPath;
+	}
+
+	public SchemaIndexPath getPredictedObjectListSIPath() {
+		return predictedObjectListSIPath;
+	}
+
+	public void setPredictedObjectListSIPath(
+			SchemaIndexPath predictedObjectListSIPath) {
+		this.predictedObjectListSIPath = predictedObjectListSIPath;
+	}
+
+	public SchemaIndexPath getScannedObjectListSIPath() {
+		return scannedObjectListSIPath;
+	}
+
+	public void setScannedObjectListSIPath(SchemaIndexPath scannedObjectListSIPath) {
+		this.scannedObjectListSIPath = scannedObjectListSIPath;
+	}
+
+	public TupleHelper getTupleHelper() {
+		return tupleHelper;
+	}
+
+	public void setTupleHelper(TupleHelper tupleHelper) {
+		this.tupleHelper = tupleHelper;
+	}
 }
