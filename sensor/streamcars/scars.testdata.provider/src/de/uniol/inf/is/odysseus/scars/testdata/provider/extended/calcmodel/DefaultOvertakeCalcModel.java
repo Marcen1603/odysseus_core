@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel;
 
+import java.util.Map;
+
 public class DefaultOvertakeCalcModel extends DefaultCalcModelAdapter {
+	
+	public static String LANE_SHIFT_FACTOR = "laneshiftfactor";
 
 	private float laneShiftFactor;
 
@@ -42,8 +46,8 @@ public class DefaultOvertakeCalcModel extends DefaultCalcModelAdapter {
 	 * Parameter: Float laneShiftFactor
 	 */
 	@Override
-	public void init(Object... params) {
-		this.laneShiftFactor = (Float) params[0];
+	public void init(Map<String, Object> params) {
+		this.laneShiftFactor = (Float) params.get(LANE_SHIFT_FACTOR);
 	}
 
 }

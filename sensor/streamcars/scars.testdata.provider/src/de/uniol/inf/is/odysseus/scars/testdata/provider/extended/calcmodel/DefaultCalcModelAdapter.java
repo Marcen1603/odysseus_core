@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.carModel.DefaultCarModel;
 
 public class DefaultCalcModelAdapter implements IDefaultCalcModel {
@@ -9,7 +11,7 @@ public class DefaultCalcModelAdapter implements IDefaultCalcModel {
 	protected int delay;
 
 	@Override
-	public void init(Object... params) {
+	public void init(Map<String, Object> params) {
 	}
 
 	@Override

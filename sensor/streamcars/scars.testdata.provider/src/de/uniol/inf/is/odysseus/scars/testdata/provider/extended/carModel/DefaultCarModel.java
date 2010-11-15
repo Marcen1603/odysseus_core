@@ -205,7 +205,11 @@ public class DefaultCarModel implements ICarModel {
 	 */
 	@Override
 	public boolean isVisible() {
-		return false;
+		if (this.getPosx() > 150 || this.getPosx() < 0 || this.getPosy() < -100
+				|| this.getPosy() > 100) {
+			return false;
+		}
+		return true;
 	}
 
 }
