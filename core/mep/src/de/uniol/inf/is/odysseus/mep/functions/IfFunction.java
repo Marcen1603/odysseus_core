@@ -11,12 +11,12 @@ public class IfFunction extends AbstractFunction<Object> {
 
 	@Override
 	public String getSymbol() {
-		return "if";
+		return "eif";
 	}
 
 	@Override
 	public Object getValue() {
-		return getInputValue(0) ? getInputValue(2) : getInputValue(1);
+		return getInputValue(0) ? getInputValue(1) : getInputValue(2);
 	}
 
 	@Override
