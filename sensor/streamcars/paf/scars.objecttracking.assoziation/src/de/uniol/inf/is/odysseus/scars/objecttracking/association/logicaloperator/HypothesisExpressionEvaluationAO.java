@@ -15,7 +15,7 @@ public class HypothesisExpressionEvaluationAO<M extends IProbability> extends Un
 
 	private String predObjListPath;
 	private String scanObjListPath;
-	private String associationExpressionString;
+	private String expressionString;
 
 	public HypothesisExpressionEvaluationAO() {
 		super();
@@ -56,12 +56,12 @@ public class HypothesisExpressionEvaluationAO<M extends IProbability> extends Un
 		this.scanObjListPath = scanObjListPath;
 	}
 
-	public String getAssociationExpressionString() {
-		return associationExpressionString;
+	public String getExpressionString() {
+		return expressionString;
 	}
 
-	public void setAssociationExpressionString(String associationExpressionString) {
-		this.associationExpressionString = associationExpressionString;
+	public void setExpressionString(String expressionString) {
+		this.expressionString = expressionString;
 	}
 
 	public static long getSerialversionuid() {

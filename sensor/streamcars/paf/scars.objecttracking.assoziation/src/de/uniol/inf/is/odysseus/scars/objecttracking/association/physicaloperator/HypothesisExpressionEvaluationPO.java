@@ -19,8 +19,10 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private PredictionExpression associationExpression;
-	private String associationExpressionString;
+	private String scanObjListPath;
+	private String predObjListPath;
+	private PredictionExpression expression;
+	private String expressionString;
 	private SchemaHelper schemaHelper;
 	private SchemaIndexPath predictedObjectListPath;
 	private SchemaIndexPath scannedObjectListPath;
@@ -41,7 +43,13 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		this.associationExpression = new PredictionExpression(this.associationExpressionString);
+		this.expression = new PredictionExpression(this.expressionString);
+		this.schemaHelper = new SchemaHelper(getOutputSchema());
+
+		this.setScannedObjectListPath(this.schemaHelper
+				.getSchemaIndexPath(this.scanObjListPath));
+		this.setPredictedObjectListPath(this.schemaHelper
+				.getSchemaIndexPath(this.predObjListPath));
 	}
 
 	@Override
@@ -60,22 +68,6 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	}
 
 	/* SETTER AND GETTER */
-
-	public PredictionExpression getAssociationExpression() {
-		return associationExpression;
-	}
-
-	public void setAssociationExpression(PredictionExpression associationExpression) {
-		this.associationExpression = associationExpression;
-	}
-
-	public String getAssociationExpressionString() {
-		return associationExpressionString;
-	}
-
-	public void setAssociationExpressionString(String associationExpressionString) {
-		this.associationExpressionString = associationExpressionString;
-	}
 
 	public SchemaHelper getSchemaHelper() {
 		return schemaHelper;
@@ -100,5 +92,38 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	public void setScannedObjectListPath(SchemaIndexPath scannedObjectListPath) {
 		this.scannedObjectListPath = scannedObjectListPath;
 	}
+
+	public String getScanObjListPath() {
+		return scanObjListPath;
+	}
+
+	public void setScanObjListPath(String scanObjListPath) {
+		this.scanObjListPath = scanObjListPath;
+	}
+
+	public String getPredObjListPath() {
+		return predObjListPath;
+	}
+
+	public void setPredObjListPath(String predObjListPath) {
+		this.predObjListPath = predObjListPath;
+	}
+
+	public PredictionExpression getExpression() {
+		return expression;
+	}
+
+	public void setExpression(PredictionExpression expression) {
+		this.expression = expression;
+	}
+
+	public String getExpressionString() {
+		return expressionString;
+	}
+
+	public void setExpressionString(String expressionString) {
+		this.expressionString = expressionString;
+	}
+
 
 }
