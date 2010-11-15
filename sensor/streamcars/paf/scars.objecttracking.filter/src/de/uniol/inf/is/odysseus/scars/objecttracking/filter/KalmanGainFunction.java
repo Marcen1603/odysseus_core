@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 /**
  * @author dtwumasi
@@ -26,19 +25,19 @@ public class KalmanGainFunction<M extends IProbability & IGain > extends Abstrac
 
 	public KalmanGainFunction(KalmanGainFunction<M> copy) {
 
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
 
 	}
 
-	public KalmanGainFunction(HashMap<Enum, Object> parameters) {
+	public KalmanGainFunction(HashMap<Enum<Parameters>, Object> parameters) {
 		this.setParameters(parameters);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void compute(IConnection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters) {
+	public void compute(IConnection connected, MVRelationalTuple<M> tuple, HashMap<Enum<Parameters>, Object> parameters) {
 
-		TupleHelper tHelper = new TupleHelper(tuple);
+		//TupleHelper tHelper = new TupleHelper(tuple);
 		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)connected.getRightPath().getTupleObject();
 		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)connected.getLeftPath().getTupleObject();
 

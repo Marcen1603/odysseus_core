@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanGainFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -18,7 +19,7 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 	private String oldListName;
 	
 	// Optional parameters for the Filter function. Not used right now.
-	private HashMap<Enum, Object> parameters;
+	private HashMap<Enum<Parameters>, Object> parameters;
 	
 	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
 	
@@ -27,7 +28,7 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 		super();
 		
 		// Standardwerte (Timo M)
-		parameters = new HashMap<Enum, Object>();
+		parameters = new HashMap<Enum<Parameters>, Object>();
 		metaDataCreationFunction = new KalmanGainFunction<M>();
 		functionID = "KALMAN";
 	}
@@ -35,7 +36,7 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 	public FilterGainAO(FilterGainAO<M> copy) {
 		super(copy);
 		this.setFunctionID(new String(copy.getFunctionID()));
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 		setNewListName(copy.getNewListName());
 		setOldListName(copy.getOldListName());
@@ -62,11 +63,11 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 		this.functionID = functionID;
 	}
 
-	public HashMap<Enum, Object> getParameters() {
+	public HashMap<Enum<Parameters>, Object> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(HashMap<Enum, Object> parameters) {
+	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
 		this.parameters = parameters;
 	}
 

@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateCovarianceFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -18,21 +19,21 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 	private String functionID;
 	
 	// Optional parameters for the Filter function. Not used right now.
-	private HashMap<Enum, Object> parameters;
+	private HashMap<Enum<Parameters>, Object> parameters;
 	
 	private AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction;
 	
 	public FilterCovarianceUpdateAO()
 	{
 		super();
-		parameters = new HashMap<Enum, Object>();
+		parameters = new HashMap<Enum<Parameters>, Object>();
 		metaDataUpdateFunction = new KalmanCorrectStateCovarianceFunction<M>();
 	}
 	
 	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {
 		super(copy);
 		this.setFunctionID(new String(copy.getFunctionID()));
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataUpdateFunction(copy.getMetaDataUpdateFunction().clone());
 		
 	}
@@ -59,11 +60,11 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 		this.functionID = functionID;
 	}
 
-	public HashMap<Enum, Object> getParameters() {
+	public HashMap<Enum<Parameters>, Object> getParameters() {
 		return parameters;
 	}
 	
-	public void setParameters(HashMap<Enum, Object> parameters) {
+	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
 		this.parameters = parameters;
 	}
 

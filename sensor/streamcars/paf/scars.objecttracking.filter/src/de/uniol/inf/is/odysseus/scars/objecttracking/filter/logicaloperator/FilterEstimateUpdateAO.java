@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEstimateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -21,7 +22,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	private String newObjListPath;
 	
 	// Optional parameters for the Filter function. Not used right now.
-	private HashMap<Enum, Object> parameters;
+	private HashMap<Enum<Parameters>, Object> parameters;
 
 	private AbstractDataUpdateFunction<M>  dataUpdateFunction;
 	
@@ -30,7 +31,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	{
 		super();
 		functionID = "KALMAN";
-		parameters = new HashMap<Enum, Object>();
+		parameters = new HashMap<Enum<Parameters>, Object>();
 		dataUpdateFunction = new KalmanCorrectStateEstimateFunction<M>();
 	}
 	
@@ -39,7 +40,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.setOldObjListPath(new String(copy.getOldObjListPath()));
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
 		this.setFunctionID(new String(copy.getFunctionID()));
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setDataUpdateFunction(copy.getDataUpdateFunction().clone());
 	}
 
@@ -90,11 +91,11 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.functionID = functionID;
 	}
 
-	public HashMap<Enum, Object> getParameters() {
+	public HashMap<Enum<Parameters>, Object> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(HashMap<Enum, Object> parameters) {
+	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
 		this.parameters = parameters;
 	}
 

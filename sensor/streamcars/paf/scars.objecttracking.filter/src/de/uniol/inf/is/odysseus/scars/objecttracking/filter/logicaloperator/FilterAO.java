@@ -6,6 +6,7 @@ import java.util.Vector;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
@@ -23,7 +24,7 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
 
   
   // Optional parameters for the Filter function. Not used right now.
-  private HashMap<Enum, Object> parameters;
+  private HashMap<Enum<Parameters>, Object> parameters;
 
   
   public FilterAO() {
@@ -32,7 +33,7 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
 
   public FilterAO(FilterAO<M> copy) {
     super(copy);
-    this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
+    this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
     this.oldObjListPath = copy.getOldObjListPath();
     this.newObjListPath = copy.getNewObjListPath();
     this.functions = (Vector<Object>) copy.getFunctions().clone();
@@ -84,11 +85,11 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
     this.functionID = functionID;
   }
 
-  public HashMap<Enum, Object> getParameters() {
+  public HashMap<Enum<Parameters>, Object> getParameters() {
     return parameters;
   }
   
-  public void setParameters(HashMap<Enum, Object> parameters) {
+  public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
     this.parameters = parameters;
   }
 }

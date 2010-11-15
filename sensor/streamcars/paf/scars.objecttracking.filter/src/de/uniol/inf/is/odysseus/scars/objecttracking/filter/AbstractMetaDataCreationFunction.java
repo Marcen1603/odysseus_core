@@ -17,18 +17,18 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
  */
 public abstract class AbstractMetaDataCreationFunction<M extends IGain & IProbability> {
 
-	private HashMap<Enum, Object> parameters;
+	private HashMap<Enum<Parameters>, Object> parameters;
 
 	public AbstractMetaDataCreationFunction() {
-		parameters = new HashMap<Enum, Object>();
+		parameters = new HashMap<Enum<Parameters>, Object>();
 	}
 
-	public AbstractMetaDataCreationFunction(HashMap<Enum, Object> parameters) {
+	public AbstractMetaDataCreationFunction(HashMap<Enum<Parameters>, Object> parameters) {
 		this.setParameters(parameters);
 	}
 
 	public AbstractMetaDataCreationFunction(AbstractMetaDataCreationFunction<M> copy) {
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
 	}
 
 	@Override
@@ -39,20 +39,20 @@ public abstract class AbstractMetaDataCreationFunction<M extends IGain & IProbab
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(IConnection connected, MVRelationalTuple<M> completeTuple, HashMap<Enum, Object> hashMap);
+	public abstract void compute(IConnection connected, MVRelationalTuple<M> completeTuple, HashMap<Enum<Parameters>, Object> hashMap);
 
 	/**
 	 * @param parameters
 	 *            the parameters needed for computation
 	 */
-	public void setParameters(HashMap<Enum, Object> parameters) {
+	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
 	 * @return the parameters
 	 */
-	public HashMap<Enum, Object> getParameters() {
+	public HashMap<Enum<Parameters>, Object> getParameters() {
 
 		return parameters;
 	}
@@ -61,7 +61,7 @@ public abstract class AbstractMetaDataCreationFunction<M extends IGain & IProbab
 	 * @param parameters
 	 *            the parameters to set
 	 */
-	public void addParameter(Enum key, Object value) {
+	public void addParameter(Enum<Parameters> key, Object value) {
 		this.parameters.put(key, value);
 	}
 

@@ -22,11 +22,11 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 	public KalmanCorrectStateEstimateFunction(
 			KalmanCorrectStateEstimateFunction<M> copy) {
 		super(copy);
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
 
 	}
 
-	public KalmanCorrectStateEstimateFunction(HashMap<Enum, Object> parameters) {
+	public KalmanCorrectStateEstimateFunction(HashMap<Enum<Parameters>, Object> parameters) {
 
 		this.setParameters(parameters);
 	}
@@ -35,7 +35,7 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 	@Override
 	public void compute(TupleIndexPath scannedObjectTupleIndex,
 			TupleIndexPath predictedObjectTupleIndex,
-			HashMap<Enum, Object> parameters) {
+			HashMap<Enum<Parameters>, Object> parameters) {
 
 		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>) predictedObjectTupleIndex
 				.getTupleObject();

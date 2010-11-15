@@ -23,18 +23,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  */
 public abstract class AbstractDataUpdateFunction<M extends IProbability & IConnectionContainer> {
 
-	private HashMap<Enum, Object> parameters;
+	private HashMap<Enum<Parameters>, Object> parameters;
 
 	public AbstractDataUpdateFunction() {
-		parameters = new HashMap<Enum, Object>();
+		parameters = new HashMap<Enum<Parameters>, Object>();
 	}
 
-	public AbstractDataUpdateFunction(HashMap<Enum, Object> parameters) {
+	public AbstractDataUpdateFunction(HashMap<Enum<Parameters>, Object> parameters) {
 		this.setParameters(parameters);
 	}
 
 	public AbstractDataUpdateFunction(AbstractDataUpdateFunction<M> copy) {
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex, HashMap<Enum, Object> parameters);
+	public abstract void compute(TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex, HashMap<Enum<Parameters>, Object> parameters);
 
 	public double[] getMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath) {
 
@@ -109,14 +109,14 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * @param parameters
 	 *            the parameters needed for computation
 	 */
-	public void setParameters(HashMap<Enum, Object> parameters) {
+	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
 	 * @return the parameters
 	 */
-	public HashMap<Enum, Object> getParameters() {
+	public HashMap<Enum<Parameters>, Object> getParameters() {
 
 		return parameters;
 	}
@@ -125,7 +125,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * @param parameters
 	 *            the parameters to set
 	 */
-	public void addParameter(Enum key, Object value) {
+	public void addParameter(Enum<Parameters> key, Object value) {
 		this.parameters.put(key, value);
 	}
 

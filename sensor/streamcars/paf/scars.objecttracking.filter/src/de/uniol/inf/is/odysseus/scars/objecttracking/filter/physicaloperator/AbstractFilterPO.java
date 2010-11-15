@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 
@@ -16,7 +17,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingL
 	private String newObjListPath;
 
 	// optional parameters for the filter function. Not used right now
-	private HashMap<Enum, Object> parameters;
+	private HashMap<Enum<Parameters>, Object> parameters;
 
 	public AbstractFilterPO() {
 		super();
@@ -26,7 +27,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingL
 		super(copy);
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
 		this.setOldObjListPath(new String(copy.getOldObjListPath()));
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
 	}
 
 	@Override
@@ -66,11 +67,11 @@ public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingL
 		this.newObjListPath = newObjListPath;
 	}
 
-	public HashMap<Enum, Object> getParameters() {
+	public HashMap<Enum<Parameters>, Object> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(HashMap<Enum, Object> parameters) {
+	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
 		this.parameters = parameters;
 	}
 }

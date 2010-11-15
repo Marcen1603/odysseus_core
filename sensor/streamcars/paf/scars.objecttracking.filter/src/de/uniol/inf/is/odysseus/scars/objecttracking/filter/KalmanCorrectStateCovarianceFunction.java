@@ -19,11 +19,11 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConn
 
 	public KalmanCorrectStateCovarianceFunction(KalmanCorrectStateCovarianceFunction<K> copy) {
 
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
 
 	}
 
-	public KalmanCorrectStateCovarianceFunction(HashMap<Enum, Object> parameters) {
+	public KalmanCorrectStateCovarianceFunction(HashMap<Enum<Parameters>, Object> parameters) {
 		this.setParameters(parameters);
 	}
 
@@ -32,7 +32,7 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConn
 	/**
 	 * This method computes the new state covariance
 	 */
-	public void compute(IConnection connected, MVRelationalTuple<K> tuple, HashMap<Enum, Object> parameters) {
+	public void compute(IConnection connected, MVRelationalTuple<K> tuple, HashMap<Enum<Parameters>, Object> parameters) {
 
 //		TupleHelper tHelper = new TupleHelper(tuple);
 		MVRelationalTuple<K> oldTuple = (MVRelationalTuple<K>) connected.getRightPath().getTupleObject();

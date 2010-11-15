@@ -17,41 +17,41 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 public abstract class AbstractMetaDataUpdateFunction<M extends IProbability> {
 	
 	public AbstractMetaDataUpdateFunction() {
-		parameters = new HashMap<Enum, Object>();
+		parameters = new HashMap<Enum<Parameters>, Object>();
 	}
 	
-	public AbstractMetaDataUpdateFunction(HashMap<Enum,Object> parameters ) {
+	public AbstractMetaDataUpdateFunction(HashMap<Enum<Parameters>,Object> parameters ) {
 		this.setParameters(parameters);
 	}
 	
 	public AbstractMetaDataUpdateFunction(AbstractMetaDataUpdateFunction<M> copy ) {
-		this.setParameters(new HashMap<Enum, Object>(copy.getParameters()));	
+		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 	}
 	
 	@Override
 	public abstract AbstractMetaDataUpdateFunction<M> clone();
 		
 	
-	private HashMap<Enum, Object> parameters;
+	private HashMap<Enum<Parameters>, Object> parameters;
 	
 	/**
 	 * this method executes the function
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(IConnection connected, MVRelationalTuple<M> tuple, HashMap<Enum, Object> parameters);
+	public abstract void compute(IConnection connected, MVRelationalTuple<M> tuple, HashMap<Enum<Parameters>, Object> parameters);
 
 	/**
 	 * @param parameters the parameters needed for computation
 	 */
-	public void setParameters(HashMap<Enum, Object> parameters) { 
+	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) { 
 	this.parameters = parameters;
 	}
 	
 	/**
 	 * @return the parameters
 	 */
-	public HashMap<Enum, Object> getParameters() {
+	public HashMap<Enum<Parameters>, Object> getParameters() {
 		
 		return parameters;
 	} 
@@ -59,7 +59,7 @@ public abstract class AbstractMetaDataUpdateFunction<M extends IProbability> {
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void addParameter(Enum key, Object value) {
+	public void addParameter(Enum<Parameters> key, Object value) {
 		this.parameters.put(key, value);
 	}
 
