@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CEP-Viewer
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.cepviewer;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.cep.cepviewer.Activator
+Bundle-Vendor: Christian Menne
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.cep.epa,
+ de.uniol.inf.is.odysseus.cep.metamodel,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.metadata,
+ org.eclipse.draw2d,
+ org.eclipse.draw2d.geometry
+Export-Package: de.uniol.inf.is.odysseus.cep.cepviewer
