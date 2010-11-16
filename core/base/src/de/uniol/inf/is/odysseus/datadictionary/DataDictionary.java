@@ -324,7 +324,9 @@ public class DataDictionary {
 				// ignore
 			}
 		}
-		if (sources.isEmpty()) {
+		if (sources.isEmpty()
+				&& !(this.streamDefinitions.isEmpty() && this.viewDefinitions
+						.isEmpty())) {
 			throw new HasNoPermissionException("User " + caller.getUsername()
 					+ " has no permission on any View.");
 		}
@@ -414,8 +416,8 @@ public class DataDictionary {
 	}
 
 	/**
-	 * checks if the given user has higher permission as the given
-	 * operation. Calls the corresponding method in the action class.
+	 * checks if the given user has higher permission as the given operation.
+	 * Calls the corresponding method in the action class.
 	 * 
 	 * @param operation
 	 * @param objecturi
