@@ -121,7 +121,7 @@ public class DataDictionary {
 
 	public SDFEntity getEntity(String uri, User caller)
 			throws HasNoPermissionException {
-		if (allowedToAccessObjects(uri, caller, DataDictionaryAction.GET_ENTITY)) {
+		if (checkObjectAccess(uri, caller, DataDictionaryAction.GET_ENTITY)) {
 			SDFEntity ret = entityMap.get(uri);
 			if (ret == null) {
 				throw new IllegalArgumentException("no such entity: " + uri);
@@ -136,23 +136,22 @@ public class DataDictionary {
 	// TODO: REMOVE Entity
 
 	/**
-	 * returns the username for the given entityname
+	 * returns the username from the creator of the given entity
 	 * 
 	 * @param entityuri
-	 * @return Username
+	 * @return username
 	 * @throws HasNoPermissionException
 	 */
 	// no restric
 	public String getUserForEntity(String entityuri) {
 		return this.entityFromUser.get(entityuri).getUsername();
 	}
-	
-	
+
 	// ----------------------------------------------------------------------------
 	// Source Management
 	// ----------------------------------------------------------------------------
 
-	
+	// no restirc
 	public void addSourceType(String sourcename, String sourcetype) {
 		sourceTypeMap.put(sourcename, sourcetype);
 	}
@@ -166,6 +165,7 @@ public class DataDictionary {
 		return value;
 	}
 
+	// no restric
 	public SDFSource createSDFSource(String sourcename) {
 		try {
 			String type = getSourceType(sourcename);
@@ -177,7 +177,7 @@ public class DataDictionary {
 			return null;
 		}
 	}
-	
+
 	// no restric
 	public boolean emptySourceTypeMap() {
 		return sourceTypeMap.isEmpty();
@@ -209,7 +209,6 @@ public class DataDictionary {
 	}
 
 	@SuppressWarnings("unchecked")
-	// no restric
 	private ILogicalOperator getView(String viewname, User caller) {
 		ILogicalOperator logicalPlan = this.viewDefinitions.get(viewname);
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
@@ -219,7 +218,7 @@ public class DataDictionary {
 		return copyVisitor.getResult();
 	}
 
-	
+	// TODO restric ?
 	private ILogicalOperator removeView(String viewname, User caller) {
 		ILogicalOperator op;
 		try {
@@ -234,7 +233,7 @@ public class DataDictionary {
 			fireRemoveEvent(viewname, op);
 		return op;
 	}
-	
+
 	// no restric
 	public boolean isView(String name) {
 		return this.viewDefinitions.containsKey(name);
@@ -292,12 +291,12 @@ public class DataDictionary {
 		checkViewAccess(name, caller, DataDictionaryAction.GET_STREAM);
 		return streamDefinitions.get(name);
 	}
-	
+
 	// no restric
 	public boolean hasStream(String name, User user) {
 		return streamDefinitions.containsKey(name);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Access View or Streams
 	// ------------------------------------------------------------------------
@@ -331,7 +330,7 @@ public class DataDictionary {
 		}
 		return sources;
 	}
-	
+
 	public ILogicalOperator getViewOrStream(String viewname, User caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
 			checkViewAccess(viewname, caller, DataDictionaryAction.GET_STREAM);
@@ -365,7 +364,7 @@ public class DataDictionary {
 		return this.streamDefinitions.containsKey(viewName)
 				|| this.viewDefinitions.containsKey(viewName);
 	}
-	
+
 	// no restric
 	public User getUserForViewOrStream(String view) {
 		return viewOrStreamFromUser.get(view);
@@ -384,16 +383,16 @@ public class DataDictionary {
 	 * @param action
 	 * @return boolean
 	 */
-	private boolean allowedToAccessObjects(String uri, User caller,
+	private boolean checkObjectAccess(String uri, User caller,
 			DataDictionaryAction action) {
 		return AccessControl.hasPermission(action, uri, caller)
 				|| AccessControl.isCreatorOfObject(caller.getUsername(), uri)
-				|| hasSuperOperation(action, DataDictionaryAction.alias, caller);
+				|| hasSuperAction(action, DataDictionaryAction.alias, caller);
 	}
 
 	/**
 	 * return true if the given user has permission to access the given view in
-	 * a certain way (action). Object can be a source or entity.
+	 * a certain way (action).
 	 * 
 	 * @param uri
 	 * @param caller
@@ -406,33 +405,35 @@ public class DataDictionary {
 		// is owner
 				|| AccessControl.isCreatorOfView(caller.getUsername(),
 						viewOrSource)
-				|| hasSuperOperation(action, DataDictionaryAction.alias, caller)) {
+				|| hasSuperAction(action, DataDictionaryAction.alias, caller)) {
 			return;
 		}
 		throw new HasNoPermissionException("User " + caller.getUsername()
-				+ " has not the right " + action + " on Source/View '"
+				+ " has not the permission '" + action + "' on Source/View '"
 				+ viewOrSource);
 	}
-	
+
 	/**
 	 * returns true if the given user has higher permission as the given
-	 * operation
+	 * operation. Calls the corresponding method in the action class.
 	 * 
 	 * @param operation
-	 * @param object
+	 * @param objecturi
 	 * @param user
 	 * @return boolean
 	 */
-	public boolean hasSuperOperation(DataDictionaryAction operation,
-			String object, User user) {
-		return AccessControl.hasPermission(
-				DataDictionaryAction.hasSuperAction(operation), object, user);
+	public boolean hasSuperAction(DataDictionaryAction operation,
+			String objecturi, User user) {
+		return AccessControl
+				.hasPermission(DataDictionaryAction.hasSuperAction(operation),
+						objecturi, user);
 	}
 
 	// ----------------------------------------------------------------------------
 	// Listener Management
 	// ----------------------------------------------------------------------------
 
+	// no restric
 	public void addListener(IDataDictionaryListener listener) {
 		if (listener == null)
 			throw new IllegalArgumentException("listener is null");
