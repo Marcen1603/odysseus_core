@@ -9,9 +9,7 @@
   |  ("\"" (~[ "\"" ])* "\""
     (
       "\"" (~[ "\"" ])* "\""
-    )*)>| < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":"  | "$"  | "#"
-  | "["
-  | "]" >| < RRND : ")" >| < LRND : "(" >}SimpleNode Expression() :{/*@bgen(jjtree) Expression */
+    )*)>| < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":"  | "$"  | "#" >| < RRND : ")" >| < LRND : "(" >}SimpleNode Expression() :{/*@bgen(jjtree) Expression */
   ASTExpression jjtn000 = new ASTExpression(JJTEXPRESSION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -42,7 +40,8 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void UnaryExpression()       :{}{  LOOKAHEAD(< IDENTIFIER > < LRND >)  Function()| Variable()| Constant()| Negation()| < LRND > OrExpression() < RRND >| UnaryMinus()}void UnaryMinus()       :{}{  "-" UnaryExpression()/*@bgen(jjtree) #Function( 1) */
+/*@egen*/}void UnaryExpression()       :{}{  LOOKAHEAD(< IDENTIFIER > < LRND >)  Function()| Variable()| Constant()| Negation()| < LRND > OrExpression() < RRND >| UnaryMinus()
+| Matrix()}void UnaryMinus()       :{}{  "-" UnaryExpression()/*@bgen(jjtree) #Function( 1) */
   {
     ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
     boolean jjtc001 = true;
@@ -297,4 +296,67 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void ArgumentList()       :{}{  [    OrExpression()    (      "," OrExpression()    )*  ]}
+/*@egen*/}void ArgumentList()       :{}{  [    OrExpression()    (      "," OrExpression()    )*  ]}
+
+void Matrix() :
+{/*@bgen(jjtree) Matrix */
+  ASTMatrix jjtn000 = new ASTMatrix(JJTMATRIX);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) Matrix */
+        try {
+/*@egen*/
+	"[" MatrixLine() (";" MatrixLine())* "]"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+void MatrixLine() :
+{/*@bgen(jjtree) MatrixLine */
+  ASTMatrixLine jjtn000 = new ASTMatrixLine(JJTMATRIXLINE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) MatrixLine */
+        try {
+/*@egen*/
+	OrExpression() ("," OrExpression()) */*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}

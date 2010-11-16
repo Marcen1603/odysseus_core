@@ -66,6 +66,9 @@ public interface MEPImplConstants {
     "\"&&\"",
     "\"||\"",
     "\",\"",
+    "\"[\"",
+    "\";\"",
+    "\"]\"",
   };
 
 }

@@ -28,7 +28,25 @@ public class TestExpressionBuilderVisitor {
 			System.out.println("expression [type= "
 					+ expression.getType().getSimpleName() + "]: "
 					+ expression.toString());
-			System.out.println("value: " + expression.getValue());
+			Object value = expression.getValue();
+			if (value instanceof Double[][]) {
+				Double[][]array = (Double[][]) value;
+				for(Double[] line : array){
+					System.out.println();
+					boolean first =true;
+					for(Double v : line ){
+						if (first) {
+							first = false;
+						}else {
+							System.out.print(", ");
+						}
+						System.out.print(v);
+					}
+				}
+
+			} else {
+				System.out.println("value: " + value.toString());
+			}
 
 		} catch (de.uniol.inf.is.odysseus.mep.ParseException e) {
 			// TODO Auto-generated catch block

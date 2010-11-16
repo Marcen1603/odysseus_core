@@ -29,8 +29,8 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		int arity = node.jjtGetNumChildren();
 		IExpression<?>[] expressions = new IExpression[arity];
 		for (int i = 0; i < arity; ++i) {
-			expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this,
-					data);
+			expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(
+					this, data);
 		}
 		function.setArguments(expressions);
 
@@ -58,6 +58,34 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 	public Object visit(ASTExpression node, Object data) {
 		this.symbolTable.clear();
 		return node.jjtGetChild(0).jjtAccept(this, data);
+	}
+
+	public Object visit(ASTMatrix node, Object data) {
+		int childCount = node.jjtGetNumChildren();
+		IExpression<?>[] values = new IExpression<?>[childCount];
+		int valuesPerLine = 0;
+		for (int i = 0; i < childCount; ++i) {
+			values[i] = (MatrixLine) node.jjtGetChild(i).jjtAccept(this, data);
+			if (i == 0) {
+				valuesPerLine = values[0].toFunction().getArity();
+			} else {
+				if (values[i].toFunction().getArity() != valuesPerLine) {
+					throw new IllegalArgumentException(
+							"matrix is not rectangular");
+				}
+			}
+		}
+
+		return new MatrixFunction(values);
+	}
+
+	public Object visit(ASTMatrixLine node, Object data) {
+		int childCount = node.jjtGetNumChildren();
+		IExpression<?>[] values = new IExpression<?>[childCount];
+		for (int i = 0; i < childCount; ++i) {
+			values[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, data);
+		}
+		return new MatrixLine(values);
 	}
 
 }
