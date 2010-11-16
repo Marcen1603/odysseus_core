@@ -64,7 +64,7 @@ abstract class AbstractUserManagement {
 	protected void registerUserInt(String username, String password)
 			throws UserStoreException, UsernameAlreadyUsedException {
 		User user = this.userStore.getUserByName(username);
-		if (user == null) {
+		if (user == null && !this.roleStore.containsKey(username)) {
 			user = new User(username, password);
 			this.userStore.storeUser(user);
 			user.addRole(roleStore.get("Public"));
@@ -217,7 +217,17 @@ abstract class AbstractUserManagement {
 		}
 	}
 
-	// TODO: java doc
+	/**
+	 * This method provides the functionality for revoking single permissions
+	 * from a entity for a given object defined by its uri. Fires change events
+	 * to inform corresponding classes.
+	 * 
+	 * @param caller
+	 * @param entityname
+	 * @param operation
+	 * @param objecturi
+	 * @throws HasNoPermissionException
+	 */
 	public void revokePermission(User caller, String entityname,
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException {
@@ -266,7 +276,7 @@ abstract class AbstractUserManagement {
 
 	/**
 	 * checks if the given user has permission to perform a certain action on a
-	 * given object.
+	 * given object. Primary used for revoke or grant access check.
 	 * 
 	 * @param caller
 	 * @param entityname
@@ -293,8 +303,8 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * revokes all permissions on an object from user or role (removes the
-	 * privilege)
+	 * revokes all permissions on an object from user or role by removing the
+	 * privilege for a whole object.
 	 * 
 	 * @param caller
 	 * @param entityname
@@ -324,7 +334,7 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * Grant a Role to a specified User
+	 * Grants a Role to a specified User.
 	 * 
 	 * @param caller
 	 * @param role
@@ -355,8 +365,8 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * returns true if the given user has higher permission as the given
-	 * operation
+	 * checks if the given user has higher permission as the given operation.
+	 * Calls the corresponding method in the action class.
 	 * 
 	 * @param operation
 	 * @param object
@@ -371,7 +381,8 @@ abstract class AbstractUserManagement {
 
 	/**
 	 * checks if the given user has permission to perform a certain action on a
-	 * given rolen. the role is specified by name.
+	 * given role. the role is specified by name. Primary used for grant or
+	 * revoke access checks.
 	 * 
 	 * @param caller
 	 * @param username
@@ -394,6 +405,15 @@ abstract class AbstractUserManagement {
 		return false;
 	}
 
+	/**
+	 * checks if the granted permission has dependencies and grant them too if
+	 * the caller has the needed permissions to do so.
+	 * 
+	 * @param caller
+	 * @param entityname
+	 * @param action
+	 * @param objecturi
+	 */
 	// TODO: zusammenhänge granten
 	private void dependingGrants(User caller, String entityname,
 			IUserAction action, String objecturi) {
@@ -421,11 +441,11 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * revoke a role from a specified user
+	 * revokes a role from a specified user.
 	 * 
 	 * @param caller
 	 * @param rolename
-	 * @param user
+	 * @param username
 	 * @throws HasNoPermissionException
 	 */
 	public void revokeRole(User caller, String rolename, String username)
@@ -445,7 +465,8 @@ abstract class AbstractUserManagement {
 
 	/**
 	 * deletes a user by performing a logout for the user and removing him from
-	 * userstore
+	 * userstore. This method permanently deletes a given user. If you want to
+	 * deactivate a user without deleting him, use the deactivateUser method.
 	 * 
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
@@ -456,7 +477,8 @@ abstract class AbstractUserManagement {
 				&& AccessControl.hasPermission(
 						UserManagementAction.DELETE_USER,
 						UserManagementAction.alias, caller)) {
-			if (!username.equals("System")) {
+			if (!username.equals(UserManagement.getInstance().getSuperUser()
+					.getUsername())) {
 				// logout
 				if (logout(caller, username)) {
 					// remove all user privileges
@@ -474,6 +496,35 @@ abstract class AbstractUserManagement {
 		}
 	}
 
+	/**
+	 * deactivates a given user. The user remains in the system and whon't by
+	 * deleted by this method.
+	 * 
+	 * @param caller
+	 * @param username
+	 */
+	public void deactivateUser(User caller, String username) {
+		if (!caller.getUsername().equals(username)
+				&& AccessControl.hasPermission(
+						UserManagementAction.DEACTIVATE_USER, username, caller)) {
+			if (!username.equals(UserManagement.getInstance().getSuperUser()
+					.getUsername())) {
+				if (logout(caller, username)) {
+					this.userStore.getUserByName(username).deaktivateUser();
+				}
+			}
+		} else {
+			throw new HasNoPermissionException("User " + caller.getUsername()
+					+ " has no permission to deactivate a user.");
+		}
+	}
+
+	/**
+	 * removes all permissions from a given entity (role or user).
+	 * 
+	 * @param entity
+	 * @throws StoreException
+	 */
 	private void removeAllEntityPrivileges(AbstractUserManagementEntity entity)
 			throws StoreException {
 		try {
@@ -486,7 +537,7 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * creates a Role and put it to the Store
+	 * creates a new Role and put it to the Store
 	 * 
 	 * @param rolename
 	 * @param privileges
@@ -513,6 +564,14 @@ abstract class AbstractUserManagement {
 		return null;
 	}
 
+	/**
+	 * deletes a given Role permanently
+	 * 
+	 * @param rolename
+	 * @param caller
+	 * @throws HasNoPermissionException
+	 * @throws StoreException
+	 */
 	public void deleteRole(String rolename, User caller)
 			throws HasNoPermissionException, StoreException {
 		if (AccessControl.hasPermission(UserManagementAction.DELETE_ROLE,
@@ -537,7 +596,7 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * creats a Privilege and put it to the Store
+	 * creates a new Privilege and put it to the Store
 	 * 
 	 * @param privname
 	 * @param obj
@@ -560,6 +619,17 @@ abstract class AbstractUserManagement {
 		return null;
 	}
 
+	/**
+	 * creates a new Privilege and put it to the Store
+	 * 
+	 * @param objecturi
+	 * @param owner
+	 * @param operation
+	 * @param caller
+	 * @return
+	 * @throws HasNoPermissionException
+	 * @throws StoreException
+	 */
 	private Privilege createPrivilege(String objecturi,
 			AbstractUserManagementEntity owner, IUserAction operation,
 			User caller) throws HasNoPermissionException, StoreException {

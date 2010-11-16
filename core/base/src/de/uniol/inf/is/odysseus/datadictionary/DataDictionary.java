@@ -414,7 +414,7 @@ public class DataDictionary {
 	}
 
 	/**
-	 * returns true if the given user has higher permission as the given
+	 * checks if the given user has higher permission as the given
 	 * operation. Calls the corresponding method in the action class.
 	 * 
 	 * @param operation

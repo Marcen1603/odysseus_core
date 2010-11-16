@@ -8,9 +8,11 @@ abstract class AbstractUserManagementEntity implements Serializable {
 
 	private static final long serialVersionUID = 6486357855125784276L;
 	protected List<Privilege> privileges;
+	private boolean active;
 
 	AbstractUserManagementEntity() {
 		this.privileges = new ArrayList<Privilege>();
+		this.active = true;
 	}
 
 	void addPrivilege(Privilege priv) {
@@ -19,6 +21,10 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		} else {
 
 		}
+	}
+
+	protected void deaktivateUser() {
+		this.active = false;
 	}
 
 	public List<Privilege> getPrivileges() {
@@ -39,6 +45,10 @@ abstract class AbstractUserManagementEntity implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	public boolean isActiv() {
+		return this.active;
 	}
 
 	void removePrivilege(String objecturi) {

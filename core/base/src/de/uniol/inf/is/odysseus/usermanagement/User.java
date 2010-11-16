@@ -6,20 +6,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class User extends AbstractUserManagementEntity implements Serializable,
-		Comparable<User> {
+public final class User extends AbstractUserManagementEntity implements
+		Serializable, Comparable<User> {
 
 	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
 	private String username;
 	private String password;
 	private Session session;
-	private boolean active;
 	private List<Role> roles;
 	static transient MessageDigest hash = null;
 
 	User(String username, String password) {
-		this.active = true;
 		this.username = username;
 		this.password = hash(password);
 		this.roles = new ArrayList<Role>();
@@ -34,10 +32,6 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 	@Override
 	public int compareTo(User o) {
 		return this.getUsername().compareTo(o.getUsername());
-	}
-
-	protected void deaktivateUser() {
-		this.active = false;
 	}
 
 	@Override
@@ -141,10 +135,6 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 		}
 	}
 
-	public boolean isActiv() {
-		return this.active;
-	}
-
 	void removeRole(Role role) {
 		this.roles.remove(role);
 	}
@@ -174,6 +164,5 @@ public final class User extends AbstractUserManagementEntity implements Serializ
 			return this.password.equals(h);
 		}
 	}
-
 
 }

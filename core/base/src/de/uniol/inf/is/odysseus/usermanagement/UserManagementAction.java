@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum UserManagementAction implements IUserAction {
-	CREATE_USER, ALTER_USER, DELETE_USER,
+	CREATE_USER, ALTER_USER, DELETE_USER, DEACTIVATE_USER,
 
 	CREATE_ROLE, DELETE_ROLE,
 
@@ -15,6 +15,11 @@ public enum UserManagementAction implements IUserAction {
 	static List<IUserAction> all;
 	static final String alias = "UserManagement";
 
+	/**
+	 * returns a list with all actions of this action class.
+	 * 
+	 * @return List<IUserAction>
+	 */
 	public synchronized static List<IUserAction> getAll() {
 		if (all == null) {
 			all = new ArrayList<IUserAction>();
@@ -27,6 +32,12 @@ public enum UserManagementAction implements IUserAction {
 		return all;
 	}
 
+	/**
+	 * returns the higher action (permission) for a given action.
+	 * 
+	 * @param action
+	 * @return IUserAction
+	 */
 	public synchronized static IUserAction hasSuperAction(
 			UserManagementAction action) {
 		switch (action) {
@@ -41,6 +52,13 @@ public enum UserManagementAction implements IUserAction {
 		}
 	}
 
+	/**
+	 * returns whether the given action (permission) operates with an objecturi
+	 * or the action class alias.
+	 * 
+	 * @param action
+	 * @return
+	 */
 	public static boolean needsNoObject(IUserAction action) {
 		switch ((UserManagementAction) action) {
 		case CREATE_USER:
