@@ -332,7 +332,7 @@ abstract class AbstractUserManagement {
 			dependingGrants(caller, entityname, operation, objecturi);
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to grant permission.");
+					+ " has no permission to grant permission. "+operation+" on "+objecturi);
 		}
 	}
 
@@ -405,8 +405,8 @@ abstract class AbstractUserManagement {
 	 */
 	private boolean hasGrantOrRevokeAccess(User caller, String entityname,
 			String objecturi, IUserAction action) {
-		if (!caller.toString().equals(entityname)
-				&& ((AccessControl.hasPermission((UserManagementAction) action,
+		if (//!caller.toString().equals(entityname) && 				
+				 ((AccessControl.hasPermission((UserManagementAction) action,
 						UserManagementAction.alias, caller)
 				// caller hat object
 						&& caller.hasObject(objecturi) != null
