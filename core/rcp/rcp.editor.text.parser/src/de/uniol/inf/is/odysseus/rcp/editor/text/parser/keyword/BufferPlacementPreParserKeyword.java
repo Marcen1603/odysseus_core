@@ -37,18 +37,21 @@ public class BufferPlacementPreParserKeyword implements IPreParserKeyword {
 						variables.get("TRANSCFG"));
 		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
 		IQueryBuildSetting<?> sett;
-		while ((sett = iter.next()) != null) {
-			if (sett instanceof ParameterBufferPlacementStrategy) {
-				iter.remove();
-				break;
+		if (iter != null){
+			while (iter.hasNext()) {
+				sett = iter.next();
+				if (sett instanceof ParameterBufferPlacementStrategy) {
+					iter.remove();
+					break;
+				}
 			}
+			IExecutor executor = ExecutorHandler.getExecutor();
+			if (executor == null)
+				throw new QueryTextParseException("No executor found");
+			IBufferPlacementStrategy s = executor
+					.getBufferPlacementStrategy(parameter);
+			config.add(new ParameterBufferPlacementStrategy(s));
 		}
-		IExecutor executor = ExecutorHandler.getExecutor();
-		if (executor == null)
-			throw new QueryTextParseException("No executor found");
-		IBufferPlacementStrategy s = executor
-				.getBufferPlacementStrategy(parameter);
-		config.add(new ParameterBufferPlacementStrategy(s));
 	}
 
 }
