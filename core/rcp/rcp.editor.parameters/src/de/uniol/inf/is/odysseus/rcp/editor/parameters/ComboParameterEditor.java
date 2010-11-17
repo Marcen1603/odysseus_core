@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.parameters;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
@@ -15,17 +17,19 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.SimpleParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 
-public class SourceParameterEditor extends SimpleParameterEditor<String> implements IParameterEditor {
+public class ComboParameterEditor extends SimpleParameterEditor<String> implements IParameterEditor {
 
 	@Override
-	protected Control createInput(Composite parent) {
+	protected Control createInputControl(Composite parent) {
 		// Combobox anstatt Texteingabe
-		final Combo combo = new Combo(parent, SWT.BORDER);
-
-		// Liste der Quellen
-		for( Entry<String, ILogicalOperator> e : DataDictionary.getInstance().getStreamsAndViews(ActiveUser.getActiveUser())) {
-			combo.add(e.getKey());
-		}
+		final Combo combo = createCombo(parent);
+		if( combo == null ) 
+			throw new IllegalArgumentException("combo is null");
+		
+		// Liste erstellen
+		final String[] list = getList();
+		for( String str: list )
+			combo.add(str);
 		
 		combo.addModifyListener(new ModifyListener() {
 
@@ -45,14 +49,38 @@ public class SourceParameterEditor extends SimpleParameterEditor<String> impleme
 		});
 		
 		// Anfangstext setzen
+		setComboStartValue(combo);
+		
+		return combo;
+	}
+	
+	protected Combo createCombo(Composite parent) {
+		return new Combo(parent, SWT.BORDER);
+	}
+	
+	protected void setComboStartValue( Combo combo ) {
 		try {
 			String txt = convertToString((String)getValue());
-			combo.setText(txt == null ? "" : txt );
+			if( txt == null || txt.equals(""))
+				combo.select(0);
+			else
+				combo.setText( txt );
 		} catch( Exception ex ) {
-			combo.setText("");
+			if( combo.getItemCount() > 0 )
+				combo.select(0);
+			else 
+				combo.setText("");
 		}
-
-		return combo;
+	}
+	
+	// Füllt die Combo mit der Liste
+	protected String[] getList() {
+		// Liste der Quellen
+		List<String> sources = new ArrayList<String>();
+		for( Entry<String, ILogicalOperator> e : DataDictionary.getInstance().getStreamsAndViews(ActiveUser.getActiveUser())) {
+			sources.add(e.getKey());
+		}
+		return sources.toArray(new String[sources.size()]);
 	}
 	
 	@Override

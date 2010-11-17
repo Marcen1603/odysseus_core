@@ -6,7 +6,7 @@
       <operator
             name="ACCESS">
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SourceParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.ComboParameterEditor"
                name="SOURCE">
          </editor>
          <editor
@@ -56,6 +56,17 @@
          <editor
                class="de.uniol.inf.is.odysseus.rcp.editor.parameters.PredicateEditor"
                name="PREDICATE">
+         </editor>
+      </operator>
+      <operator
+            name="EXISTENCE">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.PredicateEditor"
+               name="PREDICATE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.ExistenceTypeParameterEditor"
+               name="TYPE">
          </editor>
       </operator>
    </extension>

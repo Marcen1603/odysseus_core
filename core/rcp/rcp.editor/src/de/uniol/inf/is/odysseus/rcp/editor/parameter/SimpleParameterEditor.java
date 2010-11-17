@@ -24,7 +24,7 @@ public abstract class SimpleParameterEditor<T> extends AbstractParameterEditor {
 		createLabel(parent);
 		
 		// Eingabe
-		text = createInput(parent);
+		text = createInputControl(parent);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	
@@ -41,7 +41,7 @@ public abstract class SimpleParameterEditor<T> extends AbstractParameterEditor {
 		return label;
 	}
 	
-	protected Control createInput(Composite parent) {
+	protected Control createInputControl(Composite parent) {
 		final Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		text.addModifyListener(new ModifyListener() {
 
