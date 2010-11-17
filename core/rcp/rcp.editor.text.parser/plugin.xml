@@ -32,5 +32,9 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.BufferPlacementPreParserKeyword"
             name="BUFFERPLACEMENT">
       </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.StartSchedulerPreParserKeyword"
+            name="STARTSCHEDULER">
+      </PreParserKeyword>
    </extension>
 </plugin>
