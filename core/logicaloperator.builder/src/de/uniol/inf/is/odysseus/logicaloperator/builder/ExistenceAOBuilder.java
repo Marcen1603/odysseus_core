@@ -12,7 +12,7 @@ public class ExistenceAOBuilder extends AbstractOperatorBuilder {
 	
 	public ExistenceAOBuilder() {
 		super(2,2);
-		setParameters(predicate);
+		setParameters(predicate, type);
 	}
 
 	@Override
