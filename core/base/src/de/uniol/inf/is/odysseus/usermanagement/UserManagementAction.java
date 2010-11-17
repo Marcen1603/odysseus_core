@@ -44,6 +44,7 @@ public enum UserManagementAction implements IUserAction {
 		case GET_ALL_USER:
 			return GET_ALL;
 		case GRANT:
+		case GRANT_ROLE:
 			return GRANT_ALL;
 		case REVOKE:
 			return REVOKE_ALL;
