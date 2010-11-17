@@ -382,10 +382,10 @@ abstract class AbstractUserManagement {
 			String rolename, IUserAction action) {
 		if ((AccessControl.hasPermission((UserManagementAction) action,
 				UserManagementAction.alias, caller)
-		// ist in der rolle
+				// ist in der rolle
 				&& caller.hasRole(rolename) != null
-		// caller kann sich nicht selbst entfernen
-		&& !caller.getUsername().equals(username))
+				// caller kann sich nicht selbst entfernen
+				&& !caller.getUsername().equals(username))
 				|| hasSuperOperation((UserManagementAction) action,
 						UserManagementAction.alias, caller)) {
 			return true;

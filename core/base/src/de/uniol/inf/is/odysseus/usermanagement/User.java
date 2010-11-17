@@ -113,7 +113,7 @@ public final class User extends AbstractUserManagementEntity implements
 	 * role
 	 * 
 	 * @param rolename
-	 * @return
+	 * @return Role
 	 */
 	public Role hasRole(String rolename) {
 		for (Role role : getRoles()) {
