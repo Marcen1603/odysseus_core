@@ -28,5 +28,9 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LogoutUserPreParserKeyword"
             name="LOGOUT">
       </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.BufferPlacementPreParserKeyword"
+            name="BUFFERPLACEMENT">
+      </PreParserKeyword>
    </extension>
 </plugin>
