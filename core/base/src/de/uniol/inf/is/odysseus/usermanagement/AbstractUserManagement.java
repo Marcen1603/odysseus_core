@@ -90,7 +90,7 @@ abstract class AbstractUserManagement {
 	 * @param rolename
 	 * @param privileges
 	 * @param caller
-	 * @return
+	 * @return Role
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
@@ -313,7 +313,7 @@ abstract class AbstractUserManagement {
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException, StoreException {
 		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
-				UserManagementAction.GRANT)) {
+				UserManagementAction.GRANT, false)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) == null) {
@@ -332,7 +332,8 @@ abstract class AbstractUserManagement {
 			dependingGrants(caller, entityname, operation, objecturi);
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to grant permission. "+operation+" on "+objecturi);
+					+ " has no permission to grant permission. " + operation
+					+ " on " + objecturi);
 		}
 	}
 
@@ -348,7 +349,7 @@ abstract class AbstractUserManagement {
 	public void grantRole(User caller, String rolename, String username)
 			throws HasNoPermissionException, StoreException {
 		if (hasGrantAndRevokeOnRoleAccess(caller, username, rolename,
-				UserManagementAction.GRANT_ROLE)) {
+				UserManagementAction.GRANT_ROLE, false)) {
 			User user = this.userStore.getUserByName(username);
 			Role role = this.roleStore.get(rolename);
 			if (user.hasRole(rolename) == null) {
@@ -363,7 +364,7 @@ abstract class AbstractUserManagement {
 			}
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to grant this role");
+					+ " has no permission to grant role '" + rolename + "'.");
 		}
 	}
 
@@ -379,13 +380,18 @@ abstract class AbstractUserManagement {
 	 * @return boolean
 	 */
 	private boolean hasGrantAndRevokeOnRoleAccess(User caller, String username,
-			String rolename, IUserAction action) {
+			String rolename, IUserAction action, boolean revoke) {
+		if (revoke && isRevokeProtected(rolename)) {
+			System.out
+					.println("Role '" + rolename + "' has revoke protection.");
+			return false;
+		}
 		if ((AccessControl.hasPermission((UserManagementAction) action,
 				UserManagementAction.alias, caller)
-				// ist in der rolle
+		// ist in der rolle
 				&& caller.hasRole(rolename) != null
-				// caller kann sich nicht selbst entfernen
-				&& !caller.getUsername().equals(username))
+		// caller kann sich nicht selbst entfernen
+		&& !caller.getUsername().equals(username))
 				|| hasSuperOperation((UserManagementAction) action,
 						UserManagementAction.alias, caller)) {
 			return true;
@@ -404,18 +410,26 @@ abstract class AbstractUserManagement {
 	 * @return boolean
 	 */
 	private boolean hasGrantOrRevokeAccess(User caller, String entityname,
-			String objecturi, IUserAction action) {
-		if (//!caller.toString().equals(entityname) && 				
-				 ((AccessControl.hasPermission((UserManagementAction) action,
-						UserManagementAction.alias, caller)
-				// caller hat object
-						&& caller.hasObject(objecturi) != null
-				// user is owner of object
-				&& AccessControl.isCreatorOfObject(caller.getUsername(),
+			String objecturi, IUserAction action, boolean revoke) {
+		if (revoke && isRevokeProtected(entityname)) {
+			System.out.println("User '" + entityname
+					+ "' has revoke protection.");
+			return false;
+		}
+		if (((AccessControl.hasPermission((UserManagementAction) action,
+				UserManagementAction.alias, caller)
+		// caller hat object
+				&& caller.hasObject(objecturi) != null
+		// grantet nicht sich selbst
+		&& !caller.toString().equals(entityname))
+
+				// oder user is owner of object
+				|| (AccessControl.isCreatorOfObject(caller.getUsername(),
 						objecturi))
-				// hat user superPermission von permission
-				|| hasSuperOperation((UserManagementAction) action,
-						UserManagementAction.alias, caller))) {
+
+		// oder hat user superPermission von permission
+		|| hasSuperOperation((UserManagementAction) action,
+				UserManagementAction.alias, caller))) {
 			return true;
 		}
 		return false;
@@ -545,6 +559,11 @@ abstract class AbstractUserManagement {
 		}
 	}
 
+	private boolean isRevokeProtected(String entityname) {
+		AbstractUserManagementEntity entity = getEntity(entityname);
+		return entity.isSystemProtected();
+	}
+
 	public void removeUserManagementListener(User caller,
 			IUserManagementListener l) throws HasNoPermissionException {
 		listeners.remove(l);
@@ -565,7 +584,7 @@ abstract class AbstractUserManagement {
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException {
 		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
-				UserManagementAction.REVOKE)) {
+				UserManagementAction.REVOKE, true)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
 			if (entity.hasObject(objecturi) != null) {
@@ -587,7 +606,7 @@ abstract class AbstractUserManagement {
 			}
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
-					+ " has no permission to grant permission.");
+					+ " has no permission to revoke permission.");
 		}
 	}
 
@@ -603,7 +622,7 @@ abstract class AbstractUserManagement {
 	public void revokePrivilegeForObject(User caller, String entityname,
 			String objecturi) throws HasNoPermissionException {
 		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
-				UserManagementAction.REVOKE)) {
+				UserManagementAction.REVOKE, true)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			entity.removePrivilege(objecturi);
 			if (entity instanceof User) {
@@ -633,7 +652,7 @@ abstract class AbstractUserManagement {
 	public void revokeRole(User caller, String rolename, String username)
 			throws HasNoPermissionException {
 		if (hasGrantAndRevokeOnRoleAccess(caller, username, rolename,
-				UserManagementAction.REVOKE_ROLE)) {
+				UserManagementAction.REVOKE_ROLE, true)) {
 			User user = this.userStore.getUserByName(username);
 			if (user.hasRole(rolename) != null) {
 				user.removeRole(this.roleStore.get(rolename));

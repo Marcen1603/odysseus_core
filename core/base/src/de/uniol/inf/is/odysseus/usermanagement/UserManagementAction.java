@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum UserManagementAction implements IUserAction {
-	CREATE_USER, ALTER_USER, DELETE_USER, DEACTIVATE_USER,
+	CREATE_USER, ALTER_USER, DELETE_USER, DEACTIVATE_USER, SET_SYSTEM_USER,
 
 	CREATE_ROLE, DELETE_ROLE,
 

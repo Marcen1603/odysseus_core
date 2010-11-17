@@ -7,11 +7,10 @@ public final class Role extends AbstractUserManagementEntity implements
 
 	private static final long serialVersionUID = 2452410871566925898L;
 	private final int ID;
-	private String rolename;
 	private boolean isGroup;
 
 	Role(String rolename, int newid) {
-		this.rolename = rolename;
+		setName(rolename);
 		this.ID = newid;
 	}
 
@@ -24,10 +23,10 @@ public final class Role extends AbstractUserManagementEntity implements
 		if (getClass() != obj.getClass())
 			return false;
 		Role other = (Role) obj;
-		if (this.rolename == null) {
+		if (getName() == null) {
 			if (other.getRolename() != null)
 				return false;
-		} else if (!this.rolename.equals(other.getRolename())) {
+		} else if (!getName().equals(other.getRolename())) {
 			return false;
 		} else if (this.privileges.equals(other.getPrivileges())) {
 			return true;
@@ -41,16 +40,16 @@ public final class Role extends AbstractUserManagementEntity implements
 	}
 
 	public String getRolename() {
-		return this.rolename;
+		return getName();
 	}
 
 	void setRolename(String rolename) {
-		this.rolename = rolename;
+		setName(rolename);
 	}
 
 	@Override
 	public String toString() {
-		return this.rolename;
+		return getName();
 	}
 
 	public void setGroup(boolean isGroup) {

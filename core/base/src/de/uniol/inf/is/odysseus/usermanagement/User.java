@@ -11,14 +11,13 @@ public final class User extends AbstractUserManagementEntity implements
 
 	private static final long serialVersionUID = -6085280063468701069L;
 	private final String hashFunction = "SHA-1";
-	private String username;
 	private String password;
 	private Session session;
 	private List<Role> roles;
 	static transient MessageDigest hash = null;
 
 	User(String username, String password) {
-		this.username = username;
+		setName(username);
 		this.password = hash(password);
 		this.roles = new ArrayList<Role>();
 	}
@@ -43,10 +42,10 @@ public final class User extends AbstractUserManagementEntity implements
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (username == null) {
-			if (other.username != null)
+		if (getName() == null) {
+			if (other.getName() != null)
 				return false;
-		} else if (!username.equals(other.username))
+		} else if (!getName().equals(other.getName()))
 			return false;
 		return true;
 	}
@@ -73,7 +72,7 @@ public final class User extends AbstractUserManagementEntity implements
 	}
 
 	public String getUsername() {
-		return username;
+		return getName();
 	}
 
 	private String hash(String password) {
@@ -104,7 +103,7 @@ public final class User extends AbstractUserManagementEntity implements
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((username == null) ? 0 : username.hashCode());
+				+ ((getName() == null) ? 0 : getName().hashCode());
 		return result;
 	}
 
@@ -148,12 +147,12 @@ public final class User extends AbstractUserManagementEntity implements
 	}
 
 	public void setUsername(String username) {
-		this.username = username;
+		setName(username);
 	}
 
 	@Override
 	public String toString() {
-		return username;// + " " + password;
+		return getName();
 	}
 
 	public boolean validatePassword(String password, boolean passwordIsHash) {
