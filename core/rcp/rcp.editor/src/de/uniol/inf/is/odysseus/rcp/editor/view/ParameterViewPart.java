@@ -41,6 +41,7 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	private List<IParameterEditor> openedParameterEditors = new ArrayList<IParameterEditor>();
 	private Operator selectedOperator;
 	private OperatorEditPart selectedOperatorEditPart;
+	private ISelection selection;
 	
 	public ParameterViewPart() {
 	}
@@ -62,7 +63,10 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		updateParameterEditors();
+		if( selection != this.selection ) {
+			this.selection = selection;
+			updateParameterEditors();
+		}
 	}
 	
 	/* (non-Javadoc)
