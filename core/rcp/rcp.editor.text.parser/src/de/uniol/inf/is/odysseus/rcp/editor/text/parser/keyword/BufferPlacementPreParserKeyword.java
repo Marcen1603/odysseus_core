@@ -36,10 +36,9 @@ public class BufferPlacementPreParserKeyword implements IPreParserKeyword {
 				.getInstance().getQueryBuildConfiguration(
 						variables.get("TRANSCFG"));
 		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
-		IQueryBuildSetting<?> sett;
 		if (iter != null){
 			while (iter.hasNext()) {
-				sett = iter.next();
+				IQueryBuildSetting<?> sett = iter.next();
 				if (sett instanceof ParameterBufferPlacementStrategy) {
 					iter.remove();
 					break;
