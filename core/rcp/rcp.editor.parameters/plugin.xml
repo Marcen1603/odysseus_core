@@ -51,6 +51,13 @@
                name="ATTRIBUTES">
          </editor>
       </operator>
+      <operator
+            name="JOIN">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.PredicateEditor"
+               name="PREDICATE">
+         </editor>
+      </operator>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
