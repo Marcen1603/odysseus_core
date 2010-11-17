@@ -36,5 +36,9 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.StartSchedulerPreParserKeyword"
             name="STARTSCHEDULER">
       </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.SchedulerPreParserKeyword"
+            name="SCHEDULER">
+      </PreParserKeyword>
    </extension>
 </plugin>
