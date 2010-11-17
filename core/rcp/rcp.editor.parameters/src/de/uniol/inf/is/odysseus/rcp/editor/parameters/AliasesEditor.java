@@ -120,7 +120,7 @@ public class AliasesEditor extends AbstractListParameterEditor<String> implement
 			// Wenn RenameOperator einen Wert bereits besitzt, dann diesen
 			// verwenden, ansonsten einen Standardwert erzeugen (der Rename 
 			// beinhaltet die Identität)
-			aliases.put(attributeName, value != null ? value.get(i) : attributeName);
+			aliases.put(attributeName, value != null && value.size() > i ? value.get(i) : attributeName);
 		}
 		
 		return aliases;
