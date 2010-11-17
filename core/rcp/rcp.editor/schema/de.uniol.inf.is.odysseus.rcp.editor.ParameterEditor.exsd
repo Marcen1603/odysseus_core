@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="editor"/>
+            <element ref="operator" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,12 +47,27 @@
       </complexType>
    </element>
 
+   <element name="operator">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="editor"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the operator for which the parameterEditors will be defined
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="editor">
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name of the parameter
                </documentation>
             </annotation>
          </attribute>
@@ -64,13 +79,6 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor"/>
                </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="operator" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
             </annotation>
          </attribute>
       </complexType>

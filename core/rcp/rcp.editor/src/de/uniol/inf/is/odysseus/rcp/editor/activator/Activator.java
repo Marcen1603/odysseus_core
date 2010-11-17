@@ -59,17 +59,25 @@ public class Activator extends AbstractUIPlugin {
 		return executor;
 	}
 	
-	// LÃ¶st die Extensions fÃ¼r die Parametereditoren auf
+	// Löst die Extensions für die Parametereditoren auf
 	private void resolveExtensions() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ILogicalPlanEditorConstants.PARAMETER_EDITOR_EXTENSION_ID);
+		
+		// operatoren
 		for( int i = 0; i < elements.length; i++ ) {
 			IConfigurationElement element = elements[i];
 			try {
-				IParameterEditor editor = (IParameterEditor)element.createExecutableExtension("class");
-				String attrName = element.getAttribute("name");
-				String opName = element.getAttribute("operator");
-				String finalName = opName + ParameterEditorRegistry.NAME_SEPARATOR + attrName;
-				ParameterEditorRegistry.getInstance().register(finalName, editor.getClass());
+				final String operatorName = element.getAttribute("name");
+				
+				// editoren
+				for( int j = 0; j < element.getChildren().length; j++ ) {
+					IConfigurationElement editorElement = element.getChildren()[j];
+					
+					IParameterEditor editor = (IParameterEditor)editorElement.createExecutableExtension("class");
+					String attrName = editorElement.getAttribute("name");
+					String finalName = operatorName + ParameterEditorRegistry.NAME_SEPARATOR + attrName;
+					ParameterEditorRegistry.getInstance().register(finalName, editor.getClass());
+				}
 			} catch( CoreException ex ) {
 				logger.error(ex.getMessage(), ex);
 			}

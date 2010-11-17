@@ -38,6 +38,7 @@ public class ParameterEditorRegistry {
 	}
 	
 	public IParameterEditor create( String parameterName ) {
+		System.out.println("Create ParameterEditor for " + parameterName);
 		Class<? extends IParameterEditor> clazz = editors.get(parameterName);
 		if( clazz == null ) 
 			throw new IllegalArgumentException("ParameterEditor with name '" + parameterName + "' not found");

@@ -80,7 +80,9 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		}
 	}
 	
-	private void updateSelection() {
+	// liefert true zurück, wenn ein anderer Operator als zuvor
+	// selektiert wurde
+	private boolean updateSelection() {
 		ISelection selection = getSite().getWorkbenchWindow().getSelectionService().getSelection();
 		if( selection instanceof IStructuredSelection ) {
 			IStructuredSelection structSelection = (IStructuredSelection)selection;
@@ -89,15 +91,22 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 			
 				Object selectedObject = structSelection.getFirstElement();
 				if( selectedObject instanceof OperatorEditPart ) {
-					selectedOperator = (Operator)((OperatorEditPart)selectedObject).getModel();
-					selectedOperatorEditPart = ((OperatorEditPart)selectedObject);
-					return;
+					Operator selectedOperator = (Operator)((OperatorEditPart)selectedObject).getModel();
+					if( selectedOperator != this.selectedOperator ) {
+						this.selectedOperator = selectedOperator;
+						selectedOperatorEditPart = ((OperatorEditPart)selectedObject);
+						return true;
+					}
+					return false;
 				}
 			}
 		}
+		// war vorher was ausgewählt, dann hat sich etwas geändert,
+		// sonst nix
+		boolean result = selectedOperator != null;
 		selectedOperator = null;
 		selectedOperatorEditPart = null;
-		return;
+		return result;
 	}
 	
 	private void updateParameterEditors() {
