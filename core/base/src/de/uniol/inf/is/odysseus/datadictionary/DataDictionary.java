@@ -24,8 +24,6 @@ import de.uniol.inf.is.odysseus.store.StoreException;
 import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagementAction;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
@@ -98,18 +96,6 @@ public class DataDictionary {
 				this.entityMap.put(uri, entity);
 				this.entityFromUser.put(uri, user);
 
-				// User permission auf Objekt geben
-				User system = UserManagement.getInstance().getSuperUser();
-				UserManagement.getInstance().grantPermission(system,
-						user.getUsername(), DataDictionaryAction.GET_ENTITY,
-						uri);
-				UserManagement.getInstance().grantPermission(system,
-						user.getUsername(), UserManagementAction.GRANT, uri);
-				UserManagement.getInstance().grantPermission(system,
-						user.getUsername(), UserManagementAction.REVOKE, uri);
-				UserManagement.getInstance().grantPermission(system,
-						user.getUsername(), DataDictionaryAction.REMOVE_ENTITY,
-						uri);
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -254,14 +240,15 @@ public class DataDictionary {
 				streamDefinitions.put(streamname, plan);
 				viewOrStreamFromUser.put(streamname, caller);
 
+				// TODO: kann weg wenn owner überall geprüft wird
 				// Rechte
-				User system = UserManagement.getInstance().getSuperUser();
-				UserManagement.getInstance().grantPermission(system,
-						caller.getUsername(), DataDictionaryAction.GET_STREAM,
-						streamname);
-				UserManagement.getInstance().grantPermission(system,
-						caller.getUsername(),
-						DataDictionaryAction.REMOVE_STREAM, streamname);
+				// User system = UserManagement.getInstance().getSuperUser();
+				// UserManagement.getInstance().grantPermission(system,
+				// caller.getUsername(), DataDictionaryAction.GET_STREAM,
+				// streamname);
+				// UserManagement.getInstance().grantPermission(system,
+				// caller.getUsername(),
+				// DataDictionaryAction.REMOVE_STREAM, streamname);
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -416,18 +403,18 @@ public class DataDictionary {
 	}
 
 	/**
-	 * checks if the given user has higher permission as the given operation.
+	 * checks if the given user has higher permission as the given action.
 	 * Calls the corresponding method in the action class.
 	 * 
-	 * @param operation
+	 * @param action
 	 * @param objecturi
 	 * @param user
 	 * @return boolean
 	 */
-	public boolean hasSuperAction(DataDictionaryAction operation,
+	public boolean hasSuperAction(DataDictionaryAction action,
 			String objecturi, User user) {
 		return AccessControl
-				.hasPermission(DataDictionaryAction.hasSuperAction(operation),
+				.hasPermission(DataDictionaryAction.hasSuperAction(action),
 						objecturi, user);
 	}
 
