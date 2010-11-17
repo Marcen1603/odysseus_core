@@ -523,7 +523,7 @@ abstract class AbstractUserManagement {
 			this.userStore.storeUser(user);
 			user.addRole(roleStore.get("Public"));
 		} else {
-			throw new UsernameAlreadyUsedException();
+			throw new UsernameAlreadyUsedException("User "+username+" already used");
 		}
 		fireUserManagementListener();
 	}

@@ -4,4 +4,9 @@ public class UsernameAlreadyUsedException extends RuntimeException {
 
 	private static final long serialVersionUID = 3361641628617871479L;
 
+	
+	public UsernameAlreadyUsedException(String message) {
+		super(message);
+	}
+
 }
