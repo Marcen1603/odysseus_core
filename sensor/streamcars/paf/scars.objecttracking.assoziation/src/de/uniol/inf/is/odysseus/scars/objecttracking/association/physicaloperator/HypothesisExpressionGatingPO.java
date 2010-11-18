@@ -71,30 +71,40 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		ConnectionList newObjConList = new ConnectionList();
 
 		for (TupleInfo scannedTupleInfo : scannedTupleIndexPath) {
-			MVRelationalTuple<M> scannedObject = (MVRelationalTuple<M>) scannedTupleInfo.tupleObject;
 
 			for (TupleInfo predictedTupleInfo : predictedTupleIndexPath) {
-				MVRelationalTuple<M> predictedObject = (MVRelationalTuple<M>) predictedTupleInfo.tupleObject;
 
-				double currentRating = object
-						.getMetadata()
-						.getConnectionList()
-						.getRatingForElementPair(
-								scannedTupleInfo.tupleIndexPath,
-								predictedTupleInfo.tupleIndexPath);
+				try {
+					for (String attribute : expression.getAttributeNames(this.schemaHelper.getSchema())) {
+						int[] attributePath = expression.getAttributePath(attribute);
+						int[] objectPath = this.getVaryingIndex(scannedTupleInfo.tupleIndexPath.toArray(), attributePath);
+						if(objectPath == null) {
+							objectPath = this.getVaryingIndex(predictedTupleInfo.tupleIndexPath.toArray(), attributePath);
+						}
+						if(objectPath != null) {
+							expression.bindVariable(attribute, this.tupleHelper.getObject(objectPath));
+						}
+					}
+					expression.evaluate();
 
-				double[][] scannedCov = scannedObject.getMetadata()
-						.getCovariance();
-				double[][] predictedCov = predictedObject.getMetadata()
-						.getCovariance();
-
-				double value = 0;
-
-				if (currentRating != value) {
-					newObjConList.add(new Connection(
+					double currentRating = object
+					.getMetadata()
+					.getConnectionList()
+					.getRatingForElementPair(
 							scannedTupleInfo.tupleIndexPath,
-							predictedTupleInfo.tupleIndexPath, value));
+							predictedTupleInfo.tupleIndexPath);
+
+					double newRating = expression.getTargetDoubleValue();
+
+					if (currentRating != newRating) {
+						newObjConList.add(new Connection(
+								scannedTupleInfo.tupleIndexPath,
+								predictedTupleInfo.tupleIndexPath, newRating));
+					}
+				} catch (Exception exception) {
+					exception.printStackTrace();
 				}
+
 			}
 		}
 
@@ -110,6 +120,19 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
+	}
+
+	private int[] getVaryingIndex(int[] carTuplePath, int[] attributeTuplePath) {
+		for (int i = 0; i < attributeTuplePath.length; i++) {
+			if (attributeTuplePath[i] == -1) {
+				attributeTuplePath[i] = carTuplePath[carTuplePath.length-1];
+				return attributeTuplePath;
+			}
+			if(carTuplePath[i] != attributeTuplePath[i]) {
+				return null;
+			}
+		}
+		return null;
 	}
 
 	/* SETTER AND GETTER */
