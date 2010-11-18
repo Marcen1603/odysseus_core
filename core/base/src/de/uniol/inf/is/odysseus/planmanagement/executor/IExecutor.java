@@ -250,5 +250,4 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	@Override
 	List<IQuery> getQueries();
 
-
 }

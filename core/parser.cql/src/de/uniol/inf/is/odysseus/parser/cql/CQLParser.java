@@ -820,12 +820,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTCreateUserStatement node, Object data) {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
-		try {
-			UserManagement.getInstance().registerUser(this.caller, username,
-					password);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		UserManagement.getInstance().registerUser(this.caller, username,
+				password);
 		return null;
 	}
 
