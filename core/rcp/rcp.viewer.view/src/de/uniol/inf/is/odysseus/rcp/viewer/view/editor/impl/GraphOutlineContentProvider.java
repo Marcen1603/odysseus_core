@@ -6,9 +6,11 @@ import java.util.Collection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.uniol.inf.is.odysseus.ISubscription;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
@@ -55,9 +57,16 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			}
 			children.add(new OwnerWrapper(owner.toString()));
 			// Add Metadatainformation
-			for( String type : node.getModelNode().getContent().getProvidedMonitoringData())
+			for( String type : node.getModelNode().getContent().getProvidedMonitoringData()){
 				children.add(node.getModelNode().getContent().getMonitoringData(type));
-
+			}
+			// Add Subscriptions to sources
+			if (node.getModelNode().getContent().isSink()){
+				ISink sink = (ISink)node.getModelNode().getContent();
+				Collection<? extends ISubscription> subs = sink.getSubscribedToSource();
+				children.addAll(subs);
+			}
+			
 			return children.toArray();
 		}
 		

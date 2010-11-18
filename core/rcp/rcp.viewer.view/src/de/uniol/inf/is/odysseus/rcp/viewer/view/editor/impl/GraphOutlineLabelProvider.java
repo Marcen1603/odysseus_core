@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.ISubscription;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
@@ -44,6 +45,9 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return Activator.getDefault().getImageRegistry().get("partof_icon");
 		}
 
+		if (element instanceof ISubscription){
+			return Activator.getDefault().getImageRegistry().get("subscription");
+		}
 		
 		
 		if (element instanceof IOdysseusNodeView) {
@@ -82,6 +86,10 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			IOdysseusNodeView node = (IOdysseusNodeView)element;
 			String name = node.getModelNode().getContent().getName();
 			return name;
+		}
+		if (element != null && element instanceof ISubscription){
+			ISubscription s = (ISubscription) element;
+			return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+s.getTarget();
 		}
 		if (element != null && element instanceof SDFAttributeList){				
 			return "OutputSchema";
