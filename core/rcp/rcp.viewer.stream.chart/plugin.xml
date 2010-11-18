@@ -28,6 +28,10 @@
                   style="push"
                   tooltip="Shows a pie chart">
             </command>
+            <separator
+                  name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.separator1"
+                  visible="true">
+            </separator>
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowAreaChartCommand"
                   icon="icons/chart_area.png"
@@ -55,6 +59,17 @@
                   label="XY Bar Chart"
                   style="push"
                   tooltip="Shows a continuous bar chart">
+            </command>
+            <separator
+                  name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.separator2"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChart3DCommand"
+                  icon="icons/chart_pie.png"
+                  label="3D Pie Chart"
+                  style="push"
+                  tooltip="Shows a 3 dimensional pie chart">
             </command>
          </menu>
       </menuContribution>
@@ -90,6 +105,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
             name="Curve Chart Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChart3DCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChart3DCommand"
+            name="Pie Chart 3D Command">
       </command>
    </extension>
    <extension
@@ -145,6 +165,14 @@
             icon="icons/chart_line.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xylinechart"
             name="XY Line Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3D"
+            icon="icons/chart_pie.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d"
+            name="Pie Chart 3D"
             restorable="false">
       </view>
    </extension>

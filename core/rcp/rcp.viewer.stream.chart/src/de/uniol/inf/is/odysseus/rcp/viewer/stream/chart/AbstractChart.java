@@ -40,9 +40,10 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	protected boolean currentVisibleAttributes[];
 	private JFreeChart chart;	
 	private ChangeSelectedAttributesAction changeAttributesAction;
+	private IStreamConnection<Object> connection;
 
 	public void init(IPhysicalOperator observingOperator) {
-		IStreamConnection<Object> connection = createConnection(observingOperator);
+		this.connection = createConnection(observingOperator);
 		init(connection);
 	}
 
@@ -169,7 +170,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 
 	@Override
 	public void dispose() {
-
+		this.connection.disconnect();
 	}
 
 	@Override
