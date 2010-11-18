@@ -158,8 +158,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		open(new ArrayList<PhysicalSubscription<ISink<?>>>());
 	}
 
-	protected void open(List<PhysicalSubscription<ISink<?>>> callPath) throws OpenFailedException {
-		getLogger().debug("open() "+this);
+	protected void open(List<PhysicalSubscription<ISink<?>>> callPath)
+			throws OpenFailedException {
+		getLogger().debug("open() " + this);
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
@@ -168,25 +169,32 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 			// Check if callPath contains this call to avoid cycles
-			if (!containsSubscription(callPath, getInstance(),sub.getSourceOutPort(),sub.getSinkInPort())){
-				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(), sub.getSinkInPort(), sub.getSourceOutPort(), null));
-				sub.getTarget().open(getInstance(), sub.getSourceOutPort(),	sub.getSinkInPort(), callPath);
+			if (!containsSubscription(callPath, getInstance(),
+					sub.getSourceOutPort(), sub.getSinkInPort())) {
+				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
+						sub.getSinkInPort(), sub.getSourceOutPort(), null));
+				sub.getTarget().open(getInstance(), sub.getSourceOutPort(),
+						sub.getSinkInPort(), callPath);
 			}
-		}		
+		}
 	}
-	
-	private boolean containsSubscription(List<PhysicalSubscription<ISink<?>>> callPath,
-			ISink<? super T> sink, int sourcePort, int sinkPort){
-		for (PhysicalSubscription<ISink<?>> sub: callPath){
-			if (sub.getTarget() == sink && sub.getSinkInPort() == sinkPort && sub.getSourceOutPort() == sourcePort){
-				getLogger().debug("contains "+sink+" "+sourcePort+" "+sinkPort+" in "+callPath);
+
+	private boolean containsSubscription(
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			ISink<? super T> sink, int sourcePort, int sinkPort) {
+		for (PhysicalSubscription<ISink<?>> sub : callPath) {
+			if (sub.getTarget() == sink && sub.getSinkInPort() == sinkPort
+					&& sub.getSourceOutPort() == sourcePort) {
+				getLogger().debug(
+						"contains " + sink + " " + sourcePort + " " + sinkPort
+								+ " in " + callPath);
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	protected void process_open() throws OpenFailedException {
 		// Empty Default Implementation
 	}
@@ -222,10 +230,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(){
+	public void close() {
 		close(new ArrayList<PhysicalSubscription<ISink<?>>>());
 	}
-	
+
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
 		this.isOpen.set(false);
 		process_close();
@@ -233,11 +241,15 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		callCloseOnChildren(callPath);
 	}
 
-	protected void callCloseOnChildren(List<PhysicalSubscription<ISink<?>>> callPath) {
+	protected void callCloseOnChildren(
+			List<PhysicalSubscription<ISink<?>>> callPath) {
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
-			if (!containsSubscription(callPath, getInstance(),sub.getSourceOutPort(),sub.getSinkInPort())){
-				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(), sub.getSinkInPort(), sub.getSourceOutPort(), null));
-				sub.getTarget().close(getInstance(), sub.getSourceOutPort(),sub.getSinkInPort(), callPath);
+			if (!containsSubscription(callPath, getInstance(),
+					sub.getSourceOutPort(), sub.getSinkInPort())) {
+				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
+						sub.getSinkInPort(), sub.getSourceOutPort(), null));
+				sub.getTarget().close(getInstance(), sub.getSourceOutPort(),
+						sub.getSinkInPort(), callPath);
 			}
 		}
 	}
@@ -325,7 +337,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
-	
+
 	/**
 	 * Returns a ","-separated string of the owner IDs.
 	 * 
@@ -355,9 +367,14 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		if (sinkInPort >= this.noInputPorts) {
 			setInputPortCount(sinkInPort + 1);
 		}
+
 		PhysicalSubscription<ISource<? extends T>> sub = new PhysicalSubscription<ISource<? extends T>>(
 				source, sinkInPort, sourceOutPort, schema);
 		if (!this.subscribedToSource.contains(sub)) {
+			if (!sinkInPortFree(sinkInPort)) {
+				throw new IllegalArgumentException("SinkInPort " + sinkInPort
+						+ " already bound ");
+			}
 			getLogger().debug(
 					this.getInstance() + " Subscribe To Source " + source
 							+ " to " + sinkInPort + " from " + sourceOutPort);
@@ -365,6 +382,18 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 					schema);
 		}
+	}
+
+	private boolean sinkInPortFree(int sinkInPort) {
+		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+			if (sub.getSinkInPort() == sinkInPort) {
+				getLogger()
+						.error("SinkInPort " + sinkInPort
+								+ " already bound to " + sub);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -423,7 +452,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return getInstance().getClass().getSimpleName() + "("
 				+ getInstance().hashCode() + ")";
 	}
-	
+
 	@Override
 	final public int hashCode() {
 		return super.hashCode();
@@ -433,17 +462,19 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public boolean equals(Object obj) {
 		return super.equals(obj);
 	}
-	
+
 	@Override
 	abstract public AbstractSink<T> clone();
-	
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(! (ipo instanceof ISink || ipo instanceof IPipe)) return false;
+		if (!(ipo instanceof ISink || ipo instanceof IPipe))
+			return false;
 		return process_isSemanticallyEqual(ipo);
 	}
-	
+
 	// TODO: Make abstract again and implement in Children
-	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo){
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
-	}}
+	}
+}
