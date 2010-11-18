@@ -43,7 +43,7 @@ abstract public class AbstractExecListScheduling extends
 			}
 		} else {
 			// ist hier was echt komisch gelaufen ... TODO
-			throw new IllegalArgumentException();
+			//throw new IllegalArgumentException();
 		}
 	}
 

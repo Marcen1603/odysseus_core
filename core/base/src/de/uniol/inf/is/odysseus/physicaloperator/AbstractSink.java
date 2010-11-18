@@ -159,6 +159,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected void open(List<PhysicalSubscription<ISink<?>>> callPath) throws OpenFailedException {
+		getLogger().debug("open() "+this);
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
@@ -178,6 +179,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			ISink<? super T> sink, int sourcePort, int sinkPort){
 		for (PhysicalSubscription<ISink<?>> sub: callPath){
 			if (sub.getTarget() == sink && sub.getSinkInPort() == sinkPort && sub.getSourceOutPort() == sourcePort){
+				getLogger().debug("contains "+sink+" "+sourcePort+" "+sinkPort+" in "+callPath);
 				return true;
 			}
 		}

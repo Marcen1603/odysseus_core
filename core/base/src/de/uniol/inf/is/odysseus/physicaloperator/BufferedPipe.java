@@ -52,14 +52,14 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 
 	@Override
 	final protected void process_open() throws OpenFailedException {
-		super.process_open();
+//		super.process_open();
 		this.buffer = new LinkedList<T>();
 	}
 
 	@Override
 	public boolean hasNext() {
 		if (!isOpen()){
-			getLogger().error("hasNext call on not opened buffer!");
+			getLogger().error("hasNext call on not opened buffer! "+this+" "+buffer);
 			return false;
 		}
 			

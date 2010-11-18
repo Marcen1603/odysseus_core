@@ -20,29 +20,6 @@ public abstract class AbstractIterablePipe<R, W> extends AbstractPipe<R, W>
 		super.removeOwner(owner);
 		this.deactivateRequestControls.remove(owner);
 	}
-
-//	@Override
-//	public void activateRequest(IOperatorOwner operatorControl) {
-//		this.deactivateRequestControls.remove(operatorControl);
-//	}
-//
-//	@Override
-//	public void deactivateRequest(IOperatorOwner operatorControl) {
-//		this.deactivateRequestControls.add(operatorControl);
-//	}
-//
-//	@Override
-//	public boolean deactivateRequestedBy(IOperatorOwner operatorControl) {
-//		return this.deactivateRequestControls.contains(operatorControl);
-//	}
-//
-//	@Override
-//	public boolean isActive() {
-//		int ownerCount = owners.size();
-//		int deactivateRequestCount = this.deactivateRequestControls.size();
-//
-//		return ownerCount > deactivateRequestCount;
-//	}
 	
 	@Override
 	public boolean isDone() {

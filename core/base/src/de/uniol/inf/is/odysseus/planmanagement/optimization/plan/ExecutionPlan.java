@@ -139,6 +139,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public void open() throws OpenFailedException {
+		getLogger().debug("Calling Open on "+this);
 		if (!open) {
 			Set<IPhysicalOperator> roots = getRoots();
 			getLogger().debug("Calling Open for " + roots);
@@ -152,6 +153,8 @@ public class ExecutionPlan implements IExecutionPlan {
 
 			}
 			open = true;
+		}else{
+			getLogger().warn("Open called on open plan "+this);
 		}
 
 	}
