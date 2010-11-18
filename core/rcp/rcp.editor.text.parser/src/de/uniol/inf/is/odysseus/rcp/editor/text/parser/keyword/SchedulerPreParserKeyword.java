@@ -22,6 +22,13 @@ public class SchedulerPreParserKeyword implements IPreParserKeyword {
 		if (params.size() != 2){
 			throw new QueryTextParseException("Illegal Scheduler Definition "+parameter);
 		}
+		if (!(executor.getRegisteredSchedulers().contains(params.get(0)))){
+			throw new QueryTextParseException("Scheduler "+params.get(0)+" not found");			
+		}
+		if (!(executor.getRegisteredSchedulingStrategies().contains(params.get(1)))){
+			throw new QueryTextParseException("Schedulingstrategy "+params.get(1)+" not found");			
+		}
+		
 			
 	}
 
