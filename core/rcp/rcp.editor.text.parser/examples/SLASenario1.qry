@@ -1,0 +1,80 @@
+#PARSER CQL
+#TRANSCFG Standard
+	
+#LOGIN test01 test
+#QUERY
+Select * from nexmark:person2 where id > 1;
+#LOGIN test02 test
+#QUERY
+Select * from nexmark:person2 where id > 2;
+#LOGIN test03 test
+#QUERY
+Select * from nexmark:person2 where id > 3;
+#LOGIN test04 test
+#QUERY
+Select * from nexmark:person2 where id > 4;
+#LOGIN test05 test
+#QUERY
+Select * from nexmark:person2 where id > 5;
+#LOGIN test06 test
+#QUERY
+Select * from nexmark:person2 where id > 6;
+#LOGIN test07 test
+#QUERY
+Select * from nexmark:person2 where id > 7;
+#LOGIN test08 test
+#QUERY
+Select * from nexmark:person2 where id > 8;
+#LOGIN test09 test
+#QUERY
+Select * from nexmark:person2 where id > 9;
+#LOGIN test10 test
+#QUERY
+Select * from nexmark:person2 where id > 10;
+#LOGIN test11 test
+#QUERY
+Select * from nexmark:person2 where id > 11;
+#LOGIN test12 test
+#QUERY
+Select * from nexmark:person2 where id > 12;
+#LOGIN test13 test
+#QUERY
+Select * from nexmark:person2 where id > 13;
+#LOGIN test14 test
+#QUERY
+Select * from nexmark:person2 where id > 14;
+#LOGIN test15 test
+#QUERY
+Select * from nexmark:person2 where id > 15;
+#LOGIN test16 test
+#QUERY
+Select * from nexmark:person2 where id > 16;
+#LOGIN test17 test
+#QUERY
+Select * from nexmark:person2 where id > 17;
+#LOGIN test18 test
+#QUERY
+Select * from nexmark:person2 where id > 18;
+#LOGIN test19 test
+#QUERY
+Select * from nexmark:person2 where id > 19;
+#LOGIN test20 test
+#QUERY
+Select * from nexmark:person2 where id > 20;
+#LOGIN test21 test
+#QUERY
+Select * from nexmark:person2 where id > 21;
+#LOGIN test22 test
+#QUERY
+Select * from nexmark:person2 where id > 22;
+#LOGIN test23 test
+#QUERY
+Select * from nexmark:person2 where id > 23;
+#LOGIN test24 test
+#QUERY
+Select * from nexmark:person2 where id > 24;
+#LOGIN test25 test
+#QUERY
+Select * from nexmark:person2 where id > 25;
+#LOGIN System manager
+#STARTSCHEDULER

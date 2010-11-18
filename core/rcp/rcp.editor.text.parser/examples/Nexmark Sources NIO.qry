@@ -1,0 +1,12 @@
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440
+ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442
+ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441
+ATTACH STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443
+
+GRANT GET_STREAM ON nexmark:person2 TO Public;
+GRANT GET_STREAM ON nexmark:bid2 TO Public;
+GRANT GET_STREAM ON nexmark:auction2 TO Public;
+GRANT GET_STREAM ON nexmark:category2 TO Public;

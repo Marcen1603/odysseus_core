@@ -1,0 +1,122 @@
+#PARSER CQL
+#TRANSCFG Standard
+#BUFFERPLACEMENT Query Buffer Placement
+#SCHEDULER "Time based SLA scheduler max" "Round Robin"
+#QUERY
+create user test01 identified by 'test';
+create user test02 identified by 'test';
+create user test03 identified by 'test';
+create user test04 identified by 'test';
+create user test05 identified by 'test';
+create user test06 identified by 'test';
+create user test07 identified by 'test';
+create user test08 identified by 'test';
+create user test09 identified by 'test';
+create user test10 identified by 'test';
+create user test11 identified by 'test';
+create user test12 identified by 'test';
+create user test13 identified by 'test';
+create user test14 identified by 'test';
+create user test15 identified by 'test';
+create user test16 identified by 'test';
+create user test17 identified by 'test';
+create user test18 identified by 'test';
+create user test19 identified by 'test';
+create user test20 identified by 'test';
+create user test21 identified by 'test';
+create user test22 identified by 'test';
+create user test23 identified by 'test';
+create user test24 identified by 'test';
+create user test25 identified by 'test';
+
+grant role DSUser to test01;
+grant role DSUser to test02;
+grant role DSUser to test03;
+grant role DSUser to test04;
+grant role DSUser to test05;
+grant role DSUser to test06;
+grant role DSUser to test07;
+grant role DSUser to test08;
+grant role DSUser to test09;
+grant role DSUser to test10;
+grant role DSUser to test11;
+grant role DSUser to test12;
+grant role DSUser to test13;
+grant role DSUser to test14;
+grant role DSUser to test15;
+grant role DSUser to test16;
+grant role DSUser to test17;
+grant role DSUser to test18;
+grant role DSUser to test19;
+grant role DSUser to test20;
+grant role DSUser to test21;
+grant role DSUser to test22;
+grant role DSUser to test23;
+grant role DSUser to test24;
+grant role DSUser to test25;
+
+create sla slaBronce time 500 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
+create sla slaSilver time 200 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
+create sla slaGold time 100 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
+
+create tenant tenant01 with slaBronce;
+create tenant tenant02 with slaBronce;
+create tenant tenant03 with slaBronce;
+create tenant tenant04 with slaBronce;
+create tenant tenant05 with slaBronce;
+create tenant tenant06 with slaBronce;
+create tenant tenant07 with slaBronce;
+create tenant tenant08 with slaBronce;
+create tenant tenant09 with slaBronce;
+create tenant tenant10 with slaBronce;
+create tenant tenant11 with slaBronce;
+create tenant tenant12 with slaBronce;
+create tenant tenant13 with slaBronce;
+create tenant tenant14 with slaBronce;
+create tenant tenant15 with slaBronce;
+create tenant tenant16 with slaSilver;
+create tenant tenant17 with slaSilver;
+create tenant tenant18 with slaSilver;
+create tenant tenant19 with slaSilver;
+create tenant tenant20 with slaSilver;
+create tenant tenant21 with slaSilver;
+create tenant tenant22 with slaSilver;
+create tenant tenant23 with slaGold;
+create tenant tenant24 with slaGold;
+create tenant tenant25 with slaGold;
+
+add user test01 to tenant01;
+add user test02 to tenant02;
+add user test03 to tenant03;
+add user test04 to tenant04;
+add user test05 to tenant05;
+add user test06 to tenant06;
+add user test07 to tenant07;
+add user test08 to tenant08;
+add user test09 to tenant09;
+add user test10 to tenant10;
+add user test11 to tenant11;
+add user test12 to tenant12;
+add user test13 to tenant13;
+add user test14 to tenant14;
+add user test15 to tenant15;
+add user test16 to tenant16;
+add user test17 to tenant17;
+add user test18 to tenant18;
+add user test19 to tenant19;
+add user test20 to tenant20;
+add user test21 to tenant21;
+add user test22 to tenant22;
+add user test23 to tenant23;
+add user test24 to tenant24;
+add user test25 to tenant25;
+
+ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440
+ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442
+ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441
+ATTACH STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443
+
+GRANT GET_STREAM ON nexmark:person2 TO Public;
+GRANT GET_STREAM ON nexmark:bid2 TO Public;
+GRANT GET_STREAM ON nexmark:auction2 TO Public;
+GRANT GET_STREAM ON nexmark:category2 TO Public;
