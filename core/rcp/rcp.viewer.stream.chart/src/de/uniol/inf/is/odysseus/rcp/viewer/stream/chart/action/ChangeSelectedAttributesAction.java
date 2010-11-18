@@ -25,11 +25,11 @@ public class ChangeSelectedAttributesAction extends Action {
 	public void run() {
 		try {
 			System.out.println("open dialog...");
-			ChangeAttributesDialog dialog = new ChangeAttributesDialog(parentShell, changeable.getSchema(),  this.changeable.getVisibleAttributes());
+			ChangeAttributesDialog dialog = new ChangeAttributesDialog(parentShell, this.changeable);
 			if (dialog.open() == Window.OK) {
 				boolean[] attr = dialog.getSelectedAttributes();
 				changeable.setVisibleAttributes(Arrays.copyOf(attr, attr.length));
-				changeable.visibleAttributesChanged();
+				changeable.chartPropertiesChanged();
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);

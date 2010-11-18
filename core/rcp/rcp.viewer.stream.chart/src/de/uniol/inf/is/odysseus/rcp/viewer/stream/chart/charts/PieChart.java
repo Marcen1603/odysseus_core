@@ -29,7 +29,7 @@ public class PieChart extends AbstractChart {
 	}
 
 	@Override
-	public void visibleAttributesChanged() {
+	public void chartPropertiesChanged() {
 
 	}
 
@@ -63,5 +63,14 @@ public class PieChart extends AbstractChart {
 		plot.setLabelGenerator(null);
 
 	}
+	
+	@Override
+	public String isValidSelection(boolean[] selectAttributes) {
+		if(getSelectedValueCount(selectAttributes)>0){
+			return null;
+		}
+		return "The number of choosen attributes should be at least one!";
+	}
+
 
 }

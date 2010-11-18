@@ -1,12 +1,16 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -19,28 +23,35 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
 
-public class ChangeAttributesDialog extends TitleAreaDialog {
+public class ChangeSettingsDialog extends TitleAreaDialog {
 
-	private static final String DEFAULT_MESSAGE = "Changes the attributes that are shown by the chart";
+	private static final String DEFAULT_MESSAGE = "Change the settings for this chart";
+	private IChartSettingChangeable changeable;
 	private Table table;
-	private boolean[] activatedAttributes;
-	private IAttributesChangeable changeable;
 	private Button okButton;
+	private Map<MethodSetting, Object> currentValues = new HashMap<MethodSetting, Object>();
 
-	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable changeable) {
+	public ChangeSettingsDialog(Shell parentShell, IChartSettingChangeable changeable) {
 		super(parentShell);
-		this.activatedAttributes = Arrays.copyOf(changeable.getVisibleAttributes(), changeable.getVisibleAttributes().length);
 		this.changeable = changeable;
+		for (MethodSetting ms : this.changeable.getChartSettings()) {
+			try {
+				currentValues.put(ms, ms.getGetter().invoke(this.changeable));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
-		setTitle("Change Attributes");
+		setTitle("Change Settings");
 		setMessage(DEFAULT_MESSAGE);
 		return contents;
 	}
@@ -69,53 +80,43 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 		col1.setWidth(400);
 
 		TableColumn col2 = new TableColumn(table, SWT.LEFT);
-		col2.setText("visible");
+		col2.setText("Value");
 		col2.setWidth(100);
 		col2.setAlignment(SWT.CENTER);
 
 		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+		table.setLinesVisible(true);		
 
-		int i = 0;
-		for (SDFAttribute a : this.changeable.getSchema()) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			Button check = new Button(table, SWT.CHECK);
-			check.setData(i);
-			check.setSelection(activatedAttributes[i]);
-			check.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					Button thisButton = (Button) e.widget;
-					int zeilennummer = (Integer) thisButton.getData();
-					if (thisButton.getSelection()) {
-						activatedAttributes[zeilennummer] = true;
-					} else {
-						activatedAttributes[zeilennummer] = false;
-					}
-					validate();
+		for (final Entry<MethodSetting, Object> entry : this.currentValues.entrySet()) {
+			String value = entry.getValue().toString();
+			
+			final TableItem item = new TableItem(table, SWT.NONE);
+			item.setText(0, entry.getKey().getName());
+			try {
+				item.setText(1, value);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			final Text textEditor = new Text(table, SWT.NONE);
+			textEditor.setText(value);
+			textEditor.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					entry.setValue(textEditor.getText());
 				}
 			});
+
 			TableEditor tbl_editor = new TableEditor(table);
 			tbl_editor.grabHorizontal = true;
-			tbl_editor.minimumHeight = check.getSize().x;
-			tbl_editor.minimumWidth = check.getSize().y;
-			tbl_editor.setEditor(check, item, 1);
-			item.setText(0, a.toString());
-			i++;
+			tbl_editor.minimumHeight = textEditor.getSize().x;
+			tbl_editor.minimumWidth = textEditor.getSize().y;
+			tbl_editor.setEditor(textEditor, item, 1);
+
 		}
 
 		return parent;
-	}
-
-	private void validate() {
-		String test = ChangeAttributesDialog.this.changeable.isValidSelection(ChangeAttributesDialog.this.activatedAttributes);		
-		if (test == null) {			
-			okButton.setEnabled(true);
-			setMessage(DEFAULT_MESSAGE);
-		} else {			
-			setErrorMessage(test);
-			okButton.setEnabled(false);
-		}
 	}
 
 	@Override
@@ -125,6 +126,7 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 		this.okButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
 				setReturnCode(Window.OK);
 				close();
 			}
@@ -133,7 +135,8 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
 	}
 
-	public boolean[] getSelectedAttributes() {
-		return this.activatedAttributes;
+	public Map<MethodSetting, Object> getCurrentValues() {
+		return currentValues;
 	}
+
 }

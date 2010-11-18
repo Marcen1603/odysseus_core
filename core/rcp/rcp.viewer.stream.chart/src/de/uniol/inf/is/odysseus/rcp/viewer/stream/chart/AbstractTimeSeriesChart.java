@@ -22,7 +22,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 	private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
 	
 	@Override
-	public void visibleAttributesChanged() {
+	public void chartPropertiesChanged() {
 		series.clear();
 		this.dataset.removeAllSeries();
 		for (int i = 0; i < getSchema().getAttributeCount(); i++) {
@@ -37,6 +37,13 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 		}
 	}
 	
+	@Override
+	public String isValidSelection(boolean[] selectAttributes) {
+		if(getSelectedValueCount(selectAttributes)>0){
+			return null;
+		}
+		return "The number of choosen attributes should be at least one!";
+	}
 
 	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {

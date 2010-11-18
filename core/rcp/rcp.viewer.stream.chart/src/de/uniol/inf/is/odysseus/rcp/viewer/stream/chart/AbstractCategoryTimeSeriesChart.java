@@ -72,6 +72,15 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 	}
 
 	@Override
-	public void visibleAttributesChanged() {		
+	public void chartPropertiesChanged() {		
 	}
+	
+	@Override
+	public String isValidSelection(boolean[] selectAttributes) {
+		if(getSelectedValueCount(selectAttributes)>0){
+			return null;
+		}
+		return "The number of choosen attributes should be at least one!";
+	}
+
 }

@@ -28,6 +28,13 @@
                   style="push"
                   tooltip="Shows a pie chart">
             </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowThermometerCommand"
+                  icon="icons/thermometer.png"
+                  label="Thermometer"
+                  style="push"
+                  tooltip="Shows a thermometer for one attribute">
+            </command>
             <separator
                   name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.separator1"
                   visible="true">
@@ -111,6 +118,11 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChart3DCommand"
             name="Pie Chart 3D Command">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowThermometerChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowThermometerCommand"
+            name="Thermometer Command">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -169,10 +181,20 @@
       </view>
       <view
             allowMultiple="true"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3D"
             icon="icons/chart_pie.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d"
             name="Pie Chart 3D"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ThermometerChart"
+            icon="icons/thermometer.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.thermometerchart"
+            name="Thermometer"
             restorable="false">
       </view>
    </extension>
