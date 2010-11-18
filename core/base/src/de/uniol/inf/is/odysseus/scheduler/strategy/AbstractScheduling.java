@@ -107,7 +107,7 @@ public abstract class AbstractScheduling implements IScheduling,
 			} else if (nextSource.isBlocked()) {
 				logger.debug(nextSource + " blocked");
 				updateBlocked(plan.getSourceId(nextSource));
-			}else if (nextSource.isOpen() && nextSource.hasNext()) {
+			}else if (nextSource.hasNext()) {
 				// logger.debug(nextSource + " process");
 				nextSource.transferNext();
 			} else {
