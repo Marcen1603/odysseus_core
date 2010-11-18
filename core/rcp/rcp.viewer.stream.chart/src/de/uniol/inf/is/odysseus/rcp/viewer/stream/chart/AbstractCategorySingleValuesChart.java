@@ -1,10 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
-import java.awt.Color;
-
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -35,11 +34,10 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart {
 
 	@Override
 	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {
-		final SDFAttributeList currentSchema = super.getSchema(); 
+		final SDFAttributeList currentSchema = super.getSchema();		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-			//	dcds.clear();
 				int i = 0;
 				for (SDFAttribute a : currentSchema) {
 					if (currentVisibleAttributes[i]) {
@@ -54,15 +52,22 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart {
 		});
 	}
 
-	protected void decorateChart(JFreeChart chart) {		
+	protected void decorateChart(JFreeChart chart) {
+		if(chart.getPlot() instanceof CategoryPlot){
 		CategoryPlot plot = chart.getCategoryPlot();  
         chart.setAntiAlias(true);
         
      // change background colors
-		chart.setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(DEFAULT_BACKGROUND);
 		
-		plot.setBackgroundPaint(Color.WHITE);
-		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);				
+		plot.setBackgroundPaint(DEFAULT_BACKGROUND);
+		plot.setRangeGridlinePaint(DEFAULT_BACKGROUND_GRID);		
+		}else{
+			if(chart.getPlot() instanceof PiePlot){
+				PiePlot plot = (PiePlot) chart.getPlot();
+				plot.setBackgroundPaint(DEFAULT_BACKGROUND);
+			}
+		}
 	}
 	
 	private void recalcAxis(double value){

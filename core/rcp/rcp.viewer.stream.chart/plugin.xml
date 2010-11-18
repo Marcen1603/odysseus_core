@@ -22,6 +22,13 @@
                   tooltip="Shows a bar chart">
             </command>
             <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChartCommand"
+                  icon="icons/chart_pie.png"
+                  label="Pie Chart"
+                  style="push"
+                  tooltip="Shows a pie chart">
+            </command>
+            <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowAreaChartCommand"
                   icon="icons/chart_area.png"
                   label="Area Chart"
@@ -60,6 +67,11 @@
             name="Bar Chart Command">
       </command>
       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChartCommand"
+            name="Pie Chart Command">
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowAreaChartCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowAreaChartCommand"
             name="Area Chart Command">
@@ -89,6 +101,14 @@
             icon="icons/chart_bar.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.barchart"
             name="Bar Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart"
+            icon="icons/chart_pie.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart"
+            name="Pie Chart"
             restorable="false">
       </view>
       <view
