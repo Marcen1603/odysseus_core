@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
+         <menu
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.command.menu.command.showStreamCommand"
+               icon="icons/monitor.png"
+               label="Charts">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowBarChartCommand"
+                  icon="icons/chart_bar.png"
+                  label="Bar Chart"
+                  style="push"
+                  tooltip="Shows a bar chart">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowAreaChartCommand"
+                  icon="icons/chart_area.png"
+                  label="Area Chart"
+                  style="push"
+                  tooltip="Shows an area chart">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
+                  icon="icons/chart_curve.png"
+                  label="Curve Chart"
+                  style="push"
+                  tooltip="Shows a curve chart that interpolates a smooth line between the data points">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYLineChartCommand"
+                  icon="icons/chart_line.png"
+                  label="XY Line Chart"
+                  style="push"
+                  tooltip="Shows a continuious line chart">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYBarChartCommand"
+                  icon="icons/chart_bar.png"
+                  label="XY Bar Chart"
+                  style="push"
+                  tooltip="Shows a continuous bar chart">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowBarChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowBarChartCommand"
+            name="Bar Chart Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowAreaChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowAreaChartCommand"
+            name="Area Chart Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYBarChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYBarChartCommand"
+            name="XY Bar Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYLineChart"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowXYLineChartCommand"
+            name="XY Line Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowCurveChartCommand"
+            name="Curve Chart Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChart"
+            icon="icons/chart_bar.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.barchart"
+            name="Bar Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChart"
+            icon="icons/chart_area.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.areachart"
+            name="Area Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChart"
+            icon="icons/chart_curve.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.curvechart"
+            name="Curve Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChart"
+            icon="icons/chart_bar.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xybarchart"
+            name="XY Bar Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYLineChart"
+            icon="icons/chart_line.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xylinechart"
+            name="XY Line Chart"
+            restorable="false">
+      </view>
+   </extension>
+
+</plugin>
