@@ -166,7 +166,7 @@ public class SchemaEditor extends AbstractListParameterEditor<SDFAttribute> {
 	}
 
 	private void loadTable() {
-		List<SDFAttribute> attributes = getListParameter().getValue();
+		List<SDFAttribute> attributes = getValue();
 		if( attributes == null ) 
 			attributes = new ArrayList<SDFAttribute>();
 				

@@ -31,13 +31,13 @@ public abstract class SimpleParameterEditor<T> extends AbstractParameterEditor {
 	public abstract T convertFromString( String txt );
 	public abstract String convertToString( T object );
 	
-	protected String getAttributeTitle() {
+	protected String getLabelTitle() {
 		return getParameter().getName();
 	}
 
 	protected Label createLabel(Composite parent) {
 		Label label = new Label( parent, SWT.CENTER );
-		label.setText(getAttributeTitle());
+		label.setText(getLabelTitle());
 		return label;
 	}
 	

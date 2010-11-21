@@ -110,9 +110,10 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	}
 	
 	private void updateParameterEditors() {
-		deleteControls();
-		updateSelection();
-		createControls();
+		if( updateSelection() ) {
+			deleteControls();
+			createControls();
+		}
 	}
 
 	private void createControls() {		
@@ -123,18 +124,24 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		Set<IParameter<?>> parameters = builder.getParameters();
 		
 		mainContainer = new Composite(parent, SWT.NONE);
-		mainContainer.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 1;
+		mainContainer.setLayout(layout);
 		Label title = new Label( mainContainer, SWT.BORDER | SWT.CENTER);
 		title.setText(selectedOperator.getOperatorBuilderName());
 		title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		mandatoryContainer = new Composite( mainContainer, SWT.BORDER);
 		mandatoryContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		mandatoryContainer.setLayout(new GridLayout());
+		GridLayout mandatoryLayout = new GridLayout();
+		mandatoryLayout.verticalSpacing = 1;
+		mandatoryContainer.setLayout(mandatoryLayout);
 		
 		optionalContainer = new Composite( mainContainer, SWT.BORDER);
 		optionalContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		optionalContainer.setLayout(new GridLayout());
+		GridLayout optionalLayout = new GridLayout();
+		optionalLayout.verticalSpacing = 1;
+		optionalContainer.setLayout(optionalLayout);
 		
 		errorContainer = new Composite( mainContainer, SWT.BORDER);
 		errorContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -176,6 +183,7 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		
 		updateErrorList();
 		
+		parent.pack();
 		parent.layout();
 	}
 	

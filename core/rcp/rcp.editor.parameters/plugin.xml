@@ -69,6 +69,33 @@
                name="TYPE">
          </editor>
       </operator>
+      <operator
+            name="FILEACCESS">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
+               name="SOURCE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.FileTypeParameterEditor"
+               name="FILETYPE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SchemaEditor"
+               name="SCHEMA">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.LongParameterEditor"
+               name="DELAY">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SourceTypeParameterEditor"
+               name="TYPE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.FilePathParameterEditor"
+               name="PATH">
+         </editor>
+      </operator>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
