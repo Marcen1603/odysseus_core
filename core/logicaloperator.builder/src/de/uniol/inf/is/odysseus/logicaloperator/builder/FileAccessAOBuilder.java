@@ -26,10 +26,10 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 			"FILETYPE", REQUIREMENT.MANDATORY);	
 	
 	private final DirectParameter<String> type = new DirectParameter<String>(
-			"TYPE", REQUIREMENT.OPTIONAL);
+			"TYPE", REQUIREMENT.MANDATORY);
 	
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
-			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
+			"SCHEMA", REQUIREMENT.MANDATORY, new CreateSDFAttributeParameter(
 					"ATTRIBUTE", REQUIREMENT.MANDATORY));	
 	
 	private final DirectParameter<Long> delay = new DirectParameter<Long>(
@@ -83,13 +83,13 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 		if(delay.getValue() == null)
 			delay.setInputValue(0l);
 			
-		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
-			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
-				addError(new IllegalArgumentException("view " + sourceName
-						+ " already exists"));
-				return false;
-			}
-		}else {
+//		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
+//			if (path.hasValue() || type.hasValue() || fileType.hasValue() || attributes.hasValue()) {
+//				addError(new IllegalArgumentException("view " + sourceName
+//						+ " already exists"));
+//				return false;
+//			}
+//		}else {
 			if (!(path.hasValue() && type.hasValue() && fileType.hasValue() && attributes.hasValue())) {
 				addError(new IllegalArgumentException(
 						"missing information for the creation of source "
@@ -97,7 +97,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 								+ ". expecting path, fileType, type and attributes."));
 				return false;
 			}
-		}
+//		}
 		/*
 		File file = new File(path.getValue());
 		if(!file.exists()){
