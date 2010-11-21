@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-import java.io.File;
 import java.util.List;
 
 import org.slf4j.Logger;
