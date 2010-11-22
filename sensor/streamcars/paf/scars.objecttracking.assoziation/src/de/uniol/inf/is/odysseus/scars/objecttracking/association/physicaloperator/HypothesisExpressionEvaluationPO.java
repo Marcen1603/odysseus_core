@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
  * @param <M>
  */
 
-public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency>
-		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends
+		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String scanObjListPath;
 	private String predObjListPath;
@@ -34,6 +34,8 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	private SchemaIndexPath scannedObjectListSIPath;
 	private TupleHelper tupleHelper;
 
+	private static final String EXP_ASSOCIATION_CONNECTION_VALUE = "ASSOCIATION_CON_VAL";
+
 	public HypothesisExpressionEvaluationPO() {
 		super();
 	}
@@ -43,8 +45,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		return new HypothesisExpressionEvaluationPO<M>(this);
 	}
 
-	public HypothesisExpressionEvaluationPO(
-			HypothesisExpressionEvaluationPO<M> clone) {
+	public HypothesisExpressionEvaluationPO(HypothesisExpressionEvaluationPO<M> clone) {
 		super(clone);
 	}
 
@@ -54,10 +55,8 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		this.expression = new PredictionExpression(this.expressionString);
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
-		this.setScannedObjectListSIPath(this.schemaHelper
-				.getSchemaIndexPath(this.scanObjListPath));
-		this.setPredictedObjectListSIPath(this.schemaHelper
-				.getSchemaIndexPath(this.predObjListPath));
+		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scanObjListPath));
+		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predObjListPath));
 	}
 
 	@Override
@@ -67,16 +66,20 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		ConnectionList newObjConList = new ConnectionList();
 
 		for (IConnection con : object.getMetadata().getConnectionList()) {
-//			double currentRating = con.getRating();
+			// double currentRating = con.getRating();
 			try {
 				for (String attribute : expression.getAttributeNames(this.schemaHelper.getSchema())) {
-					int[] attributePath = expression.getAttributePath(attribute);
-					int[] objectPath = this.getVaryingIndex(con.getLeftPath().toArray(), attributePath);
-					if(objectPath == null) {
-						objectPath = this.getVaryingIndex(con.getRightPath().toArray(), attributePath);
-					}
-					if(objectPath != null) {
-						expression.bindVariable(attribute, this.tupleHelper.getObject(objectPath));
+					if (attribute.equals(EXP_ASSOCIATION_CONNECTION_VALUE)) {
+						expression.bindVariable(attribute, con.getRating());
+					} else {
+						int[] attributePath = expression.getAttributePath(attribute);
+						int[] objectPath = this.getVaryingIndex(con.getLeftPath().toArray(), attributePath);
+						if (objectPath == null) {
+							objectPath = this.getVaryingIndex(con.getRightPath().toArray(), attributePath);
+						}
+						if (objectPath != null) {
+							expression.bindVariable(attribute, this.tupleHelper.getObject(objectPath));
+						}
 					}
 				}
 				expression.evaluate();
@@ -103,17 +106,15 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	private int[] getVaryingIndex(int[] carTuplePath, int[] attributeTuplePath) {
 		for (int i = 0; i < attributeTuplePath.length; i++) {
 			if (attributeTuplePath[i] == -1) {
-				attributeTuplePath[i] = carTuplePath[carTuplePath.length-1];
+				attributeTuplePath[i] = carTuplePath[carTuplePath.length - 1];
 				return attributeTuplePath;
 			}
-			if(carTuplePath[i] != attributeTuplePath[i]) {
+			if (carTuplePath[i] != attributeTuplePath[i]) {
 				return null;
 			}
 		}
 		return null;
 	}
-
-
 
 	/* SETTER AND GETTER */
 
@@ -177,8 +178,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		return predictedObjectListSIPath;
 	}
 
-	public void setPredictedObjectListSIPath(
-			SchemaIndexPath predictedObjectListSIPath) {
+	public void setPredictedObjectListSIPath(SchemaIndexPath predictedObjectListSIPath) {
 		this.predictedObjectListSIPath = predictedObjectListSIPath;
 	}
 
@@ -186,8 +186,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		return scannedObjectListSIPath;
 	}
 
-	public void setScannedObjectListSIPath(
-			SchemaIndexPath scannedObjectListSIPath) {
+	public void setScannedObjectListSIPath(SchemaIndexPath scannedObjectListSIPath) {
 		this.scannedObjectListSIPath = scannedObjectListSIPath;
 	}
 
