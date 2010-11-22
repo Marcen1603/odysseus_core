@@ -29,7 +29,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		}
 		return _logger;
 	}
-	
+
 	protected LinkedList<T> buffer = new LinkedList<T>();
 	protected Lock transferLock = new ReentrantLock();
 	protected AtomicReference<PointInTime> heartbeat = new AtomicReference<PointInTime>();
@@ -52,50 +52,58 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 
 	@Override
 	final protected void process_open() throws OpenFailedException {
-//		super.process_open();
+		// super.process_open();
 		this.buffer = new LinkedList<T>();
 	}
 
 	@Override
 	public boolean hasNext() {
-		if (!isOpen()){
-			getLogger().error("hasNext call on not opened buffer! "+this+" "+buffer);
+		if (!isOpen()) {
+			getLogger()
+					.error("hasNext call on not opened buffer! " + this + " "
+							+ buffer);
 			return false;
 		}
-			
+
 		return !buffer.isEmpty() || this.heartbeat.get() != null;
 	}
 
 	@Override
 	public void transferNext() {
 		transferLock.lock();
-		if (!this.buffer.isEmpty()) {
-			// the transfer might take some time, so pop element first and
-			// release lock on buffer instead of transfer(buffer.pop())
-			T element;
-			synchronized (this.buffer) {
-				element = buffer.pop();
+		try {
+			if (!this.buffer.isEmpty()) {
+				// the transfer might take some time, so pop element first and
+				// release lock on buffer instead of transfer(buffer.pop())
+				T element;
+				synchronized (this.buffer) {
+					element = buffer.pop();
+				}
+				// logger.debug(this+" transferNext() "+element);
+				transfer(element);
+				if (isDone()) {
+					propagateDone();
+				}
+			} else {
+				sendPunctuation(heartbeat.getAndSet(null));
 			}
-			//logger.debug(this+" transferNext() "+element);
-			transfer(element);
-			if (isDone()) {
-				propagateDone();
-			}
-		} else {
-			sendPunctuation(heartbeat.getAndSet(null));
+		} finally {
+			transferLock.unlock();
 		}
-		transferLock.unlock();
 	}
 
 	@Override
 	public boolean isDone() {
 		transferLock.lock();
-		boolean returnValue;
-		synchronized (this.buffer) {
-			returnValue = super.isDone() && this.buffer.isEmpty();
+		try {
+			boolean returnValue;
+			synchronized (this.buffer) {
+				returnValue = super.isDone() && this.buffer.isEmpty();
+			}
+			return returnValue;
+		} finally {
+			transferLock.unlock();
 		}
-		transferLock.unlock();
-		return returnValue;
 	}
 
 	@Override
@@ -154,14 +162,14 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	public void processPunctuation(PointInTime timestamp, int port) {
 		this.heartbeat.set(timestamp);
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof BufferedPipe)) {
+		if (!(ipo instanceof BufferedPipe)) {
 			return false;
 		}
 		BufferedPipe bp = (BufferedPipe) ipo;
-		if(this.getSubscribedToSource().equals(bp.getSubscribedToSource())) {
+		if (this.getSubscribedToSource().equals(bp.getSubscribedToSource())) {
 			return true;
 		}
 		return false;
