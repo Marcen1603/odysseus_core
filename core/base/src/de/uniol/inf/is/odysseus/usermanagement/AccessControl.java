@@ -71,7 +71,7 @@ public final class AccessControl {
 	 * @return
 	 */
 	public static boolean isCreatorOfObject(String username, String objecturi) {
-		if (!username.isEmpty()) {
+		if (username != null && !username.isEmpty()) {
 			String user = DataDictionary.getInstance().getUserForEntity(
 					objecturi);
 			if (user==null || user.isEmpty()) {
@@ -79,7 +79,7 @@ public final class AccessControl {
 				.getUserForViewOrStream(objecturi);
 				user = userObj!=null?userObj.getUsername():null;
 			}
-			if (!user.isEmpty()) {
+			if (user!= null && !user.isEmpty()) {
 				if (user.equals(username)) {
 					return true;
 				}
