@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="de.uniol.inf.is.odysseus.scars.rcp.view3d.OpenGLViewPart"
+            id="de.uniol.inf.is.odysseus.scars.rcp.view3d"
+            name="StreamCars 3D View"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
