@@ -4,7 +4,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.Configuration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
 
 /**
  * QueryBuildConfiguration provides a set of {@link IQueryBuildSetting}.
@@ -62,6 +65,16 @@ public class QueryBuildConfiguration extends
 		if (!contains(ParameterDoRewrite.class)){
 			set(ParameterDoRewrite.TRUE);
 		}
+		if (!contains(ParameterPerformQuerySharing.class)){
+			set(ParameterPerformQuerySharing.FALSE);
+		}
+		if (!contains(ParameterAllowRestructuringOfCurrentPlan.class)){
+			set(ParameterAllowRestructuringOfCurrentPlan.FALSE);
+		}
+		if (!contains(ParameterShareSimilarOperators.class)) {
+			set(ParameterShareSimilarOperators.FALSE);
+		}
+		
 	}
 
 	/**

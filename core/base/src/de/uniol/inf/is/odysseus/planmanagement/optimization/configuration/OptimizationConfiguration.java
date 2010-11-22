@@ -76,5 +76,18 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 		}
 		return (SettingRefuseOptimizationAtMemoryLoad) this.get(SettingRefuseOptimizationAtMemoryLoad.class);
 	}
+	
+	public ParameterPerformQuerySharing getParameterPerformQuerySharing() {
+		return (ParameterPerformQuerySharing) this.get(ParameterPerformQuerySharing.class);
+	}
+	
+	public ParameterAllowRestructuringOfCurrentPlan getParameterAllowRestructuringOfCurrentPlan() {
+		return (ParameterAllowRestructuringOfCurrentPlan) this.get(ParameterAllowRestructuringOfCurrentPlan.class);
+	}
+	
+	public ParameterShareSimilarOperators getParameterShareSimilarOperators() {
+		return (ParameterShareSimilarOperators) this.get(ParameterShareSimilarOperators.class);
+	}
+
 
 }

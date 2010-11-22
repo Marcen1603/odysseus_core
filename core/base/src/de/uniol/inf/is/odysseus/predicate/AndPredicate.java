@@ -95,14 +95,14 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 			// Für JEDES Prädikat aus dem anderen AndPredicate muss ein enthaltenes Prädikat in diesem AndPredicate gefunden werden
 			// (Nur weitere Verschärfungen sind zulässig, deshalb darf keine Bedingung des anderen Prädikats stärker sein)
 			for(IPredicate<?> predb : b) {
-				if(predb instanceof OrPredicate) {
-					return false;
-				}
+//				if(predb instanceof OrPredicate) {
+//					return false;
+//				}
 				boolean foundmatch = false;
 				for(IPredicate<?> preda : a) {
-					if(preda instanceof OrPredicate) {
-						return false;
-					}
+//					if(preda instanceof OrPredicate) {
+//						return false;
+//					}
 					if(preda.isContainedIn(predb)) {
 						foundmatch = true;
 					}

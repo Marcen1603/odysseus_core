@@ -696,6 +696,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 
 	/**
 	 * Replaces a Root in the Query with another Physical Operator
+	 * (Has no effect, if the oldRoot-argument is no root for this Query)
 	 * 
 	 * @param oldRoot The root that is being replaced
 	 * @param newRoot The replacement for the old root

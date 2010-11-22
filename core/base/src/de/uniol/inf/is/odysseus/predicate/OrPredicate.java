@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.predicate;
 
+import java.util.ArrayList;
+
 /**
  * @author Jonas Jacobi
  */
@@ -70,6 +72,61 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 	
 	@Override
 	public boolean isContainedIn(Object o) {
+		// Falls o kein OrPredicate ist, wird false zurück gegeben
+		if(!(o instanceof OrPredicate)) {
+			return false;
+		} else {
+		// Falls es sich beim anderen Prädikat ebenfalls um ein OrPredicate handelt, müssen beide Prädikate verglichen werden (inklusiver aller "Unterprädikate")
+
+			OrPredicate<T> op = (OrPredicate<T>) o;
+
+
+			
+			ArrayList<IPredicate<?>> a = extractAllPredicates(this);
+			ArrayList<IPredicate<?>> b = extractAllPredicates(op);
+
+			// Für JEDES Prädikat aus diesem OrPredicate muss ein enthaltenes Prädikat in dem anderen OrPredicate gefunden werden
+			// (Das andere Oder-Prädikat darf noch weitere Prädikate haben)
+			for(IPredicate<?> preda : a) {
+				boolean foundmatch = false;
+				for(IPredicate<?> predb : b) {
+					if(preda.isContainedIn(predb)) {
+						foundmatch = true;
+					}
+				}
+				if(!foundmatch) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	
+	private ArrayList<IPredicate<?>> extractAllPredicates(OrPredicate<?> op) {
+		ArrayList<IPredicate<?>> a = new ArrayList<IPredicate<?>>();
+		if(op.getLeft() instanceof OrPredicate) {
+			a.addAll(op.extractAllPredicates((OrPredicate<?>)op.getLeft()));
+		} else {
+			a.add(op.getLeft());
+		}
+		if(op.getRight() instanceof OrPredicate) {
+			a.addAll(extractAllPredicates((OrPredicate<?>)op.getRight()));
+		} else {
+			a.add(op.getRight());
+		}
+		return a;
+	}
+	
+	// Liefert true, falls ein Prädikat o in dieser Oder-Verknüpfung enthalten ist
+	public boolean contains(Object o) {
+		if(!(o instanceof IPredicate)) {
+			return false;
+		}
+		for(IPredicate<?> a : extractAllPredicates(this)) {
+			if(((IPredicate<?>)o).isContainedIn(a)) {
+				return true;
+			}
+		}
 		return false;
 	}
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.physicaloperator;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -123,6 +124,12 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 	public boolean isContainedIn(IPipe<T,T> ip) {
 		if(!(ip instanceof SelectPO) || !this.hasSameSources(ip)) {
 			return false;
+		}
+		// Sonderfall, dass das Prädikat des anderen SelectPOs ein OrPredicate ist und das Prädikat von diesem SelectPO nicht.
+		if(((SelectPO)ip).getPredicate() instanceof OrPredicate && !(this.predicate instanceof OrPredicate)) {
+			if(((OrPredicate)((SelectPO)ip).getPredicate()).contains(this.predicate)) {
+				return true;
+			}
 		}
 		if(this.predicate.isContainedIn(((SelectPO<T>)ip).predicate)) {
 			return true;
