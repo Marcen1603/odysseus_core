@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.operator.testdata;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -8,16 +10,21 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaDataInitializer;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.ExtendedProvider;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.IProvider;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.Provider;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
+	
+	public static final String SIMPLE_PROVIDER = "simple";
+	public static final String EXTENDED_PROVIDER = "extended";
 
 	private static final int DELAY = 100; // ms
 	private static final int SEND_DELAY = 15; //ms
 	private static final long SEND_DELAY_NS = SEND_DELAY * 1000000; // ns
 
-	private Provider provider;
+	private IProvider provider;
 	private long lastTime;
 	private String sourceName;
 	
@@ -29,6 +36,14 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	
 	public TestdataProviderPO() {
 		this.provider = new Provider();
+	}
+	
+	public TestdataProviderPO(String providerID, Map<String, String> options, Map<String, Object> calcModelParams) {
+		if (SIMPLE_PROVIDER.equals(providerID)) {
+			this.provider = new Provider();
+		} else if (EXTENDED_PROVIDER.equals(providerID)) {
+			this.provider = new ExtendedProvider(options, calcModelParams);
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
