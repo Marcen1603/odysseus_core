@@ -7,13 +7,12 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -query &quot;a=nexmark:bid2&quot; -query_language PQL -max_results 10 -wait_config 1000</programArgs>
+      <programArgs>-console -wait_config 1000 -query_language CQL -query &quot;SELECT * FROM nexmark:bid2&quot; -max_results 10 -out &quot;c:\users\jacobi\result.xml&quot;</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher name="benchmark">
       <solaris/>
@@ -27,7 +26,9 @@
    </vm>
 
    <plugins>
+      <plugin id="Commons.Math"/>
       <plugin id="MEP"/>
+      <plugin id="MatLab"/>
       <plugin id="com.springsource.org.apache.log4j"/>
       <plugin id="com.springsource.slf4j.api"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
@@ -45,16 +46,19 @@
       <plugin id="de.uniol.inf.is.odysseus.latency"/>
       <plugin id="de.uniol.inf.is.odysseus.latency.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.monitoring.standardsystemmonitor"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql.benchmark"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql.priority"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardexecutioncostmodel"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
       <plugin id="de.uniol.inf.is.odysseus.priority"/>
       <plugin id="de.uniol.inf.is.odysseus.priority_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
@@ -68,7 +72,6 @@
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
       <plugin id="de.uniol.inf.is.odysseus.transform"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.helper.relational"/>
       <plugin id="log4jproperties" fragment="true"/>
       <plugin id="org.apache.commons.collections"/>
       <plugin id="org.eclipse.core.contenttype"/>

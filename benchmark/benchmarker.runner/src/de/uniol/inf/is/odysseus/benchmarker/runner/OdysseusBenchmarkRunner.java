@@ -38,6 +38,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		Args arguments = new Args();
 		BundleContext ctx = Activator.getDefault().getBundle()
 				.getBundleContext();
+		
 		try {
 			initArgs(arguments, args);
 
