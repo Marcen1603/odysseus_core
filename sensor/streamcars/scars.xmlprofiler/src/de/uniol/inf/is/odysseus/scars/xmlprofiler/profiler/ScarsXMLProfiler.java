@@ -530,10 +530,10 @@ public class ScarsXMLProfiler {
 		return list;
 	}
 
-	private static<M extends IProbability> MVRelationalTuple<M> createTimeTuple() {
-		MVRelationalTuple<M> time = new MVRelationalTuple<M>(1);
-		time.setAttribute(0, 10);
-		return time;
-	}
+//	private static<M extends IProbability> MVRelationalTuple<M> createTimeTuple() {
+//		MVRelationalTuple<M> time = new MVRelationalTuple<M>(1);
+//		time.setAttribute(0, 10);
+//		return time;
+//	}
 
 }
