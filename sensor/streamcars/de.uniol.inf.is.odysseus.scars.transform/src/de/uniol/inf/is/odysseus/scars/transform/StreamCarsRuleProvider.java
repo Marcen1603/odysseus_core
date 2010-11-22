@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.scars.transform.rules.TFilterCovarianceAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TFilterEstimateAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TFilterGainAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisEvaluationAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisExpressionEvaluationAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisExpressionGatingAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisGenarationAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisSelectionAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TInitializationAORule;
@@ -51,6 +53,8 @@ public class StreamCarsRuleProvider implements ITransformRuleProvider{
 		rules.add(new TScarsXMLProfilerAORule());
 		rules.add(new TTemporaryDataBouncerAORule());
 		rules.add(new TDistanceObjectSelectorAOAndreRule());
+		rules.add(new THypothesisExpressionEvaluationAORule());
+		rules.add(new THypothesisExpressionGatingAORule());
 		
 		return rules;
 	}
