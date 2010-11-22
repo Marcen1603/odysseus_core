@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Opengl
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.rcp.opengl
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: lib/gluegen-rt.jar,
+ lib/jogl.jar,
+ .
+Export-Package: com.sun.gluegen.runtime,
+ com.sun.opengl.cg,
+ com.sun.opengl.util,
+ com.sun.opengl.util.j2d,
+ com.sun.opengl.util.texture,
+ com.sun.opengl.util.texture.spi,
+ javax.media.opengl,
+ javax.media.opengl.glu
