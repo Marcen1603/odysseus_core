@@ -7,9 +7,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachine;
-//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
 
-import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+//import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 
 public class StateTreeItem extends Item {

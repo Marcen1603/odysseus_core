@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+//import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
-//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
 
 /**
  * This class defines the normal tree list.

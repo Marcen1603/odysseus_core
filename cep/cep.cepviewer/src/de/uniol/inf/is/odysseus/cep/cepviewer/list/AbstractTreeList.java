@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
 import java.util.ArrayList;
 
-import javax.swing.event.EventListenerList;
+//import javax.swing.event.EventListenerList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
 import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.ICEPViewListener;
-import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
-//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+//import de.uniol.inf.is.odysseus.cep.cepviewer.event.ICEPViewListener;
+//import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
 
 /**
  * This abstract Class defines a tree list.
@@ -29,7 +29,7 @@ public abstract class AbstractTreeList extends Composite {
 	// the tree which should be represented
 	private Tree tree;
 	
-	private EventListenerList listenerList = new EventListenerList();
+//	private EventListenerList listenerList = new EventListenerList();
 	
 	private ArrayList<StateMachineInstance> machineList;
 
@@ -56,9 +56,15 @@ public abstract class AbstractTreeList extends Composite {
 		this.setLayout(new FillLayout());
 		this.tree = new Tree(this, style | SWT.SINGLE);
 		this.tree.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {	
+			public void handleEvent(Event event) {
 				TreeItem item = tree.getSelection()[0];
-				StateMachineInstance instance = machineList.get(tree.indexOf(item));
+				StateMachineInstance instance = null;
+				if(tree.indexOf(item) == -1) {
+					System.out.println(tree.indexOf(item.getItem(0)));
+					instance = machineList.get(tree.indexOf(item.getItem(0)));
+				} else {
+					instance = machineList.get(tree.indexOf(item));
+				}
 				CEPViewAgent.getInstance().fireCEPEvent(CEPViewEvent.ITEM_SELECTED, instance);
 			}
 		});
@@ -78,25 +84,25 @@ public abstract class AbstractTreeList extends Composite {
 		}
 	}
 	
-	public void addCEPEventListener(ICEPViewListener listener) {
-		this.listenerList.add(ICEPViewListener.class, listener);
-	}
-	
-	public void removeCEPEventListener(ICEPViewListener listener) {
-		this.listenerList.remove(ICEPViewListener.class, listener);
-	}
-	
-	public void fireCEPEvent(int type) {
-		 Object[] listeners = listenerList.getListenerList();
-		 ICEPViewListener listener = null;
-		 for (int i=0; i<listeners.length; i+=2) {
-			 if (listeners[i]==ICEPViewListener.class){
-				 listener = (ICEPViewListener)listeners[i+1];
-				 CEPViewEvent event = new CEPViewEvent(listener, type, "Event: " + type);
-				 listener.cepEventOccurred(event);
-			 };
-		 };
-	}
+//	public void addCEPEventListener(ICEPViewListener listener) {
+//		this.listenerList.add(ICEPViewListener.class, listener);
+//	}
+//	
+//	public void removeCEPEventListener(ICEPViewListener listener) {
+//		this.listenerList.remove(ICEPViewListener.class, listener);
+//	}
+//	
+//	public void fireCEPEvent(int type) {
+//		 Object[] listeners = listenerList.getListenerList();
+//		 ICEPViewListener listener = null;
+//		 for (int i=0; i<listeners.length; i+=2) {
+//			 if (listeners[i]==ICEPViewListener.class){
+//				 listener = (ICEPViewListener)listeners[i+1];
+//				 CEPViewEvent event = new CEPViewEvent(listener, type, "Event: " + type);
+//				 listener.cepEventOccurred(event);
+//			 };
+//		 };
+//	}
 
 	/**
 	 * This method returns the tree.
