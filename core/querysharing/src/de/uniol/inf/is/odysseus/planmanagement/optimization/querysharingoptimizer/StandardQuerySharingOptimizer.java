@@ -58,14 +58,15 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		}
 
 		// Sammeln aller in den NEUEN Queries enthaltenen physischen Operatoren
-
-		for(IQuery q : newQueries) {
-			for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
-				if(!ipos.contains(ipo)) {
-					ipos.add(ipo);
-				}
-				if(!newOps.contains(ipo)) {
-					newOps.add(ipo);
+		if(newQueries != null) {
+			for(IQuery q : newQueries) {
+				for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
+					if(!ipos.contains(ipo)) {
+						ipos.add(ipo);
+					}
+					if(!newOps.contains(ipo)) {
+						newOps.add(ipo);
+					}
 				}
 			}
 		}
