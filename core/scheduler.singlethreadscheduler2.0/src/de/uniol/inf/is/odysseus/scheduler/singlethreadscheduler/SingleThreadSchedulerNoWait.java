@@ -57,7 +57,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 	/**
 	 * Thread for execution the global sources.
 	 */
-	private List<SingleSourceExecutor> sourceThreads = new Vector<SingleSourceExecutor>();
+	private List<SingleSourceExecutor> sourceThreads = new CopyOnWriteArrayList<SingleSourceExecutor>();
 
 	/**
 	 * Thread for execution the registered partial plans. Based on scheduling
