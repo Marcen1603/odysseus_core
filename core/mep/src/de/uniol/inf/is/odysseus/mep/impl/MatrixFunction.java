@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
  * Expects Double[] as arguments and builds a matrix out of them.
  * No check for rectangularity is applied. This is checked in the ExpressionBuilderVisitor!
  */
-public class MatrixFunction extends AbstractFunction<Double[][]> {
+public class MatrixFunction extends AbstractFunction<double[][]> {
 	private int arity;
 
 	public MatrixFunction(IExpression<?>[] lines) {
@@ -27,19 +27,19 @@ public class MatrixFunction extends AbstractFunction<Double[][]> {
 	}
 
 	@Override
-	public Double[][] getValue() {
+	public double[][] getValue() {
 		int arity = getArity();
-		Double[][] value = new Double[arity][];
+		double[][] value = new double[arity][];
 		for(int i = 0; i < arity; ++i){
-			value[i] = (Double[]) getArgument(i).getValue();
+			value[i] = (double[]) getArgument(i).getValue();
 		}
 		
 		return value;
 	}
 
 	@Override
-	public Class<? extends Double[][]> getType() {
-		return Double[][].class;
+	public Class<? extends double[][]> getType() {
+		return double[][].class;
 	}
 
 }

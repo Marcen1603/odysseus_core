@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.mep.impl;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.IExpression;
 
-public class MatrixLine extends AbstractFunction<Double[]> {
+public class MatrixLine extends AbstractFunction<double[]> {
 
 	private int arity;
 	
@@ -23,9 +23,9 @@ public class MatrixLine extends AbstractFunction<Double[]> {
 	}
 
 	@Override
-	public Double[] getValue() {
+	public double[] getValue() {
 		int arity = getArity();
-		Double[] value = new Double[arity];
+		double[] value = new double[arity];
 		for (int i = 0; i < arity; ++i) {
 			value[i] = (Double) getArgument(i).getValue();
 		}
@@ -33,8 +33,8 @@ public class MatrixLine extends AbstractFunction<Double[]> {
 	}
 
 	@Override
-	public Class<? extends Double[]> getType() {
-		return Double[].class;
+	public Class<? extends double[]> getType() {
+		return double[].class;
 	}
 
 }
