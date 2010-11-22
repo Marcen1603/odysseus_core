@@ -54,7 +54,7 @@ public class CovarianceExpressionMatrix {
 					.getCovariance();
 			// initialize current matrix row with covariance list
 			for (int i = 0; i < covarianceList.size(); ++i) {
-				String expressionString = (String) covarianceList.get(i);
+				String expressionString = covarianceList.get(i).toString();
 				if (expressionCache.containsKey(expressionString)) {
 					this.expressionMatrix[j][i] = expressionCache
 							.get(expressionString);
