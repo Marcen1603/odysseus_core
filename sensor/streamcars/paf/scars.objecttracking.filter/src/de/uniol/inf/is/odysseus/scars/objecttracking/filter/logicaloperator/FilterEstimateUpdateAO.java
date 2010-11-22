@@ -21,6 +21,8 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	private String oldObjListPath;
 	private String newObjListPath;
 	
+	private String expressionString;
+	
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
 
@@ -42,6 +44,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.setFunctionID(new String(copy.getFunctionID()));
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setDataUpdateFunction(copy.getDataUpdateFunction().clone());
+		this.setExpressionString(new String(copy.getExpressionString()));
 	}
 
 	
@@ -105,6 +108,14 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 
 	public AbstractDataUpdateFunction<M> getDataUpdateFunction() {
 		return dataUpdateFunction;
+	}
+
+	public void setExpressionString(String expressionString) {
+		this.expressionString = expressionString;
+	}
+
+	public String getExpressionString() {
+		return expressionString;
 	}
 }
 

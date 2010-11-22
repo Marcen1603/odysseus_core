@@ -21,7 +21,8 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
 // path to new and old objects
   private String oldObjListPath;
   private String newObjListPath;
-
+  
+  private String expressionString;
   
   // Optional parameters for the Filter function. Not used right now.
   private HashMap<Enum<Parameters>, Object> parameters;
@@ -93,4 +94,12 @@ public FilterAO(FilterAO<M> copy) {
   public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
     this.parameters = parameters;
   }
+
+public void setExpressionString(String expressionString) {
+	this.expressionString = expressionString;
+}
+
+public String getExpressionString() {
+	return expressionString;
+}
 }

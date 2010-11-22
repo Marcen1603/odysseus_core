@@ -14,10 +14,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
+	
 	private String functionID;
+	
 	private String newListName;
 	private String oldListName;
 	
+	private String expressionString;
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
 	
@@ -38,8 +41,9 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 		this.setFunctionID(new String(copy.getFunctionID()));
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
-		setNewListName(copy.getNewListName());
-		setOldListName(copy.getOldListName());
+		this.setNewListName(copy.getNewListName());
+		this.setOldListName(copy.getOldListName());
+		this.setExpressionString(new String(copy.getExpressionString()));
 	}
 
 
@@ -93,6 +97,14 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 
 	public void setOldListName(String oldListName) {
 		this.oldListName = oldListName;
+	}
+
+	public void setExpressionString(String expressionString) {
+		this.expressionString = expressionString;
+	}
+
+	public String getExpressionString() {
+		return expressionString;
 	}
 	
 }

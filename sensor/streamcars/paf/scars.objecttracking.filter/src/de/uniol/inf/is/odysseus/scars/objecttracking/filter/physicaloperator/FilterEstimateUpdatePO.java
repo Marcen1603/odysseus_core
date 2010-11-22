@@ -70,29 +70,6 @@ public class FilterEstimateUpdatePO<M extends IProbability & IObjectTrackingLate
 			compute(connected.getLeftPath(), connected.getRightPath());
 		}
 
-		/*
-		 * MVRelationalTuple<M> oldList = (MVRelationalTuple<M>)
-		 * oldObjectListPath .toTupleIndexPath(object).getTupleObject();
-		 *
-		 * String timeStampName = schemaHelper
-		 * .getStartTimestampFullAttributeName(); // SDFAttribute timestamp =
-		 * schemaHelper.getAttribute(timeStampName); Object timeStamp =
-		 * schemaHelper.getSchemaIndexPath(timeStampName)
-		 * .toTupleIndexPath(object).getTupleObject();
-		 *
-		 * MVRelationalTuple<M> newObject = new MVRelationalTuple<M>(1);
-		 *
-		 * newObject.setMetadata(object.getMetadata()); MVRelationalTuple<M>
-		 * scan = new MVRelationalTuple<M>(2);
-		 *
-		 * scan.setAttribute(0, timeStamp); scan.setAttribute(1, oldList);
-		 *
-		 * newObject.setAttribute(0, scan);
-		 *
-		 * tupleHelper = new TupleHelper(object);
-		 *
-		 * return newObject;
-		 */
 		object.getMetadata().setObjectTrackingLatencyEnd("Filter Est Update");
 		return object;
 	}

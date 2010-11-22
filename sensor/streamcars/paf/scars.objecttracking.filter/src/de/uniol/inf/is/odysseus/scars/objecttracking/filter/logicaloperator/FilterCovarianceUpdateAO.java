@@ -21,6 +21,8 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
 	
+	private String expressionString;
+	
 	private AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction;
 	
 	public FilterCovarianceUpdateAO()
@@ -35,6 +37,7 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 		this.setFunctionID(new String(copy.getFunctionID()));
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataUpdateFunction(copy.getMetaDataUpdateFunction().clone());
+		this.setExpressionString(new String(copy.getExpressionString()));
 		
 	}
 
@@ -74,6 +77,14 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 
 	public AbstractMetaDataUpdateFunction<M> getMetaDataUpdateFunction() {
 		return metaDataUpdateFunction;
+	}
+
+	public void setExpressionString(String expressionString) {
+		this.expressionString = expressionString;
+	}
+
+	public String getExpressionString() {
+		return expressionString;
 	}
 }
 
