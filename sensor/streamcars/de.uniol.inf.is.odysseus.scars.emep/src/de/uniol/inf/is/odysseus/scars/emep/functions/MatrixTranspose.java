@@ -19,8 +19,7 @@ public class MatrixTranspose extends AbstractFunction<Object> {
 
 	@Override
 	public Object getValue() {
-		return new RealMatrixImpl(DoubleMatrixConverter.getInstance()
-				.convertMatrix((Double[][]) getInputValue(0))).transpose();
+		return new RealMatrixImpl((double[][]) getInputValue(0)).transpose();
 	}
 
 	@Override
