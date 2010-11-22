@@ -82,4 +82,11 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 	public String toString() {
 		return this.getName() + " (" + getClass().getName() + ") - "+super.hashCode();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		IRule<?, ?> rule = (IRule<?,?>)obj;
+		
+		return getName().equals(rule.getName());
+	}
 }
