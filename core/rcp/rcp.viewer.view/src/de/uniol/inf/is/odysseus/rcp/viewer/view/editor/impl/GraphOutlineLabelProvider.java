@@ -88,7 +88,7 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return name;
 		}
 		if (element != null && element instanceof ISubscription){
-			ISubscription s = (ISubscription) element;
+			ISubscription<?> s = (ISubscription<?>) element;
 			return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+s.getTarget();
 		}
 		if (element != null && element instanceof SDFAttributeList){				
