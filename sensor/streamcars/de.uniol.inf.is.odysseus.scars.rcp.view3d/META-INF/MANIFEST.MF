@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.rcp.view3d.activator.Activator
 Bundle-Vendor: PG StreamCars
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.core.commands.common,
+Import-Package: de.uniol.inf.is.odysseus.metadata,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.extension,
+ org.eclipse.core.commands.common,
  org.eclipse.core.runtime,
  org.eclipse.jface.util,
  org.eclipse.swt,
@@ -19,4 +21,5 @@ Import-Package: org.eclipse.core.commands.common,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.scars.rcp.opengl;bundle-version="1.0.0",
- org.eclipse.ui
+ org.eclipse.ui,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream
