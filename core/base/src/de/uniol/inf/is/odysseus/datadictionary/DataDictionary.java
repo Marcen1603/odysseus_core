@@ -130,7 +130,8 @@ public class DataDictionary {
 	 */
 	// no restric
 	public String getUserForEntity(String entityuri) {
-		return this.entityFromUser.get(entityuri).getUsername();
+		User user = this.entityFromUser.get(entityuri);
+		return user!=null?user.getUsername():null;
 	}
 
 	// ----------------------------------------------------------------------------
