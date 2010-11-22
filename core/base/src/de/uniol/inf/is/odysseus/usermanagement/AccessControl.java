@@ -56,9 +56,11 @@ public final class AccessControl {
 				user.getSession().updateTimestamp();
 				return true;
 			}
-			throw new HasNoPermissionException("User "+user+" session timeout. Login again ");			
+			throw new HasNoPermissionException("User " + user
+					+ " session timeout. Login again ");
 		}
-		throw new HasNoPermissionException("User "+user+" has no valid session ");
+		throw new HasNoPermissionException("User " + user
+				+ " has no valid session ");
 	}
 
 	/**
@@ -70,20 +72,16 @@ public final class AccessControl {
 	 */
 	public static boolean isCreatorOfObject(String username, String objecturi) {
 		if (!username.isEmpty()) {
-			try {
-				String user = DataDictionary.getInstance().getUserForEntity(
-						objecturi);
-				if (user.isEmpty()) {
-					user = DataDictionary.getInstance()
-							.getUserForViewOrStream(objecturi).getUsername();
+			String user = DataDictionary.getInstance().getUserForEntity(
+					objecturi);
+			if (user.isEmpty()) {
+				user = DataDictionary.getInstance()
+						.getUserForViewOrStream(objecturi).getUsername();
+			}
+			if (!user.isEmpty()) {
+				if (user.equals(username)) {
+					return true;
 				}
-				if (!user.isEmpty()) {
-					if (user.equals(username)) {
-						return true;
-					}
-				}
-			} catch (Exception e) {
-				new RuntimeException(e);
 			}
 			return false;
 		} else {
@@ -100,16 +98,12 @@ public final class AccessControl {
 	 */
 	public static boolean isCreatorOfView(String username, String viewname) {
 		if (!username.isEmpty()) {
-			try {
-				String user = DataDictionary.getInstance()
-						.getUserForViewOrStream(viewname).getUsername();
-				if (!user.isEmpty()) {
-					if (user.equals(username)) {
-						return true;
-					}
+			String user = DataDictionary.getInstance()
+					.getUserForViewOrStream(viewname).getUsername();
+			if (!user.isEmpty()) {
+				if (user.equals(username)) {
+					return true;
 				}
-			} catch (Exception e) {
-				new RuntimeException(e);
 			}
 			return false;
 		} else {
