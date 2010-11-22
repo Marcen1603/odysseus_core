@@ -89,6 +89,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		printTree(tree, 2);
 		CommonTreeNodeStream nodes = new CommonTreeNodeStream(tree);
 		SaseAST walker = new SaseAST(nodes);
+		walker.setUser(user);
 
 		// Relational ... ggf. auslagern ?
 		walker.symTableOpFac = new RelationalSymbolTableOperationFactory();
