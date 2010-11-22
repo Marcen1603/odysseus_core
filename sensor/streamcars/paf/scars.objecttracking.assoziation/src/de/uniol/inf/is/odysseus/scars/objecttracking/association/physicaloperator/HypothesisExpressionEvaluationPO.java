@@ -23,8 +23,6 @@ import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends
 		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private String scanObjListPath;
-	private String predObjListPath;
 	private PredictionExpression expression;
 	private String expressionString;
 	private SchemaHelper schemaHelper;
@@ -32,7 +30,6 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	private String scannedObjectListPath;
 	private SchemaIndexPath predictedObjectListSIPath;
 	private SchemaIndexPath scannedObjectListSIPath;
-	private TupleHelper tupleHelper;
 
 	private static final String EXP_ASSOCIATION_CONNECTION_VALUE = "ASSOCIATION_CON_VAL";
 
@@ -47,8 +44,6 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 
 	public HypothesisExpressionEvaluationPO(HypothesisExpressionEvaluationPO<M> clone) {
 		super(clone);
-		this.scanObjListPath = clone.scanObjListPath;
-		this.predObjListPath = clone.predObjListPath;
 		this.expression = clone.expression;
 		this.expressionString = clone.expressionString;
 		this.schemaHelper = clone.schemaHelper;
@@ -56,22 +51,23 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		this.scannedObjectListPath = clone.scannedObjectListPath;
 		this.predictedObjectListSIPath = clone.predictedObjectListSIPath;
 		this.scannedObjectListSIPath = clone.scannedObjectListSIPath;
-		this.tupleHelper = clone.tupleHelper;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
+		this.expressionString = this.expressionString.replace("'", "");
 		this.expression = new PredictionExpression(this.expressionString);
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
-		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scanObjListPath));
-		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predObjListPath));
+		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath));
+		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predictedObjectListPath));
 	}
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		this.tupleHelper = new TupleHelper(object);
+
+		TupleHelper tupleHelper = new TupleHelper(object);
 
 		ConnectionList newObjConList = new ConnectionList();
 
@@ -88,7 +84,8 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 							objectPath = this.getVaryingIndex(con.getRightPath().toArray(), attributePath);
 						}
 						if (objectPath != null) {
-							expression.bindVariable(attribute, this.tupleHelper.getObject(objectPath));
+							Object val = tupleHelper.getObject(objectPath);
+							expression.bindVariable(attribute, val);
 						}
 					}
 				}
@@ -116,8 +113,10 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	private int[] getVaryingIndex(int[] carTuplePath, int[] attributeTuplePath) {
 		for (int i = 0; i < attributeTuplePath.length; i++) {
 			if (attributeTuplePath[i] == -1) {
-				attributeTuplePath[i] = carTuplePath[carTuplePath.length - 1];
-				return attributeTuplePath;
+				int[] resultTuplePath = new int[attributeTuplePath.length];
+				System.arraycopy(attributeTuplePath, 0, resultTuplePath, 0, attributeTuplePath.length);
+				resultTuplePath[i] = carTuplePath[carTuplePath.length - 1];
+				return resultTuplePath;
 			}
 			if (carTuplePath[i] != attributeTuplePath[i]) {
 				return null;
@@ -127,22 +126,6 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	}
 
 	/* SETTER AND GETTER */
-
-	public String getScanObjListPath() {
-		return scanObjListPath;
-	}
-
-	public void setScanObjListPath(String scanObjListPath) {
-		this.scanObjListPath = scanObjListPath;
-	}
-
-	public String getPredObjListPath() {
-		return predObjListPath;
-	}
-
-	public void setPredObjListPath(String predObjListPath) {
-		this.predObjListPath = predObjListPath;
-	}
 
 	public PredictionExpression getExpression() {
 		return expression;
@@ -198,13 +181,5 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 
 	public void setScannedObjectListSIPath(SchemaIndexPath scannedObjectListSIPath) {
 		this.scannedObjectListSIPath = scannedObjectListSIPath;
-	}
-
-	public TupleHelper getTupleHelper() {
-		return tupleHelper;
-	}
-
-	public void setTupleHelper(TupleHelper tupleHelper) {
-		this.tupleHelper = tupleHelper;
 	}
 }
