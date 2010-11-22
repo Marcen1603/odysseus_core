@@ -1,25 +1,14 @@
 package de.uniol.inf.is.odysseus.scars.base;
 
 import java.net.SocketException;
-import java.util.HashSet;
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.latency.ILatency;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaDataInitializer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -32,10 +21,6 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 
 	private long lastTime = 0;
 	
-	// BAD HACK
-	private StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>> metadataCreator;
-	
-
 	public DummyAccessMVPO() {
 	}
 
@@ -52,7 +37,6 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 	protected void process_open() throws OpenFailedException {
 		try {
 			data = new DummyJDVEData<M>(outputSchema);
-			metadataCreator = new StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>>(outputSchema);
 		} catch (SocketException ex) {
 			throw new OpenFailedException(ex);
 		}
@@ -122,14 +106,13 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 		}
 	}
 	
-	private static HashSet<String> toStringSet(
-			Class<? extends IMetaAttribute>... combinationOf) {
-		HashSet<String> typeSet = new HashSet<String>();
-		for (Class<?> c : combinationOf) {
-			typeSet.add(c.getName());
-		}
-		return typeSet;
-	}
+//	private static HashSet<String> toStringSet(Class<? extends IMetaAttribute>... combinationOf) {
+//		HashSet<String> typeSet = new HashSet<String>();
+//		for (Class<?> c : combinationOf) {
+//			typeSet.add(c.getName());
+//		}
+//		return typeSet;
+//	}
 
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {

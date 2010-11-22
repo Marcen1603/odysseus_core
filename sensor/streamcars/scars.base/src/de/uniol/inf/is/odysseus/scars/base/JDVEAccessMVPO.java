@@ -92,7 +92,6 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 		return outputSchema;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
 		if (buffer != null) {
