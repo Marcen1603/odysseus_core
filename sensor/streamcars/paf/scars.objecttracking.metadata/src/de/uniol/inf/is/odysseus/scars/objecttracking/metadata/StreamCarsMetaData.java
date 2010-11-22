@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 
