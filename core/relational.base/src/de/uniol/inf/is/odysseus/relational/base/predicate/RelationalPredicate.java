@@ -168,13 +168,13 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	
 	@Override
 	public boolean equals(IPredicate pred) {
+		// Falls die Expressions nicht identisch sind, ist dennoch eine inhaltliche Äquivalenz möglich
 		if(!this.equals((Object)pred)) {
 			boolean isContainedIn1 = this.isContainedIn(pred);
 			boolean isContainedIn2 = pred.isContainedIn(this);
-			System.out.println(isContainedIn1 + "  +  " + isContainedIn2);
 			return this.isContainedIn(pred) && pred.isContainedIn(this);
 		}
-		return false;
+		return true;
 	}
 	
 	@Override
