@@ -6,8 +6,14 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.rcp.view3d.activator.Activator
 Bundle-Vendor: PG StreamCars
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.metadata,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.metadata,
+ de.uniol.inf.is.odysseus.objecttracking,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.extension,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.scars.util,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.eclipse.core.commands.common,
  org.eclipse.core.runtime,
  org.eclipse.jface.util,
