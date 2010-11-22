@@ -516,17 +516,14 @@ abstract class AbstractUserManagement {
 	public void registerUser(User caller, String username, String password)
 			throws UsernameAlreadyUsedException, UserStoreException,
 			HasNoPermissionException {
-		try {
-			if (AccessControl.hasPermission(UserManagementAction.CREATE_USER,
-					UserManagementAction.alias, caller)) {
-				registerUserInt(username, password);
-			} else {
-				throw new HasNoPermissionException("User " + caller.toString()
-						+ " has no permission to create new users.");
-			}
-		} catch (HasNoPermissionException e) {
-			new RuntimeException(e);
+		if (AccessControl.hasPermission(UserManagementAction.CREATE_USER,
+				UserManagementAction.alias, caller)) {
+			registerUserInt(username, password);
+		} else {
+			throw new HasNoPermissionException("User " + caller.toString()
+					+ " has no permission to create new users.");
 		}
+
 	}
 
 	protected void registerUserInt(String username, String password)
@@ -537,7 +534,8 @@ abstract class AbstractUserManagement {
 			this.userStore.storeUser(user);
 			user.addRole(roleStore.get("Public"));
 		} else {
-			throw new UsernameAlreadyUsedException("User "+username+" already used");
+			throw new UsernameAlreadyUsedException("User " + username
+					+ " already used");
 		}
 		fireUserManagementListener();
 	}
@@ -550,12 +548,8 @@ abstract class AbstractUserManagement {
 	 */
 	private void removeAllEntityPrivileges(AbstractUserManagementEntity entity)
 			throws StoreException {
-		try {
-			for (Privilege priv : entity.getPrivileges()) {
-				this.privStore.remove(priv.getPrivname());
-			}
-		} catch (Exception e) {
-			new RuntimeException(e);
+		for (Privilege priv : entity.getPrivileges()) {
+			this.privStore.remove(priv.getPrivname());
 		}
 	}
 
@@ -592,11 +586,7 @@ abstract class AbstractUserManagement {
 				// wenn Priv leer dann loeschen
 				if (entity.hasObject(objecturi).isEmpty()) {
 					entity.removePrivilege(objecturi);
-					try {
-						this.privStore.remove(entityname + "::" + objecturi);
-					} catch (StoreException e) {
-						new RuntimeException(e);
-					}
+					this.privStore.remove(entityname + "::" + objecturi);
 				}
 			}
 			if (entity instanceof Role) {
