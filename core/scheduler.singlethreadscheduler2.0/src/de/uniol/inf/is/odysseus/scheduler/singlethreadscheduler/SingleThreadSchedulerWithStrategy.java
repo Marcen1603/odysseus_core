@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 	/**
 	 * Thread for execution the global sources.
 	 */
-	private List<SingleSourceExecutor> sourceThreads = new Vector<SingleSourceExecutor>();
+	private List<SingleSourceExecutor> sourceThreads = new CopyOnWriteArrayList<SingleSourceExecutor>();
 
 	@Override
 	public synchronized void startScheduling() {

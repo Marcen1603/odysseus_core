@@ -60,7 +60,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	/**
 	 * Thread for execution the global sources.
 	 */
-	private List<SingleSourceExecutor> sourceThreads = new Vector<SingleSourceExecutor>();
+	private List<SingleSourceExecutor> sourceThreads = new CopyOnWriteArrayList<SingleSourceExecutor>();
 	
 	/**
 	 * Marker that the plan has changed, needed because plan can change while
