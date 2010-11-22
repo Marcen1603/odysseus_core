@@ -23,6 +23,9 @@ public class HypothesisExpressionEvaluationAO<M extends IProbability> extends Un
 
 	public HypothesisExpressionEvaluationAO(HypothesisExpressionEvaluationAO<M> copy) {
 		super(copy);
+		this.predObjListPath = copy.predObjListPath;
+		this.scanObjListPath = copy.scanObjListPath;
+		this.expressionString = copy.expressionString;
 	}
 
 	@Override

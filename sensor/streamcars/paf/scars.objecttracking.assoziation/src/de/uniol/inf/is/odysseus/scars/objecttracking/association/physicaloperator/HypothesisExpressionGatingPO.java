@@ -49,6 +49,16 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 
 	public HypothesisExpressionGatingPO(HypothesisExpressionGatingPO<M> clone) {
 		super(clone);
+		this.scanObjListPath = clone.scanObjListPath;
+		this.predObjListPath = clone.predObjListPath;
+		this.expression = clone.expression;
+		this.expressionString = clone.expressionString;
+		this.schemaHelper = clone.schemaHelper;
+		this.predictedObjectListPath = clone.predictedObjectListPath;
+		this.scannedObjectListPath = clone.scannedObjectListPath;
+		this.predictedObjectListSIPath = clone.predictedObjectListSIPath;
+		this.scannedObjectListSIPath = clone.scannedObjectListSIPath;
+		this.tupleHelper = clone.tupleHelper;
 	}
 
 	@Override

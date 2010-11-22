@@ -23,6 +23,9 @@ public class HypothesisExpressionGatingAO<M extends IProbability> extends UnaryL
 
 	public HypothesisExpressionGatingAO(HypothesisExpressionGatingAO<M> copy) {
 		super(copy);
+		this.predObjListPath = copy.predObjListPath;
+		this.scanObjListPath = copy.scanObjListPath;
+		this.expressionString = copy.expressionString;
 	}
 
 	@Override
