@@ -31,7 +31,8 @@ public class FilterAO<M extends IProbability> extends UnaryLogicalOp {
     super();
   }
 
-  public FilterAO(FilterAO<M> copy) {
+  @SuppressWarnings("unchecked")
+public FilterAO(FilterAO<M> copy) {
     super(copy);
     this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
     this.oldObjListPath = copy.getOldObjListPath();
