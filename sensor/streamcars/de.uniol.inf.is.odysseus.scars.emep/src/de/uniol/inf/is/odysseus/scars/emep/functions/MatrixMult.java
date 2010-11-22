@@ -5,7 +5,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class MatrixMult extends AbstractFunction<Object>{
+public class MatrixMult extends AbstractFunction<Object> {
 
 	@Override
 	public int getArity() {
@@ -19,10 +19,16 @@ public class MatrixMult extends AbstractFunction<Object>{
 
 	@Override
 	public Object getValue() {
-		if(getInputValue(1) instanceof double[][]) {
-			return new RealMatrixImpl((double[][])getInputValue(0)).multiply(new RealMatrixImpl((double[][])getInputValue(1)));
+		if (getInputValue(1) instanceof Double[][]) {
+			return new RealMatrixImpl(DoubleMatrixConverter.getInstance()
+					.convertMatrix((Double[][]) getInputValue(0)))
+					.multiply(new RealMatrixImpl(DoubleMatrixConverter
+							.getInstance().convertMatrix(
+									(Double[][]) getInputValue(1))));
 		} else {
-			return new RealMatrixImpl((double[][])getInputValue(0)).scalarMultiply((Double)getInputValue(1));
+			return new RealMatrixImpl(DoubleMatrixConverter.getInstance()
+					.convertMatrix((Double[][]) getInputValue(0)))
+					.scalarMultiply((Double) getInputValue(1));
 		}
 	}
 

@@ -5,7 +5,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class MatrixTranspose extends AbstractFunction<Object>{
+public class MatrixTranspose extends AbstractFunction<Object> {
 
 	@Override
 	public int getArity() {
@@ -19,7 +19,8 @@ public class MatrixTranspose extends AbstractFunction<Object>{
 
 	@Override
 	public Object getValue() {
-		return new RealMatrixImpl((double[][])getInputValue(0)).transpose();
+		return new RealMatrixImpl(DoubleMatrixConverter.getInstance()
+				.convertMatrix((Double[][]) getInputValue(0))).transpose();
 	}
 
 	@Override
