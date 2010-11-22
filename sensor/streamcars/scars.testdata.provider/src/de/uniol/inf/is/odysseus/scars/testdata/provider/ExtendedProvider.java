@@ -77,7 +77,7 @@ public class ExtendedProvider implements IProvider {
 		
 		
 		if (this.schemaGenerator == null || this.entrance == null || this.tupleGenerator == null) {
-			throw new RuntimeException("unable to initialize test data provider");
+			throw new RuntimeException("unable to initialize test data provider: (" + this.schemaGenerator + ", " + this.entrance + ", " + this.tupleGenerator);
 		}
 	}
 
