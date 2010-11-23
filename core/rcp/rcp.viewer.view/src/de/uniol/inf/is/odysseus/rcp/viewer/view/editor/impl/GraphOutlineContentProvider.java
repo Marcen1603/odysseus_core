@@ -25,6 +25,8 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		
+		System.err.println("Get Children of "+parentElement);
+		
 		if( parentElement instanceof IOdysseusGraphView) {
 			IOdysseusGraphView graph = (IOdysseusGraphView)parentElement;
 			
@@ -108,8 +110,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			IOdysseusNodeView node = (IOdysseusNodeView)element;
 			if( node.getModelNode() == null ) return false;
 			if( node.getModelNode().getContent() == null ) return false;
-			if( node.getModelNode().getProvidedMetadataTypes().size() > 0) return true;
-			if( node.getModelNode().getContent().getOutputSchema() != null ) return true;
+			return true; // Every operator has an owner
+			//			if( node.getModelNode().getProvidedMetadataTypes().size() > 0) return true;
+//			if( node.getModelNode().getContent().getOutputSchema() != null ) return true;
 		}
 		if( element instanceof Collection<?>) return true;
 		
