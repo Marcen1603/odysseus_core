@@ -14,11 +14,11 @@ public class InstallStandardMetadataListener implements IPostOptimizationAction 
 	@Override
 	public void run(IQuery query, OptimizationConfiguration parameter) {
 		query.addPlanMonitor(MonitoringDataTypes.DATARATE.name,
-				new PlanMonitor(query, false,
+				new PlanMonitor(query, false,false,
 						MonitoringDataTypes.DATARATE.name,
 						MONITORING_PERIOD));
 		query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name,
-				new PlanMonitor(query, false,
+				new PlanMonitor(query, false,false,
 						MonitoringDataTypes.SELECTIVITY.name, -1));
 	}
 
