@@ -5,10 +5,6 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
          <menu
                commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.command.menu.command.showStreamCommand"
@@ -78,6 +74,24 @@
                   style="push"
                   tooltip="Shows a 3 dimensional pie chart">
             </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
+         <menu
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.command.menu.command.showStreamCommand"
+               icon="icons/monitor.png"
+               label="Charts">
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor?after=additions">
+         <menu
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.command.menu.command.showStreamCommand"
+               icon="icons/monitor.png"
+               label="Charts">
          </menu>
       </menuContribution>
    </extension>

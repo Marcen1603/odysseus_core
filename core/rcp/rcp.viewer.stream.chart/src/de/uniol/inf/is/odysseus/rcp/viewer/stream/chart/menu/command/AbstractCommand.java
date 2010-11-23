@@ -54,7 +54,7 @@ public abstract class AbstractCommand extends AbstractHandler {
 			if (selectedObject instanceof IOdysseusNodeView) {
 				IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
 				// Auswahl holen
-				opForStream = nodeView.getModelNode().getContent();
+				opForStream = nodeView.getModelNode().getContent();				
 			}
 		}
 

@@ -36,8 +36,9 @@ public class ThermometerChart extends AbstractChart {
 				try {
 					double value = Double.parseDouble(tuple.getAttribute(selectedValue).toString());
 					dataset.setValue(value);
-				} catch (SWTException e) {
-					System.out.println("WARN SWT Exception: " + e.getMessage());
+				} catch (SWTException e) {										
+					dispose();
+					return;
 				}
 			}
 		});

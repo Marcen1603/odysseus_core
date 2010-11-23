@@ -48,8 +48,9 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart {
 						}
 						i++;
 					}
-				} catch (SWTException e) {
-					System.out.println("WARN SWT Exception: "+e.getMessage());
+				} catch (SWTException e) {				
+					dispose();
+					return;
 				}
 			}
 		});

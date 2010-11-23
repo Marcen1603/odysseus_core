@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.awt.Color;
 
+import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
@@ -34,19 +35,24 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 			@Override
 			public void run() {
 				// dcds.clear();
-				int i = 0;
-				for (SDFAttribute a : currentSchema) {
-					if (currentVisibleAttributes[i]) {
-						double value = Double.parseDouble(tuple.getAttribute(i).toString());
-						recalcAxis(value);
-						dcds.addValue(value, a.toString(), tuple.getMetadata().getStart());						
+				try {
+					int i = 0;
+					for (SDFAttribute a : currentSchema) {
+						if (currentVisibleAttributes[i]) {
+							double value = Double.parseDouble(tuple.getAttribute(i).toString());
+							recalcAxis(value);
+							dcds.addValue(value, a.toString(), tuple.getMetadata().getStart());
 
+						}
+						i++;
 					}
-					i++;
+				} catch (SWTException e) {					
+					dispose();
+					return;
 				}
 			}
 		});
-		if(dcds.getColumnCount() > this.maxItems){			
+		if (dcds.getColumnCount() > this.maxItems) {
 			dcds.removeColumn(0);
 		}
 	}
@@ -72,12 +78,12 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 	}
 
 	@Override
-	public void chartPropertiesChanged() {		
+	public void chartPropertiesChanged() {
 	}
-	
+
 	@Override
 	public String isValidSelection(boolean[] selectAttributes) {
-		if(getSelectedValueCount(selectAttributes)>0){
+		if (getSelectedValueCount(selectAttributes) > 0) {
 			return null;
 		}
 		return "The number of choosen attributes should be at least one!";

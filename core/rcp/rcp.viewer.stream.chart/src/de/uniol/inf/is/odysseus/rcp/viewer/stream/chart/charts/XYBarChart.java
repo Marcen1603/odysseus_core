@@ -18,4 +18,5 @@ public class XYBarChart extends AbstractTimeSeriesChart {
 	public String getViewID() {
 		return VIEW_ID_PREFIX+".xybarchart";
 	}
+		
 }

@@ -65,7 +65,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		} else
 			throw new IllegalArgumentException("could not identify type of content of node " + operator);
 
-		IStreamConnection<Object> connection = new DefaultStreamConnection<Object>(sources);
+		IStreamConnection<Object> connection = new DefaultStreamConnection<Object>(sources);		
 		return connection;
 	}
 
@@ -176,7 +176,9 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 
 	@Override
 	public void dispose() {
-		this.connection.disconnect();
+		if(this.connection.isConnected()){
+			this.connection.disconnect();
+		}
 	}
 
 	@Override
@@ -220,7 +222,15 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	@Override
 	public List<MethodSetting> getChartSettings() {
 		List<MethodSetting> settings = new ArrayList<MethodSetting>();
-		for (Method m : this.getClass().getDeclaredMethods()) {
+		settings.addAll(getAnnotatedSettings(this.getClass()));
+		//settings.addAll(getAnnotatedSettings())
+		return settings;
+	}
+	
+	
+	public List<MethodSetting> getAnnotatedSettings(Class<?> theclass){
+		List<MethodSetting> settings = new ArrayList<MethodSetting>();
+		for (Method m : theclass.getMethods()) {
 			UserSetting us = m.getAnnotation(UserSetting.class);
 			if (us != null) {
 				if (us.type().equals(Type.GET)) {
@@ -242,7 +252,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		if (otherMethod.type().equals(Type.SET)) {
 			searchForTyp = Type.GET;
 		}
-		for (Method m : this.getClass().getDeclaredMethods()) {
+		for (Method m : this.getClass().getMethods()) {
 			UserSetting us = m.getAnnotation(UserSetting.class);
 			if (us != null) {
 				if (us.name().equals(otherMethod.name()) && us.type().equals(searchForTyp)) {
@@ -252,4 +262,6 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		}
 		return null;
 	}
+	
+	
 }

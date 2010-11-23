@@ -1,14 +1,23 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting.Type;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public abstract class AbstractTimeSeriesChart extends AbstractChart{
@@ -20,6 +29,8 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 100;
 	
 	private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
+
+	private String dateformat = "HH:mm";	
 	
 	@Override
 	public void chartPropertiesChanged() {
@@ -30,11 +41,13 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 				String name = getSchema().get(i).toString();
 				System.out.println("set attribute: "+name);
 				TimeSeries serie = new TimeSeries(name);
-				serie.setMaximumItemCount(this.maxItems);
+				serie.setMaximumItemCount(this.maxItems);				
 				series.put(name, serie);
 				this.dataset.addSeries(serie);
 			}
 		}
+		NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();	
+		axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));		
 	}
 	
 	@Override
@@ -59,16 +72,48 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 						}
 					}
 					
-				} catch (Exception e) {
+				}catch(SWTException ex){
+					//widget disposed				
+					dispose();
+					return;
+				}
+				catch (Exception e) {
 					e.printStackTrace();
+					
 				}
 			}
 		});
 	}
 	
 	protected void decorateChart(JFreeChart thechart){		
-		thechart.getXYPlot().setRangeGridlinePaint(DEFAULT_BACKGROUND_GRID);	
+		thechart.setBackgroundPaint(DEFAULT_BACKGROUND);
+		thechart.getXYPlot().setRangeGridlinePaint(DEFAULT_BACKGROUND_GRID);			
 	}
+
+	@UserSetting(name = "Max Shown Items", type=Type.GET)
+	public Object getMaxItems() {
+		return maxItems;
+	}
+
+	@UserSetting(name = "Max Shown Items", type=Type.SET)
+	public void setMaxItems(String maxItems) {
+		this.maxItems = Integer.parseInt(maxItems);
+		chartPropertiesChanged();
+	}
+	
+	
+	@UserSetting(name = "Date Format", type=Type.GET)
+	public Object getDateFormat() {
+		return this.dateformat;
+	}
+
+	@UserSetting(name = "Date Format", type=Type.SET)
+	public void setDateFormat(String dateFormat) {
+		this.dateformat = dateFormat;
+		chartPropertiesChanged();
+	}
+	
+	
 
 	
 

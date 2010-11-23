@@ -29,7 +29,7 @@ public class ChangeSettingsAction extends Action {
 			ChangeSettingsDialog dialog = new ChangeSettingsDialog(parentShell, this.changeable);
 			if (dialog.open() == Window.OK) {
 				for(Entry<MethodSetting, Object> en : dialog.getCurrentValues().entrySet()){					
-					en.getKey().getSetter().invoke(this.changeable, en.getValue());
+					en.getKey().getSetter().invoke(this.changeable, en.getValue().toString());
 				}
 			}
 		} catch (Exception e) {
