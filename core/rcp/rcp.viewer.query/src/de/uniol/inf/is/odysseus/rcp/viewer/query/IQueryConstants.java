@@ -13,4 +13,6 @@ public interface IQueryConstants {
 	public static final String PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.viewer.query.TransformationConfigurationName";
 	
 	public static final String QUERY_BUILD_CONFIGURATION_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.viewer.query.buildConfiguration";
+	
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.query";
 }

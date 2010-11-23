@@ -50,7 +50,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 	
 	private void run( IFile queryFile ) {
 		try {
-			// Datei Ã¶ffnen
+			// Datei öffnen
 			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
 				queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
 

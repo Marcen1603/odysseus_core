@@ -4,6 +4,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
@@ -13,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
@@ -47,24 +50,28 @@ public class StartQueryCommand extends AbstractHandler implements IHandler {
 		final IExecutor executor = Activator.getExecutor();
 		final int qID2 = qID; // final machen :-)
 		if (executor != null) {
-			Thread t = new Thread(new Runnable() {
+			// Asynchron zur GUI ausführen, damit
+			// die GUI bei längeren Queries
+			// nicht warten muss.
+			Job job = new Job("Starting query") {
 				@Override
-				public void run() {
+				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						executor.startQuery(qID2, ActiveUser.getActiveUser());
 						StatusBarManager.getInstance().setMessage("Query started");
 					} catch (PlanManagementException e) {
-						new ExceptionWindow(e);
 						e.printStackTrace();
+						return new Status(Status.ERROR, IQueryConstants.PLUGIN_ID, "Cant start query:\n See error log for details", e );
 					} catch (HasNoPermissionException e){
-						new ExceptionWindow(e);
 						e.printStackTrace();
+						return new Status(Status.ERROR, IQueryConstants.PLUGIN_ID, "Cant start query:\n See error log for details", e );
 					}
-					
+					return Status.OK_STATUS;
 				}
-			});
-			t.setDaemon(true);
-			t.start();
+			};
+			job.setUser(true);
+			job.schedule();
+
 		} else {
 			logger.error("Kein ExecutorService gefunden");
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.OK);

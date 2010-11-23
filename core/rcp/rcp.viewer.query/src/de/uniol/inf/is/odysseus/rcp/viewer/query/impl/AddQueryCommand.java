@@ -6,6 +6,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
@@ -14,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
@@ -41,22 +44,25 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 				return null;
 			}
 
-			Thread t = new Thread(new Runnable() {
+			// Asynchron zur GUI ausführen, damit
+			// die GUI bei längeren Queries
+			// nicht warten muss.
+			Job job = new Job("Add single Query") {
 				@Override
-				public void run() {
+				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						executor.addQuery(queryToExecute, parserToUse, user, cfg.toArray(new IQueryBuildSetting[0]) );
 						StatusBarManager.getInstance().setMessage("Query successfully added");
 					} catch (Exception e) {
-						new ExceptionWindow(e);
 						e.printStackTrace();
 						StatusBarManager.getInstance().setMessage("Adding query failed");
+						return new Status(Status.ERROR, IQueryConstants.PLUGIN_ID, "Cant execute query:\n See error log for details", e );
 					}
+					return Status.OK_STATUS;
 				}
-
-			});
-			t.setDaemon(true);
-			t.start();
+			};
+			job.setUser(true);
+			job.schedule();
 			
 		} else {
 			logger.error("Kein ExecutorService gefunden");

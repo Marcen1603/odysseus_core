@@ -24,6 +24,8 @@ public class StreamEditorList implements IStreamEditorType {
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.setInput(input);
 
+		// Thread, womit die Liste jeder Sekunde
+		// automatisch aktualisiert wird.
 		Thread t = new Thread(new Runnable() {
 
 			@Override

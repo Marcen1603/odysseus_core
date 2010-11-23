@@ -25,7 +25,6 @@ public class Activator extends Plugin implements IEventListener {
 
 	static Logger logger = LoggerFactory.getLogger(Activator.class);
 	
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.query";
 	private static Activator plugin;
 	private static IExecutor executor = null;
 

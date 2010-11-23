@@ -15,8 +15,7 @@ public class LogoutUserPreParserKeyword implements IPreParserKeyword {
 		// Eine Validierung ist hier nicht sinnvoll (vorerst). Da bei der Validierung keine
 		// User eingeloggt werden...
 		
-		// TODO: Sp√§ter LOGOUT nocheinmal anschauen
-		
+		// TODO: Sp‰ter LOGOUT nocheinmal anschauen
 	}
 
 	@Override
