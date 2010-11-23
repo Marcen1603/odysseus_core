@@ -14,7 +14,7 @@ import mining.generator.base.tuple.DataTuple;
 public class DodgersDataProvider extends StreamClientHandler {
 
 	private BufferedReader in;
-	private SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy HH:mm");
+	private SimpleDateFormat format = new SimpleDateFormat("M/d/yyyy HH:mm");
 
 
 	@Override
@@ -22,12 +22,20 @@ public class DodgersDataProvider extends StreamClientHandler {
 		DataTuple tuple = new DataTuple();
 		String line;
 		try {
-			line = in.readLine();
+			line = in.readLine();	
+			if(line==null){
+				return null;
+			}
 			String[] rawTuple = line.split(",");
 			long timestamp = format.parse(rawTuple[0]).getTime();
 			
 			tuple.addAttribute(new Long(timestamp));
-			tuple.addAttribute(rawTuple[1]);
+			tuple.addAttribute(new Integer(rawTuple[1]));
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			return tuple;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -38,7 +46,7 @@ public class DodgersDataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public void init() {
+	public void init() {	
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/dodgers.data");
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();

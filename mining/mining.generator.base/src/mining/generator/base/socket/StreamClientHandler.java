@@ -40,8 +40,7 @@ public abstract class StreamClientHandler extends Thread{
     }
     
     
-    public void transferTuple(DataTuple tuple) throws IOException {
-    	System.out.println(tuple);
+    public void transferTuple(DataTuple tuple) throws IOException {    	
         if (tuple != null) {
             ByteBuffer buffer = getByteBuffer(tuple);
             synchronized (gbuffer) {
