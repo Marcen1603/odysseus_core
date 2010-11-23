@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.util;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -11,7 +12,7 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements IGra
 	/**
 	 * Here the copies of each operator will stored.
 	 */
-	HashMap<T,T> nodeCopies;
+	Map<T,T> nodeCopies;
 	
 	/**
 	 * This is the first node, this visitor has ever seen.
@@ -22,7 +23,7 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements IGra
 	T root;
 	
 	public CopyLogicalGraphVisitor(){
-		this.nodeCopies = new HashMap<T,T>();
+		this.nodeCopies = new IdentityHashMap<T,T>();
 	}
 	
 	@Override
