@@ -83,7 +83,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 
 	@Override
 	public String toString() {
-		return super.toString() + " " + getName() + " {Sel " + selectivity
+		return getName() + " {Sel " + selectivity
 				+ " PTime " + processingTime + "}";
 	}
 
