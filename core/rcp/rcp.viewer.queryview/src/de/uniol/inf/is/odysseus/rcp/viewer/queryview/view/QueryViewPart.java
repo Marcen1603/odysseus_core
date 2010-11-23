@@ -136,7 +136,7 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 				cell.setText(text);
 			}
 		});
-		tableColumnLayout.setColumnData(queryTextColumn.getColumn(), new ColumnWeightData(80,200,true));
+		tableColumnLayout.setColumnData(queryTextColumn.getColumn(), new ColumnWeightData(50,200,true));
 		
 		TableViewerColumn monitorColumn = new TableViewerColumn( tableViewer, SWT.NONE ) ;
 		monitorColumn.getColumn().setText("Monitors");
@@ -148,7 +148,7 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 				cell.setText(text);
 			}
 		});
-		tableColumnLayout.setColumnData(monitorColumn.getColumn(), new ColumnWeightData(10,50,true));
+		tableColumnLayout.setColumnData(monitorColumn.getColumn(), new ColumnWeightData(40,50,true));
 		
 		
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());

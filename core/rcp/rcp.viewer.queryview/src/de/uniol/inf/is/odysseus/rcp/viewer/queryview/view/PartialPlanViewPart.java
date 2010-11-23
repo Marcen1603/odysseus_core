@@ -60,7 +60,7 @@ public class PartialPlanViewPart extends ViewPart implements IPlanModificationLi
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(String.valueOf(((IPartialPlan) cell.getElement())
-						.hashCode()));
+						.getId()));
 			}
 		});
 		tableColumnLayout.setColumnData(idColumn.getColumn(),
