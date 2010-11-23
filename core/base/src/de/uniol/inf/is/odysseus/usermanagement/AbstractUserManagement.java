@@ -218,7 +218,7 @@ abstract class AbstractUserManagement {
 			IUserAction action, String objecturi) {
 		if (action instanceof DataDictionaryAction) {
 			switch ((DataDictionaryAction) action) {
-			case GET_STREAM:
+			case READ:
 				this.grantPermission(caller, entityname,
 						DataDictionaryAction.GET_ENTITY, objecturi);
 			default:

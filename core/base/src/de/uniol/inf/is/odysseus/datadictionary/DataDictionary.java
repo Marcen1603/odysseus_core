@@ -276,7 +276,7 @@ public class DataDictionary {
 	}
 
 	public ILogicalOperator getStreamForTransformation(String name, User caller) {
-		checkViewAccess(name, caller, DataDictionaryAction.GET_STREAM);
+		checkViewAccess(name, caller, DataDictionaryAction.READ);
 		return streamDefinitions.get(name);
 	}
 
@@ -296,7 +296,7 @@ public class DataDictionary {
 				.entrySet()) {
 			try {
 				checkViewAccess(viewEntry.getKey(), caller,
-						DataDictionaryAction.GET_STREAM);
+						DataDictionaryAction.READ);
 				sources.add(viewEntry);
 			} catch (HasNoPermissionException e) {
 				// ignore
@@ -306,7 +306,7 @@ public class DataDictionary {
 				.entrySet()) {
 			try {
 				checkViewAccess(viewEntry.getKey(), caller,
-						DataDictionaryAction.GET_STREAM);
+						DataDictionaryAction.READ);
 				sources.add(viewEntry);
 			} catch (HasNoPermissionException e) {
 				// ignore
@@ -323,10 +323,10 @@ public class DataDictionary {
 
 	public ILogicalOperator getViewOrStream(String viewname, User caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
-			checkViewAccess(viewname, caller, DataDictionaryAction.GET_STREAM);
+			checkViewAccess(viewname, caller, DataDictionaryAction.READ);
 			return getView(viewname, caller);
 		} else {
-			checkViewAccess(viewname, caller, DataDictionaryAction.GET_STREAM);
+			checkViewAccess(viewname, caller, DataDictionaryAction.READ);
 			return getStream(viewname, caller);
 		}
 	}

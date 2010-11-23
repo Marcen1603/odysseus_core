@@ -20,18 +20,19 @@ public final class Role extends AbstractUserManagementEntity implements
 			return true;
 		if (obj == null)
 			return false;
+		if (this.hashCode() == obj.hashCode())
+			return true;
 		if (getClass() != obj.getClass())
 			return false;
 		Role other = (Role) obj;
-		if (getName() == null) {
+		if (getRolename() == null) {
 			if (other.getRolename() != null)
 				return false;
-		} else if (!getName().equals(other.getRolename())) {
+		} else if (!getRolename().equals(other.getRolename())) {
 			return false;
 		} else if (this.privileges.equals(other.getPrivileges())) {
 			return true;
 		}
-
 		return true;
 	}
 
@@ -53,9 +54,9 @@ public final class Role extends AbstractUserManagementEntity implements
 	}
 
 	public void setGroup(boolean isGroup) {
-		this.isGroup = isGroup; 
+		this.isGroup = isGroup;
 	}
-	
+
 	public boolean isGroup() {
 		return isGroup;
 	}

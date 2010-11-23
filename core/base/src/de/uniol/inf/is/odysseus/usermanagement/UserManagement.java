@@ -107,7 +107,7 @@ public class UserManagement extends AbstractUserManagement {
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_VIEW, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_SOURCETYPE, DataDictionaryAction.alias);
 					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_ENTITY, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_STREAM, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", DataDictionaryAction.READ, DataDictionaryAction.alias);
 
 					// Anfrage verwalten
 					instance.grantPermission(sys, "DSUser", ExecutorAction.ADD_QUERY, ExecutorAction.alias);

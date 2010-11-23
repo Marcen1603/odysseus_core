@@ -39,6 +39,8 @@ public final class User extends AbstractUserManagementEntity implements
 			return true;
 		if (obj == null)
 			return false;
+		if (this.hashCode() == obj.hashCode())
+			return true;
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;

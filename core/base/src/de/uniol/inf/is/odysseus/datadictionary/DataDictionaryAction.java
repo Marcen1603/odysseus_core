@@ -10,7 +10,7 @@ public enum DataDictionaryAction implements IUserAction {
 
 	ADD_SOURCETYPE, 
 
-	ADD_STREAM, GET_STREAM, REMOVE_STREAM, REMOVE_VIEW, ADD_VIEW, GET_VIEW, 
+	ADD_STREAM, REMOVE_STREAM, REMOVE_VIEW, ADD_VIEW, READ,
 
 	GET_ALL, REMOVE_ALL;
 
@@ -33,7 +33,7 @@ public enum DataDictionaryAction implements IUserAction {
 		switch (action) {
 		case GET_ENTITY:
 			return GET_ALL;
-		case GET_STREAM:
+		case READ:
 			return GET_ALL;
 		case REMOVE_VIEW:
 			return REMOVE_ALL;
