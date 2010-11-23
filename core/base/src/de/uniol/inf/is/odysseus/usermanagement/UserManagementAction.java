@@ -3,6 +3,30 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class containing the actions (permissions) for the UserManagement.
+ * It encapsulate the following permissions:
+ * <ul>
+ * <li>CREATE_USER - permission to create a new user</li>
+ * <li>ALTER_USER - permission to alter an existing user</li>
+ * <li>DELETE_USER - permission to delete an existing user</li>
+ * <li>DEACTIVATE_USER - permission to deactivate an existing user</li>
+ * <li>SET_SYSTEM_USER - permission to set a user or role to system status. With this status you can't loose permissions.</li>
+ * <li>CREATE_ROLE - permission to create a new role</li>
+ * <li>DELETE_ROLE - permission to delete an existing role</li>
+ * <li>GRANT - permission to grant permissions the user have to other user or roles</li>
+ * <li>GRANT_ALL - super permission to grant any permission to other user or roles</li>
+ * <li>REVOKE - permission to revoke permissions the user have from other user or roles</li>
+ * <li>REVOKE_ALL - super permission to revoke any permission from other user or roles</li>
+ * <li>GRANT_ROLE - permission to grant roles the user have to other user or roles</li>
+ * <li>REVOKE_ROLE - permission to revoke roles the user have to other user or roles</li>
+ * <li>LOGOUT - permission to logout an other user</li>
+ * <li>GET_ALL_USER - permission to get a list that contains all existing user in the system</li>
+ * <li>GET_ALL - super permission to get any get-able thing (get_all_user) from UserManagement</li>
+ * </ul>
+ * @see de.uniol.inf.is.odysseus.usermanagement.AbstractUserManagement.java
+ * @author Christian van Göns
+ */
 public enum UserManagementAction implements IUserAction {
 	CREATE_USER, ALTER_USER, DELETE_USER, DEACTIVATE_USER, SET_SYSTEM_USER,
 

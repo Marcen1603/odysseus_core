@@ -48,13 +48,13 @@ abstract class AbstractUserManagement {
 	 * @param owner
 	 * @param operation
 	 * @param caller
-	 * @return
+	 * @return Privilege
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
 	private Privilege createPrivilege(String objecturi,
 			AbstractUserManagementEntity owner, IUserAction operation,
-			User caller) throws HasNoPermissionException, StoreException {
+			User caller) throws StoreException {
 		List<IUserAction> operations = new ArrayList<IUserAction>();
 		operations.add(operation);
 		return createPrivilege(objecturi, owner, operations, caller);
@@ -67,7 +67,7 @@ abstract class AbstractUserManagement {
 	 * @param obj
 	 * @param operations
 	 * @param caller
-	 * @return
+	 * @return Privilege or null
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
@@ -241,6 +241,10 @@ abstract class AbstractUserManagement {
 
 	/**
 	 * returns the user object from the userStore for the given username.
+	 * 
+	 * @param username
+	 * @param caller
+	 * @return User
 	 */
 	public User findUser(String username, User caller) {
 		return this.userStore.getUserByName(username);
@@ -286,6 +290,13 @@ abstract class AbstractUserManagement {
 		return ++sessionID;
 	}
 
+	/**
+	 * returns all existing users.
+	 * 
+	 * @param caller
+	 * @return Collection<User>
+	 * @throws HasNoPermissionException
+	 */
 	public Collection<User> getUsers(User caller)
 			throws HasNoPermissionException {
 		if (AccessControl.hasPermission(UserManagementAction.GET_ALL_USER,
@@ -300,7 +311,7 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * grants permissions to a specified user- or role name (by entityname)
+	 * grants permissions to a specified user- or role name (by entityname).
 	 * 
 	 * @param caller
 	 * @param entityname
@@ -553,6 +564,13 @@ abstract class AbstractUserManagement {
 		}
 	}
 
+	/**
+	 * checks if the given entity has system protection.
+	 * 
+	 * @see de.uniol.inf.is.odysseus.usermanagement.AbstractUserManagementEntity.java
+	 * @param entityname
+	 * @return boolean
+	 */
 	private boolean isRevokeProtected(String entityname) {
 		AbstractUserManagementEntity entity = getEntity(entityname);
 		return entity.isSystemProtected();
@@ -655,7 +673,6 @@ abstract class AbstractUserManagement {
 	}
 
 	/**
-	 * 
 	 * Update Users password with plain text password if caller has permission
 	 * or is same user
 	 * 
