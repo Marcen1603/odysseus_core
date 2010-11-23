@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 
 /**
- * Diese Hilfsklasse verwaltet die vom Declarative Service zur VerfÃ¼gung
+ * Diese Hilfsklasse verwaltet die vom Declarative Service zur Verfügung
  * gestellten <code>IExecutor</code>. Der Nutzer kann damit die aktuelle
- * Instanz der Klasse bekommen, falls benÃ¶tigt.
+ * Instanz der Klasse bekommen, falls benötigt.
  * <p>
  * Der Declative Service ruft die Methoden <code>bindExecutor()</code> und
- * <code>unbindExecutor</code> selbststÃ¤ndig auf. Der Nutzer sollte sie nicht
+ * <code>unbindExecutor</code> selbstständig auf. Der Nutzer sollte sie nicht
  * explizit aufrufen.
  * 
  * @author Timo Michelsen
@@ -38,7 +38,7 @@ public class ExecutorHandler {
 	 * Wird vom Declarative Service aufgerufen. Damit wird der aktuelle
 	 * <code>IExecutor</code> auf <code>null</code> gesetzt. Der
 	 * Parameter wird ignoriert. Ab sofort liefert die statische Methode
-	 * <code>getExecutor()</code> ausschlieÃŸlich <code>null</code>.
+	 * <code>getExecutor()</code> ausschließlich <code>null</code>.
 	 * <p>
 	 * Der Nutzer sollte diese Funktion nicht selbst aufrufen.
 	 * 
@@ -52,8 +52,8 @@ public class ExecutorHandler {
 
 	/**
 	 * Liefert den aktuellen, vom Declarative Service gelieferten
-	 * <code>IExecutor</code>. Je nach Zeitpunkt des Aufrufs kÃ¶nnte
-	 * <code>null</code> zurÃ¼ckgegeben werden.
+	 * <code>IExecutor</code>. Je nach Zeitpunkt des Aufrufs könnte
+	 * <code>null</code> zurückgegeben werden.
 	 * 
 	 * @return Aktuelle <code>IExecutor</code>-Instanz oder
 	 *         <code>null</code>.
