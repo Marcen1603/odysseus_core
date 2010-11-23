@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -319,6 +318,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		if(!(o instanceof AbstractPipe)) {
 			return false;
 		}
+		@SuppressWarnings("unchecked")
 		AbstractPipe<R,W> other = (AbstractPipe<R,W>) o;
 
 		Collection<PhysicalSubscription<ISource<? extends R>>> thisSubs = this.getSubscribedToSource();
