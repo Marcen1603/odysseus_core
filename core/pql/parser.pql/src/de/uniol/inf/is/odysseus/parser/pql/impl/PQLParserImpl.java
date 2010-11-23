@@ -223,8 +223,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
       //to top operator of the view
       op = dd.getViewOrStream(nameStr, getUser());
     }
-    namedOpParameters.put(nameStr.toUpperCase(), parameters);
-    namedOps.put(nameStr.toUpperCase(), op);
+    else
+    {
+      namedOpParameters.put(nameStr.toUpperCase(), parameters);
+      namedOps.put(nameStr.toUpperCase(), op);
+    }
   }
 
   static final public ILogicalOperator operator(Map < String, ILogicalOperator > namedOps) throws ParseException {
