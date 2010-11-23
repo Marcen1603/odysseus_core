@@ -12,39 +12,42 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.Polygon;
 
 public class Activator implements BundleActivator {
 
-    private static BundleContext bundleContext;
-    
-    private IFunction[] functions = new IFunction[]{new DolToEur(), new Now(), new Distance(), new Polygon()};
+	private static BundleContext bundleContext;
+
+	private IFunction[] functions = new IFunction[] { new DolToEur(),
+			new Now(), new Distance(), new Polygon() };
 
 	/*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-     * )
-     */
-    @Override
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
+	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
-        // Add default Functions
-    	bundleContext = context;
-    	for(IFunction function : functions) {
-    		MEP.registerFunction(function);
-    	}
-    }
-    
-    public static BundleContext getBundleContext() {
+		// Add default Functions
+		bundleContext = context;
+		for (IFunction function : functions) {
+			MEP.registerFunction(function);
+		}
+	}
+
+	public static BundleContext getBundleContext() {
 		return bundleContext;
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
-    	for(IFunction function : functions) {
-    		MEP.unregisterFunction(function.getSymbol());
-    	}
-    }
+		for (IFunction function : functions) {
+			MEP.unregisterFunction(function.getSymbol());
+		}
+	}
 
 }

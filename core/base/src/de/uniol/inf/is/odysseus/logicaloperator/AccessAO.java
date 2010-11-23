@@ -154,7 +154,7 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 
 	@Override
 	public String toString() {
-		return getName() + " (" + this.getSource().getURI() + " | "+this.getSourceType()+")";
+		return getName() + " (" + (this.getSource()!=null?this.getSource().getURI():null) + " | "+this.getSourceType()+")";
 	}
 
 	@Override

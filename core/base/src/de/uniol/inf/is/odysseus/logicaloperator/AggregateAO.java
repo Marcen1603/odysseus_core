@@ -98,18 +98,18 @@ public class AggregateAO extends UnaryLogicalOp {
 
     public void addAggregations(
             Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
-        for (SDFAttribute attr : aggregations.keySet()) {
-            Map<AggregateFunction, SDFAttribute> aggs = aggregations.get(attr);
+        for (Entry<SDFAttribute, Map<AggregateFunction, SDFAttribute>> attrSet : aggregations.entrySet()) {
+        	Map<AggregateFunction, SDFAttribute> aggs = attrSet.getValue();
             for (Entry<AggregateFunction, SDFAttribute> e : aggs.entrySet()) {
-                addAggregation(attr, e.getKey(), e.getValue());
+                addAggregation(attrSet.getKey(), e.getKey(), e.getValue());
             }
         }
     }
 
-    public Map<AggregateFunction, SDFAttribute> getAggregationFunctions(
-            SDFAttribute attribute) {
-        return aggregations.get(attribute);
-    }
+//    public Map<AggregateFunction, SDFAttribute> getAggregationFunctions(
+//            SDFAttribute attribute) {
+//        return aggregations.get(attribute);
+//    }
 
     public Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> getAggregations() {
         return this.aggregations;

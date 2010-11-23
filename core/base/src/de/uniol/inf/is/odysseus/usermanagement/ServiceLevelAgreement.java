@@ -9,8 +9,6 @@ public class ServiceLevelAgreement extends AbstractServiceLevelAgreement{
 		super(name);
 	}
 	
-	// TODO: Darüber nachdenken, ob man nicht einfach 100 Werte vorberechnet, sollte ausreichend sein ...
-	
 	@Override
 	public double oc(double currentSLAConformance)
 			throws NotInitializedException {
@@ -20,6 +18,8 @@ public class ServiceLevelAgreement extends AbstractServiceLevelAgreement{
 		double oc = 0;
 		if (p.getLowSlaConformanceLevel() > 0){
 			oc =  Math.pow((((p.getHighSlaConformanceLevel() - currentSLAConformance)/p.getWidth())),2) * delta[index];
+		}else{
+			oc =  Math.pow((((p.getHighSlaConformanceLevel() - currentSLAConformance)/p.getWidth())),2) * p.getPenalty();
 		}
 		return oc;
 	}

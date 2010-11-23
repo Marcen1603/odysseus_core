@@ -8,9 +8,9 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 public class PlanMonitor extends AbstractPlanMonitor<Double> {
 
 	@SuppressWarnings("rawtypes")
-	public PlanMonitor(IQuery target, boolean onlyRoots, String monitoringType,
+	public PlanMonitor(IQuery target, boolean onlyRoots, boolean onlyBuffer, String monitoringType,
 			long monitoringPeriod) {
-		super(target, onlyRoots, monitoringType);
+		super(target, onlyRoots,onlyBuffer, monitoringType);
 		for (IPhysicalOperator p : monitoredOps) {
 			if (monitoringPeriod <= 0) {
 				if (!p.providesMonitoringData(monitoringType)) {

@@ -11,14 +11,15 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
-public class ProcessCallsMonitor extends AbstractPlanMonitor<Long>
-implements IPOEventListener {
+public class ProcessCallsMonitor extends AbstractPlanMonitor<Long> implements
+		IPOEventListener {
 	final Map<IPhysicalOperator, Long> processCallsPerOperator;
 	long overallProcessCallCount = 0;
 	private boolean relativeCallCount;
 
-	public ProcessCallsMonitor(IQuery target, boolean onlyRoots, String type, boolean relativeCallCount) {
-		super(target, onlyRoots, type);
+	public ProcessCallsMonitor(IQuery target, boolean onlyRoots,
+			boolean onlyBuffer, String type, boolean relativeCallCount) {
+		super(target, onlyRoots, onlyBuffer, type);
 		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>();
 		for (IPhysicalOperator p : monitoredOps) {
 			processCallsPerOperator.put(p, 0l);
@@ -30,11 +31,12 @@ implements IPOEventListener {
 	public ProcessCallsMonitor(ProcessCallsMonitor processCallsMonitor) {
 		super(processCallsMonitor);
 		overallProcessCallCount = processCallsMonitor.overallProcessCallCount;
-		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>(processCallsMonitor.processCallsPerOperator);
+		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>(
+				processCallsMonitor.processCallsPerOperator);
 	}
-	
+
 	@Override
-	public void eventOccured(IEvent<?,?> event) {
+	public void eventOccured(IEvent<?, ?> event) {
 		POEvent poEvent = (POEvent) event;
 		IPhysicalOperator source = poEvent.getSource();
 		synchronized (processCallsPerOperator) {
@@ -47,30 +49,39 @@ implements IPOEventListener {
 	public long getProcessCallsForOperator(IPhysicalOperator op) {
 		return processCallsPerOperator.get(op);
 	}
-	
+
 	public long getOverallProcessCallCount() {
 		return overallProcessCallCount;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuffer b = new StringBuffer(this.getClass().getSimpleName());
-		b.append(" sum=" + overallProcessCallCount + " /#ops="+ overallProcessCallCount/processCallsPerOperator.size() + "\n");
-//		for (Entry<IPhysicalOperator, Long> p : processCallsPerOperator.entrySet()) {
-//			b.append("--> " + p.getKey() + " = " + p.getValue() + " "
-//					+ (overallProcessCallCount > 0 ? (p.getValue() / overallProcessCallCount) : 0)
-//					+ "\n");
-//		}
+		StringBuffer b = new StringBuffer(this.getType());
+		b.append(" sum=").append(overallProcessCallCount);
+		if (processCallsPerOperator.size() > 1) {
+			 b.append(" /#ops="
+					+ overallProcessCallCount / processCallsPerOperator.size()
+					+ "\n");
+		}
+		// for (Entry<IPhysicalOperator, Long> p :
+		// processCallsPerOperator.entrySet()) {
+		// b.append("--> " + p.getKey() + " = " + p.getValue() + " "
+		// + (overallProcessCallCount > 0 ? (p.getValue() /
+		// overallProcessCallCount) : 0)
+		// + "\n");
+		// }
 		return b.toString();
 	}
 
 	@Override
-	public Long getValue()  {
-		return relativeCallCount?(overallProcessCallCount/processCallsPerOperator.size()):overallProcessCallCount;
+	public Long getValue() {
+		return relativeCallCount ? (overallProcessCallCount / processCallsPerOperator
+				.size()) : overallProcessCallCount;
 	}
-	
-	public double getDoubleValue(){
-		return relativeCallCount?(overallProcessCallCount*1.0/processCallsPerOperator.size()):overallProcessCallCount*1.0;		
+
+	public double getDoubleValue() {
+		return relativeCallCount ? (overallProcessCallCount * 1.0 / processCallsPerOperator
+				.size()) : overallProcessCallCount * 1.0;
 	}
 
 	@Override
@@ -79,7 +90,7 @@ implements IPOEventListener {
 		for (IPhysicalOperator p : monitoredOps) {
 			processCallsPerOperator.put(p, 0l);
 		}
-		
+
 	}
 
 	@Override

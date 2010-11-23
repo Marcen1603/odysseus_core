@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
@@ -13,13 +14,23 @@ public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T>
 
 	final List<IPhysicalOperator> monitoredOps = new ArrayList<IPhysicalOperator>();
 	private boolean onlyRoots;
+	private boolean onlyBuffer;
 
-	public AbstractPlanMonitor(IQuery target, boolean onlyRoots, String type) {
+	public AbstractPlanMonitor(IQuery target, boolean onlyRoots, boolean onlyBuffer, String type) {
 		super(target, type);
 		this.onlyRoots = onlyRoots;
-		monitoredOps.addAll(target.getRoots());
-		if (!onlyRoots) {
-			monitoredOps.addAll(target.getPhysicalChilds());
+		this.onlyBuffer = onlyBuffer;
+		if (onlyBuffer){
+			for (IPhysicalOperator op: target.getPhysicalChilds()){
+				if (op instanceof IBuffer){
+					monitoredOps.add(op);
+				}
+			}
+		}else{
+			monitoredOps.addAll(target.getRoots());
+			if (!onlyRoots) {
+				monitoredOps.addAll(target.getPhysicalChilds());
+			}
 		}
 	}
 
@@ -35,6 +46,11 @@ public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T>
 		return onlyRoots;
 	}
 
+	@Override
+	public boolean treatsOnlyBuffer(){
+		return onlyBuffer;
+	}
+	
 	@Override
 	public IQuery getTarget() {
 		return (IQuery) super.getTarget();

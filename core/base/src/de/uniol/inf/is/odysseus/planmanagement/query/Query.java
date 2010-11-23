@@ -120,6 +120,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	
 	Map<String,IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
 
+	@SuppressWarnings("rawtypes")
 	public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();	
 
 
@@ -689,6 +690,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 		return this.planmonitors.get(name);
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Collection<IPlanMonitor> getPlanMonitors(){
 		return Collections.unmodifiableCollection(planmonitors.values());
@@ -716,4 +718,25 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	public String toString() {
 		return "Query "+getID();
 	}
+
+	@Override
+	public int hashCode() {
+		return id;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Query other = (Query) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+	
+	
 }

@@ -17,7 +17,6 @@ public class SimplePlanPrinter<T> {
 	public String createString(T root) {
 
 		StringBuffer buff = new StringBuffer();
-		buff = new StringBuffer();
 		dumpPlan(root, 0, buff);
 		return buff.toString();
 	}

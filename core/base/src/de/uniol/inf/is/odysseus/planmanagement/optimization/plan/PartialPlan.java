@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 public class PartialPlan implements IPartialPlan {
 
 	static Logger _logger;
+	static long planIdCounter = 0;
 
 	static synchronized Logger getLogger() {
 		if (_logger == null) {
@@ -59,6 +60,8 @@ public class PartialPlan implements IPartialPlan {
 	 */
 	private List<IQuery> partOf;
 
+	private long planId;
+	
 	/**
 	 * Cache Ids for Sources to speed up getSourceID
 	 */
@@ -94,6 +97,7 @@ public class PartialPlan implements IPartialPlan {
 		for (IQuery q : otherParts) {
 			this.partOf.add(q);
 		}
+		planId = planIdCounter++;
 	}
 
 	@Override
@@ -172,6 +176,11 @@ public class PartialPlan implements IPartialPlan {
 		return this.basePriority;
 	}
 
+	@Override
+	public long getId() {
+		return planId;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -179,7 +188,7 @@ public class PartialPlan implements IPartialPlan {
 	 */
 	@Override
 	public String toString() {
-		String result = "Roots:";
+		String result = getId()+"Roots:";
 
 		for (IPhysicalOperator root : this.roots) {
 			if (result != "") {

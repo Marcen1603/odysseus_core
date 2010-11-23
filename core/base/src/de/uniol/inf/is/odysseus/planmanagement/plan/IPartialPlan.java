@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public interface IPartialPlan {
+	public long getId();
 	public List<IIterableSource<?>> getIterableSources();
 	public boolean hasIteratableSources();
 	public IIterableSource<?> getIterableSource(int id);
@@ -24,4 +25,5 @@ public interface IPartialPlan {
 	public String toString();
 	List<IPhysicalOperator> getQueryRoots();
 	List<IQuery> getQueries();
+
 }
