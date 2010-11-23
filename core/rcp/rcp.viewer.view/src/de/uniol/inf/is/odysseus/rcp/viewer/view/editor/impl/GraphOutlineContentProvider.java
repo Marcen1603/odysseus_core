@@ -24,9 +24,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 	
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		
-		System.err.println("Get Children of "+parentElement);
-		
+				
 		if( parentElement instanceof IOdysseusGraphView) {
 			IOdysseusGraphView graph = (IOdysseusGraphView)parentElement;
 			
