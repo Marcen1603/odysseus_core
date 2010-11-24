@@ -38,7 +38,7 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 				try {
 					int i = 0;
 					for (SDFAttribute a : currentSchema) {
-						if (currentVisibleAttributes[i]) {
+						if (getVisibleSchema().contains(currentSchema.get(i))) {
 							double value = Double.parseDouble(tuple.getAttribute(i).toString());
 							recalcAxis(value);
 							dcds.addValue(value, a.toString(), tuple.getMetadata().getStart());
@@ -46,7 +46,7 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 						}
 						i++;
 					}
-				} catch (SWTException e) {					
+				} catch (SWTException e) {
 					dispose();
 					return;
 				}
@@ -78,15 +78,15 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 	}
 
 	@Override
-	public void chartPropertiesChanged() {
+	public void chartSettingsChanged() {
 	}
 
 	@Override
-	public String isValidSelection(boolean[] selectAttributes) {
-		if (getSelectedValueCount(selectAttributes) > 0) {
+	public String isValidSelection(SDFAttributeList selectAttributes) {
+		if (selectAttributes.size() > 0) {
 			return null;
 		}
 		return "The number of choosen attributes should be at least one!";
-	}
+	}	
 
 }

@@ -29,20 +29,20 @@ public class PieChart extends AbstractChart {
 	}
 
 	@Override
-	public void chartPropertiesChanged() {
+	public void chartSettingsChanged() {
 
 	}
 
 	@Override
 	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {
-		final SDFAttributeList currentSchema = super.getSchema();
+		final SDFAttributeList currentSchema = super.getAllowedSchema();
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					int i = 0;
 					for (SDFAttribute a : currentSchema) {
-						if (currentVisibleAttributes[i]) {
+						if (getVisibleSchema().contains(getSchema().get(i))) {
 							double value = Double.parseDouble(tuple.getAttribute(i).toString());
 							dataset.setValue(a.toString(), value);
 						}
@@ -64,10 +64,10 @@ public class PieChart extends AbstractChart {
 		plot.setLabelGenerator(null);
 
 	}
-	
+
 	@Override
-	public String isValidSelection(boolean[] selectAttributes) {
-		if(getSelectedValueCount(selectAttributes)>0){
+	public String isValidSelection(SDFAttributeList selectAttributes) {
+		if(selectAttributes.size()>0){
 			return null;
 		}
 		return "The number of choosen attributes should be at least one!";

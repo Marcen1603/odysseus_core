@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs;
 
-import java.util.Arrays;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -22,18 +20,19 @@ import org.eclipse.swt.widgets.TableItem;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class ChangeAttributesDialog extends TitleAreaDialog {
 
 	private static final String DEFAULT_MESSAGE = "Changes the attributes that are shown by the chart";
 	private Table table;
-	private boolean[] activatedAttributes;
+	private SDFAttributeList activatedAttributes;	
 	private IAttributesChangeable changeable;
 	private Button okButton;
 
 	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable changeable) {
 		super(parentShell);
-		this.activatedAttributes = Arrays.copyOf(changeable.getVisibleAttributes(), changeable.getVisibleAttributes().length);
+		this.activatedAttributes = changeable.getVisibleSchema().clone();		
 		this.changeable = changeable;
 	}
 
@@ -78,19 +77,19 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 		table.setLinesVisible(true);
 
 		int i = 0;
-		for (SDFAttribute a : this.changeable.getSchema()) {
+		for (SDFAttribute a : this.changeable.getAllowedSchema()) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			Button check = new Button(table, SWT.CHECK);
-			check.setData(i);
-			check.setSelection(activatedAttributes[i]);
+			check.setData(a);
+			check.setSelection(this.activatedAttributes.contains(a));
 			check.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					Button thisButton = (Button) e.widget;
-					int zeilennummer = (Integer) thisButton.getData();
+					SDFAttribute selAtt = (SDFAttribute) thisButton.getData();
 					if (thisButton.getSelection()) {
-						activatedAttributes[zeilennummer] = true;
+						activatedAttributes.add(selAtt);						
 					} else {
-						activatedAttributes[zeilennummer] = false;
+						activatedAttributes.remove(selAtt);
 					}
 					validate();
 				}
@@ -133,7 +132,7 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
 	}
 
-	public boolean[] getSelectedAttributes() {
+	public SDFAttributeList getSelectedAttributes() {
 		return this.activatedAttributes;
 	}
 }

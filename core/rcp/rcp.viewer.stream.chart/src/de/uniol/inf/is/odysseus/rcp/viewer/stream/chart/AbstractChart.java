@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting.Type;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamElementListener;
@@ -42,8 +42,11 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	protected final static Color DEFAULT_BACKGROUND = Color.WHITE;
 	protected final static Color DEFAULT_BACKGROUND_GRID = Color.GRAY;
 	protected final static String VIEW_ID_PREFIX = "de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts";
-	private SDFAttributeList schema;
-	protected boolean currentVisibleAttributes[];
+
+	private SDFAttributeList allowedSchema;
+	private SDFAttributeList initialSchema;
+	private SDFAttributeList visibleSchema;
+	
 	private JFreeChart chart;
 	private ChangeSelectedAttributesAction changeAttributesAction;
 	private ChangeSettingsAction changeSettingsAction;
@@ -65,55 +68,69 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		} else
 			throw new IllegalArgumentException("could not identify type of content of node " + operator);
 
-		IStreamConnection<Object> connection = new DefaultStreamConnection<Object>(sources);		
+		IStreamConnection<Object> connection = new DefaultStreamConnection<Object>(sources);
 		return connection;
 	}
 
 	public void init(IStreamConnection<Object> streamConnection) {
-		this.schema = getSchema(streamConnection);
-		this.currentVisibleAttributes = new boolean[schema.getAttributeCount()];
-		for (int i = 0; i < schema.getAttributeCount(); i++) {
-			String t = schema.getAttribute(i).getDatatype().getURI();
-			if (t.equals("Double") || t.equals("Long") || t.equals("Integer")) {
-				this.currentVisibleAttributes[i] = true;
-			} else {
-				this.currentVisibleAttributes[i] = false;
+		// first save initial schema
+		this.initialSchema = extractSchema(streamConnection);
+		// get only allowed datatypes for the current schema from initial schema
+		this.allowedSchema = new SDFAttributeList();
+		for (int i = 0; i < initialSchema.getAttributeCount(); i++) {
+			String t = initialSchema.getAttribute(i).getDatatype().getURI();
+			if (isAllowedDataType(t)) {
+				this.allowedSchema.add(initialSchema.getAttribute(i));
 			}
 		}
-		streamConnection.addStreamElementListener(this);
-		streamConnection.connect();
-		chartPropertiesChanged();
+
+		this.visibleSchema = allowedSchema.clone();
+		
+		if (validate()) {
+			streamConnection.addStreamElementListener(this);
+			streamConnection.connect();
+			chartSettingsChanged();
+			init();
+		}
+
+	}
+
+	protected boolean isAllowedDataType(String datatype) {
+
+		if (datatype.equals("Double") || datatype.equals("Long") || datatype.equals("Integer") || datatype.equals("StartTimestamp") || datatype.equals("EndTimestamp")
+				|| datatype.equals("Timestamp")) {
+			return true;
+		}
+		return false;
+	}
+
+	protected boolean validate() {
+		if(this.allowedSchema.size()>0){
+			return true;
+		}
+		System.out.println("Chart View not validated, because there has to be at least one valid attribute");
+		return false;
+	}
+
+	protected void init() {
 
 	}
 
 	@Override
-	public void setVisibleAttributes(boolean[] selectedlist) {
-		this.currentVisibleAttributes = selectedlist;
-		// for (int i = 0; i < schema.getAttributeCount(); i++) {
-		// if (list.contains(schema.getAttribute(i))) {
-		// String t = schema.getAttribute(i).getDatatype().getURI();
-		// if (t.equals("Double") || t.equals("Long") || t.equals("Integer")) {
-		// this.currentVisibleAttributes[i] = true;
-		// } else {
-		// this.currentVisibleAttributes[i] = false;
-		// }
-		// } else {
-		// this.currentVisibleAttributes[i] = false;
-		// }
-		// }
-		chartPropertiesChanged();
-
+	public void setVisibleSchema(SDFAttributeList selectedlist) {
+		this.visibleSchema = selectedlist;
+		chartSettingsChanged();
 	}
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
 		if (!(element instanceof RelationalTuple<?>)) {
-			System.out.println("Warning: StreamTable is only for relational tuple!");
+			System.out.println("Warning: Stream visualization is only for relational tuple!");
 			return;
 		}
 		@SuppressWarnings("unchecked")
 		final RelationalTuple<? extends ITimeInterval> tuple = (RelationalTuple<? extends ITimeInterval>) element;
-		try {
+		try {			
 			processElement(tuple, port);
 		} catch (SWTException swtex) {
 			System.out.println("WARN: SWT Exception " + swtex.getMessage());
@@ -126,8 +143,8 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
 
-	}
-
+	}	
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		this.chart = createChart();
@@ -166,17 +183,16 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 
 	protected abstract void decorateChart(JFreeChart thechart);
 
-	private SDFAttributeList getSchema(IStreamConnection<?> streamConnection) {
+	private SDFAttributeList extractSchema(IStreamConnection<?> streamConnection) {
 		ISource<?>[] sources = streamConnection.getSources().toArray(new ISource<?>[0]);
-		schema = sources[0].getOutputSchema();
-		return schema;
+		return sources[0].getOutputSchema();
 	}
 
 	protected abstract JFreeChart createChart();
 
 	@Override
 	public void dispose() {
-		if(this.connection.isConnected()){
+		if (this.connection.isConnected()) {
 			this.connection.disconnect();
 		}
 	}
@@ -186,8 +202,12 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 
 	}
 
-	public SDFAttributeList getSchema() {
-		return schema;
+	public SDFAttributeList getAllowedSchema() {
+		return this.allowedSchema;
+	}
+
+	public SDFAttributeList getInitialSchema() {
+		return this.initialSchema;
 	}
 
 	public String getTitle() {
@@ -201,12 +221,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	public void setChart(JFreeChart chart) {
 		this.chart = chart;
 	}
-
-	@Override
-	public boolean[] getVisibleAttributes() {
-		return this.currentVisibleAttributes;
-	}
-
+	
 	public abstract String getViewID();
 
 	protected int getSelectedValueCount(boolean[] values) {
@@ -223,20 +238,21 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	public List<MethodSetting> getChartSettings() {
 		List<MethodSetting> settings = new ArrayList<MethodSetting>();
 		settings.addAll(getAnnotatedSettings(this.getClass()));
-		//settings.addAll(getAnnotatedSettings())
+		// settings.addAll(getAnnotatedSettings())
 		return settings;
 	}
-	
-	
-	public List<MethodSetting> getAnnotatedSettings(Class<?> theclass){
+
+	public List<MethodSetting> getAnnotatedSettings(Class<?> theclass) {
 		List<MethodSetting> settings = new ArrayList<MethodSetting>();
 		for (Method m : theclass.getMethods()) {
-			UserSetting us = m.getAnnotation(UserSetting.class);
+			ChartSetting us = m.getAnnotation(ChartSetting.class);
 			if (us != null) {
 				if (us.type().equals(Type.GET)) {
 					Method other = getAccordingType(us);
 					if (other != null) {
-						settings.add(new MethodSetting(us.name(), m, other));
+						MethodSetting ms = new MethodSetting(us.name(), m, other);
+						ms.setListGetter(getListMethod(us));
+						settings.add(ms);
 					} else {
 						System.out.println("WARN: setting can not be loaded because there is no getter/setter pair");
 						continue;
@@ -247,21 +263,38 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		return settings;
 	}
 
-	private Method getAccordingType(UserSetting otherMethod) {
-		Type searchForTyp = Type.SET;
-		if (otherMethod.type().equals(Type.SET)) {
-			searchForTyp = Type.GET;
-		}
+	private Method getListMethod(ChartSetting otherMethod) {
+		return findMethod(otherMethod.name(), Type.OPTIONS);
+	}
+
+	private Method findMethod(String name, Type searchForTyp) {
 		for (Method m : this.getClass().getMethods()) {
-			UserSetting us = m.getAnnotation(UserSetting.class);
+			ChartSetting us = m.getAnnotation(ChartSetting.class);
 			if (us != null) {
-				if (us.name().equals(otherMethod.name()) && us.type().equals(searchForTyp)) {
-					return m;
+				if (us.name().equals(name)) {
+					if (us.type().equals(searchForTyp)) {
+						return m;
+					}
 				}
 			}
 		}
 		return null;
 	}
+
+	private Method getAccordingType(ChartSetting otherMethod) {
+		if (otherMethod.type().equals(Type.SET)) {
+			return findMethod(otherMethod.name(), Type.GET);
+		} else {
+			return findMethod(otherMethod.name(), Type.SET);
+		}
+	}
 	
-	
+	@Override
+	public SDFAttributeList getVisibleSchema() {
+		return this.visibleSchema;
+	}
+
+	public SDFAttributeList getSchema(){
+		return this.initialSchema;
+	}
 }

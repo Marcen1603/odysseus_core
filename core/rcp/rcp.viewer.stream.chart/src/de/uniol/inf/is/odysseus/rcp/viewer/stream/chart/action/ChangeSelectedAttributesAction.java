@@ -1,13 +1,12 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action;
 
-import java.util.Arrays;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs.ChangeAttributesDialog;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class ChangeSelectedAttributesAction extends Action {
 
@@ -23,13 +22,12 @@ public class ChangeSelectedAttributesAction extends Action {
 
 	@Override
 	public void run() {
-		try {
-			System.out.println("open dialog...");
+		try {			
 			ChangeAttributesDialog dialog = new ChangeAttributesDialog(parentShell, this.changeable);
 			if (dialog.open() == Window.OK) {
-				boolean[] attr = dialog.getSelectedAttributes();
-				changeable.setVisibleAttributes(Arrays.copyOf(attr, attr.length));
-				changeable.chartPropertiesChanged();
+				SDFAttributeList attr = dialog.getSelectedAttributes();
+				changeable.setVisibleSchema(attr.clone());
+				changeable.chartSettingsChanged();
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);

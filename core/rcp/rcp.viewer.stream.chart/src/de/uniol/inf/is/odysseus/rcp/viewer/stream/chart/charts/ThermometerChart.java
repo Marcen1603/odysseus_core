@@ -10,9 +10,10 @@ import org.jfree.data.general.DefaultValueDataset;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting.Type;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class ThermometerChart extends AbstractChart {
 
@@ -20,25 +21,49 @@ public class ThermometerChart extends AbstractChart {
 	private int selectedValue;
 	private ThermometerPlot plot;
 
+	private double mininum = 0.0d;
+	private double maximum = 400.0d;	
+	private double upperWarning = maximum * 0.75d;
+	private double upperCritical = maximum * 0.90d;
+	
 	@Override
-	public void chartPropertiesChanged() {
-		for (int i = 0; i < super.currentVisibleAttributes.length; i++)
-			if (super.currentVisibleAttributes[i]) {
-				selectedValue = i;
-			}
+	protected void init() {	
+		super.init();
+		SDFAttributeList visibleSchema = new SDFAttributeList();
+		visibleSchema.add(getAllowedSchema().get(0));
+		setVisibleSchema(visibleSchema);
+		chartSettingsChanged();
+		resetBounds();
+	}
+	
+	
+	private void resetBounds(){
+		plot.setUpperBound(this.maximum);
+		plot.setLowerBound(this.mininum);
+		
+		plot.setSubrange(ThermometerPlot.NORMAL, this.mininum, this.upperWarning);
+		plot.setSubrange(ThermometerPlot.WARNING, this.upperWarning, this.upperCritical);
+		plot.setSubrange(ThermometerPlot.CRITICAL, this.upperCritical, this.maximum);
+	}
+	
+	@Override
+	public void chartSettingsChanged() {
+		selectedValue = super.getSchema().indexOf(getVisibleSchema().get(0));
 	}
 
 	@Override
-	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {		
+	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					double value = Double.parseDouble(tuple.getAttribute(selectedValue).toString());
 					dataset.setValue(value);
-				} catch (SWTException e) {										
+				} catch (SWTException e) {
 					dispose();
 					return;
+				} catch(Exception ex){
+					ex.printStackTrace(System.err);
 				}
 			}
 		});
@@ -46,11 +71,11 @@ public class ThermometerChart extends AbstractChart {
 	}
 
 	@Override
-	public String isValidSelection(boolean[] selectAttributes) {
-		if (getSelectedValueCount(selectAttributes) == 1) {
+	public String isValidSelection(SDFAttributeList selectAttributes) {
+		if (selectAttributes.size() == 1) {
 			return null;
 		}
-		return "You can choose just one attribute for this chart!";
+		return "The number of choosen attributes should be at least one!";
 	}
 
 	@Override
@@ -64,19 +89,18 @@ public class ThermometerChart extends AbstractChart {
 		plot.setThermometerStroke(new BasicStroke(1.0f));
 		plot.setThermometerPaint(Color.DARK_GRAY);
 		plot.setUseSubrangePaint(true);
-
+		
 		// change subranges
 		plot.setSubrange(ThermometerPlot.NORMAL, Double.MAX_VALUE, Double.MAX_VALUE);
 		plot.setSubrange(ThermometerPlot.WARNING, Double.MAX_VALUE, Double.MAX_VALUE);
-		plot.setSubrange(ThermometerPlot.CRITICAL, Double.MAX_VALUE, Double.MAX_VALUE);
-
+		plot.setSubrange(ThermometerPlot.CRITICAL, Double.MAX_VALUE, Double.MAX_VALUE);	
 		// change mercury colors
 		plot.setMercuryPaint(Color.GREEN);
-		plot.setSubrangePaint(ThermometerPlot.NORMAL, Color.RED);
+		plot.setSubrangePaint(ThermometerPlot.NORMAL, Color.GREEN);
 		plot.setSubrangePaint(ThermometerPlot.WARNING, Color.ORANGE);
 		plot.setSubrangePaint(ThermometerPlot.CRITICAL, Color.RED);
 
-		// change background color		
+		// change background color
 		plot.setBackgroundPaint(DEFAULT_BACKGROUND);
 
 		plot.setUnits(ThermometerPlot.UNITS_NONE);
@@ -87,23 +111,57 @@ public class ThermometerChart extends AbstractChart {
 
 		chart.setBackgroundPaint(DEFAULT_BACKGROUND);
 		chart.setBorderVisible(false);
-		
+
 		return chart;
 	}
 
 	@Override
 	public String getViewID() {
 		return VIEW_ID_PREFIX + ".thermometerchart";
+	}	
+
+	@ChartSetting(name = "Lower Bound", type = Type.GET)
+	public Double getMininum() {
+		return mininum;
 	}
 	
-	@UserSetting(name = "Upper Bound", type=Type.GET)
-	public Object getUpperBound(){
-		return this.plot.getUpperBound();
+	@ChartSetting(name = "Lower Bound", type = Type.SET)
+	public void setMininum(Double mininum) {
+		this.mininum = mininum;
+		resetBounds();
 	}
 	
-	@UserSetting(name = "Upper Bound", type=Type.SET)
-	public void setUpperBound(String newUpperBound){
-		this.plot.setUpperBound(Double.parseDouble(newUpperBound));
+	@ChartSetting(name = "Upper Bound", type = Type.GET)
+	public Double getMaximum() {
+		return maximum;
+	}
+
+	@ChartSetting(name = "Upper Bound", type = Type.SET)
+	public void setMaximum(Double maximum) {
+		this.maximum = maximum;
+		resetBounds();
+	}
+
+	@ChartSetting(name = "Upper Warning Bound", type = Type.GET)
+	public Double getUpperWarning() {
+		return upperWarning;
+	}
+
+	@ChartSetting(name = "Upper Warning Bound", type = Type.SET)
+	public void setUpperWarning(Double upperWarning) {
+		this.upperWarning = upperWarning;
+		resetBounds();
+	}
+
+	@ChartSetting(name = "Upper Critical Bound", type = Type.GET)
+	public Double getUpperCritical() {
+		return upperCritical;
+	}
+
+	@ChartSetting(name = "Upper Critical Bound", type = Type.SET)
+	public void setUpperCritical(Double upperCritical) {
+		this.upperCritical = upperCritical;
+		resetBounds();
 	}
 
 }

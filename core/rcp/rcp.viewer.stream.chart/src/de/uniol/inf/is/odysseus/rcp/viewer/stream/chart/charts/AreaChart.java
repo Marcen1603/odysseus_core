@@ -17,6 +17,6 @@ public class AreaChart extends AbstractCategoryTimeSeriesChart{
 	@Override
 	public String getViewID() {
 		return VIEW_ID_PREFIX+".areachart";
-	}
+	}	
 
 }

@@ -2,16 +2,17 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings;
 
 import java.lang.reflect.Method;
 
-public class MethodSetting {
-
+public class MethodSetting {	
+	
 	private Method getter;
 	private Method setter;
 	private String name;
+	private Method list;
 	
 	public MethodSetting(String name, Method getter, Method setter) {
 		this.getter = getter;
 		this.setter = setter;
-		this.name = name;
+		this.name = name;			
 	}
 
 	public String getName(){
@@ -37,6 +38,23 @@ public class MethodSetting {
 	public void setSetter(Method setter) {
 		this.setter = setter;
 	}
+
+	public Class<?> getSetterValueType() {
+		return this.getSetter().getParameterTypes()[0];
+	}
+	
+	public Class<?> getGetterValueType() {
+		return this.getGetter().getReturnType();
+	}
+
+	public Method getListGetter() {
+		return list;
+	}
+
+	public void setListGetter(Method list) {
+		this.list = list;
+	}		
 	
 	
+
 }

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.action.Action;
@@ -28,13 +29,22 @@ public class ChangeSettingsAction extends Action {
 			this.changeable.getChartSettings();
 			ChangeSettingsDialog dialog = new ChangeSettingsDialog(parentShell, this.changeable);
 			if (dialog.open() == Window.OK) {
-				for(Entry<MethodSetting, Object> en : dialog.getCurrentValues().entrySet()){					
-					en.getKey().getSetter().invoke(this.changeable, en.getValue().toString());
+				for(Entry<MethodSetting, Object> en : dialog.getCurrentValues().entrySet()){
+					invokeForType(en.getKey(), en.getValue());
 				}
 			}
+			this.changeable.chartSettingsChanged();
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 		}
+	}
+	
+	
+	private void invokeForType(MethodSetting ms, Object ob) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+//		Class<?> paramType = ms.getSetter().getParameterTypes()[0];						
+//		Object castedOb = paramType.cast(ob);
+//		ms.getSetter().invoke(this.changeable, castedOb);
+		ms.getSetter().invoke(this.changeable, ob);
 	}
 
 }

@@ -7,10 +7,15 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractCategorySingleValuesChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
 public class BarChart extends AbstractCategorySingleValuesChart {
 
 	
+	private Boolean autoadjust = true;
+
+
 	@Override
 	protected JFreeChart createChart() {
 		JFreeChart chart = ChartFactory.createBarChart(getTitle(), "", "", getDataset(), PlotOrientation.VERTICAL, true, true, false);		
@@ -29,6 +34,22 @@ public class BarChart extends AbstractCategorySingleValuesChart {
 	@Override
 	public String getViewID() {
 		return VIEW_ID_PREFIX+".barchart";
+	}
+	
+	@ChartSetting(name = "Autoadjust Axis", type=Type.GET)
+	public Boolean getAutoAdjust(){
+		return this.autoadjust;
+	}
+	
+	@ChartSetting(name = "Autoadjust Axis", type=Type.SET)
+	public void setAutoAdjust(Boolean autoadjust){
+		this.autoadjust = autoadjust;		
+	}
+	
+	@Override
+	public void chartSettingsChanged() {	
+		super.chartSettingsChanged();
+		getChart().getCategoryPlot().getRangeAxis().setAutoRange(this.autoadjust);
 	}
 
 }

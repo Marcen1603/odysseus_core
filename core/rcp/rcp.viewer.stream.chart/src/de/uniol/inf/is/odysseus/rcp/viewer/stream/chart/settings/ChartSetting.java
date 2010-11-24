@@ -7,9 +7,9 @@ import java.lang.annotation.ElementType;
 
 @Target( { ElementType.METHOD } )
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UserSetting {
+public @interface ChartSetting {
 
-	enum Type { GET, SET}
+	enum Type { GET, SET, OPTIONS}
 	String name(); 
 	Type type();
 }

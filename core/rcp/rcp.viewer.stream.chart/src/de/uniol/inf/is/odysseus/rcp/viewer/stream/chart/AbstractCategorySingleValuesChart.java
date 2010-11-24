@@ -40,7 +40,7 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart {
 				try {
 					int i = 0;
 					for (SDFAttribute a : currentSchema) {
-						if (currentVisibleAttributes[i]) {
+						if (getVisibleSchema().contains(currentSchema.get(i))) {
 							double value = Double.parseDouble(tuple.getAttribute(i).toString());
 							recalcAxis(value);
 							dcds.setValue(value, a.toString(), "");
@@ -87,17 +87,17 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart {
 	}
 
 	@Override
-	public void chartPropertiesChanged() {
+	public void chartSettingsChanged() {
 		dcds.clear();
 	}
 	
 	@Override
-	public String isValidSelection(boolean[] selectAttributes) {
-		if(getSelectedValueCount(selectAttributes)>0){
+	public String isValidSelection(SDFAttributeList selectAttributes) {
+		if (selectAttributes.size() > 0) {
 			return null;
 		}
 		return "The number of choosen attributes should be at least one!";
-	}
+	}	
 
 
 }

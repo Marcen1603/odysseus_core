@@ -11,9 +11,10 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.UserSetting.Type;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AbstractTimeSeriesChart extends AbstractChart{
 
@@ -28,12 +29,12 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 	private String dateformat = "HH:mm";	
 	
 	@Override
-	public void chartPropertiesChanged() {
+	public void chartSettingsChanged() {
 		series.clear();
 		this.dataset.removeAllSeries();
-		for (int i = 0; i < getSchema().getAttributeCount(); i++) {
-			if (currentVisibleAttributes[i]) {
-				String name = getSchema().get(i).toString();
+		for (int i = 0; i < getAllowedSchema().getAttributeCount(); i++) {
+			if (getVisibleSchema().contains(getAllowedSchema().get(i))) {
+				String name = getAllowedSchema().get(i).toString();
 				System.out.println("set attribute: "+name);
 				TimeSeries serie = new TimeSeries(name);
 				serie.setMaximumItemCount(this.maxItems);				
@@ -46,12 +47,12 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 	}
 	
 	@Override
-	public String isValidSelection(boolean[] selectAttributes) {
-		if(getSelectedValueCount(selectAttributes)>0){
+	public String isValidSelection(SDFAttributeList selectAttributes) {
+		if(selectAttributes.size()>0){
 			return null;
 		}
 		return "The number of choosen attributes should be at least one!";
-	}
+	}	
 
 	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
@@ -60,7 +61,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 				try {
 					FixedMillisecond ms = new FixedMillisecond(tuple.getMetadata().getStart().getMainPoint());
 					for (int i = 0; i < tuple.getAttributeCount(); i++) {
-						if (currentVisibleAttributes[i]) {
+						if (getVisibleSchema().contains(getSchema().get(i))) {
 							double value = Double.parseDouble(tuple.getAttribute(i).toString());
 							series.get(getSchema().get(i).toString()).add(ms, value);
 							
@@ -82,30 +83,29 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 	
 	protected void decorateChart(JFreeChart thechart){		
 		thechart.setBackgroundPaint(DEFAULT_BACKGROUND);
+		thechart.getXYPlot().setBackgroundPaint(DEFAULT_BACKGROUND);
 		thechart.getXYPlot().setRangeGridlinePaint(DEFAULT_BACKGROUND_GRID);			
 	}
 
-	@UserSetting(name = "Max Shown Items", type=Type.GET)
-	public Object getMaxItems() {
+	@ChartSetting(name = "Max Shown Items", type=Type.GET)
+	public Integer getMaxItems() {
 		return maxItems;
 	}
 
-	@UserSetting(name = "Max Shown Items", type=Type.SET)
-	public void setMaxItems(String maxItems) {
-		this.maxItems = Integer.parseInt(maxItems);
-		chartPropertiesChanged();
+	@ChartSetting(name = "Max Shown Items", type=Type.SET)
+	public void setMaxItems(Integer maxItems) {
+		this.maxItems = maxItems;		
 	}
 	
 	
-	@UserSetting(name = "Date Format", type=Type.GET)
-	public Object getDateFormat() {
+	@ChartSetting(name = "Date Format", type=Type.GET)
+	public String getDateFormat() {
 		return this.dateformat;
 	}
 
-	@UserSetting(name = "Date Format", type=Type.SET)
+	@ChartSetting(name = "Date Format", type=Type.SET)
 	public void setDateFormat(String dateFormat) {
-		this.dateformat = dateFormat;
-		chartPropertiesChanged();
+		this.dateformat = dateFormat;		
 	}
 	
 	
