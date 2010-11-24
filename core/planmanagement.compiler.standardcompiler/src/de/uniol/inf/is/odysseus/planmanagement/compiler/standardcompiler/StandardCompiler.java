@@ -1,14 +1,13 @@
 package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
@@ -18,12 +17,14 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.util.LoggerHelper;
+import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 /**
  * The StandardCompiler is a standard implementation for {@link ICompiler}. It
@@ -188,26 +189,50 @@ public class StandardCompiler implements ICompiler {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.ILogicalOperator, de.uniol.inf.is.odysseus.TransformationConfiguration)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
-			TransformationConfiguration transformationConfiguration, User caller)
-			throws TransformationException {
-		// create working copy of plan
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
-		AbstractGraphWalker walker = new AbstractGraphWalker();
-		walker.prefixWalk(logicalPlan, copyVisitor);
-		ILogicalOperator copyPlan = copyVisitor.getResult();
-		return this.transformation.transform(copyPlan, transformationConfiguration, caller);
-	}
+//	/* (non-Javadoc)
+//	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.ILogicalOperator, de.uniol.inf.is.odysseus.TransformationConfiguration)
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
+//			TransformationConfiguration transformationConfiguration, User caller)
+//			throws TransformationException {
+//		// create working copy of plan
+//		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+//		AbstractGraphWalker walker = new AbstractGraphWalker();
+//		walker.prefixWalk(logicalPlan, copyVisitor);
+//		ILogicalOperator copyPlan = copyVisitor.getResult();
+//		return this.transformation.transform(copyPlan, transformationConfiguration, caller);
+//	}
 
 	@Override
 	public void transform(IQuery query,
-			TransformationConfiguration transformationConfiguration) throws TransformationException {
-		query.initializePhysicalRoots(this.transformation.transform(query.getLogicalPlan(), transformationConfiguration, query.getUser()));
+			TransformationConfiguration transformationConfiguration, User caller) throws TransformationException {
+//		System.err.println("TRANSFORMING QUERY");
+//		
+//		System.err.println("OLD PLAN: TREE WALKER");
+//		AbstractTreeWalker walker2 = new AbstractTreeWalker();
+//		String result = walker2.prefixWalk(query.getLogicalPlan(), new AlgebraPlanToStringVisitor());
+//		System.err.println(result);
+//		
+//		AbstractGraphWalker walker = new AbstractGraphWalker();
+//		System.err.println("OLD PLAN");
+//		PrintGraphVisitor visitor = new PrintGraphVisitor();
+//		walker.prefixWalk(query.getLogicalPlan(), visitor);
+//		System.err.println(visitor.getResult());
+
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
+		AbstractGraphWalker walker = new AbstractGraphWalker();
+		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
+		ILogicalOperator copyPlan = copyVisitor.getResult();
+		
+//		walker = new AbstractGraphWalker();
+//		System.err.println("COPIED PLAN");
+//		visitor = new PrintGraphVisitor();
+//		walker.prefixWalk(copyPlan, visitor);
+//		System.err.println(visitor.getResult());
+
+		query.initializePhysicalRoots(this.transformation.transform(copyPlan, transformationConfiguration, caller));
 	}
 	
 	/* (non-Javadoc)
@@ -231,30 +256,30 @@ public class StandardCompiler implements ICompiler {
 	}
 	
 
-	@Override
-	public List<ILogicalOperator> createAlternativePlans(
-			ILogicalOperator logicalPlan, OptimizationConfiguration conf) {
-		// TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
-		// werden, z.B. durch Join-Vertauschungen
-		ILogicalOperator p = rewritePlan(logicalPlan, conf.getRewriteConfiguration());
-		List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
-		list.add(p);
-		return list;
-	}
+//	@Override
+//	public List<ILogicalOperator> createAlternativePlans(
+//			ILogicalOperator logicalPlan, OptimizationConfiguration conf) {
+//		// TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
+//		// werden, z.B. durch Join-Vertauschungen
+//		ILogicalOperator p = rewritePlan(logicalPlan, conf.getRewriteConfiguration());
+//		List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
+//		list.add(p);
+//		return list;
+//	}
 
-	@Override
-	public List<List<IPhysicalOperator>> transformWithAlternatives(
-			ILogicalOperator logicalPlan,
-			TransformationConfiguration transformationConfiguration, User caller)
-			throws TransformationException {
-		// TODO mehrere Alternativen muessen generiert werden, z.B. durch
-		// verschiedene Join-Implementationen
-		ArrayList<IPhysicalOperator> p = transform(logicalPlan,
-				transformationConfiguration, caller);
-		List<List<IPhysicalOperator>> list = new ArrayList<List<IPhysicalOperator>>(1);
-		list.add(p);
-		return list;
-	}
+//	@Override
+//	public List<List<IPhysicalOperator>> transformWithAlternatives(
+//			ILogicalOperator logicalPlan,
+//			TransformationConfiguration transformationConfiguration, User caller)
+//			throws TransformationException {
+//		// TODO mehrere Alternativen muessen generiert werden, z.B. durch
+//		// verschiedene Join-Implementationen
+//		ArrayList<IPhysicalOperator> p = transform(logicalPlan,
+//				transformationConfiguration, caller);
+//		List<List<IPhysicalOperator>> list = new ArrayList<List<IPhysicalOperator>>(1);
+//		list.add(p);
+//		return list;
+//	}
 	
 	@Override
 	public void addCompilerListener(ICompilerListener listener) {
@@ -278,7 +303,7 @@ public class StandardCompiler implements ICompiler {
 			String parserID, User user, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
 		List<IQuery> translate = translateQuery(query, parserID, user);
 		for (IQuery q:translate){
-			transform(q, transformationConfiguration);
+			transform(q, transformationConfiguration, user);
 		}
 		return translate;
 	}

@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.util;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.ISubscribable;
 import de.uniol.inf.is.odysseus.ISubscriber;
 import de.uniol.inf.is.odysseus.ISubscription;
@@ -12,16 +13,17 @@ import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 
 public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S, H>, H extends ISubscription<S>>{
 
-	ArrayList<S> visited;
-	ArrayList<IPhysicalOperator> visitedPhysical;
+	List<S> visited;
+	List<IPhysicalOperator> visitedPhysical;
 	
 	public AbstractGraphWalker(){
-		this.visited = new ArrayList<S>();
-		this.visitedPhysical = new ArrayList<IPhysicalOperator>();
+		this.visited = new IdentityArrayList<S>();
+		this.visitedPhysical = new IdentityArrayList<IPhysicalOperator>();
 	}
 	
 	public void clearVisited(){
-		this.visited = new ArrayList<S>();
+		this.visited = new IdentityArrayList<S>();
+		this.visitedPhysical = new IdentityArrayList<IPhysicalOperator>();
 	}
 	
 	/**

@@ -55,9 +55,9 @@ grant role DSUser to test23;
 grant role DSUser to test24;
 grant role DSUser to test25;
 
-create sla slaBronce time 500 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
-create sla slaSilver time 200 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
-create sla slaGold time 100 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
+create sla slaBronce time 50 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
+create sla slaSilver time 20 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
+create sla slaGold time 10 with (0.8,1,0),(0.5,0.8,300),(0.4,0.5,3000),(0,0.4,10000);
 
 create tenant tenant01 with slaBronce;
 create tenant tenant02 with slaBronce;

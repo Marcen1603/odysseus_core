@@ -110,45 +110,45 @@ public class WindowAO extends UnaryLogicalOp {
 		return getInputSchema();
 	}
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ ((partitionedBy == null) ? 0 : partitionedBy.hashCode());
-		result = prime * result
-				+ (int) (windowAdvance ^ (windowAdvance >>> 32));
-		result = prime * result + (int) (windowSize ^ (windowSize >>> 32));
-		result = prime * result
-				+ ((windowType == null) ? 0 : windowType.hashCode());
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = super.hashCode();
+//		result = prime * result
+//				+ ((partitionedBy == null) ? 0 : partitionedBy.hashCode());
+//		result = prime * result
+//				+ (int) (windowAdvance ^ (windowAdvance >>> 32));
+//		result = prime * result + (int) (windowSize ^ (windowSize >>> 32));
+//		result = prime * result
+//				+ ((windowType == null) ? 0 : windowType.hashCode());
+//		return result;
+//	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		WindowAO other = (WindowAO) obj;
-		if (partitionedBy == null) {
-			if (other.partitionedBy != null)
-				return false;
-		} else if (!partitionedBy.equals(other.partitionedBy))
-			return false;
-		if (windowAdvance != other.windowAdvance)
-			return false;
-		if (windowSize != other.windowSize)
-			return false;
-		if (windowType == null) {
-			if (other.windowType != null)
-				return false;
-		} else if (!windowType.equals(other.windowType))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (!super.equals(obj))
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		WindowAO other = (WindowAO) obj;
+//		if (partitionedBy == null) {
+//			if (other.partitionedBy != null)
+//				return false;
+//		} else if (!partitionedBy.equals(other.partitionedBy))
+//			return false;
+//		if (windowAdvance != other.windowAdvance)
+//			return false;
+//		if (windowSize != other.windowSize)
+//			return false;
+//		if (windowType == null) {
+//			if (other.windowType != null)
+//				return false;
+//		} else if (!windowType.equals(other.windowType))
+//			return false;
+//		return true;
+//	}
 	
 
 }

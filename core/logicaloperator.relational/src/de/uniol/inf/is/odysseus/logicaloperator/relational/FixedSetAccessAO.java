@@ -21,26 +21,26 @@ public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone
 		return tuples;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(tuples);
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = super.hashCode();
+//		result = prime * result + Arrays.hashCode(tuples);
+//		return result;
+//	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		@SuppressWarnings("unchecked")
-		FixedSetAccessAO other = (FixedSetAccessAO) obj;
-		if (!Arrays.equals(tuples, other.tuples))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (!super.equals(obj))
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		@SuppressWarnings("unchecked")
+//		FixedSetAccessAO other = (FixedSetAccessAO) obj;
+//		if (!Arrays.equals(tuples, other.tuples))
+//			return false;
+//		return true;
+//	}
 }

@@ -54,7 +54,7 @@ public class PartialPlanViewPart extends ViewPart implements IPlanModificationLi
 		
 		TableViewerColumn idColumn = new TableViewerColumn(tableViewer,
 				SWT.NONE);
-		idColumn.getColumn().setText("HashCode");
+		idColumn.getColumn().setText("ID");
 		// idColumn.getColumn().setWidth(50);
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -92,6 +92,20 @@ public class PartialPlanViewPart extends ViewPart implements IPlanModificationLi
 			}
 		});
 		tableColumnLayout.setColumnData(sourceColumn.getColumn(),
+				new ColumnWeightData(5, 25, true));
+
+		TableViewerColumn rootsColumn = new TableViewerColumn(tableViewer,
+				SWT.NONE);
+		rootsColumn.getColumn().setText("Roots");
+		// idColumn.getColumn().setWidth(50);
+		rootsColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(String.valueOf(((IPartialPlan) cell.getElement())
+						.getRoots()));
+			}
+		});
+		tableColumnLayout.setColumnData(rootsColumn.getColumn(),
 				new ColumnWeightData(5, 25, true));
 		
 		TableViewerColumn basePrioColumn = new TableViewerColumn(tableViewer,

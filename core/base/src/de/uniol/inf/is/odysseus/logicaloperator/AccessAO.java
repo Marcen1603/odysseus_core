@@ -102,39 +102,39 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 		return wildcard;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((host == null) ? 0 : host.hashCode());
-		result = prime * result + port;
-		result = prime * result + ((source == null) ? 0 : source.hashCode());
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = super.hashCode();
+//		result = prime * result + ((host == null) ? 0 : host.hashCode());
+//		result = prime * result + port;
+//		result = prime * result + ((source == null) ? 0 : source.hashCode());
+//		return result;
+//	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AccessAO other = (AccessAO) obj;
-		if (host == null) {
-			if (other.host != null)
-				return false;
-		} else if (!host.equals(other.host))
-			return false;
-		if (port != other.port)
-			return false;
-		if (source == null) {
-			if (other.source != null)
-				return false;
-		} else if (!source.equals(other.source))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (!super.equals(obj))
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		AccessAO other = (AccessAO) obj;
+//		if (host == null) {
+//			if (other.host != null)
+//				return false;
+//		} else if (!host.equals(other.host))
+//			return false;
+//		if (port != other.port)
+//			return false;
+//		if (source == null) {
+//			if (other.source != null)
+//				return false;
+//		} else if (!source.equals(other.source))
+//			return false;
+//		return true;
+//	}
 
 	public void setPort(int port) {
 		this.port = port;		

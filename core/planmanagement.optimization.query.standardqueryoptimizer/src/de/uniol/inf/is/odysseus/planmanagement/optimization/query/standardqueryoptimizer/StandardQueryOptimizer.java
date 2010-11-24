@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Parame
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
@@ -66,14 +68,19 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		ParameterDoRewrite restruct = parameters.getParameterDoRewrite();
 
 		// if a logical rewrite should be processed.
-		ILogicalOperator sealedLogicalPlan = query
+		ILogicalOperator originalPlan = query
 				.getLogicalPlan();
+
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
+		AbstractGraphWalker walker = new AbstractGraphWalker();
+		walker.prefixWalk(originalPlan, copyVisitor);
+		ILogicalOperator copiedPlan = copyVisitor.getResult();
 		
-		boolean queryShouldBeRewritten = sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRewrite.TRUE;
+		boolean queryShouldBeRewritten = copiedPlan != null && restruct != null && restruct == ParameterDoRewrite.TRUE;
 		if (queryShouldBeRewritten) {
-			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(sealedLogicalPlan, parameters.getRewriteConfiguration());
+			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(copiedPlan, parameters.getRewriteConfiguration());
 			// set new logical plan.
-			query.setLogicalPlan(newLogicalAlgebra);
+			query.setLogicalPlan(newLogicalAlgebra, false);
 		}
 
 		// TODO: is that correct? I think this should be done if (
@@ -85,10 +92,10 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		if (query.getRoots() == null || query.getRoots().isEmpty() || queryShouldBeRewritten){
 		try {
 				// create the physical plan
-				List<IPhysicalOperator> physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
+				compiler.transform(query, query.getBuildParameter()
 						.getTransformationConfiguration(), query.getUser());
 
-				postTransformationInit(query, physicalPlan);
+				postTransformationInit(query, query.getRoots());
 			} catch (Throwable e) {
 				throw new QueryOptimizationException(
 						"Exeception while initialize query.", e);

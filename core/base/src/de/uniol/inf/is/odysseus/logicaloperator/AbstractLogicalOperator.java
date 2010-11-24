@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
 
+import sun.awt.util.IdentityArrayList;
+
 import de.uniol.inf.is.odysseus.Subscription;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
@@ -25,7 +27,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	private ArrayList<IOperatorOwner> owner = new ArrayList<IOperatorOwner>();
+	final private List<IOperatorOwner> owner;
 
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
@@ -48,12 +50,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		predicate = (op.predicate == null) ? null : op.predicate.clone();
 		setName(op.getName());
+		owner = new IdentityArrayList<IOperatorOwner>(op.owner);
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new
 		// HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
 	}
 
 	public AbstractLogicalOperator() {
+		owner = new IdentityArrayList<IOperatorOwner>();
 	}
 
 	/*
@@ -219,7 +223,9 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
-		this.owner.add(owner);
+		if (!this.owner.contains(owner)){
+			this.owner.add(owner);
+		}
 	}
 
 	@Override
@@ -413,6 +419,24 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			int sourceOutPort, SDFAttributeList schema) {
 		// Nothing special in logical Operators
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		return getName()+"@"+hashCode()+" OwnerIDs: "+getOwnerIDs();
+	}
+
+	// TODO: Check if equals is needed in logical operators
+	@Override
+	final public boolean equals(Object arg0) {
+		return super.equals(arg0);
+	}
+	
+	@Override
+	final public int hashCode() {
+		return super.hashCode();
 	}
 	
 }

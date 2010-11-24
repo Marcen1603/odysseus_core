@@ -61,14 +61,12 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		for (IQuery query : queries) {
 			// create a physical plan if none is set
 			if (query.getRoots() == null || query.getRoots().isEmpty()) {
-				List<IPhysicalOperator> physicalPlan = sender.getCompiler()
+				sender.getCompiler()
 						.transform(
-								query.getLogicalPlan(),
+								query,
 								query.getBuildParameter()
 										.getTransformationConfiguration(),
 										query.getUser());
-
-				query.initializePhysicalRoots(physicalPlan);
 			}
 		}
 	}

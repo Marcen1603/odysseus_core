@@ -6,13 +6,11 @@ import java.util.List;
 
 import org.slf4j.LoggerFactory;
 
-
 public class RestructHelper {
 	public static Collection<ILogicalOperator> removeOperator(
 			UnaryLogicalOp remove, boolean reserveOutputSchema) {
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 		Collection<LogicalSubscription> fathers = remove.getSubscriptions();
-
 		LogicalSubscription child = remove.getSubscribedToSource(0);
 		// remove Connection between child and op
 		remove.unsubscribeFromSource(child);
@@ -27,12 +25,13 @@ public class RestructHelper {
 							.getTarget().getOutputSchema());
 			ret.add(father.getTarget());
 		}
-		//prevents duplicate entry if child.getTarget=father.getTarget
-		if(!ret.contains(child.getTarget())){
+		// prevents duplicate entry if child.getTarget=father.getTarget
+		if (!ret.contains(child.getTarget())) {
 			ret.add(child.getTarget());
 		}
 		for (LogicalSubscription a : child.getTarget().getSubscriptions()) {
-			LoggerFactory.getLogger(RestructHelper.class).debug("New subplan after remove: " + a.getTarget());
+			LoggerFactory.getLogger(RestructHelper.class).debug(
+					"New subplan after remove: " + a.getTarget());
 		}
 		return ret;
 	}
@@ -56,10 +55,12 @@ public class RestructHelper {
 		LogicalSubscription source = after.getSubscribedToSource(sinkInPort);
 		ret.add(source.getTarget());
 		after.unsubscribeFromSource(source);
-		source.getTarget().subscribeSink(toInsert, toInsertsinkInPort,
-				source.getSourceOutPort(), source.getTarget().getOutputSchema());
-		toInsert.subscribeSink(after, sinkInPort, toInsertsourceOutPort, toInsert
-				.getOutputSchema());
+		source.getTarget()
+				.subscribeSink(toInsert, toInsertsinkInPort,
+						source.getSourceOutPort(),
+						source.getTarget().getOutputSchema());
+		toInsert.subscribeSink(after, sinkInPort, toInsertsourceOutPort,
+				toInsert.getOutputSchema());
 		ret.add(after);
 		return ret;
 	}
@@ -74,14 +75,15 @@ public class RestructHelper {
 		LogicalSubscription toUp = father.getSubscription();
 		father.unsubscribeSink(toUp);
 
-		father.subscribeToSource(toDown.getTarget(), 0, toDown.getSourceOutPort(),
-				toDown.getSchema());
+		father.subscribeToSource(toDown.getTarget(), 0,
+				toDown.getSourceOutPort(), toDown.getSchema());
 		father.subscribeSink(son, 0, 0, father.getOutputSchema());
 
-		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0, son
-				.getOutputSchema());
+		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0,
+				son.getOutputSchema());
 
-		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>(2);
+		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>(
+				2);
 		toUpdate.add(toDown.getTarget());
 		toUpdate.add(toUp.getTarget());
 		return toUpdate;

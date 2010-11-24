@@ -14,34 +14,34 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class SortAO extends UnaryLogicalOp{
 
-    @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(ascending);
-		result = prime * result
-				+ ((sortAttribs == null) ? 0 : sortAttribs.hashCode());
-		return result;
-	}
+//    @Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = super.hashCode();
+//		result = prime * result + Arrays.hashCode(ascending);
+//		result = prime * result
+//				+ ((sortAttribs == null) ? 0 : sortAttribs.hashCode());
+//		return result;
+//	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SortAO other = (SortAO) obj;
-		if (!Arrays.equals(ascending, other.ascending))
-			return false;
-		if (sortAttribs == null) {
-			if (other.sortAttribs != null)
-				return false;
-		} else if (!sortAttribs.equals(other.sortAttribs))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (!super.equals(obj))
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		SortAO other = (SortAO) obj;
+//		if (!Arrays.equals(ascending, other.ascending))
+//			return false;
+//		if (sortAttribs == null) {
+//			if (other.sortAttribs != null)
+//				return false;
+//		} else if (!sortAttribs.equals(other.sortAttribs))
+//			return false;
+//		return true;
+//	}
 
 	/**
 	 * 

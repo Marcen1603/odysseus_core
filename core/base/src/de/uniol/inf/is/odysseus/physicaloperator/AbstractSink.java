@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.awt.util.IdentityArrayList;
+
 import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventHandler;
@@ -36,7 +38,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	private String name;
 	private SDFAttributeList outputSchema;
 
-	protected Vector<IOperatorOwner> owners = new Vector<IOperatorOwner>();
+	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
 	private volatile boolean allInputsDone = false;
 
@@ -314,13 +316,14 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
-		this.owners.add(owner);
+		if (!this.owners.contains(owner)) {
+			this.owners.add(owner);
+		}
 	}
-
+	
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
-		while (this.owners.remove(owner)) {
-		}
+		this.owners.remove(owner);
 	}
 
 	@Override

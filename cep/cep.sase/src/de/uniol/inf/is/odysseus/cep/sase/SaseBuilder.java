@@ -99,7 +99,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			ILogicalOperator ao = walker.start();
 			IQuery query = new Query();
 			query.setParserId(getLanguage());
-			query.setLogicalPlan(ao);
+			query.setLogicalPlan(ao, true);
 			retList.add(query);
 		} catch (RecognitionException e) {
 			throw new RuntimeException(e);

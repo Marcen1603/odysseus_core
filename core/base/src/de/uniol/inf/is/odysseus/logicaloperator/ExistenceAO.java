@@ -8,30 +8,30 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class ExistenceAO extends BinaryLogicalOp implements Cloneable {
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = super.hashCode();
+//		result = prime * result + ((type == null) ? 0 : type.hashCode());
+//		return result;
+//	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ExistenceAO other = (ExistenceAO) obj;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (!super.equals(obj))
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		ExistenceAO other = (ExistenceAO) obj;
+//		if (type == null) {
+//			if (other.type != null)
+//				return false;
+//		} else if (!type.equals(other.type))
+//			return false;
+//		return true;
+//	}
 
 	private static final long serialVersionUID = -7471367531511438478L;
 

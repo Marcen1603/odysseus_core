@@ -116,7 +116,7 @@ public class WorkingMemory {
 						} catch (Exception e) {
 							e.printStackTrace();
 							LoggerSystem.printlog(Accuracy.ERROR, e.getLocalizedMessage());
-							throw new RuntimeException("Transformation Failed: " + e.getLocalizedMessage(), e);
+							throw new RuntimeException("Transformation Failed in rule "+rule+" "+ e.getLocalizedMessage(), e);
 						}
 					} else {
 						this.wasnotexecuted(rule, o);

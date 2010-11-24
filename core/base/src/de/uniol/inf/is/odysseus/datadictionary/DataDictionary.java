@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -26,6 +27,7 @@ import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.util.SetOwnerGraphVisitor;
 
 public class DataDictionary {
 
@@ -198,10 +200,21 @@ public class DataDictionary {
 	@SuppressWarnings("unchecked")
 	private ILogicalOperator getView(String viewname, User caller) {
 		ILogicalOperator logicalPlan = this.viewDefinitions.get(viewname);
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+		// TODO: null correct?
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
 		@SuppressWarnings("rawtypes")
 		AbstractGraphWalker walker = new AbstractGraphWalker();
 		walker.prefixWalk(logicalPlan, copyVisitor);
+		// A View has no owner, since this view will be added as a copy to
+		// another logical plan, that belongs to a query
+		//		
+	// Set Owner
+//		// TODO??
+//		IOperatorOwner owner = null;
+//		SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(owner);
+//		walker = new AbstractGraphWalker();
+//		walker.prefixWalk(logicalPlan, visitor);
+		
 		return copyVisitor.getResult();
 	}
 

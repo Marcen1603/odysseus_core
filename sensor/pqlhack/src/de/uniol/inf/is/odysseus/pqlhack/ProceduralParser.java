@@ -111,7 +111,7 @@ public class ProceduralParser implements IQueryParser {
 			
 			Query queryObj = new Query();
 			queryObj.setParserId(getLanguage());
-			queryObj.setLogicalPlan(topAO);
+			queryObj.setLogicalPlan(topAO, true);
 
 			listOfPlans.add(queryObj);
 			

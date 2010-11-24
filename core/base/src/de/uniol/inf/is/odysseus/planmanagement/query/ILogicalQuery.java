@@ -49,10 +49,14 @@ public interface ILogicalQuery extends
 	/**
 	 * Set the logical plan of this query.
 	 * 
-	 * @param newLogicalAlgebra
-	 *            The new logical plan of this query.
+	 * @param logicalPlan
+	 *            The new logical plan of this query
+	 * @setOwner: Sets all connected operators in the logical plan as owned by
+	 * this query. Attention: If there are operators that are connected but not part
+	 * of this query, owner need to be set manually! 
+	 * @throws IllegalArgumentException if setOwner is false and no owners are set
 	 */
-	public void setLogicalPlan(ILogicalOperator newLogicalAlgebra);
+	public void setLogicalPlan(ILogicalOperator logicalPlan, boolean setOwner);
 
 	/**
 	 * Returns the logical plan of this query.

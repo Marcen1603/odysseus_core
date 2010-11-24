@@ -1,31 +1,12 @@
 package de.uniol.inf.is.odysseus.collection;
 
-public class Pair<E1, E2> {
+public class Pair<E1, E2> extends IdentityPair<E1, E2>{
 
-	private E1 e1;
-	private E2 e2;
 	
 	public Pair(E1 e1, E2 e2) {
-		this.e1 = e1;
-		this.e2 = e2;
+		super(e1,e2);
 	}
 	
-	public E1 getE1() {
-		return e1;
-	}
-
-	public void setE1(E1 e1) {
-		this.e1 = e1;
-	}
-
-	public E2 getE2() {
-		return e2;
-	}
-
-	public void setE2(E2 e2) {
-		this.e2 = e2;
-	}
-
 	@Override
 	public int hashCode() {
 		final int PRIME = 31;
@@ -56,12 +37,4 @@ public class Pair<E1, E2> {
 		return true;
 	}
 	
-	@Override
-	public String toString() {
-		StringBuffer ret = new StringBuffer("(");		
-		ret.append(e1).append(",");
-		ret.append(e2).append(")");
-		return ret.toString();
-	}
-
 }

@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.SetOwnerGraphVisitor;
 
 /**
  * Query is a standard implementation of a query in odysseus. Each query has an
@@ -33,8 +35,8 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public class Query extends AbstractMonitoringDataProvider implements IQuery{
-	
+public class Query extends AbstractMonitoringDataProvider implements IQuery {
+
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {
@@ -43,7 +45,6 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 		}
 		return _logger;
 	}
-	
 
 	/**
 	 * Counter for ID creation.
@@ -91,7 +92,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 * Indicates if this query is active.
 	 */
 	private boolean active;
-	
+
 	private boolean containsCycles = false;
 
 	/**
@@ -113,23 +114,23 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 * Parameter for building this query.
 	 */
 	private QueryBuildConfiguration parameters = new QueryBuildConfiguration();
-	
+
 	/**
 	 * EventListener
 	 */
-	
-	Map<String,IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
+
+	Map<String, IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
 
 	@SuppressWarnings("rawtypes")
-	public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();	
-
+	public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();
 
 	public Query() {
 		this("", null, null, null);
 	}
 
 	/**
-	 * Creates a query based on a physical plan and {@link QueryBuildConfiguration}
+	 * Creates a query based on a physical plan and
+	 * {@link QueryBuildConfiguration}
 	 * 
 	 * @param physicalPlan
 	 *            physical operator plan
@@ -154,14 +155,16 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	}
 
 	/**
-	 * Creates a query based on a logical plan and {@link QueryBuildConfiguration}
+	 * Creates a query based on a logical plan and
+	 * {@link QueryBuildConfiguration}
 	 * 
 	 * @param logicalPlan
 	 *            logical operator plan
 	 * @param parameters
 	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
-	public Query(ILogicalOperator logicalPlan, QueryBuildConfiguration parameters) {
+	public Query(ILogicalOperator logicalPlan,
+			QueryBuildConfiguration parameters) {
 		this("", logicalPlan, null, parameters);
 	}
 
@@ -179,7 +182,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
 	private Query(String parserID, ILogicalOperator logicalPlan,
-			List<IPhysicalOperator> physicalPlan, QueryBuildConfiguration parameters) {
+			List<IPhysicalOperator> physicalPlan,
+			QueryBuildConfiguration parameters) {
 		this.id = idCounter++;
 		this.active = true;
 		this.parameters = parameters;
@@ -221,8 +225,19 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 * setLogicalPlan(de.uniol.inf.is.odysseus.ILogicalOperator)
 	 */
 	@Override
-	public void setLogicalPlan(ILogicalOperator logicalPlan) {
+	public void setLogicalPlan(ILogicalOperator logicalPlan, boolean setOwner) {
 		this.logicalPlan = logicalPlan;
+		if (setOwner) {
+			// Set Owner
+			SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(
+					this);
+			AbstractGraphWalker walker = new AbstractGraphWalker();
+			walker.prefixWalk(logicalPlan, visitor);
+		}else{
+			if (!logicalPlan.hasOwner()){
+				throw new IllegalArgumentException("LogicalPlan must have an owner");
+			}
+		}
 	}
 
 	/*
@@ -233,7 +248,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 */
 	@Override
 	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> roots) {
-		getLogger().debug("setRoots "+roots);
+		getLogger().debug("setRoots " + roots);
 		this.roots = roots;
 
 		// evaluate built parameter
@@ -255,8 +270,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 							&& oldRoot.isSource()) {
 						IPhysicalOperator cloned = this.parameters
 								.getDefaultRootStrategy()
-								.connectDefaultRootToSource((ISink<?>) defaultRoot,
-										oldRoot);
+								.connectDefaultRootToSource(
+										(ISink<?>) defaultRoot, oldRoot);
 						// ((ISink) defaultRoot).subscribeToSource((ISource)
 						// oldRoot, 0,
 						// 0, oldRoot.getOutputSchema());
@@ -273,10 +288,10 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 						}
 					}
 				}
-				//this.roots = newRoots;
+				// this.roots = newRoots;
 			}
 		}
-		getLogger().debug("setRoots "+roots);
+		getLogger().debug("setRoots " + roots);
 		return this.roots;
 	}
 
@@ -317,7 +332,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 
 		// Store each child in a list. And set this Query as owner of each child
 		for (IPhysicalOperator root : roots) {
-			//addPhysicalChildren(GraphHelper.getChildren(root));
+			// addPhysicalChildren(GraphHelper.getChildren(root));
 			addPhysicalChildren(getChildren(root));
 		}
 	}
@@ -377,7 +392,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 			child.addOwner(this);
 		}
 	}
-	
+
 	private boolean removeChild(IPhysicalOperator child) {
 		if (this.physicalChilds.remove(child)) {
 			child.removeOwner(this);
@@ -386,21 +401,20 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 		return false;
 	}
 
-	
 	/**
 	 * replace an physical operator of the query plan with another operator
 	 * operator subscription are not touched, so correct subscriptions need to
-	 * be set before replacement 
+	 * be set before replacement
+	 * 
 	 * @param oldOp
 	 * @param newOp
 	 */
-	public void replaceOperator(IPhysicalOperator oldOp, IPhysicalOperator newOp){
-		if (removeChild(oldOp)){
+	public void replaceOperator(IPhysicalOperator oldOp, IPhysicalOperator newOp) {
+		if (removeChild(oldOp)) {
 			addChild(newOp);
 		}// TODO: Exception werfen?
 	}
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -414,19 +428,19 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 			getLogger().debug("Remove Ownership for " + physicalOperator);
 			physicalOperator.removeOwner(this);
-//			if (!physicalOperator.hasOwner()) {
-//				getLogger()
-//						.debug("No more owners. Closing " + physicalOperator);
-//				// physicalOperator.close();
-//				getLogger().error("ATTENTION: CLOSING CURRENT NOT IMPLEMENTED");
-//				if (physicalOperator.isSink()) {
-//					getLogger().debug(
-//							"Sink unsubscribe from all sources "
-//									+ physicalOperator);
-//					ISink<?> sink = (ISink<?>) physicalOperator;
-//					sink.unsubscribeFromAllSources();
-//				}
-//			}
+			// if (!physicalOperator.hasOwner()) {
+			// getLogger()
+			// .debug("No more owners. Closing " + physicalOperator);
+			// // physicalOperator.close();
+			// getLogger().error("ATTENTION: CLOSING CURRENT NOT IMPLEMENTED");
+			// if (physicalOperator.isSink()) {
+			// getLogger().debug(
+			// "Sink unsubscribe from all sources "
+			// + physicalOperator);
+			// ISink<?> sink = (ISink<?>) physicalOperator;
+			// sink.unsubscribeFromAllSources();
+			// }
+			// }
 		}
 	}
 
@@ -437,14 +451,14 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 */
 	@Override
 	public void start() {
-//		synchronized (this.physicalChilds) {
-//			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-//				if (physicalOperator instanceof IIterableSource<?>) {
-//					((IIterableSource<?>) physicalOperator)
-//							.activateRequest(this);
-//				}
-//			}
-//		}
+		// synchronized (this.physicalChilds) {
+		// for (IPhysicalOperator physicalOperator : this.physicalChilds) {
+		// if (physicalOperator instanceof IIterableSource<?>) {
+		// ((IIterableSource<?>) physicalOperator)
+		// .activateRequest(this);
+		// }
+		// }
+		// }
 		this.active = true;
 	}
 
@@ -455,21 +469,21 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 */
 	@Override
 	public void stop() {
-//		synchronized (this.physicalChilds) {
-//			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-//				if (physicalOperator instanceof IIterableSource<?>) {
-//					((IIterableSource<?>) physicalOperator)
-//							.deactivateRequest(this);
-//				}
-//			}
-//		}
+		// synchronized (this.physicalChilds) {
+		// for (IPhysicalOperator physicalOperator : this.physicalChilds) {
+		// if (physicalOperator instanceof IIterableSource<?>) {
+		// ((IIterableSource<?>) physicalOperator)
+		// .deactivateRequest(this);
+		// }
+		// }
+		// }
 		this.active = false;
 	}
-	
+
 	@Override
 	public boolean isOpened() {
-		for (IPhysicalOperator o: getRoots()){
-			if (!o.isOpen()){
+		for (IPhysicalOperator o : getRoots()) {
+			if (!o.isOpen()) {
 				return false;
 			}
 		}
@@ -555,8 +569,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.query.IQuery#getPriority()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.query.IQuery#getPriority()
 	 */
 	@Override
 	public int getPriority() {
@@ -566,8 +579,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.query.IQuery#setPriority
+	 * @see de.uniol.inf.is.odysseus.planmanagement.query.IQuery#setPriority
 	 * (int)
 	 */
 	@Override
@@ -593,12 +605,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	 */
 	@Override
 	public List<IPhysicalOperator> getRoots() {
-		if (roots != null){
-			return Collections.unmodifiableList(this.roots);	
-		}else{
+		if (roots != null) {
+			return Collections.unmodifiableList(this.roots);
+		} else {
 			return null;
 		}
-		
+
 	}
 
 	/*
@@ -625,8 +637,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.IOperatorControl#îsRunning()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IOperatorControl#îsRunning()
 	 */
 	@Override
 	public boolean isActive() {
@@ -666,57 +677,59 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 	@Override
 	public void setBuildParameter(QueryBuildConfiguration parameter) {
 		this.parameters = parameter;
-	}	
-	
+	}
+
 	@Override
 	public boolean containsCycles() {
 		return containsCycles;
 	}
-	
-	public void setContainsCycles(boolean containsCycles){
+
+	public void setContainsCycles(boolean containsCycles) {
 		this.containsCycles = containsCycles;
 	}
-	
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void addPlanMonitor(String name, IPlanMonitor planMonitor) {
-		this.planmonitors.put(name, planMonitor);	
+		this.planmonitors.put(name, planMonitor);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public IPlanMonitor getPlanMonitor(String name) {
 		return this.planmonitors.get(name);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Collection<IPlanMonitor> getPlanMonitors(){
+	public Collection<IPlanMonitor> getPlanMonitors() {
 		return Collections.unmodifiableCollection(planmonitors.values());
 	}
 
 	/**
-	 * Replaces a Root in the Query with another Physical Operator
-	 * (Has no effect, if the oldRoot-argument is no root for this Query)
+	 * Replaces a Root in the Query with another Physical Operator (Has no
+	 * effect, if the oldRoot-argument is no root for this Query)
 	 * 
-	 * @param oldRoot The root that is being replaced
-	 * @param newRoot The replacement for the old root
+	 * @param oldRoot
+	 *            The root that is being replaced
+	 * @param newRoot
+	 *            The replacement for the old root
 	 * 
 	 */
 	public void replaceRoot(IPhysicalOperator oldRoot, IPhysicalOperator newRoot) {
 
-		if(this.roots.contains(oldRoot)) {
-			ArrayList<IPhysicalOperator> oldRoots = new ArrayList<IPhysicalOperator>(this.roots);
+		if (this.roots.contains(oldRoot)) {
+			ArrayList<IPhysicalOperator> oldRoots = new ArrayList<IPhysicalOperator>(
+					this.roots);
 			oldRoots.remove(oldRoot);
 			oldRoots.add(newRoot);
-			this.setRoots(oldRoots);			
+			this.setRoots(oldRoots);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Query "+getID();
+		return "Query " + getID();
 	}
 
 	@Override
@@ -737,6 +750,5 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery{
 			return false;
 		return true;
 	}
-	
-	
+
 }

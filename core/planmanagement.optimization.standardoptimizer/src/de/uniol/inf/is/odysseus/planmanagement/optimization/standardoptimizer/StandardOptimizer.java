@@ -245,7 +245,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 		try {
 			// set new logical plan
-			query.setLogicalPlan(context.getLogicalPlan());
+			query.setLogicalPlan(context.getLogicalPlan(), false);
 
 			// update execution plan
 			((IExecutor) context.getSender()).updateExecutionPlan();

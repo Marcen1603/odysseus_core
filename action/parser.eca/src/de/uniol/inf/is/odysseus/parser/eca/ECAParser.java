@@ -121,7 +121,7 @@ public class ECAParser implements IQueryParser {
 				.getOutputSchema());
 
 		// replace old top element through sink
-		query.setLogicalPlan(eAO);
+		query.setLogicalPlan(eAO, true);
 		query.setParserId(getLanguage());
 		return plan;
 	}

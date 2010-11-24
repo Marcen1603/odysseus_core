@@ -157,7 +157,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		Query query = new Query();
 		query.setParserId(getLanguage());
 		query.setPriority(priority);
-		query.setLogicalPlan(op);
+		query.setLogicalPlan(op, true);
 
 		plans.add(query);
 		return plans;
@@ -698,7 +698,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	private void addQuery(AbstractLogicalOperator sourceOp) {
 		Query query = new Query();
 		query.setParserId(getLanguage());
-		query.setLogicalPlan(sourceOp);
+		query.setLogicalPlan(sourceOp, true);
 		plans.add(query);
 	}
 
@@ -960,7 +960,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		Query query = new Query();
 		query.setParserId(getLanguage());
-		query.setLogicalPlan(op);
+		query.setLogicalPlan(op, true);
 
 		plans.add(query);
 		return plans;

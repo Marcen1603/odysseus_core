@@ -11,34 +11,34 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -4615895793429076670L;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + defaultPriority;
-		result = prime * result
-				+ ((priorities == null) ? 0 : priorities.hashCode());
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = super.hashCode();
+//		result = prime * result + defaultPriority;
+//		result = prime * result
+//				+ ((priorities == null) ? 0 : priorities.hashCode());
+//		return result;
+//	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PriorityAO<?> other = (PriorityAO<?>) obj;
-		if (defaultPriority != other.defaultPriority)
-			return false;
-		if (priorities == null) {
-			if (other.priorities != null)
-				return false;
-		} else if (!priorities.equals(other.priorities))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (!super.equals(obj))
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		PriorityAO<?> other = (PriorityAO<?>) obj;
+//		if (defaultPriority != other.defaultPriority)
+//			return false;
+//		if (priorities == null) {
+//			if (other.priorities != null)
+//				return false;
+//		} else if (!priorities.equals(other.priorities))
+//			return false;
+//		return true;
+//	}
 
 	private Map<Byte, IPredicate<? super T>> priorities;
 	private byte defaultPriority;

@@ -378,8 +378,9 @@ public class StandardExecutor extends AbstractExecutor {
 		return addQuery(query, user, validateBuildParameters(parameters));
 	}
 
+	// TODO: REMOVE SYNCHRONIZED!
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID,
+	public synchronized Collection<Integer> addQuery(String query, String parserID,
 			User user, @SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
 			throws PlanManagementException {
 		QueryBuildConfiguration conf = new QueryBuildConfiguration(parameters);
