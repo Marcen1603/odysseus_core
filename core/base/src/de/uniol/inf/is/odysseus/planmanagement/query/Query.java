@@ -235,7 +235,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			walker.prefixWalk(logicalPlan, visitor);
 		}else{
 			if (!logicalPlan.hasOwner()){
-				throw new IllegalArgumentException("LogicalPlan must have an owner");
+				throw new IllegalArgumentException("LogicalPlan must have an owner "+logicalPlan);
 			}
 		}
 	}
