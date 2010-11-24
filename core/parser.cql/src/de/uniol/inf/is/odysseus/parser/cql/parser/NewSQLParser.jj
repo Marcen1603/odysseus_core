@@ -1067,7 +1067,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  String ret;  Token t;}{/*@bgen(jjtree) DateFormat */
   try {
-/*@egen*/  // permitted: <Year Expression> <Time Expression>  // or <Year Expression>  // or <Time Expression>  t = < IDENTIFIER >  {    ret = t.image;  }  // evtl. noch ein Identifier f\ufffdr die Zeit  (t = < IDENTIFIER >  {    ret += " " + t.image;  }  )?/*@bgen(jjtree)*/
+/*@egen*/  // permitted: <Year Expression> <Time Expression>  // or <Year Expression>  // or <Time Expression>  t = < IDENTIFIER >  {    ret = t.image;  }  // evtl. noch ein Identifier f\u00ef\u00bf\u00bdr die Zeit  (t = < IDENTIFIER >  {    ret += " " + t.image;  }  )?/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

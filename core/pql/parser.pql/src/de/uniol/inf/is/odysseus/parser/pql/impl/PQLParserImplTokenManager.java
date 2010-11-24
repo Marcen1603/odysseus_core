@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
@@ -27,6 +28,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.PrintTreeVisitor;
+import de.uniol.inf.is.odysseus.util.SetOwnerVisitor;
 
 /** Token Manager. */
 @SuppressWarnings("all")
