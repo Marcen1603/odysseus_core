@@ -13,7 +13,7 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	private double selectivity;
 	
 	public BenchmarkAO(BenchmarkAO benchmarkAO) {
-		super();
+		super(benchmarkAO);
 		this.processingTimeInns = benchmarkAO.processingTimeInns;
 		this.selectivity = benchmarkAO.selectivity;
 	}
