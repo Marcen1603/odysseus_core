@@ -2,6 +2,15 @@ package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
 
+/**
+ * The role is a container for privileges. You can grant a role to user. User
+ * that have a role also have the roles privileges.
+ * 
+ * A role can also be a group. A group can't contain privileges.
+ * 
+ * @author Christian van Göns
+ * 
+ */
 public final class Role extends AbstractUserManagementEntity implements
 		Serializable {
 
@@ -36,14 +45,29 @@ public final class Role extends AbstractUserManagementEntity implements
 		return true;
 	}
 
+	/**
+	 * Returns the id of the role.
+	 * 
+	 * @return Int
+	 */
 	public int getID() {
 		return this.ID;
 	}
 
+	/**
+	 * Returns the role name.
+	 * 
+	 * @return String
+	 */
 	public String getRolename() {
 		return getName();
 	}
 
+	/**
+	 * Sets the role name.
+	 * 
+	 * @param rolename
+	 */
 	void setRolename(String rolename) {
 		setName(rolename);
 	}
@@ -53,10 +77,20 @@ public final class Role extends AbstractUserManagementEntity implements
 		return getName();
 	}
 
+	/**
+	 * Defines the role as group.
+	 * 
+	 * @param isGroup
+	 */
 	public void setGroup(boolean isGroup) {
 		this.isGroup = isGroup;
 	}
 
+	/**
+	 * Returns true if the role is a group.
+	 * 
+	 * @return boolean
+	 */
 	public boolean isGroup() {
 		return isGroup;
 	}

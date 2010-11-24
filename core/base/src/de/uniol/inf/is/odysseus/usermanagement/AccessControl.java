@@ -3,6 +3,25 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 
+/**
+ * The Access Control manages the access to specified methods. All restricted
+ * methods calling the method <b>hasPermission()</b>.
+ * <ul>
+ * <li>It checks if the specified user or role has the needed permission.</il>
+ * <li>If the user do not have the needed permissions the Access Control checks
+ * if the user has a role that has the needed permission.</li>
+ * <li>Checks if the user is the owner of the accessed object.</li>
+ * </ul>
+ * 
+ * The class checks the granted actions (permissions) from the action classes.
+ * This actions are contained in the Privileges.
+ * 
+ * @see de.uniol.inf.is.odysseus.usermanagement.IUserAction.java
+ * @see hasPermission
+ * @see isCreatorOfObject
+ * @author Christian van Göns
+ * 
+ */
 public final class AccessControl {
 
 	static private AccessControl instance = null;
@@ -74,12 +93,12 @@ public final class AccessControl {
 		if (username != null && !username.isEmpty()) {
 			String user = DataDictionary.getInstance().getUserForEntity(
 					objecturi);
-			if (user==null || user.isEmpty()) {
+			if (user == null || user.isEmpty()) {
 				User userObj = DataDictionary.getInstance()
-				.getUserForViewOrStream(objecturi);
-				user = userObj!=null?userObj.getUsername():null;
+						.getUserForViewOrStream(objecturi);
+				user = userObj != null ? userObj.getUsername() : null;
 			}
-			if (user!= null && !user.isEmpty()) {
+			if (user != null && !user.isEmpty()) {
 				if (user.equals(username)) {
 					return true;
 				}
