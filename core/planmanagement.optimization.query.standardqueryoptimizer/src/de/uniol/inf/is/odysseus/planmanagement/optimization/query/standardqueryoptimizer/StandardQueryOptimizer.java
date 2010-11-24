@@ -78,9 +78,9 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		
 		boolean queryShouldBeRewritten = copiedPlan != null && restruct != null && restruct == ParameterDoRewrite.TRUE;
 		if (queryShouldBeRewritten) {
-			ILogicalOperator newLogicalAlgebra = compiler.rewritePlan(copiedPlan, parameters.getRewriteConfiguration());
+			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan, parameters.getRewriteConfiguration());
 			// set new logical plan.
-			query.setLogicalPlan(newLogicalAlgebra, false);
+			query.setLogicalPlan(newPlan, false);
 		}
 
 		// TODO: is that correct? I think this should be done if (
