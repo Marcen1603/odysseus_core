@@ -7,7 +7,6 @@
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
          <menu
-               commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.command.menu.command.showStreamCommand"
                icon="icons/monitor.png"
                label="Charts">
             <command
@@ -68,6 +67,15 @@
                   visible="true">
             </separator>
             <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowScatterPlotCommand"
+                  icon="icons/chart_scatter.png"
+                  label="Scatter Plot Chart"
+                  style="push">
+            </command>
+            <separator
+                  name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.separator1">
+            </separator>
+            <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowPieChart3DCommand"
                   icon="icons/chart_pie.png"
                   label="3D Pie Chart"
@@ -80,7 +88,6 @@
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
          <menu
-               commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.command.menu.command.showStreamCommand"
                icon="icons/monitor.png"
                label="Charts">
          </menu>
@@ -89,7 +96,6 @@
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor?after=additions">
          <menu
-               commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.command.menu.command.showStreamCommand"
                icon="icons/monitor.png"
                label="Charts">
          </menu>
@@ -137,6 +143,11 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowThermometerCommand"
             name="Thermometer Command">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowScatterPlotCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowScatterPlotCommand"
+            name="Scatter Plot Command">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -151,6 +162,7 @@
       </view>
       <view
             allowMultiple="true"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart"
             icon="icons/chart_pie.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart"
@@ -210,6 +222,15 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.thermometerchart"
             name="Thermometer"
             restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ScatterPlotChart"
+            icon="icons/chart_scatter.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.scatterplotchart"
+            name="Scatter Plot Chart"
+            restorable="true">
       </view>
    </extension>
 

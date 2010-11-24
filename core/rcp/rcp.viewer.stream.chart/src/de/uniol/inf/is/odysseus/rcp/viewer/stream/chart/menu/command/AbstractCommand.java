@@ -6,7 +6,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -20,10 +19,11 @@ public abstract class AbstractCommand extends AbstractHandler {
 	public AbstractChart openView(AbstractChart createView, IPhysicalOperator observingOperator) {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
-			AbstractChart view = (AbstractChart)activePage.showView(createView.getViewID(), observingOperator.toString(), IWorkbenchPage.VIEW_ACTIVATE);			
+			String secondaryIdentifier = observingOperator.getClass().getCanonicalName()+observingOperator.getClass().hashCode();
+			AbstractChart view = (AbstractChart)activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);			
 			view.init(observingOperator);
 			return view;
-		} catch (PartInitException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

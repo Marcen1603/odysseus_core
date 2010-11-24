@@ -1,15 +1,10 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
