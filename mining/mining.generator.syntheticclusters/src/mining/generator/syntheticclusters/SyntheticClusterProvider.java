@@ -7,6 +7,9 @@ import mining.generator.base.tuple.DataTuple;
 
 public class SyntheticClusterProvider extends StreamClientHandler {
 
+	// CREATE STREAM clusters (timestamp STARTTIMESTAMP, valX DOUBLE, valY DOUBLE) CHANNEL localhost : 54321;
+	
+	
 	private long time = 0;
 	private int numberOfPotentialClusters = 4; // gerade anzahl
 	private double distanceBetweenPeeks = 70.0d;
