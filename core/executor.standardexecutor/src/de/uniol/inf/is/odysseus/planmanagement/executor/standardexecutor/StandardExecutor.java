@@ -235,7 +235,7 @@ public class StandardExecutor extends AbstractExecutor {
 			// Einbindung des Query-Sharing-Optimizers zur Optimierung des Plans
 			
 			IQuerySharingOptimizer qso = getQuerySharingOptimizer();
-			if(qso != null && conf.getParameterPerformQuerySharing().getValue()) {
+			if(qso != null && conf.getParameterPerformQuerySharing() != null && conf.getParameterPerformQuerySharing().getValue()) {
 				qso.applyQuerySharing(this.plan, newQueries, conf);
 			}
 
