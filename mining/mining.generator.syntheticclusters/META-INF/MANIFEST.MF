@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Syntheticclusters
+Bundle-SymbolicName: mining.generator.syntheticclusters
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: mining.generator.syntheticclusters.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: mining.generator.base.socket,
+ mining.generator.base.tuple,
+ org.osgi.framework;version="1.3.0"
