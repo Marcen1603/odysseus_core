@@ -34,12 +34,6 @@ public class AlternativeSchemaGenerator implements ISchemaGenerator {
 				mvValue, mvCorrelationValue, mvCorrelationValue,
 				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue }));
 
-		SDFAttribute heading = new SDFAttribute(sourceName, "heading");
-		heading.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		heading.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue,
-				mvCorrelationValue, mvValue, mvCorrelationValue }));
-
 		SDFAttribute velocity = new SDFAttribute(sourceName, "velocity");
 		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		velocity.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
@@ -56,7 +50,6 @@ public class AlternativeSchemaGenerator implements ISchemaGenerator {
 		car.addSubattribute(laneid);
 		car.addSubattribute(posx);
 		car.addSubattribute(posy);
-		car.addSubattribute(heading);
 		car.addSubattribute(velocity);
 		car.addSubattribute(acceleration);
 

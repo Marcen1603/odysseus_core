@@ -1,18 +1,16 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel;
 
-import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.carModel.DefaultCarModel;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.carModel.AlternativeCarModel;
 
-public interface IDefaultCalcModel extends IGenericCalcModel {
+public interface IAlternativeCalcModel extends IGenericCalcModel {
 
-	public void setModel(DefaultCarModel model);
+	public void setModel(AlternativeCarModel model);
 
 	public void calculateLaneid();
 
 	public void calculatePosx();
 
 	public void calculatePosy();
-
-	public void calculatePosz();
 
 	public void calculateVelocity();
 
@@ -22,8 +20,8 @@ public interface IDefaultCalcModel extends IGenericCalcModel {
 
 	public float initPosy();
 
-	public float initPosz();
-
 	public float initVelocity();
 
+	public float initAcceleration();
+	
 }

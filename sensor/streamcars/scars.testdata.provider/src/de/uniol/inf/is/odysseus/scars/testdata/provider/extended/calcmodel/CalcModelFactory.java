@@ -33,6 +33,10 @@ public class CalcModelFactory {
 			if (calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
 				return new DefaultOvertakeCalcModel();
 			}
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)) {
+			if (calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
+				return new AlternativeOvertakeCalcModel();
+			}
 		}
 		return null;
 	}

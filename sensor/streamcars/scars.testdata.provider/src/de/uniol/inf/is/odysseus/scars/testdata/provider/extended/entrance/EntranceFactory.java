@@ -20,6 +20,9 @@ public class EntranceFactory {
 		if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_DEFAULT) && 
 				calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
 			return new DefaultOvertakeEntrance();
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE) && 
+				calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
+			return new AlternativeOvertakeEntrance();
 		}
 		return null;
 	}

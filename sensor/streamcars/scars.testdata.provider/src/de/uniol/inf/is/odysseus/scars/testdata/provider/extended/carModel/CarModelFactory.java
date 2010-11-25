@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider.extended.carModel;
 
 import de.uniol.inf.is.odysseus.scars.testdata.provider.ExtendedProvider;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IAlternativeCalcModel;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IDefaultCalcModel;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IGenericCalcModel;
 
@@ -21,6 +22,8 @@ public class CarModelFactory {
 	public ICarModel buildCarModel(String schemaID, int id, IGenericCalcModel calcModel) {
 		if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_DEFAULT)) {
 			return new DefaultCarModel(id, (IDefaultCalcModel)calcModel);
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)) {
+			return new AlternativeCarModel(id, (IAlternativeCalcModel)calcModel);
 		}
 		return null;
 	}
