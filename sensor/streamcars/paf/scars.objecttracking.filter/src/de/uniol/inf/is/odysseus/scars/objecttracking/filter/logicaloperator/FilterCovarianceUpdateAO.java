@@ -34,10 +34,10 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 	
 	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {
 		super(copy);
-		this.setFunctionID(new String(copy.getFunctionID()));
+		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataUpdateFunction(copy.getMetaDataUpdateFunction().clone());
-		this.setExpressionString(new String(copy.getExpressionString()));
+		this.setExpressionString(copy.getExpressionString());
 		
 	}
 

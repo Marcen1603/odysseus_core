@@ -39,12 +39,12 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	
 	public FilterEstimateUpdateAO(FilterEstimateUpdateAO<M> copy) {
 		super(copy);
-		this.setOldObjListPath(new String(copy.getOldObjListPath()));
-		this.setNewObjListPath(new String(copy.getNewObjListPath()));
-		this.setFunctionID(new String(copy.getFunctionID()));
+		this.setOldObjListPath(copy.getOldObjListPath());
+		this.setNewObjListPath(copy.getNewObjListPath());
+		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setDataUpdateFunction(copy.getDataUpdateFunction().clone());
-		this.setExpressionString(new String(copy.getExpressionString()));
+		this.setExpressionString(copy.getExpressionString());
 	}
 
 	

@@ -38,12 +38,12 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 	
 	public FilterGainAO(FilterGainAO<M> copy) {
 		super(copy);
-		this.setFunctionID(new String(copy.getFunctionID()));
+		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 		this.setNewListName(copy.getNewListName());
 		this.setOldListName(copy.getOldListName());
-		this.setExpressionString(new String(copy.getExpressionString()));
+		this.setExpressionString(copy.getExpressionString());
 	}
 
 
