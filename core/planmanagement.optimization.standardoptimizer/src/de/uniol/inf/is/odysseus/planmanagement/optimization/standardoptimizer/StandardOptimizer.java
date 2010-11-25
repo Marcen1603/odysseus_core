@@ -59,8 +59,9 @@ public class StandardOptimizer extends AbstractOptimizer {
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IQuery query : queries) {
-				this.queryOptimizer.optimizeQuery(sender, query, parameter);
-				
+				if (query.getLogicalPlan() != null){
+					this.queryOptimizer.optimizeQuery(sender, query, parameter);
+				}
 				doPostOptimizationActions(query, parameter);
 			}
 			List<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
