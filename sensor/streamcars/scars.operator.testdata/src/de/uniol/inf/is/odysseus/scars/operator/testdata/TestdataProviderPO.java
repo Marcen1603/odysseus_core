@@ -21,14 +21,14 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	public static final String EXTENDED_PROVIDER = "extended";
 
 	private static final int DELAY = 100; // ms
-	private static final int SEND_DELAY = 15; //ms
+	private static final int SEND_DELAY = 500; //ms
 	private static final long SEND_DELAY_NS = SEND_DELAY * 1000000; // ns
 
 	private IProvider provider;
 	private long lastTime;
 	private String sourceName;
 	
-	private int batchSize = 2000;
+	private int batchSize = 2000; // 
 	
 	@SuppressWarnings("unchecked")
 	private MVRelationalTuple<M>[] nextElems = new MVRelationalTuple[batchSize];
@@ -142,7 +142,7 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 
 	public void transferNext(){
 		long lastTime = System.nanoTime();
-		for(int i = 0; i<this.batchSize; i++){
+		for(int i = 0; i<this.batchSize || this.batchSize == -1; i++){
 			sleep(lastTime + SEND_DELAY_NS);
 			transfer(this.nextElems[i]);
 			lastTime = System.nanoTime();
