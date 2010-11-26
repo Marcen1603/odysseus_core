@@ -57,11 +57,26 @@ public class LeaderPO<T extends IMetaAttribute> extends
 	@Override
 	protected void process_next(RelationalTuple<T> tuple, int port) {
 
-		assignToCluster(tuple.restrict(restrictList, true));
+		int clusterID = assignToCluster(tuple.restrict(restrictList, true));
 
-		transfer(createRelationalClusterList());
+		// gibt das aktuelle Tupel mit Clusterzugehörigkeit auf Port 0 aus
+		
+		transfer(createLabeledTuple(tuple, clusterID),0);
+		// gibt eine Liste der Cluster auf Port 1 aus
+		transfer(createRelationalClusterList(),1);
 	}
 
+	private RelationalTuple<T> createLabeledTuple(RelationalTuple<T> tuple, int clusterID){
+		Object[] attributes = new Object[tuple
+		                 				.getAttributeCount() + 1];
+		                 		attributes[0] = clusterID;
+		                 		
+		                 		System.arraycopy(tuple.getAttributes(), 0, attributes,
+		                 				1, attributes.length - 1);
+
+		                 		return new RelationalTuple<T>(attributes);
+	}
+	
 	private ArrayList<RelationalTuple<T>> createRelationalClusterList() {
 		ArrayList<RelationalTuple<T>> relationalClusterList = new ArrayList<RelationalTuple<T>>();
 		for (LeaderCluster<T> cluster : clusters) {
@@ -82,7 +97,7 @@ public class LeaderPO<T extends IMetaAttribute> extends
 		return new RelationalTuple<T>(attributes);
 	}
 
-	private void assignToCluster(RelationalTuple<T> tuple) {
+	private int assignToCluster(RelationalTuple<T> tuple) {
 
 		LeaderCluster<T> minCluster = getMinCluster(tuple);
 		if (minCluster == null
@@ -95,8 +110,10 @@ public class LeaderPO<T extends IMetaAttribute> extends
 			
 			cluster.addTuple(tuple);
 			clusters.add(cluster);
+			return cluster.getId();
 		} else {
 			minCluster.addTuple(tuple);
+			return minCluster.getId();
 		}
 	}
 

@@ -6,8 +6,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class MinkowsiDistance<T extends IMetaAttribute> extends ADissimilarity<T>{
 
 	int p;
-	public MinkowsiDistance(SDFAttributeList schema, int p) {
-		super(schema);
+	public MinkowsiDistance(int p) {
 		this.p = p;
 	}
 

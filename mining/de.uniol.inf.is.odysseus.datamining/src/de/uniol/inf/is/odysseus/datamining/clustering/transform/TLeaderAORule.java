@@ -24,7 +24,7 @@ public class TLeaderAORule extends AbstractTransformationRule<LeaderAO> {
 		
 		
 		LeaderPO<?> leaderPO = new LeaderPO();
-		leaderPO.setDissimilarity(new EuclidianDistance(leaderAO.getAttributes()));
+		leaderPO.setDissimilarity(new EuclidianDistance());
 		leaderPO.setRestrictList(leaderAO.determineRestrictList());
 		leaderPO.setOutputSchema(leaderAO.getOutputSchema());
 		leaderPO.setThreshold(leaderAO.getThreshold());

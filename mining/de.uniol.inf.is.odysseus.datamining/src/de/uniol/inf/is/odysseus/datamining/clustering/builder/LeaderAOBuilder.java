@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.datamining.clustering.builder;
 
+import de.uniol.inf.is.odysseus.datamining.builder.AbstractDataMiningAOBuilder;
 import de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator.LeaderAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
@@ -10,28 +11,27 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributePara
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class LeaderAOBuilder extends AbstractOperatorBuilder{
+public class LeaderAOBuilder extends AbstractDataMiningAOBuilder{
 
 	
-	private static final String ATTRIBUTES = "ATTRIBUTES";
+	
 	private static final String THRESHOLD = "THRESHOLD";
-	private ListParameter<SDFAttribute> attributes;
 	private DirectParameter<Double> threshold;
 	
 	public LeaderAOBuilder() {
-		super(1, 1);
-		attributes =  new ListParameter<SDFAttribute>(
-				ATTRIBUTES, REQUIREMENT.MANDATORY,
-				new ResolvedSDFAttributeParameter("leader attribute",
-						REQUIREMENT.MANDATORY));
+		
+		
 		threshold = new DirectParameter<Double>(THRESHOLD, REQUIREMENT.MANDATORY);
-		setParameters(attributes,threshold);
+		setParameters(threshold);
 	}
 
 	@Override
 	protected boolean internalValidation() {
-		
-		return true;
+		if(threshold.getValue() <= 0){
+			addError(new InvalidThresholdValueException());
+			return false;
+		}
+		return super.internalValidation();
 	}
 
 	@Override
