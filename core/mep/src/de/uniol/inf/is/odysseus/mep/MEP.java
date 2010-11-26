@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.mep.functions.AbsoluteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.CeilFunction;
 import de.uniol.inf.is.odysseus.mep.functions.CosinusFunction;
@@ -72,6 +73,7 @@ public class MEP {
 		registerFunction(new NotOperator());
 		registerFunction(new UnaryMinusOperator());
 
+		registerFunction(new AbsoluteFunction());
 		registerFunction(new CeilFunction());
 		registerFunction(new DoubleToLongFunction());
 		registerFunction(new FloorFunction());
