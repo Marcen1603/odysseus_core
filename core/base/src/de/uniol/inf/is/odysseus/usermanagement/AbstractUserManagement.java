@@ -126,7 +126,7 @@ abstract class AbstractUserManagement {
 			if (!username.equals(UserManagement.getInstance().getSuperUser()
 					.getUsername())) {
 				if (logout(caller, username)) {
-					this.userStore.getUserByName(username).deaktivateUser();
+					this.userStore.getUserByName(username).deaktivate();
 				}
 			}
 		} else {

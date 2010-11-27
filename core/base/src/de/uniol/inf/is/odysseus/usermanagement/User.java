@@ -22,6 +22,11 @@ public final class User extends AbstractUserManagementEntity implements
 		this.roles = new ArrayList<Role>();
 	}
 
+	/**
+	 * Adds a role to a user.
+	 * 
+	 * @param role
+	 */
 	void addRole(Role role) {
 		if (role != null && !this.roles.contains(role)) {
 			this.roles.add(role);
@@ -65,6 +70,11 @@ public final class User extends AbstractUserManagementEntity implements
 		return null;
 	}
 
+	/**
+	 * Returns a list of all roles contained in the user.
+	 * 
+	 * @return List<Role>
+	 */
 	public List<Role> getRoles() {
 		return this.roles;
 	}
@@ -110,7 +120,7 @@ public final class User extends AbstractUserManagementEntity implements
 	}
 
 	/**
-	 * return the corresponding Role if the user has privileges on the given
+	 * Return the corresponding Role if the user has privileges on the given
 	 * role
 	 * 
 	 * @param rolename
@@ -136,6 +146,12 @@ public final class User extends AbstractUserManagementEntity implements
 		}
 	}
 
+	/**
+	 * Removes a role from a user.
+	 * 
+	 * @see de.uniol.inf.is.odysseus.usermanagement.Role.java
+	 * @param Role
+	 */
 	void removeRole(Role role) {
 		this.roles.remove(role);
 	}

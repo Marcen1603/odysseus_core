@@ -4,6 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * TODO
+ * 
+ * @see de.uniol.inf.is.odysseus.usermanagement.User.java
+ * @see de.uniol.inf.is.odysseus.usermanagement.Role.java
+ * @author Christian van Göns
+ * 
+ */
 abstract class AbstractUserManagementEntity implements Serializable {
 
 	private static final long serialVersionUID = 6486357855125784276L;
@@ -17,10 +25,21 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		this.active = true;
 	}
 
+	/**
+	 * Returns whether the entity (user or role) has system status. With system
+	 * status a entity is revoke save.
+	 * 
+	 * @return boolean
+	 */
 	public boolean isSystemProtected() {
 		return systemProtection;
 	}
 
+	/**
+	 * Sets system status to the entity (user or role).
+	 * 
+	 * @param caller
+	 */
 	public void setSystemProtection(User caller) {
 		if (AccessControl.hasPermission(UserManagementAction.SET_SYSTEM_USER,
 				UserManagementAction.alias, caller)) {
@@ -28,6 +47,11 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		}
 	}
 
+	/**
+	 * Adds a privilege to the entity (user or role).
+	 * 
+	 * @param privilege
+	 */
 	void addPrivilege(Privilege priv) {
 		if (!this.privileges.contains(priv)) {
 			this.privileges.add(priv);
@@ -36,7 +60,10 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		}
 	}
 
-	protected void deaktivateUser() {
+	/**
+	 * Disables an entity.
+	 */
+	protected void deaktivate() {
 		this.active = false;
 	}
 
@@ -57,10 +84,20 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Returns the name of the entity (user or role).
+	 * 
+	 * @return String
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Returns a list of all privileges of a entity.
+	 * 
+	 * @return List<Privilege>
+	 */
 	public List<Privilege> getPrivileges() {
 		return this.privileges;
 	}
@@ -81,10 +118,21 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Returns whether the entity is active or disabled.
+	 * 
+	 * @see deaktivate()
+	 * @return boolean
+	 */
 	public boolean isActiv() {
 		return this.active;
 	}
 
+	/**
+	 * Removes a privilege from a given entity specified by uri.
+	 * 
+	 * @param objecturi
+	 */
 	void removePrivilege(String objecturi) {
 		for (Privilege priv : this.privileges) {
 			if (priv.getObject().equals(objecturi)) {
@@ -93,6 +141,11 @@ abstract class AbstractUserManagementEntity implements Serializable {
 		}
 	}
 
+	/**
+	 * Sets a new entity name.
+	 * 
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
