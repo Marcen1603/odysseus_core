@@ -21,7 +21,7 @@ public class TTestAORule extends AbstractTransformationRule<TestAO>{
 
 	@Override
 	public void execute(TestAO operator, TransformationConfiguration config) {
-		TestPO testPO = new TestPO(operator.getName());
+		TestPO<?> testPO = new TestPO<Object>(operator.getName());
 		testPO.setOutputSchema(operator.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, testPO);
 		for (ILogicalOperator o:toUpdate){
