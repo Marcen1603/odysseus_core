@@ -133,10 +133,10 @@ public class ExtendedProvider implements IProvider {
 		return this.tupleGenerator.nextTuple(this.state, this.currentTimeStamp);
 	}
 
-	private void printState() {
-		for (ICarModel cm : this.state)
-			System.out.println(cm);
-	}
+//	private void printState() {
+//		for (ICarModel cm : this.state)
+//			System.out.println(cm);
+//	}
 
 	@Override
 	public SDFAttributeList getSchema(String sourceName) {
