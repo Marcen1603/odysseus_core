@@ -21,7 +21,7 @@ public class TestdataProviderPO<M extends IProbability> extends AbstractSensorAc
 	public static final String EXTENDED_PROVIDER = "extended";
 
 	private static final int DELAY = 100; // ms
-	private static final int SEND_DELAY = 500; //ms
+	private static final int SEND_DELAY = 100; //ms
 	private static final long SEND_DELAY_NS = SEND_DELAY * 1000000; // ns
 
 	private IProvider provider;
