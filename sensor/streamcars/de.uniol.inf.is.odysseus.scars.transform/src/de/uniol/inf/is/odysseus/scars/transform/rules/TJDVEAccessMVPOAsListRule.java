@@ -45,6 +45,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 				Map<String, String> options = new HashMap<String, String>();
 				options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_DEFAULT);
 				options.put(ExtendedProvider.CALCMODEL, ExtendedProvider.CALCMODEL_SCARS_OVERTAKE);
+				options.put(ExtendedProvider.VISIBILITY, ExtendedProvider.VISIBILITY_SCARS_FRONT);
 				Map<String, Object> calcModelParams = new HashMap<String, Object>();
 				calcModelParams.put(DefaultOvertakeCalcModel.LANE_SHIFT_FACTOR, new Float(1.5));
 				accessPO = new TestdataProviderPO<IProbability>(TestdataProviderPO.EXTENDED_PROVIDER, options, calcModelParams);
@@ -54,6 +55,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 				Map<String, String> options = new HashMap<String, String>();
 				options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE);
 				options.put(ExtendedProvider.CALCMODEL, ExtendedProvider.CALCMODEL_SCARS_OVERTAKE);
+				options.put(ExtendedProvider.VISIBILITY, ExtendedProvider.VISIBILITY_SCARS_FRONT);
 				Map<String, Object> calcModelParams = new HashMap<String, Object>();
 				calcModelParams.put(DefaultOvertakeCalcModel.LANE_SHIFT_FACTOR, new Float(1.5));
 				accessPO = new TestdataProviderPO<IProbability>(TestdataProviderPO.EXTENDED_PROVIDER, options, calcModelParams);
