@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public interface IPartialPlan {
@@ -18,12 +19,8 @@ public interface IPartialPlan {
 	public void setCurrentPriority(long newPriority);
 	public long getBasePriority();
 
-	public void setSLARate(double rate);
-	public double getSLARate();
-
-	public void setSLAInfo(String info);
-	public String getSLAInfo();
-
+	ScheduleMeta getScheduleMeta();
+	void setScheduleMeta(ScheduleMeta scheduleMeta);	
 	
 	@Override
 	public int hashCode();
@@ -32,5 +29,6 @@ public interface IPartialPlan {
 	public String toString();
 	List<IPhysicalOperator> getQueryRoots();
 	List<IQuery> getQueries();
+
 
 }

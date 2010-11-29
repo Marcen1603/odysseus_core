@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.queryview.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -238,6 +239,28 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 			}
 		};
 
+		/************* Penalty ****************/
+		TableViewerColumn penaltyColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		penaltyColumn.getColumn().setText("Penalty");
+		// monitorColumn.getColumn().setWidth(100);
+		penaltyColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				String text = ((IQuery) cell.getElement()).getPenalty() + "";
+				cell.setText(text);
+			}
+		});
+		tableColumnLayout.setColumnData(penaltyColumn.getColumn(), new ColumnWeightData(40, 50, true));
+		new ColumnViewerSorter(tableViewer, penaltyColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				IQuery id1 = (IQuery)e1;
+				IQuery id2 = (IQuery)e2;
+				return Double.compare(id1.getPenalty(), id2.getPenalty());
+			}
+		};
+		
+
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(queries);
 		getSite().setSelectionProvider(tableViewer);
@@ -291,18 +314,18 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 
 		t.start();
 
-//		refreshTimer = new Timer();
-//		refreshTimer.scheduleAtFixedRate(new TimerTask() {
-//
-//			@Override
-//			public void run() {
-//				try {
-//					refreshTable();
-//				} catch (Exception e) {
-//					this.cancel();
-//				}
-//			}
-//		}, 1000, 1000);
+		refreshTimer = new Timer();
+		refreshTimer.scheduleAtFixedRate(new TimerTask() {
+
+			@Override
+			public void run() {
+				try {
+					refreshTable();
+				} catch (Exception e) {
+					this.cancel();
+				}
+			}
+		}, 1000, 1000);
 	}
 
 	@Override

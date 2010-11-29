@@ -138,13 +138,13 @@ public class PartialPlanViewPart extends ViewPart implements IPlanModificationLi
 		
 		TableViewerColumn slaRateColumn = new TableViewerColumn(tableViewer,
 				SWT.NONE);
-		slaRateColumn.getColumn().setText("SLA Info");
+		slaRateColumn.getColumn().setText("SLA Infos");
 		// idColumn.getColumn().setWidth(50);
 		slaRateColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(String.valueOf(((IPartialPlan) cell.getElement())
-						.getSLAInfo()));
+						.getScheduleMeta()));
 			}
 		});
 		

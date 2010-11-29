@@ -2,14 +2,15 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy;
 
 public class GenData {
 	public static void main(String[] args) {
-		int noOfUsers = 250;
-		int baseTime = 10;
+		int noOfUsers = 150;
+		int baseTime = 50;
+		int sameLevel = 5;
 		System.out.println("#PARSER CQL");
 		System.out.println("#TRANSCFG Standard");
 		System.out.println("#BUFFERPLACEMENT Query Buffer Placement");
 		System.out.println("#DOQUERYSHARING FALSE");
 		System.out.println("#QUERY");
-		for (int i = 1; i <= noOfUsers; i++) {
+		for (int i = 0; i < noOfUsers; i++) {
 			System.out.println("create user test" + i
 					+ " identified by 'test';");
 			System.out.println("grant role DSUser to test" + i + ";");
@@ -17,7 +18,7 @@ public class GenData {
 					.println("create sla sla"
 							+ i
 							+ " time "
-							+ (baseTime * i)
+							+ (baseTime * ((i/sameLevel)+1))
 							+ " with (0.9,1,0),(0.8,0.9,100),(0.5,0.8,200),(0.4,0.5,300),(0,0.4,400);");
 			System.out.println("create tenant tenant" + i + " with sla" + i
 					+ ";");
@@ -34,7 +35,7 @@ public class GenData {
 		System.out.println("#PARSER PQL");
 		System.out.println("#TRANSCFG Standard");
 		System.out.println("#BUFFERPLACEMENT Query Buffer Placement");
-		for (int i = 1; i <= noOfUsers; i++) {
+		for (int i = 0; i < noOfUsers; i++) {
 			System.out.println("#LOGIN test" + i + " test");
 			System.out.println("#QUERY");
 			System.out.println("puffer" + i

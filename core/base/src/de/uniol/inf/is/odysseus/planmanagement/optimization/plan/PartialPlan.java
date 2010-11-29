@@ -59,8 +59,7 @@ public class PartialPlan implements IPartialPlan {
 	 * SLA-based
 	 */
 
-	private double slaRate = 0.0;
-	private String slaInfo = "";
+	private ScheduleMeta scheduleMeta;
 	
 	/**
 	 * 
@@ -189,22 +188,15 @@ public class PartialPlan implements IPartialPlan {
 	}
 
 	@Override
-	public double getSLARate() {
-		return slaRate;
+	public ScheduleMeta getScheduleMeta() {
+		return scheduleMeta;
 	}
-
+	
 	@Override
-	public void setSLARate(double rate) {
-		this.slaRate = rate;
+	public void setScheduleMeta(ScheduleMeta scheduleMeta) {
+		this.scheduleMeta = scheduleMeta;
 	}
-
-	public void setSLAInfo(String slaInfo) {
-		this.slaInfo = slaInfo;
-	}
-
-	public String getSLAInfo() {
-		return slaInfo;
-	}
+	
 
 	/*
 	 * (non-Javadoc)
