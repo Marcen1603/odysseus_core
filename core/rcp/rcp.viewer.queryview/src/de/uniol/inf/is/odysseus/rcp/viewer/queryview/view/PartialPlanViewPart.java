@@ -122,18 +122,33 @@ public class PartialPlanViewPart extends ViewPart implements IPlanModificationLi
 		tableColumnLayout.setColumnData(basePrioColumn.getColumn(),
 				new ColumnWeightData(5, 25, true));
 		
-		TableViewerColumn currentPrioColumn = new TableViewerColumn(tableViewer,
+		TableViewerColumn curPrioColumn = new TableViewerColumn(tableViewer,
 				SWT.NONE);
-		currentPrioColumn.getColumn().setText("Current Priority");
+		curPrioColumn.getColumn().setText("Current Priority");
 		// idColumn.getColumn().setWidth(50);
-		currentPrioColumn.setLabelProvider(new CellLabelProvider() {
+		curPrioColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(String.valueOf(((IPartialPlan) cell.getElement())
 						.getCurrentPriority()));
 			}
 		});
-		tableColumnLayout.setColumnData(currentPrioColumn.getColumn(),
+		tableColumnLayout.setColumnData(curPrioColumn.getColumn(),
+				new ColumnWeightData(5, 25, true));
+		
+		TableViewerColumn slaRateColumn = new TableViewerColumn(tableViewer,
+				SWT.NONE);
+		slaRateColumn.getColumn().setText("SLA Info");
+		// idColumn.getColumn().setWidth(50);
+		slaRateColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(String.valueOf(((IPartialPlan) cell.getElement())
+						.getSLAInfo()));
+			}
+		});
+		
+		tableColumnLayout.setColumnData(slaRateColumn.getColumn(),
 				new ColumnWeightData(5, 25, true));
 		
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
