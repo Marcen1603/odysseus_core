@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMEP
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.emep
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.emep.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime

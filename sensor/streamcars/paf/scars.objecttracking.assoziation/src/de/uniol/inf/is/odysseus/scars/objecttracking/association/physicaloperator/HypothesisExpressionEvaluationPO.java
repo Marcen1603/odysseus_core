@@ -61,6 +61,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		super.process_open();
 		this.expressionString = this.expressionString.replace("'", "");
 		this.expression = new StreamCarsExpression(this.expressionString);
+		this.expression.init(this.getOutputSchema());
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
 		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath));
@@ -88,7 +89,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 					} else {
 						var.bind(0);
 					}
-				} else if (var.isSchemaVariable()) { // "Normale" Variable
+				} else if (var.isSchemaVariable() && !var.hasMetadataInfo()) { // "Normale" Variable
 					if (var.isInList(scannedTupleIndexPath)) {
 						var.replaceVaryingIndex(con.getLeftPath().getLastTupleIndex().toInt());
 						var.bindTupleValue(object);

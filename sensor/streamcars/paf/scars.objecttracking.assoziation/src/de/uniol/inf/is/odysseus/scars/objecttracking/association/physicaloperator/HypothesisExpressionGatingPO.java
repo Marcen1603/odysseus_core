@@ -61,6 +61,7 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		super.process_open();
 		this.expressionString = this.expressionString.replace("'", "");
 		this.expression = new StreamCarsExpression(this.expressionString);
+		this.expression.init(this.getOutputSchema());
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
@@ -102,11 +103,11 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 						} else {
 							var.bind(0);
 						}
-					} else if (var.isSchemaVariable()) { // "Normale" Variable
+					} else if (var.isSchemaVariable() && !var.hasMetadataInfo()) { // "Normale" Variable
 						if (var.isInList(scannedTupleIndexPath)) {
 							var.replaceVaryingIndex(i);
 							var.bindTupleValue(object);
-						} else if (var.isInList(predictedTupleIndexPath.toArray())) {
+						} else if (var.isInList(predictedTupleIndexPath)) {
 							var.replaceVaryingIndex(j);
 							var.bindTupleValue(object);
 						}
