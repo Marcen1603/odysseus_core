@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface IStreamCarsExpressionVariable {
@@ -35,6 +36,8 @@ public interface IStreamCarsExpressionVariable {
 	public void replaceVaryingIndex(int index, boolean copy);
 	
 	public void bind(Object value);
+	
+	public void bindTupleValue(MVRelationalTuple<?> tuple);
 	
 
 	

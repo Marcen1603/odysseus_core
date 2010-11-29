@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 import java.util.Arrays;
 
 import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndex;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
@@ -144,6 +145,18 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		}
 	}
 	
+	@Override 
+	public void bindTupleValue(MVRelationalTuple<?> tuple) {
+		MVRelationalTuple<?> current = tuple;
+		int depth = absolutePath.length - 1;
+		for(int i=0; i<depth; i++) {
+			current = (MVRelationalTuple<?>)current.getAttribute(absolutePath[i]);
+		}
+		bind(current.getAttribute(absolutePath[depth]));
+	}
+	
+	
+	
 	public void init(SDFAttributeList schema) {
 		if(isSchemaVariable(schema)) {
 			SchemaHelper helper = new SchemaHelper(schema);
@@ -209,4 +222,6 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 				+ "\n\t\t absolutePath: " + (absolutePath != null ? Arrays.toString(absolutePath) : null) 
 				+ "\n\t   ]";
 	}
+
+
 }
