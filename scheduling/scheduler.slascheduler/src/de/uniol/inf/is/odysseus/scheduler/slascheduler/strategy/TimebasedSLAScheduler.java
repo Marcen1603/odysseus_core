@@ -4,14 +4,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +32,12 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 			.getLogger(TimebasedSLAScheduler.class);
 
 	final private List<IScheduling> lastRun = new LinkedList<IScheduling>();
-	private Timer updatePenaltiesTimer;
 	Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
-	
+
 	long historySize = 60000;
-	long penaltyTime = 60000;
+
+	private long toUpdateCounter = 0;
+	private long updatePenaliesFrequency = 10000;
 
 	public TimebasedSLAScheduler(TimebasedSLAScheduler timebasedSLAScheduler) {
 		super(timebasedSLAScheduler);
@@ -50,7 +47,7 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 			file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 
 	public TimebasedSLAScheduler(PrioCalcMethod method) {
@@ -66,22 +63,6 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 
 	@Override
 	public void addPlan(IScheduling scheduling) {
-		logger.debug("Adding Plan");
-		if (updatePenaltiesTimer == null){
-			updatePenaltiesTimer = new Timer();
-			updatePenaltiesTimer.scheduleAtFixedRate(new TimerTask() {
-
-				@Override
-				public void run() {
-					try {
-						updatePenalties();
-					} catch (Exception e) {
-						this.cancel();
-					}
-				}
-			}, penaltyTime, penaltyTime);
-
-		}
 		synchronized (queue) {
 			queue.add(scheduling);
 			scheduling.addSchedulingEventListener(this);
@@ -93,6 +74,7 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 
 	@Override
 	public IScheduling nextPlan() {
+		updatePenalties();
 		synchronized (lastRun) {
 			if (lastRun.size() > 0) {
 				return updateMetaAndReturnPlan(lastRun.remove(0));
@@ -189,16 +171,21 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 		}// Query
 		return minTimePeriod;
 	}
-	
-	void updatePenalties() throws NotInitializedException{
-		synchronized (queue) {
-			for (IScheduling q: queue){
-				updatePenalites(q.getPlan());
+
+	void updatePenalties() {
+		if (toUpdateCounter == updatePenaliesFrequency) {
+			toUpdateCounter = 0;
+			synchronized (queue) {
+				for (IScheduling q : queue) {
+					updatePenalites(q.getPlan());
+				}
 			}
 		}
+		toUpdateCounter++;
 	}
-	
-	private void updatePenalites(IPartialPlan plan) throws NotInitializedException {
+
+	private void updatePenalites(IPartialPlan plan)
+			throws NotInitializedException {
 		ScheduleMeta meta = plan.getScheduleMeta();
 		for (IQuery q : plan.getQueries()) {
 			IServiceLevelAgreement sla = TenantManagement.getInstance()
