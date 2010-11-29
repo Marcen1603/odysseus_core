@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Xith3d Plugin Fragment (linux-amd64)
+Bundle-SymbolicName: org.xith3d.linux.amd64
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Benjamin Grünebast
+Fragment-Host: org.xith3d;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
