@@ -218,7 +218,10 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 
 	@Override
 	public void bindTupleValues(SDFAttributeList schema, MVRelationalTuple<?> tuple) {
-		// TODO Auto-generated method stub
-		
+		for(IStreamCarsExpressionVariable var : variables) {
+			if(var.isSchemaVariable(schema)) {
+				var.bindTupleValue(tuple);
+			}
+		}
 	}
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface IStreamCarsExpressionVariable {
@@ -33,6 +34,8 @@ public interface IStreamCarsExpressionVariable {
 	public boolean hasMetadataInfo();
 	
 	public boolean isInList(int[] pathToList);
+	
+	public boolean isInList(TupleIndexPath pathToList);
 	
 	public SchemaIndexPath getSchemaIndexPath();
 	

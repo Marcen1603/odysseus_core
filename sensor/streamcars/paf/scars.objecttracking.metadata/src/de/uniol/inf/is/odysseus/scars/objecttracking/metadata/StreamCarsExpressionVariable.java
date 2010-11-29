@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndex;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariable {
@@ -155,8 +156,23 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		bind(current.getAttribute(absolutePath[depth]));
 	}
 	
+	@Override
+	public boolean isInList(int[] pathToList) {
+		int listIndex = pathToList[pathToList.length-1];
+		return schemaPath.getSchemaIndex(listIndex).isList();
+	}
 	
-	
+	@Override
+	public boolean isInList(TupleIndexPath pathToList) {
+		int listIndex = pathToList.getLastTupleIndex().toInt();
+		return schemaPath.getSchemaIndex(listIndex).isList();
+	}
+
+	@Override
+	public SchemaIndexPath getSchemaIndexPath() {
+		return schemaPath;
+	}
+
 	public void init(SDFAttributeList schema) {
 		if(isSchemaVariable(schema)) {
 			SchemaHelper helper = new SchemaHelper(schema);
@@ -222,18 +238,4 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 				+ "\n\t\t absolutePath: " + (absolutePath != null ? Arrays.toString(absolutePath) : null) 
 				+ "\n\t   ]";
 	}
-
-	@Override
-	public boolean isInList(int[] pathToList) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public SchemaIndexPath getSchemaIndexPath() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
 }
