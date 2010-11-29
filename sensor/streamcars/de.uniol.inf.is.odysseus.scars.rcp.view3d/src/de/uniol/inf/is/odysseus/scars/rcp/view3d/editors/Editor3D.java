@@ -15,10 +15,10 @@ import org.xith3d.loop.UpdatingThread.TimingMode;
 import org.xith3d.render.Canvas3D;
 import org.xith3d.render.Canvas3DFactory;
 import org.xith3d.render.config.DisplayMode;
+import org.xith3d.render.config.DisplayMode.FullscreenMode;
 import org.xith3d.render.config.DisplayModeSelector;
 import org.xith3d.render.config.FSAA;
 import org.xith3d.render.config.OpenGLLayer;
-import org.xith3d.render.config.DisplayMode.FullscreenMode;
 import org.xith3d.scenegraph.Appearance;
 import org.xith3d.scenegraph.BranchGroup;
 import org.xith3d.scenegraph.Light;
@@ -28,9 +28,16 @@ import org.xith3d.scenegraph.TransformGroup;
 import org.xith3d.scenegraph.primitives.Cube;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class Editor3D implements IStreamEditorType {
 	
@@ -39,10 +46,31 @@ public class Editor3D implements IStreamEditorType {
 	private InputHandler<?> ih;
 	private TransformGroup tg;
 	private RenderLoop rl;
+	private SDFAttributeList schema;
+	private SchemaIndexPath carsPath;
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
+		MVRelationalTuple<?> tuple = (MVRelationalTuple<?>) element;
+		TupleIndexPath tuplePath = carsPath.toTupleIndexPath(tuple);
 		
+		rl.pauseRendering();
+		tg.removeAllChildren();
+		for( TupleInfo car : tuplePath ) {
+			
+			MVRelationalTuple<?> carTuple = (MVRelationalTuple<?>)car.tupleObject;
+			
+			float x = carTuple.getAttribute(3);
+			float y = carTuple.getAttribute(4);
+			float z = carTuple.getAttribute(5);
+			
+			System.out.print(x + " " + y + " " + z + " ---- ");
+			
+			TransformGroup t = buildCar(x,y,z);
+			tg.addChild(t);
+		}
+		System.out.println();
+		rl.resumeRendering();
 	}
 
 	@Override
@@ -52,7 +80,10 @@ public class Editor3D implements IStreamEditorType {
 
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-		
+		ISource<?> src = editorInput.getStreamConnection().getSources().iterator().next();
+		schema = src.getOutputSchema();
+		SchemaHelper helper = new SchemaHelper(schema);
+		carsPath = helper.getSchemaIndexPath("scan:cars:car");
 	}
 
 	@Override
@@ -65,7 +96,7 @@ public class Editor3D implements IStreamEditorType {
 		env.addCanvas(canvas);
 				
 		tg = new TransformGroup();
-		env.addPerspectiveBranch(createScene());
+		env.addPerspectiveBranch(createScene(tg));
 		try {
 			InputSystem.getInstance().registerNewKeyboardAndMouse( canvas.getPeer() );
 			ih = new ObjectRotationInputHandler(tg);
@@ -78,25 +109,30 @@ public class Editor3D implements IStreamEditorType {
 		rl.setXith3DEnvironment(env);
 		rl.setTimingMode(TimingMode.NANOSECONDS);
 		rl.setStopOperation(StopOperation.DESTROY);
+		rl.setPauseMode(RenderLoop.PAUSE_TOTAL);
 		rl.begin(RunMode.RUN_IN_SEPARATE_THREAD);
 		parent.layout(true, true);
 	}
 
-	private BranchGroup createScene() {
+	private BranchGroup createScene( TransformGroup tg ) {
 		BranchGroup bg = new BranchGroup();
 		
 		Light light = new PointLight(Colorf.BLUE, new Point3f(5f, -5f, 5f),new Point3f(0.005f, 0.005f, 0.005f));
-		
-		Appearance app = new Appearance();
-		app.setMaterial(new Material(Colorf.BLACK, Colorf.RED, Colorf.WHITE, Colorf.BLACK, 0.8f, Material.AMBIENT, true));
-		
-		Cube cube = new Cube(app);
-		tg.addChild(cube);
-		tg.setPosition(2, 0, 0);
-		
+
 		bg.addChild(tg);
 		bg.addChild(light);
 		return bg;
+	}
+	
+	private TransformGroup buildCar( float x, float y, float z) {
+		Appearance app = new Appearance();
+		app.setMaterial(new Material(Colorf.BLACK, Colorf.RED, Colorf.WHITE, Colorf.BLACK, 0.8f, Material.AMBIENT, true));
+		
+		TransformGroup t = new TransformGroup();
+		Cube cube = new Cube(app);
+		t.addChild(cube);
+		t.setPosition(z, x, y);
+		return t;
 	}
 	
 	@Override
