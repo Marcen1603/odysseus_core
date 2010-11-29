@@ -39,7 +39,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 
 	protected static Logger _logger = null;
 
-	protected static Logger getLogger() {
+	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(Query.class);
 		}
@@ -110,6 +110,11 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 */
 	private int priority = 0;
 
+	/**
+	 * SLA based penalty
+	 */
+	private double penalty;
+	
 	/**
 	 * Parameter for building this query.
 	 */
@@ -224,6 +229,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
 	 * setLogicalPlan(de.uniol.inf.is.odysseus.ILogicalOperator)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setLogicalPlan(ILogicalOperator logicalPlan, boolean setOwner) {
 		this.logicalPlan = logicalPlan;
@@ -231,6 +237,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			// Set Owner
 			SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(
 					this);
+			@SuppressWarnings("rawtypes")
 			AbstractGraphWalker walker = new AbstractGraphWalker();
 			walker.prefixWalk(logicalPlan, visitor);
 		}else{
@@ -751,4 +758,16 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 		return true;
 	}
 
+	@Override
+	public double getPenalty() {
+		return penalty;
+	}
+	
+	@Override
+	public void addPenalty(double penalty) {
+		this.penalty += penalty;
+	}
+	
+	
+	
 }

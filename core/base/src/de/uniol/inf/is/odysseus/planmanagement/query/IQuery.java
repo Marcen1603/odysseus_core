@@ -118,4 +118,6 @@ public interface IQuery extends ILogicalQuery, IMonitoringDataProvider {
 	@SuppressWarnings("rawtypes")
 	public Collection<IPlanMonitor> getPlanMonitors();
 
+	public void addPenalty(double penalty);
+	double getPenalty();
 }
