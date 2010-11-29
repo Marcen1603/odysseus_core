@@ -2,13 +2,12 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            class="de.uniol.inf.is.odysseus.scars.rcp.view3d.views.View3D"
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.scars.rcp.view3d.editors.Editor3D"
             id="de.uniol.inf.is.odysseus.scars.rcp.view3d"
-            name="StreamCars 3D View"
-            restorable="true">
-      </view>
+            label="StreamCars 3D View">
+      </editor>
    </extension>
 
 </plugin>

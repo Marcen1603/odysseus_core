@@ -1,7 +1,6 @@
-package de.uniol.inf.is.odysseus.scars.rcp.view3d.views;
+package de.uniol.inf.is.odysseus.scars.rcp.view3d.editors;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.ViewPart;
 import org.jagatoo.input.InputSystem;
 import org.jagatoo.input.InputSystemException;
 import org.jagatoo.input.handlers.InputHandler;
@@ -16,10 +15,10 @@ import org.xith3d.loop.UpdatingThread.TimingMode;
 import org.xith3d.render.Canvas3D;
 import org.xith3d.render.Canvas3DFactory;
 import org.xith3d.render.config.DisplayMode;
-import org.xith3d.render.config.DisplayMode.FullscreenMode;
 import org.xith3d.render.config.DisplayModeSelector;
 import org.xith3d.render.config.FSAA;
 import org.xith3d.render.config.OpenGLLayer;
+import org.xith3d.render.config.DisplayMode.FullscreenMode;
 import org.xith3d.scenegraph.Appearance;
 import org.xith3d.scenegraph.BranchGroup;
 import org.xith3d.scenegraph.Light;
@@ -28,13 +27,33 @@ import org.xith3d.scenegraph.PointLight;
 import org.xith3d.scenegraph.TransformGroup;
 import org.xith3d.scenegraph.primitives.Cube;
 
-public class View3D extends ViewPart {
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
 
+public class Editor3D implements IStreamEditorType {
+	
 	private Xith3DEnvironment env;
 	private Canvas3D canvas;
 	private InputHandler<?> ih;
 	private TransformGroup tg;
 	private RenderLoop rl;
+
+	@Override
+	public void streamElementRecieved(Object element, int port) {
+		
+	}
+
+	@Override
+	public void punctuationElementRecieved(PointInTime point, int port) {
+		
+	}
+
+	@Override
+	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
+		
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -62,17 +81,18 @@ public class View3D extends ViewPart {
 		rl.begin(RunMode.RUN_IN_SEPARATE_THREAD);
 		parent.layout(true, true);
 	}
-	
+
 	private BranchGroup createScene() {
 		BranchGroup bg = new BranchGroup();
 		
 		Light light = new PointLight(Colorf.BLUE, new Point3f(5f, -5f, 5f),new Point3f(0.005f, 0.005f, 0.005f));
 		
-		 Appearance app = new Appearance();
-		 app.setMaterial(new Material(Colorf.BLACK, Colorf.RED, Colorf.WHITE, Colorf.BLACK, 0.8f, Material.AMBIENT, true));
+		Appearance app = new Appearance();
+		app.setMaterial(new Material(Colorf.BLACK, Colorf.RED, Colorf.WHITE, Colorf.BLACK, 0.8f, Material.AMBIENT, true));
 		
 		Cube cube = new Cube(app);
 		tg.addChild(cube);
+		tg.setPosition(2, 0, 0);
 		
 		bg.addChild(tg);
 		bg.addChild(light);
@@ -83,4 +103,10 @@ public class View3D extends ViewPart {
 	public void setFocus() {
 		
 	}
+
+	@Override
+	public void dispose() {
+		
+	}
+
 }
