@@ -12,8 +12,12 @@ public class AlternativeCalcModelAdapter implements IAlternativeCalcModel {
 
 	@Override
 	public void calculateAll() {
-		// TODO Auto-generated method stub
-
+		this.tempModel = (AlternativeCarModel) currentModel.clone();
+		this.calculateLaneid();
+		this.calculatePosx();
+		this.calculatePosy();
+		this.calculateVelocity();
+		this.currentModel.setValues(this.tempModel);
 	}
 
 	@Override
@@ -47,6 +51,11 @@ public class AlternativeCalcModelAdapter implements IAlternativeCalcModel {
 
 	@Override
 	public void calculateVelocity() {
+		this.tempModel.setVelocity(this.currentModel.getVelocity());
+	}
+	
+	@Override
+	public void calculateAcceleration() {
 		this.tempModel.setVelocity(this.currentModel.getVelocity());
 	}
 

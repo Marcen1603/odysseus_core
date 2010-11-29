@@ -46,8 +46,11 @@ public class AlternativeCarModel implements ICarModel {
 
 	@Override
 	public boolean isVisible() {
-		// TODO not implemented yet
-		return false;
+		if (this.getPosx() > 150 || this.getPosx() < 0 || this.getPosy() < -100
+				|| this.getPosy() > 100) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -111,6 +114,19 @@ public class AlternativeCarModel implements ICarModel {
 	@Override
 	public Object clone() {
 		return new AlternativeCarModel(this);
+	}
+	
+	/**
+	 * setzt die Werte eines Autos auf die Werte eines anderen Autos
+	 */
+	public void setValues(AlternativeCarModel tempModel) {
+		this.setType(tempModel.getType());
+		this.setId(tempModel.getId());
+		this.setLaneid(tempModel.getLaneid());
+		this.setPosx(tempModel.getPosx());
+		this.setPosy(tempModel.getPosy());
+		this.setVelocity(tempModel.getVelocity());
+		this.setAcceleration(tempModel.getAcceleration());
 	}
 	
 }

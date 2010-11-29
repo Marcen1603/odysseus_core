@@ -13,6 +13,8 @@ public interface IAlternativeCalcModel extends IGenericCalcModel {
 	public void calculatePosy();
 
 	public void calculateVelocity();
+	
+	public void calculateAcceleration();
 
 	public int initLaneid();
 
