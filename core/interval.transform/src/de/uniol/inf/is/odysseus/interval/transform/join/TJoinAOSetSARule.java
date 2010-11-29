@@ -57,7 +57,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
+		return TransformRuleFlowGroup.METAOBJECTS;
 	}
 
 }

@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.interval.transform.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.event,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
  de.uniol.inf.is.odysseus.intervalapproach.window,
