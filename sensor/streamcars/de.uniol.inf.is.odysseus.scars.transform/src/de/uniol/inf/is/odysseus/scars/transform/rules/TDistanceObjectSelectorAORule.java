@@ -34,6 +34,7 @@ public class TDistanceObjectSelectorAORule extends AbstractTransformationRule<Di
 		po.setDistanceThresholdXRight(operator.getDistanceThresholdXRight());
 		po.setDistanceThresholdYLeft(operator.getDistanceThresholdYLeft());
 		po.setDistanceThresholdYRight(operator.getDistanceThresholdYRight());
+		po.setOutputSchema(operator.getOutputSchema());
 		
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, po);
 		for (ILogicalOperator o:toUpdate){
