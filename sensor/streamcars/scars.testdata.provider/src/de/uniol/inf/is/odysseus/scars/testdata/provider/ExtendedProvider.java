@@ -16,6 +16,8 @@ import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.schema.ISchemaG
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.schema.SchemaGeneratorFactory;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.tuple.ITupleGenerator;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.tuple.TupleGeneratorFactory;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.visibility.IVisibility;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.visibility.VisibilityFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class ExtendedProvider implements IProvider {
@@ -23,6 +25,7 @@ public class ExtendedProvider implements IProvider {
 	// options for extended provider:
 	public static final String SCHEMA = "schema";
 	public static final String CALCMODEL = "calcmodel";
+	public static final String VISIBILITY = "visibility";
 
 	// option values: schema
 	public static final String SCHEMA_SCARS_DEFAULT = "schema.scars.default";
@@ -30,6 +33,9 @@ public class ExtendedProvider implements IProvider {
 
 	// option values calculation model
 	public static final String CALCMODEL_SCARS_OVERTAKE = "calcmodel.scars.overtake";
+	
+	// option values visibility
+	public static final String VISIBILITY_SCARS_FRONT = "visibility.scars.front";
 
 	// local fields:
 	private ISchemaGenerator schemaGenerator;
@@ -37,6 +43,7 @@ public class ExtendedProvider implements IProvider {
 	private ITupleGenerator tupleGenerator;
 	private Map<String, String> options;
 	private Map<String, Object> calcModelParams;
+	private IVisibility visibility;
 
 	/**
 	 * max number of cars in a scan
@@ -68,16 +75,17 @@ public class ExtendedProvider implements IProvider {
 		this.calcModelParams = calcModelParams;
 		String schemaID = options.get(SCHEMA);
 		String calcModelID = options.get(CALCMODEL);
+		String visibilityID = options.get(VISIBILITY);
 		if (schemaID != null && calcModelID != null) {
 			this.schemaGenerator = SchemaGeneratorFactory.getInstance()
 					.buildSchemaGenerator(schemaID);
 			this.entrance = EntranceFactory.getInstance().buildEntrance(schemaID, calcModelID);
 			this.tupleGenerator = TupleGeneratorFactory.getInstance().buildTupleGenerator(schemaID);
+			this.visibility = VisibilityFactory.getInstance().buildVisibility(visibilityID, schemaID);
 		}
 		
-		
-		if (this.schemaGenerator == null || this.entrance == null || this.tupleGenerator == null) {
-			throw new RuntimeException("unable to initialize test data provider: (" + this.schemaGenerator + ", " + this.entrance + ", " + this.tupleGenerator);
+		if (this.schemaGenerator == null || this.entrance == null || this.tupleGenerator == null || this.visibility == null) {
+			throw new RuntimeException("unable to initialize test data provider: (" + this.schemaGenerator + ", " + this.entrance + ", " + this.tupleGenerator + ", " + this.visibility);
 		}
 	}
 
@@ -107,7 +115,7 @@ public class ExtendedProvider implements IProvider {
 		Iterator<ICarModel> iterator = this.state.iterator();
 		while (iterator.hasNext()) {
 			ICarModel carModel = iterator.next();
-			if (!carModel.isVisible()) {
+			if (!this.visibility.isVisible(carModel)) {
 				this.idQueue.offer(carModel.getId());
 				iterator.remove();
 			}

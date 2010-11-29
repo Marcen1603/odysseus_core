@@ -11,7 +11,9 @@ public class ExtendedProviderTest {
 	public static void main(String[] args) {
 		Map<String, String> options = new HashMap<String, String>();
 		options.put(ExtendedProvider.CALCMODEL, ExtendedProvider.CALCMODEL_SCARS_OVERTAKE);
-		options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE);
+//		options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE);
+		options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_DEFAULT);
+		options.put(ExtendedProvider.VISIBILITY, ExtendedProvider.VISIBILITY_SCARS_FRONT);
 		Map<String, Object> calcModelParams = new HashMap<String, Object>();
 		calcModelParams.put(DefaultOvertakeCalcModel.LANE_SHIFT_FACTOR, new Float(1.5));
 		ExtendedProvider provider = new ExtendedProvider(options, calcModelParams);

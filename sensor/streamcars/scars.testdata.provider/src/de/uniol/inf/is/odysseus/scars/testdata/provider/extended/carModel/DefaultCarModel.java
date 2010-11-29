@@ -198,18 +198,4 @@ public class DefaultCarModel implements ICarModel {
 		return new DefaultCarModel(this);
 	}
 
-	/**
-	 * TODO remove this from DefaultCarModel and create IVisibility interface to
-	 * provide several visbility implementations to make different ranges of
-	 * vision possible!!
-	 */
-	@Override
-	public boolean isVisible() {
-		if (this.getPosx() > 150 || this.getPosx() < 0 || this.getPosy() < -100
-				|| this.getPosy() > 100) {
-			return false;
-		}
-		return true;
-	}
-
 }

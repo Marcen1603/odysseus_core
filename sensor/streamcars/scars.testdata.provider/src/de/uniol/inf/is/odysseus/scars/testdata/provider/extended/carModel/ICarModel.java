@@ -11,12 +11,6 @@ public interface ICarModel {
 	public IGenericCalcModel getCalcModel();
 	
 	/**
-	 * returns true iff the car model is visible for the sensor
-	 * @return
-	 */
-	public boolean isVisible();
-
-	/**
 	 * returns the unique car id
 	 * @return
 	 */

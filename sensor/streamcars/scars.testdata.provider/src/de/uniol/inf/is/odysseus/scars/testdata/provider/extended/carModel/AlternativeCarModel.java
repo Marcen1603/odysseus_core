@@ -45,15 +45,6 @@ public class AlternativeCarModel implements ICarModel {
 	}
 
 	@Override
-	public boolean isVisible() {
-		if (this.getPosx() > 150 || this.getPosx() < 0 || this.getPosy() < -100
-				|| this.getPosy() > 100) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return this.id;
 	}
