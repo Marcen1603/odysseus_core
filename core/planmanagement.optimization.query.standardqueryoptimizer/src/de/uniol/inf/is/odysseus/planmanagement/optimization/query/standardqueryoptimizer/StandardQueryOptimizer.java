@@ -70,7 +70,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		// if a logical rewrite should be processed.
 		ILogicalOperator originalPlan = query
 				.getLogicalPlan();
-
+		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
 		AbstractGraphWalker walker = new AbstractGraphWalker();
 		walker.prefixWalk(originalPlan, copyVisitor);

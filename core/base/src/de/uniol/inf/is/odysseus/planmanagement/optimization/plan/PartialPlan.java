@@ -56,12 +56,19 @@ public class PartialPlan implements IPartialPlan {
 	private long basePriority;
 
 	/**
+	 * SLA-based
+	 */
+
+	private double slaRate = 0.0;
+	private String slaInfo = "";
+	
+	/**
 	 * 
 	 */
 	private List<IQuery> partOf;
 
 	private long planId;
-	
+
 	/**
 	 * Cache Ids for Sources to speed up getSourceID
 	 */
@@ -83,7 +90,7 @@ public class PartialPlan implements IPartialPlan {
 			IQuery... otherParts) {
 		this.iterableSources = new ArrayList<IIterableSource<?>>(
 				iterableSources);
-		this.sourceIds = new  HashMap<IIterableSource<?>, Integer>();
+		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
 		for (int i = 0; i < iterableSources.size(); i++) {
 			sourceIds.put(iterableSources.get(i), i); // Iterator does not
 														// garantee order ...
@@ -124,7 +131,7 @@ public class PartialPlan implements IPartialPlan {
 	@Override
 	public synchronized int getSourceId(IIterableSource<?> source) {
 		Integer id = sourceIds.get(source);
-		return id != null?id:-1;
+		return id != null ? id : -1;
 	}
 
 	/*
@@ -180,7 +187,25 @@ public class PartialPlan implements IPartialPlan {
 	public long getId() {
 		return planId;
 	}
-	
+
+	@Override
+	public double getSLARate() {
+		return slaRate;
+	}
+
+	@Override
+	public void setSLARate(double rate) {
+		this.slaRate = rate;
+	}
+
+	public void setSLAInfo(String slaInfo) {
+		this.slaInfo = slaInfo;
+	}
+
+	public String getSLAInfo() {
+		return slaInfo;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -188,24 +213,20 @@ public class PartialPlan implements IPartialPlan {
 	 */
 	@Override
 	public String toString() {
-		String result = getId()+"Roots:";
+		StringBuffer result = new StringBuffer(getId() + "Roots:");
 
 		for (IPhysicalOperator root : this.roots) {
-			if (result != "") {
-				result += AppEnv.LINE_SEPARATOR;
-			}
-			result += root.toString() + ", Owner: " + root.getOwnerIDs();
+			result.append(AppEnv.LINE_SEPARATOR);
+			result.append(root.toString()).append(", Owner: ").append(root.getOwnerIDs());
 		}
 
-		result += AppEnv.LINE_SEPARATOR + "Sources:";
+		result.append(AppEnv.LINE_SEPARATOR + "Sources:");
 
 		for (IIterableSource<?> source : iterableSources) {
-			if (result != "") {
-				result += AppEnv.LINE_SEPARATOR;
-			}
-			result += source.toString() + ", Owner: " + source.getOwnerIDs();
+				result.append(AppEnv.LINE_SEPARATOR);
+				result.append(source.toString()).append(", Owner: ").append(source.getOwnerIDs());
 		}
-		return result;
+		return result.toString();
 	}
 
 }

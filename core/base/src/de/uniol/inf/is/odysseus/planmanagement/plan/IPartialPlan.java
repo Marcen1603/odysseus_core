@@ -18,6 +18,13 @@ public interface IPartialPlan {
 	public void setCurrentPriority(long newPriority);
 	public long getBasePriority();
 
+	public void setSLARate(double rate);
+	public double getSLARate();
+
+	public void setSLAInfo(String info);
+	public String getSLAInfo();
+
+	
 	@Override
 	public int hashCode();
 	
