@@ -25,23 +25,22 @@ public class AlternativeSchemaGenerator implements ISchemaGenerator {
 		SDFAttribute posx = new SDFAttribute(sourceName, "posx");
 		posx.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posx.setCovariance(Arrays.asList(new Double[] { mvValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue,
 				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue }));
 
 		SDFAttribute posy = new SDFAttribute(sourceName, "posy");
 		posy.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posy.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
-				mvValue, mvCorrelationValue, mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue }));
+				mvValue, mvCorrelationValue, mvCorrelationValue}));
 
 		SDFAttribute velocity = new SDFAttribute(sourceName, "velocity");
 		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		velocity.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvValue }));
+				mvCorrelationValue, mvValue, mvCorrelationValue}));
 
 		SDFAttribute acceleration = new SDFAttribute(sourceName, "acceleration");
-		acceleration.setDatatype(SDFDatatypeFactory.getDatatype("Float"));
+		acceleration.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
+		acceleration.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
+				mvCorrelationValue, mvCorrelationValue, mvValue }));
 
 		SDFAttribute car = new SDFAttribute(sourceName, "car");
 		car.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
