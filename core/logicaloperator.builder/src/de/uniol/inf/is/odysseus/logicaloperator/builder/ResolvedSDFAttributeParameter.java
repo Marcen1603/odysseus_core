@@ -31,7 +31,7 @@ public class ResolvedSDFAttributeParameter extends
 			
 			setValue(attribute);
 		} catch( Exception ex ) {
-			this.getLogger().error("cannot assign attribute value", ex);
+			throw new RuntimeException("cannot assign attribute value", ex);
 		}
 	}
 
