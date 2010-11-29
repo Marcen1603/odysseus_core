@@ -4,7 +4,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.scars.emep.functions.GetAbsoluteValue;
 import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixAdd;
+import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixGetEntry;
 import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixInvert;
 import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixMult;
 import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixSub;
@@ -39,6 +41,8 @@ public class Activator extends AbstractUIPlugin {
 		MEP.registerFunction(new MatrixSub());
 		MEP.registerFunction(new MatrixMult());
 		MEP.registerFunction(new MatrixTranspose());
+		MEP.registerFunction(new MatrixGetEntry());
+		MEP.registerFunction(new GetAbsoluteValue());
 	}
 
 	/*
@@ -52,6 +56,8 @@ public class Activator extends AbstractUIPlugin {
 		MEP.unregisterFunction("MatrixSub");
 		MEP.unregisterFunction("MatrixMult");
 		MEP.unregisterFunction("MatrixTrans");
+		MEP.unregisterFunction("MatrixEntry");
+		MEP.unregisterFunction("AbsValue");
 		super.stop(context);
 	}
 
