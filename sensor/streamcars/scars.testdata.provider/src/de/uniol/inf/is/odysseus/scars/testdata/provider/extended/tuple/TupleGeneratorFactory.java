@@ -19,6 +19,8 @@ public class TupleGeneratorFactory {
 	public ITupleGenerator buildTupleGenerator(String schemaID) {
 		if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_DEFAULT)) {
 			return new DefaultTupleGenerator();
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)) {
+			return new AlternativeTupleGenerator();
 		}
 		return null;
 	}
