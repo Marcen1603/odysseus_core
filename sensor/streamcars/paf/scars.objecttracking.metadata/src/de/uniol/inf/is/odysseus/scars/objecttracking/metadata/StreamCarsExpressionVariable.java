@@ -223,5 +223,17 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 				+ "\n\t   ]";
 	}
 
+	@Override
+	public boolean isInList(int[] pathToList) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public SchemaIndexPath getSchemaIndexPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
