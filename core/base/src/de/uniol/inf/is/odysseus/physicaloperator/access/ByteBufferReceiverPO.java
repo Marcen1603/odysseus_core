@@ -111,7 +111,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 				// Und Size kann gesetzt worden sein
 				if (size != -1) {
 					// Ist das was dazukommt kleiner als die finale Größe?
-					if (currentSize + buffer.remaining() <= size) {
+					if (currentSize + buffer.remaining() < size) {
 						currentSize = currentSize + buffer.remaining();
 						handler.put(buffer);
 					} else {
