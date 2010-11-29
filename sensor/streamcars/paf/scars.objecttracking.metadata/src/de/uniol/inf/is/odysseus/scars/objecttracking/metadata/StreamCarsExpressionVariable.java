@@ -208,13 +208,17 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	protected void initRelativeIndex() {
 		if(schemaPath == null) throw new RuntimeException("the variable " + name + "was not properly initialized: schemaIndexPath is null");
 		relativePath = new int[schemaPath.getLength()];
+		boolean isUnderList = false;
 		for(int i=0; i<relativePath.length; i++) {
 			SchemaIndex index = schemaPath.getSchemaIndex(i);
-			if(index.isList()) {
+			if(isUnderList) {
 				relativePath[i] = -1;
-			} else {
-				relativePath[i] = index.getIndex();
 			}
+			
+			if(index.isList()) {
+				isUnderList = true;
+			} 
+			relativePath[i] = index.getIndex();
 		}
 	}
 	
