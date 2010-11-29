@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.mep.functions.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.OrOperator;
 import de.uniol.inf.is.odysseus.mep.functions.PlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.PowerOperator;
+import de.uniol.inf.is.odysseus.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.SmallerThanOperator;
@@ -34,7 +35,8 @@ import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
 public class MEP {
-	public static IExpression<?> parse(String expressionStr) throws de.uniol.inf.is.odysseus.mep.ParseException {
+	public static IExpression<?> parse(String expressionStr)
+			throws de.uniol.inf.is.odysseus.mep.ParseException {
 		MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
 		SimpleNode expressionNode;
 		try {
@@ -52,7 +54,7 @@ public class MEP {
 	static {
 		registerFunction(new AndOperator());
 		registerFunction(new OrOperator());
-		
+
 		registerFunction(new EqualsOperator());
 		registerFunction(new NotEqualsOperator());
 
@@ -82,6 +84,7 @@ public class MEP {
 		registerFunction(new CosinusFunction());
 		registerFunction(new ToNumberFunction());
 		registerFunction(new ToStringFunction());
+		registerFunction(new RandomFunction());
 	}
 
 	public static void registerFunction(IFunction<?> function) {
