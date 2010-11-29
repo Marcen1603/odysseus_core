@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.emep.functions;
 
-import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -19,12 +18,12 @@ public class MatrixAdd extends AbstractFunction<Object> {
 
 	@Override
 	public Object getValue() {
-		return new RealMatrixImpl((double[][]) getInputValue(0)).add(new RealMatrixImpl((double[][]) getInputValue(1)));
+		return new RealMatrixImpl((double[][]) getInputValue(0)).add(new RealMatrixImpl((double[][]) getInputValue(1))).getData();
 	}
 
 	@Override
 	public Class<? extends Object> getType() {
-		return RealMatrix.class;
+		return Object.class;
 	}
 
 }
