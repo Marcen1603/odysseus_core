@@ -66,6 +66,7 @@ public class TransformationExecutor implements ITransformation {
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, "Current working memory:");
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, env.getWorkingMemory().getCurrentContent().toString());
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN, "Further information: \n" + env.getWorkingMemory().getDebugTrace());
+			throw new TransformationException("Error during transformation of " + op);
 		}
 
 		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
