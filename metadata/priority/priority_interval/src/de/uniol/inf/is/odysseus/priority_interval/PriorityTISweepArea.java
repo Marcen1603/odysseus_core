@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyAfterPredicate;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
@@ -16,11 +16,9 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
 //should be K extends IPriority & ITimeInterval, but suns compiler (1.6) is buggy and doens't accept it:(
 public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
 		extends DefaultTISweepArea<T> {
-	@SuppressWarnings("unchecked")
 	public PriorityTISweepArea() {
 		super();
-		setRemovePredicate(new AndPredicate<T>(new NonPriorityPredicate(),
-				TotallyBeforePredicate.getInstance()));
+		setRemovePredicate(TotallyAfterPredicate.getInstance());
 	}
 
 	@Override
@@ -42,7 +40,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 		Iterator<T> it = this.elements.iterator();
 		while (it.hasNext()) {
 			T next = it.next();
-			if (getRemovePredicate().evaluate(next, element)) {
+			if (getRemovePredicate().evaluate(element, next)) {
 				it.remove();
 			} else {
 				if (((IPriority) next.getMetadata()).getPriority() == 0) {
@@ -64,8 +62,8 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 				if (getRemovePredicate().evaluate(element, next)) {
 					it.remove();
 					result.add(next);
-				} else {
-					return result.iterator();
+					// } else {
+					// return result.iterator();
 				}
 			}
 			break;
@@ -75,8 +73,8 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 				if (getRemovePredicate().evaluate(next, element)) {
 					it.remove();
 					result.add(next);
-				} else {
-					return result.iterator();
+					// } else {
+					// return result.iterator();
 				}
 			}
 			break;
@@ -121,12 +119,12 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 		switch (order) {
 		case LeftRight:
 			for (T next : this.elements) {
-				if (TimeInterval.totallyBefore(next.getMetadata(), element
-						.getMetadata())) {
+				if (TimeInterval.totallyBefore(next.getMetadata(),
+						element.getMetadata())) {
 					continue;
 				}
-				if (TimeInterval.totallyAfter(next.getMetadata(), element
-						.getMetadata())) {
+				if (TimeInterval.totallyAfter(next.getMetadata(),
+						element.getMetadata())) {
 					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
 					} else {
@@ -140,12 +138,12 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 			break;
 		case RightLeft:
 			for (T next : this.elements) {
-				if (TimeInterval.totallyBefore(next.getMetadata(), element
-						.getMetadata())) {
+				if (TimeInterval.totallyBefore(next.getMetadata(),
+						element.getMetadata())) {
 					continue;
 				}
-				if (TimeInterval.totallyAfter(next.getMetadata(), element
-						.getMetadata())) {
+				if (TimeInterval.totallyAfter(next.getMetadata(),
+						element.getMetadata())) {
 					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
 					} else {
