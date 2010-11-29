@@ -194,7 +194,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 		
 		time.add(currentTime);
 		
-		String expression = "a.list:obj#covariance + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime + someVaryingValue";
+		String expression = "MOOOEEEEP + a.list:obj#covariance + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime + someVaryingValue";
 		StreamCarsExpression e = new StreamCarsExpression(expression);
 		e.init(scan, time);
 		System.out.println("TEST: BEFORE INDEX REPLACE:");

@@ -201,8 +201,9 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			throw new IllegalArgumentException("the variable: " + variableName + " has more than one source seperators ('.'");
 		} else if(dotSplit.length < 2) {
 			sourceName = NO_SOURCE;
+		} else {
+			sourceName =  dotSplit[0];
 		}
-		sourceName =  dotSplit[0];
 	}
 	
 	protected void initRelativeIndex() {
