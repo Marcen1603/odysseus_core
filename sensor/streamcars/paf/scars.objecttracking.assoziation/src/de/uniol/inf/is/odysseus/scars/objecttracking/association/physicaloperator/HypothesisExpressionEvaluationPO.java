@@ -5,14 +5,16 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 /**
  * @author Volker Janz
@@ -23,7 +25,7 @@ import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends
 		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private PredictionExpression expression;
+	private StreamCarsExpression expression;
 	private String expressionString;
 	private SchemaHelper schemaHelper;
 	private String predictedObjectListPath;
@@ -32,6 +34,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	private SchemaIndexPath scannedObjectListSIPath;
 
 	private static final String EXP_ASSOCIATION_CONNECTION_VALUE = "ASSOCIATION_CON_VAL";
+	private static final String METADATA_COV = "COVARIANCE";
 
 	public HypothesisExpressionEvaluationPO() {
 		super();
@@ -57,46 +60,65 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		this.expressionString = this.expressionString.replace("'", "");
-		this.expression = new PredictionExpression(this.expressionString);
+		this.expression = new StreamCarsExpression(this.expressionString);
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
 		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath));
 		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predictedObjectListPath));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		TupleIndexPath scannedTupleIndexPath = this.getScannedObjectListSIPath().toTupleIndexPath(object);
+		TupleIndexPath predictedTupleIndexPath = this.getPredictedObjectListSIPath().toTupleIndexPath(object);
 
 		TupleHelper tupleHelper = new TupleHelper(object);
 
-		ConnectionList newObjConList = new ConnectionList();
-
 		for (IConnection con : object.getMetadata().getConnectionList()) {
-			// double currentRating = con.getRating();
-			try {
-				for (String attribute : expression.getAttributeNames(this.schemaHelper.getSchema())) {
-					if (attribute.equals(EXP_ASSOCIATION_CONNECTION_VALUE)) {
-						expression.bindVariable(attribute, con.getRating());
+
+			double currentRating = con.getRating();
+
+			for (IStreamCarsExpressionVariable ivar : expression.getVariables()) {
+				StreamCarsExpressionVariable var = (StreamCarsExpressionVariable) ivar;
+
+				if (!var.isSchemaVariable() && var.getName().equals(EXP_ASSOCIATION_CONNECTION_VALUE)) { // "Custom" Variable
+					if (currentRating != -1) {
+						var.bind(currentRating);
 					} else {
-						int[] attributePath = expression.getAttributePath(attribute);
-						int[] objectPath = this.getVaryingIndex(con.getLeftPath().toArray(), attributePath);
-						if (objectPath == null) {
-							objectPath = this.getVaryingIndex(con.getRightPath().toArray(), attributePath);
+						var.bind(0);
+					}
+				} else if (var.isSchemaVariable()) { // "Normale" Variable
+					if (var.isInList(scannedTupleIndexPath)) {
+						var.replaceVaryingIndex(con.getLeftPath().getLastTupleIndex().toInt());
+						var.bindTupleValue(object);
+					} else if (var.isInList(predictedTupleIndexPath)) {
+						var.replaceVaryingIndex(con.getRightPath().getLastTupleIndex().toInt());
+						var.bindTupleValue(object);
+					}
+				} else if (var.hasMetadataInfo()) { // Metadaten Variable
+					if (var.isInList(scannedTupleIndexPath.toArray())) {
+						var.replaceVaryingIndex(con.getLeftPath().getLastTupleIndex().toInt());
+						Object val = tupleHelper.getObject(var.getPath());
+						String metaDataInfo = var.getMetadataInfo();
+						if (metaDataInfo.equals(METADATA_COV)) {
+							var.bind(((MVRelationalTuple<M>) val).getMetadata().getCovariance());
 						}
-						if (objectPath != null) {
-							Object val = tupleHelper.getObject(objectPath);
-							expression.bindVariable(attribute, val);
+					} else if (var.isInList(predictedTupleIndexPath.toArray())) {
+						var.replaceVaryingIndex(con.getRightPath().getLastTupleIndex().toInt());
+						Object val = tupleHelper.getObject(var.getPath());
+						String metaDataInfo = var.getMetadataInfo();
+						if (metaDataInfo.equals(METADATA_COV)) {
+							var.bind(((MVRelationalTuple<M>) val).getMetadata().getCovariance());
 						}
 					}
 				}
-				expression.evaluate();
-				con.setRating(expression.getTargetDoubleValue());
-			} catch (Exception exception) {
-				exception.printStackTrace();
 			}
+			expression.evaluate();
+
+			con.setRating(expression.getDoubleValue());
 		}
 
-		object.getMetadata().setConnectionList(newObjConList);
 		transfer(object);
 	}
 
@@ -110,28 +132,13 @@ public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnecti
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	private int[] getVaryingIndex(int[] carTuplePath, int[] attributeTuplePath) {
-		for (int i = 0; i < attributeTuplePath.length; i++) {
-			if (attributeTuplePath[i] == -1) {
-				int[] resultTuplePath = new int[attributeTuplePath.length];
-				System.arraycopy(attributeTuplePath, 0, resultTuplePath, 0, attributeTuplePath.length);
-				resultTuplePath[i] = carTuplePath[carTuplePath.length - 1];
-				return resultTuplePath;
-			}
-			if (carTuplePath[i] != attributeTuplePath[i]) {
-				return null;
-			}
-		}
-		return null;
-	}
-
 	/* SETTER AND GETTER */
 
-	public PredictionExpression getExpression() {
+	public StreamCarsExpression getExpression() {
 		return expression;
 	}
 
-	public void setExpression(PredictionExpression expression) {
+	public void setExpression(StreamCarsExpression expression) {
 		this.expression = expression;
 	}
 

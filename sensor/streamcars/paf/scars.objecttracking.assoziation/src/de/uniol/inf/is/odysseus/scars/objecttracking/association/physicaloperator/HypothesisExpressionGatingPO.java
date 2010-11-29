@@ -9,12 +9,13 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 
 /**
  * @author Volker Janz
@@ -25,15 +26,16 @@ import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends
 		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private PredictionExpression expression;
-	private String expressionString;
+	private StreamCarsExpression expression;
 	private SchemaHelper schemaHelper;
 	private String predictedObjectListPath;
 	private String scannedObjectListPath;
+	private String expressionString;
 	private SchemaIndexPath predictedObjectListSIPath;
 	private SchemaIndexPath scannedObjectListSIPath;
 
 	private static final String EXP_ASSOCIATION_CONNECTION_VALUE = "ASSOCIATION_CON_VAL";
+	private static final String METADATA_COV = "COVARIANCE";
 
 	public HypothesisExpressionGatingPO() {
 		super();
@@ -47,7 +49,6 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 	public HypothesisExpressionGatingPO(HypothesisExpressionGatingPO<M> clone) {
 		super(clone);
 		this.expression = clone.expression;
-		this.expressionString = clone.expressionString;
 		this.schemaHelper = clone.schemaHelper;
 		this.predictedObjectListPath = clone.predictedObjectListPath;
 		this.scannedObjectListPath = clone.scannedObjectListPath;
@@ -59,15 +60,15 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		this.expressionString = this.expressionString.replace("'", "");
-		this.expression = new PredictionExpression(this.expressionString);
-
-		this.expression.initAttributePaths(getOutputSchema());
+		this.expression = new StreamCarsExpression(this.expressionString);
+		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath));
 		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predictedObjectListPath));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		TupleIndexPath scannedTupleIndexPath = this.getScannedObjectListSIPath().toTupleIndexPath(object);
@@ -75,43 +76,64 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		TupleHelper tupleHelper = new TupleHelper(object);
 		ConnectionList newObjConList = new ConnectionList();
 
-		for (TupleInfo scannedTupleInfo : scannedTupleIndexPath) {
+		TupleIndexPath absScanTupleIndexPath;
+		TupleIndexPath absPredTupleIndexPath;
 
-			for (TupleInfo predictedTupleInfo : predictedTupleIndexPath) {
+		int scanCount = ((MVRelationalTuple<M>) scannedTupleIndexPath.getTupleObject()).getAttributeCount();
+		int predCount = ((MVRelationalTuple<M>) predictedTupleIndexPath.getTupleObject()).getAttributeCount();
 
-				try {
-					// getRatingForElementPair returns -1 if there is no connection for the given objects
-					double currentRating = object.getMetadata().getConnectionList()
-							.getRatingForElementPair(scannedTupleInfo.tupleIndexPath, predictedTupleInfo.tupleIndexPath);
+		for (int i = 0; i < scanCount; i++) {
 
-					for (String attribute : expression.getAttributeNames(this.schemaHelper.getSchema())) {
-						if (attribute.equals(EXP_ASSOCIATION_CONNECTION_VALUE)) {
-							if (currentRating != -1) {
-								expression.bindVariable(attribute, currentRating);
-							} else {
-								expression.bindVariable(attribute, 0);
-							}
+			for (int j = 0; j < predCount; j++) {
+
+				absScanTupleIndexPath = scannedTupleIndexPath.appendClone(i);
+				absPredTupleIndexPath = predictedTupleIndexPath.appendClone(j);
+
+				// getRatingForElementPair returns -1 if there is no
+				// connection for the given objects
+				double currentRating = object.getMetadata().getConnectionList().getRatingForElementPair(absScanTupleIndexPath, absPredTupleIndexPath);
+
+				for (IStreamCarsExpressionVariable ivar : expression.getVariables()) {
+					StreamCarsExpressionVariable var = (StreamCarsExpressionVariable) ivar;
+
+					if (!var.isSchemaVariable() && var.getName().equals(EXP_ASSOCIATION_CONNECTION_VALUE)) { // "Custom" Variable
+						if (currentRating != -1) {
+							var.bind(currentRating);
 						} else {
-							int[] attributePath = expression.getAttributePath(attribute);
-							int[] objectPath = this.getVaryingIndex(scannedTupleInfo.tupleIndexPath.toArray(), attributePath);
-							if (objectPath == null) {
-								objectPath = this.getVaryingIndex(predictedTupleInfo.tupleIndexPath.toArray(), attributePath);
+							var.bind(0);
+						}
+					} else if (var.isSchemaVariable()) { // "Normale" Variable
+						if (var.isInList(scannedTupleIndexPath)) {
+							var.replaceVaryingIndex(i);
+							var.bindTupleValue(object);
+						} else if (var.isInList(predictedTupleIndexPath.toArray())) {
+							var.replaceVaryingIndex(j);
+							var.bindTupleValue(object);
+						}
+					} else if (var.hasMetadataInfo()) { // Metadaten Variable
+						if (var.isInList(scannedTupleIndexPath)) {
+							var.replaceVaryingIndex(i);
+							Object val = tupleHelper.getObject(var.getPath());
+							String metaDataInfo = var.getMetadataInfo();
+							if (metaDataInfo.equals(METADATA_COV)) {
+								var.bind(((MVRelationalTuple<M>) val).getMetadata().getCovariance());
 							}
-							if (objectPath != null) {
-								Object val = tupleHelper.getObject(objectPath);
-								expression.bindVariable(attribute, val);
+						} else if (var.isInList(predictedTupleIndexPath)) {
+							var.replaceVaryingIndex(j);
+							Object val = tupleHelper.getObject(var.getPath());
+							String metaDataInfo = var.getMetadataInfo();
+							if (metaDataInfo.equals(METADATA_COV)) {
+								var.bind(((MVRelationalTuple<M>) val).getMetadata().getCovariance());
 							}
 						}
 					}
-					expression.evaluate();
+				}
+				expression.evaluate();
 
-					double newRating = expression.getTargetDoubleValue();
+				double newRating = expression.getDoubleValue();
 
-					if (currentRating != newRating) {
-						newObjConList.add(new Connection(scannedTupleInfo.tupleIndexPath, predictedTupleInfo.tupleIndexPath, newRating));
-					}
-				} catch (Exception exception) {
-					exception.printStackTrace();
+				if (currentRating != newRating) {
+					newObjConList.add(new Connection(absScanTupleIndexPath, absPredTupleIndexPath, newRating));
 				}
 
 			}
@@ -131,37 +153,14 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	private int[] getVaryingIndex(int[] carTuplePath, int[] attributeTuplePath) {
-		for (int i = 0; i < attributeTuplePath.length; i++) {
-			if (attributeTuplePath[i] == -1) {
-				int[] resultTuplePath = new int[attributeTuplePath.length];
-				System.arraycopy(attributeTuplePath, 0, resultTuplePath, 0, attributeTuplePath.length);
-				resultTuplePath[i] = carTuplePath[carTuplePath.length - 1];
-				return resultTuplePath;
-			}
-			if (carTuplePath[i] != attributeTuplePath[i]) {
-				return null;
-			}
-		}
-		return null;
-	}
-
 	/* SETTER AND GETTER */
 
-	public PredictionExpression getExpression() {
+	public StreamCarsExpression getExpression() {
 		return expression;
 	}
 
-	public void setExpression(PredictionExpression expression) {
+	public void setExpression(StreamCarsExpression expression) {
 		this.expression = expression;
-	}
-
-	public String getExpressionString() {
-		return expressionString;
-	}
-
-	public void setExpressionString(String expressionString) {
-		this.expressionString = expressionString;
 	}
 
 	public SchemaHelper getSchemaHelper() {
@@ -202,5 +201,13 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 
 	public void setScannedObjectListSIPath(SchemaIndexPath scannedObjectListSIPath) {
 		this.scannedObjectListSIPath = scannedObjectListSIPath;
+	}
+
+	public String getExpressionString() {
+		return expressionString;
+	}
+
+	public void setExpressionString(String expressionString) {
+		this.expressionString = expressionString;
 	}
 }
