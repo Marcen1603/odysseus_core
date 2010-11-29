@@ -106,6 +106,8 @@ public class ExtendedProvider implements IProvider {
 	 */
 	@Override
 	public Object nextTuple() {
+		this.currentTimeStamp += this.delay;
+		
 		// calculate new state
 		for (ICarModel model : this.state) {
 			model.getCalcModel().calculateAll();
