@@ -38,6 +38,10 @@ public class QueryTextParser {
 		return instance;
 	}
 
+	public List<IQuery> parseAndExecute(String completeText) throws QueryTextParseException{
+		return execute(parseScript(completeText));
+	}
+	
 	public List<IQuery> execute(List<PreParserStatement> statements) throws QueryTextParseException {
 
 		List<IQuery> queries = new ArrayList<IQuery>();
