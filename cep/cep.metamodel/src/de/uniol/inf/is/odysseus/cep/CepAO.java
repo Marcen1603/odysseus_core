@@ -36,8 +36,17 @@ public class CepAO<T> extends AbstractLogicalOperator implements OutputSchemaSet
 		
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outSchema = outputSchema;
+		this.outSchema = outputSchema.clone();
 	}
+	
+	@Override 
+    public void setOutputSchema(SDFAttributeList outputSchema, int port) { 
+         if(port==0){ 
+              setOutputSchema(outputSchema); 
+         }else{ 
+              throw new IllegalArgumentException("no such port: " + port); 
+         }    
+    }
 	
 	public void setInputTypeName(int port, String name){
 		portNames.put(port, name);
