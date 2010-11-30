@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator;
 
 import de.uniol.inf.is.odysseus.datamining.logicaloperator.AbstractDataMiningAO;
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -34,13 +33,30 @@ public class LeaderAO extends AbstractDataMiningAO {
 		id.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 		outputSchema.add(id);
 		outputSchema.addAll(getInputSchema());
-// Outputschema für Cluster
-//		SDFAttribute size = new SDFAttribute("cluster_size");
-//		id.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-//		outputSchema.add(size);
-//		outputSchema.addAll(attributes);
+		// Outputschema für Cluster
+		// SDFAttribute size = new SDFAttribute("cluster_size");
+		// id.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		// outputSchema.add(size);
+		// outputSchema.addAll(attributes);
 
 		return outputSchema;
+	}
+
+	@Override
+	public SDFAttributeList getOutputSchema(int port) {
+		if (port == 0) {
+			return getOutputSchema();
+		} else {
+			SDFAttributeList clusterSchema = new SDFAttributeList();
+			SDFAttribute idA = new SDFAttribute("leadercluster", "cluster_id");
+			idA.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			clusterSchema.add(idA);
+			SDFAttribute idCount = new SDFAttribute("leadercluster", "cluster_count");
+			idCount.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+			clusterSchema.add(idCount);
+			clusterSchema.addAll(attributes.clone());
+			return clusterSchema;
+		}
 	}
 
 	@Override
