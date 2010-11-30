@@ -5,6 +5,7 @@ public class GenData {
 		int noOfUsers = 150;
 		int baseTime = 50;
 		int sameLevel = 5;
+		System.out.println("#LOGIN system manager");
 		System.out.println("#PARSER CQL");
 		System.out.println("#TRANSCFG Standard");
 		System.out.println("#BUFFERPLACEMENT Query Buffer Placement");
@@ -45,8 +46,6 @@ public class GenData {
 					+ i + ")");
 
 		}
-
-		System.out.println("#LOGIN System manager");
 		System.out
 				.println("#SCHEDULER \"Time based SLA scheduler max\" \"Round Robin\"");
 		System.out.println("#STARTSCHEDULER");
