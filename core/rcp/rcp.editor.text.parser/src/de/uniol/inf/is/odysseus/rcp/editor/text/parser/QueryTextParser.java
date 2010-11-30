@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,11 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ExecuteQueryPreParserKeyword;
-import de.uniol.inf.is.odysseus.usermanagement.User;
 
 
 public class QueryTextParser {
