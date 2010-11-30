@@ -8,7 +8,11 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.ui.PlatformUI;
 
-public class StatusBarManager {
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.IActiveUserListener;
+
+public class StatusBarManager implements IActiveUserListener{
 
 	private static StatusBarManager instance = null;
 	
@@ -22,7 +26,7 @@ public class StatusBarManager {
 	private String msgCache;
 	
 	private StatusBarManager() {
-		
+		ActiveUser.addActiveUserListner(this);
 	}
 	
 	public static StatusBarManager getInstance() {
@@ -93,5 +97,10 @@ public class StatusBarManager {
 				manager.setMessage(message);
 			}
 		});
+	}
+
+	@Override
+	public void activeUserChanged(User user) {
+		setMessage(USER_ID, user.getName());
 	}
 }
