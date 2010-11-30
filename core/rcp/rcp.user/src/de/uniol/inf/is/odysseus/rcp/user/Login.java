@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.rcp.user.impl.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.user.impl.LoginWindow;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
 public class Login {
 

@@ -15,4 +15,5 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.rcp.user,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.usermanagement
+ de.uniol.inf.is.odysseus.usermanagement,
+ de.uniol.inf.is.odysseus.usermanagement.client

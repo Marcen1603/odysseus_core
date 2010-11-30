@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.rcp.editor.model;
 import org.eclipse.gef.requests.CreationFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
 public class OperatorFactory implements CreationFactory {
 

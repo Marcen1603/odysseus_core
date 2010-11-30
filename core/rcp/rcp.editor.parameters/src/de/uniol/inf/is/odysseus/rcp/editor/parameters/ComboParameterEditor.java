@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.SimpleParameterEditor;
-import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
 public class ComboParameterEditor extends SimpleParameterEditor<String> implements IParameterEditor {
 

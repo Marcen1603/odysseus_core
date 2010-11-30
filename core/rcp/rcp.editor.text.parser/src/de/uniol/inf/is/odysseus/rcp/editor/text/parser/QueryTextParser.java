@@ -49,7 +49,7 @@ public class QueryTextParser {
 					final List<PreParserStatement> statements = parse(text);
 					
 					// Erst Text testen
-					monitor.beginTask("Starting Query", statements.size() * 2);
+					monitor.beginTask("Executing Commands", statements.size() * 2);
 					monitor.subTask("Validating");
 					
 					Map<String, String> variables = new HashMap<String, String>();

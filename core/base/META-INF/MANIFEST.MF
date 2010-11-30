@@ -82,5 +82,6 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,
  de.uniol.inf.is.odysseus.store,
  de.uniol.inf.is.odysseus.usermanagement,
+ de.uniol.inf.is.odysseus.usermanagement.client,
  de.uniol.inf.is.odysseus.util
 Bundle-ActivationPolicy: lazy

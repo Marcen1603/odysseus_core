@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.usermanagement.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.rcp.user.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
 public class TenantView extends ViewPart implements IUserManagementListener,
 		ITenantManagementListener {
