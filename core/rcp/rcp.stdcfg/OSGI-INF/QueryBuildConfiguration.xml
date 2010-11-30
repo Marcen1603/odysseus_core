@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rcp.stdcfg">
-   <implementation class="de.uniol.inf.is.odysseus.rcp.stdcfg.StandardQueryBuildConfiguration"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.stdcfg">
+   <implementation class="de.uniol.inf.is.odysseus.stdcfg.StandardQueryBuildConfiguration"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration"/>
    </service>

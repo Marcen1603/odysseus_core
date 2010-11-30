@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Stdcfg
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.stdcfg;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.stdcfg;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

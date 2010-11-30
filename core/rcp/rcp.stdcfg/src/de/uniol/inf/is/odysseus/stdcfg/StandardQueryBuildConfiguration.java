@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.stdcfg;
+package de.uniol.inf.is.odysseus.stdcfg;
 
 import java.util.ArrayList;
 import java.util.List;
