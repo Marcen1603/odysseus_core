@@ -16,6 +16,7 @@ public class ActiveUser {
 	
 	public synchronized static void setActiveUser( User user ) {
 		activeUser = user;
+		fire();
 	}
 	
 	public synchronized static User getActiveUser() { 
