@@ -37,7 +37,8 @@ public class ParserPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
+	public Object execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		variables.put("PARSER", parameter);
+		return null;
 	}
 }

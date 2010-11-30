@@ -14,5 +14,5 @@ import java.util.Map;
 public interface IPreParserKeyword {
 
 	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException;
-	public void execute(Map<String, String> variables, String parameter) throws QueryTextParseException;
+	public Object execute(Map<String, String> variables, String parameter) throws QueryTextParseException;
 }

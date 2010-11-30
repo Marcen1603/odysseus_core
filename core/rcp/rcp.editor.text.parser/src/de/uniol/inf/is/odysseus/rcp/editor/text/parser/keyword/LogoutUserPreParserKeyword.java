@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.UserStack;
 
 public class LogoutUserPreParserKeyword implements IPreParserKeyword {
 
@@ -19,7 +20,7 @@ public class LogoutUserPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
+	public Object execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		
 		if( UserStack.isEmpty())
 			throw new QueryTextParseException("Too many LOGOUTs or too few LOGINs");
@@ -36,6 +37,7 @@ public class LogoutUserPreParserKeyword implements IPreParserKeyword {
 			ex.printStackTrace();
 			throw new QueryTextParseException("Cannot logout user " + user.getUsername());
 		}
+		return null;
 	}
 
 }

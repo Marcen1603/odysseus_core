@@ -33,7 +33,7 @@ public class SchedulerPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter)
+	public Object execute(Map<String, String> variables, String parameter)
 			throws QueryTextParseException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
@@ -41,6 +41,7 @@ public class SchedulerPreParserKeyword implements IPreParserKeyword {
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
 		executor.setScheduler(params.get(0), params.get(1));
+		return null;
 	}
 
 	private List<String> splitParams(String input){

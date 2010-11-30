@@ -19,8 +19,8 @@ public class PreParserStatement {
 		keyword.validate(variables, parameter);
 	}
 	
-	public void execute( Map<String, String> variables ) throws QueryTextParseException {
-		keyword.execute(variables, parameter);
+	public Object execute( Map<String, String> variables ) throws QueryTextParseException {
+		return keyword.execute(variables, parameter);
 	}
 	
 	public String getParameter() {
@@ -29,5 +29,9 @@ public class PreParserStatement {
 	
 	public String getKeywordText() {
 		return keywordText;
+	}
+	
+	public IPreParserKeyword getKeyword(){
+		return keyword;
 	}
 }

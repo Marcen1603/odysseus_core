@@ -44,7 +44,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter ) throws QueryTextParseException {
+	public Object execute(Map<String, String> variables, String parameter ) throws QueryTextParseException {
 
 		String queries = parameter;
 		String parserID = variables.get("PARSER");
@@ -73,8 +73,8 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 				IQuery query = plans.get(plans.size() - 1);
 				compiler.transform(query, cfg.getValue(), ActiveUser.getActiveUser());
 	
-				int queryID = executor.addQuery(query.getRoots(), user, transCfg.toArray(new IQueryBuildSetting[0]));
-				executor.startQuery(queryID, ActiveUser.getActiveUser());
+				IQuery addedQuery = executor.addQuery(query.getRoots(), user, transCfg.toArray(new IQueryBuildSetting[0]));
+				executor.startQuery(addedQuery.getID(), ActiveUser.getActiveUser());
 			} 
 
 		} catch (QueryParseException e1) {
@@ -84,6 +84,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 		} catch( Throwable ex ) {
 //			ex.printStackTrace();
 		}
+		return null;
 	}
 
 }

@@ -34,7 +34,7 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	final private List<IScheduling> lastRun = new LinkedList<IScheduling>();
 	Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
 
-	long historySize = 60000;
+	long historySize = 10000;
 
 	private long toUpdateCounter = 0;
 	private long updatePenaliesFrequency = 10000;

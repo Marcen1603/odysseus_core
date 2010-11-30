@@ -29,7 +29,7 @@ public class BufferPlacementPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter)
+	public Object execute(Map<String, String> variables, String parameter)
 			throws QueryTextParseException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
@@ -37,6 +37,7 @@ public class BufferPlacementPreParserKeyword implements IPreParserKeyword {
 		List<IQueryBuildSetting<?>> config = executor.getQueryBuildConfiguration(
 						variables.get("TRANSCFG"));
 		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
+		IBufferPlacementStrategy s=null;
 		if (iter != null){
 			while (iter.hasNext()) {
 				IQueryBuildSetting<?> sett = iter.next();
@@ -45,10 +46,11 @@ public class BufferPlacementPreParserKeyword implements IPreParserKeyword {
 					break;
 				}
 			}
-			IBufferPlacementStrategy s = executor
+			s = executor
 					.getBufferPlacementStrategy(parameter);
 			config.add(new ParameterBufferPlacementStrategy(s));
 		}
+		return s;
 	}
 
 }

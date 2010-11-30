@@ -19,7 +19,7 @@ public class StartSchedulerPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter)
+	public Object execute(Map<String, String> variables, String parameter)
 			throws QueryTextParseException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
@@ -29,7 +29,7 @@ public class StartSchedulerPreParserKeyword implements IPreParserKeyword {
 		} catch (PlanManagementException e) {
 			throw new QueryTextParseException(e);
 		}
-
+		return null;
 	}
 
 }

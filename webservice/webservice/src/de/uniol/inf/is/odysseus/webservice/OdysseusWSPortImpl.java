@@ -45,7 +45,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 			// TODO: User einfuegen, der diese Query ausführt
         	User user = UserManagement.getInstance().getSuperUser();
 			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, trafoConfigParam
-					).iterator().next();
+					).iterator().next().getID();
 			return queryID;
 		} catch (Exception e) {
 			ObjectFactory factory = new ObjectFactory();

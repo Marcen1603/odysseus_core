@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
+package de.uniol.inf.is.odysseus.usermanagement.client;
 
 import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
-class UserStack {
+public class UserStack {
 
 	private static Stack<User> users = new Stack<User>();
 	

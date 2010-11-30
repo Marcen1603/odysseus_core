@@ -22,7 +22,7 @@ public class QuerySharingPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter)
+	public Object execute(Map<String, String> variables, String parameter)
 			throws QueryTextParseException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
@@ -44,6 +44,7 @@ public class QuerySharingPreParserKeyword implements IPreParserKeyword {
 				config.add(ParameterPerformQuerySharing.FALSE);
 			}
 		}
+		return null;
 	}
 
 }

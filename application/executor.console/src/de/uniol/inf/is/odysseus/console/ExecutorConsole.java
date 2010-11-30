@@ -1166,9 +1166,9 @@ public class ExecutorConsole implements CommandProvider,
 				compiler.transform(query, this.trafoConfigParam.getValue(), currentUser);
 				
 
-				int queryID = this.executor.addQuery(query.getRoots(), currentUser,
+				IQuery addedQuery = this.executor.addQuery(query.getRoots(), currentUser,
 						this.trafoConfigParam);
-				this.executor.startQuery(queryID, currentUser);
+				this.executor.startQuery(addedQuery.getID(), currentUser);
 
 			} catch (QueryParseException e1) {
 				e1.printStackTrace();

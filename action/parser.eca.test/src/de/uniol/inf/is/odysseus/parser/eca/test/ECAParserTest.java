@@ -183,10 +183,10 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		int queryID = this.executor.addQuery(logicalPlan, user, new ParameterParserID("ECA"));
+		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, new ParameterParserID("ECA"));
 		ci.println("	*Testcase3: Check if physical plan is correct");
 		IPlan plan = this.executor.getPlan();
-		IQuery installedQuery = plan.getQuery(queryID);
+		IQuery installedQuery = plan.getQuery(addedQuery.getID());
 		IPhysicalOperator physicalOp = installedQuery.getRoots().get(0);
 		if (! (physicalOp.getClass() == EventTriggerPO.class)){
 			throw new Exception("Physical operator root is wrong class: <"+physicalOp.getClass()+">");

@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
@@ -43,7 +44,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA", user, this.trafoConfigParam);
+			Collection<IQuery> ids = this.executer.addQuery(args[0], "ECA", user, this.trafoConfigParam);
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (Exception e) {
 			ci.println(e.getMessage());

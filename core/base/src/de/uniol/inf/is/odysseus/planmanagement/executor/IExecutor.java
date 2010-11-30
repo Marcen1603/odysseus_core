@@ -92,7 +92,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	@SuppressWarnings("rawtypes")
-	public Collection<Integer> addQuery(String query, String parserID, User user,
+	public Collection<IQuery> addQuery(String query, String parserID, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 
@@ -107,7 +107,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	@SuppressWarnings("rawtypes")
-	public Collection<Integer> addQuery(String query, User user,
+	public Collection<IQuery> addQuery(String query, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 
@@ -124,7 +124,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	@SuppressWarnings("rawtypes")
-	public int addQuery(ILogicalOperator logicalPlan, User user,
+	public IQuery addQuery(ILogicalOperator logicalPlan, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 
@@ -140,7 +140,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	@SuppressWarnings("rawtypes")
-	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, User user,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 	

@@ -344,7 +344,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .lang.String, java.lang.String, de.uniol.inf.is.odysseus.planmanagement
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
-	private Collection<Integer> addQuery(String query, User user,
+	private Collection<IQuery> addQuery(String query, User user,
 			QueryBuildConfiguration parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries. " + query+ "for user "+user.getUsername());
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
@@ -353,7 +353,7 @@ public class StandardExecutor extends AbstractExecutor {
 			List<IQuery> newQueries = createQueries(query, user, parameters);
 			addQueries(newQueries, new OptimizationConfiguration(parameters
 					.values().toArray(new Setting[0])));
-			return getQuerieIDs(newQueries);
+			return newQueries;
 		} catch (Exception e) {
 			getLogger().error(
 					"Error adding Queries. Details: " + e.getMessage());
@@ -373,14 +373,14 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<Integer> addQuery(String query, User user,
+	public Collection<IQuery> addQuery(String query, User user,
 			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
 		return addQuery(query, user, validateBuildParameters(parameters));
 	}
 
 	// TODO: REMOVE SYNCHRONIZED!
 	@Override
-	public synchronized Collection<Integer> addQuery(String query, String parserID,
+	public synchronized Collection<IQuery> addQuery(String query, String parserID,
 			User user, @SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
 			throws PlanManagementException {
 		QueryBuildConfiguration conf = new QueryBuildConfiguration(parameters);
@@ -398,7 +398,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * <?>[])
 	 */
 	@Override
-	public int addQuery(ILogicalOperator logicalPlan, User user,
+	public IQuery addQuery(ILogicalOperator logicalPlan, User user,
 			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
@@ -410,7 +410,7 @@ public class StandardExecutor extends AbstractExecutor {
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries, new OptimizationConfiguration(parameters));
-			return query.getID();
+			return query;
 		} catch (Exception e) {
 			getLogger().error(
 					"Error adding Queries. Details: " + e.getMessage());
@@ -428,7 +428,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * <?>[])
 	 */
 	@Override
-	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, User user,
 			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
@@ -440,7 +440,7 @@ public class StandardExecutor extends AbstractExecutor {
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries, getOptimizationParameters(parameters));
-			return query.getID();
+			return query;
 		} catch (Exception e) {
 			getLogger().error(
 					"Error adding Queries. Details: " + e.getMessage());

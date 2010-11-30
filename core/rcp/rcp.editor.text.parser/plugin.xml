@@ -13,7 +13,7 @@
             name="TRANSCFG">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.QueryPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ExecuteQueryPreParserKeyword"
             name="QUERY">
       </PreParserKeyword>
       <PreParserKeyword

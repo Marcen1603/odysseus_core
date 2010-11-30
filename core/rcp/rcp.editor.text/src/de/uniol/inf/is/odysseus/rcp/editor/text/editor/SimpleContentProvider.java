@@ -45,7 +45,7 @@ public class SimpleContentProvider implements ITreeContentProvider {
 			String text = ((StringTreeRoot)parentElement).getString();
 			try {
 				ArrayList<Object> list = new ArrayList<Object>();
-				List<PreParserStatement> statements = QueryTextParser.getInstance().parse(text);
+				List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text);
 				if( replaceLeaf != null ) {
 					list.add( replaceLeaf );
 					list.addAll(statements);

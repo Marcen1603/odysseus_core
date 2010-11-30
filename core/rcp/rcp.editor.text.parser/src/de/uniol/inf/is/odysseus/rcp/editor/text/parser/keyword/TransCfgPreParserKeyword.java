@@ -29,8 +29,9 @@ public class TransCfgPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
+	public Object execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		variables.put("TRANSCFG", parameter);
+		return null;
 	}
 
 }

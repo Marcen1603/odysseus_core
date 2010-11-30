@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.UserStack;
 
 public class LoginUserPreParserKeyword implements IPreParserKeyword {
 
@@ -17,7 +18,7 @@ public class LoginUserPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public void execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
+	public Object execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
 		String[] para = getParameters(parameter);
 		String userName = para[0];
 		String password = para[1];
@@ -31,6 +32,8 @@ public class LoginUserPreParserKeyword implements IPreParserKeyword {
 		
 		// Auch als aktiven User markieren
 		ActiveUser.setActiveUser(user);
+		
+		return user;
 	}
 
 	// Liefert von einem gegebenen String userName und ggfs Password
