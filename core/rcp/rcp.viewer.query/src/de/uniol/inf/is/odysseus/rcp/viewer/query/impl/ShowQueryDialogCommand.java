@@ -32,7 +32,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryHistory;
 
 public class ShowQueryDialogCommand extends AbstractHandler implements IHandler {
@@ -218,7 +217,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 	private void fillTransformCfgCombo() {
 		transCfgCombo.removeAll();
 		boolean lastFound = false;
-		for (String name : QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfigurationNames()) {
+		for (String name :  Activator.getExecutor().getQueryBuildConfigurationNames()) {
 			transCfgCombo.add(name);
 			if (name.equals(lastTransCfg))
 				lastFound = true;

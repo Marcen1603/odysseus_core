@@ -3,13 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Brokerconfig
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.brokerconfig;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.brokerconfig.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.rcp.viewer.query;bundle-version="1.0.0"
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.broker.evaluation.rules,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.planmanagement.configuration,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter
+Service-Component: OSGI-INF/QueryBuildConfiguration.xml

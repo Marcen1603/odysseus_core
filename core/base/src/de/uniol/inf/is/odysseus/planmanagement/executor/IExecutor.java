@@ -59,6 +59,16 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	public ExecutionConfiguration getConfiguration();
 
 	/**
+	 * List of predefined registered build configurations
+	 */
+	public Collection<String> getQueryBuildConfigurationNames();
+	
+	/**
+	 * Get specific query build configuration
+	 */
+	public List<IQueryBuildSetting<?>> getQueryBuildConfiguration(String name); 
+	
+	/**
 	 * getSupportedQueryParser liefert alle IDs der zur Verfuegung stehenden
 	 * Parser zur uebersetzung von Anfragen, die als Zeichenkette vorliegen.
 	 * 

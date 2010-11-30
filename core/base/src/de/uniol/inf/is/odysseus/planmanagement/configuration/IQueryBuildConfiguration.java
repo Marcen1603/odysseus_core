@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.query;
+package de.uniol.inf.is.odysseus.planmanagement.configuration;
 
 import java.util.List;
 
@@ -6,5 +6,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryB
 
 public interface IQueryBuildConfiguration {
 
-	public List<IQueryBuildSetting<?>> get();
+	public List<IQueryBuildSetting<?>> getConfiguration();
+	public String getName();
 }

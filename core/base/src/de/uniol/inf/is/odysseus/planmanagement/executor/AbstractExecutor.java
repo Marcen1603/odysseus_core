@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
@@ -18,6 +20,7 @@ import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ISettingChangeListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
@@ -37,6 +40,7 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
@@ -54,7 +58,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 	protected static Logger _logger = null;
 
-	protected static Logger getLogger() {
+	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(AbstractExecutor.class);
 		}
@@ -90,6 +94,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * Konfiguration der Ausführungsumgebung
 	 */
 	protected ExecutionConfiguration configuration = new ExecutionConfiguration();
+	
+	/**
+	 * Standard Configurationen
+	 */
+	protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting<?>>>();
 
 	/**
 	 * Alle Listener für Anfragebearbeitungs-Nachrichten
@@ -311,6 +320,24 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/**
+	 * Binding of predefinded build configurations
+	 * @param config
+	 */
+	public void bindQueryBuildConfiguration(IQueryBuildConfiguration config){
+		queryBuildConfigs.put(config.getName(), config.getConfiguration());
+		getLogger().debug("Query Build Configuration "+config+" bound");
+	}
+	
+	/**
+	 * Unbinding of predefinded build configurations
+	 * @param config
+	 */
+	public void unbindQueryBuildConfiguration(IQueryBuildConfiguration config){
+		queryBuildConfigs.remove(config.getName());
+	}
+
+	
 	// ----------------------------------------------------------------------------------------
 	// Getter/Setter
 	// ----------------------------------------------------------------------------------------

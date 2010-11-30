@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryHistory;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
@@ -42,7 +41,7 @@ public class Activator extends Plugin implements IEventListener {
 		super.start(context);
 		plugin = this;
 
-		QueryBuildConfigurationRegistry.getInstance().loadExtensionList();
+//		QueryBuildConfigurationRegistry.getInstance().loadExtensionList();
 	}
 
 	/*

@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
@@ -38,7 +37,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		
 		final IExecutor executor = Activator.getExecutor();
 		if (executor != null) {
-			final List<IQueryBuildSetting<?>> cfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(parameterTransformationConfigurationName);
+			final List<IQueryBuildSetting<?>> cfg = executor.getQueryBuildConfiguration(parameterTransformationConfigurationName);
 			if (cfg == null) {
 				logger.error("ParameterTransformationConfiguration " + parameterTransformationConfigurationName + " nicht gefunden");
 				return null;

@@ -62,7 +62,7 @@
                   Klasse, welches die TransformationConfiguration liefert.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryBuildConfiguration"/>
+                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration"/>
                </appinfo>
             </annotation>
          </attribute>

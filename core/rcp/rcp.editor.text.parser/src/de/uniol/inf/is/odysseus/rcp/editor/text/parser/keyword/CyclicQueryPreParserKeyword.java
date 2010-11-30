@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryBuildConfigurationRegistry;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
@@ -36,8 +35,8 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			String transCfg = variables.get("TRANSCFG");
 			if( transCfg == null ) 
 				throw new QueryTextParseException("TransformationConfiguration not set");
-			if( QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfg) == null ) 
-				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not found");
+			if( executor.getQueryBuildConfiguration(transCfg) == null ) 
+				throw new QueryTextParseException("TransformationConfiguration " + transCfg + " not bound");
 			
 		} catch( Exception ex ) {
 			throw new QueryTextParseException("Unknown Exception during validation a cyclic query", ex);
@@ -53,7 +52,7 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 
 		IExecutor executor = ExecutorHandler.getExecutor();
 		
-		List<IQueryBuildSetting<?>> transCfg = QueryBuildConfigurationRegistry.getInstance().getQueryBuildConfiguration(transCfgID);
+		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID);
 		User user = ActiveUser.getActiveUser();
 		try {
 			ICompiler compiler = executor.getCompiler();

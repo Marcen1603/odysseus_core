@@ -9,4 +9,5 @@
    <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>
    <reference bind="bindSystemMonitorFactory" cardinality="0..1" interface="de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory" name="ISystemMonitorFactory" policy="dynamic" unbind="unbindSystemMonitorFactory"/>
    <reference bind="bindQuerySharingOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer" name="IQuerySharingOptimizer" policy="dynamic" unbind="unbindQuerySharingOptimizer"/>
+   <reference bind="bindQueryBuildConfiguration" cardinality="0..n" interface="de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration" name="IQueryBuildConfiguration" policy="dynamic" unbind="unbindQueryBuildConfiguration"/>
 </scr:component>

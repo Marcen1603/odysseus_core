@@ -73,8 +73,10 @@ public class KeywordRegistry {
 				try {
 					IKeywordGroup grp = (IKeywordGroup)e.createExecutableExtension("class");
 					String[] keywords = grp.getKeywords();
-					this.keywords.put(groupName, keywords);
-					this.colors.put(groupName, color);
+					if (keywords != null){
+						this.keywords.put(groupName, keywords);
+						this.colors.put(groupName, color);
+					}
 				} catch (CoreException e1) {
 					e1.printStackTrace();
 				}

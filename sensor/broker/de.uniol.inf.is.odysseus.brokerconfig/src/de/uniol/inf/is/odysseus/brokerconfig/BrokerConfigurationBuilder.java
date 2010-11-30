@@ -5,9 +5,9 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.broker.evaluation.rules.BrokerTransformationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryBuildConfiguration;
 
 public class BrokerConfigurationBuilder implements IQueryBuildConfiguration {
 
@@ -29,8 +29,13 @@ public class BrokerConfigurationBuilder implements IQueryBuildConfiguration {
 	}
 
 	@Override
-	public List<IQueryBuildSetting<?>> get() {
+	public List<IQueryBuildSetting<?>> getConfiguration() {
 		return settings;
+	}
+	
+	@Override
+	public String getName() {
+		return "BrokerConfig";
 	}
 
 	// @Override

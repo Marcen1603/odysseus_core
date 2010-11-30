@@ -873,4 +873,14 @@ public class StandardExecutor extends AbstractExecutor {
 	public String getName() {
 		return "Standard";
 	}
+
+	@Override
+	public Collection<String> getQueryBuildConfigurationNames() {
+		return queryBuildConfigs.keySet();	
+	}
+
+	@Override
+	public List<IQueryBuildSetting<?>> getQueryBuildConfiguration(String name) {
+		return queryBuildConfigs.get(name);	
+	}
 }

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper;
 
 public class ScarsQueryBuildConfiguration implements IQueryBuildConfiguration {
@@ -37,10 +37,15 @@ public class ScarsQueryBuildConfiguration implements IQueryBuildConfiguration {
 	}
 
 	@Override
-	public List<IQueryBuildSetting<?>> get() {
+	public List<IQueryBuildSetting<?>> getConfiguration() {
 		return settings;
 	}
 
+	@Override
+	public String getName() {
+		return "StreamCars";
+	}
+	
 //	@Override
 //	public ParameterTransformationConfiguration get() {
 //		trafoConfigParam.getValue().setOption("IBrokerInterval", true);
