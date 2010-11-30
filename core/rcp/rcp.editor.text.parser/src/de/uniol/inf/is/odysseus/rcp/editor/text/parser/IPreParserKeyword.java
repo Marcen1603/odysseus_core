@@ -13,6 +13,6 @@ import java.util.Map;
  */
 public interface IPreParserKeyword {
 
-	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException;
-	public Object execute(Map<String, String> variables, String parameter) throws QueryTextParseException;
+	public void validate(Map<String, Object> variables, String parameter) throws QueryTextParseException;
+	public Object execute(Map<String, Object> variables, String parameter) throws QueryTextParseException;
 }

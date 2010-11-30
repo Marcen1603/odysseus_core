@@ -2,9 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
+import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
 
 /**
@@ -15,10 +14,10 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler
  * @author Timo Michelsen
  * 
  */
-public class TransCfgPreParserKeyword implements IPreParserKeyword {
+public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, Object> variables, String parameter) throws QueryTextParseException {
 		if (parameter.length() == 0)
 			throw new QueryTextParseException("Parameter needed for #TRANCFG");
 
@@ -29,7 +28,7 @@ public class TransCfgPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, String> variables, String parameter) throws QueryTextParseException {
+	public Object execute(Map<String, Object> variables, String parameter) throws QueryTextParseException {
 		variables.put("TRANSCFG", parameter);
 		return null;
 	}

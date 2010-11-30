@@ -42,18 +42,19 @@ public class QueryTextParser {
 		return execute(parseScript(completeText));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<IQuery> execute(List<PreParserStatement> statements) throws QueryTextParseException {
 
 		List<IQuery> queries = new ArrayList<IQuery>();
 		
-		Map<String, String> variables = new HashMap<String, String>();
+		Map<String, Object> variables = new HashMap<String, Object>();
 		// Validieren
 		for (PreParserStatement stmt : statements) {
 			stmt.validate(variables);
 		}
 		
 		// Ausführen
-		variables = new HashMap<String, String>();
+		variables = new HashMap<String, Object>();
 		int counter = 1;
 		for (PreParserStatement stmt : statements) {
 			Object ret = stmt.execute(variables);

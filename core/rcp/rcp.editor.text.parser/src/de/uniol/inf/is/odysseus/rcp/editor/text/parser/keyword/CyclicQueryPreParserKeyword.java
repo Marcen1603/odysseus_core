@@ -9,16 +9,16 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword;
+import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
-public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
+public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, String> variables, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, Object> variables, String parameter) throws QueryTextParseException {
 		try {
 			IExecutor executor = ExecutorHandler.getExecutor();
 			if( executor == null ) 
@@ -27,12 +27,12 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 			if( executor.getCompiler() == null ) 
 				throw new QueryTextParseException("No compiler found");
 			
-			String parserID = variables.get("PARSER");
+			String parserID = (String)variables.get("PARSER");
 			if( parserID == null ) 
 				throw new QueryTextParseException("Parser not set");
 			if( !executor.getSupportedQueryParsers().contains(parserID))
 				throw new QueryTextParseException("Parser " + parserID + " not found");
-			String transCfg = variables.get("TRANSCFG");
+			String transCfg = (String) variables.get("TRANSCFG");
 			if( transCfg == null ) 
 				throw new QueryTextParseException("TransformationConfiguration not set");
 			if( executor.getQueryBuildConfiguration(transCfg) == null ) 
@@ -44,16 +44,16 @@ public class CyclicQueryPreParserKeyword implements IPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, String> variables, String parameter ) throws QueryTextParseException {
+	public Object execute(Map<String, Object> variables, String parameter ) throws QueryTextParseException {
 
 		String queries = parameter;
-		String parserID = variables.get("PARSER");
-		String transCfgID = variables.get("TRANSCFG");
+		String parserID = (String) variables.get("PARSER");
+		String transCfgID = (String) variables.get("TRANSCFG");
 
 		IExecutor executor = ExecutorHandler.getExecutor();
 		
 		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID);
-		User user = ActiveUser.getActiveUser();
+		User user = getCurrentUser(variables);
 		try {
 			ICompiler compiler = executor.getCompiler();
 			List<IQuery> plans = compiler.translateQuery(queries, parserID, user);

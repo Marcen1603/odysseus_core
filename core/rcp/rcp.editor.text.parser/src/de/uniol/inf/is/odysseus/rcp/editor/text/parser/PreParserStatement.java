@@ -15,11 +15,11 @@ public class PreParserStatement {
 		this.parameter = parameter;
 	}
 	
-	public void validate( Map<String, String> variables ) throws QueryTextParseException {
+	public void validate( Map<String, Object> variables ) throws QueryTextParseException {
 		keyword.validate(variables, parameter);
 	}
 	
-	public Object execute( Map<String, String> variables ) throws QueryTextParseException {
+	public Object execute( Map<String, Object> variables ) throws QueryTextParseException {
 		return keyword.execute(variables, parameter);
 	}
 	

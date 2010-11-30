@@ -11,14 +11,13 @@ import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 public class ExecuteQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
 
 	// Query selbst ausführen...
-	protected Object exec(String parserID, String transCfg, String queryText) throws PlanManagementException {
+	protected Object exec(String parserID, String transCfg, String queryText, User caller) throws PlanManagementException {
 		parserID = parserID.trim();
 		transCfg = transCfg.trim();
 		queryText = queryText.trim();
 
-		User user = ActiveUser.getActiveUser();
 		final List<IQueryBuildSetting<?>> cfg = ExecutorHandler.getExecutor().getQueryBuildConfiguration(transCfg);
-		return ExecutorHandler.getExecutor().addQuery(queryText, parserID, user, cfg.toArray(new IQueryBuildSetting[0]) );
+		return ExecutorHandler.getExecutor().addQuery(queryText, parserID, caller, cfg.toArray(new IQueryBuildSetting[0]) );
 	}
 
 }

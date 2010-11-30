@@ -96,7 +96,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					monitor.beginTask("Executing Commands", statements.size() * 2);
 					monitor.subTask("Validating");
 					
-					Map<String, String> variables = new HashMap<String, String>();
+					Map<String, Object> variables = new HashMap<String, Object>();
 					for( PreParserStatement stmt : statements ) {
 						stmt.validate(variables);
 						monitor.worked(1);
@@ -107,7 +107,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					}
 					
 					// Dann ausführen
-					variables = new HashMap<String, String>();
+					variables = new HashMap<String, Object>();
 					int counter = 1;
 					for( PreParserStatement stmt : statements ) {
 						monitor.subTask("Executing (" + counter + " / " + statements.size() + ")" );
