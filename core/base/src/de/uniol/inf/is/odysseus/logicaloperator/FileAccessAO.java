@@ -164,4 +164,14 @@ public class FileAccessAO extends AbstractLogicalOperator implements OutputSchem
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}
+
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+		if(port==0){
+			setOutputSchema(outputSchema);
+		}else{
+			throw new IllegalArgumentException("no such port: " + port);
+		}
+		
+	}
 }

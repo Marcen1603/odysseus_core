@@ -2,7 +2,10 @@ package de.uniol.inf.is.odysseus.physicaloperator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,7 +39,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
-	private SDFAttributeList outputSchema;
+	private Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
 	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
 	// --------------------------------------------------------------------
@@ -112,7 +115,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	};
 
 	public AbstractSource(AbstractSource<T> source) {
-		this.outputSchema = new SDFAttributeList(source.outputSchema);
+		this.outputSchema = createCleanClone(source.outputSchema);
 		this.blocked = new AtomicBoolean();
 		this.blocked.set(source.blocked.get());
 		this.name = source.name;
@@ -154,13 +157,25 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
+		return getOutputSchema(0);
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema;
+	public SDFAttributeList getOutputSchema(int port) {
+		return outputSchema.get(port);
 	}
+	
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		setOutputSchema(outputSchema, 0);
+	}
+	
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+		this.outputSchema.put(port, outputSchema);		
+	}
+	
+	
 
 	// ------------------------------------------------------------------------
 	// OPEN
@@ -534,5 +549,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// TODO: Make abstract again and implement in Children
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
+	}
+	
+	
+	private Map<Integer, SDFAttributeList> createCleanClone(Map<Integer, SDFAttributeList> old){
+		Map<Integer, SDFAttributeList> copy = new HashMap<Integer, SDFAttributeList>();
+		for(Entry<Integer, SDFAttributeList> e : old.entrySet()){
+			copy.put(e.getKey(), new SDFAttributeList(e.getValue()));
+		}
+		return copy;
 	}
 }

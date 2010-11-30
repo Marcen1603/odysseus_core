@@ -31,7 +31,9 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	 * @return
 	 */
 	public SDFAttributeList getOutputSchema();
+	public SDFAttributeList getOutputSchema(int port);
 	public void setOutputSchema(SDFAttributeList outputSchema);
+	public void setOutputSchema(SDFAttributeList outputSchema, int port);
 	
 	@Override
 	public IPhysicalOperator clone();

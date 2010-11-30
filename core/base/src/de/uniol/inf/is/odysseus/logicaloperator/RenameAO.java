@@ -39,6 +39,15 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable{
 	public AbstractLogicalOperator clone() {
 		return new RenameAO(this);
 	}
+
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+		if(port==0){
+			setOutputSchema(outputSchema);
+		}else{
+			throw new IllegalArgumentException("no such port: " + port);
+		}		
+	}
 	
 
 }

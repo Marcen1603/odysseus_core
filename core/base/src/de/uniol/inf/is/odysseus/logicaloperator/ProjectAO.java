@@ -63,4 +63,14 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable{
 		return ret;
 	}
 
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+		if(port==0){
+			setOutputSchema(outputSchema);
+		}else{
+			throw new IllegalArgumentException("no such port: " + port);
+		}
+		
+	}
+
 }

@@ -20,11 +20,12 @@ public interface ILogicalOperator extends IOwnedOperator,
 	public ILogicalOperator clone();
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced);
 	public SDFAttributeList getOutputSchema();
+	public SDFAttributeList getOutputSchema(int pos);
 	public SDFAttributeList getInputSchema(int pos);	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public IPredicate getPredicate();
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setPredicate(IPredicate predicate);
 
 	public String getName();

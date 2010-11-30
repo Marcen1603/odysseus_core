@@ -3,8 +3,11 @@ package de.uniol.inf.is.odysseus.physicaloperator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -36,7 +39,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected int noInputPorts = -1;
 
 	private String name;
-	private SDFAttributeList outputSchema;
+	private Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
 
 	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
@@ -109,7 +112,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected void init(AbstractSink<T> other) {
 		noInputPorts = other.noInputPorts;
 		name = other.name;
-		outputSchema = new SDFAttributeList(other.outputSchema);
+		this.outputSchema = createCleanClone(other.outputSchema);
 		owners = new Vector<IOperatorOwner>(other.owners);
 		allInputsDone = false;
 	}
@@ -302,12 +305,23 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
+		return getOutputSchema(0);
 	}
 
+	
+	@Override
+	public SDFAttributeList getOutputSchema(int port) {
+		return outputSchema.get(port);
+	}
+	
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema;
+		setOutputSchema(outputSchema, 0);
+	}
+	
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+		this.outputSchema.put(port, outputSchema);		
 	}
 
 	// ------------------------------------------------------------------------
@@ -479,5 +493,13 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// TODO: Make abstract again and implement in Children
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
+	}
+	
+	private Map<Integer, SDFAttributeList> createCleanClone(Map<Integer, SDFAttributeList> old){
+		Map<Integer, SDFAttributeList> copy = new HashMap<Integer, SDFAttributeList>();
+		for(Entry<Integer, SDFAttributeList> e : old.entrySet()){
+			copy.put(e.getKey(), e.getValue().clone());
+		}
+		return copy;
 	}
 }

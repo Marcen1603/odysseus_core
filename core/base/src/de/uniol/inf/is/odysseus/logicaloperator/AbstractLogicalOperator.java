@@ -126,6 +126,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		}
 		return ret;
 	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema(int pos) {	
+		return getOutputSchema();
+	}
+	
+	
 
 	/*
 	 * (non-Javadoc)
