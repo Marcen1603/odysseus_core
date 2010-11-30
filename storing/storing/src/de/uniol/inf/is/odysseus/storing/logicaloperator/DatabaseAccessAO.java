@@ -54,4 +54,14 @@ public class DatabaseAccessAO extends AbstractDatabaseAO implements OutputSchema
 		return this.source;
 	}
 	
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+		if(port==0){
+			setOutputSchema(outputSchema);
+		}else{
+			throw new IllegalArgumentException("no such port: " + port);
+		}
+		
+	}
+	
 }
