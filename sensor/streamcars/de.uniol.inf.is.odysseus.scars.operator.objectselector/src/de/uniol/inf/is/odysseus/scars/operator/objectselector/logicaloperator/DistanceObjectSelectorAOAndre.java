@@ -14,7 +14,7 @@ public class DistanceObjectSelectorAOAndre extends UnaryLogicalOp {
 
 	private IAttributeResolver attrRes;
 	private String trackedObjectList;
-	private HashMap<IPredicate, SDFObjectRelationalExpression> solutions;
+	private HashMap<IPredicate<?>, SDFObjectRelationalExpression> solutions;
 
 	public DistanceObjectSelectorAOAndre(IAttributeResolver attrRes) {
 		this.attrRes = attrRes;
@@ -45,11 +45,11 @@ public class DistanceObjectSelectorAOAndre extends UnaryLogicalOp {
 		this.trackedObjectList = trackedObjectList;
 	}
 	
-	public void setSolutions(HashMap<IPredicate, SDFObjectRelationalExpression> sols){
+	public void setSolutions(HashMap<IPredicate<?>, SDFObjectRelationalExpression> sols){
 		this.solutions = sols;
 	}
 	
-	public HashMap<IPredicate, SDFObjectRelationalExpression> getSolutions(){
+	public HashMap<IPredicate<?>, SDFObjectRelationalExpression> getSolutions(){
 		return this.solutions;
 	}
 
