@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.util.SetOwnerGraphVisitor;
 
 public class DataDictionary {
@@ -187,8 +188,7 @@ public class DataDictionary {
 			}
 			try {
 				// Remove Owner from View
-				IOperatorOwner owner = null;
-				SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(owner);
+				RemoveOwnersGraphVisitor<ILogicalOperator> visitor = new RemoveOwnersGraphVisitor<ILogicalOperator>();
 				@SuppressWarnings("rawtypes")
 				AbstractGraphWalker walker = new AbstractGraphWalker();
 				walker.prefixWalk(topOperator, visitor);
