@@ -78,7 +78,7 @@ public class ScheduleMeta {
 		}
 	}
 
-	public double calcPotentialRate(long minTimePeriod, long possibleSchedulings) {
+	public double calcPotentialRate(long minTimePeriod) {
 		double potentialInTimeSchedulings = ((getNow() - lastSchedule) < minTimePeriod ? (inTimeCount + 1)
 				: inTimeCount) * 1.0;
 		return allSchedulings > 0 ? potentialInTimeSchedulings * 1.0
