@@ -97,7 +97,8 @@ public class OdysseusDefaults {
 		props.setProperty("sla_history_size", 10000+""); // Milliseconds
 		props.setProperty("sla_update_Penalties_Frequency", 30000+"");
 		props.setProperty("sla_debug_TimebasedSLAScheduler", Boolean.TRUE.toString());
-	}
+		props.setProperty("sla_debug_TimebasedSLAScheduler_maxLines", 1048576+"");
+	};
 
 	private static void savePropertyFile(String odysseusHome) {
 		FileOutputStream out;
