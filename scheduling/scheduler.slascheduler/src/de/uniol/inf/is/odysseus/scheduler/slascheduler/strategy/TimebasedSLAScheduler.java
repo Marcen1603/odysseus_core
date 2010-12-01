@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 
 public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 
-	// TODO: REMOVE AGAIN!!
 	FileWriter file;
 
 	static private Logger logger = LoggerFactory
@@ -34,17 +33,22 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	final private List<IScheduling> lastRun = new LinkedList<IScheduling>();
 	Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
 
-	long historySize = 10000;
-
+	final private boolean outputDebug = Boolean.parseBoolean(OdysseusDefaults.get("sla_debug_TimebasedSLAScheduler"));
+	final private long sla_history_size = Long.parseLong(OdysseusDefaults.get("sla_history_size"));
+	final private long sla_update_Penalties_Frequency = Long.parseLong(OdysseusDefaults.get("sla_update_Penalties_Frequency"));
+	
 	private long toUpdateCounter = 0;
-	private long updatePenaliesFrequency = 10000;
+
 
 	public TimebasedSLAScheduler(TimebasedSLAScheduler timebasedSLAScheduler) {
 		super(timebasedSLAScheduler);
 		try {
-			file = new FileWriter(OdysseusDefaults.odysseusHome + "TBSLAlog"
-					+ System.currentTimeMillis() + ".csv");
-			file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+			
+			if (outputDebug) {
+				file = new FileWriter(OdysseusDefaults.odysseusHome
+						+ "TBSLAlog" + System.currentTimeMillis() + ".csv");
+				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -53,9 +57,11 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	public TimebasedSLAScheduler(PrioCalcMethod method) {
 		super(method);
 		try {
-			file = new FileWriter(OdysseusDefaults.odysseusHome + "TBSLAlog"
-					+ System.currentTimeMillis() + ".csv");
-			file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+			if (outputDebug) {
+				file = new FileWriter(OdysseusDefaults.odysseusHome
+						+ "TBSLAlog" + System.currentTimeMillis() + ".csv");
+				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +97,8 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 					minTime.put(is, minTimePeriod);
 					ScheduleMeta scheduleMeta = is.getPlan().getScheduleMeta();
 					// Drain
-					scheduleMeta.drainHistory(historySize);
+					scheduleMeta
+							.drainHistory(sla_history_size);
 					// Calc prio for each query
 					// Urgency for all Querys of this plan
 					for (IQuery q : is.getPlan().getQueries()) {
@@ -173,7 +180,7 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	}
 
 	void updatePenalties() {
-		if (toUpdateCounter == updatePenaliesFrequency) {
+		if (toUpdateCounter == sla_update_Penalties_Frequency ) {
 			toUpdateCounter = 0;
 			synchronized (queue) {
 				for (IScheduling q : queue) {
@@ -198,7 +205,9 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 
 	private IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
 		ScheduleMeta meta = toSchedule.getPlan().getScheduleMeta();
-		print(toSchedule);
+		if (outputDebug) {
+			print(toSchedule);
+		}
 		meta.scheduleDone(minTime.get(toSchedule));
 		return toSchedule;
 	}

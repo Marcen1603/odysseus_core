@@ -15,6 +15,20 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 		}
 		return (User)user;
 	}
+	
+	/**
+	 * Get Parameters with blanc as delimmiter
+	 * @param parameter
+	 * @return
+	 */
+	protected String[] getSimpleParameters(String parameter) {
+		if( parameter.contains(" ")) {
+			return parameter.split("\\ ");
+		} else {
+			//only one parameter
+			return new String[] { parameter, "" };
+		}
+	}
 
 
 

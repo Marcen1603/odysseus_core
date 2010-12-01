@@ -26,6 +26,8 @@ public final class AccessControl {
 
 	static private AccessControl instance = null;
 
+	private static long sessionTimeout =  Long.parseLong(OdysseusDefaults.get("sessionTimeout"));
+	
 	private AccessControl() {
 	}
 
@@ -69,8 +71,7 @@ public final class AccessControl {
 			// Session Zeitstempel
 			long dif = System.currentTimeMillis()
 					- user.getSession().getTimestamp();
-			// Session jünger als 4 Std. (in Minuten)
-			if (dif < OdysseusDefaults.sessionTimeout) {
+			if (dif < sessionTimeout) {
 				// Session aktuallisieren
 				user.getSession().updateTimestamp();
 				return true;

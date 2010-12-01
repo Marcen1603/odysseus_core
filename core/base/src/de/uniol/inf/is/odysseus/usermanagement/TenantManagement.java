@@ -47,10 +47,10 @@ public class TenantManagement {
 
 	private TenantManagement() {
 		try {
-			if (OdysseusDefaults.storeTenants){
-				registeredTenants = new FileStore<String, Tenant>(OdysseusDefaults.tenantsFilename);
-				users = new FileStore<String, Tenant>(OdysseusDefaults.userTenantFilename);
-				slas = new FileStore<String, IServiceLevelAgreement>(OdysseusDefaults.slasFilename);
+			if (Boolean.parseBoolean(OdysseusDefaults.get("storeTenants"))){
+				registeredTenants = new FileStore<String, Tenant>(OdysseusDefaults.get("tenantsFilename"));
+				users = new FileStore<String, Tenant>(OdysseusDefaults.get("userTenantFilename"));
+				slas = new FileStore<String, IServiceLevelAgreement>(OdysseusDefaults.get("slasFilename"));
 			}else{
 				registeredTenants = new MemoryStore<String, Tenant>();
 				users = new MemoryStore<String, Tenant>();

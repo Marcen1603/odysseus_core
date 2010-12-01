@@ -16,8 +16,8 @@ public class UserManagement extends AbstractUserManagement {
 		if (instance == null) {
 
 			try {
-				if (OdysseusDefaults.storeUsers){
-					 instance = new UserManagement(new FileUserStore(OdysseusDefaults.userStoreFilename));
+				if (Boolean.parseBoolean(OdysseusDefaults.get("storeUsers"))){
+					 instance = new UserManagement(new FileUserStore(OdysseusDefaults.get("userStoreFilename")));
 				}else{
 					instance = new UserManagement(new MemoryUserStore());
 				}

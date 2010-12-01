@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.Activator
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.physicaloperator,
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.planmanagement.configuration,
  de.uniol.inf.is.odysseus.planmanagement.executor,

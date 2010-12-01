@@ -60,19 +60,19 @@ public class DataDictionary {
 
 	private DataDictionary() {
 		try {
-			if (OdysseusDefaults.storeDataDictionary) {
+			if (Boolean.parseBoolean(OdysseusDefaults.get("storeDataDictionary"))) {
 				streamDefinitions = new FileStore<String, ILogicalOperator>(
-						OdysseusDefaults.streamDefinitionsFilename);
+						OdysseusDefaults.get("streamDefinitionsFilename"));
 				viewOrStreamFromUser = new FileStore<String, User>(
-						OdysseusDefaults.streamOrViewFromUserFilename);
+						OdysseusDefaults.get("streamOrViewFromUserFilename"));
 				viewDefinitions = new FileStore<String, ILogicalOperator>(
-						OdysseusDefaults.viewDefinitionsFilename);
+						OdysseusDefaults.get("viewDefinitionsFilename"));
 				entityMap = new FileStore<String, SDFEntity>(
-						OdysseusDefaults.entitiesFilename);
+						OdysseusDefaults.get("entitiesFilename"));
 				sourceTypeMap = new FileStore<String, String>(
-						OdysseusDefaults.sourceTypeMapFilename);
+						OdysseusDefaults.get("sourceTypeMapFilename"));
 				entityFromUser = new FileStore<String, User>(
-						OdysseusDefaults.entityFromUserFilename);
+						OdysseusDefaults.get("entityFromUserFilename"));
 			} else {
 				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewOrStreamFromUser = new MemoryStore<String, User>();

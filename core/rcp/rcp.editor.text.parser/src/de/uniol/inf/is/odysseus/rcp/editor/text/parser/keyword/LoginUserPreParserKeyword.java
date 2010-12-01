@@ -17,7 +17,7 @@ public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter) throws QueryTextParseException {
-		String[] para = getParameters(parameter);
+		String[] para = getSimpleParameters(parameter);
 		String userName = para[0];
 		String password = para[1];
 		
@@ -31,14 +31,4 @@ public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 		return user;
 	}
 
-	// Liefert von einem gegebenen String userName und ggfs Password
-	private String[] getParameters(String parameter) {
-		if( parameter.contains(" ")) {
-			// Password und Name gegeben
-			return parameter.split("\\ ");
-		} else {
-			// Nur Nutzername (kein Password nötig?)
-			return new String[] { parameter, "" };
-		}
-	}
 }

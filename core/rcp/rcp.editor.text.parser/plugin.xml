@@ -44,5 +44,9 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.QuerySharingPreParserKeyword"
             name="DOQUERYSHARING">
       </PreParserKeyword>
+           <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.OdysseusDefaultsPreParserKeyword"
+            name="ODYSSEUS_DEFAULT">
+      </PreParserKeyword>
    </extension>
 </plugin>
