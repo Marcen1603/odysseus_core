@@ -1,17 +1,21 @@
 package de.uniol.inf.is.odysseus.datamining.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AbstractDataMiningAO extends UnaryLogicalOp {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5930667720134167936L;
 	protected SDFAttributeList attributes;
 	public AbstractDataMiningAO() {
 		
 	}
 	public AbstractDataMiningAO(AbstractDataMiningAO copy) {
+		super(copy);
 		this.attributes = copy.getAttributes().clone();
 	}
 	

@@ -31,20 +31,18 @@ public class HoeffdingTreePO<T extends IMetaAttribute> extends
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO Auto-generated method stub
-
+		sendPunctuation(timestamp);
 	}
 
 	@Override
 	public OutputMode getOutputMode() {
 		// TODO Auto-generated method stub
-		return null;
+		return OutputMode.INPUT;
 	}
 
 	@Override
 	protected void process_next(RelationalTuple<T> object, int port) {
-		// TODO Auto-generated method stub
-
+		transfer(object,port);
 	}
 
 	@Override

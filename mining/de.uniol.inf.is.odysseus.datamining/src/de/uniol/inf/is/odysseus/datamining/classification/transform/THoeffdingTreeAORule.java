@@ -47,6 +47,7 @@ public class THoeffdingTreeAORule extends AbstractTransformationRule<HoeffdingTr
 		hoeffdingTreePO.setLabelPosition(hoeffdingTreeAO.getLabelPosition());
 		hoeffdingTreePO.setProbability(hoeffdingTreeAO.getProbability());
 		hoeffdingTreePO.setAttributeEvaluationMeasure(new InformationGain());
+		hoeffdingTreePO.setOutputSchema(hoeffdingTreeAO.getOutputSchema(0), 0);
 		replace(hoeffdingTreeAO, hoeffdingTreePO, config);		
 		retract(hoeffdingTreeAO);
 		

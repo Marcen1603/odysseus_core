@@ -31,12 +31,11 @@ public class HoeffdingTreeAO extends AbstractDataMiningAO {
 	}
 
 	public HoeffdingTreeAO() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		// TODO Auto-generated method stub
+
 		return getInputSchema();
 	}
 
