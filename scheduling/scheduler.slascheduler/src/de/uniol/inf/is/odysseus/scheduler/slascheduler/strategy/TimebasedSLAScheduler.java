@@ -36,6 +36,8 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	final private boolean outputDebug = Boolean.parseBoolean(OdysseusDefaults.get("sla_debug_TimebasedSLAScheduler"));
 	final private long sla_history_size = Long.parseLong(OdysseusDefaults.get("sla_history_size"));
 	final private long sla_update_Penalties_Frequency = Long.parseLong(OdysseusDefaults.get("sla_update_Penalties_Frequency"));
+	final private long limitDebug = OdysseusDefaults.get("sla_debug_TimebasedSLAScheduler_maxLines")!=null?Long.parseLong(OdysseusDefaults.get("sla_debug_TimebasedSLAScheduler_maxLines")):1048576;
+	private long linesWritten;
 	
 	private long toUpdateCounter = 0;
 
@@ -45,22 +47,25 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 		try {
 			
 			if (outputDebug) {
-				file = new FileWriter(OdysseusDefaults.odysseusHome
-						+ "TBSLAlog" + System.currentTimeMillis() + ".csv");
-				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+				initFileWriter();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void initFileWriter() throws IOException {
+		file = new FileWriter(OdysseusDefaults.odysseusHome
+				+ "TBSLAlog" + System.currentTimeMillis()+"_"+sla_history_size+ ".csv");
+		file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+		linesWritten = 1; // Header!
+	}
+
 	public TimebasedSLAScheduler(PrioCalcMethod method) {
 		super(method);
 		try {
 			if (outputDebug) {
-				file = new FileWriter(OdysseusDefaults.odysseusHome
-						+ "TBSLAlog" + System.currentTimeMillis() + ".csv");
-				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+				initFileWriter();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -110,13 +115,14 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 							// scheduled
 							// need to test, if in time or out of time
 							// if in time increase no of in time scheduling
-							double rate = scheduleMeta.calcPotentialRate(
-									minTimePeriod,
-									Long.valueOf((Long) q.getPlanMonitor(
-											"Buffer Monitor").getValue()));
+							// Ist das wirklich schlau? Man will ja wissen
+							// wie dringend es aktuell ist und nicht, wie
+							// es wäre, wenn er gescheduled wird!
+							//							double rate = scheduleMeta.calcPotentialRate(
+//									minTimePeriod);
+							double rate = scheduleMeta.getRate();
 
-							double urge = 0.0;
-							urge = sla.getMaxOcMg(rate);
+							double urge = sla.getMaxOcMg(rate);
 							queryCalcedUrg.put(q, urge);
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -205,8 +211,12 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 
 	private IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
 		ScheduleMeta meta = toSchedule.getPlan().getScheduleMeta();
-		if (outputDebug) {
+		if (outputDebug && ((limitDebug > 0 && linesWritten < limitDebug)|| limitDebug < 0)) {
 			print(toSchedule);
+			linesWritten++;
+			if (linesWritten == limitDebug){
+				logger.debug("Max No of lines written");
+			}
 		}
 		meta.scheduleDone(minTime.get(toSchedule));
 		return toSchedule;
