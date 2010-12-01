@@ -29,7 +29,7 @@ public class SlidingTimeWindowPredicate<T extends IMetaAttributeContainer<? exte
 	
 	@Override
 	public boolean evaluate(T left, T right){
-		PointInTime end = new PointInTime(right.getMetadata().getTimestamp().sum(this.windowSize, 0));
+		PointInTime end = new PointInTime(right.getMetadata().getTimestamp().sum(this.windowSize));
 		if(end.beforeOrEquals(left.getMetadata().getTimestamp())){
 			return true;
 		}

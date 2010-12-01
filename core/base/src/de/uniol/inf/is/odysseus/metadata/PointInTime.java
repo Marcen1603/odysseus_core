@@ -220,7 +220,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		return PointInTime.equals(this, other);
 	}
 
-	public PointInTime sum(long point, int subpoint) {
+	public PointInTime sum(long point) {
 		return new PointInTime(this.point + point);
 	}
 

@@ -16,7 +16,7 @@ public class WindowCalculator {
 	
 	
 	static public PointInTime calcSlidingWindowEnd(PointInTime startTimestamp, long windowSize){
-		return startTimestamp.sum(windowSize, 0);
+		return startTimestamp.sum(windowSize);
 	}
 	
 	

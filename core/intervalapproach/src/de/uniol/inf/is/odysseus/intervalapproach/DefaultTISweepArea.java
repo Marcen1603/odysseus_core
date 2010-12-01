@@ -185,14 +185,6 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	}
 
 	@Override
-	public void setRemovePredicate(IPredicate<? super T> removePredicate) {
-		UnsupportedOperationException exception = new UnsupportedOperationException(
-				"Das remove-Praedikat in der DefaultTISweepArea ist fest. Es wird ein TotallyBeforePredicate verwendet.");
-		exception.fillInStackTrace();
-		throw exception;
-	}
-
-	@Override
 	public DefaultTISweepArea<T> clone()  {
 		return new DefaultTISweepArea<T>(this);
 	}

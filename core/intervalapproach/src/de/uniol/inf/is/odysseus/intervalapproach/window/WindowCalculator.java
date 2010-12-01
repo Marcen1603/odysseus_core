@@ -22,11 +22,11 @@ public class WindowCalculator {
 	}
 	
 	static public PointInTime calcSlidingWindowEnd(ITimeInterval time, long windowSize) {
-		return time.getStart().sum(windowSize, 0);
+		return time.getStart().sum(windowSize);
 	}
 	
 	static public PointInTime calcSlidingWindowEnd(PointInTime startTimestamp, long windowSize){
-		return startTimestamp.sum(windowSize, 0);
+		return startTimestamp.sum(windowSize);
 	}
 	
 	static public PointInTime calcSlidingDeltaWindowEnd(ITimeInterval time, long windowAdvance, long windowSize){

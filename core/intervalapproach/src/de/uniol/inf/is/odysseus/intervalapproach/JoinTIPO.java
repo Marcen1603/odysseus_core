@@ -13,12 +13,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
 		extends AbstractPipe<T, T> implements IHasPredicate{
+	private final POEvent processPunctuationDoneEvent;
 	private static Logger _logger =  null;
 	
 	private static Logger getLogger(){
@@ -74,14 +75,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 		this.areas = areas;
+		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
 	}
 
 	public JoinTIPO() {
-
+		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
 	}
 
 	public JoinTIPO(JoinTIPO<K, T> join) {
 		super(join);
+		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
 		this.areas = (ITemporalSweepArea<T>[]) join.areas.clone();
 		int i = 0;
 		for (ITemporalSweepArea<T> ja : join.areas) {
@@ -155,7 +158,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
-
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
@@ -282,6 +284,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
 		this.areas[port^1].purgeElementsBefore(timestamp);
 		this.transferFunction.newHeartbeat(timestamp, port);
+		fire(this.processPunctuationDoneEvent);
 	}
 	
 	@Override

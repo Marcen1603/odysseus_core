@@ -21,5 +21,6 @@ public enum POEventType implements IEventType{
 	PostPriorisation,
 	ProcessInit, ProcessDone, ProcessInitNeg, ProcessDoneNeg,
 	PushInit, PushDone, PushInitNeg, PushDoneNeg,
+	ProcessPunctuationDone,
 	Done, Activated, Deactivated, Blocked, Unblocked, PushListInit, PushListDone, CloseInit, CloseDone
 }
