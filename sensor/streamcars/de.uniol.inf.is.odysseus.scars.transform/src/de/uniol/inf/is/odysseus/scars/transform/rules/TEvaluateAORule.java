@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.physicaloperator
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings("rawtypes")
 public class TEvaluateAORule extends AbstractTransformationRule<EvaluationAO> {
 
 	@Override

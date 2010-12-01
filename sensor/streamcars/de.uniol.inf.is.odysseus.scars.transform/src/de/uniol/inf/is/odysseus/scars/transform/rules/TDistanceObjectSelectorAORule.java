@@ -21,6 +21,7 @@ public class TDistanceObjectSelectorAORule extends AbstractTransformationRule<Di
 		return 20;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(DistanceObjectSelectorAO operator,
 			TransformationConfiguration config) {

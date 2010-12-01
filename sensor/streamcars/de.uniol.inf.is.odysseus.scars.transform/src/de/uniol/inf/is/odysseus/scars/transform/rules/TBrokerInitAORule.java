@@ -22,7 +22,7 @@ public class TBrokerInitAORule extends AbstractTransformationRule<BrokerInitAO> 
 	public void execute(BrokerInitAO operator,
 			TransformationConfiguration config) {
 		System.out.println("CREATE BrokerInitPO.");
-		BrokerInitPO po = new BrokerInitPO();
+		BrokerInitPO<?> po = new BrokerInitPO<Object>();
 		
 		po.setOutputSchema(operator.getOutputSchema());
 		po.setSize(operator.getSize());

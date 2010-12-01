@@ -21,6 +21,7 @@ public class TDistanceObjectSelectorAOAndreRule extends AbstractTransformationRu
 		return 20;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(DistanceObjectSelectorAOAndre operator,
 			TransformationConfiguration config) {
