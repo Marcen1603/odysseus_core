@@ -25,7 +25,7 @@ public class OdysseusDefaultsPreParserKeyword extends AbstractPreParserKeyword {
 					permanently = true;
 				}
 			}
-			OdysseusDefaults.set(params[0],params[1],permanently);
+			OdysseusDefaults.set(params[0],params[1],permanently, getCurrentUser(variables));
 		}
 
 		return null;

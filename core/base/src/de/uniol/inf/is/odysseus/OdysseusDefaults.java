@@ -10,6 +10,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.usermanagement.User;
+
 public class OdysseusDefaults {
 
 	static Logger logger = LoggerFactory.getLogger(OdysseusDefaults.class);
@@ -110,7 +112,8 @@ public class OdysseusDefaults {
 		return props.getProperty(key);
 	}
 
-	public static void set(String key, String value, boolean permanent) {
+	public static void set(String key, String value, boolean permanent, User caller) {
+		// TODO: Check im caller has Right to set Properties
 		props.setProperty(key, value);
 		if (permanent) {
 			savePropertyFile(odysseusHome);
