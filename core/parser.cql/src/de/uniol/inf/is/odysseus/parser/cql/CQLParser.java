@@ -201,7 +201,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			}
 		}
 		setOperator.subscribeToSource(left, 0, 0, left.getOutputSchema());
-		setOperator.subscribeToSource(right, 1, 1, right.getOutputSchema());
+		setOperator.subscribeToSource(right, 1, 0, right.getOutputSchema());
 		return setOperator;
 	}
 
