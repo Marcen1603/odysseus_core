@@ -12,3 +12,4 @@ Import-Package: de.uniol.inf.is.odysseus.physicaloperator,
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.scars.operator.test.po
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
