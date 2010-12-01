@@ -8,13 +8,14 @@ import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+@SuppressWarnings("rawtypes")
 public class DistanceObjectSelectorAOAndre extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 
 	private IAttributeResolver attrRes;
 	private String trackedObjectList;
-	private HashMap<IPredicate<?>, SDFObjectRelationalExpression> solutions;
+	private HashMap<IPredicate, SDFObjectRelationalExpression> solutions;
 
 	public DistanceObjectSelectorAOAndre(IAttributeResolver attrRes) {
 		this.attrRes = attrRes;
@@ -45,11 +46,11 @@ public class DistanceObjectSelectorAOAndre extends UnaryLogicalOp {
 		this.trackedObjectList = trackedObjectList;
 	}
 	
-	public void setSolutions(HashMap<IPredicate<?>, SDFObjectRelationalExpression> sols){
+	public void setSolutions(HashMap<IPredicate, SDFObjectRelationalExpression> sols){
 		this.solutions = sols;
 	}
 	
-	public HashMap<IPredicate<?>, SDFObjectRelationalExpression> getSolutions(){
+	public HashMap<IPredicate, SDFObjectRelationalExpression> getSolutions(){
 		return this.solutions;
 	}
 
