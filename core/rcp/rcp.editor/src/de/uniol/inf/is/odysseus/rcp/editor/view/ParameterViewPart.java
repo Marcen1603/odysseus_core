@@ -183,7 +183,7 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		
 		updateErrorList();
 		
-		parent.pack();
+//		parent.pack();
 		parent.layout();
 	}
 	
