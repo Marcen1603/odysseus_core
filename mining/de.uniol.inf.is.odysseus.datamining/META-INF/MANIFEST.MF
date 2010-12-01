@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Datamining
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.datamining
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.datamining.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -22,4 +22,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Service-Component: src/de/uniol/inf/is/odysseus/datamining/clustering/transform/component.xml
+Service-Component: OSGI-INF/component.xml
