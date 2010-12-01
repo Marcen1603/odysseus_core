@@ -43,7 +43,7 @@ public class DataDictionary {
 		return instance;
 	}
 
-	protected static Logger getLogger() {
+	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(Query.class);
 		}
@@ -176,6 +176,7 @@ public class DataDictionary {
 	// View Management
 	// ------------------------------------------------------------------------
 
+	@SuppressWarnings("unchecked")
 	public void setView(String viewname, ILogicalOperator topOperator,
 			User caller) {
 		if (AccessControl.hasPermission(DataDictionaryAction.ADD_VIEW,
@@ -185,6 +186,13 @@ public class DataDictionary {
 						+ " already exists. Drop First");
 			}
 			try {
+				// Remove Owner from View
+				IOperatorOwner owner = null;
+				SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(owner);
+				@SuppressWarnings("rawtypes")
+				AbstractGraphWalker walker = new AbstractGraphWalker();
+				walker.prefixWalk(topOperator, visitor);
+			
 				this.viewDefinitions.put(viewname, topOperator);
 				viewOrStreamFromUser.put(viewname, caller);
 			} catch (StoreException e) {
@@ -204,17 +212,7 @@ public class DataDictionary {
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
 		@SuppressWarnings("rawtypes")
 		AbstractGraphWalker walker = new AbstractGraphWalker();
-		walker.prefixWalk(logicalPlan, copyVisitor);
-		// A View has no owner, since this view will be added as a copy to
-		// another logical plan, that belongs to a query
-		//		
-	// Set Owner
-//		// TODO??
-//		IOperatorOwner owner = null;
-//		SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(owner);
-//		walker = new AbstractGraphWalker();
-//		walker.prefixWalk(logicalPlan, visitor);
-		
+		walker.prefixWalk(logicalPlan, copyVisitor);		
 		return copyVisitor.getResult();
 	}
 
