@@ -53,10 +53,10 @@ public class PriorityPO<K extends IPriority & ITimeInterval, T extends IMetaAttr
 			}
 		}
 		next.getMetadata().setPriority(this.defaultPriority);
+		transfer(next);
 		if (this.defaultPriority != 0) {
 			processPrioritizedElement(next);
 		}
-		transfer(next);
 
 		return;
 	}
@@ -86,16 +86,17 @@ public class PriorityPO<K extends IPriority & ITimeInterval, T extends IMetaAttr
 	public PriorityPO<K, T> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof PriorityPO)) {
+		if (!(ipo instanceof PriorityPO)) {
 			return false;
 		}
-		PriorityPO ppo = (PriorityPO) ipo;
-		if(this.getSubscribedToSource().equals(ppo.getSubscribedToSource()) &&
-				this.getDefaultPriority() == ppo.getDefaultPriority() &&
-				this.priorites.equals(ppo.priorites)) {
+		@SuppressWarnings("unchecked")
+		PriorityPO<K,T> ppo = (PriorityPO<K,T>) ipo;
+		if (this.getSubscribedToSource().equals(ppo.getSubscribedToSource())
+				&& this.getDefaultPriority() == ppo.getDefaultPriority()
+				&& this.priorites.equals(ppo.priorites)) {
 			return true;
 		}
 		return false;
