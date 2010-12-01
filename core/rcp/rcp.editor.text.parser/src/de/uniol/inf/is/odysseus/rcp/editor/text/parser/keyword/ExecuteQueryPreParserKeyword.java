@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
 public class ExecuteQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
 
