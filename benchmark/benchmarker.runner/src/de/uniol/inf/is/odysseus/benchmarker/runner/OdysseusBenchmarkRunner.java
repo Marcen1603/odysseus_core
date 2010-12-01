@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.benchmarker.runner;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -11,8 +13,8 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.args.Args;
-import de.uniol.inf.is.odysseus.args.ArgsException;
 import de.uniol.inf.is.odysseus.args.Args.REQUIREMENT;
+import de.uniol.inf.is.odysseus.args.ArgsException;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 
@@ -38,7 +40,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		Args arguments = new Args();
 		BundleContext ctx = Activator.getDefault().getBundle()
 				.getBundleContext();
-		
+
 		try {
 			initArgs(arguments, args);
 
@@ -59,14 +61,20 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 			configureBenchmark(benchmark, arguments);
 
-			IBenchmarkResult<?> result = benchmark.runBenchmark();
+			Collection<IBenchmarkResult<Object>> results = benchmark
+					.runBenchmark();
 			String filename = DEFAULT_OUT_FILE;
 			if (arguments.hasParameter(OUT)) {
 				filename = arguments.get(OUT);
 			}
 
 			Serializer serializer = new Persister();
-			serializer.write(result, new File(filename));
+			File file = new File(filename);
+			
+			FileOutputStream oStream = new FileOutputStream(file);
+			 for (IBenchmarkResult<?> result : results) {
+				 serializer.write(result, oStream);
+			 }
 
 			if (arguments.get(MEMORY_USAGE)) {
 				String memFile = filename.replaceAll(".xml", "_memory.xml");
@@ -114,6 +122,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String MEMORY_USAGE = "-memUsage";
 	private static final String NO_METADATA = "-no_metadata";
 	private static final String WAIT_CONFIG = "-wait_config";
+	private static final String RESULT_PER_QUERY = "-result_per_query";
 
 	// private static Logger logger =
 	// LoggerFactory.getLogger(BenchmarkStarter.class);
@@ -175,6 +184,10 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 		if (arguments.get(MEMORY_USAGE)) {
 			benchmark.setBenchmarkMemUsage(true);
+		}
+
+		if (arguments.get(RESULT_PER_QUERY)) {
+			benchmark.setResultPerQuery(true);
 		}
 
 		String queryLanguage = arguments.get(QUERY_LANGUAGE);
@@ -241,6 +254,9 @@ public class OdysseusBenchmarkRunner implements IApplication {
 						WAIT_CONFIG,
 						REQUIREMENT.OPTIONAL,
 						"<time in ms> - add waiting time before the benchmarker gets configured, so optional services can be loaded (default is 0).");
+
+		arguments.addBoolean(RESULT_PER_QUERY,
+				" - enable separate measurements for every query");
 		arguments.parse(args);
 	}
 }

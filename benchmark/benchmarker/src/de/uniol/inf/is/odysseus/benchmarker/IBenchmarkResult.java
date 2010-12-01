@@ -12,4 +12,6 @@ public interface IBenchmarkResult<T> {
 	public long size();
 
 	public DescriptiveStatistics getStatistics();
+
+	public void setQueryId(int queryId);
 }

@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Benchmark Runner" uid="de.uniol.inf.is.odysseus.benchmark.runner" id="de.uniol.inf.is.odysseus.benchmarker.runner.product" application="de.uniol.inf.is.odysseus.benchmarker.runner.application" version="1.0.0" useFeatures="false" includeLaunchers="false">
+<product name="Benchmark Runner" uid="de.uniol.inf.is.odysseus.benchmark.runner" id="de.uniol.inf.is.odysseus.benchmarker.runner.product" application="de.uniol.inf.is.odysseus.benchmarker.runner.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -wait_config 1000 -query_language CQL -query &quot;SELECT * FROM nexmark:bid2&quot; -max_results 10 -out &quot;c:\users\jacobi\result.xml&quot;</programArgs>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx512m</vmArgs>
+      <programArgs>-priority
+-scheduler &quot;Static Priority Plan Scheduler&quot;
+-scheduling_strategy &quot;Aurora Min Cost (Iter)&quot;
+-max_results 10000
+-buffer_placement &quot;No Buffers&quot;
+-query_language PQL
+-memUsage
+-query &quot;
+person = window({size=50000, type=&apos;time&apos;}, priority({prioritize = RelationalPredicate( &apos;id%25&lt;5&apos;)}, nexmark:person2))
+bid = window({size=1, type=&apos;time&apos;}, nexmark:bid2)
+result = join({predicate = RelationalPredicate(&apos;id=bidder&apos;)}, bid, person)&quot;
+-out &quot;c:/users/jacobi/result.xml&quot;</programArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx1000m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -48,6 +59,10 @@
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.monitoring.standardsystemmonitor"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
+      <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
+      <plugin id="de.uniol.inf.is.odysseus.parser.pql.benchmark"/>
+      <plugin id="de.uniol.inf.is.odysseus.parser.pql.priority"/>
+      <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
@@ -60,7 +75,9 @@
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
       <plugin id="de.uniol.inf.is.odysseus.priority"/>
+      <plugin id="de.uniol.inf.is.odysseus.priority.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.priority_interval"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.editor.text.parser"/>
       <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
       <plugin id="de.uniol.inf.is.odysseus.relational.rewrite"/>
       <plugin id="de.uniol.inf.is.odysseus.relational.transform"/>
@@ -69,6 +86,7 @@
       <plugin id="de.uniol.inf.is.odysseus.rewrite"/>
       <plugin id="de.uniol.inf.is.odysseus.ruleengine"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
       <plugin id="de.uniol.inf.is.odysseus.transform"/>

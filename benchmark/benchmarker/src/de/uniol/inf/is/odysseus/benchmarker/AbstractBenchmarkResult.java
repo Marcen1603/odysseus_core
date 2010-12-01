@@ -12,6 +12,8 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 	private long startTime;
 	private long endTime;
 	protected int size = 0;
+	@Element
+	private int queryId;
 	@SuppressWarnings("unused")
 	@Element
 	private long duration;
@@ -49,6 +51,15 @@ public abstract class AbstractBenchmarkResult<T> implements IBenchmarkResult<T> 
 		return size;
 	}
 
+	public int getQueryId() {
+		return queryId;
+	}
+	
+	@Override
+	public void setQueryId(int queryId) {
+		this.queryId = queryId;
+	}
+	
 	@Override
 	public DescriptiveStatistics getStatistics() {
 		return this.desc;

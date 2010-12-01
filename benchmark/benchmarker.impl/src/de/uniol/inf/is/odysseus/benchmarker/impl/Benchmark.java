@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,18 +22,23 @@ import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class Benchmark implements IErrorEventListener, IBenchmark {
+	private static final String SCRIPT_PARSER = "SCRIPT";
 	private long maxResults;
 	private String scheduler;
 	private String schedulingStrategy;
@@ -57,6 +63,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
 
 	private boolean noMetadataCreation;
+	private boolean resultPerQuery = false;
+	private ArrayList<BenchmarkSink<ILatency>> sinks = new ArrayList<BenchmarkSink<ILatency>>();
 
 	public Benchmark() {
 		this.dataType = "relational";
@@ -107,9 +115,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return this.buildParameters;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public IBenchmarkResult runBenchmark() throws BenchmarkException {
+	public Collection<IBenchmarkResult<ILatency>> runBenchmark()
+			throws BenchmarkException {
 
 		createNexmarkSources();
 
@@ -120,8 +129,13 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
 		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
 
-		IntegrationPipe integration = new IntegrationPipe();
-		integration.subscribeSink(latency, 0, 0, latency.getOutputSchema());
+		ISink sinkPO = latency;
+		if (!resultPerQuery) {
+			IntegrationPipe integration = new IntegrationPipe();
+			integration.subscribeSink(latency, 0, 0, latency.getOutputSchema());
+			sinkPO = integration;
+			this.sinks.add(sink);
+		}
 
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(
 				dataType, getMetadataTypes());
@@ -138,7 +152,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				wait(1000);
 			}
 
-			//executor.setDefaultBufferPlacementStrategy(bufferPlacement);
+			// executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
 			if (useBenchmarkMemUsage) {
 				this.avgMemListener = new AvgBenchmarkMemUsageListener();
@@ -151,40 +165,77 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			parameters
 					.add(new ParameterTransformationConfiguration(trafoConfig));
 			parameters.addAll(getBuildParameters());
-			parameters.add(new ParameterBufferPlacementStrategy(bufferPlacement));
+			parameters
+					.add(new ParameterBufferPlacementStrategy(bufferPlacement));
 
 			for (Pair<String, String> query : getQueries()) {
-				executor.addQuery(query.getE2(), query.getE1(), user,
-						parameters.toArray(new IQueryBuildSetting[0]));
+				String parserId = query.getE1();
+				String queryString = query.getE2();
+				if (parserId.equalsIgnoreCase(SCRIPT_PARSER)) {
+					try {
+						QueryTextParser.getInstance().parseAndExecute(
+								queryString);
+					} catch (QueryTextParseException e) {
+						throw new BenchmarkException(e);
+					}
+				} else {
+					executor.addQuery(queryString, parserId, user,
+							parameters.toArray(new IQueryBuildSetting[0]));
+				}
 			}
 			int i = 0;
 			for (IPhysicalOperator curRoot : executor.getExecutionPlan()
 					.getRoots()) {
 				ISource<?> source = (ISource<?>) curRoot;
-				source.subscribeSink(integration, i++, 0,
-						source.getOutputSchema());
+				if (this.resultPerQuery) {
+					result = resultFactory.createBenchmarkResult();
+					result.setQueryId(getQueryId(curRoot));
+					sink = new BenchmarkSink<ILatency>(result, maxResults);
+					sinkPO = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
+					latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
+					this.sinks.add(sink);
+				}
+
+				source.subscribeSink(sinkPO, i++, 0, source.getOutputSchema());
 			}
-			try {
-				sink.open();
-			} catch (OpenFailedException e) {
-				throw new BenchmarkException(e);
+			for (ISink<?> curSink : this.sinks) {
+				try {
+					curSink.open();
+				} catch (OpenFailedException e) {
+					throw new BenchmarkException(e);
+				}
 			}
-			result.setStartTime(System.nanoTime());
+			List<IBenchmarkResult<ILatency>> results = new ArrayList<IBenchmarkResult<ILatency>>();
+
+			long startTime = System.nanoTime();
+			// result.setStartTime(System.nanoTime());
 			executor.startExecution();
-			result = sink.waitForResult();
-			result.setEndTime(System.nanoTime());
+			for (BenchmarkSink<ILatency> curSink : this.sinks) {
+				result = curSink.waitForResult();
+				result.setStartTime(startTime);
+				results.add(result);
+			}
 			executor.stopExecution();
 			ErrorEvent errorEvent = this.error.get();
 			if (errorEvent != null) {
 				throw new BenchmarkException(errorEvent.getValue());
 			}
+			return results;
 		} catch (PlanManagementException e) {
 			throw new BenchmarkException(e);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new BenchmarkException(e);
 		}
-		return result;
+	}
+
+	private int getQueryId(IPhysicalOperator curRoot) {
+		for (IQuery q : this.executor.getQueries()) {
+			if (q.getRoots().contains(curRoot)) {
+				return q.getID();
+			}
+		}
+		return -1;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -284,6 +335,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	@Override
 	public void setNoMetadataCreation(boolean b) {
 		this.noMetadataCreation = b;
+	}
+
+	@Override
+	public void setResultPerQuery(boolean b) {
+		this.resultPerQuery = b;
 	}
 
 }
