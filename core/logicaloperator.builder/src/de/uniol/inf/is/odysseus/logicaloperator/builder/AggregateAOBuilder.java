@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
@@ -9,7 +12,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class AggregateAOBuilder extends AbstractOperatorBuilder {
 
 	private ListParameter<SDFAttribute> groupBy = new ListParameter<SDFAttribute>(
-			"group_by", REQUIREMENT.OPTIONAL,
+			"GROUP_BY", REQUIREMENT.OPTIONAL,
 			new ResolvedSDFAttributeParameter("group_by attribute",
 					REQUIREMENT.MANDATORY));
 
@@ -42,7 +45,24 @@ public class AggregateAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	protected boolean internalValidation() {
-		return true;
+		
+		boolean hasErrors = false;
+		if( aggregations.hasValue() ) {
+			List<AggregateItem> items = aggregations.getValue();
+			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+			
+			for(AggregateItem item : items) {
+				SDFAttribute attribute = item.outAttribute;
+				if( attributes.contains(attribute)) {
+					addError(new IllegalParameterException("dublicate attribute name:" + attribute.getAttributeName()));
+					hasErrors = true;
+				} else {
+					attributes.add(attribute);
+				}
+					
+			}
+		}
+		return !hasErrors;
 	}
 
 }
