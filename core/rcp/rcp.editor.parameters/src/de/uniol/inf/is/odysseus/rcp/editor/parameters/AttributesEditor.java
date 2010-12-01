@@ -36,12 +36,18 @@ public class AttributesEditor extends AbstractParameterEditor implements IParame
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(layout);
 		
-		// Schema des vorgängeroperators holen
+		// Schema des vorg�ngeroperators holen
 		AbstractOperatorBuilder builder = (AbstractOperatorBuilder)getOperatorBuilder();
 		
 		if( builder.hasInputOperator(0) ) {
 			ILogicalOperator op = builder.getInputOperator(0);
 			attributes = op.getOutputSchema();
+			
+			// Label
+			Label titleLabel = new Label(container, SWT.NONE);
+			titleLabel.setText(getParameter().getName());
+			
+			// Checkboxes
 			if( attributes != null && attributes.getAttributeCount() > 0) {
 				for( int i = 0; i < attributes.getAttributeCount(); i++ ) {
 					// Checkbox für jedes Attribut

@@ -96,6 +96,17 @@
                name="PATH">
          </editor>
       </operator>
+      <operator
+            name="AGGREGATION">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AttributesEditor"
+               name="GROUP_BY">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AggregationsParameterEditor"
+               name="AGGREGATIONS">
+         </editor>
+      </operator>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
