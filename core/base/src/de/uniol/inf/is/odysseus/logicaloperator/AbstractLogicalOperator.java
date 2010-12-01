@@ -239,7 +239,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public void removeOwner(IOperatorOwner owner) {
 		this.owner.remove(owner);
 	}
-
+	
+	@Override
+	public void removeAllOwners(){
+		this.owner.clear();
+	}
+	
 	@Override
 	public boolean isOwnedBy(IOperatorOwner owner) {
 		return this.owner.contains(owner);

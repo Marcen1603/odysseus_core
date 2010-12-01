@@ -52,7 +52,11 @@ public class SetOwnerGraphVisitor<T extends IOwnedOperator> implements
 	@Override
 	public void nodeAction(T op) {
 		if (!this.visited.contains(op)) {
-			op.addOwner(owner);
+			if (owner != null){
+				op.addOwner(owner);
+			}else{
+				op.removeAllOwners();
+			}
 			this.visited.add(op);
 		}
 	}

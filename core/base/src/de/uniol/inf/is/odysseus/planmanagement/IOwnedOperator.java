@@ -14,19 +14,25 @@ import java.util.List;
  */
 public interface IOwnedOperator {
 	/**
-	 * Adds a owner to this operator.
+	 * Adds an owner to this operator.
 	 * 
 	 * @param owner Owner which should be added.
 	 */
 	public void addOwner(IOperatorOwner owner);
 
 	/**
-	 * Removes a owner to this operator.
+	 * Removes an owner from this operator.
 	 * 
 	 * @param owner Owner which should be removed.
 	 */
 	public void removeOwner(IOperatorOwner owner);
 
+	/**
+	 * Removes all owner from this operator.
+	 * 
+	 */
+	void removeAllOwners();
+	
 	/**
 	 * Checks if this operator is owned by a specific owner.
 	 * 
@@ -53,4 +59,6 @@ public interface IOwnedOperator {
 	 * Returns a printable String with all Owners
 	 */
 	public String getOwnerIDs();
+
+	
 }

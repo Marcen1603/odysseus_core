@@ -488,6 +488,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// this.deactivateRequestControls.remove(owner);
 		// }
 	}
+	
+	@Override
+	public void removeAllOwners() {
+		this.owners.clear();
+	}
 
 	@Override
 	public boolean isOwnedBy(IOperatorOwner owner) {
