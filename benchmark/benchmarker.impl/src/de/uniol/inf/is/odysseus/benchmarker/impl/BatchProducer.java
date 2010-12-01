@@ -48,7 +48,7 @@ public class BatchProducer extends
 					ilp2.setPriority((byte) 1);
 					prio.setMetadata(ilp2);
 					for (int i = 0; i < count; ++i) {
-						transfer((i % jedeswievielteelementprio == 0 ? prio
+						transfer((jedeswievielteelementprio > 0 && i % jedeswievielteelementprio == 0 ? prio
 								: nonprio).clone());
 					}
 				}

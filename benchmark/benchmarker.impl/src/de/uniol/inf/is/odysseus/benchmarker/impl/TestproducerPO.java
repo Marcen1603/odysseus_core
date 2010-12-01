@@ -40,7 +40,7 @@ public class TestproducerPO extends
 						r
 								.setMetadata(new IntervalLatencyPriority(
 										expectedTime));
-						if (i%(jedeswievielteelementprio) == 0) {
+						if (jedeswievielteelementprio > 0 && i%(jedeswievielteelementprio) == 0) {
 							r.getMetadata().setPriority((byte) 1);
 						}
 						while (expectedTime > System.nanoTime()) {

@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecut
 public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 		IPOEventListener {
 
-	private static final int nsDivisor = 10000;
+	private static final int nsDivisor = 100000;
 	long lastTime = 0;
 
 	@Override
@@ -62,7 +62,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 	private Collection<IPhysicalOperator> ops = new ArrayList<IPhysicalOperator>();
 	private Map<Integer, IPhysicalOperator> hash = new HashMap<Integer, IPhysicalOperator>();
 	private DescriptiveStatistics stats = new DescriptiveStatistics();
-	private long tmpAgg = 0;
+//	private long tmpAgg = 0;
 
 	@SuppressWarnings("unchecked")
 	private void addMemListeners(IPhysicalOperator op) {
@@ -70,7 +70,8 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 				&& hash.get(op.hashCode()) == null) {
 			System.out.println("Monitoring temp memory usage for: "
 					+ op.getName() + " with hash " + op.hashCode());
-			op.subscribe(this, POEventType.PushDone);
+//			op.subscribe(this, POEventType.PushDone);
+			op.subscribeToAll(this);
 			ops.add(op);
 			hash.put(op.hashCode(), op);
 		}
@@ -98,7 +99,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 
 	@Override
 	public void eventOccured(IEvent poEvent) {
-		if (poEvent.getEventType() != POEventType.PushDone){
+		if (poEvent.getEventType()!= POEventType.ProcessInit && poEvent.getEventType() != POEventType.PushDone && poEvent.getEventType() != POEventType.ProcessPunctuationDone ){
 			return;
 		}
 		long curTime = System.nanoTime() / nsDivisor;
@@ -112,19 +113,20 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 				aggSize += ((IBuffer<?>) op).size();
 			} else {
 				JoinTIPO<?, ?> join = (JoinTIPO<?, ?>) op;
+				aggSize += join.getTransferFunction().size();
 				for (ISweepArea<?> sa : join.getAreas()) {
 					aggSize += sa.size();
 				}
 			}
 		}
-		long timeDiff = curTime - lastTime;
-		this.tmpAgg = Math.max(tmpAgg, aggSize);
+		long timeDiff = Math.max(1L, curTime - lastTime);
+//		this.tmpAgg = Math.max(tmpAgg, aggSize);
 		if (timeDiff != 0) {
 			lastTime = curTime;
 			for (int i = 0; i < timeDiff; ++i) {
 				this.stats.addValue(aggSize);
 			}
-			this.tmpAgg = 0;
+//			this.tmpAgg = 0;
 		}
 	}
 
