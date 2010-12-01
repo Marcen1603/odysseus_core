@@ -46,7 +46,7 @@
       </PreParserKeyword>
            <PreParserKeyword
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.OdysseusDefaultsPreParserKeyword"
-            name="ODYSSEUS_DEFAULT">
+            name="ODYSSEUS_PARAM">
       </PreParserKeyword>
    </extension>
 </plugin>
