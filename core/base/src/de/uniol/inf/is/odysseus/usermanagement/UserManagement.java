@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import de.uniol.inf.is.odysseus.ConfigurationAction;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryAction;
 import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorAction;
@@ -69,6 +70,15 @@ public class UserManagement extends AbstractUserManagement {
 					ddrole.setSystemProtection(sys);
 					// add to system
 					instance.grantRole(sys, "datadictionary", "System");
+					
+					// ---------------------------------------------------
+					// create Configuration Role
+					Role conf = instance.createRole("configuration", sys);
+					for (IUserAction action : ConfigurationAction.getAll()){
+						instance.grantPermission(sys, "configuration", action, ConfigurationAction.alias);
+					}
+					conf.setSystemProtection(sys);
+					instance.grantRole(sys, "configuration", "System");
 
 					// -----------------------------------------------------
 					// create ExecutorRole

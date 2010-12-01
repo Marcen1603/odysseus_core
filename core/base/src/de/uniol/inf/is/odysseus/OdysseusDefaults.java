@@ -10,6 +10,10 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.swing.AccessibleMethod;
+
+import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
+import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class OdysseusDefaults {
@@ -113,10 +117,17 @@ public class OdysseusDefaults {
 	}
 
 	public static void set(String key, String value, boolean permanent, User caller) {
-		// TODO: Check im caller has Right to set Properties
-		props.setProperty(key, value);
-		if (permanent) {
-			savePropertyFile(odysseusHome);
+		if (AccessControl.hasPermission(ConfigurationAction.SET_PARAM, ConfigurationAction.alias, caller)){			
+			props.setProperty(key, value);
+			if (permanent) {
+				if (AccessControl.hasPermission(ConfigurationAction.SAVE_PARAM, ConfigurationAction.alias, caller)){			
+					savePropertyFile(odysseusHome);
+				}else{
+					throw new HasNoPermissionException("User "+caller+" is not allowed to permanently set config param "+key);					
+				}
+			}
+		}else{
+			throw new HasNoPermissionException("User "+caller+" is not allowed to temporally set config param "+key);
 		}
 	}
 
