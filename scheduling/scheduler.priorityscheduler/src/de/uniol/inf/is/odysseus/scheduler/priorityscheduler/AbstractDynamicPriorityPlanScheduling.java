@@ -1,65 +1,80 @@
 package de.uniol.inf.is.odysseus.scheduler.priorityscheduler;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
-abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener {
+abstract public class AbstractDynamicPriorityPlanScheduling implements
+		IPartialPlanScheduling {
 
-	protected final List<IScheduling> queue;
+	final CurrentPlanPriorityComperator comperator = new CurrentPlanPriorityComperator();
+
+	private final List<IScheduling> queue;
+	final private List<IScheduling> lastRun = new LinkedList<IScheduling>();
 
 	public AbstractDynamicPriorityPlanScheduling() {
-		queue = new ArrayList<IScheduling>();
+		queue = new LinkedList<IScheduling>();
 	}
 
 	public AbstractDynamicPriorityPlanScheduling(
 			AbstractDynamicPriorityPlanScheduling dynamicPriorityPlanScheduling) {
-		queue = new ArrayList<IScheduling>(dynamicPriorityPlanScheduling.queue);
+		queue = new LinkedList<IScheduling>(dynamicPriorityPlanScheduling.queue);
 	}
 
-	
-	abstract protected void updatePriorities(IScheduling current);
-	@Override
-	abstract public AbstractDynamicPriorityPlanScheduling clone();
-	
-
+	abstract protected void updatePriority(IScheduling current);
 
 	@Override
 	public void addPlan(IScheduling scheduling) {
 		synchronized (queue) {
 			queue.add(scheduling);
-			Collections.sort(queue, new CurrentPlanPriorityComperator());
-			scheduling.addSchedulingEventListener(this);
+			// Init with Base Priority
+			scheduling.getPlan().setCurrentPriority(scheduling.getPlan().getBasePriority());
 		}
 	}
 
 	@Override
 	public void clear() {
 		synchronized (queue) {
-			for (IScheduling s:queue){
-				s.removeSchedulingEventListener(this);
-			}
 			queue.clear();
 		}
 	}
 
 	@Override
 	public IScheduling nextPlan() {
-		synchronized (queue) {
-			for (IScheduling plan : queue) {
-				if (!plan.isSchedulingBlocked() && !plan.isSchedulingPaused()
-						&& plan.isSchedulable()) {
-					updatePriorities(plan);
-					return plan;
-				}
+		synchronized (lastRun) {
+			if (lastRun.size() > 0) {
+				return updateMetaAndReturnPlan(lastRun.remove(0));
 			}
-			return null;
 		}
+		synchronized (queue) {
+			Collections.sort(queue, comperator);
+			Iterator<IScheduling> iter = queue.iterator();
+			synchronized (lastRun) {
+				lastRun.add(iter.next());
+				long prio = queue.get(0).getPlan().getCurrentPriority();
+				while (iter.hasNext()) {
+					IScheduling s = iter.next();
+					if (s.getPlan().getCurrentPriority() == prio) {
+						lastRun.add(s);
+					} else {
+						break;
+					}
+				}
+				return updateMetaAndReturnPlan(lastRun.remove(0));
+			}
+		}
+	}
+	
+	
+
+	private IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
+		updatePriority(toSchedule);
+		return toSchedule;
 	}
 
 	@Override
@@ -73,24 +88,10 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements IPartialP
 	public void removePlan(IScheduling plan) {
 		synchronized (queue) {
 			queue.remove(plan);
-			plan.removeSchedulingEventListener(this);
 		}
 	}
 
 	@Override
-	public void nothingToSchedule(IScheduling sched) {
-		synchronized (queue) {
-			// keine gute Idee -->
-			// queue.remove(sched);
-		}
-	}
-
-	@Override
-	public void scheddulingPossible(IScheduling sched) {
-		synchronized (queue) {
-			queue.add(sched);
-			Collections.sort(queue, new CurrentPlanPriorityComperator());
-		}
-	}
+	abstract public IPartialPlanScheduling clone();
 
 }
