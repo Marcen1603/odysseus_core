@@ -220,14 +220,16 @@ class ExecutorThread extends Thread {
 	public void run() {
 		try {
 			while (!isInterrupted()) {
+				boolean writingDone = false;
 				IScheduling plan = planScheduling.nextPlan();
 				while (plan != null && !isInterrupted()) {
 					if (caller.isOutputDebug()
 							&& ((caller.getLimitDebug() > 0 && caller.getLinesWritten() < caller.getLimitDebug()) || caller.getLimitDebug() < 0)) {
-						caller.print(plan);
-						caller.incLinesWritten();
-						if (caller.getLinesWritten()== caller.getLimitDebug()) {
+						int lineswritten = caller.print(plan);
+						caller.incLinesWritten(lineswritten);
+						if (!writingDone && caller.getLinesWritten()>= caller.getLimitDebug()) {
 							caller.logger.debug("Max No of lines written");
+							writingDone = true;
 						}
 					}
 
