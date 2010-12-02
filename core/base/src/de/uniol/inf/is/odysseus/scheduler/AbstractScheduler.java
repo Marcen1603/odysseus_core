@@ -75,9 +75,10 @@ public abstract class AbstractScheduler extends EventHandler implements
 		this.schedulingFactory = schedulingFactory;
 	}
 
-	public void print(IScheduling s) {
+	public int print(IScheduling s) {
 		StringBuffer toPrint = new StringBuffer();
 		List<IQuery> queries = s.getPlan().getQueries();
+		int linesPrinted = queries.size();
 		for (IQuery q : queries) {
 			toPrint.append(System.currentTimeMillis()).append(";");
 			toPrint.append(s.getPlan().getId()).append(";").append(q.getID())
@@ -87,15 +88,16 @@ public abstract class AbstractScheduler extends EventHandler implements
 			if (h!=null){
 				h.csvPrint(toPrint);
 			}
+			toPrint.append("\n");
 		}
 		// logger.debug(toPrint.toString());
 		// System.out.println(toPrint);
 		try {
-			file.write(toPrint.toString() + "\n");
+			file.write(toPrint.toString());
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
+		return linesPrinted;
 	}
 
 	public boolean isOutputDebug() {
@@ -110,8 +112,8 @@ public abstract class AbstractScheduler extends EventHandler implements
 		return linesWritten;
 	}
 
-	public void incLinesWritten() {
-		linesWritten++;
+	public void incLinesWritten(int value) {
+		linesWritten+=value;
 	}
 
 	/**
