@@ -1,7 +1,12 @@
 package de.uniol.inf.is.odysseus.benchmarker.runner;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -123,11 +128,36 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String NO_METADATA = "-no_metadata";
 	private static final String WAIT_CONFIG = "-wait_config";
 	private static final String RESULT_PER_QUERY = "-result_per_query";
+	private static final String INPUT_FILE = "-input_file";
 
 	// private static Logger logger =
 	// LoggerFactory.getLogger(BenchmarkStarter.class);
 
 	private static void configureBenchmark(IBenchmark benchmark, Args arguments) {
+		String query = null;
+		if (arguments.hasParameter(INPUT_FILE)) {
+			String filename = arguments.getString(INPUT_FILE);
+			try {
+				FileReader fr = new FileReader(new File(filename));
+				BufferedReader br = new BufferedReader(fr);
+				String tmp = br.readLine();
+				while(tmp != null) {
+					query += tmp;
+					tmp = br.readLine();
+				}
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			if (arguments.hasParameter(QUERY)){
+				query = arguments.get(QUERY);
+			} else {
+				throw new RuntimeException("missing input parameter -query or -input_file");
+			}
+		}
+		
 		if (arguments.hasParameter(SCHEDULER)) {
 			String scheduler = arguments.get(SCHEDULER);
 			benchmark.setScheduler(scheduler);
@@ -191,13 +221,15 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		}
 
 		String queryLanguage = arguments.get(QUERY_LANGUAGE);
-		String query = arguments.get(QUERY);
+		
 
 		benchmark.addQuery(queryLanguage, query);
 	}
 
 	private static void initArgs(Args arguments, String[] args)
 			throws ArgsException {
+		arguments.addString(INPUT_FILE, REQUIREMENT.OPTIONAL, "<filename> - loads query from file <filename>");
+		
 		arguments.addString(SCHEDULER, REQUIREMENT.OPTIONAL,
 				"<scheduler> - sets the scheduler");
 		arguments.addString(SCHEDULING_STRATEGY, REQUIREMENT.OPTIONAL,
@@ -219,7 +251,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		arguments.addString(QUERY_LANGUAGE, REQUIREMENT.MANDATORY,
 				"<language> - query language");
 		arguments
-				.addString(QUERY, REQUIREMENT.MANDATORY,
+				.addString(QUERY, REQUIREMENT.OPTIONAL,
 						"<query> - query string. may contain multiple queries in one string.");
 		arguments
 				.addBoolean(
