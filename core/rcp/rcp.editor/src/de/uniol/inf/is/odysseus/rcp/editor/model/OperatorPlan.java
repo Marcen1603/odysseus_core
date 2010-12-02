@@ -2,11 +2,14 @@ package de.uniol.inf.is.odysseus.rcp.editor.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class OperatorPlan {
+public class OperatorPlan implements Serializable {
+
+	private static final long serialVersionUID = -3927705609150720811L;
 
 	public static final String PROPERTY_OPERATORS = "operators";
 	

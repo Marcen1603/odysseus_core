@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.rcp.editor.model;
 
-public class OperatorConnection {
+import java.io.Serializable;
 
+public class OperatorConnection implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	private Operator source = null;
 	private Operator target = null;
 	

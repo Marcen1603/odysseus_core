@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 
-public class Operator {
+public class Operator implements Serializable {
 
+	private static final long serialVersionUID = -8457946635244480941L;
+	
 	public static final String PROPERTY_X = "x";
 	public static final String PROPERTY_Y = "y";
 	public static final String PROPERTY_CONNECTION_AS_SOURCE_ADDED = "connection_src_add";
@@ -19,7 +22,7 @@ public class Operator {
 	public static final String PROPERTY_CONNECTION_AS_TARGET_REMOVED = "connection_tgt_remove";
 	
 	private IOperatorBuilder builder;
-	private ILogicalOperator logicalOperator;
+	private transient ILogicalOperator logicalOperator;
 	private String builderName;
 	private int x = 0;
 	private int y = 0;

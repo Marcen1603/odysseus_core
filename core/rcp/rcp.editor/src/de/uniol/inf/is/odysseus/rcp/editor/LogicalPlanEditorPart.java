@@ -23,8 +23,11 @@ import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
@@ -45,7 +48,47 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-
+//		try {
+//			IEditorInput input = getEditorInput();
+//			FileEditorInput fei = (FileEditorInput)input;
+//			IFile file = fei.getFile();
+//			
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			ObjectOutputStream objOut = new ObjectOutputStream(baos);
+//			objOut.writeObject(plan);
+//			objOut.close();
+//
+//			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+//			if (!file.exists())
+//				file.create(bais, true, null); // neue Datei
+//			else
+//				file.setContents(bais, IResource.FORCE | IResource.KEEP_HISTORY, null);
+//		} catch( IOException exception ) {
+//			exception.printStackTrace();
+//		} catch( CoreException exception ) {
+//			exception.printStackTrace();
+//		}
+	}
+	
+	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);
+//		
+//		try {
+//			FileEditorInput fei = (FileEditorInput)input;
+//			IFile file = fei.getFile();
+//			if( file.exists() ) {
+//				ObjectInputStream objIn = new ObjectInputStream(file.getContents());
+//				plan = (OperatorPlan)objIn.readObject();
+//				objIn.close();
+//			}
+//		} catch( IOException exception ) {
+//			exception.printStackTrace();
+//		} catch( ClassNotFoundException exception ) {
+//			exception.printStackTrace();
+//		} catch( CoreException exception) {
+//			exception.printStackTrace();
+//		}
 	}
 
 	@Override
