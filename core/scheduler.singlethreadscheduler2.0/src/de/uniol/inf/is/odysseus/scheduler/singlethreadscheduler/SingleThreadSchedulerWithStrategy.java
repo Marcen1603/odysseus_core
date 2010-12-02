@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,10 +28,11 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public class SingleThreadSchedulerWithStrategy extends AbstractScheduler implements
-		UncaughtExceptionHandler {
+public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
+		implements UncaughtExceptionHandler {
 
-	Logger logger = LoggerFactory.getLogger(SingleThreadSchedulerWithStrategy.class);
+	Logger logger = LoggerFactory
+			.getLogger(SingleThreadSchedulerWithStrategy.class);
 	final IPartialPlanScheduling planScheduling;
 
 	/**
@@ -39,8 +41,11 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 	 * @param schedulingStrategieFactory
 	 *            Factory for creating new scheduling strategies for each
 	 *            partial plan which should be scheduled.
+	 * @throws IOException
 	 */
-	public SingleThreadSchedulerWithStrategy(ISchedulingFactory schedulingStrategieFactory, IPartialPlanScheduling planScheduling) {
+	public SingleThreadSchedulerWithStrategy(
+			ISchedulingFactory schedulingStrategieFactory,
+			IPartialPlanScheduling planScheduling) {
 		super(schedulingStrategieFactory);
 		this.planScheduling = planScheduling;
 	}
@@ -98,20 +103,21 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 	 */
 	@Override
 	public synchronized void setPartialPlans(List<IPartialPlan> partialPlans) {
-		logger.debug("Setting new Plans to schedule :"+partialPlans);
+		logger.debug("Setting new Plans to schedule :" + partialPlans);
 		this.planScheduling.clear();
 
 		if (partialPlans != null) {
 			// Create for each partial plan an own scheduling strategy.
 			// These strategies are used for scheduling partial plans.
 			for (IPartialPlan partialPlan : partialPlans) {
-				logger.debug("setPartialPlans create new Parts with Scheduling "+schedulingFactory.getName());
+				logger.debug("setPartialPlans create new Parts with Scheduling "
+						+ schedulingFactory.getName());
 				final IScheduling scheduling = schedulingFactory.create(
 						partialPlan, partialPlan.getCurrentPriority());
 				planScheduling.addPlan(scheduling);
 			}
 		}
-		
+
 		// restart ExecutorThread, if terminated before
 		if (isRunning() && (this.planScheduling.planCount() > 0)
 				&& (execThread == null || !execThread.isAlive())) {
@@ -123,7 +129,8 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 
 	private void initExecThread() {
 		logger.debug("initExecThread");
-		execThread = new ExecutorThread(planScheduling, timeSlicePerStrategy);
+		execThread = new ExecutorThread(planScheduling, timeSlicePerStrategy,
+				this);
 		execThread.setUncaughtExceptionHandler(this);
 		execThread.setPriority(Thread.NORM_PRIORITY);
 		execThread.start();
@@ -180,9 +187,10 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 		}
 
 		logger.error(e.getMessage());
-		
+
 		// send an ErrorEvent to all listenern
-		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR, new Exception(e)));
+		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
+				new Exception(e)));
 	}
 
 }
@@ -199,11 +207,13 @@ class ExecutorThread extends Thread {
 
 	private IPartialPlanScheduling planScheduling;
 	private long timeSlicePerStrategy;
+	private SingleThreadSchedulerWithStrategy caller;
 
 	public ExecutorThread(IPartialPlanScheduling planScheduling,
-			long timeSlicePerStrategy) {
+			long timeSlicePerStrategy, SingleThreadSchedulerWithStrategy caller) {
 		this.planScheduling = planScheduling.clone();
 		this.timeSlicePerStrategy = timeSlicePerStrategy;
+		this.caller = caller;
 	}
 
 	@Override
@@ -212,6 +222,15 @@ class ExecutorThread extends Thread {
 			while (!isInterrupted()) {
 				IScheduling plan = planScheduling.nextPlan();
 				while (plan != null && !isInterrupted()) {
+					if (caller.isOutputDebug()
+							&& ((caller.getLimitDebug() > 0 && caller.getLinesWritten() < caller.getLimitDebug()) || caller.getLimitDebug() < 0)) {
+						caller.print(plan);
+						caller.incLinesWritten();
+						if (caller.getLinesWritten()== caller.getLimitDebug()) {
+							caller.logger.debug("Max No of lines written");
+						}
+					}
+
 					if (plan.schedule(timeSlicePerStrategy)) {
 						// plan is done
 						planScheduling.removePlan(plan);
@@ -230,7 +249,7 @@ class ExecutorThread extends Thread {
 class SingleSourceExecutor extends Thread {
 
 	Logger logger = LoggerFactory.getLogger(SingleSourceExecutor.class);
-	
+
 	private IIterableSource<?> s;
 
 	private SingleThreadSchedulerWithStrategy caller;
@@ -243,16 +262,15 @@ class SingleSourceExecutor extends Thread {
 
 	@Override
 	public void run() {
-		logger.debug("Added Source "+s);
+		logger.debug("Added Source " + s);
 		while (!isInterrupted() && s.isOpen() && !s.isDone()) {
 			while (s.hasNext()) {
 				s.transferNext();
 			}
 			Thread.yield();
 		}
-		logger.debug("Remove Source "+s);
+		logger.debug("Remove Source " + s);
 		caller.removeSourceThread(this);
 	}
 
 }
-

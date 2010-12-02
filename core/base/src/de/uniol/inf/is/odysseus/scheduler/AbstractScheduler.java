@@ -1,12 +1,19 @@
 package de.uniol.inf.is.odysseus.scheduler;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
+import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
@@ -43,6 +50,18 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 	private SchedulingEvent schedulingStarted = new SchedulingEvent(this,SchedulingEventType.SCHEDULING_STARTED,"");
 	private SchedulingEvent schedulingStopped = new SchedulingEvent(this,SchedulingEventType.SCHEDULING_STOPPED,"");
 	
+	
+	// ---- Evaluations ----
+	final boolean outputDebug = Boolean.parseBoolean(OdysseusDefaults
+			.get("debug_Scheduler"));
+
+	FileWriter file;
+	final long limitDebug = OdysseusDefaults
+			.get("debug_Scheduler_maxLines") != null ? Long
+			.parseLong(OdysseusDefaults.get("debug_Scheduler_maxLines"))
+			: 1048576;
+	long linesWritten;
+	
 	/**
 	 * Creates a new scheduler.
 	 * 
@@ -54,8 +73,59 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 	public AbstractScheduler(
 			ISchedulingFactory schedulingFactory) {
 		this.schedulingFactory = schedulingFactory;
+		if (outputDebug) {
+			try {
+				file = new FileWriter(OdysseusDefaults.odysseusHome
+						+ "SchedulerLog"
+						+ System.currentTimeMillis() + ".csv");
+				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+				linesWritten = 1; // Header!
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			file = null;
+		}
 	}
 
+	public void print(IScheduling s) {
+		StringBuffer toPrint = new StringBuffer();
+		List<IQuery> queries = s.getPlan().getQueries();
+		for (IQuery q : queries) {
+			toPrint.append(System.currentTimeMillis()).append(";");
+			toPrint.append(s.getPlan().getId()).append(";").append(q.getID())
+					.append(";").append(s.getPlan().getCurrentPriority())
+					.append(";");
+			ScheduleMeta h = s.getPlan().getScheduleMeta();
+			h.csvPrint(toPrint);
+		}
+		// logger.debug(toPrint.toString());
+		// System.out.println(toPrint);
+		try {
+			file.write(toPrint.toString() + "\n");
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean isOutputDebug() {
+		return outputDebug;
+	}
+	
+	public long getLimitDebug() {
+		return limitDebug;
+	}
+	
+	public long getLinesWritten() {
+		return linesWritten;
+	}
+	
+	public void incLinesWritten(){
+		linesWritten++;
+	}
+	
 	/**
 	 * Send an ErrorEvent to all registered listeners.
 	 * 

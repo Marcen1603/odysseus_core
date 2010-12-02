@@ -18,3 +18,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Service-Component: OSGI-INF/singlethreadscheduler.xml, OSGI-INF/singlethreadscheduler_nowait.xml, OSGI-INF/singlethreadscheduler_rrstrat.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;version="2.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus
