@@ -93,11 +93,13 @@ public class OdysseusDefaults {
 
 		props.setProperty("sessionTimeout", (240 * 60000)+""); // Milliseconds
 
+		// Scheduling
+		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());
+		props.setProperty("debug_Scheduler_maxLines", 1048576+"");
+		
 		// SLA
 		props.setProperty("sla_history_size", 10000+""); // Milliseconds
 		props.setProperty("sla_update_Penalties_Frequency", 30000+"");
-		props.setProperty("sla_debug_TimebasedSLAScheduler", Boolean.TRUE.toString());
-		props.setProperty("sla_debug_TimebasedSLAScheduler_maxLines", 1048576+"");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {
