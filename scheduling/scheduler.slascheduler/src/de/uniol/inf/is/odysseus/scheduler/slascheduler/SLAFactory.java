@@ -19,9 +19,9 @@ public class SLAFactory extends AbstractSchedulerFactory{
 	String kind = "";
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void activate(ComponentContext context){
 		super.activate(context);
+		@SuppressWarnings("rawtypes")
 		Dictionary properties = context.getProperties();
 		this.method = PrioCalcMethod.valueOf((String)properties.get("calcMethod"));
 		this.kind = (String)properties.get("kind");
