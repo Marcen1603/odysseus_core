@@ -11,13 +11,13 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariable {
-	
+
 	public static final String NO_SOURCE = "NO_SOURCE";
-	
+
 	private final IStreamCarsExpression parent;
 	private Variable mepVariable;
 	private SchemaIndexPath schemaPath;
-	
+
 	private String name;
 	private String nameWithoutMetadata;
 	private String sourceName;
@@ -25,7 +25,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 
 	private int[] relativePath;
 	private int[] absolutePath;
-	
+
 	protected StreamCarsExpressionVariable(IStreamCarsExpression parent, Variable mepVariable) {
 		this.parent = parent;
 		this.mepVariable = mepVariable;
@@ -33,7 +33,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		this.initSourceName(this.name);
 		this.initMetadataInfo(this.name);
 	}
-	
+
 	protected StreamCarsExpressionVariable(IStreamCarsExpression parent, String name) {
 		this.parent = parent;
 		this.name = name;
@@ -65,7 +65,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	public Object getValue() {
 		return mepVariable != null ? mepVariable.getValue() : null;
 	}
-	
+
 	@Override
 	public double getDoubleValue() {
 		return ((Number) getValue()).doubleValue();
@@ -96,12 +96,12 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		if(!isSchemaVariable()) return false;
 		return sourceName.equals(getSchemaSourceName(schema));
 	}
-	
+
 	@Override
 	public boolean isVirtual() {
 		return mepVariable == null;
 	}
-	
+
 	@Override
 	public boolean hasMetadataInfo() {
 		return metadataInfo != null;
@@ -145,8 +145,8 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			mepVariable.bind(value);
 		}
 	}
-	
-	@Override 
+
+	@Override
 	public void bindTupleValue(MVRelationalTuple<?> tuple) {
 		MVRelationalTuple<?> current = tuple;
 		int depth = absolutePath.length - 1;
@@ -155,13 +155,13 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		}
 		bind(current.getAttribute(absolutePath[depth]));
 	}
-	
+
 	@Override
 	public boolean isInList(int[] pathToList) {
 		int listIndex = pathToList[pathToList.length-1];
 		return schemaPath.getSchemaIndex(listIndex).isList();
 	}
-	
+
 	@Override
 	public boolean isInList(TupleIndexPath pathToList) {
 		int listIndex = pathToList.getLastTupleIndex().toInt();
@@ -181,7 +181,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			absolutePath = schemaPath.toArray(true);
 		}
 	}
-	
+
 	protected void initMetadataInfo(String variableName) {
 		String[] split = variableName.split("\\#");
 		if(split.length > 2) {
@@ -194,7 +194,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			metadataInfo = split[1];
 		}
 	}
-	
+
 	protected void initSourceName(String variableName) {
 		String[] dotSplit = variableName.split("\\.");
 		if(dotSplit.length > 2) {
@@ -205,7 +205,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			sourceName =  dotSplit[0];
 		}
 	}
-	
+
 	protected void initRelativeIndex() {
 		if(schemaPath == null) throw new RuntimeException("the variable " + name + "was not properly initialized: schemaIndexPath is null");
 		relativePath = new int[schemaPath.getLength()];
@@ -215,22 +215,22 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			if(isUnderList) {
 				relativePath[i] = -1;
 			}
-			
+
 			if(index.isList()) {
 				isUnderList = true;
-			} 
+			}
 			relativePath[i] = index.getIndex();
 		}
 	}
-	
+
 	protected String getSchemaSourceName(SDFAttributeList schema) {
 		if(schema == null) return NO_SOURCE;
 		return schema.getAttribute(0).getSourceName();
 	}
-	
+
 	@Override
 	public String toString() {
-		return "\n\t ScarsExpressionVariable [" 
+		return "\n\t ScarsExpressionVariable ["
 				+ "\n\t\t name: " + name
 				+ "\n\t\t value: " + getValue()
 				+ "\n\t\t nameWithoutMetadata: " + nameWithoutMetadata
@@ -240,7 +240,11 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 				+ "\n\t\t isVirtual: " + isVirtual()
 				+ "\n\t\t schemaPath: " + schemaPath
 				+ "\n\t\t relativePath: " + (relativePath != null ? Arrays.toString(relativePath) : null)
-				+ "\n\t\t absolutePath: " + (absolutePath != null ? Arrays.toString(absolutePath) : null) 
+				+ "\n\t\t absolutePath: " + (absolutePath != null ? Arrays.toString(absolutePath) : null)
 				+ "\n\t   ]";
+	}
+
+	public String getNameWithoutMetadata() {
+		return nameWithoutMetadata;
 	}
 }

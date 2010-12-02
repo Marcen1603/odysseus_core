@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceHelper;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
@@ -34,6 +35,8 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 	private SchemaIndexPath predictedObjectListSIPath;
 	private SchemaIndexPath scannedObjectListSIPath;
 
+	private CovarianceHelper covarianceHelper;
+
 	private static final String EXP_ASSOCIATION_CONNECTION_VALUE = "ASSOCIATION_CON_VAL";
 	private static final String METADATA_COV = "COVARIANCE";
 
@@ -54,6 +57,7 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		this.scannedObjectListPath = clone.scannedObjectListPath;
 		this.predictedObjectListSIPath = clone.predictedObjectListSIPath;
 		this.scannedObjectListSIPath = clone.scannedObjectListSIPath;
+		this.covarianceHelper = clone.covarianceHelper;
 	}
 
 	@Override
@@ -67,6 +71,8 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath));
 		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predictedObjectListPath));
+
+		this.covarianceHelper = new CovarianceHelper(this.expression, this.getOutputSchema());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -117,14 +123,14 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 							Object val = tupleHelper.getObject(var.getPath());
 							String metaDataInfo = var.getMetadataInfo();
 							if (metaDataInfo.equals(METADATA_COV)) {
-								var.bind(((MVRelationalTuple<M>) val).getMetadata().getCovariance());
+								var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
 							}
 						} else if (var.isInList(predictedTupleIndexPath)) {
 							var.replaceVaryingIndex(j);
 							Object val = tupleHelper.getObject(var.getPath());
 							String metaDataInfo = var.getMetadataInfo();
 							if (metaDataInfo.equals(METADATA_COV)) {
-								var.bind(((MVRelationalTuple<M>) val).getMetadata().getCovariance());
+								var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
 							}
 						}
 					}
@@ -210,5 +216,13 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 
 	public void setExpressionString(String expressionString) {
 		this.expressionString = expressionString;
+	}
+
+	public CovarianceHelper getCovarianceHelper() {
+		return covarianceHelper;
+	}
+
+	public void setCovarianceHelper(CovarianceHelper covarianceHelper) {
+		this.covarianceHelper = covarianceHelper;
 	}
 }
