@@ -60,7 +60,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 	FileWriter file;
 	final long limitDebug = OdysseusDefaults.get("debug_Scheduler_maxLines") != null ? Long
 			.parseLong(OdysseusDefaults.get("debug_Scheduler_maxLines"))
-			: 1048576;
+			: 1048476;
 	long linesWritten;
 
 	/**
