@@ -177,10 +177,8 @@ public class QueryTextParser {
 	protected String useReplacements(String line,
 			Map<String, String> replacements) throws QueryTextParseException {
 		int posStart = line.indexOf(REPLACEMENT_START_KEY);
-		int lastPosEnd = 0;
 		while (posStart != -1) {
-				int posEnd = lastPosEnd + 1 + line.substring(lastPosEnd+1).indexOf(REPLACEMENT_END_KEY);
-				lastPosEnd = posEnd;
+				int posEnd = posStart + 1 + line.substring(posStart+1).indexOf(REPLACEMENT_END_KEY);
 				if (posEnd != -1 && posStart < posEnd) {
 					String key = line.substring(posStart
 							+ REPLACEMENT_START_KEY.length(), posEnd);
