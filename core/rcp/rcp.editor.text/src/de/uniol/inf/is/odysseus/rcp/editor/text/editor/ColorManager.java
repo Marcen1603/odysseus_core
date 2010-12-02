@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class ColorManager {
 
-	private class ColorEntry {
+	private static class ColorEntry {
 		public int r;
 		public int g;
 		public int b;
@@ -18,12 +18,35 @@ public class ColorManager {
 			this.g = g;
 			this.b = b;
 		}
-		
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + b;
+			result = prime * result + g;
+			result = prime * result + r;
+			return result;
+		}
+
 		@Override
 		public boolean equals(Object obj) {
-			ColorEntry o = (ColorEntry)obj;
-			return o.r == r && o.g == g && o.b == b;
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ColorEntry other = (ColorEntry) obj;
+			if (b != other.b)
+				return false;
+			if (g != other.g)
+				return false;
+			if (r != other.r)
+				return false;
+			return true;
 		}
+		
 	}
 	
 	public Map<ColorEntry, Color> colors = new HashMap<ColorEntry, Color>();
