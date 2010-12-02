@@ -29,6 +29,7 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	final private List<IScheduling> lastRun = new LinkedList<IScheduling>();
 	Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
 
+	final CurrentPlanPriorityComperator comperator = new CurrentPlanPriorityComperator();
 	
 	final private long sla_history_size = Long.parseLong(OdysseusDefaults
 			.get("sla_history_size"));
@@ -120,7 +121,7 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 					long newPrio = (long) Math.round(prio * 1000);
 					is.getPlan().setCurrentPriority(newPrio);
 				}
-				Collections.sort(queue, new CurrentPlanPriorityComperator());
+				Collections.sort(queue, comperator);
 				// Update Scheduling Infos
 				// Add all elements with same prio to list
 				Iterator<IScheduling> iter = queue.iterator();
