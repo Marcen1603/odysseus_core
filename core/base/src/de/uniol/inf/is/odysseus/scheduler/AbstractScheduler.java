@@ -84,7 +84,9 @@ public abstract class AbstractScheduler extends EventHandler implements
 					.append(";").append(s.getPlan().getCurrentPriority())
 					.append(";");
 			ScheduleMeta h = s.getPlan().getScheduleMeta();
-			h.csvPrint(toPrint);
+			if (h!=null){
+				h.csvPrint(toPrint);
+			}
 		}
 		// logger.debug(toPrint.toString());
 		// System.out.println(toPrint);
