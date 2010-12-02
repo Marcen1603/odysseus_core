@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractScheduler extends EventHandler implements IScheduler{
+public abstract class AbstractScheduler extends EventHandler implements
+		IScheduler {
 	/**
 	 * Indicates if the scheduling is started.
 	 */
@@ -35,8 +36,8 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 	protected volatile long timeSlicePerStrategy = 10;
 
 	/**
-	 * The {@link ISchedulingFactory} which will be used for scheduling.
-	 * Each PartialPlan will be initialized with a new strategy instance.
+	 * The {@link ISchedulingFactory} which will be used for scheduling. Each
+	 * PartialPlan will be initialized with a new strategy instance.
 	 */
 	protected ISchedulingFactory schedulingFactory;
 
@@ -45,48 +46,33 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 	 */
 	private ArrayList<IErrorEventListener> errorEventListener = new ArrayList<IErrorEventListener>();
 
-	//--- Events
-	
-	private SchedulingEvent schedulingStarted = new SchedulingEvent(this,SchedulingEventType.SCHEDULING_STARTED,"");
-	private SchedulingEvent schedulingStopped = new SchedulingEvent(this,SchedulingEventType.SCHEDULING_STOPPED,"");
-	
-	
+	// --- Events
+
+	private SchedulingEvent schedulingStarted = new SchedulingEvent(this,
+			SchedulingEventType.SCHEDULING_STARTED, "");
+	private SchedulingEvent schedulingStopped = new SchedulingEvent(this,
+			SchedulingEventType.SCHEDULING_STOPPED, "");
+
 	// ---- Evaluations ----
 	final boolean outputDebug = Boolean.parseBoolean(OdysseusDefaults
 			.get("debug_Scheduler"));
 
 	FileWriter file;
-	final long limitDebug = OdysseusDefaults
-			.get("debug_Scheduler_maxLines") != null ? Long
+	final long limitDebug = OdysseusDefaults.get("debug_Scheduler_maxLines") != null ? Long
 			.parseLong(OdysseusDefaults.get("debug_Scheduler_maxLines"))
 			: 1048576;
 	long linesWritten;
-	
+
 	/**
 	 * Creates a new scheduler.
 	 * 
 	 * @param schedulingFactory
-	 *            {@link ISchedulingFactory} which will be used for
-	 *            scheduling. Each PartialPlan will be initialized with a new
-	 *            strategy instance.
+	 *            {@link ISchedulingFactory} which will be used for scheduling.
+	 *            Each PartialPlan will be initialized with a new strategy
+	 *            instance.
 	 */
-	public AbstractScheduler(
-			ISchedulingFactory schedulingFactory) {
+	public AbstractScheduler(ISchedulingFactory schedulingFactory) {
 		this.schedulingFactory = schedulingFactory;
-		if (outputDebug) {
-			try {
-				file = new FileWriter(OdysseusDefaults.odysseusHome
-						+ "SchedulerLog"
-						+ System.currentTimeMillis() + ".csv");
-				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
-				linesWritten = 1; // Header!
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			file = null;
-		}
 	}
 
 	public void print(IScheduling s) {
@@ -109,27 +95,28 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 			e.printStackTrace();
 		}
 	}
-	
+
 	public boolean isOutputDebug() {
 		return outputDebug;
 	}
-	
+
 	public long getLimitDebug() {
 		return limitDebug;
 	}
-	
+
 	public long getLinesWritten() {
 		return linesWritten;
 	}
-	
-	public void incLinesWritten(){
+
+	public void incLinesWritten() {
 		linesWritten++;
 	}
-	
+
 	/**
 	 * Send an ErrorEvent to all registered listeners.
 	 * 
-	 * @param eventArgs {@link ErrorEvent} which should be send.
+	 * @param eventArgs
+	 *            {@link ErrorEvent} which should be send.
 	 */
 	@Override
 	public synchronized void fireErrorEvent(ErrorEvent eventArgs) {
@@ -138,25 +125,52 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#startScheduling()
 	 */
 	@Override
 	public synchronized void startScheduling() {
 		this.isRunning = true;
+		if (outputDebug) {
+			try {
+				file = new FileWriter(OdysseusDefaults.odysseusHome
+						+ "SchedulerLog" + System.currentTimeMillis() + ".csv");
+				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+				linesWritten = 1; // Header!
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			file = null;
+		}
 		fire(schedulingStarted);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#stopScheduling()
 	 */
 	@Override
 	public synchronized void stopScheduling() {
 		this.isRunning = false;
+		if (outputDebug) {
+			try {
+				file.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		fire(schedulingStopped);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#isRunning()
 	 */
 	@Override
@@ -164,16 +178,24 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 		return isRunning;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#setTimeSlicePerStrategy(long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setTimeSlicePerStrategy
+	 * (long)
 	 */
 	@Override
 	public void setTimeSlicePerStrategy(long time) {
 		this.timeSlicePerStrategy = time;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.event.error.IErrorEventHandler#addErrorEventListener(de.uniol.inf.is.odysseus.event.error.IErrorEventListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.event.error.IErrorEventHandler#addErrorEventListener
+	 * (de.uniol.inf.is.odysseus.event.error.IErrorEventListener)
 	 */
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
@@ -182,13 +204,16 @@ public abstract class AbstractScheduler extends EventHandler implements ISchedul
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.event.error.IErrorEventHandler#removeErrorEventListener(de.uniol.inf.is.odysseus.event.error.IErrorEventListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.event.error.IErrorEventHandler#
+	 * removeErrorEventListener
+	 * (de.uniol.inf.is.odysseus.event.error.IErrorEventListener)
 	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
 		this.errorEventListener.remove(errorEventListener);
 	}
-	
-	
+
 }
