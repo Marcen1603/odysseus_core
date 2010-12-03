@@ -7,18 +7,8 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-priority
--scheduler &quot;Static Priority Plan Scheduler&quot;
--scheduling_strategy &quot;Aurora Min Cost (Iter)&quot;
--max_results 10000
--buffer_placement &quot;No Buffers&quot;
--query_language PQL
--memUsage
--query &quot;
-person = window({size=50000, type=&apos;time&apos;}, priority({prioritize = RelationalPredicate( &apos;id%25&lt;5&apos;)}, nexmark:person2))
-bid = window({size=1, type=&apos;time&apos;}, nexmark:bid2)
-result = join({predicate = RelationalPredicate(&apos;id=bidder&apos;)}, bid, person)&quot;
--out &quot;c:/users/jacobi/result.xml&quot;</programArgs>
+      <programArgs>-input_file &quot;e:/runtime-app.product/Marco/SLA 4 Test 100.qry&quot;
+-query_language script</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx1000m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
@@ -75,7 +65,7 @@ result = join({predicate = RelationalPredicate(&apos;id=bidder&apos;)}, bid, per
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
       <plugin id="de.uniol.inf.is.odysseus.priority"/>
-      <plugin id="de.uniol.inf.is.odysseus.priority.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.priority.transform" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.priority_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.rcp.editor.text.parser"/>
       <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
@@ -89,6 +79,7 @@ result = join({predicate = RelationalPredicate(&apos;id=bidder&apos;)}, bid, per
       <plugin id="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
+      <plugin id="de.uniol.inf.is.odysseus.stdcfg"/>
       <plugin id="de.uniol.inf.is.odysseus.transform"/>
       <plugin id="log4jproperties" fragment="true"/>
       <plugin id="org.apache.commons.collections"/>
