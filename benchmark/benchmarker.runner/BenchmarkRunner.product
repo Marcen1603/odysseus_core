@@ -54,6 +54,7 @@
       <plugin id="de.uniol.inf.is.odysseus.parser.pql.priority"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
@@ -78,7 +79,9 @@
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.slascheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
       <plugin id="de.uniol.inf.is.odysseus.stdcfg"/>
       <plugin id="de.uniol.inf.is.odysseus.transform"/>
       <plugin id="log4jproperties" fragment="true"/>
