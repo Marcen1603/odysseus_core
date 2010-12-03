@@ -7,11 +7,11 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.planmanagement.configuration,
  de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.rcp.viewer.query,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml

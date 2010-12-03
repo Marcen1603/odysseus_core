@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
@@ -21,7 +22,7 @@ public class StandardQueryBuildConfiguration implements
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
 						"relational", 
-						ITimeInterval.class)));
+						ITimeInterval.class, ILatency.class)));
 		settings.add(ParameterPerformQuerySharing.TRUE);
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
