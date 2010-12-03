@@ -142,7 +142,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 				BufferedReader br = new BufferedReader(fr);
 				String tmp = br.readLine();
 				while(tmp != null) {
-					query += tmp;
+					query += tmp+"\n";
 					tmp = br.readLine();
 				}
 			} catch (FileNotFoundException e) {
