@@ -1,27 +1,27 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
-import java.util.HashMap;
-
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
-public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer>
-		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	// path to new and old objects
-	private String oldObjListPath;
-	private String newObjListPath;
+	private String predictedObjectListPath;
+	private String scannedObjectListPath;
+	private SchemaIndexPath predictedObjectListSIPath;
+	private SchemaIndexPath scannedObjectListSIPath;
 	
-	private PredictionExpression[][] expression;
-	private String[][] expressionString;
+	private SchemaHelper schemaHelper;
 	
-	// optional parameters for the filter function. Not used right now
-	private HashMap<Enum<Parameters>, Object> parameters;
+	private String expressionString;
+	protected IStreamCarsExpression expression;
 
 	public AbstractFilterExpressionPO() {
 		super();
@@ -29,11 +29,24 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 
 	public AbstractFilterExpressionPO(AbstractFilterExpressionPO<M> copy) {
 		super(copy);
-		this.setNewObjListPath(new String(copy.getNewObjListPath()));
-		this.setOldObjListPath(new String(copy.getOldObjListPath()));
-		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
 		this.setExpressionString(copy.getExpressionString());
+		this.setPredictedObjectListPath(copy.getPredictedObjectListPath());
+		this.setPredictedObjectListSIPath(copy.getScannedObjectListSIPath().clone());
+		this.setScannedObjectListPath(copy.getScannedObjectListPath());
+		this.setScannedObjectListSIPath(copy.getScannedObjectListSIPath().clone());
 		
+		
+	}
+	
+	protected void process_open() throws OpenFailedException {
+		this.expressionString = this.expressionString.replace("'", "");
+		expression = new StreamCarsExpression(expressionString);
+		expression.init(getOutputSchema());
+		
+		this.schemaHelper = new SchemaHelper(getOutputSchema());
+
+		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.getScannedObjectListPath()));
+		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.getPredictedObjectListPath()));
 	}
 
 	@Override
@@ -56,44 +69,48 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 	}
 
 	// Getter & Setter
-
-	public String getOldObjListPath() {
-		return this.oldObjListPath;
-	}
-
-	public void setOldObjListPath(String oldObjListPath) {
-		this.oldObjListPath = oldObjListPath;
-	}
-
-	public String getNewObjListPath() {
-		return this.newObjListPath;
-	}
-
-	public void setNewObjListPath(String newObjListPath) {
-		this.newObjListPath = newObjListPath;
-	}
-
-	public HashMap<Enum<Parameters>, Object> getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
-		this.parameters = parameters;
-	}
-
-	public void setExpression(PredictionExpression[][] expression) {
-		this.expression = expression;
-	}
-
-	public PredictionExpression[][] getExpression() {
+	
+	public IStreamCarsExpression getExpression() {
 		return expression;
 	}
-
-	public void setExpressionString(String[][] expressionString) {
+	
+	public void setExpressionString(String expressionString) {
 		this.expressionString = expressionString;
 	}
-
-	public String[][] getExpressionString() {
+	
+	public String getExpressionString() {
 		return expressionString;
+	}
+
+	public void setPredictedObjectListPath(String predictedObjectListPath) {
+		this.predictedObjectListPath = predictedObjectListPath;
+	}
+
+	public String getPredictedObjectListPath() {
+		return predictedObjectListPath;
+	}
+
+	public void setScannedObjectListPath(String scannedObjectListPath) {
+		this.scannedObjectListPath = scannedObjectListPath;
+	}
+
+	public String getScannedObjectListPath() {
+		return scannedObjectListPath;
+	}
+
+	public void setPredictedObjectListSIPath(SchemaIndexPath predictedObjectListSIPath) {
+		this.predictedObjectListSIPath = predictedObjectListSIPath;
+	}
+
+	public SchemaIndexPath getPredictedObjectListSIPath() {
+		return predictedObjectListSIPath;
+	}
+
+	public void setScannedObjectListSIPath(SchemaIndexPath scannedObjectListSIPath) {
+		this.scannedObjectListSIPath = scannedObjectListSIPath;
+	}
+
+	public SchemaIndexPath getScannedObjectListSIPath() {
+		return scannedObjectListSIPath;
 	}
 }
