@@ -151,7 +151,7 @@ public class PartialPlan implements IPartialPlan {
 		for (IQuery q : partOf) {
 			roots.addAll(q.getRoots());
 		}
-		getLogger().debug("get Query Roots " + roots);
+	//	getLogger().debug("get Query Roots " + roots);
 		return roots;
 	}
 

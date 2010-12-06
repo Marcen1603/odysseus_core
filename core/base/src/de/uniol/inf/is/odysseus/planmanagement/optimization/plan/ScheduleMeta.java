@@ -37,6 +37,7 @@ public class ScheduleMeta {
 		} else {
 			toPrint.append(";0");
 		}
+		toPrint.append(";").append(history.size());
 	}
 
 	private long getNow() {

@@ -83,6 +83,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 			toPrint.append(System.currentTimeMillis()).append(";");
 			toPrint.append(s.getPlan().getId()).append(";").append(q.getID())
 					.append(";").append(s.getPlan().getCurrentPriority())
+					.append(";").append((""+q.getPenalty()).replace('.', ','))
 					.append(";");
 			ScheduleMeta h = s.getPlan().getScheduleMeta();
 			if (h!=null){
@@ -141,7 +142,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 			try {
 				file = new FileWriter(OdysseusDefaults.odysseusHome
 						+ "SchedulerLog" + System.currentTimeMillis() + ".csv");
-				file.write("Timestamp;PartialPlan;Query;Priority;DiffToLastCall;InTimeCalls;AllCalls;Factor\n");
+				file.write("Timestamp;PartialPlan;Query;Priority;Penalty;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
 				linesWritten = 1; // Header!
 			} catch (Exception e) {
 				e.printStackTrace();
