@@ -71,21 +71,21 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 			planIterator = planList.iterator();
 		}
 		if (planIterator.hasNext()) {
-			synchronized (pausedPlans) {
-				while (planCount() == pausedPlans.size()) {
-					try {
-						logger.debug(this + " paused");
-						pausedPlans.wait(10);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
+//			synchronized (pausedPlans) {
+//				while (planCount() == pausedPlans.size()) {
+//					try {
+//						logger.debug(this + " paused");
+//						pausedPlans.wait(10);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
 			while (planIterator.hasNext()) {
 				currentPlan = planIterator.next();
-				if (currentPlan.isSchedulable()) {
+//				if (currentPlan.isSchedulable()) {
 					return currentPlan;
-				}
+//				}
 			}
 		}
 		return null;
