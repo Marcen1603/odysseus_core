@@ -4,20 +4,22 @@ import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IAlte
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IGenericCalcModel;
 
 public class AlternativeCarModel implements ICarModel {
-	
+
 	private int type;// Fahrzeugtyp: immer Wert 4
 	private int id;// alles > 0
 	private int laneid; // fahrspur: maximal 6
 	private float posx; // relative koordinaten (in meter)
 	private float posy;
+	private float heading;
 	private float velocity;// absolute geschwindigkeit in ??
 	private float acceleration; // l�nge des autos in m
-	
+
 	private IAlternativeCalcModel calcModel;
-	
+
 	public AlternativeCarModel(int id, IAlternativeCalcModel calcModel) {
 		this.type = 4;
 		this.id = id;
+		this.heading = 0.0f;
 
 		this.calcModel = calcModel;
 		this.calcModel.setModel(this);
@@ -27,7 +29,7 @@ public class AlternativeCarModel implements ICarModel {
 		this.velocity = this.calcModel.initVelocity();
 		this.acceleration = this.calcModel.initAcceleration();
 	}
-	
+
 	public AlternativeCarModel(AlternativeCarModel clone) {
 		this.acceleration = clone.acceleration;
 		this.calcModel = clone.calcModel;
@@ -37,6 +39,7 @@ public class AlternativeCarModel implements ICarModel {
 		this.posy = clone.posy;
 		this.type = clone.type;
 		this.velocity = clone.velocity;
+		this.heading = clone.heading;
 	}
 
 	@Override
@@ -106,7 +109,15 @@ public class AlternativeCarModel implements ICarModel {
 	public Object clone() {
 		return new AlternativeCarModel(this);
 	}
-	
+
+	public float getHeading() {
+		return heading;
+	}
+
+	public void setHeading(float heading) {
+		this.heading = heading;
+	}
+
 	/**
 	 * setzt die Werte eines Autos auf die Werte eines anderen Autos
 	 */
@@ -119,5 +130,5 @@ public class AlternativeCarModel implements ICarModel {
 		this.setVelocity(tempModel.getVelocity());
 		this.setAcceleration(tempModel.getAcceleration());
 	}
-	
+
 }

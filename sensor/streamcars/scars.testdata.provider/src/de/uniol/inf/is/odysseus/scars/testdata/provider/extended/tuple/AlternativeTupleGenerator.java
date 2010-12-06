@@ -20,14 +20,15 @@ public class AlternativeTupleGenerator implements ITupleGenerator {
 		for (int i = 0; i < state.size(); i++) {
 			AlternativeCarModel cm = (AlternativeCarModel)state.get(i);
 
-			MVRelationalTuple<?> car = ProviderUtil.createTuple(7);
+			MVRelationalTuple<?> car = ProviderUtil.createTuple(8);
 			car.setAttribute(0, cm.getType());
 			car.setAttribute(1, cm.getId());
 			car.setAttribute(2, cm.getLaneid());
 			car.setAttribute(3, cm.getPosx());
 			car.setAttribute(4, cm.getPosy());
-			car.setAttribute(5, cm.getVelocity());
-			car.setAttribute(6, cm.getAcceleration());
+			car.setAttribute(5, cm.getHeading());
+			car.setAttribute(6, cm.getVelocity());
+			car.setAttribute(7, cm.getAcceleration());
 
 			cars.setAttribute(i, car);
 		}
