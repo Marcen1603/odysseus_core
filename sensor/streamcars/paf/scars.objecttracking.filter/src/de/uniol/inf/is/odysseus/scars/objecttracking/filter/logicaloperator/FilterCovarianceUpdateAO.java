@@ -28,6 +28,7 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 		super();
 		parameters = new HashMap<Enum<Parameters>, Object>();
 		metaDataUpdateFunction = new KalmanCorrectStateCovarianceFunction<M>();
+		functionID = "KALMAN";
 	}
 	
 	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {

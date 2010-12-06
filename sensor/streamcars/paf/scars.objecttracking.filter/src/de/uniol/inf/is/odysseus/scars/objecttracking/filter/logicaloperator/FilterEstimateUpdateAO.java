@@ -21,6 +21,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	private String oldObjListPath;
 	private String newObjListPath;
 	
+	private String functionID;
 	
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
@@ -29,7 +30,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	{
 		super();
 		parameters = new HashMap<Enum<Parameters>, Object>();
-
+		functionID = "KALMAN";
 	}
 	
 	public FilterEstimateUpdateAO(FilterEstimateUpdateAO<M> copy) {
@@ -77,6 +78,20 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 
 	public void setParameters(HashMap<Enum<Parameters>, Object> parameters) {
 		this.parameters = parameters;
+	}
+
+	/**
+	 * @param functionID the functionID to set
+	 */
+	public void setFunctionID(String functionID) {
+		this.functionID = functionID;
+	}
+
+	/**
+	 * @return the functionID
+	 */
+	public String getFunctionID() {
+		return functionID;
 	}
 
 
