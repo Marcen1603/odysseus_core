@@ -16,27 +16,22 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain & IConnectionContainer> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	private String functionID;
 	
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
 	
-	
-	
-	private AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction;
+	private String[][] expressionString;
 	
 	public FilterExpressionCovarianceUpdateAO()
 	{
 		super();
 		parameters = new HashMap<Enum<Parameters>, Object>();
-		metaDataUpdateFunction = new KalmanCorrectStateCovarianceFunction<M>();
+
 	}
 	
 	public FilterExpressionCovarianceUpdateAO(FilterExpressionCovarianceUpdateAO<M> copy) {
 		super(copy);
-		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
-		this.setMetaDataUpdateFunction(copy.getMetaDataUpdateFunction().clone());
 		this.setExpressionString(copy.getExpressionString());
 		
 	}
@@ -55,14 +50,6 @@ public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain 
 	
 	// Getter & Setter
 
-	public String getFunctionID() {
-		return functionID;
-	}
-	
-	public void setFunctionID(String functionID) {
-		this.functionID = functionID;
-	}
-
 	public HashMap<Enum<Parameters>, Object> getParameters() {
 		return parameters;
 	}
@@ -71,13 +58,6 @@ public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain 
 		this.parameters = parameters;
 	}
 
-	public void setMetaDataUpdateFunction(AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction) {
-		this.metaDataUpdateFunction = metaDataUpdateFunction;
-	}
-
-	public AbstractMetaDataUpdateFunction<M> getMetaDataUpdateFunction() {
-		return metaDataUpdateFunction;
-	}
 
 	public void setExpressionString(String[][] expressionString) {
 		this.expressionString = expressionString;

@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContainer & IGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	private String functionID;
+
 	
 	// path to new and old objects
 	private String oldObjListPath;
@@ -25,24 +25,19 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
 
-	private AbstractDataUpdateFunction<M>  dataUpdateFunction;
-	
-	
 	public FilterEstimateUpdateAO()
 	{
 		super();
-		functionID = "KALMAN";
 		parameters = new HashMap<Enum<Parameters>, Object>();
-		dataUpdateFunction = new KalmanCorrectStateEstimateFunction<M>();
+
 	}
 	
 	public FilterEstimateUpdateAO(FilterEstimateUpdateAO<M> copy) {
 		super(copy);
 		this.setOldObjListPath(copy.getOldObjListPath());
 		this.setNewObjListPath(copy.getNewObjListPath());
-		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
-		this.setDataUpdateFunction(copy.getDataUpdateFunction().clone());
+		
 	}
 
 	
@@ -53,15 +48,6 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	
 	  @Override
 	  public SDFAttributeList getOutputSchema() {
-		 /* SchemaHelper helper = new SchemaHelper(this.getInputSchema().clone());
-		  SDFAttributeListExtended newSchema = new SDFAttributeListExtended((SDFAttributeListExtended)this.getInputSchema());
-		  helper = new SchemaHelper(newSchema);
-		  SchemaIndexPath path = helper.getSchemaIndexPath(newObjListPath);
-		  SDFAttribute oldListAttr = helper.getAttribute(newObjListPath);
-		  SDFAttribute oldListAttrParent = path.getSchemaIndex(path.getLength()-2).getAttribute();
-		  oldListAttrParent.removeSubattribute(oldListAttr);
-		  
-		  return newSchema; */
 		  return this.getInputSchema();
 	  }
 	
@@ -84,13 +70,6 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.newObjListPath = newObjListPath;
 	}
 
-	public String getFunctionID() {
-		return functionID;
-	}
-	
-	public void setFunctionID(String functionID) {
-		this.functionID = functionID;
-	}
 
 	public HashMap<Enum<Parameters>, Object> getParameters() {
 		return parameters;
@@ -100,13 +79,6 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.parameters = parameters;
 	}
 
-	public void setDataUpdateFunction(AbstractDataUpdateFunction<M> dataUpdateFunction) {
-		this.dataUpdateFunction = dataUpdateFunction;
-	}
-
-	public AbstractDataUpdateFunction<M> getDataUpdateFunction() {
-		return dataUpdateFunction;
-	}
 
 
 }
