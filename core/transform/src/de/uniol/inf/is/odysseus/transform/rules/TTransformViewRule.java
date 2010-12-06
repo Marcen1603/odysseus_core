@@ -57,7 +57,7 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 				}
 			}
 			
-			
+			insert(source);
 			WrapperPlanFactory.putAccessPlan(sourceName, source);
 			for(AccessAO curAO : (List<AccessAO>)accessAOs){
 //				Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(curAO,source);
