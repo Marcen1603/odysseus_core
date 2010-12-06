@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContainer & IGain> extends UnaryLogicalOp {
+public class FilterExpressionEstimateUpdateAO <M extends IProbability & IConnectionContainer & IGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private String functionID;
@@ -21,6 +21,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	private String oldObjListPath;
 	private String newObjListPath;
 	
+	private String[][] expressionString;
 	
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
@@ -28,7 +29,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	private AbstractDataUpdateFunction<M>  dataUpdateFunction;
 	
 	
-	public FilterEstimateUpdateAO()
+	public FilterExpressionEstimateUpdateAO()
 	{
 		super();
 		functionID = "KALMAN";
@@ -36,19 +37,20 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		dataUpdateFunction = new KalmanCorrectStateEstimateFunction<M>();
 	}
 	
-	public FilterEstimateUpdateAO(FilterEstimateUpdateAO<M> copy) {
+	public FilterExpressionEstimateUpdateAO(FilterExpressionEstimateUpdateAO<M> copy) {
 		super(copy);
 		this.setOldObjListPath(copy.getOldObjListPath());
 		this.setNewObjListPath(copy.getNewObjListPath());
 		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setDataUpdateFunction(copy.getDataUpdateFunction().clone());
+		this.setExpressionString(copy.getExpressionString());
 	}
 
 	
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new FilterEstimateUpdateAO<M>(this);
+		return new FilterExpressionEstimateUpdateAO<M>(this);
 	}
 	
 	  @Override
@@ -108,6 +110,12 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		return dataUpdateFunction;
 	}
 
+	public void setExpressionString(String[][] expressionString) {
+		this.expressionString = expressionString;
+	}
 
+	public String[][] getExpressionString() {
+		return expressionString;
+	}
 }
 

@@ -10,26 +10,29 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
 
-public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer>
+public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	// path to new and old objects
 	private String oldObjListPath;
 	private String newObjListPath;
 	
+	private PredictionExpression[][] expression;
+	private String[][] expressionString;
+	
 	// optional parameters for the filter function. Not used right now
 	private HashMap<Enum<Parameters>, Object> parameters;
 
-	public AbstractFilterPO() {
+	public AbstractFilterExpressionPO() {
 		super();
 	}
 
-	public AbstractFilterPO(AbstractFilterPO<M> copy) {
+	public AbstractFilterExpressionPO(AbstractFilterExpressionPO<M> copy) {
 		super(copy);
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
 		this.setOldObjListPath(new String(copy.getOldObjListPath()));
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));
-		
+		this.setExpressionString(copy.getExpressionString());
 		
 	}
 
@@ -78,5 +81,19 @@ public abstract class AbstractFilterPO<M extends IProbability & IObjectTrackingL
 		this.parameters = parameters;
 	}
 
+	public void setExpression(PredictionExpression[][] expression) {
+		this.expression = expression;
+	}
 
+	public PredictionExpression[][] getExpression() {
+		return expression;
+	}
+
+	public void setExpressionString(String[][] expressionString) {
+		this.expressionString = expressionString;
+	}
+
+	public String[][] getExpressionString() {
+		return expressionString;
+	}
 }

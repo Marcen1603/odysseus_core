@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnectionContainer> extends UnaryLogicalOp {
+public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain & IConnectionContainer> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private String functionID;
@@ -21,28 +21,30 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
 	
+	
+	
 	private AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction;
 	
-	public FilterCovarianceUpdateAO()
+	public FilterExpressionCovarianceUpdateAO()
 	{
 		super();
 		parameters = new HashMap<Enum<Parameters>, Object>();
 		metaDataUpdateFunction = new KalmanCorrectStateCovarianceFunction<M>();
 	}
 	
-	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {
+	public FilterExpressionCovarianceUpdateAO(FilterExpressionCovarianceUpdateAO<M> copy) {
 		super(copy);
 		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataUpdateFunction(copy.getMetaDataUpdateFunction().clone());
-
+		this.setExpressionString(copy.getExpressionString());
 		
 	}
 
 	
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new FilterCovarianceUpdateAO<M>(this);
+		return new FilterExpressionCovarianceUpdateAO<M>(this);
 	}
 	
 	@Override
@@ -77,5 +79,12 @@ public class FilterCovarianceUpdateAO <M extends IProbability & IGain & IConnect
 		return metaDataUpdateFunction;
 	}
 
+	public void setExpressionString(String[][] expressionString) {
+		this.expressionString = expressionString;
+	}
+
+	public String[][] getExpressionString() {
+		return expressionString;
+	}
 }
 

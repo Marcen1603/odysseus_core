@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.filter.Parameters;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalOp {
+public class FilterExpressionGainAO <M extends IProbability & IGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -20,12 +20,13 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 	private String newListName;
 	private String oldListName;
 	
+	private String[][] expressionString;
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Enum<Parameters>, Object> parameters;
 	
 	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
 	
-	public FilterGainAO()
+	public FilterExpressionGainAO()
 	{
 		super();
 		
@@ -35,19 +36,20 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 		functionID = "KALMAN";
 	}
 	
-	public FilterGainAO(FilterGainAO<M> copy) {
+	public FilterExpressionGainAO(FilterExpressionGainAO<M> copy) {
 		super(copy);
 		this.setFunctionID(copy.getFunctionID());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 		this.setNewListName(copy.getNewListName());
 		this.setOldListName(copy.getOldListName());
+		this.setExpressionString(copy.getExpressionString());
 	}
 
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new FilterGainAO<M>(this);
+		return new FilterExpressionGainAO<M>(this);
 	}
 		
 	@Override
@@ -97,6 +99,13 @@ public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalO
 		this.oldListName = oldListName;
 	}
 
+	public void setExpressionString(String[][] expressionString) {
+		this.expressionString = expressionString;
+	}
+
+	public String[][] getExpressionString() {
+		return expressionString;
+	}
 	
 }
 

@@ -12,33 +12,33 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
+
 
 /**
  * @author dtwumasi
  * @param <StreamCarsMetaData>
  *
  */
-public class FilterGainExpressionPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer & IGain> extends AbstractFilterPO<M> {
+public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer & IGain> extends AbstractFilterExpressionPO<M> {
 
-	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
-	public FilterGainExpressionPO() {
+
+	public FilterExpressionGainPO() {
 		super();
 	}
 
-	public FilterGainExpressionPO(FilterGainExpressionPO<M> copy) {
+	public FilterExpressionGainPO(FilterExpressionGainPO<M> copy) {
 		super(copy);
-		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
+		
 	}
 
 	public void compute(IConnection connected, MVRelationalTuple<M> tuple) {
-		metaDataCreationFunction.compute(connected, (MVRelationalTuple<M>)tuple, this.getParameters());
+
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		setExpression(new PredictionExpression(this.getExpressionString()));
+		//setExpression(new PredictionExpression(this.getExpressionString()));
 	}
 
 	@Override
@@ -53,8 +53,8 @@ public class FilterGainExpressionPO<M extends IProbability & IObjectTrackingLate
 	}
 
 	@Override
-	public FilterGainExpressionPO<M> clone() {
-		return new FilterGainExpressionPO<M>(this);
+	public FilterExpressionGainPO<M> clone() {
+		return new FilterExpressionGainPO<M>(this);
 	}
 
 	@Override
@@ -62,11 +62,5 @@ public class FilterGainExpressionPO<M extends IProbability & IObjectTrackingLate
 		this.sendPunctuation(timestamp);
 	}
 
-	public AbstractMetaDataCreationFunction<M> getMetaDataCreationFunction() {
-		return metaDataCreationFunction;
-	}
 
-	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction<M> metaDataCreationFunction) {
-		this.metaDataCreationFunction = metaDataCreationFunction;
-	}
 }
