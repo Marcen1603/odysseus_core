@@ -11,7 +11,7 @@ public abstract class AbstractDataMiningAO extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 5930667720134167936L;
 	protected SDFAttributeList attributes;
-	public AbstractDataMiningAO() {
+	protected AbstractDataMiningAO() {
 		
 	}
 	public AbstractDataMiningAO(AbstractDataMiningAO copy) {

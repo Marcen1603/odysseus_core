@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.datamining.classification.transform.THoeffdingTreeAORule;
 import de.uniol.inf.is.odysseus.datamining.clustering.transform.TLeaderAORule;
+import de.uniol.inf.is.odysseus.datamining.clustering.transform.TSimpleSinglePassKMeansAORule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
@@ -15,6 +16,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TLeaderAORule());
 		rules.add(new THoeffdingTreeAORule());
+		rules.add(new TSimpleSinglePassKMeansAORule());
 		return rules;
 	}
 

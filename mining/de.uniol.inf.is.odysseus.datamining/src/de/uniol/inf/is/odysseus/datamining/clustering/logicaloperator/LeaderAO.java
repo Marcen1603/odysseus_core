@@ -18,7 +18,7 @@ public class LeaderAO extends AbstractDataMiningAO {
 	}
 
 	public LeaderAO() {
-
+		super();
 	}
 
 	public LeaderAO(LeaderAO o) {
@@ -33,11 +33,7 @@ public class LeaderAO extends AbstractDataMiningAO {
 		id.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 		outputSchema.add(id);
 		outputSchema.addAll(getInputSchema());
-		// Outputschema für Cluster
-		// SDFAttribute size = new SDFAttribute("cluster_size");
-		// id.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-		// outputSchema.add(size);
-		// outputSchema.addAll(attributes);
+
 
 		return outputSchema;
 	}

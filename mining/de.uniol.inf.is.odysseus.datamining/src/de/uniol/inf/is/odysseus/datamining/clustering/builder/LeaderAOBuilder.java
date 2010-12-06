@@ -1,14 +1,11 @@
 package de.uniol.inf.is.odysseus.datamining.clustering.builder;
 
 import de.uniol.inf.is.odysseus.datamining.builder.AbstractDataMiningAOBuilder;
+import de.uniol.inf.is.odysseus.datamining.builder.AttributeOutOfRangeException;
 import de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator.LeaderAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.DirectParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.ListParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class LeaderAOBuilder extends AbstractDataMiningAOBuilder{
@@ -28,7 +25,7 @@ public class LeaderAOBuilder extends AbstractDataMiningAOBuilder{
 	@Override
 	protected boolean internalValidation() {
 		if(threshold.getValue() <= 0){
-			addError(new InvalidThresholdValueException());
+			addError(new AttributeOutOfRangeException(threshold.getName(),"has to be greater then zero"));
 			return false;
 		}
 		return super.internalValidation();
