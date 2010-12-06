@@ -12,17 +12,17 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfigur
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 
-public class StandardQueryBuildConfiguration implements
+public class StandardLatencyQueryBuildConfiguration implements
 		IQueryBuildConfiguration {
 
 	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
 	
 	@SuppressWarnings("unchecked")
-	public StandardQueryBuildConfiguration() {
+	public StandardLatencyQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
 						"relational", 
-						ITimeInterval.class)));
+						ITimeInterval.class, ILatency.class)));
 		settings.add(ParameterPerformQuerySharing.TRUE);
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
@@ -34,7 +34,7 @@ public class StandardQueryBuildConfiguration implements
 	
 	@Override
 	public String getName() {
-		return "Standard";
+		return "Standard Latency";
 	}
 
 }
