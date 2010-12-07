@@ -32,13 +32,10 @@ import org.eclipse.ui.PartInitException;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
-import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
 public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable {
 
 	private OperatorPlan plan;
-	private User user;
 	private static PaletteRoot paletteModel = null;
 
 	public LogicalPlanEditorPart() {
@@ -100,10 +97,6 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 		return plan;
 	}
 	
-	public User getUser(){
-		return user;
-	}
-
 	@Override
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
@@ -151,7 +144,6 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	@Override
 	protected void initializeGraphicalViewer() {
 		super.initializeGraphicalViewer();
-		user = ActiveUser.getActiveUser();
 		plan = new OperatorPlan();
 		GraphicalViewer graphicalViewer = getGraphicalViewer();
 		graphicalViewer.setContents(plan);
