@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
+import java.io.Serializable;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -10,7 +11,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 /**
  * @author Jonas Jacobi
  */
-public interface IParameter<T> {
+public interface IParameter<T> extends Serializable {
 	public static enum REQUIREMENT { MANDATORY, OPTIONAL };
 	public String getName();
 	public IParameter.REQUIREMENT getRequirement();

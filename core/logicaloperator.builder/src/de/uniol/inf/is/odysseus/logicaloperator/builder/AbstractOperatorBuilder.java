@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  */
 public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
+	private static final long serialVersionUID = 5166465410911961680L;
+	
 	private Set<IParameter<?>> parameters;
 	private List<Exception> errors;
 	private int minPortCount;

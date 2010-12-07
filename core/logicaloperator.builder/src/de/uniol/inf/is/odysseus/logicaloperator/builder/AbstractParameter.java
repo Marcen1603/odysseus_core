@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
  */
 public abstract class AbstractParameter<T> implements IParameter<T> {
 
+	private static final long serialVersionUID = -5259685918656067407L;
 	final private String name;
 	final private REQUIREMENT requirement;
 	private T value;
