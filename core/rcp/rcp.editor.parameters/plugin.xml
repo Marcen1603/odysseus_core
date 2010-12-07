@@ -107,6 +107,13 @@
                name="AGGREGATIONS">
          </editor>
       </operator>
+      <operator
+            name="BUFFER">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
+               name="TYPE">
+         </editor>
+      </operator>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
