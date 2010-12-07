@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.Platform;
 
 public class KeywordRegistry {
 
-	private class RGBColor {
+	private static class RGBColor {
 		public int r;
 		public int g;
 		public int b;
