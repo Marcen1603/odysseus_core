@@ -40,11 +40,15 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.SchedulerPreParserKeyword"
             name="SCHEDULER">
       </PreParserKeyword>
-           <PreParserKeyword
+      <PreParserKeyword
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.QuerySharingPreParserKeyword"
             name="DOQUERYSHARING">
       </PreParserKeyword>
-           <PreParserKeyword
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.UseRewritePreParserKeyword"
+            name="DOREWRITE">
+      </PreParserKeyword>
+      <PreParserKeyword
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.OdysseusDefaultsPreParserKeyword"
             name="ODYSSEUS_PARAM">
       </PreParserKeyword>
