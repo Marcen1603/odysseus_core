@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.rcp.editor.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ConnectionAnchor;
@@ -22,6 +24,7 @@ import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
 
+import de.uniol.inf.is.odysseus.rcp.editor.anchor.OperatorAnchor;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.model.commands.ConnectionCreateCommand;
@@ -31,7 +34,10 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 
 	private static final String ERROR_PREFIX = "- ";
 	
-	private ConnectionAnchor anchor;
+	private ConnectionAnchor standardAnchor;
+	
+	private Map<ConnectionEditPart, OperatorAnchor> inputAnchors = new HashMap<ConnectionEditPart, OperatorAnchor>();
+	private Map<ConnectionEditPart, OperatorAnchor> outputAnchors = new HashMap<ConnectionEditPart, OperatorAnchor>();
 
 	public OperatorEditPart(Operator op) {
 		setModel(op);
@@ -110,7 +116,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	}
 
 	@Override
-	protected void refreshVisuals() {
+	protected void refreshVisuals() {		
 		OperatorFigure figure = (OperatorFigure) getFigure();
 		Operator model = (Operator) getModel();
 		figure.setText(model.getOperatorBuilderName());
@@ -127,6 +133,8 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		
 		Rectangle r = new Rectangle(model.getX(), model.getY(), -1, -1);
 		((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure, r);
+		
+		refreshAnchors();
 	}
 	
 	protected String getErrorText(List<Exception> errors) {
@@ -152,58 +160,64 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		refreshTargetConnections();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
-	 * .ConnectionEditPart)
-	 */
 	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {
-		return getConnectionAnchor();
+		if( !outputAnchors.containsKey(connection)) {
+			OperatorAnchor a = new OperatorAnchor(getFigure(), OperatorAnchor.Type.OUTPUT,outputAnchors.size()+1, outputAnchors.size()+1);
+			outputAnchors.put(connection, a);
+
+			return a;
+		}
+		return outputAnchors.get(connection);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
-	 * .Request)
-	 */
 	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(Request request) {
-		return getConnectionAnchor();
+		return getStandardConnectionAnchor();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
-	 * .ConnectionEditPart)
-	 */
 	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
-		return getConnectionAnchor();
+		if( !inputAnchors.containsKey(connection)) {
+			OperatorAnchor a = new OperatorAnchor(getFigure(), OperatorAnchor.Type.INPUT,inputAnchors.size()+1, inputAnchors.size()+1);
+			inputAnchors.put(connection, a);
+			
+			return a;
+		}
+		return inputAnchors.get(connection);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
-	 * .Request)
-	 */
 	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(Request request) {
-		return getConnectionAnchor();
+		return getStandardConnectionAnchor();
+	}
+	
+	@Override
+	protected void removeSourceConnection(ConnectionEditPart connection) {
+		super.removeSourceConnection(connection);
+		outputAnchors.remove(connection);
+		refreshVisuals();
+	}
+	
+	@Override
+	protected void removeTargetConnection(ConnectionEditPart connection) {
+		super.removeTargetConnection(connection);
+		inputAnchors.remove(connection);
+		refreshVisuals();
 	}
 
-	protected ConnectionAnchor getConnectionAnchor() {
-		if (anchor == null) {
-			anchor = new ChopboxAnchor(getFigure());
+	protected ConnectionAnchor getStandardConnectionAnchor() {
+		if (standardAnchor == null) {
+			standardAnchor = new ChopboxAnchor(getFigure());
 		}
-		return anchor;
+		return standardAnchor;
+	}
+	
+	protected void refreshAnchors() {
+		for( OperatorAnchor o : inputAnchors.values())
+			o.setMaxNumber(inputAnchors.size());
+		
+		for( OperatorAnchor o : outputAnchors.values())
+			o.setMaxNumber(outputAnchors.size());
 	}
 }
