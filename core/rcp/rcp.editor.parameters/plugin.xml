@@ -14,7 +14,7 @@
                name="TYPE">
          </editor>
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.LongParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SpinnerParameterEditor"
                name="SIZE">
          </editor>
          <editor
@@ -112,6 +112,29 @@
          <editor
                class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
                name="TYPE">
+         </editor>
+      </operator>
+      <operator
+            name="WINDOW">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.WindowTypeParameterEditor"
+               name="TYPE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.LongParameterEditor"
+               name="SIZE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.LongParameterEditor"
+               name="ADVANCE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.LongParameterEditor"
+               name="SLIDE">
+         </editor>
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AttributesEditor"
+               name="PARTITION">
          </editor>
       </operator>
    </extension>
