@@ -2,11 +2,10 @@ package de.uniol.inf.is.odysseus.datamining.clustering.physicaloperator;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.datamining.clustering.ADissimilarity;
+import de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject;
+import de.uniol.inf.is.odysseus.datamining.clustering.IDissimilarity;
 import de.uniol.inf.is.odysseus.datamining.clustering.KMeansCluster;
-import de.uniol.inf.is.odysseus.datamining.clustering.RelationalTupleWrapper;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class KMeansClustering<T extends IMetaAttribute> {
 
@@ -16,31 +15,31 @@ public class KMeansClustering<T extends IMetaAttribute> {
 		return clusterList;
 	}
 
-	private ADissimilarity<T> dissimilarity;
+	private IDissimilarity<T> dissimilarity;
 	private boolean init;
 
-	public KMeansClustering(ArrayList<RelationalTupleWrapper<T>> buffer,
+	public KMeansClustering(ArrayList<IClusteringObject<T>> buffer,
 			int clusterCount, int[] restrictList,
-			ADissimilarity<T> dissimilarity) {
+			IDissimilarity<T> dissimilarity) {
 		this.clusterList = new ArrayList<KMeansCluster<T>>();
 		this.dissimilarity = dissimilarity;
 		initializeClusterList(buffer, clusterCount, restrictList);
 	}
 
 	private void initializeClusterList(
-			ArrayList<RelationalTupleWrapper<T>> buffer, int clusterCount,
+			ArrayList<IClusteringObject<T>> buffer, int clusterCount,
 			int[] restrictList) {
 		init = true;
 		for (int i = 0; i < clusterCount; i++) {
 			KMeansCluster<T> cluster = new KMeansCluster<T>(restrictList.length);
 			cluster.setId(i);
-			cluster.addTuple(buffer.get(i).getRestrictedTuple());
+			cluster.addTuple(buffer.get(i));
 			buffer.get(i).setClusterId(i);
 			clusterList.add(cluster);
 		}
 	}
 
-	public void cluster(ArrayList<RelationalTupleWrapper<T>> buffer) {
+	public void cluster(ArrayList<IClusteringObject<T>> buffer) {
 
 		ArrayList<KMeansCluster<T>> clusterListCopy = copyClusterList();
 		int oldSwaps = -1;
@@ -51,14 +50,14 @@ public class KMeansClustering<T extends IMetaAttribute> {
 			swaps = 0;
 			ArrayList<KMeansCluster<T>> emptyClusterList = getEmtpyClusterList();
 
-			for (RelationalTupleWrapper<T> tuple : buffer) {
+			for (IClusteringObject<T> tuple : buffer) {
 
 				int nearestCluster = getNearestCluster(tuple, clusterListCopy);
 				if (nearestCluster != tuple.getClusterId()) {
 					swaps++;
 				}
 				emptyClusterList.get(nearestCluster).addTuple(
-						tuple.getRestrictedTuple());
+						tuple);
 				tuple.setClusterId(nearestCluster);
 			}
 			if (!init) {
@@ -73,10 +72,11 @@ public class KMeansClustering<T extends IMetaAttribute> {
 					emptyClusterList.get(nearestCluster).addCluster(cluster);
 				}
 			}
-			init = false;
+			
 			clusterListCopy = emptyClusterList;
 
 		}
+		init = false;
 		clusterList = clusterListCopy;
 	}
 
@@ -91,13 +91,9 @@ public class KMeansClustering<T extends IMetaAttribute> {
 		return emptyList;
 	}
 
-	private int getNearestCluster(RelationalTupleWrapper<T> tuple,
-			ArrayList<KMeansCluster<T>> clusters) {
-		return AbstractClusteringPO.getMinCluster(tuple.getRestrictedTuple(),
-				clusters, dissimilarity).getId();
-	}
+	
 
-	private int getNearestCluster(RelationalTuple<T> tuple,
+	private int getNearestCluster(IClusteringObject<T> tuple,
 			ArrayList<KMeansCluster<T>> clusters) {
 		return AbstractClusteringPO.getMinCluster(tuple, clusters,
 				dissimilarity).getId();

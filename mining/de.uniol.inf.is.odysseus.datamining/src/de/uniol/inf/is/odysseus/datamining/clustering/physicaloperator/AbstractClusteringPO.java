@@ -2,10 +2,13 @@ package de.uniol.inf.is.odysseus.datamining.clustering.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import de.uniol.inf.is.odysseus.datamining.clustering.ADissimilarity;
 import de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster;
-import de.uniol.inf.is.odysseus.datamining.clustering.LeaderCluster;
+import de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject;
+import de.uniol.inf.is.odysseus.datamining.clustering.IDissimilarity;
+import de.uniol.inf.is.odysseus.datamining.clustering.RelationalTupleWrapper;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
@@ -15,17 +18,22 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
 	protected int[] restrictList;
+
+	protected final int ELEMENT_PORT = 0;
+	protected final int CLUSTER_PORT = 1;
+	protected IDissimilarity<T> dissimilarity;
+
 	public int[] getRestrictList() {
 		return restrictList;
 	}
 
-	public ADissimilarity<T> getDissimilarity() {
+	public IDissimilarity<T> getDissimilarity() {
 		return dissimilarity;
 	}
-	protected AbstractClusteringPO(){
-		
+
+	protected AbstractClusteringPO() {
+
 	}
-	protected ADissimilarity<T> dissimilarity;
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
@@ -33,26 +41,15 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 
 	}
 
-	
-	protected RelationalTuple<T> createLabeledTuple(RelationalTuple<T> tuple,
-			int clusterID) {
-		Object[] attributes = new Object[tuple.getAttributeCount() + 1];
-		attributes[0] = clusterID;
-
-		System.arraycopy(tuple.getAttributes(), 0, attributes, 1,
-				attributes.length - 1);
-
-		return new RelationalTuple<T>(attributes);
-	}
-	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	public AbstractClusteringPO(AbstractClusteringPO<T> copy){
+	public AbstractClusteringPO(AbstractClusteringPO<T> copy) {
 		super(copy);
-		this.restrictList = Arrays.copyOf(copy.getRestrictList(),copy.getRestrictList().length);
+		this.restrictList = Arrays.copyOf(copy.getRestrictList(),
+				copy.getRestrictList().length);
 		this.dissimilarity = copy.getDissimilarity();
 	}
 
@@ -62,17 +59,40 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 
 	}
 
-	public void setDissimilarity(ADissimilarity<T> dissimilarity) {
+	public void setDissimilarity(IDissimilarity<T> dissimilarity) {
 
 		this.dissimilarity = dissimilarity;
 	}
 
-	public static <U extends IMetaAttribute,K extends AbstractCluster<U>> K getMinCluster(RelationalTuple<U> tuple, ArrayList<K> clusters,ADissimilarity<U> dissimilarity){
+	protected void process_next(RelationalTuple<T> object, int port) {
+		IClusteringObject<T> tuple = new RelationalTupleWrapper<T>(object,
+				restrictList);
+		process_next(tuple, port);
+	}
+
+	protected void transferTuple(IClusteringObject<T> object) {
+		transfer(object.getLabeledTuple(), ELEMENT_PORT);
+	}
+
+	protected void transferTuples(List<IClusteringObject<T>> objects) {
+		Iterator<IClusteringObject<T>> iter = objects.iterator();
+		ArrayList<RelationalTuple<T>> list = new ArrayList<RelationalTuple<T>>();
+		while (iter.hasNext()) {
+			list.add(iter.next().getLabeledTuple());
+		}
+		transfer(list, ELEMENT_PORT);
+	}
+
+	protected abstract void process_next(IClusteringObject<T> object, int port);
+
+	public static <U extends IMetaAttribute, K extends AbstractCluster<U>> K getMinCluster(
+			IClusteringObject<U> tuple, ArrayList<K> clusters,
+			IDissimilarity<U> dissimilarity) {
 		K minCluster = null;
 		Double minDistance = 0D;
 		Double distance;
 		for (K cluster : clusters) {
-			distance = dissimilarity.getDissimilarity(cluster.getCentre().getAttributes(), tuple.getAttributes());
+			distance = dissimilarity.getDissimilarity(tuple, cluster);
 			if (minCluster == null || distance < minDistance) {
 				minCluster = cluster;
 
@@ -82,7 +102,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 		}
 
 		return minCluster;
-		
+
 	}
-	
+
 }

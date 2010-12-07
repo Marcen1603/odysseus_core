@@ -3,10 +3,9 @@ package de.uniol.inf.is.odysseus.datamining.clustering.physicaloperator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import de.uniol.inf.is.odysseus.datamining.clustering.ADissimilarity;
+import de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject;
 import de.uniol.inf.is.odysseus.datamining.clustering.LeaderCluster;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
@@ -37,13 +36,13 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 	}
 
 	@Override
-	protected void process_next(RelationalTuple<T> tuple, int port) {
+	protected void process_next(IClusteringObject<T> tuple, int port) {
 
-		int clusterID = assignToCluster(tuple.restrict(restrictList, true));
+		assignToCluster(tuple);
 
 		// gibt das aktuelle Tupel mit Clusterzugehörigkeit auf Port 0 aus
 
-		transfer(createLabeledTuple(tuple, clusterID), 0);
+		transferTuple(tuple);
 		// gibt eine Liste der Cluster auf Port 1 aus
 		transfer(createRelationalClusterList(), 1);
 	}
@@ -61,7 +60,7 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 	private RelationalTuple<T> createRelationalCluster(LeaderCluster<T> cluster) {
 
 		Object[] attributes = new Object[cluster.getCentre()
-				.getAttributeCount() + 2];
+				.getClusterAttributeCount() + 2];
 		attributes[0] = cluster.getId();
 		attributes[1] = cluster.getClusteringFeature().getCount();
 		System.arraycopy(cluster.getCentre().getAttributes(), 0, attributes, 2,
@@ -70,23 +69,22 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 		return new RelationalTuple<T>(attributes);
 	}
 
-	private int assignToCluster(RelationalTuple<T> tuple) {
+	private void assignToCluster(IClusteringObject<T> tuple) {
 
 		LeaderCluster<T> minCluster = getMinCluster(tuple);
 		if (minCluster == null
-				|| dissimilarity.getDissimilarity(tuple.getAttributes(),
-						minCluster.getCentre().getAttributes()) > threshold) {
+				|| dissimilarity.getDissimilarity(tuple,minCluster) > threshold) {
 			LeaderCluster<T> cluster = new LeaderCluster<T>(
-					tuple.getAttributeCount());
+					tuple.getClusterAttributeCount());
 			cluster.setId(clusters.size());
 			cluster.setCentre(tuple);
 
 			cluster.addTuple(tuple);
 			clusters.add(cluster);
-			return cluster.getId();
+			tuple.setClusterId(cluster.getId());
 		} else {
 			minCluster.addTuple(tuple);
-			return minCluster.getId();
+			tuple.setClusterId(minCluster.getId());
 		}
 	}
 
@@ -96,7 +94,7 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 		return new LeaderPO<T>(this);
 	}
 
-	private LeaderCluster<T> getMinCluster(RelationalTuple<T> tuple) {
+	private LeaderCluster<T> getMinCluster(IClusteringObject<T> tuple) {
 
 		return getMinCluster(tuple, clusters, dissimilarity);
 	}

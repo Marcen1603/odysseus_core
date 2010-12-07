@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.datamining.clustering;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+
 
 public abstract class AbstractCluster<T extends IMetaAttribute> {
 
@@ -20,14 +20,14 @@ public abstract class AbstractCluster<T extends IMetaAttribute> {
 		return clusteringFeature;
 	}
 
-	public abstract RelationalTuple<T> getCentre();
+	public abstract IClusteringObject<T> getCentre();
 
 	public int getId() {
 		return id;
 	}
 	
-	public void addTuple(RelationalTuple<T> tuple){
-		clusteringFeature.add(tuple.getAttributes());
+	public void addTuple(IClusteringObject<T> element){
+		clusteringFeature.add(element.getClusterAttributes());
 	}
 
 	public void setId(int id) {

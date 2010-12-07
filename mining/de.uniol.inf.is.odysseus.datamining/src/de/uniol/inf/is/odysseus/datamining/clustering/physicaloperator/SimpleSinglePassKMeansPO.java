@@ -2,62 +2,55 @@ package de.uniol.inf.is.odysseus.datamining.clustering.physicaloperator;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.datamining.clustering.RelationalTupleWrapper;
+import de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> {
 
 	private int clusterCount;
 	private int bufferSize;
-	private ArrayList<RelationalTupleWrapper<T>> buffer;
+	private ArrayList<IClusteringObject<T>> buffer;
 	private KMeansClustering<T> kMeans;
 
-	public ArrayList<RelationalTupleWrapper<T>> getBuffer() {
+	public ArrayList<IClusteringObject<T>> getBuffer() {
 		return buffer;
 	}
 
-	public void setBuffer(ArrayList<RelationalTupleWrapper<T>> buffer) {
-		this.buffer = buffer;
-	}
+
 
 	public int getClusterCount() {
 		return clusterCount;
 	}
 
 	public SimpleSinglePassKMeansPO(){
-		buffer = new ArrayList<RelationalTupleWrapper<T>>();
+		buffer = new ArrayList<IClusteringObject<T>>();
 	}
 	
 	protected SimpleSinglePassKMeansPO(SimpleSinglePassKMeansPO<T> copy){
 		super(copy);
-		this.buffer = new ArrayList<RelationalTupleWrapper<T>>(copy.getBuffer());
+		this.buffer = new ArrayList<IClusteringObject<T>>(copy.getBuffer());
 		this.bufferSize = copy.bufferSize;
 		this.clusterCount = copy.clusterCount;
 	}
 	
 	@Override
-	protected void process_next(RelationalTuple<T> tuple, int port) {
+	protected void process_next(IClusteringObject<T> tuple, int port) {
 		
-		buffer.add(new RelationalTupleWrapper<T>(tuple,restrictList));
+		buffer.add(tuple);
 		if(buffer.size() == bufferSize){
 			if(kMeans == null){
 				kMeans = new KMeansClustering<T>(buffer,clusterCount,restrictList,dissimilarity);
 				
 			}
 			kMeans.cluster(buffer);
-			transferTuple();
+			transferTuples(buffer);
 			buffer.clear();
 		}
 		
 		
 	}
 	
-	private void transferTuple(){
-		for(RelationalTupleWrapper<T> tupleWrapper: buffer){
-			transfer(createLabeledTuple(tupleWrapper.getTuple(),tupleWrapper.getClusterId()), 0);
-		}
-	}
+	
 
 	@Override
 	public SimpleSinglePassKMeansPO<T> clone() {
