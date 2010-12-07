@@ -138,7 +138,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 		this.isRunning = true;
 		if (outputDebug) {
 			try {
-				file = new FileWriter(OdysseusDefaults.odysseusHome
+				file = new FileWriter(OdysseusDefaults.getHomeDir()
 						+ "SchedulerLog" + System.currentTimeMillis() + ".csv");
 				file.write("Timestamp;PartialPlan;Query;Priority;Penalty;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
 				linesWritten = 1; // Header!

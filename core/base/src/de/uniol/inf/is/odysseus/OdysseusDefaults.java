@@ -21,8 +21,9 @@ public class OdysseusDefaults {
 	static Logger logger = LoggerFactory.getLogger(OdysseusDefaults.class);
 	static Properties props = new Properties();
 
-	public static String odysseusHome = System.getProperty("user.home")
+	private static String odysseusDefaultHome = System.getProperty("user.home")
 			+ "/odysseus/";
+	private static String homeDir;
 
 	static public File openOrCreateFile(String path) throws IOException {
 		File f = new File(path);
@@ -41,14 +42,15 @@ public class OdysseusDefaults {
 
 	static {
 		try {
-			// TODO: Odysseus-Home configurierbar machen z.B. ueber
-			// Umgebungsvariable
-
-			loadProperties(odysseusHome);
+			homeDir = System.getenv("ODYSSEUS_HOME");
+			if (homeDir == null || homeDir.length() == 0){
+				homeDir = odysseusDefaultHome;
+			}
+			loadProperties(homeDir);
 			if (props.getProperty("storeUsers") == null) {
 				logger.info("No Odysseus config found.");
-				setDefaults(odysseusHome);
-				savePropertyFile(odysseusHome);
+				setDefaults(homeDir);
+				savePropertyFile(homeDir);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -133,7 +135,7 @@ public class OdysseusDefaults {
 			if (permanent) {
 				if (AccessControl.hasPermission(ConfigurationAction.SAVE_PARAM,
 						ConfigurationAction.alias, caller)) {
-					savePropertyFile(odysseusHome);
+					savePropertyFile(homeDir);
 				} else {
 					throw new HasNoPermissionException(
 							"User "
@@ -146,6 +148,10 @@ public class OdysseusDefaults {
 			throw new HasNoPermissionException("User " + caller
 					+ " is not allowed to temporally set config param " + key);
 		}
+	}
+	
+	public static String getHomeDir(){
+		return homeDir;
 	}
 
 }
