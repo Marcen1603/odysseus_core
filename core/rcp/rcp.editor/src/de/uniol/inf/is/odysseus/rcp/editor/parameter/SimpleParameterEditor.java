@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Text;
 
 public abstract class SimpleParameterEditor<T> extends AbstractParameterEditor {
 	
-	private Control text;
+	private Control control;
 	
 	@Override
 	public void createControl(Composite parent) {
@@ -24,8 +24,8 @@ public abstract class SimpleParameterEditor<T> extends AbstractParameterEditor {
 		createLabel(parent);
 		
 		// Eingabe
-		text = createInputControl(parent);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		control = createInputControl(parent);
+		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	
 	public abstract T convertFromString( String txt );
@@ -77,4 +77,7 @@ public abstract class SimpleParameterEditor<T> extends AbstractParameterEditor {
 
 	}
 
+	public Control getInputControl() {
+		return control;
+	}
 }
