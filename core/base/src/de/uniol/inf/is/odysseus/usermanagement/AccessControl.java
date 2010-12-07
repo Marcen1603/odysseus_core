@@ -26,7 +26,7 @@ public final class AccessControl {
 
 	static private AccessControl instance = null;
 
-	private static long sessionTimeout =  Long.parseLong(OdysseusDefaults.get("sessionTimeout"));
+	private static long sessionTimeout =  OdysseusDefaults.getLong("sessionTimeout",240 * 60000);
 	
 	private AccessControl() {
 	}

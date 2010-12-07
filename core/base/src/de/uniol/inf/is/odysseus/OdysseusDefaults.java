@@ -91,15 +91,16 @@ public class OdysseusDefaults {
 		props.setProperty("schedulingConfigFile", odysseusHome
 				+ "scheduling.conf");
 
-		props.setProperty("sessionTimeout", (240 * 60000)+""); // Milliseconds
+		props.setProperty("sessionTimeout", (240 * 60000) + ""); // Milliseconds
 
 		// Scheduling
 		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());
-		props.setProperty("debug_Scheduler_maxLines", 1048476+"");
-		
+		props.setProperty("debug_Scheduler_maxLines", 1048476 + "");
+		props.setProperty("scheduler_TimeSlicePerStrategy", 10 + "");
+
 		// SLA
-		props.setProperty("sla_history_size", 10000+""); // Milliseconds
-		props.setProperty("sla_update_Penalties_Frequency", 30000+"");
+		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
+		props.setProperty("sla_update_Penalties_Frequency", 30000 + "");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {
@@ -119,18 +120,31 @@ public class OdysseusDefaults {
 		return props.getProperty(key);
 	}
 
-	public static void set(String key, String value, boolean permanent, User caller) {
-		if (AccessControl.hasPermission(ConfigurationAction.SET_PARAM, ConfigurationAction.alias, caller)){			
+	public static long getLong(String key, long defaultValue) {
+		String val = props.getProperty(key);
+		return val != null ? Long.parseLong(val) : defaultValue;
+	}
+
+	public static void set(String key, String value, boolean permanent,
+			User caller) {
+		if (AccessControl.hasPermission(ConfigurationAction.SET_PARAM,
+				ConfigurationAction.alias, caller)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (AccessControl.hasPermission(ConfigurationAction.SAVE_PARAM, ConfigurationAction.alias, caller)){			
+				if (AccessControl.hasPermission(ConfigurationAction.SAVE_PARAM,
+						ConfigurationAction.alias, caller)) {
 					savePropertyFile(odysseusHome);
-				}else{
-					throw new HasNoPermissionException("User "+caller+" is not allowed to permanently set config param "+key);					
+				} else {
+					throw new HasNoPermissionException(
+							"User "
+									+ caller
+									+ " is not allowed to permanently set config param "
+									+ key);
 				}
 			}
-		}else{
-			throw new HasNoPermissionException("User "+caller+" is not allowed to temporally set config param "+key);
+		} else {
+			throw new HasNoPermissionException("User " + caller
+					+ " is not allowed to temporally set config param " + key);
 		}
 	}
 

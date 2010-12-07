@@ -33,7 +33,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 	/**
 	 * Maximum time each strategy can use (no garantee if strategy)
 	 */
-	protected volatile long timeSlicePerStrategy = 10;
+	protected volatile long timeSlicePerStrategy = OdysseusDefaults.getLong("scheduler_TimeSlicePerStrategy",10);
 
 	/**
 	 * The {@link ISchedulingFactory} which will be used for scheduling. Each
@@ -58,9 +58,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 			.get("debug_Scheduler"));
 
 	FileWriter file;
-	final long limitDebug = OdysseusDefaults.get("debug_Scheduler_maxLines") != null ? Long
-			.parseLong(OdysseusDefaults.get("debug_Scheduler_maxLines"))
-			: 1048476;
+	final long limitDebug = OdysseusDefaults.getLong("debug_Scheduler_maxLines",1048476);
 	long linesWritten;
 
 	/**
