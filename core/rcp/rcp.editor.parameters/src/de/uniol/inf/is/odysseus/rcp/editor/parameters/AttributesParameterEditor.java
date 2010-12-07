@@ -20,12 +20,12 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class AttributesEditor extends AbstractParameterEditor implements IParameterEditor {
+public class AttributesParameterEditor extends AbstractParameterEditor implements IParameterEditor {
 
 	private List<Button> checkBoxes = new ArrayList<Button>();
 	private SDFAttributeList attributes;
 	
-	public AttributesEditor() {
+	public AttributesParameterEditor() {
 	}
 
 	@SuppressWarnings("unchecked")

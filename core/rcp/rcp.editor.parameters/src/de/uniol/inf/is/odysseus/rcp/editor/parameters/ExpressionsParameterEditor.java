@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameters.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.TextEditingSupport;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
-public class StringListParameterEditor extends AbstractListParameterEditor<SDFExpression> implements IParameterEditor {
+public class ExpressionsParameterEditor extends AbstractListParameterEditor<SDFExpression> implements IParameterEditor {
 
 	private static class ExpressionString {
 		public String expression = "";

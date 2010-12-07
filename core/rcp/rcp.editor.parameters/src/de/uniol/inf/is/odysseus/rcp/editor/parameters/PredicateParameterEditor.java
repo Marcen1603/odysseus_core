@@ -18,14 +18,14 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.AbstractParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 
-public class PredicateEditor extends AbstractParameterEditor implements
+public class PredicateParameterEditor extends AbstractParameterEditor implements
 		IParameterEditor {
 
 	private Combo typeCombo;
 	private Label predLabel;
 	private Text predText;
 
-	public PredicateEditor() {
+	public PredicateParameterEditor() {
 	}
 
 	@Override

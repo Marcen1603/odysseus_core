@@ -33,12 +33,12 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class AliasesEditor extends AbstractListParameterEditor<String> implements IParameterEditor {
+public class AliasesParameterEditor extends AbstractListParameterEditor<String> implements IParameterEditor {
 	
 	private Map<String, String> aliases;
 	private SDFAttributeList schema;
 	
-	public AliasesEditor() {
+	public AliasesParameterEditor() {
 	}
 
 	@Override

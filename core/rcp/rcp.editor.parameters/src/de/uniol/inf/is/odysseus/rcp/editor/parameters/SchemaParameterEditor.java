@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.AbstractListParameterEditor
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.activator.Activator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
-public class SchemaEditor extends AbstractListParameterEditor<SDFAttribute> {
+public class SchemaParameterEditor extends AbstractListParameterEditor<SDFAttribute> {
 
 	private static final String SCHEMA_TEXT = "SCHEMA";
 	private static final String NAME_TEXT = "Name";
