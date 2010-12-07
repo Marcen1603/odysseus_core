@@ -265,6 +265,6 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 
 	@Override
 	public void close() {
-
+		save();
 	}
 }

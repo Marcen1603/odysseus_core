@@ -137,6 +137,13 @@
                name="PARTITION">
          </editor>
       </operator>
+      <operator
+            name="MAP">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringListParameterEditor"
+               name="EXPRESSIONS">
+         </editor>
+      </operator>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
