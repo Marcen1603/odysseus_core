@@ -39,13 +39,13 @@ public class AttributesEditor extends AbstractParameterEditor implements IParame
 		// Schema des vorgängeroperators holen
 		AbstractOperatorBuilder builder = (AbstractOperatorBuilder)getOperatorBuilder();
 		
+		// Label
+		Label titleLabel = new Label(container, SWT.NONE);
+		titleLabel.setText(getParameter().getName());
+
 		if( builder.hasInputOperator(0) ) {
 			ILogicalOperator op = builder.getInputOperator(0);
 			attributes = op.getOutputSchema();
-			
-			// Label
-			Label titleLabel = new Label(container, SWT.NONE);
-			titleLabel.setText(getParameter().getName());
 			
 			// Checkboxes
 			if( attributes != null && attributes.getAttributeCount() > 0) {
