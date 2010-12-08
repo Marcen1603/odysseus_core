@@ -14,11 +14,5 @@ abstract public class Nest<R> extends AbstractAggregateFunction<R> {
 		return new ListPartialAggregate<R>(in);
 	}
 
-	@Override
-	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge,
-			boolean createNew) {
-		return ((ListPartialAggregate)p).addElem(toMerge);
-	}
-
 
 }

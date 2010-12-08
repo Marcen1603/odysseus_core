@@ -146,6 +146,8 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
                 || (key.getName().equalsIgnoreCase("MAX"))) {
             aggFunc = RelationalMinMax.getInstance(pos[0], (key.getName()
                     .equalsIgnoreCase("MAX")) ? true : false);
+        }else if((key.getName().equalsIgnoreCase("NEST"))){
+        	aggFunc = new RelationalNest(pos);
         }
         else if (key.getName().equalsIgnoreCase("BEAN")) {
             aggFunc = new AggregationBean(pos, key.getProperty("resource"));
