@@ -20,11 +20,13 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
-		IBufferPlacementStrategy s = executor
-				.getBufferPlacementStrategy(parameter);
-		if (s == null) {
-			throw new QueryTextParseException("No Buffer Placement Strategy "
-					+ parameter + " loaded");
+		if (parameter != null && parameter.equalsIgnoreCase("NONE")) {
+			IBufferPlacementStrategy s = executor
+					.getBufferPlacementStrategy(parameter);
+			if (s == null) {
+				throw new QueryTextParseException(
+						"No Buffer Placement Strategy " + parameter + " loaded");
+			}
 		}
 	}
 
@@ -34,11 +36,11 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
-		List<IQueryBuildSetting<?>> config = executor.getQueryBuildConfiguration(
-						(String)variables.get("TRANSCFG"));
+		List<IQueryBuildSetting<?>> config = executor
+				.getQueryBuildConfiguration((String) variables.get("TRANSCFG"));
 		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
-		IBufferPlacementStrategy s=null;
-		if (iter != null){
+		IBufferPlacementStrategy s = null;
+		if (iter != null) {
 			while (iter.hasNext()) {
 				IQueryBuildSetting<?> sett = iter.next();
 				if (sett instanceof ParameterBufferPlacementStrategy) {
@@ -46,9 +48,10 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 					break;
 				}
 			}
-			s = executor
-					.getBufferPlacementStrategy(parameter);
-			config.add(new ParameterBufferPlacementStrategy(s));
+			if (parameter != null && parameter.equalsIgnoreCase("NONE")) {
+				s = executor.getBufferPlacementStrategy(parameter);
+				config.add(new ParameterBufferPlacementStrategy(s));
+			}
 		}
 		return s;
 	}
