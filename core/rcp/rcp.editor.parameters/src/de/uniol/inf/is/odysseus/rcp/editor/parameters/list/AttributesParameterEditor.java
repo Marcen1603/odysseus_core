@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.parameters;
+package de.uniol.inf.is.odysseus.rcp.editor.parameters.list;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +92,7 @@ public class AttributesParameterEditor extends AbstractParameterEditor implement
 	}
 
 	private void save() {
-		// Ausgew√§hlte Attribute in Parameter speichern
+		// Ausgew‰hlte Attribute in Parameter speichern
 		List<String> selectedAttributes = new ArrayList<String>();
 		for( int i = 0; i < checkBoxes.size(); i++ ) {
 			Button cb = checkBoxes.get(i);

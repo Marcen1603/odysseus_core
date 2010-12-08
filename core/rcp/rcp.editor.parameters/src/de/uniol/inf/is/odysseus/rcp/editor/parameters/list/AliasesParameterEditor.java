@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.parameters;
+package de.uniol.inf.is.odysseus.rcp.editor.parameters.list;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.AbstractListParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
+import de.uniol.inf.is.odysseus.rcp.editor.parameters.AliasChangeWindow;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

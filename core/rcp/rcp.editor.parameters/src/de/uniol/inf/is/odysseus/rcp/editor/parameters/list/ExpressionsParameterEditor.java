@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.parameters;
+package de.uniol.inf.is.odysseus.rcp.editor.parameters.list;
 
 import java.util.ArrayList;
 import java.util.List;

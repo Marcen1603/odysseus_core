@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.parameters;
+package de.uniol.inf.is.odysseus.rcp.editor.parameters.list;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 		}
 	}
 	
-	private void createButtons(Composite container) {
+	protected void createButtons(Composite container) {
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -117,7 +117,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 		
 	}
 
-	private boolean loadSchema() {
+	protected boolean loadSchema() {
 		// Schema des vorgängeroperators holen
 		AbstractOperatorBuilder builder = (AbstractOperatorBuilder)getOperatorBuilder();
 		
@@ -131,7 +131,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 	}
 
 	// Läd die Daten aus dem Parameter
-	private void load() {
+	protected void load() {
 		List<AggregateItem> list = getValue();
 
 		if (list != null) {
@@ -141,7 +141,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 		}
 	}
 	
-	private void save() {
+	protected void save() {
 		ArrayList<ArrayList<String>> valList = new ArrayList<ArrayList<String>>();
 		
 		for( AggItem aggItem : aggregations) {
@@ -152,11 +152,13 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 			
 			valList.add(strings);
 		}
-		
-		setValue(valList);
+		if( valList.isEmpty() )
+			setValue(null);
+		else
+			setValue(valList);
 	}
 
-	private void createTable(Composite parent) {
+	protected void createTable(Composite parent) {
 		// Layout
 		Composite tableComposite = new Composite(parent, SWT.NONE);
 		TableColumnLayout tableLayout = new TableColumnLayout();

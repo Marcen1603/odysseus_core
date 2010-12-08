@@ -12,6 +12,8 @@ public class Startup implements IStartup {
 			public void run() {
 				Activator.getDefault().getImageRegistry().put("addIcon", Activator.getImageDescriptor("icons/add.gif"));
 				Activator.getDefault().getImageRegistry().put("removeIcon", Activator.getImageDescriptor("icons/remove.gif"));
+				Activator.getDefault().getImageRegistry().put("upIcon", Activator.getImageDescriptor("icons/arrow-up.jpg"));
+				Activator.getDefault().getImageRegistry().put("downIcon", Activator.getImageDescriptor("icons/arrow-down.jpg"));
 			}
 		});
 	}

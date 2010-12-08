@@ -22,7 +22,7 @@
                name="HOST">
          </editor>
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SchemaParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.SchemaParameterEditor"
                name="SCHEMA">
          </editor>
          <editor
@@ -40,14 +40,14 @@
       <operator
             name="RENAME">
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AliasesParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.AliasesParameterEditor"
                name="ALIASES">
          </editor>
       </operator>
       <operator
             name="PROJECT">
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AttributesParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.AttributesParameterEditor"
                name="ATTRIBUTES">
          </editor>
       </operator>
@@ -80,7 +80,7 @@
                name="FILETYPE">
          </editor>
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.SchemaParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.SchemaParameterEditor"
                name="SCHEMA">
          </editor>
          <editor
@@ -99,11 +99,11 @@
       <operator
             name="AGGREGATION">
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AttributesParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.AttributesParameterEditor"
                name="GROUP_BY">
          </editor>
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AggregationsParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.AggregationsParameterEditor"
                name="AGGREGATIONS">
          </editor>
       </operator>
@@ -133,15 +133,22 @@
                name="SLIDE">
          </editor>
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.AttributesParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.AttributesParameterEditor"
                name="PARTITION">
          </editor>
       </operator>
       <operator
             name="MAP">
          <editor
-               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.ExpressionsParameterEditor"
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.ExpressionsParameterEditor"
                name="EXPRESSIONS">
+         </editor>
+      </operator>
+      <operator
+            name="SPLIT">
+         <editor
+               class="de.uniol.inf.is.odysseus.rcp.editor.parameters.list.PredicateListParameterEditor"
+               name="PREDICATES">
          </editor>
       </operator>
    </extension>
