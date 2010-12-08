@@ -50,11 +50,17 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			if (isEmpty())
 				return -1;
 
-			// die Elemente der queue k�nnen sich �ndern ...
-			// TODO: Nicht sehr effizient... Sortieren ist gar nicht
-			// notwendig!!
-			Collections.sort(groups_queue);
-			return gToId.get(groups_queue.get(0));
+			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> min = null;
+			for (DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> group: groups_queue){
+				if (min == null){
+					min = group;
+				}else{
+					if (min.compareTo(group) < 0){
+						min=group;
+					}
+				}
+			}
+			return gToId.get(min);
 		}
 
 		synchronized public void removeLastMin() {
