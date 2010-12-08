@@ -20,7 +20,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
-		if (parameter != null && parameter.equalsIgnoreCase("NONE")) {
+		if (parameter != null && !parameter.equalsIgnoreCase("NONE")) {
 			IBufferPlacementStrategy s = executor
 					.getBufferPlacementStrategy(parameter);
 			if (s == null) {
@@ -48,7 +48,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 					break;
 				}
 			}
-			if (parameter != null && parameter.equalsIgnoreCase("NONE")) {
+			if (parameter != null && !parameter.equalsIgnoreCase("NONE")) {
 				s = executor.getBufferPlacementStrategy(parameter);
 				config.add(new ParameterBufferPlacementStrategy(s));
 			}
