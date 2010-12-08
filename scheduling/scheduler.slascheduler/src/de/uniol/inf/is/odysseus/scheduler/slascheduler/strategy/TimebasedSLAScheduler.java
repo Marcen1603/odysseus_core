@@ -32,9 +32,6 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	final CurrentPlanPriorityComperator comperator = new CurrentPlanPriorityComperator();
 	
 	final private long sla_history_size = OdysseusDefaults.getLong("sla_history_size",1000);
-	final private long sla_update_Penalties_Frequency = OdysseusDefaults.getLong("sla_update_Penalties_Frequency",30000);
-
-	private long toUpdateCounter = 0;
 
 	public TimebasedSLAScheduler(TimebasedSLAScheduler timebasedSLAScheduler) {
 		super(timebasedSLAScheduler);
@@ -57,7 +54,6 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 
 	@Override
 	public IScheduling nextPlan() {
-		updatePenalties();
 		synchronized (lastRun) {
 			if (lastRun.size() > 0) {
 				return updateMetaAndReturnPlan(lastRun.remove(0));
@@ -156,18 +152,6 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 		return minTimePeriod;
 	}
 
-	void updatePenalties() {
-		if (toUpdateCounter == sla_update_Penalties_Frequency) {
-			toUpdateCounter = 0;
-			synchronized (queue) {
-				for (IScheduling q : queue) {
-					updatePenalites(q.getPlan());
-				}
-			}
-		}
-		toUpdateCounter++;
-	}
-
 	private void updatePenalites(IPartialPlan plan)
 			throws NotInitializedException {
 		ScheduleMeta meta = plan.getScheduleMeta();
@@ -183,6 +167,7 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	private IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
 		ScheduleMeta meta = toSchedule.getPlan().getScheduleMeta();
 		meta.scheduleDone(minTime.get(toSchedule));
+		updatePenalites(toSchedule.getPlan());
 		return toSchedule;
 	}
 
