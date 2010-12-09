@@ -9,7 +9,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
-import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;

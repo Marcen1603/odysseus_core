@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.transform.rules.join;
 
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.ObjectTrackingJoinPO;

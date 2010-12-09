@@ -7,7 +7,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.Subscription;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;

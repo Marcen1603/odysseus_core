@@ -8,7 +8,7 @@ import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.benchmarker.AbstractBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
-import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 @Root(name = "priorityresult")

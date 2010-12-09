@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
-import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 
 /**
  * @author Jonas Jacobi

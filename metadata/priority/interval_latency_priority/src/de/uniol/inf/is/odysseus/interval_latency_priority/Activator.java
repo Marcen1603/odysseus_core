@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 

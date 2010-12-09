@@ -15,3 +15,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/QueryBuildConfiguration2.xml
+Require-Bundle: de.uniol.inf.is.odysseus

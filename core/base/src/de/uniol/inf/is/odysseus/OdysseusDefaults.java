@@ -102,7 +102,6 @@ public class OdysseusDefaults {
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
-		props.setProperty("sla_update_Penalties_Frequency", 30000 + "");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {

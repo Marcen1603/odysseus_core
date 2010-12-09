@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
 import org.apache.commons.math.linear.RealMatrix;
 
-import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;

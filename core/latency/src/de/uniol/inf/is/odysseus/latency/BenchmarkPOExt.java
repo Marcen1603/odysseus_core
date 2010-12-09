@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.latency;
 
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;

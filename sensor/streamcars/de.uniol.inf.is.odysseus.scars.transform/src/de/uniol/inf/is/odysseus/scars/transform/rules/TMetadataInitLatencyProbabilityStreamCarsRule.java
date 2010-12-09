@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.scars.transform.rules;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;

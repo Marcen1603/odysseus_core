@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.latency;
 
+import de.uniol.inf.is.odysseus.metadata.ILatency;
+
 public class Latency implements ILatency{
 
 	private long lstart;
