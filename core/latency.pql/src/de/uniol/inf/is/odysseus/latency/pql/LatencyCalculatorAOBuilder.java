@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.latency.LatencyCalculationAO;
 
 public class LatencyCalculatorAOBuilder extends AbstractOperatorBuilder {
 
-	public LatencyCalculatorAOBuilder(int minPortCount, int maxPortCount) {
+	public LatencyCalculatorAOBuilder() {
 		super(1, Integer.MAX_VALUE);
 	}
 
