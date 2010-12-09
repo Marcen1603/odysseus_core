@@ -39,6 +39,7 @@ public FilterAO(FilterAO<M> copy) {
     this.oldObjListPath = copy.getOldObjListPath();
     this.newObjListPath = copy.getNewObjListPath();
     this.functions = (Vector<Object>) copy.getFunctions().clone();
+    this.functionID = copy.functionID;
   }
 
   

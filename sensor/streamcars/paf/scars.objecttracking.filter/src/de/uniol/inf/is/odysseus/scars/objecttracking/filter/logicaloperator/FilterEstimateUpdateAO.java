@@ -38,7 +38,7 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		this.setOldObjListPath(copy.getOldObjListPath());
 		this.setNewObjListPath(copy.getNewObjListPath());
 		this.setParameters(new HashMap<Enum<Parameters>, Object>(copy.getParameters()));	
-		
+		this.functionID = copy.functionID;
 	}
 
 	
