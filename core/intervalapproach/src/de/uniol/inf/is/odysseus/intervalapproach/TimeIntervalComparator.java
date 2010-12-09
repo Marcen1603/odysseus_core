@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 
 /**
  * This comparator compares two {@link ITimeInterval} objects.

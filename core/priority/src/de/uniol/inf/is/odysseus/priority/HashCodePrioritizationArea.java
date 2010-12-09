@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 
 public class HashCodePrioritizationArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		implements IPostPrioritizationArea<T> {

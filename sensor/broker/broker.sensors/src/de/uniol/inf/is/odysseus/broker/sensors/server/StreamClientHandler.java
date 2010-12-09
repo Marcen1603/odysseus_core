@@ -7,7 +7,7 @@ import java.nio.channels.SocketChannel;
 import de.uniol.inf.is.odysseus.broker.sensors.generator.IStreamType;
 import de.uniol.inf.is.odysseus.broker.sensors.generator.StreamType;
 import de.uniol.inf.is.odysseus.broker.sensors.generator.StreamTypeFactory;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;

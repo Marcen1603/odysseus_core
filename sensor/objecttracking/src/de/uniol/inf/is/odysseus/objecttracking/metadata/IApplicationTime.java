@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 
 public interface IApplicationTime extends IMetaAttribute, IClone {
 

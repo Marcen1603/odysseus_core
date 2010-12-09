@@ -1,7 +1,5 @@
-package de.uniol.inf.is.odysseus.intervalapproach;
+package de.uniol.inf.is.odysseus.metadata;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 
 /**

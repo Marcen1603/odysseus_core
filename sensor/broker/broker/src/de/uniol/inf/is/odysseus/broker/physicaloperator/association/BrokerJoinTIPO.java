@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 
 

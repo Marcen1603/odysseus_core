@@ -2,7 +2,7 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 
 public class ASTTimeInterval extends SimpleNode {
 	private ITimeInterval interval;

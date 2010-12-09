@@ -18,3 +18,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework;version="1.3.0"
 Service-Component: OSGI-INF/commandProvider.xml
+Require-Bundle: de.uniol.inf.is.odysseus
