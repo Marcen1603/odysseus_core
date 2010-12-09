@@ -10,6 +10,11 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * 
+ * @author Benjamin G
+ *
+ */
 public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariable {
 
 	public static final String NO_SOURCE = "NO_SOURCE";
@@ -26,6 +31,11 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	private int[] relativePath;
 	private int[] absolutePath;
 
+	/**
+	 * 
+	 * @param parent
+	 * @param mepVariable
+	 */
 	protected StreamCarsExpressionVariable(IStreamCarsExpression parent, Variable mepVariable) {
 		this.parent = parent;
 		this.mepVariable = mepVariable;
@@ -34,6 +44,11 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		this.initMetadataInfo(this.name);
 	}
 
+	/**
+	 * 
+	 * @param parent
+	 * @param name
+	 */
 	protected StreamCarsExpressionVariable(IStreamCarsExpression parent, String name) {
 		this.parent = parent;
 		this.name = name;
@@ -173,6 +188,9 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		return schemaPath;
 	}
 
+	/**
+	 * @param schema
+	 */
 	public void init(SDFAttributeList schema) {
 		if(isSchemaVariable(schema)) {
 			SchemaHelper helper = new SchemaHelper(schema);
@@ -181,7 +199,18 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			absolutePath = schemaPath.toArray(true);
 		}
 	}
+	
+	/**
+	 * @return
+	 */
+	public String getNameWithoutMetadata() {
+		return nameWithoutMetadata;
+	}
 
+	/**
+	 * 
+	 * @param variableName
+	 */
 	protected void initMetadataInfo(String variableName) {
 		String[] split = variableName.split("\\#");
 		if(split.length > 2) {
@@ -195,6 +224,10 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		}
 	}
 
+	/**
+	 * 
+	 * @param variableName
+	 */
 	protected void initSourceName(String variableName) {
 		String[] dotSplit = variableName.split("\\.");
 		if(dotSplit.length > 2) {
@@ -206,6 +239,9 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		}
 	}
 
+	/**
+	 * 
+	 */
 	protected void initRelativeIndex() {
 		if(schemaPath == null) throw new RuntimeException("the variable " + name + "was not properly initialized: schemaIndexPath is null");
 		relativePath = new int[schemaPath.getLength()];
@@ -223,6 +259,11 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 		}
 	}
 
+	/**
+	 * 
+	 * @param schema
+	 * @return
+	 */
 	protected String getSchemaSourceName(SDFAttributeList schema) {
 		if(schema == null) return NO_SOURCE;
 		return schema.getAttribute(0).getSourceName();
@@ -244,7 +285,5 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 				+ "\n\t   ]";
 	}
 
-	public String getNameWithoutMetadata() {
-		return nameWithoutMetadata;
-	}
+
 }

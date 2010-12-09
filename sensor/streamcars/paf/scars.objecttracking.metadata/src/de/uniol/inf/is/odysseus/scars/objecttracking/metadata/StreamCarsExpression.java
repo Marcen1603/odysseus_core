@@ -12,6 +12,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
+/**
+ * 
+ * @author Benjamin G
+ *
+ */
 public class StreamCarsExpression implements IStreamCarsExpression {
 
 	public static final String DEFAULT_TARGET_VARIABLE_NAME = "DEFAULT_TARGET_VARIABLE";
@@ -22,10 +27,19 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 	private IExpression<?> mepExpression;
 	private List<IStreamCarsExpressionVariable> variables;
 
+	/**
+	 * 
+	 * @param expression
+	 */
 	public StreamCarsExpression(String expression) {
 		this(null, expression);
 	}
 
+	/**
+	 * 
+	 * @param targetName
+	 * @param expression
+	 */
 	public StreamCarsExpression(String targetName, String expression) {
 		this.expression = expression;
 
@@ -122,6 +136,15 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 			}
 		}
 	}
+	
+	@Override
+	public void bindTupleValues(SDFAttributeList schema, MVRelationalTuple<?> tuple) {
+		for(IStreamCarsExpressionVariable var : variables) {
+			if(var.isSchemaVariable(schema)) {
+				var.bindTupleValue(tuple);
+			}
+		}
+	}
 
 	@Override
 	public void bind(IStreamCarsExpressionVariable variable, Object value) {
@@ -194,7 +217,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 
 		time.add(currentTime);
 
-		String expression = "MOOOEEEEP + a.list:obj#covariance + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime + someVaryingValue";
+		String expression = "[1;2] + [2;4] * a.list:obj#covariance + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime + GAIN";
 		StreamCarsExpression e = new StreamCarsExpression(expression);
 		e.init(scan, time);
 		System.out.println("TEST: BEFORE INDEX REPLACE:");
@@ -216,12 +239,5 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 		System.out.println(e);
 	}
 
-	@Override
-	public void bindTupleValues(SDFAttributeList schema, MVRelationalTuple<?> tuple) {
-		for(IStreamCarsExpressionVariable var : variables) {
-			if(var.isSchemaVariable(schema)) {
-				var.bindTupleValue(tuple);
-			}
-		}
-	}
+
 }
