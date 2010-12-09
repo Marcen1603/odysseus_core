@@ -74,7 +74,9 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 	@Override
 	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
 		List<Class<? extends IMetaAttribute>> attributes = super.getMetaAttributes();
-		attributes.add(type);
+		if(!attributes.contains(type)){
+			attributes.add(type);
+		}
 		return attributes;
 	}
 

@@ -358,7 +358,12 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
 		List<Class<? extends IMetaAttribute>> attributes = new ArrayList<Class<? extends IMetaAttribute>>();
 		for(PhysicalSubscription<ISource<? extends R>> sub : this.getSubscribedToSource()){
-			attributes.addAll(sub.getTarget().getMetaAttributes());
+			for(Class<? extends IMetaAttribute> metaattribute : sub.getTarget().getMetaAttributes()){
+				if(!attributes.contains(metaattribute)){
+					attributes.add(metaattribute);
+				}
+			}
+			
 		}
 		return attributes;
 	}
