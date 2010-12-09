@@ -12,6 +12,7 @@ public class RuleProvider implements ITransformRuleProvider {
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TLatencyRule());
+		rules.add(new TLatencyCalculationRule());
 		return rules;
 	}
 
