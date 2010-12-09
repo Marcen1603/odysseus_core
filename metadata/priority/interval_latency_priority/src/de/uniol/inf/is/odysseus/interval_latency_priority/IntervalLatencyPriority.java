@@ -67,7 +67,7 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency, I
 	
 	@Override
 	public String toString() {
-		return "( " +super.toString() + " ; " + "("+ this.latency.getLatencyStart() + "-" + this.latency.getLatencyEnd() + ") )" + " ; " + this.prio.getPriority();
+		return "( i= " +super.toString() + " ; " + " l="+ this.latency+ "" + " ; p=" + this.prio+ ")";
 	}
 
 	@Override
