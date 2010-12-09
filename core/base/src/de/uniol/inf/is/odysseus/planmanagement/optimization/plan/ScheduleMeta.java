@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.collection.Pair;
 
 public class ScheduleMeta {
 	private long lastSchedule;
+	private long lastDiff;
 	private long inTimeCount;
 	private long allSchedulings;
 	
@@ -17,6 +18,7 @@ public class ScheduleMeta {
 		this.lastSchedule = lastSchedule;
 		this.inTimeCount = 0;
 		this.allSchedulings = 0;
+		this.lastDiff = 0;
 		history = new LinkedList<Pair<Long, Boolean>>();
 	}
 
@@ -24,11 +26,12 @@ public class ScheduleMeta {
 		this.lastSchedule = other.lastSchedule;
 		this.inTimeCount = other.inTimeCount;
 		this.allSchedulings = other.allSchedulings;
+		this.lastDiff = other.lastDiff;
 		history = new LinkedList<Pair<Long, Boolean>>(other.history);
 	}
 
 	public void csvPrint(StringBuffer toPrint) {
-		toPrint.append(getNow() - lastSchedule);
+		toPrint.append(lastDiff);
 		toPrint.append(";").append(inTimeCount);
 		toPrint.append(";").append(allSchedulings);
 		if (allSchedulings > 0) {
@@ -74,6 +77,7 @@ public class ScheduleMeta {
 			this.lastSchedule = now;
 			allSchedulings++;
 			history.add(new Pair<Long, Boolean>(now, inTime));
+			lastDiff = timeSinceLastSchedule;
 			return timeSinceLastSchedule;
 
 		}
