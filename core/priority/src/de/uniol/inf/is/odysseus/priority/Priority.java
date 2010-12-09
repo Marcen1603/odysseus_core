@@ -26,4 +26,9 @@ public class Priority implements IPriority{
 	public IPriority clone(){
 		return new Priority(this);
 	}
+	
+	@Override
+	public String toString() {
+		return ""+prio;
+	}
 }
