@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -60,6 +62,13 @@ public class TestproducerPO extends
 	@Override
 	public TestproducerPO clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	@Override
+	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
+		List<Class<? extends IMetaAttribute>> providedMetaAttributes = new ArrayList<Class<? extends IMetaAttribute>>();
+		providedMetaAttributes.add(IntervalLatencyPriority.class);
+		return providedMetaAttributes;
 	}
 
 	
