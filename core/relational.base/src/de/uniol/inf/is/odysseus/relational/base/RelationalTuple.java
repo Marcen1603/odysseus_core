@@ -114,7 +114,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 * @param object the object to append
 	 * @return a new created and extended copy
 	 */
-	public RelationalTuple<T> append(T object){
+	public RelationalTuple<T> append(Object object){
 		return this.append(object, true);
 	}
 	
@@ -127,7 +127,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 * @return the extended tuple
 	 */
 	@SuppressWarnings("unchecked")
-	public RelationalTuple<T> append(T object, boolean createNew){
+	public RelationalTuple<T> append(Object object, boolean createNew){
 		Object[] newAttrs = Arrays.copyOf(this.attributes, this.attributes.length+1);		
 		newAttrs[this.attributes.length] = object;
 		
