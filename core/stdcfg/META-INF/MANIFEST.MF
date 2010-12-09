@@ -14,5 +14,5 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/QueryBuildConfiguration2.xml
+Service-Component: OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/QueryBuildConfiguration2.xml, OSGI-INF/QueryBuildConfiguration3.xml
 Require-Bundle: de.uniol.inf.is.odysseus
