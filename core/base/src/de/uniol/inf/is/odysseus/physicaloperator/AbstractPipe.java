@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -350,7 +352,15 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	
 	public boolean isContainedIn(IPipe<R,W> ip) {
 		return false;
+	}	
+			
+	@Override
+	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
+		List<Class<? extends IMetaAttribute>> attributes = new ArrayList<Class<? extends IMetaAttribute>>();
+		for(PhysicalSubscription<ISource<? extends R>> sub : this.getSubscribedToSource()){
+			attributes.addAll(sub.getTarget().getMetaAttributes());
+		}
+		return attributes;
 	}
-
 
 }

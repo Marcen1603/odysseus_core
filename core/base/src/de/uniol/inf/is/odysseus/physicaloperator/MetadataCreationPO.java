@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
 import java.io.Serializable;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
@@ -63,11 +64,18 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		if(!(ipo instanceof MetadataCreationPO)) {
 			return false;
 		}
-		MetadataCreationPO mdcpo = (MetadataCreationPO) ipo;
+		MetadataCreationPO<?,?> mdcpo = (MetadataCreationPO<?,?>) ipo;
 		if(this.getSubscribedToSource().equals(mdcpo.getSubscribedToSource()) && (this.getType().toString().equals(mdcpo.getType().toString()))) {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
+		List<Class<? extends IMetaAttribute>> attributes = super.getMetaAttributes();
+		attributes.add(type);
+		return attributes;
 	}
 
 }

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,12 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
-
 import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventHandler;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Jonas Jacobi, Tobias Witt, Marco Grawunder
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
-		implements ISource<T> {
+		implements ISource<T>{
 
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	// Only active subscription are served on transfer
@@ -563,5 +564,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			copy.put(e.getKey(), new SDFAttributeList(e.getValue()));
 		}
 		return copy;
+	}
+	
+	@Override
+	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
+		// in general there are no meta attributes!
+		return new ArrayList<Class<? extends IMetaAttribute>>();		
 	}
 }
