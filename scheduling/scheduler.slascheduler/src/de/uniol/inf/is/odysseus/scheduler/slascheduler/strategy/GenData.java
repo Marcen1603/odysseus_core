@@ -34,7 +34,7 @@ public class GenData {
 			System.out.println("#ODYSSEUS_PARAM sla_history_size 1000");
 		}
 		System.out.println("#PARSER CQL");
-		System.out.println("#TRANSCFG Standard Latency");
+		System.out.println("#TRANSCFG Benchmark Latency");
 		System.out.println("#BUFFERPLACEMENT None");
 		System.out.println("#DOQUERYSHARING FALSE");
 		System.out.println("#QUERY");
