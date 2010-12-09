@@ -13,6 +13,7 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	private final ILatency latency;
 	
 	public IntervalLatency() {
+		super();
 		latency = new Latency();
 	}
 	
@@ -50,6 +51,11 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	@Override
 	public IntervalLatency clone() {
 		return new IntervalLatency(this);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString()+" "+latency;
 	}
 
 }
