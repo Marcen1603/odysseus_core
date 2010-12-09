@@ -15,6 +15,7 @@ public class TLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> {
 		return 0;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(JoinTIPO<?, ?> joinPO, TransformationConfiguration config) {
 		((CombinedMergeFunction)joinPO.getMetadataMerge()).add(new LatencyMergeFunction());		
