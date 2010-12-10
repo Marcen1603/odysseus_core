@@ -9,14 +9,12 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public abstract class AbstractXYChart extends AbstractChart {
+public abstract class AbstractXYChart extends AbstractChart<Double, IMetaAttribute> {
 
 	private XYSeriesCollection dataset = new XYSeriesCollection();
 	private int choosenXValue;
@@ -24,7 +22,7 @@ public abstract class AbstractXYChart extends AbstractChart {
 	private int choosenSerie = -1;
 
 	@Override
-	public String isValidSelection(SDFAttributeList selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
 		if (selectAttributes.size() == 2) {
 			return null;
 		}
@@ -33,27 +31,27 @@ public abstract class AbstractXYChart extends AbstractChart {
 
 	@Override
 	protected void init() {
-		choosenXValue = getSchema().indexOf(getAllowedSchema().get(0));
-		choosenYValue = getSchema().indexOf(getAllowedSchema().get(1));
+		choosenXValue = 0;
+		choosenYValue = 1;
 	}
 
 	@Override
 	public void chartSettingsChanged() {
 	}
 
+	
 	@Override
-	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {
+	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
-
 					String key = "-";
 					XYSeries currentserie;
 					if (choosenSerie == -1) {
 						key = "-";
 					} else {
-						key = tuple.getAttribute(choosenSerie).toString();
+						key = tuple.get(choosenSerie).toString();
 					}
 					
 					
@@ -64,8 +62,7 @@ public abstract class AbstractXYChart extends AbstractChart {
 						currentserie = dataset.getSeries(key);
 					}
 
-					currentserie.add(Double.parseDouble(tuple.getAttribute(choosenXValue).toString()), Double.parseDouble(tuple.getAttribute(choosenYValue).toString()));
-
+					currentserie.add(tuple.get(choosenXValue), tuple.get(choosenYValue));
 				} catch (SWTException e) {
 					dispose();
 					return;
@@ -74,9 +71,9 @@ public abstract class AbstractXYChart extends AbstractChart {
 				}
 			}
 		});
-
+		
 	}
-
+	
 	
 	private boolean containsSeriesWithKey(Comparable<?> key){
 		for(Object o : dataset.getSeries()){
@@ -106,13 +103,13 @@ public abstract class AbstractXYChart extends AbstractChart {
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.GET)
 	public String getXValue() {
-		return getSchema().get(this.choosenXValue).getQualName();
+		return getViewableAttributes().get(this.choosenXValue).getName();
 	}
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.SET)
 	public void setXValue(String value) {
-		for (int i = 0; i < getSchema().size(); i++) {
-			if (getSchema().get(i).getQualName().equals(value)) {
+		for (int i = 0; i < getViewableAttributes().size(); i++) {
+			if (getViewableAttributes().get(i).getName().equals(value)) {
 				this.choosenXValue = i;
 				return;
 			}
@@ -126,13 +123,13 @@ public abstract class AbstractXYChart extends AbstractChart {
 
 	@ChartSetting(name = "Value for Y-Axis", type = Type.GET)
 	public String getYValue() {
-		return getSchema().get(this.choosenYValue).getQualName();
+		return getViewableAttributes().get(this.choosenYValue).getName();
 	}
 
 	@ChartSetting(name = "Value for Y-Axis", type = Type.SET)
 	public void setYValue(String value) {
-		for (int i = 0; i < getSchema().size(); i++) {
-			if (getSchema().get(i).getQualName().equals(value)) {
+		for (int i = 0; i < getViewableAttributes().size(); i++) {
+			if (getViewableAttributes().get(i).getName().equals(value)) {
 				this.choosenYValue = i;
 				return;
 			}
@@ -149,7 +146,7 @@ public abstract class AbstractXYChart extends AbstractChart {
 	@ChartSetting(name = "Value for Series", type = Type.GET)
 	public String getSeriesValue() {
 		if (this.choosenSerie > -1) {
-			return getSchema().get(this.choosenSerie).getQualName();
+			return getViewableAttributes().get(this.choosenSerie).getName();
 		} else {
 			return "";
 		}
@@ -160,8 +157,8 @@ public abstract class AbstractXYChart extends AbstractChart {
 		if (value.equals("")) {
 			this.choosenSerie = -1;
 		} else {
-			for (int i = 0; i < getSchema().size(); i++) {
-				if (getSchema().get(i).getQualName().equals(value)) {
+			for (int i = 0; i < getViewableAttributes().size(); i++) {
+				if (getViewableAttributes().get(i).getName().equals(value)) {
 					this.choosenSerie = i;
 					return;
 				}
@@ -171,8 +168,8 @@ public abstract class AbstractXYChart extends AbstractChart {
 
 	private List<String> getValues() {
 		List<String> values = new ArrayList<String>();
-		for (SDFAttribute a : getAllowedSchema()) {
-			values.add(a.getQualName());
+		for (IViewableAttribute<Double> a : getViewableAttributes()) {
+			values.add(a.getName());
 		}
 		return values;
 	}

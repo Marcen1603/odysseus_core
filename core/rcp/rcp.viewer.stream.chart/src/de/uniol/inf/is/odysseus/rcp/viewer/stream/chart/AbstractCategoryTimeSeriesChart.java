@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
@@ -10,11 +11,9 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
+public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart<Double, ITimeInterval> {
 
 	private DefaultCategoryDataset dcds = new DefaultCategoryDataset();
 
@@ -29,21 +28,18 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 	}
 
 	@Override
-	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {
-		final SDFAttributeList currentSchema = super.getSchema();
+	protected void processElement(final List<Double> tuple, final ITimeInterval metadata, int port) {		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				// dcds.clear();
 				try {
-					int i = 0;
-					for (SDFAttribute a : currentSchema) {
-						if (getVisibleSchema().contains(currentSchema.get(i))) {
-							double value = Double.parseDouble(tuple.getAttribute(i).toString());
-							recalcAxis(value);
-							dcds.addValue(value, a.toString(), tuple.getMetadata().getStart());
 
-						}
+					int i = 0;
+					for (IViewableAttribute<Double> a : getChoosenAttributes()) {
+						double value = tuple.get(i);
+						recalcAxis(value);
+						dcds.addValue(value, a.getName(), metadata.getStart());
+
 						i++;
 					}
 				} catch (SWTException e) {
@@ -82,11 +78,11 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart {
 	}
 
 	@Override
-	public String isValidSelection(SDFAttributeList selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
 		if (selectAttributes.size() > 0) {
 			return null;
 		}
 		return "The number of choosen attributes should be at least one!";
-	}	
+	}
 
 }

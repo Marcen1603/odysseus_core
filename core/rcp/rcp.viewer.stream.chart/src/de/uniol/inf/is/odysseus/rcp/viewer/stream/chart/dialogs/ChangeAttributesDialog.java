@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -19,20 +22,19 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-public class ChangeAttributesDialog extends TitleAreaDialog {
+public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 
 	private static final String DEFAULT_MESSAGE = "Changes the attributes that are shown by the chart";
-	private Table table;
-	private SDFAttributeList activatedAttributes;	
-	private IAttributesChangeable changeable;
+	private Table table;	
+	private List<IViewableAttribute<T>> activatedAttributes;	
+	private IAttributesChangeable<T> changeable;
 	private Button okButton;
 
-	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable changeable) {
+	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable<T> changeable) {
 		super(parentShell);
-		this.activatedAttributes = changeable.getVisibleSchema().clone();		
+		Collections.copy(this.activatedAttributes, changeable.getChoosenAttributes());	
 		this.changeable = changeable;
 	}
 
@@ -77,7 +79,7 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 		table.setLinesVisible(true);
 
 		int i = 0;
-		for (SDFAttribute a : this.changeable.getAllowedSchema()) {
+		for (IViewableAttribute<T> a : this.changeable.getViewableAttributes()) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			Button check = new Button(table, SWT.CHECK);
 			check.setData(a);
@@ -85,7 +87,8 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 			check.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					Button thisButton = (Button) e.widget;
-					SDFAttribute selAtt = (SDFAttribute) thisButton.getData();
+					@SuppressWarnings("unchecked")
+					IViewableAttribute<T> selAtt = (IViewableAttribute<T>) thisButton.getData();
 					if (thisButton.getSelection()) {
 						activatedAttributes.add(selAtt);						
 					} else {
@@ -132,7 +135,7 @@ public class ChangeAttributesDialog extends TitleAreaDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
 	}
 
-	public SDFAttributeList getSelectedAttributes() {
+	public List<IViewableAttribute<T>> getSelectedAttributes() {		
 		return this.activatedAttributes;
 	}
 }

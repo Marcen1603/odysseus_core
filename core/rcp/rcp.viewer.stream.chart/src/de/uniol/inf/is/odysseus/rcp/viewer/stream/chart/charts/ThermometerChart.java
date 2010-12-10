@@ -2,20 +2,20 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.util.List;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.ThermometerPlot;
 import org.jfree.data.general.DefaultValueDataset;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class ThermometerChart extends AbstractChart {
+public class ThermometerChart extends AbstractChart<Double, IMetaAttribute> {
 
 	DefaultValueDataset dataset = new DefaultValueDataset(new Double(0));
 	private int selectedValue;
@@ -29,9 +29,7 @@ public class ThermometerChart extends AbstractChart {
 	@Override
 	protected void init() {	
 		super.init();
-		SDFAttributeList visibleSchema = new SDFAttributeList();
-		visibleSchema.add(getAllowedSchema().get(0));
-		setVisibleSchema(visibleSchema);
+		selectedValue = 0;		
 		chartSettingsChanged();
 		resetBounds();
 	}
@@ -45,20 +43,14 @@ public class ThermometerChart extends AbstractChart {
 		plot.setSubrange(ThermometerPlot.WARNING, this.upperWarning, this.upperCritical);
 		plot.setSubrange(ThermometerPlot.CRITICAL, this.upperCritical, this.maximum);
 	}
-	
-	@Override
-	public void chartSettingsChanged() {
-		selectedValue = super.getSchema().indexOf(getVisibleSchema().get(0));
-	}
 
 	@Override
-	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {
+	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					double value = Double.parseDouble(tuple.getAttribute(selectedValue).toString());
-					dataset.setValue(value);
+					dataset.setValue(tuple.get(selectedValue));										
 				} catch (SWTException e) {
 					dispose();
 					return;
@@ -71,7 +63,7 @@ public class ThermometerChart extends AbstractChart {
 	}
 
 	@Override
-	public String isValidSelection(SDFAttributeList selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
 		if (selectAttributes.size() == 1) {
 			return null;
 		}
@@ -162,6 +154,12 @@ public class ThermometerChart extends AbstractChart {
 	public void setUpperCritical(Double upperCritical) {
 		this.upperCritical = upperCritical;
 		resetBounds();
+	}
+
+
+	@Override
+	public void chartSettingsChanged() {		
+		
 	}
 
 }

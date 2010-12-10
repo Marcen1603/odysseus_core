@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 
 public abstract class AbstractCommand extends AbstractHandler {
 
-	public AbstractChart openView(AbstractChart createView, IPhysicalOperator observingOperator) {
+	public AbstractChart<?,?> openView(AbstractChart<?,?> createView, IPhysicalOperator observingOperator) {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
 			String secondaryIdentifier = observingOperator.getClass().getCanonicalName()+observingOperator.getClass().hashCode();
-			AbstractChart view = (AbstractChart)activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);			
+			AbstractChart<?,?> view = (AbstractChart<?,?>)activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);			
 			view.init(observingOperator);
 			return view;
 		} catch (Exception e) {

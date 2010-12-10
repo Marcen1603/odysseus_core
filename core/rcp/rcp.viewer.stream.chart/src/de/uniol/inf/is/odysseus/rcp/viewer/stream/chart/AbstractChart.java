@@ -16,7 +16,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
@@ -35,7 +37,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
-public abstract class AbstractChart extends ViewPart implements IAttributesChangeable, IChartSettingChangeable, IStreamElementListener<Object> {
+public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IChartSettingChangeable, IStreamElementListener<Object> {
 
 	protected static ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
 	protected static ImageDescriptor IMG_COG = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
@@ -44,15 +46,11 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	protected final static Color DEFAULT_BACKGROUND_GRID = Color.GRAY;
 	protected final static String VIEW_ID_PREFIX = "de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts";
 
-	private SDFAttributeList allowedSchema;
-	private SDFAttributeList initialSchema;
-	private SDFAttributeList visibleSchema;	
-	private SDFMetaAttributeList metadataSchema;
-
 	private JFreeChart chart;
-	private ChangeSelectedAttributesAction changeAttributesAction;
+	private ChangeSelectedAttributesAction<T> changeAttributesAction;
 	private ChangeSettingsAction changeSettingsAction;
 	private IStreamConnection<Object> connection;
+	private ViewSchema<T> viewSchema;
 
 	public void init(IPhysicalOperator observingOperator) {
 		this.connection = createConnection(observingOperator);
@@ -75,24 +73,11 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	}
 
 	public void init(IStreamConnection<Object> streamConnection) {
-		// first save initial schema
-		this.initialSchema = extractSchema(streamConnection);
-		// get only allowed datatypes for the current schema from initial schema
-		this.allowedSchema = new SDFAttributeList();
-		for (int i = 0; i < initialSchema.getAttributeCount(); i++) {
-			String t = initialSchema.getAttribute(i).getDatatype().getURI();
-			if (isAllowedDataType(t)) {
-				this.allowedSchema.add(initialSchema.getAttribute(i));
-			}
-		}
-
-		this.visibleSchema = allowedSchema.clone();
-
-		// now we need all metadata...
+		SDFAttributeList initialSchema = extractSchema(streamConnection);
+		SDFMetaAttributeList metaSchema = extractMetaSchema(streamConnection);
 		
-		this.metadataSchema = createSchemaFromMetadata(streamConnection); 
-		this.allowedSchema.addAll(metadataSchema);
-
+		this.viewSchema = new ViewSchema<T>(initialSchema, metaSchema);
+					
 		if (validate()) {
 			streamConnection.addStreamElementListener(this);
 			streamConnection.connect();
@@ -102,7 +87,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 
 	}	
 
-	private SDFMetaAttributeList createSchemaFromMetadata(IStreamConnection<Object> streamConnection) {
+	private SDFMetaAttributeList extractMetaSchema(IStreamConnection<Object> streamConnection) {
 		SDFMetaAttributeList attributes = new SDFMetaAttributeList();
 		for(ISource<?> source : streamConnection.getSources()){
 			attributes = SDFMetaAttributeList.union(attributes, source.getMetaAttributeSchema());
@@ -110,17 +95,8 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		return attributes;
 	}
 
-	protected boolean isAllowedDataType(String datatype) {
-
-		if (datatype.equals("Double") || datatype.equals("Long") || datatype.equals("Integer") || datatype.equals("StartTimestamp") || datatype.equals("EndTimestamp")
-				|| datatype.equals("Timestamp")) {
-			return true;
-		}
-		return false;
-	}
-
 	protected boolean validate() {
-		if (this.allowedSchema.size() > 0) {
+		if (this.viewSchema.getChoosenAttributes().size() > 0) {
 			return true;
 		}
 		System.out.println("Chart View not validated, because there has to be at least one valid attribute");
@@ -129,13 +105,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 
 	protected void init() {
 
-	}
-
-	@Override
-	public void setVisibleSchema(SDFAttributeList selectedlist) {
-		this.visibleSchema = selectedlist;
-		chartSettingsChanged();
-	}
+	}	
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
@@ -145,24 +115,17 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		}
 		
 		@SuppressWarnings("unchecked")
-		final RelationalTuple<? extends ITimeInterval> tuple = (RelationalTuple<? extends ITimeInterval>) element;
+		final RelationalTuple<M> tuple = (RelationalTuple<M>) element;
 		try {			
-//			// TODO: hashmap is not sort-safe --> selected schema must not be equal to following entryset!!
-//			for(Entry<SDFAttribute, Method> attribute : this.metadataSchema.entrySet()){
-//				try {
-//					tuple.append(attribute.getValue().invoke(tuple.getMetadata()), true);
-//				} catch (Exception e) {
-//					e.printStackTrace();				
-//				}
-//			}
-			processElement(tuple, port);
+			List<T> values = this.viewSchema.convertToChoosenFormat(this.viewSchema.convertToViewableFormat(tuple));
+			processElement(values, tuple.getMetadata(), port);			
 		} catch (SWTException swtex) {
 			System.out.println("WARN: SWT Exception " + swtex.getMessage());
 		}
 
 	}
 
-	protected abstract void processElement(RelationalTuple<? extends ITimeInterval> tuple, int port);
+	protected abstract void processElement(List<T> tuple, M metadata, int port);
 
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
@@ -193,7 +156,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	}
 
 	private void createActions() {
-		this.changeAttributesAction = new ChangeSelectedAttributesAction(this.getSite().getShell(), this);
+		this.changeAttributesAction = new ChangeSelectedAttributesAction<T>(this.getSite().getShell(), this);
 		this.changeAttributesAction.setText("Change Attributes");
 		this.changeAttributesAction.setToolTipText("Configure the attributes that will be shown by the chart");
 		this.changeAttributesAction.setImageDescriptor(IMG_MONITOR_EDIT);
@@ -224,14 +187,6 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	@Override
 	public void setFocus() {
 
-	}
-
-	public SDFAttributeList getAllowedSchema() {
-		return this.allowedSchema;
-	}
-
-	public SDFAttributeList getInitialSchema() {
-		return this.initialSchema;
 	}
 
 	public String getTitle() {
@@ -311,14 +266,21 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		} else {
 			return findMethod(otherMethod.name(), Type.SET);
 		}
-	}
-
+	}	
+	
 	@Override
-	public SDFAttributeList getVisibleSchema() {
-		return this.visibleSchema;
+	public List<IViewableAttribute<T>> getViewableAttributes() {
+		return this.viewSchema.getViewableAttributes();
 	}
-
-	public SDFAttributeList getSchema() {
-		return this.initialSchema;
+	
+	@Override
+	public List<IViewableAttribute<T>> getChoosenAttributes() {		
+		return this.viewSchema.getChoosenAttributes();
+	}
+	
+	@Override
+	public void setChoosenAttributes(List<IViewableAttribute<T>> choosenAttributes) {
+		this.viewSchema.setChoosenAttributes(choosenAttributes);
+		chartSettingsChanged();		
 	}
 }

@@ -1,18 +1,18 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
 
+import java.util.List;
+
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-public class PieChart extends AbstractChart {
+public class PieChart extends AbstractChart<Double, IMetaAttribute> {
 
 	DefaultPieDataset dataset = new DefaultPieDataset();
 
@@ -34,20 +34,15 @@ public class PieChart extends AbstractChart {
 	}
 
 	@Override
-	protected void processElement(final RelationalTuple<? extends ITimeInterval> tuple, int port) {
-		final SDFAttributeList currentSchema = super.getAllowedSchema();
+	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					int i = 0;
-					for (SDFAttribute a : currentSchema) {
-						if (getVisibleSchema().contains(getSchema().get(i))) {
-							double value = Double.parseDouble(tuple.getAttribute(i).toString());
-							dataset.setValue(a.toString(), value);
-						}
-						i++;
-					}
+				try {					
+					for(int i=0;i<getChoosenAttributes().size();i++){
+						double value = tuple.get(i);						
+						dataset.setValue(getChoosenAttributes().get(i).getName(), value);																
+					}										
 				} catch (SWTException e) {								
 					dispose();
 					return;
@@ -66,7 +61,7 @@ public class PieChart extends AbstractChart {
 	}
 
 	@Override
-	public String isValidSelection(SDFAttributeList selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
 		if(selectAttributes.size()>0){
 			return null;
 		}

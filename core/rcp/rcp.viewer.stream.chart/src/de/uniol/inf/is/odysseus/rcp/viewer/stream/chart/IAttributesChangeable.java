@@ -1,19 +1,19 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import java.util.List;
 
-public interface IAttributesChangeable {
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-	public void chartSettingsChanged();
-	public SDFAttributeList getSchema();
-	public SDFAttributeList getAllowedSchema();
-	public SDFAttributeList getInitialSchema();
-	public SDFAttributeList getVisibleSchema();
-	public void setVisibleSchema(SDFAttributeList schema);
+public interface IAttributesChangeable<T> {
+
+	public void chartSettingsChanged();	
 	/**
 	 * Should return null if everything is ok or a string containing the error message
 	 * @param selectAttributes
 	 * @return
 	 */
-	public String isValidSelection(SDFAttributeList selectAttributes);
+	public String isValidSelection(List<IViewableAttribute<T>> selectAttributes);
+	public List<IViewableAttribute<T>> getViewableAttributes();
+	public List<IViewableAttribute<T>> getChoosenAttributes();
+	public void setChoosenAttributes(List<IViewableAttribute<T>> choosenAttributes);	
 }
