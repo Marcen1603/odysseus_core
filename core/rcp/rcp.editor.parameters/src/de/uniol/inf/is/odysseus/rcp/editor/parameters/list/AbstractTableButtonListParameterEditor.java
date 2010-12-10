@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.parameters.list;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -75,64 +72,81 @@ public abstract class AbstractTableButtonListParameterEditor<T, U, V> extends Ab
 	protected Button createAddButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Add");
-		button.setImage( Activator.getDefault().getImageRegistry().get("addIcon"));
-		button.addSelectionListener( new SelectionAdapter() {
+		button.setImage(Activator.getDefault().getImageRegistry().get("addIcon"));
+		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				addDataItem( createNewDataRow() );
+				addDataItem(createNewDataRow());
 				refresh();
 			}
 		});
-		
+
 		return button;
 	}
 
 	protected Button createRemoveButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Remove");
-		button.setImage( Activator.getDefault().getImageRegistry().get("removeIcon"));
-		button.addSelectionListener( new SelectionAdapter() {
-			@SuppressWarnings("unchecked")
+		button.setImage(Activator.getDefault().getImageRegistry().get("removeIcon"));
+		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TableViewer viewer = getTableViewer();
-				ISelection selection = viewer.getSelection();
-				if( selection != null ) {
-					U selectedItem = (U)((IStructuredSelection)selection).getFirstElement();
-					if( selectedItem != null ) {
-						removeDataItem(selectedItem);
-						refresh();
-					}
+				U selectedItem = getSelection();
+				if (selectedItem != null) {
+					removeDataItem(selectedItem);
+					refresh();
 				}
 			}
 		});
-		
+
 		return button;
 	}
 
 	protected Button createShiftUpButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Shift Up");
-		button.setImage( Activator.getDefault().getImageRegistry().get("upIcon"));
-		button.addSelectionListener( new SelectionAdapter() {
+		button.setImage(Activator.getDefault().getImageRegistry().get("upIcon"));
+		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				U selectedItem = getSelection();
+				if (selectedItem != null) {
+					int index = getData().indexOf(selectedItem);
+					if( index > 0 ) {
+						U upperItem = getData().get(index - 1);
+						getData().set(index-1, selectedItem);
+						getData().set(index, upperItem);
+						
+						refresh();
+					}
+				}
 			}
 		});
-		
+
 		return button;
 	}
 
 	protected Button createShiftDownButton(Composite parent) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setToolTipText("Shift Down");
-		button.setImage( Activator.getDefault().getImageRegistry().get("downIcon"));
-		button.addSelectionListener( new SelectionAdapter() {
+		button.setImage(Activator.getDefault().getImageRegistry().get("downIcon"));
+		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				U selectedItem = getSelection();
+				if (selectedItem != null) {
+					int index = getData().indexOf(selectedItem);
+					if( index < getData().size() - 1 ) {
+						U upperItem = getData().get(index + 1);
+						getData().set(index+1, selectedItem);
+						getData().set(index, upperItem);
+						
+						refresh();
+					}
+				}
 			}
 		});
-		
+
 		return button;
 	}
 

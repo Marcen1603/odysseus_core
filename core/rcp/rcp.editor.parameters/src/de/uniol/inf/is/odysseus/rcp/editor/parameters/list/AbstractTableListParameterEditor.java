@@ -8,6 +8,8 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -160,6 +162,7 @@ public abstract class AbstractTableListParameterEditor<T, U, V> extends Abstract
 	
 	public final void refresh() {
 		getTableViewer().refresh();
+		getView().layout();
 	}
 	
 	protected List<U> load(List<T> rawData) {
@@ -183,6 +186,19 @@ public abstract class AbstractTableListParameterEditor<T, U, V> extends Abstract
 			return null;//setValue(null);
 		else
 			return list;//setValue(list);
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected final U getSelection() {
+		TableViewer viewer = getTableViewer();
+		ISelection selection = viewer.getSelection();
+		if( selection != null ) {
+			U selectedItem = (U)((IStructuredSelection)selection).getFirstElement();
+			if( selectedItem != null ) {
+				return selectedItem;
+			}
+		}
+		return null;
 	}
 
 	private void setTitleControl( Control control ) {

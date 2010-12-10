@@ -17,10 +17,8 @@ final class PredicateListEntry {
 	
 	private String predicate;
 	private String predicateType;
-	private int index;
 	
-	public PredicateListEntry( int index, String predicate, String predicateType ) {
-		this.index = index;
+	public PredicateListEntry( String predicate, String predicateType ) {
 		this.predicate = predicate;
 		this.predicateType = predicateType;
 	}
@@ -33,20 +31,12 @@ final class PredicateListEntry {
 		return predicateType;
 	}
 
-	public int getIndex() {
-		return index;
-	}
-
 	public void setPredicate(String predicate) {
 		this.predicate = predicate;
 	}
 
 	public void setPredicateType(String predicateType) {
 		this.predicateType = predicateType;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
 	}
 	
 }
@@ -63,7 +53,7 @@ public class PredicateListParameterEditor extends AbstractTableButtonListParamet
 		
 		if( items != null ) 
 			for( int i = 0; i < items.size(); i++ ) 
-				list.add(new PredicateListEntry(i, items.get(i).getPredicate(), items.get(i).getPredicateType()));
+				list.add(new PredicateListEntry(items.get(i).getPredicate(), items.get(i).getPredicateType()));
 			
 		return list;
 	}
@@ -81,14 +71,6 @@ public class PredicateListParameterEditor extends AbstractTableButtonListParamet
 	@Override
 	protected List<SimpleColumnDefinition<PredicateListEntry>> createColumnDefinitions() {
 		List<SimpleColumnDefinition<PredicateListEntry>> defs = new ArrayList<SimpleColumnDefinition<PredicateListEntry>>();
-		
-		// ID
-		defs.add( new SimpleColumnDefinition<PredicateListEntry>("ID") {
-			@Override
-			protected String getStringValue(PredicateListEntry element) {
-				return String.valueOf(element.getIndex());
-			}
-		});
 		
 		// Predicate
 		defs.add(new TextEditingColumnDefinition<PredicateListEntry>("Predicate") {
@@ -125,7 +107,7 @@ public class PredicateListParameterEditor extends AbstractTableButtonListParamet
 
 	@Override
 	protected PredicateListEntry createNewDataRow() {
-		return new PredicateListEntry(getData().size(), "Predicate", "RELATIONALPREDICATE");
+		return new PredicateListEntry( "Predicate", "RELATIONALPREDICATE");
 	}
 	
 }
