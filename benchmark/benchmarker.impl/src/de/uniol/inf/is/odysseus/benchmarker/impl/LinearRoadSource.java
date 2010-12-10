@@ -4,12 +4,9 @@ import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -89,10 +86,7 @@ public class LinearRoadSource extends
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 
-	@Override
-	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
-		return new ArrayList<Class<? extends IMetaAttribute>>();
-	}
+		
 
 
 }

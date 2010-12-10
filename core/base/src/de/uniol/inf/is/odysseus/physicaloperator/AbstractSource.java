@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,13 +19,13 @@ import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventHandler;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 /**
  * @author Jonas Jacobi, Tobias Witt, Marco Grawunder
@@ -567,8 +566,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 	
 	@Override
-	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
-		// in general there are no meta attributes!
-		return new ArrayList<Class<? extends IMetaAttribute>>();		
+	public SDFMetaAttributeList getMetaAttributeSchema() {
+		// in general there is no metadata
+		return new SDFMetaAttributeList();
 	}
 }

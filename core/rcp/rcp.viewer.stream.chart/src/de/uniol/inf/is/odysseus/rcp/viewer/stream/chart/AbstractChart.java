@@ -33,6 +33,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamElementListener;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public abstract class AbstractChart extends ViewPart implements IAttributesChangeable, IChartSettingChangeable, IStreamElementListener<Object> {
 
@@ -45,8 +48,9 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 
 	private SDFAttributeList allowedSchema;
 	private SDFAttributeList initialSchema;
-	private SDFAttributeList visibleSchema;
-	
+	private SDFAttributeList visibleSchema;	
+	private SDFMetaAttributeList metadataSchema;
+
 	private JFreeChart chart;
 	private ChangeSelectedAttributesAction changeAttributesAction;
 	private ChangeSettingsAction changeSettingsAction;
@@ -85,7 +89,12 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 		}
 
 		this.visibleSchema = allowedSchema.clone();
+
+		// now we need all metadata...
 		
+		this.metadataSchema = createSchemaFromMetadata(streamConnection); 
+		this.allowedSchema.addAll(metadataSchema);
+
 		if (validate()) {
 			streamConnection.addStreamElementListener(this);
 			streamConnection.connect();
@@ -93,6 +102,37 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 			init();
 		}
 
+	}	
+
+	private SDFMetaAttributeList createSchemaFromMetadata(IStreamConnection<Object> streamConnection) {
+		SDFMetaAttributeList attributes = new SDFMetaAttributeList();
+		for(ISource<?> source : streamConnection.getSources()){
+			attributes = SDFMetaAttributeList.union(attributes, source.getMetaAttributeSchema());
+		}
+		return attributes;
+	}
+
+	private SDFDatatype getAccordingSDFDataType(Class<?> returnType) {
+		if (returnType.equals(Integer.class) || returnType.equals(int.class)) {
+			return SDFDatatypeFactory.getDatatype("Integer");
+		}
+		if (returnType.equals(Double.class) || returnType.equals(double.class)) {
+			return SDFDatatypeFactory.getDatatype("Double");
+		}
+		if (returnType.equals(Long.class) || returnType.equals(long.class)) {
+			return SDFDatatypeFactory.getDatatype("Long");
+		}
+		if (returnType.equals(PointInTime.class)) {
+			return SDFDatatypeFactory.getDatatype("PointInTime");
+		}
+		return null;
+	}
+
+	private boolean isCorrectReturnType(Class<?> returnType) {
+		if (getAccordingSDFDataType(returnType) != null) {
+			return true;
+		}
+		return false;
 	}
 
 	protected boolean isAllowedDataType(String datatype) {
@@ -105,7 +145,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	}
 
 	protected boolean validate() {
-		if(this.allowedSchema.size()>0){
+		if (this.allowedSchema.size() > 0) {
 			return true;
 		}
 		System.out.println("Chart View not validated, because there has to be at least one valid attribute");
@@ -128,9 +168,18 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 			System.out.println("Warning: Stream visualization is only for relational tuple!");
 			return;
 		}
+		
 		@SuppressWarnings("unchecked")
 		final RelationalTuple<? extends ITimeInterval> tuple = (RelationalTuple<? extends ITimeInterval>) element;
 		try {			
+//			// TODO: hashmap is not sort-safe --> selected schema must not be equal to following entryset!!
+//			for(Entry<SDFAttribute, Method> attribute : this.metadataSchema.entrySet()){
+//				try {
+//					tuple.append(attribute.getValue().invoke(tuple.getMetadata()), true);
+//				} catch (Exception e) {
+//					e.printStackTrace();				
+//				}
+//			}
 			processElement(tuple, port);
 		} catch (SWTException swtex) {
 			System.out.println("WARN: SWT Exception " + swtex.getMessage());
@@ -143,8 +192,8 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
 
-	}	
-	
+	}
+
 	@Override
 	public void createPartControl(Composite parent) {
 		this.chart = createChart();
@@ -221,7 +270,7 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 	public void setChart(JFreeChart chart) {
 		this.chart = chart;
 	}
-	
+
 	public abstract String getViewID();
 
 	protected int getSelectedValueCount(boolean[] values) {
@@ -288,13 +337,13 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 			return findMethod(otherMethod.name(), Type.SET);
 		}
 	}
-	
+
 	@Override
 	public SDFAttributeList getVisibleSchema() {
 		return this.visibleSchema;
 	}
 
-	public SDFAttributeList getSchema(){
+	public SDFAttributeList getSchema() {
 		return this.initialSchema;
 	}
 }

@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
 import java.io.Serializable;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 /**
  * @author Jonas Jacobi
@@ -70,14 +71,14 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		}
 		return false;
 	}
-	
+		
 	@Override
-	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
-		List<Class<? extends IMetaAttribute>> attributes = super.getMetaAttributes();
-		if(!attributes.contains(type)){
-			attributes.add(type);
+	public SDFMetaAttributeList getMetaAttributeSchema() {
+		SDFMetaAttributeList metalist = super.getMetaAttributeSchema();
+		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(type);
+		if(!metalist.contains(mataAttribute)){
+			metalist.add(mataAttribute);
 		}
-		return attributes;
-	}
-
+		return metalist;
+	}		
 }

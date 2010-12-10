@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -8,10 +7,10 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -66,7 +65,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	};
 
-	final protected DelegateSink delegateSink = new DelegateSink();
+	final protected DelegateSink delegateSink = new DelegateSink();	
+	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
+	private boolean metadataCalculated = false;
 
 	// ------------------------------------------------------------------------
 
@@ -136,7 +137,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public synchronized void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort,List<PhysicalSubscription<ISink<?>>> callPath) throws OpenFailedException {
 		super.open(caller, sourcePort, sinkPort, callPath);
-		this.delegateSink.open(callPath);
+		this.delegateSink.open(callPath);						
 	}
 
 	public void delegatedProcessOpen() throws OpenFailedException {
@@ -355,17 +356,14 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}	
 			
 	@Override
-	public List<Class<? extends IMetaAttribute>> getMetaAttributes() {
-		List<Class<? extends IMetaAttribute>> attributes = new ArrayList<Class<? extends IMetaAttribute>>();
-		for(PhysicalSubscription<ISource<? extends R>> sub : this.getSubscribedToSource()){
-			for(Class<? extends IMetaAttribute> metaattribute : sub.getTarget().getMetaAttributes()){
-				if(!attributes.contains(metaattribute)){
-					attributes.add(metaattribute);
-				}
+	public SDFMetaAttributeList getMetaAttributeSchema() {		
+		if(!this.metadataCalculated){
+			for(PhysicalSubscription<ISource<? extends R>> sub : this.getSubscribedToSource()){
+				this.metadataAttributeSchema = SDFMetaAttributeList.union(this.metadataAttributeSchema, sub.getTarget().getMetaAttributeSchema());
 			}
-			
-		}
-		return attributes;
+			this.metadataCalculated = true;
+		}		
+		return this.metadataAttributeSchema;
 	}
 
 }

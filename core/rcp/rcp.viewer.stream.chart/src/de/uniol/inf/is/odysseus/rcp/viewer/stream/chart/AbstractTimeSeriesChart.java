@@ -6,6 +6,7 @@ import java.util.Map;
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -72,6 +73,9 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart{
 					//widget disposed				
 					dispose();
 					return;
+				}
+				catch (SeriesException e) {
+					System.out.println("Warn: "+e.getLocalizedMessage());
 				}
 				catch (Exception e) {
 					e.printStackTrace();

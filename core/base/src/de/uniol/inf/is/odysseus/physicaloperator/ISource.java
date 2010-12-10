@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.ISubscribable;
-import de.uniol.inf.is.odysseus.metadata.IHasMetaAttributes;
+import de.uniol.inf.is.odysseus.metadata.IHasMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Jonas Jacobi, Tobias Witt
  */
 public interface ISource<T> extends IPhysicalOperator,
-		ISubscribable<ISink<? super T>, PhysicalSubscription<ISink<? super T>>>, IHasMetaAttributes {
+		ISubscribable<ISink<? super T>, PhysicalSubscription<ISink<? super T>>>, IHasMetaAttribute {
 	/**
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.
