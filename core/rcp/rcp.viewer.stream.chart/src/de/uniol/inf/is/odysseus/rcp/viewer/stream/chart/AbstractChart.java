@@ -33,8 +33,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamElementListener;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public abstract class AbstractChart extends ViewPart implements IAttributesChangeable, IChartSettingChangeable, IStreamElementListener<Object> {
@@ -110,29 +108,6 @@ public abstract class AbstractChart extends ViewPart implements IAttributesChang
 			attributes = SDFMetaAttributeList.union(attributes, source.getMetaAttributeSchema());
 		}
 		return attributes;
-	}
-
-	private SDFDatatype getAccordingSDFDataType(Class<?> returnType) {
-		if (returnType.equals(Integer.class) || returnType.equals(int.class)) {
-			return SDFDatatypeFactory.getDatatype("Integer");
-		}
-		if (returnType.equals(Double.class) || returnType.equals(double.class)) {
-			return SDFDatatypeFactory.getDatatype("Double");
-		}
-		if (returnType.equals(Long.class) || returnType.equals(long.class)) {
-			return SDFDatatypeFactory.getDatatype("Long");
-		}
-		if (returnType.equals(PointInTime.class)) {
-			return SDFDatatypeFactory.getDatatype("PointInTime");
-		}
-		return null;
-	}
-
-	private boolean isCorrectReturnType(Class<?> returnType) {
-		if (getAccordingSDFDataType(returnType) != null) {
-			return true;
-		}
-		return false;
 	}
 
 	protected boolean isAllowedDataType(String datatype) {
