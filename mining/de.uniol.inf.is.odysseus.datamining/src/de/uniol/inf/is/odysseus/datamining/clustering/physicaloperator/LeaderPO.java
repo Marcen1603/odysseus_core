@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject;
 import de.uniol.inf.is.odysseus.datamining.clustering.LeaderCluster;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> {
 
@@ -44,30 +43,12 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 
 		transferTuple(tuple);
 		// gibt eine Liste der Cluster auf Port 1 aus
-		transfer(createRelationalClusterList(), 1);
+		transferClusters(clusters);
 	}
 
 	
 
-	private ArrayList<RelationalTuple<T>> createRelationalClusterList() {
-		ArrayList<RelationalTuple<T>> relationalClusterList = new ArrayList<RelationalTuple<T>>();
-		for (LeaderCluster<T> cluster : clusters) {
-			relationalClusterList.add(createRelationalCluster(cluster));
-		}
-		return relationalClusterList;
-	}
-
-	private RelationalTuple<T> createRelationalCluster(LeaderCluster<T> cluster) {
-
-		Object[] attributes = new Object[cluster.getCentre()
-				.getClusterAttributeCount() + 2];
-		attributes[0] = cluster.getId();
-		attributes[1] = cluster.getClusteringFeature().getCount();
-		System.arraycopy(cluster.getCentre().getAttributes(), 0, attributes, 2,
-				attributes.length - 2);
-
-		return new RelationalTuple<T>(attributes);
-	}
+	
 
 	private void assignToCluster(IClusteringObject<T> tuple) {
 

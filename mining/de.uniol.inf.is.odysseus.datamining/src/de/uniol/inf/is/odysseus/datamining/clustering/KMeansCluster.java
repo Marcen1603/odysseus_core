@@ -13,7 +13,7 @@ public class KMeansCluster<T extends IMetaAttribute> extends AbstractCluster<T> 
 	@Override
 	public IClusteringObject<T> getCentre() {
 
-		return new RelationalTupleWrapper<T>( new RelationalTuple<T>(clusteringFeature.getMean()),getId());
+		return new RelationalClusteringObject<T>( new RelationalTuple<T>(clusteringFeature.getMean()),getId());
 	}
 	
 	private KMeansCluster(KMeansCluster<T> copy){

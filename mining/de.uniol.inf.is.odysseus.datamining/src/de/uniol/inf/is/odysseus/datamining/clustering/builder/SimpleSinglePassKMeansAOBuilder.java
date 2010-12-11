@@ -9,8 +9,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class SimpleSinglePassKMeansAOBuilder extends
-		AbstractDataMiningAOBuilder {
+		AbstractClusteringAOBuilder {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6320176622859137201L;
 	private static final String CLUSTERCOUNT = "CLUSTERCOUNT";
 	private IntegerParameter clusterCount;
 	
@@ -35,9 +39,11 @@ public class SimpleSinglePassKMeansAOBuilder extends
 
 	@Override
 	protected boolean internalValidation() {
-		//TODO buffersize > clusterCount
 		if(clusterCount.getValue() <= 0){
 			addError(new AttributeOutOfRangeException(clusterCount.getName(), "has to be greater then zero"));
+			return false;
+		} else if(bufferSize.getValue() < clusterCount.getValue()){
+			addError(new AttributeOutOfRangeException(bufferSize.getName(), "has to be equal or greater then the value of "+clusterCount.getName()));
 			return false;
 		}
 		return super.internalValidation();

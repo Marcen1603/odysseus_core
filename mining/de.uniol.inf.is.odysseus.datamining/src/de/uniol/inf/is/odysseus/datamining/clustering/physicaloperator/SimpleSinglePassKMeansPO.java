@@ -44,6 +44,7 @@ public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends Abstract
 			}
 			kMeans.cluster(buffer);
 			transferTuples(buffer);
+			transferClusters(kMeans.getClusterList());
 			buffer.clear();
 		}
 		

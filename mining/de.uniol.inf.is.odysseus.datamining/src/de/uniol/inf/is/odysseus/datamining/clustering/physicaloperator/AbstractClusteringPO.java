@@ -8,7 +8,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster;
 import de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject;
 import de.uniol.inf.is.odysseus.datamining.clustering.IDissimilarity;
-import de.uniol.inf.is.odysseus.datamining.clustering.RelationalTupleWrapper;
+import de.uniol.inf.is.odysseus.datamining.clustering.RelationalClusteringObject;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
@@ -65,7 +65,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	}
 
 	protected void process_next(RelationalTuple<T> object, int port) {
-		IClusteringObject<T> tuple = new RelationalTupleWrapper<T>(object,
+		IClusteringObject<T> tuple = new RelationalClusteringObject<T>(object,
 				restrictList);
 		process_next(tuple, port);
 	}
@@ -74,8 +74,8 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 		transfer(object.getLabeledTuple(), ELEMENT_PORT);
 	}
 
-	protected void transferTuples(List<IClusteringObject<T>> objects) {
-		Iterator<IClusteringObject<T>> iter = objects.iterator();
+	protected void transferTuples(List<? extends IClusteringObject<T>> objects) {
+		Iterator<? extends IClusteringObject<T>> iter = objects.iterator();
 		ArrayList<RelationalTuple<T>> list = new ArrayList<RelationalTuple<T>>();
 		while (iter.hasNext()) {
 			list.add(iter.next().getLabeledTuple());
@@ -83,6 +83,19 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 		transfer(list, ELEMENT_PORT);
 	}
 
+	protected void transferCluster(AbstractCluster<T> cluster){
+		transfer(cluster.getRelationalCluster(), CLUSTER_PORT);
+	}
+	
+	protected void transferClusters(List<? extends AbstractCluster<T>> clusters){
+		Iterator<? extends AbstractCluster<T>> iter = clusters.iterator();
+		ArrayList<RelationalTuple<T>> list = new ArrayList<RelationalTuple<T>>();
+		while (iter.hasNext()) {
+			list.add(iter.next().getRelationalCluster());
+		}
+		transfer(list, CLUSTER_PORT);
+	}
+	
 	protected abstract void process_next(IClusteringObject<T> object, int port);
 
 	public static <U extends IMetaAttribute, K extends AbstractCluster<U>> K getMinCluster(

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.datamining.clustering.builder;
 
-import de.uniol.inf.is.odysseus.datamining.builder.AbstractDataMiningAOBuilder;
 import de.uniol.inf.is.odysseus.datamining.builder.AttributeOutOfRangeException;
 import de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator.LeaderAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -8,7 +7,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.DirectParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class LeaderAOBuilder extends AbstractDataMiningAOBuilder{
+public class LeaderAOBuilder extends AbstractClusteringAOBuilder{
 
 	
 	
