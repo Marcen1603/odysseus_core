@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Label;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.State;
+import de.uniol.inf.is.odysseus.cep.metamodel.State;
 
 /**
  * This abstract class defines a state.

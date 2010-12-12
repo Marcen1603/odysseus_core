@@ -6,8 +6,9 @@ import org.eclipse.draw2d.AbsoluteBendpoint;
 import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.geometry.Point;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.EAction;
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Transition;
+import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
+import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
+
 
 /**
  * This class defines an transition loop in an automata.
@@ -16,8 +17,8 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Transition;
  */
 public class TransitionLoop extends AbstractTransition {
 
-	private final int MAX_BENDPOINTS = 3;
-	private final int BENDPOINT_Y_SPACING = 20;
+	private static final int MAX_BENDPOINTS = 3;
+	private static final int BENDPOINT_Y_SPACING = 20;
 
 	private ArrayList<AbsoluteBendpoint> list;
 

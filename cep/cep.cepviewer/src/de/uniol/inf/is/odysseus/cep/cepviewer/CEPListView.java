@@ -4,21 +4,21 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstancesTestData;
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
-//import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstancesTestData;
-//import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
-//import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+//import de.uniol.inf.is.odysseus.cep.epa.event.CEPEvent;
+//import de.uniol.inf.is.odysseus.cep.epa.event.CEPEventAgent;
+//import de.uniol.inf.is.odysseus.cep.epa.event.ICEPEventListener;
 
 /**
  * This class defines the list view.
@@ -29,10 +29,7 @@ public class CEPListView extends ViewPart {
 
 	// The id of this view.
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.listview";
-
-	// This variable holds the test data for the list view.
-	private StateMachineInstancesTestData testdata = new StateMachineInstancesTestData();
-
+	
 	// These are widgets for the list view.
 	private TabFolder tabMenu;
 	private NormalTreeList normalList;
@@ -95,43 +92,29 @@ public class CEPListView extends ViewPart {
 		this.infoLabel = new Label(parent, SWT.CENTER);
 		this.infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.END, true,
 				false));
-//		setInfoData();
-
-		// add the test data
-		addStateMaschine();
+		setInfoData();
 	}
 
 	/**
-	 * This method adds the state machines to test view
+	 * This method adds the state machines
 	 */
-	public void addStateMaschine() {
-		for (StateMachineInstance instance : this.testdata.getMachines()) {
-			this.normalList.addStateMachineInstance(instance);
-			this.queryList.addStateMachineInstance(instance);
-			this.statusList.addStateMachineInstance(instance);
-			setInfoData();
-		}
-	}
-	
-//	@SuppressWarnings("unchecked")
-//	public void addStateMaschine(CepOperator operator) {
-//		operator.addCEPEventListener(new CEPEventListener() {
-//			public void eventOccurred(CEPEvent event) {
-//				// event handling
+	@SuppressWarnings("unchecked")
+	public void addStateMaschine(CepOperator operator) {
+//		CEPEventAgent.getInstance().addCEPEventListener(new ICEPEventListener() {
+//			public void cepEventOccurred(CEPEvent event) {
+//				// TODO event handling
 //			}
 //		});
-//		for (Object instance : operator.getInstances()) {
-//			normalList.addStateMachineInstance((StateMachineInstance) instance);
-//			queryList.addStateMachineInstance((StateMachineInstance) instance);
-//			statusList.addStateMachineInstance((StateMachineInstance) instance);
-//		}
-//		setInfoData();
-//	}
+		normalList.addToTree(operator);
+		queryList.addToTree(operator);
+		statusList.addToTree(operator);
+		setInfoData();
+	}
 
 	/**
 	 * This method should update the infoLabel.
 	 */
-	private void setInfoData() {
+	public void setInfoData() {
 		String infotext = this.statusList.getNumberOfRunning() + " running ; "
 				+ this.statusList.getNumberOfFinished() + " finished ; "
 				+ this.statusList.getNumberOfAborted() + " aborted";
@@ -139,9 +122,17 @@ public class CEPListView extends ViewPart {
 		this.infoLabel.pack();
 	}
 
+	/**
+	 * @deprecated for testing purpose
+	 */
 	public void setInfoData(String string) {
 		this.infoLabel.setText(string);
 		this.infoLabel.pack();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void removeMachine(CepOperator operator) {
+		// TODO
 	}
 	
 	/**

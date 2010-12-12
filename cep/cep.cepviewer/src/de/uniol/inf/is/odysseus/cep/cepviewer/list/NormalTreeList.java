@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeItem;
 
-//import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
-
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 /**
  * This class defines the normal tree list.
@@ -25,20 +25,23 @@ public class NormalTreeList extends AbstractTreeList {
 	public NormalTreeList(Composite parent, int style) {
 		super(parent, style);
 	}
-	
-	/**
-	 * This method adds a new tree item to the tree list.
-	 * 
-	 * @param stateMachineInstance
-	 *            is an state machine instance
-	 */
-	@Override
-	public void addStateMachineInstance(StateMachineInstance instance) {
-		this.getMachineList().add(instance);
-		StateTreeItem item = new StateTreeItem(this.getTree(), SWT.NONE, instance);
-//		item.setText(instance.getMachine().getString() + ": " + instance.getInstanceId());
-		item.setText(""+instance.hashCode());
-		this.setStatusImage(item);
+
+	@SuppressWarnings("unchecked")
+	public boolean addToTree(CepOperator operator) {
+		boolean inserted = false;
+		for (Object instance : operator.getInstances()) {
+			inserted = this.addToTree((StateMachineInstance) instance);
+		}
+		return inserted;
 	}
 
+	@SuppressWarnings("unchecked")
+	public boolean addToTree(StateMachineInstance instance) {
+		TreeItem item = new TreeItem(this.getTree(), SWT.NONE);
+		item.setData("Instance", instance);
+		// TODO same text for two instances of differnt machines
+		item.setText("Instance " + instance.hashCode());
+		this.setStatusImage(item);
+		return true;
+	}
 }

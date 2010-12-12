@@ -5,10 +5,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.ICEPViewListener;
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 /**
  * This class defines the query view which should hold the information of the
@@ -21,6 +18,8 @@ public class CEPQueryView extends ViewPart {
 	// The id of this view.
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.queryview";
 
+	private Label label;
+	
 	/**
 	 * This is the constructor.
 	 */
@@ -37,15 +36,8 @@ public class CEPQueryView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		// just show its name.
-		final Label label = new Label(parent, SWT.NONE);
+		this.label = new Label(parent, SWT.NONE);
 		label.setText("QueryView");
-		CEPViewAgent.getInstance().addCEPEventListener(new ICEPViewListener() {
-			public void cepEventOccurred(CEPViewEvent event) {
-				if (event.getType() == CEPViewEvent.ITEM_SELECTED) {
-					label.setText("" + ((StateMachineInstance) event.getContent()).getInstanceId());
-				}
-			}
-		});
 	}
 
 	/**
@@ -53,6 +45,11 @@ public class CEPQueryView extends ViewPart {
 	 */
 	@Override
 	public void setFocus() {
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setContent(StateMachineInstance instance) {
+		this.label.setText("" + instance.hashCode());
 	}
 
 }

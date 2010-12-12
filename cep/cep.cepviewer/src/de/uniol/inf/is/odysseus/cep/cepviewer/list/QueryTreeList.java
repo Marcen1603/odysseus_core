@@ -4,9 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
-
-//import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 /**
  * This class defines the query tree list.
@@ -15,6 +14,8 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
  */
 public class QueryTreeList extends AbstractTreeList {
 
+	private static int machine = 0;
+	
 	/**
 	 * This is the constructor.
 	 * 
@@ -27,46 +28,46 @@ public class QueryTreeList extends AbstractTreeList {
 		super(parent, style);
 	}
 
-	/**
-	 * This method adds a new tree item to the tree list. If there is an state
-	 * machine instance from the same machine, they are grouped together. Else a
-	 * new categorie for the machine is created.
-	 * 
-	 * @param stateMachineInstance
-	 *            is an state machine instance
-	 */
-	@Override
-	public void addStateMachineInstance(
-			StateMachineInstance stateMachineInstance) {
-
+	@SuppressWarnings("unchecked")
+	public boolean addToTree(CepOperator operator) {
 		// if there is no item in the tree
 		if (this.getTree().getItemCount() == 0) {
-			StateTreeItem item = new StateTreeItem(this.getTree(), SWT.NONE,
-					stateMachineInstance.getMachine());
-			item.setText(stateMachineInstance.getMachine().getString());
+			TreeItem item = new TreeItem(this.getTree(), SWT.NONE);
+			item.setData("Machine", operator);
+			item.setText("Machine " + QueryTreeList.machine);
+			QueryTreeList.machine++;
 		} else {
-			boolean inserted = false;
-			// if the machine of the instance was added before add the new item
-			// into the matching tree item
-			for (TreeItem statusItem : this.getTree().getItems()) {
-				if (statusItem.getText().equals(
-						stateMachineInstance.getMachine().getString())) {
-					StateTreeItem item = new StateTreeItem(statusItem,
-							SWT.NONE, stateMachineInstance);
-					item.setText(stateMachineInstance.getMachine().getString()
-							+ ": " + stateMachineInstance.getInstanceId());
+			for(Object instance : operator.getInstances()) {
+				if(!this.addToTree((StateMachineInstance) instance)) {
+					TreeItem item = new TreeItem(this.getTree(), SWT.NONE);
+					item.setData("Machine", operator);
+					item.setText("Machine " + QueryTreeList.machine);
+					QueryTreeList.machine++;
+					TreeItem newItem = new TreeItem(item, SWT.NONE);
+					newItem.setData("Instance", instance);
+					newItem.setText("Instance " + instance.hashCode());
 					this.setStatusImage(item);
-					inserted = true;
+					return true;
 				}
 			}
-			// if the machine of the instance was not found in the tree, add a new 
-			// tree item for this machine and add the tree item of this instance
-			if (!inserted) {
-				StateTreeItem item = new StateTreeItem(this.getTree(),
-						SWT.NONE, stateMachineInstance.getMachine());
-				item.setText(stateMachineInstance.getMachine().getString());
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean addToTree(StateMachineInstance instance) {
+		for (TreeItem item : this.getTree().getItems()) {
+			CepOperator nextOp = (CepOperator) item.getData("Machine");
+			for(Object next : nextOp.getInstances()) {
+				if(((StateMachineInstance) next).equals(instance)) {
+					TreeItem newItem = new TreeItem(item,SWT.NONE);
+					newItem.setData("Instance", next);
+					newItem.setText("Instance " + instance.hashCode());
+					this.setStatusImage(item);
+					return true;
+				}
 			}
 		}
+		return false;
 	}
-
 }

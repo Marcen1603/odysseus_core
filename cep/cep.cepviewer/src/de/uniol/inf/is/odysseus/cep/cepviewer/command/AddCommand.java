@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 public class AddCommand extends AbstractHandler implements IHandler {
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		ISelection selection = window.getActivePage().getSelection();
@@ -28,7 +27,6 @@ public class AddCommand extends AbstractHandler implements IHandler {
 			return null;
 		}
 		
-		@SuppressWarnings("unused")
 		CepOperator operator= null;
 		CEPListView view = null; 
 		
@@ -51,9 +49,9 @@ public class AddCommand extends AbstractHandler implements IHandler {
 			
 			if( selectedObject instanceof CepOperator ) {
 				operator = (CepOperator)selectedObject;
-//				view.addStateMaschine(operator);	
+				view.addStateMaschine(operator);	
 			} else {
-				view.setInfoData("No CepOperator found");
+				System.out.println("No CepOperator found");
 			}
 
 		} 

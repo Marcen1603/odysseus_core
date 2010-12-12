@@ -4,10 +4,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.StateMachineInstance;
-import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Status;
+import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 
-//import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 
 /**
@@ -18,9 +17,9 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.testdata.Status;
 public class StatusTreeList extends AbstractTreeList {
 
 	// categories of this tree list
-	private StateTreeItem itemR;
-	private StateTreeItem itemF;
-	private StateTreeItem itemA;
+	private TreeItem itemR;
+	private TreeItem itemF;
+	private TreeItem itemA;
 
 	/**
 	 * This is the constructor.
@@ -32,35 +31,65 @@ public class StatusTreeList extends AbstractTreeList {
 	 */
 	public StatusTreeList(Composite parent, int style) {
 		super(parent, style);
-		itemR = new StateTreeItem(this.getTree(), SWT.NONE);
-		itemR.setText(Status.RUNNING.toString());
-		itemF = new StateTreeItem(this.getTree(), SWT.NONE);
-		itemF.setText(Status.FINISHED.toString());
-		itemA = new StateTreeItem(this.getTree(), SWT.NONE);
-		itemA.setText(Status.ABORTED.toString());
+		itemR = new TreeItem(this.getTree(), SWT.NONE);
+		itemR.setText("Running");
+		itemF = new TreeItem(this.getTree(), SWT.NONE);
+		itemF.setText("Finished");
+		itemA = new TreeItem(this.getTree(), SWT.NONE);
+		itemA.setText("Aborted");
 	}
 
-	/**
-	 * This method adds a new tree item to the tree list.
-	 * 
-	 * @param stateMachineInstance
-	 *            is an state machine instance
-	 */
-	@Override
-	public void addStateMachineInstance(StateMachineInstance stateMachineInstance) {
-		Status status = null;
-		if(stateMachineInstance.getCurrentState().isAccepting()) {
-			status = Status.FINISHED;
-		} else if(!stateMachineInstance.getCurrentState().isAccepting()) {
-			status = Status.RUNNING;
+//	public void addToTree(StateMachineInstance stateMachineInstance) {
+//		Status status = null;
+//		if(stateMachineInstance.getCurrentState().isAccepting()) {
+//			status = Status.FINISHED;
+//		} else if(!stateMachineInstance.getCurrentState().isAccepting()) {
+//			status = Status.RUNNING;
+//		}
+//		for (TreeItem statusItem : this.getTree().getItems()) {
+//			if (statusItem.getText().contains(status.toString())) {
+//				StateTreeItem item = new StateTreeItem(statusItem, SWT.NONE, stateMachineInstance);
+//				item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());
+//				this.setStatusImage(item);
+//			}
+//		}
+//	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean addToTree(CepOperator operator) {
+		boolean inserted = false;
+		for (Object instance : operator.getInstances()) {
+			inserted = this.addToTree((StateMachineInstance) instance);
 		}
-		for (TreeItem statusItem : this.getTree().getItems()) {
-			if (statusItem.getText().contains(status.toString())) {
-				StateTreeItem item = new StateTreeItem(statusItem, SWT.NONE, stateMachineInstance);
-				item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());
-				this.setStatusImage(item);
-			}
-		}
+		return inserted;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean addToTree(StateMachineInstance instance) {
+		if(!instance.getCurrentState().isAccepting()) {
+			TreeItem item = new TreeItem(itemR, SWT.NONE);
+			item.setData("Instance", instance);
+			// TODO same text for two instances of differnt machines
+			item.setText("Instance " + instance.hashCode());
+			this.setStatusImage(item);
+			return true;
+		} else if(instance.getCurrentState().isAccepting()) {
+			TreeItem item = new TreeItem(itemF, SWT.NONE);
+			item.setData("Instance", instance);
+			// TODO same text for two instances of differnt machines
+			item.setText("Instance " + instance.hashCode());
+			this.setStatusImage(item);
+			return true;
+		} 
+		// TODO in case the instance is aborted...
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void changeToStatus(TreeItem item) {
+		Object instance = item.getData("Instance");
+		item.dispose();
+		this.addToTree((StateMachineInstance) instance);
 	}
 	
 	/**

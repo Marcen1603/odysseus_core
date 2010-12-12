@@ -5,9 +5,10 @@ import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.MouseMotionListener;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
+import de.uniol.inf.is.odysseus.cep.cepviewer.CEPStateView;
 
 /**
  * This class defines the drag and drop listener used by the automata view.
@@ -22,6 +23,8 @@ public class DragListener extends MouseMotionListener.Stub implements
 	// is the state that is currently draged
 	private AbstractState draggingState;
 
+	private static final String STATE_VIEW_ID = "de.uniol.inf.is.odysseus.cep.cepviewer.queryview";
+	
 	/**
 	 * This is the constructor.
 	 * 
@@ -80,12 +83,18 @@ public class DragListener extends MouseMotionListener.Stub implements
 			this.initialPoint = event.getLocation();
 			this.draggingState = (AbstractState) event.getSource();
 		}
-		
-		// notify the CEPStateView to show the details of the selected state
-		try{
-		CEPViewAgent.getInstance().fireCEPEvent(CEPViewEvent.STATE_SELECTED, (AbstractState) event.getSource());
-		}catch(Exception e) {
-			e.printStackTrace();
+		for (IViewReference a : PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage()
+				.getViewReferences()) {
+			if (a.getId().equals(STATE_VIEW_ID)) {
+				if(event.getSource() instanceof AbstractState) {
+					((CEPStateView) a.getView(false)).setContent((AbstractState) event.getSource());
+				} else if(event.getSource() instanceof AbstractTransition) {
+					((CEPStateView) a.getView(false)).setContent((AbstractTransition) event.getSource());
+				}
+			} else {
+				System.out.println(STATE_VIEW_ID + " not found");
+			}
 		}
 	}
 

@@ -15,10 +15,10 @@ import org.eclipse.draw2d.geometry.Rectangle;
 public class Anchor extends AbstractConnectionAnchor {
 
 	// holds the location of this anchor
-	Point place;
+	protected Point place;
 
 	/**
-	 * This ois the constructor.
+	 * This is the constructor.
 	 * 
 	 * @param owner
 	 */

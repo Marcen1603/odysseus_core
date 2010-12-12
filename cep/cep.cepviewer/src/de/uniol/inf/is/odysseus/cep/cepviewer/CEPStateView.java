@@ -5,10 +5,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewAgent;
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.CEPViewEvent;
-import de.uniol.inf.is.odysseus.cep.cepviewer.event.ICEPViewListener;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractTransition;
 
 /**
  * This class defines the state view which should hold the information of the
@@ -18,6 +16,8 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractState;
  */
 public class CEPStateView extends ViewPart {
 
+	private Label label;
+	
 	// The id of this view.
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.stateview";
 
@@ -37,16 +37,8 @@ public class CEPStateView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		// just show its name.
-		final Label label = new Label(parent, SWT.NONE);
-		label.setText("StateView");
-		CEPViewAgent.getInstance().addCEPEventListener(new ICEPViewListener() {
-			public void cepEventOccurred(CEPViewEvent event) {
-				if (event.getType() == CEPViewEvent.STATE_SELECTED) {
-					label.setText(((AbstractState) event.getContent())
-							.getName() + "");
-				}
-			}
-		});
+		this.label = new Label(parent, SWT.NONE);
+		this.label.setText("StateView");
 	}
 
 	/**
@@ -54,6 +46,18 @@ public class CEPStateView extends ViewPart {
 	 */
 	@Override
 	public void setFocus() {
+	}
+	
+	public void setContent(AbstractState state) {
+		if(state != null) {
+			this.label.setText(state.getName() + "");
+		}
+	}
+	
+	public void setContent(AbstractTransition transition) {
+		if(transition != null) {
+			this.label.setText(transition.getName() + "");
+		}
 	}
 
 }
