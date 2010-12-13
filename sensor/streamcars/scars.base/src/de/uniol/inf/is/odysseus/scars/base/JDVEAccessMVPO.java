@@ -213,7 +213,7 @@ class JDVEData<M extends IProbability> {
 	public MVRelationalTuple<M> parseList(SDFAttribute schema, ByteBuffer bb) {
 		// int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
 		// System.out.println(count);
-		int count = 50;
+		int count = bb.getInt();
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 
 		for (int i = 0; i < count; i++) {
