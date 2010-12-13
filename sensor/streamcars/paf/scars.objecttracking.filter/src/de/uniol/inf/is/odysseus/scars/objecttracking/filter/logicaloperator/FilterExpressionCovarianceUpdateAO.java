@@ -12,10 +12,8 @@ public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain 
 	private static final long serialVersionUID = 1L;
 
 	private String expressionString;
-	private String[] restrictedVariables;
 	
-	public FilterExpressionCovarianceUpdateAO()
-	{
+	public FilterExpressionCovarianceUpdateAO() {
 		super();
 
 	}
@@ -23,7 +21,6 @@ public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain 
 	public FilterExpressionCovarianceUpdateAO(FilterExpressionCovarianceUpdateAO<M> copy) {
 		super(copy);
 		this.setExpressionString(copy.getExpressionString());
-		this.setRestrictedVariables(copy.getRestrictedVariables());
 	}
 
 	@Override
@@ -34,20 +31,6 @@ public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain 
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();
-	}
-
-	/**
-	 * @param restrictedVariables the restrictedVariables to set
-	 */
-	public void setRestrictedVariables(String[] restrictedVariables) {
-		this.restrictedVariables = restrictedVariables;
-	}
-
-	/**
-	 * @return the restrictedVariables
-	 */
-	public String[] getRestrictedVariables() {
-		return restrictedVariables;
 	}
 
 	/**

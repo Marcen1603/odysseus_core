@@ -89,9 +89,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 				info.tupleIndexPath.setTupleObject(val);
 				i += 1;
 			}
-
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")

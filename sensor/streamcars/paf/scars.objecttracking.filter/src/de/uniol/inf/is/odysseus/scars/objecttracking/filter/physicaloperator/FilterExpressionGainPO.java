@@ -79,6 +79,7 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 		return object;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void compute(MVRelationalTuple<M> root, IConnection con) {
 		
 		for(IStreamCarsExpressionVariable variable : expression.getVariables()) {
@@ -103,7 +104,7 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 		expression.evaluate();
 		double[][] gain = (double[][])expression.getValue();
 		MVRelationalTuple<M> predictedCar = (MVRelationalTuple<M>)con.getRightPath().getTupleObject();
-		predictedCar.getMetadata().setGain(gain);
+		predictedCar.getMetadata().setRestrictedGain(gain, getRestrictedVariables());
 	}
 	
 	public CovarianceHelper getCovHelper() {
