@@ -14,16 +14,13 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 
 /**
  * @author dtwumasi
  *
  */
 public class FilterExpressionEstimateUpdatePO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractFilterExpressionPO<M> {
-
-	
-	SDFAttributeList inputSchema;
 
 	public FilterExpressionEstimateUpdatePO() {
 		super();
@@ -38,7 +35,6 @@ public class FilterExpressionEstimateUpdatePO<M extends IProbability & IObjectTr
 	protected void process_open() throws OpenFailedException {
 
 		super.process_open();
-		inputSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema();
 
 	}
 

@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpress
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
@@ -18,6 +19,8 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 	
 	private SchemaIndexPath predictedObjectListSIPath;
 	private SchemaIndexPath scannedObjectListSIPath;
+	
+	private SDFAttributeList inputSchema;
 	
 	private SchemaHelper schemaHelper;
 	
@@ -43,9 +46,12 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 		this.setScannedObjectListSIPath(copy.getScannedObjectListSIPath().clone());
 		// TODO clone?
 		this.setExpression(copy.getExpression());
-		// TODO clone
-		this.setRestrictedVariables(copy.getRestrictedVariables().clone());
 		
+		String [] restrictedVariablesCopy = null;
+		System.arraycopy(copy.getRestrictedVariables(), 0, restrictedVariablesCopy, 0,copy.getRestrictedVariables().length );
+		this.setRestrictedVariables(restrictedVariablesCopy);
+		
+		this.setInputSchema(copy.getInputSchema().clone());
 	}
 	
 	protected void process_open() throws OpenFailedException {
@@ -57,6 +63,8 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 
 		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.getScannedObjectListPath()));
 		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.getPredictedObjectListPath()));
+		
+		this.setInputSchema(this.getSubscribedToSource(0).getTarget().getOutputSchema());
 	}
 
 	@Override
@@ -136,5 +144,19 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 	 */
 	public String[] getRestrictedVariables() {
 		return restrictedVariables;
+	}
+
+	/**
+	 * @param inputSchema the inputSchema to set
+	 */
+	public void setInputSchema(SDFAttributeList inputSchema) {
+		this.inputSchema = inputSchema;
+	}
+
+	/**
+	 * @return the inputSchema
+	 */
+	public SDFAttributeList getInputSchema() {
+		return inputSchema;
 	}
 }

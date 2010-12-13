@@ -30,34 +30,24 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 	
 	private CovarianceHelper covHelper;
 	
-	private String[] restrictedVariables;
-	
-	
 	public FilterExpressionGainPO() {
 		super();
 	}
 
 	public FilterExpressionGainPO(FilterExpressionGainPO<M> copy) {
 		super(copy);
-		this.setRestrictedVariables(copy.getRestrictedVariables().clone());
+		//TODO clone?
 		this.setCovHelper(copy.getCovHelper());
+		
 		this.setPredictedTupleIndexPath(copy.getPredictedTupleIndexPath().clone());
 		this.setScannedTupleIndexPath(copy.getScannedTupleIndexPath().clone());
 		
 	}
 
-	public void setRestrictedVariables(String[] restrictedVariables) {
-		this.restrictedVariables = restrictedVariables;
-	}
-	
-	public String[] getRestrictedVariables() {
-		return restrictedVariables;
-	}
-
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		covHelper = new CovarianceHelper(this.restrictedVariables, this.getOutputSchema());
+		covHelper = new CovarianceHelper(this.getRestrictedVariables(), this.getOutputSchema());
 	}
 
 	@Override
@@ -72,6 +62,8 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+		
+		// latency
 		object.getMetadata().setObjectTrackingLatencyStart("Filter Gain");
 		
 		scannedTupleIndexPath = this.getScannedObjectListSIPath().toTupleIndexPath(object);
@@ -81,7 +73,9 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 			compute(object, connected);
 		}
 		
+		// latency
 		object.getMetadata().setObjectTrackingLatencyEnd("Filter Gain");
+		
 		return object;
 	}
 	

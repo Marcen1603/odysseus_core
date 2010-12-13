@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceHelper;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
@@ -16,9 +17,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLat
  *
  */
 public class FilterExpressionCovarianceUpdatePO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractFilterExpressionPO<M> {
-
+	
+	
 	private CovarianceHelper covOldHelper;
-	private CovarianceHelper covNewHelper;
 	
 	public FilterExpressionCovarianceUpdatePO() {
 		super();
@@ -28,9 +29,17 @@ public class FilterExpressionCovarianceUpdatePO<M extends IProbability & IObject
 		super(copy);
 		//TODO clone?
 		this.setCovOldHelper(copy.getCovOldHelper());
-		this.setCovNewHelper(copy.getCovOldHelper());
 	}
 
+	@Override
+	protected void process_open() throws OpenFailedException {
+
+		super.process_open();
+		covOldHelper = new CovarianceHelper(this.getRestrictedVariables(), this.getOutputSchema());
+		
+	}
+	
+	
 	public void compute(IConnection connected, MVRelationalTuple<M> tuple) {
 	
 	}
@@ -79,18 +88,5 @@ public class FilterExpressionCovarianceUpdatePO<M extends IProbability & IObject
 		return covOldHelper;
 	}
 
-	/**
-	 * @param covNewHelper the covNewHelper to set
-	 */
-	public void setCovNewHelper(CovarianceHelper covNewHelper) {
-		this.covNewHelper = covNewHelper;
-	}
-
-	/**
-	 * @return the covNewHelper
-	 */
-	public CovarianceHelper getCovNewHelper() {
-		return covNewHelper;
-	}
 
 }
