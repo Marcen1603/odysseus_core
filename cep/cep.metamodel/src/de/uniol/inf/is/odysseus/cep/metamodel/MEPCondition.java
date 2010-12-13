@@ -36,9 +36,9 @@ public abstract class MEPCondition extends AbstractCondition{
 
 	@Override
 	public void setLabel(String label) {
-		super.setLabel((label == null || label.length() == 0) ? "1" : label);
+		super.setLabel((label == null || label.length() == 0) ? "true" : label);
 		try {
-			expression = MepHelper.initMEPExpressionFromLabel(label, symbolTable);
+			expression = MepHelper.initMEPExpressionFromLabel(getLabel(), symbolTable);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -89,7 +89,7 @@ public abstract class MEPCondition extends AbstractCondition{
 	@Override
 	public void appendAND(String fullExpression) {
 		String curLabel = getLabel();
-		if (curLabel == null || curLabel.length() == 0 || "1".equals(curLabel)) {
+		if (curLabel == null || curLabel.length() == 0 || "true".equals(curLabel)) {
 			setLabel(fullExpression);
 		} else {
 			setLabel(curLabel + " && " + fullExpression);
@@ -99,7 +99,7 @@ public abstract class MEPCondition extends AbstractCondition{
 	@Override
 	public void appendOR(String fullExpression) {
 		String curLabel = getLabel();
-		if (curLabel == null || curLabel.length() == 0 || "1".equals(curLabel)) {
+		if (curLabel == null || curLabel.length() == 0 || "true".equals(curLabel)) {
 			setLabel(fullExpression);
 		} else {
 			setLabel(curLabel + " || " + fullExpression);
@@ -123,7 +123,7 @@ public abstract class MEPCondition extends AbstractCondition{
 	
 	@Override
 	public String toString() {
-		String ret = (getLabel().equals("1")?"true":getLabel())+(doEventTypeChecking()?" AND type == "+getEventType():"");
+		String ret = (getLabel().equals("1")?"true":getLabel())+(doEventTypeChecking()?" && type == "+getEventType():"");
 		return negate? "!("+ret+")":ret;
 	}
 
