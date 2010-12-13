@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -28,13 +28,16 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 
 	private static final String DEFAULT_MESSAGE = "Changes the attributes that are shown by the chart";
 	private Table table;	
-	private List<IViewableAttribute<T>> activatedAttributes;	
+	private List<IViewableAttribute<T>> activatedAttributes = new ArrayList<IViewableAttribute<T>>();	
 	private IAttributesChangeable<T> changeable;
 	private Button okButton;
 
 	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable<T> changeable) {
 		super(parentShell);
-		Collections.copy(this.activatedAttributes, changeable.getChoosenAttributes());	
+		//Collections.copy(this.activatedAttributes, changeable.getChoosenAttributes());
+		for(IViewableAttribute<T> att : changeable.getChoosenAttributes()){
+			this.activatedAttributes.add(att);
+		}
 		this.changeable = changeable;
 	}
 

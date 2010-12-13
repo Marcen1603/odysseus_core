@@ -28,6 +28,11 @@ public class ViewableSDFAttribute<T> implements IViewableAttribute<T>{
 		return tuple.getAttribute(index);		
 	}
 	
+	@Override
+	public String toString() {
+		return getName();
+	}
+	
 	
 	
 	

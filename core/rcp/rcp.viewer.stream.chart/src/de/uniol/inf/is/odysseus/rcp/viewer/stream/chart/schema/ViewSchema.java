@@ -41,7 +41,7 @@ public class ViewSchema<T> {
 		for (SDFMetaAttribute m : this.metadataSchema) {
 			for (Method method : m.getMetaAttributeClass().getMethods()) {
 				IViewableAttribute<T> attribute = new ViewableMetaAttribute<T>(m, method);
-				if (isAllowedDataType(attribute.getSDFDatatype())) {
+				if (method.getParameterTypes().length==0 && isAllowedDataType(attribute.getSDFDatatype())) {
 					viewableAttributes.add(new ViewableMetaAttribute<T>(m, method));
 				}
 			}
@@ -57,13 +57,25 @@ public class ViewSchema<T> {
 		return values;
 	}
 
+	
 	public List<T> convertToChoosenFormat(List<T> objects) {
-		List<T> restricted = new ArrayList<T>(objects);
+		List<T> restricted = new ArrayList<T>();
 
 		for (IViewableAttribute<?> viewable : this.viewableAttributes) {
 			int index = this.choosenAttributes.indexOf(viewable);
-			if (index >= 0) {
-				restricted.remove(index);
+			if (index >= 0) {			
+				T value = objects.get(index);
+				
+				
+				// TODO: noch "unsauber"
+				if(value instanceof Integer){
+					value = (T) new Double(((Integer)value).doubleValue());
+				}else{
+					if(value instanceof Long){
+						value = (T) new Double(((Long)value).doubleValue());
+					}
+				}
+				restricted.add(value);
 			}
 		}
 		return restricted;
@@ -72,7 +84,8 @@ public class ViewSchema<T> {
 	protected boolean isAllowedDataType(SDFDatatype datatype) {
 		if (datatype.equals(SDFDatatypeFactory.getDatatype("Double")) || datatype.equals(SDFDatatypeFactory.getDatatype("Long"))
 				|| datatype.equals(SDFDatatypeFactory.getDatatype("Integer")) || datatype.equals(SDFDatatypeFactory.getDatatype("StartTimestamp"))
-				|| datatype.equals(SDFDatatypeFactory.getDatatype("EndTimestamp")) || datatype.equals(SDFDatatypeFactory.getDatatype("Timestamp"))) {
+				|| datatype.equals(SDFDatatypeFactory.getDatatype("EndTimestamp")) || datatype.equals(SDFDatatypeFactory.getDatatype("Timestamp"))
+				|| datatype.equals(SDFDatatypeFactory.getDatatype("PointInTime"))) {
 			return true;
 		}
 		return false;

@@ -49,12 +49,18 @@ public class ViewableMetaAttribute<T> implements IViewableAttribute<T> {
 	@Override
 	public T evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple) {
 		try {
-			Object result = method.invoke(tuple.getMetadata());			
-			return (T) result;
+			Object value = method.invoke(tuple.getMetadata());			
+			T result = (T) value;
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 
 }
