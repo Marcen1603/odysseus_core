@@ -1653,7 +1653,7 @@ void AssociationGenOp(): {/*@bgen(jjtree) AssociationGenOp */
 /*@egen*/} {/*@bgen(jjtree) AssociationGenOp */
   try {
 /*@egen*/
-  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ")"/*@bgen(jjtree)*/
+  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ( "," Identifier() )? ( "," Identifier() )? ( "," Identifier() )? ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1673,7 +1673,8 @@ void AssociationGenOp(): {/*@bgen(jjtree) AssociationGenOp */
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}
+/*@egen*/
+}
 
 void AssociationEvalOp(): {/*@bgen(jjtree) AssociationEvalOp */
   ASTAssociationEvalOp jjtn000 = new ASTAssociationEvalOp(JJTASSOCIATIONEVALOP);

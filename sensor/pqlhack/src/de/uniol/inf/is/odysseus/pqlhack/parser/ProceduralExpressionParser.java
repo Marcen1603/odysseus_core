@@ -2183,6 +2183,33 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         Identifier();
         jj_consume_token(76);
         Identifier();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 76:
+          jj_consume_token(76);
+          Identifier();
+          break;
+        default:
+          jj_la1[27] = jj_gen;
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 76:
+          jj_consume_token(76);
+          Identifier();
+          break;
+        default:
+          jj_la1[28] = jj_gen;
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 76:
+          jj_consume_token(76);
+          Identifier();
+          break;
+        default:
+          jj_la1[29] = jj_gen;
+          ;
+        }
         jj_consume_token(77);
       } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -2233,7 +2260,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           KeyValueList();
           break;
         default:
-          jj_la1[27] = jj_gen;
+          jj_la1[30] = jj_gen;
           ;
         }
         jj_consume_token(77);
@@ -3135,7 +3162,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[28];
+  static final private int[] jj_la1 = new int[31];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -3145,13 +3172,13 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
       jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0xdc047e20,0xdc047e20,0x6000,0x0,0x0,0x0,0x0,0x0,0x40,0x0,0x0,0x10000,0x0,0x10000,0x400000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0xdc047e20,0xdc047e20,0x6000,0x0,0x0,0x0,0x0,0x0,0x40,0x0,0x0,0x10000,0x0,0x10000,0x400000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x40000000,0x0,0x3fffe27f,0x3fffe27f,0x0,0x40000000,0x40000000,0x0,0x40000000,0x0,0x0,0x0,0x40000000,0x0,0x40000000,0x0,0x40000000,0x40000000,0x0,0x40000000,0x0,0x0,0x0,0x40000000,0x40000000,0x40000000,0x40000000,0x0,};
+      jj_la1_1 = new int[] {0x40000000,0x0,0x3fffe27f,0x3fffe27f,0x0,0x40000000,0x40000000,0x0,0x40000000,0x0,0x0,0x0,0x40000000,0x0,0x40000000,0x0,0x40000000,0x40000000,0x0,0x40000000,0x0,0x0,0x0,0x40000000,0x40000000,0x40000000,0x40000000,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x10100,0x400,0x0,0x0,0x0,0x10000,0x10000,0x1000,0x10000,0x1000,0x0,0x1000,0x10000,0x0,0x10000,0x0,0x10862,0x10862,0x62,0x10800,0x60,0x7c000,0x10000,0x10000,0x10000,0x10000,0x10060,0x1000,};
+      jj_la1_2 = new int[] {0x10100,0x400,0x0,0x0,0x0,0x10000,0x10000,0x1000,0x10000,0x1000,0x0,0x1000,0x10000,0x0,0x10000,0x0,0x10862,0x10862,0x62,0x10800,0x60,0x7c000,0x10000,0x10000,0x10000,0x10000,0x10060,0x1000,0x1000,0x1000,0x1000,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[7];
   static private boolean jj_rescan = false;
@@ -3175,7 +3202,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -3191,7 +3218,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -3209,7 +3236,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -3221,7 +3248,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -3238,7 +3265,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -3249,7 +3276,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -3368,7 +3395,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 28; i++) {
+    for (int i = 0; i < 31; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
