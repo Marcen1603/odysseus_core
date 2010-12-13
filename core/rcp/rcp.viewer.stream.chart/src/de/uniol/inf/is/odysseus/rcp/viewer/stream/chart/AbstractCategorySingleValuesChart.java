@@ -87,7 +87,7 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart<Do
 	}
 	
 	@Override
-	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
 		if (selectAttributes.size() > 0) {
 			return null;
 		}

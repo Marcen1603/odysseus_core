@@ -22,7 +22,7 @@ public abstract class AbstractXYChart extends AbstractChart<Double, IMetaAttribu
 	private int choosenSerie = -1;
 
 	@Override
-	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
 		if (selectAttributes.size() == 2) {
 			return null;
 		}
@@ -168,7 +168,7 @@ public abstract class AbstractXYChart extends AbstractChart<Double, IMetaAttribu
 
 	private List<String> getValues() {
 		List<String> values = new ArrayList<String>();
-		for (IViewableAttribute<Double> a : getViewableAttributes()) {
+		for (IViewableAttribute a : getViewableAttributes()) {
 			values.add(a.getName());
 		}
 		return values;

@@ -12,8 +12,8 @@ public interface IAttributesChangeable<T> {
 	 * @param selectAttributes
 	 * @return
 	 */
-	public String isValidSelection(List<IViewableAttribute<T>> selectAttributes);
-	public List<IViewableAttribute<T>> getViewableAttributes();
-	public List<IViewableAttribute<T>> getChoosenAttributes();
-	public void setChoosenAttributes(List<IViewableAttribute<T>> choosenAttributes);	
+	public String isValidSelection(List<IViewableAttribute> selectAttributes);
+	public List<IViewableAttribute> getViewableAttributes();
+	public List<IViewableAttribute> getChoosenAttributes();
+	public void setChoosenAttributes(List<IViewableAttribute> choosenAttributes);	
 }

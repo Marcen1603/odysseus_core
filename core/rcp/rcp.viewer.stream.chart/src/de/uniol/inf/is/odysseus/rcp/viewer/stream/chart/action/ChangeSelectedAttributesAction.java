@@ -27,7 +27,7 @@ public class ChangeSelectedAttributesAction<T> extends Action {
 		try {			
 			ChangeAttributesDialog<T> dialog = new ChangeAttributesDialog<T>(parentShell, this.changeable);
 			if (dialog.open() == Window.OK) {
-				List<IViewableAttribute<T>> attr = dialog.getSelectedAttributes();
+				List<IViewableAttribute> attr = dialog.getSelectedAttributes();
 				changeable.setChoosenAttributes(attr);
 				changeable.chartSettingsChanged();
 			}

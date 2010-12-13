@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class ViewableSDFAttribute<T> implements IViewableAttribute<T>{
+public class ViewableSDFAttribute implements IViewableAttribute{
 
 	private SDFAttribute attribute;
 	
@@ -24,7 +24,7 @@ public class ViewableSDFAttribute<T> implements IViewableAttribute<T>{
 	}
 
 	@Override
-	public T evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple) {
+	public Object evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple) {
 		return tuple.getAttribute(index);		
 	}
 	

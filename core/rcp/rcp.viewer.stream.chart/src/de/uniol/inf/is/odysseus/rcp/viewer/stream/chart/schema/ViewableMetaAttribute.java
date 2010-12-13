@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttribute;
 
-public class ViewableMetaAttribute<T> implements IViewableAttribute<T> {
+public class ViewableMetaAttribute implements IViewableAttribute {
 
 	public SDFMetaAttribute metaAttribute;
 	public Method method;
@@ -44,14 +44,12 @@ public class ViewableMetaAttribute<T> implements IViewableAttribute<T> {
 		}
 		return new SDFDatatype(getName());
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public T evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple) {
+	public Object evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple) {
 		try {
-			Object value = method.invoke(tuple.getMetadata());			
-			T result = (T) value;
-			return result;
+			Object value = method.invoke(tuple.getMetadata());							
+			return value;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

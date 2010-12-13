@@ -63,7 +63,7 @@ public class ThermometerChart extends AbstractChart<Double, IMetaAttribute> {
 	}
 
 	@Override
-	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
 		if (selectAttributes.size() == 1) {
 			return null;
 		}

@@ -35,7 +35,7 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart<Doub
 				try {
 
 					int i = 0;
-					for (IViewableAttribute<Double> a : getChoosenAttributes()) {
+					for (IViewableAttribute a : getChoosenAttributes()) {
 						double value = tuple.get(i);
 						recalcAxis(value);
 						dcds.addValue(value, a.getName(), metadata.getStart());
@@ -78,7 +78,7 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart<Doub
 	}
 
 	@Override
-	public String isValidSelection(List<IViewableAttribute<Double>> selectAttributes) {
+	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
 		if (selectAttributes.size() > 0) {
 			return null;
 		}

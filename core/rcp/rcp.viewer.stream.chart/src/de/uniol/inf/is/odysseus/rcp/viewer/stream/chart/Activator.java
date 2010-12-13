@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.DoubleDatatypeProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.IntegerDatatypeProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.LongDatatypeProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.PointInTimeDatatypeProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -30,6 +36,12 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		bundleContext= context;
+		
+		// register all allowed datatypes and convertes
+		ViewableDatatypeRegistry.getInstance().register(new LongDatatypeProvider());
+		ViewableDatatypeRegistry.getInstance().register(new IntegerDatatypeProvider());
+		ViewableDatatypeRegistry.getInstance().register(new DoubleDatatypeProvider());
+		ViewableDatatypeRegistry.getInstance().register(new PointInTimeDatatypeProvider());
 	}
 
 	/*

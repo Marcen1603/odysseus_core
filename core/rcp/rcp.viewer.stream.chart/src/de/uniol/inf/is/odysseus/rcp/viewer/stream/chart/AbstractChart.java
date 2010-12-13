@@ -269,17 +269,17 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}	
 	
 	@Override
-	public List<IViewableAttribute<T>> getViewableAttributes() {
+	public List<IViewableAttribute> getViewableAttributes() {
 		return this.viewSchema.getViewableAttributes();
 	}
 	
 	@Override
-	public List<IViewableAttribute<T>> getChoosenAttributes() {		
+	public List<IViewableAttribute> getChoosenAttributes() {		
 		return this.viewSchema.getChoosenAttributes();
 	}
 	
 	@Override
-	public void setChoosenAttributes(List<IViewableAttribute<T>> choosenAttributes) {
+	public void setChoosenAttributes(List<IViewableAttribute> choosenAttributes) {
 		this.viewSchema.setChoosenAttributes(choosenAttributes);
 		chartSettingsChanged();		
 	}

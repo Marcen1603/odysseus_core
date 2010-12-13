@@ -28,14 +28,14 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 
 	private static final String DEFAULT_MESSAGE = "Changes the attributes that are shown by the chart";
 	private Table table;	
-	private List<IViewableAttribute<T>> activatedAttributes = new ArrayList<IViewableAttribute<T>>();	
+	private List<IViewableAttribute> activatedAttributes = new ArrayList<IViewableAttribute>();	
 	private IAttributesChangeable<T> changeable;
 	private Button okButton;
 
 	public ChangeAttributesDialog(Shell parentShell, IAttributesChangeable<T> changeable) {
 		super(parentShell);
 		//Collections.copy(this.activatedAttributes, changeable.getChoosenAttributes());
-		for(IViewableAttribute<T> att : changeable.getChoosenAttributes()){
+		for(IViewableAttribute att : changeable.getChoosenAttributes()){
 			this.activatedAttributes.add(att);
 		}
 		this.changeable = changeable;
@@ -82,16 +82,15 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		table.setLinesVisible(true);
 
 		int i = 0;
-		for (IViewableAttribute<T> a : this.changeable.getViewableAttributes()) {
+		for (IViewableAttribute a : this.changeable.getViewableAttributes()) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			Button check = new Button(table, SWT.CHECK);
 			check.setData(a);
 			check.setSelection(this.activatedAttributes.contains(a));
 			check.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					Button thisButton = (Button) e.widget;
-					@SuppressWarnings("unchecked")
-					IViewableAttribute<T> selAtt = (IViewableAttribute<T>) thisButton.getData();
+					Button thisButton = (Button) e.widget;					
+					IViewableAttribute selAtt = (IViewableAttribute) thisButton.getData();
 					if (thisButton.getSelection()) {
 						activatedAttributes.add(selAtt);						
 					} else {
@@ -138,7 +137,7 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
 	}
 
-	public List<IViewableAttribute<T>> getSelectedAttributes() {		
+	public List<IViewableAttribute> getSelectedAttributes() {		
 		return this.activatedAttributes;
 	}
 }
