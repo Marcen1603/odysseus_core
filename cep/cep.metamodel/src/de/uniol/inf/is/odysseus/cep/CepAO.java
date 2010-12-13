@@ -18,6 +18,7 @@ public class CepAO<T> extends AbstractLogicalOperator implements OutputSchemaSet
 	
 
 	public CepAO(CepAO<T> cepAO) {
+		super(cepAO);
 		this.stateMachine = cepAO.stateMachine;
 		this.outSchema = cepAO.outSchema == null? null: new SDFAttributeList(cepAO.outSchema);
 		this.portNames = new HashMap<Integer, String>(cepAO.portNames);
