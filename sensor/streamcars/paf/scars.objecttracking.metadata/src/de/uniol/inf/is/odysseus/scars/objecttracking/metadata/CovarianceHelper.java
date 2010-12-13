@@ -13,6 +13,13 @@ public class CovarianceHelper {
 	private IStreamCarsExpression expression;
 	
 	private String[] restrictedVariables;
+	
+	public CovarianceHelper(SDFAttributeList schema) {
+		this.schema = schema;
+		this.mapper = new CovarianceMapper(this.schema);
+		this.expression = null;
+		restrictedVariables = null;
+	}
 
 	public CovarianceHelper(IStreamCarsExpression expression, SDFAttributeList schema) {
 		this.schema = schema;
@@ -70,6 +77,23 @@ public class CovarianceHelper {
 	}
 	
 	public double[][] getCovarianceForRestrictedVariables(double[][] initialCovarianceMatrix) {
+		
+		ArrayList<Integer> attributePositions = new ArrayList<Integer>();
+		for(String resVar : restrictedVariables) {
+			int tmpIndex = mapper.getCovarianceIndex(resVar);
+			attributePositions.add(tmpIndex);
+		}
+		
+		double[][] resultMatrix = new double[attributePositions.size()][attributePositions.size()];
+		for (int i = 0; i < attributePositions.size(); i++) {
+			for (int j = 0; j <attributePositions.size(); j++) {
+				resultMatrix[i][j] = initialCovarianceMatrix[attributePositions.get(i)][attributePositions.get(j)];
+			}
+		}
+		return resultMatrix;
+	}
+	
+	public double[][] getCovarianceForRestrictedVariables(double[][] initialCovarianceMatrix, String[] restrictedVariables) {
 		
 		ArrayList<Integer> attributePositions = new ArrayList<Integer>();
 		for(String resVar : restrictedVariables) {
