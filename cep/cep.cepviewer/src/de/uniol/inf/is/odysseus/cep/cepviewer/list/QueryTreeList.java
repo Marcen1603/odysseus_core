@@ -55,7 +55,7 @@ public class QueryTreeList extends AbstractTreeList {
 	public boolean addToTree(StateMachineInstance instance) {
 		for (CEPTreeItem item : this.getRoot().getChildren()) {
 			CepOperator nextOp = (CepOperator) item.getContent();
-			StateMachine machine = ((StateMachineInstance)nextOp.getInstances().getFirst()).getStateMachine();
+			StateMachine machine = nextOp.getStateMachine();
 			if(machine.equals(instance.getStateMachine())) {
 				CEPTreeItem newItem = new CEPTreeItem(instance);
 				newItem.setParent(item);
