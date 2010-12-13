@@ -35,9 +35,11 @@ public class NormalTreeList extends AbstractTreeList {
 
 	@SuppressWarnings("unchecked")
 	public boolean addToTree(StateMachineInstance instance) {
+		System.out.println("add instance");
 		CEPTreeItem item = new CEPTreeItem(instance);
 		item.setParent(this.getRoot());
 		this.getRoot().add(item);
+		this.getTree().setInput(this.getRoot().getChildren());
 		return true;
 	}
 }

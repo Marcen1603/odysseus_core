@@ -29,13 +29,18 @@ public class QueryTreeList extends AbstractTreeList {
 
 	@SuppressWarnings("unchecked")
 	public boolean addToTree(CepOperator operator) {
+		System.out.println("try to add Operator to List");
 		if(this.getRoot().getChildren().isEmpty()) {
+			System.out.println("add Operator to List");
 			CEPTreeItem item = new CEPTreeItem(operator);
 			item.setParent(this.getRoot());
 			this.getRoot().add(item);
+			this.getTree().setInput(this.getRoot().getChildren());
 			QueryTreeList.machine++;
 		} else {
+			System.out.println("try to add Instances to List");
 			for(Object instance : operator.getInstances()) {
+				System.out.println("try to add Instances to Operator in List");
 				if(!this.addToTree((StateMachineInstance) instance)) {
 					CEPTreeItem parent = new CEPTreeItem(operator);
 					parent.setParent(this.getRoot());
@@ -44,6 +49,7 @@ public class QueryTreeList extends AbstractTreeList {
 					CEPTreeItem item = new CEPTreeItem((StateMachineInstance)instance);
 					item.setParent(parent);
 					parent.add(item);
+					this.getTree().setInput(this.getRoot().getChildren());
 					return true;
 				}
 			}
@@ -60,6 +66,7 @@ public class QueryTreeList extends AbstractTreeList {
 				CEPTreeItem newItem = new CEPTreeItem(instance);
 				newItem.setParent(item);
 				item.add(newItem);
+				this.getTree().setInput(this.getRoot().getChildren());
 				return true;
 			}
 		}

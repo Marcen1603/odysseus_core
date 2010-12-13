@@ -99,12 +99,12 @@ public class CEPListView extends ViewPart {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addStateMaschine(CepOperator operator) {
-		// CEPEventAgent.getInstance().addCEPEventListener(new
-		// ICEPEventListener() {
-		// public void cepEventOccurred(CEPEvent event) {
-		// // TODO event handling
-		// }
-		// });
+//		 CEPEventAgent.getInstance().addCEPEventListener(new
+//		 ICEPEventListener() {
+//		 public void cepEventOccurred(CEPEvent event) {
+//		 // TODO event handling
+//		 }
+//		 });
 		normalList.addToTree(operator);
 		queryList.addToTree(operator);
 		statusList.addToTree(operator);

@@ -57,6 +57,7 @@ public abstract class AbstractTreeList extends Composite {
 		this.setLayout(new FillLayout());
 		this.root = new CEPTreeItem();
 		this.tree = new TreeViewer(this, style | SWT.SINGLE);
+
 		this.tree.setContentProvider(new MyTreeContentProvider());
 		this.tree.setLabelProvider(new MyTreeLabelProvider());
 		this.tree.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -80,6 +81,7 @@ public abstract class AbstractTreeList extends Composite {
 				}
 			}
 		});
+		this.tree.setInput(this.root.getChildren());
 		this.createContextMenu();
 	}
 

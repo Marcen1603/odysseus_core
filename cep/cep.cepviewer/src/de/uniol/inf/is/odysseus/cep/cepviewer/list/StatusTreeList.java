@@ -42,6 +42,7 @@ public class StatusTreeList extends AbstractTreeList {
 		itemA.setParent(this.getRoot());
 		itemA.setName("Aborted");
 		this.getRoot().add(itemA);
+		this.getTree().setInput(this.getRoot().getChildren());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -59,11 +60,13 @@ public class StatusTreeList extends AbstractTreeList {
 			CEPTreeItem item = new CEPTreeItem(instance);
 			item.setParent(this.itemR);
 			this.itemR.add(item);
+			this.getTree().setInput(this.getRoot().getChildren());
 			return true;
 		} else if(instance.getCurrentState().isAccepting()) {
 			CEPTreeItem item = new CEPTreeItem(instance);
 			item.setParent(this.itemF);
 			this.itemF.add(item);
+			this.getTree().setInput(this.getRoot().getChildren());
 			return true;
 		} 
 		// TODO in case the instance is aborted...
