@@ -27,7 +27,9 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 	
 	private TupleIndexPath scannedTupleIndexPath;
 	private TupleIndexPath predictedTupleIndexPath;
+	
 	private CovarianceHelper covHelper;
+	
 	private String[] restrictedVariables;
 	
 	
@@ -37,6 +39,10 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 
 	public FilterExpressionGainPO(FilterExpressionGainPO<M> copy) {
 		super(copy);
+		this.setRestrictedVariables(copy.getRestrictedVariables().clone());
+		this.setCovHelper(copy.getCovHelper());
+		this.setPredictedTupleIndexPath(copy.getPredictedTupleIndexPath().clone());
+		this.setScannedTupleIndexPath(copy.getScannedTupleIndexPath().clone());
 		
 	}
 
@@ -105,6 +111,30 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 		MVRelationalTuple<M> predictedCar = (MVRelationalTuple<M>)con.getRightPath().getTupleObject();
 		predictedCar.getMetadata().setGain(gain);
 	}
+	
+	public CovarianceHelper getCovHelper() {
+		return covHelper;
+	}
 
+	public void setCovHelper(CovarianceHelper covHelper) {
+		this.covHelper = covHelper;
+	}
+	
+	public void setScannedTupleIndexPath(TupleIndexPath scannedTupleIndexPath) {
+		this.scannedTupleIndexPath = scannedTupleIndexPath;
+	}
+
+	public TupleIndexPath getPredictedTupleIndexPath() {
+		return predictedTupleIndexPath;
+	}
+
+	public void setPredictedTupleIndexPath(TupleIndexPath predictedTupleIndexPath) {
+		this.predictedTupleIndexPath = predictedTupleIndexPath;
+
+	}
+
+	public TupleIndexPath getScannedTupleIndexPath() {
+		return scannedTupleIndexPath;
+	}
 
 }

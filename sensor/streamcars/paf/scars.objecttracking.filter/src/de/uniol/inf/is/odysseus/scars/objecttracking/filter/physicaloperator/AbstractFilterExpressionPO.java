@@ -15,6 +15,7 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 
 	private String predictedObjectListPath;
 	private String scannedObjectListPath;
+	
 	private SchemaIndexPath predictedObjectListSIPath;
 	private SchemaIndexPath scannedObjectListSIPath;
 	
@@ -22,6 +23,12 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 	
 	private String expressionString;
 	protected IStreamCarsExpression expression;
+
+	private String[] restrictedVariables;
+	
+	public void setExpression(IStreamCarsExpression expression) {
+		this.expression = expression;
+	}
 
 	public AbstractFilterExpressionPO() {
 		super();
@@ -34,7 +41,10 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 		this.setPredictedObjectListSIPath(copy.getScannedObjectListSIPath().clone());
 		this.setScannedObjectListPath(copy.getScannedObjectListPath());
 		this.setScannedObjectListSIPath(copy.getScannedObjectListSIPath().clone());
-		
+		// TODO clone?
+		this.setExpression(copy.getExpression());
+		// TODO clone
+		this.setRestrictedVariables(copy.getRestrictedVariables().clone());
 		
 	}
 	
@@ -112,5 +122,19 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 
 	public SchemaIndexPath getScannedObjectListSIPath() {
 		return scannedObjectListSIPath;
+	}
+
+	/**
+	 * @param restrictedVariables the restrictedVariables to set
+	 */
+	public void setRestrictedVariables(String[] restrictedVariables) {
+		this.restrictedVariables = restrictedVariables;
+	}
+
+	/**
+	 * @return the restrictedVariables
+	 */
+	public String[] getRestrictedVariables() {
+		return restrictedVariables;
 	}
 }

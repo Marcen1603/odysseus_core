@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
@@ -45,7 +44,10 @@ public class FilterExpressionEstimateUpdatePO<M extends IProbability & IObjectTr
 
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+		
+		// latency
 		object.getMetadata().setObjectTrackingLatencyStart("Filter Est Update");
+		
 		// list of connections
 		ArrayList<IConnection> objConList = object.getMetadata().getConnectionList();
 
@@ -53,8 +55,10 @@ public class FilterExpressionEstimateUpdatePO<M extends IProbability & IObjectTr
 		for (IConnection connected : objConList) {
 			compute(connected.getLeftPath(), connected.getRightPath());
 		}
-
+		
+		// latency
 		object.getMetadata().setObjectTrackingLatencyEnd("Filter Est Update");
+		
 		return object;
 	}
 

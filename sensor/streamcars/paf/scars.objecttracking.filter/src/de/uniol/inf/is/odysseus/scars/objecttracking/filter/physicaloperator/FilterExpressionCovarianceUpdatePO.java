@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceHelper;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
@@ -17,43 +17,80 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLat
  */
 public class FilterExpressionCovarianceUpdatePO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractFilterExpressionPO<M> {
 
+	private CovarianceHelper covOldHelper;
+	private CovarianceHelper covNewHelper;
+	
+	public FilterExpressionCovarianceUpdatePO() {
+		super();
+	}
 
-  public FilterExpressionCovarianceUpdatePO() {
-    super();
-  }
-
-  public FilterExpressionCovarianceUpdatePO(FilterExpressionCovarianceUpdatePO<M> copy) {
-    super(copy);
-  }
+	public FilterExpressionCovarianceUpdatePO(FilterExpressionCovarianceUpdatePO<M> copy) {
+		super(copy);
+		//TODO clone?
+		this.setCovOldHelper(copy.getCovOldHelper());
+		this.setCovNewHelper(copy.getCovOldHelper());
+	}
 
 	public void compute(IConnection connected, MVRelationalTuple<M> tuple) {
-   
-  }
+	
+	}
 
+	@Override
+	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+		
+		// latency
+		object.getMetadata().setObjectTrackingLatencyStart("Filter Cov Update");
+		
+		// list of connections
+		ArrayList<IConnection> tmpConList = object.getMetadata().getConnectionList();
 
-  @Override
-  public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
-	object.getMetadata().setObjectTrackingLatencyStart("Filter Cov Update");
-    // list of connections
-    ArrayList<IConnection> tmpConList = object.getMetadata().getConnectionList();
+		// traverse connection list and filter
+		for (IConnection connected : tmpConList) {
+			compute(connected, object);
+		}
+		
+		// latency
+		object.getMetadata().setObjectTrackingLatencyEnd("Filter Cov Update");
+		
+		return object;
+	}
 
-    // traverse connection list and filter
-    for (IConnection connected : tmpConList) {
-		compute(connected, object);
-    }
+	@Override
+	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+		return new FilterExpressionCovarianceUpdatePO<M>(this);
+	}
 
-    object.getMetadata().setObjectTrackingLatencyEnd("Filter Cov Update");
-    return object;
-  }
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		this.sendPunctuation(timestamp);
+	}
 
-  @Override
-  public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-    return new FilterExpressionCovarianceUpdatePO<M>(this);
-  }
+	/**
+	 * @param covOldHelper the covOldHelper to set
+	 */
+	public void setCovOldHelper(CovarianceHelper covOldHelper) {
+		this.covOldHelper = covOldHelper;
+	}
 
-  @Override
-  public void processPunctuation(PointInTime timestamp, int port) {
-	  this.sendPunctuation(timestamp);
-  }
+	/**
+	 * @return the covOldHelper
+	 */
+	public CovarianceHelper getCovOldHelper() {
+		return covOldHelper;
+	}
+
+	/**
+	 * @param covNewHelper the covNewHelper to set
+	 */
+	public void setCovNewHelper(CovarianceHelper covNewHelper) {
+		this.covNewHelper = covNewHelper;
+	}
+
+	/**
+	 * @return the covNewHelper
+	 */
+	public CovarianceHelper getCovNewHelper() {
+		return covNewHelper;
+	}
 
 }
