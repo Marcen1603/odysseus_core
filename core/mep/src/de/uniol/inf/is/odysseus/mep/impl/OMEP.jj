@@ -9,7 +9,7 @@
   |  ("\"" (~[ "\"" ])* "\""
     (
       "\"" (~[ "\"" ])* "\""
-    )*)>| < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":"  | "$"  | "#" >| < RRND : ")" >| < LRND : "(" >}SimpleNode Expression() :{/*@bgen(jjtree) Expression */
+    )*)>| < IDENTIFIER :    (< LETTER > | < SPECIAL_CHARS >)    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":"  | "$"  | "#" >| < RRND : ")" >| < LRND : "(" >}SimpleNode Expression() :{/*@bgen(jjtree) Expression */
   ASTExpression jjtn000 = new ASTExpression(JJTEXPRESSION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
