@@ -83,6 +83,8 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 	/* ############### GAIN ################ */
 
 	private double[][] gain;
+	private String[] restrictedList;
+	
 	@Override
 	public double[][] getGain() {
 		return this.gain;
@@ -166,5 +168,36 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 
 	public void setOperatorLatencies(HashMap<String, Long> operatorLatencies) {
 		this.operatorLatencies = operatorLatencies;
+	}
+
+	
+
+	@Override
+	public String[] getRestrictedList() {
+		return this.getRestrictedList();
+	}
+
+	@Override
+	public double getRestrictedGain(int index) {
+		return this.getGain()[index][index];
+	}
+
+	@Override
+	public void setRestrictedGain(double[][] newGain, String[] restrictedList) {
+		this.gain=newGain;
+		this.restrictedList=restrictedList;
+		
+	}
+
+	@Override
+	public double getRestrictedGain(String attribute) {
+		int y = 0;
+		for (int i=0; i<=restrictedList.length-1; i++) {
+			if (restrictedList[i].equals(attribute)){
+			y=i;	
+			}
+			
+		}
+		return this.getGain()[y][y];
 	}
 }
