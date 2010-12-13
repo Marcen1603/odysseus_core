@@ -35,12 +35,14 @@ public class StateMachineInstance<R> {
 	/**
 	 * Referenz auf die Symboltabelle der Automateninstanz
 	 */
-	private SymbolTable<R> symTab;
+	final private SymbolTable<R> symTab;
 	/**
 	 * Referenz auf den Puffer für bereits konsumierte Events
 	 */
-	private MatchingTrace<R> matchingTrace;
-	private long startTimestamp;
+	final private MatchingTrace<R> matchingTrace;
+	final private long startTimestamp;
+	
+	final private StateMachine<R> stateMachine;
 
 	/**
 	 * erzeugt eine neue Automateninstanz
@@ -56,6 +58,7 @@ public class StateMachineInstance<R> {
 		this.symTab = new SymbolTable<R>(stateMachine.getSymTabScheme(true));
 		this.startTimestamp = startTimestamp;
 		instance = _instanceCounter++;
+		this.stateMachine = stateMachine;
 		// logger.debug("Created new initial StateMachineInstance "+instance);
 	}
 
@@ -67,6 +70,7 @@ public class StateMachineInstance<R> {
 		this.startTimestamp = stateMachineInstance.startTimestamp;
 		instance = _instanceCounter++;
 		derivedFrom = stateMachineInstance.instance;
+		this.stateMachine = stateMachineInstance.stateMachine;
 		// logger.debug("Created new StateMachineInstance " + toString());
 	}
 
@@ -240,4 +244,8 @@ public class StateMachineInstance<R> {
 				+ " " + symTab.toString();
 	}
 
+	public StateMachine<R> getStateMachine() {
+		return stateMachine;
+	}
+	
 }

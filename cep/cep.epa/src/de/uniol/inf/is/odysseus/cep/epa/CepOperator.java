@@ -474,7 +474,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * 
 	 * @return Den Automaten, der das zu suchende Event-Muster definiert.
 	 */
-	protected StateMachine<R> getStateMachine() {
+	public StateMachine<R> getStateMachine() {
 		return stateMachine;
 	}
 
