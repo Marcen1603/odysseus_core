@@ -4,18 +4,17 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
 
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+
 //import de.uniol.inf.is.odysseus.cep.epa.event.CEPEvent;
 //import de.uniol.inf.is.odysseus.cep.epa.event.CEPEventAgent;
 //import de.uniol.inf.is.odysseus.cep.epa.event.ICEPEventListener;
@@ -29,7 +28,7 @@ public class CEPListView extends ViewPart {
 
 	// The id of this view.
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.listview";
-	
+
 	// These are widgets for the list view.
 	private TabFolder tabMenu;
 	private NormalTreeList normalList;
@@ -92,7 +91,7 @@ public class CEPListView extends ViewPart {
 		this.infoLabel = new Label(parent, SWT.CENTER);
 		this.infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.END, true,
 				false));
-		setInfoData();
+		this.setInfoData();
 	}
 
 	/**
@@ -100,11 +99,12 @@ public class CEPListView extends ViewPart {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addStateMaschine(CepOperator operator) {
-//		CEPEventAgent.getInstance().addCEPEventListener(new ICEPEventListener() {
-//			public void cepEventOccurred(CEPEvent event) {
-//				// TODO event handling
-//			}
-//		});
+		// CEPEventAgent.getInstance().addCEPEventListener(new
+		// ICEPEventListener() {
+		// public void cepEventOccurred(CEPEvent event) {
+		// // TODO event handling
+		// }
+		// });
 		normalList.addToTree(operator);
 		queryList.addToTree(operator);
 		statusList.addToTree(operator);
@@ -129,12 +129,12 @@ public class CEPListView extends ViewPart {
 		this.infoLabel.setText(string);
 		this.infoLabel.pack();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void removeMachine(CepOperator operator) {
 		// TODO
 	}
-	
+
 	/**
 	 * This method is called to set the focus to this view.
 	 */
@@ -142,5 +142,5 @@ public class CEPListView extends ViewPart {
 	public void setFocus() {
 		this.tabMenu.setFocus();
 	}
-	
+
 }

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -17,9 +16,9 @@ import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 public class StatusTreeList extends AbstractTreeList {
 
 	// categories of this tree list
-	private TreeItem itemR;
-	private TreeItem itemF;
-	private TreeItem itemA;
+	private CEPTreeItem itemR;
+	private CEPTreeItem itemF;
+	private CEPTreeItem itemA;
 
 	/**
 	 * This is the constructor.
@@ -31,30 +30,20 @@ public class StatusTreeList extends AbstractTreeList {
 	 */
 	public StatusTreeList(Composite parent, int style) {
 		super(parent, style);
-		itemR = new TreeItem(this.getTree(), SWT.NONE);
-		itemR.setText("Running");
-		itemF = new TreeItem(this.getTree(), SWT.NONE);
-		itemF.setText("Finished");
-		itemA = new TreeItem(this.getTree(), SWT.NONE);
-		itemA.setText("Aborted");
+		itemR = new CEPTreeItem();
+		itemR.setParent(this.getRoot());
+		itemR.setName("Running");
+		this.getRoot().add(itemR);
+		itemF = new CEPTreeItem();
+		itemF.setParent(this.getRoot());
+		itemF.setName("Finished");
+		this.getRoot().add(itemF);
+		itemA = new CEPTreeItem();
+		itemA.setParent(this.getRoot());
+		itemA.setName("Aborted");
+		this.getRoot().add(itemA);
 	}
 
-//	public void addToTree(StateMachineInstance stateMachineInstance) {
-//		Status status = null;
-//		if(stateMachineInstance.getCurrentState().isAccepting()) {
-//			status = Status.FINISHED;
-//		} else if(!stateMachineInstance.getCurrentState().isAccepting()) {
-//			status = Status.RUNNING;
-//		}
-//		for (TreeItem statusItem : this.getTree().getItems()) {
-//			if (statusItem.getText().contains(status.toString())) {
-//				StateTreeItem item = new StateTreeItem(statusItem, SWT.NONE, stateMachineInstance);
-//				item.setText(stateMachineInstance.getMachine().getString() + ": " + stateMachineInstance.getInstanceId());
-//				this.setStatusImage(item);
-//			}
-//		}
-//	}
-	
 	@SuppressWarnings("unchecked")
 	public boolean addToTree(CepOperator operator) {
 		boolean inserted = false;
@@ -67,18 +56,14 @@ public class StatusTreeList extends AbstractTreeList {
 	@SuppressWarnings("unchecked")
 	public boolean addToTree(StateMachineInstance instance) {
 		if(!instance.getCurrentState().isAccepting()) {
-			TreeItem item = new TreeItem(itemR, SWT.NONE);
-			item.setData("Instance", instance);
-			// TODO same text for two instances of differnt machines
-			item.setText("Instance " + instance.hashCode());
-			this.setStatusImage(item);
+			CEPTreeItem item = new CEPTreeItem(instance);
+			item.setParent(this.itemR);
+			this.itemR.add(item);
 			return true;
 		} else if(instance.getCurrentState().isAccepting()) {
-			TreeItem item = new TreeItem(itemF, SWT.NONE);
-			item.setData("Instance", instance);
-			// TODO same text for two instances of differnt machines
-			item.setText("Instance " + instance.hashCode());
-			this.setStatusImage(item);
+			CEPTreeItem item = new CEPTreeItem(instance);
+			item.setParent(this.itemF);
+			this.itemF.add(item);
 			return true;
 		} 
 		// TODO in case the instance is aborted...
@@ -97,7 +82,7 @@ public class StatusTreeList extends AbstractTreeList {
 	 * @return the number of running automates
 	 */
 	public int getNumberOfRunning() {
-		return this.itemR.getItemCount();
+		return this.itemR.getChildren().size();
 	}
 
 	/**
@@ -105,7 +90,7 @@ public class StatusTreeList extends AbstractTreeList {
 	 * @return the number of finished automates
 	 */
 	public int getNumberOfFinished() {
-		return this.itemF.getItemCount();
+		return this.itemF.getChildren().size();
 	}
 
 	/**
@@ -113,7 +98,7 @@ public class StatusTreeList extends AbstractTreeList {
 	 * @return the number of aborted automates
 	 */
 	public int getNumberOfAborted() {
-		return this.itemA.getItemCount();
+		return this.itemA.getChildren().size();
 	}
 
 }

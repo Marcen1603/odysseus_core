@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -8,12 +12,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPAutomataView;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractState;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
@@ -25,7 +29,9 @@ import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 public abstract class AbstractTreeList extends Composite {
 
 	// the tree which should be represented
-	private Tree tree;
+	private TreeViewer tree;
+
+	private CEPTreeItem root;
 
 	// the images that show the status of a tree item
 	private final Image running = new Image(getDisplay(), this.getClass()
@@ -49,41 +55,59 @@ public abstract class AbstractTreeList extends Composite {
 	public AbstractTreeList(final Composite parent, int style) {
 		super(parent, SWT.NONE);
 		this.setLayout(new FillLayout());
-		this.tree = new Tree(this, style | SWT.SINGLE);
-		this.tree.addListener(SWT.Selection, new Listener() {
+		this.root = new CEPTreeItem();
+		this.tree = new TreeViewer(this, style | SWT.SINGLE);
+		this.tree.setContentProvider(new MyTreeContentProvider());
+		this.tree.setLabelProvider(new MyTreeLabelProvider());
+		this.tree.addSelectionChangedListener(new ISelectionChangedListener() {
 			@SuppressWarnings("unchecked")
-			public void handleEvent(Event event) {
-				for (IViewReference a : PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage()
-						.getViewReferences()) {
-					if (a.getId().equals(AUTOMATA_VIEW_ID)) {
-						((CEPAutomataView) a.getView(false))
-								.showAutomata((StateMachineInstance) event.item
-										.getData("Instance"));
-					} else {
-						System.out.println(AUTOMATA_VIEW_ID + " not found");
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection select = (IStructuredSelection) event
+						.getSelection();
+				if (((CEPTreeItem) select.getFirstElement()).getContent() instanceof StateMachineInstance) {
+					StateMachineInstance instance = ((StateMachineInstance) ((CEPTreeItem) select
+							.getFirstElement()).getContent());
+					for (IViewReference a : PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow().getActivePage()
+							.getViewReferences()) {
+						if (a.getId().equals(AUTOMATA_VIEW_ID)) {
+							if (event.getSource() instanceof AbstractState) {
+								((CEPAutomataView) a.getView(false))
+										.showAutomata(instance);
+							}
+						}
 					}
 				}
 			}
 		});
-		this.setContextMenu();
+		this.createContextMenu();
 	}
 
-	public void setContextMenu() {
-		Menu menu = new Menu(this.tree);
+	public void createContextMenu() {
+		Menu menu = new Menu(this.tree.getTree());
 		MenuItem removeItem = new MenuItem(menu, SWT.PUSH);
 		removeItem.setText("Remove");
 		removeItem.addListener(SWT.Selection, new Listener() {
+			@SuppressWarnings("unchecked")
 			public void handleEvent(Event event) {
-				TreeItem item = (TreeItem) tree.getSelection()[0];
-				if (item.getData("Instance") != null
-						&& item.getData("Machine") != null) {
-					tree.getSelection()[0].dispose();
+				IStructuredSelection select = (IStructuredSelection) tree
+						.getSelection();
+				if (!select.isEmpty()) {
+					Object object = ((CEPTreeItem) select.getFirstElement())
+							.getContent();
+					if (object instanceof StateMachineInstance
+							|| object instanceof CepOperator) {
+						tree.getTree().getSelection()[0].dispose();
+					} else {
+						System.out.println("must not be disposed");
+					}
+				} else {
+					System.out.println("Nothing to dispose");
 				}
 			}
 		});
 		menu.setVisible(false);
-		this.tree.setMenu(menu);
+		this.tree.getTree().setMenu(menu);
 	}
 
 	/**
@@ -93,6 +117,7 @@ public abstract class AbstractTreeList extends Composite {
 	 *            is a tree item
 	 */
 	@SuppressWarnings("unchecked")
+	// TODO in den LabelProvider einbauen
 	public void setStatusImage(TreeItem item) {
 		if (((StateMachineInstance) item.getData("Instance")).getCurrentState()
 				.isAccepting()) {
@@ -107,8 +132,12 @@ public abstract class AbstractTreeList extends Composite {
 	 * 
 	 * @return the tree.
 	 */
-	public Tree getTree() {
+	public TreeViewer getTree() {
 		return this.tree;
+	}
+
+	public CEPTreeItem getRoot() {
+		return this.root;
 	}
 
 	/**

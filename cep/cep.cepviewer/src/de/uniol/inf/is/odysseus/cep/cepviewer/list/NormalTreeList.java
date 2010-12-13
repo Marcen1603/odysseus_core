@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TreeItem;
 
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
@@ -37,11 +35,9 @@ public class NormalTreeList extends AbstractTreeList {
 
 	@SuppressWarnings("unchecked")
 	public boolean addToTree(StateMachineInstance instance) {
-		TreeItem item = new TreeItem(this.getTree(), SWT.NONE);
-		item.setData("Instance", instance);
-		// TODO same text for two instances of differnt machines
-		item.setText("Instance " + instance.hashCode());
-		this.setStatusImage(item);
+		CEPTreeItem item = new CEPTreeItem(instance);
+		item.setParent(this.getRoot());
+		this.getRoot().add(item);
 		return true;
 	}
 }

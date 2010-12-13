@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TreeItem;
 
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 
 /**
  * This class defines the query tree list.
@@ -30,23 +29,21 @@ public class QueryTreeList extends AbstractTreeList {
 
 	@SuppressWarnings("unchecked")
 	public boolean addToTree(CepOperator operator) {
-		// if there is no item in the tree
-		if (this.getTree().getItemCount() == 0) {
-			TreeItem item = new TreeItem(this.getTree(), SWT.NONE);
-			item.setData("Machine", operator);
-			item.setText("Machine " + QueryTreeList.machine);
+		if(this.getRoot().getChildren().isEmpty()) {
+			CEPTreeItem item = new CEPTreeItem(operator);
+			item.setParent(this.getRoot());
+			this.getRoot().add(item);
 			QueryTreeList.machine++;
 		} else {
 			for(Object instance : operator.getInstances()) {
 				if(!this.addToTree((StateMachineInstance) instance)) {
-					TreeItem item = new TreeItem(this.getTree(), SWT.NONE);
-					item.setData("Machine", operator);
-					item.setText("Machine " + QueryTreeList.machine);
+					CEPTreeItem parent = new CEPTreeItem(operator);
+					parent.setParent(this.getRoot());
+					this.getRoot().add(parent);
 					QueryTreeList.machine++;
-					TreeItem newItem = new TreeItem(item, SWT.NONE);
-					newItem.setData("Instance", instance);
-					newItem.setText("Instance " + instance.hashCode());
-					this.setStatusImage(item);
+					CEPTreeItem item = new CEPTreeItem((StateMachineInstance)instance);
+					item.setParent(parent);
+					parent.add(item);
 					return true;
 				}
 			}
@@ -56,16 +53,14 @@ public class QueryTreeList extends AbstractTreeList {
 	
 	@SuppressWarnings("unchecked")
 	public boolean addToTree(StateMachineInstance instance) {
-		for (TreeItem item : this.getTree().getItems()) {
-			CepOperator nextOp = (CepOperator) item.getData("Machine");
-			for(Object next : nextOp.getInstances()) {
-				if(((StateMachineInstance) next).equals(instance)) {
-					TreeItem newItem = new TreeItem(item,SWT.NONE);
-					newItem.setData("Instance", next);
-					newItem.setText("Instance " + instance.hashCode());
-					this.setStatusImage(item);
-					return true;
-				}
+		for (CEPTreeItem item : this.getRoot().getChildren()) {
+			CepOperator nextOp = (CepOperator) item.getContent();
+			StateMachine machine = ((StateMachineInstance)nextOp.getInstances().getFirst()).getStateMachine();
+			if(machine.equals(instance.getStateMachine())) {
+				CEPTreeItem newItem = new CEPTreeItem(instance);
+				newItem.setParent(item);
+				item.add(newItem);
+				return true;
 			}
 		}
 		return false;
