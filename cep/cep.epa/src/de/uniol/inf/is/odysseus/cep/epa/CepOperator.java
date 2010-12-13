@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +18,6 @@ import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
@@ -64,7 +64,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	/**
 	 * Liste aller Automaten-Instanzen, die gerade vom EPA verarbeitet werden
 	 */
-	private LinkedList<StateMachineInstance<R>> instances;
+	private LinkedList<StateMachineInstance<R>> smInstances;
 	/**
 	 * Der Automat, der das zu suchende Event-Muster sowie die Event-Aggregation
 	 * und die Struktur des Zwischenspeichers enthält
@@ -111,7 +111,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		this.stateMachine = stateMachine;
 		this.complexEventFactory = complexEventFactory;
 		this.eventReader = eventReader;
-		this.instances = new LinkedList<StateMachineInstance<R>>();
+		this.smInstances = new LinkedList<StateMachineInstance<R>>();
 		// this.branchingBuffer = new BranchingBuffer<R>();
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferFunction = outputTransferFunction;
@@ -148,7 +148,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	@Override
 	public void process_internal(R event, int port) {
-		synchronized (instances) {
+		synchronized (smInstances) {
 			if (logger.isDebugEnabled())
 				logger.debug("-------------------> NEXT EVENT from "
 						+ eventReader.get(port).getType() + ": " + event + " "
@@ -171,7 +171,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			LinkedList<W> complexEvents = null;
 			if (createNewInstance) {
 				logger.debug("Created New Initial Instance");
-				this.instances.add(new StateMachineInstance<R>(
+				addInstance(new StateMachineInstance<R>(
 						this.stateMachine, getEventReader().get(port).getTime(
 								event)));
 			}
@@ -183,9 +183,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
 			validateTransitions(event, outdatedInstances, branchedInstances,
 					port);
-			this.instances.addAll(branchedInstances);
+			addInstances(branchedInstances);
 			complexEvents = validateFinalStates(outdatedInstances, port);
-			this.instances.removeAll(outdatedInstances);
+			removeInstances(outdatedInstances);
 
 			if (complexEvents.size() > 0) {
 				for (W e : complexEvents) {
@@ -199,11 +199,36 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		}
 	}
 
+	private void removeInstances(
+			LinkedList<StateMachineInstance<R>> instances) {
+		for (StateMachineInstance<R> i:instances){
+			removeInstance(i);
+		}
+	}
+
+	private void addInstances(
+			LinkedList<StateMachineInstance<R>> instances) {
+		for (StateMachineInstance<R> i:instances){
+			addInstance(i);
+		}
+	}
+
+	private void addInstance(StateMachineInstance<R> stateMachineInstance) {
+		// TODO: Events
+		smInstances.add(stateMachineInstance);
+	}
+
+	private void removeInstance(StateMachineInstance<R> stateMachineInstance) {
+		// TODO: Events
+		smInstances.remove(stateMachineInstance);
+	}
+
+	
 	private void validateTransitions(R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
-		for (StateMachineInstance<R> instance : this.instances) {
+		for (StateMachineInstance<R> instance : this.getInstances()) {
 			if (logger.isDebugEnabled())
 				logger.debug("Validating " + instance);
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
@@ -336,7 +361,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private LinkedList<W> validateFinalStates(
 			LinkedList<StateMachineInstance<R>> outdatedInstances, int port) {
 		LinkedList<W> complexEvents = new LinkedList<W>();
-		for (StateMachineInstance<R> instance : instances) {
+		for (StateMachineInstance<R> instance : getInstances()) {
 			// if (logger.isDebugEnabled()) {
 			// logger.debug("Testing for final state in " + instance);
 			// }
@@ -492,8 +517,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * 
 	 * @return Liste der Automateninstanzen.
 	 */
-	public LinkedList<StateMachineInstance<R>> getInstances() {
-		return instances;
+	public List<StateMachineInstance<R>> getInstances() {
+		return Collections.unmodifiableList(smInstances);
 	}
 
 	/**
@@ -545,7 +570,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 */
 	public String getStats() {
 		String str = "";
-		str = str + "#instances:" + this.instances.size() + " ";
+		str = str + "#instances:" + this.smInstances.size() + " ";
 		// str = str + "#branch trees:"
 		// + this.branchingBuffer.getBranches().size();
 		return str;
