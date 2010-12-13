@@ -444,7 +444,8 @@ void KeyValuePair(): {}{
 }
 
 void AssociationGenOp(): {} {
-  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ")"}
+  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ( "," Identifier() )? ( "," Identifier() )? ( "," Identifier() )? ")"
+}
 
 void AssociationEvalOp(): {} {
   <K_ASSOCIATION_EVAL> "(" AlgebraOp()	"," Identifier() "," KeyValueList()	"," Identifier() "," Identifier() ( "," KeyValueList() )? ")"

@@ -133,9 +133,9 @@ import de.uniol.infs.is.odysseus.scars.operator.brokerinit.BrokerInitAO;
  * IMPORTANT: data[0] contains the attribute resolver data[1] contains the child
  * operator data[2] contains the output port of the child operator to which the
  * parent is connected
- * 
+ *
  * @author Andre Bolles
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor {
@@ -145,7 +145,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	public CreateLogicalPlanVisitor(User user){
 		this.user = user;
 	}
-	
+
 	@Override
 	public Object visit(SimpleNode node, Object data) {
 		return null;
@@ -1117,6 +1117,17 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		gen.initPaths(((ASTIdentifier) node.jjtGetChild(3)).getName(), ((ASTIdentifier) node.jjtGetChild(2)).getName());
 
+		if(node.jjtGetNumChildren() > 4) {
+			ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(4);
+			gen.setASSOCIATION_RECORD_NAME(identifier.getName());
+		} if(node.jjtGetNumChildren() > 5) {
+			ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(5);
+			gen.setPREDICTED_OBJECTS_NAME(identifier.getName());
+		} if(node.jjtGetNumChildren() > 6) {
+			ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(6);
+			gen.setSCANNED_OBJECTS_NAME(identifier.getName());
+		}
+
 		// pass only the attribute resolver to the children
 		((ArrayList) data).add(gen);
 		((ArrayList) data).add(new Integer(0));
@@ -2056,13 +2067,13 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// Assoziations Objektpfad
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		ao.setTrackedObjectList(identifier.getName());
-		
+
 		identifier = (ASTIdentifier) node.jjtGetChild(2);
 		ao.setTrackedObjectX(identifier.getName());
-		
+
 		identifier = (ASTIdentifier) node.jjtGetChild(3);
 		ao.setTrackedObjectY(identifier.getName());
-		
+
 		// get threshold
 		ASTNumber number = (ASTNumber) node.jjtGetChild(4);
 		Double threshold = 0.0;
@@ -2072,7 +2083,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}
 		// set threshold
 		ao.setDistanceThresholdXLeft(threshold);
-		
+
 		number = (ASTNumber) node.jjtGetChild(5);
 		threshold = 0.0;
 		try {
@@ -2081,7 +2092,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}
 		// set threshold
 		ao.setDistanceThresholdXRight(threshold);
-		
+
 		number = (ASTNumber) node.jjtGetChild(6);
 		threshold = 0.0;
 		try {
@@ -2090,7 +2101,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}
 		// set threshold
 		ao.setDistanceThresholdYLeft(threshold);
-		
+
 		number = (ASTNumber) node.jjtGetChild(7);
 		threshold = 0.0;
 		try {
@@ -2123,53 +2134,53 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// Assoziations Objektpfad
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		ao.setTrackedObjectList(identifier.getName());
-		
-		
-		// add predicates		
+
+
+		// add predicates
 		String condStr1 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) > 0.0";
 		SDFObjectRelationalExpression cond1Expr = new SDFObjectRelationalExpression("", condStr1, attrRes);
 		IPredicate cond1 = new ObjectRelationalPredicate(cond1Expr);
 		String solStr1 = "(10000 - streamCarsBroker.scan:cars:car:posx) / ((cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001))";
 		SDFObjectRelationalExpression sol1 = new SDFObjectRelationalExpression("", solStr1, attrRes);
-		
+
 		String condStr2 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) < 0.0";
 		SDFObjectRelationalExpression cond2Expr = new SDFObjectRelationalExpression("", condStr2, attrRes);
 		IPredicate cond2 = new ObjectRelationalPredicate(cond2Expr);
 		String solStr2 = solStr1;
 		SDFObjectRelationalExpression sol2 = new SDFObjectRelationalExpression("", solStr2, attrRes);
-		
+
 		String condStr3 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) == 0 AND streamCarsBroker.scan:cars:car:posx < 10000";
 		SDFObjectRelationalExpression cond3Expr = new SDFObjectRelationalExpression("", condStr3, attrRes);
 		IPredicate cond3 = new ObjectRelationalPredicate(cond3Expr);
 		String solStr3 = "1 < 2";
 		SDFObjectRelationalExpression sol3 = new SDFObjectRelationalExpression("", solStr3, attrRes);
-		
+
 		String condStr4 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) == 0 AND streamCarsBroker.scan:cars:car:posx > 10000";
 		SDFObjectRelationalExpression cond4Expr = new SDFObjectRelationalExpression("", condStr4, attrRes);
 		IPredicate cond4 = new ObjectRelationalPredicate(cond4Expr);
 		String solStr4 = "1 > 2";
 		SDFObjectRelationalExpression sol4 = new SDFObjectRelationalExpression("", solStr4, attrRes);
-		
+
 		initPredicate(cond1, childOp.getOutputSchema(), null);
 		initPredicate(cond2, childOp.getOutputSchema(), null);
 		initPredicate(cond3, childOp.getOutputSchema(), null);
 		initPredicate(cond4, childOp.getOutputSchema(), null);
-		
+
 		HashMap<IPredicate, SDFObjectRelationalExpression> solutions = new HashMap<IPredicate, SDFObjectRelationalExpression>();
 		solutions.put(cond1, sol1);
 		solutions.put(cond2, sol2);
 		solutions.put(cond3, sol3);
 		solutions.put(cond4, sol4);
-		
+
 		ao.setSolutions(solutions);
-		
-//		
+
+//
 //		identifier = (ASTIdentifier) node.jjtGetChild(2);
 //		ao.setTrackedObjectX(identifier.getName());
-//		
+//
 //		identifier = (ASTIdentifier) node.jjtGetChild(3);
 //		ao.setTrackedObjectY(identifier.getName());
-//		
+//
 //		// get threshold
 //		ASTNumber number = (ASTNumber) node.jjtGetChild(4);
 //		Double threshold = 0.0;
@@ -2179,7 +2190,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 //		}
 //		// set threshold
 //		ao.setDistanceThresholdXLeft(threshold);
-//		
+//
 //		number = (ASTNumber) node.jjtGetChild(5);
 //		threshold = 0.0;
 //		try {
@@ -2188,7 +2199,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 //		}
 //		// set threshold
 //		ao.setDistanceThresholdXRight(threshold);
-//		
+//
 //		number = (ASTNumber) node.jjtGetChild(6);
 //		threshold = 0.0;
 //		try {
@@ -2197,7 +2208,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 //		}
 //		// set threshold
 //		ao.setDistanceThresholdYLeft(threshold);
-//		
+//
 //		number = (ASTNumber) node.jjtGetChild(7);
 //		threshold = 0.0;
 //		try {
@@ -2230,16 +2241,16 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		ao.setPredObjListPath(identifier.getName());
-		
+
 		identifier = (ASTIdentifier) node.jjtGetChild(2);
 		ao.setScanObjListPath(identifier.getName());
-		
+
 		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
 		ao.setExpressionString(expression.toString());
-		
+
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));
-		
+
 		return data;
 	}
 
@@ -2259,16 +2270,16 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		ao.setPredObjListPath(identifier.getName());
-		
+
 		identifier = (ASTIdentifier) node.jjtGetChild(2);
 		ao.setScanObjListPath(identifier.getName());
-		
+
 		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
 		ao.setExpressionString(expression.toString());
-		
+
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));
-		
+
 		return data;
 	}
 

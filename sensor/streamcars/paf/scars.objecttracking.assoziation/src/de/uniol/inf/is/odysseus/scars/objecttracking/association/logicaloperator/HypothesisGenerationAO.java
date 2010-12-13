@@ -15,18 +15,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * same timestamp. The Hypothesis Generation Operator initiates the connection
  * list in the metadata and changes the schema so that the next operator gets
  * both lists (new and old) as input.
- * 
+ *
  * @author Volker Janz
- * 
+ *
  */
 public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogicalOp {
 
   private static final long serialVersionUID = 1L;
 
   //private static final String ASSOCIATION_SOURCE_NAME = "association";
-  private static final String ASSOCIATION_RECORD_NAME = "scan";
-  private static final String SCANNED_OBJECTS_NAME = "scannedObjects";
-  private static final String PREDICTED_OBJECTS_NAME = "predictedObjects";
+  private String ASSOCIATION_RECORD_NAME = "scan";
+  private String SCANNED_OBJECTS_NAME = "scannedObjects";
+  private String PREDICTED_OBJECTS_NAME = "predictedObjects";
 
   private String oldObjListPath;
   private String newObjListPath;
@@ -39,6 +39,9 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     super(copy);
     this.oldObjListPath = copy.oldObjListPath;
     this.newObjListPath = copy.newObjListPath;
+    this.ASSOCIATION_RECORD_NAME = copy.ASSOCIATION_RECORD_NAME;
+    this.SCANNED_OBJECTS_NAME = copy.SCANNED_OBJECTS_NAME;
+    this.PREDICTED_OBJECTS_NAME = copy.PREDICTED_OBJECTS_NAME;
   }
 
   // LEFT -> SOURCE (neu erkannte objekte)
@@ -52,8 +55,16 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     SchemaHelper helper = null;
 
     // copy scanned Objects
-    helper = new SchemaHelper(this.getSubscribedToSource(LEFT).getSchema().clone());
-    SDFAttribute scannedObjects = helper.getAttribute(this.newObjListPath).clone();
+
+
+    // Hier wird AUCH das rechte Schema genutzt damit die neu erkannten Objekte das gleiche
+    // Schema haben wie die prädizierten Objekte, auch wenn sie nicht alle Attribute davon
+    // besitzen --> alles aufs globale Schema mappen
+    helper = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema().clone());
+    SDFAttribute scannedObjects = helper.getAttribute(this.oldObjListPath).clone();
+
+
+
     // set new list name
     scannedObjects.setAttributeName(SCANNED_OBJECTS_NAME);
 
@@ -78,12 +89,13 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     association.addSubattribute(predictedObjects);
 
     // set source name
+    helper = new SchemaHelper(this.getSubscribedToSource(LEFT).getSchema().clone());
     setSourceName(association, helper.getSourceName());
 
     // TODO: die metadaten aus dem inputschema mitnehmen
     SDFAttributeListExtended newSchema = new SDFAttributeListExtended();
     newSchema.addAttribute(association);
-    
+
     return newSchema;
   }
 
@@ -128,5 +140,31 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
       return null;
     }
   }
+
+
+
+public String getASSOCIATION_RECORD_NAME() {
+	return ASSOCIATION_RECORD_NAME;
+}
+
+public void setASSOCIATION_RECORD_NAME(String aSSOCIATION_RECORD_NAME) {
+	ASSOCIATION_RECORD_NAME = aSSOCIATION_RECORD_NAME;
+}
+
+public String getSCANNED_OBJECTS_NAME() {
+	return SCANNED_OBJECTS_NAME;
+}
+
+public void setSCANNED_OBJECTS_NAME(String sCANNED_OBJECTS_NAME) {
+	SCANNED_OBJECTS_NAME = sCANNED_OBJECTS_NAME;
+}
+
+public String getPREDICTED_OBJECTS_NAME() {
+	return PREDICTED_OBJECTS_NAME;
+}
+
+public void setPREDICTED_OBJECTS_NAME(String pREDICTED_OBJECTS_NAME) {
+	PREDICTED_OBJECTS_NAME = pREDICTED_OBJECTS_NAME;
+}
 
 }
