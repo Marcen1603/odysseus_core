@@ -4,6 +4,9 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -16,6 +19,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TypeCaster;
 
@@ -30,7 +34,7 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 	
 	private TupleIndexPath scannedTupleIndexPath;
 	private TupleIndexPath predictedTupleIndexPath;
-	private IStreamCarsExpression[] expressions;
+	private List<IStreamCarsExpression> expressions;
 	
 	
 	public FilterExpressionEstimateUpdatePO() {
@@ -41,17 +45,26 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 		super(copy);
 		this.scannedTupleIndexPath = copy.scannedTupleIndexPath.clone();
 		this.predictedTupleIndexPath = copy.predictedTupleIndexPath.clone();
-		this.expressions = copy.expressions.clone();
+		this.expressions = new ArrayList<IStreamCarsExpression>(copy.getExpressions());
 	}
 	
-	public void setExpressions(IStreamCarsExpression[] expressions) {
-		this.expressions = expressions;
+	public void setExpressions(Map<String, String> expressionsMap) {
+		this.expressions = new ArrayList<IStreamCarsExpression>(expressionsMap.size());
+		for(Entry<String, String> exp : expressionsMap.entrySet()) {
+			expressions.add(new StreamCarsExpression(exp.getKey(), exp.getValue()));
+		}
+	}
+	
+	public List<IStreamCarsExpression> getExpressions() {
+		return this.expressions;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-
 		super.process_open();
+		for(IStreamCarsExpression exp : this.expressions) {
+			exp.init(getOutputSchema());
+		}
 
 	}
 
