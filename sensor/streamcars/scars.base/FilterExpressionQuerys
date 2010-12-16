@@ -1,0 +1,64 @@
+// FilterGainExpression
+
+Matrix
+// restricted Variables
+// ??
+MatrixEntry(
+	'eif(
+		MatrixMult(
+			MatrixInv(
+				MatrixAdd(
+					// Expression mit target Entry?
+					${PredictedListName}:car#Covariance#
+					${SensorListName}:car#Covariance# 					
+				),
+			),
+		),
+	)'
+)
+// FilterEstimateUpdateExpression
+
+'eif(
+		MatrixAdd(
+			MatrixMult(
+				MatrixSub(
+					[${SensorListName}:car:posx]
+					,
+					[${PredictedListName}:car:posx]
+				),		
+			[${PredictedListName}:car:posx#Gain	
+			),			
+		),
+)'
+
+// FilterCovarianceExpression
+
+'eif(
+	MatrixAdd(
+		MatrixMult(
+			MatrixMult(
+				MatrixMult(
+					${PredictedListName}:car#Covariance,
+					MatrixTrans(
+						MatrixSub(
+							$IdentityMatrix,
+							${PredictedListName}:car#Gain
+						),
+					),
+				),
+			),
+		),
+	MatrixMult(
+		${PredictedListName}:car#Gain,
+		MatrixMult(
+			${SensorListName}:car#Covariance,
+			MatrixTrans(
+				${PredictedListName}:car#Gain
+			),
+		),
+		
+	),
+)'
+
+	
+	
