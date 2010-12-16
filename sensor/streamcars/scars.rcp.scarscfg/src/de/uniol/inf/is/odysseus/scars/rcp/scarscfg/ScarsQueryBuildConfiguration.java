@@ -19,15 +19,15 @@ public class ScarsQueryBuildConfiguration implements IQueryBuildConfiguration {
 				"relational",
 
 				// ObjectTracking
-				"de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval", // ok
-				"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey", // ok
-				"de.uniol.inf.is.odysseus.latency.ILatency",  // ok
-				"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability",  // ok
-				"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime", // ok
-
+				"de.uniol.inf.is.odysseus.metadata.ITimeInterval",
+				"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
+				"de.uniol.inf.is.odysseus.metadata.ILatency",  // ok
+				"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability",
+				"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime",
+		
 				// StreamCars
-				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer", // ok
-				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain", // ok
+				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer",
+				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain",
 				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency");
 
 

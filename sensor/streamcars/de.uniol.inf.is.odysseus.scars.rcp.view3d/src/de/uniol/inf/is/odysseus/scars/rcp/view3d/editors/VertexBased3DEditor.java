@@ -50,9 +50,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class VertexBased3DEditor implements IStreamEditorType {
 
 	private static final float CAR_HEIGHT = 3;
-	private String x_pos_name = "x_pos";
-	private String y_pos_name = "y_pos";
-	private String z_pos_name = "z_pos";
+	private String x_pos_name = "posx";
+	private String y_pos_name = "posy";
+	private String z_pos_name = "posz";
 	private String car_vertices_name = "vertices";
 	private TransformGroup carGroup;
 	private SchemaIndexPath carPath;
