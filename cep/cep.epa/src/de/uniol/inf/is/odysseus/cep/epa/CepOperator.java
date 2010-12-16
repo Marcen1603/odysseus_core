@@ -10,6 +10,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.cep.epa.event.CEPEvent;
+import de.uniol.inf.is.odysseus.cep.epa.event.CEPEventAgent;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
@@ -72,9 +74,14 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private StateMachine<R> stateMachine;
 	
 	/**
-	 * Referenz auf die globale, automatenübergreifende Symboltabelle
+	 * Referenz auf die globale, automaten?ergreifende Symboltabelle
 	 */
 	//private SymbolTable<R> symTab;
+	
+	/**
+	 * EventAgent
+	 */
+	private CEPEventAgent agent = CEPEventAgent.getInstance();
 
 	/**
 	 * leerer Standardkonstruktor
@@ -171,9 +178,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			LinkedList<W> complexEvents = null;
 			if (createNewInstance) {
 				logger.debug("Created New Initial Instance");
-				addInstance(new StateMachineInstance<R>(
+				StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
 						this.stateMachine, getEventReader().get(port).getTime(
-								event)));
+								event));
+				addInstance(newInstance);
+				this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, newInstance);
 			}
 			if (event == null)
 				throw new InvalidEventException(
@@ -186,7 +195,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			addInstances(branchedInstances);
 			complexEvents = validateFinalStates(outdatedInstances, port);
 			removeInstances(outdatedInstances);
-
+			this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, outdatedInstances);
 			if (complexEvents.size() > 0) {
 				for (W e : complexEvents) {
 					if (logger.isDebugEnabled()) {
@@ -298,6 +307,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					// execute transition
 					instance.takeTransition(transitionsToTake.remove(0), event,
 							eventReader.get(port));
+					this.agent.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
 				} else {
 					// execute possible further transitions on new instances
 					// because it must be cloned from current instance,
@@ -310,10 +320,12 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						// this.branchingBuffer.addBranch(instance,
 						// newInstance);
 						branchedInstances.add(newInstance);
+						this.agent.fireCEPEvent(CEPEvent.SPLIT_MACHINE, newInstance);
 					}
 					// Now its save to update current Transition
 					instance.takeTransition(transitionsToTake.remove(0), event,
 							eventReader.get(port));
+					this.agent.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
 				}
 			}
 			if (logger.isDebugEnabled()) {

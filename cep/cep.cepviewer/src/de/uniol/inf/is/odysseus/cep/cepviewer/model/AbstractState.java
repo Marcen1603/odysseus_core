@@ -28,10 +28,10 @@ public abstract class AbstractState extends Figure {
 	 */
 	public static final int SIZE = 65;
 	
-	public AbstractState(String name, State state) {
+	public AbstractState(int id, State state) {
 		this.state = state;
-		this.name = "S" +this.state.getId();
-		this.setToolTip(new Label("State " + name));
+		this.name = "S" + id;
+		this.setToolTip(new Label("State " + this.name));
 	}
 
 	public String getName() {

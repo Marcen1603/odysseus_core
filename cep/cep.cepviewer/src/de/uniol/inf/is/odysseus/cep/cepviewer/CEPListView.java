@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
+import java.util.LinkedList;
+
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
@@ -14,10 +16,11 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
-//import de.uniol.inf.is.odysseus.cep.epa.event.CEPEvent;
-//import de.uniol.inf.is.odysseus.cep.epa.event.CEPEventAgent;
-//import de.uniol.inf.is.odysseus.cep.epa.event.ICEPEventListener;
+import de.uniol.inf.is.odysseus.cep.epa.event.CEPEvent;
+import de.uniol.inf.is.odysseus.cep.epa.event.CEPEventAgent;
+import de.uniol.inf.is.odysseus.cep.epa.event.ICEPEventListener;
 
 /**
  * This class defines the list view.
@@ -99,12 +102,52 @@ public class CEPListView extends ViewPart {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addStateMaschine(CepOperator operator) {
-//		 CEPEventAgent.getInstance().addCEPEventListener(new
-//		 ICEPEventListener() {
-//		 public void cepEventOccurred(CEPEvent event) {
-//		 // TODO event handling
-//		 }
-//		 });
+		CEPEventAgent.getInstance().addCEPEventListener(
+				new ICEPEventListener() {
+					public void cepEventOccurred(CEPEvent event) {
+						Object content = event.getContent();
+						switch (event.getType()) {
+						case CEPEvent.ADD_MASCHINE:
+							if(content instanceof StateMachineInstance) {
+								System.out.println("add instance");
+								normalList.addToTree((StateMachineInstance) content);
+								queryList.addToTree((StateMachineInstance) content);
+								statusList.addToTree((StateMachineInstance) content);
+							} else {
+								System.out.println("Wrong CEPEvent-Content");
+							}
+							break;
+						case CEPEvent.CHANGE_STATE:
+							System.out.println("change state");
+							// use content?
+							normalList.update();
+							break;
+						case CEPEvent.SPLIT_MACHINE:
+							if(content instanceof StateMachineInstance) {
+								System.out.println("split");
+								normalList.addToTree((StateMachineInstance) content);
+								queryList.addToTree((StateMachineInstance) content);
+								statusList.addToTree((StateMachineInstance) content);
+							} else {
+								System.out.println("Wrong CEPEvent-Content");
+							}
+							break;
+						case CEPEvent.MACHINE_ABORTED:
+							if(content instanceof LinkedList<?>) {
+								System.out.println("abort");
+								LinkedList<StateMachineInstance> instances = (LinkedList<StateMachineInstance>) content;
+								for(StateMachineInstance instance :  instances) {
+									normalList.changeStatus();
+									queryList.changeStatus();
+									statusList.changeStatus();
+								}
+							}
+							break;
+						default:
+							break;
+						}
+					}
+				});
 		normalList.addToTree(operator);
 		queryList.addToTree(operator);
 		statusList.addToTree(operator);

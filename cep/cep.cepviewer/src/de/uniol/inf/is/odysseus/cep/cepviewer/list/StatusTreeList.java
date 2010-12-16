@@ -60,13 +60,21 @@ public class StatusTreeList extends AbstractTreeList {
 			CEPTreeItem item = new CEPTreeItem(instance);
 			item.setParent(this.itemR);
 			this.itemR.add(item);
-			this.getTree().setInput(this.getRoot().getChildren());
+			this.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					getTree().setInput(getRoot().getChildren());	
+				}
+			});
 			return true;
 		} else if(instance.getCurrentState().isAccepting()) {
 			CEPTreeItem item = new CEPTreeItem(instance);
 			item.setParent(this.itemF);
 			this.itemF.add(item);
-			this.getTree().setInput(this.getRoot().getChildren());
+			this.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					getTree().setInput(getRoot().getChildren());	
+				}
+			});
 			return true;
 		} 
 		// TODO in case the instance is aborted...

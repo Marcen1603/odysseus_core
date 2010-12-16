@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.cep.epa,
+ de.uniol.inf.is.odysseus.cep.epa.event,
  de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.metadata,

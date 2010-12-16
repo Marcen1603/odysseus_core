@@ -65,17 +65,18 @@ public abstract class AbstractTreeList extends Composite {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection select = (IStructuredSelection) event
 						.getSelection();
+				System.out.println("Selection found");
 				if (((CEPTreeItem) select.getFirstElement()).getContent() instanceof StateMachineInstance) {
 					StateMachineInstance instance = ((StateMachineInstance) ((CEPTreeItem) select
 							.getFirstElement()).getContent());
+					System.out.println("TreeItem selected");
 					for (IViewReference a : PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getActivePage()
 							.getViewReferences()) {
 						if (a.getId().equals(AUTOMATA_VIEW_ID)) {
-							if (event.getSource() instanceof AbstractState) {
-								((CEPAutomataView) a.getView(false))
-										.showAutomata(instance);
-							}
+							CEPAutomataView view = (CEPAutomataView) a.getView(false);
+							view.clearView();
+							view.showAutomata(instance);
 						}
 					}
 				}
@@ -127,6 +128,18 @@ public abstract class AbstractTreeList extends Composite {
 		} else {
 			item.setImage(this.running);
 		}
+	}
+	
+	public void changeStatus() {
+	}
+	
+	public void update() {
+		this.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				TreeItem selected = tree.getTree().getSelection()[0];
+				tree.getTree().select(selected);
+			}
+		});
 	}
 
 	/**

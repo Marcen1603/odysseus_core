@@ -35,7 +35,11 @@ public class QueryTreeList extends AbstractTreeList {
 			CEPTreeItem item = new CEPTreeItem(operator);
 			item.setParent(this.getRoot());
 			this.getRoot().add(item);
-			this.getTree().setInput(this.getRoot().getChildren());
+			this.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					getTree().setInput(getRoot().getChildren());	
+				}
+			});
 			QueryTreeList.machine++;
 		} else {
 			System.out.println("try to add Instances to List");
@@ -49,7 +53,11 @@ public class QueryTreeList extends AbstractTreeList {
 					CEPTreeItem item = new CEPTreeItem((StateMachineInstance)instance);
 					item.setParent(parent);
 					parent.add(item);
-					this.getTree().setInput(this.getRoot().getChildren());
+					this.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							getTree().setInput(getRoot().getChildren());	
+						}
+					});
 					return true;
 				}
 			}
@@ -66,7 +74,11 @@ public class QueryTreeList extends AbstractTreeList {
 				CEPTreeItem newItem = new CEPTreeItem(instance);
 				newItem.setParent(item);
 				item.add(newItem);
-				this.getTree().setInput(this.getRoot().getChildren());
+				this.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						getTree().setInput(getRoot().getChildren());	
+					}
+				});
 				return true;
 			}
 		}

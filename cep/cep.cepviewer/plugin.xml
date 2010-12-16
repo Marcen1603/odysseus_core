@@ -39,9 +39,9 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="*">
+            targetID="de.uniol.inf.is.odysseus.cep.cepviewer.cepviewer">
          <view
-               closeable="false"
+               closeable="true"
                id="de.uniol.inf.is.odysseus.cep.cepviewer.listview"
                minimized="false"
                ratio="0.25"
@@ -49,7 +49,7 @@
                relative="org.eclipse.ui.editorss">
          </view>
          <view
-               closeable="false"
+               closeable="true"
                id="de.uniol.inf.is.odysseus.cep.cepviewer.automataview"
                minimized="false"
                ratio="0.75"
@@ -57,7 +57,7 @@
                relative="org.eclipse.ui.editorss">
          </view>
          <view
-               closeable="false"
+               closeable="true"
                id="de.uniol.inf.is.odysseus.cep.cepviewer.queryview"
                minimized="false"
                ratio="0.25"
@@ -65,7 +65,7 @@
                relative="de.uniol.inf.is.odysseus.cep.cepviewer.automataview">
          </view>
          <view
-               closeable="false"
+               closeable="true"
                id="de.uniol.inf.is.odysseus.cep.cepviewer.stateview"
                minimized="false"
                relationship="stack"

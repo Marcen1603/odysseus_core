@@ -61,10 +61,10 @@ public class CEPAutomataView extends ViewPart {
 	@SuppressWarnings("unchecked")
 	public void showAutomata(StateMachineInstance instance) {
 		this.currentState = instance.getCurrentState();
-		// TODO 
-		State nextState = null;//instance.getStateMachine().getInitialState();
-		AutomataState state = this.createState(nextState);
-		this.createTransitions(state, nextState);
+		// TODO
+		State firstState = instance.getStateMachine().getInitialState();
+		AutomataState state = this.createState(firstState);
+		this.createTransitions(state, firstState);
 	}
 
 	private void createTransitions(AutomataState oldState, State nextState) {
@@ -90,9 +90,9 @@ public class CEPAutomataView extends ViewPart {
 	}
 
 	private AutomataState createState(State rootState) {
-		AutomataState newState = new AutomataState(this.parent, "S"
-				+ rootState.getId(), rootState, this.currentState
-				.equals(rootState), rootState.isAccepting());
+		AutomataState newState = new AutomataState(this.parent,
+				this.stateCount, rootState,
+				this.currentState.equals(rootState), rootState.isAccepting());
 		newState.setBounds(new Rectangle(STATE_X_SPACING
 				* (this.stateCount + 1),
 				(this.diagram.getSize().height - AbstractState.SIZE) / 2,
@@ -101,6 +101,13 @@ public class CEPAutomataView extends ViewPart {
 		new DragListener(newState);
 		this.stateCount++;
 		return newState;
+	}
+
+	/**
+	 * @deprecated never used
+	 */
+	public void update() {
+		this.diagram.repaint();
 	}
 
 	public void clearView() {

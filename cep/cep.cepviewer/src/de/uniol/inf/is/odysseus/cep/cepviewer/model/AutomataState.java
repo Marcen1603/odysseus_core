@@ -38,8 +38,8 @@ public class AutomataState extends AbstractState {
 	 * @param parent
 	 *            is the widget which contains this state.
 	 */
-	public AutomataState(Composite parent, String name, State state, boolean isActive, boolean isAccepting) {
-		super(name, state);
+	public AutomataState(Composite parent, int id, State state, boolean isActive, boolean isAccepting) {
+		super(id, state);
 		this.setOpaque(false);
 		this.parent = parent;
 		this.isActive = isActive;

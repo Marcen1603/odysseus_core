@@ -12,6 +12,7 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.physicaloperator,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.cep.epa,
+ de.uniol.inf.is.odysseus.cep.epa.event,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
  de.uniol.inf.is.odysseus.cep.epa.eventreading,
  de.uniol.inf.is.odysseus.cep.epa.exceptions
