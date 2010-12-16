@@ -11,6 +11,8 @@ public class FilterExpressionGainAO <M extends IProbability & IGain> extends Una
 	private static final long serialVersionUID = 1L;
 	
 	private String expressionString;
+	private String scannedListPath;
+	private String predictedListPath;
 	private String[] restrictedVariables;
 
 	public FilterExpressionGainAO() {
@@ -51,5 +53,22 @@ public class FilterExpressionGainAO <M extends IProbability & IGain> extends Una
 	public String getExpressionString() {
 		return expressionString;
 	}
+
+	public String getScannedListPath() {
+		return scannedListPath;
+	}
+
+	public void setScannedListPath(String scannedListPath) {
+		this.scannedListPath = scannedListPath;
+	}
+
+	public String getPredictedListPath() {
+		return predictedListPath;
+	}
+
+	public void setPredictedListPath(String predictedListPath) {
+		this.predictedListPath = predictedListPath;
+	}
+
 }
 
