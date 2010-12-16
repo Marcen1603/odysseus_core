@@ -11,6 +11,10 @@ public class CovarianceMapper {
 
 	private List<String> indices = new ArrayList<String>();
 	
+	public CovarianceMapper(CovarianceMapper copy) {
+		this.indices = new ArrayList<String>(copy.indices);
+	}
+	
 	public CovarianceMapper( SDFAttributeList schema ) {
 		find(schema, null);
 	}
