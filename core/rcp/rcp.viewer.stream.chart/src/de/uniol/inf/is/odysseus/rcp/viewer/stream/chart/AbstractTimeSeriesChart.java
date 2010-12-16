@@ -69,7 +69,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 					dispose();
 					return;
 				} catch (SeriesException e) {
-					System.out.println("Warn: " + e.getLocalizedMessage());
+					//System.out.println("Warn: " + e.getLocalizedMessage());
 				} catch (Exception e) {
 					e.printStackTrace();
 

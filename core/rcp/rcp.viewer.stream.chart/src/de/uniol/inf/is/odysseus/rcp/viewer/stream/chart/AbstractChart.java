@@ -52,6 +52,14 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	private IStreamConnection<Object> connection;
 	private ViewSchema<T> viewSchema;
 
+	
+	private static int currentUniqueSecondIdentifer = 0;
+	public static synchronized String getUniqueSecondIdentifier(String prefix){
+		currentUniqueSecondIdentifer++;
+		return prefix+"_"+currentUniqueSecondIdentifer;
+	}
+	
+	
 	public void init(IPhysicalOperator observingOperator) {
 		this.connection = createConnection(observingOperator);
 		init(connection);

@@ -19,7 +19,8 @@ public abstract class AbstractCommand extends AbstractHandler {
 	public AbstractChart<?,?> openView(AbstractChart<?,?> createView, IPhysicalOperator observingOperator) {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
-			String secondaryIdentifier = observingOperator.getClass().getCanonicalName()+observingOperator.getClass().hashCode();
+			String secondaryIdentifierPrefix = observingOperator.getClass().getCanonicalName()+observingOperator.getClass().hashCode();
+			String secondaryIdentifier = AbstractChart.getUniqueSecondIdentifier(secondaryIdentifierPrefix);
 			AbstractChart<?,?> view = (AbstractChart<?,?>)activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);			
 			view.init(observingOperator);
 			return view;
