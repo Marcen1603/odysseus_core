@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterExpressionEstimateUpdateAO <M extends IProbability & IConnectionContainer & IGain> extends UnaryLogicalOp {
@@ -16,7 +17,7 @@ public class FilterExpressionEstimateUpdateAO <M extends IProbability & IConnect
 	private String oldObjListPath;
 	private String newObjListPath;
 	
-	private IStreamCarsExpression[] expressions;
+	private Map<String, String> expressions;
 	
 	public FilterExpressionEstimateUpdateAO()
 	{
@@ -64,14 +65,14 @@ public class FilterExpressionEstimateUpdateAO <M extends IProbability & IConnect
 	/**
 	 * @param expressionString the expressionString to set
 	 */
-	public void setExpressions(IStreamCarsExpression[] expressions) {
-		this.expressions = expressions;
+	public void setExpressions(Map<String, String> functionList) {
+		this.expressions = functionList;
 	}
 
 	/**
 	 * @return the expressionString
 	 */
-	public IStreamCarsExpression[] getExpressions() {
+	public Map<String, String> getExpressions() {
 		return expressions;
 	}
 
