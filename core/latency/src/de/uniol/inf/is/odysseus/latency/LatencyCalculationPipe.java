@@ -11,6 +11,7 @@ public class LatencyCalculationPipe<T extends IMetaAttributeContainer<? extends 
 	
 	public LatencyCalculationPipe(
 			LatencyCalculationPipe<T> latencyCalculationPipe) {	
+		super(latencyCalculationPipe);
 	}
 
 	@Override

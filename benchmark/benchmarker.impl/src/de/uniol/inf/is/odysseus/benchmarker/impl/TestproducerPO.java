@@ -6,11 +6,14 @@ import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriorit
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public class TestproducerPO extends
-		AbstractSource<RelationalTuple<IntervalLatencyPriority>> {
+		AbstractSource<RelationalTuple<IntervalLatencyPriority>>{
 
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
@@ -18,13 +21,14 @@ public class TestproducerPO extends
 	
 	public TestproducerPO(int percentagePrios) {
 		this.jedeswievielteelementprio = percentagePrios;
+
 	}
 
 	public void addTestPart(int elementCount, long elementsPerSecond) {
 		this.elementCounts.add(elementCount);
 		this.frequencies.add(elementsPerSecond);
 	}
-
+	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		Thread t = new Thread() {
@@ -37,7 +41,8 @@ public class TestproducerPO extends
 					long offset = 1000000000 / frequency;
 					for (int i = 0; i < count; ++i) {
 						RelationalTuple<IntervalLatencyPriority> r = new RelationalTuple<IntervalLatencyPriority>(
-								0);
+								1);
+						r.setAttribute(0, i);
 						long expectedTime = lastTime + offset;
 						r
 								.setMetadata(new IntervalLatencyPriority(

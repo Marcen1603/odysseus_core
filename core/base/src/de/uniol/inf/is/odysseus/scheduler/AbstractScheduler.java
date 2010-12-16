@@ -9,6 +9,9 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
+import de.uniol.inf.is.odysseus.monitoring.physicalplan.ProcessCallsMonitor;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent;
@@ -83,6 +86,14 @@ public abstract class AbstractScheduler extends EventHandler implements
 					.append(";").append(s.getPlan().getCurrentPriority())
 					.append(";").append((""+q.getPenalty()).replace('.', ','))
 					.append(";");
+			// Written Objects
+			IPlanMonitor mon = q.getPlanMonitor("Root Monitor");
+			if (mon != null){
+				toPrint.append(((ProcessCallsMonitor)mon).getOverallProcessCallCount());
+			}else{
+				toPrint.append("-1");
+			}
+			toPrint.append(";");
 			ScheduleMeta h = s.getPlan().getScheduleMeta();
 			if (h!=null){
 				h.csvPrint(toPrint);
@@ -93,6 +104,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 		// System.out.println(toPrint);
 		try {
 			file.write(toPrint.toString());
+			file.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -140,7 +152,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 			try {
 				file = new FileWriter(OdysseusDefaults.getHomeDir()
 						+ "SchedulerLog" + System.currentTimeMillis() + ".csv");
-				file.write("Timestamp;PartialPlan;Query;Priority;Penalty;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
+				file.write("Timestamp;PartialPlan;Query;Priority;Penalty;ObjectsWritten;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
 				linesWritten = 1; // Header!
 			} catch (Exception e) {
 				e.printStackTrace();

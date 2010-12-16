@@ -21,6 +21,7 @@ public class TTestProducerAORule extends AbstractTransformationRule<TestProducer
 	@Override
 	public void execute(TestProducerAO algebraOp, TransformationConfiguration trafo) {
 		TestproducerPO po = new TestproducerPO(algebraOp.getInvertedPriorityRatio());
+		po.setOutputSchema(algebraOp.getOutputSchema());
 		Iterator<Long> it = algebraOp.getFrequencies().iterator();
 		for(Integer size : algebraOp.getElementCounts()) {
 			po.addTestPart(size, it.next());

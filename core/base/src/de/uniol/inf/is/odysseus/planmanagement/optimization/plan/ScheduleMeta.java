@@ -97,6 +97,10 @@ public class ScheduleMeta {
 				: 0;
 
 	}
+	
+	public long getLastDiff() {
+		return lastDiff;
+	}
 
 	@Override
 	public String toString() {

@@ -22,6 +22,7 @@ public class TBenchmarkAORule extends AbstractTransformationRule<BenchmarkAO> {
 	@Override
 	public void execute(BenchmarkAO algebraOp, TransformationConfiguration trafo) {
 		BenchmarkPO po = createBenchmarkPO(algebraOp.getProcessingTimeInns(), algebraOp.getSelectivity(), trafo);
+		po.setOutputSchema(algebraOp.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);

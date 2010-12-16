@@ -29,6 +29,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 	};
 
 	public BenchmarkPO(BenchmarkPO<R> benchmarkPO) {
+		super(benchmarkPO);
 		this.processingTime = benchmarkPO.processingTime;
 		this.selectivity = benchmarkPO.selectivity;
 	}
