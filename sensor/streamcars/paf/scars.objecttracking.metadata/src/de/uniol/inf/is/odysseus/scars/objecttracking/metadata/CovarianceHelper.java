@@ -14,6 +14,13 @@ public class CovarianceHelper {
 	
 	private String[] restrictedVariables;
 	
+	public CovarianceHelper(CovarianceHelper copy) {
+		this.schema = copy.schema.clone();
+		this.mapper = new CovarianceMapper(copy.mapper);
+		this.expression = copy.expression;
+		this.restrictedVariables = copy.restrictedVariables;
+	}
+	
 	public CovarianceHelper(SDFAttributeList schema) {
 		this.schema = schema;
 		this.mapper = new CovarianceMapper(this.schema);
