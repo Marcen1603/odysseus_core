@@ -37,8 +37,10 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGain & IProbability &
 
 	public FilterExpressionCovarianceUpdatePO(FilterExpressionCovarianceUpdatePO<M> copy) {
 		super(copy);
-		//TODO clone?
-		this.setCovOldHelper(copy.getCovOldHelper());
+		this.scannedTupleIndexPath = copy.scannedTupleIndexPath.clone();
+		this.predictedTupleIndexPath = copy.predictedTupleIndexPath.clone();
+		this.covHelper = new CovarianceHelper(copy.covHelper);
+		this.covMapper = new CovarianceMapper(copy.covMapper);
 	}
 
 	@Override

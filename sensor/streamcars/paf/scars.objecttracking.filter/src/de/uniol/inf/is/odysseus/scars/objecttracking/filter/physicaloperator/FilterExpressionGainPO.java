@@ -36,9 +36,7 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 
 	public FilterExpressionGainPO(FilterExpressionGainPO<M> copy) {
 		super(copy);
-		//TODO clone?
-		this.setCovHelper(copy.getCovHelper());
-		
+		this.covHelper = new CovarianceHelper(copy.covHelper);
 		this.setPredictedTupleIndexPath(copy.getPredictedTupleIndexPath().clone());
 		this.setScannedTupleIndexPath(copy.getScannedTupleIndexPath().clone());
 		

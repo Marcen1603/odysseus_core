@@ -39,7 +39,9 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 
 	public FilterExpressionEstimateUpdatePO(FilterExpressionEstimateUpdatePO<M> copy) {
 		super(copy);
-
+		this.scannedTupleIndexPath = copy.scannedTupleIndexPath.clone();
+		this.predictedTupleIndexPath = copy.predictedTupleIndexPath.clone();
+		this.expressions = copy.expressions.clone();
 	}
 	
 	public void setExpressions(IStreamCarsExpression[] expressions) {
