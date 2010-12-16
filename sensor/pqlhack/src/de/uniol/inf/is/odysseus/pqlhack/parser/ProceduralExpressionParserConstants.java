@@ -125,27 +125,33 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_ASSOCIATION_EXP_GATE = 61;
   /** RegularExpression Id. */
-  int IDENTIFIER = 62;
+  int K_FILTER_EXP_GATE = 62;
   /** RegularExpression Id. */
-  int LETTER = 63;
+  int K_FILTER_EXP_EXTIMATE = 63;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 64;
+  int K_FILTER_EXP_COVARIANCE = 64;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 65;
+  int IDENTIFIER = 65;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 66;
+  int LETTER = 66;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 67;
+  int SPECIAL_CHARS = 67;
   /** RegularExpression Id. */
-  int REGEXP = 68;
+  int CHAR_LITERAL = 68;
   /** RegularExpression Id. */
-  int FLOAT = 69;
+  int QUOTED_IDENTIFIER = 69;
   /** RegularExpression Id. */
-  int INTEGER = 70;
+  int COMPARE_OPERATOR = 70;
   /** RegularExpression Id. */
-  int DIGIT = 71;
+  int REGEXP = 71;
   /** RegularExpression Id. */
-  int IPADDRESS = 72;
+  int FLOAT = 72;
+  /** RegularExpression Id. */
+  int INTEGER = 73;
+  /** RegularExpression Id. */
+  int DIGIT = 74;
+  /** RegularExpression Id. */
+  int IPADDRESS = 75;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -214,6 +220,9 @@ public interface ProceduralExpressionParserConstants {
     "\"DISTANCE-OBJECT-SELECTOR-ANDRE\"",
     "\"ASSOCIATION-EXP-EVAL\"",
     "\"ASSOCIATION-EXP-GATE\"",
+    "\"FILTER-EXP-GATE\"",
+    "\"FILTER_EXP_EXTIMATE\"",
+    "\"FILTER_EXP_COVARIANCE\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

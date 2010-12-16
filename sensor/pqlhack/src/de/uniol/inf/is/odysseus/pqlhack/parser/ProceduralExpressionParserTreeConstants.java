@@ -65,6 +65,9 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTDISTANCEOBJECTSELECTOROP_ANDRE = 59;
   public int JJTASSOCIATIONEXPRESSIONEVALOP = 60;
   public int JJTASSOCIATIONEXPRESSIONGATEOP = 61;
+  public int JJTFILTEREXPGAINOP = 62;
+  public int JJTFILTEREXPESTIMATEOP = 63;
+  public int JJTFILTEREXPCOVARIANCEOP = 64;
 
 
   public String[] jjtNodeName = {
@@ -130,6 +133,9 @@ public interface ProceduralExpressionParserTreeConstants
     "DistanceObjectSelectorOp_Andre",
     "AssociationExpressionEvalOp",
     "AssociationExpressionGateOp",
+    "FilterExpGainOp",
+    "FilterExpEstimateOp",
+    "FilterExpCovarianceOp",
   };
 }
-/* JavaCC - OriginalChecksum=989718426535000082020aecd274b4d1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=b3d0e88457b6bd0e820ab0f280470c28 (do not edit this line) */

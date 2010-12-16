@@ -1,359 +1,30 @@
-/**
+ /**
 * JJTree file
-*/
-
-options {
-  JDK_VERSION = "1.5";
-  IGNORE_CASE = true;
-  MULTI = true;
-  VISITOR = true;
-  DEBUG_PARSER = true;
-  DEBUG_TOKEN_MANAGER = false;
-  //  NODE_DEFAULT_VOID=true;
-  JJTREE_OUTPUT_DIRECTORY = "parser";
-  NODE_PACKAGE = "de.uniol.inf.is.odysseus.pqlhack.parser";
-  //LOOKAHEAD = 2;
+*/options{  JDK_VERSION = "1.5";  IGNORE_CASE = true;  MULTI = true;  VISITOR = true;  DEBUG_PARSER = true;  DEBUG_TOKEN_MANAGER = false;  //  NODE_DEFAULT_VOID=true;
+  JJTREE_OUTPUT_DIRECTORY = "parser";  NODE_PACKAGE = "de.uniol.inf.is.odysseus.pqlhack.parser";  //LOOKAHEAD = 2;
   //FORCE_LA_CHECK = true;
-}
-
-PARSER_BEGIN(ProceduralExpressionParser)
-package de.uniol.inf.is.odysseus.pqlhack.parser;
-
-@SuppressWarnings("all")
-
-public class ProceduralExpressionParser{} PARSER_END(ProceduralExpressionParser)
-
-SKIP :
-{
-  " "
-| "\t"
-| "\n"
-| "\r"
-/*| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
-| <"/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/">*/
-}
-
-
-TOKEN : /* Keywords */ {
-	<K_ACCESS: "ACCESS">
-|	<K_AS: "AS">
-|	<K_AND: "AND">
-|	<K_AVG: "AVG">
-|   <K_BENCHMARK: "BENCHMARK">
-|	<K_BENCHMARK_EXT: "BENCHMARK-EXT">
-|   <K_BROKER: "BROKER">
-|	<K_BUFFER: "BUFFER">
-|	<K_EXIST: "EXIST">
-|	<K_NOT_EXIST : "NOT_EXIST">
-|	<K_COUNT: "COUNT">
-|	<K_DEFAULT: "DEFAULT">
-|	<K_IN: "IN">
-|	<K_JOIN: "JOIN">
-|	<K_LOGICAL: "LOGICAL">
-|	<K_MAX: "MAX">
-|	<K_MIN: "MIN">
-|	<K_NOT: "NOT">
-|	<K_OR: "OR">
-|	<K_ON: "ON">
-|	<K_PLAN: "PLAN">
-|   <K_PREDICTION: "PREDICTION">
-|	<K_PROJECTION: "PROJECTION">
-|	<K_PUNCTUATION: "PUNCTUATION">
-|   <K_QUEUE: "QUEUE">
-|   <K_RELATIONAL_PROJECTION: "RPROJECTION">
-|   <K_RELATIONAL_SELECTION: "RSELECTION">
-|   <K_RELATIONAL_JOIN: "RJOIN">
-|   <K_RELATIONAL_NEST: "RNEST">
-|   <K_RELATIONAL_UNNEST: "RUNNEST">
-|	<K_SCHEMA_CONVERT: "SCHEMACONVERT">
-|	<K_SELECTION: "SELECTION">
-|	<K_SET_PREDICTION: "SET-PREDICTION">
-|   <K_SET_PREDICTION_OR : "SET-PREDICTION-OR" >
-|	<K_SIZE: "SIZE">
-|	<K_SLIDE: "SLIDE">
-|	<K_SLDING_TIME_WINDOW: "SLIDING-TIME-WINDOW">
-|	<K_SUM: "SUM">
-|	<K_TUMBLING_TIME_WINDOW: "TUMBLING-TIME-WINDOW">
-|	<K_WHERE: "WHERE">
-|   <K_TEST: "TESTOP">
-|   <K_ASSOCIATION_GEN: "ASSOCIATION-GEN">
-|   <K_ASSOCIATION_EVAL: "ASSOCIATION-EVAL">
-|   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
-|   <K_ASSOCIATION_SRC: "ASSOCIATION-SRC">
-|   <K_EVALUATE: "EVALUATE">
-|   <K_FILTER_GAIN: "FILTER-GAIN">
-|   <K_FILTER_ESTIMATE: "FILTER-ESTIMATE">
-|   <K_FILTER_COVARIANCE: "FILTER-COVARIANCE">
-|   <K_BROKER_INIT: "BROKER-INIT">
-|	<K_TMP_DATA_BOUNCER: "TMP-DATA-BOUNCER">
-|   <K_JDVE_SINK: "JDVE-SINK">
-| 	<K_SCARS_XML_PROFILER: "SCARS-XML-PROFILER">
-|   <K_DISTANCE_OBJECT_SELECTOR: "DISTANCE-OBJECT-SELECTOR">
-| 	<K_DISTANCE_OBJECT_SELECTOR_ANDRE: "DISTANCE-OBJECT-SELECTOR-ANDRE" >
-|   <K_ASSOCIATION_EXP_EVAL: "ASSOCIATION-EXP-EVAL">
-|   <K_ASSOCIATION_EXP_GATE: "ASSOCIATION-EXP-GATE">
-}
-
-TOKEN:{
-  <IDENTIFIER:(<LETTER>)+(<DIGIT>
-  | <LETTER>
-  | <SPECIAL_CHARS>)*>
-  | <#LETTER:["a"-"z", "A"-"Z"]>
-  | <#SPECIAL_CHARS:":"
-  | "_"
-  | ".">
-  | <CHAR_LITERAL:"'"(~["'"])*"'"("'"(~["'"])*"'")*>
-  | <QUOTED_IDENTIFIER:"\""(~["\n", "\r", "\""])*"\"">
-  | <COMPARE_OPERATOR:"="
-  | "<>"
-  | ">"
-  | "<"
-  | "<="
-  | ">=">
-  | <REGEXP: "/" ("^")?(<LETTER> | <DIGIT> | "\\" | "+" | "." | "*" | "?" | "$")+ "/" >
-}
-
-TOKEN:/* Numeric Constants */
-{
-  //  <NUMBER:<FLOAT>
-//  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>
-//  | <#FLOAT:<INTEGER>
-//  | <INTEGER>("."<INTEGER>)?
-//  | "."<INTEGER>>
-<FLOAT:("-")?(<INTEGER>"."<INTEGER>
-  | "."<INTEGER>)>
-  | <INTEGER:(<DIGIT>)+>
-  | <#DIGIT:["0"-"9"]>
- | <IPADDRESS:<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?>
-}
-
-void Host() :
-{
-  Token value;
-}
-{
-  value = < IPADDRESS >
-  {
-    jjtThis.setValue(value.image);
-  }
-| Identifier()
-}
-
-ASTLogicalPlan LogicalPlan():{}{
-
-	<K_LOGICAL><K_PLAN>":" (AlgebraOp() [";"])+ < EOF > {return jjtThis;}
-}
-
-void AlgebraOp():{}{
-	ProjectionOp() | RelationalProjectionOp() |
-	SelectionOp() | RelationalSelectionOp() |
-	JoinOp() | RelationalJoinOp() |
-	RelationalNestOp() |
-	RelationalUnnestOp() |
-	WindowOp() |
-	AccessOp() |
-	BrokerOp() |
-	PredictionAssignOp() |
-	PredictionAssignOrOp() |
-	PredictionOp() |
-	TestOp() |
-	AssociationGenOp() |
-	AssociationEvalOp() |
-	AssociationSelOp() |
-	AssociationSrcOp() |
-	EvaluateOp() |
-	SchemaConvertOp() |
-	BenchmarkOp() |
-	BenchmarkOpExt()|
-	BufferOp() |
-	ExistOp() |
-	FilterGainOp() |
-	FilterEstimateOp() |
-	FilterCovarianceOp() |
-	PunctuationOp()|
-	BrokerInitOp() |
-	TmpDataBouncerOp() |
-	JDVESinkOp() |
-	ScarsXMLProfilerOp() |
-	DistanceObjectSelectorOp()|
-	DistanceObjectSelectorOp_Andre() |
-	AssociationExpressionGateOp() |
-	AssociationExpressionEvalOp()
-}
-
-void TestOp(): {}{
-    <K_TEST>"(" AlgebraOp() "," Identifier() ")"
-}
-
-void ExistOp() : {} {
-
-	(<K_EXIST> {jjtThis.setType("exist");} | <K_NOT_EXIST> {jjtThis.setType("not exist");})
-			"(" AlgebraOp() "," AlgebraOp() "," Predicate() ")"
-}
-
-void BenchmarkOp() : {}{
-	<K_BENCHMARK>"(" AlgebraOp() "," Number() "," Number() ")"
-}
-
-void BenchmarkOpExt() : {}{
-	<K_BENCHMARK_EXT>"(" AlgebraOp() "," Number() "," Number() ")"
-}
-
-void BufferOp(): {}{
-	<K_BUFFER>"(" AlgebraOp() "," Identifier() ")"
-}
-
-void PunctuationOp(): {} {
-	<K_PUNCTUATION>"(" AlgebraOp() "," Number() ")"
-}
-
-void ProjectionOp(): {}{
-	<K_PROJECTION>"(" AlgebraOp() ","  (Identifier()#ProjectionIdentifier)*")"
-}
-
-void RelationalProjectionOp(): {}{
-	<K_RELATIONAL_PROJECTION>"(" AlgebraOp() ","  (Identifier()#ProjectionIdentifier)*")"
-}
-
-/*void TumblingWindow(): {}{
+}PARSER_BEGIN(ProceduralExpressionParser)package de.uniol.inf.is.odysseus.pqlhack.parser;@ SuppressWarnings("all") public class ProceduralExpressionParser{}PARSER_END(ProceduralExpressionParser)SKIP :{  " "| "\t"| "\n"| "\r"  /*| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+| <"/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/">*/}TOKEN : /* Keywords */{  < K_ACCESS : "ACCESS" >| < K_AS : "AS" >| < K_AND : "AND" >| < K_AVG : "AVG" >| < K_BENCHMARK : "BENCHMARK" >| < K_BENCHMARK_EXT : "BENCHMARK-EXT" >| < K_BROKER : "BROKER" >| < K_BUFFER : "BUFFER" >| < K_EXIST : "EXIST" >| < K_NOT_EXIST : "NOT_EXIST" >| < K_COUNT : "COUNT" >| < K_DEFAULT : "DEFAULT" >| < K_IN : "IN" >| < K_JOIN : "JOIN" >| < K_LOGICAL : "LOGICAL" >| < K_MAX : "MAX" >| < K_MIN : "MIN" >| < K_NOT : "NOT" >| < K_OR : "OR" >| < K_ON : "ON" >| < K_PLAN : "PLAN" >| < K_PREDICTION : "PREDICTION" >| < K_PROJECTION : "PROJECTION" >| < K_PUNCTUATION : "PUNCTUATION" >| < K_QUEUE : "QUEUE" >| < K_RELATIONAL_PROJECTION : "RPROJECTION" >| < K_RELATIONAL_SELECTION : "RSELECTION" >| < K_RELATIONAL_JOIN : "RJOIN" >| < K_RELATIONAL_NEST : "RNEST" >| < K_RELATIONAL_UNNEST : "RUNNEST" >| < K_SCHEMA_CONVERT : "SCHEMACONVERT" >| < K_SELECTION : "SELECTION" >| < K_SET_PREDICTION : "SET-PREDICTION" >| < K_SET_PREDICTION_OR : "SET-PREDICTION-OR" >| < K_SIZE : "SIZE" >| < K_SLIDE : "SLIDE" >| < K_SLDING_TIME_WINDOW : "SLIDING-TIME-WINDOW" >| < K_SUM : "SUM" >| < K_TUMBLING_TIME_WINDOW : "TUMBLING-TIME-WINDOW" >| < K_WHERE : "WHERE" >| < K_TEST : "TESTOP" >| < K_ASSOCIATION_GEN : "ASSOCIATION-GEN" >| < K_ASSOCIATION_EVAL : "ASSOCIATION-EVAL" >| < K_ASSOCIATION_SEL : "ASSOCIATION-SEL" >| < K_ASSOCIATION_SRC : "ASSOCIATION-SRC" >| < K_EVALUATE : "EVALUATE" >| < K_FILTER_GAIN : "FILTER-GAIN" >| < K_FILTER_ESTIMATE : "FILTER-ESTIMATE" >| < K_FILTER_COVARIANCE : "FILTER-COVARIANCE" >| < K_BROKER_INIT : "BROKER-INIT" >| < K_TMP_DATA_BOUNCER : "TMP-DATA-BOUNCER" >| < K_JDVE_SINK : "JDVE-SINK" >| < K_SCARS_XML_PROFILER : "SCARS-XML-PROFILER" >| < K_DISTANCE_OBJECT_SELECTOR : "DISTANCE-OBJECT-SELECTOR" >| < K_DISTANCE_OBJECT_SELECTOR_ANDRE : "DISTANCE-OBJECT-SELECTOR-ANDRE" >| < K_ASSOCIATION_EXP_EVAL : "ASSOCIATION-EXP-EVAL" >| < K_ASSOCIATION_EXP_GATE : "ASSOCIATION-EXP-GATE" >| < K_FILTER_EXP_GATE : "FILTER-EXP-GATE" >| < K_FILTER_EXP_EXTIMATE : "FILTER_EXP_EXTIMATE" >| < K_FILTER_EXP_COVARIANCE : "FILTER_EXP_COVARIANCE" >}TOKEN :{  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    ":"  | "_"  | "." >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )* >| < QUOTED_IDENTIFIER : "\"" (~[ "\n", "\r", "\"" ])* "\"" >| < COMPARE_OPERATOR :    "="  | "<>"  | ">"  | "<"  | "<="  | ">=" >| < REGEXP :    "/" ("^")?    (      < LETTER >    | < DIGIT >    | "\\"    | "+"    | "."    | "*"    | "?"    | "$"    )+    "/" >}TOKEN : /* Numeric Constants */{  //  <NUMBER:<FLOAT>
+  //  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>
+  //  | <#FLOAT:<INTEGER>
+  //  | <INTEGER>("."<INTEGER>)?
+  //  | "."<INTEGER>>
+  < FLOAT :    ("-")?    (      < INTEGER > "." < INTEGER >    | "." < INTEGER >    ) >| < INTEGER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >}void Host() :{  Token value;}{  value = < IPADDRESS >  {    jjtThis.setValue(value.image);  }| Identifier()}ASTLogicalPlan LogicalPlan() :{}{  < K_LOGICAL > < K_PLAN > ":"  (    AlgebraOp() [ ";" ]  )+  < EOF >  {    return jjtThis;  }}void AlgebraOp() :{}{  ProjectionOp()| RelationalProjectionOp()|   SelectionOp()| RelationalSelectionOp()|   JoinOp()| RelationalJoinOp()|   RelationalNestOp()|   RelationalUnnestOp()|   WindowOp()|   AccessOp()|   BrokerOp()|   PredictionAssignOp()|   PredictionAssignOrOp()|   PredictionOp()|   TestOp()|   AssociationGenOp()|   AssociationEvalOp()|   AssociationSelOp()|   AssociationSrcOp()|   EvaluateOp()|   SchemaConvertOp()|   BenchmarkOp()|   BenchmarkOpExt()|   BufferOp()|   ExistOp()|   FilterGainOp()|   FilterEstimateOp()|   FilterCovarianceOp()|   PunctuationOp()|   BrokerInitOp()|   TmpDataBouncerOp()|   JDVESinkOp()|   ScarsXMLProfilerOp()|   DistanceObjectSelectorOp()|   DistanceObjectSelectorOp_Andre()|   AssociationExpressionGateOp()|   AssociationExpressionEvalOp()|   FilterExpGainOp()|   FilterExpEstimateOp()|   FilterExpCovarianceOp()}void TestOp() :{}{  < K_TEST > "(" AlgebraOp() "," Identifier() ")"}void ExistOp() :{}{  (    < K_EXIST >    {      jjtThis.setType("exist");    }  | < K_NOT_EXIST >    {      jjtThis.setType("not exist");    }  )  "(" AlgebraOp() "," AlgebraOp() "," Predicate() ")"}void BenchmarkOp() :{}{  < K_BENCHMARK > "(" AlgebraOp() "," Number() "," Number() ")"}void BenchmarkOpExt() :{}{  < K_BENCHMARK_EXT > "(" AlgebraOp() "," Number() "," Number() ")"}void BufferOp() :{}{  < K_BUFFER > "(" AlgebraOp() "," Identifier() ")"}void PunctuationOp() :{}{  < K_PUNCTUATION > "(" AlgebraOp() "," Number() ")"}void ProjectionOp() :{}{  < K_PROJECTION > "(" AlgebraOp() ","  (    Identifier() #ProjectionIdentifier)*  ")"}void RelationalProjectionOp() :{}{  < K_RELATIONAL_PROJECTION > "(" AlgebraOp() ","  (    Identifier() #ProjectionIdentifier)*  ")"}/*void TumblingWindow(): {}{
 	<K_TUMBLING_TIME_WINDOW>"(" AlgebraOp() "," Number()#WindowSize "," Number()#WindowAdvance ")"
-}*/
-
-void SelectionOp(): {
-	Token windowSize;
-}{
-    // window size is a hack for evaluation of range predicates
-	<K_SELECTION>"(" AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
-}
-
-void BrokerInitOp():{}
-{
-  < K_BROKER_INIT >"(" AlgebraOp() "," Number() ")"}
-
-void RelationalSelectionOp():{
-	Token windowSize;
-}{
-	<K_RELATIONAL_SELECTION>"(" AlgebraOp() "," Predicate() ")"
-}
-
-void RelationalJoinOp(): {
-	Token windowSize;
-
-}{
-	// Here no join predicate will be set
-	// this will be done by the restructuring component
-	<K_RELATIONAL_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"
-}
-
-void RelationalNestOp(): {
-}{
-	// NEST stream, a, b AS z, z is the attribute name of the nesting.
-	<K_RELATIONAL_NEST>"(" AlgebraOp() "," Identifier() "," (Identifier())* ")"
-}
-
-void RelationalUnnestOp(): {
-}{
-	// NEST stream, a, b AS z, z is the attribute name of the nesting.
-	<K_RELATIONAL_UNNEST>"(" AlgebraOp() "," Identifier() ")"
-}
-
-void JoinOp(): {
-	Token windowSize;
-
-}{
-	// Here no join predicate will be set
-	// this will be done by the restructuring component
-	// window size is a hack for evaluation of window size
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
-}
-
-void SchemaConvertOp(): {} {
-	<K_SCHEMA_CONVERT>"(" AlgebraOp() ")"
-}
-
-void WindowOp():{}{
-	// at the moment only sliding time windows are supported
-	SlidingTimeWindow()
-}
-
-void SlidingTimeWindow(): {}{
-	<K_SLDING_TIME_WINDOW>"(" AlgebraOp()"," Number()"," Number() ")"
-}
-
-void AccessOp(): {}{
-	<K_ACCESS>"(" Identifier() [<K_AS> Identifier()] ")"
-}
-
-void BrokerOp(): {}{
-	<K_BROKER>"(" Identifier() [LOOKAHEAD(2) "," <K_QUEUE>"(" AlgebraOp() ")" {jjtThis.setQueue(true);}] ("," AlgebraOp() {jjtThis.increaseNoOfChildOps();})* ")"
-}
-
-void PredictionAssignOp() : {}{
-	<K_SET_PREDICTION>"(" AlgebraOp() "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
-}
-
-void PredictionAssignOrOp() : {}{
-	<K_SET_PREDICTION_OR>"(" AlgebraOp() "," (Identifier()) "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
-}
-
-void PredictionOp() : {}{
-  	< K_PREDICTION >"(" AlgebraOp() "," AlgebraOp() "," (Identifier()) ")"}
-
-void Predicate():{}{
-  LOOKAHEAD(OrPredicate())OrPredicate()
-  | LOOKAHEAD(AndPredicate())AndPredicate()
-  | NotPredicate()
-  | SimplePredicate()
-}
-void SimplePredicate():{}{
-  LOOKAHEAD("("Predicate())"("Predicate()")"
-  | LOOKAHEAD(BasicPredicate()) BasicPredicate()
-  /*| LOOKAHEAD(SpatialPredicate()) SpatialPredicate()
-  | ProbabilityPredicate()*/
-}
-
-void BasicPredicate():{}{
-	Expression()CompareOperator()Expression()
-}
-
-void OrPredicate():{}{
-  SimplePredicate()<K_OR>Predicate()
-}
-void AndPredicate():{}{
-  SimplePredicate()<K_AND>Predicate()
-}
-void NotPredicate():{}{
-  <K_NOT>Predicate()
-}
-
-void Expression():{
-  String tOp;
-}
-{
-  LOOKAHEAD(SimpleToken()MathOperator())SimpleToken()tOp = MathOperator(){
-    jjtThis.setOperator(tOp);
-  }
-  Expression()
-  | SimpleToken()
-}
-
-void SimpleToken():{}{
-  Number()
-  | String()
-  /*| LOOKAHEAD(AggregateExpression())AggregateExpression()*/
-  | LOOKAHEAD(FunctionExpression())FunctionExpression()
-  | "("Expression()")"
-  | Identifier()
-//TODO DISTINCE Expression
-}
-
-void FunctionExpression():{}{
-  Identifier()#FunctionName "("Expression()")"
-}
-/*void AggregateExpression():{}{
+}*/void SelectionOp() :{  Token windowSize;}{  // window size is a hack for evaluation of range predicates
+  < K_SELECTION > "(" AlgebraOp() "," Predicate()  (    "," windowSize = < INTEGER >    {      jjtThis.setWindowSize(windowSize.image);    }  )?  ")"}void BrokerInitOp() :{}{  < K_BROKER_INIT > "(" AlgebraOp() "," Number() ")"}void RelationalSelectionOp() :{  Token windowSize;}{  < K_RELATIONAL_SELECTION > "(" AlgebraOp() "," Predicate() ")"}void RelationalJoinOp() :{  Token windowSize;}{  // Here no join predicate will be set
+  // this will be done by the restructuring component
+  < K_RELATIONAL_JOIN > "(" AlgebraOp() "," AlgebraOp() "," Predicate() ")"}void RelationalNestOp() :{}{  // NEST stream, a, b AS z, z is the attribute name of the nesting.
+  < K_RELATIONAL_NEST > "(" AlgebraOp() "," Identifier() ","  (    Identifier()  )*  ")"}void RelationalUnnestOp() :{}{  // NEST stream, a, b AS z, z is the attribute name of the nesting.
+  < K_RELATIONAL_UNNEST > "(" AlgebraOp() "," Identifier() ")"}void JoinOp() :{  Token windowSize;}{  // Here no join predicate will be set
+  // this will be done by the restructuring component
+  // window size is a hack for evaluation of window size
+  < K_JOIN > "(" AlgebraOp() "," AlgebraOp() "," Predicate()  (    "," windowSize = < INTEGER >    {      jjtThis.setWindowSize(windowSize.image);    }  )?  ")"}void SchemaConvertOp() :{}{  < K_SCHEMA_CONVERT > "(" AlgebraOp() ")"}void WindowOp() :{}{  // at the moment only sliding time windows are supported
+  SlidingTimeWindow()}void SlidingTimeWindow() :{}{  < K_SLDING_TIME_WINDOW > "(" AlgebraOp() "," Number() "," Number() ")"}void AccessOp() :{}{  < K_ACCESS > "(" Identifier() [ < K_AS > Identifier() ] ")"}void BrokerOp() :{}{  < K_BROKER > "(" Identifier()  [    LOOKAHEAD(2)    "," < K_QUEUE > "(" AlgebraOp() ")"    {      jjtThis.setQueue(true);    }  ]  (    "," AlgebraOp()    {      jjtThis.increaseNoOfChildOps();    }  )*  ")"}void PredictionAssignOp() :{}{  < K_SET_PREDICTION > "(" AlgebraOp() ","  (    PredictionDefinition()  )+  [ < K_DEFAULT > DefaultPredictionDefinition() ] ")"}void PredictionAssignOrOp() :{}{  < K_SET_PREDICTION_OR > "(" AlgebraOp() ","  (    Identifier()  )  ","  (    PredictionDefinition()  )+  [ < K_DEFAULT > DefaultPredictionDefinition() ] ")"}void PredictionOp() :{}{  < K_PREDICTION > "(" AlgebraOp() "," AlgebraOp() ","  (    Identifier()  )  ")"}void Predicate() :{}{  LOOKAHEAD(OrPredicate())  OrPredicate()| LOOKAHEAD(AndPredicate())  AndPredicate()| NotPredicate()| SimplePredicate()}void SimplePredicate() :{}{  LOOKAHEAD("(" Predicate())  "(" Predicate() ")"| LOOKAHEAD(BasicPredicate())  BasicPredicate()  /*| LOOKAHEAD(SpatialPredicate()) SpatialPredicate()
+  | ProbabilityPredicate()*/}void BasicPredicate() :{}{  Expression() CompareOperator() Expression()}void OrPredicate() :{}{  SimplePredicate() < K_OR > Predicate()}void AndPredicate() :{}{  SimplePredicate() < K_AND > Predicate()}void NotPredicate() :{}{  < K_NOT > Predicate()}void Expression() :{  String tOp;}{  LOOKAHEAD(SimpleToken() MathOperator())  SimpleToken() tOp = MathOperator()  {    jjtThis.setOperator(tOp);  }  Expression()| SimpleToken()}void SimpleToken() :{}{  Number()| String()  /*| LOOKAHEAD(AggregateExpression())AggregateExpression()*/| LOOKAHEAD(FunctionExpression())  FunctionExpression()| "(" Expression() ")"| Identifier()  //TODO DISTINCE Expression
+}void FunctionExpression() :{}{  Identifier() #FunctionName "(" Expression()")"}/*void AggregateExpression():{}{
   AggregateFunction()"("Identifier()")"
-}*/
-/*void AggregateFunction():{
+}*//*void AggregateFunction():{
   Token t;
 }
 {
@@ -364,149 +35,4 @@ void FunctionExpression():{}{
   | t = <K_SUM>){
     jjtThis.setFunction(AggregateFunction.valueOf(AggregateFunction.class , t.image.toUpperCase()));
   }
-}*/
-
-void Number():{
-  Token t;
-}
-{
-  (t = <FLOAT>
-  | t = <INTEGER>){
-    jjtThis.setValue(t.image);
-  }
-}
-
-void String():{
-  Token t;
-}
-{
-  t = <CHAR_LITERAL>{
-    jjtThis.setValue(t.image);
-  }
-}
-
-String MathOperator()#void :{}{
-  "*"{
-    return "*";
-  }
-  | "+"{
-    return "+";
-  }
-  | "-"{
-    return "-";
-  }
-  | "/"{
-    return "/";
-  }
-  | "^"{
-    return "^";
-  }
-}
-
-void Identifier():{
-  Token sign = null;
-  Token t;
-}
-{
- (sign = "-")?
-  t = <IDENTIFIER>{
-    jjtThis.setName((sign != null && sign.image != null ? sign.image : "") + t.image);
-  }
-}
-
-void CompareOperator():{
-  Token t;
-}
-{
-  t = <COMPARE_OPERATOR> {
-    jjtThis.setOperator(t.image);
-  }
-}
-
-void PredictionDefinition(): {} {
-	(PredictionFunctionDefinition())+ <K_WHERE> Predicate() ";"
-}
-
-void DefaultPredictionDefinition(): {}{
-	(PredictionFunctionDefinition())+
-}
-
-void PredictionFunctionDefinition(): {}{
-	Identifier() ":=" Expression()";"
-}
-
-void KeyValueList(): {}{
-	( KeyValuePair() ";" )*
-}
-
-void KeyValuePair(): {}{
-	Identifier() ":=" ( Identifier() | Number() )
-}
-
-void AssociationGenOp(): {} {
-  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ( "," Identifier() )? ( "," Identifier() )? ( "," Identifier() )? ")"
-}
-
-void AssociationEvalOp(): {} {
-  <K_ASSOCIATION_EVAL> "(" AlgebraOp()	"," Identifier() "," KeyValueList()	"," Identifier() "," Identifier() ( "," KeyValueList() )? ")"
-}
-
-void AssociationSelOp(): {} {
-  < K_ASSOCIATION_SEL > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"
-}
-
-void AssociationSrcOp(): {} {
-  < K_ASSOCIATION_SRC > "(" Identifier() "," Number() ")"
-}
-
-void EvaluateOp(): {} {
-  < K_EVALUATE > "(" AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," Number() ")"}
-
-void TmpDataBouncerOp(): {} {
- < K_TMP_DATA_BOUNCER > "(" AlgebraOp() "," Identifier() "," Number() "," Identifier()  ")"
-}
-
-void FilterGainOp(): {}
-{
-  < K_FILTER_GAIN > "(" AlgebraOp() "," Identifier() ")"
-}
-
-void FilterEstimateOp(): {}
-{
-  < K_FILTER_ESTIMATE > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"
-}
-
-void FilterCovarianceOp(): {}
-{
-  < K_FILTER_COVARIANCE > "(" AlgebraOp() "," Identifier() ")"
-}
-
-void JDVESinkOp(): {}
-{  <  K_JDVE_SINK > "(" AlgebraOp() "," Host() "," Number() "," Identifier() ")"}
-
-void ScarsXMLProfilerOp(): {}{
-  < K_SCARS_XML_PROFILER > "(" AlgebraOp() "," Identifier() "," Identifier() ")"}
-
-void DistanceObjectSelectorOp(): {}
-{
-  < K_DISTANCE_OBJECT_SELECTOR > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() "," Number() "," Number() "," Number() "," Number() ")"
-}
-
-void DistanceObjectSelectorOp_Andre():{}{
-  < K_DISTANCE_OBJECT_SELECTOR_ANDRE > "(" AlgebraOp() "," Identifier() ")"}
-
-void AssociationExpressionEvalOp(): {} {
-  <K_ASSOCIATION_EXP_EVAL> "("
-  	AlgebraOp() ","
-  	Identifier() ","
-  	Identifier() ","
-  	Expression() ")"
-}
-
-void AssociationExpressionGateOp(): {} {
-  <K_ASSOCIATION_EXP_GATE> "("
-  	AlgebraOp() ","
-  	Identifier() ","
-  	Identifier() ","
-  	Expression() ")"
-}
+}*/void Number() :{  Token t;}{  (    t = < FLOAT >  | t = < INTEGER >  )  {    jjtThis.setValue(t.image);  }}void String() :{  Token t;}{  t = < CHAR_LITERAL >  {    jjtThis.setValue(t.image);  }}String MathOperator() #void :{}{  "*"  {    return "*";  }| "+"  {    return "+";  }| "-"  {    return "-";  }| "/"  {    return "/";  }| "^"  {    return "^";  }}void Identifier() :{  Token sign = null;  Token t;}{  (sign = "-")?   t = < IDENTIFIER >  {    jjtThis.setName((sign != null && sign.image != null ? sign.image : "") + t.image);  }}void CompareOperator() :{  Token t;}{  t = < COMPARE_OPERATOR >  {    jjtThis.setOperator(t.image);  }}void PredictionDefinition() :{}{  (    PredictionFunctionDefinition()  )+  < K_WHERE > Predicate() ";"}void DefaultPredictionDefinition() :{}{  (    PredictionFunctionDefinition()  )+}void PredictionFunctionDefinition() :{}{  Identifier() ":=" Expression() ";"}void KeyValueList() :{}{  (    KeyValuePair() ";"  )*}void KeyValuePair() :{}{  Identifier() ":="  (    Identifier()  | Number()  )}void AssociationGenOp() :{}{  < K_ASSOCIATION_GEN > "("   AlgebraOp() ","   AlgebraOp() ","   Identifier() ","   Identifier()   [ "," Identifier() "," Identifier() "," Identifier() ]   ")"}void AssociationEvalOp() :{}{  < K_ASSOCIATION_EVAL > "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier()  (    "," KeyValueList()  )?  ")"}void AssociationSelOp() :{}{  < K_ASSOCIATION_SEL > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"}void AssociationSrcOp() :{}{  < K_ASSOCIATION_SRC > "(" Identifier() "," Number() ")"}void EvaluateOp() :{}{  < K_EVALUATE > "(" AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," Number() ")"}void TmpDataBouncerOp() :{}{  < K_TMP_DATA_BOUNCER > "(" AlgebraOp() "," Identifier() "," Number() "," Identifier() ")"}void FilterGainOp() :{}{  < K_FILTER_GAIN > "(" AlgebraOp() "," Identifier() ")"}void FilterEstimateOp() :{}{  < K_FILTER_ESTIMATE > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"}void FilterCovarianceOp() :{}{  < K_FILTER_COVARIANCE > "(" AlgebraOp() "," Identifier() ")"}void JDVESinkOp() :{}{  < K_JDVE_SINK > "(" AlgebraOp() "," Host() "," Number() "," Identifier() ")"}void ScarsXMLProfilerOp() :{}{  < K_SCARS_XML_PROFILER > "(" AlgebraOp() "," Identifier() "," Identifier() ")"}void DistanceObjectSelectorOp() :{}{  < K_DISTANCE_OBJECT_SELECTOR > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() "," Number() "," Number() "," Number() "," Number() ")"}void DistanceObjectSelectorOp_Andre() :{}{  < K_DISTANCE_OBJECT_SELECTOR_ANDRE > "(" AlgebraOp() "," Identifier() ")"}void AssociationExpressionEvalOp() :{}{  < K_ASSOCIATION_EXP_EVAL > "("   AlgebraOp() ","   Identifier() ","   Identifier() ","   Expression() ")"}void AssociationExpressionGateOp() :{}{  < K_ASSOCIATION_EXP_GATE > "("   AlgebraOp() ","   Identifier() ","   Identifier() ","   Expression() ")"}void FilterExpGainOp() :{}{  < K_FILTER_EXP_GATE > "("   AlgebraOp() ","   Identifier() ","   Identifier() ","   Expression()  (    "," Identifier()  )*  ")"}void FilterExpEstimateOp() :{}{  < K_FILTER_EXP_EXTIMATE > "("   AlgebraOp() ","   Identifier() ","   Identifier() ","   DefaultPredictionDefinition()   ")"}void FilterExpCovarianceOp() :{}{  < K_FILTER_EXP_COVARIANCE > "("   AlgebraOp() ","   Identifier() ","   Identifier() ","   Expression()   ")"}

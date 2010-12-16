@@ -30,6 +30,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpCovarianceOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpEstimateOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
@@ -600,6 +603,24 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTAssociationExpressionGateOp node, Object data) {
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTFilterExpGainOp node, Object data) {
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTFilterExpEstimateOp node, Object data) {
+		((ArrayList)data).set(0, true);
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTFilterExpCovarianceOp node, Object data) {
 		((ArrayList)data).set(0, true);
 		return node.childrenAccept(this, data);
 	}

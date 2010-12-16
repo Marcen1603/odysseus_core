@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
@@ -51,6 +52,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpCovarianceOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpEstimateOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
@@ -109,6 +113,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator
 import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.EvaluationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterCovarianceUpdateAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterEstimateUpdateAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterExpressionCovarianceUpdateAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterExpressionEstimateUpdateAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterExpressionGainAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterGainAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
@@ -2273,6 +2280,109 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		identifier = (ASTIdentifier) node.jjtGetChild(2);
 		ao.setScanObjListPath(identifier.getName());
+
+		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
+		ao.setExpressionString(expression.toString());
+
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTFilterExpGainOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+		FilterExpressionGainAO ao = new FilterExpressionGainAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		ao.setScannedListPath(identifier.getName());
+
+		identifier = (ASTIdentifier) node.jjtGetChild(2);
+		ao.setPredictedListPath(identifier.getName());
+
+		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
+		ao.setExpressionString(expression.toString());
+		
+		ArrayList<String> restrictedVariables = new ArrayList<String>();
+		for (int i = 4; i < node.jjtGetNumChildren(); i++) {
+			identifier = (ASTIdentifier) node.jjtGetChild(i);
+			restrictedVariables.add(identifier.getName());
+		}
+		ao.setRestrictedVariables(restrictedVariables.toArray(new String[0]));
+
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTFilterExpEstimateOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+		FilterExpressionEstimateUpdateAO ao = new FilterExpressionEstimateUpdateAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		ao.setNewObjListPath(identifier.getName());
+
+		identifier = (ASTIdentifier) node.jjtGetChild(2);
+		ao.setOldObjListPath(identifier.getName());
+		
+		Map<String, String> functionList = new HashMap<String, String>();
+		ASTDefaultPredictionDefinition prediction = (ASTDefaultPredictionDefinition) node.jjtGetChild(3);
+		for (int i = 0; i < prediction.jjtGetNumChildren(); i++) {
+			ASTPredictionFunctionDefinition function = (ASTPredictionFunctionDefinition) prediction.jjtGetChild(i);
+			
+			ASTIdentifier target = (ASTIdentifier) function.jjtGetChild(0);
+			ASTIdentifier functionString = (ASTIdentifier) function.jjtGetChild(1);
+			
+			functionList.put(target.getName(), functionString.getName());
+		}
+		ao.setExpressions(functionList);
+		
+		((ArrayList) data).add(ao);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTFilterExpCovarianceOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+		FilterExpressionCovarianceUpdateAO ao = new FilterExpressionCovarianceUpdateAO();
+
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		ao.setScannedListPath(identifier.getName());
+
+		identifier = (ASTIdentifier) node.jjtGetChild(2);
+		ao.setPredictedListPath(identifier.getName());
 
 		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
 		ao.setExpressionString(expression.toString());
