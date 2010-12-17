@@ -13,6 +13,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
 		//loading default rules		
 		rules.add(new TAccessAOExistsRule());
+		rules.add(new TFileSinkAORule());
 		rules.add(new TCreateMetadataRule());
 		rules.add(new TDeleteRenameAORule());
 		rules.add(new TSelectAORule());

@@ -18,7 +18,8 @@ public class Activator implements BundleActivator {
 	private static final String DIFFERENCE = "DIFFERENCE";
 	private static final String EXISTENCE = "EXISTENCE";
 	private static final String AGGREGATION = "AGGREGATION";
-
+	private static final String FILESINK = "FILESINK";
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -41,6 +42,8 @@ public class Activator implements BundleActivator {
 		OperatorBuilderFactory.putOperatorBuilderType(DIFFERENCE, DifferenceAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(EXISTENCE, ExistenceAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(AGGREGATION, AggregateAOBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(FILESINK, FileSinkAOBuilder.class);
+
 	}
 
 	/*
@@ -64,6 +67,7 @@ public class Activator implements BundleActivator {
 		OperatorBuilderFactory.removeOperatorBuilderType(DIFFERENCE);
 		OperatorBuilderFactory.removeOperatorBuilderType(EXISTENCE);
 		OperatorBuilderFactory.removeOperatorBuilderType(AGGREGATION);
+		OperatorBuilderFactory.removeOperatorBuilderType(FILESINK);		
 	}
 
 }

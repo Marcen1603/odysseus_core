@@ -82,7 +82,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 		int linesPrinted = queries.size();
 		for (IQuery q : queries) {
 			toPrint.append(System.currentTimeMillis()).append(";");
-			toPrint.append(s.getPlan().getId()).append(";").append(q.getID())
+			toPrint.append(s.getPlan().getId()).append(";").append(q.getID()+1) // sieht besser aus :-)
 					.append(";").append(s.getPlan().getCurrentPriority())
 					.append(";").append((""+q.getPenalty()).replace('.', ','))
 					.append(";");
