@@ -255,7 +255,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			retBuff.append(";");
 			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
 		}
-		retBuff.append(getMetadata().csvToString());
+		retBuff.append(";").append(getMetadata().csvToString());
 		return retBuff.toString();
 	}
 
