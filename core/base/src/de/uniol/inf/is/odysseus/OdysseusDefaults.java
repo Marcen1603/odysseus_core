@@ -31,9 +31,7 @@ public class OdysseusDefaults {
 			if (d != null) {
 				success = d.mkdirs();
 			}
-			if (success){
-				success = f.createNewFile();
-			}
+			success = f.createNewFile();
 			if (success){
 				logger.debug("Created new File " + f.getAbsolutePath());
 			}
