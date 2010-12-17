@@ -10,8 +10,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.swing.AccessibleMethod;
-
 import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -27,13 +25,20 @@ public class OdysseusDefaults {
 
 	static public File openOrCreateFile(String path) throws IOException {
 		File f = new File(path);
+		boolean success = false;
 		if (!f.exists()) {
 			File d = f.getParentFile();
 			if (d != null) {
-				d.mkdirs();
+				success = d.mkdirs();
 			}
-			f.createNewFile();
-			logger.debug("Created new File " + f.getAbsolutePath());
+			if (success){
+				success = f.createNewFile();
+			}
+			if (success){
+				logger.debug("Created new File " + f.getAbsolutePath());
+			}else{
+				throw new IOException("Could not create File "+f.getAbsolutePath());
+			}
 		} else {
 			logger.debug("Read from file " + f.getAbsolutePath());
 		}
@@ -102,6 +107,7 @@ public class OdysseusDefaults {
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
+		props.setProperty("sla_updatePenaltyTime", 60000+""); // Milliseconds
 	};
 
 	private static void savePropertyFile(String odysseusHome) {
