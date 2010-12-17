@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.FileSinkPO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
@@ -44,8 +45,7 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		// TODO Auto-generated method stub
-		return null;
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 }
