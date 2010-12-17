@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.FileSink;
+import de.uniol.inf.is.odysseus.physicaloperator.FileSinkPO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -19,7 +19,7 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 
 	@Override
 	public void execute(FileSinkAO operator, TransformationConfiguration config) {
-		ISink fileSinkPO = new FileSink(operator.getFilename(), operator.getSinkType());
+		ISink fileSinkPO = new FileSinkPO(operator.getFilename(), operator.getSinkType());
 		
 		fileSinkPO.setOutputSchema(operator.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, fileSinkPO);

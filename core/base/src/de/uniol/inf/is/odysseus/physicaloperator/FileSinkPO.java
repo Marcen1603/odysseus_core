@@ -5,15 +5,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.CSVToString;
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
-public class FileSink extends AbstractSink<Object> {
+public class FileSinkPO extends AbstractSink<Object> {
 
 	final private String filename;
 	final private boolean csvSink;
 	transient BufferedWriter out;
 
-	public FileSink(String filename, String sinkType) {
+	public FileSinkPO(String filename, String sinkType) {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
@@ -22,7 +23,7 @@ public class FileSink extends AbstractSink<Object> {
 		}
 	}
 
-	public FileSink(FileSink fileSink) {
+	public FileSinkPO(FileSinkPO fileSink) {
 		this.filename = fileSink.filename;
 		this.csvSink = fileSink.csvSink;
 	}
@@ -34,7 +35,7 @@ public class FileSink extends AbstractSink<Object> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			out = new BufferedWriter(new FileWriter(filename));
+			out = new BufferedWriter(new FileWriter(OdysseusDefaults.openOrCreateFile(filename)));
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);
 			ex.fillInStackTrace();
@@ -70,8 +71,8 @@ public class FileSink extends AbstractSink<Object> {
 	}
 
 	@Override
-	public FileSink clone() {
-		return new FileSink(this);
+	public FileSinkPO clone() {
+		return new FileSinkPO(this);
 	}
 
 	@Override
@@ -80,12 +81,12 @@ public class FileSink extends AbstractSink<Object> {
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof FileSink)) {
+		if (!(ipo instanceof FileSinkPO)) {
 			return false;
 		}
-		FileSink fs = (FileSink) ipo;
+		FileSinkPO fs = (FileSinkPO) ipo;
 		if (this.getSubscribedToSource().equals(fs.getSubscribedToSource())
-				&& this.filename.equals(fs.getFilename())) {
+				&& this.filename.equals(fs.getFilename()) && this.csvSink == fs.csvSink) {
 			return true;
 		}
 		return false;

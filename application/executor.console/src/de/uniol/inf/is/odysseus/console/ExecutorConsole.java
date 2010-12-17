@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.physicaloperator.FileSink;
+import de.uniol.inf.is.odysseus.physicaloperator.FileSinkPO;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -827,7 +827,7 @@ public class ExecutorConsole implements CommandProvider,
 			} else {
 				this.executor.addQuery(q, parser(), currentUser,
 						new ParameterDefaultRoot(
-								new FileSink(outputputFilename, "")),
+								new FileSinkPO(outputputFilename, "")),
 						this.trafoConfigParam);
 			}
 		} catch (PlanManagementException e) {
@@ -1002,7 +1002,7 @@ public class ExecutorConsole implements CommandProvider,
 						this.trafoConfigParam);
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
 				this.executor.addQuery(q.toString(), parser(), currentUser,
-						new ParameterDefaultRoot(new FileSink(
+						new ParameterDefaultRoot(new FileSinkPO(
 								args[args.length - 1],"")), this.trafoConfigParam);
 
 			} else if (args[args.length - 1].toUpperCase().equals("<E>")) {
