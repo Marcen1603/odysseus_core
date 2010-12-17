@@ -8,10 +8,12 @@ public class FileSinkAOBuilder extends AbstractOperatorBuilder {
 
 	private final DirectParameter<String> fileName = new DirectParameter<String>(
 			"FILE", REQUIREMENT.MANDATORY);
+	private final DirectParameter<String> sinktype = new DirectParameter<String>(
+			"FILETYPE", REQUIREMENT.OPTIONAL); 
 	
 	public FileSinkAOBuilder() {
 		super(0, Integer.MAX_VALUE);
-		setParameters(fileName);
+		setParameters(fileName, sinktype);
 	}
 
 	private static final long serialVersionUID = 167513434840811081L;
@@ -24,7 +26,7 @@ public class FileSinkAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
-		return new FileSinkAO(this.fileName.getValue());
+		return new FileSinkAO(this.fileName.getValue(), this.sinktype.getValue());
 	}
 
 }

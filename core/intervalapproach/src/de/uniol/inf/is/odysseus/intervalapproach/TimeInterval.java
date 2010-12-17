@@ -409,6 +409,11 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return "[" + getStart().minus(baseTime).toString() + ","
 				+ getEnd().minus(baseTime).toString() + ")";
 	}
+	
+	@Override
+	public String csvToString() {
+		return getStart().toString() + ";" + getEnd().toString();
+	}
 
 	@Override
 	public boolean isValid() {

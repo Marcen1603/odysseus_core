@@ -245,4 +245,9 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 		prob.setAttributePaths(paths);
 	}
 
+	@Override
+	public String csvToString() {
+		return null;
+	}
+	
 }

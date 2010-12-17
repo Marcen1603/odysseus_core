@@ -31,4 +31,9 @@ public class Priority implements IPriority{
 	public String toString() {
 		return ""+prio;
 	}
+	
+	@Override
+	public String csvToString() {
+		return toString();
+	}
 }

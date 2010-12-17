@@ -92,4 +92,9 @@ public class Probability implements IProbability{
 		}
 		return true;
 	}
+	
+	@Override
+	public String csvToString() {
+		return null;
+	}
 }

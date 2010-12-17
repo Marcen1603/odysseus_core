@@ -227,6 +227,9 @@ class ExecutorThread extends Thread {
 							&& ((caller.getLimitDebug() > 0 && caller.getLinesWritten() < caller.getLimitDebug()) || caller.getLimitDebug() < 0)) {
 						int lineswritten = caller.print(plan);
 						caller.incLinesWritten(lineswritten);
+						if (!writingDone && caller.getLinesWritten() % 10000 == 0){
+							caller.logger.debug("Written "+caller.getLinesWritten());
+						}
 						if (!writingDone && caller.getLinesWritten()>= caller.getLimitDebug()) {
 							caller.logger.debug("Max No of lines written");
 							writingDone = true;

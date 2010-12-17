@@ -827,7 +827,7 @@ public class ExecutorConsole implements CommandProvider,
 			} else {
 				this.executor.addQuery(q, parser(), currentUser,
 						new ParameterDefaultRoot(
-								new FileSink(outputputFilename)),
+								new FileSink(outputputFilename, "")),
 						this.trafoConfigParam);
 			}
 		} catch (PlanManagementException e) {
@@ -1003,7 +1003,7 @@ public class ExecutorConsole implements CommandProvider,
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
 				this.executor.addQuery(q.toString(), parser(), currentUser,
 						new ParameterDefaultRoot(new FileSink(
-								args[args.length - 1])), this.trafoConfigParam);
+								args[args.length - 1],"")), this.trafoConfigParam);
 
 			} else if (args[args.length - 1].toUpperCase().equals("<E>")) {
 				q.append(args[args.length - 2]).append(" ");

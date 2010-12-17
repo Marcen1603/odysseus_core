@@ -19,7 +19,7 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 
 	@Override
 	public void execute(FileSinkAO operator, TransformationConfiguration config) {
-		ISink fileSinkPO = new FileSink(operator.getFilename());
+		ISink fileSinkPO = new FileSink(operator.getFilename(), operator.getSinkType());
 		
 		fileSinkPO.setOutputSchema(operator.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, fileSinkPO);

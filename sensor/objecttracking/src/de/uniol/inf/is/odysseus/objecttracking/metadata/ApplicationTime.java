@@ -94,6 +94,11 @@ public class ApplicationTime implements IApplicationTime{
 	}
 
 	@Override
+	public String csvToString() {
+		return toString();
+	}
+	
+	@Override
 	public void setApplicationIntervals(List<ITimeInterval> intervals) {
 		this.intervals = intervals;
 		

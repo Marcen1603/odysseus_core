@@ -106,4 +106,9 @@ public class PosNeg implements IPosNeg{
 		buffer.append("ElementType: " + this.type + " ID: " + this.id + " Timestamp: " + this.timestamp);
 		return buffer.toString();
 	}
+	
+	@Override
+	public String csvToString() {
+		return this.type+";"+this.id+";"+this.timestamp;
+	}
 }

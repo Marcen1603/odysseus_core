@@ -30,5 +30,15 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	public IntervalPriority clone() {
 		return new IntervalPriority(this);
 	}
+	
+	@Override
+	public String toString() {
+		return super.toString()+" p= "+this.priority;
+	}
+	
+	@Override
+	public String csvToString() {
+		return super.csvToString()+";"+this.priority;
+	}
 
 }

@@ -38,4 +38,9 @@ public class PredictionFunctionKey<T> implements IPredictionFunctionKey<T> {
 			return this.key.toString();
 		} else return "PredFctKey: empty";
 	}
+	
+	@Override
+	public String csvToString() {
+		return toString();
+	}
 }

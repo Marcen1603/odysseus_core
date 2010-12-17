@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.CSVToString;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 
@@ -16,7 +17,7 @@ import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> implements Serializable, Comparable<RelationalTuple<?>> {
+public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> implements Serializable, Comparable<RelationalTuple<?>>, CSVToString {
 
 	private static final long serialVersionUID = 7119095568322125441L;
 
@@ -238,6 +239,23 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		}
 		retBuff.append(" | sz=" + (memSize == -1 ? "(-)" : memSize));
 		retBuff.append(" | META | " + getMetadata());
+		return retBuff.toString();
+	}
+	
+	@Override
+	public final String csvToString() {
+		StringBuffer retBuff = new StringBuffer();
+		if (attributes.length > 0) {
+			retBuff.append(this.attributes[0] == null ? "" : this.attributes[0]);
+		} else {
+			retBuff.append("null");
+		}
+		for (int i = 1; i < this.attributes.length; ++i) {
+			Object curAttribute = this.attributes[i];
+			retBuff.append(";");
+			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
+		}
+		retBuff.append(getMetadata().csvToString());
 		return retBuff.toString();
 	}
 

@@ -566,4 +566,9 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	public void setRestrictList(int[] restrictList){
 		this.restrictList = restrictList;
 	}
+	
+	@Override
+	public String csvToString() {
+		return null;
+	}
 }

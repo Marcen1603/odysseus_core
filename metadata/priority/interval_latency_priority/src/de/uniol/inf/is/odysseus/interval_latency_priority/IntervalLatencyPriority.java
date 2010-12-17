@@ -9,10 +9,11 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
-public class IntervalLatencyPriority extends TimeInterval implements ILatency, IPriority, Serializable {
-	
+public class IntervalLatencyPriority extends TimeInterval implements ILatency,
+		IPriority, Serializable {
+
 	private static final long serialVersionUID = -4924797905689073685L;
-	
+
 	private ILatency latency;
 	private IPriority prio;
 
@@ -21,21 +22,22 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency, I
 		this.latency = new Latency();
 		this.prio = new Priority();
 	}
-	
+
 	public IntervalLatencyPriority(long start) {
-		super(PointInTime.getZeroTime());//TODO warum hier zero und oben infinity???
+		super(PointInTime.getZeroTime());// TODO warum hier zero und oben
+											// infinity???
 		this.latency = new Latency();
 		this.prio = new Priority();
 		setLatencyStart(start);
 	}
-	
+
 	public IntervalLatencyPriority(IntervalLatencyPriority original) {
 		super(original);
-		
-		this.latency = (ILatency)original.latency.clone();
-		this.prio = (IPriority)original.prio.clone();
+
+		this.latency = (ILatency) original.latency.clone();
+		this.prio = (IPriority) original.prio.clone();
 	}
-	
+
 	@Override
 	public final long getLatencyEnd() {
 		return this.latency.getLatencyEnd();
@@ -60,14 +62,21 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency, I
 	public final void setLatencyStart(long timestamp) {
 		this.latency.setLatencyStart(timestamp);
 	}
+
 	@Override
 	public IntervalLatencyPriority clone() {
 		return new IntervalLatencyPriority(this);
 	}
-	
+
 	@Override
 	public String toString() {
-		return "( i= " +super.toString() + " ; " + " l="+ this.latency+ "" + " ; p=" + this.prio+ ")";
+		return "( i= " + super.toString() + " ; " + " l=" + this.latency + ""
+				+ " ; p=" + this.prio + ")";
+	}
+
+	@Override
+	public String csvToString() {
+		return super.csvToString() + ";" + this.latency.csvToString()+";"+this.prio.csvToString();
 	}
 
 	@Override
