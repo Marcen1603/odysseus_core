@@ -3,12 +3,14 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.CSVToString;
 import de.uniol.inf.is.odysseus.collection.Pair;
 
-public class ScheduleMeta {
+public class ScheduleMeta implements CSVToString{
 	private long lastSchedule;
 	private long lastDiff;
 	private long inTimeCount;
+	private double rate;
 	private long allSchedulings;
 	
 	final private LinkedList<Pair<Long, Boolean>> history;
@@ -42,6 +44,13 @@ public class ScheduleMeta {
 		}
 		toPrint.append(";").append(history.size());
 	}
+	
+	@Override
+	public String csvToString() {
+		StringBuffer ret = new StringBuffer();
+		csvPrint(ret);
+		return ret.toString();
+	}
 
 	private long getNow() {
 		return System.currentTimeMillis();
@@ -62,6 +71,7 @@ public class ScheduleMeta {
 					break; // Timestamps are sorted
 				}
 			}
+			calcRate();
 		}
 	}
 
@@ -78,8 +88,8 @@ public class ScheduleMeta {
 			allSchedulings++;
 			history.add(new Pair<Long, Boolean>(now, inTime));
 			lastDiff = timeSinceLastSchedule;
+			calcRate();
 			return timeSinceLastSchedule;
-
 		}
 	}
 
@@ -92,10 +102,13 @@ public class ScheduleMeta {
 		: 0;
 	}
 
-	public double getRate() {
-		return allSchedulings > 0 ? inTimeCount * 1.0 / (allSchedulings * 1.0)
+	public void calcRate() {
+		rate = allSchedulings > 0 ? inTimeCount * 1.0 / (allSchedulings * 1.0)
 				: 0;
-
+	}
+	
+	public double getRate(){
+		return rate;
 	}
 	
 	public long getLastDiff() {
