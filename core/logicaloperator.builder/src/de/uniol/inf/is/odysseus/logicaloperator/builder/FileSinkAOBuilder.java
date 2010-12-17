@@ -20,8 +20,7 @@ public class FileSinkAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	protected boolean internalValidation() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
