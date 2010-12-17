@@ -36,8 +36,6 @@ public class OdysseusDefaults {
 			}
 			if (success){
 				logger.debug("Created new File " + f.getAbsolutePath());
-			}else{
-				throw new IOException("Could not create File "+f.getAbsolutePath());
 			}
 		} else {
 			logger.debug("Read from file " + f.getAbsolutePath());
