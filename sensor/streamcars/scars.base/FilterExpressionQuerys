@@ -1,64 +1,62 @@
 // FilterGainExpression
 
 Matrix
-// restricted Variables
-// ??
-MatrixEntry(
-	'eif(
-		MatrixMult(
-			MatrixInv(
-				MatrixAdd(
-					// Expression mit target Entry?
-					${PredictedListName}:car#Covariance#
-					${SensorListName}:car#Covariance# 					
-				),
-			),
-		),
-	)'
+// P * (P + R)^-1
+FILTER-EXP-GATE (
+	operator, // source operator
+	${sensorListName}, // scanned list path
+	${predictedListName}, // predicted list path
+	MatrixMult(
+		${PredictedListName}:car#COVARIANCE,
+		MatrixInv(
+			MatrixAdd(
+				${PredictedListName}:car#COVARIANCE,
+				${SensorListName}:car#COVARIANCE
+			) 
+		)
+	),
+	// restricted list
+	${predictedListName}:car:posx,
+	${predictedListName}:car:posy,
+	${predictedListName}:car:posz,
+	${predictedListName}:car:roll,
+	${predictedListName}:car:pitch,
+	${predictedListName}:car:heading,
+	${predictedListName}:car:velocity
 )
-// FilterEstimateUpdateExpression
 
-'eif(
-		MatrixAdd(
-			MatrixMult(
-				MatrixSub(
-					[${SensorListName}:car:posx]
-					,
-					[${PredictedListName}:car:posx]
-				),		
-			[${PredictedListName}:car:posx#Gain	
-			),			
-		),
-)'
-
-// FilterCovarianceExpression
-
-'eif(
+// P + KG * ( S - P)
+FILTER_EXP_EXTIMATE (
+	operator, // source operator
+	${sensorListName}, // scanned list path
+	${predictedListName}, // predicted list path
+	
+	${predictedListName}:car:posx := ${predictedListName}:car:posx + ${predictedListName}:car:posx#GAIN * (${sensorListName}:car:posx - ${predictedListName}:car:posx); 
+	${predictedListName}:car:posy := ${predictedListName}:car:posy + ${predictedListName}:car:posy#GAIN * (${sensorListName}:car:posy - ${predictedListName}:car:posy);
+	${predictedListName}:car:posz := ${predictedListName}:car:posz + ${predictedListName}:car:posz#GAIN * (${sensorListName}:car:posz - ${predictedListName}:car:posz);
+	${predictedListName}:car:roll := ${predictedListName}:car:roll + ${predictedListName}:car:roll#GAIN * (${sensorListName}:car:roll - ${predictedListName}:car:roll);
+	${predictedListName}:car:pitch := ${predictedListName}:car:pitch + ${predictedListName}:car:pitch#GAIN * (${sensorListName}:car:pitch - ${predictedListName}:car:pitch);
+	${predictedListName}:car:heading := ${predictedListName}:car:heading + ${predictedListName}:car:heading#GAIN * (${sensorListName}:car:heading - ${predictedListName}:car:heading);
+	${predictedListName}:car:velocity := ${predictedListName}:car:velocity + ${predictedListName}:car:velocity#GAIN * (${sensorListName}:car:velocity - ${predictedListName}:car:velocity);
+)
+// (I - KG) * P * ((I - KG)^t) + KG * R * (KG^t)
+FILTER_EXP_COVARIANCE (
+	operator, // source operator
+	${sensorListName}, // scanned list path
+	${predictedListName}, // predicted list path
 	MatrixAdd(
 		MatrixMult(
-			MatrixMult(
-				MatrixMult(
-					${PredictedListName}:car#Covariance,
-					MatrixTrans(
-						MatrixSub(
-							$IdentityMatrix,
-							${PredictedListName}:car#Gain
-						),
-					),
-				),
+			MatrixMult( 
+				MatrixSub(IDENTITY_MATRIX, ${predictedListName}:car#GAIN), 
+				${predictedListName}:car#COVARIANCE )
 			),
+			MatrixTrans( 
+				MatrixSub( IDENTITY_MATRIX, ${predictedListName}:car#GAIN )
+			)
 		),
-	MatrixMult(
-		${PredictedListName}:car#Gain,
-		MatrixMult(
-			${SensorListName}:car#Covariance,
-			MatrixTrans(
-				${PredictedListName}:car#Gain
-			),
-		),
-		
-	),
-)'
-
-	
-	
+		MatrixMult( 
+			MatrixMult( ${predictedListName}:car#GAIN, ${sensorListName}:car#COVARIANCE ),
+			MatrixTrans( ${predictedListName}:car#GAIN )
+		)
+	)
+)
