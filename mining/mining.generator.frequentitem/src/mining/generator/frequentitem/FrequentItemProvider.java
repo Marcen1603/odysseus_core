@@ -15,9 +15,10 @@ public class FrequentItemProvider extends StreamClientHandler {
 
 	// CREATE STREAM frequent (timestamp STARTTIMESTAMP, transaction INTEGER, item INTEGER) CHANNEL localhost : 54321;
 
-	private final static String DATA_FILE = "T10I4D100K.dat";
+	//private final static String DATA_FILE = "T10I4D100K.dat";
 	// T10I4D100K => 1000 items, average transaction length of 10 and 100k
 	// (=100.000) transactions
+	private final static String DATA_FILE = "retail.dat";
 
 	private long time = 0;
 	private int transId = 1;
@@ -50,7 +51,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 			time = time + 10;
 			transId++;
 
-			Thread.sleep(500);
+			Thread.sleep(50);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e1) {
