@@ -1,5 +1,7 @@
 package mining.generator.syntheticclusters;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import mining.generator.base.socket.StreamClientHandler;
@@ -62,7 +64,7 @@ public class SyntheticClusterProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public DataTuple next() {
+	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
 		int nextCluster = rand.nextInt(numberOfPotentialClusters);
 
@@ -80,8 +82,9 @@ public class SyntheticClusterProvider extends StreamClientHandler {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		return tuple;
+		List<DataTuple> list = new ArrayList<DataTuple>();
+		list.add(tuple);
+		return list;
 	}
 
 }
