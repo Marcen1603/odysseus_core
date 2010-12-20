@@ -20,13 +20,16 @@ public class TFilterExpressionEstimateAORule  extends AbstractTransformationRule
 		return 20;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(FilterExpressionEstimateUpdateAO operator,TransformationConfiguration config) {
 		System.out.print("CREATE Filter Expression Estimate PO...");
 		FilterExpressionEstimateUpdatePO filterEstimateUpdatePO = new FilterExpressionEstimateUpdatePO();
 		filterEstimateUpdatePO.setOutputSchema(operator.getOutputSchema());
 		
-		
+		filterEstimateUpdatePO.setPredictedObjectListPath(operator.getOldObjListPath());
+		filterEstimateUpdatePO.setScannedObjectListPath(operator.getNewObjListPath());
+		filterEstimateUpdatePO.setExpressions(operator.getExpressions());
 		
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, filterEstimateUpdatePO);
 		for (ILogicalOperator o:toUpdate) {

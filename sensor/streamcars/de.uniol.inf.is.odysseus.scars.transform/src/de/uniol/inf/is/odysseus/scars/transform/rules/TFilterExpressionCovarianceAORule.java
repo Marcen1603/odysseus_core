@@ -28,6 +28,9 @@ public class TFilterExpressionCovarianceAORule extends AbstractTransformationRul
 		filterCovarianceUpdatePO.setOutputSchema(operator.getOutputSchema());
 		
 		//TODO variablen getten und setten
+		filterCovarianceUpdatePO.setPredictedObjectListPath(operator.getPredictedListPath());
+		filterCovarianceUpdatePO.setScannedObjectListPath(operator.getScannedListPath());
+		filterCovarianceUpdatePO.setExpressionString(operator.getExpressionString());
 		
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, filterCovarianceUpdatePO);
 		for (ILogicalOperator o:toUpdate) {

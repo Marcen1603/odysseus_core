@@ -17,7 +17,6 @@ public class TFilterExpressionGainAORule extends AbstractTransformationRule<Filt
 
 	@Override
 	public int getPriority() {
-		// TODO Auto-generated method stub
 		return 20;
 	}
 	
