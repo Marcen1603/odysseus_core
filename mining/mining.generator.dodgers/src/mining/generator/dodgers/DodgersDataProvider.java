@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import mining.generator.base.socket.StreamClientHandler;
 import mining.generator.base.tuple.DataTuple;
@@ -18,7 +20,7 @@ public class DodgersDataProvider extends StreamClientHandler {
 
 
 	@Override
-	public DataTuple next() {
+	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
 		String line;
 		try {
@@ -36,7 +38,9 @@ public class DodgersDataProvider extends StreamClientHandler {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			return tuple;
+			List<DataTuple> list = new ArrayList<DataTuple>();
+			list.add(tuple);
+			return list;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {			

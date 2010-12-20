@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.List;
 
 import mining.generator.base.tuple.DataTuple;
 
@@ -16,19 +17,21 @@ public abstract class StreamClientHandler extends Thread{
    
     public abstract void init();
     public abstract void close();
-    public abstract DataTuple next();
+    public abstract List<DataTuple> next();
     
     @Override
     public void run() {
     	init();
-    	DataTuple next = next();
+    	List<DataTuple> next = next();
     	while(next!=null){
     		try {
     			if(this.connection.isClosed()){
     				System.out.println("Connection closed.");
     				break;
     			}
-				transferTuple(next);
+    			for(DataTuple nextTuple : next){
+    				transferTuple(nextTuple);
+    			}
 				next = next();
 				
 			} catch (IOException e) { 
