@@ -1,5 +1,5 @@
 // Konstanten
-#DEFINE ip 127.0.0.1:5002 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
+#DEFINE ip 192.168.0.42:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
 #DEFINE sensorName laserSensor // Quellenname
 
 // Quellendefinitionen
@@ -54,7 +54,7 @@ CREATE SENSOR ${sensorName} (
             )
         )
     ),
-    radarSensor.scan:cars
+    laserSensor.scan:cars
 ) FROM CHANNEL ${ip}
 
 #QUERY
