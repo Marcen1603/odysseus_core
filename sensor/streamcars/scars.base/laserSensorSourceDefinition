@@ -43,12 +43,12 @@ CREATE SENSOR ${sensorName} (
                                                 0.0 ,
                                                 ${sensorName}.scan:cars:car:velocity*10/100 )
                          )
-                ATTRIBUTE(nearX, FLOAT)
-                ATTRIBUTE(nearY, FLOAT)
+                ATTRIBUTE(posx_np, FLOAT)
+                ATTRIBUTE(posy_np, FLOAT)
                 LIST( points, 
                 	RECORD( point, 
-                		ATTRIBUTE(x, FLOAT)
-                		ATTRIBUTE(y, FLOAT)
+                		ATTRIBUTE(posx, FLOAT)
+                		ATTRIBUTE(posy, FLOAT)
                 	)
                 )
             )
@@ -95,12 +95,12 @@ CREATE BROKER streamCarsBroker (
                                                 0.0 ,
                                                 ${sensorName}.scan:cars:car:velocity*10/100 )
                          )
-                ATTRIBUTE(nearX, FLOAT)
-                ATTRIBUTE(nearY, FLOAT)
+                ATTRIBUTE(posx_np, FLOAT)
+                ATTRIBUTE(posy_np, FLOAT)
                 LIST( points, 
                 	RECORD( point, 
-                		ATTRIBUTE(x, FLOAT)
-                		ATTRIBUTE(y, FLOAT)
+                		ATTRIBUTE(posx, FLOAT)
+                		ATTRIBUTE(posy, FLOAT)
                 	)
                 )
             )
@@ -143,12 +143,12 @@ CREATE BROKER streamCarsBroker (
                                                 0.0 ,
                                                 ${sensorName}.scan:cars:car:velocity*10/100 )
                          )
-                ATTRIBUTE(nearX, FLOAT)
-                ATTRIBUTE(nearY, FLOAT)
+                ATTRIBUTE(posx_np, FLOAT)
+                ATTRIBUTE(posy_np, FLOAT)
                 LIST( points, 
                 	RECORD( point, 
-                		ATTRIBUTE(x, FLOAT)
-                		ATTRIBUTE(y, FLOAT)
+                		ATTRIBUTE(posx, FLOAT)
+                		ATTRIBUTE(posy, FLOAT)
                 	)
                 )
             )
@@ -194,12 +194,12 @@ CREATE BROKER streamCarsBroker2 (
                                                 0.0 ,
                                                 ${sensorName}.scan:cars:car:velocity*10/100 )
                          )
-                ATTRIBUTE(nearX, FLOAT)
-                ATTRIBUTE(nearY, FLOAT)
+                ATTRIBUTE(posx_np, FLOAT)
+                ATTRIBUTE(posy_np, FLOAT)
                 LIST( points, 
                 	RECORD( point, 
-                		ATTRIBUTE(x, FLOAT)
-                		ATTRIBUTE(y, FLOAT)
+                		ATTRIBUTE(posx, FLOAT)
+                		ATTRIBUTE(posy, FLOAT)
                 	)
                 )
             )
@@ -242,12 +242,12 @@ CREATE BROKER streamCarsBroker2 (
                                                 0.0 ,
                                                 ${sensorName}.scan:cars:car:velocity*10/100 )
                          )
-                ATTRIBUTE(nearX, FLOAT)
-                ATTRIBUTE(nearY, FLOAT)
+                ATTRIBUTE(posx_np, FLOAT)
+                ATTRIBUTE(posy_np, FLOAT)
                 LIST( points, 
                 	RECORD( point, 
-                		ATTRIBUTE(x, FLOAT)
-                		ATTRIBUTE(y, FLOAT)
+                		ATTRIBUTE(posx, FLOAT)
+                		ATTRIBUTE(posy, FLOAT)
                 	)
                 )
             )
