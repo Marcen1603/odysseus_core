@@ -32,6 +32,7 @@ import org.xith3d.scenegraph.Shape3D;
 import org.xith3d.scenegraph.Transform3D;
 import org.xith3d.scenegraph.TransformGroup;
 import org.xith3d.scenegraph.TriangleStripArray;
+import org.xith3d.scenegraph.primitives.Cube;
 import org.xith3d.scenegraph.primitives.Line;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
@@ -53,6 +54,9 @@ public class VertexBased3DEditor implements IStreamEditorType {
 	private String x_pos_name = "posx";
 	private String y_pos_name = "posy";
 	private String z_pos_name = "posz";
+	private String x_pos_name_np = "posx_np";
+	private String y_pos_name_np = "posy_np";
+	private String z_pos_name_np = "posz_np";
 	private String car_vertices_name = "vertices";
 	private TransformGroup carGroup;
 	private SchemaIndexPath carPath;
@@ -66,38 +70,41 @@ public class VertexBased3DEditor implements IStreamEditorType {
 		TupleIndexPath tuplePath = carPath.toTupleIndexPath(tuple);
 
 		carGroup.removeAllChildren();
-		
+
 		for (TupleInfo car : new TupleIterator(tuple, tuplePath, 1)) {
-			Point3f position = getVertex(tuple, car.tupleIndexPath);
+			Point3f position = getVertex(tuple, car.tupleIndexPath, x_pos_name,
+					y_pos_name, z_pos_name);
+			Point3f positionnp = getVertex(tuple, car.tupleIndexPath,
+					x_pos_name_np, y_pos_name_np, z_pos_name_np);
 			List<Point3f> vertices = new ArrayList<Point3f>();
 
 			for (TupleInfo carObject : car.tupleIndexPath) {
 				if (carObject.attribute.getAttributeName().equals(
 						car_vertices_name)) {
-					for (TupleInfo vertex : new TupleIterator(tuple, carObject.tupleIndexPath, 1)) {
-						vertices.add(getVertex(tuple, vertex.tupleIndexPath));
+					for (TupleInfo vertex : new TupleIterator(tuple,
+							carObject.tupleIndexPath, 1)) {
+						vertices.add(getVertex(tuple, vertex.tupleIndexPath,
+								x_pos_name, y_pos_name, z_pos_name));
 					}
 				}
 			}
 
-			carGroup.addChild(buildCube(this.carGroup, position, vertices));
+			carGroup.addChild(buildCube(this.carGroup, position, positionnp,
+					vertices));
 		}
 	}
 
-	private Point3f getVertex(MVRelationalTuple<?> tuple, TupleIndexPath iterator) {
+	private Point3f getVertex(MVRelationalTuple<?> tuple,
+			TupleIndexPath iterator, String xpos, String ypos, String zpos) {
 		Point3f vertex = new Point3f();
 
 		for (TupleInfo carObject : new TupleIterator(tuple, iterator, 1)) {
-			if (carObject.attribute.getAttributeName().equals(x_pos_name)) {
+			if (carObject.attribute.getAttributeName().equals(xpos)) {
 				vertex.setX((Float) carObject.tupleObject);
-			} else if (carObject.attribute.getAttributeName()
-					.equals(y_pos_name)) {
+			} else if (carObject.attribute.getAttributeName().equals(ypos)) {
 				vertex.setY((Float) carObject.tupleObject);
-			} else if (carObject.attribute.getAttributeName()
-					.equals(z_pos_name)) {
+			} else if (carObject.attribute.getAttributeName().equals(zpos)) {
 				vertex.setZ((Float) carObject.tupleObject);
-			} else if (carObject.attribute.getAttributeName().equals(
-					car_vertices_name)) {
 			}
 		}
 		return vertex;
@@ -176,26 +183,40 @@ public class VertexBased3DEditor implements IStreamEditorType {
 		parent.layout(true, true);
 	}
 
-	private TransformGroup buildCube(TransformGroup carGroup2, Point3f position,
-			List<Point3f> vertices) {
-		List<Point3f> newVertices = new ArrayList<Point3f>(); 
+	private TransformGroup buildCube(TransformGroup carGroup2,
+			Point3f position, Point3f positionnp, List<Point3f> vertices) {
+		List<Tuple3f> newVertices = new ArrayList<Tuple3f>();
+		
 		for (Point3f point3f : vertices) {
 			Point3f topVertex = new Point3f(point3f);
 			topVertex.addY(CAR_HEIGHT);
 			newVertices.add(topVertex);
 			newVertices.add(point3f);
 		}
-		
+
 		Appearance app = new Appearance();
 		app.setMaterial(new Material(Colorf.BLACK, Colorf.RED, Colorf.WHITE,
 				Colorf.BLACK, 0.8f, Material.AMBIENT, true));
-		Shape3D car = new Shape3D(new TriangleStripArray(vertices.size() * 2), app);
 		
-		TransformGroup cube = new TransformGroup();
-		cube.addChild(car);
-		cube.setTransform(new Transform3D(-position.getY(), position.getZ(), -position.getX()));
+		TriangleStripArray triangleStripArray = new TriangleStripArray(vertices.size() * 2);
+		triangleStripArray.setCoordinates(0, newVertices);
+		Shape3D carVertices = new Shape3D(triangleStripArray, app);
+		
+		Cube pointCube = new Cube(0.5f, app);
+		TransformGroup pointGroup = new TransformGroup();
+		pointGroup.addChild(pointCube);
+		pointGroup.setTransform(new Transform3D(position));
+		
+		Cube pointCubeNP = new Cube(0.5f, app);
+		TransformGroup pointGroupNP = new TransformGroup();
+		pointGroupNP.addChild(pointCubeNP);
+		pointGroupNP.setTransform(new Transform3D(positionnp));
 
-		return cube;
+		TransformGroup car = new TransformGroup();
+		car.addChild(carVertices);
+		car.addChild(pointCube);
+		car.addChild(pointCubeNP);
+		return car;
 	}
 
 	private void createScene(TransformGroup sceneGroup) {
