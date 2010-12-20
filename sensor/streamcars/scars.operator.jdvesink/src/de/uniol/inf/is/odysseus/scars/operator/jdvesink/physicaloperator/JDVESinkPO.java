@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.operator.jdvesink.physicaloperator;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -19,8 +17,6 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLat
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.DatagramServer;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.IServer;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.server.NIOServer;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -347,73 +343,73 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 		}
 
 		// iterate over schema and calculate size of byte buffer
-		int bufferSize = 0;
-		SDFAttributeList schema = this.getSubscribedToSource(0).getSchema();
-		TupleIterator iterator = new TupleIterator(object, schema);
-		for (TupleInfo info : iterator) {
-			// atomare typen beachten, komplexe �bergehen
-			if (!info.isTuple) {
-				if (info.tupleObject instanceof Integer) {
-					bufferSize += 4;
-				} else if (info.tupleObject instanceof Long) {
-					bufferSize += 8;
-				} else if (info.tupleObject instanceof Float) {
-					bufferSize += 4;
-				} else if (info.tupleObject instanceof Double) {
-					bufferSize += 8;
-				} else if (info.tupleObject instanceof String) {
-					bufferSize += ((String) info.tupleObject).length();
-				} else if (info.tupleObject instanceof Byte) {
-					bufferSize++;
-				} else if (info.tupleObject instanceof Character) {
-					bufferSize++;
-				}
-			} else {
-				if (info.attribute.getDatatype().getURIWithoutQualName()
-						.equals("List")) {
-					bufferSize += 4;
-				}
-			}
-		}
-		//transfer(object);
-
-		// Allocate byte buffer
-		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-		buffer.order(ByteOrder.LITTLE_ENDIAN);
-
-		// iterate over tuple and write elementary data to byte buffer
-		iterator = new TupleIterator(object, schema);
-		for (TupleInfo info : iterator) {
-			if (!info.isTuple) {
-				if (info.tupleObject instanceof Integer) {
-					buffer.putInt((Integer) info.tupleObject);
-				} else if (info.tupleObject instanceof Long) {
-					buffer.putLong((Long) info.tupleObject);
-				} else if (info.tupleObject instanceof Float) {
-					buffer.putFloat((Float) info.tupleObject);
-				} else if (info.tupleObject instanceof Double) {
-					buffer.putDouble((Double) info.tupleObject);
-				} else if (info.tupleObject instanceof String) {
-					String str = (String) info.tupleObject;
-					for (int i = 0; i < str.length(); i++) {
-						buffer.putChar(str.charAt(i));
-					}
-				} else if (info.tupleObject instanceof Byte) {
-					buffer.put((Byte) info.tupleObject);
-				} else if (info.tupleObject instanceof Character) {
-					buffer.putChar((Character) info.tupleObject);
-				}
-			} else if (info.attribute.getDatatype().getURIWithoutQualName()
-					.equals("List")) {
-				@SuppressWarnings("unchecked")
-				MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) info.tupleObject;
-				buffer.putInt(tuple.getAttributeCount());
-			}
-		}
-
-		// push byte buffer to server
-		buffer.flip();
-		this.server.sendData(buffer);
+//		int bufferSize = 0;
+//		SDFAttributeList schema = this.getSubscribedToSource(0).getSchema();
+//		TupleIterator iterator = new TupleIterator(object, schema);
+//		for (TupleInfo info : iterator) {
+//			// atomare typen beachten, komplexe �bergehen
+//			if (!info.isTuple) {
+//				if (info.tupleObject instanceof Integer) {
+//					bufferSize += 4;
+//				} else if (info.tupleObject instanceof Long) {
+//					bufferSize += 8;
+//				} else if (info.tupleObject instanceof Float) {
+//					bufferSize += 4;
+//				} else if (info.tupleObject instanceof Double) {
+//					bufferSize += 8;
+//				} else if (info.tupleObject instanceof String) {
+//					bufferSize += ((String) info.tupleObject).length();
+//				} else if (info.tupleObject instanceof Byte) {
+//					bufferSize++;
+//				} else if (info.tupleObject instanceof Character) {
+//					bufferSize++;
+//				}
+//			} else {
+//				if (info.attribute.getDatatype().getURIWithoutQualName()
+//						.equals("List")) {
+//					bufferSize += 4;
+//				}
+//			}
+//		}
+//		//transfer(object);
+//
+//		// Allocate byte buffer
+//		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+//		buffer.order(ByteOrder.LITTLE_ENDIAN);
+//
+//		// iterate over tuple and write elementary data to byte buffer
+//		iterator = new TupleIterator(object, schema);
+//		for (TupleInfo info : iterator) {
+//			if (!info.isTuple) {
+//				if (info.tupleObject instanceof Integer) {
+//					buffer.putInt((Integer) info.tupleObject);
+//				} else if (info.tupleObject instanceof Long) {
+//					buffer.putLong((Long) info.tupleObject);
+//				} else if (info.tupleObject instanceof Float) {
+//					buffer.putFloat((Float) info.tupleObject);
+//				} else if (info.tupleObject instanceof Double) {
+//					buffer.putDouble((Double) info.tupleObject);
+//				} else if (info.tupleObject instanceof String) {
+//					String str = (String) info.tupleObject;
+//					for (int i = 0; i < str.length(); i++) {
+//						buffer.putChar(str.charAt(i));
+//					}
+//				} else if (info.tupleObject instanceof Byte) {
+//					buffer.put((Byte) info.tupleObject);
+//				} else if (info.tupleObject instanceof Character) {
+//					buffer.putChar((Character) info.tupleObject);
+//				}
+//			} else if (info.attribute.getDatatype().getURIWithoutQualName()
+//					.equals("List")) {
+//				@SuppressWarnings("unchecked")
+//				MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) info.tupleObject;
+//				buffer.putInt(tuple.getAttributeCount());
+//			}
+//		}
+//
+//		// push byte buffer to server
+//		buffer.flip();
+//		this.server.sendData(buffer);
 	}
 
 	@Override
