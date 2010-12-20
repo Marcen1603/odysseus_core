@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixInvert;
 import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixMult;
 import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixSub;
 import de.uniol.inf.is.odysseus.scars.emep.functions.MatrixTranspose;
+import de.uniol.inf.is.odysseus.scars.emep.functions.SquareValue;
+import de.uniol.inf.is.odysseus.scars.emep.functions.SqrtValue;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -43,6 +45,8 @@ public class Activator extends AbstractUIPlugin {
 		MEP.registerFunction(new MatrixTranspose());
 		MEP.registerFunction(new MatrixGetEntry());
 		MEP.registerFunction(new GetAbsoluteValue());
+		MEP.registerFunction(new SquareValue());
+		MEP.registerFunction(new SqrtValue());
 	}
 
 	/*
@@ -58,6 +62,8 @@ public class Activator extends AbstractUIPlugin {
 		MEP.unregisterFunction("MatrixTrans");
 		MEP.unregisterFunction("MatrixEntry");
 		MEP.unregisterFunction("AbsValue");
+		MEP.unregisterFunction("SquareValue");
+		MEP.unregisterFunction("SqrtValue");
 		super.stop(context);
 	}
 
