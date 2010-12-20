@@ -31,5 +31,5 @@ LOGICAL PLAN :
         ),
         ${sensorListName},
         ${sensorListName},
-        '${sensorListName}:car:posx + ASSOCIATION_CON_VAL'
+        'SqrtValue(SquareValue(${sensorListName}:car:posx-${sensorListName}:car:posx)+SquareValue(${sensorListName}:car:posy-${sensorListName}:car:posy)+4)'
     );
