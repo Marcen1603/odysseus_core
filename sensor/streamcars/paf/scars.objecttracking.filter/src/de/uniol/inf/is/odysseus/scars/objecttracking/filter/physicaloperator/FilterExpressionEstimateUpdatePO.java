@@ -61,6 +61,7 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		
 		super.process_open();
 		for(IStreamCarsExpression exp : this.expressions) {
 			exp.init(getOutputSchema());
