@@ -15,6 +15,6 @@ Import-Package: de.uniol.inf.is.odysseus.metadata,
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime;bundle-version="3.6.0",
- org.xith3d;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rcp.viewer.stream,
- de.uniol.inf.is.odysseus
+ de.uniol.inf.is.odysseus,
+ org.xith3d;bundle-version="1.0.0"
