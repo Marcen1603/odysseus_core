@@ -56,7 +56,10 @@ public class QuantificationPredicate extends
 		if(!(pred instanceof QuantificationPredicate)) {
 			return false;
 		}
-		return true;
+		if(astPredicate.equals(((QuantificationPredicate)pred).astPredicate)) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -64,6 +67,9 @@ public class QuantificationPredicate extends
 		if(!(o instanceof QuantificationPredicate)) {
 			return false;
 		}
-		return true;
+		if(astPredicate.equals(((QuantificationPredicate)o).astPredicate)) {
+			return true;
+		}
+		return false;
 	}
 }
