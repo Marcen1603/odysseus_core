@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
@@ -65,6 +66,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 				doPostOptimizationActions(query, parameter);
 			}
 			List<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
+			IQuerySharingOptimizer qso = getQuerySharingOptimizer();
+			if(qso != null && parameter.getParameterPerformQuerySharing() != null && parameter.getParameterPerformQuerySharing().getValue()) {
+				qso.applyQuerySharing(newPlan, queries, parameter);
+			}
 			newPlan.addAll(queries);
 
 			IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(

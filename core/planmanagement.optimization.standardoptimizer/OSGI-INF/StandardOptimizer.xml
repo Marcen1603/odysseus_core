@@ -8,6 +8,7 @@
    <reference bind="bindPlanMigrationStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy" name="IPlanMigrationStrategy" policy="dynamic" unbind="unbindPlanMigrationStrategy"/> 
    <reference bind="bindExecutionCostModel" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel" name="IPlanExecutionCostModel" policy="dynamic" unbind="unbindExecutionCostModel"/>
    <reference bind="bindMigrationCostModel" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel" name="IPlanMigrationCostModel" policy="dynamic" unbind="unbindMigrationCostModel"/>
+   <reference bind="bindQuerySharingOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer" name="IQuerySharingOptimizer" policy="dynamic" unbind="unbindQuerySharingOptimizer"/>
     <service>
       <provide interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer"/>
    </service>
