@@ -7,8 +7,8 @@ public class ConfigurePerspective implements IPerspectiveFactory {
 	public static final String ID = "measure.windPerformanceRCP.confPerspective";
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
-		layout.setEditorAreaVisible(true);
-		layout.setFixed(true);
+		layout.setEditorAreaVisible(false);
+		layout.setFixed(true); //if true, the views can be closed by the user. we dont want that.
 		
 	}
 

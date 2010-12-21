@@ -31,6 +31,11 @@
             id="measure.windPerformanceRCP.assignPMView"
             name="AssignPMs">
       </view>
+      <view
+            class="windperformancercp.views.SourceAttributeView"
+            id="measure.windPerformanceRCP.sourceAttributeView"
+            name="SourceEditor">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -40,13 +45,20 @@
                id="measure.windPerformanceRCP.sourceManagerView"
                minimized="false"
                ratio="1.0"
-               relationship="left"
+               relationship="top"
                relative="org.eclipse.ui.editorss"
                standalone="true"
                visible="true">
          </view>
          <view
                id="measure.windPerformanceRCP.assignPMView"
+               minimized="false"
+               relationship="stack"
+               relative="measure.windPerformanceRCP.sourceManagerView"
+               standalone="true">
+         </view>
+         <view
+               id="measure.windPerformanceRCP.sourceAttributeView"
                minimized="false"
                relationship="stack"
                relative="measure.windPerformanceRCP.sourceManagerView"

@@ -75,20 +75,16 @@ public class ManageSourceView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-
-		parent.setLayout(new FillLayout());
-		
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
 		
 		//surrounding sash form
 		SashForm sashForm = new SashForm(parent, SWT.BORDER | SWT.SMOOTH);
 		sashForm.setSashWidth(5);
-		//sashForm.setWeights(new int[] {1, 1});
+
 		
 		//sources list composite with buttons
+		
 		Composite leftComposite = new Composite(sashForm, SWT.NONE);
-		leftComposite.setLayout(gridLayout);
+		leftComposite.setLayout(new GridLayout());
 		ToolBar sourceToolBar = new ToolBar(leftComposite, SWT.BORDER | SWT.FLAT | SWT.RIGHT);
 		
 		ToolItem tltmNew = new ToolItem(sourceToolBar, SWT.NONE);
@@ -111,7 +107,7 @@ public class ManageSourceView extends ViewPart {
 		sourcesList.add("TestSource");
 		
 		//right composite for additional information
-		//Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
+		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
 		
 	}
 
