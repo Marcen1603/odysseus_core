@@ -77,9 +77,12 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			File file = new File(filename);
 			
 			FileOutputStream oStream = new FileOutputStream(file);
+			oStream.write("<benchmark>\n".getBytes());
 			 for (IBenchmarkResult<?> result : results) {
 				 serializer.write(result, oStream);
 			 }
+			oStream.write("\n</benchmark>\n".getBytes());
+			oStream.close();
 
 			if (arguments.get(MEMORY_USAGE)) {
 				String memFile = filename.replaceAll(".xml", "_memory.xml");
