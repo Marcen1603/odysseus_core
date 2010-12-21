@@ -53,13 +53,6 @@ public class BenchmarkSink<M extends ILatency> extends
 			int port, boolean isReadOnly) {
 		if (resultsToRead == -1 || result.size() < resultsToRead) {
 			addToResult(object);
-			if(object.getMetadata().getLatency() > 1900000000){
-				System.out.println(object);
-			}
-//			if(i % 20 == 0){
-//				System.out.println("added result no " + i);
-//			}
-//			i++;
 		} else {
 			lock.lock();
 			inputDone();
