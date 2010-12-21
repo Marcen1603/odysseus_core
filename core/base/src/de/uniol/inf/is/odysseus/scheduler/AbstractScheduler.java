@@ -63,6 +63,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 	FileWriter file;
 	final long limitDebug = OdysseusDefaults.getLong("debug_Scheduler_maxLines",1048476);
 	long linesWritten;
+	StringBuffer toPrint = new StringBuffer();
 
 	/**
 	 * Creates a new scheduler.
@@ -77,7 +78,6 @@ public abstract class AbstractScheduler extends EventHandler implements
 	}
 
 	public int print(IScheduling s) {
-		StringBuffer toPrint = new StringBuffer();
 		List<IQuery> queries = s.getPlan().getQueries();
 		int linesPrinted = queries.size();
 		for (IQuery q : queries) {
@@ -100,17 +100,18 @@ public abstract class AbstractScheduler extends EventHandler implements
 			}
 			toPrint.append("\n");
 		}
-		// logger.debug(toPrint.toString());
-		// System.out.println(toPrint);
+		return linesPrinted;
+	}
+	
+	public void savePrint(){
 		try {
 			file.write(toPrint.toString());
 			file.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		return linesPrinted;
+		}		
 	}
-
+	
 	public boolean isOutputDebug() {
 		return outputDebug;
 	}
