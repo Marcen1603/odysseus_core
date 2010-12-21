@@ -100,6 +100,7 @@ public class OdysseusDefaults {
 		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());
 		props.setProperty("debug_Scheduler_maxLines", 1048476 + "");
 		props.setProperty("scheduler_TimeSlicePerStrategy", 10 + "");
+		props.setProperty("scheduler_DebugFileName","SchedulerLog");
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
