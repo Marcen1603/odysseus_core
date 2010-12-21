@@ -294,9 +294,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			return false;
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ipo;
-		
+				
 		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
-		if(!this.hasSameSources(jtipo)) {
+		if(!this.hasSameSources(jtipo)
+				|| !dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
+				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
+				|| !creationFunction.getClass().toString().equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
 		
@@ -316,7 +319,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ip;
 		
 		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
-		if(!this.hasSameSources(jtipo)) {
+		if(!this.hasSameSources(jtipo)
+				|| !dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
+				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
+				|| !creationFunction.getClass().toString().equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
 		

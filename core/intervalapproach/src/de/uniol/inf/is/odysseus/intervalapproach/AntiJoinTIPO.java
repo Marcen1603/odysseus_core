@@ -337,8 +337,13 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(ipo instanceof AntiJoinTIPO && this.getSubscribedToSource().equals(((AntiJoinTIPO) ipo).getSubscribedToSource())) {
-			return true;
+		if(ipo instanceof AntiJoinTIPO && ((AntiJoinTIPO<?,?>)ipo).hasSameSources(this)) {
+			AntiJoinTIPO<?,?> ajtipo = (AntiJoinTIPO<?,?>)ipo; 
+			if(ajtipo.sa[0].getQueryPredicate().equals(this.sa[0].getQueryPredicate())
+					&& ajtipo.sa[1].getQueryPredicate().equals(this.sa[1].getQueryPredicate())) {
+				return true;
+			}
+			
 		}
 		return false;
 	}

@@ -52,8 +52,8 @@ public class TimeSplitTIPO<T extends IMetaAttributeContainer<? extends ITimeInte
 		if(!(ipo instanceof TimeSplitTIPO)) {
 			return false;
 		}
-		TimeSplitTIPO tstipo = (TimeSplitTIPO) ipo;
-		if(this.getSubscribedToSource().equals(tstipo.getSubscribedToSource()) &&
+		TimeSplitTIPO<T> tstipo = (TimeSplitTIPO) ipo;
+		if(this.hasSameSources(tstipo) &&
 				this.size == tstipo.size) {
 			return true;
 		}

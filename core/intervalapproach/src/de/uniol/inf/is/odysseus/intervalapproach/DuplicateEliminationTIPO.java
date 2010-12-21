@@ -142,8 +142,8 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 		if(!(ipo instanceof DuplicateEliminationTIPO)) {
 			return false;
 		}
-		DuplicateEliminationTIPO bpp = (DuplicateEliminationTIPO) ipo;
-		if(this.getSubscribedToSource().equals(bpp.getSubscribedToSource())) {
+		DuplicateEliminationTIPO<?> bpp = (DuplicateEliminationTIPO<?>) ipo;
+		if(this.hasSameSources(bpp)) {
 			return true;
 		}
 		return false;

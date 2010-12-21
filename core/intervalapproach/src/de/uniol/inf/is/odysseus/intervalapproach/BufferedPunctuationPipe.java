@@ -186,7 +186,7 @@ public class BufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M ext
 			return false;
 		}
 		BufferedPunctuationPipe bpp = (BufferedPunctuationPipe) ipo;
-		if(this.getSubscribedToSource().equals(bpp.getSubscribedToSource())) {
+		if(this.hasSameSources(bpp)) {
 			return true;
 		}
 		return false;
