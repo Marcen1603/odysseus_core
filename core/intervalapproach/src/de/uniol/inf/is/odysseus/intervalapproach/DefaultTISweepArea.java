@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSweepArea;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
  * This sweeparea implementation provides some optimizations on extract and
