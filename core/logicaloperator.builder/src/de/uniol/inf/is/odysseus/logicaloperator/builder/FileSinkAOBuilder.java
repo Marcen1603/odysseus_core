@@ -10,10 +10,11 @@ public class FileSinkAOBuilder extends AbstractOperatorBuilder {
 			"FILE", REQUIREMENT.MANDATORY);
 	private final DirectParameter<String> sinktype = new DirectParameter<String>(
 			"FILETYPE", REQUIREMENT.OPTIONAL); 
+	private final DirectParameter<Long> writeAfterElements = new DirectParameter<Long>("CACHESIZE", REQUIREMENT.OPTIONAL);
 	
 	public FileSinkAOBuilder() {
 		super(0, Integer.MAX_VALUE);
-		setParameters(fileName, sinktype);
+		setParameters(fileName, sinktype, writeAfterElements);
 	}
 
 	private static final long serialVersionUID = 167513434840811081L;
@@ -25,7 +26,8 @@ public class FileSinkAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
-		return new FileSinkAO(this.fileName.getValue(), this.sinktype.getValue());
+		return new FileSinkAO(this.fileName.getValue(), this.sinktype.getValue(),
+				this.writeAfterElements.getValue()!=null?this.writeAfterElements.getValue():-1);
 	}
 
 }

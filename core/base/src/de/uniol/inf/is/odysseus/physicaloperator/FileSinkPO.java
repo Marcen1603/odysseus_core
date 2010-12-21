@@ -12,20 +12,25 @@ public class FileSinkPO extends AbstractSink<Object> {
 
 	final private String filename;
 	final private boolean csvSink;
+	final private long writeAfterElements;
+	private long elementsWritten;
+	transient private StringBuffer writeCache;
 	transient BufferedWriter out;
 
-	public FileSinkPO(String filename, String sinkType) {
+	public FileSinkPO(String filename, String sinkType, long writeAfterElements) {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
 		} else {
 			csvSink = false;
 		}
+		this.writeAfterElements = writeAfterElements;
 	}
 
 	public FileSinkPO(FileSinkPO fileSink) {
 		this.filename = fileSink.filename;
 		this.csvSink = fileSink.csvSink;
+		this.writeAfterElements = fileSink.writeAfterElements;
 	}
 
 	public String getFilename() {
@@ -35,7 +40,10 @@ public class FileSinkPO extends AbstractSink<Object> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			out = new BufferedWriter(new FileWriter(OdysseusDefaults.openOrCreateFile(filename)));
+			writeCache = new StringBuffer();
+			elementsWritten = 0;
+			out = new BufferedWriter(new FileWriter(
+					OdysseusDefaults.openOrCreateFile(filename)));
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);
 			ex.fillInStackTrace();
@@ -47,17 +55,32 @@ public class FileSinkPO extends AbstractSink<Object> {
 	@Override
 	protected void process_next(Object object, int port, boolean isReadOnly) {
 		try {
+			String toWrite = null;
 			if (csvSink) {
-				out.write(""+((CSVToString)object).csvToString()); // Check if correct Type to expensive!
+				toWrite = ((CSVToString) object).csvToString();
 			} else {
-				out.write("" + object);
+				toWrite = "" + object;
 			}
-			out.newLine();
-			out.flush();
+			if (writeAfterElements > 0) {
+				writeCache.append(toWrite).append("\n");
+				elementsWritten++;
+				if (writeAfterElements >= elementsWritten) {
+					writeToFile(writeCache.toString());
+					writeCache = new StringBuffer();
+					elementsWritten = 0;
+				}
+			} else {
+				writeToFile(toWrite);
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	void writeToFile(String elem) throws IOException {
+		out.write(elem);
+		out.flush();
 	}
 
 	@Override
@@ -85,8 +108,10 @@ public class FileSinkPO extends AbstractSink<Object> {
 			return false;
 		}
 		FileSinkPO fs = (FileSinkPO) ipo;
-		if (this.getSubscribedToSource().get(0).equals(fs.getSubscribedToSource().get(0))
-				&& this.filename.equals(fs.getFilename()) && this.csvSink == fs.csvSink) {
+		if (this.getSubscribedToSource().get(0)
+				.equals(fs.getSubscribedToSource().get(0))
+				&& this.filename.equals(fs.getFilename())
+				&& this.csvSink == fs.csvSink) {
 			return true;
 		}
 		return false;

@@ -12,4 +12,5 @@ Import-Package: de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory
 Require-Bundle: de.uniol.inf.is.odysseus
 Service-Component: OSGI-INF/simpledynamicpriorityscheduling.xml, OSGI-INF/staticpriorityscheduling.xml, OSGI-INF/staticpriorityplanscheduling.xml
-Export-Package: de.uniol.inf.is.odysseus.scheduler.priorityscheduler
+Export-Package: de.uniol.inf.is.odysseus.scheduler.priorityscheduler,
+ de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy

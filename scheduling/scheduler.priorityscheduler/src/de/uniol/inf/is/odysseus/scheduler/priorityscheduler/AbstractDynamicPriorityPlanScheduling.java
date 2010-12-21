@@ -72,7 +72,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	
 	
 
-	private IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
+	protected IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
 		updatePriority(toSchedule);
 		return toSchedule;
 	}

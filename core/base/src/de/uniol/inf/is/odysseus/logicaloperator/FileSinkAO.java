@@ -7,16 +7,19 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = -5468128562016704956L;
 	final String filename;
 	final String sinkType;
+	final long writeAfterElements;
 	
-	public FileSinkAO(String filename, String sinkType) {
+	public FileSinkAO(String filename, String sinkType, long writeAfterElements) {
 		this.filename = filename;
 		this.sinkType = sinkType;
+		this.writeAfterElements = writeAfterElements;
 	}
 
 	public FileSinkAO(FileSinkAO fileSinkAO) {
 		super(fileSinkAO);
 		this.filename = fileSinkAO.filename;
 		this.sinkType = fileSinkAO.sinkType;
+		this.writeAfterElements = fileSinkAO.writeAfterElements;
 	}
 	
 	@Override
@@ -37,6 +40,9 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		return sinkType;
 	}
 	
+	public long getWriteAfterElements() {
+		return writeAfterElements;
+	}
 
 
 }

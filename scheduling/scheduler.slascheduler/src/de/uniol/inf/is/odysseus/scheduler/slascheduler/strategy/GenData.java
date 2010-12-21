@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy;
 
-
 public class GenData {
 
 	static String[] slas = new String[] {
@@ -12,34 +11,35 @@ public class GenData {
 			"with (0.8,1,0),(0.6,0.8,100),(0.4,0.6,200),(0.2,0.4,300),(0,0.2,400);" };
 
 	static String[] testinput = new String[] {
-			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000000, 100]]})",
+			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
 			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000000, 100000]]})",
 			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000, 100], [10000, 1000], [1000, 100]]})" };
 
-	static String[] scheduler = new String[]{
-		""		
-	};
-	static String homeDir = System.getProperty("user.home")
-	+ "/odysseus/";
-	
+	static String[] scheduler = new String[] { "" };
+	static String homeDir = System.getProperty("user.home") + "/odysseus/";
+
+
 	public static void main(String[] args) {
 		int noOfUsers = 150;
-		int baseTime = 10;
-		int baseTimeOffset = 100;
+		int baseTime = 5;
+		int baseTimeOffset = 10;
 		int sameLevel = 5;
 		int sla = 2;
 		int testInputNo = 0;
 		boolean prio = false;
 		boolean variateSLA = false;
 		boolean variateSLATime = true;
-		
+		boolean dumpToFile = false;
+
+
 		System.out.println("#DEFINE PROC_TIME 1000");
 		System.out.println("#LOGIN System manager");
 		if (!prio) {
-			System.out.println("#ODYSSEUS_PARAM sla_history_size 1000");
+			System.out.println("#ODYSSEUS_PARAM sla_history_size 10000");
 		}
 		System.out.println("#ODYSSEUS_PARAM scheduler_TimeSlicePerStrategy 10");
 		System.out.println("#ODYSSEUS_PARAM debug_Scheduler_maxLines 1000000");
+		System.out.println("#ODYSSEUS_PARAM scheduler_DebugFileName Versuch5");
 		System.out.println("#PARSER CQL");
 		System.out.println("#TRANSCFG Benchmark");
 		System.out.println("#BUFFERPLACEMENT None");
@@ -52,8 +52,9 @@ public class GenData {
 			System.out.println("create sla sla"
 					+ i
 					+ " time "
-					+ baseTimeOffset+(variateSLATime ? (baseTime * ((i / sameLevel) + 1))
-							: baseTime));
+					+ (baseTimeOffset+
+					+ (variateSLATime ? (baseTime * ((i / sameLevel) + 1))
+							: baseTime)));
 			if (variateSLA) {
 				System.out.println("with (0.0,0.1,"
 						+ (noOfUsers - ((i / sameLevel)) * sameLevel) * 100
@@ -86,17 +87,16 @@ public class GenData {
 							+ i
 							+ " = benchmark({selectivity = 1.0, time = ${PROC_TIME}},puffer"
 							+ i + ")");
-			System.out
-			.println("latencyCalc"
-					+ i
-					+ " = CALCLATENCY(benchmark"
-					+ i + ")");
-			System.out.println("fileSink"+i
-					+ "{priority="
-					+ (noOfUsers - ((i / sameLevel)) * sameLevel)
-					+ "}"
-					+ " = FILESINK({file='"+homeDir+run+"/Query_"+i+".csv',fileType='csv'},latencyCalc"
-					+ i + ")");				
+				System.out.println("latencyCalc" + i
+						+ " = CALCLATENCY(benchmark" + i + ")");	
+				
+			if (dumpToFile) {
+				System.out.println("fileSink" + i + "{priority="
+						+ (noOfUsers - ((i / sameLevel)) * sameLevel) + "}"
+						+ " = FILESINK({file='" + homeDir + run + "/Query_" + i
+						+ ".csv',fileType='csv',CACHESIZE=1000000},latencyCalc"
+						+ i + ")");
+			}
 		}
 
 		if (prio) {
