@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -231,13 +230,6 @@ public class StandardExecutor extends AbstractExecutor {
 			// optimize queries and set resulting execution plan
 			IExecutionPlan exep = getOptimizer().optimize(this,
 					newQueries, conf);
-			
-			// Einbindung des Query-Sharing-Optimizers zur Optimierung des Plans
-			
-			IQuerySharingOptimizer qso = getQuerySharingOptimizer();
-			if(qso != null && conf.getParameterPerformQuerySharing() != null && conf.getParameterPerformQuerySharing().getValue()) {
-				qso.applyQuerySharing(this.plan, newQueries, conf);
-			}
 
 			setExecutionPlan(exep);
 
