@@ -102,5 +102,10 @@ public class BenchmarkSink<M extends ILatency> extends
 	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
+	public void stopRecording() {
+		lock.lock();
+		inputDone();
+		lock.unlock();
+	}
 
 }

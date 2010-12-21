@@ -15,6 +15,8 @@ import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.collection.Pair;
+import de.uniol.inf.is.odysseus.event.IEvent;
+import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
@@ -34,10 +36,13 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
+import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
-public class Benchmark implements IErrorEventListener, IBenchmark {
+public class Benchmark implements IErrorEventListener, IBenchmark, IEventListener {
 	private static final String SCRIPT_PARSER = "SCRIPT";
 	private long maxResults;
 	private String scheduler;
@@ -198,6 +203,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 				source.subscribeSink(sinkPO, i++, 0, source.getOutputSchema());
 			}
+			
 			for (ISink<?> curSink : this.sinks) {
 				try {
 					curSink.open();
@@ -206,7 +212,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				}
 			}
 			List<IBenchmarkResult<ILatency>> results = new ArrayList<IBenchmarkResult<ILatency>>();
-
+			
+			ISchedulerManager schedulermanager = executor.getSchedulerManager();
+			IScheduler curScheduler = schedulermanager.getActiveScheduler();
+			curScheduler.subscribe(this, SchedulingEventType.SCHEDULING_STOPPED);
+			
 			long startTime = System.nanoTime();
 			// result.setStartTime(System.nanoTime());
 			executor.startExecution();
@@ -341,5 +351,15 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	public void setResultPerQuery(boolean b) {
 		this.resultPerQuery = b;
 	}
+
+	@Override
+	public void eventOccured(IEvent<?, ?> event) {
+		if(event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED){
+			for(BenchmarkSink<? extends ILatency> sink : this.sinks){
+				sink.stopRecording();
+			}
+		}
+	}
+
 
 }
