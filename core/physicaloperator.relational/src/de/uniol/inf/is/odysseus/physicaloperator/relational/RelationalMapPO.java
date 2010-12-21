@@ -87,7 +87,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 			return false;
 		}
 		RelationalMapPO rmpo = (RelationalMapPO) ipo;
-		if(this.getSubscribedToSource().equals(rmpo.getSubscribedToSource()) &&
+		if(this.hasSameSources(rmpo) &&
 					this.schema.compareTo(rmpo.schema) == 0) {
 			if(this.expressions.length == rmpo.expressions.length) {
 				for(int i=0; i<this.expressions.length; i++) {
