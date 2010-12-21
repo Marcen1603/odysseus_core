@@ -173,8 +173,9 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 			boolean isContainedIn1 = this.isContainedIn(pred);
 			boolean isContainedIn2 = pred.isContainedIn(this);
 			return this.isContainedIn(pred) && pred.isContainedIn(this);
+		} else {
+			return true;
 		}
-		return true;
 	}
 	
 	@Override
@@ -207,6 +208,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 				String symbol2 = if2.getSymbol();
 				// Funktionen enthalten nur ein Attribut und ansonsten Konstanten
 				if(this.getAttributes().size() == 1) {
+			
 					// gleiches Attribut auf der linken Seite, Konstante auf der rechten
 					if(firstArgument1.isVariable() &&  secondArgument1.isConstant() 
 							&& firstArgument2.isVariable() && secondArgument2.isConstant()
