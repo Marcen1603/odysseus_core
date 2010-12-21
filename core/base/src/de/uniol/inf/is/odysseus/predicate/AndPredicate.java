@@ -68,13 +68,21 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 			return false;
 		}
 		AndPredicate<T> ap = (AndPredicate<T>) pred;
-		return this.getLeft().equals(ap.getLeft()) && this.getRight().equals(ap.getRight());
+		//return this.getLeft().equals(ap.getLeft()) && this.getRight().equals(ap.getRight());
+		if((this.getLeft().equals(ap.getLeft()) && this.getRight().equals(ap.getRight()))
+				|| (this.getLeft().equals(ap.getRight()) && this.getRight().equals(ap.getLeft()))) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
 	public boolean isContainedIn(Object o) {
 		// Falls o ein Oder-Prädikat, überhaupt kein Prädikat oder eines der beiden Argumente des And-Prädikats ein Oder-Prädikat ist, wird false zurück gegeben
-		if(o instanceof OrPredicate || !(o instanceof IPredicate) || this.getLeft() instanceof OrPredicate || this.getRight() instanceof OrPredicate) {
+//		if(o instanceof OrPredicate || !(o instanceof IPredicate) || this.getLeft() instanceof OrPredicate || this.getRight() instanceof OrPredicate) {
+//			return false;
+//		}
+		if(!(o instanceof IPredicate)) {
 			return false;
 		}
 		

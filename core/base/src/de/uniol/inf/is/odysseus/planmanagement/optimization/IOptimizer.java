@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.IOptimizationSetting;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
@@ -211,9 +212,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 */
 	public void handleFinishedMigration(IQuery query);
 	
-
 	
-
-
+	IQuerySharingOptimizer getQuerySharingOptimizer();
 
 }

@@ -72,8 +72,14 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 	
 	@Override
 	public boolean isContainedIn(Object o) {
-		// Falls o kein OrPredicate ist, wird false zurück gegeben
+		if(!(o instanceof IPredicate)) {
+			return false;
+		}
+		// Falls o kein OrPredicate ist, wird false zurück gegeben, es sei denn, beide Prädikate dieses Oders sind in o enthalten
 		if(!(o instanceof OrPredicate)) {
+			if(this.getLeft().isContainedIn(((IPredicate<?>)o)) && this.getRight().isContainedIn(((IPredicate<?>)o))) {
+				return true;
+			}
 			return false;
 		} else {
 		// Falls es sich beim anderen Prädikat ebenfalls um ein OrPredicate handelt, müssen beide Prädikate verglichen werden (inklusiver aller "Unterprädikate")

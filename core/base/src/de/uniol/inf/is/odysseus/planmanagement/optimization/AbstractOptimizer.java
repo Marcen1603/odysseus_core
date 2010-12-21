@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
  */
 public abstract class AbstractOptimizer implements IOptimizer {
 
+	
 	protected static Logger _logger = null;
 
 	protected static Logger getLogger() {
@@ -70,6 +72,11 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * Registered plan migration services.
 	 */
 	private Map<String, IPlanMigrationStrategy> planMigrationStrategies = new HashMap<String, IPlanMigrationStrategy>();
+	
+	/**
+	 * optional Query-Sharing-Component
+	 */
+	protected IQuerySharingOptimizer querySharingOptimizer = null;
 
 	private IPlanExecutionCostModel executionCostModel;
 	private IPlanMigrationCostModel migrationCostModel;
@@ -214,6 +221,45 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	
 	public void unbindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
 		this.migrationCostModel = null;
+	}
+	
+	/**
+	 * bindQuerySharingOptimizer bindet eine Querysharing-Komponente ein
+	 * 
+	 * @param querySharingOptimizer
+	 *            neue Querysharing-Komponente
+	 */
+	public void bindQuerySharingOptimizer(IQuerySharingOptimizer querySharingOptimizer) {
+		this.querySharingOptimizer = querySharingOptimizer;
+		getLogger().debug("QuerysharingOptimizer bound " + querySharingOptimizer);
+	}
+	
+	/**
+	 * unbindQuerysharingOptimizer entfernt eine Querysharing-Komponente
+	 * 
+	 * @param querySharingOptimizer
+	 *            zu entfernende Querysharing-Komponente
+	 */
+	public void unbindQuerySharingOptimizer(IQuerySharingOptimizer querySharingOptimizer) {
+		if (this.querySharingOptimizer == querySharingOptimizer) {
+			this.querySharingOptimizer = null;
+			getLogger().debug("QuerysharingOptimizer unbound " + querySharingOptimizer);
+		}
+	}
+	
+	/**
+	 * QuerySharingOptimizer liefert den aktuellen QuerySharingOpzimizer.
+	 * 
+	 * @return aktueller QuerySharingOptimizer
+	 * 
+	 */
+	@Override
+	public IQuerySharingOptimizer getQuerySharingOptimizer()  {
+		if (this.querySharingOptimizer != null) {
+			return this.querySharingOptimizer;
+		}
+
+		return null;
 	}
 	
 	public IPlanMigrationCostModel getMigrationCostModel() {

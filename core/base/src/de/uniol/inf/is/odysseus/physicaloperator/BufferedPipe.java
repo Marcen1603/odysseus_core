@@ -169,7 +169,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 			return false;
 		}
 		BufferedPipe bp = (BufferedPipe) ipo;
-		if (this.getSubscribedToSource().equals(bp.getSubscribedToSource())) {
+		if (this.hasSameSources(bp)) {
 			return true;
 		}
 		return false;

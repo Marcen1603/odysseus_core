@@ -85,7 +85,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 			return false;
 		}
 		FileSinkPO fs = (FileSinkPO) ipo;
-		if (this.getSubscribedToSource().equals(fs.getSubscribedToSource())
+		if (this.getSubscribedToSource().get(0).equals(fs.getSubscribedToSource().get(0))
 				&& this.filename.equals(fs.getFilename()) && this.csvSink == fs.csvSink) {
 			return true;
 		}

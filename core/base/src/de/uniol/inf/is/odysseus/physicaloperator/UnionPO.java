@@ -49,11 +49,9 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 		if(!(ipo instanceof UnionPO)) {
 			return false;
 		}
-		UnionPO upo = (UnionPO) ipo;
-		if(this.getSubscribedToSource().equals(upo.getSubscribedToSource())) {
-			// Sicherheitshalber erst einmal false
-			//return true;
-			return false;
+		UnionPO<?> upo = (UnionPO) ipo;
+		if(this.hasSameSources(upo)) {
+			return true;
 		}
 		return false;
 	}

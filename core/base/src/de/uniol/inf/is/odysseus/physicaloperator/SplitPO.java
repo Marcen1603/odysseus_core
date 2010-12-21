@@ -73,7 +73,7 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 			return false;
 		}
 		SplitPO spo = (SplitPO) ipo;
-		if(this.getSubscribedToSource().equals(spo.getSubscribedToSource()) &&
+		if(this.hasSameSources(spo) &&
 				this.predicates.size() == spo.predicates.size()) {
 			for(int i = 0; i<this.predicates.size(); i++) {
 				if(!this.predicates.get(i).equals(spo.predicates.get(i))) {

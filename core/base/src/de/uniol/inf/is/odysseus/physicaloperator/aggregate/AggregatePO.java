@@ -193,11 +193,10 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 		if(!this.hasSameSources(ipo)) {
 			return false;
 		}
-		System.out.println(this.groupingHelper.getClass().toString());
-		System.out.println(apo.groupingHelper.getClass().toString());
 		if(this.groupingHelper.getClass().toString().equals(apo.groupingHelper.getClass().toString())
 				&& this.inputSchema.compareTo(apo.inputSchema) == 0
-				&& this.outputSchema.compareTo(apo.outputSchema) == 0) {
+				&& this.outputSchema.compareTo(apo.outputSchema) == 0
+				&& this.groupingAttributes.size() == apo.groupingAttributes.size()) {
 			
 			// Vergleich der groupingAttributes
 			for(SDFAttribute a : this.groupingAttributes) {

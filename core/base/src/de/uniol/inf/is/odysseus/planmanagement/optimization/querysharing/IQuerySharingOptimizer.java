@@ -8,6 +8,6 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public interface IQuerySharingOptimizer {
-	public void applyQuerySharing(IPlan oldPlan, OptimizationConfiguration conf);
-	public void applyQuerySharing(IPlan oldPlan, List<IQuery> newQueries, OptimizationConfiguration conf);
+	public void applyQuerySharing(List<IQuery> oldPlan, OptimizationConfiguration conf);
+	public void applyQuerySharing(List<IQuery> oldPlan, List<IQuery> newQueries, OptimizationConfiguration conf);
 }
