@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.ISubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -31,25 +32,25 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.functions.*;
 
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
-
-	public void applyQuerySharing(IPlan plan, OptimizationConfiguration conf) {
-		//Neustrukturierung eines bestehenden Plans ist erlaubt
-		if(conf.getParameterAllowRestructuringOfCurrentPlan().getValue()) {
-			applyQuerySharing(plan, null, conf);
+	
+	public void applyQuerySharing(List<IQuery> plan, List<IQuery> newQueries, OptimizationConfiguration conf) {
+		boolean restructuringAllowed;
+		if(conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
+			restructuringAllowed = conf.getParameterAllowRestructuringOfCurrentPlan().getValue();
+		} else {
+			restructuringAllowed = false;
 		}
-	}
-	public void applyQuerySharing(IPlan oldPlan, List<IQuery> newQueries, OptimizationConfiguration conf) {
 		//Weder neue Queries vorhanden, noch die Erlaubnis den alten Plan umzustrukturieren 
-		if(newQueries == null && !conf.getParameterAllowRestructuringOfCurrentPlan().getValue()) {
+		if(newQueries == null && !restructuringAllowed) {
 			return;
 		}
-		boolean restructuringAllowed = conf.getParameterAllowRestructuringOfCurrentPlan().getValue();
+
 		List<IPhysicalOperator> newOps = new ArrayList<IPhysicalOperator>();
 		List<IPhysicalOperator> ipos =  new ArrayList<IPhysicalOperator>();
 
 		// Sammeln aller im alten Plan enthaltenen physischen Operatoren
 
-		for(IQuery q : oldPlan.getQueries()) {
+		for(IQuery q : plan) {
 			for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
 				if(!ipos.contains(ipo)) {
 					ipos.add(ipo);
@@ -59,7 +60,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Sammeln aller in den NEUEN Queries enthaltenen physischen Operatoren
 		if(newQueries != null) {
-			for(IQuery q : newQueries) {
+			for(IQuery q : newQueries) {	
 				for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
 					if(!ipos.contains(ipo)) {
 						ipos.add(ipo);
@@ -70,9 +71,23 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 				}
 			}
 		}
-		boolean parameterShareSimilarOperators = conf.getParameterShareSimilarOperators().getValue();
+		boolean parameterShareSimilarOperators;
+		if(conf.getParameterShareSimilarOperators() != null) {
+			parameterShareSimilarOperators = conf.getParameterShareSimilarOperators().getValue();
+		} else {
+			parameterShareSimilarOperators = false;
+		}
 		while(removeIdenticalOperators(ipos, newOps, restructuringAllowed)
 				|| (parameterShareSimilarOperators && reconnectSimilarOperators(ipos,newOps,restructuringAllowed)));
+//		while((parameterShareSimilarOperators && reconnectSimilarOperators(ipos,newOps,restructuringAllowed))
+//				|| removeIdenticalOperators(ipos, newOps, restructuringAllowed));
+	}
+
+	public void applyQuerySharing(List<IQuery> plan, OptimizationConfiguration conf) {
+		//Neustrukturierung eines bestehenden Plans ist erlaubt
+		if(conf.getParameterAllowRestructuringOfCurrentPlan().getValue()) {
+			applyQuerySharing(plan, null, conf);
+		}
 	}
 
 	private boolean removeIdenticalOperators(List<IPhysicalOperator> ipos, List<IPhysicalOperator> newOps, boolean restructuringAllowed) {
@@ -164,17 +179,18 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			ISink s = (ISink)sub.getTarget();
 
 			// debug
-			System.out.println("S-Name: " + s.getName());
-			System.out.println("op1-Name: " + op1.getName());
+			//System.out.println("S-Name: " + s.getName());
+			//System.out.println("op1-Name: " + op1.getName());
 
 			// Schema- und Portinformationen der alten Verbindung in Erfahrung bringen
 			SDFAttributeList schema = sub.getSchema();
 			int sinkInPort = sub.getSinkInPort();
 			int sourceOutPort = sub.getSourceOutPort();
 
+			
 			// Subscription löschen
 			((IPipe)op1).unsubscribeSink(sub);
-			System.out.println(s.getName() + " unsubscribed from " + op1.getName());
+			//System.out.println(s.getName() + " unsubscribed from " + op1.getName());
 
 			// mit den Informationen der alten Subscription den Ersatzoperator beim Sink anmelden
 			//s.subscribeToSource(op2, sinkInPort, sourceOutPort, schema);
@@ -202,7 +218,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			((Query)oo).replaceRoot(op1, op2);
 		}
 
-		System.out.println(op1.getName() + "has been replaced by" + op2.getName());
+		//System.out.println(op1.getName() + "has been replaced by" + op2.getName());
 
 	}
 
@@ -231,5 +247,4 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		}						
 	}
-
 }
