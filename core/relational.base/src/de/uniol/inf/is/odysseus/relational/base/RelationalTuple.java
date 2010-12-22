@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.CSVToString;
+import de.uniol.inf.is.odysseus.ICSVToString;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> implements Serializable, Comparable<RelationalTuple<?>>, CSVToString {
+public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> implements Serializable, Comparable<RelationalTuple<?>>, ICSVToString {
 
 	private static final long serialVersionUID = 7119095568322125441L;
 
@@ -258,6 +258,16 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		retBuff.append(";").append(getMetadata().csvToString());
 		return retBuff.toString();
 	}
+	
+	@Override
+	public String getCSVHeader() {
+		StringBuffer ret = new StringBuffer();
+		for (int i=0;i<attributes.length;i++){
+			ret.append(";");
+		}
+		ret.append(getMetadata().getCSVHeader());
+		return ret.toString();
+	}
 
 	public int memSize(boolean calcNew) {
 		if (memSize == -1 || calcNew) {
@@ -317,39 +327,6 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 */
 	protected RelationalTuple() {
 	}
-
-	/**
-	 * Erzeugt ein neues Object, anhand der Zeile und des Trennzeichens
-	 * 
-	 * @param line
-	 *            enthaelt die konkatenierten Attribute
-	 * @param delimiter
-	 *            enthaelt das Trennzeichen
-	 * @param noOfAttribs
-	 *            enthaelt die Anzahl der Attribute (Effizienzgr�nde)
-	 */
-	// public RelationalTuple(SDFAttributeList schema, String line, char
-	// delimiter) {
-	// // this.schema = schema;
-	// this.attributes = splittLineToAttributes(line, delimiter, schema);
-	// }
-
-	/**
-	 * Erzeugt ein neues leeres Object, zur Erzeugung von Zwischenergebnissen
-	 * 
-	 * @param attributeCount
-	 *            enthaelt die Anzahl der Attribute die das Objekt speichern
-	 *            koennen soll
-	 */
-	// public RelationalTuple(SDFAttributeList schema) {
-	// if (schema.size() == 0) {
-	// throw new IllegalArgumentException("attribute count has to be > 0");
-	// }
-	//
-	// this.schema = schema;
-	// this.attributes = new Object[schema.size()];
-	// //calcSize();
-	// }
 
 	/**
 	 * Erzeugt ein leeres Tuple ohne Schemainformationen

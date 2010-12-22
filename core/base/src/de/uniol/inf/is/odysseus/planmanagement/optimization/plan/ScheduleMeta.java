@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.CSVToString;
+import de.uniol.inf.is.odysseus.ICSVToString;
 import de.uniol.inf.is.odysseus.collection.Pair;
 
-public class ScheduleMeta implements CSVToString{
+public class ScheduleMeta implements ICSVToString{
 	private long lastSchedule;
 	private long lastDiff;
 	private long inTimeCount;
@@ -50,6 +50,11 @@ public class ScheduleMeta implements CSVToString{
 		StringBuffer ret = new StringBuffer();
 		csvPrint(ret);
 		return ret.toString();
+	}
+	
+	@Override
+	public String getCSVHeader() {
+		return "lastDiff;inTimeCount;allSchedulings;factor;historySize";
 	}
 
 	private long getNow() {

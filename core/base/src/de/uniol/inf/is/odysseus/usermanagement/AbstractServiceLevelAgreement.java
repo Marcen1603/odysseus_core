@@ -15,10 +15,27 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 	transient private boolean initialized = false;
 	int maxUsers = -1;
 
+	private double[] preCalced = null;
+	private boolean isPrecalced = false;
+	private int preCalcedValues = -1;
+	
 	private String name;
 	
 	public AbstractServiceLevelAgreement(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public void preCalc(int values){
+		checkInitialized();
+		this.preCalcedValues = values;
+		double i = 0.0;
+		preCalced = new double[preCalcedValues+1];
+		for (int counter=0;counter < preCalcedValues; counter++){
+			preCalced[counter] = getMaxOcMg(i);
+			i+= 1/(preCalcedValues*1.0);
+		}
+		isPrecalced = true;
 	}
 	
 	@Override
@@ -83,10 +100,6 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 		return pcs.indexOf(p);
 	}
 	
-	@Override
-	public double getMaxPenalty(){
-		return pcs.get(pcs.size()-1).getPenalty();
-	}
 	
 	@Override
 	public String toString() {
@@ -107,7 +120,11 @@ abstract public class AbstractServiceLevelAgreement implements IServiceLevelAgre
 	
 	@Override
 	public double getMaxOcMg(double currentSLAConformance) throws NotInitializedException{
-		return Math.max(oc(currentSLAConformance), mg(currentSLAConformance));
+		if (isPrecalced){
+			return preCalced[(int) Math.round(currentSLAConformance*preCalcedValues)];
+		}else{
+			return Math.max(oc(currentSLAConformance), mg(currentSLAConformance));
+		}
 	}
 	
 	@Override

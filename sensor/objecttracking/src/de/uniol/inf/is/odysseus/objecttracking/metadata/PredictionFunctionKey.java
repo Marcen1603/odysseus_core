@@ -43,4 +43,9 @@ public class PredictionFunctionKey<T> implements IPredictionFunctionKey<T> {
 	public String csvToString() {
 		return toString();
 	}
+	
+	@Override
+	public String getCSVHeader() {
+		return "PredFctKey";
+	}
 }

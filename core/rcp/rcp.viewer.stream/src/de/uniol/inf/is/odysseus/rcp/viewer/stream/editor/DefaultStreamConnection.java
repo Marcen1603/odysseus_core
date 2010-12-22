@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.editor;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -12,6 +15,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamElementListen
 
 public class DefaultStreamConnection<In> extends AbstractSink<In> implements IStreamConnection<In> {
 
+	Logger logger = LoggerFactory.getLogger(DefaultStreamConnection.class);
+	
 	private Collection<ISource<? extends In>> sources;
 	private boolean connected = false;
 	private boolean enabled = false;
@@ -69,7 +74,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 
 	@Override
 	protected void process_next( In element, int port, boolean isReadOnly ) {
-		//logger.debug( "Objekt:" + element.toString() );
+		logger.debug( "Objekt:" + element.toString() );
 		if( hasExceptions )
 			return;
 		

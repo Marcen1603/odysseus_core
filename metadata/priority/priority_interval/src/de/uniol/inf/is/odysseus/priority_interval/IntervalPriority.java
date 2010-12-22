@@ -40,5 +40,10 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	public String csvToString() {
 		return super.csvToString()+";"+this.priority;
 	}
+	
+	@Override
+	public String getCSVHeader() {
+		return super.getCSVHeader()+";priority";
+	}
 
 }

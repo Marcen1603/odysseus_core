@@ -20,18 +20,7 @@ public class SLATest {
 		sla.addPercentilConstraint(pc);
 		sla.init();
 		
-		System.out.println(sla);
-
-		System.out.println("MaxPenalty " + sla.getMaxPenalty());
-
-		System.out.println("i;levelUp;levelDown;urge;slapenalty");
-		for (double i=1;i>=0;i=Math.round((i-0.001)*1000.0)/1000.0){
-			double oc = sla.oc(i);
-			double mg = sla.mg(i);
-			System.out.println((int)(i*1000)+";" + Math.round(oc*100)/100+";"+  Math.round(mg*100)/100+";"+Math.round(Math.max(oc,mg)*100)/100+";"+(int)sla.getPercentilConstraint(i).getPenalty());
-		}
-
-		
+		System.out.println(sla);		
 
 	}
 }

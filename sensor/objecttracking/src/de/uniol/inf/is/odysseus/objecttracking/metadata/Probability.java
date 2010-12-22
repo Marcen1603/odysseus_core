@@ -97,4 +97,9 @@ public class Probability implements IProbability{
 	public String csvToString() {
 		return null;
 	}
+	
+	@Override
+	public String getCSVHeader() {
+		return null;
+	}
 }

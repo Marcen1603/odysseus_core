@@ -3,21 +3,21 @@
 
 <product name="Benchmark Runner" uid="de.uniol.inf.is.odysseus.benchmark.runner" id="de.uniol.inf.is.odysseus.benchmarker.runner.product" application="de.uniol.inf.is.odysseus.benchmarker.runner.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-input_file &quot;E:/runtime-app.product/SLA Evaluation/Versuch 5.qry&quot;
+      <programArgs>-input_file &quot;E:/runtime-app.product/SLA Evaluation/Versuch 4.qry&quot;
 -query_language script
--out &quot;C:/Users/Marco Grawunder/odysseus/Versuch5_result.xml&quot;
--result_per_query</programArgs>
+-out &quot;C:/Users/Marco Grawunder/odysseus/Versuch4_result.xml&quot;
+-result_per_query
+-no_metadata
+-max_results 1000</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx1000m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher name="benchmark">
       <solaris/>
@@ -25,7 +25,6 @@
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/OSGi%Minimum-1.2</windows>

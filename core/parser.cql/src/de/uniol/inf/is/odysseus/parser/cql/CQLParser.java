@@ -907,6 +907,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			sla.addPercentilConstraint(pc);
 		}
 		sla.init();
+		sla.preCalc(100);
 		TenantManagement.getInstance().addSLA(slaName, sla);
 		return null;
 	}

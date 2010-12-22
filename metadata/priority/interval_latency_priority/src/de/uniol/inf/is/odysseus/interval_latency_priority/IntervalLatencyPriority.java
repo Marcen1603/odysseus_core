@@ -80,6 +80,11 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	}
 
 	@Override
+	public String getCSVHeader() {
+		return super.getCSVHeader()+";"+this.latency.getCSVHeader()+";"+this.prio.getCSVHeader();
+	}
+	
+	@Override
 	public final byte getPriority() {
 		return this.prio.getPriority();
 	}

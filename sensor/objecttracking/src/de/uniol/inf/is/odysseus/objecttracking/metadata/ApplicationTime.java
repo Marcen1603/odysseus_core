@@ -86,16 +86,29 @@ public class ApplicationTime implements IApplicationTime{
 	
 	@Override
 	public String toString(){
-		String ret = "";
+		StringBuffer ret = new StringBuffer();
 		for(ITimeInterval interval: this.intervals){
-			ret += interval.toString() + ";";
+			ret.append(interval.toString()).append(";");
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	@Override
 	public String csvToString() {
-		return toString();
+		StringBuffer ret = new StringBuffer();
+		for(ITimeInterval interval: this.intervals){
+			ret.append(interval.csvToString()).append(";");
+		}
+		return ret.toString();
+	}
+	
+	@Override
+	public String getCSVHeader() {
+		StringBuffer ret = new StringBuffer();
+		for(ITimeInterval interval: this.intervals){
+			ret.append(interval.getCSVHeader()).append(";");
+		}
+		return ret.toString();
 	}
 	
 	@Override

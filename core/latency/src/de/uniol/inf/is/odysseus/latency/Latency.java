@@ -61,5 +61,10 @@ public class Latency implements ILatency{
 	public String csvToString() {
 		return ""+ this.lstart+";"+this.lend+";"+(this.lend - this.lstart);
 	}
+	
+	@Override
+	public String getCSVHeader() {
+		return "lstart;lend;latency";
+	}
 
 }

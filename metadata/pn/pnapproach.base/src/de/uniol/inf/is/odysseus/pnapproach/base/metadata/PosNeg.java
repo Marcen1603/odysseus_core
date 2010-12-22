@@ -111,4 +111,9 @@ public class PosNeg implements IPosNeg{
 	public String csvToString() {
 		return this.type+";"+this.id+";"+this.timestamp;
 	}
+	
+	@Override
+	public String getCSVHeader() {
+		return "Type;Id;Timestamp";
+	}
 }

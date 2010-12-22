@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.CSVToString;
+import de.uniol.inf.is.odysseus.ICSVToString;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
@@ -57,7 +57,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 		try {
 			String toWrite = null;
 			if (csvSink) {
-				toWrite = ((CSVToString) object).csvToString();
+				toWrite = ((ICSVToString) object).csvToString();
 			} else {
 				toWrite = "" + object;
 			}

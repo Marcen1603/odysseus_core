@@ -63,4 +63,9 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 		return super.csvToString()+";"+this.latency.csvToString();
 	}
 	
+	@Override
+	public String getCSVHeader() {
+		return super.getCSVHeader()+";"+this.latency.getCSVHeader();
+	}
+	
 }

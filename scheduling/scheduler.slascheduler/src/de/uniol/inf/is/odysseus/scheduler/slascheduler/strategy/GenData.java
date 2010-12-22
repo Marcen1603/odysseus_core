@@ -18,19 +18,19 @@ public class GenData {
 	static String[] scheduler = new String[] { "" };
 	static String homeDir = System.getProperty("user.home") + "/odysseus/";
 
-
 	public static void main(String[] args) {
 		int noOfUsers = 150;
 		int baseTime = 5;
 		int baseTimeOffset = 10;
-		int sameLevel = 5;
-		int sla = 2;
+		int sameLevel = 1;
+		int sla = 3;
 		int testInputNo = 0;
 		boolean prio = false;
 		boolean variateSLA = false;
 		boolean variateSLATime = true;
+		boolean calcLatency = false;
 		boolean dumpToFile = false;
-
+		String debugFileName = "Versuch6";
 
 		System.out.println("#DEFINE PROC_TIME 1000");
 		System.out.println("#LOGIN System manager");
@@ -39,7 +39,7 @@ public class GenData {
 		}
 		System.out.println("#ODYSSEUS_PARAM scheduler_TimeSlicePerStrategy 10");
 		System.out.println("#ODYSSEUS_PARAM debug_Scheduler_maxLines 1000000");
-		System.out.println("#ODYSSEUS_PARAM scheduler_DebugFileName Versuch5");
+		System.out.println("#ODYSSEUS_PARAM scheduler_DebugFileName "+debugFileName);
 		System.out.println("#PARSER CQL");
 		System.out.println("#TRANSCFG Benchmark");
 		System.out.println("#BUFFERPLACEMENT None");
@@ -49,12 +49,12 @@ public class GenData {
 			System.out.println("create user test" + i
 					+ " identified by 'test';");
 			System.out.println("grant role DSUser to test" + i + ";");
-			System.out.println("create sla sla"
-					+ i
-					+ " time "
-					+ (baseTimeOffset+
-					+ (variateSLATime ? (baseTime * ((i / sameLevel) + 1))
-							: baseTime)));
+			System.out
+					.println("create sla sla"
+							+ i
+							+ " time "
+							+ (baseTimeOffset + +(variateSLATime ? (baseTime * ((i / sameLevel) + 1))
+									: baseTime)));
 			if (variateSLA) {
 				System.out.println("with (0.0,0.1,"
 						+ (noOfUsers - ((i / sameLevel)) * sameLevel) * 100
@@ -84,14 +84,20 @@ public class GenData {
 					+ " = buffer({type = 'Normal'},testinput)");
 			System.out
 					.println("benchmark"
-							+ i
+							+ i +
+							((!calcLatency && !dumpToFile)?
+							"{priority="
+							+ (noOfUsers - ((i / sameLevel)) * sameLevel) + "}"
+							:"")
 							+ " = benchmark({selectivity = 1.0, time = ${PROC_TIME}},puffer"
 							+ i + ")");
+			if (calcLatency) {
 				System.out.println("latencyCalc" + i
-						+ " = CALCLATENCY(benchmark" + i + ")");	
-				
+						+ " = CALCLATENCY(benchmark" + i + ")");
+			}
 			if (dumpToFile) {
-				System.out.println("fileSink" + i + "{priority="
+				System.out.println("fileSink" + i + 
+						"{priority="
 						+ (noOfUsers - ((i / sameLevel)) * sameLevel) + "}"
 						+ " = FILESINK({file='" + homeDir + run + "/Query_" + i
 						+ ".csv',fileType='csv',CACHESIZE=1000000},latencyCalc"

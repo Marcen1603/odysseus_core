@@ -414,6 +414,11 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	public String csvToString() {
 		return getStart().toString() + ";" + getEnd().toString();
 	}
+	
+	@Override
+	public String getCSVHeader() {
+		return "start;end";
+	}
 
 	@Override
 	public boolean isValid() {

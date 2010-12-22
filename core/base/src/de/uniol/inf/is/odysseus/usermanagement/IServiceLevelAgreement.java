@@ -3,14 +3,15 @@ package de.uniol.inf.is.odysseus.usermanagement;
 import java.io.Serializable;
 import java.util.List;
 
-public interface IServiceLevelAgreement extends Serializable{
+import de.uniol.inf.is.odysseus.ICSVToString;
+
+public interface IServiceLevelAgreement extends Serializable, ICSVToString{
 	/**
 	 * Add a new PercentileConstraints. 
 	 * @param pc
 	 */
 	public void addPercentilConstraint(IPercentileConstraint pc) throws PercentileConstraintOverlapException;
 	public IPercentileConstraint getPercentilConstraint(double currentSLAConformance) throws NotInitializedException;
-	public double getMaxPenalty();
 	public void init() throws IllegalServiceLevelDefinition;
 	public double oc(double currentSLAConformance) throws NotInitializedException;
 	public double mg(double currentSLAConformance) throws NotInitializedException;
@@ -20,4 +21,5 @@ public interface IServiceLevelAgreement extends Serializable{
 	public List<IPercentileConstraint> getPercentilConstraints();
 	public String getName();
 	public boolean isInitialized();
+	void preCalc(int elements);
 }
