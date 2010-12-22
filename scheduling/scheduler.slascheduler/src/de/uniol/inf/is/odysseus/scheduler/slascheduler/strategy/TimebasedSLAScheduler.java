@@ -1,13 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
@@ -17,15 +11,10 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.ITimeBasedServiceLevelAgreement;
-import de.uniol.inf.is.odysseus.usermanagement.NotInitializedException;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 
-public class TimebasedSLAScheduler extends SimpleSLAScheduler {
+public class TimebasedSLAScheduler extends AbstractSLAScheduler {
 
-	static private Logger logger = LoggerFactory
-			.getLogger(TimebasedSLAScheduler.class);
-
-	final private List<IScheduling> lastRun = new LinkedList<IScheduling>();
 	Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
 
 	final CurrentPlanPriorityComperator comperator = new CurrentPlanPriorityComperator();
@@ -33,9 +22,6 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	final private long sla_history_size = OdysseusDefaults.getLong(
 			"sla_history_size", 1000);
 
-	final private long updatePenaltyTime = OdysseusDefaults.getLong(
-			"sla_updatePenaltyTime", 60000);
-	private long lastPenalties = -1;
 
 	public TimebasedSLAScheduler(TimebasedSLAScheduler timebasedSLAScheduler) {
 		super(timebasedSLAScheduler);
@@ -46,39 +32,15 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 	}
 
 	@Override
-	public void addPlan(IScheduling scheduling) {
-		synchronized (queue) {
-			queue.add(scheduling);
-			scheduling.addSchedulingEventListener(this);
-			scheduling.getPlan().setScheduleMeta(
-					new ScheduleMeta(System.currentTimeMillis()));
-			logger.debug("Adding Plan done. Current Plan count " + queue.size());
-		}
-	}
-
-	@Override
-	public void removePlan(IScheduling plan) {
-		super.removePlan(plan);
-		lastRun.remove(plan);
-		minTime.remove(plan);
-	}
-
-	@Override
 	public IScheduling nextPlan() {
-		if ((lastPenalties > 0 && System.currentTimeMillis() - lastPenalties >= updatePenaltyTime)
-				|| lastPenalties <= 0) {
-			updatePenalites();
-		}
-		synchronized (lastRun) {
-			if (lastRun.size() > 0) {
-				return updateMetaAndReturnPlan(lastRun.remove(0));
-			}
-		}
+		IScheduling nextPlan = super.nextPlan();
+		if (nextPlan != null) return nextPlan;
+		
 		synchronized (queue) {
 			if (queue.size() > 0) {
+				long maxPrio = 0;
 				// Calc Prio for each PartialPlan
 				for (IScheduling is : queue) {
-					Map<IQuery, Double> queryCalcedUrg = new HashMap<IQuery, Double>();
 					if (minTime.get(is) == null) {
 						long minTimeP = calcMinTimePeriod(is.getPlan());
 						minTime.put(is, minTimeP);
@@ -87,71 +49,41 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 					ScheduleMeta scheduleMeta = is.getPlan().getScheduleMeta();
 					// Drain
 					scheduleMeta.drainHistory(sla_history_size);
-					// Calc prio for each query
-					// Urgency for all Querys of this plan
-					for (IQuery q : is.getPlan().getQueries()) {
-						try {
-							IServiceLevelAgreement sla = TenantManagement
-									.getInstance().getSLAForUser(q.getUser());
-
-							double rate = scheduleMeta.getRate();
-
-							double urge = sla.getMaxOcMg(rate);
-							queryCalcedUrg.put(q, urge);
-						} catch (Exception e) {
-							e.printStackTrace();
-							throw new RuntimeException(e);
-						}
-
-					}// Query
-					// Calc Prio for current Scheduling, based
-					// on all queries
-					double prio = 0;
-					switch (method) {
-					case MAX:
-						prio = calcPrioMax(queryCalcedUrg, is);
-						break;
-					case SUM:
-						prio = calcPrioSum(queryCalcedUrg, is);
-						break;
-					case AVG:
-						prio = calcPrioAvg(queryCalcedUrg, is);
-						break;
-					}
-					long newPrio = (long) Math.round(prio * 1000);
+					long newPrio = calcPrio(is, scheduleMeta);
 					is.getPlan().setCurrentPriority(newPrio);
-				}
-				// Collections.sort(queue, comperator);
-				// Determine Plan with max prio
-				long maxPrio = getMaxPrioPlan(queue);
-
-				// Update Scheduling Infos
-				// Add all elements with same prio to list
-				Iterator<IScheduling> iter = queue.iterator();
-				synchronized (lastRun) {
-					while (iter.hasNext()) {
-						IScheduling s = iter.next();
-						if (s.getPlan().getCurrentPriority() == maxPrio) {
-							lastRun.add(s);
-						}
+					
+					// Determine MaxPrio
+					if (newPrio > maxPrio) {
+						maxPrio = newPrio;
 					}
-					return updateMetaAndReturnPlan(lastRun.remove(0));
-				}
-				// return updateMetaAndReturnPlan(queue.get(0));
+					
+				} // for (IScheduling is : queue)
+				return initLastRun(maxPrio);
 			} else {
 				return null;
 			}
 		}
 	}
 
-	private long getMaxPrioPlan(List<IScheduling> list) {
-		long maxPrio = 0;
-		for (IScheduling is : list) {
-			if (is.getPlan().getCurrentPriority() > maxPrio) {
-				maxPrio = is.getPlan().getCurrentPriority();
+	private long calcPrio(IScheduling is, ScheduleMeta scheduleMeta) {
+		Map<IQuery, Double> queryCalcedUrg = new HashMap<IQuery, Double>();
+		for (IQuery q : is.getPlan().getQueries()) {
+			try {
+				IServiceLevelAgreement sla = TenantManagement
+						.getInstance().getSLAForUser(q.getUser());
+				double rate = scheduleMeta.getRate();
+				double urge = sla.getMaxOcMg(rate);
+				queryCalcedUrg.put(q, urge);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
-		}
-		return maxPrio;
+
+		}// Query
+		// Calc Prio for current Scheduling, based
+		// on all queries
+		double prio = calcPrio(queryCalcedUrg, is);
+		return Math.round(prio * 1000);
 	}
 
 	private long calcMinTimePeriod(IPartialPlan plan) {
@@ -167,31 +99,8 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 		return minTimePeriod;
 	}
 
-	private void updatePenalites() {
-		synchronized (queue) {
-			for (IScheduling s : queue) {
-				updatePenalites(s.getPlan());
-			}
-			lastPenalties = System.currentTimeMillis();
-		}
 
-	}
-
-	private void updatePenalites(IPartialPlan plan)
-			throws NotInitializedException {
-		ScheduleMeta meta = plan.getScheduleMeta();
-		for (IQuery q : plan.getQueries()) {
-			IServiceLevelAgreement sla = TenantManagement.getInstance()
-					.getSLAForUser(q.getUser());
-			if (meta.getLastDiff() > 0) {
-				double penalty = sla.getPercentilConstraint(meta.getRate())
-						.getPenalty();
-				q.addPenalty(penalty);
-			}
-		}
-	}
-
-	private IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
+	protected IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
 		ScheduleMeta meta = toSchedule.getPlan().getScheduleMeta();
 		meta.scheduleDone(minTime.get(toSchedule));
 		return toSchedule;
@@ -202,4 +111,10 @@ public class TimebasedSLAScheduler extends SimpleSLAScheduler {
 		return new TimebasedSLAScheduler(this);
 	}
 
+	@Override
+	public void removePlan(IScheduling plan) {
+		super.removePlan(plan);
+		minTime.remove(plan);
+	}
+	
 }
