@@ -5,17 +5,14 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
-import de.uniol.inf.is.odysseus.usermanagement.ITimeBasedServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 
-public class TimebasedSLAScheduler extends AbstractSLAScheduler {
+public class TimebasedSLAScheduler extends AbstractTimebasedSLAScheduler{
 
-	Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
 
 	final CurrentPlanPriorityComperator comperator = new CurrentPlanPriorityComperator();
 
@@ -58,7 +55,7 @@ public class TimebasedSLAScheduler extends AbstractSLAScheduler {
 					}
 					
 				} // for (IScheduling is : queue)
-				return initLastRun(maxPrio);
+				return initLastRunAndReturn(maxPrio);
 			} else {
 				return null;
 			}
@@ -85,20 +82,6 @@ public class TimebasedSLAScheduler extends AbstractSLAScheduler {
 		double prio = calcPrio(queryCalcedUrg, is);
 		return Math.round(prio * 1000);
 	}
-
-	private long calcMinTimePeriod(IPartialPlan plan) {
-		long minTimePeriod = Long.MAX_VALUE;
-		for (IQuery q : plan.getQueries()) {
-			IServiceLevelAgreement sla = TenantManagement.getInstance()
-					.getSLAForUser(q.getUser());
-			if (((ITimeBasedServiceLevelAgreement) sla).getTimeperiod() < minTimePeriod) {
-				minTimePeriod = ((ITimeBasedServiceLevelAgreement) sla)
-						.getTimeperiod();
-			}
-		}// Query
-		return minTimePeriod;
-	}
-
 
 	protected IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
 		ScheduleMeta meta = toSchedule.getPlan().getScheduleMeta();

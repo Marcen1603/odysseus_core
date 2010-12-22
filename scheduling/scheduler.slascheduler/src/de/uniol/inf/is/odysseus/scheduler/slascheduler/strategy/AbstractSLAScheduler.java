@@ -48,6 +48,19 @@ public abstract class AbstractSLAScheduler implements IPartialPlanScheduling{
 		this.method = simpleSLAScheduler.method;
 	}
 
+	protected long getMaxPrio(){
+		long maxPrio = 0;
+		synchronized (queue) {
+			for (IScheduling s:queue){
+				long curPrio = s.getPlan().getCurrentPriority();
+				if (curPrio > maxPrio){
+					maxPrio = curPrio;
+				}
+			}
+		}
+		return maxPrio;
+	}
+	
 	protected double calcPrio(Map<IQuery, Double> queryCalcedUrg, IScheduling is) {
 		double prio = 0;
 		// Calculation is only needed if more that one query is involved
@@ -115,7 +128,7 @@ public abstract class AbstractSLAScheduler implements IPartialPlanScheduling{
 		return null;
 	}
 	
-	protected IScheduling initLastRun(long maxPrio) {
+	protected IScheduling initLastRunAndReturn(long maxPrio) {
 		// Add all elements with max prio to list
 		Iterator<IScheduling> iter = queue.iterator();
 		synchronized (lastRun) {
