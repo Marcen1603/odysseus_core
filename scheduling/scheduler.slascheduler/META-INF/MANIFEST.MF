@@ -9,4 +9,4 @@ Import-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  org.osgi.service.component,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus
-Service-Component: OSGI-INF/TimeBasedSLASchedulerMAX.xml, OSGI-INF/TimeBasedSLASchedulerSUM.xml, OSGI-INF/TimeBasedSLASchedulerAVG.xml
+Service-Component: OSGI-INF/TimeBasedSLASchedulerMAX.xml, OSGI-INF/TimeBasedSLASchedulerSUM.xml, OSGI-INF/TimeBasedSLASchedulerAVG.xml, OSGI-INF/PrioSLASchedulerMAX.xml, OSGI-INF/PrioSLASchedulerSUM.xml, OSGI-INF/PrioSLASchedulerAVG.xml

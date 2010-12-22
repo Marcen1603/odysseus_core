@@ -16,10 +16,6 @@ public class TimebasedSLAScheduler extends AbstractTimebasedSLAScheduler{
 
 	final CurrentPlanPriorityComperator comperator = new CurrentPlanPriorityComperator();
 
-	final private long sla_history_size = OdysseusDefaults.getLong(
-			"sla_history_size", 1000);
-
-
 	public TimebasedSLAScheduler(TimebasedSLAScheduler timebasedSLAScheduler) {
 		super(timebasedSLAScheduler);
 	}
@@ -38,14 +34,8 @@ public class TimebasedSLAScheduler extends AbstractTimebasedSLAScheduler{
 				long maxPrio = 0;
 				// Calc Prio for each PartialPlan
 				for (IScheduling is : queue) {
-					if (minTime.get(is) == null) {
-						long minTimeP = calcMinTimePeriod(is.getPlan());
-						minTime.put(is, minTimeP);
-						//logger.debug("MinTime for "+is+" set to "+minTimeP);
-					}
-					ScheduleMeta scheduleMeta = is.getPlan().getScheduleMeta();
-					// Drain
-					scheduleMeta.drainHistory(sla_history_size);
+					calcMinTime(is);
+					ScheduleMeta scheduleMeta = drainHistory(is);
 					long newPrio = calcPrio(is, scheduleMeta);
 					is.getPlan().setCurrentPriority(newPrio);
 					
@@ -83,21 +73,11 @@ public class TimebasedSLAScheduler extends AbstractTimebasedSLAScheduler{
 		return Math.round(prio * 1000);
 	}
 
-	protected IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
-		ScheduleMeta meta = toSchedule.getPlan().getScheduleMeta();
-		meta.scheduleDone(minTime.get(toSchedule));
-		return toSchedule;
-	}
 
 	@Override
 	public TimebasedSLAScheduler clone() {
 		return new TimebasedSLAScheduler(this);
 	}
 
-	@Override
-	public void removePlan(IScheduling plan) {
-		super.removePlan(plan);
-		minTime.remove(plan);
-	}
 	
 }

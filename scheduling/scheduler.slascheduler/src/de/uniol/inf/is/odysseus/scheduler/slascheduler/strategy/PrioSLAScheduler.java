@@ -13,8 +13,8 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 public class PrioSLAScheduler extends AbstractTimebasedSLAScheduler{
 
 	
-	private int minPrio;
-	Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
+	final private int minPrio;
+	final Map<IScheduling, Long> minTime = new HashMap<IScheduling, Long>();
 
 	
 	public PrioSLAScheduler(int minPrio) {
@@ -25,6 +25,11 @@ public class PrioSLAScheduler extends AbstractTimebasedSLAScheduler{
 	public PrioSLAScheduler(PrioSLAScheduler other){
 		super(other);
 		this.minPrio = other.minPrio;
+	}
+
+	public PrioSLAScheduler(PrioCalcMethod method) {
+		super(method);
+		this.minPrio = 0;
 	}
 
 	@Override
@@ -50,21 +55,13 @@ public class PrioSLAScheduler extends AbstractTimebasedSLAScheduler{
 	
 	@Override
 	protected IScheduling updateMetaAndReturnPlan(IScheduling toSchedule) {
-		ScheduleMeta meta = toSchedule.getPlan().getScheduleMeta();
-		if (minTime.get(toSchedule) == null) {
-			long minTimeP = calcMinTimePeriod(toSchedule.getPlan());
-			minTime.put(toSchedule, minTimeP);
-			//logger.debug("MinTime for "+is+" set to "+minTimeP);
-		}
-
-		meta.scheduleDone(minTime.get(toSchedule));
-		return updatePriority(toSchedule);
+		drainHistory(toSchedule);
+		return updatePriority(super.updateMetaAndReturnPlan(toSchedule));
 	}
 
 	@Override
-	public AbstractSLAScheduler clone() {
-		// TODO Auto-generated method stub
-		return null;
+	public PrioSLAScheduler clone() {
+		return new PrioSLAScheduler(this);
 	}
 
 }

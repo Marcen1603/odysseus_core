@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.slascheduler.PrioSLASchedulerSUM">
+   <implementation class="de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAFactory"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory"/>
+   </service>
+   <property name="calcMethod" type="String" value="SUM"/>
+   <property name="kind" type="String" value="prio"/>
+   <property name="component.readableName" type="String" value="Prio SLA scheduler sum"/>
+</scr:component>
