@@ -78,6 +78,24 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:measure.windPerformanceRCP.sourceManagerView">
+         <command
+               commandId="measure.windPerformanceRCP.showNewSourceDialog"
+               label="New Source"
+               style="push"
+               tooltip="create a new source">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="windperformancercp.views.ShowNewSourceDialogCommand"
+            id="measure.windPerformanceRCP.showNewSourceDialog"
+            name="New Source">
+      </command>
    </extension>
 
 </plugin>

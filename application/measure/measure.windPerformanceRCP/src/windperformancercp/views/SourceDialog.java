@@ -1,64 +1,55 @@
 package windperformancercp.views;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.Viewer;
+
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 
+public class SourceDialog extends Dialog {
 
-public class SourceAttributeView extends ViewPart {
-	
-	Text nameInputField;
-	
-	class labeledDialog extends Composite{
-		Label label;
-		Text description;
+	public SourceDialog(Shell parentShell) {
+		super(parentShell);
+		//parentShell.setText("New Source Dialog");
 		
-		
-		labeledDialog(Composite parent, String text, int style){
-			super(parent,style);
-			FormLayout layout = new FormLayout();
-			//Composite comp = new Composite(parent,style);
-			this.setLayout(layout);
-			
-			FormData data = new FormData();
-			label = new Label(this, SWT.NONE);
-			label.setLayoutData(data);
-			label.setText(text);
-			data = new FormData();
-			data.left = new FormAttachment(label,3);
-			data.top = new FormAttachment(label,0,SWT.TOP);
-			description = new Text(this, SWT.SINGLE | SWT.BORDER);
-			description.setLayoutData(data);
-		}
+	}
+
+	public SourceDialog(IShellProvider parentShell) {
+		super(parentShell);
+		// TODO Auto-generated constructor stub
 	}
 	
-	public SourceAttributeView() {
-	}
-	public static final String ID = "measure.windPerformanceRCP.sourceAttributeView";
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	protected void configureShell(Shell newShell){
+		super.configureShell(newShell);
+		newShell.setText("New Source Dialog");
+	}
+	
+	@Override
+	protected Control createDialogArea(Composite parent){
 		
-		Composite mainComposite = new Composite(parent, SWT.NONE);
-		mainComposite.setLayout(new FillLayout(SWT.VERTICAL));
+		Composite area = (Composite) super.createDialogArea(parent);
+		area.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		//###upper composite
 		
-		SashForm upperComposite = new SashForm(mainComposite, SWT.FILL);
+		SashForm upperComposite = new SashForm(area, SWT.FILL);
 		
 		Group streamInfoGroup = new Group(upperComposite,SWT.NONE);
 		streamInfoGroup.setLayout(new FormLayout());
@@ -71,7 +62,7 @@ public class SourceAttributeView extends ViewPart {
 		nameComp.setLayout(new FillLayout());
 		Label nameLabel = new Label(nameComp, SWT.BORDER);
 		nameLabel.setText("Name:");
-		nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
+		Text nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
 		
 		Composite hostComp = new Composite(streamInfoGroup,SWT.NONE);
 		FormData hostCompFD = new FormData();
@@ -108,7 +99,7 @@ public class SourceAttributeView extends ViewPart {
 		
 				
 		//### lower sash form with WT and MetMast Information
-		SashForm lowerSash = new SashForm(mainComposite, SWT.FILL);
+		SashForm lowerSash = new SashForm(area, SWT.FILL);
 		//FillLayout llCompoLayout = new FillLayout();
 		//lowerSash.setLayoutData(lowerSashLayout);
 		
@@ -163,7 +154,7 @@ public class SourceAttributeView extends ViewPart {
 		lowerRightGroup.setLayout(lrGgridLayout);
 		
 		//### Buttons
-		Composite lowerButtonComp = new Composite(mainComposite, SWT.BOTTOM);
+		/*Composite lowerButtonComp = new Composite(mainComposite, SWT.BOTTOM);
 		RowLayout lButtonLayout = new RowLayout();
 		lButtonLayout.marginRight = 2;
 		//lButtonLayout.type = 
@@ -182,14 +173,17 @@ public class SourceAttributeView extends ViewPart {
 		Button btnCancel = new Button(lowerButtonComp, SWT.PUSH);
 		//btnCancel.setLayoutData(btnCancelFD);
 		btnCancel.setText("&Cancel");
-		
-	}
+*/
 
+		return area;
+	}
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-		nameInputField.setFocus();
-
+	public void okPressed(){
+		//TODO
+		System.out.println("NewSourceDialog: Ok gedrueckt!");
+		close();
 	}
+
 
 }
