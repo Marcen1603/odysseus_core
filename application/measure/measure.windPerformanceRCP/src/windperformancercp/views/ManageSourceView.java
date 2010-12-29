@@ -12,12 +12,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.menus.CommandContributionItem;
-import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.part.ViewPart;
 
 public class ManageSourceView extends ViewPart {
@@ -86,33 +82,6 @@ public class ManageSourceView extends ViewPart {
 		
 		Composite leftComposite = new Composite(sashForm, SWT.NONE);
 		leftComposite.setLayout(new GridLayout());
-		ToolBar sourceToolBar = new ToolBar(leftComposite, SWT.BORDER | SWT.FLAT | SWT.RIGHT);
-		sourceToolBar.setLayoutData(new GridData());
-		//MenuManager tbManager = new MenuManager();
-		
-		/*
-		ToolItem tltmNew = new ToolItem(sourceToolBar, SWT.NONE);
-		tltmNew.setToolTipText("create a new source");
-		tltmNew.setText("New");
-		*/
-		
-		/*CommandContributionItemParameter parms = 
-				new CommandContributionItemParameter(getSite(),
-						"",
-						"measure.windPerformanceRCP.showNewSourceDialog",
-						CommandContributionItem.STYLE_PUSH);
-		parms.label = "New";
-		CommandContributionItem tltmNew = new CommandContributionItem(parms);
-		tltmNew.fill(sourceToolBar);
-		*/
-				
-		ToolItem tltmCopy = new ToolItem(sourceToolBar, SWT.NONE);
-		tltmCopy.setToolTipText("copy the selected source");
-		tltmCopy.setText("Copy");
-		
-		ToolItem tltmDelete = new ToolItem(sourceToolBar, SWT.NONE);
-		tltmDelete.setToolTipText("delete the selected source");
-		tltmDelete.setText("Delete");
 		
 		GridData slGridData = new GridData(GridData.FILL_BOTH);
 		listViewer = new ListViewer(leftComposite, SWT.BORDER | SWT.V_SCROLL);
@@ -131,7 +100,6 @@ public class ManageSourceView extends ViewPart {
 	 */
 	@Override
 	public void setFocus() {
-		//viewer.getControl().setFocus();
 		listViewer.getControl().setFocus();
 	}
 }

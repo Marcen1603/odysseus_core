@@ -31,11 +31,6 @@
             id="measure.windPerformanceRCP.assignPMView"
             name="AssignPMs">
       </view>
-      <view
-            class="windperformancercp.views.SourceAttributeView"
-            id="measure.windPerformanceRCP.sourceAttributeView"
-            name="SourceEditor">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -57,13 +52,6 @@
                relative="measure.windPerformanceRCP.sourceManagerView"
                standalone="true">
          </view>
-         <view
-               id="measure.windPerformanceRCP.sourceAttributeView"
-               minimized="false"
-               relationship="stack"
-               relative="measure.windPerformanceRCP.sourceManagerView"
-               standalone="true">
-         </view>
       </perspectiveExtension>
    </extension>
    <extension
@@ -71,7 +59,7 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu">
          <menu
-               label="File">
+               label="Application">
             <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Exit">
@@ -87,6 +75,18 @@
                style="push"
                tooltip="create a new source">
          </command>
+         <command
+               commandId="measure.windPerformanceRCP.showCopySourceDialog"
+               label="Copy Source"
+               style="push"
+               tooltip="copy an existing source">
+         </command>
+         <command
+               commandId="measure.windPerformanceRCP.DeleteSource"
+               label="Delete Source"
+               style="push"
+               tooltip="delete the selected source">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -95,6 +95,16 @@
             defaultHandler="windperformancercp.views.ShowNewSourceDialogCommand"
             id="measure.windPerformanceRCP.showNewSourceDialog"
             name="New Source">
+      </command>
+      <command
+            defaultHandler="windperformancercp.views.ShowCopySourceDialogCommand"
+            id="measure.windPerformanceRCP.showCopySourceDialog"
+            name="Copy Source">
+      </command>
+      <command
+            defaultHandler="windperformancercp.views.DeleteSourceCommand"
+            id="measure.windPerformanceRCP.DeleteSource"
+            name="Delete Source">
       </command>
    </extension>
 

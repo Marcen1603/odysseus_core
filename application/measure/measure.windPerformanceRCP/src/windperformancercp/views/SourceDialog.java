@@ -23,9 +23,21 @@ import org.eclipse.swt.widgets.Text;
 
 public class SourceDialog extends Dialog {
 
+	Text nameInputField;
+	Text hostInputField;
+	Text portInputField;
+	Table attributeTable;
+	Text hhInputField;
+	Button btnRActive;
+	Button btnRPassive;
+	
+	public static final int PC_ACTIVE = 0;
+	public static final int PC_PASSIVE = 1;
+	public static final int MMId = 0;
+	public static final int WTId = 1;
+	
 	public SourceDialog(Shell parentShell) {
 		super(parentShell);
-		//parentShell.setText("New Source Dialog");
 		
 	}
 
@@ -34,7 +46,7 @@ public class SourceDialog extends Dialog {
 		// TODO Auto-generated constructor stub
 	}
 	
-	
+//TODO ein clear-button waere noch schick!	
 	@Override
 	protected void configureShell(Shell newShell){
 		super.configureShell(newShell);
@@ -62,7 +74,7 @@ public class SourceDialog extends Dialog {
 		nameComp.setLayout(new FillLayout());
 		Label nameLabel = new Label(nameComp, SWT.BORDER);
 		nameLabel.setText("Name:");
-		Text nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
+		nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
 		
 		Composite hostComp = new Composite(streamInfoGroup,SWT.NONE);
 		FormData hostCompFD = new FormData();
@@ -71,7 +83,7 @@ public class SourceDialog extends Dialog {
 		hostComp.setLayout(new FillLayout());
 		Label hostLabel = new Label(hostComp, SWT.NONE);
 		hostLabel.setText("Host:");
-		Text hostInputField = new Text(hostComp, SWT.SINGLE | SWT.BORDER);
+		hostInputField = new Text(hostComp, SWT.SINGLE | SWT.BORDER);
 		
 		Composite portComp = new Composite(streamInfoGroup,SWT.NONE);
 		FormData portCompFD = new FormData();
@@ -80,7 +92,7 @@ public class SourceDialog extends Dialog {
 		portComp.setLayout(new FillLayout());
 		Label portLabel = new Label(portComp, SWT.NONE);
 		portLabel.setText("Port:");
-		Text portInputField = new Text(portComp, SWT.SINGLE | SWT.BORDER);
+		portInputField = new Text(portComp, SWT.SINGLE | SWT.BORDER);
 		
 		//### upper right composite: attribute table
 		Composite attributeComp = new Composite(upperComposite, SWT.RIGHT);
@@ -88,7 +100,7 @@ public class SourceDialog extends Dialog {
 		//attributeComp.setLayout(attributeCompL);
 		attributeComp.setLayout(new FillLayout());
 		
-		Table attributeTable = new Table(attributeComp, SWT.MULTI|SWT.BORDER|SWT.FULL_SELECTION);
+		attributeTable = new Table(attributeComp, SWT.MULTI|SWT.BORDER|SWT.FULL_SELECTION);
 		attributeTable.setHeaderVisible(true);
 		attributeTable.setLinesVisible(true);
 		String[] titles ={"Attribute","Type"};
@@ -119,7 +131,7 @@ public class SourceDialog extends Dialog {
 		
 		Label hubHeightLbl = new Label(hhComp, SWT.NONE);
 		hubHeightLbl.setText("Hub height:");
-		Text hhInputField = new Text(hhComp, SWT.BORDER | SWT.FILL);
+		hhInputField = new Text(hhComp, SWT.BORDER | SWT.FILL);
 		Label mLabel = new Label(hhComp, SWT.NONE);
 		mLabel.setText("m");
 		
@@ -133,14 +145,14 @@ public class SourceDialog extends Dialog {
 		powerControlLbl.setLayoutData(new FormData());
 		
 		powerControlLbl.setText("Power Control Type:");
-		Button btnRActive =	new Button(pcComposite, SWT.RADIO);
+		btnRActive =	new Button(pcComposite, SWT.RADIO);
 		FormData btnRActiveFD = new FormData();
 		btnRActiveFD.top = new FormAttachment(powerControlLbl,7);
 		btnRActiveFD.left = new FormAttachment(pcComposite,5,SWT.LEFT);
 		btnRActive.setLayoutData(btnRActiveFD);
 		btnRActive.setText("active(pitch)");
 
-		Button btnRPassive = new Button(pcComposite, SWT.RADIO);
+		btnRPassive = new Button(pcComposite, SWT.RADIO);
 		FormData btnRPassiveFD = new FormData();
 		btnRPassiveFD.left = new FormAttachment(btnRActive,5);
 		btnRPassiveFD.top = new FormAttachment(btnRActive,0,SWT.TOP);
@@ -152,36 +164,70 @@ public class SourceDialog extends Dialog {
 		Group lowerRightGroup = new Group(lowerSash, SWT.RIGHT);
 		lowerRightGroup.setText("MetMast");
 		lowerRightGroup.setLayout(lrGgridLayout);
-		
-		//### Buttons
-		/*Composite lowerButtonComp = new Composite(mainComposite, SWT.BOTTOM);
-		RowLayout lButtonLayout = new RowLayout();
-		lButtonLayout.marginRight = 2;
-		//lButtonLayout.type = 
-		lowerButtonComp.setLayout(lButtonLayout);
-		
-		
-		//FormData btnOKFD = new FormData();
-		RowData btnOKRD = new RowData();
-		//btnOKFD.right = new FormAttachment(lowerButtonComp,100,SWT.RIGHT);
-		Button btnOK = new Button(lowerButtonComp, SWT.PUSH);
-		btnOK.setLayoutData(btnOKRD);
-		btnOK.setText("&Ok");
-		
-		//FormData btnCancelFD = new FormData();
-		//btnCancelFD.right = new FormAttachment(btnOK,5);
-		Button btnCancel = new Button(lowerButtonComp, SWT.PUSH);
-		//btnCancel.setLayoutData(btnCancelFD);
-		btnCancel.setText("&Cancel");
-*/
 
 		return area;
+	}
+	
+	public void setNameValue(String newName){
+		nameInputField.setText(newName);
+	}
+	
+	public void setHostValue(String newHost){
+		hostInputField.setText(newHost);
+	}
+	
+	//TODO: bin ich korrekt?
+	public void setPortValue(int newPort){
+		portInputField.setText(Integer.toString(newPort));
+	}
+	
+	public void setHubHeightValue(int newHubHeight){
+		hhInputField.setText(Integer.toString(newHubHeight));
+	}
+	
+	public void setPowerControl(int pc){
+		if(pc == PC_ACTIVE){
+			btnRActive.setSelection(true);
+			btnRPassive.setSelection(false);
+		}
+		if(pc == PC_PASSIVE){
+			btnRActive.setSelection(false);
+			btnRPassive.setSelection(true);
+		}
+	}
+	
+	//TODO
+	public void setType(int type){
+	/*	if(type==MMId){
+			
+		}
+		if(type==WTId){
+			
+		}
+		*/
+	}
+	
+	public void resetView(){
+		nameInputField.setText("");
+		hostInputField.setText("");
+		portInputField.setText("");
+		attributeTable.removeAll();
+		hhInputField.setText("");
+		btnRActive.setSelection(false);
+		btnRPassive.setSelection(false);
 	}
 	
 	@Override
 	public void okPressed(){
 		//TODO
-		System.out.println("NewSourceDialog: Ok gedrueckt!");
+		System.out.println("SourceDialog: Ok gedrueckt!");
+		close();
+	}
+	
+	@Override
+	public void cancelPressed(){
+		resetView();
+		System.out.println("SourceDialog: cancel gedrueckt!");
 		close();
 	}
 
