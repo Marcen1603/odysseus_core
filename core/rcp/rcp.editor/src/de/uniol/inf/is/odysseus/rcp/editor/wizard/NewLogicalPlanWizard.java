@@ -16,6 +16,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.editor.ILogicalPlanEditorConstants;
+import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanExporter;
+import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
+import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 public class NewLogicalPlanWizard extends Wizard implements INewWizard {
@@ -47,6 +50,11 @@ public class NewLogicalPlanWizard extends Wizard implements INewWizard {
 			IPath path = container.getFullPath().append(queryName);
 			IFile newFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			newFile.create(getQueryTemplate(), IResource.NONE, null);
+			
+			// leeren plan reinschreiben
+			OperatorPlan plan = new OperatorPlan();
+			IOperatorPlanExporter exporter = new OperatorPlanExporter(newFile);
+			exporter.save(plan);
 
 			// open editor
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(

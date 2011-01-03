@@ -116,8 +116,9 @@ public class Operator implements Serializable {
 	public void build() {
 		if( !onBuild ) { // verhindert unendliche rekursive aufrufe im ablaufplan
 			onBuild = true;
+			System.out.println("Build Logical Operator : " + getOperatorBuilderName());
 			
-			// logicalOperator aus vorgÃ¤nger holen, falls mÃ¶glich
+			// logicalOperator aus vorgänger holen, falls möglich
 			int i = 0;
 			((AbstractOperatorBuilder)builder).clearInputOperators();
 			for( OperatorConnection connection : getConnectionsAsTarget()) {
@@ -126,7 +127,7 @@ public class Operator implements Serializable {
 					ILogicalOperator op = connection.getSource().getLogicalOperator();
 					builder.setInputOperator(i, op, i);
 				} else {
-					builder.setInputOperator(i, null, i); // lÃ¶scht operator
+					builder.setInputOperator(i, null, i); // löscht operator
 				}
 				i++;
 			}
@@ -139,13 +140,18 @@ public class Operator implements Serializable {
 					}
 					logicalOperator = builder.createOperator();
 									
-					// nachfolger auch bauen, falls mÃ¶glich
+					// nachfolger auch bauen, falls möglich
 					for( OperatorConnection connection : getConnectionsAsSource() ) {
 						connection.getTarget().build();
 					}
 					
 					onBuild = false;
 					return;
+				} else {
+					System.out.println("ERRORS:");
+					for( Exception ex: builder.getErrors() ) {
+						System.out.println(ex);
+					}
 				}
 			}
 			logicalOperator = null;

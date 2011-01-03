@@ -123,10 +123,9 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		
 		model.build();
 		
-		if( model.hasLogicalOperator() ) {
-			figure.unmarkError();
-			figure.setToolTip( null );
-		} else {
+		figure.unmarkError();
+		figure.setToolTip( null );
+		if( !model.hasLogicalOperator() ) {
 			figure.markError();
 			figure.setToolTip(new Label(getErrorText(model.getOperatorBuilder().getErrors())));
 		}
