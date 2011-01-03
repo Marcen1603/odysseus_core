@@ -21,6 +21,7 @@ public class ManageSourceView extends ViewPart {
 
 	
 	private ListViewer listViewer;
+	private List sourcesList;
 
 	/**
 	 * The content provider class is responsible for providing objects to the
@@ -83,16 +84,27 @@ public class ManageSourceView extends ViewPart {
 		Composite leftComposite = new Composite(sashForm, SWT.NONE);
 		leftComposite.setLayout(new GridLayout());
 		
+		/*ToolBar slTB = new ToolBar(leftComposite,SWT.BORDER);
+		ToolItem itm_add = new ToolItem(slTB,SWT.PUSH);
+		*/
 		GridData slGridData = new GridData(GridData.FILL_BOTH);
 		listViewer = new ListViewer(leftComposite, SWT.BORDER | SWT.V_SCROLL);
 		
-		List sourcesList = listViewer.getList();
+		sourcesList = listViewer.getList();
 		sourcesList.setLayoutData(slGridData);
 		sourcesList.add("TestSource");
 		
 		//right composite for additional information
 		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
 		
+	}
+
+	public void addListItem(Object newItem){
+		sourcesList.add((String) newItem);
+	}
+	
+	public void removeListItem(int index){
+		sourcesList.remove(index);
 	}
 
 	/**

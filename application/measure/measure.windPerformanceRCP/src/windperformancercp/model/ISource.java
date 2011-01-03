@@ -11,6 +11,8 @@ public interface ISource {
 	public int getType();
 	public boolean isWindTurbine();
 	public boolean isMetMast();
+	public void setName(String newName);
+	public String getName();
 	public void setPort(int newPort);
 	public int getPort();
 	public void setHost(String newHost);

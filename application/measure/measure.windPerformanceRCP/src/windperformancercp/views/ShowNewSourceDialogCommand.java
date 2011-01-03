@@ -15,8 +15,8 @@ public class ShowNewSourceDialogCommand extends AbstractHandler implements
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
+		//System.out.println("event looks like: "+event.toString());
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-
 		final Shell dialogShell = new Shell(parent);
 		SourceDialog dialog = new SourceDialog(dialogShell);
 		//TODO: generate

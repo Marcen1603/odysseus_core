@@ -15,7 +15,7 @@ public class DeleteSourceCommand extends AbstractHandler implements
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-		final Shell dialogShell = new Shell(parent);
+		//final Shell dialogShell = new Shell(parent);
 
 		//TODO: delete source as parameter
 		//TODO: evtl. anzeigen, welche PMs dann davon betroffen sind
