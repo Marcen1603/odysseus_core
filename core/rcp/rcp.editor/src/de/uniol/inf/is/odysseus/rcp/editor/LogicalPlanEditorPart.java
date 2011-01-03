@@ -64,6 +64,8 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 		IOperatorPlanImporter importer = new OperatorPlanImporter(fi.getFile());
 		plan = importer.load();
 		
+		setPartName(fi.getFile().getName());
+		
 		// bauen
 		for( Operator op : plan.getOperators() ) {
 			if( op.getConnectionsAsTarget().size() == 0 ) // Quelle?
