@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.BendpointConnectionRouter;
@@ -28,8 +30,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
@@ -38,8 +44,10 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
+import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorPlanEditPart;
 
-public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable {
+public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener {
 
 	private OperatorPlan plan;
 	private static PaletteRoot paletteModel = null;
@@ -47,42 +55,51 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	public LogicalPlanEditorPart() {
 		super();
 		setEditDomain(new DefaultEditDomain(this));
+		DataDictionary.getInstance().addListener(this);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		DataDictionary.getInstance().removeListener(this);
 	}
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		FileEditorInput fi = (FileEditorInput)getEditorInput();
+		FileEditorInput fi = (FileEditorInput) getEditorInput();
 		IOperatorPlanExporter exporter = new OperatorPlanExporter(fi.getFile());
 		exporter.save(plan);
 	}
-	
+
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
-		
-		FileEditorInput fi = (FileEditorInput)getEditorInput();
+
+		FileEditorInput fi = (FileEditorInput) getEditorInput();
 		IOperatorPlanImporter importer = new OperatorPlanImporter(fi.getFile());
 		plan = importer.load();
-		
+
+		fullBuild();
 		setPartName(fi.getFile().getName());
-		
+	}
+
+	private void fullBuild() {
 		// bauen
-		for( Operator op : plan.getOperators() ) {
-			if( op.getConnectionsAsTarget().size() == 0 ) // Quelle?
+		for (Operator op : plan.getOperators()) {
+			if (op.getConnectionsAsTarget().size() == 0) // Quelle?
 				op.build();
 		}
-		
 	}
 
 	@Override
 	public void doSaveAs() {
 		// TODO: Implement
 	}
-	
+
 	public OperatorPlan getOperatorPlan() {
 		return plan;
 	}
-	
+
 	@Override
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
@@ -101,7 +118,6 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 		createActions();
 		ContextMenuProvider cmProvider = new MyContextMenuProvider(graphicalViewer, getActionRegistry());
 		graphicalViewer.setContextMenu(cmProvider);
-//		getSite().registerContextMenu(cmProvider, graphicalViewer);
 	}
 
 	@Override
@@ -157,6 +173,34 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 		if (paletteModel == null)
 			paletteModel = PaletteFactory.createPalette();
 		return paletteModel;
+	}
+
+	@Override
+	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+		fullBuild();
+		updateContents();
+	}
+
+	@Override
+	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+		fullBuild();
+		updateContents();
+	}
+	
+	private void updateContents() {
+		// Update Viewer
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void run() {
+				OperatorPlanEditPart part = (OperatorPlanEditPart) getGraphicalViewer().getContents();
+				List<OperatorEditPart> parts = (List<OperatorEditPart>) part.getChildren();
+				for( OperatorEditPart p: parts ) 
+					p.refresh();
+			}
+
+		});
 	}
 
 }

@@ -19,6 +19,9 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
@@ -28,7 +31,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterView;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
 
-public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener, IParameterView {
+public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener, IParameterView, IDataDictionaryListener{
 
 	private static final String ERROR_PREFIX = "- ";
 	
@@ -43,15 +46,13 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	private OperatorEditPart selectedOperatorEditPart;
 	private ISelection selection;
 	
-	public ParameterViewPart() {
-	}
-
 	@Override
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
 		parent.setLayout(new FillLayout());
 				
-		updateParameterEditors();
+		DataDictionary.getInstance().addListener(this);
+		updateParameterEditors(true);
 	
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 	}
@@ -62,10 +63,16 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+		DataDictionary.getInstance().removeListener(this);
+	}
+
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if( selection != this.selection ) {
 			this.selection = selection;
-			updateParameterEditors();
+			updateParameterEditors(false);
 		}
 	}
 	
@@ -75,6 +82,8 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	@Override
 	public void refresh() {
 		if( selectedOperator != null && selectedOperatorEditPart != null ) {
+			((Operator)selectedOperatorEditPart.getModel()).build();
+			
 			selectedOperatorEditPart.refresh();
 			updateErrorList();
 		}
@@ -109,8 +118,8 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		return result;
 	}
 	
-	private void updateParameterEditors() {
-		if( updateSelection() ) {
+	private void updateParameterEditors( boolean force) {
+		if( force || updateSelection() ) {
 			deleteControls();
 			createControls();
 		}
@@ -225,5 +234,15 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		this.optionalContainer.layout();
 		this.errorContainer.layout();
 		this.parent.layout();
+	}
+
+	@Override
+	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+		updateParameterEditors(true);
+	}
+
+	@Override
+	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+		updateParameterEditors(true);
 	}
 }
