@@ -45,27 +45,31 @@ public class LoginWindow {
 	private final String startUserName;
 	private final boolean cancelOK;
 	private boolean loginOK = false;
-	private final Shell parent;
+	private final Display display;
 	
-	public LoginWindow( Shell parent,  boolean cancelOK ) {
+	public LoginWindow( Display parent,  boolean cancelOK ) {
 		this(parent, "", cancelOK);
 	}
 	
-	public LoginWindow( Shell parent,  String userName, boolean cancelOK ) {
+	public LoginWindow( Display parent,  String userName, boolean cancelOK ) {
 		Assert.isNotNull(userName);
 		Assert.isNotNull(parent);
 		startUserName = userName;
 		this.cancelOK = cancelOK;
-		this.parent = parent;
+		this.display = parent;
 	}
 	
 	public void show() {
 		wnd = createWindow();
 		wnd.setVisible(true);
+		
+		while( !wnd.isDisposed() )
+			if( !display.readAndDispatch() )
+				display.sleep();
 	}
 	
 	private Shell createWindow() {
-		Shell wnd = new Shell(parent, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
+		Shell wnd = new Shell(display, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
 		
 		wnd.setLayout( new GridLayout() );
 		wnd.setText(TITLE_TEXT);

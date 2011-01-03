@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.user;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
 
 public class Login {
 
-	public static void loginWindow(Shell parent, boolean forceShow,
+	public static void loginWindow(Display parent, boolean forceShow,
 			boolean cancelOK) {
 		// Daten aus Prefs holen
 		String username = LoginPreferencesManager.getInstance().getUsername();
