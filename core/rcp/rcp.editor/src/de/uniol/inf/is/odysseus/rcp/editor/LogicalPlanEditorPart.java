@@ -130,6 +130,11 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 			}
 		};
 	}
+	
+	@Override
+	public boolean isDirty() {
+		return true;
+	}
 
 	private TransferDropTargetListener createTransferDropTargetListener() {
 		return new TemplateTransferDropTargetListener(getGraphicalViewer()) {
