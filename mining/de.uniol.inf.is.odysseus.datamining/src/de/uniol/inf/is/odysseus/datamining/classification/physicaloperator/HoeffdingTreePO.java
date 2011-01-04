@@ -1,72 +1,58 @@
 package de.uniol.inf.is.odysseus.datamining.classification.physicaloperator;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.datamining.classification.AbstractAttributeEvaluationMeasure;
+import de.uniol.inf.is.odysseus.datamining.classification.HoeffdingNode;
+import de.uniol.inf.is.odysseus.datamining.classification.RelationalClassificationObject;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class HoeffdingTreePO<T extends IMetaAttribute> extends
-		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
-
-	private int[] restrictList;
-	private int labelPosition;
-	private AbstractAttributeEvaluationMeasure attributeEvaluationMeasure;
-	private Double probability;
+public class HoeffdingTreePO<T extends IMetaAttribute> extends AbstractClassificationPO<T>{
+		
+	
+	private HoeffdingNode<T> tree;
 
 	public HoeffdingTreePO(HoeffdingTreePO<T> hoeffdingTreePO) {
 		super(hoeffdingTreePO);
-		labelPosition = hoeffdingTreePO.labelPosition;
-		restrictList = Arrays.copyOf(hoeffdingTreePO.restrictList,
-				hoeffdingTreePO.restrictList.length);
-		probability = hoeffdingTreePO.probability;
+		tree = hoeffdingTreePO.tree.clone();
 		attributeEvaluationMeasure = hoeffdingTreePO.attributeEvaluationMeasure;
-	}
+			}
 
 	public HoeffdingTreePO() {
-		// TODO Auto-generated constructor stub
+		super();
+	}
+	
+	public void initTree(){
+		tree = new HoeffdingNode<T>();
+		tree.setLeaf(true);
+		tree.initDataCube(restrictList.length);
+		tree.setAttributeEvaluationMeasure(attributeEvaluationMeasure);
+		ArrayList<Integer> splitAttributes = new ArrayList<Integer>();
+		for(int i = 0; i< restrictList.length; i++){
+			splitAttributes.add(i);
+		}
+		tree.setSplitAttributes(splitAttributes);
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
-
-	@Override
-	public OutputMode getOutputMode() {
-		// TODO Auto-generated method stub
-		return OutputMode.INPUT;
-	}
-
-	@Override
-	protected void process_next(RelationalTuple<T> object, int port) {
-		transfer(object,port);
-	}
+	
 
 	@Override
 	public HoeffdingTreePO<T> clone() {
 		// TODO Auto-generated method stub
 		return new HoeffdingTreePO<T>(this);
 	}
+	
 
-	public void setRestrictList(int[] restrictList) {
-		this.restrictList = restrictList;
 
-	}
+	
 
-	public void setLabelPosition(int labelPosition) {
-		this.labelPosition = labelPosition;
-	}
 
-	public void setAttributeEvaluationMeasure(
-			AbstractAttributeEvaluationMeasure attributeEvaluationMeasure) {
-		this.attributeEvaluationMeasure = attributeEvaluationMeasure;
-	}
-
-	public void setProbability(Double probability) {
-		this.probability = probability;
+	@Override
+	protected void process_next(RelationalClassificationObject<T> tuple) {
+		boolean changed = tree.addTuple(tuple);
+		if(changed){
+			transferClassifier(tree.getSnapshot());
+		}
+		
 	}
 
 }

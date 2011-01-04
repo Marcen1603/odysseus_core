@@ -1,33 +1,29 @@
 package de.uniol.inf.is.odysseus.datamining.classification.logicaloperator;
 
-import de.uniol.inf.is.odysseus.datamining.logicaloperator.AbstractDataMiningAO;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
-public class HoeffdingTreeAO extends AbstractDataMiningAO {
+public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2997087529890096578L;
-	private SDFAttribute labelAttribute;
+
 	private Double probability;
+
+	private Double tie;
 
 	public HoeffdingTreeAO(HoeffdingTreeAO hoeffdingTreeAO) {
 		super(hoeffdingTreeAO);
-		labelAttribute = hoeffdingTreeAO.labelAttribute.clone();
+		probability = hoeffdingTreeAO.getProbability();
+		tie = hoeffdingTreeAO.getTie();
 	}
 
-	public int getLabelPosition() {
-		int i = 0;
-		for (SDFAttribute attribute : getInputSchema()) {
-			if (attribute.equals(labelAttribute)) {
-				return i;
-			}
-			i++;
-		}
-		return -1;
+	public Double getTie() {
+		return tie;
 	}
 
 	public HoeffdingTreeAO() {
@@ -35,8 +31,11 @@ public class HoeffdingTreeAO extends AbstractDataMiningAO {
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-
-		return getInputSchema();
+		SDFAttributeList outputSchema = new SDFAttributeList();
+		SDFAttribute classifier = new SDFAttribute("classifier");
+		classifier.setDatatype(SDFDatatypeFactory.getDatatype("IClassifier"));
+		outputSchema.add(classifier);
+		return outputSchema;
 	}
 
 	@Override
@@ -55,6 +54,10 @@ public class HoeffdingTreeAO extends AbstractDataMiningAO {
 
 	public void setProbability(Double probability) {
 		this.probability = probability;
+	}
+
+	public void setTie(Double tie) {
+		this.tie = tie;
 	}
 
 }

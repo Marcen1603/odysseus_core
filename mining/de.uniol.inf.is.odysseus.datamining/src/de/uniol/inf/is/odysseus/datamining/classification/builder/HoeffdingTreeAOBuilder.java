@@ -1,34 +1,39 @@
 package de.uniol.inf.is.odysseus.datamining.classification.builder;
 
-import de.uniol.inf.is.odysseus.datamining.builder.AbstractDataMiningAOBuilder;
 import de.uniol.inf.is.odysseus.datamining.builder.AttributeOutOfRangeException;
 import de.uniol.inf.is.odysseus.datamining.classification.logicaloperator.HoeffdingTreeAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.DirectParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class HoeffdingTreeAOBuilder extends AbstractDataMiningAOBuilder {
+public class HoeffdingTreeAOBuilder extends
+		AbstractClassificationLearnerAOBuilder {
 
-	private static final String LABELATTRIBUTE = "LABELATTRIBUTE";
-	private ResolvedSDFAttributeParameter labelAttribute;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7070015888103484706L;
 
 	private static final String PROBABILITY = "PROBABILITY";
 	private DirectParameter<Double> probability;
+	private static final String TIE = "TIE";
+	private DirectParameter<Double> tie;
 
 	public HoeffdingTreeAOBuilder() {
-		labelAttribute = new ResolvedSDFAttributeParameter(LABELATTRIBUTE,
-				REQUIREMENT.MANDATORY);
+
 		probability = new DirectParameter<Double>(PROBABILITY,
 				REQUIREMENT.MANDATORY);
-		setParameters(labelAttribute, probability);
+		tie = new DirectParameter<Double>(TIE, REQUIREMENT.OPTIONAL);
+
+		setParameters(probability, tie);
 	}
-	
+
 	@Override
 	protected boolean internalValidation() {
-		if(probability.getValue() < 0 || probability.getValue() > 1){
-			addError(new AttributeOutOfRangeException(probability.getName(),"has to be between 0 and 1"));
+		if (probability.getValue() < 0 || probability.getValue() > 1) {
+			addError(new AttributeOutOfRangeException(probability.getName(),
+					"has to be between 0 and 1"));
 			return false;
 		}
 		return super.internalValidation();
@@ -41,6 +46,7 @@ public class HoeffdingTreeAOBuilder extends AbstractDataMiningAOBuilder {
 				.getValue()));
 		hoeffdingTreeAO.setLabelAttribute(labelAttribute.getValue());
 		hoeffdingTreeAO.setProbability(probability.getValue());
+		hoeffdingTreeAO.setTie(tie.getValue());
 		return hoeffdingTreeAO;
 	}
 
