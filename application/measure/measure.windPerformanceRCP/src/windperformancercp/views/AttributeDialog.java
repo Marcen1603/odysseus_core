@@ -50,29 +50,36 @@ public class AttributeDialog extends Dialog {
 		//###main composite
 		area.setLayout(new FormLayout());
 		
+		//## attribute name
 		Composite nameComp = new Composite(area,SWT.NONE);
-		FormData nameCompFD = new FormData();
-		nameCompFD.top = new FormAttachment(area,0);
-		nameComp.setLayoutData(nameCompFD);
-		nameComp.setLayout(new FillLayout());
-		Label nameLabel = new Label(nameComp, SWT.BORDER);
-		nameLabel.setText("Name:");
-		nameLabel.setToolTipText("name for human readable identification");
-		nameInputField = new Text(nameComp, SWT.BORDER);
-
+		{
+			FormData nameCompFD = new FormData();
+			nameCompFD.top = new FormAttachment(area,0);
+			nameComp.setLayoutData(nameCompFD);
+			nameComp.setLayout(new FillLayout());
+			Label nameLabel = new Label(nameComp, SWT.BORDER);
+			nameLabel.setText("Name:");
+			nameLabel.setToolTipText("name for human readable identification");
+			nameInputField = new Text(nameComp, SWT.BORDER);
+		}	
+		
+		//## attribute type
 		Composite typeComp = new Composite(area,SWT.NONE);
-		FormData typeCompFD = new FormData();
-		typeCompFD.top = new FormAttachment(nameComp,5);
-		typeComp.setLayoutData(typeCompFD);
-		GridLayout gl_typeComp = new GridLayout();
-		gl_typeComp.numColumns = 2;
-		typeComp.setLayout(gl_typeComp);
-		String[] typeButtonNames = {"Timestamp", "Windspeed","Power","Air temperature","Air pressure","Wind direction","State","Various"};
-		typeButton = new Button[typeButtonNames.length];
-		for(int i=0 ; i<typeButton.length;i++){
-			Button actButton = new Button(typeComp,SWT.RADIO);
-			actButton.setText(typeButtonNames[i]);
-		}		
+		{
+			FormData typeCompFD = new FormData();
+			typeCompFD.top = new FormAttachment(nameComp,5);
+			typeComp.setLayoutData(typeCompFD);
+			GridLayout gl_typeComp = new GridLayout();
+			gl_typeComp.numColumns = 2;
+			typeComp.setLayout(gl_typeComp);
+			String[] typeButtonNames = {"Timestamp", "Windspeed","Power","Air temperature","Air pressure","Wind direction","State","Various"};
+			typeButton = new Button[typeButtonNames.length];
+		
+			for(int i=0 ; i<typeButton.length;i++){
+				Button actButton = new Button(typeComp,SWT.RADIO);
+				actButton.setText(typeButtonNames[i]);
+			}
+		}
 
 		return area;
 	}
@@ -80,21 +87,7 @@ public class AttributeDialog extends Dialog {
 	public void setNameValue(String newName){
 		nameInputField.setText(newName);
 	}
-	
-	/*
-	public void setTypeValue(int pc){
-		if(pc == PC_ACTIVE){
-			btnRActive.setSelection(true);
-			btnRPassive.setSelection(false);
-		}
-		if(pc == PC_PASSIVE){
-			btnRActive.setSelection(false);
-			btnRPassive.setSelection(true);
-		}
-	}
-	*/
-	//TODO
-	
+
 	public void resetView(){
 		nameInputField.setText("");
 		for(int i=0; i<typeButton.length;i++){

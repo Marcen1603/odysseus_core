@@ -1,8 +1,7 @@
 package windperformancercp.model;
 
-public abstract class Attribute {
+public class Attribute {
 	//Datentyp, einer aus Double, Timestamp, Int ...
-
 	
 	public enum AttributeType{
 		STARTTIMESTAMP,
@@ -46,6 +45,7 @@ public abstract class Attribute {
 		default:
 			this.dataType = DataType.DOUBLE; 
 		}
+System.out.println("created Attribute: "+this.toString());		
 	}
 	
 	public String getName(){
@@ -58,6 +58,10 @@ public abstract class Attribute {
 	
 	public String getDataType(){
 		return this.dataType.toString();
+	}
+	
+	public String toString(){
+		return this.getName()+" "+this.getAttType()+" "+this.getDataType();
 	}
 
 }
