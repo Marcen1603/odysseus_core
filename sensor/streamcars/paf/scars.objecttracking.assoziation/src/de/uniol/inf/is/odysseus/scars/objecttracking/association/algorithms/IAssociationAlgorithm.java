@@ -3,8 +3,12 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.association.algorithms;
 import java.util.HashMap;
 
 /**
- * IAssociationAlgorithm represents a algorithm for the evaluation of connections.
- * @author VJ
+ * <p>
+ * IAssociationAlgorithm represents a algorithm for the evaluation of connections. Each implementation can have a set of <strong>individual</strong> parameters
+ * and within {@link #evaluate(double[][], double[], double[][], double[], double)} a new rating is be calculated.
+ * </p>
+ * 
+ * @author Volker Janz
  *
  */
 public interface IAssociationAlgorithm {
