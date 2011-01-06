@@ -28,10 +28,8 @@ import org.xith3d.scenegraph.BranchGroup;
 import org.xith3d.scenegraph.Light;
 import org.xith3d.scenegraph.Material;
 import org.xith3d.scenegraph.PointLight;
-import org.xith3d.scenegraph.Shape3D;
 import org.xith3d.scenegraph.Transform3D;
 import org.xith3d.scenegraph.TransformGroup;
-import org.xith3d.scenegraph.TriangleStripArray;
 import org.xith3d.scenegraph.primitives.Cube;
 import org.xith3d.scenegraph.primitives.Line;
 
@@ -50,7 +48,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class VertexBased3DEditor implements IStreamEditorType {
 
-	private static final float CAR_HEIGHT = 3;
 	private String x_pos_name = "posx";
 	private String y_pos_name = "posy";
 	private String z_pos_name = "posz";
@@ -60,17 +57,30 @@ public class VertexBased3DEditor implements IStreamEditorType {
 	private String car_vertices_name = "points";
 	private TransformGroup carGroup;
 	private SchemaIndexPath carPath;
+	
+	
+	private Car[] cubes = new Car[20];
+	private static int activeCubes = 0;
 
 	private Composite parent;
-
-	@Override
+	
 	public void streamElementRecieved(final Object element, int port) {
+
 		MVRelationalTuple<?> tuple = (MVRelationalTuple<?>) element;
 
 		TupleIndexPath tuplePath = carPath.toTupleIndexPath(tuple);
+		
+		if (((MVRelationalTuple<?>) tuplePath.getTupleObject()).getAttributeCount() == 0) {
+			for (int i = 0; i < activeCubes; i++) {
+				Transform3D t = new Transform3D(new Tuple3f(-1000 - i * 100, -1000 - i * 100, 1000 + i * 100));
+				cubes[i].setTransform(t);
+			}
+			activeCubes = 0;
 
-		carGroup.removeAllChildren();
-
+			return;
+		}
+		
+		int counter = 0;
 		for (TupleInfo car : new TupleIterator(tuple, tuplePath.clone(), 0)) {
 			Point3f position = getVertex(tuple, car.tupleIndexPath, x_pos_name, y_pos_name, z_pos_name);
 			Point3f positionnp = getVertex(tuple, car.tupleIndexPath, x_pos_name_np, y_pos_name_np, z_pos_name_np);
@@ -84,10 +94,57 @@ public class VertexBased3DEditor implements IStreamEditorType {
 					}
 				}
 			}
-
-			carGroup.addChild(buildCube(this.carGroup, position, positionnp, vertices));
+			
+			cubes[counter].setCenterPosition(position);
+			cubes[counter].setNearPosition(positionnp);
+			cubes[counter].setVertices(vertices);
+			
+			Transform3D t = new Transform3D(new Tuple3f(0, 0, 0));
+			cubes[counter].setTransform(t);
+			counter++;
 		}
+
+		if (activeCubes > counter) {
+			for (int i = counter; i < activeCubes; i++) {
+				Transform3D t = new Transform3D(new Tuple3f(-1000 - i * 100, -1000 - i * 100, 1000 + i * 100));
+				cubes[i].setTransform(t);
+			}
+		}
+		activeCubes = counter;
+
 	}
+//
+////	@Override
+////	public void streamElementRecieved(final Object element, int port) {
+////		MVRelationalTuple<?> tuple = (MVRelationalTuple<?>) element;
+////
+////		TupleIndexPath tuplePath = carPath.toTupleIndexPath(tuple);
+////		
+////		System.out.println(carGroup.getTotalNumChildren());
+////		
+////		for (int i = 0; i < carGroup.getTotalNumChildren(); i++) {
+////			carGroup.getChild(i).detach();
+////		}
+////
+////		carGroup.removeAllChildren();
+////
+////		for (TupleInfo car : new TupleIterator(tuple, tuplePath.clone(), 0)) {
+////			Point3f position = getVertex(tuple, car.tupleIndexPath, x_pos_name, y_pos_name, z_pos_name);
+////			Point3f positionnp = getVertex(tuple, car.tupleIndexPath, x_pos_name_np, y_pos_name_np, z_pos_name_np);
+////			List<Point3f> vertices = new ArrayList<Point3f>();
+////
+////			for (TupleInfo carObject :  new TupleIterator(tuple, car.tupleIndexPath, 1)) {
+////				if (carObject.attribute.getAttributeName().equals(car_vertices_name)) {
+////					for (TupleInfo vertex : new TupleIterator(tuple, carObject.tupleIndexPath, 1)) {
+////						if (!vertex.attribute.getAttributeName().equals(car_vertices_name)) 
+////							vertices.add(getVertex(tuple, vertex.tupleIndexPath, x_pos_name, y_pos_name, z_pos_name));
+////					}
+////				}
+////			}
+////
+////			carGroup.addChild(buildCube(this.carGroup, position, positionnp, vertices));
+////		}
+//	}
 
 	private Point3f getVertex(MVRelationalTuple<?> tuple, TupleIndexPath iterator, String xpos, String ypos, String zpos) {
 		Point3f vertex = new Point3f();
@@ -151,6 +208,7 @@ public class VertexBased3DEditor implements IStreamEditorType {
 		bg.addChild(root);
 
 		createScene(scene);
+		createCubes(carGroup);
 
 		env.addPerspectiveBranch(bg);
 		env.getView().lookAt(new Tuple3f(0, 2, 0), new Tuple3f(0, 0, -100), new Tuple3f(0, 1, 0));
@@ -173,44 +231,6 @@ public class VertexBased3DEditor implements IStreamEditorType {
 		parent.layout(true, true);
 	}
 
-	private TransformGroup buildCube(TransformGroup carGroup2, Point3f position, Point3f positionnp, List<Point3f> vertices) {
-		List<Tuple3f> newVertices = new ArrayList<Tuple3f>();
-
-		for (Point3f point3f : vertices) {
-			Point3f topVertex = new Point3f(point3f);
-			topVertex.addY(CAR_HEIGHT);
-			newVertices.add(topVertex);
-			newVertices.add(point3f);
-		}
-
-		Appearance app = new Appearance();
-		app.setMaterial(new Material(Colorf.BLACK, Colorf.RED, Colorf.WHITE, Colorf.BLACK, 0.8f, Material.AMBIENT, true));
-
-		TransformGroup car = new TransformGroup();
-
-		if (vertices.size() > 0) {
-			TriangleStripArray triangleStripArray = new TriangleStripArray(vertices.size() * 2);
-			triangleStripArray.setCoordinates(0, newVertices);
-			Shape3D carVertices = new Shape3D(triangleStripArray, app);
-
-			Cube pointCube = new Cube(0.5f, app);
-			TransformGroup pointGroup = new TransformGroup();
-			pointGroup.addChild(pointCube);
-			pointGroup.setTransform(new Transform3D(position));
-
-			Cube pointCubeNP = new Cube(0.5f, app);
-			TransformGroup pointGroupNP = new TransformGroup();
-			pointGroupNP.addChild(pointCubeNP);
-			pointGroupNP.setTransform(new Transform3D(positionnp));
-
-			car.addChild(carVertices);
-			car.addChild(pointGroup);
-			car.addChild(pointGroupNP);
-		}
-
-		return car;
-	}
-
 	private void createScene(TransformGroup sceneGroup) {
 
 		for (float z = -100.0f; z < 100.0f; z += 10.0f) {
@@ -225,6 +245,22 @@ public class VertexBased3DEditor implements IStreamEditorType {
 			sceneGroup.addChild(l);
 		}
 
+	}
+	
+	private void createCubes(TransformGroup carGroup) {
+		Appearance app = new Appearance();
+		app.setMaterial(new Material(Colorf.BLACK, Colorf.RED, Colorf.WHITE, Colorf.BLACK, 0.8f, Material.AMBIENT, true));
+
+		for (int i = 0; i < cubes.length; i++) {
+			cubes[i] = new Car();
+			Cube c = new Cube(app);
+			cubes[i].addChild(c);
+
+			Transform3D t = new Transform3D(new Tuple3f(-1000 - i * 100, -1000 - i * 100, 1000 + i * 100));
+			cubes[i].setTransform(t);
+
+			carGroup.addChild(cubes[i]);
+		}
 	}
 
 	@Override
