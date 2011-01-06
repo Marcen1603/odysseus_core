@@ -4,24 +4,39 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/*
+ * Diese Klasse dient dazu, zwei Matrizen zu subtrahieren.
+ */
 public class MatrixSub extends AbstractFunction<Object> {
 
+	/*
+	 * Liefert die Anzahl der möglichen Übergabeparameter zurück.
+	 */
 	@Override
 	public int getArity() {
 		return 2;
 	}
 
+	/*
+	 * Liefert den Namen zurück mit welchem die Funktion aufgerufen wird.
+	 */
 	@Override
 	public String getSymbol() {
 		return "MatrixSub";
 	}
 
+	/*
+	 * Subtrahiert zwei Matrizen und liefert die Ergebnismatrix zurück.
+	 */
 	@Override
 	public Object getValue() {
 		return new RealMatrixImpl((double[][]) getInputValue(0))
 				.subtract(new RealMatrixImpl((double[][]) getInputValue(1))).getData();
 	}
 
+	/*
+	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
+	 */
 	@Override
 	public Class<? extends Object> getType() {
 		return Object.class;
