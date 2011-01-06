@@ -18,9 +18,15 @@ import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 /**
+ * <p>
+ * Physical operator for the <i>expression based</i> rating of <strong>Connections</strong>
+ * ({@link de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection}). The expressions
+ * is set within the query. Only existing connections will be considered. To rate each
+ * possible pair of detected and predicted objects, HypothesisExpressionGatingPO
+ * ({@link HypothesisExpressionGatingPO}) should be used.
+ * </p>
+ * 
  * @author Volker Janz
- *
- * @param <M>
  */
 
 public class HypothesisExpressionEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends

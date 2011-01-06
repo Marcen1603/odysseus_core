@@ -21,12 +21,21 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 
 /**
- * Diese Klasse sorgt dafuer, dass nur noch eindeutige Zuordnungen
- * weitergeleitet werden
+ * <p>
+ * Physical operator for selecting <strong>unique connections</strong>. As a result there are three outputstreams:
+ * <ul>
+ *  <li>detected objects without assigned predicted objects on <strong>port 0</strong>,</li>
+ *  <li>matched objects on <strong>port 1</strong> and</li>
+ *  <li>predicted objects without assigned detected objects on <strong>port 2</strong>.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * To select those unique connections, the connection with the highest rating is selected. Therefore this operator
+ * should be placed <strong>at the end</strong> of the association process.
+ * </p>
  *
- * @author N da G
- *
- * @param <M>
+ * @author Nico Klein, Volker Janz
  */
 public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & IConnectionContainer & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
@@ -71,7 +80,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 	 */
 	private ConnectionList matchObjects(MVRelationalTuple<M> mainTuple, ConnectionList connectionList) {
 
-//		TupleHelper tupleHelper = new TupleHelper(mainTuple);
 		Map<MVRelationalTuple<M>, List<IConnection>> connections = new HashMap<MVRelationalTuple<M>, List<IConnection>>();
 
 		for (IConnection connection : connectionList) {
@@ -106,7 +114,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			}
 		}
 
-//		TupleHelper tupleHelper = new TupleHelper(mainTuple);
 		List<MVRelationalTuple<M>> removeTupleList = new ArrayList<MVRelationalTuple<M>>();
 		for (MVRelationalTuple<M> tuple : singleMatchingTuples.keySet()) {
 			for (MVRelationalTuple<M> tuple2 : singleMatchingTuples.keySet()) {
@@ -197,16 +204,9 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		objArray[1] = scannedTuple;
 		base.setAttribute(0, new MVRelationalTuple<M>(objArray));
 
-
-//		hasDublicates(base);
 		base.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 		base.getMetadata().setObjectTrackingLatencyEnd();
 		transfer(base.clone(), 0);
-
-//		MVRelationalTuple<M> scannedNotMatchedTuple = new MVRelationalTuple<M>(object); // Timo: Wieso wird das Ursprungsobjekt geklont?
-//		TupleIndexPath scannedObjectTuplePath = this.scannedObjectListPath.toTupleIndexPath(scannedNotMatchedTuple);
-//		scannedObjectTuplePath.setTupleObject(scannedTuple);
-//		transfer(scannedNotMatchedTuple, 0); // immer senden, auch wenn leere liste
 
 		// PORT: 2, get predicted not matching objects
 		List<Object> predictedNotMatchedObjects = getDifferenceSet(object, this.predictedObjectListPath.toTupleIndexPath(object), matchedObjects);
@@ -218,7 +218,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			MVRelationalTuple<M> predictedNotMatchedTuple = object.clone();
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath.toTupleIndexPath(predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedTuple);
-//			hasDublicates(predictedNotMatchedTuple);
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(predictedNotMatchedTuple.clone(), 2);
@@ -226,24 +225,6 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 2);
 		}
 	}
-//
-//	private void hasDublicates( MVRelationalTuple<?> list ) {
-//
-//		MVRelationalTuple<?> cars = ((MVRelationalTuple<?>)list.getAttribute(0)).getAttribute(1);
-//
-//		for( int i = 0; i < cars.getAttributeCount(); i++ ) {
-//			for( int o = 0; o < cars.getAttributeCount(); o++ ) {
-//				if( i != o ) {
-//					int id1 = (Integer)((MVRelationalTuple<?>)cars.getAttribute(i)).getAttribute(1);
-//					int id2 = (Integer)((MVRelationalTuple<?>)cars.getAttribute(o)).getAttribute(1);
-//					if( id1 == id2 ) {
-//						System.out.println("Double!");
-//					}
-//				}
-//			}
-//		}
-//
-//	}
 
 	@Override
 	public OutputMode getOutputMode() {

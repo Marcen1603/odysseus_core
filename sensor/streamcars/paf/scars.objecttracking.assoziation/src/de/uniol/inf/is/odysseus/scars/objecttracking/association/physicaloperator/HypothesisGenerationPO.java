@@ -15,14 +15,20 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
 
 /**
- * The Hypothesis Generation has two inputstreams:
- * 1 - predicted objects from the prediction operator
- * 2 - the new detected objects
- * Both list now have the same timestamp. The Hypothesis Generation Operator initiates the connection list
- * in the metadata and changes the schema so that the next operator gets both lists (new and old) as input.
+ * <p>
+ * Physical operator to join two inputstreams:
+ * <ul>
+ *  <li>the predicted objects from the <strong>prediction operator</strong> ({@link de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator.PredictionPO}) and</li>
+ *  <li>the new detected objects.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * At this point both list should have the <strong>same timestamp</strong>. This operator initiates the connection list
+ * in the metadata and changes the schema so that the next operator gets both lists in one stream as input.
+ * </p>
  *
  * @author Volker Janz
- *
  */
 public class HypothesisGenerationPO<M extends IProbability & IConnectionContainer & ITimeInterval & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 

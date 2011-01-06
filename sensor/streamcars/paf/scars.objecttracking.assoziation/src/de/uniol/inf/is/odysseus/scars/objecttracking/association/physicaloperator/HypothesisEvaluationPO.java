@@ -24,14 +24,23 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
- * Physical Operator for the rating of connections within the association
- * process.
- *
- * new = left; old = right
+ * <p>
+ * Physical operator for the rating of <strong>Connections</strong>
+ * ({@link de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection})
+ * within the association process.
+ * </p>
+ * 
+ * <p>
+ * For the evaluation an implementation of <strong>IAssociationAlgorithm</strong> is used.
+ * ({@link IAssociationAlgorithm})
+ * </p>
+ * 
+ * <p>
+ * Based on which implementation is used, either each possible pair of predicted and scanned objects is used or
+ * only existing connections will be considered.
+ * </p>
  *
  * @author Volker Janz
- *
- * @param <M>
  */
 public class HypothesisEvaluationPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency >
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
