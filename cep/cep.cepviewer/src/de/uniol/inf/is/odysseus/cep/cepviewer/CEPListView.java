@@ -2,9 +2,11 @@ package de.uniol.inf.is.odysseus.cep.cepviewer;
 
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.AbstractTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -19,7 +21,6 @@ import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 import de.uniol.inf.is.odysseus.cep.epa.event.CEPEvent;
-import de.uniol.inf.is.odysseus.cep.epa.event.CEPEventAgent;
 import de.uniol.inf.is.odysseus.cep.epa.event.ICEPEventListener;
 
 /**
@@ -29,9 +30,6 @@ import de.uniol.inf.is.odysseus.cep.epa.event.ICEPEventListener;
  */
 public class CEPListView extends ViewPart {
 
-	// The id of this view.
-	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.listview";
-
 	// These are widgets for the list view.
 	private TabFolder tabMenu;
 	private NormalTreeList normalList;
@@ -40,7 +38,7 @@ public class CEPListView extends ViewPart {
 	private TabItem normalListItem;
 	private TabItem queryListItem;
 	private TabItem statusListItem;
-	private Label infoLabel;
+	private Label infoLabel;	
 
 	/**
 	 * This is the constructor.
@@ -50,46 +48,42 @@ public class CEPListView extends ViewPart {
 	}
 
 	/**
-	 * This method creates the list view. There will be 20 automata instances
-	 * added to test this view.
+	 * This method creates the list view. It instantiate three TreeList which
+	 * show the StateMachineInstance that were added to the CEPViewer.
 	 * 
 	 * @param parent
 	 *            is the widget which contains the list view.
 	 */
-	@Override
-	public void createPartControl(Composite parent) {
-
+	public void createPartControl(Composite parent) {			
 		// set the layout
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginWidth = layout.marginHeight = 0;
 		parent.setLayout(layout);
-
 		// create the tab menu of this view
 		this.tabMenu = new TabFolder(parent, SWT.NONE);
 		this.tabMenu
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
 		// create tab for the unsorted List
 		this.normalList = new NormalTreeList(this.tabMenu, SWT.V_SCROLL);
+		this.normalList.createContextMenu(this);
 		this.normalListItem = new TabItem(this.tabMenu, SWT.NONE);
-		this.normalListItem.setText("Normal-List");
-		this.normalListItem.setToolTipText("This is the unsorted List");
+		this.normalListItem.setText(StringConst.NORMAL_LIST_TAB_NAME);
+		this.normalListItem.setToolTipText(StringConst.NORMAL_LIST_TOOTIP);
 		this.normalListItem.setControl(this.normalList);
-
 		// create tab for the categorized List
 		this.queryList = new QueryTreeList(this.tabMenu, SWT.V_SCROLL);
+		this.queryList.createContextMenu(this);
 		this.queryListItem = new TabItem(this.tabMenu, SWT.NONE);
-		this.queryListItem.setText("Query-List");
-		this.queryListItem.setToolTipText("This is the categorized List");
+		this.queryListItem.setText(StringConst.QUERY_LIST_TAB_NAME);
+		this.queryListItem.setToolTipText(StringConst.QUERY_LIST_TOOLTIP);
 		this.queryListItem.setControl(this.queryList);
-
 		// create tab for the status List
 		this.statusList = new StatusTreeList(this.tabMenu, SWT.V_SCROLL);
+		this.statusList.createContextMenu(this);
 		this.statusListItem = new TabItem(this.tabMenu, SWT.NONE);
-		this.statusListItem.setText("Status-List");
-		this.statusListItem.setToolTipText("This is the status List");
+		this.statusListItem.setText(StringConst.STATUS_LIST_TAB_NAME);
+		this.statusListItem.setToolTipText(StringConst.STATUS_LIST_TOOLTIP);
 		this.statusListItem.setControl(this.statusList);
-
 		// create label for the infos
 		this.infoLabel = new Label(parent, SWT.CENTER);
 		this.infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.END, true,
@@ -98,48 +92,53 @@ public class CEPListView extends ViewPart {
 	}
 
 	/**
-	 * This method adds the state machines
+	 * This method is called, if a new instance of the class CepOperator should
+	 * be added to the CEPViewer. It implements the ICEPEventListener which
+	 * manages the communication with the operator an the CEPViewer. After this
+	 * it adds the instances to the lists
+	 * 
+	 * @param operator
+	 *            is an CepOperator which holds all instances of an StateMachine
+	 *            and manages the CEP
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addStateMaschine(CepOperator operator) {
-		CEPEventAgent.getInstance().addCEPEventListener(
+		// initialize ICEPEventListener
+		operator.getCEPEventAgent().addCEPEventListener(
 				new ICEPEventListener() {
 					public void cepEventOccurred(CEPEvent event) {
 						Object content = event.getContent();
 						switch (event.getType()) {
 						case CEPEvent.ADD_MASCHINE:
-							if(content instanceof StateMachineInstance) {
-								System.out.println("add instance");
-								normalList.addToTree((StateMachineInstance) content);
-								queryList.addToTree((StateMachineInstance) content);
-								statusList.addToTree((StateMachineInstance) content);
+							// if a new Instance should be added
+							if (content instanceof StateMachineInstance) {
+								System.out.println("add instance"); // DELETE: Ausgabe
+								normalList
+										.addToTree((StateMachineInstance) content);
+								queryList
+										.addToTree((StateMachineInstance) content);
+								statusList
+										.addToTree((StateMachineInstance) content);
 							} else {
-								System.out.println("Wrong CEPEvent-Content");
+								System.out
+										.println("CEPEvent-Content is no StateMachineInstance"); // DELETE: Ausgabe
 							}
 							break;
 						case CEPEvent.CHANGE_STATE:
-							System.out.println("change state");
-							// use content?
+							// if an instance should be updated
+							System.out.println("change state"); // DELETE: Ausgabe
+							// TODO: update Lists (maybe with content?)
 							normalList.update();
 							break;
-						case CEPEvent.SPLIT_MACHINE:
-							if(content instanceof StateMachineInstance) {
-								System.out.println("split");
-								normalList.addToTree((StateMachineInstance) content);
-								queryList.addToTree((StateMachineInstance) content);
-								statusList.addToTree((StateMachineInstance) content);
-							} else {
-								System.out.println("Wrong CEPEvent-Content");
-							}
-							break;
 						case CEPEvent.MACHINE_ABORTED:
-							if(content instanceof LinkedList<?>) {
-								System.out.println("abort");
-								LinkedList<StateMachineInstance> instances = (LinkedList<StateMachineInstance>) content;
-								for(StateMachineInstance instance :  instances) {
-									normalList.changeStatus();
-									queryList.changeStatus();
-									statusList.changeStatus();
+							if (content instanceof LinkedList) {
+								System.out.println("abort"); // DELETE: Ausgabe
+								LinkedList<StateMachineInstance> instances =
+										(LinkedList<StateMachineInstance>) content;
+								for (StateMachineInstance instance : instances) {
+									normalList.changeStatus(instance);
+									queryList.changeStatus(instance);
+									statusList.changeStatus(instance);
 								}
 							}
 							break;
@@ -148,42 +147,60 @@ public class CEPListView extends ViewPart {
 						}
 					}
 				});
-		normalList.addToTree(operator);
-		queryList.addToTree(operator);
-		statusList.addToTree(operator);
+		// add the instances of the operator
+		for(Object instance : operator.getInstances()) {
+			this.normalList.addToTree(instance);
+			this.queryList.addToTree(instance);
+			this.statusList.addToTree(instance);
+		}
 		setInfoData();
 	}
 
 	/**
-	 * This method should update the infoLabel.
+	 * This method updates the info label with the current numbers of the
+	 * inherited StateMachineInstances.
 	 */
 	public void setInfoData() {
-		String infotext = this.statusList.getNumberOfRunning() + " running ; "
-				+ this.statusList.getNumberOfFinished() + " finished ; "
-				+ this.statusList.getNumberOfAborted() + " aborted";
+		String infotext = StringConst.INFO_ALL + " "
+				+ this.normalList.getItemCount() + " " + StringConst.STATUS_RUNNING
+				+ " " + this.statusList.getNumberOfRunning() + " "
+				+ StringConst.STATUS_FINISHED + " "
+				+ this.statusList.getNumberOfFinished() + " "
+				+ StringConst.STATUS_ABORTED + " "
+				+ this.statusList.getNumberOfAborted();
 		this.infoLabel.setText(infotext);
-		this.infoLabel.pack();
 	}
 
-	/**
-	 * @deprecated for testing purpose
-	 */
-	public void setInfoData(String string) {
-		this.infoLabel.setText(string);
-		this.infoLabel.pack();
-	}
-
-	@SuppressWarnings("unchecked")
+	// TODO: remove a StateMachine
+	@SuppressWarnings("rawtypes")
 	public void removeMachine(CepOperator operator) {
-		// TODO
+	}
+	
+	public AbstractTreeList getActiveList() {
+		TabItem tab = this.tabMenu.getItem(this.tabMenu.getSelectionIndex());
+		if(tab != null && tab.getControl() instanceof AbstractTreeList) {
+			return (AbstractTreeList) tab.getControl();
+		}
+		return null;
 	}
 
 	/**
 	 * This method is called to set the focus to this view.
 	 */
-	@Override
 	public void setFocus() {
 		this.tabMenu.setFocus();
+	}
+
+	public NormalTreeList getNormalList() {
+		return normalList;
+	}
+
+	public QueryTreeList getQueryList() {
+		return queryList;
+	}
+
+	public StatusTreeList getStatusList() {
+		return statusList;
 	}
 
 }

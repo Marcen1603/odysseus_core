@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
-import javax.xml.bind.annotation.XmlIDREF;
-
 /**
  * Zustandsübergang eines Automaten. Die Zustandsübergänge werden grundsätzlich
  * in dem Zustand referenziert, von dem der Zustandsübergang ausgeht. Der
@@ -86,7 +84,6 @@ public class Transition {
 	 * @return Folgezustand der Transition, nicht null. Der gelieferte Zustand
 	 *         ist ein Objekt aus der Menge der Zustände des Automaten.
 	 */
-	@XmlIDREF
 	public State getNextState() {
 		return nextState;
 	}

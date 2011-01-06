@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TreeItem;
 
-import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
-
 
 /**
  * This class defines the status tree list.
@@ -16,9 +14,9 @@ import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 public class StatusTreeList extends AbstractTreeList {
 
 	// categories of this tree list
-	private CEPTreeItem itemR;
-	private CEPTreeItem itemF;
-	private CEPTreeItem itemA;
+	private LabelTreeItem itemR;
+	private LabelTreeItem itemF;
+	private LabelTreeItem itemA;
 
 	/**
 	 * This is the constructor.
@@ -30,66 +28,65 @@ public class StatusTreeList extends AbstractTreeList {
 	 */
 	public StatusTreeList(Composite parent, int style) {
 		super(parent, style);
-		itemR = new CEPTreeItem();
-		itemR.setParent(this.getRoot());
-		itemR.setName("Running");
-		this.getRoot().add(itemR);
-		itemF = new CEPTreeItem();
-		itemF.setParent(this.getRoot());
-		itemF.setName("Finished");
-		this.getRoot().add(itemF);
-		itemA = new CEPTreeItem();
-		itemA.setParent(this.getRoot());
-		itemA.setName("Aborted");
-		this.getRoot().add(itemA);
-		this.getTree().setInput(this.getRoot().getChildren());
+		this.itemR = new LabelTreeItem(this.root, StringConst.STATUS_RUNNING);
+		this.itemR.setImage(StringConst.PATH_TO_RUNNING_IMAGE);
+		this.root.add(this.itemR);
+		this.itemF = new LabelTreeItem(this.root, StringConst.STATUS_FINISHED);
+		this.itemF.setImage(StringConst.PATH_TO_FINISHED_IMAGE);
+		this.root.add(this.itemF);
+		this.itemA = new LabelTreeItem(this.root, StringConst.STATUS_ABORTED);
+		this.itemA.setImage(StringConst.PATH_TO_ABORTED_IMAGE);
+		this.root.add(this.itemA);
+		
+		// DELETE: Test
+		LabelTreeItem testA = new LabelTreeItem(this.itemR, StringConst.STATUS_ABORTED);
+		testA.setImage(StringConst.PATH_TO_RUNNING_IMAGE);
+		this.itemR.add(testA);
+		LabelTreeItem testB = new LabelTreeItem(this.itemF, StringConst.STATUS_ABORTED);
+		testB.setImage(StringConst.PATH_TO_FINISHED_IMAGE);
+		this.itemF.add(testB);
+		
+		this.tree.refresh();
 	}
 
-	@SuppressWarnings("unchecked")
-	public boolean addToTree(CepOperator operator) {
-		boolean inserted = false;
-		for (Object instance : operator.getInstances()) {
-			inserted = this.addToTree((StateMachineInstance) instance);
+	public boolean addToTree(Object object) {
+		if (object instanceof StateMachineInstance) {
+			// if the object is an instance of StateMachineInstance
+			StateMachineInstance<?> instance = (StateMachineInstance<?>) object;
+			if (instance.getCurrentState().isAccepting()) {
+				InstanceTreeItem newItem = new InstanceTreeItem(this.itemF, instance);
+				this.itemF.add(newItem);
+			} else if (!instance.getCurrentState().isAccepting()) {
+				InstanceTreeItem newItem = new InstanceTreeItem(this.itemR, instance);
+				this.itemR.add(newItem);
+			}  // TODO: else if (Instanze wurde abgebrochen) {}
+			this.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					tree.refresh();
+				}
+			});
+			return true;
 		}
-		return inserted;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public boolean addToTree(StateMachineInstance instance) {
-		if(!instance.getCurrentState().isAccepting()) {
-			CEPTreeItem item = new CEPTreeItem(instance);
-			item.setParent(this.itemR);
-			this.itemR.add(item);
-			this.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					getTree().setInput(getRoot().getChildren());	
-				}
-			});
-			return true;
-		} else if(instance.getCurrentState().isAccepting()) {
-			CEPTreeItem item = new CEPTreeItem(instance);
-			item.setParent(this.itemF);
-			this.itemF.add(item);
-			this.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					getTree().setInput(getRoot().getChildren());	
-				}
-			});
-			return true;
-		} 
-		// TODO in case the instance is aborted...
 		return false;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public void changeToStatus(TreeItem item) {
-		Object instance = item.getData("Instance");
-		item.dispose();
-		this.addToTree((StateMachineInstance) instance);
+
+	public void changeToStatus(InstanceTreeItem item) {
+		Object instance = item.getContent();
+		item.getParent().getChildren().remove(item);
+		
+		this.addToTree(instance);
 	}
 	
+	public void removeAll() {
+		this.itemA.removeAllChildren();
+		this.itemR.removeAllChildren();
+		this.itemF.removeAllChildren();
+		this.tree.refresh();
+	}
+
 	/**
 	 * This method returns the number of running automates
+	 * 
 	 * @return the number of running automates
 	 */
 	public int getNumberOfRunning() {
@@ -98,6 +95,7 @@ public class StatusTreeList extends AbstractTreeList {
 
 	/**
 	 * This method returns the number of finished automates
+	 * 
 	 * @return the number of finished automates
 	 */
 	public int getNumberOfFinished() {
@@ -106,10 +104,31 @@ public class StatusTreeList extends AbstractTreeList {
 
 	/**
 	 * This method returns the number of aborted automates
+	 * 
 	 * @return the number of aborted automates
 	 */
 	public int getNumberOfAborted() {
 		return this.itemA.getChildren().size();
+	}
+
+	public boolean remove(InstanceTreeItem item) {
+		StateMachineInstance<?> instance = item.getContent();
+		if (instance.getCurrentState().isAccepting()) {
+			for(AbstractTreeItem instanceItem : this.itemF.children) {
+				if(instance.equals(((InstanceTreeItem) instanceItem).getContent())) {
+					instanceItem = null;
+					return true;
+				}
+			}
+		} else if (!instance.getCurrentState().isAccepting()) {
+			for(AbstractTreeItem instanceItem : this.itemR.children) {
+				if(instance.equals(((InstanceTreeItem) instanceItem).getContent())) {
+					instanceItem = null;
+					return true;
+				}
+			}
+		}  // TODO: else if (Instanze wurde abgebrochen) {}
+		return false;
 	}
 
 }

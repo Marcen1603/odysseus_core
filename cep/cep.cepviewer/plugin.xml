@@ -80,6 +80,26 @@
             id="de.uniol.inf.is.odysseus.cep.cepviewer.addcommand"
             name="Add to CEPViewer">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.cep.cepviewer.command.CollapseAllCommand"
+            id="de.uniol.inf.is.odysseus.cep.cepviewer.collapseall"
+            name="Collapse all">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.cep.cepviewer.command.ExpandAllCommand"
+            id="de.uniol.inf.is.odysseus.cep.cepviewer.expandall"
+            name="Expand all">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.cep.cepviewer.command.RemoveAllCommand"
+            id="de.uniol.inf.is.odysseus.cep.cepviewer.removeall"
+            name="Remove all">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.cep.cepviewer.command.RemoveCommand"
+            id="de.uniol.inf.is.odysseus.cep.cepviewer.remove"
+            name="Remove">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -88,6 +108,35 @@
          <command
                commandId="de.uniol.inf.is.odysseus.cep.cepviewer.addcommand"
                label="Add to CEPViewer"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:de.uniol.inf.is.odysseus.cep.cepviewer.listview">
+         <command
+               commandId="de.uniol.inf.is.odysseus.cep.cepviewer.removeall"
+               icon="META-INF/icons/RemoveAll.gif"
+               label="Remove all"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.cep.cepviewer.expandall"
+               icon="META-INF/icons/ExpandAll.gif"
+               label="Expand all"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.cep.cepviewer.collapseall"
+               icon="META-INF/icons/CollapseAll.gif"
+               label="Collapse all"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:de.uniol.inf.is.odysseus.cep.cepviewer.listview">
+         <command
+               commandId="de.uniol.inf.is.odysseus.cep.cepviewer.remove"
+               label="Remove"
                style="push">
          </command>
       </menuContribution>

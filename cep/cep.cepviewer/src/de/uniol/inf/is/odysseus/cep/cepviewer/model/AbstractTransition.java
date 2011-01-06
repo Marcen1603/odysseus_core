@@ -6,22 +6,48 @@ import org.eclipse.draw2d.PolylineDecoration;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
+/**
+ * This abstract class defines a transition within the diagram.
+ * 
+ * @author Christian
+ */
 public class AbstractTransition extends PolylineConnection {
-	
+
+	// the corresponding transition within a StateMachine
 	protected Transition transition;
+	// the label of this transition
 	protected String name;
 
-	public AbstractTransition(Anchor sourceAnchor, Anchor targetAnchor, Transition transition) {
+	/**
+	 * This is the constructor of this class. IT sets the source and target
+	 * Anchor, determines the layout of the transition and sets the tooltip
+	 * 
+	 * @param sourceAnchor
+	 *            is the anchor of the start state
+	 * @param targetAnchor
+	 *            is the anchor of the end state
+	 * @param transition
+	 *            ins the corresponding transition within a StateMachine
+	 */
+	public AbstractTransition(Anchor sourceAnchor, Anchor targetAnchor,
+			Transition transition) {
 		this.name = transition.getCondition().getLabel();
 		this.transition = transition;
 		this.setSourceAnchor(sourceAnchor);
 		this.setTargetAnchor(targetAnchor);
+		// draw the transition as a line with an arrow pointing to the end state
 		setTargetDecoration(new PolylineDecoration());
-		this.setToolTip(new Label(transition.getCondition().getLabel() + "/" + transition.getAction().toString()));
+		this.setToolTip(new Label(transition.getCondition().getLabel() + " / "
+				+ transition.getAction().toString()));
 	}
-	
+
+	/**
+	 * This is the getter of the name.
+	 * 
+	 * @return the name
+	 */
 	public String getName() {
 		return name;
 	}
-	
+
 }

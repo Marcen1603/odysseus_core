@@ -1,24 +1,21 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPAutomataView;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractState;
-import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
+import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 /**
@@ -29,20 +26,9 @@ import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 public abstract class AbstractTreeList extends Composite {
 
 	// the tree which should be represented
-	private TreeViewer tree;
-
-	private CEPTreeItem root;
-
-	// the images that show the status of a tree item
-	private final Image running = new Image(getDisplay(), this.getClass()
-			.getResourceAsStream("imageA.jpg"));
-	private final Image finished = new Image(getDisplay(), this.getClass()
-			.getResourceAsStream("imageB.jpg"));
-	@SuppressWarnings("unused")
-	private final Image aborted = new Image(getDisplay(), this.getClass()
-			.getResourceAsStream("imageC.jpg"));
-
-	private static final String AUTOMATA_VIEW_ID = "de.uniol.inf.is.odysseus.cep.cepviewer.automataview";
+	protected TreeViewer tree;
+	// the root element of the tree
+	protected AbstractTreeItem root;
 
 	/**
 	 * This is the constructor.
@@ -55,26 +41,22 @@ public abstract class AbstractTreeList extends Composite {
 	public AbstractTreeList(final Composite parent, int style) {
 		super(parent, SWT.NONE);
 		this.setLayout(new FillLayout());
-		this.root = new CEPTreeItem();
 		this.tree = new TreeViewer(this, style | SWT.SINGLE);
-
-		this.tree.setContentProvider(new MyTreeContentProvider());
-		this.tree.setLabelProvider(new MyTreeLabelProvider());
+		this.tree.setContentProvider(new TreeContentProvider());
+		this.tree.setLabelProvider(new TreeLabelProvider());
 		this.tree.addSelectionChangedListener(new ISelectionChangedListener() {
-			@SuppressWarnings("unchecked")
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection select = (IStructuredSelection) event
 						.getSelection();
-				System.out.println("Selection found");
-				if (((CEPTreeItem) select.getFirstElement()).getContent() instanceof StateMachineInstance) {
-					StateMachineInstance instance = ((StateMachineInstance) ((CEPTreeItem) select
-							.getFirstElement()).getContent());
-					System.out.println("TreeItem selected");
+				if (select.getFirstElement() instanceof InstanceTreeItem) {
+					StateMachineInstance<?> instance = ((InstanceTreeItem) select
+							.getFirstElement()).getContent();
 					for (IViewReference a : PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getActivePage()
 							.getViewReferences()) {
-						if (a.getId().equals(AUTOMATA_VIEW_ID)) {
-							CEPAutomataView view = (CEPAutomataView) a.getView(false);
+						if (a.getId().equals(StringConst.AUTOMATA_VIEW_ID)) {
+							CEPAutomataView view = (CEPAutomataView) a
+									.getView(false);
 							view.clearView();
 							view.showAutomata(instance);
 						}
@@ -82,57 +64,22 @@ public abstract class AbstractTreeList extends Composite {
 				}
 			}
 		});
+		this.root = new LabelTreeItem(null, "Root");
 		this.tree.setInput(this.root.getChildren());
-		this.createContextMenu();
 	}
 
-	public void createContextMenu() {
-		Menu menu = new Menu(this.tree.getTree());
-		MenuItem removeItem = new MenuItem(menu, SWT.PUSH);
-		removeItem.setText("Remove");
-		removeItem.addListener(SWT.Selection, new Listener() {
-			@SuppressWarnings("unchecked")
-			public void handleEvent(Event event) {
-				IStructuredSelection select = (IStructuredSelection) tree
-						.getSelection();
-				if (!select.isEmpty()) {
-					Object object = ((CEPTreeItem) select.getFirstElement())
-							.getContent();
-					if (object instanceof StateMachineInstance
-							|| object instanceof CepOperator) {
-						tree.getTree().getSelection()[0].dispose();
-					} else {
-						System.out.println("must not be disposed");
-					}
-				} else {
-					System.out.println("Nothing to dispose");
-				}
-			}
-		});
-		menu.setVisible(false);
-		this.tree.getTree().setMenu(menu);
+	public void createContextMenu(CEPListView view) {
+		MenuManager menuManager = new MenuManager();
+		Menu contextMenu = menuManager.createContextMenu(this.tree.getTree());
+		// Set the MenuManager
+		this.tree.getTree().setMenu(contextMenu);
+		view.getSite().registerContextMenu(menuManager, this.tree);
 	}
 
-	/**
-	 * This method assigns an image to a tree item.
-	 * 
-	 * @param item
-	 *            is a tree item
-	 */
-	@SuppressWarnings("unchecked")
-	// TODO in den LabelProvider einbauen
-	public void setStatusImage(TreeItem item) {
-		if (((StateMachineInstance) item.getData("Instance")).getCurrentState()
-				.isAccepting()) {
-			item.setImage(this.finished);
-		} else {
-			item.setImage(this.running);
-		}
+	public void changeStatus(StateMachineInstance<?> instance) {
+		// TODO: change status?
 	}
-	
-	public void changeStatus() {
-	}
-	
+
 	public void update() {
 		this.getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -143,36 +90,21 @@ public abstract class AbstractTreeList extends Composite {
 	}
 
 	/**
-	 * This method returns the tree.
+	 * This method should add an object to the tree, if the objectis an instance
+	 * of the right class.
 	 * 
-	 * @return the tree.
+	 * @param object
+	 *            is an object
 	 */
+	public abstract boolean addToTree(Object object);
+	
+	public abstract void removeAll();
+	
+	public abstract boolean remove(InstanceTreeItem item);
+
 	public TreeViewer getTree() {
-		return this.tree;
+		return tree;
 	}
 
-	public CEPTreeItem getRoot() {
-		return this.root;
-	}
-
-	/**
-	 * This method should handle the addition of a tree item form a state
-	 * machine instance.
-	 * 
-	 * @param instance
-	 *            is an state machine instance
-	 */
-	@SuppressWarnings("unchecked")
-	public abstract boolean addToTree(StateMachineInstance instance);
-
-	/**
-	 * This method should handle the addition of a tree item form a state
-	 * machine instance.
-	 * 
-	 * @param instance
-	 *            is an state machine instance
-	 */
-	@SuppressWarnings("unchecked")
-	public abstract boolean addToTree(CepOperator operator);
-
+	
 }

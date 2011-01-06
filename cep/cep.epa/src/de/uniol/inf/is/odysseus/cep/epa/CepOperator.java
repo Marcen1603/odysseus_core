@@ -81,7 +81,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	/**
 	 * EventAgent
 	 */
-	private CEPEventAgent agent = CEPEventAgent.getInstance();
+	private CEPEventAgent agent = new CEPEventAgent();
 
 	/**
 	 * leerer Standardkonstruktor
@@ -320,7 +320,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						// this.branchingBuffer.addBranch(instance,
 						// newInstance);
 						branchedInstances.add(newInstance);
-						this.agent.fireCEPEvent(CEPEvent.SPLIT_MACHINE, newInstance);
+						this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, newInstance);
 					}
 					// Now its save to update current Transition
 					instance.takeTransition(transitionsToTake.remove(0), event,
@@ -513,6 +513,14 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 */
 	public StateMachine<R> getStateMachine() {
 		return stateMachine;
+	}
+	
+	/**
+	 * This is the getter for the CEPEventAgent.
+	 * @return the CEPEventAgent
+	 */
+	public CEPEventAgent getCEPEventAgent() {
+		return this.agent;
 	}
 
 	// /**
