@@ -7,7 +7,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -21,12 +20,17 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import windperformancercp.model.Attribute.AttributeType;
+import windperformancercp.event.IEvent;
+import windperformancercp.event.IEventListener;
+import windperformancercp.event.InputDialogEvent;
+import windperformancercp.event.InputDialogEventType;
+import windperformancercp.views.AbstractUIDialog;
 import windperformancercp.views.AttributeDialog;
 
 public class AttributeTable extends Composite {
 
 	private AttributeTableModel model;
+	//private ArrayList<AttributeDialog> dialogs;
 	
 	TableViewer tv;
 	ToolBar tb_attList;
@@ -34,6 +38,7 @@ public class AttributeTable extends Composite {
 	public AttributeTable(Composite parent, int style) {
 		super(parent, style);
 		model = new AttributeTableModel();
+		//dialogs = new ArrayList<AttributeDialog>();
 		
 		this.setLayout(new GridLayout(2,false));
 		
@@ -75,6 +80,15 @@ public class AttributeTable extends Composite {
 		tv.setInput(attList);
 	}
 	
+	/*private void registerDialog(AttributeDialog newDialog){
+		dialogs.add(newDialog);
+	}
+	
+	private void deregisterDialog(int index){
+		dialogs.remove(index);
+	}
+	*/
+	
 	Listener selectionListener = new Listener() {
 	      public void handleEvent(Event event) {
 	        ToolItem item = (ToolItem)event.widget;
@@ -83,22 +97,52 @@ public class AttributeTable extends Composite {
 	        	try {
 	        		//TODO: das hier geht sicher eleganter mittels eines Commands!
 	        		final Shell dialogShell = new Shell(event.display.getActiveShell());
-	        		AttributeDialog dialog = new AttributeDialog(dialogShell);
-					//TODO: generate
-	        		if(dialog.open() == Window.OK)
-	        			System.out.println("New Attribute Handler says: Dialog says - ok button has been pressed!");
-	        			
-	        		else			
-	        			System.out.println("New Attribute Handler says: Dialog says - cancel button has been pressed!");
+	        		AbstractUIDialog dialog = new AttributeDialog(dialogShell, Attribute.AttributeType.values());
+	        		IEventListener attListener = new IEventListener(){
+	        			public void eventOccured(IEvent<?, ?> idevent){
+	        				if(idevent.getEventType().equals(InputDialogEventType.NewAttributeItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+	        					InputDialogEvent newAttevent = (InputDialogEvent) idevent;
+	        					Attribute att = new Attribute((String)newAttevent.getValue()[0],newAttevent.getValue()[1]);
+	        					model.addAttribute(att);
+	        					update(model.getAllAttributes());
+	        				}
+	        				
+	        			}
+	        		};
+	        		dialog.subscribe(attListener, InputDialogEventType.NewAttributeItem);
+	        		dialog.open();
+	        		
 	    	   }
 	    	   catch(Exception ex){
-	    		   System.out.println("Exception in pressing "+item.getText()+": "+ex+";;;"+ex.getCause()+";;;"+ex.getMessage());
+	    		   System.out.println("New Attribute Listener - Exception in pressing "+item.getText()+": "+ex+";;;"+ex.getCause()+";;;"+ex.getMessage());
 	    	   }
-
-	       }
-	        System.out.println(item.getText() + " is selected");
-	        if( (item.getStyle() & SWT.RADIO) != 0 || (item.getStyle() & SWT.CHECK) != 0 ) 
-	        	System.out.println("Selection status: " + item.getSelection());
+	        }
+	        
+	        
+	        if(item.getText().equals("Up")){
+	        	int actualIndex = tv.getTable().getSelectionIndex();
+	        	if(actualIndex > 0){ //if it's 0, it is the topmost element
+	        		model.swapEntries(actualIndex, actualIndex-1);
+	        		update(model.getAllAttributes());
+	        	}
+	        }
+	        
+	        if(item.getText().equals("Down")){
+	        	int actualIndex = tv.getTable().getSelectionIndex();
+	        	if(actualIndex >= 0 && actualIndex < model.getElemCount()-1){ //if it's 0, it is the bottommost element
+	        		model.swapEntries(actualIndex, actualIndex+1);
+	        		update(model.getAllAttributes());
+	        	}
+	        }
+	       
+	        if(item.getText().equals("Delete")){
+	        	int actualIndex = tv.getTable().getSelectionIndex();
+	        	if(actualIndex>=0){
+	        		model.deleteAttribute(actualIndex);
+	        		update(model.getAllAttributes());
+	        	}
+	        }
+	        
 	      }
 	    };
 
@@ -109,10 +153,7 @@ public class AttributeTable extends Composite {
 		
 		public AttributeTableModel(){			
 			attributeList = new ArrayList<Attribute>();
-			attributeList.add(new Attribute("test1",AttributeType.AIRPRESSURE));
-			//attributeList.add(new Attribute("test2",AttributeType.WINDSPEED));
-			//attributeList.add(new Attribute("test3",AttributeType.POWER));
-			
+			//attributeList.add(new Attribute("test1",AttributeType.AIRPRESSURE));
 		}
 		
 		
@@ -131,6 +172,16 @@ public class AttributeTable extends Composite {
 		
 		public ArrayList<Attribute> getAllAttributes(){
 			return(attributeList);
+		}
+		
+		public void swapEntries(int ind1, int ind2){
+			Attribute tmp = attributeList.get(ind1);
+			attributeList.set(ind1, attributeList.get(ind2));
+			attributeList.set(ind2, tmp);
+		}
+		
+		public int getElemCount(){
+			return attributeList.size();
 		}
 	}
 	
@@ -193,6 +244,7 @@ public class AttributeTable extends Composite {
 			
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((ArrayList<Attribute>)inputElement).toArray();

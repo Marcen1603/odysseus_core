@@ -1,6 +1,6 @@
 package windperformancercp.model;
 
-public class Attribute {
+public class Attribute implements IAttribute{
 	//Datentyp, einer aus Double, Timestamp, Int ...
 	
 	public enum AttributeType{
@@ -45,21 +45,29 @@ public class Attribute {
 		default:
 			this.dataType = DataType.DOUBLE; 
 		}
-System.out.println("created Attribute: "+this.toString());		
+		System.out.println("created Attribute: "+this.toString());		
 	}
 	
+	public Attribute(String name, String type){
+		this(name, Attribute.AttributeType.valueOf(type));
+	}
+	
+	@Override
 	public String getName(){
 		return this.name;
 	}
 	
+	@Override
 	public String getAttType(){
 		return this.attType.toString();
 	}
 	
+	@Override
 	public String getDataType(){
 		return this.dataType.toString();
 	}
 	
+	@Override
 	public String toString(){
 		return this.getName()+" "+this.getAttType()+" "+this.getDataType();
 	}

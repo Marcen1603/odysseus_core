@@ -6,7 +6,7 @@ package windperformancercp.model;
  *
  */
 
-public interface ISource {
+public interface ISource extends IDialogResult {
 	
 	public int getType();
 	public boolean isWindTurbine();

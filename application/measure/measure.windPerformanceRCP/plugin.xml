@@ -92,22 +92,22 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="windperformancercp.views.ShowNewSourceDialogCommand"
+            defaultHandler="windperformancercp.views.commands.ShowNewSourceDialogCommand"
             id="measure.windPerformanceRCP.showNewSourceDialog"
             name="New Source">
       </command>
       <command
-            defaultHandler="windperformancercp.views.ShowCopySourceDialogCommand"
+            defaultHandler="windperformancercp.views.commands.ShowCopySourceDialogCommand"
             id="measure.windPerformanceRCP.showCopySourceDialog"
             name="Copy Source">
       </command>
       <command
-            defaultHandler="windperformancercp.views.DeleteSourceCommand"
+            defaultHandler="windperformancercp.views.commands.DeleteSourceCommand"
             id="measure.windPerformanceRCP.DeleteSource"
             name="Delete Source">
       </command>
       <command
-            defaultHandler="windperformancercp.views.NewAttributeDialogCommand"
+            defaultHandler="windperformancercp.views.commands.NewAttributeDialogCommand"
             id="measure.windPerformanceRCP.showNewAttributeDialog"
             name="New Attribute">
       </command>

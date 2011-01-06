@@ -1,4 +1,4 @@
-package windperformancercp.views;
+package windperformancercp.views.commands;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -38,9 +38,9 @@ public class ShowCopySourceDialogCommand extends AbstractHandler implements
 	            
 	        }
 	        if(selection == null){
-	        	System.out.println("Selection was null!");
+	        	System.out.println("ShowCopySourceCommand: Selection was null!");
 	        } else{
-	        	System.out.println("Selection was not null but did not match!");
+	        	System.out.println("ShowCopySourceCommand: Selection was not null but did not match!");
 	        }
 
 	        return null;

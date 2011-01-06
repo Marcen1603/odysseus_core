@@ -1,7 +1,6 @@
 package windperformancercp.views;
 
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -18,17 +17,19 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 
+import windperformancercp.event.InputDialogEvent;
+import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.AttributeTable;
 
 
-public class SourceDialog extends Dialog {
+
+public class SourceDialog extends AbstractUIDialog {
 
 	public static final String ID = "measure.windPerformanceRCP.sourceDialog";
+	
+	//private InputDialogEvent newSourceEvent = new InputDialogEvent(getInstance(),InputDialogEventType.NewSourceITem, new String[]{});
 	
 	private Text nameInputField;
 	public static final String NAMELABEL = "Name:";
@@ -44,7 +45,7 @@ public class SourceDialog extends Dialog {
 	private Button btnMM;
 	private Button btnRActive;
 	private Button btnRPassive;
-	private ToolBar tb_attList;
+	//private ToolBar tb_attList;
 	
 	public static final int PC_ACTIVE = 0;
 	public static final int PC_PASSIVE = 1;
@@ -53,7 +54,6 @@ public class SourceDialog extends Dialog {
 	
 	public SourceDialog(Shell parentShell) {
 		super(parentShell);
-		
 	}
 
 	public SourceDialog(IShellProvider parentShell) {
@@ -215,34 +215,6 @@ public class SourceDialog extends Dialog {
 		return area;
 	}
 	
-	Listener selectionListener = new Listener() {
-	      public void handleEvent(Event event) {
-	        ToolItem item = (ToolItem)event.widget;
-	       
-	        if(item.getText().equals("Add")){
-	        	try {
-	        		//TODO: das hier geht sicher eleganter mittels eines Commands!
-	        		final Shell dialogShell = new Shell(event.display.getActiveShell());
-	        		AttributeDialog dialog = new AttributeDialog(dialogShell);
-					//TODO: generate
-	        		if(dialog.open() == OK)
-	        			System.out.println("New Attribute Handler says: Dialog says - ok button has been pressed!");
-	        			
-	        		else			
-	        			System.out.println("New Attribute Handler says: Dialog says - cancel button has been pressed!");
-	    	   }
-	    	   catch(Exception ex){
-	    		   System.out.println("Exception in pressing "+item.getText()+": "+ex+";;;"+ex.getCause()+";;;"+ex.getMessage());
-	    	   }
- 
-	       }
-	        System.out.println(item.getText() + " is selected");
-	        if( (item.getStyle() & SWT.RADIO) != 0 || (item.getStyle() & SWT.CHECK) != 0 ) 
-	        	System.out.println("Selection status: " + item.getSelection());
-	      }
-	    };
-	    
-	
 	Listener verifyListener = new Listener(){
 		public void handleEvent(Event event){
 			Text eText = (Text) event.widget;
@@ -301,6 +273,12 @@ public class SourceDialog extends Dialog {
 	}
 	
 	//TODO
+	@Override
+	public String[] getValues(){
+		return new String[]{};
+	}
+	
+	//TODO
 	public void setType(int type){
 	/*	if(type==MMId){
 			
@@ -311,6 +289,7 @@ public class SourceDialog extends Dialog {
 		*/
 	}
 	
+	@Override
 	public void resetView(){
 		//TODO: reset fuer attributeComp einsetzen
 		nameInputField.setText("");
@@ -323,19 +302,12 @@ public class SourceDialog extends Dialog {
 		btnRPassive.setSelection(false);
 	}
 	
-	@Override
+/*	@Override
 	public void okPressed(){
 		//TODO: neuen Event erzeugen, der dafuer sorgt, dass die Werte abgeholt werden
-		System.out.println("SourceDialog: Ok gedrueckt!");
+		
 		close();
 	}
-	
-	@Override
-	public void cancelPressed(){
-		resetView();
-		System.out.println("SourceDialog: cancel gedrueckt!");
-		close();
-	}
-
+*/
 
 }
