@@ -1,6 +1,13 @@
 package windperformancercp.model;
 
-public class Attribute implements IAttribute{
+import windperformancercp.event.EventHandler;
+import windperformancercp.event.IEvent;
+import windperformancercp.event.IEventHandler;
+import windperformancercp.event.IEventListener;
+import windperformancercp.event.IEventType;
+
+//public class Attribute implements IAttribute{
+public class Attribute implements IEventHandler{
 	//Datentyp, einer aus Double, Timestamp, Int ...
 	
 	public enum AttributeType{
@@ -28,6 +35,33 @@ public class Attribute implements IAttribute{
 	String name;
 	AttributeType attType;
 	DataType dataType;
+
+	EventHandler eventHandler = new EventHandler();
+	@Override
+	public void subscribe(IEventListener listener, IEventType type) {
+		eventHandler.subscribe(listener, type);
+	}
+
+	@Override
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		eventHandler.unsubscribe(listener, type);
+	}
+
+	@Override
+	public void subscribeToAll(IEventListener listener) {
+		eventHandler.subscribeToAll(listener);
+	}
+
+	@Override
+	public void unSubscribeFromAll(IEventListener listener) {
+		eventHandler.unSubscribeFromAll(listener);
+	}
+
+	@Override
+	public void fire(IEvent<?, ?> event) {
+		eventHandler.fire(event);
+	}
+
 	
 	public Attribute(String name, AttributeType type){
 		this.name = name;
@@ -52,24 +86,34 @@ public class Attribute implements IAttribute{
 		this(name, Attribute.AttributeType.valueOf(type));
 	}
 	
-	@Override
 	public String getName(){
 		return this.name;
 	}
 	
-	@Override
-	public String getAttType(){
-		return this.attType.toString();
+	public void setName(String name){
+		this.name = name;
+		//TODO:fire
 	}
 	
-	@Override
+	public AttributeType getAttType(){
+		return this.attType;
+	}
+	
+	public void setAttType(AttributeType atype){
+		this.attType = (AttributeType) atype;
+		//TODO: fire
+	}
+	
 	public String getDataType(){
 		return this.dataType.toString();
 	}
 	
-	@Override
+	public void setDataType(DataType dtype){
+		this.dataType = (DataType) dtype;
+		//TODO: fire
+	}
+	
 	public String toString(){
 		return this.getName()+" "+this.getAttType()+" "+this.getDataType();
 	}
-
 }

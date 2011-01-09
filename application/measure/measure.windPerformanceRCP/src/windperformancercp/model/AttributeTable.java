@@ -72,22 +72,26 @@ public class AttributeTable extends Composite {
 			gd_tb_attL.horizontalAlignment = GridData.BEGINNING;
 			tb_attList.setLayoutData(gd_tb_attL);
 		}
-		update(model.getAllAttributes());
+		update(model.getAllElements());
 
+	}
+	
+	public String extractElements(){
+		String result = "{";
+		for(Attribute a: model.getAllElements()){
+			result = result+a.toString()+";";
+		}
+		result = result+"}";
+		return result;
 	}
 
 	private void update(ArrayList<Attribute> attList){
 		tv.setInput(attList);
 	}
 	
-	/*private void registerDialog(AttributeDialog newDialog){
-		dialogs.add(newDialog);
+	public void resetView(){
+		model.getAllElements().clear();
 	}
-	
-	private void deregisterDialog(int index){
-		dialogs.remove(index);
-	}
-	*/
 	
 	Listener selectionListener = new Listener() {
 	      public void handleEvent(Event event) {
@@ -104,7 +108,7 @@ public class AttributeTable extends Composite {
 	        					InputDialogEvent newAttevent = (InputDialogEvent) idevent;
 	        					Attribute att = new Attribute((String)newAttevent.getValue()[0],newAttevent.getValue()[1]);
 	        					model.addAttribute(att);
-	        					update(model.getAllAttributes());
+	        					update(model.getAllElements());
 	        				}
 	        				
 	        			}
@@ -123,7 +127,7 @@ public class AttributeTable extends Composite {
 	        	int actualIndex = tv.getTable().getSelectionIndex();
 	        	if(actualIndex > 0){ //if it's 0, it is the topmost element
 	        		model.swapEntries(actualIndex, actualIndex-1);
-	        		update(model.getAllAttributes());
+	        		update(model.getAllElements());
 	        	}
 	        }
 	        
@@ -131,7 +135,7 @@ public class AttributeTable extends Composite {
 	        	int actualIndex = tv.getTable().getSelectionIndex();
 	        	if(actualIndex >= 0 && actualIndex < model.getElemCount()-1){ //if it's 0, it is the bottommost element
 	        		model.swapEntries(actualIndex, actualIndex+1);
-	        		update(model.getAllAttributes());
+	        		update(model.getAllElements());
 	        	}
 	        }
 	       
@@ -139,7 +143,7 @@ public class AttributeTable extends Composite {
 	        	int actualIndex = tv.getTable().getSelectionIndex();
 	        	if(actualIndex>=0){
 	        		model.deleteAttribute(actualIndex);
-	        		update(model.getAllAttributes());
+	        		update(model.getAllElements());
 	        	}
 	        }
 	        
@@ -156,6 +160,10 @@ public class AttributeTable extends Composite {
 			//attributeList.add(new Attribute("test1",AttributeType.AIRPRESSURE));
 		}
 		
+		public AttributeTableModel(ArrayList<Attribute> attributes){			
+			attributeList = new ArrayList<Attribute>(attributes);
+		}
+		
 		
 		public void addAttribute(Attribute newAtt){
 			attributeList.add(newAtt);
@@ -170,7 +178,7 @@ public class AttributeTable extends Composite {
 			return(attributeList.get(index));
 		}
 		
-		public ArrayList<Attribute> getAllAttributes(){
+		public ArrayList<Attribute> getAllElements(){
 			return(attributeList);
 		}
 		
@@ -223,7 +231,7 @@ public class AttributeTable extends Composite {
 			Attribute attr = (Attribute) element;
 			switch(columnIndex){
 			case 0: return attr.getName();
-			case 1:	return attr.getAttType();
+			case 1:	return attr.getAttType().toString();
 			}
 			return null;
 		}

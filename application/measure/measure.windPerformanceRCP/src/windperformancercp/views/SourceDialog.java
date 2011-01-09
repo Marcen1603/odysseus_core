@@ -4,18 +4,22 @@ package windperformancercp.views;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -31,6 +35,8 @@ public class SourceDialog extends AbstractUIDialog {
 	
 	//private InputDialogEvent newSourceEvent = new InputDialogEvent(getInstance(),InputDialogEventType.NewSourceITem, new String[]{});
 	
+	private SourceDialogPresenter presenter;
+	
 	private Text nameInputField;
 	public static final String NAMELABEL = "Name:";
 	private Text strInputField;
@@ -45,6 +51,7 @@ public class SourceDialog extends AbstractUIDialog {
 	private Button btnMM;
 	private Button btnRActive;
 	private Button btnRPassive;
+	private AttributeTable attributeComp;
 	//private ToolBar tb_attList;
 	
 	public static final int PC_ACTIVE = 0;
@@ -54,11 +61,12 @@ public class SourceDialog extends AbstractUIDialog {
 	
 	public SourceDialog(Shell parentShell) {
 		super(parentShell);
+		this.presenter = new SourceDialogPresenter(this);
 	}
 
 	public SourceDialog(IShellProvider parentShell) {
 		super(parentShell);
-		// TODO Auto-generated constructor stub
+		this.presenter = new SourceDialogPresenter(this);
 	}
 	
 //TODO ein clear-button waere noch schick!	
@@ -94,6 +102,10 @@ public class SourceDialog extends AbstractUIDialog {
 				nameLabel.setText(NAMELABEL);
 				nameLabel.setToolTipText("name for human readable identification");
 				nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
+				nameInputField.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.nameEntered();}
+				});
 			}
 
 			Composite strInputComp = new Composite(streamInfoGroup,SWT.NONE);
@@ -106,6 +118,10 @@ public class SourceDialog extends AbstractUIDialog {
 				strInputLabel.setText(STREAMLABEL);
 				strInputLabel.setToolTipText("stream identification for DSMS");
 				strInputField = new Text(strInputComp, SWT.SINGLE | SWT.BORDER);
+				strInputField.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.streamIdEntered();}
+				});
 			}
 			
 			Composite hostComp = new Composite(streamInfoGroup,SWT.NONE);
@@ -116,7 +132,12 @@ public class SourceDialog extends AbstractUIDialog {
 				hostComp.setLayout(new FillLayout());
 				Label hostLabel = new Label(hostComp, SWT.NONE);
 				hostLabel.setText(HOSTLABEL);
+				hostLabel.setToolTipText("name of the host where the stream is located, e.g. 'localhost'");
 				hostInputField = new Text(hostComp, SWT.SINGLE | SWT.BORDER);
+				hostInputField.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.hostEntered();}
+				});
 			}
 			
 			Composite portComp = new Composite(streamInfoGroup,SWT.NONE);
@@ -127,38 +148,39 @@ public class SourceDialog extends AbstractUIDialog {
 				portComp.setLayout(new FillLayout());
 				Label portLabel = new Label(portComp, SWT.NONE);
 				portLabel.setText(PORTLABEL);
+				portLabel.setToolTipText("port under which the stream is accessible at the host");
 				portInputField = new Text(portComp, SWT.SINGLE | SWT.BORDER);
-				/*portInputField.addListener(SWT.Verify, new Listener(){
-				public void handleEvent(Event e){
-					String string = e.text;
-					char[] chars = new char[string.length()];
-					string.getChars(0, chars.length, chars, 0);
-					for(int i = 0;i<chars.length;i++){
-						if(!('0'<= chars[i]&&chars[i]<='9')){
-							e.doit = false;
-							return;
-						}
-					}
-				}
-				});*/
+				portInputField.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.portEntered();}
+				});
 			}
 			}
 
 		
 		//## upper right composite: attribute table
 			{
-				Composite attributeComp = new AttributeTable(upperComposite, SWT.RIGHT);
+				attributeComp = new AttributeTable(upperComposite, SWT.RIGHT);
 			}
 		}
 		
 		//### lower sash form with WT and MetMast Information
 		{
-		SashForm lowerSash = new SashForm(area, SWT.FILL);
+		//SashForm lowerSash = new SashForm(area, SWT.FILL);
+			Composite lowerSash = new Composite(area, SWT.FILL);
+			lowerSash.setLayout(new GridLayout(4,false));
 
 			//## WindTurbine
+			final Group lowerLeftGroup;
 			{
-			//GridLayout llGgridLayout = new GridLayout();
-			Group lowerLeftGroup = new Group(lowerSash, SWT.LEFT);
+			btnWT = new Button(lowerSash,SWT.RADIO);
+			btnWT.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			
+			lowerLeftGroup = new Group(lowerSash, SWT.NONE);
+			lowerLeftGroup.setEnabled(false);
+			
+			
+			lowerLeftGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 			lowerLeftGroup.setLayout(new FormLayout());
 			lowerLeftGroup.setText("WindTurbine");
 		
@@ -173,9 +195,14 @@ public class SourceDialog extends AbstractUIDialog {
 				Label hubHeightLbl = new Label(hhComp, SWT.NONE);
 				hubHeightLbl.setText(HHLABEL);
 				hhInputField = new Text(hhComp, SWT.BORDER | SWT.FILL);
+				hhInputField.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.hubheightEntered();}
+				});
 				Label mLabel = new Label(hhComp, SWT.NONE);
 				mLabel.setText("m");
 			}
+
 		
 			//# power control
 			Composite pcComposite = new Composite(lowerLeftGroup, SWT.FILL);
@@ -194,6 +221,9 @@ public class SourceDialog extends AbstractUIDialog {
 				btnRActiveFD.left = new FormAttachment(pcComposite,5,SWT.LEFT);
 				btnRActive.setLayoutData(btnRActiveFD);
 				btnRActive.setText("active(pitch)");
+				btnRActive.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) { presenter.powerControlTypeClick();}
+				});
 				
 				btnRPassive = new Button(pcComposite, SWT.RADIO);
 				FormData btnRPassiveFD = new FormData();
@@ -201,64 +231,112 @@ public class SourceDialog extends AbstractUIDialog {
 				btnRPassiveFD.left = new FormAttachment(btnRActive,5);
 				btnRPassive.setLayoutData(btnRPassiveFD);
 				btnRPassive.setText("passive(stall)");
+				btnRPassive.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) { presenter.powerControlTypeClick();}
+				});
 			}
 			}	
 		
 			//## MetMast
+			final Group lowerRightGroup;
 			{
-				GridLayout lrGgridLayout = new GridLayout();
-				Group lowerRightGroup = new Group(lowerSash, SWT.RIGHT);
+				btnMM = new Button(lowerSash,SWT.RADIO);
+				btnMM.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+				
+				lowerRightGroup = new Group(lowerSash, SWT.RIGHT);
+				lowerRightGroup.setEnabled(false);
+				
+				lowerRightGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 				lowerRightGroup.setText("MetMast");
-				lowerRightGroup.setLayout(lrGgridLayout);
+				lowerRightGroup.setLayout(new GridLayout(1,false));
 			}
+			
+			SelectionAdapter typeAdapter = new SelectionAdapter(){
+				public void widgetSelected(SelectionEvent e) {
+					Button button = (Button) e.widget;
+			    	  if(button.equals(btnWT)){
+			    		  lowerLeftGroup.setEnabled(true);
+			    		  lowerRightGroup.setEnabled(false);
+			    	  }
+			    	  if(button.equals(btnMM)){
+			    		  lowerLeftGroup.setEnabled(false);
+			    		  lowerRightGroup.setEnabled(true);
+			    	  }
+			    	  presenter.srcTypeClick();
+				}
+			};
+			
+			btnMM.addSelectionListener(typeAdapter);
+			btnWT.addSelectionListener(typeAdapter);
+			
 		}
 		return area;
 	}
-	
-	Listener verifyListener = new Listener(){
-		public void handleEvent(Event event){
-			Text eText = (Text) event.widget;
-			
-			if(eText.getText().equals(NAMELABEL)){
-				
-			}
-			if(eText.getText().equals(STREAMLABEL)){
-				
-			}
 
-			if(eText.getText().equals(HOSTLABEL)){
-				
-			}
-			if(eText.getText().equals(PORTLABEL)){
-				
-			}
-
-			if(eText.getText().equals(HHLABEL)){
-				
-			}
-			
-		}
-	};
 	    
 	public void setNameValue(String newName){
 		nameInputField.setText(newName);
+	}
+	
+	public String getNameValue(){
+		return nameInputField.getText();
 	}
 	
 	public void setStrIdValue(String newStrIdent){
 		strInputField.setText(newStrIdent);
 	}
 	
+	public String getStrIdValue(){
+		return strInputField.getText();
+	}
+	
 	public void setHostValue(String newHost){
 		hostInputField.setText(newHost);
 	}
 	
-	//TODO: bin ich korrekt?
+	public String getHostValue(){
+		return hostInputField.getText();
+	}
+	
 	public void setPortValue(int newPort){
-		portInputField.setText(String.valueOf(newPort));
+		portInputField.setText(Integer.toString(newPort));
+	}
+	
+	//TODO: zusaetzlicher getter fuer int?
+	public String getPortValue(){
+		return portInputField.getText();
 	}
 	
 	public void setHubHeightValue(int newHubHeight){
 		hhInputField.setText(Integer.toString(newHubHeight));
+	}
+	
+	public String getHubHeightValue(){
+		return hhInputField.getText();
+	}
+	
+	//TODO: das hier ist nicht so schick. Geht sicher besser.
+	public String getStringSourceType(){
+		if(btnWT.getSelection() & !btnMM.getSelection()) return Integer.toString(WTId);
+		if(btnMM.getSelection() & !btnWT.getSelection()) return Integer.toString(MMId);
+		else return Integer.toString(-1);
+	}
+	
+	public int getSourceType(){
+		if(btnWT.getSelection() & !btnMM.getSelection()) return WTId;
+		if(btnMM.getSelection() & !btnWT.getSelection()) return MMId;
+		else return -1;
+	}
+	
+	public void setSourceType(int type){
+		if(type==MMId){
+			btnWT.setSelection(false);
+			btnMM.setSelection(true);
+			}
+		if(type==WTId){
+				btnWT.setSelection(true);
+				btnMM.setSelection(false);
+		}
 	}
 	
 	public void setPowerControl(int pc){
@@ -272,42 +350,118 @@ public class SourceDialog extends AbstractUIDialog {
 		}
 	}
 	
+	public int getPowerControl(){
+		if(btnRActive.getSelection()) return PC_ACTIVE;
+		if(btnRPassive.getSelection()) return PC_PASSIVE;
+		else return -1;
+	}
+	
 	//TODO
 	@Override
 	public String[] getValues(){
-		return new String[]{};
+		String[] result = {}; 
+		if(getSourceType() == MMId){
+			//TODO: um weitere Werte ergaenzen: vor allem um attribute!
+		
+			result = new String[]{getNameValue(), 
+							getStrIdValue(), 
+							getHostValue(), 
+							getPortValue(), 
+							attributeComp.extractElements(), 
+							Integer.toString(MMId)};
+		}
+		if(getSourceType() == WTId){
+			result = new String[]{getNameValue(), 
+							getStrIdValue(), 
+							getHostValue(), 
+							getPortValue(), 
+							attributeComp.extractElements(), 
+							Integer.toString(WTId), 
+							getHubHeightValue(), 
+							Integer.toString(getPowerControl())};
+		}
+		return result;
 	}
 	
-	//TODO
-	public void setType(int type){
-	/*	if(type==MMId){
-			
-		}
-		if(type==WTId){
-			
-		}
-		*/
-	}
 	
 	@Override
 	public void resetView(){
-		//TODO: reset fuer attributeComp einsetzen
 		nameInputField.setText("");
 		strInputField.setText("");
 		hostInputField.setText("");
 		portInputField.setText("");
-		
+		attributeComp.resetView();
+		btnMM.setSelection(false);
+		btnWT.setSelection(false);
 		hhInputField.setText("");
 		btnRActive.setSelection(false);
 		btnRPassive.setSelection(false);
 	}
 	
-/*	@Override
+	@Override
 	public void okPressed(){
-		//TODO: neuen Event erzeugen, der dafuer sorgt, dass die Werte abgeholt werden
-		
-		close();
+		presenter.okPressed();
 	}
-*/
+	
+	@Override
+	public void cancelPressed(){
+		presenter.cancelPressed();
+	}
+	
+	public class SourceDialogPresenter{
+		SourceDialog dialog;
+		
+		public SourceDialogPresenter(SourceDialog caller){
+			this.dialog = caller;
+		}
+		
+		public void nameEntered(){
+		}
+		
+		public void streamIdEntered(){
+		}
+		
+		public void hostEntered(){
+		}
+		
+		public void portEntered(){
+		}
+		
+		public void attAddClick(){
+		}
+		
+		public void attUpClick(){
+		}
+		
+		public void attDownClick(){
+		}
+		
+		public void attDelClick(){
+		}
+		
+		public void srcTypeClick(){
+		}
+		
+		public void hubheightEntered(){
+		}
+		
+		public void powerControlTypeClick(){
+		}
+		
+		public void okPressed(){
+			//TODO: abfragemethode, die auf korrekte ausfuellung prueft
+			if(! dialog.getNameValue().equals("")){
+				fire(new InputDialogEvent(dialog, InputDialogEventType.NewSourceItem, dialog.getValues()));
+			}
+			dialog.close();
+		}
+		
+		public void cancelPressed(){
+			dialog.close();
+		}
+		
+	
+	}
+
 
 }

@@ -2,6 +2,10 @@ package windperformancercp.views;
 
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -21,19 +25,20 @@ public class AttributeDialog extends AbstractUIDialog {
 
 	public static final String ID = "measure.windPerformanceRCP.NewAttributeDialog";
 
-//	private InputDialogEvent newAttributeEvent = new InputDialogEvent(getInstance(),InputDialogEventType.NewItem, new String[]{});
-	
+	private AttDialogPresenter presenter;
 	Text nameInputField;
 	Combo typeCombo;
 	Object[] comboElements;
 	
 	public AttributeDialog(Shell parentShell, Object[] cElements) {
 		super(parentShell);
+		this.presenter = new AttDialogPresenter(this);  
 		this.comboElements = cElements;
 	}
 
 	public AttributeDialog(IShellProvider parentShell) {
 		super(parentShell);
+		this.presenter = new AttDialogPresenter(this);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -64,6 +69,11 @@ public class AttributeDialog extends AbstractUIDialog {
 			nameLabel.setLayoutData(new GridData());
 			nameInputField = new Text(nameComp, SWT.BORDER);
 			nameInputField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			nameInputField.addFocusListener(new FocusListener(){
+				public void focusGained(FocusEvent fe){}
+				public void focusLost(FocusEvent fe){presenter.nameEntered();}
+			});
+			
 		}	
 		
 		//## attribute type
@@ -79,6 +89,10 @@ public class AttributeDialog extends AbstractUIDialog {
 				typeCombo.add(comboElements[i].toString());
 			}
 			typeCombo.select(0);
+			typeCombo.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) { presenter.typeSelected();}
+				public void widgetDefaultSelected(SelectionEvent e) { presenter.typeSelected();}
+			});
 		}
 
 		return area;
@@ -87,34 +101,63 @@ public class AttributeDialog extends AbstractUIDialog {
 	public void setNameValue(String newName){
 		nameInputField.setText(newName);
 	}
-
-	@Override
-	public void resetView(){
-		nameInputField.setText("");
-		typeCombo.select(0);
-	}
 	
-	@Override
-	public String[] getValues(){
-		return new String[]{getName(),getComboValue()};
-	}
-	
-	public String getName(){
+	public String getNameValue(){
 		return nameInputField.getText();
 	}
 	
 	public String getComboValue(){
 		return typeCombo.getItem(typeCombo.getSelectionIndex());
 	}
+
+	@Override
+	public String[] getValues(){
+		return new String[]{getNameValue(),getComboValue()};
+	}
 	
+	@Override
+	public void resetView(){
+		nameInputField.setText("");
+		typeCombo.select(0);
+	}
+			
 	@Override
 	public void okPressed(){	
 		//TODO: throw exception
-			if(! this.getName().equals("")){
-				fire(new InputDialogEvent(this, InputDialogEventType.NewAttributeItem, this.getValues()));
-			}
-		
+		presenter.okPressed();	
 		close();
 	}
 	
+	@Override
+	public void cancelPressed(){	
+		presenter.cancelPressed();	
+		close();
+	}
+
+	
+	public class AttDialogPresenter{
+		AttributeDialog dialog;
+		
+		AttDialogPresenter(AttributeDialog caller){
+			this.dialog = caller;
+		}
+		
+		public void nameEntered(){
+		}
+		
+		public void typeSelected(){
+		}
+		
+		public void okPressed(){
+			//TODO: Aufruf des Controllers
+			if(! dialog.getNameValue().equals("")){
+				fire(new InputDialogEvent(dialog, InputDialogEventType.NewAttributeItem, dialog.getValues()));
+			}
+
+		}
+		
+		public void cancelPressed(){
+			//TODO
+		}
+	}
 }

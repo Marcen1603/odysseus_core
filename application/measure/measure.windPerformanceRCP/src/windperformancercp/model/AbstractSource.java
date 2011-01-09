@@ -1,11 +1,15 @@
 package windperformancercp.model;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public abstract class AbstractSource implements ISource {
+import windperformancercp.event.EventHandler;
+import windperformancercp.event.IEvent;
+import windperformancercp.event.IEventHandler;
+import windperformancercp.event.IEventListener;
+import windperformancercp.event.IEventType;
+
+public abstract class AbstractSource implements ISource, IEventHandler {
 	
 	public static final String ID = "measure.windPerformanceRCP.ASource";
 	//String PROP_TYPE="type"; //this should not change
@@ -13,6 +17,7 @@ public abstract class AbstractSource implements ISource {
 	private String PROP_PORT="port";
 	private String PROP_HOST="host";
 	//String PROP_STRID="streamIdentifier"; //this should not change
+	
 	
 	private static int sourceCounter = 0;
 	
@@ -24,22 +29,48 @@ public abstract class AbstractSource implements ISource {
 	private String name;
 	private  ArrayList<Attribute> attributeList;
 	private int connectState; //0=disconnected, 1=proceeding, 2= connected
-	private final PropertyChangeSupport sourcePCS = new PropertyChangeSupport(this);
 	
 	public static final int MMId = 0;
 	public static final int WTId = 1;
 	
-	//public AbstractSource(){
-	//}
 	
-	public AbstractSource(int typeId, String name, String strIdentifier, String hostName, int portId, Attribute[] attList){
+	EventHandler eventHandler = new EventHandler();
+	
+	@Override
+	public void subscribe(IEventListener listener, IEventType type){
+		eventHandler.subscribe(listener, type);
+	}
+
+	@Override
+	public void unsubscribe(IEventListener listener, IEventType type){
+		eventHandler.unsubscribe(listener, type);
+	}
+
+	@Override
+	public void subscribeToAll(IEventListener listener){
+		eventHandler.subscribeToAll(listener);
+	}
+
+	@Override
+	public void unSubscribeFromAll(IEventListener listener){
+		eventHandler.unSubscribeFromAll(listener);
+	}
+
+	@Override
+	public void fire(IEvent<?, ?> event){
+		eventHandler.fire(event);
+	}
+
+
+	public AbstractSource(int typeId, String name, String strIdentifier, String hostName, int portId, Attribute[] attList, int connectState){
 		this.type = typeId;
 		this.name = name;
 		this.streamIdentifier = strIdentifier;
 		this.host = hostName;
 		this.port = portId;
 		//TODO: ist das hier so proper? Und will ich unbedingt einen Array zur initialisierung haben?
-		this.attributeList = new ArrayList<Attribute>(Arrays.asList(attList));
+		this.attributeList = new ArrayList<Attribute>(Arrays.asList(attList)); 
+		this.connectState = connectState;
 		sourceCounter++;
 		this.id = sourceCounter;
 	}
@@ -63,9 +94,8 @@ public abstract class AbstractSource implements ISource {
 	
 	@Override
 	public void setName(String newName) {
-		String old = this.name;
 		this.name = newName;
-		this.sourcePCS.firePropertyChange(PROP_NAME,old, this.name);
+		//TODO: fire
 	}
 	
 	@Override
@@ -75,9 +105,8 @@ public abstract class AbstractSource implements ISource {
 
 	@Override
 	public void setPort(int newPort) {
-		int old = this.port;
 		this.port = newPort;
-		this.sourcePCS.firePropertyChange(PROP_PORT,old, this.port);
+		//TODO: fire
 	}
 	
 	@Override
@@ -87,9 +116,8 @@ public abstract class AbstractSource implements ISource {
 	
 	@Override
 	public void setHost(String newHost){
-		String old = this.host;
 		this.host = newHost;
-		this.sourcePCS.firePropertyChange(PROP_HOST, old, this.host);
+		//TODO: fire
 	}
 	
 	@Override
@@ -107,27 +135,44 @@ public abstract class AbstractSource implements ISource {
 		return this.streamIdentifier;
 	}
 	
+	@Override
+	public void setStreamIdentifier(String strId){
+		this.streamIdentifier = strId;
+		//TODO: fire
+	}
+	
+	
 	public Attribute getIthAtt(int i){
 		if(attributeList.size()>i){
 			return attributeList.get(i);
 		} else return null;
 	}
 	
+	@Override
 	public ArrayList<Attribute> getAttList(){
 		return this.attributeList;
 	}
 	
+	@Override
 	public int getNumberOfAtts(){
 		return attributeList.size();
 	}
 	
+	@Override
 	public boolean isConnected(){
 		if(connectState == 1) return true;
 		else return false;		
 	}
 	
+	@Override
 	public int getConnectState(){
 		return connectState;
+	}
+	
+	@Override
+	public void setConnectState(int i){
+		this.connectState = i;
+		//TODO: fire
 	}
 	
 	@Override
@@ -136,21 +181,4 @@ public abstract class AbstractSource implements ISource {
 		return info;
 	}
 	
-	protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
-		sourcePCS.firePropertyChange(propertyName, oldValue, newValue);
-	}
-	 
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-		   sourcePCS.addPropertyChangeListener(propertyName, listener);
-	}
-	 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		   sourcePCS.removePropertyChangeListener(listener);
-	}
-	
-	//TODO: das lassen wir besser
-	/*protected void finalize(){
-		sourceCounter--;
-	}*/
-
 }
