@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.model;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
 
 import java.util.Hashtable;
 

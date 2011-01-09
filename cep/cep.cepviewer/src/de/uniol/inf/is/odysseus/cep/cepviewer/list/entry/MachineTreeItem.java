@@ -1,11 +1,9 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.list;
+package de.uniol.inf.is.odysseus.cep.cepviewer.list.entry;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 
 public class MachineTreeItem extends AbstractTreeItem {
-
-	private StateMachine<?> content;
 	
 	public MachineTreeItem(AbstractTreeItem parent, StateMachine<?> machine) {
 		super(parent);
@@ -14,7 +12,7 @@ public class MachineTreeItem extends AbstractTreeItem {
 	}
 	
 	public StateMachine<?> getContent() {
-		return this.content;
+		return (StateMachine<?>) this.content;
 	}
 	
 	public String toString() {

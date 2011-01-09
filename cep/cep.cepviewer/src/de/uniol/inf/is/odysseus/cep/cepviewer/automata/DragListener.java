@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.model;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
 
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -23,7 +23,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	private Point initialPoint;
 	// is the state that is currently draged
 	private AbstractState draggingState;
-	
+
 	/**
 	 * This is the constructor.
 	 * 
@@ -45,6 +45,22 @@ public class DragListener extends MouseMotionListener.Stub implements
 		// delete
 		this.initialPoint = null;
 		this.draggingState = null;
+		for (IViewReference a : PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
+			if (a.getId().equals(StringConst.STATE_VIEW_ID)) {
+				if (event.getSource() instanceof AbstractState) {
+					AbstractState state = (AbstractState) event.getSource();
+					System.out.println(((AbstractState) event.getSource())
+							.getParent().getClass());
+					((CEPStateView) a.getView(false)).setContent(
+							(AbstractState) event.getSource(),
+							((AutomataDiagram) state.getParent()).getInstance()
+									.getTransitionList());
+					break;
+				}
+			}
+		}
+		// }
 	}
 
 	/**
@@ -54,7 +70,6 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 *            is the mouse event which happened
 	 */
 	public void mouseClicked(MouseEvent event) {
-		// do nothing
 	}
 
 	/**
@@ -64,7 +79,6 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 *            is the mouse event which happened
 	 */
 	public void mouseDoubleClicked(MouseEvent event) {
-		// do nothing
 	}
 
 	/**
@@ -78,21 +92,6 @@ public class DragListener extends MouseMotionListener.Stub implements
 		if (initialPoint == null) {
 			this.initialPoint = event.getLocation();
 			this.draggingState = (AbstractState) event.getSource();
-		}
-		for (IViewReference a : PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage()
-				.getViewReferences()) {
-			if (a.getId().equals(StringConst.STATE_VIEW_ID)) {
-				if(event.getSource() instanceof AbstractState) {
-					((CEPStateView) a.getView(false)).setContent((AbstractState) event.getSource());
-				}
-				// DELETE? never used
-//				else if(event.getSource() instanceof AbstractTransition) {
-//					((CEPStateView) a.getView(false)).setContent((AbstractTransition) event.getSource());
-//				}
-			} else {
-				System.out.println("StateView not found"); // DELETE: Ausgabe
-			}
 		}
 	}
 

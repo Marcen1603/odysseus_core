@@ -2,6 +2,11 @@ package de.uniol.inf.is.odysseus.cep.cepviewer.list;
 
 import org.eclipse.swt.widgets.Composite;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.AbstractTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.LabelTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPStatus;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
@@ -37,46 +42,30 @@ public class StatusTreeList extends AbstractTreeList {
 		this.itemA = new LabelTreeItem(this.root, StringConst.STATUS_ABORTED);
 		this.itemA.setImage(StringConst.PATH_TO_ABORTED_IMAGE);
 		this.root.add(this.itemA);
-		
-		// DELETE: Test
-		LabelTreeItem testA = new LabelTreeItem(this.itemR, StringConst.STATUS_ABORTED);
-		testA.setImage(StringConst.PATH_TO_RUNNING_IMAGE);
-		this.itemR.add(testA);
-		LabelTreeItem testB = new LabelTreeItem(this.itemF, StringConst.STATUS_ABORTED);
-		testB.setImage(StringConst.PATH_TO_FINISHED_IMAGE);
-		this.itemF.add(testB);
-		
 		this.tree.refresh();
 	}
 
-	public boolean addToTree(Object object) {
-		if (object instanceof StateMachineInstance) {
-			// if the object is an instance of StateMachineInstance
-			StateMachineInstance<?> instance = (StateMachineInstance<?>) object;
-			if (instance.getCurrentState().isAccepting()) {
-				InstanceTreeItem newItem = new InstanceTreeItem(this.itemF, instance);
-				this.itemF.add(newItem);
-			} else if (!instance.getCurrentState().isAccepting()) {
-				InstanceTreeItem newItem = new InstanceTreeItem(this.itemR, instance);
-				this.itemR.add(newItem);
-			}  // TODO: else if (Instanze wurde abgebrochen) {}
-			this.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					tree.refresh();
-				}
-			});
-			return true;
+	public void addToTree(CEPInstance instance) {
+		if (instance.getStatus().equals(CEPStatus.FINISHED)) {
+			InstanceTreeItem newItem = new InstanceTreeItem(this.itemF,
+					instance);
+			this.itemF.add(newItem);
+		} else if (instance.getStatus().equals(CEPStatus.RUNNING)) {
+			InstanceTreeItem newItem = new InstanceTreeItem(this.itemR,
+					instance);
+			this.itemR.add(newItem);
+		} else if (instance.getStatus().equals(CEPStatus.ABORTED)) {
+			InstanceTreeItem newItem = new InstanceTreeItem(this.itemR,
+					instance);
+			this.itemA.add(newItem);
 		}
-		return false;
+		this.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				tree.refresh();
+			}
+		});
 	}
 
-	public void changeToStatus(InstanceTreeItem item) {
-		Object instance = item.getContent();
-		item.getParent().getChildren().remove(item);
-		
-		this.addToTree(instance);
-	}
-	
 	public void removeAll() {
 		this.itemA.removeAllChildren();
 		this.itemR.removeAllChildren();
@@ -111,24 +100,83 @@ public class StatusTreeList extends AbstractTreeList {
 		return this.itemA.getChildren().size();
 	}
 
-	public boolean remove(InstanceTreeItem item) {
-		StateMachineInstance<?> instance = item.getContent();
-		if (instance.getCurrentState().isAccepting()) {
-			for(AbstractTreeItem instanceItem : this.itemF.children) {
-				if(instance.equals(((InstanceTreeItem) instanceItem).getContent())) {
-					instanceItem = null;
+	public boolean remove(AbstractTreeItem item) {
+		CEPInstance cepInstance = (CEPInstance) item.getContent();
+		if (cepInstance.getStatus().equals(CEPStatus.FINISHED)) {
+			System.out.println("Status remove 1f");
+			for (AbstractTreeItem instanceItem : this.itemF.getChildren()) {
+				System.out.println("Status remove 2f");
+				if (cepInstance.getInstance().equals(
+						((InstanceTreeItem) instanceItem).getContent()
+								.getInstance())) {
+					System.out.println("Status remove finished");
+					this.itemF.getChildren().remove(instanceItem);
+					instanceItem.setParent(null);
+					this.tree.refresh();
 					return true;
 				}
 			}
-		} else if (!instance.getCurrentState().isAccepting()) {
-			for(AbstractTreeItem instanceItem : this.itemR.children) {
-				if(instance.equals(((InstanceTreeItem) instanceItem).getContent())) {
-					instanceItem = null;
+		} else if (cepInstance.getStatus().equals(CEPStatus.RUNNING)) {
+			System.out.println("Status remove 1r");
+			for (AbstractTreeItem instanceItem : this.itemR.getChildren()) {
+				System.out.println("Status remove 2r");
+				if (cepInstance.getInstance().equals(
+						((InstanceTreeItem) instanceItem).getContent()
+								.getInstance())) {
+					System.out.println("Status remove running");
+					this.itemR.getChildren().remove(instanceItem);
+					instanceItem.setParent(null);
+					this.tree.refresh();
 					return true;
 				}
 			}
-		}  // TODO: else if (Instanze wurde abgebrochen) {}
+		} else if (cepInstance.getStatus().equals(CEPStatus.ABORTED)) {
+			System.out.println("Status remove 1a");
+			for (AbstractTreeItem instanceItem : this.itemA.getChildren()) {
+				System.out.println("Status remove 2a");
+				if (cepInstance.getInstance().equals(
+						((InstanceTreeItem) instanceItem).getContent()
+								.getInstance())) {
+					System.out.println("Status remove aborted");
+					this.itemA.getChildren().remove(instanceItem);
+					instanceItem.setParent(null);
+					this.tree.refresh();
+					return true;
+				}
+			}
+		}
 		return false;
+	}
+
+	public void stateChanged(StateMachineInstance<?> instance) {
+		for (AbstractTreeItem instanceItem : this.itemR.getChildren()) {
+			if (instance.equals(((CEPInstance) instanceItem.getContent())
+					.getInstance())) {
+				CEPInstance cepInstance = (CEPInstance) instanceItem
+						.getContent();
+				cepInstance.currentStateChanged();
+				if (cepInstance.getCurrentState().getState().isAccepting()) {
+					cepInstance.setStatus(CEPStatus.FINISHED);
+					return;
+				}
+			}
+		}
+	}
+
+	public void statusChanged(StateMachineInstance<?> instance,
+			CEPStatus newStatus) {
+		for (AbstractTreeItem instanceItem : this.itemR.getChildren()) {
+			if (instance.equals(((CEPInstance) instanceItem.getContent())
+					.getInstance())) {
+				System.out.println("---Remove old reference");
+				this.remove(instanceItem);
+				System.out.println("---set new status to reference");
+				((CEPInstance) instanceItem.getContent()).setStatus(newStatus);
+				System.out.println("---add new reference");
+				this.addToTree((CEPInstance) instanceItem.getContent());
+				return;
+			}
+		}
 	}
 
 }

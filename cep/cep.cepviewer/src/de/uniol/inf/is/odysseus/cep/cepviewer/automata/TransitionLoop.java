@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.model;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
+
 /**
  * This class defines an transition loop in an automata.
  * 
@@ -17,10 +18,8 @@ import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
  */
 public class TransitionLoop extends AbstractTransition {
 
-	// the list of the BendPoints
 	private ArrayList<AbsoluteBendpoint> list;
 
-	// the state which is the start and end state
 	private AutomataState state;
 
 	/**
@@ -33,61 +32,47 @@ public class TransitionLoop extends AbstractTransition {
 	 */
 	public TransitionLoop(Anchor sourceAnchor, Anchor targetAnchor,
 			Transition transition, AutomataState state) {
-		super(sourceAnchor, targetAnchor, transition);
+		super(sourceAnchor, targetAnchor, transition, state);
 		this.state = state;
 		// set the connection router to connect two anchors via some bend
 		// points
 		setConnectionRouter(new BendpointConnectionRouter());
-		this.list = createLocationPoints();
+		this.list = new ArrayList<AbsoluteBendpoint>();
+		for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
+			this.list.add(new AbsoluteBendpoint(new Point(0, 0)));
+		}
 		this.setLocations();
 		// add the bend points to the connection
 		this.setRoutingConstraint(list);
 	}
 
-	/**
-	 * This method creates the Bendpoints of this loop and computes their
-	 * location relative to the state.
-	 * 
-	 * @return the list of Bendpoints.
-	 */
-	private ArrayList<AbsoluteBendpoint> createLocationPoints() {
-		ArrayList<AbsoluteBendpoint> points = new ArrayList<AbsoluteBendpoint>();
+	private ArrayList<Point> createLocationPoints() {
+		ArrayList<Point> points = new ArrayList<Point>();
 		for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
-			this.list.add(new AbsoluteBendpoint(new Point((IntConst.STATE_SIZE
-							* i / 2), IntConst.Y_SPACE_BETWEEN_BENDPOINTS
-							* (1 + i % 2))));
+			points.add(new Point((IntConst.STATE_SIZE * i / 2),
+					IntConst.Y_SPACE_BETWEEN_BENDPOINTS * (1 + i % 2)));
 		}
 		return points;
 	}
-
-	/**
-	 * This methods sets the location of this transitions Bendpoints. If the
-	 * Action of the transition is to consume an event, the loop will be drawn
-	 * above the state, else below.
-	 */
+	
 	private void setLocations() {
+		ArrayList<Point> points = this.createLocationPoints();
 		if (this.transition.getAction() == EAction.consumeBufferWrite) {
-			// if the action is to consume the events
 			for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
 				this.list.get(i).setLocation(
-						this.state.getLocation().x + this.list.get(i).x,
-						this.state.getLocation().y - this.list.get(i).y);
+						this.state.getLocation().x + points.get(i).x,
+						this.state.getLocation().y - points.get(i).y);
 			}
 		} else if (this.transition.getAction() == EAction.discard) {
-			// if the action is to discard the events
 			for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
 				this.list.get(i).setLocation(
-						this.state.getLocation().x + this.list.get(i).x,
-						this.state.getLocation().y + this.list.get(i).y
+						this.state.getLocation().x + points.get(i).x,
+						this.state.getLocation().y + points.get(i).y
 								+ IntConst.STATE_SIZE);
 			}
 		}
 	}
 
-	/**
-	 * This method calls the repaint method of the PolylineConnection.
-	 */
-	// TODO: Warum if?
 	public void repaint() {
 		super.repaint();
 		if (list != null) {

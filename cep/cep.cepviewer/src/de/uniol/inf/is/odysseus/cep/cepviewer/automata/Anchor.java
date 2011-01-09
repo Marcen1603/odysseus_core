@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.model;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
 
 import org.eclipse.draw2d.AbstractConnectionAnchor;
 import org.eclipse.draw2d.IFigure;

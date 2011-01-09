@@ -1,12 +1,12 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.model;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
 
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 
@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
 public class AutomataState extends AbstractState {
 
 	// holds the widget that inherits this state
-	private Composite parent;
 	// the anchors of this state
 	private Anchor inAnchor;
 	private Anchor outAnchor;
@@ -33,10 +32,9 @@ public class AutomataState extends AbstractState {
 	 * @param parent
 	 *            is the widget which contains this state.
 	 */
-	public AutomataState(Composite parent, int id, State state, boolean isActive) {
+	public AutomataState(int id, State state, boolean isActive) {
 		super(id, state, isActive);
 		this.setOpaque(false);
-		this.parent = parent;
 		
 		// create an name all anchors
 		this.inAnchor = new Anchor(this);
@@ -66,7 +64,7 @@ public class AutomataState extends AbstractState {
 	 *            is the object that allows to draw on a surface.
 	 */
 	public void paintFigure(Graphics grafic) {
-		Display display = this.parent.getDisplay();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		Rectangle r = bounds;
 		Font f = new Font(display, "Arial", 15,
 				SWT.BOLD | SWT.ITALIC);
@@ -75,7 +73,6 @@ public class AutomataState extends AbstractState {
 		if(isActive) {
 			// if the state is the active one
 			grafic.setBackgroundColor(display.getSystemColor(SWT.COLOR_BLUE));
-			grafic.setForegroundColor(display.getSystemColor(SWT.COLOR_WHITE));
 		}
 		if(this.state.isAccepting()) {
 			// if the state is the end state
@@ -86,6 +83,10 @@ public class AutomataState extends AbstractState {
 			grafic.fillOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
 		}
 		grafic.drawOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+		if(isActive) {
+			// if the state is the active one
+			grafic.setForegroundColor(display.getSystemColor(SWT.COLOR_WHITE));
+		}
 		// paint the name on the location based on its length
 		if (name.length() < 2) {
 			grafic.drawText(name, r.x + (r.width / 5), r.y + (r.height / 3));

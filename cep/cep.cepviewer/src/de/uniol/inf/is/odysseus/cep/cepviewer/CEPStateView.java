@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.AbstractTransition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractTransition;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
@@ -71,43 +71,55 @@ public class CEPStateView extends ViewPart {
 	 * 
 	 * @param state
 	 *            is a state of an automata
+	 * @param transitions 
 	 */
-	public void setContent(AbstractState state) {
-		this.table.getItem(0).setText(state.getName());
-		this.table.getItem(1).setText(
-				Boolean.toString(state.getState().isAccepting()));
-		this.table.getItem(2).setText(Boolean.toString(state.isActive()));
-		List<Transition> list = state.getState().getTransitions();
-		if (!list.isEmpty()) {
-			Transition first = list.remove(0);
-			this.table.getItem(3).setText(
-					StringConst.STATE_VIEW_ROW_D_STATE + first.getNextState()
-							+ StringConst.STATE_VIEW_ROW_D_CONDITION
-							+ first.getCondition()
-							+ StringConst.TRANSITION_LABEL_ACTION
-							+ first.getAction());
-			for (Transition next : list) {
-				TableItem item = new TableItem(this.table, SWT.NONE);
-				item.setText(
-						1,
-						"to: " + next.getNextState() + " if: "
-								+ next.getCondition() + "/" + next.getAction());
+	public void setContent(final AbstractState state, final ArrayList<AbstractTransition> transList) {
+		this.clear();
+		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				CEPStateView.this.table.getItem(0).setText(1, 
+						state.getName());
+				CEPStateView.this.table.getItem(1).setText(1, 
+						Boolean.toString(state.getState()
+								.isAccepting()));
+				CEPStateView.this.table.getItem(2).setText(1, 
+						Boolean.toString(state.isActive()));
+				for(int i = 1; i < state.getState().getTransitions().size(); i++) {
+					new TableItem(CEPStateView.this.table,SWT.NONE);
+				}
+				int row = 3;
+				for(Transition transition : state.getState().getTransitions()) {
+					for(AbstractTransition trans : transList) {
+						if(transition.equals(trans.getTransition())) {
+							CEPStateView.this.table.getItem(row).setText(1,
+									StringConst.STATE_VIEW_ROW_D_STATE
+											+ trans.getNextState().getName()
+											+ StringConst.STATE_VIEW_ROW_D_CONDITION
+											+ transition.getCondition()
+											+ StringConst.TRANSITION_LABEL_ACTION
+											+ transition.getAction());
+							row++;
+							break;
+						}
+					}
+				}
+				for (int i = 0; i < 2; i++) {
+					CEPStateView.this.table.getColumn(i).pack();
+				}
 			}
+		});
+
+	}
+	
+	public void clear() {
+		this.table.removeAll();
+		for (String row : this.stateRowLabels) {
+			TableItem item = new TableItem(this.table, SWT.NONE);
+			item.setText(0, row);
 		}
 		for (int i = 0; i < 2; i++) {
 			this.table.getColumn(i).pack();
 		}
-	}
-
-	/**
-	 * This method displays the information of the given transition in the view.
-	 * 
-	 * @param transition
-	 *            is a transition of an automata
-	 * @deprecated: not used
-	 */
-	public void setContent(AbstractTransition transition) {
-
 	}
 
 }

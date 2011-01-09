@@ -182,7 +182,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						this.stateMachine, getEventReader().get(port).getTime(
 								event));
 				addInstance(newInstance);
-				this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, newInstance);
 			}
 			if (event == null)
 				throw new InvalidEventException(
@@ -195,7 +194,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			addInstances(branchedInstances);
 			complexEvents = validateFinalStates(outdatedInstances, port);
 			removeInstances(outdatedInstances);
-			this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, outdatedInstances);
 			if (complexEvents.size() > 0) {
 				for (W e : complexEvents) {
 					if (logger.isDebugEnabled()) {
@@ -224,6 +222,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	private void addInstance(StateMachineInstance<R> stateMachineInstance) {
 		// TODO: Events
+		this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, stateMachineInstance);
 		smInstances.add(stateMachineInstance);
 	}
 
@@ -249,6 +248,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				// event);
 				// Terminate if out of Window
 				if (outofWindow) {
+					this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, instance);
 					break;
 				}
 
@@ -320,7 +320,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						// this.branchingBuffer.addBranch(instance,
 						// newInstance);
 						branchedInstances.add(newInstance);
-						this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, newInstance);
 					}
 					// Now its save to update current Transition
 					instance.takeTransition(transitionsToTake.remove(0), event,

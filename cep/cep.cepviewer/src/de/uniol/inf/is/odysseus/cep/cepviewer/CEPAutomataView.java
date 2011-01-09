@@ -1,18 +1,11 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.AutomataDiagram;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.AutomataState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.DragListener;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.AutomataTransition;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.TransitionLoop;
-import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
-import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
-import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
-import de.uniol.inf.is.odysseus.cep.metamodel.State;
-import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractTransition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AutomataDiagram;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 
 import org.eclipse.draw2d.LightweightSystem;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -29,17 +22,12 @@ public class CEPAutomataView extends ViewPart {
 	private Composite parent;
 	// the widget which displays the diagram
 	private AutomataDiagram diagram;
-	// counter of all shown states
-	private int stateCount;
-	// the instance that should be shown as automata diagram
-	private StateMachineInstance<?> shownInstance;
 
 	/**
 	 * This is the constructor.
 	 */
 	public CEPAutomataView() {
 		super();
-		this.stateCount = 0;
 	}
 
 	/**
@@ -67,78 +55,14 @@ public class CEPAutomataView extends ViewPart {
 	 *            is the instance of an StateMachine that should be shown in
 	 *            this view
 	 */
-	public void showAutomata(StateMachineInstance<?> instance) {
-		this.shownInstance = instance;
-		// create the initial state of the automata
-		AutomataState state = this.createState(instance.getStateMachine()
-				.getInitialState());
-		this.createTransitions(state);
-	}
-
-	/**
-	 * This method creates the transitions of the automata. The transitions of
-	 * the delivered state are distinguished into two types. If the start-state
-	 * of the transition equals the end-state, it's a loop. If not, it's a line
-	 * between two states and this method is recursively called with the
-	 * corresponding AutomataState of its end-state.
-	 * 
-	 * @param automataState
-	 *            is the the state which transitions should be drawn
-	 */
-	private void createTransitions(AutomataState automataState) {
-		for (Transition nextTrans : automataState.getState().getTransitions()) {
-			if (nextTrans.getNextState().equals(automataState.getState())) {
-				// if the transition is a loop ...
-				TransitionLoop loop = null;
-				if (nextTrans.getAction() == EAction.consumeBufferWrite) {
-					// if the action of the transition is to consume an event
-					loop = new TransitionLoop(automataState.getTakeOutAnchor(),
-							automataState.getTakeInAnchor(), nextTrans,
-							automataState);
-				} else if (nextTrans.getAction() == EAction.discard) {
-					// if the action of the transition is to discard an event
-					loop = new TransitionLoop(
-							automataState.getIgnoreOutAnchor(),
-							automataState.getIgnoreInAnchor(), nextTrans,
-							automataState);
-				}
-				// add the loop to the diagram
-				this.diagram.add(loop);
-			} else {
-				// if the transition is no loop create its end-state
-				AutomataState newState = createState(nextTrans.getNextState());
-				AutomataTransition path = new AutomataTransition(
-						automataState.getOutAnchor(), newState.getInAnchor(),
-						nextTrans);
-				// add the transition to the diagramm
-				this.diagram.add(path);
-				this.createTransitions(newState);
-			}
+	public void showAutomata(CEPInstance instance) {
+		this.diagram.setInstance(instance);
+		for(AbstractState state : instance.getStateList()) {
+			this.diagram.add(state);
 		}
-	}
-
-	/**
-	 * This method creates an corresponding AutomataState to a State-instance.
-	 * After initializing its location in the diagram is set and a new instance
-	 * of the DragListener class is created to enable the drag and drop feature.
-	 * 
-	 * @param rootState is the State which should be tranformed into an AutomataState
-	 * @return the created AutomataState-instance 
-	 */
-	private AutomataState createState(State rootState) {
-		AutomataState newState = new AutomataState(this.parent,
-				this.stateCount, rootState, this.shownInstance
-						.getCurrentState().equals(rootState));
-		// set location in the diagram
-		newState.setBounds(new Rectangle(IntConst.X_SPACE_BETWEEN_STATES
-				* (this.stateCount + 1),
-				(this.diagram.getSize().height - IntConst.STATE_SIZE) / 2,
-				IntConst.STATE_SIZE, IntConst.STATE_SIZE));
-		// add the state to the diagramm
-		this.diagram.add(newState);
-		new DragListener(newState);
-		this.stateCount++;
-		return newState;
+		for(AbstractTransition state : instance.getTransitionList()) {
+			this.diagram.add(state);
+		}
 	}
 
 	/**
@@ -147,7 +71,6 @@ public class CEPAutomataView extends ViewPart {
 	 */
 	public void clearView() {
 		this.diagram.removeAll();
-		this.stateCount = 0;
 	}
 
 	/**

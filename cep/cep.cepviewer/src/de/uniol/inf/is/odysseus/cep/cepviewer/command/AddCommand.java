@@ -55,7 +55,6 @@ public class AddCommand extends AbstractHandler implements IHandler {
 				}
 			} catch (WorkbenchException e) {
 				// TODO: Error-Message
-				System.out.println("Perspective could not be shown"); // DELETE:
 				e.printStackTrace();
 			}
 			if(selectedObject instanceof OdysseusNodeView) {
@@ -66,9 +65,6 @@ public class AddCommand extends AbstractHandler implements IHandler {
 							.getContent();
 					// add the instance to the CEPListView
 					view.addStateMaschine(operator);
-					System.out.println("CepOperator found"); // DELETE:
-				} else {
-					System.out.println("No CepOperator found"); // DELETE:
 				}
 			}
 		}

@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.AbstractTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.CEPEventListener;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 import org.eclipse.swt.SWT;
@@ -19,9 +21,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
-
-import de.uniol.inf.is.odysseus.cep.epa.event.CEPEvent;
-import de.uniol.inf.is.odysseus.cep.epa.event.ICEPEventListener;
 
 /**
  * This class defines the list view.
@@ -38,13 +37,17 @@ public class CEPListView extends ViewPart {
 	private TabItem normalListItem;
 	private TabItem queryListItem;
 	private TabItem statusListItem;
-	private Label infoLabel;	
+	private Label infoLabel;
+	private CEPEventListener listener;
+	private ArrayList<CepOperator<?, ?>> operators;
 
 	/**
 	 * This is the constructor.
 	 */
 	public CEPListView() {
 		super();
+		this.operators = new ArrayList<CepOperator<?, ?>>();
+		this.listener = new CEPEventListener(this);
 	}
 
 	/**
@@ -54,7 +57,7 @@ public class CEPListView extends ViewPart {
 	 * @param parent
 	 *            is the widget which contains the list view.
 	 */
-	public void createPartControl(Composite parent) {			
+	public void createPartControl(Composite parent) {
 		// set the layout
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginWidth = layout.marginHeight = 0;
@@ -101,59 +104,20 @@ public class CEPListView extends ViewPart {
 	 *            is an CepOperator which holds all instances of an StateMachine
 	 *            and manages the CEP
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	public void addStateMaschine(CepOperator operator) {
 		// initialize ICEPEventListener
-		operator.getCEPEventAgent().addCEPEventListener(
-				new ICEPEventListener() {
-					public void cepEventOccurred(CEPEvent event) {
-						Object content = event.getContent();
-						switch (event.getType()) {
-						case CEPEvent.ADD_MASCHINE:
-							// if a new Instance should be added
-							if (content instanceof StateMachineInstance) {
-								System.out.println("add instance"); // DELETE: Ausgabe
-								normalList
-										.addToTree((StateMachineInstance) content);
-								queryList
-										.addToTree((StateMachineInstance) content);
-								statusList
-										.addToTree((StateMachineInstance) content);
-							} else {
-								System.out
-										.println("CEPEvent-Content is no StateMachineInstance"); // DELETE: Ausgabe
-							}
-							break;
-						case CEPEvent.CHANGE_STATE:
-							// if an instance should be updated
-							System.out.println("change state"); // DELETE: Ausgabe
-							// TODO: update Lists (maybe with content?)
-							normalList.update();
-							break;
-						case CEPEvent.MACHINE_ABORTED:
-							if (content instanceof LinkedList) {
-								System.out.println("abort"); // DELETE: Ausgabe
-								LinkedList<StateMachineInstance> instances =
-										(LinkedList<StateMachineInstance>) content;
-								for (StateMachineInstance instance : instances) {
-									normalList.changeStatus(instance);
-									queryList.changeStatus(instance);
-									statusList.changeStatus(instance);
-								}
-							}
-							break;
-						default:
-							break;
-						}
-					}
-				});
+		this.operators.add(operator);
+		operator.getCEPEventAgent().addCEPEventListener(this.listener);
 		// add the instances of the operator
-		for(Object instance : operator.getInstances()) {
-			this.normalList.addToTree(instance);
-			this.queryList.addToTree(instance);
-			this.statusList.addToTree(instance);
+		for (Object instance : operator.getInstances()) {
+			CEPInstance newInstance = new CEPInstance(
+					(StateMachineInstance<?>) instance);
+			this.normalList.addToTree(newInstance);
+			this.queryList.addToTree(newInstance);
+			this.statusList.addToTree(newInstance);
 		}
-		setInfoData();
+		this.setInfoData();
 	}
 
 	/**
@@ -161,24 +125,42 @@ public class CEPListView extends ViewPart {
 	 * inherited StateMachineInstances.
 	 */
 	public void setInfoData() {
-		String infotext = StringConst.INFO_ALL + " "
-				+ this.normalList.getItemCount() + " " + StringConst.STATUS_RUNNING
-				+ " " + this.statusList.getNumberOfRunning() + " "
-				+ StringConst.STATUS_FINISHED + " "
-				+ this.statusList.getNumberOfFinished() + " "
-				+ StringConst.STATUS_ABORTED + " "
-				+ this.statusList.getNumberOfAborted();
-		this.infoLabel.setText(infotext);
+		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				String infotext = StringConst.INFO_ALL + " "
+						+ CEPListView.this.normalList.getItemCount() + " "
+						+ StringConst.STATUS_RUNNING + " "
+						+ CEPListView.this.statusList.getNumberOfRunning()
+						+ " " + StringConst.STATUS_FINISHED + " "
+						+ CEPListView.this.statusList.getNumberOfFinished()
+						+ " " + StringConst.STATUS_ABORTED + " "
+						+ CEPListView.this.statusList.getNumberOfAborted();
+				CEPListView.this.infoLabel.setText(infotext);
+			}
+		});
 	}
 
-	// TODO: remove a StateMachine
-	@SuppressWarnings("rawtypes")
-	public void removeMachine(CepOperator operator) {
+	public void refresh() {
+		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				CEPListView.this.normalList.getTree().refresh();
+			}
+		});
+		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				CEPListView.this.queryList.getTree().refresh();
+			}
+		});
+		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				CEPListView.this.statusList.getTree().refresh();
+			}
+		});
 	}
-	
+
 	public AbstractTreeList getActiveList() {
 		TabItem tab = this.tabMenu.getItem(this.tabMenu.getSelectionIndex());
-		if(tab != null && tab.getControl() instanceof AbstractTreeList) {
+		if (tab != null && tab.getControl() instanceof AbstractTreeList) {
 			return (AbstractTreeList) tab.getControl();
 		}
 		return null;
@@ -201,6 +183,14 @@ public class CEPListView extends ViewPart {
 
 	public StatusTreeList getStatusList() {
 		return statusList;
+	}
+
+	public ArrayList<CepOperator<?, ?>> getOperators() {
+		return operators;
+	}
+
+	public CEPEventListener getListener() {
+		return listener;
 	}
 
 }

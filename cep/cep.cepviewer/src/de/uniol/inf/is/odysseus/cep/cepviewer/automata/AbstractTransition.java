@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.model;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
 
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolylineConnection;
@@ -17,6 +17,8 @@ public class AbstractTransition extends PolylineConnection {
 	protected Transition transition;
 	// the label of this transition
 	protected String name;
+	// the next State in the automata
+	protected AbstractState nextState;
 
 	/**
 	 * This is the constructor of this class. IT sets the source and target
@@ -30,8 +32,9 @@ public class AbstractTransition extends PolylineConnection {
 	 *            ins the corresponding transition within a StateMachine
 	 */
 	public AbstractTransition(Anchor sourceAnchor, Anchor targetAnchor,
-			Transition transition) {
+			Transition transition, AbstractState nextState) {
 		this.name = transition.getCondition().getLabel();
+		this.nextState = nextState;
 		this.transition = transition;
 		this.setSourceAnchor(sourceAnchor);
 		this.setTargetAnchor(targetAnchor);
@@ -48,6 +51,14 @@ public class AbstractTransition extends PolylineConnection {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	public Transition getTransition() {
+		return transition;
+	}
+
+	public AbstractState getNextState() {
+		return nextState;
 	}
 
 }
