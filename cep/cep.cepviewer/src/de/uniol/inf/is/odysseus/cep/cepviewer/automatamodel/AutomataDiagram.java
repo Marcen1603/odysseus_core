@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.FreeformLayeredPane;
@@ -22,7 +22,6 @@ public class AutomataDiagram extends FreeformLayeredPane {
 	public AutomataDiagram() {
 		this.setLayoutManager(new FreeformLayout());
 		this.setBorder(new MarginBorder(5));
-		// TODO: background und opaque benötigt?
 		this.setBackgroundColor(ColorConstants.white);
 		this.setOpaque(true);
 	}

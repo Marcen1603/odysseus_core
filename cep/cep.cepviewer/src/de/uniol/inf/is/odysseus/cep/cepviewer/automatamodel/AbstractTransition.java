@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel;
 
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolylineConnection;

@@ -125,7 +125,7 @@ public class CEPListView extends ViewPart {
 	 * inherited StateMachineInstances.
 	 */
 	public void setInfoData() {
-		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				String infotext = StringConst.INFO_ALL + " "
 						+ CEPListView.this.normalList.getItemCount() + " "
@@ -141,18 +141,10 @@ public class CEPListView extends ViewPart {
 	}
 
 	public void refresh() {
-		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				CEPListView.this.normalList.getTree().refresh();
-			}
-		});
-		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
 				CEPListView.this.queryList.getTree().refresh();
-			}
-		});
-		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
 				CEPListView.this.statusList.getTree().refresh();
 			}
 		});

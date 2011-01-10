@@ -21,7 +21,8 @@ public class CEPEventListener implements ICEPEventListener {
 		case CEPEvent.ADD_MASCHINE:
 			// if a new Instance should be added
 			if (content instanceof StateMachineInstance) {
-				CEPInstance instance = new CEPInstance((StateMachineInstance<?>) content);
+				CEPInstance instance = new CEPInstance(
+						(StateMachineInstance<?>) content);
 				this.view.getNormalList().addToTree(instance);
 				this.view.getQueryList().addToTree(instance);
 				this.view.getStatusList().addToTree(instance);
@@ -30,10 +31,6 @@ public class CEPEventListener implements ICEPEventListener {
 		case CEPEvent.CHANGE_STATE:
 			// if a new Instance should be added
 			if (content instanceof StateMachineInstance) {
-				this.view.getNormalList().stateChanged(
-						(StateMachineInstance<?>) content);
-				this.view.getQueryList().stateChanged(
-						(StateMachineInstance<?>) content);
 				this.view.getStatusList().stateChanged(
 						(StateMachineInstance<?>) content);
 			}

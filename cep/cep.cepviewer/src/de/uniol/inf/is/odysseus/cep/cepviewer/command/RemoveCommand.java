@@ -57,7 +57,6 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 							&& view.getStatusList().remove(item)) {
 						view.setInfoData();
 					}
-
 				} else {
 					return null;
 				}

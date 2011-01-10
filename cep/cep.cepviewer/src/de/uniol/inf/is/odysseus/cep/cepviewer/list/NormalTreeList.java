@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Composite;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.AbstractTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.LabelTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.MachineTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPStatus;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
@@ -44,11 +45,11 @@ public class NormalTreeList extends AbstractTreeList {
 
 	public void removeAll() {
 		this.root = new LabelTreeItem(null, "Root");
-		this.tree.setInput(this.root);
+		this.tree.setInput(this.root.getChildren());
 		this.tree.refresh();
 	}
 
-	public boolean remove(AbstractTreeItem toRemove) {
+	public boolean remove(InstanceTreeItem toRemove) {
 		for (AbstractTreeItem instanceItem : this.root.getChildren()) {
 			if (toRemove.getContent().equals(instanceItem.getContent())) {
 				this.root.getChildren().remove(instanceItem);
@@ -58,6 +59,19 @@ public class NormalTreeList extends AbstractTreeList {
 			}
 		}
 		return false;
+	}
+
+	public boolean remove(MachineTreeItem toRemove) {
+		for (Object listItem : this.root.getChildren().toArray()) {
+			if (toRemove.getContent().equals(
+					((InstanceTreeItem) listItem).getContent()
+							.getStateMachine())) {
+				this.root.getChildren().remove(listItem);
+				((InstanceTreeItem)listItem).setParent(null);
+			}
+		}
+		this.tree.refresh();
+		return true;
 	}
 
 	public void stateChanged(StateMachineInstance<?> instance) {

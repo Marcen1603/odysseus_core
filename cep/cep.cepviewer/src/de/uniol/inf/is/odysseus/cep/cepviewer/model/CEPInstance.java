@@ -8,12 +8,12 @@ import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.Activator;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractTransition;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AutomataState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AutomataTransition;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.DragListener;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.TransitionLoop;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractTransition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AutomataState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AutomataTransition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.DragListener;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.TransitionLoop;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
@@ -109,9 +109,11 @@ public class CEPInstance {
 	}
 	
 	public void currentStateChanged() {
+		this.currentState.setActive(false);
 		for(AbstractState astate : this.stateList) {
 			if(astate.getState().equals(this.instance.getCurrentState())) {
 				this.currentState = (AutomataState)astate;
+				this.currentState.setActive(true);
 			}
 		}	
 	}

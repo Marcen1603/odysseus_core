@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractTransition;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AutomataDiagram;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractTransition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AutomataDiagram;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 
 import org.eclipse.draw2d.LightweightSystem;

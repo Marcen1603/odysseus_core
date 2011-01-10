@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -10,8 +11,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractTransition;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractTransition;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
@@ -71,46 +72,53 @@ public class CEPStateView extends ViewPart {
 	 * 
 	 * @param state
 	 *            is a state of an automata
-	 * @param transitions 
+	 * @param transitions
 	 */
-	public void setContent(final AbstractState state, final ArrayList<AbstractTransition> transList) {
+	public void setContent(AbstractState state,
+			ArrayList<AbstractTransition> transList) {
 		this.clear();
-		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+		final String[] newContent = { state.getName(),
+				Boolean.toString(state.getState().isAccepting()),
+				Boolean.toString(state.isActive()) };
+		final String[] transContent = this.createTransList(state, transList);
+		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				CEPStateView.this.table.getItem(0).setText(1, 
-						state.getName());
-				CEPStateView.this.table.getItem(1).setText(1, 
-						Boolean.toString(state.getState()
-								.isAccepting()));
-				CEPStateView.this.table.getItem(2).setText(1, 
-						Boolean.toString(state.isActive()));
-				for(int i = 1; i < state.getState().getTransitions().size(); i++) {
-					new TableItem(CEPStateView.this.table,SWT.NONE);
+				for (int i = 0; i < newContent.length; i++) {
+					table.getItem(i).setText(1, newContent[i]);
 				}
-				int row = 3;
-				for(Transition transition : state.getState().getTransitions()) {
-					for(AbstractTransition trans : transList) {
-						if(transition.equals(trans.getTransition())) {
-							CEPStateView.this.table.getItem(row).setText(1,
-									StringConst.STATE_VIEW_ROW_D_STATE
-											+ trans.getNextState().getName()
-											+ StringConst.STATE_VIEW_ROW_D_CONDITION
-											+ transition.getCondition()
-											+ StringConst.TRANSITION_LABEL_ACTION
-											+ transition.getAction());
-							row++;
-							break;
-						}
-					}
+				table.getItem(2).setText(1, transContent[0]);
+				for (int i = 1; i < transContent.length; i++) {
+					TableItem newItem = new TableItem(CEPStateView.this.table,
+							SWT.NONE);
+					newItem.setText(1, transContent[i]);
 				}
-				for (int i = 0; i < 2; i++) {
-					CEPStateView.this.table.getColumn(i).pack();
+				for (int i = 0; i < table.getColumnCount(); i++) {
+					table.getColumn(i).pack();
 				}
 			}
 		});
 
 	}
-	
+
+	private String[] createTransList(AbstractState state,
+			ArrayList<AbstractTransition> transList) {
+		List<String> output = new ArrayList<String>();
+		for (Transition transition : state.getState().getTransitions()) {
+			for (AbstractTransition trans : transList) {
+				if (transition.equals(trans.getTransition())) {
+					output.add(StringConst.STATE_VIEW_ROW_D_STATE
+							+ trans.getNextState().getName()
+							+ StringConst.STATE_VIEW_ROW_D_CONDITION
+							+ transition.getCondition()
+							+ StringConst.TRANSITION_LABEL_ACTION
+							+ transition.getAction());
+					break;
+				}
+			}
+		}
+		return output.toArray(new String[output.size()]);
+	}
+
 	public void clear() {
 		this.table.removeAll();
 		for (String row : this.stateRowLabels) {

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel;
 
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -60,7 +60,6 @@ public class DragListener extends MouseMotionListener.Stub implements
 				}
 			}
 		}
-		// }
 	}
 
 	/**
@@ -70,6 +69,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 *            is the mouse event which happened
 	 */
 	public void mouseClicked(MouseEvent event) {
+		// do nothing
 	}
 
 	/**
@@ -79,6 +79,7 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 *            is the mouse event which happened
 	 */
 	public void mouseDoubleClicked(MouseEvent event) {
+		// do nothing
 	}
 
 	/**
@@ -99,14 +100,9 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * This method is called if the mouse button is pressed and the mouse is
 	 * dragged.
 	 * 
-	 * This method is not working as it should be: - two states overlapping
-	 * causes an exception (currently avoided by null check) - sometimes state
-	 * starts acting strange (jumping away from the mouse cursor)
-	 * 
 	 * @param event
 	 *            is the mouse event which happened
 	 */
-	// TODO: mouse dragging may result in false behavior
 	public void mouseDragged(MouseEvent event) {
 		// null check to avoid exception
 		if (this.initialPoint != null) {

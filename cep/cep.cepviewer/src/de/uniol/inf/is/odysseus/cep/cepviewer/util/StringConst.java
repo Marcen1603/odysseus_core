@@ -35,7 +35,6 @@ public class StringConst {
 	public static final String QUERY_VIEW_ROW_F = "Time window:";
 	public static final String QUERY_VIEW_ROW_G = "Current state:";
 	public static final String QUERY_VIEW_ROW_H = "Starttime:";
-	
 	public static final String STATE_VIEW_ROW_A = "State ID:";
 	public static final String STATE_VIEW_ROW_B = "Is Accepting:";
 	public static final String STATE_VIEW_ROW_C = "Is Active:";
@@ -43,4 +42,7 @@ public class StringConst {
 	public static final String STATE_VIEW_ROW_D_STATE = "to: ";
 	public static final String STATE_VIEW_ROW_D_CONDITION = " if: ";
 	public static final String TRANSITION_LABEL_ACTION = " / ";
+	public static final String LIST_INSTANCE_LABEL = "? (Machine: ?)";
+	public static final String WILDCARD = "\\?";
+	public static final String SEPERATOR = ",";
 }

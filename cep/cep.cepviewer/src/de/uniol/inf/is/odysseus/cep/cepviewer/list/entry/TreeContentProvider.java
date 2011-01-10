@@ -1,9 +1,8 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.list;
+package de.uniol.inf.is.odysseus.cep.cepviewer.list.entry;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.AbstractTreeItem;
 
 public class TreeContentProvider extends ArrayContentProvider implements
 		ITreeContentProvider {

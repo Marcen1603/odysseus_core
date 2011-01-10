@@ -5,11 +5,13 @@ import org.eclipse.swt.widgets.Composite;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.AbstractTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.LabelTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.MachineTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPStatus;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 
 /**
  * This class defines the status tree list.
@@ -100,58 +102,64 @@ public class StatusTreeList extends AbstractTreeList {
 		return this.itemA.getChildren().size();
 	}
 
-	public boolean remove(AbstractTreeItem item) {
-		CEPInstance cepInstance = (CEPInstance) item.getContent();
-		if (cepInstance.getStatus().equals(CEPStatus.FINISHED)) {
-			System.out.println("Status remove 1f");
-			for (AbstractTreeItem instanceItem : this.itemF.getChildren()) {
-				System.out.println("Status remove 2f");
-				if (cepInstance.getInstance().equals(
-						((InstanceTreeItem) instanceItem).getContent()
-								.getInstance())) {
-					System.out.println("Status remove finished");
-					this.itemF.getChildren().remove(instanceItem);
-					instanceItem.setParent(null);
-					this.tree.refresh();
-					return true;
-				}
-			}
-		} else if (cepInstance.getStatus().equals(CEPStatus.RUNNING)) {
-			System.out.println("Status remove 1r");
-			for (AbstractTreeItem instanceItem : this.itemR.getChildren()) {
-				System.out.println("Status remove 2r");
-				if (cepInstance.getInstance().equals(
-						((InstanceTreeItem) instanceItem).getContent()
-								.getInstance())) {
-					System.out.println("Status remove running");
-					this.itemR.getChildren().remove(instanceItem);
-					instanceItem.setParent(null);
-					this.tree.refresh();
-					return true;
-				}
-			}
-		} else if (cepInstance.getStatus().equals(CEPStatus.ABORTED)) {
-			System.out.println("Status remove 1a");
-			for (AbstractTreeItem instanceItem : this.itemA.getChildren()) {
-				System.out.println("Status remove 2a");
-				if (cepInstance.getInstance().equals(
-						((InstanceTreeItem) instanceItem).getContent()
-								.getInstance())) {
-					System.out.println("Status remove aborted");
-					this.itemA.getChildren().remove(instanceItem);
-					instanceItem.setParent(null);
-					this.tree.refresh();
-					return true;
-				}
+	public boolean remove(InstanceTreeItem toRemove) {
+		if (toRemove.getContent().getStatus().equals(CEPStatus.FINISHED)) {
+			return this.removeInstanceFromList(this.itemF, toRemove
+					.getContent().getInstance());
+		} else if (toRemove.getContent().getStatus().equals(CEPStatus.RUNNING)) {
+			return this.removeInstanceFromList(this.itemR, toRemove
+					.getContent().getInstance());
+		} else if (toRemove.getContent().getStatus().equals(CEPStatus.ABORTED)) {
+			return this.removeInstanceFromList(this.itemA, toRemove
+					.getContent().getInstance());
+		}
+		return false;
+	}
+
+	public boolean remove(MachineTreeItem toRemove) {
+		System.out.println("StatusList: remove Machine R");
+		this.removeMachineFromList(this.itemR, toRemove.getContent());
+		System.out.println("StatusList: remove Machine F");
+		this.removeMachineFromList(this.itemF, toRemove.getContent());
+		System.out.println("StatusList: remove Machine A");
+		this.removeMachineFromList(this.itemA, toRemove.getContent());
+		System.out.println("StatusList: remove Machine refresh");
+		this.tree.refresh();
+		return true;
+	}
+
+	private boolean removeInstanceFromList(LabelTreeItem labelItem,
+			StateMachineInstance<?> instance) {
+		for (Object item : labelItem.getChildren().toArray()) {
+			if (((InstanceTreeItem) item).getContent().getInstance()
+					.equals(instance)) {
+				labelItem.getChildren().remove(item);
+				((InstanceTreeItem) item).setParent(null);
+				return true;
 			}
 		}
 		return false;
 	}
 
+	private void removeMachineFromList(LabelTreeItem labelItem,
+			StateMachine<?> machine) {
+		for (Object item : labelItem.getChildren().toArray()) {
+			if (((InstanceTreeItem) item).getContent().getStateMachine()
+					.equals(machine)) {
+				labelItem.getChildren().remove(item);
+				((InstanceTreeItem)item).setParent(null);
+			}
+		}
+	}
+
 	public void stateChanged(StateMachineInstance<?> instance) {
+		System.out.println("!");
+		try{
 		for (AbstractTreeItem instanceItem : this.itemR.getChildren()) {
+			System.out.println("!");
 			if (instance.equals(((CEPInstance) instanceItem.getContent())
 					.getInstance())) {
+				System.out.println("!");
 				CEPInstance cepInstance = (CEPInstance) instanceItem
 						.getContent();
 				cepInstance.currentStateChanged();
@@ -161,18 +169,19 @@ public class StatusTreeList extends AbstractTreeList {
 				}
 			}
 		}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void statusChanged(StateMachineInstance<?> instance,
 			CEPStatus newStatus) {
-		for (AbstractTreeItem instanceItem : this.itemR.getChildren()) {
+		for (Object item : this.itemR.getChildren().toArray()) {
+			InstanceTreeItem instanceItem = (InstanceTreeItem) item;
 			if (instance.equals(((CEPInstance) instanceItem.getContent())
 					.getInstance())) {
-				System.out.println("---Remove old reference");
-				this.remove(instanceItem);
-				System.out.println("---set new status to reference");
+				this.remove((InstanceTreeItem) instanceItem);
 				((CEPInstance) instanceItem.getContent()).setStatus(newStatus);
-				System.out.println("---add new reference");
 				this.addToTree((CEPInstance) instanceItem.getContent());
 				return;
 			}

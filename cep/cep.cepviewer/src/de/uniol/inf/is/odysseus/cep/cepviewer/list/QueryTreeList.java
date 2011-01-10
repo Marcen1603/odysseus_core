@@ -55,51 +55,50 @@ public class QueryTreeList extends AbstractTreeList {
 
 	public void removeAll() {
 		this.root = new LabelTreeItem(null, "Root");
-		this.tree.setInput(this.root);
+		this.tree.setInput(this.root.getChildren());
 		this.tree.refresh();
 	}
 
-	public boolean remove(AbstractTreeItem toRemove) {
-		if (toRemove instanceof InstanceTreeItem) {
-			InstanceTreeItem removeItem = (InstanceTreeItem) toRemove;
-			for (AbstractTreeItem machineItem : this.root.getChildren()) {
-				System.out.println("Query remove: 1");
-				// durchsuche die Rootelemente
-				if (removeItem.getContent().getStateMachine()
-						.equals(((MachineTreeItem) machineItem).getContent())) {
-					System.out.println("Query remove: 2");
-					// wenn die machinen passen
-					for (AbstractTreeItem instanceItem : machineItem
-							.getChildren()) {
-						System.out.println("Query remove: 3");
-						// durchsuche die instanzen
-						if (((CEPInstance) toRemove.getContent()).getInstance()
-								.equals(((InstanceTreeItem) instanceItem)
-										.getContent().getInstance())) {
-							System.out.println("Query remove: 4");
-							machineItem.getChildren().remove(instanceItem);
-							instanceItem.setParent(null);
-							this.tree.refresh();
-							return true;
-						}
+	public boolean remove(InstanceTreeItem toRemove) {
+		for (AbstractTreeItem machineItem : this.root.getChildren()) {
+			System.out.println("Query remove: 1");
+			// durchsuche die Rootelemente
+			if (toRemove.getContent().getStateMachine()
+					.equals(((MachineTreeItem) machineItem).getContent())) {
+				System.out.println("Query remove: 2");
+				// wenn die machinen passen
+				for (AbstractTreeItem instanceItem : machineItem.getChildren()) {
+					System.out.println("Query remove: 3");
+					// durchsuche die instanzen
+					if (((CEPInstance) toRemove.getContent()).getInstance()
+							.equals(((InstanceTreeItem) instanceItem)
+									.getContent().getInstance())) {
+						System.out.println("Query remove: 4");
+						machineItem.getChildren().remove(instanceItem);
+						instanceItem.setParent(null);
+						this.tree.refresh();
+						return true;
 					}
 				}
 			}
-		} else if (toRemove instanceof MachineTreeItem) {
-			System.out.println("QueryList: remove Machine 1");
-			MachineTreeItem removeItem = (MachineTreeItem) toRemove;
-			for (AbstractTreeItem machineItem : this.root.getChildren()) {
-				System.out.println("QueryList: remove Machine 2");
-				// durchsuche die Rootelemente
-				if (removeItem.getContent().equals(
-						((MachineTreeItem) machineItem).getContent())) {
-					System.out.println("QueryList: remove Machine 2");
-					// wenn die machinen passen
-					this.root.getChildren().remove(machineItem);
-					machineItem.setParent(null);
-					this.tree.refresh();
-					return true;
-				}
+		}
+		return false;
+	}
+	
+	
+	public boolean remove(MachineTreeItem toRemove) {
+		System.out.println("QueryList: remove Machine 1");
+		MachineTreeItem removeItem = (MachineTreeItem) toRemove;
+		for (AbstractTreeItem machineItem : this.root.getChildren()) {
+			System.out.println("QueryList: remove Machine 2");
+			// durchsuche die Rootelemente
+			if (removeItem.getContent().equals(((MachineTreeItem) machineItem).getContent())) {
+				System.out.println("QueryList: remove Machine 3");
+				// wenn die machinen passen
+				this.root.getChildren().remove(machineItem);
+				machineItem.setParent(null);
+				this.tree.refresh();
+				return true;
 			}
 		}
 		return false;

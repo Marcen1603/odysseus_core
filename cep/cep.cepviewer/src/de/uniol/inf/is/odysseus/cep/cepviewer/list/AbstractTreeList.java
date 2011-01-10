@@ -18,6 +18,9 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.CEPQueryView;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.AbstractTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.LabelTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.MachineTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.TreeContentProvider;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.TreeLabelProvider;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPStatus;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
@@ -65,13 +68,7 @@ public abstract class AbstractTreeList extends Composite {
 							CEPAutomataView view = (CEPAutomataView) a
 									.getView(false);
 							view.clearView();
-							System.out.println("bevor showAutomata");
-							try{
 							view.showAutomata(instance);
-							}catch(Exception e) {
-								e.printStackTrace();
-							}
-							System.out.println("nach showAutomata");
 						} else if (a.getId().equals(StringConst.QUERY_VIEW_ID)) {
 							CEPQueryView view = (CEPQueryView) a
 									.getView(false);
@@ -113,7 +110,9 @@ public abstract class AbstractTreeList extends Composite {
 	
 	public abstract void removeAll();
 	
-	public abstract boolean remove(AbstractTreeItem item);
+	public abstract boolean remove(InstanceTreeItem item);
+	
+	public abstract boolean remove(MachineTreeItem item);
 
 	public abstract void stateChanged(StateMachineInstance<?> instance);
 	

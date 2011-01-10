@@ -54,7 +54,6 @@ public class AddCommand extends AbstractHandler implements IHandler {
 					}
 				}
 			} catch (WorkbenchException e) {
-				// TODO: Error-Message
 				e.printStackTrace();
 			}
 			if(selectedObject instanceof OdysseusNodeView) {

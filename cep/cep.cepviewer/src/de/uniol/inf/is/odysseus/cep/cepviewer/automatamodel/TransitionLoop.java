@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel;
 
 import java.util.ArrayList;
 
@@ -71,13 +71,14 @@ public class TransitionLoop extends AbstractTransition {
 								+ IntConst.STATE_SIZE);
 			}
 		}
+		System.out.println(this.state.getBounds() + ": " + this.list.get(1).getLocation());
 	}
 
 	public void repaint() {
-		super.repaint();
-		if (list != null) {
+		if(this.list != null) {
 			this.setLocations();
 		}
+		super.repaint();
 	}
 
 }

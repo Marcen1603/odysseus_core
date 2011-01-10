@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.cepviewer.automata;
+package de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel;
 
 import java.util.Hashtable;
 
@@ -66,5 +66,9 @@ public abstract class AbstractState extends Figure {
 	 */
 	public boolean isActive() {
 		return this.isActive;
+	}
+	
+	public void setActive(boolean status) {
+		this.isActive = status;
 	}
 }

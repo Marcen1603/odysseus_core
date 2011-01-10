@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -8,7 +10,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.automata.AbstractState;
+import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractState;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
@@ -23,7 +25,6 @@ public class CEPQueryView extends ViewPart {
 	// the widget which holds the informations
 	private Table table;
 	private String[] rowLabels;
-	private CEPInstance instance;
 
 	/**
 	 * This is the constructor.
@@ -74,47 +75,33 @@ public class CEPQueryView extends ViewPart {
 	 */
 	public void setContent(CEPInstance instance) {
 		this.clear();
-		this.instance = instance;
-		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+		final String[] newContent = {
+				Integer.toString(instance.getStateMachine().hashCode()),
+				Integer.toString(instance.getInstance().hashCode()),
+				this.createStateLabel(instance.getStateList()),
+				instance.getStateList().get(0).getName(),
+				this.createStateLabel(instance.getFinalStateList()),
+				Long.toString(instance.getStateMachine().getWindowSize()),
+				instance.getCurrentState().getName(),
+				Long.toString(instance.getStartTimestamp()) };
+		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				String string = new String();
-				CEPQueryView.this.table.getItem(0).setText(
-						1,
-						Integer.toString(CEPQueryView.this.instance
-								.getStateMachine().hashCode()));
-				CEPQueryView.this.table.getItem(1)
-						.setText(
-								1,
-								Integer.toString(CEPQueryView.this.instance
-										.hashCode()));
-				for (AbstractState state : CEPQueryView.this.instance
-						.getStateList()) {
-					string += state.getName() + " ";
+				for (int i = 0; i < newContent.length; i++) {
+					table.getItem(i).setText(1, newContent[i]);
 				}
-				CEPQueryView.this.table.getItem(2).setText(1, string);
-				CEPQueryView.this.table.getItem(3).setText(1,
-						CEPQueryView.this.instance.getCurrentState().getName());
-				string = new String();
-				for (AbstractState state : CEPQueryView.this.instance
-						.getFinalStateList()) {
-					string += state.getName() + " ";
-				}
-				CEPQueryView.this.table.getItem(4).setText(1, string);
-				CEPQueryView.this.table.getItem(5).setText(
-						1,
-						Long.toString(CEPQueryView.this.instance
-								.getStateMachine().getWindowSize()));
-				CEPQueryView.this.table.getItem(6).setText(1,
-						CEPQueryView.this.instance.getCurrentState().getName());
-				CEPQueryView.this.table.getItem(7).setText(
-						1,
-						Long.toString(CEPQueryView.this.instance
-								.getStartTimestamp()));
-				for (int i = 0; i < 2; i++) {
-					CEPQueryView.this.table.getColumn(i).pack();
+				for (int i = 0; i < table.getColumnCount(); i++) {
+					table.getColumn(i).pack();
 				}
 			}
 		});
+	}
+
+	private String createStateLabel(ArrayList<AbstractState> stateList) {
+		String output = new String();
+		for (AbstractState state : stateList) {
+			output += state.getName() + StringConst.SEPERATOR;
+		}
+		return output.substring(0, output.length() - 1);
 	}
 
 	public void clear() {
