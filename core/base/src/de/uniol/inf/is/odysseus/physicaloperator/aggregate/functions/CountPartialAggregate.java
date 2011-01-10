@@ -32,6 +32,6 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
 	
 	@Override
 	public CountPartialAggregate<T> clone(){
-		return new CountPartialAggregate(this);
+		return new CountPartialAggregate<T>(this);
 	}
 }
