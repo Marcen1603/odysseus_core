@@ -104,7 +104,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		if (attribute == null) {
 			SDFDatatype datatype = this.attributeResolver.getAttribute(
 					attributeName).getDatatype();
-			if (!isNumerical(datatype) && function.getName().equalsIgnoreCase("COUNT")) {
+			if (!isNumerical(datatype) && !function.getName().equalsIgnoreCase("COUNT")) {
 				throw new IllegalArgumentException("function '"
 						+ function.toString()
 						+ "' can't be used on non scalar types");
