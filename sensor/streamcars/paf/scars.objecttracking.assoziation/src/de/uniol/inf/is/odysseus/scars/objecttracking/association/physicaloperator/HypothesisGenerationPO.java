@@ -127,13 +127,13 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		association[0] = timePathFromScannedData.toTupleIndexPath(scannedObject).getTupleObject();
 
 		// get scanned objects
-		association[1] = carsFromscannedData.toTupleIndexPath(scannedObject).getTupleObject();
+		association[1] = new MVRelationalTuple<M>((MVRelationalTuple<M>) carsFromscannedData.toTupleIndexPath(scannedObject).getTupleObject());
 
 		// get predicted objects
 		if(predictedObject == null) {
 			association[2] = new MVRelationalTuple<M>(0);
 		} else {
-			association[2] =  carsFromPredictedData.toTupleIndexPath(predictedObject).getTupleObject();
+			association[2] =  new MVRelationalTuple<M>((MVRelationalTuple<M>) carsFromPredictedData.toTupleIndexPath(predictedObject).getTupleObject());
 		}
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
