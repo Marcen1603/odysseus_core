@@ -31,6 +31,7 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 		this.currentObjectTrackingLatency = data.currentObjectTrackingLatency;
 		this.currentStartObjTrackingTime = data.currentStartObjTrackingTime;
 		this.operatorLatencies = new HashMap<String, Long>((HashMap<String, Long>) data.operatorLatencies.clone());
+		this.restrictedList = data.restrictedList;
 	}
 
 	/* ############### CONNECTIONCONTAINER ################ */
@@ -174,7 +175,12 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 
 	@Override
 	public String[] getRestrictedList() {
-		return this.getRestrictedList();
+		return restrictedList;
+	}
+	
+	@Override
+	public void setRestrictedList(String[] restrictedList) {
+		this.restrictedList = restrictedList;
 	}
 
 	@Override

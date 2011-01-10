@@ -93,7 +93,7 @@ public class CovarianceHelper {
 		
 		double[][] resultMatrix = new double[attributePositions.size()][attributePositions.size()];
 		for (int i = 0; i < attributePositions.size(); i++) {
-			for (int j = 0; j <attributePositions.size(); j++) {
+			for (int j = 0; j < attributePositions.size(); j++) {
 				resultMatrix[i][j] = initialCovarianceMatrix[attributePositions.get(i)][attributePositions.get(j)];
 			}
 		}

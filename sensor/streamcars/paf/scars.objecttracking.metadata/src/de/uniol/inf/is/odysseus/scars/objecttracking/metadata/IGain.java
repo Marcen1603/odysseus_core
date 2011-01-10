@@ -11,6 +11,8 @@ public interface IGain extends IMetaAttribute, IClone{
 	public void setRestrictedGain(double[][] newGain, String[] restrictedList);
 	
 	public String[] getRestrictedList();
+	
+	public void setRestrictedList(String[] restrictedList);
 
 	public double getRestrictedGain(int index);
 	
