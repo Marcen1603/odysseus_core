@@ -9,6 +9,7 @@ public interface ILogicalPlanEditorConstants {
 	public static final String PARAMETERS_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.editor.ParameterView";
 	
 	public static final String PARAMETER_EDITOR_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor";
+	public static final String OPERATOR_GROUP_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.editor.OperatorGroup";
 	
 	public static final String LOGICAL_PLAN_FILE_EXTENSION = "pln";
 }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.ILogicalPlanEditorConstants;
+import de.uniol.inf.is.odysseus.rcp.editor.OperatorGroupRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 
@@ -59,8 +60,8 @@ public class Activator extends AbstractUIPlugin {
 		return executor;
 	}
 	
-	// Löst die Extensions für die Parametereditoren auf
 	private void resolveExtensions() {
+		// Löst die Extensions für die Parametereditoren auf
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ILogicalPlanEditorConstants.PARAMETER_EDITOR_EXTENSION_ID);
 		
 		// operatoren
@@ -80,6 +81,23 @@ public class Activator extends AbstractUIPlugin {
 				}
 			} catch( CoreException ex ) {
 				logger.error(ex.getMessage(), ex);
+			}
+		}
+		
+		// Extensions für Operatorgruppen
+		elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ILogicalPlanEditorConstants.OPERATOR_GROUP_EXTENSION_ID);
+		
+		// Gruppen
+		for( int i = 0; i < elements.length; i++ ) {
+			IConfigurationElement element = elements[i];
+			String groupName = element.getAttribute("label");
+			OperatorGroupRegistry.getInstance().registerOperatorGroup(groupName);
+			
+			// Operatoren
+			for( int j = 0; j < element.getChildren().length; j++ ) {
+				IConfigurationElement operatorElement = element.getChildren()[j];
+				String opName = operatorElement.getAttribute("name");
+				OperatorGroupRegistry.getInstance().registerOperator(opName, groupName);
 			}
 		}
 	}

@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor" name="Parameter Editor" schema="schema/de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor.exsd"/>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.OperatorGroup" name="Operator Group" schema="schema/de.uniol.inf.is.odysseus.rcp.editor.OperatorGroup.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -85,6 +86,39 @@
             </command>
          </toolbar>
       </menuContribution>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.editor.OperatorGroup">
+      <group
+            label="Source">
+         <operator
+               name="ACCESS">
+         </operator>
+         <operator
+               name="BATCHPRODUCER">
+         </operator>
+         <operator
+               name="FILEACCESS">
+         </operator>
+         <operator
+               name="TESTPRODUCER">
+         </operator>
+      </group>
+      <group
+            label="Join">
+         <operator
+               name="JOIN">
+         </operator>
+         <operator
+               name="PRIORITYIDJOIN">
+         </operator>
+      </group>
+      <group
+            label="Sink">
+         <operator
+               name="FILESINK">
+         </operator>
+      </group>
    </extension>
 
 </plugin>

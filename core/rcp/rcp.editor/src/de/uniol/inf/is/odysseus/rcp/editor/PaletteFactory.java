@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.rcp.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
@@ -30,14 +32,23 @@ public class PaletteFactory {
 	}
 
 	private static void createDrawers(PaletteRoot root) {
+		
+		// Drawer
+		Map<String, PaletteDrawer> drawers = new HashMap<String, PaletteDrawer>();
+		
+		// Operatoren
 		List<String> builderNames = new ArrayList<String>(OperatorBuilderFactory.getOperatorBuilderNames());
-
+		ImageDescriptor imageDesc = Activator.getImageDescriptor("icons/operatorIcon.png");
 		Collections.sort(builderNames);
 		
-		ImageDescriptor imageDesc = Activator.getImageDescriptor("icons/operatorIcon.png");
-		PaletteDrawer drawer = new PaletteDrawer("Operators");
+		for( String builderName : builderNames ) {
+			String grp = OperatorGroupRegistry.getInstance().getOperatorGroup(builderName);
+			PaletteDrawer drawer = drawers.get(grp);
+			if( drawer == null ) {
+				drawer = new PaletteDrawer(grp);
+				drawers.put(grp, drawer);
+			}
 
-		for (String builderName : builderNames) {
 			CombinedTemplateCreationEntry component = new CombinedTemplateCreationEntry(
 					builderName, 
 					builderName,
@@ -47,8 +58,12 @@ public class PaletteFactory {
 					imageDesc);
 			drawer.add(component);
 		}
-
-		root.add(drawer);
+		
+		// drawer sortiert einfügen
+		List<String> groups = new ArrayList<String>(drawers.keySet());
+		Collections.sort(groups);
+		for( String grp : groups )
+			root.add(drawers.get(grp));
 	}
 
 	/** Create the "Tools" group. */
