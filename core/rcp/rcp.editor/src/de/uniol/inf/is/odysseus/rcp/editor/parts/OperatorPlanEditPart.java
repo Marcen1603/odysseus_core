@@ -85,7 +85,8 @@ public class OperatorPlanEditPart extends AbstractGraphicalEditPart implements E
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(OperatorPlan.PROPERTY_OPERATORS))
+		if (evt.getPropertyName().equals(OperatorPlan.PROPERTY_OPERATOR_ADD) || 
+			evt.getPropertyName().equals(OperatorPlan.PROPERTY_OPERATOR_REMOVE))
 			refreshChildren();
 		else
 			refresh();

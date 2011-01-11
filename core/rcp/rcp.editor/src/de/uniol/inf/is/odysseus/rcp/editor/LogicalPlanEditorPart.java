@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.editor;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,6 +34,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
@@ -45,10 +49,11 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
 
-public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener {
+public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener, PropertyChangeListener {
 
 	private OperatorPlan plan;
 	private static PaletteRoot paletteModel = null;
+	private boolean isDirty = false;
 
 	public LogicalPlanEditorPart() {
 		super();
@@ -71,6 +76,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 				FileEditorInput fi = (FileEditorInput) getEditorInput();
 				IOperatorPlanExporter exporter = new OperatorPlanExporter(fi.getFile());
 				exporter.save(plan);
+				setDirty(false);
 				return Status.OK_STATUS;
 			}
 			
@@ -89,7 +95,10 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 		plan = importer.load();
 
 		fullBuild();
+		
 		setPartName(fi.getFile().getName());
+		setDirty(false);
+		plan.addPropertyChangeListener(this);
 	}
 
 	private void fullBuild() {
@@ -103,6 +112,16 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	@Override
 	public void doSaveAs() {
 		// TODO: Implement
+	}
+	
+	@Override
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+	
+	@Override
+	public boolean isSaveOnCloseNeeded() {
+		return true;
 	}
 
 	public OperatorPlan getOperatorPlan() {
@@ -142,7 +161,21 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	
 	@Override
 	public boolean isDirty() {
-		return true;
+		return isDirty;
+	}
+	
+	protected void setDirty( boolean dirty ) {
+		if( dirty != isDirty ) {
+			isDirty = dirty;
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					firePropertyChange(IEditorPart.PROP_DIRTY);
+				}
+				
+			});
+		}
 	}
 
 	private TransferDropTargetListener createTransferDropTargetListener() {
@@ -192,29 +225,30 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	@Override
 	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 		fullBuild();
-//		updateContents();
 	}
 
 	@Override
 	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 		fullBuild();
-//		updateContents();
 	}
-	
-//	private void updateContents() {
-//		// Update Viewer
-//		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-//
-//			@SuppressWarnings("unchecked")
-//			@Override
-//			public void run() {
-//				OperatorPlanEditPart part = (OperatorPlanEditPart) getGraphicalViewer().getContents();
-//				List<OperatorEditPart> parts = (List<OperatorEditPart>) part.getChildren();
-//				for( OperatorEditPart p: parts ) 
-//					p.refresh();
-//			}
-//
-//		});
-//	}
 
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if( OperatorPlan.PROPERTY_OPERATOR_ADD.equals(event.getPropertyName())) {
+			((Operator)event.getNewValue()).addPropertyChangeListener(this);
+			setDirty(true);
+			
+		} else if( OperatorPlan.PROPERTY_OPERATOR_REMOVE.equals(event.getPropertyName())) {
+			((Operator)event.getNewValue()).removePropertyChangeListener(this);
+			setDirty(true);
+			
+		} else if( OperatorPlan.PROPERTY_OPERATOR_CHANGE.equals(event.getPropertyName()) ) {
+			PropertyChangeEvent evt = (PropertyChangeEvent)event.getNewValue();
+			
+			// Bauen ändert nicht das Model
+			if( !evt.getPropertyName().equals(Operator.PROPERTY_BUILD))
+				setDirty(true);
+		}
+		
+	}
 }
