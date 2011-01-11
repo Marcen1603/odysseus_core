@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry exported="true" kind="lib" path="org.eclipse.gef_3.5.1.v20090910-2020.jar"/>
+	<classpathentry exported="true" kind="lib" path="org.eclipse.gef_3.5.1.v20090910-2020.jar" sourcepath="C:/Program Files/eclipse/plugins/org.eclipse.gef.source_3.6.1.v20100712-1224.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
