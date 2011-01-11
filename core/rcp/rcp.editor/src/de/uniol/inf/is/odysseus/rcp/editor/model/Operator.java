@@ -16,6 +16,7 @@ public class Operator implements Serializable {
 	
 	public static final String PROPERTY_X = "x";
 	public static final String PROPERTY_Y = "y";
+	public static final String PROPERTY_BUILD = "build";
 	public static final String PROPERTY_CONNECTION_AS_SOURCE_ADDED = "connection_src_add";
 	public static final String PROPERTY_CONNECTION_AS_TARGET_ADDED = "connection_tgt_add";
 	public static final String PROPERTY_CONNECTION_AS_SOURCE_REMOVED = "connection_src_remove";
@@ -63,10 +64,12 @@ public class Operator implements Serializable {
 	public void addConnection( OperatorConnection connection ) {
 		if( connection.getSource() == this ) {
 			connectionsAsSource.add(connection);
+			build();
 			listeners.firePropertyChange(PROPERTY_CONNECTION_AS_SOURCE_ADDED, null, connectionsAsSource);
 		} else if( connection.getTarget() == this ) {
 			connectionsAsTarget.add(connection);
 			listeners.firePropertyChange(PROPERTY_CONNECTION_AS_TARGET_ADDED, null, connectionsAsTarget);
+			build();
 		}
 	}
 	
@@ -74,9 +77,11 @@ public class Operator implements Serializable {
 		if( connection.getSource() == this ) {
 			connectionsAsSource.remove(connection);
 			listeners.firePropertyChange(PROPERTY_CONNECTION_AS_SOURCE_REMOVED, null, connectionsAsSource);
+			build();
 		} else if( connection.getTarget() == this ) {
 			connectionsAsTarget.remove(connection);
 			listeners.firePropertyChange(PROPERTY_CONNECTION_AS_TARGET_REMOVED, null, connectionsAsTarget);
+			build();
 		}
 	}
 	
@@ -145,6 +150,7 @@ public class Operator implements Serializable {
 						connection.getTarget().build();
 					}
 					
+					listeners.firePropertyChange(PROPERTY_BUILD, null, null);
 					onBuild = false;
 					return;
 				} else {
@@ -157,6 +163,7 @@ public class Operator implements Serializable {
 			logicalOperator = null;
 		}
 		onBuild = false;
+		listeners.firePropertyChange(PROPERTY_BUILD, null, null);
 	}
 	
 }

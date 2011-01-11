@@ -23,6 +23,7 @@ import org.eclipse.gef.editpolicies.GraphicalNodeEditPolicy;
 import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.GroupRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
+import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.rcp.editor.anchor.OperatorAnchor;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
@@ -121,8 +122,6 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		Operator model = (Operator) getModel();
 		figure.setText(model.getOperatorBuilderName());
 		
-//		model.build();
-		
 		figure.unmarkError();
 		figure.setToolTip( null );
 		if( !model.hasLogicalOperator() ) {
@@ -152,11 +151,19 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		return sb.toString();
 	}
 
+	// Kann auﬂerhalb des UI-Threads aufgerufen werden
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		refresh();
-		refreshSourceConnections();
-		refreshTargetConnections();
+		PlatformUI.getWorkbench().getDisplay().asyncExec( new Runnable() {
+
+			@Override
+			public void run() {
+				refresh();
+				refreshSourceConnections();
+				refreshTargetConnections();
+			}
+			
+		});
 	}
 
 	@Override

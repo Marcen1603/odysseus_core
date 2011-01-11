@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.editor;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,7 +31,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
@@ -47,8 +44,6 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
-import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
-import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorPlanEditPart;
 
 public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener {
 
@@ -197,29 +192,29 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	@Override
 	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 		fullBuild();
-		updateContents();
+//		updateContents();
 	}
 
 	@Override
 	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 		fullBuild();
-		updateContents();
+//		updateContents();
 	}
 	
-	private void updateContents() {
-		// Update Viewer
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void run() {
-				OperatorPlanEditPart part = (OperatorPlanEditPart) getGraphicalViewer().getContents();
-				List<OperatorEditPart> parts = (List<OperatorEditPart>) part.getChildren();
-				for( OperatorEditPart p: parts ) 
-					p.refresh();
-			}
-
-		});
-	}
+//	private void updateContents() {
+//		// Update Viewer
+//		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+//
+//			@SuppressWarnings("unchecked")
+//			@Override
+//			public void run() {
+//				OperatorPlanEditPart part = (OperatorPlanEditPart) getGraphicalViewer().getContents();
+//				List<OperatorEditPart> parts = (List<OperatorEditPart>) part.getChildren();
+//				for( OperatorEditPart p: parts ) 
+//					p.refresh();
+//			}
+//
+//		});
+//	}
 
 }
