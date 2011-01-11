@@ -14,7 +14,6 @@ Import-Package: de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselecti
  net.jxta,
  net.jxta.access,
  net.jxta.codat,
- net.jxta.content,
  net.jxta.credential,
  net.jxta.discovery,
  net.jxta.document,
