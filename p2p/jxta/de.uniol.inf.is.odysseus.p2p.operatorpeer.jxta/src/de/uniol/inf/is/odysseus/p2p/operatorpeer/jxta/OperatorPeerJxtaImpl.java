@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -279,23 +280,25 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	protected void initSources(AbstractOperatorPeer aPeer) {
 	    
-		getSources().put("nexmark:person2", "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440");
-		getSources().put("nexmark:auction2", "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441");
-		getSources().put("nexmark:bid2", "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442");
+		return;
 		
-		for (String s : getSources().values()) {
-			try {		
-				// TODO: User einfuegen, der diese Query ausführt
-				User user = UserManagement.getInstance().getSuperUser();
-
-				aPeer.getExecutor().addQuery(s, "CQL", user, new ParameterPriority(2) );
-				
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+//		getSources().put("nexmark:person2", "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440");
+//		getSources().put("nexmark:auction2", "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441");
+//		getSources().put("nexmark:bid2", "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442");
+//
+//		final List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor().getQueryBuildConfiguration("Standard");
+//
+//		for (String s : getSources().values()) {
+//			try {		
+//				// TODO: User einfuegen, der diese Query ausführt
+//				User user = UserManagement.getInstance().getSuperUser();
+//				aPeer.getExecutor().addQuery(s, "CQL", user, cfg.toArray(new IQueryBuildSetting[0])  );		
+//			} catch (PlanManagementException e) {
+//				e.printStackTrace();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 
 	}
 
