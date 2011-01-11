@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-public class PredicateItem {
+import java.io.Serializable;
+
+public class PredicateItem implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private String predicateType;
 	
 	private String predicate;
