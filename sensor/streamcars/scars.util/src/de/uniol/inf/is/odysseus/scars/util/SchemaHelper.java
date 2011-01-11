@@ -48,13 +48,13 @@ public class SchemaHelper {
 		String toFind = "";
 		
 		if( fullAttributeName.contains(SOURCE_SEPARATOR)) {
-			toFind = fullAttributeName;
-//			String[] parts = fullAttributeName.split(SOURCE_SPLIT_REGEX);
+//			toFind = fullAttributeName;
+			String[] parts = fullAttributeName.split("\\" + SOURCE_SEPARATOR);
 //			if( !parts[0].equals(sourceName) ) // andere Quelle
 //				throw new IllegalArgumentException("sourceName " + parts[0] + " is not euqal to sourcename" + sourceName + " specified in schema");
-//			toFind = parts[1];
+			toFind = parts[1];
 		} else {
-			toFind = sourceName + SOURCE_SEPARATOR + fullAttributeName;
+			toFind = fullAttributeName;
 		}
 		SchemaIndexPath p = paths.get(toFind);
 		if( p != null ) 
@@ -101,7 +101,7 @@ public class SchemaHelper {
 			if( actualAttributeName != null ) 
 				fullAttributeName = actualAttributeName + ATTRIBUTE_SEPARATOR + attribute.getAttributeName();
 			else
-				fullAttributeName = attribute.getSourceName() + SOURCE_SEPARATOR + attribute.getAttributeName();
+				fullAttributeName = attribute.getAttributeName();
 			
 			// timestamp
 			if( attribute.getDatatype().getURIWithoutQualName().equals("StartTimestamp")) {
