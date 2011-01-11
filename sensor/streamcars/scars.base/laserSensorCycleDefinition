@@ -20,7 +20,7 @@
 #DEFINE assoSourceName2 selectionSrc2
 #DEFINE assoSource2     ASSOCIATION-SRC(selectionSrc2, 0)
 #DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
-#DEFINE assoParam1      threshold := 5; operator := LESSEQUAL;
+#DEFINE assoParam1      threshold := 0.5; operator := LESSEQUAL;
 #DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
 #DEFINE assoParam2      distanceFunction := EUCLIDEAN; gatingMode := true;
 
@@ -35,8 +35,8 @@
 #CYCLICQUERY
 LOGICAL PLAN :
 ASSOCIATION-SEL(
-    ASSOCIATION-EVAL (
-        ASSOCIATION-EVAL (
+    ASSOCIATION-EXP-EVAL (
+        ASSOCIATION-EXP-EVAL (
             ASSOCIATION-GEN (     
                  BUFFER( 
                     ${sensorSource},
@@ -73,15 +73,28 @@ ASSOCIATION-SEL(
                  ${sensorListName},
                  ${brokerListName1}
             ),
-            ${assoAlgo1},
-            ${assoParam1},
             ${assoScanned},
-            ${assoPedicted}
+            ${assoPedicted},
+            'eif(
+              AbsValue(
+                MatrixEntry(
+                  MatrixMult(
+                    MatrixMult(
+                      MatrixTrans(
+                        MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz;${assoScanned}:car:heading;${assoScanned}:car:velocity], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz;${assoPedicted}:car:heading;${assoPedicted}:car:velocity])
+                      ),
+                    MatrixAdd(${assoScanned}:car#COVARIANCE, ${assoPedicted}:car#COVARIANCE)
+                    ),
+                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz;${assoScanned}:car:heading;${assoScanned}:car:velocity], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz;${assoPedicted}:car:heading;${assoPedicted}:car:velocity])
+                  ),
+                0,
+              0)
+              )
+            <5, 100, 0)'
         ),
-        ${assoAlgo2},
-        ${assoParam2},
         ${assoScanned},
-        ${assoPedicted}
+        ${assoPedicted},
+        'SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz) + SquareValue(${assoScanned}:car:heading - ${assoPedicted}:car:heading) + SquareValue(${assoScanned}:car:velocity - ${assoPedicted}:car:velocity))'
     ),
     ${assoSourceName1},
     ${assoScanned},
