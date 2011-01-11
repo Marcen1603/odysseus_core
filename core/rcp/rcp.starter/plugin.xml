@@ -42,11 +42,53 @@
                   name="FileSeparator1"
                   visible="true">
             </separator>
+            <command
+                  commandId="org.eclipse.ui.file.close"
+                  id="close"
+                  label="Close"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.closeAll"
+                  label="Close All"
+                  style="push">
+            </command>
+            <separator
+                  name="FileSeparator2"
+                  visible="true">
+            </separator>
+            <separator
+                  name="FileSeparator4">
+            </separator>
             <separator
                   name="additions">
             </separator>
+            <command
+                  commandId="org.eclipse.ui.file.save"
+                  id="save"
+                  label="Save"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.saveAs"
+                  id="saveAs"
+                  label="Save As..."
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.saveAll"
+                  id="saveAll"
+                  label="Save All"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.revert"
+                  id="revert"
+                  label="Revert"
+                  style="push">
+            </command>
             <separator
-                  name="FileSeparator2"
+                  name="FileSeparator3"
                   visible="true">
             </separator>
             <command
