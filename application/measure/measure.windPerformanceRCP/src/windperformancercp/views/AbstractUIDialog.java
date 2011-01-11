@@ -74,6 +74,9 @@ public class AbstractUIDialog extends Dialog implements IUserInputDialog{
 		System.out.println(getInstance().toString()+": Cancel gedrueckt!");
 		close();
 	}
+	
+	@Override
+	public void update(Object c){}
 
 
 }

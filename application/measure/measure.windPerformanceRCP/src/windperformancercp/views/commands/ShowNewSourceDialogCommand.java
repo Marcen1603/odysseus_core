@@ -12,8 +12,6 @@ import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
-import windperformancercp.model.Attribute;
-import windperformancercp.model.SourceTable;
 import windperformancercp.views.AbstractUIDialog;
 import windperformancercp.views.SourceDialog;
 
@@ -35,7 +33,9 @@ public class ShowNewSourceDialogCommand extends AbstractHandler implements
     				if(idevent.getEventType().equals(InputDialogEventType.NewSourceItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
     					System.out.println(this.toString()+": Received new source item event");
     					InputDialogEvent newItemevent = (InputDialogEvent) idevent;
-    					String[] ideValue = newItemevent.getValue();
+    					
+    					/*String[] ideValue = newItemevent.getValue();
+    					
     					if(ideValue[5].equals("0")){
     						System.out.println("MetMast");
     						//ISource source = new MetMast();
@@ -48,7 +48,7 @@ public class ShowNewSourceDialogCommand extends AbstractHandler implements
     					for(String str : ideValue){
     						System.out.print(str+"#");
     					}
-    					System.out.println("!");
+    					System.out.println("!");*/
     					//ISource source = new AbstractSource();
     					//Attribute att = new Attribute((String)newAttevent.getValue()[0],newAttevent.getValue()[1]);
     					//model.addAttribute(att);

@@ -1,14 +1,23 @@
 package windperformancercp.views;
 
 
+import java.util.ArrayList;
+
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -21,11 +30,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
-import windperformancercp.event.InputDialogEvent;
-import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.AttributeTable;
+import windperformancercp.model.sources.Attribute;
 
 
 
@@ -52,6 +64,8 @@ public class SourceDialog extends AbstractUIDialog {
 	private Button btnRActive;
 	private Button btnRPassive;
 	private AttributeTable attributeComp;
+	private TableViewer attributeViewer;
+	private ToolBar tb_attList;
 	//private ToolBar tb_attList;
 	
 	public static final int PC_ACTIVE = 0;
@@ -102,9 +116,14 @@ public class SourceDialog extends AbstractUIDialog {
 				nameLabel.setText(NAMELABEL);
 				nameLabel.setToolTipText("name for human readable identification");
 				nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
-				nameInputField.addFocusListener(new FocusListener(){
+				/*nameInputField.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent fe){}
-					public void focusLost(FocusEvent fe){presenter.nameEntered();}
+					public void focusLost(FocusEvent fe){}
+				});*/
+				nameInputField.addModifyListener(new ModifyListener(){
+					public void modifyText(ModifyEvent e){
+						presenter.nameEntered();
+					}
 				});
 			}
 
@@ -159,14 +178,50 @@ public class SourceDialog extends AbstractUIDialog {
 
 		
 		//## upper right composite: attribute table
+			Composite attributeComp = new Composite(upperComposite, SWT.NONE);
 			{
-				attributeComp = new AttributeTable(upperComposite, SWT.RIGHT);
+				//attributeComp = new AttributeTable(upperComposite, SWT.RIGHT);
+				attributeComp.setLayout(new GridLayout(2,false));
+				
+				attributeViewer = new TableViewer(attributeComp);
+				attributeViewer.setContentProvider(new AttributeContentProvider());
+				attributeViewer.setLabelProvider(new AttributeLabelProvider());
+				
+				Table attributeTable = attributeViewer.getTable();
+				{
+					attributeTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+				
+					String[] titles ={"Attribute","Type"};
+					for (int i=0;i<titles.length;i++){
+						TableColumn col = new TableColumn(attributeTable,SWT.LEFT);
+						col.setText(titles[i]);
+						col.pack();
+					}
+					attributeTable.setHeaderVisible(true);
+					attributeTable.setLinesVisible(true);
+				}
+
+				tb_attList = new ToolBar(attributeComp,SWT.BORDER|SWT.VERTICAL);
+				{
+					String[] ti_labels = {"Add","Up","Down","Delete"};
+					for(int i =0;i<ti_labels.length;i++){
+						ToolItem ti = new ToolItem(tb_attList,SWT.PUSH);
+						ti.setText(ti_labels[i]);
+						ti.addSelectionListener(new SelectionAdapter() {
+							public void widgetSelected(SelectionEvent e) { presenter.attBtnClick();}
+						});
+					}
+					GridData gd_tb_attL = new GridData(60,SWT.DEFAULT);
+					gd_tb_attL.horizontalAlignment = GridData.BEGINNING;
+					tb_attList.setLayoutData(gd_tb_attL);
+				}
+
+				
 			}
 		}
 		
 		//### lower sash form with WT and MetMast Information
 		{
-		//SashForm lowerSash = new SashForm(area, SWT.FILL);
 			Composite lowerSash = new Composite(area, SWT.FILL);
 			lowerSash.setLayout(new GridLayout(4,false));
 
@@ -298,8 +353,8 @@ public class SourceDialog extends AbstractUIDialog {
 		return hostInputField.getText();
 	}
 	
-	public void setPortValue(int newPort){
-		portInputField.setText(Integer.toString(newPort));
+	public void setPortValue(String newPort){
+		portInputField.setText(newPort);
 	}
 	
 	//TODO: zusaetzlicher getter fuer int?
@@ -307,11 +362,12 @@ public class SourceDialog extends AbstractUIDialog {
 		return portInputField.getText();
 	}
 	
-	public void setHubHeightValue(int newHubHeight){
-		hhInputField.setText(Integer.toString(newHubHeight));
+	public void setHubHeightValue(String newHubHeight){
+		hhInputField.setText(newHubHeight);
 	}
 	
 	public String getHubHeightValue(){
+		if(hhInputField.getText().equals("")) return "-1";
 		return hhInputField.getText();
 	}
 	
@@ -384,6 +440,7 @@ public class SourceDialog extends AbstractUIDialog {
 	}
 	
 	
+	
 	@Override
 	public void resetView(){
 		nameInputField.setText("");
@@ -408,60 +465,74 @@ public class SourceDialog extends AbstractUIDialog {
 		presenter.cancelPressed();
 	}
 	
-	public class SourceDialogPresenter{
-		SourceDialog dialog;
-		
-		public SourceDialogPresenter(SourceDialog caller){
-			this.dialog = caller;
-		}
-		
-		public void nameEntered(){
-		}
-		
-		public void streamIdEntered(){
-		}
-		
-		public void hostEntered(){
-		}
-		
-		public void portEntered(){
-		}
-		
-		public void attAddClick(){
-		}
-		
-		public void attUpClick(){
-		}
-		
-		public void attDownClick(){
-		}
-		
-		public void attDelClick(){
-		}
-		
-		public void srcTypeClick(){
-		}
-		
-		public void hubheightEntered(){
-		}
-		
-		public void powerControlTypeClick(){
-		}
-		
-		public void okPressed(){
-			//TODO: abfragemethode, die auf korrekte ausfuellung prueft
-			if(! dialog.getNameValue().equals("")){
-				fire(new InputDialogEvent(dialog, InputDialogEventType.NewSourceItem, dialog.getValues()));
-			}
-			dialog.close();
-		}
-		
-		public void cancelPressed(){
-			dialog.close();
-		}
-		
 	
+	class AttributeLabelProvider implements ITableLabelProvider{
+
+		@Override
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			//TODO
+			Attribute attr = (Attribute) element;
+			switch(columnIndex){
+			case 0: return attr.getName();
+			case 1:	return attr.getAttType().toString();
+			}
+			return null;
+		}
+		
 	}
 
+	class AttributeContentProvider implements IStructuredContentProvider{
+
+		@Override
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return ((ArrayList<Attribute>)inputElement).toArray();
+		}
+		
+	}
+
+	
 
 }

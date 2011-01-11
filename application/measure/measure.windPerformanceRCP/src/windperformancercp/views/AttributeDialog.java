@@ -18,27 +18,24 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import windperformancercp.event.InputDialogEvent;
-import windperformancercp.event.InputDialogEventType;
-
 public class AttributeDialog extends AbstractUIDialog {
 
 	public static final String ID = "measure.windPerformanceRCP.NewAttributeDialog";
 
-	private AttDialogPresenter presenter;
+	private AttributeDialogPresenter presenter;
 	Text nameInputField;
 	Combo typeCombo;
 	Object[] comboElements;
 	
 	public AttributeDialog(Shell parentShell, Object[] cElements) {
 		super(parentShell);
-		this.presenter = new AttDialogPresenter(this);  
+		this.presenter = new AttributeDialogPresenter(this);  
 		this.comboElements = cElements;
 	}
 
 	public AttributeDialog(IShellProvider parentShell) {
 		super(parentShell);
-		this.presenter = new AttDialogPresenter(this);
+		this.presenter = new AttributeDialogPresenter(this);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -123,41 +120,13 @@ public class AttributeDialog extends AbstractUIDialog {
 			
 	@Override
 	public void okPressed(){	
-		//TODO: throw exception
 		presenter.okPressed();	
-		close();
 	}
 	
 	@Override
 	public void cancelPressed(){	
 		presenter.cancelPressed();	
-		close();
 	}
 
-	
-	public class AttDialogPresenter{
-		AttributeDialog dialog;
-		
-		AttDialogPresenter(AttributeDialog caller){
-			this.dialog = caller;
-		}
-		
-		public void nameEntered(){
-		}
-		
-		public void typeSelected(){
-		}
-		
-		public void okPressed(){
-			//TODO: Aufruf des Controllers
-			if(! dialog.getNameValue().equals("")){
-				fire(new InputDialogEvent(dialog, InputDialogEventType.NewAttributeItem, dialog.getValues()));
-			}
 
-		}
-		
-		public void cancelPressed(){
-			//TODO
-		}
-	}
 }

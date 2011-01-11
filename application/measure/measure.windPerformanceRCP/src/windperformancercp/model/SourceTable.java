@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import windperformancercp.model.sources.ISource;
+
 public class SourceTable extends Composite {
 	
 	private SourceTableModel model;
@@ -81,10 +83,7 @@ public class SourceTable extends Composite {
 		
 		private SourceTableModel(){
 			sourcesList = new ArrayList<ISource>();
-			MetMast mm1 = new MetMast("MetMast1","MeteoSim","localhost",50001,new Attribute[]{new Attribute("att1",Attribute.AttributeType.AIRPRESSURE),new Attribute("att2",Attribute.AttributeType.POWER)});
-			WindTurbine wt1 = new WindTurbine("WT1","flapSim","localhost",50002,new Attribute[]{new Attribute("att1",Attribute.AttributeType.AIRPRESSURE),new Attribute("att2",Attribute.AttributeType.POWER)},55.0,true);
-			sourcesList.add(mm1);
-			sourcesList.add(wt1);
+			
 		}
 		
 		public static SourceTableModel getInstance(){

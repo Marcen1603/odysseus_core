@@ -24,6 +24,7 @@ import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
+import windperformancercp.model.sources.Attribute;
 import windperformancercp.views.AbstractUIDialog;
 import windperformancercp.views.AttributeDialog;
 
@@ -106,7 +107,7 @@ public class AttributeTable extends Composite {
 	        			public void eventOccured(IEvent<?, ?> idevent){
 	        				if(idevent.getEventType().equals(InputDialogEventType.NewAttributeItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
 	        					InputDialogEvent newAttevent = (InputDialogEvent) idevent;
-	        					Attribute att = new Attribute((String)newAttevent.getValue()[0],newAttevent.getValue()[1]);
+	        					Attribute att = (Attribute)newAttevent.getValue();
 	        					model.addAttribute(att);
 	        					update(model.getAllElements());
 	        				}

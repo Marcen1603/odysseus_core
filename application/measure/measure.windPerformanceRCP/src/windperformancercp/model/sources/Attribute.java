@@ -1,13 +1,10 @@
-package windperformancercp.model;
+package windperformancercp.model.sources;
 
 import windperformancercp.event.EventHandler;
-import windperformancercp.event.IEvent;
-import windperformancercp.event.IEventHandler;
-import windperformancercp.event.IEventListener;
-import windperformancercp.event.IEventType;
 
 //public class Attribute implements IAttribute{
-public class Attribute implements IEventHandler{
+//public class Attribute implements IEventHandler, IDialogResult{
+public class Attribute implements IDialogResult{
 	//Datentyp, einer aus Double, Timestamp, Int ...
 	
 	public enum AttributeType{
@@ -31,38 +28,10 @@ public class Attribute implements IEventHandler{
 		STRING
 	}
 	
-	
 	String name;
 	AttributeType attType;
 	DataType dataType;
 
-	EventHandler eventHandler = new EventHandler();
-	@Override
-	public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(listener, type);
-	}
-
-	@Override
-	public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(listener, type);
-	}
-
-	@Override
-	public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(listener);
-	}
-
-	@Override
-	public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(listener);
-	}
-
-	@Override
-	public void fire(IEvent<?, ?> event) {
-		eventHandler.fire(event);
-	}
-
-	
 	public Attribute(String name, AttributeType type){
 		this.name = name;
 		this.attType = type;
@@ -86,13 +55,16 @@ public class Attribute implements IEventHandler{
 		this(name, Attribute.AttributeType.valueOf(type));
 	}
 	
+	public Attribute(Attribute copy){
+		this(copy.name,copy.attType);
+	}
+	
 	public String getName(){
 		return this.name;
 	}
 	
 	public void setName(String name){
 		this.name = name;
-		//TODO:fire
 	}
 	
 	public AttributeType getAttType(){
@@ -101,7 +73,6 @@ public class Attribute implements IEventHandler{
 	
 	public void setAttType(AttributeType atype){
 		this.attType = (AttributeType) atype;
-		//TODO: fire
 	}
 	
 	public String getDataType(){
@@ -110,7 +81,6 @@ public class Attribute implements IEventHandler{
 	
 	public void setDataType(DataType dtype){
 		this.dataType = (DataType) dtype;
-		//TODO: fire
 	}
 	
 	public String toString(){
