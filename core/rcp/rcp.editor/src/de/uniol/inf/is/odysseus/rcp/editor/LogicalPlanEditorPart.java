@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.gef.ContextMenuProvider;
@@ -66,9 +69,20 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		FileEditorInput fi = (FileEditorInput) getEditorInput();
-		IOperatorPlanExporter exporter = new OperatorPlanExporter(fi.getFile());
-		exporter.save(plan);
+		Job job = new Job("Save " + getPartName() ) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				FileEditorInput fi = (FileEditorInput) getEditorInput();
+				IOperatorPlanExporter exporter = new OperatorPlanExporter(fi.getFile());
+				exporter.save(plan);
+				return Status.OK_STATUS;
+			}
+			
+		};
+		
+		job.setUser(true);
+		job.schedule();
 	}
 
 	@Override
