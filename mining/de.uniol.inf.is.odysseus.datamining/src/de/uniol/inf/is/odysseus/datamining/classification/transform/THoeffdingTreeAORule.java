@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.datamining.classification.transform;
 
+import de.uniol.inf.is.odysseus.datamining.classification.AbstractAttributeEvaluationMeasure;
+import de.uniol.inf.is.odysseus.datamining.classification.GiniIndex;
 import de.uniol.inf.is.odysseus.datamining.classification.InformationGain;
 import de.uniol.inf.is.odysseus.datamining.classification.logicaloperator.HoeffdingTreeAO;
 import de.uniol.inf.is.odysseus.datamining.classification.physicaloperator.HoeffdingTreePO;
@@ -44,13 +46,26 @@ public class THoeffdingTreeAORule extends
 		hoeffdingTreePO
 				.setRestrictList(hoeffdingTreeAO.determineRestrictList());
 		hoeffdingTreePO.setLabelPosition(hoeffdingTreeAO.getLabelPosition());
-		hoeffdingTreePO.setAttributeEvaluationMeasure(new InformationGain(
-				hoeffdingTreeAO.getProbability(), hoeffdingTreeAO.getTie()));
+		hoeffdingTreePO
+				.setAttributeEvaluationMeasure(createEvaluationMeasure(hoeffdingTreeAO));
 		hoeffdingTreePO.setOutputSchema(hoeffdingTreeAO.getOutputSchema(0), 0);
 		hoeffdingTreePO.initTree();
 		replace(hoeffdingTreeAO, hoeffdingTreePO, config);
 		retract(hoeffdingTreeAO);
 
+	}
+
+	@SuppressWarnings("rawtypes")
+	private AbstractAttributeEvaluationMeasure createEvaluationMeasure(
+			HoeffdingTreeAO hoeffdingTreeAO) {
+		String evaluationMeasure = hoeffdingTreeAO
+				.getAttributeEvaluationMeasure();
+		if ("gini".equalsIgnoreCase(evaluationMeasure)
+				|| "giniindex".equalsIgnoreCase(evaluationMeasure)) {
+			return new GiniIndex(hoeffdingTreeAO.getProbability(),null);
+		} else {
+			return new InformationGain(hoeffdingTreeAO.getProbability(),null);
+		}
 	}
 
 }

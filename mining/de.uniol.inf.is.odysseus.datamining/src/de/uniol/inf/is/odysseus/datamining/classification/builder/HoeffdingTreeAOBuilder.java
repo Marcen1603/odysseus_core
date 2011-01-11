@@ -17,16 +17,13 @@ public class HoeffdingTreeAOBuilder extends
 
 	private static final String PROBABILITY = "PROBABILITY";
 	private DirectParameter<Double> probability;
-	private static final String TIE = "TIE";
-	private DirectParameter<Double> tie;
 
 	public HoeffdingTreeAOBuilder() {
 
 		probability = new DirectParameter<Double>(PROBABILITY,
 				REQUIREMENT.MANDATORY);
-		tie = new DirectParameter<Double>(TIE, REQUIREMENT.OPTIONAL);
 
-		setParameters(probability, tie);
+		setParameters(probability);
 	}
 
 	@Override
@@ -46,7 +43,7 @@ public class HoeffdingTreeAOBuilder extends
 				.getValue()));
 		hoeffdingTreeAO.setLabelAttribute(labelAttribute.getValue());
 		hoeffdingTreeAO.setProbability(probability.getValue());
-		hoeffdingTreeAO.setTie(tie.getValue());
+		hoeffdingTreeAO.setAttributeEvaluationMeasure(evaluationMeasure.getValue());
 		return hoeffdingTreeAO;
 	}
 

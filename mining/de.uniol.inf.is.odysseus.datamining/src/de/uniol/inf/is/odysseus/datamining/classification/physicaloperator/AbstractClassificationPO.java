@@ -34,6 +34,7 @@ super();
 				classifierLearner.restrictList.length);
 		attributeEvaluationMeasure = classifierLearner.attributeEvaluationMeasure;
 	}
+	
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
@@ -53,7 +54,7 @@ super();
 			RelationalClassificationObject<T> tuple = new RelationalClassificationObject<T>(
 					object, restrictList, labelPosition);
 			tuple.setClassLabel(label);
-			process_next(tuple);
+			processNext(tuple);
 		}
 	}
 
@@ -61,7 +62,7 @@ super();
 		transfer(new RelationalTuple<T>(new Object[] { classifier }));
 	}
 
-	protected abstract void process_next(
+	protected abstract void processNext(
 			RelationalClassificationObject<T> tuple);
 
 	public void setRestrictList(int[] restrictList) {

@@ -14,16 +14,11 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 
 	private Double probability;
 
-	private Double tie;
+	private String attributeEvaluationMeasure;
 
 	public HoeffdingTreeAO(HoeffdingTreeAO hoeffdingTreeAO) {
 		super(hoeffdingTreeAO);
 		probability = hoeffdingTreeAO.getProbability();
-		tie = hoeffdingTreeAO.getTie();
-	}
-
-	public Double getTie() {
-		return tie;
 	}
 
 	public HoeffdingTreeAO() {
@@ -56,8 +51,13 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 		this.probability = probability;
 	}
 
-	public void setTie(Double tie) {
-		this.tie = tie;
+	public void setAttributeEvaluationMeasure(String attributeEvaluationMeasure) {
+		this.attributeEvaluationMeasure = attributeEvaluationMeasure;
+
+	}
+
+	public String getAttributeEvaluationMeasure() {
+		return attributeEvaluationMeasure;
 	}
 
 }

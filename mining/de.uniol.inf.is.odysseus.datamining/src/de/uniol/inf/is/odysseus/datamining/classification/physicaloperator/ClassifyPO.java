@@ -6,32 +6,37 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class ClassifyPO<T extends IMetaAttribute> extends AbstractClassificationPO<T> {
-	
-	protected IClassifier<T> classifier ;
+public class ClassifyPO<T extends IMetaAttribute> extends
+		AbstractClassificationPO<T> {
+
+	protected IClassifier<T> classifier;
 
 	public ClassifyPO(ClassifyPO<T> classifyPO) {
 		super(classifyPO);
 	}
-	
+
 	public ClassifyPO() {
 	}
 
 	@Override
 	protected void process_next(RelationalTuple<T> object, int port) {
-		if(port == 0){
+		if (port == 0) {
 			classifier = object.getAttribute(0);
-		}
-		else{
-				process_next(new RelationalClassificationObject<T>(
-						object, restrictList, labelPosition));
-			
+		} else {
+			if (!(labelPosition < object.getAttributeCount())
+					|| object.getAttribute(labelPosition) != null) {
+				processNext(new RelationalClassificationObject<T>(object,
+						restrictList, labelPosition));
+			}
+			else {
+				transfer(object);
+			}
 		}
 	}
 
 	@Override
-	protected void process_next(RelationalClassificationObject<T> tuple) {
-		if(classifier != null){
+	protected void processNext(RelationalClassificationObject<T> tuple) {
+		if (classifier != null) {
 			tuple.setClassLabel(classifier.getClassLabel(tuple));
 		}
 		transfer(tuple.getClassifiedTuple());

@@ -22,11 +22,10 @@ public abstract class AbstractGainMeasure<T extends IMetaAttribute> extends Abst
 	
 	
 	
-	protected Double getAttributeQuality(HashMap<Object, HashMap<Object, Integer>> hashMap, Integer tupleCount){
+	protected Double getAttributeQuality(HashMap<Object, HashMap<Object, Integer>> dataLayer, Integer tupleCount){
 		Double quality = 0D;
-		for(Map<Object, Integer> vector : hashMap.values()){
-			
-			quality += ((double)getTupleCount(vector))/ tupleCount * getPartitionQuality(vector);
+		for(Map<Object, Integer> dataVector : dataLayer.values()){			
+			quality += ((double)getTupleCount(dataVector))/ tupleCount * getPartitionQuality(dataVector);
 		}
 		return quality;
 	}

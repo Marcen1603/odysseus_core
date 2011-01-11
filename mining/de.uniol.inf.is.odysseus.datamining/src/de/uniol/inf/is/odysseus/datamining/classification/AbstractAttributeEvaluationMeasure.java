@@ -6,9 +6,9 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 
 public abstract class AbstractAttributeEvaluationMeasure<T extends IMetaAttribute> {
 
-	private double probability;
+	private Double probability;
 	
-	private double tie;
+	private Double tie;
 
 	public abstract Double getEvaluationMeasure(DataCube<T> statistics,
 			int attribute);
@@ -40,8 +40,7 @@ public abstract class AbstractAttributeEvaluationMeasure<T extends IMetaAttribut
 		}
 		double difference = bestQuality - secondQuality;
 		Double bound = getHoeffdingBound(statistics, probability);
-		System.out.println(difference+" > "+bound +"?");
-		return difference > bound  || bound < tie ? bestAttribute
+		return difference > bound  || (tie != null && bound < tie) ? bestAttribute
 				: null;
 	}
 

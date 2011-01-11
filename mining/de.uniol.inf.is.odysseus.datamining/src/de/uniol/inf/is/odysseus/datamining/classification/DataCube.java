@@ -56,7 +56,7 @@ public DataCube<T> clone() {
 		return attributeCount;
 	}
 
-	public Map<Object, Integer> getClassCountVector(){
+	public HashMap<Object, Integer> getClassCountVector(){
 		return classCountVector;
 	}
 	
@@ -69,7 +69,7 @@ public DataCube<T> clone() {
 		incrementClass(tuple.getClassLabel());
 		for (int i = 0; i < splitAttributes.size(); i++) {
 			incrementValue(i, tuple.getClassificationAttributes()[splitAttributes.get(i)],
-					tuple.getClass());
+					tuple.getClassLabel());
 		}
 	}
 	

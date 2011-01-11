@@ -21,7 +21,7 @@ public class ClassifyAOBuilder extends
 	
 	protected ListParameter<SDFAttribute> attributes;
 	
-	private static final String LABELATTRIBUTE = "LABELATTRIBUTE";
+	private static final String LABEL_ATTRIBUTE = "LABELATTRIBUTE";
 	protected ResolvedSDFAttributeParameter labelAttribute;
 	
 	public ClassifyAOBuilder() {
@@ -31,7 +31,7 @@ public class ClassifyAOBuilder extends
 				ATTRIBUTES, REQUIREMENT.MANDATORY,
 				new ResolvedSDFAttributeParameter("data mining attribute",
 						REQUIREMENT.MANDATORY));
-		labelAttribute = new ResolvedSDFAttributeParameter(LABELATTRIBUTE,
+		labelAttribute = new ResolvedSDFAttributeParameter(LABEL_ATTRIBUTE,
 				REQUIREMENT.OPTIONAL);
 		setParameters(attributes,labelAttribute);
 	}

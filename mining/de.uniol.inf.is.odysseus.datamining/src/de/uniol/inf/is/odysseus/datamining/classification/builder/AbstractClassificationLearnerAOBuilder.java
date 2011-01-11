@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.datamining.classification.builder;
 
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.DirectParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -18,8 +19,12 @@ public abstract class AbstractClassificationLearnerAOBuilder extends
 	
 	protected ListParameter<SDFAttribute> attributes;
 	
-	private static final String LABELATTRIBUTE = "LABELATTRIBUTE";
+	private static final String LABEL_ATTRIBUTE = "LABELATTRIBUTE";
 	protected ResolvedSDFAttributeParameter labelAttribute;
+	
+	private static final String EVALUATION_MEASURE ="EVALUATIONMEASURE";
+	
+	protected DirectParameter<String> evaluationMeasure;
 	
 	public AbstractClassificationLearnerAOBuilder() {
 		
@@ -28,9 +33,10 @@ public abstract class AbstractClassificationLearnerAOBuilder extends
 				ATTRIBUTES, REQUIREMENT.MANDATORY,
 				new ResolvedSDFAttributeParameter("data mining attribute",
 						REQUIREMENT.MANDATORY));
-		labelAttribute = new ResolvedSDFAttributeParameter(LABELATTRIBUTE,
+		labelAttribute = new ResolvedSDFAttributeParameter(LABEL_ATTRIBUTE,
 				REQUIREMENT.MANDATORY);
-		setParameters(attributes,labelAttribute);
+		evaluationMeasure = new DirectParameter<String>(EVALUATION_MEASURE, REQUIREMENT.OPTIONAL);
+		setParameters(attributes,labelAttribute, evaluationMeasure);
 	}
 
 	@Override
