@@ -85,6 +85,8 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 			} else if (actContent.getNodeName().equals("Connections")) {
 				connections = loadConnections(actContent);
 
+			} else if( actContent.getNodeType() == Node.TEXT_NODE) {
+				continue;
 			} else {
 				throw new IllegalArgumentException("Unknown node:" + actContent.getNodeName());
 			}
@@ -113,7 +115,9 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 		NodeList list = node.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			Node actNode = list.item(i);
-			if (!actNode.getNodeName().equals("Connection"))
+			if( actNode.getNodeType() == Node.TEXT_NODE) {
+				continue;
+			} else if (!actNode.getNodeName().equals("Connection"))
 				throw new IllegalArgumentException("Unknown node: " + actNode.getNodeName());
 
 			IDConnection conn = loadConnection(actNode);
@@ -134,7 +138,9 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 		NodeList list = node.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			Node actNode = list.item(i);
-			if (!actNode.getNodeName().equals("Operator"))
+			if( actNode.getNodeType() == Node.TEXT_NODE) {
+				continue;
+			} else if (!actNode.getNodeName().equals("Operator"))
 				throw new IllegalArgumentException("Unknown node: " + actNode.getNodeName());
 			Operator op = loadOperator(actNode);
 			int id = Integer.valueOf(getAttributeValue(actNode, "id"));
@@ -175,14 +181,18 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 		for (int i = 0; i < list.getLength(); i++) {
 			Node actNode = list.item(i);
 
-			if (!actNode.getNodeName().equals("Parameters"))
+			if( actNode.getNodeType() == Node.TEXT_NODE) {
+				continue;
+			} else if (!actNode.getNodeName().equals("Parameters"))
 				throw new IllegalArgumentException("Unknown node: " + actNode.getNodeName());
 
 			NodeList list2 = actNode.getChildNodes();
 			for (int j = 0; j < list2.getLength(); j++) {
 				Node actNode2 = list2.item(j);
 
-				if (!actNode2.getNodeName().equals("Parameter"))
+				if( actNode2.getNodeType() == Node.TEXT_NODE) {
+					continue;
+				} else if (!actNode2.getNodeName().equals("Parameter"))
 					throw new IllegalArgumentException("Unknown node: " + actNode.getNodeName());
 
 				String key = getAttributeValue(actNode2, "name");
