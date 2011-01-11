@@ -9,13 +9,5 @@
             label="StreamCars 3D View">
       </editor>
    </extension>
-   <extension
-         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
-      <editor
-            class="de.uniol.inf.is.odysseus.scars.rcp.view3d.editors.VertexBased3DEditor"
-            id="de.uniol.inf.is.odysseus.scars.rcp.view3d.editors.VertexBased3DEditor"
-            label="StreanCars 3D Vertex View">
-      </editor>
-   </extension>
 
 </plugin>

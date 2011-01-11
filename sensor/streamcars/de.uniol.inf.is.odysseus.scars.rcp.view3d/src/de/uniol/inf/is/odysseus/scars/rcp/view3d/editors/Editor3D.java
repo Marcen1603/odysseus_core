@@ -53,7 +53,7 @@ public class Editor3D implements IStreamEditorType {
 	private SchemaIndexPath carPath;
 	private SchemaIndexPath carsPath;
 
-	private TransformGroup[] cubes = new TransformGroup[20];
+	private TransformGroup[] cubes = new TransformGroup[50];
 	private static int activeCubes = 0;
 
 	@Override
@@ -84,7 +84,7 @@ public class Editor3D implements IStreamEditorType {
 			float y = carTuple.getAttribute(4);
 			float z = carTuple.getAttribute(5);
 
-			Transform3D t = new Transform3D(-y, z, -x);
+			Transform3D t = new Transform3D(y, z, -x);
 			cubes[counter].setTransform(t);
 
 			counter++;
@@ -167,7 +167,7 @@ public class Editor3D implements IStreamEditorType {
 
 		for (int i = 0; i < cubes.length; i++) {
 			cubes[i] = new TransformGroup();
-			Cube c = new Cube(app);
+			Cube c = new Cube(2, app);
 			cubes[i].addChild(c);
 
 			Transform3D t = new Transform3D(new Tuple3f(-1000 - i * 100, -1000 - i * 100, 1000 + i * 100));
