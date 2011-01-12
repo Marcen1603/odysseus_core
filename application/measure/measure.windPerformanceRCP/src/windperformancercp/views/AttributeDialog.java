@@ -1,5 +1,7 @@
 package windperformancercp.views;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -17,6 +19,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import windperformancercp.event.IEventListener;
+import windperformancercp.event.IEventType;
 
 public class AttributeDialog extends AbstractUIDialog {
 
@@ -85,14 +90,34 @@ public class AttributeDialog extends AbstractUIDialog {
 			for(int i = 0; i<comboElements.length;i++){
 				typeCombo.add(comboElements[i].toString());
 			}
-			typeCombo.select(0);
 			typeCombo.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) { presenter.typeSelected();}
 				public void widgetDefaultSelected(SelectionEvent e) { presenter.typeSelected();}
 			});
+			typeCombo.select(0);
+			presenter.typeSelected(); //irgendwie bewirkt das obige select keinen Event (nur bei dem, sonst gehts)
 		}
 
 		return area;
+	}
+	
+	@Override
+	public void subscribe(IEventListener listener, IEventType type) {
+		presenter.subscribe(listener, type);
+	}
+	@Override
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		presenter.unsubscribe(listener, type);
+	}
+
+	@Override
+	public void subscribeToAll(IEventListener listener) {
+		presenter.subscribeToAll(listener);
+	}
+
+	@Override
+	public void unSubscribeFromAll(IEventListener listener) {
+		presenter.unSubscribeFromAll(listener);
 	}
 	
 	public void setNameValue(String newName){
@@ -128,5 +153,6 @@ public class AttributeDialog extends AbstractUIDialog {
 		presenter.cancelPressed();	
 	}
 
+	
 
 }

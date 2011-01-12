@@ -36,6 +36,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import windperformancercp.event.IEvent;
+import windperformancercp.event.IEventListener;
+import windperformancercp.event.UpdateEvent;
+import windperformancercp.event.UpdateEventType;
 import windperformancercp.model.AttributeTable;
 import windperformancercp.model.sources.Attribute;
 
@@ -116,14 +120,9 @@ public class SourceDialog extends AbstractUIDialog {
 				nameLabel.setText(NAMELABEL);
 				nameLabel.setToolTipText("name for human readable identification");
 				nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
-				/*nameInputField.addFocusListener(new FocusListener(){
+				nameInputField.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent fe){}
 					public void focusLost(FocusEvent fe){}
-				});*/
-				nameInputField.addModifyListener(new ModifyListener(){
-					public void modifyText(ModifyEvent e){
-						presenter.nameEntered();
-					}
 				});
 			}
 
@@ -208,15 +207,16 @@ public class SourceDialog extends AbstractUIDialog {
 						ToolItem ti = new ToolItem(tb_attList,SWT.PUSH);
 						ti.setText(ti_labels[i]);
 						ti.addSelectionListener(new SelectionAdapter() {
-							public void widgetSelected(SelectionEvent e) { presenter.attBtnClick();}
+							public void widgetSelected(SelectionEvent e) { 
+								ToolItem btn = (ToolItem)e.widget;
+								
+								presenter.attBtnClick(btn.getText(),attributeViewer.getTable().getSelectionIndex());}
 						});
 					}
 					GridData gd_tb_attL = new GridData(60,SWT.DEFAULT);
 					gd_tb_attL.horizontalAlignment = GridData.BEGINNING;
 					tb_attList.setLayoutData(gd_tb_attL);
 				}
-
-				
 			}
 		}
 		
@@ -323,11 +323,28 @@ public class SourceDialog extends AbstractUIDialog {
 			
 			btnMM.addSelectionListener(typeAdapter);
 			btnWT.addSelectionListener(typeAdapter);
-			
 		}
+		presenter.subscribeToAll(updateListener);
 		return area;
 	}
 
+	
+	IEventListener updateListener = new IEventListener(){
+		public void eventOccured(IEvent<?, ?> idevent){
+			//System.out.println(this.toString()+": got update event from"+idevent.getSender().toString());
+			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){
+				UpdateEvent updateInvoker = (UpdateEvent) idevent;
+			//System.out.println(this.toString()+": got general update invocation: ");
+				update(updateInvoker.getValue());
+			}
+			
+		}
+	};
+	
+		
+	public void update(ArrayList<?> attList){
+		setTableContent(attList);
+	}
 	    
 	public void setNameValue(String newName){
 		nameInputField.setText(newName);
@@ -359,7 +376,19 @@ public class SourceDialog extends AbstractUIDialog {
 	
 	//TODO: zusaetzlicher getter fuer int?
 	public String getPortValue(){
+		if(portInputField.getText().equals("")) return "-1";
 		return portInputField.getText();
+	}
+	
+	public ArrayList<?> getTableContent(){
+		if(attributeViewer!= null)
+			return (ArrayList<?>) attributeViewer.getInput();
+		else
+			return null;
+	}
+	
+	public void setTableContent(ArrayList<?> attList){
+		attributeViewer.setInput(attList);
 	}
 	
 	public void setHubHeightValue(String newHubHeight){
@@ -471,13 +500,11 @@ public class SourceDialog extends AbstractUIDialog {
 		@Override
 		public void addListener(ILabelProviderListener listener) {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void dispose() {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -489,7 +516,6 @@ public class SourceDialog extends AbstractUIDialog {
 		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -516,13 +542,11 @@ public class SourceDialog extends AbstractUIDialog {
 		@Override
 		public void dispose() {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@SuppressWarnings("unchecked")

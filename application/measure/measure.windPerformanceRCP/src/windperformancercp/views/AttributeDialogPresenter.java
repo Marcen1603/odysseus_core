@@ -11,13 +11,10 @@ public class AttributeDialogPresenter extends EventHandler implements IPresenter
 	AttributeDialog dialog;
 	IController _cont;
 	Attribute actAtt;
-	
-	
-	
-	//public AttributeDialogPresenter(Attribute att, IControler caller){
+
 	public AttributeDialogPresenter(AttributeDialog dialog){
 		this.actAtt = new Attribute("",Attribute.AttributeType.VARIOUS);
-		this.dialog = dialog;//TODO: Shellx
+		this.dialog = dialog;
 		_cont = SourceController.getInstance(this);
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
 	}
@@ -28,7 +25,7 @@ public class AttributeDialogPresenter extends EventHandler implements IPresenter
 	
 	public void typeSelected(){ //TODO throws exception
 		try{
-		actAtt.setAttType(Attribute.AttributeType.valueOf(dialog.getComboValue()));
+			actAtt.setAttType(Attribute.AttributeType.valueOf(dialog.getComboValue()));
 		}
 		catch(Exception e){
 			//
@@ -36,12 +33,11 @@ public class AttributeDialogPresenter extends EventHandler implements IPresenter
 	}
 	
 	public void okPressed(){
-		//TODO: Aufruf des Controllers
 		if(! dialog.getNameValue().equals("")){
 			actAtt = new Attribute(actAtt); //fuer Zuweisung des Datatyps
 			
 			fire(new InputDialogEvent(this, InputDialogEventType.NewAttributeItem, actAtt));
-			System.out.println("fired new attribute event");
+			System.out.println(this.toString()+"fired new attribute event");
 			dialog.close();
 			fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
 		}
@@ -50,7 +46,5 @@ public class AttributeDialogPresenter extends EventHandler implements IPresenter
 	public void cancelPressed(){
 		dialog.close();
 		fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
-		
-		//TODO
 	}
 }

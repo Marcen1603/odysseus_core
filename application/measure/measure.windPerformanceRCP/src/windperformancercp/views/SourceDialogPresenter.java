@@ -2,11 +2,17 @@ package windperformancercp.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.widgets.Shell;
+
 import windperformancercp.controller.IController;
 import windperformancercp.controller.SourceController;
 import windperformancercp.event.EventHandler;
+import windperformancercp.event.IEvent;
+import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
+import windperformancercp.event.UpdateEvent;
+import windperformancercp.event.UpdateEventType;
 import windperformancercp.model.sources.Attribute;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.MetMast;
@@ -15,20 +21,30 @@ import windperformancercp.model.sources.WindTurbine;
 public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	SourceDialog dialog;
 	ISource source;
+	ArrayList<Attribute> tmpAttList;
 	IController _cont;
-	
+	final SourceDialogPresenter boss;
 	//TODO: auslagern
 	int MMId = 0;
 	int WTId = 1;
 	
-	//public SourceDialogPresenter(IControler caller){
 	public SourceDialogPresenter(SourceDialog caller){
+		boss = this;
 		System.out.println("source dialog presenter says hi!");
 		dialog = caller;
 		_cont = SourceController.getInstance(this);
+		tmpAttList = new ArrayList<Attribute>();
+		
+		/*
+		if(dialog.getTableContent()!=null){
+			for(Object el:dialog.getTableContent()){
+				tmpAttList.add((Attribute) el);
+			}
+		}*/
+		
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
 	}
-	
+		
 	public void nameEntered(){
 		if(source != null)
 			source.setName(dialog.getNameValue());
@@ -49,9 +65,47 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 			source.setPort(Integer.parseInt(dialog.getPortValue()));
 	}
 	
-	public void attBtnClick(){
-		
+	public void attBtnClick(String btn, int index){
+		//System.out.println(btn);
+		if(btn.equals("Add")){
+			Shell attShell = dialog.getShell();
+			AbstractUIDialog attDialog = new AttributeDialog(attShell, Attribute.AttributeType.values());
+			attDialog.subscribe(attListener, InputDialogEventType.NewAttributeItem);
+			attDialog.open();
+		}
+		if(btn.equals("Up")){
+			if(index > 0){ //if it's 0, it is the topmost element
+				swapEntries(index, index-1);
+				updateDialog();
+			}
+		}
+		if(btn.equals("Down")){
+			if(index >= 0 && index < tmpAttList.size()-1){ //if it's 0, it is the bottommost element
+        		swapEntries(index, index+1);
+        		updateDialog();
+			}
+		}
+		if(btn.equals("Delete")){
+			if((index>=0)&&(index<tmpAttList.size())){
+        		tmpAttList.remove(index);
+        		updateDialog();
+			}
+		}
 	}
+	
+	
+	IEventListener attListener = new IEventListener(){
+		public void eventOccured(IEvent<?, ?> idevent){
+			if(idevent.getEventType().equals(InputDialogEventType.NewAttributeItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+				InputDialogEvent newAttevent = (InputDialogEvent) idevent;
+				Attribute att = (Attribute)newAttevent.getValue();
+			//	fire(new InputDialogEvent(boss, InputDialogEventType.NewAttributeItem, att));
+				tmpAttList.add(att);
+				updateDialog();
+			}
+		}
+	};
+	
 	
 	public void srcTypeClick(){
 		if(dialog.getSourceType() == MMId) 
@@ -59,13 +113,13 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					dialog.getStrIdValue(),
 					dialog.getHostValue(),
 					Integer.parseInt(dialog.getPortValue()), 
-					new ArrayList<Attribute>());
+					tmpAttList);
 		if(dialog.getSourceType() == WTId) 
 			source = new WindTurbine(dialog.getNameValue(),
 					dialog.getStrIdValue(),
 					dialog.getHostValue(),
 					Integer.parseInt(dialog.getPortValue()), 
-					new ArrayList<Attribute>(),
+					tmpAttList,
 					Double.parseDouble(dialog.getHubHeightValue()),	//zum Zeitpunkt des Klicks sind hubheight und powercontrol noch nicht gesetzt
 					dialog.getPowerControl());
 	}
@@ -83,13 +137,12 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	}
 	
 	public void okPressed(){
-		//TODO: abfragemethode, die auf korrekte ausfuellung prueft
+		//TODO: Validation
 		
 		if(sourceIsOk(source)){
-			System.out.println("source is ok!");
-			source.toString();
+			System.out.println("source is ok!"+source.toString());
 			fire(new InputDialogEvent(this, InputDialogEventType.NewSourceItem, source));
-			System.out.println("fired new source event!");
+			//System.out.println("fired new source event!");
 			dialog.close();
 			fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
 		}
@@ -104,6 +157,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	}
 	
 	
+	//vorlaeufige Validation
 	public boolean sourceIsOk(ISource tocheck){
 		if(tocheck != null){
 			if(!tocheck.getName().equals("")){
@@ -131,9 +185,20 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	
 	public void updateDialog(){
-		
+		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,getContent()));
+		//System.out.println(this.toString()+":fired update event!");
 	}
 	
+	
+	public ArrayList<Attribute> getContent(){
+		return tmpAttList;
+	}
+	
+	public void swapEntries(int ind1, int ind2){
+		Attribute tmp = tmpAttList.get(ind1);
+		tmpAttList.set(ind1, tmpAttList.get(ind2));
+		tmpAttList.set(ind2, tmp);
+	}
 	/*
 	public void update(Object arg0, Object arg1){
 		ISource src = (ISource) arg1;

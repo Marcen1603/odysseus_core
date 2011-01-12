@@ -18,11 +18,8 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 	IController _cont;
 	SourceModel model;
 	
-	//public ManageSourcePresenter(IControler caller, ManageSourceView view){
-	public ManageSourcePresenter(ManageSourceView view){
-		//this._cont = caller;
+	public ManageSourcePresenter(ManageSourceView view){	
 		this.view = view;
-		//_cont = SourceController.getInstance();
 		_cont = SourceController.getInstance(this);
 		model = SourceModel.getInstance();
 		System.out.println("manage source presenter says hi!");
@@ -33,7 +30,6 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 	
 	public void updateView(){
 		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
-		//view.update(newList);
 	}
 	
 	public IEventListener modelListener = new IEventListener(){

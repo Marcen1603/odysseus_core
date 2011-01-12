@@ -54,11 +54,11 @@ public class SourceController implements IController {
 	public static IEventListener presenterListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
 			if(event.getEventType().equals(InputDialogEventType.RegisterDialog)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
-				System.out.println(this.toString()+": Received new dialog registry event");
+				//System.out.println(this.toString()+": Received new dialog registry event");
 			}
 			
 			if(event.getEventType().equals(InputDialogEventType.DeregisterDialog)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
-				System.out.println(this.toString()+": Received new dialog deregistry event");
+				//System.out.println(this.toString()+": Received new dialog deregistry event");
 				
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				IPresenter pres = ideEvent.getDialog();
@@ -72,7 +72,7 @@ public class SourceController implements IController {
 			}
 			
 			if(event.getEventType().equals(InputDialogEventType.NewSourceItem)){
-				System.out.println(this.toString()+": Received new source event");
+				//System.out.println(this.toString()+": Received new source event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				ISource src = (ISource) ideEvent.getValue();
 				
@@ -80,7 +80,7 @@ public class SourceController implements IController {
 			}
 			if(event.getEventType().equals(InputDialogEventType.DeleteSourceItem)){
 				System.out.println(this.toString()+": Received delete source event");
-			}
+			}			
 		}
 	};
 	
