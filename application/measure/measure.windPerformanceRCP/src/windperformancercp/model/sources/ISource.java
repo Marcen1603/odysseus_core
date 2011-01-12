@@ -13,23 +13,24 @@ import windperformancercp.event.IEventHandler;
 
 public interface ISource extends IDialogResult, IEventHandler {
 	
-	public int getType();
-	public boolean isWindTurbine();
-	public boolean isMetMast();
+	
 	public void setName(String newName);
 	public String getName();
-	public void setPort(int newPort);
-	public int getPort();
-	public void setHost(String newHost);
 	public String getHost();
-	public int getId();
 	public String getStreamIdentifier();
 	public void setStreamIdentifier(String strId);
-	public ArrayList<Attribute> getAttList();
-	public void setAttList(ArrayList<Attribute> newAttl);
+	public void setHost(String newHost);
+	public int getPort();
+	public void setPort(int newPort);
+	public int getId();
+	public ArrayList<Attribute> getAttributeList();
+	public void setAttributeList(ArrayList<Attribute> newAttl);
 	public Attribute getIthAtt(int i);
 	public void setIthAtt(int i, Attribute att);
 	public int getNumberOfAtts();
+	public int getType();
+	public boolean isWindTurbine();
+	public boolean isMetMast();
 	public boolean isConnected();
 	public int getConnectState();
 	public void setConnectState(int i);

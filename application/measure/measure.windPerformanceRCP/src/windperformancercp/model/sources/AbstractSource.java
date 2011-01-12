@@ -2,24 +2,28 @@ package windperformancercp.model.sources;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.IEventType;
 
+
+//@XmlRootElement(name="source")
 public abstract class AbstractSource implements ISource {
 	
 	public static final String ID = "measure.windPerformanceRCP.ASource";
 	
 	private static int sourceCounter = 0;
-	
 	private int type;
 	private int port;
 	private int id;
 	private String host;
 	private String streamIdentifier;
 	private String name;
-	private  ArrayList<Attribute> attributeList;
+	private ArrayList<Attribute> attributeList;
 	private int connectState; //0=disconnected, 1=proceeding, 2= connected
 	
 	public static final int MMId = 0;
@@ -77,7 +81,7 @@ public abstract class AbstractSource implements ISource {
 	}
 	
 	public AbstractSource(AbstractSource copy){
-		this(copy.getType(),copy.getName(),copy.getStreamIdentifier(),copy.getHost(),copy.getPort(),copy.getAttList(),copy.getConnectState());
+		this(copy.getType(),copy.getName(),copy.getStreamIdentifier(),copy.getHost(),copy.getPort(),copy.getAttributeList(),copy.getConnectState());
 	}
 	
 	@Override
@@ -97,41 +101,17 @@ public abstract class AbstractSource implements ISource {
 		return false;
 	}
 	
-	@Override
-	public void setName(String newName) {
-			this.name = newName;
-	}
 	
 	@Override
 	public String getName(){
 		return this.name;
 	}
-
-	@Override
-	public void setPort(int newPort) {
-			this.port = newPort;
-	}
 	
 	@Override
-	public int getPort() {
-		return this.port;
+	public void setName(String newName) {
+			this.name = newName;
 	}
-	
-	@Override
-	public void setHost(String newHost){
-			this.host = newHost;
-	}
-	
-	@Override
-	public String getHost(){
-		return this.host;
-	}
-	
-	@Override
-	public int getId() {
-		return this.id;
-	}
-	
+		
 	@Override
 	public String getStreamIdentifier(){
 		return this.streamIdentifier;
@@ -141,7 +121,47 @@ public abstract class AbstractSource implements ISource {
 	public void setStreamIdentifier(String strId){
 			this.streamIdentifier = strId;
 	}
+
 	
+	@Override
+	public String getHost(){
+		return this.host;
+	}
+	
+	@Override
+	public void setHost(String newHost){
+			this.host = newHost;
+	}
+		
+	@Override
+	public int getPort() {
+		return this.port;
+	}
+	
+	@Override
+	public void setPort(int newPort) {
+			this.port = newPort;
+	}
+		
+	
+	@Override
+	public int getId() {
+		return this.id;
+	}
+	
+	@XmlElement(name="attribute")
+	@Override
+	public ArrayList<Attribute> getAttributeList(){
+		if(attributeList == null)
+			attributeList = new ArrayList<Attribute>();
+		return this.attributeList;
+	}
+	
+	@Override
+	public void setAttributeList(ArrayList<Attribute> newAttl){
+			this.attributeList = newAttl;
+	}
+		
 	@Override
 	public Attribute getIthAtt(int i){
 		if(attributeList.size()>i){
@@ -155,17 +175,7 @@ public abstract class AbstractSource implements ISource {
 				attributeList.set(i, att);
 		} 
 	}
-	
-	@Override
-	public ArrayList<Attribute> getAttList(){
-		return this.attributeList;
-	}
-	
-	@Override
-	public void setAttList(ArrayList<Attribute> newAttl){
-			this.attributeList = newAttl;
-	}
-	
+		
 	@Override
 	public int getNumberOfAtts(){
 		return attributeList.size();

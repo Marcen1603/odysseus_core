@@ -2,10 +2,16 @@ package windperformancercp.controller;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
+import windperformancercp.model.sources.AbstractSource;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.SourceModel;
 import windperformancercp.views.AttributeDialogPresenter;
@@ -22,6 +28,8 @@ public class SourceController implements IController {
 	
 	IController _control;
 	static SourceModel model;
+	
+	
 
 	private SourceController(){
 		System.out.println("sourceController wurde erzeugt");
@@ -30,6 +38,7 @@ public class SourceController implements IController {
 		msrcPresenters = new ArrayList<ManageSourcePresenter>();
 		srcDPresenters = new ArrayList<SourceDialogPresenter>();
 		attDPresenters = new ArrayList<AttributeDialogPresenter>();
+		
 		
 		/*ArrayList<Attribute> atts = new ArrayList<Attribute>();
 		atts.add(new Attribute("pogo",Attribute.AttributeType.WINDDIRECTION));
@@ -77,6 +86,8 @@ public class SourceController implements IController {
 				ISource src = (ISource) ideEvent.getValue();
 				
 				model.addElement(src);
+	//			JAXB.marshal(src, System.out);
+				
 			}
 			if(event.getEventType().equals(InputDialogEventType.DeleteSourceItem)){
 				System.out.println(this.toString()+": Received delete source event");
@@ -90,7 +101,7 @@ public class SourceController implements IController {
 
 	@Override
 	public ArrayList<ISource> getContent(){
-		return model.getAll();
+		return model.getSourcesList();
 	}
 	
 	public static <E extends IPresenter> SourceController getInstance(E pres){

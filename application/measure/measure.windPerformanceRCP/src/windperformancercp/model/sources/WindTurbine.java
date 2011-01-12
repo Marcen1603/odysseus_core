@@ -14,7 +14,23 @@ public class WindTurbine extends AbstractSource {
 		super(WTId, name, identifier, hostName, portId, attList,0);
 		this.powerControl = powerControl;
 		this.hubHeight = hubHeight;
-System.out.println("WT Konstruktor: created new wind turbine: '"+this.getName()+"', '"+this.getHost()+"', '"+this.getPort());		
+			//System.out.println("WT Konstruktor: created new wind turbine: '"+this.toString());		
+	}
+	
+	public WindTurbine(){
+		super();
+		this.powerControl = -1;
+		this.hubHeight = 0.0;
+	}
+	
+	public WindTurbine(WindTurbine copy){
+		this(copy.getName(),
+			copy.getStreamIdentifier(),
+			copy.getHost(),
+			copy.getPort(),
+			copy.getAttributeList(),
+			copy.getHubHeight(),
+			copy.getPowerControl());
 	}
 	
 	public void setHubHeight(double hh){

@@ -2,6 +2,8 @@ package windperformancercp.model.sources;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.SourceModelEvent;
 import windperformancercp.event.SourceModelEventType;
@@ -10,7 +12,7 @@ import windperformancercp.event.SourceModelEventType;
 public class SourceModel extends EventHandler{
 	
 	private static SourceModel instance = new SourceModel();
-	ArrayList<ISource> sourcesList;
+	private ArrayList<ISource> sourcesList;
 	
 	SourceModelEvent newItemEvent = new SourceModelEvent(this,SourceModelEventType.NewItem,null);
 	SourceModelEvent deleteItemEvent = new SourceModelEvent(this,SourceModelEventType.DeletedItem,null);
@@ -59,7 +61,7 @@ public class SourceModel extends EventHandler{
 		else return null;
 	}
 	
-	public ArrayList<ISource> getAll(){
+	public ArrayList<ISource> getSourcesList(){
 		return sourcesList;
 	}
 	

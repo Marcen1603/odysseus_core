@@ -101,6 +101,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 				Attribute att = (Attribute)newAttevent.getValue();
 			//	fire(new InputDialogEvent(boss, InputDialogEventType.NewAttributeItem, att));
 				tmpAttList.add(att);
+				source.setAttributeList(tmpAttList);
 				updateDialog();
 			}
 		}
@@ -108,20 +109,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	
 	public void srcTypeClick(){
-		if(dialog.getSourceType() == MMId) 
-			source = new MetMast(dialog.getNameValue(),
-					dialog.getStrIdValue(),
-					dialog.getHostValue(),
-					Integer.parseInt(dialog.getPortValue()), 
-					tmpAttList);
-		if(dialog.getSourceType() == WTId) 
-			source = new WindTurbine(dialog.getNameValue(),
-					dialog.getStrIdValue(),
-					dialog.getHostValue(),
-					Integer.parseInt(dialog.getPortValue()), 
-					tmpAttList,
-					Double.parseDouble(dialog.getHubHeightValue()),	//zum Zeitpunkt des Klicks sind hubheight und powercontrol noch nicht gesetzt
-					dialog.getPowerControl());
+		source = buildSource();
 	}
 	
 	public void hubheightEntered(){
@@ -138,7 +126,8 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	public void okPressed(){
 		//TODO: Validation
-		
+		if(source == null)
+			source = buildSource();
 		if(sourceIsOk(source)){
 			System.out.println("source is ok!"+source.toString());
 			fire(new InputDialogEvent(this, InputDialogEventType.NewSourceItem, source));
@@ -154,6 +143,25 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	public void cancelPressed(){
 		dialog.close();
 		fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
+	}
+	
+	private ISource buildSource(){
+		if(dialog.getSourceType() == MMId) 
+			source = new MetMast(dialog.getNameValue(),
+					dialog.getStrIdValue(),
+					dialog.getHostValue(),
+					Integer.parseInt(dialog.getPortValue()), 
+					tmpAttList);
+		if(dialog.getSourceType() == WTId) 
+			source = new WindTurbine(dialog.getNameValue(),
+					dialog.getStrIdValue(),
+					dialog.getHostValue(),
+					Integer.parseInt(dialog.getPortValue()), 
+					tmpAttList,
+					Double.parseDouble(dialog.getHubHeightValue()),
+					dialog.getPowerControl());
+		else return null;
+		return source;
 	}
 	
 	

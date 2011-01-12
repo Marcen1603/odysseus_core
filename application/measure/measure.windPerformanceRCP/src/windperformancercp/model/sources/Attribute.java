@@ -1,12 +1,10 @@
 package windperformancercp.model.sources;
 
-import windperformancercp.event.EventHandler;
+import javax.xml.bind.annotation.XmlEnum;
 
-//public class Attribute implements IAttribute{
-//public class Attribute implements IEventHandler, IDialogResult{
 public class Attribute implements IDialogResult{
 	//Datentyp, einer aus Double, Timestamp, Int ...
-	
+	@XmlEnum
 	public enum AttributeType{
 		STARTTIMESTAMP,
 		WINDSPEED,
@@ -20,6 +18,7 @@ public class Attribute implements IDialogResult{
 	
 	//TODO: liste komplettieren
 	///Entspricht den Datentypen in Odysseus CQL
+	@XmlEnum
 	private enum DataType{
 		STARTTIMESTAMP,
 		ENDTIMESTAMP,
@@ -48,7 +47,7 @@ public class Attribute implements IDialogResult{
 		default:
 			this.dataType = DataType.DOUBLE; 
 		}
-		System.out.println("created Attribute: "+this.toString());		
+		//System.out.println("created Attribute: "+this.toString());		
 	}
 	
 	public Attribute(String name, String type){
@@ -57,6 +56,10 @@ public class Attribute implements IDialogResult{
 	
 	public Attribute(Attribute copy){
 		this(copy.name,copy.attType);
+	}
+	
+	public Attribute(){
+		this("",Attribute.AttributeType.VARIOUS);
 	}
 	
 	public String getName(){
@@ -75,8 +78,8 @@ public class Attribute implements IDialogResult{
 		this.attType = (AttributeType) atype;
 	}
 	
-	public String getDataType(){
-		return this.dataType.toString();
+	public DataType getDataType(){
+		return this.dataType;
 	}
 	
 	public void setDataType(DataType dtype){
