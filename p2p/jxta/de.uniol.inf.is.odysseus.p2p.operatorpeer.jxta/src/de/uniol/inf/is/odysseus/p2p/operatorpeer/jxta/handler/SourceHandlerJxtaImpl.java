@@ -45,7 +45,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 				.getStreamsAndViews(user)) {
 //			P2PSinkAO p2ppipe = null;
 //			PipeAdvertisement pipeAdv = null;
-			if(v.getValue() instanceof AccessAO) {
+//			if(v.getValue() instanceof AccessAO) {
 //				pipeAdv = createSocketAdvertisement();
 //			    p2ppipe = new P2PSinkAO(pipeAdv.toString());
 //				AccessAO ao = new AccessAO();
@@ -111,7 +111,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //			
 //			
 //			}
-		}
+//		}
 
 		
 //		Iterator<String> it = OperatorPeerJxtaImpl.getInstance()

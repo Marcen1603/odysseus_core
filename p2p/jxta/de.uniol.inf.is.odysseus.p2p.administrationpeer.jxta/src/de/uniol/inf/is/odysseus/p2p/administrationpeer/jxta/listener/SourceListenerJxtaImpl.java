@@ -76,19 +76,22 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 						adv = (SourceAdvertisement) source;
 						AdministrationPeerJxtaImpl.getInstance().getSources()
 								.put(adv.getSourceName(), adv);
-						// Hier wird noch das Schema der Quelle zum
-						// DataDictionary hinzugefügt, damit der Compiler mit
-						// den Informationen arbeiten kann
 						User user = GlobalState.getActiveUser();
-						IDataDictionary datadictionary = GlobalState.getActiveDatadictionary();
-						// TODO: Was sollte das?
-						// if(DataDictionary.getInstance().getSourceType(adv.getSourceName(),user)
-						// != null) {
-						getExecutor().addQuery(adv.getSourceScheme(), "CQL",
-								user, datadictionary, this.trafoConfigParam,
-								new ParameterPriority(2));
-						// }
-
+						IDataDictionary datadictionary = GlobalState
+								.getActiveDatadictionary();
+						// Nur eintragen, wenn nicht eh schon vorhanden
+						try {
+							datadictionary.getViewOrStream(adv.getSourceName(),
+									user);
+							getExecutor().addQuery(adv.getSourceScheme(),
+									"CQL", user, datadictionary,
+									this.trafoConfigParam,
+									new ParameterPriority(2));
+							
+						} catch (Exception e) {
+							// View already exists 
+							// ignore
+						}
 					} else {
 						return;
 					}

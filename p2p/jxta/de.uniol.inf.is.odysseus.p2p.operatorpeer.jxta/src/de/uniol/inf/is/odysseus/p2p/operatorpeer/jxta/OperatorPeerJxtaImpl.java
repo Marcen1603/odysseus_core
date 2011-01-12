@@ -309,7 +309,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 				e.printStackTrace();
 			}
 		}
-
+		
 	}
 
 
