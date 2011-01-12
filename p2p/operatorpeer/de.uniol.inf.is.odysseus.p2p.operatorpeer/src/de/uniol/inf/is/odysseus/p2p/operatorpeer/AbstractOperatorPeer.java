@@ -173,7 +173,6 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		startNetwork();
 		startGui();
 		init();
-		startSourceHandler();
 		startServerSocketListener();
 		startAliveHandler();
 		getDistributionClient().startService();
@@ -189,6 +188,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 					e.printStackTrace();
 				}
 				initSources(me);
+				startSourceHandler();
 			};
 		}.start();
 		
