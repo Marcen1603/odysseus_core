@@ -15,12 +15,12 @@ import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
-import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryPublisherHandlerJ
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.AdministrationPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.RandomIdGenerator;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
@@ -104,7 +106,10 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	}
 
 	private ThinPeerJxtaImpl() {
-
+		// TODO: Nutzer auslesen
+		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
+		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
+		GlobalState.setActiveDatadictionary(null);
 	}
 
 	public DiscoveryService getDiscoveryService() {

@@ -16,6 +16,7 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.QueryResultHandlerJxtaImpl;
@@ -35,6 +36,9 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
@@ -216,6 +220,11 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 		super();
 		instance = this;
+		
+		// TODO: Nutzer auslesen
+		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
+		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
+		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("AdminPeer"));
 	}
 
 	/**
