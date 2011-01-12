@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
@@ -43,13 +44,13 @@ public abstract class AbstractQueryPreParserKeyword extends
 		String transCfg = (String) variables.get("TRANSCFG");
 
 		try {
-			return exec(parserID, transCfg, parameter, getCurrentUser(variables));
+			return exec(parserID, transCfg, parameter, getCurrentUser(variables), getDataDictionary());
 		} catch (Exception ex) {
 			throw new QueryTextParseException("Error during executing query", ex);
 		}
 	}
 
-	protected abstract Object exec(String parserID, String transCfg, String parameter, User user) throws PlanManagementException;
+	protected abstract Object exec(String parserID, String transCfg, String parameter, User user, IDataDictionary dd) throws PlanManagementException;
 
 
 

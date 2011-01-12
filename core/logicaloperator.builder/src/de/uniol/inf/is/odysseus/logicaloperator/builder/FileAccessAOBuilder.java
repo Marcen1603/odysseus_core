@@ -45,13 +45,13 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		String sourceName = this.sourceName.getValue();
-		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
-			return DataDictionary.getInstance().getViewOrStream(sourceName, getCaller());
+		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
+			return getDataDictionary().getViewOrStream(sourceName, getCaller());
 		}
 		
 		FileAccessAO ao = createNewFileAccessAO(sourceName);
 		
-		DataDictionary.getInstance().setView(sourceName,ao, getCaller());
+		getDataDictionary().setView(sourceName,ao, getCaller());
 		return ao;
 	}
 	
@@ -62,8 +62,8 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder{
 		SDFAttributeList schema = new SDFAttributeList(attributeList);
 		sdfEntity.setAttributes(schema);
 		
-		DataDictionary.getInstance().addSourceType(sourceName, "RelationalStreaming");
-		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, getCaller());
+		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
+		getDataDictionary().addEntity(sourceName, sdfEntity, getCaller());
 		
 		
 		FileAccessAO ao = new FileAccessAO(sdfSource);

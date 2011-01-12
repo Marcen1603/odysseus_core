@@ -23,24 +23,15 @@ import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
 import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
+import de.uniol.inf.is.odysseus.usermanagement.NullUserException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.util.RemoveOwnersGraphVisitor;
 
-public class DataDictionary {
+public class DataDictionary implements IDataDictionary {
 
 	protected static Logger _logger = null;
-
-	static private DataDictionary instance = null;
-
-	public synchronized static DataDictionary getInstance() {
-		if (instance == null) {
-			// logger.debug("Create new DataDictionary");
-			instance = new DataDictionary();
-		}
-		return instance;
-	}
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
@@ -57,7 +48,7 @@ public class DataDictionary {
 	final private IStore<String, User> entityFromUser;
 	final private IStore<String, String> sourceTypeMap;
 
-	private DataDictionary() {
+	DataDictionary() {
 		try {
 			if (Boolean.parseBoolean(OdysseusDefaults.get("storeDataDictionary"))) {
 				streamDefinitions = new FileStore<String, ILogicalOperator>(
@@ -89,6 +80,7 @@ public class DataDictionary {
 	// Entity Management
 	// ----------------------------------------------------------------------------
 
+	@Override
 	public void addEntity(String uri, SDFEntity entity, User user)
 			throws HasNoPermissionException {
 		if (AccessControl.hasPermission(DataDictionaryAction.ADD_ENTITY,
@@ -106,6 +98,7 @@ public class DataDictionary {
 		}
 	}
 
+	@Override
 	public SDFEntity getEntity(String uri, User caller)
 			throws HasNoPermissionException {
 		if (checkObjectAccess(uri, caller, DataDictionaryAction.GET_ENTITY)) {
@@ -130,6 +123,7 @@ public class DataDictionary {
 	 * @throws HasNoPermissionException
 	 */
 	// no restric
+	@Override
 	public String getUserForEntity(String entityuri) {
 		User user = this.entityFromUser.get(entityuri);
 		return user!=null?user.getUsername():null;
@@ -140,6 +134,7 @@ public class DataDictionary {
 	// ----------------------------------------------------------------------------
 
 	// no restirc
+	@Override
 	public void addSourceType(String sourcename, String sourcetype) {
 		sourceTypeMap.put(sourcename, sourcetype);
 	}
@@ -154,6 +149,7 @@ public class DataDictionary {
 	}
 
 	// no restric
+	@Override
 	public SDFSource createSDFSource(String sourcename) {
 		try {
 			String type = getSourceType(sourcename);
@@ -167,6 +163,7 @@ public class DataDictionary {
 	}
 
 	// no restric
+	@Override
 	public boolean emptySourceTypeMap() {
 		return sourceTypeMap.isEmpty();
 	}
@@ -175,6 +172,7 @@ public class DataDictionary {
 	// View Management
 	// ------------------------------------------------------------------------
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setView(String viewname, ILogicalOperator topOperator,
 			User caller) {
@@ -206,7 +204,6 @@ public class DataDictionary {
 	@SuppressWarnings("unchecked")
 	private ILogicalOperator getView(String viewname, User caller) {
 		ILogicalOperator logicalPlan = this.viewDefinitions.get(viewname);
-		// TODO: null correct?
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
 		@SuppressWarnings("rawtypes")
 		AbstractGraphWalker walker = new AbstractGraphWalker();
@@ -214,7 +211,6 @@ public class DataDictionary {
 		return copyVisitor.getResult();
 	}
 
-	// TODO restric ?
 	private ILogicalOperator removeView(String viewname, User caller) {
 		ILogicalOperator op;
 		try {
@@ -231,6 +227,7 @@ public class DataDictionary {
 	}
 
 	// no restric
+	@Override
 	public boolean isView(String name) {
 		return this.viewDefinitions.containsKey(name);
 	}
@@ -239,6 +236,7 @@ public class DataDictionary {
 	// Stream Management
 	// ------------------------------------------------------------------------
 
+	@Override
 	public void setStream(String streamname, ILogicalOperator plan, User caller) {
 		if (AccessControl.hasPermission(DataDictionaryAction.ADD_STREAM,
 				DataDictionaryAction.alias, caller)) {
@@ -249,16 +247,6 @@ public class DataDictionary {
 			try {
 				streamDefinitions.put(streamname, plan);
 				viewOrStreamFromUser.put(streamname, caller);
-
-				// TODO: kann weg wenn owner überall geprüft wird
-				// Rechte
-				// User system = UserManagement.getInstance().getSuperUser();
-				// UserManagement.getInstance().grantPermission(system,
-				// caller.getUsername(), DataDictionaryAction.GET_STREAM,
-				// streamname);
-				// UserManagement.getInstance().grantPermission(system,
-				// caller.getUsername(),
-				// DataDictionaryAction.REMOVE_STREAM, streamname);
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -284,12 +272,14 @@ public class DataDictionary {
 		return ao;
 	}
 
+	@Override
 	public ILogicalOperator getStreamForTransformation(String name, User caller) {
 		checkViewAccess(name, caller, DataDictionaryAction.READ);
 		return streamDefinitions.get(name);
 	}
 
 	// no restric
+	@Override
 	public boolean hasStream(String name, User user) {
 		return streamDefinitions.containsKey(name);
 	}
@@ -298,6 +288,7 @@ public class DataDictionary {
 	// Access View or Streams
 	// ------------------------------------------------------------------------
 
+	@Override
 	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(User caller) {
 		Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String, ILogicalOperator>>();
 
@@ -330,6 +321,7 @@ public class DataDictionary {
 		return sources;
 	}
 
+	@Override
 	public ILogicalOperator getViewOrStream(String viewname, User caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
 			checkViewAccess(viewname, caller, DataDictionaryAction.READ);
@@ -340,6 +332,7 @@ public class DataDictionary {
 		}
 	}
 
+	@Override
 	public ILogicalOperator removeViewOrStream(String viewname, User caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
 			checkViewAccess(viewname, caller, DataDictionaryAction.REMOVE_VIEW);
@@ -359,12 +352,14 @@ public class DataDictionary {
 	}
 
 	// no restric
+	@Override
 	public boolean containsViewOrStream(String viewName, User user) {
 		return this.streamDefinitions.containsKey(viewName)
 				|| this.viewDefinitions.containsKey(viewName);
 	}
 
 	// no restric
+	@Override
 	public User getUserForViewOrStream(String view) {
 		return viewOrStreamFromUser.get(view);
 	}
@@ -385,7 +380,7 @@ public class DataDictionary {
 	private boolean checkObjectAccess(String uri, User caller,
 			DataDictionaryAction action) {
 		return AccessControl.hasPermission(action, uri, caller)
-				|| AccessControl.isCreatorOfObject(caller.getUsername(), uri)
+				|| isCreatorOfObject(caller.getUsername(), uri)
 				|| hasSuperAction(action, DataDictionaryAction.alias, caller);
 	}
 
@@ -402,7 +397,7 @@ public class DataDictionary {
 			DataDictionaryAction action) {
 		if (AccessControl.hasPermission(action, viewOrSource, caller)
 		// is owner
-				|| AccessControl.isCreatorOfView(caller.getUsername(),
+				|| isCreatorOfView(caller.getUsername(),
 						viewOrSource)
 				|| hasSuperAction(action, DataDictionaryAction.alias, caller)) {
 			return;
@@ -421,18 +416,74 @@ public class DataDictionary {
 	 * @param user
 	 * @return boolean
 	 */
+	@Override
 	public boolean hasSuperAction(DataDictionaryAction action,
 			String objecturi, User user) {
 		return AccessControl
 				.hasPermission(DataDictionaryAction.hasSuperAction(action),
 						objecturi, user);
 	}
+	
+	/**
+	 * returns true if username equals creator of the given objecturi
+	 * 
+	 * @param username
+	 * @param objecturi
+	 * @return
+	 */
+	@Override
+	public boolean isCreatorOfObject(String username, String objecturi) {
+		if (objecturi == null){
+			return false;
+		}
+		if (username != null && !username.isEmpty()) {
+			String user = getUserForEntity(
+					objecturi);
+			if (user == null || user.isEmpty()) {
+				User userObj = getUserForViewOrStream(objecturi);
+				user = userObj != null ? userObj.getUsername() : null;
+			}
+			if (user != null && !user.isEmpty()) {
+				if (user.equals(username)) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			throw new NullUserException("Username is empty.");
+		}
+	}
 
+	/**
+	 * returns true if username euqlas creator of the given view
+	 * 
+	 * @param username
+	 * @param viewname
+	 * @return
+	 */
+	public boolean isCreatorOfView(String username, String viewname) {
+		if (viewname == null){
+			return false;
+		}
+		if (!username.isEmpty()) {
+			String user = getUserForViewOrStream(viewname).getUsername();
+			if (!user.isEmpty()) {
+				if (user.equals(username)) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			throw new NullUserException("Username is empty.");
+		}
+	}
+	
 	// ----------------------------------------------------------------------------
 	// Listener Management
 	// ----------------------------------------------------------------------------
 
 	// no restric
+	@Override
 	public void addListener(IDataDictionaryListener listener) {
 		if (listener == null)
 			throw new IllegalArgumentException("listener is null");
@@ -442,6 +493,7 @@ public class DataDictionary {
 	}
 
 	// no restirc
+	@Override
 	public void removeListener(IDataDictionaryListener listener) {
 		listeners.remove(listener);
 	}

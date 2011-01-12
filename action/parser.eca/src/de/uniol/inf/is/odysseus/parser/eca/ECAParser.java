@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
@@ -43,6 +44,8 @@ public class ECAParser implements IQueryParser {
 	private IActuatorFactory actuatorFactory;
 
 	private User user;
+
+	private IDataDictionary dataDictionary;
 
 	private static Pattern ecaPattern;
 	private static final Pattern ACTIONPATTERN = Pattern.compile(
@@ -196,14 +199,16 @@ public class ECAParser implements IQueryParser {
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, User user) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, User user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
+		this.dataDictionary = dd;
 		return null;
 	}
 
 	@Override
-	public List<IQuery> parse(String query, User user) throws QueryParseException {
+	public List<IQuery> parse(String query, User user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
+		this.dataDictionary = dd;
 		HashMap<Action, List<IActionParameter>> actions = new HashMap<Action, List<IActionParameter>>();
 		// extract internal query
 		Matcher ecaMatcher = ecaPattern.matcher(query.toLowerCase());
@@ -223,7 +228,7 @@ public class ECAParser implements IQueryParser {
 
 				// create logical plan and retrieve schema
 				List<IQuery> plan = compiler.translateQuery(
-						interalQuery, lang, user);
+						interalQuery, lang, user, dataDictionary);
 				SDFAttributeList schema = this.determineSchema(plan);
 
 				// extract action part of query

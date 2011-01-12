@@ -16,12 +16,14 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class AddQueryCommand extends AbstractHandler implements IHandler {
 
@@ -33,7 +35,8 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		final String queryToExecute = event.getParameter(IQueryConstants.QUERY_PARAMETER_ID);
 		final String parserToUse = event.getParameter(IQueryConstants.PARSER_PARAMETER_ID);
 		final String parameterTransformationConfigurationName = event.getParameter(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID);
-		final User user = ActiveUser.getActiveUser();
+		final User user = GlobalState.getActiveUser();
+		final IDataDictionary dd = GlobalState.getActiveDatadictionary();
 		
 		final IExecutor executor = Activator.getExecutor();
 		if (executor != null) {
@@ -50,7 +53,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						executor.addQuery(queryToExecute, parserToUse, user, cfg.toArray(new IQueryBuildSetting[0]) );
+						executor.addQuery(queryToExecute, parserToUse, user, dd, cfg.toArray(new IQueryBuildSetting[0]) );
 						StatusBarManager.getInstance().setMessage("Query successfully added");
 					} catch (Exception e) {
 						e.printStackTrace();

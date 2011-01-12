@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class StopQueryCommand extends AbstractHandler implements IHandler {
 
@@ -54,7 +54,7 @@ public class StopQueryCommand extends AbstractHandler implements IHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						executor.stopQuery(qID2, ActiveUser.getActiveUser());
+						executor.stopQuery(qID2, GlobalState.getActiveUser());
 						StatusBarManager.getInstance().setMessage("Query started");
 					} catch (PlanManagementException e) {
 						e.printStackTrace();

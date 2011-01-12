@@ -13,7 +13,7 @@ options {
 	import java.util.HashMap;
 	import java.util.Iterator;
 	
-	import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+	import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 	import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 	import de.uniol.inf.is.odysseus.cep.CepAO;
 	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -52,10 +52,14 @@ options {
 	Map<String, String> kleeneAttributeState = null;
 	ISymbolTableOperationFactory symTableOpFac = null;
 	User user = null;
-	
+	IDataDictionary dd = null;
 	
   public void setUser(User user){
     this.user = user;
+  }
+  
+  public void setDataDictionary(IDataDictionary dd){
+    this.dd = dd;
   }
   private String transformAttribute(PathAttribute attrib,State s){
       String index = ""; // getKleenePart.equals("[i]")
@@ -166,7 +170,7 @@ catch(RecognitionException e){
 start returns [ILogicalOperator op]
   :
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
-  {	DataDictionary.getInstance().setView(n.getText(), q, user);
+  {	dd.setView(n.getText(), q, user);
 	  getLogger().debug("Created New View "+n+" "+q);
 	  $op = q;}
   | o=query {$op = o;} // Only Query
@@ -191,7 +195,7 @@ query returns [ILogicalOperator op]
     int port = 0;
     for (String sn : sourceNames) {
       getLogger().debug("Bind "+sn+" to Port "+port);      
-      ILogicalOperator ao = DataDictionary.getInstance().getViewOrStream(sn, user);
+      ILogicalOperator ao = dd.getViewOrStream(sn, user);
       if (ao != null) {
         cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
         cepAo.setInputTypeName(port, sn);

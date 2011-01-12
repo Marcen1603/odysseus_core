@@ -41,7 +41,7 @@ public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer,
 			List<IQuery> plan = null;
 			try {
 				//Anfrage Übersetzen und in Query kapseln
-				plan = getFunction().translateQuery(getExecutionListenerCallback().getQuery().getDeclarativeQuery(), getExecutionListenerCallback().getQuery().getLanguage(), getExecutionListenerCallback().getQuery().getUser());
+				plan = getFunction().translateQuery(getExecutionListenerCallback().getQuery().getDeclarativeQuery(), getExecutionListenerCallback().getQuery().getLanguage(), getExecutionListenerCallback().getQuery().getUser(), getExecutionListenerCallback().getQuery().getDataDictionary());
 			} catch (QueryParseException e3) {
 				e3.printStackTrace();
 				Log.logAction(getExecutionListenerCallback().getQuery().getId(), "Fehler bei der Übersetzung der Anfrage");

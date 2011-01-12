@@ -10,6 +10,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -148,9 +149,11 @@ import de.uniol.infs.is.odysseus.scars.operator.brokerinit.BrokerInitAO;
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor {
 
 	private User user;
-
-	public CreateLogicalPlanVisitor(User user){
+	private IDataDictionary dd;
+	
+	public CreateLogicalPlanVisitor(User user, IDataDictionary dd){
 		this.user = user;
+		this.dd = dd;
 	}
 
 	@Override
@@ -426,7 +429,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		if (((ArrayList) data).get(1) == null) {
 			((ArrayList) data).remove(1);
-			((ArrayList) data).add(DataDictionary.getInstance().getViewOrStream(((ASTIdentifier) node.jjtGetChild(0)).getName(), user));
+			((ArrayList) data).add(dd.getViewOrStream(((ASTIdentifier) node.jjtGetChild(0)).getName(), user));
 		}
 
 		((ArrayList) data).add(new Integer(0));

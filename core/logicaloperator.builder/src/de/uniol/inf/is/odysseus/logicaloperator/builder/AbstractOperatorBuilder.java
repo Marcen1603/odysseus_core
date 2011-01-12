@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -27,6 +28,8 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private int maxPortCount;
 	private Map<Integer, InputOperatorItem> inputOperators;
 	private User caller;
+
+	private IDataDictionary dataDictionary;
 	
 	public AbstractOperatorBuilder(int minPortCount, int maxPortCount) {
 		if (minPortCount > maxPortCount) {
@@ -79,6 +82,15 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		return caller;
 	}
 
+	@Override
+	public void setDataDictionary(IDataDictionary dataDictionary){
+		this.dataDictionary = dataDictionary;
+	}
+	
+	public IDataDictionary getDataDictionary(){
+		return dataDictionary;
+	}
+	
 	@Override
 	public boolean validate() {
 		this.errors.clear();

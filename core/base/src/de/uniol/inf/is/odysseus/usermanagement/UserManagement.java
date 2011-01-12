@@ -63,7 +63,7 @@ public class UserManagement extends AbstractUserManagement {
 					// create permission for admin
 					// create DataDic Priv and add to Role
 					for (IUserAction action : DataDictionaryAction.getAll()) {
-						instance.grantPermission(sys, "datadictionary", action,
+						instance.grantPermission(sys, "datadictionary", true, action,
 								DataDictionaryAction.alias);
 					}
 					// set protection
@@ -75,7 +75,7 @@ public class UserManagement extends AbstractUserManagement {
 					// create Configuration Role
 					Role conf = instance.createRole("configuration", sys);
 					for (IUserAction action : ConfigurationAction.getAll()){
-						instance.grantPermission(sys, "configuration", action, ConfigurationAction.alias);
+						instance.grantPermission(sys, "configuration", true, action, ConfigurationAction.alias);
 					}
 					conf.setSystemProtection(sys);
 					instance.grantRole(sys, "configuration", "System");
@@ -84,7 +84,7 @@ public class UserManagement extends AbstractUserManagement {
 					// create ExecutorRole
 					Role qrole = instance.createRole("queryexecutor", sys);
 					for (IUserAction action : ExecutorAction.getAll()) {
-						instance.grantPermission(sys, "queryexecutor", action,
+						instance.grantPermission(sys, "queryexecutor", true, action,
 								ExecutorAction.alias);
 					}
 					// set protection
@@ -110,20 +110,20 @@ public class UserManagement extends AbstractUserManagement {
 					// Create Default Role for users
 					instance.createRole("DSUser", sys);
 					// Anfragen erstellen und entfernen
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_ENTITY, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_ENTITY, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_VIEW, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_STREAM, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.REMOVE_VIEW, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.ADD_SOURCETYPE, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.GET_ENTITY, DataDictionaryAction.alias);
-					instance.grantPermission(sys, "DSUser", DataDictionaryAction.READ, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.ADD_ENTITY, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.REMOVE_ENTITY, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.ADD_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.ADD_STREAM, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.REMOVE_VIEW, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.ADD_SOURCETYPE, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.GET_ENTITY, DataDictionaryAction.alias);
+					instance.grantPermission(sys, "DSUser", true, DataDictionaryAction.READ, DataDictionaryAction.alias);
 
 					// Anfrage verwalten
-					instance.grantPermission(sys, "DSUser", ExecutorAction.ADD_QUERY, ExecutorAction.alias);
-					instance.grantPermission(sys, "DSUser", ExecutorAction.START_QUERY, ExecutorAction.alias);
-					instance.grantPermission(sys, "DSUser", ExecutorAction.STOP_QUERY, ExecutorAction.alias);
-					instance.grantPermission(sys, "DSUser", ExecutorAction.REMOVE_QUERY, ExecutorAction.alias);
+					instance.grantPermission(sys, "DSUser", true, ExecutorAction.ADD_QUERY, ExecutorAction.alias);
+					instance.grantPermission(sys, "DSUser", true, ExecutorAction.START_QUERY, ExecutorAction.alias);
+					instance.grantPermission(sys, "DSUser", true, ExecutorAction.STOP_QUERY, ExecutorAction.alias);
+					instance.grantPermission(sys, "DSUser", true, ExecutorAction.REMOVE_QUERY, ExecutorAction.alias);
 					
 //					System.out.println("grant DSU to Tester");
 //					instance.grantRole(sys, "DSUser", "Tester");

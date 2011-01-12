@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.ProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -21,6 +22,11 @@ public class ProbabilityPredicateVisitor implements IVisitor{
 	@Override
 	public void setUser(User user) {
 		this.user = user;	
+	}
+	
+	@Override
+	public void setDataDictionary(IDataDictionary dd) {
+		// Not needed
 	}
 	
 	@Override

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
@@ -183,20 +184,21 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private List<IQuery> createQueries(String queryStr, User user,
+	private List<IQuery> createQueries(String queryStr, User user, IDataDictionary dd,
 			QueryBuildConfiguration parameters)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
 		getLogger().debug("Translate Queries.");
 		// translate query and build logical plans
 		List<IQuery> queries = getCompiler().translateQuery(queryStr,
-				parameters.getParserID(), user);
+				parameters.getParserID(), user, dd);
 		getLogger().trace("Number of queries: " + queries.size());
 		// create for each logical plan an intern query
 		for (IQuery query : queries) {
 			query.setBuildParameter(parameters);
 			query.setQueryText(queryStr);
 			query.setUser(user);
+			query.setDataDictionary(dd);
 			// this executor processes reoptimize requests
 			query.addReoptimizeListener(this);
 		}
@@ -336,13 +338,13 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .lang.String, java.lang.String, de.uniol.inf.is.odysseus.planmanagement
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
-	private Collection<IQuery> addQuery(String query, User user,
+	private Collection<IQuery> addQuery(String query, User user, IDataDictionary dd,
 			QueryBuildConfiguration parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries. " + query+ "for user "+user.getUsername());
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
 		validateBuildParameters(parameters);
 		try {
-			List<IQuery> newQueries = createQueries(query, user, parameters);
+			List<IQuery> newQueries = createQueries(query, user, dd, parameters);
 			addQueries(newQueries, new OptimizationConfiguration(parameters
 					.values().toArray(new Setting[0])));
 			return newQueries;
@@ -365,19 +367,19 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<IQuery> addQuery(String query, User user,
+	public Collection<IQuery> addQuery(String query, User user, IDataDictionary dd,
 			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
-		return addQuery(query, user, validateBuildParameters(parameters));
+		return addQuery(query, user, dd, validateBuildParameters(parameters));
 	}
 
 	// TODO: REMOVE SYNCHRONIZED!
 	@Override
 	public synchronized Collection<IQuery> addQuery(String query, String parserID,
-			User user, @SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
+			User user, IDataDictionary dd, @SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
 			throws PlanManagementException {
 		QueryBuildConfiguration conf = new QueryBuildConfiguration(parameters);
 		conf.set(new ParameterParserID(parserID));
-		return addQuery(query, user, conf);
+		return addQuery(query, user, dd, conf);
 	}
 
 	/*
@@ -390,7 +392,7 @@ public class StandardExecutor extends AbstractExecutor {
 	 * <?>[])
 	 */
 	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, User user,
+	public IQuery addQuery(ILogicalOperator logicalPlan, User user, IDataDictionary dd,
 			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
@@ -399,6 +401,7 @@ public class StandardExecutor extends AbstractExecutor {
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(logicalPlan, params);
 			query.setUser(user);
+			query.setDataDictionary(dd);
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries, new OptimizationConfiguration(parameters));
@@ -429,6 +432,8 @@ public class StandardExecutor extends AbstractExecutor {
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(physicalPlan, params);
 			query.setUser(user);
+			// TODO: Korrekt so oder braucht man immer ein DD?
+			query.setDataDictionary(null);
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries, getOptimizationParameters(parameters));

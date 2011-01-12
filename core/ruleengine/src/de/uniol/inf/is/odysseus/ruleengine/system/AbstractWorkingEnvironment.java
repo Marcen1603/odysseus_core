@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.ruleengine.system;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -9,10 +10,10 @@ public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironme
 	private WorkingMemory workingMemory;
 	private IRuleFlow ruleFlow;
 	
-	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow, User caller){
+	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow, User caller, IDataDictionary dd){
 		this.configuration = config;
 		this.ruleFlow = ruleflow;
-		this.workingMemory = new WorkingMemory(this, caller);
+		this.workingMemory = new WorkingMemory(this, caller, dd);
 	}
 	
 	@Override

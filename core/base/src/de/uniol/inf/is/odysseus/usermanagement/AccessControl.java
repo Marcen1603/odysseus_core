@@ -83,54 +83,6 @@ public final class AccessControl {
 				+ " has no valid session ");
 	}
 
-	/**
-	 * returns true if username equals creator of the given objecturi
-	 * 
-	 * @param username
-	 * @param objecturi
-	 * @return
-	 */
-	public static boolean isCreatorOfObject(String username, String objecturi) {
-		if (username != null && !username.isEmpty()) {
-			String user = DataDictionary.getInstance().getUserForEntity(
-					objecturi);
-			if (user == null || user.isEmpty()) {
-				User userObj = DataDictionary.getInstance()
-						.getUserForViewOrStream(objecturi);
-				user = userObj != null ? userObj.getUsername() : null;
-			}
-			if (user != null && !user.isEmpty()) {
-				if (user.equals(username)) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			throw new NullUserException("Username is empty.");
-		}
-	}
-
-	/**
-	 * returns true if username euqlas creator of the given view
-	 * 
-	 * @param username
-	 * @param viewname
-	 * @return
-	 */
-	public static boolean isCreatorOfView(String username, String viewname) {
-		if (!username.isEmpty()) {
-			String user = DataDictionary.getInstance()
-					.getUserForViewOrStream(viewname).getUsername();
-			if (!user.isEmpty()) {
-				if (user.equals(username)) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			throw new NullUserException("Username is empty.");
-		}
-	}
 
 	/**
 	 * search for operation in user special privileges and user role privileges.

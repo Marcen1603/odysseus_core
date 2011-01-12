@@ -3,15 +3,25 @@ package de.uniol.inf.is.odysseus.usermanagement.client;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
-public class ActiveUser {
+public class GlobalState {
 	
 	private static List<IActiveUserListener> activeUserListener = new CopyOnWriteArrayList<IActiveUserListener>();
 	
 	private static User activeUser; 
+	private static IDataDictionary activeDatadictionary;
 	
-	private ActiveUser() {
+	public static IDataDictionary getActiveDatadictionary() {
+		return activeDatadictionary;
+	}
+
+	public static void setActiveDatadictionary(IDataDictionary activeDatadictionary) {
+		GlobalState.activeDatadictionary = activeDatadictionary;
+	}
+
+	private GlobalState() {
 	}
 	
 	public synchronized static void setActiveUser( User user ) {

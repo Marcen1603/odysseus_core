@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.RenameAO;
@@ -28,9 +29,11 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	private Map<SDFSource, BrokerAO> brokers;
 	private AttributeResolver attributeResolver;
 	private User caller;
+	private IDataDictionary dd;
 	
-	public InitAttributesVisitor(User user){
+	public InitAttributesVisitor(User user, IDataDictionary dd){
 		super();
+		this.dd = dd;
 		this.attributeResolver = new AttributeResolver();
 		this.sources = new HashMap<SDFSource, AccessAO>();
 		this.brokers = new HashMap<SDFSource, BrokerAO>();
@@ -41,7 +44,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	public Object visit(ASTAccessOp node, Object data){
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
-		SDFSource source = DataDictionary.getInstance().createSDFSource(sourceString);
+		SDFSource source = dd.createSDFSource(sourceString);
 		
 		relationalStreamingSource(node, source, sourceString);
 
@@ -56,7 +59,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		AccessAO access = this.sources.get(source);
 		if (access == null) {
 			
-			access = (AccessAO)DataDictionary.getInstance().getViewOrStream(sourceName, caller);
+			access = (AccessAO)dd.getViewOrStream(sourceName, caller);
 //			access = new AccessAO();
 //			access.setSource(new SDFSource(sourceName,""));
 //			access.setOutputSchema(DataDictionary.getInstance().getViewOutputSchema(sourceName));
@@ -95,7 +98,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	public Object visit(ASTBrokerOp node, Object data){
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();		
-		SDFSource source = DataDictionary.getInstance().createSDFSource(sourceString);
+		SDFSource source = dd.createSDFSource(sourceString);
 		brokerStreamingSource(node, source, sourceString);
 
 		return node.childrenAccept(this, data);

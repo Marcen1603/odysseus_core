@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -23,10 +24,12 @@ public class WorkingMemory {
 	private volatile boolean hasChanged = false;
 
 	private User caller;
+	private IDataDictionary dd;
 
-	public WorkingMemory(IWorkingEnvironment<?> env, User caller) {
+	public WorkingMemory(IWorkingEnvironment<?> env, User caller, IDataDictionary dd) {
 		this.env = env;
 		this.caller = caller;
+		this.dd = dd;
 	}
 
 	public void removeObject(Object o) {
@@ -170,4 +173,8 @@ public class WorkingMemory {
 		return caller;
 	}
 
+	public IDataDictionary getDataDictionary(){
+		return dd;
+	}
+	
 }

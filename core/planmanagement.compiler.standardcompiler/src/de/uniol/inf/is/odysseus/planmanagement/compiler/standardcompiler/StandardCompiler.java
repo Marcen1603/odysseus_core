@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
@@ -178,10 +179,10 @@ public class StandardCompiler implements ICompiler {
 	 */
 	@Override
 	public List<IQuery> translateQuery(String query,
-			String parserID, User user) throws QueryParseException {
+			String parserID, User user, IDataDictionary dd) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID)
-					.parse(query, user);
+					.parse(query, user, dd);
 		}
 
 		throw new QueryParseException("Parser with ID " + parserID
@@ -207,7 +208,7 @@ public class StandardCompiler implements ICompiler {
 
 	@Override
 	public void transform(IQuery query,
-			TransformationConfiguration transformationConfiguration, User caller) throws TransformationException {
+			TransformationConfiguration transformationConfiguration, User caller, IDataDictionary dd) throws TransformationException {
 //		System.err.println("TRANSFORMING QUERY");
 //		
 //		System.err.println("OLD PLAN: TREE WALKER");
@@ -232,7 +233,7 @@ public class StandardCompiler implements ICompiler {
 //		walker.prefixWalk(copyPlan, visitor);
 //		System.err.println(visitor.getResult());
 
-		query.initializePhysicalRoots(this.transformation.transform(copyPlan, transformationConfiguration, caller));
+		query.initializePhysicalRoots(this.transformation.transform(copyPlan, transformationConfiguration, caller, dd));
 	}
 	
 	/* (non-Javadoc)
@@ -300,10 +301,10 @@ public class StandardCompiler implements ICompiler {
 
 	@Override
 	public List<IQuery> translateAndTransformQuery(String query,
-			String parserID, User user, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
-		List<IQuery> translate = translateQuery(query, parserID, user);
+			String parserID, User user, IDataDictionary dd, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
+		List<IQuery> translate = translateQuery(query, parserID, user, dd);
 		for (IQuery q:translate){
-			transform(q, transformationConfiguration, user);
+			transform(q, transformationConfiguration, user, dd);
 		}
 		return translate;
 	}

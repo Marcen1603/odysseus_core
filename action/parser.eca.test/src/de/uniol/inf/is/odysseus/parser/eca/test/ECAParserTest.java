@@ -16,6 +16,9 @@ import de.uniol.inf.is.odysseus.action.output.StaticParameter;
 import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.console.ExecutorConsole;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
@@ -37,6 +40,7 @@ public class ECAParserTest implements CommandProvider {
 	private IActuatorFactory actuatorFactory;
 	private ICompiler compiler;
 	User user = UserManagement.getInstance().getSuperUser();
+	IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("ECA Parser Test");
 	
 	//set to false if u want to prevent removal of testActuators!
 	private static boolean autoRemoveActuator = true;
@@ -134,7 +138,7 @@ public class ECAParserTest implements CommandProvider {
 
 	@SuppressWarnings("unchecked")
 	private void runTestSuite(String query, List<IActionParameter> parameters, CommandInterpreter ci) throws Exception {	
-		List<IQuery> queries = this.compiler.translateQuery(query , "ECA", user);
+		List<IQuery> queries = this.compiler.translateQuery(query , "ECA", user, dd);
 		ILogicalOperator logicalPlan = queries.get(0).getLogicalPlan();
 		logicalPlan.getOutputSchema();
 		
@@ -183,7 +187,7 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, new ParameterParserID("ECA"));
+		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, dd, new ParameterParserID("ECA"));
 		ci.println("	*Testcase3: Check if physical plan is correct");
 		IPlan plan = this.executor.getPlan();
 		IQuery installedQuery = plan.getQuery(addedQuery.getID());

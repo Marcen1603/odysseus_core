@@ -15,6 +15,9 @@ import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.collection.Pair;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
@@ -60,6 +63,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private boolean useBenchmarkMemUsage = false;
 
 	private User user = UserManagement.getInstance().getSuperUser();
+	private IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Benchmark");
 
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
@@ -185,7 +189,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 						throw new BenchmarkException(e);
 					}
 				} else {
-					executor.addQuery(queryString, parserId, user,
+					executor.addQuery(queryString, parserId, user, dd, 
 							parameters.toArray(new IQueryBuildSetting[0]));
 				}
 			}
@@ -258,7 +262,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, "CQL", user,
+				this.executor.addQuery(s, "CQL", user, dd, 
 						new ParameterTransformationConfiguration(
 								new TransformationConfiguration("relational",
 										ITimeInterval.class)));

@@ -215,11 +215,11 @@ abstract class AbstractUserManagement {
 	 */
 	// TODO: zusammenhänge granten
 	private void dependingGrants(User caller, String entityname,
-			IUserAction action, String objecturi) {
+			IUserAction action, String objecturi, boolean callerIsOwner) {
 		if (action instanceof DataDictionaryAction) {
 			switch ((DataDictionaryAction) action) {
 			case READ:
-				this.grantPermission(caller, entityname,
+				this.grantPermission(caller, entityname, callerIsOwner,
 						DataDictionaryAction.GET_ENTITY, objecturi);
 			default:
 				;
@@ -320,10 +320,10 @@ abstract class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 * @throws StoreException
 	 */
-	public void grantPermission(User caller, String entityname,
+	public void grantPermission(User caller, String entityname, boolean callerIsOwner, 
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException, StoreException {
-		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
+		if (hasGrantOrRevokeAccess(caller, entityname, objecturi, callerIsOwner, 
 				UserManagementAction.GRANT, false)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
@@ -340,7 +340,7 @@ abstract class AbstractUserManagement {
 			}
 
 			// vergibt zusammenhängende Rechte
-			dependingGrants(caller, entityname, operation, objecturi);
+			dependingGrants(caller, entityname, operation, objecturi, callerIsOwner);
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()
 					+ " has no permission to grant permission. " + operation
@@ -421,7 +421,7 @@ abstract class AbstractUserManagement {
 	 * @return boolean
 	 */
 	private boolean hasGrantOrRevokeAccess(User caller, String entityname,
-			String objecturi, IUserAction action, boolean revoke) {
+			String objecturi, boolean callerIsOwner, IUserAction action, boolean revoke) {
 		if (revoke && isRevokeProtected(entityname)) {
 			System.out.println("User '" + entityname
 					+ "' has revoke protection.");
@@ -435,8 +435,7 @@ abstract class AbstractUserManagement {
 		&& !caller.toString().equals(entityname))
 
 				// oder user is owner of object
-				|| (AccessControl.isCreatorOfObject(caller.getUsername(),
-						objecturi))
+				|| (callerIsOwner)
 
 		// oder hat user superPermission von permission
 		|| hasSuperOperation((UserManagementAction) action,
@@ -592,10 +591,10 @@ abstract class AbstractUserManagement {
 	 * @param objecturi
 	 * @throws HasNoPermissionException
 	 */
-	public void revokePermission(User caller, String entityname,
+	public void revokePermission(User caller, String entityname, boolean callerIsOwner,
 			IUserAction operation, String objecturi)
 			throws HasNoPermissionException {
-		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
+		if (hasGrantOrRevokeAccess(caller, entityname, objecturi, callerIsOwner, 
 				UserManagementAction.REVOKE, true)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			// if entity has't already rights on this object
@@ -628,8 +627,8 @@ abstract class AbstractUserManagement {
 	 * @throws HasNoPermissionException
 	 */
 	public void revokePrivilegeForObject(User caller, String entityname,
-			String objecturi) throws HasNoPermissionException {
-		if (hasGrantOrRevokeAccess(caller, entityname, objecturi,
+			String objecturi, boolean callerIsOwner) throws HasNoPermissionException {
+		if (hasGrantOrRevokeAccess(caller, entityname, objecturi, callerIsOwner,
 				UserManagementAction.REVOKE, true)) {
 			AbstractUserManagementEntity entity = getEntity(entityname);
 			entity.removePrivilege(objecturi);

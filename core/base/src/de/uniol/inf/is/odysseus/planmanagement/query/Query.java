@@ -13,6 +13,7 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
@@ -65,6 +66,11 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * The user who created this query
 	 */
 	private User user = null;
+	
+	/**
+	 * The Data Dictionary belonging to this query
+	 */
+	private IDataDictionary datadictionary;
 
 	/**
 	 * List of all direct physical child operators. Stored separate because a
@@ -674,6 +680,16 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	@Override
 	public User getUser() {
 		return user;
+	}
+	
+	@Override
+	public IDataDictionary getDataDictionary() {
+		return datadictionary;
+	}
+	
+	@Override
+	public void setDataDictionary(IDataDictionary dd) {
+		this.datadictionary = dd;
 	}
 
 	@Override

@@ -34,6 +34,8 @@ import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkSink;
 import de.uniol.inf.is.odysseus.benchmarker.impl.LatencyBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
@@ -90,6 +92,7 @@ public class ExecutorConsole implements CommandProvider,
 	private String parser = null;
 
 	User currentUser = UserManagement.getInstance().getSuperUser();
+	IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Executor Console");
 
 	/**
 	 * This is the bath to files, to read queries from. This path can be set by
@@ -736,7 +739,7 @@ public class ExecutorConsole implements CommandProvider,
 		q[7] = "CREATE STREAM nexmark:category2_v (id INTEGER, name STRING, description STRING, parentid INTEGER) FROM (SELECT * FROM nexmark:category2 [UNBOUNDED])";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser,
+				this.executor.addQuery(s, parser(), currentUser, dd,
 						this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
@@ -762,7 +765,7 @@ public class ExecutorConsole implements CommandProvider,
 		q[3] = "CREATE STREAM nexmark:category (id INTEGER, name STRING, description STRING, parentid INTEGER) SOCKET localhost : 65433";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser,
+				this.executor.addQuery(s, parser(), currentUser, dd, 
 						this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
@@ -821,11 +824,11 @@ public class ExecutorConsole implements CommandProvider,
 	private void addQuery(String q) {
 		try {
 			if (outputputFilename == null || outputputFilename.length() == 0) {
-				this.executor.addQuery(q, parser(), currentUser,
+				this.executor.addQuery(q, parser(), currentUser, dd,
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
 			} else {
-				this.executor.addQuery(q, parser(), currentUser,
+				this.executor.addQuery(q, parser(), currentUser, dd, 
 						new ParameterDefaultRoot(
 								new FileSinkPO(outputputFilename, "", -1)),
 						this.trafoConfigParam);
@@ -980,7 +983,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		try {
 			q.append(args[args.length - 1]);
-			this.executor.addQuery(q.toString(), parser(), currentUser,
+			this.executor.addQuery(q.toString(), parser(), currentUser, dd, 
 					this.trafoConfigParam);
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -997,11 +1000,11 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			if (args[args.length - 1].toUpperCase().equals("<S>")) {
 				q.append(args[args.length - 2]).append(" ");
-				this.executor.addQuery(q.toString(), parser(), currentUser,
+				this.executor.addQuery(q.toString(), parser(), currentUser, dd,
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
-				this.executor.addQuery(q.toString(), parser(), currentUser,
+				this.executor.addQuery(q.toString(), parser(), currentUser, dd,
 						new ParameterDefaultRoot(new FileSinkPO(
 								args[args.length - 1],"", -1)), this.trafoConfigParam);
 
@@ -1011,7 +1014,7 @@ public class ExecutorConsole implements CommandProvider,
 			} else {
 				q.append(args[args.length - 2]).append(" ");
 				q.append(args[args.length - 1]).append(" ");
-				this.executor.addQuery(q.toString(), parser(), currentUser,
+				this.executor.addQuery(q.toString(), parser(), currentUser, dd,
 						this.trafoConfigParam);
 			}
 		} catch (Exception e) {
@@ -1140,7 +1143,7 @@ public class ExecutorConsole implements CommandProvider,
 			
 			try {
 				ICompiler compiler = this.executor.getCompiler();
-				List<IQuery> plans = compiler.translateQuery(queries, parser(), currentUser);
+				List<IQuery> plans = compiler.translateQuery(queries, parser(), currentUser,dd);
 
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
@@ -1163,7 +1166,7 @@ public class ExecutorConsole implements CommandProvider,
 				// so transform this one
 				IQuery query = plans
 				.get(plans.size() - 1);
-				compiler.transform(query, this.trafoConfigParam.getValue(), currentUser);
+				compiler.transform(query, this.trafoConfigParam.getValue(), currentUser, dd);
 				
 
 				IQuery addedQuery = this.executor.addQuery(query.getRoots(), currentUser,
@@ -1233,7 +1236,7 @@ public class ExecutorConsole implements CommandProvider,
 			this.addQueryWithEclipseConsoleOutput(query);
 			return;
 		} else {
-			this.executor.addQuery(query, parser(), currentUser, paramsArray);
+			this.executor.addQuery(query, parser(), currentUser, dd, paramsArray);
 			return;
 		}
 	}
@@ -1273,7 +1276,7 @@ public class ExecutorConsole implements CommandProvider,
 	public void _lssources(CommandInterpreter ci) {
 		addCommand();
 		System.out.println("Current registered sources");
-		for (Entry<String, ILogicalOperator> e : DataDictionary.getInstance()
+		for (Entry<String, ILogicalOperator> e : dd
 				.getStreamsAndViews(currentUser)) {
 			ci.println(e.getKey() + " | " + e.getValue());
 		}
@@ -1790,7 +1793,7 @@ public class ExecutorConsole implements CommandProvider,
 			Object ecs = eclipseConsoleSink.newInstance();
 			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
-			this.executor.addQuery(query, parser(), currentUser,
+			this.executor.addQuery(query, parser(), currentUser, dd, 
 					new ParameterDefaultRoot(ecSink), this.trafoConfigParam);
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");

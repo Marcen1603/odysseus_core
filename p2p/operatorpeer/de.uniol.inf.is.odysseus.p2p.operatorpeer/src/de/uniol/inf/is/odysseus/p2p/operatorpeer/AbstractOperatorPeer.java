@@ -96,12 +96,11 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		try {
 			initServerResponseConnection();
 			Log.setWindow(getGui());
-			initSources(this);
+			initExecutor();
 			initPriorityMode();
 			initMessageSender();
 			initSourceHandler(this);
 			initSocketServerListener(this);
-			initExecutor();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -179,6 +178,20 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		startAliveHandler();
 		getDistributionClient().startService();
 //		startQuerySpezificationFinder();
+		// HACK !!
+		final AbstractOperatorPeer me = this;
+		new Thread(){
+			public void run() {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				initSources(me);
+			};
+		}.start();
+		
 	}
 	
 //	protected void startQuerySpezificationFinder() {

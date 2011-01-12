@@ -22,6 +22,8 @@ import java.util.Properties;
 import com.Ostermiller.util.CSVParser;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -117,7 +119,7 @@ public class LabdataServer {
 
 		SDFEntity stream = null;
 
-		DataDictionary dd = DataDictionary.getInstance();
+		IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Labdata Server");
 		try {
 			stream = dd.getEntity(streamName, UserManagement.getInstance()
 					.getSuperUser());
@@ -135,7 +137,7 @@ public class LabdataServer {
 			InputStreamReader reader = new InputStreamReader(input);
 			try {
 				CQLParser.getInstance().parse(reader,
-						UserManagement.getInstance().getSuperUser());
+						UserManagement.getInstance().getSuperUser(),dd);
 			} catch (QueryParseException e) {
 				e.printStackTrace();
 			}

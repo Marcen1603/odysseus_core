@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -56,6 +57,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	private List<IQuery> plans = new ArrayList<IQuery>();
 	private User caller;
+	private IDataDictionary dataDictionary;
 	private static CQLParser instance = null;
 	private static NewSQLParser parser;
 
@@ -72,16 +74,18 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query, User user)
+	public synchronized List<IQuery> parse(String query, User user, IDataDictionary dd)
 			throws QueryParseException {
 		this.caller = user;
-		return parse(new StringReader(query), user);
+		this.dataDictionary = dd;
+		return parse(new StringReader(query), user, dd);
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(Reader reader, User user)
+	public synchronized List<IQuery> parse(Reader reader, User user, IDataDictionary dd)
 			throws QueryParseException {
 		this.caller = user;
+		this.dataDictionary = dd;
 		try {
 			if (parser == null) {
 				parser = new NewSQLParser(reader);
@@ -91,6 +95,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			ASTStatement statement = NewSQLParser.Statement();
 			CQLParser cqlParser = new CQLParser();
 			cqlParser.setUser(user);
+			cqlParser.setDataDictionary(dataDictionary);
 			cqlParser.visit(statement, null);
 			return cqlParser.plans;
 		} catch (NoClassDefFoundError e) {
@@ -105,6 +110,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public void setUser(User user) {
 		this.caller = user;
 	}
+	
+	public void setDataDictionary(IDataDictionary dataDictionary) {
+		this.dataDictionary = dataDictionary;
+	}
+
 
 	@Override
 	public Object visit(ASTStatement node, Object data) {
@@ -208,7 +218,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTSelectStatement statement, Object data) {
 		try {
-			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller);
+			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller, dataDictionary);
 			access.visit(statement, null);
 			AttributeResolver attributeResolver = access.getAttributeResolver();
 
@@ -252,13 +262,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) {
-		CreateStreamVisitor v = new CreateStreamVisitor(caller);
+		CreateStreamVisitor v = new CreateStreamVisitor(caller, dataDictionary);
 		return v.visit(node, data);
 	}
 
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) {
-		CreateViewVisitor v = new CreateViewVisitor(caller);
+		CreateViewVisitor v = new CreateViewVisitor(caller, dataDictionary);
 		return v.visit(node, data);
 	}
 
@@ -841,14 +851,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTDropStreamStatement node, Object data) {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		DataDictionary.getInstance().removeViewOrStream(streamname, caller);
+		dataDictionary.removeViewOrStream(streamname, caller);
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDropViewStatement node, Object data) {
 		String viewname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		DataDictionary.getInstance().removeViewOrStream(viewname, caller);
+		dataDictionary.removeViewOrStream(viewname, caller);
 		return null;
 	}
 
@@ -1053,11 +1063,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			if (UserActionFactory.needsNoObject(action)) {
 				String object = UserActionFactory.getAliasObject(action);
-				UserManagement.getInstance().grantPermission(caller, user,
+				UserManagement.getInstance().grantPermission(caller, user, dataDictionary.isCreatorOfObject(caller.getName(), object),
 						action, object);
 			} else {
 				for (String entityname : objects) {
-					UserManagement.getInstance().grantPermission(caller, user,
+					UserManagement.getInstance().grantPermission(caller, user, dataDictionary.isCreatorOfObject(caller.getName(), entityname),
 							action, entityname);
 				}
 			}

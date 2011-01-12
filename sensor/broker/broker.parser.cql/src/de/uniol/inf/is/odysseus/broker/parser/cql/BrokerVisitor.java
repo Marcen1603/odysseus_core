@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -48,12 +49,17 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	private User caller;
+	private IDataDictionary dataDictionary;
 
 	public BrokerVisitor() {
 	}
 	
 	public void setUser(User user){
 		this.caller = user;
+	}
+	
+	public void setDataDictionary(IDataDictionary dd){
+		this.dataDictionary = dd;
 	}
 	
 	/*
@@ -131,10 +137,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		// connect the source to broker
 		broker.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		// make it accessible like a normal source
-		DataDictionary.getInstance().addSourceType(name, "brokerStreaming");
+		dataDictionary.addSourceType(name, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(broker.getOutputSchema());
-		DataDictionary.getInstance().addEntity(name, entity, caller);
+		dataDictionary.addEntity(name, entity, caller);
 		return broker;
 
 	}
@@ -298,10 +304,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// make it accessible like a normal source
-		DataDictionary.getInstance().addSourceType(brokerName, "brokerStreaming");
+		dataDictionary.addSourceType(brokerName, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(brokerName);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().addEntity(brokerName, entity, caller);
+		dataDictionary.addEntity(brokerName, entity, caller);
 		// create the broker
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		broker.setSchema(attributes);
@@ -313,7 +319,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		BrokerDictionary.getInstance().setLogicalPlan(brokerName, broker);
 
 		// Is this necessary any more?
-		DataDictionary.getInstance().setView(brokerName, broker, caller);
+		dataDictionary.setView(brokerName, broker, caller);
 
 		return broker;
 	}

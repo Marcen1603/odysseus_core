@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.transform.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.TopAO;
@@ -33,7 +34,7 @@ public class TransformationExecutor implements ITransformation {
 	}
 
 	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config, User caller) throws TransformationException {		
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config, User caller, IDataDictionary dd) throws TransformationException {		
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting transformation of " + op + "...");		
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Before transformation: \n"+planPrinter.createString(op));
@@ -52,7 +53,7 @@ public class TransformationExecutor implements ITransformation {
 		
 
 		TransformationInventory concreteTransformInvent = new TransformationInventory(TransformationInventory.getInstance());
-		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent, caller);
+		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent, caller, dd);
 
 		addLogicalOperator(top, list, env);
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Processing rules...");

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.objecttracking.parser;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
@@ -31,9 +32,14 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	private Long port;
 
 	private User user;
+	private IDataDictionary dd;
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public void setDataDictionary(IDataDictionary dd){
+		this.dd = dd;
 	}
 
 	@Override
@@ -56,9 +62,9 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(ex);
-		DataDictionary.getInstance().addSourceType(name,
+		dd.addSourceType(name,
 				"ObjectRelationalStreaming");
-		DataDictionary.getInstance().addEntity(name, entity, user);
+		dd.addEntity(name, entity, user);
 
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist
 		// (extra Klasse oder so)
@@ -69,7 +75,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		source.setHost(host);
 		source.setOutputSchema(ex);
 		source.setObjectListPath(objectListPath);
-		DataDictionary.getInstance().setView(name, source, user);
+		dd.setView(name, source, user);
 		return null;
 	}
 

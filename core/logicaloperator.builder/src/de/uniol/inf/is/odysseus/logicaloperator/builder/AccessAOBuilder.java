@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
@@ -16,6 +15,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
  */
 public class AccessAOBuilder extends AbstractOperatorBuilder {
 
+	private static final long serialVersionUID = 2682090172449918821L;
 	private final DirectParameter<String> sourceName = new DirectParameter<String>(
 			"SOURCE", REQUIREMENT.MANDATORY);
 	private final IntegerParameter port = new IntegerParameter("PORT",
@@ -36,8 +36,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		String sourceName = this.sourceName.getValue();
-		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
-			return DataDictionary.getInstance().getViewOrStream(sourceName, getCaller());
+		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
+			return getDataDictionary().getViewOrStream(sourceName, getCaller());
 		}
 		AccessAO ao = createNewAccessAO(sourceName);
 
@@ -51,9 +51,9 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		SDFAttributeList schema = new SDFAttributeList(attributeList);
 		sdfEntity.setAttributes(schema);
 
-		DataDictionary.getInstance().addSourceType(sourceName,
+		getDataDictionary().addSourceType(sourceName,
 				"RelationalStreaming");
-		DataDictionary.getInstance().addEntity(sourceName, sdfEntity, getCaller());
+		getDataDictionary().addEntity(sourceName, sdfEntity, getCaller());
 
 		AccessAO ao = new AccessAO(sdfSource);
 		ao.setHost(host.getValue());
@@ -66,7 +66,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	protected boolean internalValidation() {
 		String sourceName = this.sourceName.getValue();
 
-		if (DataDictionary.getInstance().containsViewOrStream(sourceName, getCaller())) {
+		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
 			if (host.hasValue() || type.hasValue() || port.hasValue()
 					|| attributes.hasValue()) {
 				addError(new IllegalArgumentException("view " + sourceName

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 	private static int MAXQUERIES = 10;
@@ -31,14 +32,14 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 			for(AccessAO ao : sources) {
 
 				User user = UserManagement.getInstance().getSuperUser();
-				if(DataDictionary.getInstance().createSDFSource(ao.getSource().getURI())== null) {
+				if(GlobalState.getActiveDatadictionary().createSDFSource(ao.getSource().getURI())== null) {
 					return false;
 				}
 			}
 			return true;
 		}
 		//keine Quellen werden verwaltet
-		if(DataDictionary.getInstance().emptySourceTypeMap()) {
+		if(GlobalState.getActiveDatadictionary().emptySourceTypeMap()) {
 			return true;
 		}
 		//Zum einfacheren testen wird true zurückgeliefert, obwohl false geliefert werden müsste

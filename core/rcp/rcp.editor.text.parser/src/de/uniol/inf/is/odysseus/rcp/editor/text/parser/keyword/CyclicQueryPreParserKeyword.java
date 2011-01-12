@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
@@ -13,7 +15,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 
@@ -55,8 +57,9 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID);
 		User user = getCurrentUser(variables);
 		try {
+			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			ICompiler compiler = executor.getCompiler();
-			List<IQuery> plans = compiler.translateQuery(queries, parserID, user);
+			List<IQuery> plans = compiler.translateQuery(queries, parserID, user, dd);
 			
 			// HACK
 			ParameterTransformationConfiguration cfg = null;
@@ -71,10 +74,10 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 				// the last plan is the complete plan
 				// so transform this one
 				IQuery query = plans.get(plans.size() - 1);
-				compiler.transform(query, cfg.getValue(), ActiveUser.getActiveUser());
+				compiler.transform(query, cfg.getValue(), GlobalState.getActiveUser(), dd);
 	
 				IQuery addedQuery = executor.addQuery(query.getRoots(), user, transCfg.toArray(new IQueryBuildSetting[0]));
-				executor.startQuery(addedQuery.getID(), ActiveUser.getActiveUser());
+				executor.startQuery(addedQuery.getID(), GlobalState.getActiveUser());
 			} 
 
 		} catch (QueryParseException e1) {

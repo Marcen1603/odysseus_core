@@ -10,6 +10,8 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -22,7 +24,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 
@@ -50,7 +52,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 					return null;
 				}
 				// Logischen Plan aufbauen
-				buildLogicalPlan(part.getOperatorPlan(), ActiveUser.getActiveUser());
+				buildLogicalPlan(part.getOperatorPlan(), GlobalState.getActiveUser(), GlobalState.getActiveDatadictionary());
 
 			}
 		} catch (Exception ex) {
@@ -80,7 +82,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void buildLogicalPlan(OperatorPlan plan, User user) {
+	private void buildLogicalPlan(OperatorPlan plan, User user, IDataDictionary dd) {
 
 		// oberste Operatoren finden
 		List<Operator> sinks = new ArrayList<Operator>();
@@ -93,7 +95,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		try {
 			for (Operator sink : sinks) {
 				printLogicalPlan(sink.getLogicalOperator(), 0);
-				Activator.getExecutor().addQuery(sink.getLogicalOperator(), user,
+				Activator.getExecutor().addQuery(sink.getLogicalOperator(), user,dd,
 						new ParameterTransformationConfiguration(new TransformationConfiguration("relational", ITimeInterval.class)));
 			}
 		} catch (PlanManagementException ex) {

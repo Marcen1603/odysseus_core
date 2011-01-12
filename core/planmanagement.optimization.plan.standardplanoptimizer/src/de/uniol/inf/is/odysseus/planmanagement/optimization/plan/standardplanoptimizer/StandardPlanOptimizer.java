@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanop
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -66,7 +67,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 								query,
 								query.getBuildParameter()
 										.getTransformationConfiguration(),
-										query.getUser());
+										query.getUser(), query.getDataDictionary());
 			}
 		}
 	}

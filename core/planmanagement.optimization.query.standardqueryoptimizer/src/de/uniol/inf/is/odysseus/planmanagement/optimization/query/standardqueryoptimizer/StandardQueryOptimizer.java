@@ -93,7 +93,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		try {
 				// create the physical plan
 				compiler.transform(query, query.getBuildParameter()
-						.getTransformationConfiguration(), query.getUser());
+						.getTransformationConfiguration(), query.getUser(), query.getDataDictionary());
 
 				postTransformationInit(query, query.getRoots());
 			} catch (Throwable e) {

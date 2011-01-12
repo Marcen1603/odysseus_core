@@ -10,7 +10,9 @@ import de.uniol.inf.is.odysseus.rcp.user.impl.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.user.impl.LoginWindow;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 
 public class Login {
 
@@ -49,7 +51,8 @@ public class Login {
 
 			if (user != null) {
 				// anmelden ok
-				ActiveUser.setActiveUser(user);
+				GlobalState.setActiveUser(user);
+				GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("RCP"));
 				StatusBarManager.getInstance().setMessage(
 						"Automatically logged in as " + username);
 				return user;

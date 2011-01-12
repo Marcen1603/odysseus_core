@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionaryEntry;
 import de.uniol.inf.is.odysseus.broker.transaction.TransactionDetector;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -41,6 +42,7 @@ public class ProceduralParser implements IQueryParser {
 	private ArrayList<String> brokerNames;
 
 	private User user;
+	private IDataDictionary dd;
 
 	public static synchronized IQueryParser getInstance() {
 		if (instance == null) {
@@ -56,14 +58,15 @@ public class ProceduralParser implements IQueryParser {
 	 * the last plan in returned list contains the whole plan.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<IQuery> parse(String query, User user) throws QueryParseException {
+	public List<IQuery> parse(String query, User user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
+		this.dd = dd;
 		List<IQuery> listOfPlans = new ArrayList<IQuery>();
 		this.brokerNames = new ArrayList<String>();
 		
-		InitAttributesVisitor initAttrs = new InitAttributesVisitor(user);
+		InitAttributesVisitor initAttrs = new InitAttributesVisitor(user, dd);
 		InitBrokerVisitor initBroker = new InitBrokerVisitor();
-		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor(user);
+		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor(user, dd);
 		
 		if(this.parser == null){
 			this.parser = new ProceduralExpressionParser(new StringReader(query));
@@ -136,8 +139,9 @@ public class ProceduralParser implements IQueryParser {
 		return this.brokerNames;
 	}
 
-	public List<IQuery> parse(Reader reader, User user) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, User user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
+		this.dd = dd;
 		return null;
 	}
 

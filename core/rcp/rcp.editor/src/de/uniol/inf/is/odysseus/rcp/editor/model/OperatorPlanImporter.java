@@ -19,10 +19,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class OperatorPlanImporter implements IOperatorPlanImporter {
 
@@ -155,9 +157,10 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 		int x = Integer.valueOf(getAttributeValue(node, "x"));
 		int y = Integer.valueOf(getAttributeValue(node, "y"));
 
+		final IDataDictionary dd = GlobalState.getActiveDatadictionary();		
 		String builderName = getAttributeValue(node, "builder");
-		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, ActiveUser.getActiveUser());
-		builder.setCaller(ActiveUser.getActiveUser());
+		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, GlobalState.getActiveUser(), dd);
+		builder.setCaller(GlobalState.getActiveUser());
 
 		Map<String, Object> parameters = loadParameters(node);
 

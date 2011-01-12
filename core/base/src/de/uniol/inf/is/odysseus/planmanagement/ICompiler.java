@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
@@ -32,10 +33,10 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 * @throws QueryParseException
 	 *             An {@link Exception} which occurs during parsing the query.
 	 */
-	public List<IQuery> translateQuery(String query, String parserID, User user)
+	public List<IQuery> translateQuery(String query, String parserID, User user, IDataDictionary dd)
 			throws QueryParseException;
 
-	public List<IQuery> translateAndTransformQuery(String query, String parserID, User user,
+	public List<IQuery> translateAndTransformQuery(String query, String parserID, User user, IDataDictionary dd,
 			TransformationConfiguration transformationConfiguration)
 			throws QueryParseException, TransformationException;
 //	/**
@@ -82,7 +83,7 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 *             An {@link Exception} which occurs during transformation the
 	 *             query.
 	 */
-	public void transform(/*InOut*/IQuery query, TransformationConfiguration transformationConfiguration, User caller) throws TransformationException;
+	public void transform(/*InOut*/IQuery query, TransformationConfiguration transformationConfiguration, User caller, IDataDictionary dd) throws TransformationException;
 
 //	/**
 //	 * Transforms a logical plan into several semantically equivalent physical

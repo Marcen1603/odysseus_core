@@ -2,8 +2,10 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 
 public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
@@ -11,9 +13,13 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 	protected User getCurrentUser(Map<String, Object> variables){
 		Object user =  variables.get("USER");
 		if (user == null){
-			user = ActiveUser.getActiveUser();
+			user = GlobalState.getActiveUser();
 		}
 		return (User)user;
+	}
+	
+	protected IDataDictionary getDataDictionary() {
+		return GlobalState.getActiveDatadictionary();
 	}
 	
 	/**

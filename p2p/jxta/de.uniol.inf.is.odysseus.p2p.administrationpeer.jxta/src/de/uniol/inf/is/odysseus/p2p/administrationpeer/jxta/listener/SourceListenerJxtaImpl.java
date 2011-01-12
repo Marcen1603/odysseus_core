@@ -7,7 +7,7 @@ import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * Operator-Peers mit Quellen werden separat ausgeschrieben, so dass diese
@@ -79,13 +79,13 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 						// Hier wird noch das Schema der Quelle zum
 						// DataDictionary hinzugefÃ¼gt, damit der Compiler mit
 						// den Informationen arbeiten kann
-						User user = UserManagement.getInstance().getSuperUser();
+						User user = GlobalState.getActiveUser();
+						IDataDictionary datadictionary = GlobalState.getActiveDatadictionary();
 						// TODO: Was sollte das?
 						// if(DataDictionary.getInstance().getSourceType(adv.getSourceName(),user)
 						// != null) {
-						// TODO: User einfuegen, der diese Query ausführt
 						getExecutor().addQuery(adv.getSourceScheme(), "CQL",
-								user, this.trafoConfigParam,
+								user, datadictionary, this.trafoConfigParam,
 								new ParameterPriority(2));
 						// }
 

@@ -16,6 +16,8 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
@@ -31,6 +33,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	
@@ -93,6 +97,11 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	
 	public void activate() {
 		getLogger().info("OSGi Services loaded");
+		
+		// TODO: User einlesen
+		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
+		// TODO: Unterschiedliche Namen notwendig?
+		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("OperatorPeer")); 
 		startPeer();
 		getDistributionClient().initializeService();
 	}
@@ -279,26 +288,27 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	@Override
 	protected void initSources(AbstractOperatorPeer aPeer) {
-	    
-		return;
-		
-//		getSources().put("nexmark:person2", "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440");
-//		getSources().put("nexmark:auction2", "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441");
-//		getSources().put("nexmark:bid2", "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442");
-//
-//		final List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor().getQueryBuildConfiguration("Standard");
-//
-//		for (String s : getSources().values()) {
-//			try {		
-//				// TODO: User einfuegen, der diese Query ausführt
-//				User user = UserManagement.getInstance().getSuperUser();
-//				aPeer.getExecutor().addQuery(s, "CQL", user, cfg.toArray(new IQueryBuildSetting[0])  );		
-//			} catch (PlanManagementException e) {
-//				e.printStackTrace();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
+	    		
+		getSources().put("nexmark:person2", "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440");
+		getSources().put("nexmark:auction2", "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441");
+		getSources().put("nexmark:bid2", "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442");
+		List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor().getQueryBuildConfiguration("Standard");;
+		if (cfg == null){
+			  getLogger().debug("No Query Build Configuration found!!!");
+			  return;
+		}
+
+		for (String s : getSources().values()) {
+			try {		
+				User user = GlobalState.getActiveUser();
+				IDataDictionary dd = GlobalState.getActiveDatadictionary();
+				aPeer.getExecutor().addQuery(s, "CQL", user,dd, cfg.toArray(new IQueryBuildSetting[0])  );		
+			} catch (PlanManagementException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 

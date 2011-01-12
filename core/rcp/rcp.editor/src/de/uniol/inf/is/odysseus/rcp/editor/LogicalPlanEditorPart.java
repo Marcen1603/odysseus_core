@@ -48,6 +48,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener, PropertyChangeListener {
 
@@ -58,13 +59,13 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	public LogicalPlanEditorPart() {
 		super();
 		setEditDomain(new DefaultEditDomain(this));
-		DataDictionary.getInstance().addListener(this);
+		GlobalState.getActiveDatadictionary().addListener(this);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		DataDictionary.getInstance().removeListener(this);
+		GlobalState.getActiveDatadictionary().removeListener(this);
 	}
 
 	@Override

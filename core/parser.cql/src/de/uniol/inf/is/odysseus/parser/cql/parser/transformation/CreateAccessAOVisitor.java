@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.QueryAccessAO;
@@ -33,11 +36,13 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	private Map<SDFSource, ILogicalOperator> sources;
 
 	private User caller;
+	private IDataDictionary dd;
 
-	public CreateAccessAOVisitor(User user) {
+	public CreateAccessAOVisitor(User user, IDataDictionary dd) {
 		super();
 		init();
 		this.caller = user;
+		this.dd = dd;
 	}
 
 	public final void init() {
@@ -53,7 +58,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSimpleSource node, Object data) {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
-		SDFSource source = DataDictionary.getInstance().createSDFSource(sourceString);
+		SDFSource source = dd.createSDFSource(sourceString);
 		if (source.getSourceType().equals("RelationalStreaming")) {
 			relationalStreamingSource(node, source, sourceString);
 			return null;
@@ -142,7 +147,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private void relationalStreamingSource(ASTSimpleSource node,
 			SDFSource source, String sourceName) {
-		ILogicalOperator access = DataDictionary.getInstance().getViewOrStream(sourceName, caller);
+		ILogicalOperator access = dd.getViewOrStream(sourceName, caller);
 		
 
 		ILogicalOperator inputOp = access;
@@ -263,6 +268,13 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 					.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
 			IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
 					.newInstance();
+			
+			Method m = dbClass.getDeclaredMethod("setUser", User.class);
+			m.invoke(dbVisitor, caller);
+			m = dbClass.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m.invoke(dbVisitor, dd);
+
+			
 			AbstractLogicalOperator dbOp = (AbstractLogicalOperator) dbVisitor
 					.visit(node, data);
 			this.attributeResolver.addSource(dbVisitor.getAlias(), dbOp);
@@ -279,7 +291,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", User.class);
+			m.invoke(bsv, caller);
+			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m.invoke(bsv, dd);
+
+			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTBrokerSource.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);
@@ -305,7 +322,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", User.class);
+			m.invoke(bsv, caller);
+			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m.invoke(bsv, dd);
+			
+			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTSimpleSource.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
@@ -20,6 +22,8 @@ public class PQLParser implements IQueryParser {
 
 	private User user;
 
+	private IDataDictionary dataDictionary;
+
 	private static Map<String, IParameter<?>> queryParameters = new HashMap<String, IParameter<?>>();
 
 	@Override
@@ -28,18 +32,22 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query, User user)
+	public synchronized List<IQuery> parse(String query, User user, IDataDictionary dd)
 			throws QueryParseException {
 		this.user = user;
+		this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
-		return parse(new StringReader(query),user);
+		PQLParserImpl.setDataDictionary(dd);
+		return parse(new StringReader(query),user, dd);
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(Reader reader, User user)
+	public synchronized List<IQuery> parse(Reader reader, User user, IDataDictionary dd)
 			throws QueryParseException {
 		this.user = user;
+		this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
+		PQLParserImpl.setDataDictionary(dd);
 		try {
 			if (this.parser == null) {
 				try {

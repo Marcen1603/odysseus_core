@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.Acti
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.planmanagement.configuration,

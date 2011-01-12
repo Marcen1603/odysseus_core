@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.sources.view.part;
 
 import java.util.Map.Entry;
 
+import javax.xml.bind.JAXBElement.GlobalScope;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -11,6 +13,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.sources.view.activator.Activator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class SourcesLabelProvider implements ILabelProvider {
 
@@ -36,7 +39,7 @@ public class SourcesLabelProvider implements ILabelProvider {
 		if (element instanceof Entry) {
 			@SuppressWarnings("unchecked")
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
-			if (DataDictionary.getInstance().isView(entry.getKey())){
+			if (GlobalState.getActiveDatadictionary().isView(entry.getKey())){
 				return Activator.getDefault().getImageRegistry().get("view");				
 			}else{
 				return Activator.getDefault().getImageRegistry().get("source");
@@ -57,7 +60,7 @@ public class SourcesLabelProvider implements ILabelProvider {
 			sb.append(entry.getKey()).append(" [")
 					.append(entry.getValue().getClass().getSimpleName())
 					.append("]");
-			User user = DataDictionary.getInstance().getUserForViewOrStream(
+			User user = GlobalState.getActiveDatadictionary().getUserForViewOrStream(
 					entry.getKey());
 			if (user != null) {
 				sb.append(" created by ").append(user.getUsername());

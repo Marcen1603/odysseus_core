@@ -3,9 +3,10 @@ package de.uniol.inf.is.odysseus.ruleengine.rule;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import de.uniol.inf.is.odysseus.usermanagement.User;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.system.WorkingMemory;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
@@ -76,6 +77,10 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
 	protected User getCaller(){
 		return this.getCurrentWorkingMemory().getCaller();
+	}
+	
+	protected IDataDictionary getDataDictionary(){
+		return this.getCurrentWorkingMemory().getDataDictionary();
 	}
 	
 	@Override

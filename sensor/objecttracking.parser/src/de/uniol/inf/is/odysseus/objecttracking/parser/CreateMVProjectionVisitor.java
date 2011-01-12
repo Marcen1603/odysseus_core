@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -16,6 +17,11 @@ public class CreateMVProjectionVisitor implements IVisitor{
 	@Override
 	public void setUser(User user) {
 		this.user = user;	
+	}
+	
+	@Override
+	public void setDataDictionary(IDataDictionary dd) {
+		// Not needed
 	}
 	
 	@Override

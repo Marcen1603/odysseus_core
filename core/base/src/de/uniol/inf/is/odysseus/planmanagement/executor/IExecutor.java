@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import javax.security.auth.login.Configuration;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -91,7 +91,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	@SuppressWarnings("rawtypes")
-	public Collection<IQuery> addQuery(String query, String parserID, User user,
+	public Collection<IQuery> addQuery(String query, String parserID, User user, IDataDictionary dd,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 
@@ -106,7 +106,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	@SuppressWarnings("rawtypes")
-	public Collection<IQuery> addQuery(String query, User user,
+	public Collection<IQuery> addQuery(String query, User user, IDataDictionary dd,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 
@@ -123,7 +123,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @throws PlanManagementException
 	 */
 	@SuppressWarnings("rawtypes")
-	public IQuery addQuery(ILogicalOperator logicalPlan, User user,
+	public IQuery addQuery(ILogicalOperator logicalPlan, User user, IDataDictionary dd,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 

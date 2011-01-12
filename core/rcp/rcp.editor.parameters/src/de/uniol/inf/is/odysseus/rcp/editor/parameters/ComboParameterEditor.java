@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.SimpleParameterEditor;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ComboParameterEditor extends SimpleParameterEditor<String> implements IParameterEditor {
 
@@ -77,7 +77,7 @@ public class ComboParameterEditor extends SimpleParameterEditor<String> implemen
 	protected String[] getList() {
 		// Liste der Quellen
 		List<String> sources = new ArrayList<String>();
-		for( Entry<String, ILogicalOperator> e : DataDictionary.getInstance().getStreamsAndViews(ActiveUser.getActiveUser())) {
+		for( Entry<String, ILogicalOperator> e : GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveUser())) {
 			sources.add(e.getKey());
 		}
 		return sources.toArray(new String[sources.size()]);

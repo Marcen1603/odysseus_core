@@ -12,3 +12,4 @@ Import-Package: de.uniol.inf.is.odysseus.usermanagement,
 Export-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.ruleengine.system
+Require-Bundle: de.uniol.inf.is.odysseus

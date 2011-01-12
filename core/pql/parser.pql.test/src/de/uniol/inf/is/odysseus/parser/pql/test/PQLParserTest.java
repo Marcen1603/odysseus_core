@@ -5,6 +5,8 @@ import java.util.List;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -26,7 +28,7 @@ public class PQLParserTest implements BundleActivator {
 			String queryString = "a = muh()\nb=muh()\nc=muh(a,b)\n"
 					+ "OUT= muh({ [x=1,[y=2]], z='a>b']}, c)";
 			PQLParser parser = new PQLParser();
-			List<IQuery> ops = parser.parse(queryString, UserManagement.getInstance().getSuperUser());
+			List<IQuery> ops = parser.parse(queryString, UserManagement.getInstance().getSuperUser(), DataDictionaryFactory.getDefaultDataDictionary("PQLParserTest"));
 			System.out.println(ops.get(0).getLogicalPlan());
 		} catch (Throwable t) {
 			t.printStackTrace();

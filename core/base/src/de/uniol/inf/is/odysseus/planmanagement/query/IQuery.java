@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.query;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
@@ -202,4 +203,7 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	public void addPenalty(double penalty);
 
 	double getPenalty();
+
+	public IDataDictionary getDataDictionary();
+	public void setDataDictionary(IDataDictionary dd);
 }

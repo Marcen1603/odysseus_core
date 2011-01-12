@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.ruleengine.system.AbstractWorkingEnvironment;
 public class RewriteEnvironment extends AbstractWorkingEnvironment<RewriteConfiguration> {
 
 	public RewriteEnvironment(RewriteConfiguration config, IRuleFlow ruleflow) {
-		// Currently no user in rewrite needed
-		super(config, ruleflow, null);		
+		// Currently no user and no datadictionary is needed in rewrite
+		super(config, ruleflow, null, null);		
 	}
 
 }

@@ -5,8 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
+import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseCreateOption;
@@ -22,13 +24,18 @@ import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseAccessAO;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
-public class DatabaseVisitor {
+public class DatabaseVisitor{
 
 	private User caller;
 	private String name;
+	private IDataDictionary dd;
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public void setDataDictionary(IDataDictionary dd) {
+		this.dd = dd;
 	}
 
 	public void setUser(User user) {
@@ -56,7 +63,7 @@ public class DatabaseVisitor {
 		}
 
 		// ***************
-		DataDictionary.getInstance().setStream(name, access, caller);
+		dd.setStream(name, access, caller);
 		return access;
 	}
 

@@ -8,11 +8,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class SourcesViewPart extends ViewPart implements
 		IDataDictionaryListener, IUserManagementListener {
@@ -59,7 +60,7 @@ public class SourcesViewPart extends ViewPart implements
 				try {
 					getTreeViewer().setInput(
 							getDataDictionary().getStreamsAndViews(
-									ActiveUser.getActiveUser()));
+									GlobalState.getActiveUser()));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
 					e.printStackTrace();// ?
@@ -69,8 +70,8 @@ public class SourcesViewPart extends ViewPart implements
 		});
 	}
 
-	public DataDictionary getDataDictionary() {
-		return DataDictionary.getInstance();
+	public IDataDictionary getDataDictionary() {
+		return GlobalState.getActiveDatadictionary();
 	}
 	
 

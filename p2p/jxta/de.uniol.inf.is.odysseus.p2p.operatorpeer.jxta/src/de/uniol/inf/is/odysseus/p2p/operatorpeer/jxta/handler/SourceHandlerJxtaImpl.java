@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * Alle Quellen werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und in regelmaessigen Abstaenden ausgeschrieben.
@@ -39,8 +40,8 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 	@Override
 	public void run() {
 
-		User user = UserManagement.getInstance().getSuperUser();		// Wollen jede View bzw. Quelle ausschreiben
-		for (Entry<String, ILogicalOperator> v : DataDictionary.getInstance()
+		User user = GlobalState.getActiveUser();		// Wollen jede View bzw. Quelle ausschreiben
+		for (Entry<String, ILogicalOperator> v : GlobalState.getActiveDatadictionary()
 				.getStreamsAndViews(user)) {
 //			P2PSinkAO p2ppipe = null;
 //			PipeAdvertisement pipeAdv = null;

@@ -7,6 +7,9 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
@@ -35,6 +38,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static IActuatorFactory actuatorFactory;
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration("relational", ITimeInterval.class));
+	IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("WSPort");
 	
 	/* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
@@ -44,7 +48,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         try {
 			// TODO: User einfuegen, der diese Query ausführt
         	User user = UserManagement.getInstance().getSuperUser();
-			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, trafoConfigParam
+			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, dd, trafoConfigParam
 					).iterator().next().getID();
 			return queryID;
 		} catch (Exception e) {
@@ -127,7 +131,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     		}
 			// TODO: User einfuegen, der diese Query ausführt
     		User user = UserManagement.getInstance().login("Console","", false);
-    		executor.addQuery(query, "CQL", user);
+    		executor.addQuery(query, "CQL", user, dd);
     		return "";
     	}catch (Exception e){
     		ObjectFactory factory = new ObjectFactory();

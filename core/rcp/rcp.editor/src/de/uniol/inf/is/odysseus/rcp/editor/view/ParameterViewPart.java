@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterView;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener, IParameterView, IDataDictionaryListener{
 
@@ -51,7 +52,7 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 		this.parent = parent;
 		parent.setLayout(new FillLayout());
 				
-		DataDictionary.getInstance().addListener(this);
+		GlobalState.getActiveDatadictionary().addListener(this);
 		updateParameterEditors(true);
 	
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
@@ -65,7 +66,7 @@ public class ParameterViewPart extends ViewPart implements IViewPart, ISelection
 	@Override
 	public void dispose() {
 		super.dispose();
-		DataDictionary.getInstance().removeListener(this);
+		GlobalState.getActiveDatadictionary().removeListener(this);
 	}
 
 	@Override

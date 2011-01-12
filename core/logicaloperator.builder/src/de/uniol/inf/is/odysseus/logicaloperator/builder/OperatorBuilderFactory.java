@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class OperatorBuilderFactory {
@@ -11,7 +12,7 @@ public class OperatorBuilderFactory {
 	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
 
 	@SuppressWarnings("unchecked")
-	public static <T extends IOperatorBuilder> T createOperatorBuilder(String name, User caller) {
+	public static <T extends IOperatorBuilder> T createOperatorBuilder(String name, User caller, IDataDictionary dataDictionary) {
 		name = name.toUpperCase();
 		if (!operatorBuilders.containsKey(name)) {
 			throw new IllegalArgumentException("no such operator builder: " + name);
@@ -19,6 +20,7 @@ public class OperatorBuilderFactory {
 		try {
 			T builder = (T) operatorBuilders.get(name).newInstance();
 			builder.setCaller(caller);
+			builder.setDataDictionary(dataDictionary);
 			return builder;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

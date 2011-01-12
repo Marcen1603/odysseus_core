@@ -9,7 +9,7 @@ import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.ActiveUser;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.usermanagement.client.IActiveUserListener;
 
 public class StatusBarManager implements IActiveUserListener{
@@ -26,7 +26,7 @@ public class StatusBarManager implements IActiveUserListener{
 	private String msgCache;
 	
 	private StatusBarManager() {
-		ActiveUser.addActiveUserListner(this);
+		GlobalState.addActiveUserListner(this);
 	}
 	
 	public static StatusBarManager getInstance() {

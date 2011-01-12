@@ -32,7 +32,6 @@ public class WrapperPlanFactory {
 
 	public synchronized static void init() throws Exception {
 		//logger.debug("init wrapper");
-		DataDictionary.getInstance();
 	}
 
 	public synchronized static ISource<?> getAccessPlan(String uri) {

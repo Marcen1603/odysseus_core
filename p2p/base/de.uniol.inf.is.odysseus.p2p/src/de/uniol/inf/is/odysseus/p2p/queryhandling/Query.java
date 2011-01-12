@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -39,6 +41,8 @@ public abstract class Query implements Serializable{
 	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
 
 	private User user;
+
+	private IDataDictionary dataDictionary;
 	
 	public User getUser() {
 		return user;
@@ -151,4 +155,12 @@ public abstract class Query implements Serializable{
 //		}
 //		
 //	}
+
+	public IDataDictionary getDataDictionary() {
+		return dataDictionary;
+	}
+	
+	public void setDataDictionary(IDataDictionary dataDictionary){
+		this.dataDictionary = dataDictionary;
+	}
 }
