@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.PrintTreeVisitor;
@@ -38,7 +37,7 @@ import de.uniol.inf.is.odysseus.util.SetOwnerVisitor;
 public class PQLParserImpl implements PQLParserImplConstants {
   static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)
   {
-    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser());
+    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary());
     List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();
     for (int i = 0; i < inputOps.size(); ++i)
     {
@@ -89,6 +88,18 @@ public class PQLParserImpl implements PQLParserImplConstants {
     user = newUser;
   }
 
+  static IDataDictionary dd;
+
+  static public void setDataDictionary(IDataDictionary dataDictionary)
+  {
+    dd = dataDictionary;
+  }
+
+  static public IDataDictionary getDataDictionary()
+  {
+    return dd;
+  }
+
   static final public List < IQuery > query() throws ParseException {
   Map < String, ILogicalOperator > namedOps = new HashMap < String, ILogicalOperator > ();
   Map < String, Map < String, Object > > namedOpParameters = new HashMap < String, Map < String, Object > > ();
@@ -132,16 +143,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
       if (roots.contains(topOperator))
       {
         IQuery query = new Query();
-                // Set Owners for query 
-                AbstractTreeWalker walker = new AbstractTreeWalker();
-                SetOwnerVisitor visitor = new SetOwnerVisitor(query);
-                walker.prefixWalk(topOperator, visitor);
-
-//		System.err.println("SET OWNER");
-//
-//		AbstractTreeWalker walker2 = new AbstractTreeWalker();
-//		System.err.println(walker2.prefixWalk(topOperator, new AlgebraPlanToStringVisitor()));
-
+        // Set Owners for query 
+        AbstractTreeWalker walker = new AbstractTreeWalker();
+        SetOwnerVisitor visitor = new SetOwnerVisitor(query);
+        walker.prefixWalk(topOperator, visitor);
+        //		System.err.println("SET OWNER");
+        //
+        //		AbstractTreeWalker walker2 = new AbstractTreeWalker();
+        //		System.err.println(walker2.prefixWalk(topOperator, new AlgebraPlanToStringVisitor()));
         query.setLogicalPlan(topOperator, false);
         queries.add(query);
         PQLParser.initQueryParameters(namedOpParameters.get(queryName));
@@ -225,15 +234,15 @@ public class PQLParserImpl implements PQLParserImplConstants {
     if (isView)
     {
       nameStr = name.image;
-      DataDictionary dd = DataDictionary.getInstance();
+      IDataDictionary dd = getDataDictionary();
       if (dd.containsViewOrStream(nameStr, getUser()))
       {
         {if (true) throw new IllegalArgumentException("multiple definition of view '" + nameStr + "'");}
       }
       SDFEntity entity = new SDFEntity(nameStr);
       entity.setAttributes(op.getOutputSchema());
-      DataDictionary.getInstance().addSourceType(nameStr, "RelationalStreaming");
-      DataDictionary.getInstance().addEntity(nameStr, entity, getUser());
+      dd.addSourceType(nameStr, "RelationalStreaming");
+      dd.addEntity(nameStr, entity, getUser());
       dd.setStream(nameStr, op, user);
       //get access operator for view, so other operators don't get subscribed
       //to top operator of the view
@@ -282,9 +291,9 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator op = namedOps.get(identifier.image.toUpperCase());
       if (op == null)
       {
-        if (DataDictionary.getInstance().containsViewOrStream(identifier.image, getUser()))
+        if (getDataDictionary().containsViewOrStream(identifier.image, getUser()))
         {
-          op = DataDictionary.getInstance().getViewOrStream(identifier.image, getUser());
+          op = getDataDictionary().getViewOrStream(identifier.image, getUser());
         }
         else
         {
