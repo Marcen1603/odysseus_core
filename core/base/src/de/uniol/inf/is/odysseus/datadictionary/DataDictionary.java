@@ -466,9 +466,9 @@ public class DataDictionary implements IDataDictionary {
 			return false;
 		}
 		if (!username.isEmpty()) {
-			String user = getUserForViewOrStream(viewname).getUsername();
-			if (!user.isEmpty()) {
-				if (user.equals(username)) {
+			User user = getUserForViewOrStream(viewname);
+			if (user != null) {
+				if (user.getName().equals(username)) {
 					return true;
 				}
 			}
