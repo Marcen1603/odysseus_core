@@ -5,7 +5,6 @@
 	<classpathentry exported="true" kind="lib" path="jxse-2.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="jxse-2.6-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="bcprov-jdk15-145.jar"/>
-	<classpathentry exported="true" kind="lib" path="felix.jar"/>
 	<classpathentry exported="true" kind="lib" path="h2-1.2.127.jar"/>
 	<classpathentry exported="true" kind="lib" path="javax.servlet.jar"/>
 	<classpathentry exported="true" kind="lib" path="org.mortbay.jetty.jar"/>
