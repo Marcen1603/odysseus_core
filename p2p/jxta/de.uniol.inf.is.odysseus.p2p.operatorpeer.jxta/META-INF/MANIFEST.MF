@@ -28,4 +28,3 @@ Import-Package: de.uniol.inf.is.odysseus.event,
  net.jxta.platform,
  net.jxta.protocol,
  net.jxta.socket
-Require-Bundle: Apache_Commons_Codec;bundle-version="1.0.0"
