@@ -41,7 +41,6 @@ public class AttributeDialog extends AbstractUIDialog {
 	public AttributeDialog(IShellProvider parentShell) {
 		super(parentShell);
 		this.presenter = new AttributeDialogPresenter(this);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -120,17 +119,21 @@ public class AttributeDialog extends AbstractUIDialog {
 		presenter.unSubscribeFromAll(listener);
 	}
 	
-	public void setNameValue(String newName){
-		nameInputField.setText(newName);
-	}
-	
 	public String getNameValue(){
 		return nameInputField.getText();
 	}
-	
+	public void setNameValue(String newName){
+		nameInputField.setText(newName);
+	}
+
 	public String getComboValue(){
 		return typeCombo.getItem(typeCombo.getSelectionIndex());
 	}
+	
+	public void setComboValue(String value){
+		typeCombo.setText(value);
+	}
+	
 
 	@Override
 	public String[] getValues(){

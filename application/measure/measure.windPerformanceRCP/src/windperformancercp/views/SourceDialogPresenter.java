@@ -14,6 +14,7 @@ import windperformancercp.event.InputDialogEventType;
 import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
 import windperformancercp.model.sources.Attribute;
+import windperformancercp.model.sources.IDialogResult;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.MetMast;
 import windperformancercp.model.sources.WindTurbine;
@@ -24,23 +25,17 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	ArrayList<Attribute> tmpAttList;
 	IController _cont;
 	final SourceDialogPresenter boss;
+
 	//TODO: auslagern
 	int MMId = 0;
 	int WTId = 1;
 	
 	public SourceDialogPresenter(SourceDialog caller){
 		boss = this;
-		System.out.println("source dialog presenter says hi!");
+		//System.out.println(this.toString()+": source dialog presenter says hi!");
 		dialog = caller;
 		_cont = SourceController.getInstance(this);
 		tmpAttList = new ArrayList<Attribute>();
-		
-		/*
-		if(dialog.getTableContent()!=null){
-			for(Object el:dialog.getTableContent()){
-				tmpAttList.add((Attribute) el);
-			}
-		}*/
 		
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
 	}
@@ -66,7 +61,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	}
 	
 	public void attBtnClick(String btn, int index){
-		//System.out.println(btn);
+
 		if(btn.equals("Add")){
 			Shell attShell = dialog.getShell();
 			AbstractUIDialog attDialog = new AttributeDialog(attShell, Attribute.AttributeType.values());
@@ -96,14 +91,15 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	IEventListener attListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> idevent){
-			if(idevent.getEventType().equals(InputDialogEventType.NewAttributeItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+			//if(idevent.getEventType().equals(InputDialogEventType.NewAttributeItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
 				InputDialogEvent newAttevent = (InputDialogEvent) idevent;
 				Attribute att = (Attribute)newAttevent.getValue();
 			//	fire(new InputDialogEvent(boss, InputDialogEventType.NewAttributeItem, att));
 				tmpAttList.add(att);
-				source.setAttributeList(tmpAttList);
+				if(source != null)
+					source.setAttributeList(tmpAttList);
 				updateDialog();
-			}
+			//}
 		}
 	};
 	
@@ -160,7 +156,6 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					tmpAttList,
 					Double.parseDouble(dialog.getHubHeightValue()),
 					dialog.getPowerControl());
-		else return null;
 		return source;
 	}
 	
@@ -197,7 +192,27 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		//System.out.println(this.toString()+":fired update event!");
 	}
 	
+	@Override
+	public void feedDialog(IDialogResult input){
+		
+		ISource src = (ISource) input;
+		dialog.setNameValue(src.getName());
+		dialog.setStrIdValue(src.getStreamIdentifier());
+		dialog.setHostValue(src.getHost());
+		dialog.setPortValue(Integer.toString(src.getPort()));
+		dialog.setTableContent(src.getAttributeList());
+		tmpAttList = src.getAttributeList();
+		if(src.isWindTurbine()){
+			dialog.setSourceType(WTId);
+			dialog.setHubHeightValue(Double.toString(((WindTurbine)src).getHubHeight()));
+			dialog.setPowerControl(((WindTurbine)src).getPowerControl());
+		}
+		if(src.isMetMast()){
+			dialog.setSourceType(MMId);
+		}
+	}
 	
+
 	public ArrayList<Attribute> getContent(){
 		return tmpAttList;
 	}
@@ -207,27 +222,5 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		tmpAttList.set(ind1, tmpAttList.get(ind2));
 		tmpAttList.set(ind2, tmp);
 	}
-	/*
-	public void update(Object arg0, Object arg1){
-		ISource src = (ISource) arg1;
-		dialog.setNameValue(src.getName());
-		dialog.setStrIdValue(src.getStreamIdentifier());
-		dialog.setHostValue(src.getHost());
-		dialog.setPortValue(Integer.toString(src.getPort()));
-
-		if(src instanceof WindTurbine){
-			dialog.setSourceType(WTId);
-			WindTurbine wt = (WindTurbine) src;
-			dialog.setHubHeightValue(Double.toString(wt.getHubHeight()));
-			dialog.setPowerControl(wt.getPowerControl());
-		}
-		if(src instanceof MetMast){
-			MetMast mm = (MetMast) src;
-		}
-
-	}*/
-
-
-
 
 }

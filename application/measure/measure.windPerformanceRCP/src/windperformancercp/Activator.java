@@ -4,8 +4,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import windperformancercp.controller.MainController;
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -16,7 +14,6 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	private MainController mCont;
 	
 	
 	/**
@@ -33,7 +30,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		mCont = new MainController();
 	}
 
 	/*

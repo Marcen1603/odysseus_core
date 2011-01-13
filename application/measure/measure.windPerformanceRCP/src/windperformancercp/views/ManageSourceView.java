@@ -27,10 +27,10 @@ import windperformancercp.model.sources.ISource;
 public class ManageSourceView extends ViewPart {
 	public static final String ID = "measure.windPerformanceRCP.sourceManagerView";
 
-	ManageSourcePresenter presenter = new ManageSourcePresenter(this);
+	private ManageSourcePresenter presenter = new ManageSourcePresenter(this);
 	
 	//SourceTable sourceTabViewer;
-	TableViewer sourceViewer;
+	private TableViewer sourceViewer;
 
 	
 	/**
@@ -54,8 +54,7 @@ public class ManageSourceView extends ViewPart {
 		/*ToolBar slTB = new ToolBar(leftComposite,SWT.BORDER);
 		ToolItem itm_add = new ToolItem(slTB,SWT.PUSH);
 		*/
-		//sourceTabViewer = new SourceTable(leftComposite,SWT.FILL);
-		//sourceTabViewer.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		sourceViewer = new TableViewer(leftComposite);
 		sourceViewer.setContentProvider(new ISourceContentProvider());
 		sourceViewer.setLabelProvider(new ISourceLabelProvider());
@@ -79,8 +78,9 @@ public class ManageSourceView extends ViewPart {
 		//right composite for additional information
 		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
 		
+		getSite().setSelectionProvider(sourceViewer);
 		presenter.subscribeToAll(updateListener);
-		System.out.println("subscribed to invocation");
+		//System.out.println(this.toString()+": subscribed to invocation");
 	}
 
 	IEventListener updateListener = new IEventListener(){
@@ -108,6 +108,11 @@ public class ManageSourceView extends ViewPart {
 	
 	public void update(ArrayList<?> newList){
 		sourceViewer.setInput(newList);
+	}
+	
+
+	public IPresenter getPresenter(){
+		return presenter;
 	}
 	
 	

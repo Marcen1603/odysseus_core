@@ -13,8 +13,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -48,9 +46,7 @@ import windperformancercp.model.sources.Attribute;
 public class SourceDialog extends AbstractUIDialog {
 
 	public static final String ID = "measure.windPerformanceRCP.sourceDialog";
-	
-	//private InputDialogEvent newSourceEvent = new InputDialogEvent(getInstance(),InputDialogEventType.NewSourceITem, new String[]{});
-	
+		
 	private SourceDialogPresenter presenter;
 	
 	private Text nameInputField;
@@ -70,7 +66,6 @@ public class SourceDialog extends AbstractUIDialog {
 	private AttributeTable attributeComp;
 	private TableViewer attributeViewer;
 	private ToolBar tb_attList;
-	//private ToolBar tb_attList;
 	
 	public static final int PC_ACTIVE = 0;
 	public static final int PC_PASSIVE = 1;
@@ -81,11 +76,13 @@ public class SourceDialog extends AbstractUIDialog {
 		super(parentShell);
 		this.presenter = new SourceDialogPresenter(this);
 	}
+	
 
 	public SourceDialog(IShellProvider parentShell) {
 		super(parentShell);
 		this.presenter = new SourceDialogPresenter(this);
 	}
+	
 	
 //TODO ein clear-button waere noch schick!	
 	@Override
@@ -229,6 +226,7 @@ public class SourceDialog extends AbstractUIDialog {
 			final Group lowerLeftGroup;
 			{
 			btnWT = new Button(lowerSash,SWT.RADIO);
+			btnWT.setData(WTId);
 			btnWT.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 			
 			lowerLeftGroup = new Group(lowerSash, SWT.NONE);
@@ -296,6 +294,7 @@ public class SourceDialog extends AbstractUIDialog {
 			final Group lowerRightGroup;
 			{
 				btnMM = new Button(lowerSash,SWT.RADIO);
+				btnMM.setData(MMId);
 				btnMM.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 				
 				lowerRightGroup = new Group(lowerSash, SWT.RIGHT);
@@ -308,19 +307,25 @@ public class SourceDialog extends AbstractUIDialog {
 			
 			SelectionAdapter typeAdapter = new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
-					Button button = (Button) e.widget;
-			    	  if(button.equals(btnWT)){
+					//Button button = (Button) e.widget;
+					Button button = (Button) e.getSource();
+					
+			    	  if((button.getData().equals(WTId))&&(button.getSelection())){
 			    		  lowerLeftGroup.setEnabled(true);
 			    		  lowerRightGroup.setEnabled(false);
+			    		  presenter.srcTypeClick();
+			    		  return;
 			    	  }
-			    	  if(button.equals(btnMM)){
+			    	  if((button.getData().equals(MMId))&&(button.getSelection())){
 			    		  lowerLeftGroup.setEnabled(false);
 			    		  lowerRightGroup.setEnabled(true);
+			    		  presenter.srcTypeClick();
+			    		  return;
 			    	  }
-			    	  presenter.srcTypeClick();
+			    	  
 				}
 			};
-			
+
 			btnMM.addSelectionListener(typeAdapter);
 			btnWT.addSelectionListener(typeAdapter);
 		}
@@ -341,6 +346,10 @@ public class SourceDialog extends AbstractUIDialog {
 		}
 	};
 	
+	@Override
+	public IPresenter getPresenter(){
+		return presenter;
+	}
 		
 	public void update(ArrayList<?> attList){
 		setTableContent(attList);
@@ -374,7 +383,6 @@ public class SourceDialog extends AbstractUIDialog {
 		portInputField.setText(newPort);
 	}
 	
-	//TODO: zusaetzlicher getter fuer int?
 	public String getPortValue(){
 		if(portInputField.getText().equals("")) return "-1";
 		return portInputField.getText();

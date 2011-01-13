@@ -2,8 +2,6 @@ package windperformancercp.model.sources;
 
 import java.util.ArrayList;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.SourceModelEvent;
 import windperformancercp.event.SourceModelEventType;

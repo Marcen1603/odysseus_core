@@ -106,11 +106,6 @@
             id="measure.windPerformanceRCP.DeleteSource"
             name="Delete Source">
       </command>
-      <command
-            defaultHandler="windperformancercp.views.commands.NewAttributeDialogCommand"
-            id="measure.windPerformanceRCP.showNewAttributeDialog"
-            name="New Attribute">
-      </command>
    </extension>
 
 </plugin>

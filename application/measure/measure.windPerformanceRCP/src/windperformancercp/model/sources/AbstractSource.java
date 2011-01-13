@@ -199,7 +199,7 @@ public abstract class AbstractSource implements ISource {
 	
 	@Override
 	public String toString(){
-		String info = "Source_ID"+this.id+"Source_Name: "+this.streamIdentifier+"Source_Type: "+this.type+" Port: "+this.port;
+		String info = "Source_ID: "+this.id+", Source_Name: "+this.streamIdentifier+", Source_Type: "+this.type+", Port: "+this.port+", Host: "+this.host+", Attributes: "+this.attributeList.toString();
 		return info;
 	}
 	

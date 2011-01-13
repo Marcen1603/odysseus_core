@@ -1,12 +1,21 @@
 package windperformancercp.views.commands;
 
+import java.util.Iterator;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
+
+import windperformancercp.model.sources.ISource;
+import windperformancercp.views.AbstractUIDialog;
+import windperformancercp.views.IPresenter;
+import windperformancercp.views.SourceDialog;
+import windperformancercp.views.SourceDialogPresenter;
 
 public class ShowCopySourceDialogCommand extends AbstractHandler implements
 		IHandler {
@@ -14,28 +23,26 @@ public class ShowCopySourceDialogCommand extends AbstractHandler implements
 		 
 	    @Override
 	    public Object execute(ExecutionEvent event) throws ExecutionException {
-	        ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
-	                .getActivePage().getSelection();
-	        
-	        if (selection != null & selection instanceof IStructuredSelection) {
-	            IStructuredSelection strucSelection = (IStructuredSelection) selection;
-	            System.out.println("Structuredselection: "+strucSelection.getFirstElement().toString());
-	        /*    MyObject o = (MyObject ) strucSelection.getFirstElement();
-	        
-	            ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
-
-	            try {
-	            	Map<String, Object> parameters= new HashMap<String, Object>();
-	            	parameters.put("key.des.parameter", deinParameterObject);
-	            	 
-	            	Command command = commandService.getCommand("measure.windPerformanceRCP.ShowNewSourceDialog");
-	            	ExecutionEvent newEvent = new ExecutionEvent(command, parameters, null, null);
-	            	command.executeWithChecks(newEvent);
-
-	            } catch (Exception ex) {
-	                throw new RuntimeException("add.command");
-	            }*/
-	            
+	    	
+	    	ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
+		
+	    	if(selection != null & selection instanceof IStructuredSelection){
+				IStructuredSelection strucSelection = (IStructuredSelection) selection;
+							
+				for (Iterator<Object> iterator = (Iterator<Object>) strucSelection.iterator(); iterator.hasNext();) {
+					Object element = iterator.next();
+					ISource source = (ISource) element;
+					
+					Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
+					final Shell dialogShell = new Shell(parent);
+					AbstractUIDialog dialog = new SourceDialog(dialogShell);
+					IPresenter presenter = dialog.getPresenter();
+					dialog.create();					
+					((SourceDialogPresenter) presenter).feedDialog(source);
+					dialog.open();
+								
+					}
+				return null;
 	        }
 	        if(selection == null){
 	        	System.out.println("ShowCopySourceCommand: Selection was null!");

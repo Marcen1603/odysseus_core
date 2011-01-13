@@ -6,11 +6,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
+import windperformancercp.controller.MainController;
+
 /**
  * This class controls all aspects of the application's execution
  */
 public class Application implements IApplication {
 
+	
+	private MainController mCont;
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
@@ -18,6 +22,7 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) {
 		Display display = PlatformUI.createDisplay();
 		try {
+			mCont = new MainController();
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if (returnCode == PlatformUI.RETURN_RESTART) {
 				return IApplication.EXIT_RESTART;

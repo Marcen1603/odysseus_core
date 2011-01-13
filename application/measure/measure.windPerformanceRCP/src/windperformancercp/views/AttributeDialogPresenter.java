@@ -6,6 +6,7 @@ import windperformancercp.event.EventHandler;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.sources.Attribute;
+import windperformancercp.model.sources.IDialogResult;
 
 public class AttributeDialogPresenter extends EventHandler implements IPresenter{
 	AttributeDialog dialog;
@@ -37,7 +38,7 @@ public class AttributeDialogPresenter extends EventHandler implements IPresenter
 			actAtt = new Attribute(actAtt); //fuer Zuweisung des Datatyps
 			
 			fire(new InputDialogEvent(this, InputDialogEventType.NewAttributeItem, actAtt));
-			System.out.println(this.toString()+"fired new attribute event");
+			//System.out.println(this.toString()+"fired new attribute event");
 			dialog.close();
 			fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
 		}
@@ -46,5 +47,14 @@ public class AttributeDialogPresenter extends EventHandler implements IPresenter
 	public void cancelPressed(){
 		dialog.close();
 		fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
+	}
+
+	//TODO: testing
+	@Override
+	public void feedDialog(IDialogResult input) {
+		Attribute att = (Attribute) input;
+		dialog.setNameValue(att.getName());
+		dialog.setComboValue(att.getAttType().toString());
+		
 	}
 }

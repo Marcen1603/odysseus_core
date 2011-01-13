@@ -2,16 +2,10 @@ package windperformancercp.controller;
 
 import java.util.ArrayList;
 
-import javax.xml.bind.JAXB;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
 import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
-import windperformancercp.model.sources.AbstractSource;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.SourceModel;
 import windperformancercp.views.AttributeDialogPresenter;
@@ -32,19 +26,9 @@ public class SourceController implements IController {
 	
 
 	private SourceController(){
-		System.out.println("sourceController wurde erzeugt");
+		//System.out.println(this.toString()+": sourceController says hello!");
 		model = SourceModel.getInstance();
-		
-		msrcPresenters = new ArrayList<ManageSourcePresenter>();
-		srcDPresenters = new ArrayList<SourceDialogPresenter>();
-		attDPresenters = new ArrayList<AttributeDialogPresenter>();
-		
-		
-		/*ArrayList<Attribute> atts = new ArrayList<Attribute>();
-		atts.add(new Attribute("pogo",Attribute.AttributeType.WINDDIRECTION));
-		WindTurbine wt = new WindTurbine("hallo","strId","host",12345,atts,55.3,1);
-	
-		model.addElement(wt);*/
+
 	}
 	
 	public static <E extends IPresenter> void registerPresenter(ArrayList<E> list, E pres){
@@ -60,17 +44,18 @@ public class SourceController implements IController {
 		//pres.unSubscribeFromAll(presenterListener);
 	}
 	
+//source Model modification wird hier ausgefuehrt
 	public static IEventListener presenterListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
-			if(event.getEventType().equals(InputDialogEventType.RegisterDialog)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+			if(event.getEventType().equals(InputDialogEventType.RegisterDialog)){ 
 				//System.out.println(this.toString()+": Received new dialog registry event");
 			}
 			
-			if(event.getEventType().equals(InputDialogEventType.DeregisterDialog)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+			if(event.getEventType().equals(InputDialogEventType.DeregisterDialog)){ 
 				//System.out.println(this.toString()+": Received new dialog deregistry event");
 				
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
-				IPresenter pres = ideEvent.getDialog();
+				IPresenter pres = ideEvent.getPresenter();
 							
 				if(pres instanceof ManageSourcePresenter) 
 					deregisterPresenter(msrcPresenters, (ManageSourcePresenter)pres);
@@ -90,13 +75,15 @@ public class SourceController implements IController {
 				
 			}
 			if(event.getEventType().equals(InputDialogEventType.DeleteSourceItem)){
-				System.out.println(this.toString()+": Received delete source event");
+				
+				InputDialogEvent ideEvent = (InputDialogEvent) event;
+				ISource src = (ISource) ideEvent.getValue();
+				int c = model.removeAllOccurences(src);
+				//System.out.println(this.toString()+": Received delete source event for "+src.toString()+" from "+event.getSender().toString()+"\n Deleted "+c);
 			}			
 		}
 	};
 	
-	
-	//TODO source Model modification wird hier ausgefuehrt
 	
 
 	@Override
@@ -113,6 +100,7 @@ public class SourceController implements IController {
 			registerPresenter(attDPresenters, (AttributeDialogPresenter) pres);
 		return instance;
 	}
+
 	
 	public static SourceController getInstance(){
 		return instance;

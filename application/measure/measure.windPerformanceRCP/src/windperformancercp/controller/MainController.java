@@ -10,7 +10,7 @@ public class MainController implements IController {
 	public MainController(){
 		srcControl = SourceController.getInstance();
 		pmControl = new PMController(this);
-		System.out.println("mainController says hi");
+		//System.out.println(this.toString()+": mainController says hi");
 	}
 	
 	@Override

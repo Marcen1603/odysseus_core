@@ -11,7 +11,7 @@ public class InputDialogEvent extends AbstractEvent<IPresenter, IDialogResult> {
 		super(source,type,value);
 	}
 	
-	public IPresenter getDialog(){
+	public IPresenter getPresenter(){
 		return getSender();
 	}
 	

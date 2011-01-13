@@ -64,19 +64,32 @@ public class AbstractUIDialog extends Dialog implements IUserInputDialog{
 	
 	@Override
 	public void okPressed(){
-		//TODO
-		System.out.println(getInstance().toString()+": Ok gedrueckt!");
 		close();
 	}
 	
 	@Override
 	public void cancelPressed(){
-		System.out.println(getInstance().toString()+": Cancel gedrueckt!");
 		close();
 	}
 	
 	@Override
 	public void update(Object c){}
+
+	@Override
+	public void setInput(Object input) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void setContent(Object input){
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public IPresenter getPresenter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }

@@ -10,6 +10,7 @@ import windperformancercp.event.InputDialogEventType;
 import windperformancercp.event.SourceModelEventType;
 import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
+import windperformancercp.model.sources.IDialogResult;
 import windperformancercp.model.sources.SourceModel;
 
 public class ManageSourcePresenter extends EventHandler implements IPresenter{
@@ -22,7 +23,7 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 		this.view = view;
 		_cont = SourceController.getInstance(this);
 		model = SourceModel.getInstance();
-		System.out.println("manage source presenter says hi!");
+		//System.out.println(this.toString()+": manage source presenter says hi!");
 		model.subscribeToAll(modelListener);
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
 		
@@ -32,13 +33,27 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
 	}
 	
+	
 	public IEventListener modelListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
-			if(event.getEventType().equals(SourceModelEventType.NewItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+			
+			if(event.getEventType().equals(SourceModelEventType.NewItem)){ 
 				System.out.println("received new source event, updating view!");
+				updateView();
+			}
+			
+			if(event.getEventType().equals(SourceModelEventType.DeletedItem)){ 
+				System.out.println("received delete source event, updating view!");
 				updateView();
 			}
 		}
 	};
 
+
+
+	@Override
+	public void feedDialog(IDialogResult input) {
+		// TODO Auto-generated method stub
+		
+	}
 }
