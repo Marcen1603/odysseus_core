@@ -53,5 +53,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  net.jxta.util,
  net.jxta.util.documentSerializable,
  org.osgi.framework;version="1.3.0"
-Require-Bundle: Apache_Commons_Codec;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus

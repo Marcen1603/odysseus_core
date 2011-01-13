@@ -26,7 +26,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/AbstractAdministrationPeer.xml
-Require-Bundle: Apache_Commons_Codec;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.p2p.administrationpeer,
  de.uniol.inf.is.odysseus.p2p.administrationpeer.gui,
  de.uniol.inf.is.odysseus.p2p.administrationpeer.handler,

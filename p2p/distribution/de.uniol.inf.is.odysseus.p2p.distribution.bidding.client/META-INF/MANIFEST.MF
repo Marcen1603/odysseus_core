@@ -5,8 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.client
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.Activator
 Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.distribution.client,
@@ -22,6 +20,8 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.p2p.queryhandling,
  de.uniol.inf.is.odysseus.parser.cql.parser.transformation,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.predicate,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
@@ -53,4 +53,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"
 Service-Component: OSGI-INF/BiddingClient.xml
-Require-Bundle: Apache_Commons_Codec;bundle-version="1.0.0"
+Require-Bundle: apache.codec;bundle-version="1.0.0"
