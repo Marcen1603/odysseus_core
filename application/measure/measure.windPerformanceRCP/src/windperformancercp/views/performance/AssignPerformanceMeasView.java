@@ -1,4 +1,4 @@
-package windperformancercp.views;
+package windperformancercp.views.performance;
 
 import java.util.ArrayList;
 
@@ -23,14 +23,14 @@ import windperformancercp.event.IEventListener;
 import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
 import windperformancercp.model.sources.ISource;
+import windperformancercp.views.IPresenter;
 
-public class ManageSourceView extends ViewPart {
-	public static final String ID = "measure.windPerformanceRCP.sourceManagerView";
+public class AssignPerformanceMeasView extends ViewPart {
+	public static final String ID = "measure.windPerformanceRCP.assignPMView";
 
-	private ManageSourcePresenter presenter = new ManageSourcePresenter(this);
+	private AssignPerformanceMeasPresenter presenter = new AssignPerformanceMeasPresenter(this);
 	
-	//SourceTable sourceTabViewer;
-	private TableViewer sourceViewer;
+	private TableViewer performanceViewer;
 
 	
 	/**
@@ -55,21 +55,21 @@ public class ManageSourceView extends ViewPart {
 		ToolItem itm_add = new ToolItem(slTB,SWT.PUSH);
 		*/
 
-		sourceViewer = new TableViewer(leftComposite);
-		sourceViewer.setContentProvider(new ISourceContentProvider());
-		sourceViewer.setLabelProvider(new ISourceLabelProvider());
+		performanceViewer = new TableViewer(leftComposite);
+		performanceViewer.setContentProvider(new ISourceContentProvider());
+		performanceViewer.setLabelProvider(new ISourceLabelProvider());
 		
-		Table sourceTable = sourceViewer.getTable();
+		Table sourceTable = performanceViewer.getTable();
 		{
 			sourceTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 			
 		
-			String[] titles ={"Name","Type","Host","Port"};
+			String[] titles ={"Name","Type","Sources","Lifetime","Connected"};
 			for (int i=0;i<titles.length;i++){
 				TableColumn col = new TableColumn(sourceTable,SWT.LEFT);
 				col.setText(titles[i]);
 				//col.pack();
-				col.setWidth(100);
+				col.setWidth(90);
 			}
 			
 			sourceTable.setHeaderVisible(true);
@@ -78,7 +78,7 @@ public class ManageSourceView extends ViewPart {
 		//right composite for additional information
 		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
 		
-		getSite().setSelectionProvider(sourceViewer);
+		getSite().setSelectionProvider(performanceViewer);
 		presenter.subscribeToAll(updateListener);
 		//System.out.println(this.toString()+": subscribed to invocation");
 	}
@@ -103,11 +103,11 @@ public class ManageSourceView extends ViewPart {
 	}
 	
 	public TableItem[] getSources(){
-		return this.sourceViewer.getTable().getItems();
+		return this.performanceViewer.getTable().getItems();
 	}
 	
 	public void update(ArrayList<?> newList){
-		sourceViewer.setInput(newList);
+		performanceViewer.setInput(newList);
 	}
 	
 

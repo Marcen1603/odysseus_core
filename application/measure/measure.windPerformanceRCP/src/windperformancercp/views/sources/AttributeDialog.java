@@ -1,4 +1,4 @@
-package windperformancercp.views;
+package windperformancercp.views.sources;
 
 import java.util.ArrayList;
 
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Text;
 
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.IEventType;
+import windperformancercp.views.AbstractUIDialog;
 
 public class AttributeDialog extends AbstractUIDialog {
 

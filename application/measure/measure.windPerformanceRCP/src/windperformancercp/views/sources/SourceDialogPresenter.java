@@ -1,4 +1,4 @@
-package windperformancercp.views;
+package windperformancercp.views.sources;
 
 import java.util.ArrayList;
 
@@ -18,6 +18,8 @@ import windperformancercp.model.sources.IDialogResult;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.MetMast;
 import windperformancercp.model.sources.WindTurbine;
+import windperformancercp.views.AbstractUIDialog;
+import windperformancercp.views.IPresenter;
 
 public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	SourceDialog dialog;

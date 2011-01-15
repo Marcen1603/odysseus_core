@@ -14,8 +14,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.views.AbstractUIDialog;
 import windperformancercp.views.IPresenter;
-import windperformancercp.views.SourceDialog;
-import windperformancercp.views.SourceDialogPresenter;
+import windperformancercp.views.sources.SourceDialog;
+import windperformancercp.views.sources.SourceDialogPresenter;
 
 public class ShowCopySourceDialogCommand extends AbstractHandler implements
 		IHandler {

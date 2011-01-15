@@ -1,4 +1,4 @@
-package windperformancercp.views;
+package windperformancercp.views.sources;
 
 
 import java.util.ArrayList;
@@ -40,6 +40,8 @@ import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
 import windperformancercp.model.AttributeTable;
 import windperformancercp.model.sources.Attribute;
+import windperformancercp.views.AbstractUIDialog;
+import windperformancercp.views.IPresenter;
 
 
 

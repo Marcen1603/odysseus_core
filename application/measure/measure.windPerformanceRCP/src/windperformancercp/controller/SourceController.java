@@ -8,10 +8,10 @@ import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.SourceModel;
-import windperformancercp.views.AttributeDialogPresenter;
 import windperformancercp.views.IPresenter;
-import windperformancercp.views.ManageSourcePresenter;
-import windperformancercp.views.SourceDialogPresenter;
+import windperformancercp.views.sources.AttributeDialogPresenter;
+import windperformancercp.views.sources.ManageSourcePresenter;
+import windperformancercp.views.sources.SourceDialogPresenter;
 
 public class SourceController implements IController {
 	
@@ -21,6 +21,7 @@ public class SourceController implements IController {
 	private static ArrayList<AttributeDialogPresenter> attDPresenters = new ArrayList<AttributeDialogPresenter>();
 	
 	IController _control;
+	static PMController pcontrol;
 	static SourceModel model;
 	
 	
@@ -28,6 +29,7 @@ public class SourceController implements IController {
 	private SourceController(){
 		//System.out.println(this.toString()+": sourceController says hello!");
 		model = SourceModel.getInstance();
+		pcontrol = PMController.getInstance();
 
 	}
 	
@@ -71,6 +73,7 @@ public class SourceController implements IController {
 				ISource src = (ISource) ideEvent.getValue();
 				
 				model.addElement(src);
+				System.out.println(pcontrol.callGen(src));
 	//			JAXB.marshal(src, System.out);
 				
 			}
@@ -78,7 +81,7 @@ public class SourceController implements IController {
 				
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				ISource src = (ISource) ideEvent.getValue();
-				int c = model.removeAllOccurences(src);
+				int c = model.removeAllOccurences(src);				
 				//System.out.println(this.toString()+": Received delete source event for "+src.toString()+" from "+event.getSender().toString()+"\n Deleted "+c);
 			}			
 		}

@@ -1,5 +1,6 @@
 package windperformancercp;
 
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -27,4 +28,12 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowStatusLine(true);
 		configurer.setTitle("WT Performance Measurer");
 	}
+
+	@Override
+	public void postWindowOpen() {
+		IStatusLineManager statusline = getWindowConfigurer()
+				.getActionBarConfigurer().getStatusLineManager();
+		statusline.setMessage(null, "Hi, I'm the application status bar.");
+	}
+
 }

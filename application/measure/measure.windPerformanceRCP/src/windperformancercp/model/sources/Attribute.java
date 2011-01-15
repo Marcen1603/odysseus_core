@@ -19,7 +19,7 @@ public class Attribute implements IDialogResult{
 	//TODO: liste komplettieren
 	///Entspricht den Datentypen in Odysseus CQL
 	@XmlEnum
-	private enum DataType{
+	public enum DataType{
 		STARTTIMESTAMP,
 		ENDTIMESTAMP,
 		INTEGER,

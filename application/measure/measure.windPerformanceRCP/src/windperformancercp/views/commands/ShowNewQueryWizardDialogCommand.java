@@ -8,11 +8,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import windperformancercp.views.AbstractUIDialog;
+import windperformancercp.views.performance.QueryWizard;
+import windperformancercp.views.performance.QueryWizardDialog;
 import windperformancercp.views.sources.SourceDialog;
 
-public class ShowNewSourceDialogCommand extends AbstractHandler implements
+public class ShowNewQueryWizardDialogCommand extends AbstractHandler implements
 		IHandler {
-	public static final String ID = "measure.windPerformanceRCP.ShowNewSourceDialog";
+	public static final String ID = "measure.windPerformanceRCP.ShowNewQueryWizardDialog";
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -20,7 +22,8 @@ public class ShowNewSourceDialogCommand extends AbstractHandler implements
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
 		final Shell dialogShell = new Shell(parent);
 		
-			AbstractUIDialog dialog = new SourceDialog(dialogShell);
+		//TODO: evtl. von AbstractUIDialog ableiten/IUserIDIalog
+			QueryWizardDialog dialog = new QueryWizardDialog(dialogShell, new QueryWizard()); 
 			dialog.open();
 			
 		return null;

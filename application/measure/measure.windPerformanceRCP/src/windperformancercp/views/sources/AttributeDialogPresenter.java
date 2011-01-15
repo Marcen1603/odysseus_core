@@ -1,4 +1,4 @@
-package windperformancercp.views;
+package windperformancercp.views.sources;
 
 import windperformancercp.controller.IController;
 import windperformancercp.controller.SourceController;
@@ -7,6 +7,7 @@ import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.sources.Attribute;
 import windperformancercp.model.sources.IDialogResult;
+import windperformancercp.views.IPresenter;
 
 public class AttributeDialogPresenter extends EventHandler implements IPresenter{
 	AttributeDialog dialog;

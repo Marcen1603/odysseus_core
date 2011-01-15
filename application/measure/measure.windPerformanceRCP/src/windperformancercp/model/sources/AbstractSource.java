@@ -158,6 +158,15 @@ public abstract class AbstractSource implements ISource {
 	}
 	
 	@Override
+	public ArrayList<String> getAttributeNameList(){
+		ArrayList<String> nameList = new ArrayList<String>();
+		for(Attribute a: attributeList){
+			nameList.add(a.getName());
+		}
+		return nameList;
+	}
+
+	@Override
 	public void setAttributeList(ArrayList<Attribute> newAttl){
 			this.attributeList = newAttl;
 	}

@@ -1,4 +1,6 @@
-package windperformancercp.views;
+package windperformancercp.views.sources;
+
+import org.eclipse.ui.IActionBars;
 
 import windperformancercp.controller.IController;
 import windperformancercp.controller.SourceController;
@@ -12,6 +14,7 @@ import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
 import windperformancercp.model.sources.IDialogResult;
 import windperformancercp.model.sources.SourceModel;
+import windperformancercp.views.IPresenter;
 
 public class ManageSourcePresenter extends EventHandler implements IPresenter{
 	
@@ -38,18 +41,22 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 		public void eventOccured(IEvent<?, ?> event){
 			
 			if(event.getEventType().equals(SourceModelEventType.NewItem)){ 
-				System.out.println("received new source event, updating view!");
 				updateView();
+				setStatusLine("Added source successfully. ");
 			}
 			
 			if(event.getEventType().equals(SourceModelEventType.DeletedItem)){ 
-				System.out.println("received delete source event, updating view!");
 				updateView();
+				setStatusLine("Removed source successfully. ");
 			}
 		}
 	};
 
-
+	private void setStatusLine(String message) {
+		// Get the status line and set the text
+		IActionBars bars = view.getViewSite().getActionBars();
+		bars.getStatusLineManager().setMessage(message);
+	}
 
 	@Override
 	public void feedDialog(IDialogResult input) {

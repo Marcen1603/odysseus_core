@@ -24,6 +24,7 @@ public interface ISource extends IDialogResult, IEventHandler {
 	public void setPort(int newPort);
 	public int getId();
 	public ArrayList<Attribute> getAttributeList();
+	public ArrayList<String> getAttributeNameList();
 	public void setAttributeList(ArrayList<Attribute> newAttl);
 	public Attribute getIthAtt(int i);
 	public void setIthAtt(int i, Attribute att);

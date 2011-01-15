@@ -9,7 +9,7 @@ public class MainController implements IController {
 	
 	public MainController(){
 		srcControl = SourceController.getInstance();
-		pmControl = new PMController(this);
+		pmControl = PMController.getInstance();
 		//System.out.println(this.toString()+": mainController says hi");
 	}
 	

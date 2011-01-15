@@ -17,7 +17,7 @@ import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.views.IPresenter;
-import windperformancercp.views.ManageSourceView;
+import windperformancercp.views.sources.ManageSourceView;
 
 public class DeleteSourceCommand extends AbstractHandler implements
 		IHandler {

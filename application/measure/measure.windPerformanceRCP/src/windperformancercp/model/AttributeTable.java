@@ -26,7 +26,7 @@ import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.sources.Attribute;
 import windperformancercp.views.AbstractUIDialog;
-import windperformancercp.views.AttributeDialog;
+import windperformancercp.views.sources.AttributeDialog;
 
 public class AttributeTable extends Composite {
 
