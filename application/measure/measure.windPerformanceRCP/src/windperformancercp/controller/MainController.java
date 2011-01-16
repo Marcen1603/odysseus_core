@@ -4,13 +4,18 @@ import java.util.ArrayList;
 
 public class MainController implements IController {
 
-	SourceController srcControl;
-	PMController pmControl;
+	static SourceController srcControl;
+	static PMController pmControl;
 	
 	public MainController(){
+		//System.out.println(this.toString()+": mainController says hi");
 		srcControl = SourceController.getInstance();
 		pmControl = PMController.getInstance();
-		//System.out.println(this.toString()+": mainController says hi");
+		
+		srcControl.setBrotherControl(pmControl);
+		pmControl.setBrotherControl(srcControl);
+		
+		
 	}
 	
 	@Override

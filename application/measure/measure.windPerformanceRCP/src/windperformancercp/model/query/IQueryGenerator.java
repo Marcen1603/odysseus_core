@@ -1,5 +1,7 @@
 package windperformancercp.model.query;
 
+import java.util.ArrayList;
+
 import windperformancercp.model.query.QueryGenerator.Aggregation;
 import windperformancercp.model.query.QueryGenerator.Window;
 import windperformancercp.model.sources.ISource;
@@ -13,5 +15,6 @@ public interface IQueryGenerator {
 	public OperatorResult generateAggregation(Stream instream, String[] groupBy, Aggregation[] aggregations, String outputName);
 	public OperatorResult generateMap(Stream instream, String[] resNames, String[] expressions, String outputName);
 	public OperatorResult generateRename(Stream instream, String[] newAttNames, String outputName);
+	public OperatorResult generateJoin(ArrayList<Stream> instreams, String predicate, String outputName);
 
 }

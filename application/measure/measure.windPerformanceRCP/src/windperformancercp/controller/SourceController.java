@@ -29,8 +29,13 @@ public class SourceController implements IController {
 	private SourceController(){
 		//System.out.println(this.toString()+": sourceController says hello!");
 		model = SourceModel.getInstance();
-		pcontrol = PMController.getInstance();
-
+	}
+	
+	public static void setBrotherControl(PMController pcont){
+		pcontrol = pcont;
+		if(pcontrol == null){
+			//TODO Error message
+		}
 	}
 	
 	public static <E extends IPresenter> void registerPresenter(ArrayList<E> list, E pres){
@@ -73,7 +78,7 @@ public class SourceController implements IController {
 				ISource src = (ISource) ideEvent.getValue();
 				
 				model.addElement(src);
-				System.out.println(pcontrol.callGen(src));
+				//System.out.println(pcontrol.callGen(src));
 	//			JAXB.marshal(src, System.out);
 				
 			}

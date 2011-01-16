@@ -1,5 +1,7 @@
 package windperformancercp.model.query;
 
+import java.util.ArrayList;
+
 import windperformancercp.model.sources.ISource;
 
 //Context
@@ -75,6 +77,9 @@ public class QueryGenerator {
 	}
 	public OperatorResult generateMap(Stream instream, String[] resNames, String[] expressions, String outputName){
 		return this.language.generateMap(instream, resNames, expressions, outputName);
+	}
+	public OperatorResult generateJoin(ArrayList<Stream> instreams, String predicate, String outputName){
+		return this.language.generateJoin(instreams, predicate, outputName);
 	}
 
 	

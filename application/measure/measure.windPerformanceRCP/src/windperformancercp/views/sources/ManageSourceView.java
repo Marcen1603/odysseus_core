@@ -82,10 +82,10 @@ public class ManageSourceView extends ViewPart {
 
 	IEventListener updateListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> idevent){
-			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){ 
 				UpdateEvent updateInvoker = (UpdateEvent) idevent;
-				//ArrayList<?> list = new ArrayList<?>(updateInvoker.getValue());
-			System.out.println(this.toString()+"got general update invocation");
+				
+			//System.out.println(this.toString()+"got general update invocation");
 				update(updateInvoker.getValue());
 			}
 			

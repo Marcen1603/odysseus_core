@@ -40,6 +40,7 @@ public class CQLGenerator implements IQueryGenerator {
 	@Override
 	public OperatorResult generateProjection(Stream instream, int[] attIndexes,
 			String outputName) {
+		//throw new NotImplementedException();
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -72,6 +73,12 @@ public class CQLGenerator implements IQueryGenerator {
 	@Override
 	public OperatorResult generateRename(Stream instream, String[] newAttNames,
 			String outputName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public OperatorResult generateJoin(ArrayList<Stream> instreams, String predicate, String outputName){
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -157,5 +157,35 @@ public class PQLGenerator implements IQueryGenerator {
 			return null;
 		}
 	}
+	
+	
+	@Override
+	public OperatorResult generateJoin(ArrayList<Stream> instreams, String predicate, String outputName) {
+		String query = outputName+" = join(";
+		if(!predicate.equals("")){
+			query = query+"{predicate=RelationalPredicate('"+predicate+"')},";
+		}
+		
+		if(instreams.size()>1){
+			ArrayList<String> streamAtts = new ArrayList<String>();
+		
+			query=query+instreams.get(0).getName();
+			streamAtts.addAll(instreams.get(0).getAttributes());
+		
+			for(int i=1;i<instreams.size();i++){
+				query=query+","+instreams.get(i).getName();
+				streamAtts.addAll(instreams.get(i).getAttributes());
+			}
+			query = query+")\n";
+		
+			OperatorResult result = new OperatorResult(new Stream(outputName,streamAtts),query);
+			return result;
+		}
+		
+		else{
+			//TODO Errormessage
+			return null;
+		}
+	}
 
 }

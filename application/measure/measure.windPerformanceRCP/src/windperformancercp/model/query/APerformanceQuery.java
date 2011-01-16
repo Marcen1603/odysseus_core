@@ -26,9 +26,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.neededAssigns = new ArrayList<Assignment>(); 
 		this.concernedSrc = new ArrayList<ISource>(sources);
 		
-		Assignment asgn = new Assignment(Assignment.Kind.TIMESTAMP,Attribute.AttributeType.STARTTIMESTAMP);
-		neededAssigns.add(asgn);
-		asgn = new Assignment(Assignment.Kind.WINDSPEED,Attribute.AttributeType.WINDSPEED);
+	/*	Assignment asgn = new Assignment(Assignment.Kind.TIMESTAMP,Attribute.AttributeType.STARTTIMESTAMP);
+		neededAssigns.add(asgn);*/
+		Assignment asgn = new Assignment(Assignment.Kind.WINDSPEED,Attribute.AttributeType.WINDSPEED);
 		neededAssigns.add(asgn);
 		asgn = new Assignment(Assignment.Kind.POWER,Attribute.AttributeType.POWER);
 		neededAssigns.add(asgn);

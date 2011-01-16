@@ -15,5 +15,6 @@ public interface IPerformanceQuery {
 	public void setAssignment(String what, Stream who);
 	public Stream getResponsibleStream(String what);
 	public String getMethod();
+	public void setMethod(APerformanceQuery.PMType type);
 	public ArrayList<ISource> getMember();
 }

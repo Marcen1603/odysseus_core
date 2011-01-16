@@ -121,7 +121,7 @@ public class SourceDialog extends AbstractUIDialog {
 				nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
 				nameInputField.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent fe){}
-					public void focusLost(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.nameEntered();}
 				});
 			}
 
@@ -410,7 +410,6 @@ public class SourceDialog extends AbstractUIDialog {
 		return hhInputField.getText();
 	}
 	
-	//TODO: das hier ist nicht so schick. Geht sicher besser.
 	public String getStringSourceType(){
 		if(btnWT.getSelection() & !btnMM.getSelection()) return Integer.toString(WTId);
 		if(btnMM.getSelection() & !btnWT.getSelection()) return Integer.toString(MMId);
@@ -451,7 +450,7 @@ public class SourceDialog extends AbstractUIDialog {
 		else return -1;
 	}
 	
-	//TODO
+	//TODO: nicht mehr gebraucht!
 	@Override
 	public String[] getValues(){
 		String[] result = {}; 
