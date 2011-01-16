@@ -1,15 +1,39 @@
 package de.uniol.inf.is.odysseus.datamining.classification;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-
+/**
+ * This interface defines a classification object used to wrap tuples for classification operators
+ * 
+ * @author Sven Vorlauf
+ * 
+ * @param <T>
+ *            the type of the IMetaAttribute
+ */
 public interface IClassificationObject<U extends IMetaAttribute> {
 
-	public void setClassLabel(Object classLabel);
-	public Object getClassLabel();
+	/**get the attribute values of the tuple
+	 * @return the attribute values
+	 */
 	public Object[] getAttributes();
-	public Object[] getClassificationAttributes();
-	//public RelationalTuple<U> getLabeledTuple();
+	
+	/** get the number of attributes used for the classification
+	 * @return the number of attributes
+	 */
 	public int getClassificationAttributeCount();
-	RelationalTuple<U> getRestrictedTuple();
-}
+	
+	/**get the values of the tuples classification attributes
+	 * @return the attribute values
+	 */
+	public Object[] getClassificationAttributes();
+	
+	/**get the class label
+	 * @return the class the tuple belongs to
+	 */
+	public Object getClassLabel();
+	
+	/**set the tuples class lable
+	 * @param classLabel the class to set
+	 */
+	public void setClassLabel(Object classLabel);
+	
+	}

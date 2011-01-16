@@ -10,14 +10,33 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * This class defines a transformation rule to transform a logical hoeffdingTree
+ * operator operator into an physical hoeffdingTree operator
+ * 
+ * @author Sven Vorlauf
+ * 
+ */
 public class THoeffdingTreeAORule extends
 		AbstractTransformationRule<HoeffdingTreeAO> {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
 	public int getPriority() {
 		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+	 * .Object, java.lang.Object)
+	 */
 	@Override
 	public boolean isExecutable(HoeffdingTreeAO operator,
 			TransformationConfiguration config) {
@@ -25,23 +44,40 @@ public class THoeffdingTreeAORule extends
 		return operator.isAllPhysicalInputSet();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
 	public String getName() {
 
 		return "HoeffdingTreeAO -> HoeffdingTreePO";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+	 * java.lang.Object)
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(HoeffdingTreeAO hoeffdingTreeAO,
 			TransformationConfiguration config) {
-
+		// create the physical operator and set the parameters
 		HoeffdingTreePO<?> hoeffdingTreePO = new HoeffdingTreePO();
 		hoeffdingTreePO
 				.setRestrictList(hoeffdingTreeAO.determineRestrictList());
@@ -62,9 +98,9 @@ public class THoeffdingTreeAORule extends
 				.getAttributeEvaluationMeasure();
 		if ("gini".equalsIgnoreCase(evaluationMeasure)
 				|| "giniindex".equalsIgnoreCase(evaluationMeasure)) {
-			return new GiniIndex(hoeffdingTreeAO.getProbability(),null);
+			return new GiniIndex(hoeffdingTreeAO.getProbability(), null);
 		} else {
-			return new InformationGain(hoeffdingTreeAO.getProbability(),null);
+			return new InformationGain(hoeffdingTreeAO.getProbability(), null);
 		}
 	}
 

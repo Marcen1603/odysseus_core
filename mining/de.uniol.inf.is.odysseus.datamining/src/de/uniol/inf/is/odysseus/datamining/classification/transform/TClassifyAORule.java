@@ -7,14 +7,32 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TClassifyAORule extends
-		AbstractTransformationRule<ClassifyAO> {
+/**
+ * This class defines a transformation rule to transform a logical classify
+ * operator into an physical classify operator
+ * 
+ * @author Sven Vorlauf
+ * 
+ */
+public class TClassifyAORule extends AbstractTransformationRule<ClassifyAO> {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
 	public int getPriority() {
 		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+	 * .Object, java.lang.Object)
+	 */
 	@Override
 	public boolean isExecutable(ClassifyAO operator,
 			TransformationConfiguration config) {
@@ -22,26 +40,42 @@ public class TClassifyAORule extends
 		return operator.isAllPhysicalInputSet();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
 	public String getName() {
 
 		return "ClassifyAO -> ClassifyPO";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
-	@SuppressWarnings({ "rawtypes"})
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+	 * java.lang.Object)
+	 */
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void execute(ClassifyAO classifyAO,
 			TransformationConfiguration config) {
-
+		// create the physical operator and set the parameters
 		ClassifyPO<?> classifyPO = new ClassifyPO();
-		classifyPO
-				.setRestrictList(classifyAO.determineRestrictList());
+		classifyPO.setRestrictList(classifyAO.determineRestrictList());
 		classifyPO.setLabelPosition(classifyAO.getLabelPosition());
 		classifyPO.setOutputSchema(classifyAO.getOutputSchema(0), 0);
 		replace(classifyAO, classifyPO, config);
