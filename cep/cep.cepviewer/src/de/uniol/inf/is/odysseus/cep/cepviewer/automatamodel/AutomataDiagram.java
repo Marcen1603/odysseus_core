@@ -26,8 +26,17 @@ public class AutomataDiagram extends FreeformLayeredPane {
 		this.setOpaque(true);
 	}
 
-	public void setInstance(CEPInstance instance) {
+	public void setContent(CEPInstance instance) {
+		this.removeAll();
 		this.instance = instance;
+		// add the states
+		for (AbstractState state : instance.getStateList()) {
+			this.add(state);
+		}
+		// add the transitions
+		for (AbstractTransition state : instance.getTransitionList()) {
+			this.add(state);
+		}
 	}
 
 	public CEPInstance getInstance() {

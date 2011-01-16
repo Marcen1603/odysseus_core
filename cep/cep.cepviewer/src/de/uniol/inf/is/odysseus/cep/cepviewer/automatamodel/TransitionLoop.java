@@ -71,7 +71,6 @@ public class TransitionLoop extends AbstractTransition {
 								+ IntConst.STATE_SIZE);
 			}
 		}
-		System.out.println(this.state.getBounds() + ": " + this.list.get(1).getLocation());
 	}
 
 	public void repaint() {

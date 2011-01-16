@@ -7,9 +7,12 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.list.CEPEventListener;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,7 +32,10 @@ import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
  */
 public class CEPListView extends ViewPart {
 
-	// These are widgets for the list view.
+	// the ID of this view
+	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.listview";
+
+	// the widgets for the list view.
 	private TabFolder tabMenu;
 	private NormalTreeList normalList;
 	private QueryTreeList queryList;
@@ -38,7 +44,9 @@ public class CEPListView extends ViewPart {
 	private TabItem queryListItem;
 	private TabItem statusListItem;
 	private Label infoLabel;
+	// the event listener
 	private CEPEventListener listener;
+	// the list of CepOperators handled by the CEPViewer
 	private ArrayList<CepOperator<?, ?>> operators;
 
 	/**
@@ -95,61 +103,37 @@ public class CEPListView extends ViewPart {
 	}
 
 	/**
-	 * This method is called, if a new instance of the class CepOperator should
-	 * be added to the CEPViewer. It implements the ICEPEventListener which
-	 * manages the communication with the operator an the CEPViewer. After this
-	 * it adds the instances to the lists
-	 * 
-	 * @param operator
-	 *            is an CepOperator which holds all instances of an StateMachine
-	 *            and manages the CEP
-	 */
-	@SuppressWarnings("rawtypes")
-	public void addStateMaschine(CepOperator operator) {
-		// initialize ICEPEventListener
-		this.operators.add(operator);
-		operator.getCEPEventAgent().addCEPEventListener(this.listener);
-		// add the instances of the operator
-		for (Object instance : operator.getInstances()) {
-			CEPInstance newInstance = new CEPInstance(
-					(StateMachineInstance<?>) instance);
-			this.normalList.addToTree(newInstance);
-			this.queryList.addToTree(newInstance);
-			this.statusList.addToTree(newInstance);
-		}
-		this.setInfoData();
-	}
-
-	/**
 	 * This method updates the info label with the current numbers of the
 	 * inherited StateMachineInstances.
 	 */
 	public void setInfoData() {
 		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				String infotext = StringConst.INFO_ALL + " "
-						+ CEPListView.this.normalList.getItemCount() + " "
-						+ StringConst.STATUS_RUNNING + " "
+				String infotext = StringConst.INFO_ALL
+						+ CEPListView.this.normalList.getItemCount()
+						+ StringConst.WHITESPACE;
+				if (CEPListView.this.normalList.getItemCount() >= IntConst.MAX_LIST_ENTRIES) {
+					infotext = infotext
+							.concat(StringConst.INFO_MAXIMAL_ENTRIES);
+				} else {
+					infotext = infotext.concat(StringConst.WHITESPACE);
+				}
+				infotext = infotext.concat(StringConst.STATUS_RUNNING
 						+ CEPListView.this.statusList.getNumberOfRunning()
-						+ " " + StringConst.STATUS_FINISHED + " "
+						+ StringConst.WHITESPACE + StringConst.STATUS_FINISHED
 						+ CEPListView.this.statusList.getNumberOfFinished()
-						+ " " + StringConst.STATUS_ABORTED + " "
-						+ CEPListView.this.statusList.getNumberOfAborted();
+						+ StringConst.WHITESPACE + StringConst.STATUS_ABORTED
+						+ CEPListView.this.statusList.getNumberOfAborted());
 				CEPListView.this.infoLabel.setText(infotext);
 			}
 		});
 	}
 
-	public void refresh() {
-		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				CEPListView.this.normalList.getTree().refresh();
-				CEPListView.this.queryList.getTree().refresh();
-				CEPListView.this.statusList.getTree().refresh();
-			}
-		});
-	}
-
+	/**
+	 * This method returns the list currently shown in the CEPViewer.
+	 * 
+	 * @return
+	 */
 	public AbstractTreeList getActiveList() {
 		TabItem tab = this.tabMenu.getItem(this.tabMenu.getSelectionIndex());
 		if (tab != null && tab.getControl() instanceof AbstractTreeList) {
@@ -165,24 +149,64 @@ public class CEPListView extends ViewPart {
 		this.tabMenu.setFocus();
 	}
 
+	/**
+	 * This is the getter for the NormalTreeList.
+	 * 
+	 * @return the NormalTreeList
+	 */
 	public NormalTreeList getNormalList() {
 		return normalList;
 	}
 
+	/**
+	 * This is the getter for the QueryTreeList.
+	 * 
+	 * @return the QueryTreeList
+	 */
 	public QueryTreeList getQueryList() {
 		return queryList;
 	}
 
+	/**
+	 * This is the getter for the StatusTreeList.
+	 * 
+	 * @return the StatusTreeList
+	 */
 	public StatusTreeList getStatusList() {
 		return statusList;
 	}
 
+	/**
+	 * This is the getter for the list of handled CepOperators.
+	 * 
+	 * @return the list of handled CepOperators
+	 */
 	public ArrayList<CepOperator<?, ?>> getOperators() {
 		return operators;
 	}
 
+	/**
+	 * This is the getter for the event listener.
+	 * 
+	 * @return the event listener
+	 */
 	public CEPEventListener getListener() {
 		return listener;
+	}
+
+	public void selectionChanged(StateMachineInstance<?> content) {
+		AbstractTreeList list = this.getActiveList();
+		IStructuredSelection select = (IStructuredSelection) list.getTree()
+				.getSelection();
+		if (select.getFirstElement() instanceof InstanceTreeItem) {
+			// if the selected item is a CEPInstance show it's data
+			CEPInstance instance = ((InstanceTreeItem) select.getFirstElement())
+					.getContent();
+			if (instance.getInstance().equals(content)) {
+				list.getListener().select(instance);
+			}
+		}
+
 	}
 
 }

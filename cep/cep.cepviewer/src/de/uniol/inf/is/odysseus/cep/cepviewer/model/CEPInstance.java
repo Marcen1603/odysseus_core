@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
 public class CEPInstance {
-	
+
 	private StateMachineInstance<?> instance;
 	private ArrayList<AbstractState> stateList;
 	private ArrayList<AbstractTransition> transitionList;
@@ -31,30 +31,35 @@ public class CEPInstance {
 	private AutomataState currentState;
 	private CEPStatus status;
 	private Image image;
-	
+
 	public CEPInstance(StateMachineInstance<?> instance) {
 		this.instance = instance;
 		this.stateList = new ArrayList<AbstractState>();
 		this.transitionList = new ArrayList<AbstractTransition>();
 		this.finalStateList = new ArrayList<AbstractState>();
 		Bundle bundle = Activator.getDefault().getBundle();
-		if(instance.getCurrentState().isAccepting()) {
+		if (instance.getCurrentState().isAccepting()) {
 			this.status = CEPStatus.FINISHED;
-			this.image = ImageDescriptor.createFromURL(bundle.getEntry(StringConst.PATH_TO_FINISHED_IMAGE)).createImage();
+			this.image = ImageDescriptor.createFromURL(
+					bundle.getEntry(StringConst.PATH_TO_FINISHED_IMAGE))
+					.createImage();
 		} else {
 			this.status = CEPStatus.RUNNING;
-			this.image = ImageDescriptor.createFromURL(bundle.getEntry(StringConst.PATH_TO_RUNNING_IMAGE)).createImage();
+			this.image = ImageDescriptor.createFromURL(
+					bundle.getEntry(StringConst.PATH_TO_RUNNING_IMAGE))
+					.createImage();
 		}
-		this.createAutomata(instance);
 	}
-	
-	public void createAutomata(StateMachineInstance<?> instance) {
-		// create the initial state of the automata
-		AutomataState state = this.createState(instance.getStateMachine()
-				.getInitialState());
-		this.createTransitions(state);
+
+	public void createAutomata() {
+		if (this.stateList.isEmpty()) {
+			// create the initial state of the automata
+			AutomataState state = this.createState(instance.getStateMachine()
+					.getInitialState());
+			this.createTransitions(state);
+		}
 	}
-	
+
 	private void createTransitions(AutomataState automataState) {
 		for (Transition nextTrans : automataState.getState().getTransitions()) {
 			if (nextTrans.getNextState().equals(automataState.getState())) {
@@ -89,13 +94,13 @@ public class CEPInstance {
 
 	private AutomataState createState(State state) {
 		AutomataState newState;
-		if(this.instance.getCurrentState().equals(state)){
+		if (this.instance.getCurrentState().equals(state)) {
 			newState = new AutomataState(this.stateList.size(), state, true);
 			this.currentState = newState;
 		} else {
 			newState = new AutomataState(this.stateList.size(), state, false);
 		}
-		if(state.isAccepting()) {
+		if (state.isAccepting()) {
 			this.finalStateList.add(newState);
 		}
 		// set location in the diagram
@@ -107,25 +112,27 @@ public class CEPInstance {
 		this.stateList.add(newState);
 		return newState;
 	}
-	
+
 	public void currentStateChanged() {
-		this.currentState.setActive(false);
-		for(AbstractState astate : this.stateList) {
-			if(astate.getState().equals(this.instance.getCurrentState())) {
-				this.currentState = (AutomataState)astate;
-				this.currentState.setActive(true);
+		if (this.currentState != null) {
+			this.currentState.setActive(false);
+			for (AbstractState astate : this.stateList) {
+				if (astate.getState().equals(this.instance.getCurrentState())) {
+					this.currentState = (AutomataState) astate;
+					this.currentState.setActive(true);
+				}
 			}
-		}	
+		}
 	}
-	
+
 	public AutomataState getCurrentState() {
 		return this.currentState;
 	}
-	
+
 	public long getStartTimestamp() {
 		return this.instance.getStartTimestamp();
 	}
-	
+
 	public StateMachine<?> getStateMachine() {
 		return this.instance.getStateMachine();
 	}
@@ -144,10 +151,14 @@ public class CEPInstance {
 
 	public void setStatus(CEPStatus status) {
 		Bundle bundle = Activator.getDefault().getBundle();
-		if(status.equals(CEPStatus.FINISHED)) {
-			this.image = ImageDescriptor.createFromURL(bundle.getEntry(StringConst.PATH_TO_FINISHED_IMAGE)).createImage();
-		} else if(status.equals(CEPStatus.ABORTED)){
-			this.image = ImageDescriptor.createFromURL(bundle.getEntry(StringConst.PATH_TO_ABORTED_IMAGE)).createImage();
+		if (status.equals(CEPStatus.FINISHED)) {
+			this.image = ImageDescriptor.createFromURL(
+					bundle.getEntry(StringConst.PATH_TO_FINISHED_IMAGE))
+					.createImage();
+		} else if (status.equals(CEPStatus.ABORTED)) {
+			this.image = ImageDescriptor.createFromURL(
+					bundle.getEntry(StringConst.PATH_TO_ABORTED_IMAGE))
+					.createImage();
 		}
 		this.status = status;
 	}
@@ -167,6 +178,5 @@ public class CEPInstance {
 	public Image getImage() {
 		return image;
 	}
-	
 
 }

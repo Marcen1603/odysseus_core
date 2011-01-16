@@ -9,7 +9,6 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPStateView;
-import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 /**
  * This class defines the drag and drop listener used by the automata view.
@@ -45,14 +44,14 @@ public class DragListener extends MouseMotionListener.Stub implements
 		// delete
 		this.initialPoint = null;
 		this.draggingState = null;
-		for (IViewReference a : PlatformUI.getWorkbench()
+		for (IViewReference reference : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
-			if (a.getId().equals(StringConst.STATE_VIEW_ID)) {
+			if (reference.getId().equals(CEPStateView.ID)) {
 				if (event.getSource() instanceof AbstractState) {
 					AbstractState state = (AbstractState) event.getSource();
 					System.out.println(((AbstractState) event.getSource())
 							.getParent().getClass());
-					((CEPStateView) a.getView(false)).setContent(
+					((CEPStateView) reference.getView(false)).setContent(
 							(AbstractState) event.getSource(),
 							((AutomataDiagram) state.getParent()).getInstance()
 									.getTransitionList());

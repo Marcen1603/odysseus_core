@@ -8,7 +8,6 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
-import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 public class CollapseAllCommand extends AbstractHandler implements IHandler {
 
@@ -16,7 +15,7 @@ public class CollapseAllCommand extends AbstractHandler implements IHandler {
 		for (IViewReference a : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage()
 				.getViewReferences()) {
-			if (a.getId().equals(StringConst.LIST_VIEW_ID)) {
+			if (a.getId().equals(CEPListView.ID)) {
 				CEPListView view = (CEPListView) a.getView(false);
 				view.getNormalList().getTree().collapseAll();
 				view.getQueryList().getTree().collapseAll();

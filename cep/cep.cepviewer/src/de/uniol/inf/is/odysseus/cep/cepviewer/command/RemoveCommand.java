@@ -12,7 +12,6 @@ import org.eclipse.ui.PlatformUI;
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.MachineTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 
 public class RemoveCommand extends AbstractHandler implements IHandler {
@@ -21,7 +20,7 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		for (IViewReference a : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
-			if (a.getId().equals(StringConst.LIST_VIEW_ID)) {
+			if (a.getId().equals(CEPListView.ID)) {
 				CEPListView view = (CEPListView) a.getView(false);
 				ISelection selection = view.getActiveList().getTree()
 						.getSelection();
@@ -29,17 +28,10 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 				Object selectedObject = structSelection.getFirstElement();
 				if (selectedObject instanceof InstanceTreeItem) {
 					InstanceTreeItem item = (InstanceTreeItem) selectedObject;
-					for (CepOperator operator : view.getOperators()) {
-						if (operator.getStateMachine().equals(
-								item.getContent().getStateMachine())) {
-							operator.getCEPEventAgent().removeCEPEventListener(
-									view.getListener());
-							break;
-						}
-					}
 					if (view.getNormalList().remove(item)
 							&& view.getQueryList().remove(item)
 							&& view.getStatusList().remove(item)) {
+						view.getStatusList().getTree().refresh();
 						view.setInfoData();
 					}
 				} else if (selectedObject instanceof MachineTreeItem) {
@@ -57,8 +49,6 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 							&& view.getStatusList().remove(item)) {
 						view.setInfoData();
 					}
-				} else {
-					return null;
 				}
 			}
 		}

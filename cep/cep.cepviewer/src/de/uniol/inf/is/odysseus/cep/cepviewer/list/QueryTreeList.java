@@ -61,19 +61,15 @@ public class QueryTreeList extends AbstractTreeList {
 
 	public boolean remove(InstanceTreeItem toRemove) {
 		for (AbstractTreeItem machineItem : this.root.getChildren()) {
-			System.out.println("Query remove: 1");
 			// durchsuche die Rootelemente
 			if (toRemove.getContent().getStateMachine()
 					.equals(((MachineTreeItem) machineItem).getContent())) {
-				System.out.println("Query remove: 2");
 				// wenn die machinen passen
 				for (AbstractTreeItem instanceItem : machineItem.getChildren()) {
-					System.out.println("Query remove: 3");
 					// durchsuche die instanzen
 					if (((CEPInstance) toRemove.getContent()).getInstance()
 							.equals(((InstanceTreeItem) instanceItem)
 									.getContent().getInstance())) {
-						System.out.println("Query remove: 4");
 						machineItem.getChildren().remove(instanceItem);
 						instanceItem.setParent(null);
 						this.tree.refresh();
@@ -87,13 +83,10 @@ public class QueryTreeList extends AbstractTreeList {
 	
 	
 	public boolean remove(MachineTreeItem toRemove) {
-		System.out.println("QueryList: remove Machine 1");
 		MachineTreeItem removeItem = (MachineTreeItem) toRemove;
 		for (AbstractTreeItem machineItem : this.root.getChildren()) {
-			System.out.println("QueryList: remove Machine 2");
 			// durchsuche die Rootelemente
 			if (removeItem.getContent().equals(((MachineTreeItem) machineItem).getContent())) {
-				System.out.println("QueryList: remove Machine 3");
 				// wenn die machinen passen
 				this.root.getChildren().remove(machineItem);
 				machineItem.setParent(null);

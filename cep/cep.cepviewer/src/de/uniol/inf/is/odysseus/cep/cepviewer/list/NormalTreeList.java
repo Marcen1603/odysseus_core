@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.LabelTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.MachineTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPStatus;
+import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 /**
@@ -37,6 +38,13 @@ public class NormalTreeList extends AbstractTreeList {
 				tree.refresh();
 			}
 		});
+	}
+	
+	public boolean isFull() {
+		if(this.getItemCount() >= IntConst.MAX_LIST_ENTRIES) {
+			return true;
+		}
+		return false;
 	}
 
 	public int getItemCount() {

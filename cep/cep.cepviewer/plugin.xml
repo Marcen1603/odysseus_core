@@ -35,6 +35,18 @@
             name="StateView"
             restorable="true">
       </view>
+      <view
+            class="de.uniol.inf.is.odysseus.cep.cepviewer.CEPSymbolView"
+            id="de.uniol.inf.is.odysseus.cep.cepviewer.symboltableview"
+            name="SymbolTableView"
+            restorable="true">
+      </view>
+      <view
+            class="de.uniol.inf.is.odysseus.cep.cepviewer.CEPTraceView"
+            id="de.uniol.inf.is.odysseus.cep.cepviewer.matchingtraceview"
+            name="MatchingTraceView"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -60,13 +72,27 @@
                closeable="true"
                id="de.uniol.inf.is.odysseus.cep.cepviewer.queryview"
                minimized="false"
-               ratio="0.25"
+               ratio="0.7"
                relationship="bottom"
                relative="de.uniol.inf.is.odysseus.cep.cepviewer.automataview">
          </view>
          <view
                closeable="true"
                id="de.uniol.inf.is.odysseus.cep.cepviewer.stateview"
+               minimized="false"
+               relationship="stack"
+               relative="de.uniol.inf.is.odysseus.cep.cepviewer.queryview">
+         </view>
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.cep.cepviewer.symboltableview"
+               minimized="false"
+               relationship="stack"
+               relative="de.uniol.inf.is.odysseus.cep.cepviewer.queryview">
+         </view>
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.cep.cepviewer.matchingtraceview"
                minimized="false"
                relationship="stack"
                relative="de.uniol.inf.is.odysseus.cep.cepviewer.queryview">

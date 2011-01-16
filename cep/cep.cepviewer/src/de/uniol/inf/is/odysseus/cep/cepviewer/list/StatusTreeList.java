@@ -104,41 +104,39 @@ public class StatusTreeList extends AbstractTreeList {
 
 	public boolean remove(InstanceTreeItem toRemove) {
 		if (toRemove.getContent().getStatus().equals(CEPStatus.FINISHED)) {
-			return this.removeInstanceFromList(this.itemF, toRemove
+			this.removeInstanceFromList(this.itemF, toRemove
 					.getContent().getInstance());
+			return true;
 		} else if (toRemove.getContent().getStatus().equals(CEPStatus.RUNNING)) {
-			return this.removeInstanceFromList(this.itemR, toRemove
+			this.removeInstanceFromList(this.itemR, toRemove
 					.getContent().getInstance());
+			return true;
 		} else if (toRemove.getContent().getStatus().equals(CEPStatus.ABORTED)) {
-			return this.removeInstanceFromList(this.itemA, toRemove
+			this.removeInstanceFromList(this.itemA, toRemove
 					.getContent().getInstance());
+			return true;
 		}
 		return false;
 	}
 
 	public boolean remove(MachineTreeItem toRemove) {
-		System.out.println("StatusList: remove Machine R");
 		this.removeMachineFromList(this.itemR, toRemove.getContent());
-		System.out.println("StatusList: remove Machine F");
 		this.removeMachineFromList(this.itemF, toRemove.getContent());
-		System.out.println("StatusList: remove Machine A");
 		this.removeMachineFromList(this.itemA, toRemove.getContent());
-		System.out.println("StatusList: remove Machine refresh");
 		this.tree.refresh();
 		return true;
 	}
 
-	private boolean removeInstanceFromList(LabelTreeItem labelItem,
+	private void removeInstanceFromList(LabelTreeItem labelItem,
 			StateMachineInstance<?> instance) {
 		for (Object item : labelItem.getChildren().toArray()) {
 			if (((InstanceTreeItem) item).getContent().getInstance()
 					.equals(instance)) {
 				labelItem.getChildren().remove(item);
 				((InstanceTreeItem) item).setParent(null);
-				return true;
+				return;
 			}
 		}
-		return false;
 	}
 
 	private void removeMachineFromList(LabelTreeItem labelItem,
@@ -153,24 +151,20 @@ public class StatusTreeList extends AbstractTreeList {
 	}
 
 	public void stateChanged(StateMachineInstance<?> instance) {
-		System.out.println("!");
-		try{
-		for (AbstractTreeItem instanceItem : this.itemR.getChildren()) {
-			System.out.println("!");
-			if (instance.equals(((CEPInstance) instanceItem.getContent())
+		for (Object object : this.itemR.getChildren().toArray()) {
+			AbstractTreeItem item = (AbstractTreeItem) object; 
+			if (instance.equals(((CEPInstance) item.getContent())
 					.getInstance())) {
-				System.out.println("!");
-				CEPInstance cepInstance = (CEPInstance) instanceItem
+				CEPInstance cepInstance = (CEPInstance) item
 						.getContent();
 				cepInstance.currentStateChanged();
-				if (cepInstance.getCurrentState().getState().isAccepting()) {
-					cepInstance.setStatus(CEPStatus.FINISHED);
+				if (cepInstance.getInstance().getCurrentState().isAccepting()) {
+					this.remove((InstanceTreeItem) item);
+					((CEPInstance) item.getContent()).setStatus(CEPStatus.FINISHED);
+					this.addToTree((CEPInstance) item.getContent());
 					return;
 				}
 			}
-		}
-		}catch(Exception e) {
-			e.printStackTrace();
 		}
 	}
 

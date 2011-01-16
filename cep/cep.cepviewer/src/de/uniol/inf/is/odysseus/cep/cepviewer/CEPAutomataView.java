@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractTransition;
 import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AutomataDiagram;
 import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
 
@@ -12,11 +10,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * This class defines the automata view.
+ * This class defines the automata view which shows a state diagram.
  * 
  * @author Christian
  */
 public class CEPAutomataView extends ViewPart {
+
+	// the ID of this view
+	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.automataview";
 
 	// the composite which is the parent to this view
 	private Composite parent;
@@ -31,6 +32,13 @@ public class CEPAutomataView extends ViewPart {
 	}
 
 	/**
+	 * This method clears the view.
+	 */
+	public void clear() {
+		this.diagram.removeAll();
+	}
+
+	/**
 	 * This method initializes the structure of this view. It creates an Canvas
 	 * and adds an Instance of the LightweightSystem class. This instance allows
 	 * to add class instances of the draw2d toolkit to the Canvas
@@ -40,7 +48,8 @@ public class CEPAutomataView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
-		Canvas canvas = new Canvas(this.parent, SWT.BORDER);
+		Canvas canvas = new Canvas(this.parent, SWT.BORDER | SWT.H_SCROLL
+				| SWT.V_SCROLL);
 		// create the basic struktur of an automata diagram
 		LightweightSystem lws = new LightweightSystem(canvas);
 		this.diagram = new AutomataDiagram();
@@ -48,35 +57,21 @@ public class CEPAutomataView extends ViewPart {
 	}
 
 	/**
-	 * This method is called to create an automata diagram to an
-	 * StateMachineInstance and displays it in this view.
+	 * This method is called to display the state diagram of a CEPInstance by
+	 * setting the content of the diagram.
 	 * 
 	 * @param instance
-	 *            is the instance of an StateMachine that should be shown in
-	 *            this view
+	 *            is a CEPInstance which holds the elements of the state diagram
 	 */
 	public void showAutomata(CEPInstance instance) {
-		this.diagram.setInstance(instance);
-		for(AbstractState state : instance.getStateList()) {
-			this.diagram.add(state);
-		}
-		for(AbstractTransition state : instance.getTransitionList()) {
-			this.diagram.add(state);
-		}
-	}
-
-	/**
-	 * This method clears the AutomataDiagram-instance of all
-	 * states and transitions and returns the state counter to 0.
-	 */
-	public void clearView() {
-		this.diagram.removeAll();
+		this.diagram.setContent(instance);
 	}
 
 	/**
 	 * This method is called to set the focus to this view.
 	 */
 	public void setFocus() {
+		// do nothing
 	}
 
 }
