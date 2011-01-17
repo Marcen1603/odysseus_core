@@ -2316,12 +2316,22 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
 		ao.setExpressionString(expression.toString());
 		
-		ArrayList<String> restrictedVariables = new ArrayList<String>();
+		ArrayList<String> restrictedScanVariables = new ArrayList<String>();
+		ArrayList<String> restrictedPredVariables = new ArrayList<String>();
+		List<String> currentList;
+		currentList = restrictedScanVariables;
 		for (int i = 4; i < node.jjtGetNumChildren(); i++) {
+
 			identifier = (ASTIdentifier) node.jjtGetChild(i);
-			restrictedVariables.add(identifier.getName());
+			
+			if(identifier.getName().equals("SEPARATOR")) {
+				currentList = restrictedPredVariables;
+				continue;
+			}
+			currentList.add(identifier.getName());
 		}
-		ao.setRestrictedVariables(restrictedVariables.toArray(new String[0]));
+		ao.setRestrictedScanVariables(restrictedScanVariables);
+		ao.setRestrictedPredVariables(restrictedPredVariables);
 
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));
@@ -2355,9 +2365,9 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			ASTPredictionFunctionDefinition function = (ASTPredictionFunctionDefinition) prediction.jjtGetChild(i);
 			
 			ASTIdentifier target = (ASTIdentifier) function.jjtGetChild(0);
-			ASTIdentifier functionString = (ASTIdentifier) function.jjtGetChild(1);
+			ASTExpression functionString = (ASTExpression) function.jjtGetChild(1);
 			
-			functionList.put(target.getName(), functionString.getName());
+			functionList.put(target.getName(), functionString.toString());
 		}
 		ao.setExpressions(functionList);
 		
