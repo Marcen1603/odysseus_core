@@ -1,0 +1,108 @@
+#DEFINE bufferType      Punct
+
+#DEFINE sensorSource    ACCESS(radarSensor) // Quellenoperator(!) des Sensors
+#DEFINE sensorListName  radarSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
+#DEFINE predictedListName radarSensor.scan:predCars
+
+#PARSER PQLHack
+#TRANSCFG StreamCars
+#QUERY
+LOGICAL PLAN :
+		FILTER_EXP_COVARIANCE (	
+			FILTER_EXP_EXTIMATE (
+				FILTER-EXP-GATE (
+					ASSOCIATION-EXP-EVAL (
+						ASSOCIATION-EXP-GATE (
+							ASSOCIATION-GEN(
+								${sensorSource},
+								${sensorSource},
+								${sensorListName},
+								${sensorListName},
+								scan,
+								predCars,
+								cars
+							),
+							${sensorListName},
+							${predictedListName},
+							 'eif(
+              					AbsValue(
+               		 				MatrixEntry(
+                 	 				MatrixMult(
+									MatrixMult(
+									MatrixTrans(
+
+										MatrixSub([${sensorListName}:car:posx;${sensorListName}:car:posy;${sensorListName}:car:posz;${sensorListName}:car:heading;${sensorListName}:car:velocity],
+												[${predictedListName}:car:posx;${predictedListName}:car:posy;${predictedListName}:car:posz;${predictedListName}:car:heading;${predictedListName}:car:velocity])
+									),
+										MatrixAdd(${sensorListName}:car#COVARIANCE,${predictedListName}:car#COVARIANCE)
+									),
+
+									MatrixSub([${sensorListName}:car:posx;${sensorListName}:car:posy;${sensorListName}:car:posz;${sensorListName}:car:heading;${sensorListName}:car:velocity],
+					[${predictedListName}:car:posx;${predictedListName}:car:posy;${predictedListName}:car:posz;${predictedListName}:car:heading;${predictedListName}:car:velocity])
+                  ),
+                0,
+              0)
+              )
+            	<5, 100, 0)'
+						),
+						${sensorListName},
+						${predictedListName},
+						'SqrtValue(SquareValue(${sensorListName}:car:posx - ${predictedListName}:car:posx) + SquareValue(${sensorListName}:car:posy - ${predictedListName}:car:posy) + SquareValue(${sensorListName}:car:posz -${predictedListName}:car:posz) + SquareValue(${sensorListName}:car:heading - ${predictedListName}:car:heading) + SquareValue(${sensorListName}:car:velocity- ${predictedListName}:car:velocity))'
+					),
+					${sensorListName}, // scanned list path
+					${predictedListName}, // predicted list path
+					'MatrixMult(
+						${predictedListName}:car#COVARIANCE,
+						MatrixInv(
+							MatrixAdd(
+								${predictedListName}:car#COVARIANCE,
+								${sensorListName}:car#COVARIANCE
+							) 
+						)
+					)',
+					${sensorListName}:car:posx,
+					${sensorListName}:car:posy,
+					${sensorListName}:car:posz,
+					${sensorListName}:car:roll,
+					${sensorListName}:car:pitch,
+					${sensorListName}:car:heading,
+					${sensorListName}:car:velocity,
+					SEPARATOR,
+					${predictedListName}:car:posx,
+					${predictedListName}:car:posy,
+					${predictedListName}:car:posz,
+					${predictedListName}:car:roll,
+					${predictedListName}:car:pitch,
+					${predictedListName}:car:heading,
+					${predictedListName}:car:velocity
+				),
+				${sensorListName}, // scanned list path
+				${predictedListName}, // predicted list path
+	
+				${predictedListName}:car:posx := '${predictedListName}:car:posx + ${predictedListName}:car:posx#GAIN * (${sensorListName}:car:posx - ${predictedListName}:car:posx)'; 
+				${predictedListName}:car:posy := '${predictedListName}:car:posy + ${predictedListName}:car:posy#GAIN * (${sensorListName}:car:posy - ${predictedListName}:car:posy)';
+				${predictedListName}:car:posz := '${predictedListName}:car:posz + ${predictedListName}:car:posz#GAIN * (${sensorListName}:car:posz - ${predictedListName}:car:posz)';
+				${predictedListName}:car:roll := '${predictedListName}:car:roll + ${predictedListName}:car:roll#GAIN * (${sensorListName}:car:roll - ${predictedListName}:car:roll)';
+				${predictedListName}:car:pitch := '${predictedListName}:car:pitch + ${predictedListName}:car:pitch#GAIN * (${sensorListName}:car:pitch - ${predictedListName}:car:pitch)';
+				${predictedListName}:car:heading := '${predictedListName}:car:heading + ${predictedListName}:car:heading#GAIN * (${sensorListName}:car:heading - ${predictedListName}:car:heading)';
+				${predictedListName}:car:velocity := '${predictedListName}:car:velocity + ${predictedListName}:car:velocity#GAIN * (${sensorListName}:car:velocity - ${predictedListName}:car:velocity)';
+			),
+			${sensorListName}, // scanned list path
+			${predictedListName}, // predicted list path
+			'MatrixAdd(
+				MatrixMult(
+					MatrixMult( 
+						MatrixSub(IDENTITY_MATRIX, ${predictedListName}:car#GAIN), 
+						${predictedListName}:car#COVARIANCE 
+					),
+					MatrixTrans( 
+						MatrixSub( IDENTITY_MATRIX, ${predictedListName}:car#GAIN )
+					)
+				),
+				MatrixMult( 
+					MatrixMult( ${predictedListName}:car#GAIN, ${sensorListName}:car#COVARIANCE ),
+					MatrixTrans( ${predictedListName}:car#GAIN )
+				)
+			)'
+		);
+			
