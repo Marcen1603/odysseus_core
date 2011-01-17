@@ -688,6 +688,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					User.class);
 			m.invoke(bsv, caller);
 
+			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m2.invoke(bsv, dataDictionary);
+
 			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTCreateBroker.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
@@ -724,10 +727,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
+					User.class);
+			m.invoke(bsv, caller);
+			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m2.invoke(bsv, dataDictionary);
+			
+			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTBrokerSelectInto.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);
+
 			addQuery(sourceOp);
 			return plans;
 		} catch (ClassNotFoundException e) {
@@ -761,7 +771,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m2.invoke(bsv, dataDictionary);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
+					User.class);
+			m.invoke(bsv, caller);
+			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTMetric.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);
@@ -783,6 +798,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Object sv = sensorVisitor.newInstance();
 			Method m = sensorVisitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(sv, caller);
+			Method m2 = sensorVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m2.invoke(sv, dataDictionary);
+			
 			m = sensorVisitor.getDeclaredMethod("visit", ASTCreateSensor.class,
 					Object.class);
 			return m.invoke(sv, node, data);
