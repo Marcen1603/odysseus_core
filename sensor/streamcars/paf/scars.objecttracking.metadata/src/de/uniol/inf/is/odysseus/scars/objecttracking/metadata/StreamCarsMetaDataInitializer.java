@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.util.CovarianceMapper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
@@ -127,11 +128,12 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 					.getTupleObject();
 
 			this.covarianceExpressionMatrix.setRootTuple(tupleGiven);
-
+			CovarianceMapper mapper = new CovarianceMapper(this.schema);
 			for (int k = 0; k < objList.getAttributeCount(); k++) {
 				MVRelationalTuple<M> object = objList.getAttribute(k);
 				object.getMetadata().setCovariance(
 						this.covarianceExpressionMatrix.calculateMatrix(k));
+				object.getMetadata().setAttributeMapping(mapper.getMapping());
 			}
 		}
 	}
