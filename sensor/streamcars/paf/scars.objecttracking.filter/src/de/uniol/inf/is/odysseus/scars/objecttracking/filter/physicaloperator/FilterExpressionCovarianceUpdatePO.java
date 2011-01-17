@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -99,23 +100,29 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGain & IProbability &
 	}
 	
 	private void updateCovariance(MVRelationalTuple<M> car, double[][] restCov, String[] restrictedList) {
-		int[] restrictedIndices = new int[restrictedList.length];
+		List<Integer> restrictedIndicesList = new ArrayList<Integer>(restrictedList.length);
+//		int[] restrictedIndices = new int[restrictedList.length];
 		IProbability prob = car.getMetadata();
-		for(int i=0; i<restrictedList.length; i++) {
-			restrictedIndices[i] = prob.getCovarianceIndex(restrictedList[i]);
+		for(String attr : restrictedList) {
+//			restrictedIndices[i] = prob.getCovarianceIndex(restrictedList[i]);
+			int index = prob.getCovarianceIndex(attr);
+			if(index != -1 && !restrictedIndicesList.contains(index)) {
+				restrictedIndicesList.add(index);
+			}
+			
 		}
 		double[][] cov = car.getMetadata().getCovariance();
 		
-		for(int i=0; i<restrictedIndices.length; i++) {
-			double[] covLine = cov[restrictedIndices[i]];
+		for(int i=0; i<restrictedIndicesList.size(); i++) {
+			double[] covLine = cov[restrictedIndicesList.get(i)];
 			double[] restCovLine = restCov[i];
-			updateCovarianceLine(covLine, restCovLine, restrictedIndices);
+			updateCovarianceLine(covLine, restCovLine, restrictedIndicesList);
 		}
 	}
 	
-	private void updateCovarianceLine(double[] covLine, double[] restCovLine, int[] restrictedIndices) {
-		for(int i=0; i<restrictedIndices.length; i++) {
-			covLine[restrictedIndices[i]] = restCovLine[i];
+	private void updateCovarianceLine(double[] covLine, double[] restCovLine, List<Integer> restrictedIndices) {
+		for(int i=0; i<restrictedIndices.size(); i++) {
+			covLine[restrictedIndices.get(i)] = restCovLine[i];
 		}
 	}
 	
