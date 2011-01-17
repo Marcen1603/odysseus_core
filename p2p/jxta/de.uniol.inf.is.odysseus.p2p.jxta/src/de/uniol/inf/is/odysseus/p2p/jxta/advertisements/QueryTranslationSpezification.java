@@ -19,7 +19,7 @@ import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class QueryTranslationSpezification extends Advertisement implements
 		Serializable, Cloneable, Comparable {
 
@@ -169,7 +169,6 @@ public class QueryTranslationSpezification extends Advertisement implements
 	}
 
 	public QueryTranslationSpezification() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

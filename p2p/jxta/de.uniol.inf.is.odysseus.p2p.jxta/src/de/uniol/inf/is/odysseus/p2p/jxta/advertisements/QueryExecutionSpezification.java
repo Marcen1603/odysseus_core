@@ -21,12 +21,12 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 
 /**
- * Repraesentiert eine Ausschreibung eines Subplans mit einer serialisierten Version des dazugehörigen Operatorplans
+ * Repraesentiert eine Ausschreibung eines Subplans mit einer serialisierten Version des dazugehoerigen Operatorplans
  * 
- * @author Mart Köhler
+ * @author Mart Koehler
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class QueryExecutionSpezification extends Advertisement implements
 		Serializable, Cloneable, Comparable {
 
@@ -200,7 +200,6 @@ public class QueryExecutionSpezification extends Advertisement implements
 	}
 
 	public QueryExecutionSpezification() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

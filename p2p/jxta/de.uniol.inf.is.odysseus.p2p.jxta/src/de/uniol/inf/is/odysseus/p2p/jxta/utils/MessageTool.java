@@ -1,14 +1,10 @@
 package de.uniol.inf.is.odysseus.p2p.jxta.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.MimeMediaType;
@@ -24,18 +20,15 @@ import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 
-@SuppressWarnings("unchecked")
 public class MessageTool {
 	
 	
-
-
 	public static void sendMessage(PeerGroup netPeerGroup, PipeAdvertisement adv, Message message){
 		new MessageSender(netPeerGroup, adv, message).start();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static PipeAdvertisement getResponsePipe(String namespace, Message msg, int number){
 		MessageElement advElement = msg.getMessageElement(
 				namespace, "pipeAdv"+number);
@@ -54,6 +47,7 @@ public class MessageTool {
 		return pipeAdv;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static PeerAdvertisement getPeerAdvertisement(String namespace, Message msg){
 		MessageElement advElement = msg.getMessageElement(
 				namespace, "peerAdv");
@@ -79,6 +73,7 @@ public class MessageTool {
 	}
 	
 
+	@SuppressWarnings("rawtypes")
 	public static PipeAdvertisement createPipeAdvertisementFromXml(String xmlAdv){
 		PipeAdvertisement pipeAdv = null;
 		StringReader sr = new StringReader(xmlAdv);
@@ -88,7 +83,6 @@ public class MessageTool {
 					.newStructuredDocument(MimeMediaType.XMLUTF8,
 							sr);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		pipeAdv = (PipeAdvertisement) AdvertisementFactory
@@ -99,55 +93,62 @@ public class MessageTool {
 	}
 	
 	
-	public synchronized static Object getObjectFromMessage(Message msg, String elem){
-		MessageElement advElement = msg.getMessageElement(elem);
-		
-		Object obj = null;
-		  try {
-		    ByteArrayInputStream bis = new ByteArrayInputStream (advElement.getBytes(true));
-		    ObjectInputStream ois = new ObjectInputStream (bis);
-		    obj = ois.readObject();
-		  }
-		  catch (IOException ex) {
-		    ex.printStackTrace();
-		  }
-		  catch (ClassNotFoundException ex) {
-		    ex.printStackTrace();
-		  }
-		return obj;
-	}
-	
-	public synchronized static Object getObjectFromMessage(Message msg, int number){
-		
-		MessageElement advElement = msg.getMessageElement("ao"+number);
-		
-		Object obj = null;
-		  try {
-		    ByteArrayInputStream bis = new ByteArrayInputStream (advElement.getBytes(true));
-		    ObjectInputStream ois = new ObjectInputStream (bis);
-		    obj = ois.readObject();
-		  }
-		  catch (IOException ex) {
-		    ex.printStackTrace();
-		  }
-		  catch (ClassNotFoundException ex) {
-		    ex.printStackTrace();
-		  }
-		return obj;
-	}
-	
-	public static ArrayList<POEventType> getEvents(String events){
-
-		StringTokenizer st = new StringTokenizer(events, ",");
-		ArrayList<POEventType> list = new ArrayList<POEventType>();
-		while (st.hasMoreTokens()) { 	
-			list.add(POEventType.valueOf(st.nextToken()));
-		}
-		return list;
-
-	}
+	// Methode auskommentiert da aktuell nicht beötigt
+//	public synchronized static Object getObjectFromMessage(Message msg, String elem){
+//		MessageElement advElement = msg.getMessageElement(elem);
+//		
+//		Object obj = null;
+//		  try {
+//		    ByteArrayInputStream bis = new ByteArrayInputStream (advElement.getBytes(true));
+//		    ObjectInputStream ois = new ObjectInputStream (bis);
+//		    obj = ois.readObject();
+//		  }
+//		  catch (IOException ex) {
+//		    ex.printStackTrace();
+//		  }
+//		  catch (ClassNotFoundException ex) {
+//		    ex.printStackTrace();
+//		  }
+//		return obj;
+//	}
 	
 	
+	// Methode auskommentiert da aktuell nicht beötigt
+	
+//	public synchronized static Object getObjectFromMessage(Message msg, int number){
+//		
+//		MessageElement advElement = msg.getMessageElement("ao"+number);
+//		
+//		Object obj = null;
+//		  try {
+//		    ByteArrayInputStream bis = new ByteArrayInputStream (advElement.getBytes(true));
+//		    ObjectInputStream ois = new ObjectInputStream (bis);
+//		    obj = ois.readObject();
+//		  }
+//		  catch (IOException ex) {
+//		    ex.printStackTrace();
+//		  }
+//		  catch (ClassNotFoundException ex) {
+//		    ex.printStackTrace();
+//		  }
+//		return obj;
+//	}
+	
+	// Auskommentiert da akuell nicht benötigt
+	
+//	public static ArrayList<POEventType> getEvents(String events){
+//
+//		StringTokenizer st = new StringTokenizer(events, ",");
+//		ArrayList<POEventType> list = new ArrayList<POEventType>();
+//		while (st.hasMoreTokens()) { 	
+//			list.add(POEventType.valueOf(st.nextToken()));
+//		}
+//		return list;
+//
+//	}
+	
+	
+	@SuppressWarnings("rawtypes")
 	public static Message createSimpleMessage(String namespace, Map<String,Object> messageElements) {
 		Message response = new Message();
 		int pipeCounter = 0;
@@ -247,7 +248,6 @@ class MessageSender extends Thread{
 				socket = new JxtaSocket(netPeerGroup, null, pipeAdv, 16000, true);
 				break;
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
 				socket = null;
 				e2.printStackTrace();
 				
@@ -258,7 +258,6 @@ class MessageSender extends Thread{
 		try {
 			oout = new ObjectOutputStream(socket.getOutputStream());
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 
@@ -267,21 +266,18 @@ class MessageSender extends Thread{
 			oout.flush();
 			
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
 		try {
 			Thread.sleep(8000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			oout.close();
 			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -25,7 +25,7 @@ import net.jxta.id.IDFactory;
  * @author christian
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SourceAdvertisement extends Advertisement implements
 Serializable, Cloneable, Comparable {
 
@@ -157,7 +157,6 @@ Serializable, Cloneable, Comparable {
 	}
 
 	public SourceAdvertisement() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
