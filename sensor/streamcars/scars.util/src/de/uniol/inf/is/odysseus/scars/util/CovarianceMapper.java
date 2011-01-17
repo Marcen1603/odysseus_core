@@ -62,4 +62,8 @@ public class CovarianceMapper {
 		
 		return sb.toString();
 	}
+	
+	public List<String> getMapping() {
+		return indices;
+	}
 }

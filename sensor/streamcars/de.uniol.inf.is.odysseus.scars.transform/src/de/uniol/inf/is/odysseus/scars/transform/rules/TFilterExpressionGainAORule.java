@@ -25,13 +25,13 @@ public class TFilterExpressionGainAORule extends AbstractTransformationRule<Filt
 	public void execute(FilterExpressionGainAO operator, TransformationConfiguration config) {
 		System.out.print("CREATE Filter Expression Gain PO...");
 		
-		FilterExpressionGainPO filterGainPO = new FilterExpressionGainPO();
+		FilterExpressionGainPO<?> filterGainPO = new FilterExpressionGainPO();
 		filterGainPO.setOutputSchema(operator.getOutputSchema());
 		filterGainPO.setPredictedObjectListPath(operator.getPredictedListPath());
 		filterGainPO.setScannedObjectListPath(operator.getScannedListPath());
-//		filterGainPO.setNewObjListPath( operator.getScannedListPath());
-//		filterGainPO.setOldObjListPath( operator.getPredictedListPath());
-		
+		filterGainPO.setExpressionString(operator.getExpressionString());
+		filterGainPO.setRestrictedPredVariables(operator.getRestrictedPredVariables());
+		filterGainPO.setRestrictedScanVariables(operator.getRestrictedScanVarialbes());
 		
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, filterGainPO);
 		for (ILogicalOperator o:toUpdate) {
