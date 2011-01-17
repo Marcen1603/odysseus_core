@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
@@ -238,6 +240,24 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	public int getIndexOfKovMatrix(int[] path) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void setAttributeMapping(List<String> indices) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getCovarianceIndex(String fullAttributeName) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getAttributeName(int index) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
