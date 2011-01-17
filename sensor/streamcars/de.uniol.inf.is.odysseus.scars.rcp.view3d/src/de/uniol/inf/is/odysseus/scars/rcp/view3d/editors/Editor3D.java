@@ -80,15 +80,16 @@ public class Editor3D implements IStreamEditorType {
 
 			MVRelationalTuple<?> carTuple = (MVRelationalTuple<?>) car.tupleObject;
 
-			float x = carTuple.getAttribute(3);
-			float y = carTuple.getAttribute(4);
-			float z = carTuple.getAttribute(5);
+			float x = carTuple.getAttribute(2);
+			float y = carTuple.getAttribute(3);
+			float z = carTuple.getAttribute(4);
 
 			Transform3D t = new Transform3D(y, z, -x);
 			cubes[counter].setTransform(t);
 
 			counter++;
 		}
+		System.out.println(counter);
 		if (activeCubes > counter) {
 			for (int i = counter; i < activeCubes; i++) {
 				Transform3D t = new Transform3D(new Tuple3f(-1000 - i * 100, -1000 - i * 100, 1000 + i * 100));
