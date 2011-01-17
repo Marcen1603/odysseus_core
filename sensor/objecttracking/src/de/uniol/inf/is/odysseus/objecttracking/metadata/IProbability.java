@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
@@ -26,7 +27,11 @@ public interface IProbability extends IMetaAttribute, IClone{
 	 */
 	public double[][] getCovariance();
 	
+	public void setAttributeMapping(List<String> indices);
 
+	public int getCovarianceIndex( String fullAttributeName );
+	
+	public String getAttributeName( int index );
 	/**
 	 * Sets the schema attribute indices corresponding to the covarians matrix, reflecting the MVAttributes of the schema
 	 * 		    	   s1 s2 s3 s4

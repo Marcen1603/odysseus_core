@@ -254,5 +254,20 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 	public String getCSVHeader() {
 		return null;
 	}
+
+	@Override
+	public int getCovarianceIndex(String fullAttributeName) {
+		return prob.getCovarianceIndex(fullAttributeName);
+	}
+
+	@Override
+	public String getAttributeName(int index) {
+		return prob.getAttributeName(index);
+	}
+
+	@Override
+	public void setAttributeMapping(List<String> indices) {
+		this.prob.setAttributeMapping(indices);
+	}
 	
 }

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Probability implements IProbability{
 
@@ -8,8 +9,11 @@ public class Probability implements IProbability{
 	private ArrayList<int[]> attributePaths;
 	private int[] attrIndices;
 	
+	private List<String> indices;
+	
 	public Probability(){
 		cov = null;
+		indices = new ArrayList<String>();
 	}
 	
 	public Probability(double[][] sigma){
@@ -21,6 +25,18 @@ public class Probability implements IProbability{
 				}
 			}
 		}
+	}
+	
+	public Probability(double[][] sigma, List<String> mapping) {
+		if(sigma != null && sigma.length > 0){
+			cov = new double[sigma.length][sigma[0].length];
+			for(int i =0; i<sigma.length; i++){
+				for(int u = 0; u<sigma[i].length; u++){
+					cov[u][i] = sigma[u][i];
+				}
+			}
+		}
+		this.indices = new ArrayList<String>(mapping);
 	}
 	
 	@Override
@@ -35,7 +51,7 @@ public class Probability implements IProbability{
 	
 	@Override
 	public IProbability clone(){
-		return new Probability(this.cov);
+		return new Probability(this.cov, indices);
 	}
 	
 	@Override
@@ -101,5 +117,21 @@ public class Probability implements IProbability{
 	@Override
 	public String getCSVHeader() {
 		return null;
+	}
+
+	@Override
+	public int getCovarianceIndex(String fullAttributeName) {
+		return indices.indexOf(fullAttributeName);
+	}
+
+	@Override
+	public String getAttributeName(int index) {
+		return indices.get(index);
+	}
+
+	@Override
+	public void setAttributeMapping(List<String> indices) {
+		this.indices = indices;
+		
 	}
 }
