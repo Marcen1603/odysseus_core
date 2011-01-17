@@ -1,7 +1,5 @@
 package windperformancercp.views.sources;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;

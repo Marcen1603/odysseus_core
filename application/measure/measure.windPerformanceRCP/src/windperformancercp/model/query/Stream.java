@@ -2,8 +2,6 @@ package windperformancercp.model.query;
 
 import java.util.ArrayList;
 
-import windperformancercp.model.sources.Attribute;
-
 public class Stream {
 	private String name;
 	//private ArrayList<Attribute> attributes;

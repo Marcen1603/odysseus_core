@@ -62,17 +62,26 @@ public class SourceDialog extends AbstractUIDialog {
 	private Text hhInputField;
 	public static final String HHLABEL = "Hub height:";
 	private Button btnWT;
+	Group lowerLeftGroup;
 	private Button btnMM;
+	Group lowerRightGroup;
 	private Button btnRActive;
 	private Button btnRPassive;
+	private Button btnRKelvin;
+	private Button btnRCelsius;
 	private AttributeTable attributeComp;
 	private TableViewer attributeViewer;
 	private ToolBar tb_attList;
 	
-	public static final int PC_ACTIVE = 0;
-	public static final int PC_PASSIVE = 1;
+	//Source Type
 	public static final int MMId = 0;
 	public static final int WTId = 1;
+	//Power Control
+	public static final int PC_ACTIVE = 0;
+	public static final int PC_PASSIVE = 1;
+	//Temperature Measurement Method
+	public static final int TIK = 0; //Kelvin
+	public static final int TIC = 1; //Celsius
 	
 	public SourceDialog(Shell parentShell) {
 		super(parentShell);
@@ -93,6 +102,7 @@ public class SourceDialog extends AbstractUIDialog {
 		newShell.setText("New Source Dialog");
 		newShell.setMinimumSize(600, 400);
 		newShell.setSize(700, 500);
+		
 	}
 	
 	@Override
@@ -225,15 +235,15 @@ public class SourceDialog extends AbstractUIDialog {
 			lowerSash.setLayout(new GridLayout(4,false));
 
 			//## WindTurbine
-			final Group lowerLeftGroup;
+			//final Group lowerLeftGroup;
 			{
 			btnWT = new Button(lowerSash,SWT.RADIO);
 			btnWT.setData(WTId);
 			btnWT.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 			
 			lowerLeftGroup = new Group(lowerSash, SWT.NONE);
-			lowerLeftGroup.setEnabled(false);
-			
+			//lowerLeftGroup.setEnabled(false);
+			lowerLeftGroup.setEnabled(btnWT.getSelection());
 			
 			lowerLeftGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 			lowerLeftGroup.setLayout(new FormLayout());
@@ -293,18 +303,56 @@ public class SourceDialog extends AbstractUIDialog {
 			}	
 		
 			//## MetMast
-			final Group lowerRightGroup;
+			//final Group lowerRightGroup;
 			{
 				btnMM = new Button(lowerSash,SWT.RADIO);
 				btnMM.setData(MMId);
 				btnMM.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 				
 				lowerRightGroup = new Group(lowerSash, SWT.RIGHT);
-				lowerRightGroup.setEnabled(false);
+				//lowerRightGroup.setEnabled(false);
+				lowerRightGroup.setEnabled(btnMM.getSelection());
 				
 				lowerRightGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+				lowerLeftGroup.setLayout(new FormLayout());
 				lowerRightGroup.setText("MetMast");
-				lowerRightGroup.setLayout(new GridLayout(1,false));
+				
+				Composite tempComposite = new Composite(lowerRightGroup, SWT.FILL);
+				{
+					FormData tempCompositeFD = new FormData();
+					tempCompositeFD.top = new FormAttachment(lowerRightGroup,5);
+					tempComposite.setLayoutData(tempCompositeFD);
+					
+					tempComposite.setLayout(new FormLayout());
+					Label tempControlLbl = new Label(tempComposite, SWT.NONE);
+					tempControlLbl.setLayoutData(new FormData());
+					tempControlLbl.setText("Temperatur measured in:");
+					
+					btnRKelvin = new Button(tempComposite, SWT.RADIO);
+					FormData btnRKelvinFD = new FormData();
+					btnRKelvinFD.top = new FormAttachment(tempControlLbl,7);
+					btnRKelvinFD.left = new FormAttachment(tempComposite,5,SWT.LEFT);
+					btnRKelvin.setLayoutData(btnRKelvinFD);
+					
+					btnRKelvin.setText("Kelvin (K)");
+					btnRKelvin.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) { presenter.temperatureControlTypeClick();}
+					});
+					
+					btnRCelsius = new Button(tempComposite, SWT.RADIO);
+					FormData btnRCelsiusFD = new FormData();
+					btnRCelsiusFD.top = new FormAttachment(btnRKelvin,0,SWT.TOP);
+					btnRCelsiusFD.left = new FormAttachment(btnRKelvin,5);
+					btnRCelsius.setLayoutData(btnRCelsiusFD);
+					
+					btnRCelsius.setText("Celcius (C°)");
+					btnRCelsius.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) { presenter.temperatureControlTypeClick();}
+					});
+					
+				}
+			
+				
 			}
 			
 			SelectionAdapter typeAdapter = new SelectionAdapter(){
@@ -426,27 +474,60 @@ public class SourceDialog extends AbstractUIDialog {
 		if(type==MMId){
 			btnWT.setSelection(false);
 			btnMM.setSelection(true);
+			return;
 			}
 		if(type==WTId){
-				btnWT.setSelection(true);
-				btnMM.setSelection(false);
+			btnWT.setSelection(true);
+			btnMM.setSelection(false);
+			return;
 		}
+		lowerLeftGroup.setEnabled(btnWT.getSelection());
+		lowerRightGroup.setEnabled(btnMM.getSelection());
 	}
 	
 	public void setPowerControl(int pc){
+		
 		if(pc == PC_ACTIVE){
 			btnRActive.setSelection(true);
 			btnRPassive.setSelection(false);
+			return;
 		}
 		if(pc == PC_PASSIVE){
 			btnRActive.setSelection(false);
 			btnRPassive.setSelection(true);
+			return;
 		}
+			btnRActive.setSelection(false);
+			btnRPassive.setSelection(false);
 	}
 	
 	public int getPowerControl(){
 		if(btnRActive.getSelection()) return PC_ACTIVE;
 		if(btnRPassive.getSelection()) return PC_PASSIVE;
+		else return -1;
+	}
+	
+	//TODO
+	public void setTemperatureMeasure(int tik){
+		if(tik == TIK){
+			btnRKelvin.setSelection(true);
+			btnRCelsius.setSelection(false);
+			return;
+		}
+		if(tik == TIC){
+			btnRKelvin.setSelection(false);
+			btnRCelsius.setSelection(true);
+			return;
+		}
+		
+		btnRKelvin.setSelection(false);
+		btnRCelsius.setSelection(false);
+		
+	}
+	
+	public int getTemperatureMeasure(){
+		if(btnRKelvin.getSelection()) return TIK;
+		if(btnRCelsius.getSelection()) return TIC;
 		else return -1;
 	}
 	

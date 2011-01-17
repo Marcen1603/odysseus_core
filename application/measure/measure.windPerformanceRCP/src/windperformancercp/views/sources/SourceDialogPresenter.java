@@ -95,7 +95,8 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		public void eventOccured(IEvent<?, ?> idevent){
 			//if(idevent.getEventType().equals(InputDialogEventType.NewAttributeItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
 				InputDialogEvent newAttevent = (InputDialogEvent) idevent;
-				Attribute att = (Attribute)newAttevent.getValue();
+				Attribute att = new Attribute((Attribute)newAttevent.getValue());
+				
 			//	fire(new InputDialogEvent(boss, InputDialogEventType.NewAttributeItem, att));
 				tmpAttList.add(att);
 				if(source != null)
@@ -119,6 +120,12 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	public void powerControlTypeClick(){
 		if(source != null && source instanceof WindTurbine){
 			((WindTurbine) source).setPowerControl(dialog.getPowerControl());
+		}
+	}
+	
+	public void temperatureControlTypeClick(){
+		if(source != null && source instanceof MetMast){
+			((MetMast) source).setTemperatureInKelvin(dialog.getTemperatureMeasure());
 		}
 	}
 	
@@ -149,7 +156,8 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					dialog.getStrIdValue(),
 					dialog.getHostValue(),
 					Integer.parseInt(dialog.getPortValue()), 
-					tmpAttList);
+					tmpAttList,
+					dialog.getTemperatureMeasure());
 		if(dialog.getSourceType() == WTId) 
 			source = new WindTurbine(dialog.getNameValue(),
 					dialog.getStrIdValue(),
@@ -170,7 +178,10 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					if(!tocheck.getHost().equals("")){
 						if(!(tocheck.getPort() < 1024 || tocheck.getPort() > 65536)){
 							if(tocheck instanceof MetMast){
-								return true;
+								MetMast mm = (MetMast)tocheck;
+								if(mm.getTemperatureInKelvin() == 0||mm.getTemperatureInKelvin() == 1){
+									return true;
+								}
 							}
 							if(tocheck instanceof WindTurbine){
 								WindTurbine wt = (WindTurbine)tocheck;
@@ -211,6 +222,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		}
 		if(src.isMetMast()){
 			dialog.setSourceType(MMId);
+			dialog.setTemperatureMeasure(((MetMast)src).getTemperatureInKelvin());
 		}
 	}
 	

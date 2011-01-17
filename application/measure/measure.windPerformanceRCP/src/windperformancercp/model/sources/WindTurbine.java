@@ -2,9 +2,6 @@ package windperformancercp.model.sources;
 
 import java.util.ArrayList;
 
-import windperformancercp.event.SourceModelEvent;
-import windperformancercp.event.SourceModelEventType;
-
 public class WindTurbine extends AbstractSource {
 
 	double hubHeight;

@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import windperformancercp.model.sources.ISource;
+import windperformancercp.model.sources.MetMast;
+import windperformancercp.model.sources.WindTurbine;
 import windperformancercp.views.AbstractUIDialog;
 import windperformancercp.views.IPresenter;
 import windperformancercp.views.sources.SourceDialog;
@@ -31,17 +33,28 @@ public class ShowCopySourceDialogCommand extends AbstractHandler implements
 							
 				for (Iterator<Object> iterator = (Iterator<Object>) strucSelection.iterator(); iterator.hasNext();) {
 					Object element = iterator.next();
+					
 					ISource source = (ISource) element;
 					
 					Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
 					final Shell dialogShell = new Shell(parent);
 					AbstractUIDialog dialog = new SourceDialog(dialogShell);
 					IPresenter presenter = dialog.getPresenter();
-					dialog.create();					
-					((SourceDialogPresenter) presenter).feedDialog(source);
+					dialog.create();
+					
+					if(source instanceof MetMast){
+						MetMast mm = new MetMast((MetMast)source);
+						((SourceDialogPresenter) presenter).feedDialog(mm);
+					}
+					if(source instanceof WindTurbine){
+						WindTurbine wt = new WindTurbine((WindTurbine)source);
+						((SourceDialogPresenter) presenter).feedDialog(wt);
+					} 
+					else return null;
 					dialog.open();
 								
 					}
+				
 				return null;
 	        }
 	        if(selection == null){
@@ -52,20 +65,5 @@ public class ShowCopySourceDialogCommand extends AbstractHandler implements
 
 	        return null;
 	    }
-
-	/*@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		//TODO: werte des values uebergeben, am besten als command parameter (source)
-		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-
-		final Shell dialogShell = new Shell(parent);
-		SourceDialog dialog = new SourceDialog(dialogShell);
-		//TODO: generate
-		if(dialog.open()== Window.OK){
-			System.out.println("Copy Source Handler says: Dialog says Ok!");
-		}
-
-		return null;
-	}*/
 
 }

@@ -18,10 +18,9 @@ public class QueryWizardDialog extends WizardDialog implements IUserInputDialog{
 	public QueryWizardDialog(Shell parentShell, IWizard newWizard) {
 		super(parentShell, newWizard);
 		this.presenter = new PerformanceWizardDialogPresenter(this);
-		
 		((QueryWizard)this.getWizard()).setAvailableMethods(presenter.getAvailableMethods());
 		((QueryWizard)this.getWizard()).setAvailableSources(presenter.getAvailableSources());
-		((QueryWizard)this.getWizard()).createPageControls(parentShell);
+		this.create();
 		update();
 	}
 
@@ -29,7 +28,20 @@ public class QueryWizardDialog extends WizardDialog implements IUserInputDialog{
 	protected void finishPressed(){
 		presenter.finishClick();
 	}
-
+	
+	@Override
+	protected void nextPressed() {
+		//System.out.println("page changed. "+this.getCurrentPage().getName());
+		if(this.getCurrentPage().getName().equals("TypeOfQueryPage")){
+			presenter.typeChoosed(((QueryWizard)this.getWizard()).getQueryID(), ((QueryWizard)this.getWizard()).getMethod());
+		}
+		if(this.getCurrentPage().getName().equals("SourceSelectPage")){
+			presenter.sourcesChoosed(((QueryWizard)this.getWizard()).getSelectedSources());
+			((QueryWizard)this.getWizard()).setNeededAssignments(presenter.getNeededAssignments(null));
+			((QueryWizard)this.getWizard()).setAssignmentComboElements(presenter.getPossibleAssignments());
+		}
+		  super.nextPressed();
+	}
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {

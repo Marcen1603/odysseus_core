@@ -28,6 +28,7 @@ public interface ISource extends IDialogResult, IEventHandler {
 	public void setAttributeList(ArrayList<Attribute> newAttl);
 	public Attribute getIthAtt(int i);
 	public void setIthAtt(int i, Attribute att);
+	public int getAttIndex(Attribute att);
 	public int getNumberOfAtts();
 	public int getType();
 	public boolean isWindTurbine();

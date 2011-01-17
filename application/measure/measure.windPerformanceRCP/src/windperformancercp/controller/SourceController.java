@@ -7,7 +7,9 @@ import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
 import windperformancercp.model.sources.ISource;
+import windperformancercp.model.sources.MetMast;
 import windperformancercp.model.sources.SourceModel;
+import windperformancercp.model.sources.WindTurbine;
 import windperformancercp.views.IPresenter;
 import windperformancercp.views.sources.AttributeDialogPresenter;
 import windperformancercp.views.sources.ManageSourcePresenter;
@@ -76,8 +78,16 @@ public class SourceController implements IController {
 				//System.out.println(this.toString()+": Received new source event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				ISource src = (ISource) ideEvent.getValue();
+				if(src instanceof WindTurbine){
+					ISource newsrc = new WindTurbine((WindTurbine)src);
+					model.addElement(newsrc);
+				}
+				if(src instanceof MetMast){
+					ISource newsrc = new MetMast((MetMast)src);
+					model.addElement(newsrc);
+				}
 				
-				model.addElement(src);
+				
 				//System.out.println(pcontrol.callGen(src));
 	//			JAXB.marshal(src, System.out);
 				

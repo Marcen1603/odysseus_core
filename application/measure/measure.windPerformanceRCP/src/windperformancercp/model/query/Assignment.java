@@ -20,18 +20,21 @@ public class Assignment {
 		Stream respStream;
 		int attributeId;
 		
-		/*public Assignment(String kind, Attribute.AttributeType dt, ISource rs, int id){
-			this.kind = kind;
-			this.attType = dt;
-			this.respSource = rs;
-			this.attributeId = id;
-		}*/
+		public Assignment(Attribute.AttributeType dt, ISource rs, int ind){
 		
-		public Assignment(Kind kind, Attribute.AttributeType dt, Stream rs, int id){
-			this.kind = kind;
 			this.attType = dt;
+			this.respStream = null;
+			this.respSource = rs;
+			this.attributeId = ind;
+			
+		}
+		
+		public Assignment(Attribute.AttributeType at, Stream rs, int ind){
+			
+			this.attType = at;
 			this.respStream = rs;
-			this.attributeId = id;
+			this.respSource = null;
+			this.attributeId = ind;
 		}
 		
 		
@@ -41,10 +44,9 @@ public class Assignment {
 			this.setType(dt);
 		}*/
 		
-		public Assignment(Kind kind, Attribute.AttributeType dt){
+		public Assignment(Attribute.AttributeType at){
 			this();
-			this.setKind(kind);
-			this.setType(dt);
+			this.attType = at;
 		}
 		
 		public Assignment(){
@@ -84,12 +86,12 @@ public class Assignment {
 		}
 		
 		
-		public Attribute.AttributeType getDataType(){
+		public Attribute.AttributeType getAttType(){
 			return attType;
 		}
 		
-		public void setType(Attribute.AttributeType dt){
-			this.attType = dt;
+		public void setType(Attribute.AttributeType at){
+			this.attType = at;
 		}
 		
 		public ISource getRespSource(){
@@ -108,9 +110,18 @@ public class Assignment {
 			this.respStream = str;
 		}
 		
-		
 		public int getAttributeId(){
 			return attributeId;
+		}
+		
+		public String toString(){
+			String info = "";
+			
+			if(this.respSource !=null)
+				info = info + this.attType.toString()+" "+this.respSource.getName()+" "+this.respSource.getIthAtt(attributeId).getName();
+			if(this.respStream !=null)
+				info = info + this.attType.toString()+" "+this.respStream.getName()+" "+this.respStream.getIthAttName(this.attributeId);
+			return info;
 		}
 
 	}

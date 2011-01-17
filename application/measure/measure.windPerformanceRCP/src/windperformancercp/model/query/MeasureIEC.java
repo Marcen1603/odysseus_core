@@ -12,11 +12,13 @@ public class MeasureIEC extends APerformanceQuery {
 
 	int cutin;
 	int eightyfivepercent;
-	QueryGenerator Pgen;
-	QueryGenerator Qgen;
 	
-
+	//TODO: auf streams setzen
 	public MeasureIEC(String name, ArrayList<Stream> instr){
+		super(name, APerformanceQuery.PMType.IEC,new ArrayList<ISource>());
+	}
+	
+	public MeasureIEC(String name){
 		super(name, APerformanceQuery.PMType.IEC,new ArrayList<ISource>());
 		Pgen = new QueryGenerator(new PQLGenerator());
 		Qgen = new QueryGenerator(new CQLGenerator());
@@ -66,9 +68,5 @@ public class MeasureIEC extends APerformanceQuery {
 		return queryText;
 	}
 
-	@Override
-	public void setMethod(PMType type) {
-		// TODO Auto-generated method stub
-	}
 
 }

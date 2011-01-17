@@ -11,8 +11,12 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	String identifier;
 	PMType method;
 	ArrayList<ISource> concernedSrc;
-	ArrayList<Assignment> neededAssigns;
+	ArrayList<Assignment> neededAssigns = new ArrayList<Assignment>();
+	
 	String queryText;
+	
+	QueryGenerator Pgen;
+	QueryGenerator Qgen;
 
 	
 	public enum PMType{
@@ -25,16 +29,18 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.method = method;
 		this.neededAssigns = new ArrayList<Assignment>(); 
 		this.concernedSrc = new ArrayList<ISource>(sources);
+		Pgen = new QueryGenerator(new PQLGenerator());
+		Qgen = new QueryGenerator(new CQLGenerator());
 		
 	/*	Assignment asgn = new Assignment(Assignment.Kind.TIMESTAMP,Attribute.AttributeType.STARTTIMESTAMP);
 		neededAssigns.add(asgn);*/
-		Assignment asgn = new Assignment(Assignment.Kind.WINDSPEED,Attribute.AttributeType.WINDSPEED);
+		Assignment asgn = new Assignment(Attribute.AttributeType.WINDSPEED);
 		neededAssigns.add(asgn);
-		asgn = new Assignment(Assignment.Kind.POWER,Attribute.AttributeType.POWER);
+		asgn = new Assignment(Attribute.AttributeType.POWER);
 		neededAssigns.add(asgn);
-		asgn = new Assignment(Assignment.Kind.PRESSURE,Attribute.AttributeType.AIRPRESSURE);
+		asgn = new Assignment(Attribute.AttributeType.AIRPRESSURE);
 		neededAssigns.add(asgn);
-		asgn = new Assignment(Assignment.Kind.TEMPERATURE,AttributeType.AIRTEMPERATURE);
+		asgn = new Assignment(AttributeType.AIRTEMPERATURE);
 	}
 	
 	@Override
@@ -94,6 +100,60 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	@Override
 	public ArrayList<ISource> getMember() {
 		return concernedSrc;
+	}
+	
+	@Override
+	public void addMember(ISource m){
+		concernedSrc.add(m);
+	}
+	
+	@Override
+	public void addAllMembers(ArrayList<ISource> listm){
+		concernedSrc.addAll(listm);
+	}
+	
+	@Override
+	public void clearMembers(){
+		concernedSrc.clear();
+	}
+	
+	@Override
+	public ArrayList<Assignment> getAssignments(PMType what) {
+		return neededAssigns;
+	}
+	
+	@Override
+	public ArrayList<OperatorResult> generateSourceStreams(){
+		ArrayList<OperatorResult> result = new ArrayList<OperatorResult>(); 
+		for(ISource src: concernedSrc){
+			OperatorResult current = Qgen.generateCreateStream(src);
+			result.add(current);
+			System.out.println(current.getQuery());
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ArrayList<Assignment> getPossibleAssignments(){
+		ArrayList<Assignment> possibilities = new ArrayList<Assignment>();
+		for(Assignment a: neededAssigns){
+			for(ISource s: concernedSrc){
+				for(Attribute at: s.getAttributeList()){
+					if(a.getAttType().equals(at.getAttType())){
+						Assignment newpos = new Assignment(a.getAttType(),s,s.getAttIndex(at));
+						possibilities.add(newpos);
+					}
+				}
+			}
+		}
+		return possibilities;
+	}
+	
+
+	@Override
+	public void setMethod(PMType type) {
+		// TODO Auto-generated method stub
 	}
 
 }

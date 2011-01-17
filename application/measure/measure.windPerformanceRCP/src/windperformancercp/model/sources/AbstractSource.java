@@ -3,7 +3,6 @@ package windperformancercp.model.sources;
 import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.IEvent;
@@ -184,6 +183,11 @@ public abstract class AbstractSource implements ISource {
 				attributeList.set(i, att);
 		} 
 	}
+	
+	@Override
+	public int getAttIndex(Attribute att){
+		return attributeList.indexOf(att);
+	}
 		
 	@Override
 	public int getNumberOfAtts(){
@@ -208,7 +212,7 @@ public abstract class AbstractSource implements ISource {
 	
 	@Override
 	public String toString(){
-		String info = "Source_ID: "+this.id+", Source_Name: "+this.streamIdentifier+", Source_Type: "+this.type+", Port: "+this.port+", Host: "+this.host+", Attributes: "+this.attributeList.toString();
+		String info = "Source_ID: "+this.id+", Source_Name: "+this.name+" Stream Id: "+this.streamIdentifier+", Source_Type: "+this.type+", Port: "+this.port+", Host: "+this.host+", Attributes: "+this.attributeList.toString();
 		return info;
 	}
 	

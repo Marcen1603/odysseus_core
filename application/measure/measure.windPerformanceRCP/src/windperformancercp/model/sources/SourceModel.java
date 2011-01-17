@@ -52,6 +52,15 @@ public class SourceModel extends EventHandler{
 		return c;
 	}
 	
+	public ArrayList<ISource> getElementsByName(String n){
+		ArrayList<ISource> result = new ArrayList<ISource>(); 
+		for(ISource s: sourcesList){
+			if(s.getName().equals(n))
+				result.add(s);
+		}
+		return result;
+	}
+	
 	public ISource getIthElement(int i){
 		if(sourcesList.size()>i){
 			return sourcesList.get(i);
