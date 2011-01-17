@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -13,7 +16,8 @@ public class FilterExpressionGainAO <M extends IProbability & IGain> extends Una
 	private String expressionString;
 	private String scannedListPath;
 	private String predictedListPath;
-	private String[] restrictedVariables;
+	private List<String> restrictedPredVariables;
+	private List<String> restrictedScanVariables;
 
 	public FilterExpressionGainAO() {
 		super();
@@ -21,8 +25,11 @@ public class FilterExpressionGainAO <M extends IProbability & IGain> extends Una
 	
 	public FilterExpressionGainAO(FilterExpressionGainAO<M> copy) {
 		super(copy);
+		this.setPredictedListPath(copy.getPredictedListPath());
+		this.setScannedListPath(copy.getScannedListPath());
 		this.setExpressionString(copy.getExpressionString());
-		this.setRestrictedVariables(copy.restrictedVariables.clone());
+		this.setRestrictedPredVariables(new ArrayList<String>(copy.restrictedPredVariables));
+		this.setRestrictedScanVariables(new ArrayList<String>(copy.restrictedScanVariables));
 	}
 
 
@@ -38,12 +45,20 @@ public class FilterExpressionGainAO <M extends IProbability & IGain> extends Una
 
 	// Getter & Setter
 	
-	public void setRestrictedVariables(String[] restrictedVariables) {
-		this.restrictedVariables = restrictedVariables;
+	public void setRestrictedPredVariables(List<String> restrictedVariables) {
+		this.restrictedPredVariables = restrictedVariables;
 	}
 	
-	public String[] getRestrictedVariables() {
-		return restrictedVariables;
+	public void setRestrictedScanVariables(List<String> restrictedVarialbes) {
+		this.restrictedScanVariables = restrictedVarialbes;
+	}
+	
+	public List<String> getRestrictedPredVariables() {
+		return restrictedPredVariables;
+	} 
+	
+	public List<String> getRestrictedScanVarialbes() {
+		return restrictedScanVariables;
 	}
 
 	public void setExpressionString(String expressionString) {
@@ -69,6 +84,5 @@ public class FilterExpressionGainAO <M extends IProbability & IGain> extends Una
 	public void setPredictedListPath(String predictedListPath) {
 		this.predictedListPath = predictedListPath;
 	}
-
 }
 

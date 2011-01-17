@@ -23,6 +23,8 @@ public class FilterExpressionCovarianceUpdateAO <M extends IProbability & IGain 
 	public FilterExpressionCovarianceUpdateAO(FilterExpressionCovarianceUpdateAO<M> copy) {
 		super(copy);
 		this.setExpressionString(copy.getExpressionString());
+		this.setScannedListPath(copy.getScannedListPath());
+		this.setPredictedListPath(copy.getPredictedListPath());
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceExpressionHelper;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceHelper;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
@@ -24,12 +25,15 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGain & IProbability &
 	
 	private static final String METADATA_COV = "COVARIANCE";
 	private static final String GAIN = "GAIN";
+	private static final String IDENTITY_MATRIX = "IDENTITY_MATRIX";
 	
 	private TupleIndexPath scannedTupleIndexPath;
 	private TupleIndexPath predictedTupleIndexPath;
-	private CovarianceHelper covHelper;
+	private CovarianceHelper predCovHelper;
+	private CovarianceHelper scanCovHelper;
 	private CovarianceMapper covMapper;
 	
+	private CovarianceExpressionHelper covHelper;
 	
 	public FilterExpressionCovarianceUpdatePO() {
 		super();
@@ -39,40 +43,48 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGain & IProbability &
 		super(copy);
 		this.scannedTupleIndexPath = copy.scannedTupleIndexPath.clone();
 		this.predictedTupleIndexPath = copy.predictedTupleIndexPath.clone();
-		this.covHelper = new CovarianceHelper(copy.covHelper);
+//		this.predCovHelper = new CovarianceHelper(copy.predCovHelper);
+//		this.scanCovHelper = new CovarianceHelper(copy.scanCovHelper);
 		this.covMapper = new CovarianceMapper(copy.covMapper);
+		this.covHelper = copy.covHelper;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		covHelper = new CovarianceHelper(this.getOutputSchema());
+		predCovHelper = new CovarianceHelper(this.getOutputSchema());
+		scanCovHelper = new CovarianceHelper(this.getOutputSchema());
 		covMapper = new CovarianceMapper(this.getInputSchema());
+		this.covHelper = new CovarianceExpressionHelper();
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public void compute(IConnection con, MVRelationalTuple<M> tuple) {
 		for(IStreamCarsExpressionVariable variable : expression.getVariables()) {
 			if(variable.isSchemaVariable() && METADATA_COV.equals(variable.getMetadataInfo())) {
 				if(variable.isInList(scannedTupleIndexPath)) {
 					variable.replaceVaryingIndex(con.getLeftPath().getLastTupleIndex().toInt());
 					MVRelationalTuple<M> car = (MVRelationalTuple<M>)con.getLeftPath().getTupleObject();
-					double[][] cov = car.getMetadata().getCovariance();
+//					double[][] cov = car.getMetadata().getCovariance();
 					String[] restrictedVariables = car.getMetadata().getRestrictedList();
-					cov = covHelper.getCovarianceForRestrictedVariables(cov, restrictedVariables);
-					variable.bind(cov);
+//					cov = scanCovHelper.getCovarianceForRestrictedVariables(cov, restrictedVariables);
+//					variable.bind(cov);
+					variable.bind(covHelper.getCovarianceForRestictedAttributes(restrictedVariables, car.getMetadata()));
 				} else if(variable.isInList(predictedTupleIndexPath)) {
 					variable.replaceVaryingIndex(con.getRightPath().getLastTupleIndex().toInt());
 					MVRelationalTuple<M> car = (MVRelationalTuple<M>)con.getRightPath().getTupleObject();
-					double[][] cov = car.getMetadata().getCovariance();
+//					double[][] cov = car.getMetadata().getCovariance();
 					String[] restrictedVariables = car.getMetadata().getRestrictedList();
-					cov = covHelper.getCovarianceForRestrictedVariables(cov, restrictedVariables);
-					variable.bind(cov);
+					
+//					cov = predCovHelper.getCovarianceForRestrictedVariables(cov, restrictedVariables);
+//					variable.bind(cov);
+					variable.bind(covHelper.getCovarianceForRestictedAttributes(restrictedVariables, car.getMetadata()));
 				}
-			} else if(!variable.isSchemaVariable() && variable.getName().equals(GAIN)) {
+			} else if(variable.isSchemaVariable() && variable.getMetadataInfo().equals(GAIN)) {
 				MVRelationalTuple<M> car = (MVRelationalTuple<M>)con.getRightPath().getTupleObject();
 				variable.bind(car.getMetadata().getGain());
-			} else if(!variable.isSchemaVariable() && variable.getName().equals("IDENTITY_MATRIX")) {
+			} else if(!variable.isSchemaVariable() && variable.getName().equals(IDENTITY_MATRIX)) {
 				MVRelationalTuple<M> car = (MVRelationalTuple<M>)con.getRightPath().getTupleObject();
 				double[][] gain = car.getMetadata().getGain();
 				variable.bind(makeIdentityMatrix(gain));
@@ -88,8 +100,9 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGain & IProbability &
 	
 	private void updateCovariance(MVRelationalTuple<M> car, double[][] restCov, String[] restrictedList) {
 		int[] restrictedIndices = new int[restrictedList.length];
+		IProbability prob = car.getMetadata();
 		for(int i=0; i<restrictedList.length; i++) {
-			restrictedIndices[i] = covMapper.getCovarianceIndex(restrictedList[i]);
+			restrictedIndices[i] = prob.getCovarianceIndex(restrictedList[i]);
 		}
 		double[][] cov = car.getMetadata().getCovariance();
 		
@@ -153,19 +166,7 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGain & IProbability &
 		this.sendPunctuation(timestamp);
 	}
 
-	/**
-	 * @param covOldHelper the covOldHelper to set
-	 */
-	public void setCovOldHelper(CovarianceHelper covOldHelper) {
-		this.covHelper = covOldHelper;
-	}
 
-	/**
-	 * @return the covOldHelper
-	 */
-	public CovarianceHelper getCovOldHelper() {
-		return covHelper;
-	}
 
 
 }

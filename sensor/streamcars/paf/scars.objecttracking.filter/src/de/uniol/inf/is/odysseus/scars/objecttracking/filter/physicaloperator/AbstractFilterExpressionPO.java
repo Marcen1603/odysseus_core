@@ -41,23 +41,21 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 		super(copy);
 		this.setExpressionString(copy.getExpressionString());
 		this.setPredictedObjectListPath(copy.getPredictedObjectListPath());
-		this.setPredictedObjectListSIPath(copy.getScannedObjectListSIPath().clone());
+		this.setPredictedObjectListSIPath(copy.getPredictedObjectListSIPath().clone());
 		this.setScannedObjectListPath(copy.getScannedObjectListPath());
 		this.setScannedObjectListSIPath(copy.getScannedObjectListSIPath().clone());
 		// TODO clone?
 		this.setExpression(copy.getExpression());
-		
-		String [] restrictedVariablesCopy = null;
-		System.arraycopy(copy.getRestrictedVariables(), 0, restrictedVariablesCopy, 0,copy.getRestrictedVariables().length );
-		this.setRestrictedVariables(restrictedVariablesCopy);
-		
 		this.setInputSchema(copy.getInputSchema().clone());
 	}
 	
 	protected void process_open() throws OpenFailedException {
-		this.expressionString = this.expressionString.replace("'", "");
-		expression = new StreamCarsExpression(expressionString);
-		expression.init(getOutputSchema());
+		if(expressionString != null) {
+			this.expressionString = this.expressionString.replace("'", "");
+			expression = new StreamCarsExpression(expressionString);
+			expression.init(getOutputSchema());
+		}
+
 		
 		this.schemaHelper = new SchemaHelper(getOutputSchema());
 
@@ -130,20 +128,6 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 
 	public SchemaIndexPath getScannedObjectListSIPath() {
 		return scannedObjectListSIPath;
-	}
-
-	/**
-	 * @param restrictedVariables the restrictedVariables to set
-	 */
-	public void setRestrictedVariables(String[] restrictedVariables) {
-		this.restrictedVariables = restrictedVariables;
-	}
-
-	/**
-	 * @return the restrictedVariables
-	 */
-	public String[] getRestrictedVariables() {
-		return restrictedVariables;
 	}
 
 	/**

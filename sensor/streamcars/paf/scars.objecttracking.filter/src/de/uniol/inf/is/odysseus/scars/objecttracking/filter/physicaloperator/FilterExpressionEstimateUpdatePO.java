@@ -51,7 +51,9 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 	public void setExpressions(Map<String, String> expressionsMap) {
 		this.expressions = new ArrayList<IStreamCarsExpression>(expressionsMap.size());
 		for(Entry<String, String> exp : expressionsMap.entrySet()) {
-			expressions.add(new StreamCarsExpression(exp.getKey(), exp.getValue()));
+			String expressionString = exp.getValue();
+			expressionString = expressionString.replace("'", "");
+			expressions.add(new StreamCarsExpression(exp.getKey(), expressionString));
 		}
 	}
 	
@@ -61,7 +63,6 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		
 		super.process_open();
 		for(IStreamCarsExpression exp : this.expressions) {
 			exp.init(getOutputSchema());
@@ -103,7 +104,7 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 						variable.replaceVaryingIndex(predictedObjectTupleIndex.getLastTupleIndex().toInt());
 						variable.bindTupleValue(root);
 					}
-				} else if(!variable.isSchemaVariable() && variable.getName().equals(GAIN)) {
+				} else if(variable.hasMetadataInfo() && variable.getMetadataInfo().equals(GAIN)) {
 					MVRelationalTuple<M> car = (MVRelationalTuple<M>)predictedObjectTupleIndex.getTupleObject();
 					double gain = car.getMetadata().getRestrictedGain(variable.getName());
 					variable.bind(gain);
