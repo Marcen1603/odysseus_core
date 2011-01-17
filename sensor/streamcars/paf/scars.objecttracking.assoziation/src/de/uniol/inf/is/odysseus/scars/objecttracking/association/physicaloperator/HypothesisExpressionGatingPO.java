@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceExpressionHelper;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceHelper;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
@@ -40,6 +41,7 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 	private SchemaIndexPath scannedObjectListSIPath;
 
 	private CovarianceHelper covarianceHelper;
+	private CovarianceExpressionHelper covHelper;
 
 	private static final String EXP_ASSOCIATION_CONNECTION_VALUE = "ASSOCIATION_CON_VAL";
 	private static final String METADATA_COV = "COVARIANCE";
@@ -62,6 +64,7 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		this.predictedObjectListSIPath = clone.predictedObjectListSIPath;
 		this.scannedObjectListSIPath = clone.scannedObjectListSIPath;
 		this.covarianceHelper = clone.covarianceHelper;
+		this.covHelper = clone.covHelper;
 	}
 
 	@Override
@@ -76,7 +79,9 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath));
 		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predictedObjectListPath));
 
+//		this.scannedObjectListSIPath.getLastSchemaIndex().getAttribute().getSubattributes();
 		this.covarianceHelper = new CovarianceHelper(this.expression, this.getOutputSchema());
+		covHelper = new CovarianceExpressionHelper();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -127,14 +132,16 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 							Object val = tupleHelper.getObject(var.getPath());
 							String metaDataInfo = var.getMetadataInfo();
 							if (metaDataInfo.equals(METADATA_COV)) {
-								var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
+								var.bind(covHelper.getCovarianceForExpressionVariables(this.expression, ((MVRelationalTuple<M>) val).getMetadata()));
+//								var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
 							}
 						} else if (var.isInList(predictedTupleIndexPath)) {
 							var.replaceVaryingIndex(j);
 							Object val = tupleHelper.getObject(var.getPath());
 							String metaDataInfo = var.getMetadataInfo();
 							if (metaDataInfo.equals(METADATA_COV)) {
-								var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
+								var.bind(covHelper.getCovarianceForExpressionVariables(this.expression, ((MVRelationalTuple<M>) val).getMetadata()));
+//								var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
 							}
 						}
 					}
