@@ -36,7 +36,9 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.eclipse.gef.ui.actions,
  org.eclipse.gef.ui.palette,
  org.eclipse.gef.ui.parts,
+ org.eclipse.ui.dialogs,
  org.eclipse.ui.part,
+ org.eclipse.ui.wizards.newresource,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.rcp.editor.parameter
 Service-Component: OSGI-INF/Executor.xml

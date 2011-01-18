@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="OdysseusProjectIconSmall"
+   inkscape:export-filename="C:\Users\Boomer\OdysseusWorkspace\de.uniol.inf.is.odysseus.rcp.editor\icons\OdysseusProjectIconSmall.png"
+   inkscape:export-xdpi="144"
+   inkscape:export-ydpi="144">
+  <defs
+     id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3775">
+      <stop
+         style="stop-color:#0050ff;stop-opacity:1;"
+         offset="0"
+         id="stop3777" />
+      <stop
+         style="stop-color:#0050ff;stop-opacity:0;"
+         offset="1"
+         id="stop3779" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3759">
+      <stop
+         style="stop-color:#aba3a6;stop-opacity:1;"
+         offset="0"
+         id="stop3761" />
+      <stop
+         style="stop-color:#aba3a6;stop-opacity:0;"
+         offset="1"
+         id="stop3763" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3759"
+       id="linearGradient3765"
+       x1="6.6185293"
+       y1="31.476768"
+       x2="11.816755"
+       y2="38.042759"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.84507043,0,0,0.77500002,-1.966952,-22.092197)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3775"
+       id="linearGradient3781"
+       x1="4.8290858"
+       y1="8.9548645"
+       x2="12.074789"
+       y2="8.9548645"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.86172381,0,0,0.86172388,-15.737868,-1.6499963)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7.9195959"
+     inkscape:cx="21.293869"
+     inkscape:cy="-4.4040702"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1366"
+     inkscape:window-height="721"
+     inkscape:window-x="-4"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(19.743023,-0.94413596)">
+    <image
+       y="0.94413596"
+       x="-19.743023"
+       id="image3791"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAA3NCSVQICAjb4U/gAAABVElEQVQo
+kbWSO0sDURCFv4mbqK1FxD8giKCtmMJKBREULSwUDPhAtAsYNEI0GAJaa+WDVBYiPkALxVYbC4ON
+rbUSdJPNGjaBsciaRNBACg+3mLl3zszcMyOqSj3w1BUNGNXO02mkbHeNJX5n6DdSJ6tahdTJiv4G
+2Y1tlYhzC36gaOftTO7zI2Ob1u1j68/kshgNG5ZjFP2BSNAp3XmbaG5x39v7KrGJpM94vQM84Xgo
+/fKAY9Y+6ZeHcDzkftq0fThmbXFM21dRKZv34mSAYKJRFBBwh6MggiqCEZw/FMUArEIjhTcguZwd
+32ybjk/+VSe5dmQAOcdLwQIGYp2zG6N5q4CUiki1/vvr5zfHUwZgOw0U873Rnrlwf+7dUUHcblBF
+BGBv++b+bAIQVe0euhCRmaUAgGh146ggerBzl7oacWdRWr6OwcsaEj1fD5dt+fdt/QJ3gb493Mx+
+iwAAAABJRU5ErkJggg==
+"
+       height="16"
+       width="16" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.61723804px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.34468955;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans;-inkscape-font-specification:Sans"
+       x="-11.280199"
+       y="7.737114"
+       id="text2985"
+       sodipodi:linespacing="125%"
+       transform="scale(0.93438804,1.0702192)"><tspan
+         sodipodi:role="line"
+         id="tspan2987"
+         x="-11.280199"
+         y="7.737114"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.34468955;stroke-opacity:1">O</tspan></text>
+  </g>
+</svg>
