@@ -67,4 +67,6 @@ public interface IProbability extends IMetaAttribute, IClone{
 	public void setAttributePaths(ArrayList<int[]> paths);
 	
 	public int getIndexOfKovMatrix(int[] path);
+
+	public List<String> getAttributMapping();
 }

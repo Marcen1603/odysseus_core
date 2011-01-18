@@ -134,4 +134,9 @@ public class Probability implements IProbability{
 		this.indices = indices;
 		
 	}
+
+	@Override
+	public List<String> getAttributMapping() {
+		return this.indices;
+	}
 }

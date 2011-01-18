@@ -269,5 +269,10 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 	public void setAttributeMapping(List<String> indices) {
 		this.prob.setAttributeMapping(indices);
 	}
+
+	@Override
+	public List<String> getAttributMapping() {
+		return this.prob.getAttributMapping();
+	}
 	
 }

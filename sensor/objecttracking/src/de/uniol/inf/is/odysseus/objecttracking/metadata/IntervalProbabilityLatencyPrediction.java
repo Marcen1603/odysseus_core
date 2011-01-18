@@ -260,4 +260,10 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		return null;
 	}
 
+	@Override
+	public List<String> getAttributMapping() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
