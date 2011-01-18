@@ -10,10 +10,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.console;bundle-version="3.4.0",
  org.eclipse.ui.views.log;bundle-version="1.0.100"
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.usermanagement,
- de.uniol.inf.is.odysseus.rcp.perspective.observer,
- de.uniol.inf.is.odysseus.rcp.statusbar,
+Import-Package: de.uniol.inf.is.odysseus.rcp.perspective.observer,
+ de.uniol.inf.is.odysseus.rcp.status,
  de.uniol.inf.is.odysseus.rcp.user,
+ de.uniol.inf.is.odysseus.usermanagement,
  org.apache.log4j,
  org.apache.log4j.spi
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
