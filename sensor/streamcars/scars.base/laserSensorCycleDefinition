@@ -19,10 +19,7 @@
 #DEFINE assoSource1     ASSOCIATION-SRC(selectionSrc, 0)
 #DEFINE assoSourceName2 selectionSrc2
 #DEFINE assoSource2     ASSOCIATION-SRC(selectionSrc2, 0)
-#DEFINE assoAlgo1       MAHA // Welcher Algorithmus zur Assoziation wird verwendet?
-#DEFINE assoParam1      threshold := 0.5; operator := LESSEQUAL;
-#DEFINE assoAlgo2       MULTIDISTANCE // Welcher Algorithmus zur Assoziation wird verwendet?
-#DEFINE assoParam2      distanceFunction := EUCLIDEAN; gatingMode := true;
+#DEFINE threshold       5
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
 
@@ -36,7 +33,7 @@
 LOGICAL PLAN :
 ASSOCIATION-SEL(
     ASSOCIATION-EXP-EVAL (
-        ASSOCIATION-EXP-EVAL (
+        ASSOCIATION-EXP-GATE (
             ASSOCIATION-GEN (     
                  BUFFER( 
                     ${sensorSource},
@@ -75,26 +72,28 @@ ASSOCIATION-SEL(
             ),
             ${assoScanned},
             ${assoPedicted},
-            'eif(
-              AbsValue(
+            'SqrtValue(
                 MatrixEntry(
                   MatrixMult(
                     MatrixMult(
                       MatrixTrans(
-                        MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz;${assoScanned}:car:heading;${assoScanned}:car:velocity], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz;${assoPedicted}:car:heading;${assoPedicted}:car:velocity])
+                        MatrixSub(	[${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+                        			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
                       ),
-                    MatrixAdd(${assoScanned}:car#COVARIANCE, ${assoPedicted}:car#COVARIANCE)
+                      MatrixInv(
+                    	 MatrixAdd( ${assoScanned}:car#COVARIANCE, 
+                    			   ${assoPedicted}:car#COVARIANCE)
+                      )
                     ),
-                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz;${assoScanned}:car:heading;${assoScanned}:car:velocity], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz;${assoPedicted}:car:heading;${assoPedicted}:car:velocity])
+                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+                  			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
                   ),
-                0,
-              0)
-              )
-            <5, 100, 0)'
+                0,0)
+              )'
         ),
         ${assoScanned},
         ${assoPedicted},
-        'SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz) + SquareValue(${assoScanned}:car:heading - ${assoPedicted}:car:heading) + SquareValue(${assoScanned}:car:velocity - ${assoPedicted}:car:velocity))'
+        'SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
     ),
     ${assoSourceName1},
     ${assoScanned},
@@ -188,20 +187,20 @@ ASSOCIATION-SEL(
                   MatrixMult(
                     MatrixMult(
                       MatrixTrans(
-                        MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz;${assoScanned}:car:heading;${assoScanned}:car:velocity], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz;${assoPedicted}:car:heading;${assoPedicted}:car:velocity])
+                        MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
                       ),
                     MatrixAdd(${assoScanned}:car#COVARIANCE, ${assoPedicted}:car#COVARIANCE)
                     ),
-                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz;${assoScanned}:car:heading;${assoScanned}:car:velocity], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz;${assoPedicted}:car:heading;${assoPedicted}:car:velocity])
+                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
                   ),
                 0,
               0)
               )
-            <5, 100, 0)'
+            <${threshold}, 100, 0)'
         ),
         ${assoScanned},
         ${assoPedicted},
-        'SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz) + SquareValue(${assoScanned}:car:heading - ${assoPedicted}:car:heading) + SquareValue(${assoScanned}:car:velocity - ${assoPedicted}:car:velocity))'
+        'SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
     ),
     ${assoSourceName2},
     ${assoScanned},
