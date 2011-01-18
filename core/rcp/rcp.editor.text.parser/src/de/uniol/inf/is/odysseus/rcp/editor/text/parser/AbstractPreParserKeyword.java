@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;

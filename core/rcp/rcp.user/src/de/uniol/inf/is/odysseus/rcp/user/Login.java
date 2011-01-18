@@ -5,14 +5,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.user.impl.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.user.impl.LoginWindow;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 
 public class Login {
 

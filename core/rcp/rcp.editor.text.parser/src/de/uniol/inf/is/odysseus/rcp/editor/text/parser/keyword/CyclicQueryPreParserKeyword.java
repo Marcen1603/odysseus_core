@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;

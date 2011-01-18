@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.SimpleParameterEditor;

@@ -2,13 +2,10 @@ package de.uniol.inf.is.odysseus.rcp.sources.view.part;
 
 import java.util.Map.Entry;
 
-import javax.xml.bind.JAXBElement.GlobalScope;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.sources.view.activator.Activator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
