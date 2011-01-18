@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.StartUp"></startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.views.TenantView"
+            icon="icons/users.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.TenantView"
+            name="Tenants and Users"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.views.TenantView"
+               minimized="false"
+               ratio="0.3"
+               relationship="right"
+               relative="org.eclipse.ui.editorss">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
