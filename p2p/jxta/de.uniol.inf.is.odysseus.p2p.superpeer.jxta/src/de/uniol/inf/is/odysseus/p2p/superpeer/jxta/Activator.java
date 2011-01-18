@@ -1,11 +1,17 @@
 package de.uniol.inf.is.odysseus.p2p.superpeer.jxta;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.p2p.superpeer.AbstractSuperPeer;
 
 public class Activator implements BundleActivator {
+	
+	static Logger logger = LoggerFactory.getLogger(Activator.class);
+	
 	private AbstractSuperPeer superPeer;
 	/*
 	 * (non-Javadoc)
@@ -13,7 +19,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		System.out.println("Starte Super-Peer");
+		logger.debug("Starte Super-Peer");
 		superPeer = new SuperPeerJxtaImpl();
 		superPeer.startPeer();
 	}

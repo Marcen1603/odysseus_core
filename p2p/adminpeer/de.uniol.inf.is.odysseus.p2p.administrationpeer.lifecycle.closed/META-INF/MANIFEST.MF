@@ -3,9 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Closed
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.closed
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.closed.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.terminated.Activator
 Import-Package: de.uniol.inf.is.odysseus.p2p.peer,
  de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
  de.uniol.inf.is.odysseus.p2p.queryhandling,
  org.osgi.framework;version="1.3.0"
-Service-Component: OSGI-INF/closedExecutionHandler.xml
+Service-Component: OSGI-INF/TerminatedExecutionHandler.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -11,3 +11,4 @@ Import-Package: de.uniol.inf.is.odysseus.p2p.peer,
  de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
  de.uniol.inf.is.odysseus.p2p.queryhandling
 Service-Component: OSGI-INF/failedExecutionHandler.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

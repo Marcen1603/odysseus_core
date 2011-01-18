@@ -8,7 +8,6 @@ import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.AbstractClientSelector;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.jxta.SubplanJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
@@ -45,7 +44,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 
 	private void handleBidding() {
 		Query q = getQuery();
-		Log.logAction(q.getId(), "Werte Gebote für Anfrage aus");
+		Log.logAction(q.getId(), "Werte Gebote fuer Anfrage aus");
 //		for (Query q : getQueries().keySet()) {
 			// Ist mindestens ein Gebot je Subplan vorhanden
 			if(q.containsAllBidding() && q.getSubPlans().size()>0 && q.getStatus() != Lifecycle.RUNNING) {
@@ -76,13 +75,13 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 //					messageElements.put("events", getEvents());
 					Message response = MessageTool.createSimpleMessage(
 							"BiddingClient", messageElements);
-					Log.addEvent(q.getId(), "Sende Zusage für Teilplan "+subplan.getId());
+					Log.addEvent(q.getId(), "Sende Zusage fuer Teilplan "+subplan.getId());
 					// Sende die Zusage
 					MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), opPeer, response);
 //					this.sender.sendMessage(PeerGroupTool.getPeerGroup(), response, opPeer);
 					// Den Peer setzen der gerade den ausgewählten Teilplan ausführt
 					
-					((SubplanJxtaImpl)subplan).setPeerId(optimalBid.getPeerId());
+					subplan.setPeerId(optimalBid.getPeerId());
 //					((SubplanJxtaImpl) AbstractDistributionProvider.getInstance()
 //							.getQueries().get(s).getSubPlans().get(
 //									subplannumber))
@@ -93,7 +92,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 					// Socket von dem Peer setzen der gerade den
 					// Teilplan ausführt. Für den Verwaltungs-Peer interessant, damit er weiß wen er kontaktieren muss.
 					
-					((SubplanJxtaImpl)subplan).setResponseSocket(opPeer.toString());
+					subplan.setResponseSocket(opPeer.toString());
 //					((SubplanJxtaImpl) getQueries().get(s).getSubPlans().get(
 //									subplannumber))
 //							.setResponseSocket(((BidJxtaImpl) getQueries().get(s)

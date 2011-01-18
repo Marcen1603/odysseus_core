@@ -1,19 +1,18 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.closed;
 
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 
-public class ClosedExecutionHandler<F> extends AbstractExecutionHandler<AbstractPeer, F> {
+public class ClosedExecutionHandler<F> extends AbstractExecutionHandler<F> {
+
+	public ClosedExecutionHandler(
+			ClosedExecutionHandler<F> closedExecutionHandler) {
+		super(closedExecutionHandler);
+	}
 
 	@Override
-	public IExecutionHandler<AbstractPeer,F> clone()  {
-		IExecutionHandler<AbstractPeer,F> handler = new ClosedExecutionHandler<F>();
-		handler.setFunction(getFunction());
-		handler.setPeer(getPeer());
-		handler.setExecutionListenerCallback(getExecutionListenerCallback());
-		handler.setProvidedLifecycle(getProvidedLifecycle());
-		return handler;
+	public IExecutionHandler<F> clone()  {
+		return new ClosedExecutionHandler<F>(this);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		thinPeer = ThinPeerJxtaImpl.getInstance();
+		thinPeer = new ThinPeerJxtaImpl();
 		thinPeer.startPeer();
 	}
 

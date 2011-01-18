@@ -17,17 +17,18 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.apache.commons.codec.binary.Base64InputStream;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
+import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
@@ -38,19 +39,17 @@ import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
  */
 public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezification> implements IQuerySpecificationHandler<S>{
 	
-	private AbstractPeer aPeer;
+	private AbstractOdysseusPeer aPeer;
 	private IQuerySelectionStrategy querySelectionStrategy;
-	private List<QueryExecutionSpezification> specifications;
 
-	public QuerySpecificationHandlerJxtaImpl(S temp2, AbstractPeer aPeer, IQuerySelectionStrategy querySelectionStrategy, List<QueryExecutionSpezification> specifications) {
+	public QuerySpecificationHandlerJxtaImpl(S temp2, AbstractOdysseusPeer aPeer, IQuerySelectionStrategy querySelectionStrategy, List<QueryExecutionSpezification> specifications) {
 		this.aPeer = aPeer;
 		this.querySelectionStrategy = querySelectionStrategy;
-		this.specifications = specifications;
 		handleQuerySpezification(temp2);
 		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes"})
 	@Override
 	public void handleQuerySpezification(S adv) {
 		System.out.println("handle adv zu Subplan "+adv.getSubplanId());
@@ -136,11 +135,11 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 //			MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), pipeAdv, MessageTool
 //					.createSimpleMessage("BiddingProvider", messageElements));
 //			Log.logAction(adv.getQueryId(), "Für Anfrageausführung beworben !");
-			getaPeer().getMessageSender().sendMessage(PeerGroupTool.getPeerGroup(), MessageTool
+			((JxtaMessageSender)(getaPeer().getMessageSender())).sendMessage(PeerGroupTool.getPeerGroup(), MessageTool
 					.createSimpleMessage("BiddingProvider", messageElements), pipeAdv);
 	}
 	
-	public AbstractPeer getaPeer() {
+	public AbstractOdysseusPeer getaPeer() {
 		return aPeer;
 	}
 	

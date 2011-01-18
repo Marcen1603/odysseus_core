@@ -1,18 +1,18 @@
 package de.uniol.inf.is.odysseus.p2p.peer.execution.handler;
 
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
-public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandler<P,F>
+public abstract class AbstractExecutionHandler<F> implements IExecutionHandler<F>
 {
 	
 	@Override
-	public abstract IExecutionHandler<P,F> clone() ;
+	public abstract IExecutionHandler<F> clone() ;
 
 	@Override
 	public void setProvidedLifecycle(Lifecycle lifecycle) {
 		this.providedLifecycle = lifecycle;
-		
 	}
 	
 	
@@ -21,7 +21,7 @@ public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandle
 
 	private Lifecycle providedLifecycle;
 	private IExecutionListenerCallback executionListenerCallback = null;
-	protected P peer;
+	protected IOdysseusPeer peer;
 	private F function;
 
 	@Override
@@ -42,16 +42,22 @@ public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandle
 		return this.providedLifecycle;
 	}
 
-	public AbstractExecutionHandler() {
-		
+	public AbstractExecutionHandler(AbstractExecutionHandler<F> other) {
+		setFunction(other.getFunction());
+		setPeer(other.getPeer());
+		setExecutionListenerCallback(other.getExecutionListenerCallback());
+		setProvidedLifecycle(other.getProvidedLifecycle());
 	}
 	
-	public AbstractExecutionHandler(Lifecycle lifecycle, F function, P peer) {
+	public AbstractExecutionHandler(Lifecycle lifecycle, F function, IOdysseusPeer peer) {
 		this.providedLifecycle = lifecycle;
 		this.function = function;
 		this.peer = peer;
 	}
 	
+	public AbstractExecutionHandler() {
+	}
+
 	@Override
 	public abstract void run();
 
@@ -63,7 +69,7 @@ public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandle
 	}
 
 	@Override
-	public P getPeer() {
+	public IOdysseusPeer getPeer() {
 		return this.peer;
 	}
 
@@ -73,7 +79,7 @@ public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandle
 	}
 	
 	@Override
-	public void setPeer(P peer) {
+	public void setPeer(IOdysseusPeer peer) {
 		this.peer = peer;
 	}
 	

@@ -4,11 +4,11 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
 public interface IExecutionHandlerFactory {
 
-	IExecutionHandler getNewInstance();
+	IExecutionHandler<?> getNewInstance();
 
 	Lifecycle getProvidedLifecycle();
 
-	void setExecutionHandler(IExecutionHandler handler);
+	void setExecutionHandler(IExecutionHandler<?> handler);
 
 	String getName();
 

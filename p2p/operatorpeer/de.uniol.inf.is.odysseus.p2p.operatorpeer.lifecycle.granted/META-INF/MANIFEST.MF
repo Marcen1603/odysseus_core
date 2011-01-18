@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Granted
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.granted
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.granted.Activator
 Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.p2p.jxta
 Import-Package: de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
@@ -16,5 +15,7 @@ Import-Package: de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
  net.jxta.endpoint,
  net.jxta.peergroup,
  net.jxta.protocol,
- org.eclipse.ui.plugin
+ org.eclipse.ui.plugin,
+ org.slf4j
 Service-Component: OSGI-INF/grantedExecutionHandler.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

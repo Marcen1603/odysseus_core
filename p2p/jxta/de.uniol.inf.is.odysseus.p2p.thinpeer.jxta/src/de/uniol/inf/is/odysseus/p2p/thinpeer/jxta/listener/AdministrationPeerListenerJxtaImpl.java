@@ -21,7 +21,10 @@ public class AdministrationPeerListenerJxtaImpl implements
 	// Wieviel Advertisements pro Peer
 	private int ADVS_PER_PEER = 6;
 
-	public AdministrationPeerListenerJxtaImpl() {
+	private ThinPeerJxtaImpl thinPeerJxtaImpl;
+
+	public AdministrationPeerListenerJxtaImpl(ThinPeerJxtaImpl thinPeerJxtaImpl) {
+		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
 	}
 
 	@Override
@@ -31,15 +34,15 @@ public class AdministrationPeerListenerJxtaImpl implements
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			ThinPeerJxtaImpl.getInstance().getAdminPeers().clear();
+			thinPeerJxtaImpl.getAdminPeers().clear();
 			try {
-				ThinPeerJxtaImpl.getInstance().getDiscoveryService()
+				thinPeerJxtaImpl.getDiscoveryService()
 						.getLocalAdvertisements(DiscoveryService.ADV, "type",
 								"AdministrationPeer");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			ThinPeerJxtaImpl.getInstance().getDiscoveryService()
+			thinPeerJxtaImpl.getDiscoveryService()
 					.getRemoteAdvertisements(null, DiscoveryService.ADV,
 							"type", "AdministrationPeer", ADVS_PER_PEER, this);
 		}
@@ -56,8 +59,8 @@ public class AdministrationPeerListenerJxtaImpl implements
 					continue;
 				}
 				ExtendedPeerAdvertisement adv = (ExtendedPeerAdvertisement) o;
-				synchronized (ThinPeerJxtaImpl.getInstance().getAdminPeers()) {
-					ThinPeerJxtaImpl.getInstance().getAdminPeers().put(adv.getPeerId(), adv);
+				synchronized (thinPeerJxtaImpl.getAdminPeers()) {
+					thinPeerJxtaImpl.getAdminPeers().put(adv.getPeerId(), adv);
 				}
 
 			}

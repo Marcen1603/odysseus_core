@@ -12,8 +12,10 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 
 	// Wie oft wird die GUI aktualisiert
 	private int UPDATE_TIME = 6000;
+	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
-	public GuiUpdaterJxtaImpl() {
+	public GuiUpdaterJxtaImpl(ThinPeerJxtaImpl thinPeerJxtaImpl) {
+		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
 	}
 
 	@Override
@@ -24,7 +26,6 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 			try {
 				Thread.sleep(UPDATE_TIME);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -36,41 +37,41 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 	}
 
 	public void updateQueryList() {
-		synchronized (ThinPeerJxtaImpl.getInstance().getQueries()) {
+		synchronized (thinPeerJxtaImpl.getQueries()) {
 			DefaultListModel model = new DefaultListModel();
-			for (Query q: ThinPeerJxtaImpl.getInstance().getQueries()
+			for (Query q: thinPeerJxtaImpl.getQueries()
 					.keySet()) {
 				model
 						.addElement(q.getId()
 								+ "("
 								+ getAllBiddings(q) + ") - " + q.getStatus());
 			}
-			ThinPeerJxtaImpl.getInstance().getGui().getQuerys().setModel(model);
+			thinPeerJxtaImpl.getGui().getQuerys().setModel(model);
 		}
 
 	}
 
 	public void updateAdminList() {
-		synchronized (ThinPeerJxtaImpl.getInstance().getAdminPeers()) {
+		synchronized (thinPeerJxtaImpl.getAdminPeers()) {
 			DefaultListModel model = new DefaultListModel();
-			for (String s : ThinPeerJxtaImpl.getInstance().getAdminPeers()
+			for (String s : thinPeerJxtaImpl.getAdminPeers()
 					.keySet()) {
-				model.addElement(((ExtendedPeerAdvertisement)ThinPeerJxtaImpl.getInstance().getAdminPeers()
+				model.addElement(((ExtendedPeerAdvertisement)thinPeerJxtaImpl.getAdminPeers()
 						.get(s)).getPeerName().substring(19));
 			}
-			ThinPeerJxtaImpl.getInstance().getGui().getAdminPeers().setModel(
+			thinPeerJxtaImpl.getGui().getAdminPeers().setModel(
 					model);
 		}
 	}
 
 	public void updateSourcesList() {
-		synchronized (ThinPeerJxtaImpl.getInstance().getAdminPeers()) {
+		synchronized (thinPeerJxtaImpl.getAdminPeers()) {
 			DefaultListModel model = new DefaultListModel();
-			for (String s : ThinPeerJxtaImpl.getInstance().getSources()
+			for (String s : thinPeerJxtaImpl.getSources()
 					.keySet()) {
 				model.addElement(s);
 			}
-			ThinPeerJxtaImpl.getInstance().getGui().getSources()
+			thinPeerJxtaImpl.getGui().getSources()
 					.setModel(model);
 		}
 	}

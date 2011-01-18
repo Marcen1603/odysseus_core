@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.endpoint.Message;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
@@ -19,7 +18,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisemen
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
@@ -91,13 +90,13 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	private HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
 
-	private static ThinPeerJxtaImpl instance = null;
-
-	public static ThinPeerJxtaImpl getInstance() {
-		if (instance == null)
-			instance = new ThinPeerJxtaImpl();
-		return instance;
-	}
+//	private static ThinPeerJxtaImpl instance = null;
+//
+//	public static ThinPeerJxtaImpl getInstance() {
+//		if (instance == null)
+//			instance = new ThinPeerJxtaImpl();
+//		return instance;
+//	}
 
 
 	@Override
@@ -105,7 +104,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		return adminPeers;
 	}
 
-	private ThinPeerJxtaImpl() {
+	ThinPeerJxtaImpl() {
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
 		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
@@ -263,22 +262,17 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	protected void initGuiUpdater() {
-		this.guiUpdater = new GuiUpdaterJxtaImpl();
+		this.guiUpdater = new GuiUpdaterJxtaImpl(this);
 	}
-
-//	@Override
-//	protected void initQueryBiddingHandler() {
-//		this.queryBiddingHandler = new BiddingHandlerJxtaImpl();
-//	}
 
 	@Override
 	protected void initAdministrationPeerListener() {
-		administrationPeerListener = new AdministrationPeerListenerJxtaImpl();
+		administrationPeerListener = new AdministrationPeerListenerJxtaImpl(this);
 	}
 
 	@Override
 	protected void initSourceListener() {
-		sourceListener = new SourceListenerJxtaImpl();
+		sourceListener = new SourceListenerJxtaImpl(this);
 	}
 
 	@Override
@@ -292,7 +286,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		String queryId = idGenerator.generateId();
 		queryPublisher.sendQuerySpezificationToAdminPeer(queryId, query,
 				language, adminPeer);
-		for(Query q : ThinPeerJxtaImpl.getInstance().getQueries().keySet()) {
+		for(Query q : getQueries().keySet()) {
 			q.setStatus(Lifecycle.NEW);
 			Log.addAdminPeer(queryId,
 					adminPeerName);
@@ -302,12 +296,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		}
 
 	}
-
-//	@Override
-//	protected void initBiddingHandlerStrategy() {
-//		this.biddingHandlerStrategy = new BiddingHandlerStrategyStandard();
-//
-//	}
 	
 	@Override
 	protected void initIdGenerator() {
@@ -339,7 +327,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	public void initLocalMessageHandler() {
-			registerMessageHandler(new QueryNegotiationMessageHandler());
+			registerMessageHandler(new QueryNegotiationMessageHandler(this));
 
 
 	}
@@ -353,7 +341,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	
 	@Override
 	public void initMessageSender() {
-		setMessageSender(new MessageSender<PeerGroup, Message, PipeAdvertisement>());
+		setMessageSender(new JxtaMessageSender());
 	}
 
 

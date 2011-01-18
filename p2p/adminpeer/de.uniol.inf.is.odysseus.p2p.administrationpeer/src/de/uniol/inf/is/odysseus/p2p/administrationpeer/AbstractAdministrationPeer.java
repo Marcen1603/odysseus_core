@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IHotPeerListener;
@@ -14,12 +14,21 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IQuerySpezificat
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IHotPeerStrategy;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 
-public abstract class AbstractAdministrationPeer extends AbstractPeer {
+public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer implements IOdysseusPeer{
 
+	static Logger logger = LoggerFactory.getLogger(AbstractAdministrationPeer.class);
+	static Logger getLogger(){
+		return logger;
+	}
+	
 	protected IQuerySpezificationListener querySpezificationListener;
 
 	private Thread querySpezificationListenerThread;
@@ -113,11 +122,6 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	public AbstractAdministrationPeer() {
 		super();
 	}
-	
-	
-	
-	
-
 	
 	public void bindSplitting(ISplittingStrategy splitting) {
 		try {

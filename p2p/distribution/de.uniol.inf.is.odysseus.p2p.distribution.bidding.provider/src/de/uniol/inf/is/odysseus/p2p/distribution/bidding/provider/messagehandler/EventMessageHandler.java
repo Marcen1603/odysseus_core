@@ -3,13 +3,12 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandle
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 
-public class EventMessageHandler implements IMessageHandler {
+public class EventMessageHandler extends AbstractMessageHandler {
 
-	@Override
-	public String getInterestedNamespace() {
-		return "ProviderEvents";
+	public EventMessageHandler() {
+		setInterestedNamespace("ProviderEvents");
 	}
 
 	@Override
@@ -17,14 +16,8 @@ public class EventMessageHandler implements IMessageHandler {
 		String event = MessageTool.getMessageElementAsString(
 				namespace, "event", (Message)msg);
 		String queryId = MessageTool.getMessageElementAsString(
-				namespace, "geryId", (Message)msg);
+				namespace, "queryId", (Message)msg);
 		Log.addEvent(queryId, event);
 	}
-
-	@Override
-	public void setInterestedNamespace(String namespace) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 }

@@ -3,16 +3,18 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.granted;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.jxta.endpoint.Message;
-import net.jxta.peergroup.PeerGroup;
-import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
-public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>>{
+public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessageSender>{
+
+	static Logger logger = LoggerFactory.getLogger(GrantedExecutionHandler.class);
+		
 	private List<GrantedMessageHandler> handlerList = null;
 	
 	public GrantedExecutionHandler() {
@@ -21,14 +23,14 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPe
 		handlerList = new ArrayList<GrantedMessageHandler>();
 	}
 
+	public GrantedExecutionHandler(
+			GrantedExecutionHandler grantedExecutionHandler) {
+		super(grantedExecutionHandler);
+	}
+
 	@Override
-	@SuppressWarnings("unchecked")
-	public IExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> clone()  {
-		IExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> handler = new GrantedExecutionHandler();
-		handler.setFunction((MessageSender<PeerGroup, Message, PipeAdvertisement>) getPeer().getMessageSender());
-		handler.setPeer(getPeer());
-		handler.setExecutionListenerCallback(getExecutionListenerCallback());
-		return handler;
+	public IExecutionHandler<JxtaMessageSender> clone()  {
+		return new GrantedExecutionHandler(this);
 	}
 
 	@Override
@@ -41,7 +43,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPe
 		for(String sub : getExecutionListenerCallback().getQuery().getSubPlans().keySet()) {
 			
 			//Fix, da an einer anderen Stelle ein Subplan mehrfahc eingetragen wird.
-			boolean createMessageHandler = true;
+//			boolean createMessageHandler = true;
 //			for(GrantedMessageHandler handler : this.handlerList) {
 //				
 //				
@@ -52,7 +54,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPe
 ////				}
 //			}
 //			if(createMessageHandler) {
-				System.out.println("Erzeuge GrantedMessageHandler " +"Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub);
+				logger.debug("Erzeuge GrantedMessageHandler " +"Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub);
 				GrantedMessageHandler handl = new GrantedMessageHandler(getExecutionListenerCallback(), "Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub, getFunction());
 				this.handlerList.add(handl);
 				getPeer().registerMessageHandler(handl);

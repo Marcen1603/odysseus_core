@@ -16,13 +16,15 @@ Import-Package: de.uniol.inf.is.odysseus,
  net.jxta.endpoint,
  net.jxta.exception,
  net.jxta.id,
-  net.jxta.peer,
+ net.jxta.peer,
  net.jxta.peergroup,
  net.jxta.pipe,
  net.jxta.platform,
  net.jxta.protocol,
- net.jxta.socket
+ net.jxta.socket,
+ org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
  de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
  de.uniol.inf.is.odysseus.p2p.jxta.utils
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

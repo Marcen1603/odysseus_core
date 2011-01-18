@@ -4,8 +4,12 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.AbstractExecutionLis
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; 
+
 public class ExecutionListener extends AbstractExecutionListener{
 	
+	static Logger logger = LoggerFactory.getLogger(ExecutionListener.class);
 
 	public ExecutionListener(Query query) {
 		super(query);
@@ -28,7 +32,7 @@ public class ExecutionListener extends AbstractExecutionListener{
 		
 		while(getQuery().getStatus()!=Lifecycle.TERMINATED) {
 			Lifecycle temp = getQuery().getStatus();
-			System.out.println("aktueller Zustand: "+getQuery().getStatus());
+			logger.debug("aktueller Zustand: "+getQuery().getStatus());
 			if(getHandler().containsKey(getQuery().getStatus())) {
 				execute(getQuery().getStatus());
 			}

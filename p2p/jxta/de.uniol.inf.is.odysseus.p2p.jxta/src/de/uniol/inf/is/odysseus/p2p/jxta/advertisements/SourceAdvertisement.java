@@ -22,61 +22,42 @@ import net.jxta.id.IDFactory;
 
 /**
  * Beschreibt eine Quelle im P2P-Netzwerk
- * @author christian
- *
+ * 
+ * @author christian, Marco Grawunder
+ * 
  */
-@SuppressWarnings({"unchecked","rawtypes"})
-public class SourceAdvertisement extends Advertisement implements
-Serializable, Cloneable, Comparable {
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class SourceAdvertisement extends Advertisement implements Serializable,
+		Cloneable, Comparable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String sourceName;
-	
+
 	private String sourceScheme;
 
-	public String getSourceScheme() {
-		return sourceScheme;
-	}
-
-	public void setSourceScheme(String sourceScheme) {
-		this.sourceScheme = sourceScheme;
-	}
+	private String language;
 
 	private ID id = ID.nullID;
-	
+
 	private String peer;
-	
+
 	private String sourceId;
-	
-	public String getSourceId() {
-		return sourceId;
-	}
-
-	public void setSourceId(String sourceId) {
-		this.sourceId = sourceId;
-	}
-
-	public String getPeer() {
-		return peer;
-	}
-
-	public void setPeer(String peer) {
-		this.peer = peer;
-	}
 
 	private final static String sourceNameTag = "sourceName";
 	private final static String idTag = "id";
 	private final static String peerTag = "peer";
 	private final static String sourceIdTag = "sourceId";
 	private final static String sourceSchemeTag = "sourceScheme";
+	private final static String sourceLangTag = "language";
 
 	/**
 	 * Indexable fields. Advertisements must define the indexables, in order to
 	 * properly index and retrieve these advertisements locally and on the
 	 * network
 	 */
-	private final static String[] fields = { idTag, sourceIdTag, sourceNameTag, sourceSchemeTag};
+	private final static String[] fields = { idTag, sourceIdTag, sourceNameTag,
+			sourceSchemeTag, sourceLangTag };
 
 	public SourceAdvertisement(Element root) {
 		TextElement doc = (TextElement) root;
@@ -147,11 +128,14 @@ Serializable, Cloneable, Comparable {
 			setSourceId(elem.getTextValue());
 			return true;
 		}
-		if(elem.getName().equals(sourceSchemeTag)) {
+		if (elem.getName().equals(sourceSchemeTag)) {
 			setSourceScheme(elem.getTextValue());
 			return true;
 		}
-		
+		if (elem.getName().equals(sourceLangTag)) {
+			setLanguage(elem.getTextValue());
+			return true;
+		}
 
 		return false;
 	}
@@ -169,13 +153,16 @@ Serializable, Cloneable, Comparable {
 		Element e;
 		e = adv.createElement(idTag, getID().toString());
 		adv.appendChild(e);
-		e = adv.createElement(sourceNameTag, getSourceName().trim());		
+		e = adv.createElement(sourceNameTag, getSourceName().trim());
 		adv.appendChild(e);
 		e = adv.createElement(peerTag, getPeer().toString().trim());
 		adv.appendChild(e);
 		e = adv.createElement(sourceIdTag, getSourceId().toString().trim());
 		adv.appendChild(e);
-		e = adv.createElement(sourceSchemeTag, getSourceScheme().toString().trim());
+		e = adv.createElement(sourceSchemeTag, getSourceScheme().toString()
+				.trim());
+		adv.appendChild(e);
+		e = adv.createElement(sourceLangTag, getLanguage().toString().trim());
 		adv.appendChild(e);
 		return adv;
 	}
@@ -198,7 +185,7 @@ Serializable, Cloneable, Comparable {
 	public int compareTo(Object other) {
 		return getID().toString().compareTo(other.toString());
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -215,8 +202,6 @@ Serializable, Cloneable, Comparable {
 		this.id = (id == null ? null : id);
 	}
 
-	
-
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -225,7 +210,37 @@ Serializable, Cloneable, Comparable {
 		this.sourceName = sourceName;
 	}
 
+	public void setLanguage(String language) {
+		this.language = language;
+	}
 
+	public String getLanguage() {
+		return language;
+	}
+
+	public String getSourceScheme() {
+		return sourceScheme;
+	}
+
+	public void setSourceScheme(String sourceScheme) {
+		this.sourceScheme = sourceScheme;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public String getPeer() {
+		return peer;
+	}
+
+	public void setPeer(String peer) {
+		this.peer = peer;
+	}
 
 	/**
 	 * Instantiator
@@ -260,8 +275,4 @@ Serializable, Cloneable, Comparable {
 		}
 	}
 
-
-
-
-	
 }

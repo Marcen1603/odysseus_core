@@ -7,15 +7,16 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 
 /**
  * 
- * Ein Subplan stellt einen Ausschnitt eines Operatorplans dar. Auf diesen Teilplan koennen fuer die Verarbeitung Gebote abgegeben werden
+ * Ein Subplan stellt einen Ausschnitt eines Operatorplans dar. Auf diesen
+ * Teilplan koennen fuer die Verarbeitung Gebote abgegeben werden
  * 
  * TODO: Auslagern der Bidding spezifischen Elemente
  * 
  * @author Mart Köhler
- *
+ * 
  */
-public abstract class Subplan implements Serializable{
-	
+public class Subplan implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -23,9 +24,17 @@ public abstract class Subplan implements Serializable{
 	private ILogicalOperator ao;
 	private Lifecycle status;
 	private String id;
-	
+	private String peerId = null;
+	String responseSocket;
 	
 	protected ArrayList<Bid> biddings = new ArrayList<Bid>();
+
+	public Subplan(String id, ILogicalOperator ao) {
+		super();
+		this.ao = ao;
+		this.status = Lifecycle.NEW;
+		this.id = id;
+	}
 	
 	public ArrayList<Bid> getBiddings() {
 		return biddings;
@@ -34,9 +43,7 @@ public abstract class Subplan implements Serializable{
 	public void setBiddings(ArrayList<Bid> biddings) {
 		this.biddings = biddings;
 	}
-	
 
-	
 	public String getId() {
 		return id;
 	}
@@ -45,10 +52,6 @@ public abstract class Subplan implements Serializable{
 		this.id = id;
 	}
 
-	private String peerId = null;
-	
-
-	
 	public String getPeerId() {
 		return peerId;
 	}
@@ -56,8 +59,7 @@ public abstract class Subplan implements Serializable{
 	public void setPeerId(String peerId) {
 		this.peerId = peerId;
 	}
-	
-	
+
 	public Lifecycle getStatus() {
 		return status;
 	}
@@ -65,8 +67,6 @@ public abstract class Subplan implements Serializable{
 	public void setStatus(Lifecycle status) {
 		this.status = status;
 	}
-	
-
 
 	public ILogicalOperator getAo() {
 		return ao;
@@ -76,11 +76,12 @@ public abstract class Subplan implements Serializable{
 		this.ao = ao;
 	}
 
-	public Subplan(String id, ILogicalOperator ao) {
-		super();
-		this.ao = ao;
-		this.status = Lifecycle.NEW;
-		this.id=id;
+	public String getResponseSocket() {
+		return responseSocket;
+	}
+
+	public void setResponseSocket(String responseSocket) {
+		this.responseSocket = responseSocket;
 	}
 
 }

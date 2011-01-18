@@ -3,15 +3,14 @@ package de.uniol.inf.is.odysseus.p2p.splitting.base;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
-import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
-import de.uniol.inf.is.odysseus.p2p.splitting.refinement.base.IRefinementStrategy;
 
 public abstract class AbstractSplittingStrategy implements ISplittingStrategy {
 
 	private IExecutionListenerCallback callback;
-	private AbstractPeer peer;
+	private AbstractOdysseusPeer peer;
 
 	public IExecutionListenerCallback getCallback() {
 		return this.callback;
@@ -20,8 +19,6 @@ public abstract class AbstractSplittingStrategy implements ISplittingStrategy {
 	public void setCallback(IExecutionListenerCallback callback) {
 		this.callback = callback;
 	}
-
-	private IRefinementStrategy refinement = null;
 	
 	@Override
 	public abstract ArrayList<ILogicalOperator> splitPlan(
@@ -29,26 +26,21 @@ public abstract class AbstractSplittingStrategy implements ISplittingStrategy {
 
 	@Override
 	public abstract String getName();
-
-	public void bindRefinement(IRefinementStrategy rs) {
-		this.refinement = rs;
-	}
-
-	public void unbindRefinement(IRefinementStrategy rs) {
-		if(this.refinement == rs) {
-			this.refinement = null;
-		}
-	}
 	
-	public IRefinementStrategy getRefinement() {
-		return refinement;
+	@Override
+	public void setPeer(IOdysseusPeer peer) {
+		this.peer = (AbstractOdysseusPeer) peer;
+	}
+	protected AbstractOdysseusPeer getPeer() {
+		return this.peer;
 	}
 	
 	@Override
-	public void setPeer(IPeer peer) {
-		this.peer = (AbstractPeer) peer;
+	public void finalizeService() {
 	}
-	protected AbstractPeer getPeer() {
-		return this.peer;
+
+	@Override
+	public void startService() {
 	}
+
 }

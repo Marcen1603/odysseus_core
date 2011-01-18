@@ -18,3 +18,4 @@ Export-Package: de.uniol.inf.is.odysseus.p2p.thinpeer,
  de.uniol.inf.is.odysseus.p2p.thinpeer.handler,
  de.uniol.inf.is.odysseus.p2p.thinpeer.listener,
  de.uniol.inf.is.odysseus.p2p.thinpeer.strategy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

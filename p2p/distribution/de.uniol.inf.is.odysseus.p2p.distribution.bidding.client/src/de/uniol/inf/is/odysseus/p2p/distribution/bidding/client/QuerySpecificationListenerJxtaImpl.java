@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
@@ -14,15 +17,18 @@ import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationListe
 import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 
 public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezification> implements
 		IQuerySpecificationListener<S>, DiscoveryListener {
+	
+	static Logger logger = LoggerFactory.getLogger(QuerySpecificationListenerJxtaImpl.class);
+	
 	private List<QueryExecutionSpezification> specifications;
-	private AbstractPeer aPeer;
+	private AbstractOdysseusPeer aPeer;
 	private IQuerySelectionStrategy selectionStrategy;
 	
-	public QuerySpecificationListenerJxtaImpl(AbstractPeer aPeer, IQuerySelectionStrategy strategy) {
+	public QuerySpecificationListenerJxtaImpl(AbstractOdysseusPeer aPeer, IQuerySelectionStrategy strategy) {
 		PeerGroupTool.getPeerGroup().getDiscoveryService().addDiscoveryListener(this);
 		this.aPeer = aPeer;
 		this.selectionStrategy = strategy;
@@ -45,6 +51,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void discoveryEvent(DiscoveryEvent ev) {
 
@@ -54,11 +61,11 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 		if (en != null) {
 			while (en.hasMoreElements()) {
 
-				S temp2 = (S) en.nextElement();
+				Advertisement temp2 = en.nextElement();
 				if (temp2 instanceof QueryExecutionSpezification) {
-					QueryExecutionSpezification spec = temp2;
+					QueryExecutionSpezification spec = (QueryExecutionSpezification) temp2;
 					boolean createHandler = true;
-					System.out.println("QueryExecutionSpezifikation Anfrage: "+spec.getQueryId()+" Subplan:" +spec.getSubplanId());
+					logger.debug("QueryExecutionSpezifikation Anfrage: "+spec.getQueryId()+" Subplan:" +spec.getSubplanId());
 					for(QueryExecutionSpezification s : getSpecifications()) {
 						if(s.getSubplanId().equals(spec.getSubplanId()))
 						{
@@ -67,21 +74,15 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 							break;
 						}
 					}
-//					if(!this.qes.containsKey(((QueryExecutionSpezification)temp2).getID().toString())) {
-//						this.qes.put(((QueryExecutionSpezification)temp2).getID().toString(), ((QueryExecutionSpezification)temp2));
-					
-//					new QuerySpecificationHandlerJxtaImpl<S>(temp2, getaPeer(), getSelectionStrategy()) ;
 					if(createHandler) {
 						try {
 							getSpecifications().add(spec);
-							System.out.println("Erzeuge SpecificationHandler zu: "+spec.getQueryId());
+							logger.debug("Erzeuge SpecificationHandler zu: "+spec.getQueryId());
 							getQuerySpecificationHandler((S) spec);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-//					}
 				} else {
 					return;
 				}
@@ -91,7 +92,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	}
 	
-	public AbstractPeer getaPeer() {
+	public AbstractOdysseusPeer getaPeer() {
 		return aPeer;
 	}
 	

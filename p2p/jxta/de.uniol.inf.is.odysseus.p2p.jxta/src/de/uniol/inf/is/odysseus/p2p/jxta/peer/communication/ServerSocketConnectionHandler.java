@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p.jxta.peer.communication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -14,6 +17,8 @@ import de.uniol.inf.is.odysseus.p2p.peer.communication.IServerSocketConnectionHa
 
 public class ServerSocketConnectionHandler implements IServerSocketConnectionHandler{
 
+		static Logger logger = LoggerFactory.getLogger(ServerSocketConnectionHandler.class); 
+	
 		private Map<String, IMessageHandler> messageHandler;
 	
 		private Socket socket;
@@ -49,7 +54,7 @@ public class ServerSocketConnectionHandler implements IServerSocketConnectionHan
 				String namespace="";
 				while (it.hasNext()) {
 					namespace = it.next();
-					System.out.println("ERHALTE NACHRICHT: "+namespace);
+					logger.debug("ERHALTE NACHRICHT: "+namespace);
 					//Existiert ein registrierter Handler, dann sende die Nachricht an diesen weiter
 					if(getMessageHandlerList().containsKey(namespace)) {
 						getMessageHandlerList().get(namespace).handleMessage(msg, namespace);

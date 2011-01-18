@@ -5,21 +5,20 @@ import java.util.List;
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
-public class GrantedMessageHandler implements IMessageHandler, Runnable {
+public class GrantedMessageHandler extends AbstractMessageHandler implements Runnable {
 
-	private String namespace = null;
 	private Query query;
 	private IExecutionListenerCallback callback;
-	private AbstractPeer peer;
+	private IOdysseusPeer peer;
 	private List<String> confirmed;
 	
-	public GrantedMessageHandler(Query query, IExecutionListenerCallback callback, AbstractPeer peer) {
+	public GrantedMessageHandler(Query query, IExecutionListenerCallback callback, IOdysseusPeer peer) {
 		this.query = query;
 		this.callback = callback;
 		this.setPeer(peer);
@@ -27,32 +26,14 @@ public class GrantedMessageHandler implements IMessageHandler, Runnable {
 		Thread t = new Thread(this);
 		t.start();
 	}
-	
-	@Override
-	public String getInterestedNamespace() {
-		return this.namespace;
-	}
 
 	@Override
-	public void handleMessage(Object msg, String namespace) {
-//		String queryId = MessageTool.getMessageElementAsString(
-//				namespace, "queryId", (Message)msg);
-//		
-//		String peerId = MessageTool.getMessageElementAsString(
-//				namespace, "peerId", (Message)msg);
-		
+	public void handleMessage(Object msg, String namespace) {		
 		String subplanId = MessageTool.getMessageElementAsString(
 				namespace, "subplanId", (Message)msg);
 		synchronized (confirmed) {
 			this.confirmed.add(subplanId);	
 		}
-		
-		
-	}
-	
-	@Override
-	public void setInterestedNamespace(String namespace) {
-		this.namespace = namespace;
 	}
 	
 	@Override
@@ -85,11 +66,11 @@ public class GrantedMessageHandler implements IMessageHandler, Runnable {
 		return query;
 	}
 
-	public void setPeer(AbstractPeer peer) {
+	public void setPeer(IOdysseusPeer peer) {
 		this.peer = peer;
 	}
 
-	public AbstractPeer getPeer() {
+	public IOdysseusPeer getPeer() {
 		return peer;
 	}
 }

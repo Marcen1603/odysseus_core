@@ -18,6 +18,7 @@ public class TP2PSinkAORule extends AbstractTransformationRule<P2PSinkAO> {
 		return 0;
 	}
 
+	@SuppressWarnings({"rawtypes"})
 	@Override
 	public void execute(P2PSinkAO p2pSinkAO, TransformationConfiguration trafo) {		
 		P2PSinkPO<?> p2pSinkPO = new P2PSinkPO(p2pSinkAO.getAdv(), PeerGroupTool.getPeerGroup());

@@ -6,9 +6,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.endpoint.Message;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeService;
@@ -16,12 +18,13 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
@@ -37,6 +40,12 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
+	
+	static Logger logger = LoggerFactory.getLogger(OperatorPeerJxtaImpl.class);
+	static Logger getLogger(){
+		return logger;
+	}
+
 	
 	private String name = "OperatorPeer";
 	
@@ -105,20 +114,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		startPeer();
 		getDistributionClient().initializeService();
 	}
-	
-	public static OperatorPeerJxtaImpl instance = null;
-	
-	public static OperatorPeerJxtaImpl getInstance(){
-		if (instance == null){
-			instance = new OperatorPeerJxtaImpl();
-		}
-		return instance;
-	}
-
-	public OperatorPeerJxtaImpl() {
-		instance = this;
-	}
-	
+		
 	
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
@@ -282,27 +278,27 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	@Override
 	protected void initAliveHandler() {
-		this.aliveHandler = new AliveHandlerJxtaImpl();
+		this.aliveHandler = new AliveHandlerJxtaImpl(this);
 		
 	}
 
 	@Override
 	protected void initSources(AbstractOperatorPeer aPeer) {
 	    		
-		getSources().put("nexmark:person2", "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440");
-		getSources().put("nexmark:auction2", "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441");
-		getSources().put("nexmark:bid2", "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442");
+		getSources().put("nexmark:person2", new Pair<String, String>("CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440", "CQL"));
+		getSources().put("nexmark:auction2", new Pair<String, String>("CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441", "CQL"));
+		getSources().put("nexmark:bid2", new Pair<String, String>("CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442", "CQL"));
 		List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor().getQueryBuildConfiguration("Standard");;
 		if (cfg == null){
 			  getLogger().debug("No Query Build Configuration found!!!");
 			  return;
 		}
 
-		for (String s : getSources().values()) {
+		for (Pair<String, String> s : getSources().values()) {
 			try {		
 				User user = GlobalState.getActiveUser();
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();
-				aPeer.getExecutor().addQuery(s, "CQL", user,dd, cfg.toArray(new IQueryBuildSetting[0])  );		
+				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user,dd, cfg.toArray(new IQueryBuildSetting[0])  );		
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -346,20 +342,16 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	}
 
 	@Override
-	public void initLocalMessageHandler() {
-		// TODO Auto-generated method stub
-		
+	public void initLocalMessageHandler() {		
 	}
 
 	@Override
 	public void initLocalExecutionHandler() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void initMessageSender() {
-		setMessageSender(new MessageSender<PeerGroup, Message, PipeAdvertisement>());
+		setMessageSender(new JxtaMessageSender());
 	}
 	
 }

@@ -15,24 +15,28 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisemen
 public class AliveHandlerJxtaImpl implements IAliveHandler {
 
 	private final int WAIT_TIME = 10000;
+	private AdministrationPeerJxtaImpl administrationPeerJxtaImpl;
 
+	public AliveHandlerJxtaImpl(AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
+		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
+	}
+	
 	@Override
 	public void run() {
 
 		ExtendedPeerAdvertisement adv = new ExtendedPeerAdvertisement();
-		adv.setPeerName(AdministrationPeerJxtaImpl.getInstance()
+		adv.setPeerName(administrationPeerJxtaImpl
 				.getNetPeerGroup().getPeerName());
-		adv.setPipe(AdministrationPeerJxtaImpl
-				.getInstance()
+		adv.setPipe(administrationPeerJxtaImpl
 				.getServerPipeAdvertisement().toString());
 		adv.setType("AdministrationPeer");
-		adv.setPeerId(AdministrationPeerJxtaImpl.getInstance()
+		adv.setPeerId(administrationPeerJxtaImpl
 				.getNetPeerGroup().getPeerID().toString());
 		while (true) {
 			try {
-				AdministrationPeerJxtaImpl.getInstance().getDiscoveryService()
+				administrationPeerJxtaImpl.getDiscoveryService()
 						.publish(adv, 13000, 13000);
-				AdministrationPeerJxtaImpl.getInstance().getDiscoveryService()
+				administrationPeerJxtaImpl.getDiscoveryService()
 						.remotePublish(adv, 13000);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block

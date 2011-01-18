@@ -9,3 +9,4 @@ Require-Bundle: org.eclipse.ui,
 Service-Component: OSGI-INF/closedExecutionHandler.xml
 Import-Package: de.uniol.inf.is.odysseus.p2p.peer,
  de.uniol.inf.is.odysseus.p2p.peer.execution.handler
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

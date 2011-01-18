@@ -31,3 +31,4 @@ Export-Package: de.uniol.inf.is.odysseus.p2p.administrationpeer,
  de.uniol.inf.is.odysseus.p2p.administrationpeer.handler,
  de.uniol.inf.is.odysseus.p2p.administrationpeer.listener,
  de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

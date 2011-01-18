@@ -26,7 +26,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
  de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
  de.uniol.inf.is.odysseus.p2p.splitting.base,
- de.uniol.inf.is.odysseus.p2p.splitting.refinement.base,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  net.jxta,
  net.jxta.access,
@@ -54,3 +53,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  net.jxta.util.documentSerializable,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

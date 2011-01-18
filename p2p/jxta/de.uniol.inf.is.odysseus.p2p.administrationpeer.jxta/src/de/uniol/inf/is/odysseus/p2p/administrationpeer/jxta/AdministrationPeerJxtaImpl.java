@@ -6,9 +6,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.endpoint.Message;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeService;
@@ -18,8 +20,8 @@ import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AdminPeerQueryResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.QueryResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.HotPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.OperatorPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.QuerySpezificationListenerJxtaImpl;
@@ -29,19 +31,24 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisemen
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
+	static Logger logger = LoggerFactory.getLogger(AdministrationPeerJxtaImpl.class);
+	static Logger getLogger(){
+		return logger;
+	}
+
+	
 	public HashMap<String, ExtendedPeerAdvertisement> getOperatorPeers() {
 		return operatorPeers;
 	}
@@ -121,105 +128,19 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public HashMap<String, ExtendedPeerAdvertisement> operatorPeers = new HashMap<String, ExtendedPeerAdvertisement>();
 
-	private static AdministrationPeerJxtaImpl instance = null;
-
 	public void activate() {
 		
 		// TODO: Read from Config-File
-		
-		
 		startPeer();
-		//TODO Splitting initialisieren
-//		getSplitting().initializeService();
 		getDistributionProvider().initializeService();
-		for(IExecutionHandler eHandler : getExecutionHandler()){
-			eHandler.setPeer(this);
-		}
-		
 		getLogger().info("Administration Peer started");
-
-//		try {
-//			System.out.println("Adde Queries");
-//			getExecutor()
-//					.addQuery(
-//							"CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440",
-//							"CQL", new ParameterPriority(2));
-//			getExecutor()
-//					.addQuery(
-//							"CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441",
-//							"CQL", new ParameterPriority(2));
-//			getExecutor()
-//					.addQuery(
-//							"CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442",
-//							"CQL", new ParameterPriority(2));
-//			// getExecutor().addQuery("CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430",
-//			// "CQL", new ParameterPriority(2) );
-//			// getExecutor().addQuery("CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65431",
-//			// "CQL", new ParameterPriority(2));
-//			// getExecutor().addQuery("CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432",
-//			// "CQL", new ParameterPriority(2));
-//			System.out.println("Adde Queries fertig");
-//		} catch (PlanManagementException e) {
-//			e.printStackTrace();
-//		}
-//		ArrayList<ILogicalOperator> lo = null;
-//		try {
-//			System.out.println("translate query");
-//			lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery(
-//					"SELECT id FROM nexmark:person2 WHERE id>0", "CQL");
-////			 lo.addAll(getCompiler().translateQuery("SELECT * FROM nexmark:person2 WHERE id<500",
-////			 "CQL"));
-//			// lo = (ArrayList<ILogicalOperator>)
-//			// getCompiler().translateQuery("SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 UNBOUNDED AS b",
-//			// "CQL");
-//
-//			// lo = (ArrayList<ILogicalOperator>)
-//			// getCompiler().translateQuery("SELECT * FROM nexmark:person2 WHERE id<1000",
-//			// "CQL");
-//			// lo = (ArrayList<ILogicalOperator>)
-//			// getCompiler().translateQuery("SELECT * FROM nexmark:person2",
-//			// "CQL");
-//		} catch (QueryParseException e) {
-//			e.printStackTrace();
-//		}
-//		ArrayList<ILogicalOperator> restructList = new ArrayList<ILogicalOperator>();
-//		try {
-//			for (ILogicalOperator op : lo) {
-//				restructList.add(getCompiler().restructPlan(
-//						(ILogicalOperator) op));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		System.out.println("split");
-//		ArrayList<ILogicalOperator> alo = null;
-//		try {
-//
-//			alo = getSplitting().splitPlan(restructList.get(0));
-//
-////			alo.addAll(getSplitting().splitPlan(
-////					(AbstractLogicalOperator) restructList.get(1)));
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		for (ILogicalOperator elem : alo) {
-//			try {
-//				getExecutor().addQuery(elem, new ParameterPriority(2));
-//
-//			} catch (PlanManagementException e) {
-//				e.printStackTrace();
-//			}
-//		}
 
 	}
 
-	// für die korrekte Nutzung in OSGi muss der Konstruktor public sein. Damit
-	// der "Singleton" in weiteren Programmaufrufen unberührt bleibt, wurde noch
-	// die Instanz der Static Variablen zugewiesen.
+	// für die korrekte Nutzung in OSGi muss der Konstruktor public sein. 
 	public AdministrationPeerJxtaImpl() {
 
 		super();
-		instance = this;
 		
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
@@ -227,19 +148,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("AdminPeer"));
 	}
 
-	/**
-	 * Entspricht nicht mehr dem Singleton, wird allerdings in vielen Teilen
-	 * gebraucht, so dass der Workaround über den public Konstruktor gewählt
-	 * wurde.
-	 * 
-	 * @return
-	 */
-	public synchronized static AdministrationPeerJxtaImpl getInstance() {
-		if (instance == null) {
-			instance = new AdministrationPeerJxtaImpl();
-		}
-		return instance;
-	}
 
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
@@ -267,13 +175,13 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initQuerySpezificationListener() {
-		querySpezificationListener = new QuerySpezificationListenerJxtaImpl(getMessageSender());
+		querySpezificationListener = new QuerySpezificationListenerJxtaImpl((JxtaMessageSender) getMessageSender(), this);
 
 	}
 
 	@Override
 	protected void initSourceListener() {
-		this.sourceListener = new SourceListenerJxtaImpl(getExecutor());
+		this.sourceListener = new SourceListenerJxtaImpl(getExecutor(), this);
 
 	}
 
@@ -423,13 +331,13 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initOperatorPeerListener() {
-		operatorPeerListener = new OperatorPeerListenerJxtaImpl();
+		operatorPeerListener = new OperatorPeerListenerJxtaImpl(this);
 
 	}
 
 	@Override
 	protected void initAliveHandler() {
-		aliveHandler = new AliveHandlerJxtaImpl();
+		aliveHandler = new AliveHandlerJxtaImpl(this);
 
 	}
 
@@ -468,13 +376,13 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	public void initLocalMessageHandler() {
-		registerMessageHandler(new QueryResultHandlerJxtaImpl(getMessageSender()));
+		registerMessageHandler(new AdminPeerQueryResultHandlerJxtaImpl(this));
 	}
 
 	@Override
 	public void initLocalExecutionHandler() {
-		//TODO: Anders Lösen
-		for(IExecutionHandler h : getExecutionHandler()) {
+		//TODO: Anders Loesen
+		for(IExecutionHandler<?> h : getExecutionHandler()) {
 			if(h.getProvidedLifecycle() == Lifecycle.NEW) {
 				h.setPeer(this);
 			}
@@ -483,7 +391,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	public void initMessageSender() {
-		setMessageSender(new MessageSender<PeerGroup, Message, PipeAdvertisement>());
+		setMessageSender(new JxtaMessageSender());
 	}
 
 }

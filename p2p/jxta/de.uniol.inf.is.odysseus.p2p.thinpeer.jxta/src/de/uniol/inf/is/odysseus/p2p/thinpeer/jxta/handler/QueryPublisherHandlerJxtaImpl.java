@@ -11,20 +11,21 @@ import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
-	
-	private AbstractPeer peer;
 
-	public QueryPublisherHandlerJxtaImpl(AbstractPeer peer) {
-		this.peer = peer;
+	private ThinPeerJxtaImpl thinPeerJxtaImpl;
+
+	public QueryPublisherHandlerJxtaImpl(ThinPeerJxtaImpl thinPeerJxtaImpl) {
+		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
 	}
 	// Wie lange ist eine Ausschreibung gültig.
 	private int VALID = 15000;
@@ -37,31 +38,33 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		q.setDeclarativeQuery(query);
 		q.setId(queryId);
 		q.setStatus(Lifecycle.NEW);
-		q.setLanguage("CQL");
+		q.setUser(GlobalState.getActiveUser());
+		q.setDataDictionary(GlobalState.getActiveDatadictionary());
+		q.setLanguage(language);
 		QueryTranslationSpezification adv = (QueryTranslationSpezification) AdvertisementFactory
 				.newAdvertisement(QueryTranslationSpezification
 						.getAdvertisementType());
 		adv.setQuery(query);
 		adv
-				.setBiddingPipe(ThinPeerJxtaImpl.getInstance().getServerResponseAddress().toString());
-		adv.setPeer(ThinPeerJxtaImpl.getInstance().getNetPeerGroup()
+				.setBiddingPipe(thinPeerJxtaImpl.getServerResponseAddress().toString());
+		adv.setPeer(thinPeerJxtaImpl.getNetPeerGroup()
 				.getPeerAdvertisement().toString());
 		adv.setQueryId(q.getId());
 		adv.setLanguage(language);
-		ThinPeerJxtaImpl.getInstance().addQuery(q);
+		thinPeerJxtaImpl.addQuery(q);
 		try {
-			ThinPeerJxtaImpl.getInstance().getDiscoveryService().publish(adv,
+			thinPeerJxtaImpl.getDiscoveryService().publish(adv,
 					VALID, VALID);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ThinPeerJxtaImpl.getInstance().getDiscoveryService().remotePublish(adv,
+		thinPeerJxtaImpl.getDiscoveryService().remotePublish(adv,
 				VALID);
 
 		Log.addTab(q.getId(), query);
 		
 		//Hier den "Timer" starten für die Behandlung der Gebote
-		IBiddingHandler handler = new BiddingHandlerJxtaImpl(q,this.peer.getMessageSender());
+		IBiddingHandler handler = new BiddingHandlerJxtaImpl(q, (JxtaMessageSender) this.thinPeerJxtaImpl.getMessageSender(), thinPeerJxtaImpl);
 		Thread t = new Thread(handler);
 		t.start();
 	}
@@ -71,17 +74,18 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 			String language, String adminPeer) {
 
 		PipeAdvertisement adminPipe = MessageTool
-				.createPipeAdvertisementFromXml(((ExtendedPeerAdvertisement)ThinPeerJxtaImpl.getInstance()
+				.createPipeAdvertisementFromXml(((ExtendedPeerAdvertisement)thinPeerJxtaImpl
 						.getAdminPeers().get(adminPeer)).getPipe());
-		PipeAdvertisement thinPeerPipe = (PipeAdvertisement) ThinPeerJxtaImpl
-				.getInstance().getServerResponseAddress();
+		PipeAdvertisement thinPeerPipe = (PipeAdvertisement) thinPeerJxtaImpl.getServerResponseAddress();
 
 		QueryJxtaImpl q = new QueryJxtaImpl();
 		q.setDeclarativeQuery(query);
+		q.setUser(GlobalState.getActiveUser());
+		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setId(queryId);
 		BidJxtaImpl bid = new BidJxtaImpl();
 		bid.setResponseSocket(adminPipe);
-		ThinPeerJxtaImpl.getInstance().addQuery(q);
+		thinPeerJxtaImpl.addQuery(q);
 
 //		Message message = MessageTool.createSimpleMessage("DoQuery", "queryId",
 //				"query", "language", "result", queryId, query, language,
@@ -96,7 +100,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		Message message = MessageTool.createSimpleMessage("DoQuery", messageElements);
 //		MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
 //				.getNetPeerGroup(), adminPipe, message);
-		this.peer.getMessageSender().sendMessage(ThinPeerJxtaImpl.getInstance()
+		((JxtaMessageSender)(thinPeerJxtaImpl.getMessageSender())).sendMessage(thinPeerJxtaImpl
 				.getNetPeerGroup(), message, adminPipe);
 		Log.addTab(q.getId(), query);
 	}

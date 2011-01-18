@@ -10,7 +10,7 @@ import java.util.Map;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IServerSocketConnectionHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.ServerSocketConnectionHandler;
@@ -19,9 +19,9 @@ import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 public class SocketServerListener implements ISocketServerListener {
 	private Map<String, IMessageHandler> messageHandler = new HashMap<String, IMessageHandler>();
 	private PipeAdvertisement serverPipeAdvertisement;
-	private AbstractPeer aPeer;
+	private AbstractOdysseusPeer aPeer;
 
-	public SocketServerListener(AbstractPeer aPeer) {
+	public SocketServerListener(AbstractOdysseusPeer aPeer) {
 		setServerPipeAdvertisement((PipeAdvertisement) aPeer.getServerResponseAddress());
 		setaPeer(aPeer);
 	}
@@ -84,11 +84,11 @@ public class SocketServerListener implements ISocketServerListener {
 	}
 	
 
-	public AbstractPeer getaPeer() {
+	public AbstractOdysseusPeer getaPeer() {
 		return aPeer;
 	}
 
-	private void setaPeer(AbstractPeer aPeer) {
+	private void setaPeer(AbstractOdysseusPeer aPeer) {
 		this.aPeer = aPeer;
 	}
 	

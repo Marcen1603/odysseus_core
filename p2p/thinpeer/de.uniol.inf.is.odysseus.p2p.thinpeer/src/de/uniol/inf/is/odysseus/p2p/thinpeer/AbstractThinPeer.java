@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListene
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
 
-public abstract class AbstractThinPeer extends AbstractPeer {
+public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 
 
 	private Thread socketListenerThread;

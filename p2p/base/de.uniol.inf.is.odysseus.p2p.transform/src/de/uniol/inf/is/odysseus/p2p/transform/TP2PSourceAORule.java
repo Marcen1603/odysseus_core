@@ -19,6 +19,7 @@ public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
 		return 0;
 	}
 
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public void execute(P2PSourceAO p2pSourceAO, TransformationConfiguration transformConfig) {
 		P2PInputStreamAccessPO<?,?> p2pAccessPO = new P2PInputStreamAccessPO(new IdentityTransformation(), p2pSourceAO.getAdv(), PeerGroupTool.getPeerGroup());

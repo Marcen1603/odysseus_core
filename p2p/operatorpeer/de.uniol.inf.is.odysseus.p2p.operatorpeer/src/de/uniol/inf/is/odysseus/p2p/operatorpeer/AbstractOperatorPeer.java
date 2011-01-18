@@ -3,21 +3,30 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
-public abstract class AbstractOperatorPeer extends AbstractPeer {
+public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 
+	static Logger logger = LoggerFactory.getLogger(AbstractOdysseusPeer.class);
+	static Logger getLogger(){
+		return logger;
+	}
+	
 	private IExecutor executor;
 
 	protected IAliveHandler aliveHandler;
@@ -34,7 +43,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 
 	private Thread sourceHandlerThread;
 	
-	protected HashMap<String, String> sources = new HashMap<String, String>();
+	protected HashMap<String, Pair<String,String>> sources = new HashMap<String, Pair<String,String>>();
 	
 	private IDistributionClient distributionClient;
 
@@ -66,11 +75,11 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		return distributionClient;
 	}
 
-	public HashMap<String, String> getSources() {
+	public HashMap<String, Pair<String, String>> getSources() {
 		return sources;
 	}
 
-	public void setSources(HashMap<String, String> sources) {
+	public void setSources(HashMap<String, Pair<String, String>> sources) {
 		this.sources = sources;
 	}
 
@@ -136,8 +145,6 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		this.priority = new Priority();
 	}
 
-//	protected abstract void initQuerySpezificationFinder();
-
 	protected abstract void initSocketServerListener(AbstractOperatorPeer aPeer);
 
 	protected abstract void initSourceHandler(AbstractOperatorPeer aPeer);
@@ -176,15 +183,15 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		startServerSocketListener();
 		startAliveHandler();
 		getDistributionClient().startService();
-//		startQuerySpezificationFinder();
-		// HACK !!
+		// Notwendiger Hack da die Quellen erst dann gebunden werden können
+		// wenn das Execution Environment fertig ist ...
+		// Später kein Problem mehr, da die Quellen ja anders eingebunden werden müssen!
 		final AbstractOperatorPeer me = this;
 		new Thread(){
 			public void run() {
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				initSources(me);
@@ -193,16 +200,6 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		}.start();
 		
 	}
-	
-//	protected void startQuerySpezificationFinder() {
-//		if (querySpezificationFinderThread != null
-//				&& querySpezificationFinderThread.isAlive()) {
-//			querySpezificationFinderThread.interrupt();
-//		}
-//		this.querySpezificationFinderThread = new Thread(
-//				querySpezificationFinder);
-//		querySpezificationFinderThread.start();
-//	}
 
 	protected void startServerSocketListener() {
 		if (socketListenerThread != null && socketListenerThread.isAlive()) {

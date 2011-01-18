@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
 public interface IExecutionListener extends Runnable{
 	public Thread startListener();
-	public void registerHandler(IExecutionHandler handler);
-	public void registerHandler(List<IExecutionHandler> handler);
-	public void deregisterHandler(Lifecycle lifecycle, IExecutionHandler handler);
+	public void registerHandler(IExecutionHandler<?> handler);
+	public void registerHandler(List<IExecutionHandler<?>> handler);
+	public void deregisterHandler(Lifecycle lifecycle, IExecutionHandler<?> handler);
 	public void changeState(Lifecycle lifecycle);
-	public Map<Lifecycle, IExecutionHandler> getHandler();
+	public Map<Lifecycle, IExecutionHandler<?>> getHandler();
 	public Query getQuery();
 }

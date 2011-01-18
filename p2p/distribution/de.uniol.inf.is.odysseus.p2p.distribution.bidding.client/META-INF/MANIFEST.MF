@@ -12,6 +12,7 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.p2p.gui,
  de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
+ de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
  de.uniol.inf.is.odysseus.p2p.jxta.utils,
  de.uniol.inf.is.odysseus.p2p.logicaloperator,
  de.uniol.inf.is.odysseus.p2p.peer,
@@ -54,3 +55,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Service-Component: OSGI-INF/BiddingClient.xml
 Require-Bundle: apache.codec;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

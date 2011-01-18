@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +21,8 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		extends AbstractInputStreamAccessPO<In, Out> {
 
+	static Logger logger = LoggerFactory.getLogger(P2PInputStreamAccessPO.class);
+	
 	private PipeAdvertisement adv;
 	private JxtaSocket socket;
 
@@ -33,7 +38,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 					socket = new JxtaSocket(getPeerGroup(), null, adv, 15000,
 							true);
 					
-					System.out.println("JxtaSocket erzeugt " + adv.toString());
+					logger.debug("JxtaSocket erzeugt " + adv.toString());
 					break;
 				} catch (IOException e2) {
 					// Timeout passiert weil ein anderer Peer seinen
@@ -55,7 +60,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		super(transformation);
 		this.adv = MessageTool.createPipeAdvertisementFromXml(adv);
 		this.peerGroup = peergroup;
-		System.out.println("Initialisiere P2PInputStreamAccessPO: "
+		logger.debug("Initialisiere P2PInputStreamAccessPO: "
 				+ this.adv.toString());
 
 	}
@@ -90,7 +95,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 				propagateDone();
 				return false;
 			} else if (o instanceof RelationalTuple) {
-				System.out.println("tuple received "+adv.getID().toString() +" "+o);
+				logger.debug("tuple received "+adv.getID().toString() +" "+o);
 			}
 
 			In inElem = (In) o;

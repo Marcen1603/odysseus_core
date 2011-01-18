@@ -21,18 +21,6 @@ public class Log {
 	public static void addQuery(String queryId) {
 		getWindow().addTab(queryId);
 	}
-//	public static void addQuery(String queryId) {
-//			if (!getWindow().isQuery(queryId)) {
-////				getWindow().addTab(queryId);
-//			} else {
-////				int count = OperatorPeerJxtaImpl.getInstance().getQueries()
-////						.get(queryId).getSubPlans().size();
-////				OperatorPeerJxtaImpl.getInstance().getGui().addSubplans(
-////						queryId, count);
-//				System.out.println("komm hier rein");
-//			}
-//
-//	}
 
 	public static void logAction(String queryId, String action) {
 			getWindow().addAction(

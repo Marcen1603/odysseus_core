@@ -26,7 +26,10 @@ public class OperatorPeerListenerJxtaImpl implements IOperatorPeerListener,
 	// Wieviel Advertisements pro Peer
 	private int ADVS_PER_PEER = 6;
 
-	public OperatorPeerListenerJxtaImpl() {
+	private AdministrationPeerJxtaImpl administrationPeerJxtaImpl;
+
+	public OperatorPeerListenerJxtaImpl(AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
+		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 	}
 
 	@Override
@@ -38,16 +41,16 @@ public class OperatorPeerListenerJxtaImpl implements IOperatorPeerListener,
 				e.printStackTrace();
 			}
 
-			AdministrationPeerJxtaImpl.getInstance().getOperatorPeers().clear();
+			administrationPeerJxtaImpl.getOperatorPeers().clear();
 			try {
-				AdministrationPeerJxtaImpl.getInstance().getDiscoveryService()
+				administrationPeerJxtaImpl.getDiscoveryService()
 						.getLocalAdvertisements(DiscoveryService.ADV, "type",
 								"OperatorPeer");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			AdministrationPeerJxtaImpl.getInstance().getDiscoveryService()
+			administrationPeerJxtaImpl.getDiscoveryService()
 					.getRemoteAdvertisements(null, DiscoveryService.ADV,
 							"type", "OperatorPeer", ADVS_PER_PEER, this);
 		}
@@ -64,9 +67,9 @@ public class OperatorPeerListenerJxtaImpl implements IOperatorPeerListener,
 					continue;
 				}
 				ExtendedPeerAdvertisement adv = (ExtendedPeerAdvertisement) o;
-				synchronized (AdministrationPeerJxtaImpl.getInstance()
+				synchronized (administrationPeerJxtaImpl
 						.getOperatorPeers()) {
-					AdministrationPeerJxtaImpl.getInstance().getOperatorPeers()
+					administrationPeerJxtaImpl.getOperatorPeers()
 							.put(adv.getPeerId().toString(), adv);
 				}
 

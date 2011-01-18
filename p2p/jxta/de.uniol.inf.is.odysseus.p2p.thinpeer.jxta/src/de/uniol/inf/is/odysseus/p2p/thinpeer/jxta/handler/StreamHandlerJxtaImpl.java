@@ -1,4 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -13,6 +15,10 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
 public class StreamHandlerJxtaImpl implements IStreamHandler {
 
+	static Logger logger = LoggerFactory.getLogger(StreamHandlerJxtaImpl.class);
+	
+	private static final int TIMEOUT = 8000;
+
 	private PipeAdvertisement adv;
 
 	private JxtaSocket socket = null;
@@ -23,24 +29,28 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 
 	private String queryId;
 
-	public StreamHandlerJxtaImpl(PipeAdvertisement adv, String queryId) {
+	private ThinPeerJxtaImpl thinPeerJxtaImpl;
+
+	public StreamHandlerJxtaImpl(PipeAdvertisement adv, String queryId, ThinPeerJxtaImpl thinPeerJxtaImpl) {
 		super();
 		this.adv = adv;
 		this.queryId = queryId;
-		System.out.println("Initialisiere StreamHandler auf dem Thin-Peer: "+this.adv.toString());
+		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
+		logger.debug("Initialisiere StreamHandler auf dem Thin-Peer: "+this.adv.toString());
 	}
 
 	@Override
 	public void run() {
-		System.out.println("Bin im StreamHandler Thread");
+		logger.debug("Bin im StreamHandler Thread");
 		while (socket == null) {
 			try {
-				System.out.println("Bauen Socket auf mit diesem Adv: "+adv.toString());
-				socket = new JxtaSocket(ThinPeerJxtaImpl.getInstance()
-						.getNetPeerGroup(), null, adv, 8000, true);
+				logger.debug("Bauen Socket auf mit diesem Adv: "+adv.toString());
+				socket = new JxtaSocket(thinPeerJxtaImpl
+						.getNetPeerGroup(), null, adv, TIMEOUT, true);
 				break;
 			} catch (IOException e2) {
 				socket = null;
+				e2.printStackTrace();
 			}
 		}
 
@@ -52,7 +62,7 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 		}
 		Object o = null;
 		while (true) {
-			System.out.println("Lesen des Objektes");
+			logger.debug("Lesen des Objektes");
 			try {
 				o = iStream.readObject();
 				if ((o instanceof Integer) && (((Integer) o).equals(0))){
@@ -66,8 +76,8 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 				e.printStackTrace();
 			}
 			// Empfangene Daten der Gui hinzufuegen
-			if(!ThinPeerJxtaImpl.getInstance().getGui().isEnabled())
-				ThinPeerJxtaImpl.getInstance().getGui().setEnabled(true);
+			if(!thinPeerJxtaImpl.getGui().isEnabled())
+				thinPeerJxtaImpl.getGui().setEnabled(true);
 			Log.addResult(queryId, o);
 		}
 

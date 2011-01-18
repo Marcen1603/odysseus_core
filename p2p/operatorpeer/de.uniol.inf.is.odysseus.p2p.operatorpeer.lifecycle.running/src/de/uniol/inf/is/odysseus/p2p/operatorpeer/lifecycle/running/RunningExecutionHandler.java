@@ -2,35 +2,43 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.running;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPeer, IExecutor> {
+public class RunningExecutionHandler extends AbstractExecutionHandler<IExecutor> {
 
+	static Logger logger = LoggerFactory.getLogger(RunningExecutionHandler.class);
+	
 	public RunningExecutionHandler() {
 		super();
 		setProvidedLifecycle(Lifecycle.RUNNING);
 	}
 	
+	public RunningExecutionHandler(
+			RunningExecutionHandler runningExecutionHandler) {
+		super(runningExecutionHandler);
+	}
+
 	@Override
-	public IExecutionHandler<AbstractPeer, IExecutor> clone()  {
-		IExecutionHandler<AbstractPeer, IExecutor> handler = new RunningExecutionHandler();
-		handler.setFunction(getFunction());
-		handler.setPeer(getPeer());
-		handler.setExecutionListenerCallback(getExecutionListenerCallback());
-		return handler;
+	public IExecutionHandler<IExecutor> clone()  {
+		return new RunningExecutionHandler(this);
 	}
 
 	@Override
@@ -40,16 +48,17 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 
 	@Override
 	public void run() {
-		System.out.println("running wird ausgeführt");
+		logger.debug("running wird ausgefuehrt");
 		try {
 
 		for(Subplan s :getExecutionListenerCallback().getQuery().getSubPlans().values()) {
 			if(s.getStatus() == Lifecycle.GRANTED) {
-				System.out.println("Füge hinzu: "+AbstractTreeWalker.prefixWalk(s.getAo(),
+				logger.debug("Fuege hinzu: "+AbstractTreeWalker.prefixWalk(s.getAo(),
 						new AlgebraPlanToStringVisitor()));
 				User user = GlobalState.getActiveUser();
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();
-				getFunction().addQuery(s.getAo(), user, dd, new ParameterPriority(2));		
+				List<IQueryBuildSetting<?>> cfg = getFunction().getQueryBuildConfiguration("Standard");
+				getFunction().addQuery(s.getAo(), user, dd, cfg.toArray(new IQueryBuildSetting[0]));		
 			}
 		}
 		
@@ -70,11 +79,11 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 	}
 	
 	@Override
-	public void setPeer(AbstractPeer peer) {
+	public void setPeer(IOdysseusPeer peer) {
 		super.setPeer(peer);
 		Method[] methods = peer.getClass().getMethods();
 		for(Method m : methods) {
-			if(m.getReturnType().toString().equals("interface de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor")) {
+			if(m.getReturnType() == IExecutor.class) {
 				try {
 					setFunction((IExecutor) m.invoke(peer,(Object[])null));
 					break;

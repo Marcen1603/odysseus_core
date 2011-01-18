@@ -16,3 +16,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.osgi.framework;version="1.3.0"
 Service-Component: OSGI-INF/QuerySelectionStrategy.xml
 Require-Bundle: de.uniol.inf.is.odysseus
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

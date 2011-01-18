@@ -1,21 +1,24 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener;
 
 import java.util.Enumeration;
+import java.util.List;
 
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -29,12 +32,14 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 public class SourceListenerJxtaImpl implements ISourceListener,
 		DiscoveryListener {
 
+	static Logger logger = LoggerFactory
+			.getLogger(SourceListenerJxtaImpl.class);
+
 	private int WAIT_TIME = 10000;
 
 	private IExecutor executor;
 
-	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration("relational", ITimeInterval.class));
+	private AdministrationPeerJxtaImpl administrationPeerJxtaImpl;
 
 	public IExecutor getExecutor() {
 		return executor;
@@ -43,8 +48,9 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 	public SourceListenerJxtaImpl() {
 	}
 
-	public SourceListenerJxtaImpl(IExecutor executor) {
+	public SourceListenerJxtaImpl(IExecutor executor, AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
 		this.executor = executor;
+		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 	}
 
 	@Override
@@ -54,8 +60,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			AdministrationPeerJxtaImpl
-					.getInstance()
+			administrationPeerJxtaImpl
 					.getDiscoveryService()
 					.getRemoteAdvertisements(null, DiscoveryService.ADV,
 							"sourceName", "*", 20, this);
@@ -63,7 +68,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 	}
 
 	@Override
-	public void discoveryEvent(DiscoveryEvent ev) {
+	public synchronized void discoveryEvent(DiscoveryEvent ev) {
 
 		DiscoveryResponseMsg res = ev.getResponse();
 		SourceAdvertisement adv = null;
@@ -74,23 +79,26 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 					Object source = en.nextElement();
 					if (source instanceof SourceAdvertisement) {
 						adv = (SourceAdvertisement) source;
-						AdministrationPeerJxtaImpl.getInstance().getSources()
+						//logger.debug("Found Source " + adv.getSourceName());
+
+						administrationPeerJxtaImpl.getSources()
 								.put(adv.getSourceName(), adv);
 						User user = GlobalState.getActiveUser();
 						IDataDictionary datadictionary = GlobalState
 								.getActiveDatadictionary();
 						// Nur eintragen, wenn nicht eh schon vorhanden
+						ILogicalOperator v = null;
 						try {
-							datadictionary.getViewOrStream(adv.getSourceName(),
+							v = datadictionary.getViewOrStream(adv.getSourceName(),
 									user);
-							getExecutor().addQuery(adv.getSourceScheme(),
-									"CQL", user, datadictionary,
-									this.trafoConfigParam,
-									new ParameterPriority(2));
-							
 						} catch (Exception e) {
-							// View already exists 
-							// ignore
+						}
+						if (v == null){
+							logger.debug("Adding to DD " + adv.getSourceName());
+							List<IQueryBuildSetting<?>> cfg = executor.getQueryBuildConfiguration("Standard");
+							getExecutor().addQuery(adv.getSourceScheme(),
+									adv.getLanguage(), user, datadictionary,
+									cfg.toArray(new IQueryBuildSetting[0]));
 						}
 					} else {
 						return;

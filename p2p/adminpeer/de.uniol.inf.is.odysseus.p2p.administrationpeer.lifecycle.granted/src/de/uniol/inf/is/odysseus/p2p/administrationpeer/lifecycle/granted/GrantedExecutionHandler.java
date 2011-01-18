@@ -2,34 +2,32 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.granted;
 
 import java.util.HashMap;
 
-import net.jxta.endpoint.Message;
-import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
-public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> {
+public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessageSender> {
 
 	public GrantedExecutionHandler() {
 		super();
 		setProvidedLifecycle(Lifecycle.GRANTED);
 	}
 	
+	public GrantedExecutionHandler(
+			GrantedExecutionHandler grantedExecutionHandler) {
+		super(grantedExecutionHandler);
+	}
+
 	@Override
-	public IExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> clone()  {
-		IExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> handler = new GrantedExecutionHandler();
-		handler.setFunction(getFunction());
-		handler.setPeer(getPeer());
-		handler.setExecutionListenerCallback(getExecutionListenerCallback());
-		handler.setProvidedLifecycle(getProvidedLifecycle());
-		return handler;
+	public IExecutionHandler<JxtaMessageSender> clone()  {
+		return new GrantedExecutionHandler(this);
 	}
 
 	@Override
@@ -63,10 +61,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPe
 			}
 			
 		}
-//		
-//		Thread t = new Thread(handler);
-//		t.start();
-//		while(true) {
+
 		synchronized (this) {
 			try {
 				this.wait(5000);
@@ -76,32 +71,12 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPe
 				getPeer().deregisterMessageHandler(handler);
 			}
 		}
-//			if(!t.isAlive()) {
-//				getPeer().deregisterMessageHandler(handler);
-//				break;
-//			}
-//		}
 	}
-	@SuppressWarnings("unchecked")
+
 	@Override
-	public void setPeer(AbstractPeer peer) {
+	public void setPeer(IOdysseusPeer peer) {
 		super.setPeer(peer);
-		setFunction((MessageSender<PeerGroup, Message, PipeAdvertisement>) getPeer().getMessageSender());
-//		Method[] methods = peer.getClass().getMethods();
-//		for(Method m : methods) {
-//			if(m.getReturnType().toString().equals("interface de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.IMessageSender")) {
-//				try {
-//					setFunction((MessageSender<PeerGroup,Message,PipeAdvertisement>) m.invoke((Object[])null));
-//					break;
-//				} catch (IllegalArgumentException e) {
-//					e.printStackTrace();
-//				} catch (IllegalAccessException e) {
-//					e.printStackTrace();
-//				} catch (InvocationTargetException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
+		setFunction((JxtaMessageSender) getPeer().getMessageSender());
 	}
 	
 }

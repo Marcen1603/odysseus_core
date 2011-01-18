@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IP2PPOEventListener;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 
 public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
@@ -26,13 +27,12 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 
 	private ObjectOutputStream oout;
 
-	public P2PPOEventListenerJxtaImpl(String queryId, PipeAdvertisement pipeAdv) {
+	public P2PPOEventListenerJxtaImpl(String queryId, PipeAdvertisement pipeAdv, OperatorPeerJxtaImpl peer) {
 		this.queryId = queryId;
 		this.pipeAdvertisement = pipeAdv;
 
 		try {
-			socket = new JxtaSocket(OperatorPeerJxtaImpl.getInstance()
-					.getNetPeerGroup(), null, pipeAdv, 8000, true);
+			socket = new JxtaSocket(peer.getNetPeerGroup(), null, pipeAdv, 8000, true);
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -72,7 +72,7 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 	}
 
 	@Override
-	public void eventOccured(IEvent poEvent) {
+	public void eventOccured(IEvent<?,?> poEvent) {
 		Log.logEvent(queryId, "Event aufgetreten: "
 				+ poEvent.getEventType().toString());
 		sendEvent((POEvent)poEvent);
@@ -89,7 +89,6 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 			oout.writeObject(msg);
 			oout.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

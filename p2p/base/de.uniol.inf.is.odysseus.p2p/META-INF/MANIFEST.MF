@@ -24,3 +24,4 @@ Export-Package: de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
  de.uniol.inf.is.odysseus.p2p.queryhandling
 Require-Bundle: de.uniol.inf.is.odysseus
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

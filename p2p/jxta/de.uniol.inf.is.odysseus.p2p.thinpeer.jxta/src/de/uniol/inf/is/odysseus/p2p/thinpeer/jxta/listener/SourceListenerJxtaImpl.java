@@ -19,8 +19,11 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 	
 	//Wieviele Advertisements pro Peer
 	private int ADVS_PER_PEER=20;
+
+	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 	
-	public SourceListenerJxtaImpl() {
+	public SourceListenerJxtaImpl(ThinPeerJxtaImpl thinPeerJxtaImpl) {
+		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			ThinPeerJxtaImpl.getInstance().getDiscoveryService().getRemoteAdvertisements(null,
+			thinPeerJxtaImpl.getDiscoveryService().getRemoteAdvertisements(null,
 					DiscoveryService.ADV, "sourceName", "*", ADVS_PER_PEER, this);
 		}
 	}
@@ -46,7 +49,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 					Object temp2 = en.nextElement();
 					if (temp2 instanceof SourceAdvertisement) {
 						adv = (SourceAdvertisement) temp2;
-						ThinPeerJxtaImpl.getInstance().getSources().put(adv.getSourceName(),
+						thinPeerJxtaImpl.getSources().put(adv.getSourceName(),
 								adv);
 					} else {
 						return;
