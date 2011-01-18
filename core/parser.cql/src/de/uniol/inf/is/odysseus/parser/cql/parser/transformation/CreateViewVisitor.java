@@ -30,6 +30,7 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 		
 		CQLParser parser = new CQLParser();
 		parser.setUser(caller);
+		parser.setDataDictionary(dd);
 		ILogicalOperator operator = ((List<IQuery>) parser.visit((ASTPriorizedStatement) node.jjtGetChild(1), null)).get(0).getLogicalPlan();
 		
 		if (dd.containsViewOrStream(viewName, caller)) {

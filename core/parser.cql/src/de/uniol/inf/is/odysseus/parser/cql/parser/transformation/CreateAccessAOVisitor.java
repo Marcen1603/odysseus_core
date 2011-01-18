@@ -230,6 +230,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
 		v.setUser(caller);
+		v.setDataDictionary(dd);
 		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
 				childNode, null);
 
