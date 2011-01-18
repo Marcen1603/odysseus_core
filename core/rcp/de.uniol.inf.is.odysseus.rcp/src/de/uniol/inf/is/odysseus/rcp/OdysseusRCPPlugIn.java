@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.rcp;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.eclipse.ui.ide.IDE;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 	
 	public static final String TENANT_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.TenantView";
+	public static final String NAVIGATOR_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView";
 	
 	public static final String OBSERVER_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective";
 	public static final String QUERIES_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
@@ -31,6 +33,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		ImageManager.getInstance().register("percentile", "icons/document-tag.png");
 		ImageManager.getInstance().register("tenant", "icons/user-business.png");
 		ImageManager.getInstance().register("role", "icons/tick-small-circle.png");
+		
+		IDE.registerAdapters();
 		
 		instance = this;
 	}

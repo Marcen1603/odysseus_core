@@ -18,7 +18,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.NavigatorView.popup?after=group.build">
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView.popup?after=group.build">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
                label="Run Query"
