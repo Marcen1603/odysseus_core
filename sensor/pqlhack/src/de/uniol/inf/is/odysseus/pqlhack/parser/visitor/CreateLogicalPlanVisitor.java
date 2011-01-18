@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
@@ -2250,11 +2249,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
-		ao.setPredObjListPath(identifier.getName());
-
-		identifier = (ASTIdentifier) node.jjtGetChild(2);
 		ao.setScanObjListPath(identifier.getName());
 
+		identifier = (ASTIdentifier) node.jjtGetChild(2);
+		ao.setPredObjListPath(identifier.getName());
+		
 		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
 		ao.setExpressionString(expression.toString());
 
@@ -2279,10 +2278,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ao.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
-		ao.setPredObjListPath(identifier.getName());
+		ao.setScanObjListPath(identifier.getName());
 
 		identifier = (ASTIdentifier) node.jjtGetChild(2);
-		ao.setScanObjListPath(identifier.getName());
+		ao.setPredObjListPath(identifier.getName());
 
 		ASTExpression expression = (ASTExpression) node.jjtGetChild(3);
 		ao.setExpressionString(expression.toString());
