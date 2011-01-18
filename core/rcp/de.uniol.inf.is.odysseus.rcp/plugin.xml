@@ -16,6 +16,10 @@
             name="Tenants and Users"
             restorable="true">
       </view>
+      <category
+            id="Odysseus"
+            name="Odysseus">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -29,6 +33,14 @@
                relative="org.eclipse.ui.editorss">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective"
+            id="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective"
+            name="Observer">
+      </perspective>
    </extension>
 
 </plugin>

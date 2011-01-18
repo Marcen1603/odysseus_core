@@ -5,7 +5,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-import de.uniol.inf.is.odysseus.rcp.perspective.observer.IObserverPerspectiveConstants;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
@@ -17,7 +17,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
 	public String getInitialWindowPerspectiveId() {
-		return IObserverPerspectiveConstants.PERSPECTIVE_ID;
+		return OdysseusRCPPlugIn.OBSERVER_PERSPECTIVE_ID;
 	}
 
 	@Override
