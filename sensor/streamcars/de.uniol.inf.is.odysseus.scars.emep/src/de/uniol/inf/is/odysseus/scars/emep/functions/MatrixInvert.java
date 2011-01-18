@@ -30,7 +30,8 @@ public class MatrixInvert extends AbstractFunction<Object> {
 	 */
 	@Override
 	public Object getValue() {
-		return new RealMatrixImpl((double[][])getInputValue(0)).inverse().getData();
+		double[][] i = new RealMatrixImpl((double[][])getInputValue(0)).inverse().getData();
+		return i;
 	}
 
 	/*

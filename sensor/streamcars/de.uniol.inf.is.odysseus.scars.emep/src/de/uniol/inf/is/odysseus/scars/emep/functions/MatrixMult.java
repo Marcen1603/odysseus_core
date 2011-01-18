@@ -31,11 +31,13 @@ public class MatrixMult extends AbstractFunction<Object> {
 	@Override
 	public Object getValue() {
 		if (getInputValue(1) instanceof double[][]) {
-			return new RealMatrixImpl((double[][]) getInputValue(0))
+			double[][] res = new RealMatrixImpl((double[][]) getInputValue(0))
 					.multiply(new RealMatrixImpl((double[][]) getInputValue(1))).getData();
+			return res;
 		} else {
-			return new RealMatrixImpl((double[][]) getInputValue(0))
+			double[][] res = new RealMatrixImpl((double[][]) getInputValue(0))
 					.scalarMultiply((Double) getInputValue(1)).getData();
+			return res;
 		}
 	}
 

@@ -30,7 +30,8 @@ public class MatrixAdd extends AbstractFunction<Object> {
 	 */
 	@Override
 	public Object getValue() {
-		return new RealMatrixImpl((double[][]) getInputValue(0)).add(new RealMatrixImpl((double[][]) getInputValue(1))).getData();
+		double[][] holyShit = new RealMatrixImpl((double[][]) getInputValue(0)).add(new RealMatrixImpl((double[][]) getInputValue(1))).getData();
+		return holyShit;
 	}
 
 	/*

@@ -30,7 +30,8 @@ public class MatrixTranspose extends AbstractFunction<Object> {
 	 */
 	@Override
 	public Object getValue() {
-		return new RealMatrixImpl((double[][]) getInputValue(0)).transpose().getData();
+		double[][] v = new RealMatrixImpl((double[][]) getInputValue(0)).transpose().getData();
+		return v;
 	}
 
 	/*

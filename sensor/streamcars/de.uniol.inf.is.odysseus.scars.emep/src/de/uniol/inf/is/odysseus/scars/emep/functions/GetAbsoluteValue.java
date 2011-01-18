@@ -28,10 +28,11 @@ public class GetAbsoluteValue extends AbstractFunction<Object>{
 	 */
 	@Override
 	public Object getValue() {
-		if((Double)getInputValue(0) < 1) {
-			return ((Double)getInputValue(0)*(-1));
+		double d = (Double)getInputValue(0);
+		if(d < 0) {
+			return (d*(-1));
 		} else {
-			return getInputValue(0);
+			return d;
 		}
 	}
 

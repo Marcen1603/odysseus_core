@@ -28,7 +28,8 @@ public class SqrtValue extends AbstractFunction<Object>{
 	 */
 	@Override
 	public Object getValue() {
-		return Math.sqrt((Double)getInputValue(0));
+		double d = Math.sqrt((Double)getInputValue(0));
+		return d;
 	}
 
 	/*

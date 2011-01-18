@@ -28,7 +28,8 @@ public class MatrixGetEntry extends AbstractFunction<Object>{
 	 */
 	@Override
 	public Object getValue() {
-		return ((double[][]) getInputValue(0))[((Double)getInputValue(1)).intValue()][((Double)getInputValue(2)).intValue()];
+		double d = ((double[][]) getInputValue(0))[((Double)getInputValue(1)).intValue()][((Double)getInputValue(2)).intValue()];
+		return d;
 	}
 
 	/*

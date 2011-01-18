@@ -29,7 +29,8 @@ public class SquareValue extends AbstractFunction<Object>{
 	 */
 	@Override
 	public Object getValue() {
-		return (Double)getInputValue(0)*(Double)getInputValue(0);
+		double dd = (Double)getInputValue(0)*(Double)getInputValue(0);
+		return dd;
 	}
 
 	/*
