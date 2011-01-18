@@ -236,7 +236,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			checkHaving.init(attributeResolver);
 			checkHaving.visit(statement, null);
 
-			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller);
+			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller, dataDictionary);
 			joinVisitor.init(attributeResolver);
 			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(
 					statement, null);

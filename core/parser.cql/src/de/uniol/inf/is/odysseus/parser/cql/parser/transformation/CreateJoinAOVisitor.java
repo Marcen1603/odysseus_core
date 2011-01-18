@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
@@ -57,10 +58,12 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
 	private User caller;
+	private IDataDictionary dataDictionary;
 
-	public CreateJoinAOVisitor(User caller) {
+	public CreateJoinAOVisitor(User caller, IDataDictionary dd) {
 		super();
 		this.caller = caller;
+		this.dataDictionary = dd;
 	}
 
 	public void init(AttributeResolver attributeResolver) {
@@ -337,6 +340,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	private AbstractLogicalOperator subquery(ASTComplexSelectStatement query) {
 		CQLParser v = new CQLParser();
 		v.setUser(caller);
+		v.setDataDictionary(dataDictionary);
 		return (AbstractLogicalOperator) v.visit(query, null);
 	}
 
