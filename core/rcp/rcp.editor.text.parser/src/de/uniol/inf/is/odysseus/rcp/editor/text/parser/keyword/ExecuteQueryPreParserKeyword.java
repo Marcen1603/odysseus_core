@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class ExecuteQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
 
 	// Query selbst ausführen...
+	@Override
 	protected Object exec(String parserID, String transCfg, String queryText, User caller, IDataDictionary dd) throws PlanManagementException {
 		parserID = parserID.trim();
 		transCfg = transCfg.trim();

@@ -446,6 +446,7 @@ public class QueryViewPart extends ViewPart implements
 			this.column.getColumn().addSelectionListener(
 					new SelectionAdapter() {
 
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							if (ColumnViewerSorter.this.viewer.getComparator() != null) {
 								if (ColumnViewerSorter.this.viewer
@@ -492,6 +493,7 @@ public class QueryViewPart extends ViewPart implements
 			}
 		}
 
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return direction * doCompare(viewer, e1, e2);
 		}

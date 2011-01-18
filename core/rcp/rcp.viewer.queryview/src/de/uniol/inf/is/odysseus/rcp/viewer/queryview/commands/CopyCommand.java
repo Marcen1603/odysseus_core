@@ -10,7 +10,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 
 public class CopyCommand extends AbstractHandler implements IHandler {
 

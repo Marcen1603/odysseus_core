@@ -53,6 +53,7 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart<Doub
 		}
 	}
 
+	@Override
 	protected void decorateChart(JFreeChart chart) {
 		CategoryPlot plot = chart.getCategoryPlot();
 		chart.setAntiAlias(true);

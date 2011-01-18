@@ -23,6 +23,7 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart<Do
 
 	private int maxAdjustTimes = 10;
 
+	@Override
 	public void init(IPhysicalOperator observingOperator) {
 		super.init(observingOperator);
 	}
@@ -51,6 +52,7 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart<Do
 		});
 	}
 
+	@Override
 	protected void decorateChart(JFreeChart chart) {
 		if (chart.getPlot() instanceof CategoryPlot) {
 			CategoryPlot plot = chart.getCategoryPlot();

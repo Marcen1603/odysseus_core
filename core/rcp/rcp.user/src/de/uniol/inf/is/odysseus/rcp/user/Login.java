@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
-import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.user.impl.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.user.impl.LoginWindow;
 import de.uniol.inf.is.odysseus.usermanagement.User;

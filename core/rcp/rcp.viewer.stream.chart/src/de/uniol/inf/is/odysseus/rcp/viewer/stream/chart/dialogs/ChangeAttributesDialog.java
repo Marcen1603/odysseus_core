@@ -87,6 +87,7 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 			check.setData(a);
 			check.setSelection(this.activatedAttributes.contains(a));
 			check.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					Button thisButton = (Button) e.widget;					
 					IViewableAttribute selAtt = (IViewableAttribute) thisButton.getData();

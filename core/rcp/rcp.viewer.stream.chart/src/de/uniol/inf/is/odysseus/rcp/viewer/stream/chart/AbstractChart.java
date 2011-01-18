@@ -197,6 +197,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	}
 
+	@Override
 	public String getTitle() {
 		return "";
 	}

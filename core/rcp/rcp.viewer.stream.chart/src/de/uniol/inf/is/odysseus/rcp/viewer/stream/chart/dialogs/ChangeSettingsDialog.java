@@ -129,6 +129,7 @@ public class ChangeSettingsDialog extends TitleAreaDialog {
 			combo.select(combo.indexOf(entry.getValue().toString()));
 
 			combo.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent event) {
 					setValueType(entry, combo.getText());
 					// combo.dispose();
@@ -169,6 +170,7 @@ public class ChangeSettingsDialog extends TitleAreaDialog {
 		check.setData(value);
 		check.setSelection(value);
 		check.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Button thisButton = (Button) e.widget;
 				entry.setValue(thisButton.getSelection());

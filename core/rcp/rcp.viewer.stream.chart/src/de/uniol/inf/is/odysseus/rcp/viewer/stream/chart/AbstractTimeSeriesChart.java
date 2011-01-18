@@ -78,6 +78,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 		});
 	}
 
+	@Override
 	protected void decorateChart(JFreeChart thechart) {
 		thechart.setBackgroundPaint(DEFAULT_BACKGROUND);
 		thechart.getXYPlot().setBackgroundPaint(DEFAULT_BACKGROUND);

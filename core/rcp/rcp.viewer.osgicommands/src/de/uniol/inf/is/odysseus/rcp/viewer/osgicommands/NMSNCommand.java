@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
-import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
