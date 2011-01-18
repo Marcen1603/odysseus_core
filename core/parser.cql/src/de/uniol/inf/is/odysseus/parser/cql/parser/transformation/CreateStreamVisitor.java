@@ -106,6 +106,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTPriorizedStatement node, Object data) {
 		CQLParser parser = new CQLParser();
 		parser.setUser(caller);
+		parser.setDataDictionary(dd);
 		operator = ((List<IQuery>) parser.visit(node, null)).get(0).getLogicalPlan();
 		SDFAttributeList otherAttributes = operator.getOutputSchema();
 
