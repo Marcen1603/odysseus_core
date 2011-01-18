@@ -72,7 +72,7 @@
       <wizard
             canFinishEarly="false"
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.editor.wizard.NewLogicalPlanWizard"
+            class="de.uniol.inf.is.odysseus.rcp.editor.wizard.LogicalPlanWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspective.queries"
             hasPages="true"
             icon="icons/plan.png" id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard"

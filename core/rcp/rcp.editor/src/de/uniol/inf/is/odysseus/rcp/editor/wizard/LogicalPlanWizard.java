@@ -5,6 +5,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -12,13 +13,12 @@ import de.uniol.inf.is.odysseus.rcp.editor.ILogicalPlanEditorConstants;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
-public class NewLogicalPlanWizard extends Wizard implements INewWizard {
+public class LogicalPlanWizard extends Wizard implements INewWizard {
 
 	private CreateNewFileWizardPage page;
-	
-	public NewLogicalPlanWizard() {
+
+	public LogicalPlanWizard() {
 		super();
 		setWindowTitle("New Query Text");
 		setNeedsProgressMonitor(true);
@@ -26,9 +26,9 @@ public class NewLogicalPlanWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		page = new CreateNewFileWizardPage("CreateFilePage", selection, "Odysseus Script", "Query.qry");
+		page = new CreateNewFileWizardPage("CreateFilePage", selection, "Odysseus Script", "Query.pln");
 	}
-	
+
 	@Override
 	public void addPages() {
 		addPage(page);
@@ -36,24 +36,22 @@ public class NewLogicalPlanWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
-		try {
-			IFile newFile = page.createNewFile();
-			
+		IFile newFile = page.createNewFile();
+		if (newFile != null) {
 			// leeren plan reinschreiben
 			OperatorPlan plan = new OperatorPlan();
 			IOperatorPlanExporter exporter = new OperatorPlanExporter(newFile);
 			exporter.save(plan);
 
 			// open editor
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(
-					new FileEditorInput(newFile), 
-					ILogicalPlanEditorConstants.LOGICAL_PLAN_EDITOR_ID, 
-					true);
-			
+			try {
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(newFile), ILogicalPlanEditorConstants.LOGICAL_PLAN_EDITOR_ID, true);
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
+
 			return true;
-		} catch (Exception ex ) {
-			new ExceptionWindow(ex);
-			return false;
 		}
+		return false;
 	}
 }
