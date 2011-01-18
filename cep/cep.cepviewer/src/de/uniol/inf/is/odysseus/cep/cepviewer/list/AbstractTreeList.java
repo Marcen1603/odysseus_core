@@ -8,15 +8,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.AbstractTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.LabelTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.MachineTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.TreeContentProvider;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.TreeLabelProvider;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPStatus;
-import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.AbstractTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.LabelTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.MachineTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.TreeContentProvider;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.TreeLabelProvider;
 
 /**
  * This abstract Class defines a tree list.
@@ -25,12 +23,12 @@ import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
  */
 public abstract class AbstractTreeList extends Composite {
 
-	// the tree which should be represented
-	protected TreeViewer tree;
-	// the root element of the tree
-	protected AbstractTreeItem root;
 	// the listener
 	protected CEPTreeListListener listener;
+	// the root element of the tree
+	protected AbstractTreeItem root;
+	// the tree which should be represented
+	protected TreeViewer tree;
 
 	/**
 	 * This is the constructor.
@@ -52,6 +50,21 @@ public abstract class AbstractTreeList extends Composite {
 		this.tree.addSelectionChangedListener(listener);
 	}
 
+	/**
+	 * This method should add an object to the tree, if the objectis an instance
+	 * of the right class.
+	 * 
+	 * @param object
+	 *            is an object of the class CEPInstance
+	 */
+	public abstract void addToTree(CEPInstance object);
+
+	/**
+	 * This method creates the context menu for the TreeViewer.
+	 * 
+	 * @param view
+	 *            is the view which holds the TreeViewer widget.
+	 */
 	public void createContextMenu(CEPListView view) {
 		MenuManager menuManager = new MenuManager();
 		Menu contextMenu = menuManager.createContextMenu(this.tree.getTree());
@@ -61,32 +74,48 @@ public abstract class AbstractTreeList extends Composite {
 	}
 
 	/**
-	 * This method should add an object to the tree, if the objectis an instance
-	 * of the right class.
+	 * This method should remove an InstanceTreeItem from the tree within the
+	 * TreeViewer.
 	 * 
-	 * @param object
-	 *            is an object
+	 * @param item
+	 *            is the item which should be removed
 	 */
-	public abstract void addToTree(CEPInstance object);
-
-	public abstract void removeAll();
-
 	public abstract boolean remove(InstanceTreeItem item);
 
+	/**
+	 * This method should remove a MachineTreeItem and all InstanceTreeItems
+	 * which are children of the MachineTreeItem from the tree within the
+	 * TreeViewer.
+	 * 
+	 * @param item
+	 *            is the item which should be removed
+	 */
 	public abstract boolean remove(MachineTreeItem item);
 
-	public abstract void stateChanged(StateMachineInstance<?> instance);
+	/**
+	 * This method should remove all enties from the tree within the TreeViewer.
+	 * 
+	 * @param object
+	 *            is an object of the class CEPInstance
+	 */
+	public abstract void removeAll();
 
-	public abstract void statusChanged(StateMachineInstance<?> instance,
-			CEPStatus status);
+	/**
+	 * This is the getter for the CEPTreeListListener.
+	 * 
+	 * @return the listener
+	 */
+	public CEPTreeListListener getListener() {
+		return listener;
+	}
 
+	/**
+	 * This is the getter for the TreeViewer.
+	 * 
+	 * @return the insatcne of the TreeViewer
+	 */
 	public TreeViewer getTree() {
 		return tree;
 	}
 
-	public CEPTreeListListener getListener() {
-		return listener;
-	}
-	
-	
 }

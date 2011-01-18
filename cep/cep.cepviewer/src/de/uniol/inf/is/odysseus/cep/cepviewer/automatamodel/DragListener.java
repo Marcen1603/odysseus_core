@@ -18,10 +18,10 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.CEPStateView;
 public class DragListener extends MouseMotionListener.Stub implements
 		MouseListener {
 
-	// is the initial point for calculating the new position
-	private Point initialPoint;
 	// is the state that is currently draged
 	private AbstractState draggingState;
+	// is the initial point for calculating the new position
+	private Point initialPoint;
 
 	/**
 	 * This is the constructor.
@@ -32,6 +32,60 @@ public class DragListener extends MouseMotionListener.Stub implements
 	public DragListener(AbstractState state) {
 		state.addMouseMotionListener(this);
 		state.addMouseListener(this);
+	}
+
+	/**
+	 * This method is called if the mouse button was clicked.
+	 * 
+	 * @param event
+	 *            is the mouse event which happened
+	 */
+	public void mouseClicked(MouseEvent event) {
+		// do nothing
+	}
+
+	/**
+	 * This method is called if the mouse button was clicked two times.
+	 * 
+	 * @param event
+	 *            is the mouse event which happened
+	 */
+	public void mouseDoubleClicked(MouseEvent event) {
+		// do nothing
+	}
+
+	/**
+	 * This method is called if the mouse button is pressed and the mouse is
+	 * dragged.
+	 * 
+	 * @param event
+	 *            is the mouse event which happened
+	 */
+	public void mouseDragged(MouseEvent event) {
+		// null check to avoid exception
+		if (this.initialPoint != null) {
+			// calculate the new position of the state
+			Point newPoint = event.getLocation();
+			Dimension d = newPoint.getDifference(this.initialPoint);
+			this.initialPoint = newPoint;
+			// set new location of the state
+			this.draggingState.setBounds(this.draggingState.getBounds()
+					.getTranslated(d.width, d.height));
+		}
+	}
+
+	/**
+	 * This method is called if the mouse button is pressed.
+	 * 
+	 * @param event
+	 *            is the mouse event which happened
+	 */
+	public void mousePressed(MouseEvent event) {
+		// If the is no state registered to be dragged, register it.
+		if (initialPoint == null) {
+			this.initialPoint = event.getLocation();
+			this.draggingState = (AbstractState) event.getSource();
+		}
 	}
 
 	/**
@@ -58,60 +112,6 @@ public class DragListener extends MouseMotionListener.Stub implements
 					break;
 				}
 			}
-		}
-	}
-
-	/**
-	 * This method is called if the mouse button was clicked.
-	 * 
-	 * @param event
-	 *            is the mouse event which happened
-	 */
-	public void mouseClicked(MouseEvent event) {
-		// do nothing
-	}
-
-	/**
-	 * This method is called if the mouse button was clicked two times.
-	 * 
-	 * @param event
-	 *            is the mouse event which happened
-	 */
-	public void mouseDoubleClicked(MouseEvent event) {
-		// do nothing
-	}
-
-	/**
-	 * This method is called if the mouse button is pressed.
-	 * 
-	 * @param event
-	 *            is the mouse event which happened
-	 */
-	public void mousePressed(MouseEvent event) {
-		// If the is no state registered to be dragged, register it.
-		if (initialPoint == null) {
-			this.initialPoint = event.getLocation();
-			this.draggingState = (AbstractState) event.getSource();
-		}
-	}
-
-	/**
-	 * This method is called if the mouse button is pressed and the mouse is
-	 * dragged.
-	 * 
-	 * @param event
-	 *            is the mouse event which happened
-	 */
-	public void mouseDragged(MouseEvent event) {
-		// null check to avoid exception
-		if (this.initialPoint != null) {
-			// calculate the new position of the state
-			Point newPoint = event.getLocation();
-			Dimension d = newPoint.getDifference(this.initialPoint);
-			this.initialPoint = newPoint;
-			// set new location of the state
-			this.draggingState.setBounds(this.draggingState.getBounds()
-					.getTranslated(d.width, d.height));
 		}
 	}
 }

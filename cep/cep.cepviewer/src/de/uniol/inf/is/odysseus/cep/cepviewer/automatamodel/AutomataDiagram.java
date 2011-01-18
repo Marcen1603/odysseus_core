@@ -5,7 +5,7 @@ import org.eclipse.draw2d.FreeformLayeredPane;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.MarginBorder;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
 
 /**
  * This class defines the layout of an automata diagram.
@@ -14,7 +14,9 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
  */
 public class AutomataDiagram extends FreeformLayeredPane {
 
+	// the CEPInstance which holds the currently shown automata
 	private CEPInstance instance;
+
 	/**
 	 * This is the constructor of this class. It set the LayoutManager and
 	 * determines the background color.
@@ -26,6 +28,13 @@ public class AutomataDiagram extends FreeformLayeredPane {
 		this.setOpaque(true);
 	}
 
+	/**
+	 * This method add the AbstractStates and AbstractTransitions to the
+	 * diagram.
+	 * 
+	 * @param instance
+	 *            is the class that holds the elements for the automata.
+	 */
 	public void setContent(CEPInstance instance) {
 		this.removeAll();
 		this.instance = instance;
@@ -39,6 +48,12 @@ public class AutomataDiagram extends FreeformLayeredPane {
 		}
 	}
 
+	/**
+	 * This is the getter for the CEPInstance of the Automata that is currently
+	 * shown.
+	 * 
+	 * @return
+	 */
 	public CEPInstance getInstance() {
 		return instance;
 	}

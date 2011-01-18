@@ -15,16 +15,16 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
  */
 public abstract class AbstractState extends Figure {
 
-	// contains the anchors that are used as a source for a transition
-	protected Hashtable<String, Anchor> transTargets = new Hashtable<String, Anchor>();
-	// contains the anchors that are used as a target for a transition
-	protected Hashtable<String, Anchor> transSources = new Hashtable<String, Anchor>();
-	// the corresponding state in a StateMachine
-	protected State state;
-	// the label of the state
-	protected String name;
 	// is the state active
 	protected boolean isActive;
+	// the label of the state
+	protected String name;
+	// the corresponding state in a StateMachine
+	protected State state;
+	// contains the anchors that are used as a target for a transition
+	protected Hashtable<String, Anchor> transSources = new Hashtable<String, Anchor>();
+	// contains the anchors that are used as a source for a transition
+	protected Hashtable<String, Anchor> transTargets = new Hashtable<String, Anchor>();
 
 	/**
 	 * This is the constructor of this class
@@ -58,7 +58,7 @@ public abstract class AbstractState extends Figure {
 	public State getState() {
 		return this.state;
 	}
-	
+
 	/**
 	 * This method returns if the state is active.
 	 * 
@@ -67,7 +67,13 @@ public abstract class AbstractState extends Figure {
 	public boolean isActive() {
 		return this.isActive;
 	}
-	
+
+	/**
+	 * This is the setter for the variable isActive.
+	 * 
+	 * @param status
+	 *            true if the state is active, else false
+	 */
 	public void setActive(boolean status) {
 		this.isActive = status;
 	}

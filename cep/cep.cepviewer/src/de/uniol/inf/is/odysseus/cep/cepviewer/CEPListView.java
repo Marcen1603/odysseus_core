@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.list.CEPEventListener;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
 import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
@@ -34,20 +34,19 @@ public class CEPListView extends ViewPart {
 
 	// the ID of this view
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.listview";
-
-	// the widgets for the list view.
-	private TabFolder tabMenu;
-	private NormalTreeList normalList;
-	private QueryTreeList queryList;
-	private StatusTreeList statusList;
-	private TabItem normalListItem;
-	private TabItem queryListItem;
-	private TabItem statusListItem;
 	private Label infoLabel;
 	// the event listener
 	private CEPEventListener listener;
+	private NormalTreeList normalList;
+	private TabItem normalListItem;
 	// the list of CepOperators handled by the CEPViewer
 	private ArrayList<CepOperator<?, ?>> operators;
+	private QueryTreeList queryList;
+	private TabItem queryListItem;
+	private StatusTreeList statusList;
+	private TabItem statusListItem;
+	// the widgets for the list view.
+	private TabFolder tabMenu;
 
 	/**
 	 * This is the constructor.
@@ -103,6 +102,52 @@ public class CEPListView extends ViewPart {
 	}
 
 	/**
+	 * This method returns the list currently shown in the CEPViewer.
+	 * 
+	 * @return
+	 */
+	public AbstractTreeList getActiveList() {
+		TabItem tab = this.tabMenu.getItem(this.tabMenu.getSelectionIndex());
+		if (tab != null && tab.getControl() instanceof AbstractTreeList) {
+			return (AbstractTreeList) tab.getControl();
+		}
+		return null;
+	}
+
+
+
+	/**
+	 * This method is called, if the state of an instance changed. It checks if
+	 * the changed instance is the same instance as the one selected in the
+	 * currently shown list. If this is the case, the listener of the active
+	 * list is informed to refresh all views with the new data of the instance.
+	 * 
+	 * @param instance
+	 *            is the instance that has been changed.
+	 */
+	public void selectionChanged(StateMachineInstance<?> instance) {
+		AbstractTreeList list = this.getActiveList();
+		IStructuredSelection select = (IStructuredSelection) list.getTree()
+				.getSelection();
+		if (select.getFirstElement() instanceof InstanceTreeItem) {
+			// if the selected item is a CEPInstance show it's data
+			CEPInstance cepInstance = ((InstanceTreeItem) select.getFirstElement())
+					.getContent();
+			if (cepInstance.getInstance().equals(cepInstance)) {
+				list.getListener().select(cepInstance);
+			}
+		}
+
+	}
+
+	/**
+	 * This method is called to set the focus to this view.
+	 */
+	public void setFocus() {
+		this.tabMenu.setFocus();
+	}
+
+	/**
 	 * This method updates the info label with the current numbers of the
 	 * inherited StateMachineInstances.
 	 */
@@ -113,6 +158,7 @@ public class CEPListView extends ViewPart {
 						+ CEPListView.this.normalList.getItemCount()
 						+ StringConst.WHITESPACE;
 				if (CEPListView.this.normalList.getItemCount() >= IntConst.MAX_LIST_ENTRIES) {
+					// if the list can not add more entries...
 					infotext = infotext
 							.concat(StringConst.INFO_MAXIMAL_ENTRIES);
 				} else {
@@ -128,25 +174,14 @@ public class CEPListView extends ViewPart {
 			}
 		});
 	}
-
+	
 	/**
-	 * This method returns the list currently shown in the CEPViewer.
+	 * This is the getter for the event listener.
 	 * 
-	 * @return
+	 * @return the event listener
 	 */
-	public AbstractTreeList getActiveList() {
-		TabItem tab = this.tabMenu.getItem(this.tabMenu.getSelectionIndex());
-		if (tab != null && tab.getControl() instanceof AbstractTreeList) {
-			return (AbstractTreeList) tab.getControl();
-		}
-		return null;
-	}
-
-	/**
-	 * This method is called to set the focus to this view.
-	 */
-	public void setFocus() {
-		this.tabMenu.setFocus();
+	public CEPEventListener getListener() {
+		return listener;
 	}
 
 	/**
@@ -156,6 +191,15 @@ public class CEPListView extends ViewPart {
 	 */
 	public NormalTreeList getNormalList() {
 		return normalList;
+	}
+
+	/**
+	 * This is the getter for the list of handled CepOperators.
+	 * 
+	 * @return the list of handled CepOperators
+	 */
+	public ArrayList<CepOperator<?, ?>> getOperators() {
+		return operators;
 	}
 
 	/**
@@ -174,39 +218,6 @@ public class CEPListView extends ViewPart {
 	 */
 	public StatusTreeList getStatusList() {
 		return statusList;
-	}
-
-	/**
-	 * This is the getter for the list of handled CepOperators.
-	 * 
-	 * @return the list of handled CepOperators
-	 */
-	public ArrayList<CepOperator<?, ?>> getOperators() {
-		return operators;
-	}
-
-	/**
-	 * This is the getter for the event listener.
-	 * 
-	 * @return the event listener
-	 */
-	public CEPEventListener getListener() {
-		return listener;
-	}
-
-	public void selectionChanged(StateMachineInstance<?> content) {
-		AbstractTreeList list = this.getActiveList();
-		IStructuredSelection select = (IStructuredSelection) list.getTree()
-				.getSelection();
-		if (select.getFirstElement() instanceof InstanceTreeItem) {
-			// if the selected item is a CEPInstance show it's data
-			CEPInstance instance = ((InstanceTreeItem) select.getFirstElement())
-					.getContent();
-			if (instance.getInstance().equals(content)) {
-				list.getListener().select(instance);
-			}
-		}
-
 	}
 
 }

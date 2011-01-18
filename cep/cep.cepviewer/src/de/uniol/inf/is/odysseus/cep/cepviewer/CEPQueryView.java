@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AbstractState;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 
 /**
@@ -24,11 +24,10 @@ public class CEPQueryView extends ViewPart {
 
 	// the ID of this view
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.queryview";
-
-	// the widget which holds the informations
-	private Table table;
 	// the row labels
 	private String[] rowLabels;
+	// the widget which holds the informations
+	private Table table;
 
 	/**
 	 * This is the constructor.
@@ -46,12 +45,13 @@ public class CEPQueryView extends ViewPart {
 	/**
 	 * This method clears the view.
 	 */
-	public void clear() {
+	public void clearView() {
 		this.table.removeAll();
 		for (String row : this.rowLabels) {
 			TableItem item = new TableItem(this.table, SWT.NONE);
 			item.setText(0, row);
 		}
+		// resize the columns
 		for (int i = 0; i < this.table.getColumnCount(); i++) {
 			this.table.getColumn(i).pack();
 		}

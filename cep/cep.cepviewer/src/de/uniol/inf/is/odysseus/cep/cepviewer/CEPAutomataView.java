@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.automatamodel.AutomataDiagram;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.swt.SWT;
@@ -18,11 +18,10 @@ public class CEPAutomataView extends ViewPart {
 
 	// the ID of this view
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.automataview";
-
-	// the composite which is the parent to this view
-	private Composite parent;
 	// the widget which displays the diagram
 	private AutomataDiagram diagram;
+	// the composite which is the parent to this view
+	private Composite parent;
 
 	/**
 	 * This is the constructor.
@@ -34,7 +33,7 @@ public class CEPAutomataView extends ViewPart {
 	/**
 	 * This method clears the view.
 	 */
-	public void clear() {
+	public void clearView() {
 		this.diagram.removeAll();
 	}
 
@@ -57,6 +56,13 @@ public class CEPAutomataView extends ViewPart {
 	}
 
 	/**
+	 * This method is called to set the focus to this view.
+	 */
+	public void setFocus() {
+		// do nothing
+	}
+	
+	/**
 	 * This method is called to display the state diagram of a CEPInstance by
 	 * setting the content of the diagram.
 	 * 
@@ -65,13 +71,6 @@ public class CEPAutomataView extends ViewPart {
 	 */
 	public void showAutomata(CEPInstance instance) {
 		this.diagram.setContent(instance);
-	}
-
-	/**
-	 * This method is called to set the focus to this view.
-	 */
-	public void setFocus() {
-		// do nothing
 	}
 
 }

@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.CEPQueryView;
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPStateView;
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPSymbolView;
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPTraceView;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.entry.InstanceTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
 
 /**
  * This Listener handles the selection within the source widget.
@@ -42,13 +42,16 @@ public class CEPTreeListListener implements ISelectionChangedListener {
 		}
 	}
 
-	public void clearAllViews() {
+	/**
+	 * This method clears all Views within the CEPViewer
+	 */
+	private void clearAllViews() {
 		for (IViewReference reference : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
 			if (reference.getId().equals(CEPAutomataView.ID)) {
-				((CEPAutomataView) reference.getView(true)).clear();
+				((CEPAutomataView) reference.getView(true)).clearView();
 			} else if (reference.getId().equals(CEPQueryView.ID)) {
-				((CEPQueryView) reference.getView(true)).clear();
+				((CEPQueryView) reference.getView(true)).clearView();
 			} else if (reference.getId().equals(CEPStateView.ID)) {
 				((CEPStateView) reference.getView(true)).clear();
 			} else if (reference.getId().equals(CEPSymbolView.ID)) {
@@ -60,13 +63,12 @@ public class CEPTreeListListener implements ISelectionChangedListener {
 	}
 
 	/**
-	 * This method sets the CEPInstance to all views or resets them.
+	 * This method sets the CEPInstance to all views.
 	 * 
 	 * @param instance
-	 *            is a CEPInstance or null
+	 *            is a CEPInstance
 	 */
 	public void select(CEPInstance instance) {
-		try{
 		for (IViewReference reference : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
 			if (reference.getId().equals(CEPAutomataView.ID)) {
@@ -80,9 +82,6 @@ public class CEPTreeListListener implements ISelectionChangedListener {
 			} else if (reference.getId().equals(CEPTraceView.ID)) {
 				((CEPTraceView) reference.getView(true)).setContent(instance);
 			}
-		}
-		}catch(Exception e) {
-			e.printStackTrace();
 		}
 	}
 

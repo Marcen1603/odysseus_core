@@ -1,12 +1,22 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer.util;
 
+/**
+ * This class holds the string constants used in this plugin.
+ * 
+ * @author Christian
+ */
 public class StringConst {
-	
 	public static final String ABORTED_IMAGE_LABEL = "instance_aborted";
 	public static final String BREAK = "\n";
 	public static final String EQUALS_SIGN = " = ";
+	public static final String EXCEPTION_CEP_LIST_VIEW_NOT_FOUND = "CEPListView could not be found!";
+	public static final String EXCEPTION_CEPVIEWER_NOT_SHOWN = "CEPViewer could not be shown in the workbench!";
+	public static final String EXCEPTION_NO_CEPOPERATOR_SELECTED = "No CepOperator was selected!";
+	public static final String EXCEPTION_NO_STATEMACHINEINSTANCE= "There was no StateMachineInstance to add!";
 	public static final String FINISHED_IMAGE_LABEL = "instance_finished";
 	public static final String INFO_ALL = "Instances: ";
+	public static final String INFO_MAXIMAL_ENTRIES = "(MAX) ";
+	public static final String LABEL_TREE_ITEM_TEXT = "? (Total ?)";
 	public static final String NORMAL_LIST_TAB_NAME = "Normal-List";
 	public static final String NORMAL_LIST_TOOTIP = "This is an unsorted list.";
 	public static final String PATH_TO_ABORTED_IMAGE = "META-INF/icons/aborted.gif";
@@ -40,7 +50,6 @@ public class StringConst {
 	public static final String TITLE_BREAK = ":\n";
 	public static final String TREE_ITEM_INSTANCE_LABEL = "Instance: ";
 	public static final String TREE_ITEM_MACHINE_LABEL = "Machine: ";
-	public static final String WILDCARD = "\\?";
-	public static final String INFO_MAXIMAL_ENTRIES = "(MAX) ";
 	public static final String WHITESPACE = " ";
+	public static final String WILDCARD = "\\?";
 }

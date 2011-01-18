@@ -17,14 +17,13 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
  */
 public class AutomataState extends AbstractState {
 
-	// holds the widget that inherits this state
+	private Anchor ignoreInAnchor;
+	private Anchor ignoreOutAnchor;
 	// the anchors of this state
 	private Anchor inAnchor;
 	private Anchor outAnchor;
 	private Anchor takeInAnchor;
 	private Anchor takeOutAnchor;
-	private Anchor ignoreInAnchor;
-	private Anchor ignoreOutAnchor;
 	
 	/**
 	 * This is the constructor
@@ -94,45 +93,9 @@ public class AutomataState extends AbstractState {
 			grafic.drawText(name, r.x + (r.width / 3), r.y + (r.height / 3));
 		}
 	}
-
+	
 	/**
-	 * This method returns the specific anchor
-	 * 
-	 * @return the in_anchor
-	 */
-	public Anchor getInAnchor() {
-		return this.inAnchor;
-	}
-
-	/**
-	 * This method returns the specific anchor
-	 * 
-	 * @return the out_anchor
-	 */
-	public Anchor getOutAnchor() {
-		return this.outAnchor;
-	}
-
-	/**
-	 * This method returns the specific anchor
-	 * 
-	 * @return the take_in_anchor
-	 */
-	public Anchor getTakeInAnchor() {
-		return takeInAnchor;
-	}
-
-	/**
-	 * This method returns the specific anchor
-	 * 
-	 * @return the take_out_anchor
-	 */
-	public Anchor getTakeOutAnchor() {
-		return takeOutAnchor;
-	}
-
-	/**
-	 * This method returns the specific anchor
+	 * This method is the getter for the specific anchor.
 	 * 
 	 * @return the ignore_in_anchor
 	 */
@@ -141,12 +104,48 @@ public class AutomataState extends AbstractState {
 	}
 
 	/**
-	 * This method returns the specific anchor
+	 * This method is the getter for the specific anchor.
 	 * 
 	 * @return the ignore_out_anchor
 	 */
 	public Anchor getIgnoreOutAnchor() {
 		return ignoreOutAnchor;
+	}
+
+	/**
+	 * This method is the getter for the specific anchor.
+	 * 
+	 * @return the in_anchor
+	 */
+	public Anchor getInAnchor() {
+		return this.inAnchor;
+	}
+
+	/**
+	 * This method is the getter for the specific anchor.
+	 * 
+	 * @return the out_anchor
+	 */
+	public Anchor getOutAnchor() {
+		return this.outAnchor;
+	}
+
+	/**
+	 * This method is the getter for the specific anchor.
+	 * 
+	 * @return the take_in_anchor
+	 */
+	public Anchor getTakeInAnchor() {
+		return takeInAnchor;
+	}
+
+	/**
+	 * This method is the getter for the specific anchor.
+	 * 
+	 * @return the take_out_anchor
+	 */
+	public Anchor getTakeOutAnchor() {
+		return takeOutAnchor;
 	}
 	
 }

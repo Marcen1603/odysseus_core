@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 
@@ -20,7 +20,6 @@ public class CEPTraceView extends ViewPart {
 
 	// the ID of this view
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.matchingtraceview";
-
 	// the widget which holds the informations
 	private Text text;
 

@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
-
 /**
  * This class defines an transition loop in an automata.
  * 
@@ -18,8 +17,9 @@ import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
  */
 public class TransitionLoop extends AbstractTransition {
 
+	// a list of all Bendpoints
 	private ArrayList<AbsoluteBendpoint> list;
-
+	// the AbstractState which is the source/target of this transition
 	private AutomataState state;
 
 	/**
@@ -54,7 +54,22 @@ public class TransitionLoop extends AbstractTransition {
 		}
 		return points;
 	}
-	
+
+	/**
+	 * This method is called, if the AbstractState is dragged to another
+	 * position within the diagram to update the positions of the Bendpoints.
+	 */
+	public void repaint() {
+		if (this.list != null) {
+			this.setLocations();
+		}
+		super.repaint();
+	}
+
+	/**
+	 * This method computes the new location of the Bendpoints relativly to the
+	 * AbstracteState.
+	 */
 	private void setLocations() {
 		ArrayList<Point> points = this.createLocationPoints();
 		if (this.transition.getAction() == EAction.consumeBufferWrite) {
@@ -71,13 +86,6 @@ public class TransitionLoop extends AbstractTransition {
 								+ IntConst.STATE_SIZE);
 			}
 		}
-	}
-
-	public void repaint() {
-		if(this.list != null) {
-			this.setLocations();
-		}
-		super.repaint();
 	}
 
 }

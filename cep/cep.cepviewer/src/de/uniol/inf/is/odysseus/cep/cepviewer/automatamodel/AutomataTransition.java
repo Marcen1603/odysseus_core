@@ -17,7 +17,6 @@ public class AutomataTransition extends AbstractTransition {
 	public AutomataTransition(Anchor sourceAnchor, Anchor targetAnchor,
 			Transition transition, AbstractState nextState) {
 		super(sourceAnchor, targetAnchor, transition, nextState);
-
 		// set the connection router which directly connects two the anchors
 		setConnectionRouter(ConnectionRouter.NULL);
 	}

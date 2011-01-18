@@ -13,12 +13,12 @@ import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
  */
 public class AbstractTransition extends PolylineConnection {
 
-	// the corresponding transition within a StateMachine
-	protected Transition transition;
 	// the label of this transition
 	protected String name;
 	// the next State in the automata
 	protected AbstractState nextState;
+	// the corresponding transition within a StateMachine
+	protected Transition transition;
 
 	/**
 	 * This is the constructor of this class. IT sets the source and target
@@ -53,12 +53,23 @@ public class AbstractTransition extends PolylineConnection {
 		return name;
 	}
 
-	public Transition getTransition() {
-		return transition;
-	}
-
+	/**
+	 * This is the getter for the AbstractState which is the target of this
+	 * transition.
+	 * 
+	 * @return the targeted AbstractState
+	 */
 	public AbstractState getNextState() {
 		return nextState;
+	}
+
+	/**
+	 * This is the getter for the represented transition.
+	 * 
+	 * @return the represented transition
+	 */
+	public Transition getTransition() {
+		return transition;
 	}
 
 }

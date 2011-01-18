@@ -26,13 +26,12 @@ public class CEPStateView extends ViewPart {
 
 	// the ID of this view
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.stateview";
-
-	// the widget which holds the informations
-	private Table table;
 	// the row labels
 	private String[] rowLabels;
 	// holds the currently shown state
 	private AbstractState state;
+	// the widget which holds the informations
+	private Table table;
 
 	/**
 	 * This is the constructor.
@@ -54,6 +53,7 @@ public class CEPStateView extends ViewPart {
 			TableItem item = new TableItem(this.table, SWT.NONE);
 			item.setText(0, row);
 		}
+		// resize the columns
 		for (int i = 0; i < this.table.getColumnCount(); i++) {
 			this.table.getColumn(i).pack();
 		}
@@ -159,18 +159,22 @@ public class CEPStateView extends ViewPart {
 		});
 	}
 
-	public void update() {
-		if (this.state != null) {
-			table.getItem(2)
-					.setText(1, Boolean.toString(this.state.isActive()));
-		}
-	}
-
 	/**
 	 * This method is called to set the focus to this view.
 	 */
 	public void setFocus() {
 		// do nothing
+	}
+
+	/**
+	 * This method is used to update the entry for the current state of the
+	 * shown instance.
+	 */
+	public void update() {
+		if (this.state != null) {
+			table.getItem(2)
+					.setText(1, Boolean.toString(this.state.isActive()));
+		}
 	}
 
 }

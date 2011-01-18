@@ -12,12 +12,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.Activator;
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
-import de.uniol.inf.is.odysseus.cep.cepviewer.CEPViewer;
 import de.uniol.inf.is.odysseus.cep.cepviewer.exception.CEPListViewNotFoundException;
 import de.uniol.inf.is.odysseus.cep.cepviewer.exception.CEPViewerNotShownException;
 import de.uniol.inf.is.odysseus.cep.cepviewer.exception.NoCepOperatorSelectedException;
-import de.uniol.inf.is.odysseus.cep.cepviewer.model.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
@@ -49,7 +49,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 		try {
 			// show the CEPViewer in the workbench
 			window.getWorkbench()
-					.showPerspective(CEPViewer.ID, window);
+					.showPerspective(Activator.PLUGIN_ID, window);
 			// get a reference of the CEPListView and add the CepOperator
 			CEPListView listView = this.getCEPListView();
 			if (listView == null) {

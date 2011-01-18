@@ -9,9 +9,6 @@ import org.eclipse.ui.IPerspectiveFactory;
  * @author Christian
  */
 public class CEPViewer implements IPerspectiveFactory {
-	
-	// the ID of this view
-	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.cepviewer";
 
 	/**
 	 * This methods creates the layout of the perspective and adds the views.

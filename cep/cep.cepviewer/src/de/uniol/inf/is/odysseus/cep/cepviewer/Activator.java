@@ -8,7 +8,9 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin {
 
-	// The shared instance
+	// the ID of the plugin
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.cep.cepviewer";
+	// the shared instance
 	private static Activator plugin;
 
 	/**
