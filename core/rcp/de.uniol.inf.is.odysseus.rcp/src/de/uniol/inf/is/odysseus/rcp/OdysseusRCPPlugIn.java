@@ -10,6 +10,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	public static final String TENANT_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.TenantView";
 	
 	public static final String OBSERVER_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective";
+	public static final String QUERIES_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
 	
 	private static OdysseusRCPPlugIn instance;
 	

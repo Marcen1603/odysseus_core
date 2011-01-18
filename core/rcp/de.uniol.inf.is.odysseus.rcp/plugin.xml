@@ -24,11 +24,11 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
+            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective">
          <view
                id="de.uniol.inf.is.odysseus.rcp.views.TenantView"
                minimized="false"
-               ratio="0.3"
+               ratio="0.7"
                relationship="right"
                relative="org.eclipse.ui.editorss">
          </view>
@@ -40,6 +40,11 @@
             class="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective"
             id="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective"
             name="Observer">
+      </perspective>
+      <perspective
+            class="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            id="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            name="Queries">
       </perspective>
    </extension>
 

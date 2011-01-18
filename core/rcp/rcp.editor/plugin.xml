@@ -43,15 +43,15 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
+            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective">
          <view
                closeable="true"
                id="de.uniol.inf.is.odysseus.rcp.editor.ParameterView"
                minimized="false"
                moveable="true"
                ratio="0.70f"
-               relationship="right"
-               relative="org.eclipse.ui.editorss"
+               relationship="stack"
+               relative="de.uniol.inf.is.odysseus.rcp.views.TenantView"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -73,7 +73,7 @@
             canFinishEarly="false"
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.editor.wizard.LogicalPlanWizard"
-            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspective.queries"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             hasPages="true"
             icon="icons/plan.png" id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard"
             name="Logical Plan">
@@ -81,7 +81,7 @@
       <wizard
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.editor.wizard.OdysseusProjectWizard"
-            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspective.queries"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             icon="icons/OdysseusProjectIcon.png"
             id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusProjectWizard"
             name="Odysseus Project"

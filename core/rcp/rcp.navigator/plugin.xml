@@ -42,7 +42,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
+            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective">
          <view
                closeable="false"
                id="de.uniol.inf.is.odysseus.rcp.NavigatorView"
