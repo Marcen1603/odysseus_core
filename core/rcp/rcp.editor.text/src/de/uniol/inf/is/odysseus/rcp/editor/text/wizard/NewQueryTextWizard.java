@@ -16,7 +16,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.IEditorTextConstants;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 
 public class NewQueryTextWizard extends Wizard implements INewWizard {
 

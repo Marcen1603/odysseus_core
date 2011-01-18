@@ -14,10 +14,10 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.queryview.IQueryViewConstants;
+import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 
 public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 

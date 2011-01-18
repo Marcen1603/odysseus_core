@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IEditorTextParserConstant
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 

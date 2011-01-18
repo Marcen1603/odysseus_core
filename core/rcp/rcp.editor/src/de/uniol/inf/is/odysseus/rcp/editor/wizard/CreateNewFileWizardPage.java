@@ -19,6 +19,7 @@ public class CreateNewFileWizardPage extends WizardNewFileCreationPage {
 		setDescription("Create a new " + getFileDescription());
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		setFileName(getFilename());

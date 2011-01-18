@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanEditorPart;
 import de.uniol.inf.is.odysseus.rcp.editor.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
