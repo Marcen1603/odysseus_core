@@ -27,7 +27,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	transient private List<IOperatorOwner> owner;
+	transient private List<IOperatorOwner> owners;
 
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
@@ -51,7 +51,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		predicate = (op.predicate == null) ? null : op.predicate.clone();
 		setName(op.getName());
 		initOwner();
-		owner.addAll(op.owner);
+		owners.addAll(op.owners);
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new
 		// HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
@@ -225,53 +225,53 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
-		if (owner == null){initOwner();}
-		if (!this.owner.contains(owner)) {
-			this.owner.add(owner);
+		if (this.owners == null){initOwner();}
+		if (!this.owners.contains(owner)) {
+			this.owners.add(owner);
 		}
 	}
 
 	private void initOwner() {
-		owner = new IdentityArrayList<IOperatorOwner>();
+		owners = new IdentityArrayList<IOperatorOwner>();
 	}
 
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
-		this.owner.remove(owner);
+		this.owners.remove(owner);
 	}
 
 	@Override
 	public void removeAllOwners() {
-		this.owner.clear();
+		this.owners.clear();
 	}
 
 	@Override
 	public boolean isOwnedBy(IOperatorOwner owner) {
-		return this.owner.contains(owner);
+		return this.owners.contains(owner);
 	}
 
 	@Override
 	public boolean hasOwner() {
-		return this.owner.size() > 0;
+		return this.owners.size() > 0;
 	}
 
 	@Override
 	public List<IOperatorOwner> getOwner() {
-		return Collections.unmodifiableList(this.owner);
+		return Collections.unmodifiableList(this.owners);
 	}
 
 	/**
 	 * Returns a ","-separated string of the owner IDs.
 	 * 
-	 * @param owner
+	 * @param owners
 	 *            Owner which have IDs.
 	 * @return ","-separated string of the owner IDs.
 	 */
 	@Override
 	public String getOwnerIDs() {
 		String result = "";
-		if (owner != null) { // TODO: WARUM??
-			for (IOperatorOwner iOperatorOwner : owner) {
+		if (owners != null) { // TODO: WARUM??
+			for (IOperatorOwner iOperatorOwner : owners) {
 				if (result != "") {
 					result += ", ";
 				}
