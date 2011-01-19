@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Queryselection
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.queryselection
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distr.bidding.client.queryselection
 Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.datadictionary,

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Provider
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.provider
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distr.provider
 Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection,

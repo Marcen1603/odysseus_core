@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Thinpeer
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.thinpeer
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.tp
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.thinpeer.Activator
 Import-Package: de.uniol.inf.is.odysseus,

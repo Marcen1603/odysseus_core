@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jxta Super-Peer
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.superpeer.jxta
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.sp.jxta
 Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
  de.uniol.inf.is.odysseus.p2p.jxta.utils,

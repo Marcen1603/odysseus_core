@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Administrationpeer
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ap
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.administrationpeer.Activator
 Import-Package: de.uniol.inf.is.odysseus,

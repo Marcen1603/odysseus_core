@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jxta Thin-Peer
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.thinpeer.jxta
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.tp.jxta
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.Activator
 Bundle-ActivationPolicy: lazy

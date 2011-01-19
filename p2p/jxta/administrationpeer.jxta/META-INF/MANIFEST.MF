@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jxta P2P Implementation
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ap.jxta
 Bundle-Version: 1.0.0
 Bundle-ActivationPolicy: lazy
-Fragment-Host: de.uniol.inf.is.odysseus.p2p.administrationpeer;bundle-version="1.0.0"
+Fragment-Host: de.uniol.inf.is.odysseus.p2p.ap;bundle-version="1.0.0"
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,

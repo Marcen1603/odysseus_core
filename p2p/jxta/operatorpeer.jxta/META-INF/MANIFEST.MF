@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jxta
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.op.jxta
 Bundle-Version: 1.0.0
-Fragment-Host: de.uniol.inf.is.odysseus.p2p.operatorpeer;bundle-version="1.0.0"
+Fragment-Host: de.uniol.inf.is.odysseus.p2p.op;bundle-version="1.0.0"
 Import-Package: de.uniol.inf.is.odysseus.event,
  de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p.jxta,
