@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Operatorpeer
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.op
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.operatorpeer.Activator
 Import-Package: de.uniol.inf.is.odysseus,
