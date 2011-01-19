@@ -27,7 +27,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	transient final private List<IOperatorOwner> owner = new IdentityArrayList<IOperatorOwner>();;
+	transient private List<IOperatorOwner> owner;
 
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
@@ -50,6 +50,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		predicate = (op.predicate == null) ? null : op.predicate.clone();
 		setName(op.getName());
+		initOwner();
 		owner.addAll(op.owner);
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new
@@ -57,6 +58,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	public AbstractLogicalOperator() {
+		initOwner();
 	}
 
 	/*
@@ -223,9 +225,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
+		if (owner == null){initOwner();}
 		if (!this.owner.contains(owner)) {
 			this.owner.add(owner);
 		}
+	}
+
+	private void initOwner() {
+		owner = new IdentityArrayList<IOperatorOwner>();
 	}
 
 	@Override
