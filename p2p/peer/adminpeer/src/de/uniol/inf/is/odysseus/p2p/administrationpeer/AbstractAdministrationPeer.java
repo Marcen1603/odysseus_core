@@ -206,6 +206,7 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 
 	@Override
 	public void startPeer() {
+		getLogger().info("Start Peer Service");
 		startNetwork();
 		init();
 		getDistributionProvider().startService();

@@ -6,9 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
@@ -18,6 +15,10 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AdminPeerQueryResultHandlerJxtaImpl;
@@ -65,9 +66,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	private static final int tcpPort = 8900;
 
 	private static final int httpPort = 8901;
-
-	// Logging an oder aus
-	private static final String LOGGING = "OFF";
 
 	// Zum Testen um mehrere Peers gleichzeitig zu starten,
 	// dem Namen des Peers wird eine zufällge Nummernfolgen angehängt, um
@@ -128,24 +126,23 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public HashMap<String, ExtendedPeerAdvertisement> operatorPeers = new HashMap<String, ExtendedPeerAdvertisement>();
 
-	public void activate() {
-		
-		// TODO: Read from Config-File
-		startPeer();
-		getDistributionProvider().initializeService();
-		getLogger().info("Administration Peer started");
-
-	}
-
-	// für die korrekte Nutzung in OSGi muss der Konstruktor public sein. 
-	public AdministrationPeerJxtaImpl() {
-
-		super();
-		
+	public void activate(){
+		getLogger().debug("Activate Admin Peer");
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
 		// TODO: M�ssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("AdminPeer"));
+
+		// TODO: Read from Config-File
+		startPeer();
+		getDistributionProvider().initializeService();
+		getLogger().info("Administration Peer started");	
+	}
+	
+	// fuer die korrekte Nutzung in OSGi muss der Konstruktor public sein. 
+	public AdministrationPeerJxtaImpl() {
+		super();		
+		getLogger().debug("Created Admin Peer");		
 	}
 
 
@@ -210,9 +207,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	}
 
 	@Override
-	protected void startNetwork() {
+	protected synchronized void startNetwork() {
 		getLogger().info("Starting Peer Network");
-		System.setProperty("net.jxta.logging.Logging", LOGGING);
 		String name = "";
 		if (RANDOM_NAME) {
 			name = "" + AdministrationPeerJxtaImpl.name + ""
@@ -282,9 +278,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 		if (manager.getNetPeerGroup() == null) {
 			try {
-	//			if (!manager.isStarted()) {
+				if (!manager.isStarted()) {
 					manager.startNetwork();
-//				}
+				}
 			} catch (PeerGroupException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
