@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.planmanagement.configuration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ValueChangeHandler<T extends ISetting<?>> implements IValueChangeHandler<T> {
+public class ValueChangeHandler<T extends ISetting<?>> implements IValueChangeHandler<T>, Serializable {
 
+	private static final long serialVersionUID = -297686698027444767L;
 	/**
 	 * List of objects which are informed if an entry value changes.
 	 */
