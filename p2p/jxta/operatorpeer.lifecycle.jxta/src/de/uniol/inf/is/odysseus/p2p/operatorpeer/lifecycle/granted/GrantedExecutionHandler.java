@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.granted;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 
 	static Logger logger = LoggerFactory.getLogger(GrantedExecutionHandler.class);
 		
-	private List<GrantedMessageHandler> handlerList = null;
+	final private List<GrantedMessageHandler> handlerList;
 	
 	public GrantedExecutionHandler() {
 		super();
@@ -26,6 +27,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 	public GrantedExecutionHandler(
 			GrantedExecutionHandler grantedExecutionHandler) {
 		super(grantedExecutionHandler);
+		handlerList = new ArrayList<GrantedMessageHandler>(grantedExecutionHandler.handlerList);
 	}
 
 	@Override
