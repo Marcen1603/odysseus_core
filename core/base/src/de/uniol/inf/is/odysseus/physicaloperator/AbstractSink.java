@@ -41,7 +41,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	private String name;
 	private Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
 
-	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
+	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
 	private volatile boolean allInputsDone = false;
 
@@ -113,7 +113,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		noInputPorts = other.noInputPorts;
 		name = other.name;
 		this.outputSchema = createCleanClone(other.outputSchema);
-		owners = new Vector<IOperatorOwner>(other.owners);
+		owners.addAll(other.owners);
 		allInputsDone = false;
 	}
 
