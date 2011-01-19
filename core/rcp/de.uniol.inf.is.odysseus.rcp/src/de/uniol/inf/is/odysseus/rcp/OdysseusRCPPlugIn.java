@@ -10,9 +10,14 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 	
 	public static final String TENANT_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.TenantView";
 	public static final String NAVIGATOR_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView";
+	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
 	
 	public static final String OBSERVER_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective";
 	public static final String QUERIES_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
+	
+	public static final String REFRESH_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand";
+	public static final String COLLAPSE_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand";
+	public static final String EXPAND_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand";
 	
 	private static OdysseusRCPPlugIn instance;
 	
@@ -33,6 +38,9 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		ImageManager.getInstance().register("percentile", "icons/document-tag.png");
 		ImageManager.getInstance().register("tenant", "icons/user-business.png");
 		ImageManager.getInstance().register("role", "icons/tick-small-circle.png");
+		ImageManager.getInstance().register("source", "icons/application-import.png");
+		ImageManager.getInstance().register("view", "icons/table.png");
+		ImageManager.getInstance().register("attribute", "icons/status.png");
 		
 		IDE.registerAdapters();
 		

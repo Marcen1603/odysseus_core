@@ -6,8 +6,13 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.usermanagement,
+Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ de.uniol.inf.is.odysseus.usermanagement,
  de.uniol.inf.is.odysseus.usermanagement.client,
+ org.eclipse.core.commands,
  org.eclipse.core.commands.common,
  org.eclipse.core.resources,
  org.eclipse.core.runtime;version="3.4.0",
@@ -21,6 +26,7 @@ Import-Package: de.uniol.inf.is.odysseus.usermanagement,
  org.eclipse.swt.widgets,
  org.eclipse.ui,
  org.eclipse.ui.console,
+ org.eclipse.ui.handlers,
  org.eclipse.ui.help,
  org.eclipse.ui.ide,
  org.eclipse.ui.navigator,

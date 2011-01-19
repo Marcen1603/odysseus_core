@@ -29,6 +29,14 @@
             name="Odysseus Project Navigator"
             restorable="true">
       </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.views.SourcesViewPart"
+            icon="icons/repository_rep.gif"
+            id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
+            name="Sources"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -93,6 +101,52 @@
             </actionExtension>
          </includes>
       </viewerActionBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand"
+            name="Refresh Sources View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand"
+            name="Expand Sources View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
+            name="Collapse Sources View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand"
+               icon="icons/expandall.gif"
+               label="Expand"
+               style="push"
+               tooltip="Expand All">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
+               icon="icons/collapseall.gif"
+               label="Collapse All"
+               style="push"
+               tooltip="Collapse All">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>
