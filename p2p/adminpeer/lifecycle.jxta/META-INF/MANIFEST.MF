@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Admin Peer Lifecycle Jxta
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.adminpeer.lifecycle.jxta
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/FailedExecutionHandler.xml, OSGI-INF/GrantedExecutionHandler.xml, OSGI-INF/NewExecutionHandler.xml, OSGI-INF/SuccessExecutionHandler.xml, OSGI-INF/TerminatedExecutionHandler.xml
+Import-Package: de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.p2p.gui,
+ de.uniol.inf.is.odysseus.p2p.jxta,
+ de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.jxta.utils,
+ de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
+ de.uniol.inf.is.odysseus.p2p.queryhandling,
+ de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.planmanagement.query,
+ net.jxta.endpoint,
+ net.jxta.protocol
