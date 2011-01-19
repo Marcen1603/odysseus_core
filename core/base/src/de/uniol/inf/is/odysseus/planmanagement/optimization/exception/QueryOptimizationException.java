@@ -25,6 +25,10 @@ public class QueryOptimizationException extends Exception {
 		this(m, null);
 	}
 
+	public QueryOptimizationException(Exception e) {
+		super(e);
+	}
+	
 	/**
 	 * Constructor of QueryOptimizationException.
 	 * 
