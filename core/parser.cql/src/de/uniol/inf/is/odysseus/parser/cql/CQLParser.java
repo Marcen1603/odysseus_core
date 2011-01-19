@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
@@ -41,8 +40,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
-import de.uniol.inf.is.odysseus.usermanagement.IllegalServiceLevelDefinition;
-import de.uniol.inf.is.odysseus.usermanagement.PercentileConstraintOverlapException;
 import de.uniol.inf.is.odysseus.usermanagement.PercentileContraint;
 import de.uniol.inf.is.odysseus.usermanagement.ServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
