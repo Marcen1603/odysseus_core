@@ -27,7 +27,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	final private List<IOperatorOwner> owner;
+	transient final private List<IOperatorOwner> owner = new IdentityArrayList<IOperatorOwner>();;
 
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
@@ -50,21 +50,19 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		predicate = (op.predicate == null) ? null : op.predicate.clone();
 		setName(op.getName());
-		owner = new IdentityArrayList<IOperatorOwner>(op.owner);
+		owner.addAll(op.owner);
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new
 		// HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
 	}
 
 	public AbstractLogicalOperator() {
-		owner = new IdentityArrayList<IOperatorOwner>();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#clone()
+	 * @see de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#clone()
 	 */
 	@Override
 	abstract public AbstractLogicalOperator clone();
@@ -77,13 +75,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			predicate.updateAfterClone(replaced);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPredicate
-	 * ()
+	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPredicate ()
 	 */
 	@Override
 	@SuppressWarnings({ "rawtypes" })
@@ -99,7 +96,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * (de.uniol.inf.is.odysseus.predicate.IPredicate)
 	 */
 	@Override
-	@SuppressWarnings("rawtypes") 
+	@SuppressWarnings("rawtypes")
 	public void setPredicate(IPredicate predicate) {
 		this.predicate = predicate;
 	}
@@ -126,13 +123,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public SDFAttributeList getOutputSchema(int pos) {	
+	public SDFAttributeList getOutputSchema(int pos) {
 		return getOutputSchema();
 	}
-	
-	
 
 	/*
 	 * (non-Javadoc)
@@ -150,8 +145,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPOName
+	 * @see de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPOName
 	 * ()
 	 */
 	@Override
@@ -176,8 +170,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#setPOName
+	 * @see de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#setPOName
 	 * (java.lang.String)
 	 */
 	@Override
@@ -195,8 +188,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkInPort(), subscription
-				.getTarget());
+		this.physInputOperators.put(subscription.getSinkInPort(),
+				subscription.getTarget());
 	}
 
 	@Override
@@ -230,7 +223,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
-		if (!this.owner.contains(owner)){
+		if (!this.owner.contains(owner)) {
 			this.owner.add(owner);
 		}
 	}
@@ -239,12 +232,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public void removeOwner(IOperatorOwner owner) {
 		this.owner.remove(owner);
 	}
-	
+
 	@Override
-	public void removeAllOwners(){
+	public void removeAllOwners() {
 		this.owner.clear();
 	}
-	
+
 	@Override
 	public boolean isOwnedBy(IOperatorOwner owner) {
 		return this.owner.contains(owner);
@@ -270,15 +263,17 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public String getOwnerIDs() {
 		String result = "";
-		for (IOperatorOwner iOperatorOwner : owner) {
-			if (result != "") {
-				result += ", ";
+		if (owner != null) { // TODO: WARUM??
+			for (IOperatorOwner iOperatorOwner : owner) {
+				if (result != "") {
+					result += ", ";
+				}
+				result += iOperatorOwner.getID();
 			}
-			result += iOperatorOwner.getID();
 		}
 		return result;
 	}
-	
+
 	// "delegatable this", used for the delegate sink
 	protected ILogicalOperator getInstance() {
 		return this;
@@ -329,9 +324,9 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public void unsubscribeFromSource(LogicalSubscription subscription) {
-		unsubscribeFromSource(subscription.getTarget(), subscription
-				.getSinkInPort(), subscription.getSourceOutPort(), subscription
-				.getSchema());
+		unsubscribeFromSource(subscription.getTarget(),
+				subscription.getSinkInPort(), subscription.getSourceOutPort(),
+				subscription.getSchema());
 	}
 
 	@Override
@@ -363,9 +358,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 				sourceOutPort, inputSchema);
 		if (!this.subscriptions.contains(sub)) {
 			this.subscriptions.add(sub);
-			sink
-					.subscribeToSource(this, sinkInPort, sourceOutPort,
-							inputSchema);
+			sink.subscribeToSource(this, sinkInPort, sourceOutPort, inputSchema);
 			recalcOutputSchemata = true;
 		}
 	}
@@ -395,18 +388,19 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return new Vector<LogicalSubscription>(this.subscriptions);
 	}
 
-//	@Override
-//	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a) {
-//		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
-//		synchronized (subscriptions) {
-//			for (LogicalSubscription l : subscriptions) {
-//				if (l.getTarget() == a) {
-//					subs.add(l);
-//				}
-//			}
-//		}
-//		return subs;
-//	}
+	// @Override
+	// public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator
+	// a) {
+	// List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
+	// synchronized (subscriptions) {
+	// for (LogicalSubscription l : subscriptions) {
+	// if (l.getTarget() == a) {
+	// subs.add(l);
+	// }
+	// }
+	// }
+	// return subs;
+	// }
 
 	@Override
 	public int getNumberOfInputs() {
@@ -418,7 +412,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.physInputOperators.clear();
 		this.physSubscriptionTo.clear();
 	}
-	
+
 	@Override
 	public void connectSink(ILogicalOperator sink, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
@@ -432,12 +426,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		// Nothing special in logical Operators
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
-	
-	
-	
+
 	@Override
 	public String toString() {
-		return getName()+"@"+hashCode()+" OwnerIDs: "+getOwnerIDs();
+		return getName() + "@" + hashCode() + " OwnerIDs: " + getOwnerIDs();
 	}
 
 	// TODO: Check if equals is needed in logical operators
@@ -445,10 +437,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	final public boolean equals(Object arg0) {
 		return super.equals(arg0);
 	}
-	
+
 	@Override
 	final public int hashCode() {
 		return super.hashCode();
 	}
-	
+
 }
