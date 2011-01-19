@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Operator Peer Lifecycle Jxta
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.op.lifecycle.jxta
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.jxta.utils,
+ de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
+ de.uniol.inf.is.odysseus.p2p.queryhandling,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.usermanagement,
+ de.uniol.inf.is.odysseus.usermanagement.client,
+ de.uniol.inf.is.odysseus.util,
+ net.jxta.endpoint,
+ net.jxta.protocol,
+ org.slf4j
+Service-Component: OSGI-INF/FailedExecutionHandler.xml, OSGI-INF/GrantedExecutionHandler.xml, OSGI-INF/RunningExecutionHandler.xml, OSGI-INF/SuccessExecutionHandler.xml, OSGI-INF/TerminatedExecutionHandler.xml
