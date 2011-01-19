@@ -52,6 +52,8 @@ import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.SetOwnerVisitor;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -246,7 +248,9 @@ public class StandardExecutor extends AbstractExecutor {
 						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 			}
 			
-
+		}catch (Exception e){
+			e.printStackTrace();
+			throw new QueryOptimizationException(e);
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
@@ -255,22 +259,22 @@ public class StandardExecutor extends AbstractExecutor {
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
 	}
 
-	/**
-	 * Returns a ID list of the given queries.
-	 * 
-	 * @param newQueries
-	 *            Queries for search.
-	 * @return ID list of the given queries.
-	 */
-	private List<Integer> getQuerieIDs(List<IQuery> newQueries) {
-		ArrayList<Integer> newIDs = new ArrayList<Integer>();
-
-		for (IQuery query : newQueries) {
-			newIDs.add(query.getID());
-		}
-
-		return newIDs;
-	}
+//	/**
+//	 * Returns a ID list of the given queries.
+//	 * 
+//	 * @param newQueries
+//	 *            Queries for search.
+//	 * @return ID list of the given queries.
+//	 */
+//	private List<Integer> getQuerieIDs(List<IQuery> newQueries) {
+//		ArrayList<Integer> newIDs = new ArrayList<Integer>();
+//
+//		for (IQuery query : newQueries) {
+//			newIDs.add(query.getID());
+//		}
+//
+//		return newIDs;
+//	}
 
 	/**
 	 * Creates {@link QueryBuildConfiguration} of given
@@ -403,6 +407,8 @@ public class StandardExecutor extends AbstractExecutor {
 			query.setUser(user);
 			query.setDataDictionary(dd);
 			query.addReoptimizeListener(this);
+			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
+	        AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
 			newQueries.add(query);
 			addQueries(newQueries, new OptimizationConfiguration(parameters));
 			return query;
