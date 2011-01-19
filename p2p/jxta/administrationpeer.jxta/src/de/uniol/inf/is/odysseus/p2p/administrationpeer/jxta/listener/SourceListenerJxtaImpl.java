@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
@@ -87,13 +86,8 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 						IDataDictionary datadictionary = GlobalState
 								.getActiveDatadictionary();
 						// Nur eintragen, wenn nicht eh schon vorhanden
-						ILogicalOperator v = null;
-						try {
-							v = datadictionary.getViewOrStream(adv.getSourceName(),
-									user);
-						} catch (Exception e) {
-						}
-						if (v == null){
+						if (!datadictionary.containsViewOrStream(adv.getSourceName(),
+								user)){
 							logger.debug("Adding to DD " + adv.getSourceName());
 							List<IQueryBuildSetting<?>> cfg = executor.getQueryBuildConfiguration("Standard");
 							getExecutor().addQuery(adv.getSourceScheme(),
