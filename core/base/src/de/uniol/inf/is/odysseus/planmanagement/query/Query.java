@@ -70,7 +70,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	/**
 	 * The Data Dictionary belonging to this query
 	 */
-	private IDataDictionary datadictionary;
+	transient private IDataDictionary datadictionary;
 
 	/**
 	 * List of all direct physical child operators. Stored separate because a
