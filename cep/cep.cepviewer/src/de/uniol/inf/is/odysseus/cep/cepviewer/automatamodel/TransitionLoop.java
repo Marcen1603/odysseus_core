@@ -19,6 +19,8 @@ public class TransitionLoop extends AbstractTransition {
 
 	// a list of all Bendpoints
 	private ArrayList<AbsoluteBendpoint> bendpointList;
+	// a list of the Bendpoint position relative to the state
+	private ArrayList<Point> pointList;
 	// the AbstractState which is the source/target of this transition
 	private AutomataState state;
 
@@ -34,9 +36,10 @@ public class TransitionLoop extends AbstractTransition {
 			Transition transition, AutomataState state) {
 		super(sourceAnchor, targetAnchor, transition, state);
 		this.state = state;
+		this.pointList = createLocationPoints();
 		// set the connection router to connect two anchors via some bend
 		// points
-		setConnectionRouter(new BendpointConnectionRouter());
+		this.setConnectionRouter(new BendpointConnectionRouter());
 		this.bendpointList = new ArrayList<AbsoluteBendpoint>();
 		for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
 			this.bendpointList.add(new AbsoluteBendpoint(new Point(0, 0)));
@@ -46,6 +49,11 @@ public class TransitionLoop extends AbstractTransition {
 		this.setRoutingConstraint(bendpointList);
 	}
 
+	/**
+	 * This method creates the location points for the Bendpoints
+	 * 
+	 * @return a list of loaction points
+	 */
 	private ArrayList<Point> createLocationPoints() {
 		ArrayList<Point> points = new ArrayList<Point>();
 		for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
@@ -60,10 +68,10 @@ public class TransitionLoop extends AbstractTransition {
 	 * position within the diagram to update the positions of the Bendpoints.
 	 */
 	public void repaint() {
+//		super.repaint();
 		if (this.bendpointList != null) {
 			this.setLocations();
 		}
-		super.repaint();
 	}
 
 	/**
@@ -71,18 +79,17 @@ public class TransitionLoop extends AbstractTransition {
 	 * AbstracteState.
 	 */
 	private void setLocations() {
-		ArrayList<Point> points = this.createLocationPoints();
 		if (this.transition.getAction() == EAction.consumeBufferWrite) {
 			for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
 				this.bendpointList.get(i).setLocation(
-						this.state.getLocation().x + points.get(i).x,
-						this.state.getLocation().y - points.get(i).y);
+						this.state.getLocation().x + this.pointList.get(i).x,
+						this.state.getLocation().y - this.pointList.get(i).y);
 			}
 		} else if (this.transition.getAction() == EAction.discard) {
 			for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
 				this.bendpointList.get(i).setLocation(
-						this.state.getLocation().x + points.get(i).x,
-						this.state.getLocation().y + points.get(i).y
+						this.state.getLocation().x + this.pointList.get(i).x,
+						this.state.getLocation().y + this.pointList.get(i).y
 								+ IntConst.STATE_SIZE);
 			}
 		}

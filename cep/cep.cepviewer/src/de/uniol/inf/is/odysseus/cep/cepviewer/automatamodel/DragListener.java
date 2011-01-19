@@ -103,8 +103,6 @@ public class DragListener extends MouseMotionListener.Stub implements
 			if (reference.getId().equals(CEPStateView.ID)) {
 				if (event.getSource() instanceof AbstractState) {
 					AbstractState state = (AbstractState) event.getSource();
-					System.out.println(((AbstractState) event.getSource())
-							.getParent().getClass());
 					((CEPStateView) reference.getView(false)).setContent(
 							(AbstractState) event.getSource(),
 							((AutomataDiagram) state.getParent()).getInstance()

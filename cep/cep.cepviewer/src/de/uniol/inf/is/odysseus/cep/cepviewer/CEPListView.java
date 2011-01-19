@@ -132,7 +132,7 @@ public class CEPListView extends ViewPart {
 			// if the selected item is a CEPInstance show it's data
 			CEPInstance cepInstance = ((InstanceTreeItem) select.getFirstElement())
 					.getContent();
-			if (cepInstance.getInstance().equals(cepInstance)) {
+			if (cepInstance.getInstance().equals(instance)) {
 				list.getListener().select(cepInstance);
 			}
 		}

@@ -68,6 +68,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 			listView.setInfoData();
 			return null;
 		} catch (WorkbenchException exception) {
+			exception.printStackTrace();
 			throw new CEPViewerNotShownException();
 		}
 	}
