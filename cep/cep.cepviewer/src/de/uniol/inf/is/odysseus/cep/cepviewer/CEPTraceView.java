@@ -33,7 +33,7 @@ public class CEPTraceView extends ViewPart {
 	/**
 	 * This method clears the view.
 	 */
-	public void clear() {
+	public void clearView() {
 		this.text.setText("");
 	}
 

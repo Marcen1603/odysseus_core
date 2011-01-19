@@ -34,19 +34,20 @@ public class CEPListView extends ViewPart {
 
 	// the ID of this view
 	public static final String ID = "de.uniol.inf.is.odysseus.cep.cepviewer.listview";
-	private Label infoLabel;
 	// the event listener
 	private CEPEventListener listener;
-	private NormalTreeList normalList;
-	private TabItem normalListItem;
 	// the list of CepOperators handled by the CEPViewer
 	private ArrayList<CepOperator<?, ?>> operators;
-	private QueryTreeList queryList;
-	private TabItem queryListItem;
-	private StatusTreeList statusList;
-	private TabItem statusListItem;
 	// the widgets for the list view.
+	private Label infoLabel;
+	private NormalTreeList normalList;
+	private QueryTreeList queryList;
+	private StatusTreeList statusList;
+	private TabItem normalListItem;
+	private TabItem queryListItem;
+	private TabItem statusListItem;
 	private TabFolder tabMenu;
+
 
 	/**
 	 * This is the constructor.
@@ -113,8 +114,6 @@ public class CEPListView extends ViewPart {
 		}
 		return null;
 	}
-
-
 
 	/**
 	 * This method is called, if the state of an instance changed. It checks if

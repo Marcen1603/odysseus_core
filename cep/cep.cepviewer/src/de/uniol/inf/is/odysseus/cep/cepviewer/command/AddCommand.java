@@ -38,11 +38,10 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	 * @param event
 	 *            is the event.
 	 */
-	@SuppressWarnings("rawtypes")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		// get the CepOperator
-		CepOperator operator = this.getCepOperator(window);
+		CepOperator<?,?> operator = this.getCepOperator(window);
 		if (operator == null) {
 			throw new NoCepOperatorSelectedException();
 		}

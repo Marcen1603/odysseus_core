@@ -53,11 +53,11 @@ public class CEPTreeListListener implements ISelectionChangedListener {
 			} else if (reference.getId().equals(CEPQueryView.ID)) {
 				((CEPQueryView) reference.getView(true)).clearView();
 			} else if (reference.getId().equals(CEPStateView.ID)) {
-				((CEPStateView) reference.getView(true)).clear();
+				((CEPStateView) reference.getView(true)).clearView();
 			} else if (reference.getId().equals(CEPSymbolView.ID)) {
-				((CEPSymbolView) reference.getView(true)).clear();
+				((CEPSymbolView) reference.getView(true)).clearView();
 			} else if (reference.getId().equals(CEPTraceView.ID)) {
-				((CEPTraceView) reference.getView(true)).clear();
+				((CEPTraceView) reference.getView(true)).clearView();
 			}
 		}
 	}

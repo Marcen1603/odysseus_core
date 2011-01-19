@@ -47,7 +47,7 @@ public class CEPStateView extends ViewPart {
 	/**
 	 * This method clears the view.
 	 */
-	public void clear() {
+	public void clearView() {
 		this.table.removeAll();
 		for (String row : this.rowLabels) {
 			TableItem item = new TableItem(this.table, SWT.NONE);
@@ -129,7 +129,7 @@ public class CEPStateView extends ViewPart {
 	 */
 	public void setContent(AbstractState state,
 			ArrayList<AbstractTransition> transList) {
-		this.clear();
+		this.clearView();
 		// create an array with all informations
 		final String[] newContent = { state.getName(),
 				Boolean.toString(state.getState().isAccepting()),

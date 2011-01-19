@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 public class TransitionLoop extends AbstractTransition {
 
 	// a list of all Bendpoints
-	private ArrayList<AbsoluteBendpoint> list;
+	private ArrayList<AbsoluteBendpoint> bendpointList;
 	// the AbstractState which is the source/target of this transition
 	private AutomataState state;
 
@@ -37,13 +37,13 @@ public class TransitionLoop extends AbstractTransition {
 		// set the connection router to connect two anchors via some bend
 		// points
 		setConnectionRouter(new BendpointConnectionRouter());
-		this.list = new ArrayList<AbsoluteBendpoint>();
+		this.bendpointList = new ArrayList<AbsoluteBendpoint>();
 		for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
-			this.list.add(new AbsoluteBendpoint(new Point(0, 0)));
+			this.bendpointList.add(new AbsoluteBendpoint(new Point(0, 0)));
 		}
 		this.setLocations();
 		// add the bend points to the connection
-		this.setRoutingConstraint(list);
+		this.setRoutingConstraint(bendpointList);
 	}
 
 	private ArrayList<Point> createLocationPoints() {
@@ -60,7 +60,7 @@ public class TransitionLoop extends AbstractTransition {
 	 * position within the diagram to update the positions of the Bendpoints.
 	 */
 	public void repaint() {
-		if (this.list != null) {
+		if (this.bendpointList != null) {
 			this.setLocations();
 		}
 		super.repaint();
@@ -74,13 +74,13 @@ public class TransitionLoop extends AbstractTransition {
 		ArrayList<Point> points = this.createLocationPoints();
 		if (this.transition.getAction() == EAction.consumeBufferWrite) {
 			for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
-				this.list.get(i).setLocation(
+				this.bendpointList.get(i).setLocation(
 						this.state.getLocation().x + points.get(i).x,
 						this.state.getLocation().y - points.get(i).y);
 			}
 		} else if (this.transition.getAction() == EAction.discard) {
 			for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
-				this.list.get(i).setLocation(
+				this.bendpointList.get(i).setLocation(
 						this.state.getLocation().x + points.get(i).x,
 						this.state.getLocation().y + points.get(i).y
 								+ IntConst.STATE_SIZE);

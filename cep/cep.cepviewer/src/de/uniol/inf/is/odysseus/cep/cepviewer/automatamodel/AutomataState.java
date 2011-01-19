@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
  */
 public class AutomataState extends AbstractState {
 
+	// the anchors of this state
 	private Anchor ignoreInAnchor;
 	private Anchor ignoreOutAnchor;
-	// the anchors of this state
 	private Anchor inAnchor;
 	private Anchor outAnchor;
 	private Anchor takeInAnchor;
@@ -59,38 +59,38 @@ public class AutomataState extends AbstractState {
 	/**
 	 * This method paints the shape and the name of the state.
 	 * 
-	 * @param grafic
+	 * @param graphic
 	 *            is the object that allows to draw on a surface.
 	 */
-	public void paintFigure(Graphics grafic) {
+	public void paintFigure(Graphics graphic) {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Rectangle r = bounds;
 		Font f = new Font(display, "Arial", 15,
 				SWT.BOLD | SWT.ITALIC);
-		grafic.setFont(f);
-		grafic.setLineWidth(3);
+		graphic.setFont(f);
+		graphic.setLineWidth(3);
 		if(isActive) {
 			// if the state is the active one
-			grafic.setBackgroundColor(display.getSystemColor(SWT.COLOR_BLUE));
+			graphic.setBackgroundColor(display.getSystemColor(SWT.COLOR_BLUE));
 		}
 		if(this.state.isAccepting()) {
 			// if the state is the end state
-			grafic.fillOval(r.x + 5, r.y + 5, r.width - 11, r.height - 11);
-			grafic.drawOval(r.x + 5, r.y + 5, r.width - 11, r.height - 11);
+			graphic.fillOval(r.x + 5, r.y + 5, r.width - 11, r.height - 11);
+			graphic.drawOval(r.x + 5, r.y + 5, r.width - 11, r.height - 11);
 		} else {
 			// if the state is a normal state
-			grafic.fillOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+			graphic.fillOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
 		}
-		grafic.drawOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+		graphic.drawOval(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
 		if(isActive) {
 			// if the state is the active one
-			grafic.setForegroundColor(display.getSystemColor(SWT.COLOR_WHITE));
+			graphic.setForegroundColor(display.getSystemColor(SWT.COLOR_WHITE));
 		}
 		// paint the name on the location based on its length
 		if (name.length() < 2) {
-			grafic.drawText(name, r.x + (r.width / 5), r.y + (r.height / 3));
+			graphic.drawText(name, r.x + (r.width / 5), r.y + (r.height / 3));
 		} else {
-			grafic.drawText(name, r.x + (r.width / 3), r.y + (r.height / 3));
+			graphic.drawText(name, r.x + (r.width / 3), r.y + (r.height / 3));
 		}
 	}
 	
