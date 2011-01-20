@@ -253,12 +253,14 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			if(isUnderList) {
 				relativePath[i] = -1;
 //				relativePathIndexIndex = i;
+			} else {
+				relativePath[i] = index.getIndex();
 			}
 
 			if(index.isList()) {
 				isUnderList = true;
 			}
-			relativePath[i] = index.getIndex();
+
 		}
 	}
 
