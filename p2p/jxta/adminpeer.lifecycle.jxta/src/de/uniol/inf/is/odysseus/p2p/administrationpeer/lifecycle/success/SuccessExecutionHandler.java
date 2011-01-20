@@ -21,10 +21,6 @@ public class SuccessExecutionHandler<F> extends AbstractExecutionHandler<F> {
 		return new SuccessExecutionHandler<F>(this);
 	}
 
-	@Override
-	public String getName() {
-		return "SuccessExecutionHandler";
-	}
 
 	@Override
 	public void run() {
@@ -36,6 +32,7 @@ public class SuccessExecutionHandler<F> extends AbstractExecutionHandler<F> {
 		} else if (priorLifecycle == Lifecycle.DISTRIBUTION) {
 			getExecutionListenerCallback().changeState(Lifecycle.GRANTED);
 		} else if (priorLifecycle == Lifecycle.GRANTED) {
+			// TODO: Wieso gibt es hier RUNNING aber keine Implementierung dafuer?
 			getExecutionListenerCallback().changeState(Lifecycle.RUNNING);
 		} else if (priorLifecycle == Lifecycle.RUNNING) {
 			getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);

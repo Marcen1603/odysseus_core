@@ -137,11 +137,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	}
 
 
-//	@Override
-//	protected void initQuerySpezificationFinder() {
-//		this.querySpezificationFinder = new QuerySpezificationListenerJxtaImpl();
-//	}
-
 	@Override
 	protected void initSocketServerListener(AbstractOperatorPeer aPeer) {
 		setSocketServerListener(new SocketServerListener(aPeer));

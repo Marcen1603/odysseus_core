@@ -24,11 +24,6 @@ public class SuccessExecutionHandler<F> extends AbstractExecutionHandler<F> {
 	}
 
 	@Override
-	public String getName() {
-		return "SuccessExecutionHandler";
-	}
-
-	@Override
 	public void run() {
 		Lifecycle priorLifecycle = getExecutionListenerCallback().getQuery().getHistory().get(getExecutionListenerCallback().getQuery().getHistory().size()-2);
 

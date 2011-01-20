@@ -12,6 +12,7 @@ abstract public class P2PAO extends UnaryLogicalOp {
 	}
 
 	public P2PAO(P2PAO p2pAO) {
+		super(p2pAO);
 		this.adv = p2pAO.adv;
 	}
 

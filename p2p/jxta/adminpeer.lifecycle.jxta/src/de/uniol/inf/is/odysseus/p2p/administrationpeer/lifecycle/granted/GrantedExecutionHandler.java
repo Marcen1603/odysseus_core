@@ -31,10 +31,6 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 		return new GrantedExecutionHandler(this);
 	}
 
-	@Override
-	public String getName() {
-		return "GrantedExecutionHandler";
-	}
 
 	@Override
 	public void run() {

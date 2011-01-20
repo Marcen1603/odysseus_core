@@ -15,6 +15,8 @@ import net.jxta.document.XMLDocument;
 import net.jxta.protocol.PipeAdvertisement;
 
 import org.apache.commons.codec.binary.Base64InputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
@@ -39,6 +41,8 @@ import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
  */
 public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezification> implements IQuerySpecificationHandler<S>{
 	
+	static private Logger logger = LoggerFactory.getLogger(QuerySpecificationHandlerJxtaImpl.class);
+	
 	private AbstractOdysseusPeer aPeer;
 	private IQuerySelectionStrategy querySelectionStrategy;
 
@@ -52,7 +56,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 	@SuppressWarnings({"rawtypes"})
 	@Override
 	public void handleQuerySpezification(S adv) {
-		System.out.println("handle adv zu Subplan "+adv.getSubplanId());
+		logger.debug("handle adv zu Subplan "+adv.getSubplanId());
 		QueryJxtaImpl query = null;
 		for(Query q : aPeer.getQueries().keySet()) {
 			if(adv.getQueryId().equals(q.getId())) {

@@ -23,3 +23,4 @@ Import-Package: de.uniol.inf.is.odysseus.datadictionary,
  net.jxta.protocol,
  org.slf4j
 Service-Component: OSGI-INF/FailedExecutionHandler.xml, OSGI-INF/GrantedExecutionHandler.xml, OSGI-INF/RunningExecutionHandler.xml, OSGI-INF/SuccessExecutionHandler.xml, OSGI-INF/TerminatedExecutionHandler.xml
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"

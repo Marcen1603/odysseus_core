@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
 public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F> {
 
+	public FailedExecutionHandler(){
+		setProvidedLifecycle(Lifecycle.FAILED);
+	}
+	
 	public FailedExecutionHandler(
 			FailedExecutionHandler<F> failedExecutionHandler) {
 		super(failedExecutionHandler);
@@ -15,11 +19,6 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F> {
 	@Override
 	public IExecutionHandler<F> clone() {
 		return new FailedExecutionHandler<F>(this);
-	}
-
-	@Override
-	public String getName() {
-		return "FailedExecutionHandler";
 	}
 
 	@Override

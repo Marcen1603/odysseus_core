@@ -88,7 +88,9 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	@Override
 	public void addResult(String queryId, Object o) {
 		List l = listResults.get(queryId);
-		l.add(o.toString(), 0);
+		if (o != null){
+			l.add(o.toString(), 0);
+		}
 	}
 	@Override
 	public void addTab(String queryId, String queryAsString) {

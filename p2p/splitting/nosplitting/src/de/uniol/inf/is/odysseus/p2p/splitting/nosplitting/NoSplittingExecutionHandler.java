@@ -19,10 +19,5 @@ public class NoSplittingExecutionHandler extends AbstractSplittingExecutionHandl
 	public IExecutionHandler<AbstractSplittingStrategy> clone()  {
 		return new NoSplittingExecutionHandler(this);
 	}
-
-	@Override
-	public String getName() {
-		return "NoSplittingExecutionHandler";
-	}
 	
 }

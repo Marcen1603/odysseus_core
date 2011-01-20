@@ -26,11 +26,6 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F> {
 	}
 
 	@Override
-	public String getName() {
-		return "FailedExecutionHandler";
-	}
-
-	@Override
 	public void run() {
 		IExecutionListenerCallback cb = getExecutionListenerCallback();
 		List<Lifecycle> history = cb.getQuery()

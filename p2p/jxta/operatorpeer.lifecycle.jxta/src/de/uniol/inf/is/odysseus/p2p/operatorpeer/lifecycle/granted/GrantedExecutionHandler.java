@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.granted;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
@@ -33,11 +33,6 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 	@Override
 	public IExecutionHandler<JxtaMessageSender> clone()  {
 		return new GrantedExecutionHandler(this);
-	}
-
-	@Override
-	public String getName() {
-		return "GrantedExecutionHandler";
 	}
 
 	@Override
@@ -77,6 +72,12 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 //			}
 //		}
 		getExecutionListenerCallback().changeState(Lifecycle.SUCCESS);
+	}
+	
+	@Override
+	public void setPeer(IOdysseusPeer peer) {
+		super.setPeer(peer);
+		setFunction((JxtaMessageSender) getPeer().getMessageSender());
 	}
 
 }

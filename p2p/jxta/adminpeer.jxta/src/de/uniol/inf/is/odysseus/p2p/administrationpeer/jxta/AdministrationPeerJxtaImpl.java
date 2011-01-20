@@ -61,6 +61,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	
 	//TODO: Daten in Config oder Umgebung auslagern.
 
+	// Logging an oder aus
+	private static final String LOGGING = "OFF";
+	
 	private static final String name = "adminPeer";
 
 	private static final int tcpPort = 8900;
@@ -209,6 +212,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	@Override
 	protected synchronized void startNetwork() {
 		getLogger().info("Starting Peer Network");
+		System.setProperty("net.jxta.logging.Logging", LOGGING);
 		String name = "";
 		if (RANDOM_NAME) {
 			name = "" + AdministrationPeerJxtaImpl.name + ""

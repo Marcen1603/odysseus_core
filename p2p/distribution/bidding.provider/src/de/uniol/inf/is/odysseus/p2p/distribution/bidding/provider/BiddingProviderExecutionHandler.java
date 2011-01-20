@@ -22,11 +22,6 @@ public class BiddingProviderExecutionHandler
 	}
 
 	@Override
-	public String getName() {
-		return "BiddingProviderExecutionHandler";
-	}
-
-	@Override
 	public void run() {
 		if (getExecutionListenerCallback() != null) {
 			getFunction().setCallback(getExecutionListenerCallback());

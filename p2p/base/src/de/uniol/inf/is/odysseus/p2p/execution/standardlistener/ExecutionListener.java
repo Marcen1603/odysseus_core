@@ -32,12 +32,14 @@ public class ExecutionListener extends AbstractExecutionListener{
 		
 		while(getQuery().getStatus()!=Lifecycle.TERMINATED) {
 			Lifecycle temp = getQuery().getStatus();
-			logger.debug("aktueller Zustand: "+getQuery().getStatus());
-			if(getHandler().containsKey(getQuery().getStatus())) {
-				execute(getQuery().getStatus());
+			logger.debug("aktueller Zustand: "+temp);
+			if(getHandler().containsKey(temp)) {
+				logger.debug("Executing "+getHandler().get(temp));
+				execute(temp);
 			}
 			//Sonst hängen wir ewig in einer Schleife fest, falls es keinen passenden ExecutionHandler gibt.
 			else {
+				logger.warn("no Handler for Lifecycle "+temp+" found!");
 				getCallback().changeState(Lifecycle.FAILED);
 				return;
 //				continue;

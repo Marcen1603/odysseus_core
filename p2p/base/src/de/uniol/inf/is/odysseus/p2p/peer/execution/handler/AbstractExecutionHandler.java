@@ -14,10 +14,6 @@ public abstract class AbstractExecutionHandler<F> implements IExecutionHandler<F
 	public void setProvidedLifecycle(Lifecycle lifecycle) {
 		this.providedLifecycle = lifecycle;
 	}
-	
-	
-	@Override
-	public abstract String getName();
 
 	private Lifecycle providedLifecycle;
 	private IExecutionListenerCallback executionListenerCallback = null;
@@ -86,5 +82,10 @@ public abstract class AbstractExecutionHandler<F> implements IExecutionHandler<F
 	@Override
 	public void setFunction(F function) {
 		this.function = function;
+	}
+	
+	@Override
+	final public String getName() {
+		return this.getClass().getSimpleName();
 	}
 }

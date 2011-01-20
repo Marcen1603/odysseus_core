@@ -22,9 +22,5 @@ public class OnePlanPerOperatorExecutionHandler<F extends AbstractSplittingStrat
 		return new OnePlanPerOperatorExecutionHandler<F>(this);
 	}
 
-	@Override
-	public String getName() {
-		return "OnePlanPerOperatorExecutionHandler";
-	}
 
 }

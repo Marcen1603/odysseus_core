@@ -102,8 +102,4 @@ public class NewExecutionHandler extends
 		return new NewExecutionHandler(this);
 	}
 
-	@Override
-	public String getName() {
-		return "OpenExecutionHandler";
-	}
 }

@@ -21,10 +21,6 @@ public class TerminatedExecutionHandler<F> extends AbstractExecutionHandler<F> {
 		return new TerminatedExecutionHandler<F>(this);
 	}
 
-	@Override
-	public String getName() {
-		return "TerminatedExecutionHandler";
-	}
 
 	@Override
 	public void run() {

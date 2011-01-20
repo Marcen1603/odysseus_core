@@ -6,12 +6,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class P2PSinkAO extends P2PAO{
 
 	private static final long serialVersionUID = -4079953031372502548L;
-	
-	private String adv;
-	
+		
 	public P2PSinkAO(String adv) {
 		super(adv);
-		this.adv = adv;
+	}
+
+	public P2PSinkAO(P2PSinkAO p2pSinkAO) {
+		super(p2pSinkAO);
 	}
 
 	@Override
@@ -21,7 +22,7 @@ public class P2PSinkAO extends P2PAO{
 	
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new P2PSinkAO(this.adv);
+		return new P2PSinkAO(this);
 	}
 
 }

@@ -21,28 +21,25 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-public class RunningExecutionHandler extends AbstractExecutionHandler<IExecutor> {
+public class RunningExecutionHandler extends
+		AbstractExecutionHandler<IExecutor> {
 
-	static Logger logger = LoggerFactory.getLogger(RunningExecutionHandler.class);
-	
+	static Logger logger = LoggerFactory
+			.getLogger(RunningExecutionHandler.class);
+
 	public RunningExecutionHandler() {
 		super();
 		setProvidedLifecycle(Lifecycle.RUNNING);
 	}
-	
+
 	public RunningExecutionHandler(
 			RunningExecutionHandler runningExecutionHandler) {
 		super(runningExecutionHandler);
 	}
 
 	@Override
-	public IExecutionHandler<IExecutor> clone()  {
+	public IExecutionHandler<IExecutor> clone() {
 		return new RunningExecutionHandler(this);
-	}
-
-	@Override
-	public String getName() {
-		return "RunningExecutionHandler";
 	}
 
 	@Override
@@ -50,41 +47,38 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<IExecutor>
 		logger.debug("running wird ausgefuehrt");
 		try {
 
-		for(Subplan s :getExecutionListenerCallback().getQuery().getSubPlans().values()) {
-			if(s.getStatus() == Lifecycle.GRANTED) {
-				logger.debug("Fuege hinzu: "+AbstractTreeWalker.prefixWalk(s.getAo(),
-						new AlgebraPlanToStringVisitor()));
-				User user = GlobalState.getActiveUser();
-				IDataDictionary dd = GlobalState.getActiveDatadictionary();
-				List<IQueryBuildSetting<?>> cfg = getFunction().getQueryBuildConfiguration("Standard");
-				getFunction().addQuery(s.getAo(), user, dd, cfg.toArray(new IQueryBuildSetting[0]));		
+			for (Subplan s : getExecutionListenerCallback().getQuery()
+					.getSubPlans().values()) {
+				if (s.getStatus() == Lifecycle.GRANTED) {
+					logger.debug("Fuege hinzu: "
+							+ AbstractTreeWalker.prefixWalk(s.getAo(),
+									new AlgebraPlanToStringVisitor()));
+					User user = GlobalState.getActiveUser();
+					IDataDictionary dd = GlobalState.getActiveDatadictionary();
+					List<IQueryBuildSetting<?>> cfg = getFunction()
+							.getQueryBuildConfiguration("Standard");
+					getFunction().addQuery(s.getAo(), user, dd,
+							cfg.toArray(new IQueryBuildSetting[0]));
+				}
 			}
+
+			if (!getFunction().isRunning()) {
+				getFunction().startExecution();
+			}
+		} catch (PlanManagementException e2) {
+			e2.printStackTrace();
 		}
-		
-		
-		if(!getFunction().isRunning()) {
-			getFunction().startExecution();
-		}
-	} catch (PlanManagementException e2) {
-		e2.printStackTrace();
+
 	}
-		//Lasse eine bestimmte Zeit laufen, bis Anfrage beendet wird
-//		try {
-//			Thread.sleep(100000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//		getExecutionListenerCallback().changeState(Lifecycle.SUCCESS);
-	}
-	
+
 	@Override
 	public void setPeer(IOdysseusPeer peer) {
 		super.setPeer(peer);
 		Method[] methods = peer.getClass().getMethods();
-		for(Method m : methods) {
-			if(m.getReturnType() == IExecutor.class) {
+		for (Method m : methods) {
+			if (m.getReturnType() == IExecutor.class) {
 				try {
-					setFunction((IExecutor) m.invoke(peer,(Object[])null));
+					setFunction((IExecutor) m.invoke(peer, (Object[]) null));
 					break;
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();

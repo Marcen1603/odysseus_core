@@ -18,11 +18,6 @@ public class SourceSplitExecutionHandler<F extends AbstractSplittingStrategy> ex
 	@Override
 	public SourceSplitExecutionHandler<F> clone()  {
 		return new SourceSplitExecutionHandler<F>(this);
-	}
-
-	@Override
-	public String getName() {
-		return "SourceSplitExecutionHandler";
 	}	
 
 }
