@@ -26,9 +26,11 @@ public class THypothesisGenarationAORule extends AbstractTransformationRule<Hypo
 		System.out.println("DROOLS: THypothesisGeneration.drl");
 		System.out.println("CREATE HypothesisGenerationPO.");
 		HypothesisGenerationPO genPO = new HypothesisGenerationPO();
-		genPO.setNewObjListPath(operator.getNewObjListPath());
-		genPO.setOldObjListPath(operator.getOldObjListPath());
+		genPO.setSourceScannedObjListPath(operator.getSourceScannedObjListPath());
+		genPO.setSourcePredictedObjListPath(operator.getSourcePredictedObjListPath());
 		genPO.setOutputSchema(operator.getOutputSchema());
+		genPO.setOutputPredictedObjListPath(operator.getOutputPredictedObjListPath());
+		genPO.setOutputScannedObjListPath(operator.getOutputScannedObjListPath());
 
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, genPO);
 		for (ILogicalOperator o : toUpdate) {
