@@ -239,5 +239,14 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 		System.out.println(e);
 	}
 
+	@Override
+	public void reset() {
+		target.reset();
+		
+		for(IStreamCarsExpressionVariable var : variables) {
+			var.reset();
+		}
+	}
+
 
 }

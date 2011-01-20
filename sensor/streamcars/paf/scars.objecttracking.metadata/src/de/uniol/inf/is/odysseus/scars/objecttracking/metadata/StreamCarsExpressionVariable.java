@@ -30,6 +30,8 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 
 	private int[] relativePath;
 	private int[] absolutePath;
+	
+	private int relativePathIndexIndex;
 
 	/**
 	 * 
@@ -250,6 +252,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			SchemaIndex index = schemaPath.getSchemaIndex(i);
 			if(isUnderList) {
 				relativePath[i] = -1;
+				relativePathIndexIndex = i;
 			}
 
 			if(index.isList()) {
@@ -283,6 +286,12 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 				+ "\n\t\t relativePath: " + (relativePath != null ? Arrays.toString(relativePath) : null)
 				+ "\n\t\t absolutePath: " + (absolutePath != null ? Arrays.toString(absolutePath) : null)
 				+ "\n\t   ]";
+	}
+
+	@Override
+	public void reset() {
+		mepVariable.bind(null);
+//		absolutePath[relativePathIndexIndex] = -1;
 	}
 
 

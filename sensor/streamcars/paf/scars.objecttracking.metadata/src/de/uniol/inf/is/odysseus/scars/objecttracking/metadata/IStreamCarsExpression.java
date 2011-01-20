@@ -90,6 +90,6 @@ public interface IStreamCarsExpression {
 	public void bindTupleValues(SDFAttributeList schema, MVRelationalTuple<?> tuple);
 	
 
-	
+	public void reset();
 	
 }

@@ -48,6 +48,8 @@ public interface IStreamCarsExpressionVariable {
 	public void bindTupleValue(MVRelationalTuple<?> tuple);
 
 	public String getNameWithoutMetadata();
+	
+	public void reset();
 
 
 
