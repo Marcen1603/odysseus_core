@@ -21,16 +21,16 @@ import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 /**
  * <p>
- * Physical operator for the <i>expression based</i> rating of each possible pair of predicted and scanned objects.
- * The expressions is set within the query. To rate only existing connections HypothesisExpressionEvaluationPO
- * ({@link HypothesisExpressionEvaluationPO}) should be used.
+ * Physical operator for the <i>expression based</i> rating of each possible
+ * pair of predicted and scanned objects. The expressions is set within the
+ * query. To rate only existing connections HypothesisExpressionEvaluationPO (
+ * {@link HypothesisExpressionEvaluationPO}) should be used.
  * </p>
  * 
  * @author Volker Janz
  */
 
-public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends
-		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private StreamCarsExpression expression;
 	private SchemaHelper schemaHelper;
@@ -79,7 +79,7 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		this.setScannedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath));
 		this.setPredictedObjectListSIPath(this.schemaHelper.getSchemaIndexPath(this.predictedObjectListPath));
 
-//		this.scannedObjectListSIPath.getLastSchemaIndex().getAttribute().getSubattributes();
+		// this.scannedObjectListSIPath.getLastSchemaIndex().getAttribute().getSubattributes();
 		this.covarianceHelper = new CovarianceHelper(this.expression, this.getOutputSchema());
 		covHelper = new CovarianceExpressionHelper();
 	}
@@ -150,8 +150,12 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 
 				double newRating = expression.getDoubleValue();
 
-				if (currentRating != newRating) {
-					newObjConList.add(new Connection(absScanTupleIndexPath, absPredTupleIndexPath, newRating));
+				if (newRating > 0) {
+					if (currentRating == -1) {
+						newObjConList.add(new Connection(absScanTupleIndexPath, absPredTupleIndexPath, newRating));
+					} else if (newRating != currentRating) {
+						newObjConList.add(new Connection(absScanTupleIndexPath, absPredTupleIndexPath, newRating));
+					}
 				}
 
 			}
