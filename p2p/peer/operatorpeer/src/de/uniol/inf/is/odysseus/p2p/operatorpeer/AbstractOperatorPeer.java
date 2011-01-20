@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
@@ -48,8 +49,8 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 	private IDistributionClient distributionClient;
 
 
-	public AbstractOperatorPeer() {
-		super();
+	public AbstractOperatorPeer(ISocketServerListener socketServerListener) {
+		super(socketServerListener);
 	}
 	
 	public void bindDistributionClient(IDistributionClient dc) {
@@ -109,7 +110,6 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 			initPriorityMode();
 			initMessageSender();
 			initSourceHandler(this);
-			initSocketServerListener(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -144,8 +144,6 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 	protected void initPriorityMode() {
 		this.priority = new Priority();
 	}
-
-	protected abstract void initSocketServerListener(AbstractOperatorPeer aPeer);
 
 	protected abstract void initSourceHandler(AbstractOperatorPeer aPeer);
 

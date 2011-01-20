@@ -17,7 +17,7 @@ public abstract class Query implements Serializable{
 	 */
 	private static final long serialVersionUID = -5425656893540775498L;
 
-	private Lifecycle status;
+	private Lifecycle currStatus;
 	
 	public String getId() {
 		return id;
@@ -86,11 +86,12 @@ public abstract class Query implements Serializable{
 	}
 
 	public Lifecycle getStatus() {
-		return status;
+		return currStatus;
 	}
-
+	
 	public void setStatus(Lifecycle status) {
-		this.status = status;
+
+		this.currStatus = status;
 		getHistory().add(status);
 	}
 	

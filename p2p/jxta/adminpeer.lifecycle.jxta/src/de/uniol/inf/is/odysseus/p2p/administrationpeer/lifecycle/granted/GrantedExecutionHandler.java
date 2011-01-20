@@ -34,22 +34,13 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 
 	@Override
 	public void run() {
-		synchronized (this) {
-			try {
-				this.wait(15000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 		IExecutionListenerCallback cb = getExecutionListenerCallback();
-		GrantedMessageHandler handler = new GrantedMessageHandler(cb.getQuery(), cb, getPeer());
-		handler.setInterestedNamespace("Granted"+cb.getQuery().getId());
+		// Erzeuge Message Handler for this query
+		GrantedMessageHandler handler = new GrantedMessageHandler(cb.getQuery(), cb, getPeer(), "Granted"+cb.getQuery().getId());
 		getPeer().registerMessageHandler(handler);
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
-		//Sende Anfrage an die bestätigten Peers
+		//Sende Anfrage an die bestaetigten Peers
 		messageElements.put("queryId", cb.getQuery().getId());
-//		messageElements.put("peerId", PeerGroupTool.getPeerGroup().getPeerID().toString());
-
 		messageElements.put("pipeAdvertisement", (PipeAdvertisement)getPeer().getServerResponseAddress());
 		for(Subplan s : cb.getQuery().getSubPlans().values()) {
 			if(s.getBiddings().get(0) instanceof BidJxtaImpl) {
@@ -58,16 +49,6 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 						.createSimpleMessage("Granted"+cb.getQuery().getId()+"_"+ s.getId(), messageElements), ((BidJxtaImpl)s.getBiddings().get(0)).getResponseSocket());
 			}
 			
-		}
-
-		synchronized (this) {
-			try {
-				this.wait(5000);
-				getPeer().deregisterMessageHandler(handler);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				getPeer().deregisterMessageHandler(handler);
-			}
 		}
 	}
 

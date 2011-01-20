@@ -246,6 +246,7 @@ class MessageSender extends Thread{
 		while(socket == null){
 			try {
 				socket = new JxtaSocket(netPeerGroup, null, pipeAdv, 16000, true);
+				socket.setSoTimeout(0);
 				break;
 			} catch (IOException e2) {
 				socket = null;

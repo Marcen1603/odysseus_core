@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
@@ -119,8 +120,8 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 	}
 	
 	
-	public AbstractAdministrationPeer() {
-		super();
+	public AbstractAdministrationPeer(ISocketServerListener listener) {
+		super(listener);
 	}
 	
 	public void bindSplitting(ISplittingStrategy splitting) {
@@ -162,7 +163,6 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 		initHotPeerFinder();
 		initLocalMessageHandler();
 		initHotPeerStrategy();
-		initSocketServerListener();
 		initLocalExecutionHandler();
 	}
 	
@@ -175,9 +175,7 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 	protected abstract void initOperatorPeerListener();
 	
 	protected abstract void initAliveHandler();
-	
-	protected abstract void initSocketServerListener();
-	
+		
 	protected MainWindow gui;
 
 	private Thread socketListenerThread;

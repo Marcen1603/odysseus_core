@@ -18,4 +18,5 @@ Import-Package: de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.planmanagement.query,
  net.jxta.endpoint,
- net.jxta.protocol
+ net.jxta.protocol,
+ org.slf4j;version="1.5.6"

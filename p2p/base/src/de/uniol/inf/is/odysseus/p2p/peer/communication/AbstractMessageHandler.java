@@ -9,8 +9,7 @@ abstract public class AbstractMessageHandler implements IMessageHandler {
 		return interestedNamespace;
 	}
 
-	@Override
-	final public void setInterestedNamespace(String namespace) {
+	final protected void setInterestedNamespace(String namespace) {
 		this.interestedNamespace = namespace;
 	}
 

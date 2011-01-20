@@ -38,39 +38,11 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 	@Override
 	public void run() {
 		for(String sub : getExecutionListenerCallback().getQuery().getSubPlans().keySet()) {
-			
-			//Fix, da an einer anderen Stelle ein Subplan mehrfahc eingetragen wird.
-//			boolean createMessageHandler = true;
-//			for(GrantedMessageHandler handler : this.handlerList) {
-//				
-//				
-//				
-//				
-////				if(handler.getQuery().getId().equals(getExecutionListenerCallback().getQuery().getId()) && handler.getQuery().getSubPlans().containsKey(sub)) {
-////					createMessageHandler = true;
-////				}
-//			}
-//			if(createMessageHandler) {
-				logger.debug("Erzeuge GrantedMessageHandler " +"Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub);
+							logger.debug("Erzeuge GrantedMessageHandler " +"Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub);
 				GrantedMessageHandler handl = new GrantedMessageHandler(getExecutionListenerCallback(), "Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub, getFunction());
 				this.handlerList.add(handl);
-				getPeer().registerMessageHandler(handl);
-//			}
 		}
 		
-		
-		synchronized (this) {
-			try {
-				this.wait(15000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-//		for(GrantedMessageHandler mHandler : this.handlerList) {
-//			if(!mHandler.isGranted()) {
-//				getExecutionListenerCallback().changeState(Lifecycle.FAILED);
-//			}
-//		}
 		getExecutionListenerCallback().changeState(Lifecycle.SUCCESS);
 	}
 	

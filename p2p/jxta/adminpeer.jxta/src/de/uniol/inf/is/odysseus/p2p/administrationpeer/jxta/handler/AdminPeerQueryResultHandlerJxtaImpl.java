@@ -12,7 +12,8 @@ public class AdminPeerQueryResultHandlerJxtaImpl extends AbstractMessageHandler 
 
 	private AdministrationPeerJxtaImpl administrationPeerJxtaImpl;
 
-	public AdminPeerQueryResultHandlerJxtaImpl(AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
+	public AdminPeerQueryResultHandlerJxtaImpl(
+			AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
 		setInterestedNamespace("BiddingResult");
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 	}
@@ -31,22 +32,21 @@ public class AdminPeerQueryResultHandlerJxtaImpl extends AbstractMessageHandler 
 		if (queryResult.equals("granted")) {
 			Log.logAction(queryId,
 					"Zusage fuer die Verwaltung der Anfrage bekommen.");
-			for (Query q : administrationPeerJxtaImpl
-					.getQueries().keySet()) {
+			for (Query q : administrationPeerJxtaImpl.getQueries().keySet()) {
 				if (q.getId().equals(queryId)) {
 					// Einstieg in die Ausfuehrungsumgebung
 					q.setStatus(Lifecycle.NEW);
-					administrationPeerJxtaImpl.getQueries()
-							.get(q).startListener();
+					administrationPeerJxtaImpl.getQueries().get(q)
+							.startListener();
 				}
 			}
 
 		} else if (queryResult.equals("denied")) {
-			for (Query q : administrationPeerJxtaImpl
-					.getQueries().keySet()) {
+			Log.logAction(queryId,
+					"Zusage fuer die Verwaltung der Anfrage NICHT bekommen. Verwerfe Anfrage");
+			for (Query q : administrationPeerJxtaImpl.getQueries().keySet()) {
 				if (q.getId() == queryId) {
-					administrationPeerJxtaImpl.getQueries()
-							.remove(q);
+					administrationPeerJxtaImpl.getQueries().remove(q);
 				}
 			}
 		}

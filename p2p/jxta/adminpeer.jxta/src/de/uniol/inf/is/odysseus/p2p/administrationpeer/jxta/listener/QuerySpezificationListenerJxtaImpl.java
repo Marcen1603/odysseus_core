@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 /**
  * Finden und bewerben von Anfragen, welche durch Thin-Peers ausgeschrieben werden. 
  * 
- * @author Mart Köhler
+ * @author Mart Koehler
  *
  */
 public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationListener,
@@ -54,13 +54,14 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 	@Override
 	public void run() {
 		while (true) {
+			//Suchanfrage nach Ausschreibungen von Thin-Peers
+			administrationPeerJxtaImpl.getDiscoveryService().getRemoteAdvertisements(
+					null, DiscoveryService.ADV, "queryId", "*", ADVS_PER_PEER, null);
 			try {
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			//Suchanfrage nach Ausschreibungen von Thin-Peers
-			administrationPeerJxtaImpl.getDiscoveryService().getRemoteAdvertisements(
-					null, DiscoveryService.ADV, "queryId", "*", ADVS_PER_PEER, null);
+
 		}
 	}
 
@@ -96,12 +97,10 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					q.setResponseSocketThinPeer(pipeAdv);
 					PeerAdvertisement peerAdv = administrationPeerJxtaImpl.getNetPeerGroup().getPeerAdvertisement();
 					
-//					synchronized(AdministrationPeerJxtaImpl.getInstance().getQueries()){
 						if(!administrationPeerJxtaImpl.getQueries().containsKey(q)) {
 							administrationPeerJxtaImpl.addQuery(q);
-//							AdministrationPeerJxtaImpl.getInstance().getQueries().put(q, AdministrationPeerJxtaImpl.getInstance().getExecutionListenerFactory().getNewInstance(q, AdministrationPeerJxtaImpl.getInstance().getExecutionHandler()));
 							Log.addQuery(adv.getQueryId());
-							Log.logAction(adv.getQueryId(), "Anfrage gefunden !");
+							Log.logAction(adv.getQueryId(), "Anfrage gefunden.");
 							Log.logAction(adv.getQueryId(), adv.getQuery());
 							if (biddingStrategy.bidding(q)){
 								HashMap<String, Object> messageElements = new HashMap<String, Object>();
@@ -110,15 +109,11 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 								messageElements.put("queryId", q.getId());
 								messageElements.put("responsePipeAdvertisement", administrationPeerJxtaImpl.getServerPipeAdvertisement());
 								messageElements.put("peerAdvertisement", peerAdv);
-//								messageElements.put("thinPeerPipeAdvertisement", pipeAdv);
 								Message response = MessageTool.createSimpleMessage(
 										"QueryNegotiation", messageElements);
 
-//								MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(), pipeAdv, response);
 								this.sender.sendMessage(administrationPeerJxtaImpl.getNetPeerGroup(), response, pipeAdv);
-								//TODO Überprüfen, ob die Kommunikation funktioniert
-//								MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(), pipeAdv, MessageTool.createMessage("QueryNegotiation", "Bidding", adv.getQueryId(),  AdministrationPeerJxtaImpl.getInstance().getServerPipeAdvertisement(), peerAdv));
-								Log.logAction(adv.getQueryId(), "Für Anfrage beworben !");
+								Log.logAction(adv.getQueryId(), "Fuer Anfrage beworben. Warte auf Antwort...");
 							}
 						}
 //					}

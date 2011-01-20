@@ -144,7 +144,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	
 	// fuer die korrekte Nutzung in OSGi muss der Konstruktor public sein. 
 	public AdministrationPeerJxtaImpl() {
-		super();		
+		super(new SocketServerListener() );
+		getSocketServerListener().setPeer(this);
 		getLogger().debug("Created Admin Peer");		
 	}
 
@@ -364,14 +365,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	@Override
 	public Object getServerResponseAddress() {
 		return this.serverPipeAdvertisement;
-	}
-
-	@Override
-	protected void initSocketServerListener() {
-		setSocketServerListener(new SocketServerListener(this));
-		if(getMessageHandlerList()!=null) {
-			getSocketServerListener().registerMessageHandler(getMessageHandlerList());
-		}
 	}
 
 	@Override

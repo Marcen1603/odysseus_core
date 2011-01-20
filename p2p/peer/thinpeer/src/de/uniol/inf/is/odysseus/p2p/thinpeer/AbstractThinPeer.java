@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
@@ -42,8 +43,8 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	
 	public HashMap<String,Object> adminPeers;
 	
-	public AbstractThinPeer() {
-		super();
+	public AbstractThinPeer(ISocketServerListener serverListener) {
+		super(serverListener);
 	}
 	
 	public HashMap<String,Object> getAdminPeers() {
@@ -124,7 +125,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 
 	protected void stopServerSocketListener() {
 		this.socketListenerThread.interrupt();
-		setSocketServerListener(null);
 	}
 
 	protected void stopGuiUpdater() {
@@ -135,7 +135,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	private void init() {
 		initServerResponseConnection();
 		initMessageSender();
-		initSocketServerListener();
 		initLocalMessageHandler();
 		initQueryPublisher();
 		initGuiUpdater();
@@ -162,8 +161,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	protected abstract void initGuiUpdater();
 
 	protected abstract void initQueryPublisher();
-
-	protected abstract void initSocketServerListener();
 
 	protected abstract void initSourceListener();
 

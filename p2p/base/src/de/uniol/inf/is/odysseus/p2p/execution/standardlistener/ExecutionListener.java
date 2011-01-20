@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.execution.standardlistener;
 
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.AbstractExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
@@ -16,37 +17,46 @@ public class ExecutionListener extends AbstractExecutionListener{
 		setCallback(new ExecutionListenerCallback());
 	}
 	
+//	@Override
+//	protected void execute(Lifecycle lifecycle) {
+//		if(getHandler().containsKey(lifecycle)) {
+//			execute(getHandler().get(lifecycle));
+//		}
+//	}
+	
 	@Override
-	protected void execute(Lifecycle lifecycle) {
-		if(getHandler().containsKey(lifecycle)) {
-			if(getActualExecutionThread()!=null) {
-				getActualExecutionThread().interrupt();
-			}
-			setActualExecutionThread(new Thread(getHandler().get(lifecycle)));
-			getActualExecutionThread().start();
+	protected void execute(IExecutionHandler<?> executionHandler){
+		if(getActualExecutionThread()!=null) {
+			getActualExecutionThread().interrupt();
 		}
+		// Jetzt muss man hier eigentlich warten bis der alte fertig ist ...
+		// Warum wird der überhaupt interrupted??
+		setActualExecutionThread(new Thread(executionHandler));
+		getActualExecutionThread().start();
+	
 	}
 
 	@Override
 	public void run() {
 		
 		while(getQuery().getStatus()!=Lifecycle.TERMINATED) {
-			Lifecycle temp = getQuery().getStatus();
-			logger.debug("aktueller Zustand: "+temp);
-			if(getHandler().containsKey(temp)) {
-				logger.debug("Executing "+getHandler().get(temp));
-				execute(temp);
+			Lifecycle currentQueryState = getQuery().getStatus();
+			IExecutionHandler<?> nextHandler = getHandler().get(currentQueryState);
+			logger.debug("aktueller Zustand: "+currentQueryState);
+			if(nextHandler != null) {
+				logger.debug("Executing "+nextHandler);
+				execute(nextHandler);
 			}
 			//Sonst hÃ¤ngen wir ewig in einer Schleife fest, falls es keinen passenden ExecutionHandler gibt.
 			else {
-				logger.warn("no Handler for Lifecycle "+temp+" found!");
+				logger.warn("no Handler for Lifecycle "+currentQueryState+" found!");
 				getCallback().changeState(Lifecycle.FAILED);
 				return;
 //				continue;
 				
 			}
 			synchronized (this) {
-				if(temp == getQuery().getStatus()) {
+				if(currentQueryState == getQuery().getStatus()) {
 					try {
 						this.wait();
 					} catch (InterruptedException e) {

@@ -105,6 +105,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	}
 
 	ThinPeerJxtaImpl() {
+		super(new SocketServerListener());
+		getSocketServerListener().setPeer(this);
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
 		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
@@ -240,16 +242,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	public void publishQuerySpezification(String query, String language) {
 		queryPublisher.publishQuerySpezification(idGenerator.generateId(),
 				query, language);
-	}
-
-	@Override
-	protected void initSocketServerListener() {
-		if (getSocketServerListener() == null) {
-			setSocketServerListener(new SocketServerListener(this));
-			if(getMessageHandlerList()!=null) {
-				getSocketServerListener().registerMessageHandler(getMessageHandlerList());
-			}
-		}
 	}
 
 	public HashMap<String, SourceAdvertisement> getSources() {

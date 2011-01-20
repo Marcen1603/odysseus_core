@@ -33,6 +33,7 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 
 		try {
 			socket = new JxtaSocket(peer.getNetPeerGroup(), null, pipeAdv, 8000, true);
+			socket.setSoTimeout(0);
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();

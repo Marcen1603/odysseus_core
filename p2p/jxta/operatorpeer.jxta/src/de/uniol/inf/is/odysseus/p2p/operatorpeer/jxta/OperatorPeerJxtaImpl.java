@@ -114,6 +114,11 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		startPeer();
 		getDistributionClient().initializeService();
 	}
+	
+	public OperatorPeerJxtaImpl() {
+		super(new SocketServerListener());
+		getSocketServerListener().setPeer(this);
+	}
 		
 	
 	public DiscoveryService getDiscoveryService() {
@@ -136,14 +141,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		return pipeService;
 	}
 
-
-	@Override
-	protected void initSocketServerListener(AbstractOperatorPeer aPeer) {
-		setSocketServerListener(new SocketServerListener(aPeer));
-		if(getMessageHandlerList()!=null) {
-			getSocketServerListener().registerMessageHandler(getMessageHandlerList());
-		}
-	}
 
 	public void setDiscoveryService(DiscoveryService discoveryService) {
 		this.discoveryService = discoveryService;

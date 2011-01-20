@@ -25,18 +25,18 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
  */
 public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
-	static private Logger logger = LoggerFactory.getLogger(AbstractOdysseusPeer.class);;
+	static private Logger logger = LoggerFactory
+			.getLogger(AbstractOdysseusPeer.class);;
 	private HashMap<Query, IExecutionListener> queries;
 	private List<IExecutionHandler<?>> executionHandler;
-	private List<IMessageHandler> messageHandlerList;
-	private IMessageSender<?,?,?> messageSender;
-	private ISocketServerListener socketServerListener;
+	private IMessageSender<?, ?, ?> messageSender;
+	final private ISocketServerListener socketServerListener;
 	private IExecutionListenerFactory executionListenerFactory;
 
-	public AbstractOdysseusPeer() {
+	public AbstractOdysseusPeer(ISocketServerListener socketServerListener) {
 		this.queries = new HashMap<Query, IExecutionListener>();
-		this.messageHandlerList = new ArrayList<IMessageHandler>();
 		this.executionHandler = new ArrayList<IExecutionHandler<?>>();
+		this.socketServerListener = socketServerListener;
 	}
 
 	@Override
@@ -44,10 +44,13 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
 	@Override
 	public abstract void stopPeer();
+
 	@Override
 	public abstract void initLocalMessageHandler();
+
 	@Override
 	public abstract void initMessageSender();
+
 	@Override
 	public abstract void initLocalExecutionHandler();
 
@@ -56,73 +59,62 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
 	@Override
 	public void bindExecutionListenerFactory(IExecutionListenerFactory factory) {
-		getLogger().info(
+		logger.info(
 				"Binding ExecutionListenerFactory: " + factory.getName());
 		this.executionListenerFactory = factory;
 	}
+
 	@Override
 	public void unbindExecutionListenerFactory(IExecutionListenerFactory factory) {
 		if (this.executionListenerFactory == factory) {
 			this.executionListenerFactory = null;
 		}
 	}
+
 	@Override
 	public void bindExecutionHandler(IExecutionHandler<?> handler) {
-		getLogger().info("Binding Execution Handler: " + handler.getName());
+		logger.info("Binding Execution Handler: " + handler.getName());
 		if (handler.getPeer() == null) {
 			handler.setPeer(this);
 		}
 		this.executionHandler.add(handler);
 	}
-	
+
 	@Override
 	public void unbindExecutionHandler(IExecutionHandler<?> handler) {
 		if (this.executionHandler.contains(handler)) {
 			this.executionHandler.remove(handler);
 		}
 	}
-	
+
 	@Override
 	public synchronized void registerMessageHandler(
 			IMessageHandler messageHandler) {
-		if (getSocketServerListener() == null) {
-			this.messageHandlerList.add(messageHandler);
-		} else {
-			this.messageHandlerList = getSocketServerListener()
-					.registerMessageHandler(messageHandler);
-		}
+		getSocketServerListener().registerMessageHandler(messageHandler);
 	}
+
 	@Override
 	public synchronized void registerMessageHandler(
 			List<IMessageHandler> messageHandler) {
-		for (IMessageHandler iMessageHandler : messageHandler) {
-			registerMessageHandler(iMessageHandler);
-		}
+		getSocketServerListener().registerMessageHandler(messageHandler);
 	}
 
-	private Logger getLogger() {
-		return logger;
-	}
-	
 	protected ISocketServerListener getSocketServerListener() {
 		return this.socketServerListener;
 	}
 
-	protected void setSocketServerListener(ISocketServerListener ssl) {
-		this.socketServerListener = ssl;
-	}
-	
 	@Override
 	public HashMap<Query, IExecutionListener> getQueries() {
 		return queries;
 	}
-	
+
 	@Override
 	public void addQuery(Query query) {
 		// Fuer alle Peers, welche die Ausfuehrungsumgebung nutzen
 		if (getExecutionListenerFactory() != null) {
 			boolean contain = false;
 			Query actualQuery = null;
+			// Find query with id ...??
 			for (Query q : getQueries().keySet()) {
 				if (q.getId().equals(query.getId())) {
 					contain = true;
@@ -170,31 +162,26 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 		IExecutionListener listener = getQueries().remove(query);
 		listener = null;
 	}
-	
+
 	@Override
 	public void deregisterMessageHandler(IMessageHandler messageHandler) {
-		if (getSocketServerListener() == null) {
-			getMessageHandlerList().remove(messageHandler);
-		} else {
-			getSocketServerListener().deregisterMessageHandler(messageHandler);
-		}
-
+		getSocketServerListener().deregisterMessageHandler(messageHandler);
 	}
 
-	protected synchronized List<IMessageHandler> getMessageHandlerList() {
-		return messageHandlerList;
+	protected synchronized Collection<IMessageHandler> getMessageHandlerList() {
+		return getSocketServerListener().getMessageHandler();
 	}
 
 	protected synchronized List<IExecutionHandler<?>> getExecutionHandler() {
 		return this.executionHandler;
 	}
-	
+
 	@Override
-	public IMessageSender<?,?,?> getMessageSender() {
+	public IMessageSender<?, ?, ?> getMessageSender() {
 		return messageSender;
 	}
 
-	protected void setMessageSender(IMessageSender<?,?,?> messageSender) {
+	protected void setMessageSender(IMessageSender<?, ?, ?> messageSender) {
 		this.messageSender = messageSender;
 	}
 }

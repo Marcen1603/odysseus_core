@@ -44,7 +44,7 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	@Override
 	public abstract void run();
 	
-	protected abstract void execute(Lifecycle lifecycle);
+	protected abstract void execute(IExecutionHandler<?> executionHandler);
 	
 	@Override
 	public synchronized Query getQuery() {
