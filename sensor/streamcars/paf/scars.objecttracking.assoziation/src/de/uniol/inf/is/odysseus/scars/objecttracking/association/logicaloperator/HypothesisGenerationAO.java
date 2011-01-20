@@ -45,6 +45,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		this.ASSOCIATION_RECORD_NAME = copy.ASSOCIATION_RECORD_NAME;
 		this.SCANNED_OBJECTS_NAME = copy.SCANNED_OBJECTS_NAME;
 		this.PREDICTED_OBJECTS_NAME = copy.PREDICTED_OBJECTS_NAME;
+		this.outputPredictedObjListPath = copy.outputPredictedObjListPath;
+		this.outputScannedObjListPath = copy.outputScannedObjListPath;
 	}
 
 	// LEFT -> SOURCE (neu erkannte objekte)

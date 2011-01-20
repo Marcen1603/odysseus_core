@@ -57,6 +57,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		super(copy);
 		this.sourcePredictedObjListPath = copy.getOldObjListPath();
 		this.sourceScannedObjListPath = copy.getNewObjListPath();
+		this.outputPredictedObjListPath = copy.outputPredictedObjListPath;
+		this.outputScannedObjListPath = copy.outputScannedObjListPath;
 	}
 
 	@Override
