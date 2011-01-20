@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -13,6 +14,8 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLat
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 
 /**
  * <p>
@@ -32,8 +35,12 @@ import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
  */
 public class HypothesisGenerationPO<M extends IProbability & IConnectionContainer & ITimeInterval & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private String oldObjListPath;
-	private String newObjListPath;
+	private String sourcePredictedObjListPath;
+	private String sourceScannedObjListPath;
+	
+	private String outputPredictedObjListPath;
+	private String outputScannedObjListPath;
+	
 	StreamCollector streamCollector;
 
 	private SchemaHelper helper;
@@ -48,8 +55,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	public HypothesisGenerationPO(HypothesisGenerationPO<M> copy) {
 		super(copy);
-		this.oldObjListPath = copy.getOldObjListPath();
-		this.newObjListPath = copy.getNewObjListPath();
+		this.sourcePredictedObjListPath = copy.getOldObjListPath();
+		this.sourceScannedObjListPath = copy.getNewObjListPath();
 	}
 
 	@Override
@@ -60,8 +67,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		helper2 = new SchemaHelper(getSubscribedToSource(1).getSchema());
 
 		timePathFromScannedData = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
-		carsFromscannedData = helper.getSchemaIndexPath(this.newObjListPath);
-		carsFromPredictedData = helper2.getSchemaIndexPath(this.oldObjListPath);
+		carsFromscannedData = helper.getSchemaIndexPath(this.sourceScannedObjListPath);
+		carsFromPredictedData = helper2.getSchemaIndexPath(this.sourcePredictedObjListPath);
 	}
 
 	@Override
@@ -127,13 +134,18 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		association[0] = timePathFromScannedData.toTupleIndexPath(scannedObject).getTupleObject();
 
 		// get scanned objects
-		association[1] = new MVRelationalTuple<M>((MVRelationalTuple<M>) carsFromscannedData.toTupleIndexPath(scannedObject).getTupleObject());
+		TupleIndexPath path = carsFromscannedData.toTupleIndexPath((MVRelationalTuple<M>) scannedObject);
+		replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputScannedObjListPath);
+		association[1] = new MVRelationalTuple<M>((MVRelationalTuple<M>) path.getTupleObject());
+		
 
 		// get predicted objects
 		if(predictedObject == null) {
 			association[2] = new MVRelationalTuple<M>(0);
 		} else {
-			association[2] =  new MVRelationalTuple<M>((MVRelationalTuple<M>) carsFromPredictedData.toTupleIndexPath(predictedObject).getTupleObject());
+			path = carsFromPredictedData.toTupleIndexPath(predictedObject);
+			replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputPredictedObjListPath);
+			association[2] =  new MVRelationalTuple<M>((MVRelationalTuple<M>) path.getTupleObject());
 		}
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
@@ -147,6 +159,19 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		return base;
 	}
 
+	private void replaceMetaDataNames(TupleIndexPath tupleIndexPath, String sourceName, String outputName) {
+		for (TupleInfo car : tupleIndexPath) {
+			@SuppressWarnings("unchecked")
+			MVRelationalTuple<M> carObject = (MVRelationalTuple<M>) car.tupleObject;
+			List<String> newAttributeMapping = new ArrayList<String>(carObject.getMetadata().getAttributMapping());
+			
+			for (int i = 0; i < newAttributeMapping.size(); i++) {
+				newAttributeMapping.set(i, newAttributeMapping.get(i).replace(sourceName, outputName));
+			}
+			carObject.getMetadata().setAttributeMapping(newAttributeMapping);
+		}
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -158,18 +183,26 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	}
 
 	public String getOldObjListPath() {
-		return this.oldObjListPath;
+		return this.sourcePredictedObjListPath;
 	}
 
 	public String getNewObjListPath() {
-		return this.newObjListPath;
+		return this.sourceScannedObjListPath;
 	}
 
-	public void setOldObjListPath(String oldObjListPath) {
-		this.oldObjListPath = oldObjListPath;
+	public void setSourcePredictedObjListPath(String oldObjListPath) {
+		this.sourcePredictedObjListPath = oldObjListPath;
 	}
 
-	public void setNewObjListPath(String newObjListPath) {
-		this.newObjListPath = newObjListPath;
+	public void setSourceScannedObjListPath(String newObjListPath) {
+		this.sourceScannedObjListPath = newObjListPath;
+	}
+
+	public void setOutputPredictedObjListPath(String outputPredictedObjListPath) {
+		this.outputPredictedObjListPath = outputPredictedObjListPath;
+	}
+	
+	public void setOutputScannedObjListPath(String outputScannedObjListPath) {
+		this.outputScannedObjListPath = outputScannedObjListPath;
 	}
 }
