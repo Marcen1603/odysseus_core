@@ -179,7 +179,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 
 	@Override
 	public boolean isInList(TupleIndexPath pathToList) {
-		int listIndex = pathToList.getLength()-1;
+		int listIndex = pathToList.getLastTupleIndex().toInt();
 		return schemaPath.getSchemaIndex(listIndex).isList();
 	}
 
