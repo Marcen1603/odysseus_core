@@ -67,10 +67,8 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 		}
 		Object o = null;
 		while (true) {
-			logger.debug("Lesen des Objektes");
 			try {
 				o = iStream.readObject();
-				logger.debug("Done");
 				if ((o instanceof Integer) && (((Integer) o).equals(0))) {
 					iStream.close();
 					socket.close();
