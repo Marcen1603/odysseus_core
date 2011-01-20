@@ -12,7 +12,7 @@ public class IntegerDatatypeProvider extends AbstractViewableDatatype<Double> {
 	}
 	
 	@Override
-	public Double convertToValue(Object value) {
+	public Double convertToValue(Object value) {		
 		Integer valInt = (Integer) value;		
 		return valInt.doubleValue();
 	}	

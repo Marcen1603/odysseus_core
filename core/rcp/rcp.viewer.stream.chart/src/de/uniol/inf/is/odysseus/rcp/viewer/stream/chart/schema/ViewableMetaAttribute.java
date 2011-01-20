@@ -46,7 +46,7 @@ public class ViewableMetaAttribute implements IViewableAttribute {
 	}
 	
 	@Override
-	public Object evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple) {
+	public Object evaluate(RelationalTuple<? extends IMetaAttribute> tuple) {
 		try {
 			Object value = method.invoke(tuple.getMetadata());							
 			return value;

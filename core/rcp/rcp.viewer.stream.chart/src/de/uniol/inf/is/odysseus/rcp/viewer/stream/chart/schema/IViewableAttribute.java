@@ -8,5 +8,5 @@ public interface IViewableAttribute{
 
 	public String getName();
 	public SDFDatatype getSDFDatatype();
-	public Object evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple);
+	public Object evaluate(RelationalTuple<? extends IMetaAttribute> tuple);
 }

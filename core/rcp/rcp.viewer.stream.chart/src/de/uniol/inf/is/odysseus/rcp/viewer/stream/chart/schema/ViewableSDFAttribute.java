@@ -8,9 +8,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 public class ViewableSDFAttribute implements IViewableAttribute{
 
 	private SDFAttribute attribute;
+	private int index;
 	
-	public ViewableSDFAttribute(SDFAttribute attribute){
+	public ViewableSDFAttribute(SDFAttribute attribute, int index){
 		this.attribute = attribute;
+		this.index = index;
 	}
 
 	@Override
@@ -24,8 +26,8 @@ public class ViewableSDFAttribute implements IViewableAttribute{
 	}
 
 	@Override
-	public Object evaluate(int index, RelationalTuple<? extends IMetaAttribute> tuple) {
-		return tuple.getAttribute(index);		
+	public Object evaluate(RelationalTuple<? extends IMetaAttribute> tuple) {
+		return tuple.getAttribute(this.index);		
 	}
 	
 	@Override

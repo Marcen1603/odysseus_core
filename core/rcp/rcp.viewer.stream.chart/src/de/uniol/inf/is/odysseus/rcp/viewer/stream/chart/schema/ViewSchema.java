@@ -30,12 +30,13 @@ public class ViewSchema<T> {
 	}
 
 	private void init() {
-		
+		int index = 0;
 		for (SDFAttribute a : this.outputSchema) {
-			IViewableAttribute attribute = new ViewableSDFAttribute(a);
+			IViewableAttribute attribute = new ViewableSDFAttribute(a, index);
 			if (isAllowedDataType(attribute.getSDFDatatype())) {
 				viewableAttributes.add(attribute);
 			}
+			index++;
 		}
 		this.choosenAttributes = new ArrayList<IViewableAttribute>(viewableAttributes);
 
@@ -62,9 +63,8 @@ public class ViewSchema<T> {
 	public List<T> convertToViewableFormat(RelationalTuple<? extends IMetaAttribute> tuple) {
 		List<T> values = new ArrayList<T>();
 		for (int index = 0; index < this.viewableAttributes.size(); index++) {
-			IViewableAttribute viewable = this.viewableAttributes.get(index);
-			
-			Object value = viewable.evaluate(index, tuple);
+			IViewableAttribute viewable = this.viewableAttributes.get(index);			
+			Object value = viewable.evaluate(tuple);
 			IViewableDatatype<?> converter = ViewableDatatypeRegistry.getInstance().getConverter(viewable.getSDFDatatype());			
 			values.add((T)converter.convertToValue(value));
 		}
