@@ -252,7 +252,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			SchemaIndex index = schemaPath.getSchemaIndex(i);
 			if(isUnderList) {
 				relativePath[i] = -1;
-				relativePathIndexIndex = i;
+//				relativePathIndexIndex = i;
 			}
 
 			if(index.isList()) {
