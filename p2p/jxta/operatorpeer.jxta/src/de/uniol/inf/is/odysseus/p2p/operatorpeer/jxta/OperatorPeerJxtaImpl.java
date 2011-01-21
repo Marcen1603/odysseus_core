@@ -18,6 +18,7 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.JxtaConfiguration;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
@@ -49,47 +51,8 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	
 	private String name = "OperatorPeer";
 	
-	private int tcpPort=9900;
-	
-	private int httpPort=10000;
 
-	// Logging an oder aus
-	private static final String LOGGING = "OFF";
-
-	// Zum Testen um mehrere Peers gleichzeitig zu starten,
-	// dem Namen des Peers wird eine zufällge Nummernfolgen angehängt, um
-	// den Peer im Netzwerk eindeutig zu machen.
-	private static final boolean RANDOM_NAME = true;
-
-	// Wieviele Millisekunden soll probiert werden eine Verbindung
-	// mit dem P2P-Netzwerk aufzubauen bevor aufgegeben wird.
-	private static final int CONNECTION_TIME = 12000;
-
-	// Soll Multicasting für Peers im lokalen Netzwertk aktiviert
-	// werden.
-	private static final boolean MULTICAST = true;
-
-	// Soll HTTP für den Peer aktiviert werden ? Unbedingt notwendig
-	// wenn Peer im WAN arbeiten soll.
-	private static final boolean HTTP = true;
-
-	// Soll TCP für den Peer aktiviert werden.
-	private static final boolean TCP = true;
-
-	private static final boolean USE_SUPER_PEER = false;
-
-	private static final String TCP_RENDEZVOUS_URI = "tcp://hurrikan.informatik.uni-oldenburg.de:10801";
-
-	private static final String HTTP_RENDEZVOUS_URI = "http://hurrikan.informatik.uni-oldenburg.de:10802";
-
-	private static final String TCP_RELAY_URI = "tcp://hurrikan.informatik.uni-oldenburg.de:10801";
-
-	private static final String HTTP_RELAY_URI = "http://hurrikan.informatik.uni-oldenburg.de:10802";
-	
-	private static final String TCP_INTERFACE_ADDRESS = "";
-	
-	private static final String HTTP_INTERFACE_ADDRESS = "";
-	
+	JxtaConfiguration configuration;
 	
 	public DiscoveryService discoveryService;
 
@@ -107,12 +70,27 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	public void activate() {
 		getLogger().info("OSGi Services loaded");
 		
+		String configFile = System.getenv("PeerConfig");
+		if (configFile == null || configFile.trim().length() == 0){
+			configFile = OdysseusDefaults.getHomeDir()+"/OperatorPeerConfig.xml";
+		}
+		
+		// JxtaConfiguration einlesen
+		try {
+			configuration = new JxtaConfiguration(configFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
 		// TODO: User einlesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
 		// TODO: Unterschiedliche Namen notwendig?
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("OperatorPeer")); 
 		startPeer();
 		getDistributionClient().initializeService();
+		
+		
 	}
 	
 	public OperatorPeerJxtaImpl() {
@@ -166,10 +144,10 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	public void startNetwork() {
 		
-		if (RANDOM_NAME) {
+		if (configuration.isRandomName()) {
 			name = "" + name + "" + System.currentTimeMillis();
 		}
-		System.setProperty("net.jxta.logging.Logging", LOGGING);
+		System.setProperty("net.jxta.logging.Logging", configuration.getLogging());
 
 		try {
 			CacheTool.checkForExistingConfigurationDeletion("OperatorPeer_" + name,
@@ -180,7 +158,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		
 		ConfigMode peerMode = null;
 		
-		if (USE_SUPER_PEER){
+		if (configuration.isUseSuperPeer()){
 			peerMode = NetworkManager.ConfigMode.EDGE;
 		}
 		else{
@@ -194,39 +172,39 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 			manager.getConfigurator().clearRelaySeeds();
 			manager.getConfigurator().clearRendezvousSeeds();
-			if (USE_SUPER_PEER) {
+			if (configuration.isUseSuperPeer()) {
 				manager.getConfigurator().clearRelaySeeds();
 				manager.getConfigurator().clearRendezvousSeeds();
 
 				try {
 					manager.getConfigurator().addSeedRendezvous(
-							new URI(HTTP_RENDEZVOUS_URI));
+							new URI(configuration.getHttpRendezvousUri()));
 					manager.getConfigurator().addSeedRelay(
-							new URI(HTTP_RELAY_URI));
+							new URI(configuration.getHttpRelayUri()));
 					manager.getConfigurator().addSeedRendezvous(
-							new URI(TCP_RENDEZVOUS_URI));
+							new URI(configuration.getTcpRendezvousUri()));
 					manager.getConfigurator().addSeedRelay(
-							new URI(TCP_RELAY_URI));
+							new URI(configuration.getTcpRelayUri()));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}
-			manager.getConfigurator().setTcpPort(tcpPort);
-			manager.getConfigurator().setHttpPort(httpPort);
-			manager.getConfigurator().setHttpEnabled(HTTP);
-			manager.getConfigurator().setHttpOutgoing(HTTP);
-			manager.getConfigurator().setHttpIncoming(HTTP);
-			manager.getConfigurator().setTcpEnabled(TCP);
-			manager.getConfigurator().setTcpOutgoing(TCP);
-			manager.getConfigurator().setTcpIncoming(TCP);
-			manager.getConfigurator().setUseMulticast(MULTICAST);
+			manager.getConfigurator().setTcpPort(configuration.getTcpPort());
+			manager.getConfigurator().setHttpPort(configuration.getHttpPort());
+			manager.getConfigurator().setHttpEnabled(configuration.isHttp());
+			manager.getConfigurator().setHttpOutgoing(configuration.isHttp());
+			manager.getConfigurator().setHttpIncoming(configuration.isHttp());
+			manager.getConfigurator().setTcpEnabled(configuration.isTcp());
+			manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
+			manager.getConfigurator().setTcpIncoming(configuration.isTcp());
+			manager.getConfigurator().setUseMulticast(configuration.isMulticast());
 			
-			if (!TCP_INTERFACE_ADDRESS.equals("")){
-				manager.getConfigurator().setTcpInterfaceAddress(TCP_INTERFACE_ADDRESS);
+			if (!configuration.getTcpInterfaceAddress().equals("")){
+				manager.getConfigurator().setTcpInterfaceAddress(configuration.getTcpInterfaceAddress());
 			}
 			
-			if (!HTTP_INTERFACE_ADDRESS.equals("")){
-				manager.getConfigurator().setHttpInterfaceAddress(HTTP_INTERFACE_ADDRESS);
+			if (!configuration.getHttpInterfaceAddress().equals("")){
+				manager.getConfigurator().setHttpInterfaceAddress(configuration.getHttpInterfaceAddress());
 			}
 			
 		} catch (IOException e1) {
@@ -243,6 +221,10 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 				e.printStackTrace();
 			}
 		}
+
+		manager.waitForRendezvousConnection(configuration.getConnectionTime());
+
+		
 		netPeerGroup = manager.getNetPeerGroup();
 		PeerGroupTool.setPeerGroup(netPeerGroup);
 		this.discoveryService = this.getNetPeerGroup().getDiscoveryService();
@@ -250,7 +232,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 				QueryTranslationSpezification.getAdvertisementType(),
 				new QueryTranslationSpezification.Instantiator());
 
-		manager.waitForRendezvousConnection(CONNECTION_TIME);
 
 		AdvertisementFactory
 				.registerAdvertisementInstance(SourceAdvertisement
