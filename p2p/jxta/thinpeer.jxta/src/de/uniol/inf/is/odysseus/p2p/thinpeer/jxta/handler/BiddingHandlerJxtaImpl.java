@@ -7,12 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Bid;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.BiddingHandlerStrategyStandard;
@@ -34,12 +34,12 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 	
 	// Wie oft werden Antworten auf Bewerbungen herausgeschickt
 	private int WAIT_TIME = 10000;
-	private Query query;
+	private P2PQuery query;
 	private JxtaMessageSender sender;
 
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
-	public BiddingHandlerJxtaImpl(Query query, JxtaMessageSender sender, ThinPeerJxtaImpl thinPeerJxtaImpl) {
+	public BiddingHandlerJxtaImpl(P2PQuery query, JxtaMessageSender sender, ThinPeerJxtaImpl thinPeerJxtaImpl) {
 		this.query = query;
 		this.sender = sender;
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
@@ -71,7 +71,7 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 				if (getQuery()
 						.getStatus() == Lifecycle.NEW) {
 					ArrayList<Bid> biddings = new ArrayList<Bid>();
-					QueryJxtaImpl query = ((QueryJxtaImpl)getQuery());
+					P2PQueryJxtaImpl query = ((P2PQueryJxtaImpl)getQuery());
 					
 					for (Bid bid : query.getAdminPeerBidding().values()) {
 						biddings.add(bid);
@@ -94,7 +94,7 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 //								.getNetPeerGroup(), ((BidJxtaImpl) bid)
 //								.getResponseSocket(), MessageTool
 //								.createSimpleMessage("BiddingResult", messageElements));
-						((QueryJxtaImpl) getQuery())
+						((P2PQueryJxtaImpl) getQuery())
 								.setAdminPeerPipe(((BidJxtaImpl) bid)
 										.getResponseSocket());
 	
@@ -116,7 +116,7 @@ logger.debug("timer abgelaufen");
 //		}
 	}
 	
-	public Query getQuery() {
+	public P2PQuery getQuery() {
 		return query;
 	}
 }

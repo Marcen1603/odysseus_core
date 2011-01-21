@@ -12,19 +12,19 @@ import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 public class GrantedMessageHandler extends AbstractMessageHandler implements
 		Runnable {
 
 	static Logger logger = LoggerFactory.getLogger(GrantedMessageHandler.class);
 	
-	private Query query;
+	private P2PQuery query;
 	private IExecutionListenerCallback callback;
 	private IOdysseusPeer peer;
 	private List<String> confirmed;
 
-	public GrantedMessageHandler(Query query,
+	public GrantedMessageHandler(P2PQuery query,
 			IExecutionListenerCallback callback, IOdysseusPeer peer,
 			String interestedNamespace) {
 		this.query = query;
@@ -80,7 +80,7 @@ public class GrantedMessageHandler extends AbstractMessageHandler implements
 		return callback;
 	}
 
-	public Query getQuery() {
+	public P2PQuery getQuery() {
 		return query;
 	}
 

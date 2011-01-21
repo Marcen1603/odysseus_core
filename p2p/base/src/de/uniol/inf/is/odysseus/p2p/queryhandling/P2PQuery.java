@@ -9,38 +9,24 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
-public abstract class Query implements Serializable{
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5425656893540775498L;
+public abstract class P2PQuery implements Serializable{
 
+	private static final long serialVersionUID = -5425656893540775498L;
 	private Lifecycle currStatus;
-	
 	public String getId() {
 		return id;
 	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
 	private String id;
-
 	private String declarativeQuery;
-	
 	private String language;
-	
 	private ILogicalOperator logicalOperatorPlan;
 	
 	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
-	
 	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
-
 	private User user;
-
 	transient private IDataDictionary dataDictionary;
 	
 	public User getUser() {
@@ -82,7 +68,7 @@ public abstract class Query implements Serializable{
 	}
 	
 
-	public Query(){
+	public P2PQuery(){
 	}
 
 	public Lifecycle getStatus() {
@@ -127,7 +113,7 @@ public abstract class Query implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Query other = (Query) obj;
+		P2PQuery other = (P2PQuery) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -136,7 +122,7 @@ public abstract class Query implements Serializable{
 		return true;
 	}
 	
-	public Query(String query, String queryID, User user) {
+	public P2PQuery(String query, String queryID, User user) {
 		setDeclarativeQuery(queryID);
 		setId(queryID);
 		this.user = user;

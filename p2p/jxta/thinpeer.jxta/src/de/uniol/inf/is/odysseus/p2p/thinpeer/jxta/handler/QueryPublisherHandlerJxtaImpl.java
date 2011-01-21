@@ -8,7 +8,7 @@ import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
@@ -34,7 +34,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 	public void publishQuerySpezification(String queryId, String query,
 			String language) {
 
-		QueryJxtaImpl q = new QueryJxtaImpl();
+		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
 		q.setDeclarativeQuery(query);
 		q.setId(queryId);
 		q.setStatus(Lifecycle.NEW);
@@ -78,7 +78,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 						.getAdminPeers().get(adminPeer)).getPipe());
 		PipeAdvertisement thinPeerPipe = (PipeAdvertisement) thinPeerJxtaImpl.getServerResponseAddress();
 
-		QueryJxtaImpl q = new QueryJxtaImpl();
+		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
 		q.setDeclarativeQuery(query);
 		q.setUser(GlobalState.getActiveUser());
 		q.setDataDictionary(GlobalState.getActiveDatadictionary());

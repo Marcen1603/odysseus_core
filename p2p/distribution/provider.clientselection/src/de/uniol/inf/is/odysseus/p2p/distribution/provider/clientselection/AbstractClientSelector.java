@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection;
 
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 
 
@@ -18,15 +18,15 @@ public abstract class AbstractClientSelector<C> implements IClientSelector {
 	}
 
 	private int time;
-	private Query query;
+	private P2PQuery query;
 
-	public AbstractClientSelector(int time, Query query, C callback) {
+	public AbstractClientSelector(int time, P2PQuery query, C callback) {
 		this.query = query;
 		this.time = time;
 		this.callback = callback;
 	}
 	
-	public AbstractClientSelector(int time, Query query) {
+	public AbstractClientSelector(int time, P2PQuery query) {
 		this.query = query;
 		this.time = time;
 		this.callback = null;
@@ -41,7 +41,7 @@ public abstract class AbstractClientSelector<C> implements IClientSelector {
 	public abstract void run();
 
 	@Override
-	public Query getQuery() {
+	public P2PQuery getQuery() {
 		return query;
 	}
 	

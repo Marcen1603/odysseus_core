@@ -13,13 +13,13 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 public class GrantedMessageHandler extends AbstractMessageHandler {
 
 	static Logger logger = LoggerFactory.getLogger(GrantedExecutionHandler.class);
 	
-	private Query query = null;
+	private P2PQuery query = null;
 	private IExecutionListenerCallback callback;
 	@SuppressWarnings("rawtypes")
 	private IMessageSender messageSender;
@@ -58,11 +58,11 @@ public class GrantedMessageHandler extends AbstractMessageHandler {
 	}
 
 
-	public void setQuery(Query query) {
+	public void setQuery(P2PQuery query) {
 		this.query = query;
 	}
 
-	public Query getQuery() {
+	public P2PQuery getQuery() {
 		return query;
 	}
 

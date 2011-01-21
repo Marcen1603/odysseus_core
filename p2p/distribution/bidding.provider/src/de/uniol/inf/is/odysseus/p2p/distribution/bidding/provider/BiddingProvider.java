@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelector;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class BiddingProvider extends
@@ -97,7 +97,7 @@ public class BiddingProvider extends
 	}
 
 	@Override
-	public void distributePlan(Query query, PipeAdvertisement serverResponse) {
+	public void distributePlan(P2PQuery query, PipeAdvertisement serverResponse) {
 		if (getDiscoveryService() == null) {
 			return;
 		}
@@ -119,7 +119,7 @@ public class BiddingProvider extends
 				messageElements);
 
 		((JxtaMessageSender)(getPeer().getMessageSender())).sendMessage(PeerGroupTool.getPeerGroup(),
-				message, ((QueryJxtaImpl) query).getResponseSocketThinPeer());
+				message, ((P2PQueryJxtaImpl) query).getResponseSocketThinPeer());
 		Log.logAction(query.getId(),
 				"Sende Thin-Peer Verbindungsinformationen zum Operatorplan"); // ??
 

@@ -5,20 +5,20 @@ import java.util.HashMap;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 public class BiddingMessageResultHandler extends AbstractMessageHandler {
 
-	private HashMap<Query, IExecutionListener> managedQueries;
+	private HashMap<P2PQuery, IExecutionListener> managedQueries;
 
 	// Soll hier nicht den gesamten ExecutionListener kennen, sondern nur das
 	// ihm zugehörige CallbackObjekt
 	public BiddingMessageResultHandler(
-			HashMap<Query, IExecutionListener> hashMap) {
+			HashMap<P2PQuery, IExecutionListener> hashMap) {
 		this.managedQueries = hashMap;
 		setInterestedNamespace("BiddingProvider");
 	}
@@ -39,8 +39,8 @@ public class BiddingMessageResultHandler extends AbstractMessageHandler {
 		Log.logAction(queryId, "Gebot (" + bid
 				+ ") von einem Operator-Peer eingegangen.");
 		boolean exists = false;
-		Query actualQuery = null;
-		for (Query q : getManagedQueries().keySet()) {
+		P2PQuery actualQuery = null;
+		for (P2PQuery q : getManagedQueries().keySet()) {
 			if (q.getId().equals(queryId)) {
 				exists = true;
 				actualQuery = q;
@@ -49,19 +49,19 @@ public class BiddingMessageResultHandler extends AbstractMessageHandler {
 		}
 		if (exists && bid.equals("positive")) {
 			// Fuege das Gebot dem entsprechenden Subplan der Query hinzu
-			((QueryJxtaImpl) actualQuery).addBidding(pipeAdv, peerId,
+			((P2PQueryJxtaImpl) actualQuery).addBidding(pipeAdv, peerId,
 					subplanId, bid);
 			Log.addBid(queryId, actualQuery.getSubPlans().get(subplanId)
 					.getBiddings().size());
 		}
 	}
 
-	public HashMap<Query, IExecutionListener> getManagedQueries() {
+	public HashMap<P2PQuery, IExecutionListener> getManagedQueries() {
 		return managedQueries;
 	}
 
 	public void setManagedQueries(
-			HashMap<Query, IExecutionListener> managedQueries) {
+			HashMap<P2PQuery, IExecutionListener> managedQueries) {
 		this.managedQueries = managedQueries;
 	}
 

@@ -8,18 +8,18 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class QueryResultHandlerJxtaImpl extends AbstractMessageHandler {
 
-	private HashMap<Query, IExecutionListener> queries;
+	private HashMap<P2PQuery, IExecutionListener> queries;
 
-	public HashMap<Query, IExecutionListener> getQueries() {
+	public HashMap<P2PQuery, IExecutionListener> getQueries() {
 		return queries;
 	}
 
-	public QueryResultHandlerJxtaImpl(HashMap<Query, IExecutionListener> hashMap) {
+	public QueryResultHandlerJxtaImpl(HashMap<P2PQuery, IExecutionListener> hashMap) {
 		this.queries = hashMap;
 		setInterestedNamespace("BiddingClient");
 	}
@@ -38,7 +38,7 @@ public class QueryResultHandlerJxtaImpl extends AbstractMessageHandler {
 				"subplanId", msg);
 		if (result.equals("granted")) {
 			Log.logAction(queryId, "Erhalte Zusage fuer Teilplan " + subPlanId);
-			for (Query q : getQueries().keySet()) {
+			for (P2PQuery q : getQueries().keySet()) {
 				if (q.getId().equals(queryId)) {
 					IExecutionListener listener = getQueries().get(q);
 					for (Subplan sp : q.getSubPlans().values()) {
@@ -63,7 +63,7 @@ public class QueryResultHandlerJxtaImpl extends AbstractMessageHandler {
 		} else {
 			Log.logAction(queryId,
 					"Habe keine Zusage fuer die Anfrage bekommen");
-			for (Query q : getQueries().keySet()) {
+			for (P2PQuery q : getQueries().keySet()) {
 				if (q.getId() == queryId && q.getSubPlans().size() == 1) {
 					getQueries().remove(q);
 				} else if (q.getId() == queryId) {

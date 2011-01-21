@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.ErrorPopup;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
@@ -32,9 +32,9 @@ public class QueryNegotiationMessageHandler extends AbstractMessageHandler {
 			.getResponsePipe(namespace, (Message)msg, 0);
 			PeerAdvertisement peerAdv = MessageTool
 					.getPeerAdvertisement(namespace, (Message)msg);
-			for(Query q :thinPeerJxtaImpl.getQueries().keySet()) {
-				if(q.getId().equals(queryId) && (q instanceof QueryJxtaImpl)) {
-					((QueryJxtaImpl)q).addAdminBidding(pipeAdv, peerAdv);
+			for(P2PQuery q :thinPeerJxtaImpl.getQueries().keySet()) {
+				if(q.getId().equals(queryId) && (q instanceof P2PQueryJxtaImpl)) {
+					((P2PQueryJxtaImpl)q).addAdminBidding(pipeAdv, peerAdv);
 				}
 			}
 		}

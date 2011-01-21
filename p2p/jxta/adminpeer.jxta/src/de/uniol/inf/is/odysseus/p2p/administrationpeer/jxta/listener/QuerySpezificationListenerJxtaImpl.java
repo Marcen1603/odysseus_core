@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.MaxQueryBid
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IThinPeerBiddingStrategy;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
@@ -88,7 +88,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					}
 					
 					PipeAdvertisement pipeAdv = MessageTool.createPipeAdvertisementFromXml(adv.getBiddingPipe());
-					QueryJxtaImpl q = new QueryJxtaImpl();
+					P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
 					q.setId(adv.getQueryId());
 					q.setLanguage(adv.getLanguage());
 					q.setDeclarativeQuery(adv.getQuery());

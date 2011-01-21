@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 public abstract class AbstractDistributionProvider<R> implements IDistributionProvider<R> {
 
@@ -40,7 +40,7 @@ public abstract class AbstractDistributionProvider<R> implements IDistributionPr
 	}
 	
 	@Override
-	public abstract void distributePlan(Query q, R serverResponse);
+	public abstract void distributePlan(P2PQuery q, R serverResponse);
 	
 	@Override
 	public abstract String getDistributionStrategy();

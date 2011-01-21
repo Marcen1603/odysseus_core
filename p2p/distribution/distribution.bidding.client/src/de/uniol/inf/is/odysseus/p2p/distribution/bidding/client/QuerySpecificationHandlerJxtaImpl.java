@@ -22,14 +22,14 @@ import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
@@ -57,10 +57,10 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 	@Override
 	public void handleQuerySpezification(S adv) {
 		logger.debug("handle adv zu Subplan "+adv.getSubplanId());
-		QueryJxtaImpl query = null;
-		for(Query q : aPeer.getQueries().keySet()) {
+		P2PQueryJxtaImpl query = null;
+		for(P2PQuery q : aPeer.getQueries().keySet()) {
 			if(adv.getQueryId().equals(q.getId())) {
-				query = (QueryJxtaImpl) q;
+				query = (P2PQueryJxtaImpl) q;
 				if(q.getSubPlans().containsKey(adv.getSubplanId())) {
 //					return;
 				}
@@ -83,7 +83,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		synchronized (aPeer.getQueries()) {
 			//Existiert die Query bereits
 			if(query==null) {
-				query = new QueryJxtaImpl();
+				query = new P2PQueryJxtaImpl();
 				query.setId(adv.getQueryId());
 				query.setLanguage(adv.getLanguage());
 				query.setAdminPeerPipe(MessageTool

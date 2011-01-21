@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -141,10 +140,10 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
-		logger.debug("Sending object "+object);
+		//logger.debug("Sending object "+object);
 		synchronized (subscribe) {
 			for (StreamHandler sh : subscribe) {
-				logger.debug("to "+sh.socket.getRemoteSocketAddress());
+				//logger.debug("to "+sh.socket.getRemoteSocketAddress());
 				sh.transfer(object);
 			}
 		}

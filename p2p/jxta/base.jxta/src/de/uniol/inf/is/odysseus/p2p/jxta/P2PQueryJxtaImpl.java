@@ -6,13 +6,10 @@ import java.util.Map;
 
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
-public class QueryJxtaImpl extends Query{
+public class P2PQueryJxtaImpl extends P2PQuery{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8784146315565652081L;
 	private PipeAdvertisement responseSocketThinPeer;
 	private PipeAdvertisement adminPeerPipe;
@@ -23,7 +20,7 @@ public class QueryJxtaImpl extends Query{
 		return adminPeerBidding;
 	}
 
-	public QueryJxtaImpl() {
+	public P2PQueryJxtaImpl() {
 		this.adminPeerBidding = new HashMap<String, BidJxtaImpl>();
 	}
 

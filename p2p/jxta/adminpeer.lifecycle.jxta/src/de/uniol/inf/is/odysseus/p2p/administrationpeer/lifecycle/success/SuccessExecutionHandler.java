@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 /**
  * Handler that get active each time
@@ -51,7 +51,7 @@ public class SuccessExecutionHandler<F> extends AbstractExecutionHandler<F> {
 
 	@Override
 	public void run() {
-		Query q = getExecutionListenerCallback().getQuery();
+		P2PQuery q = getExecutionListenerCallback().getQuery();
 		Lifecycle oldState = q.getHistory().get(getExecutionListenerCallback().getQuery().getHistory().size()-2);
 		Lifecycle newState = followingCycle.get(oldState);
 		logger.debug("Changing state from " + oldState + " to " + newState);

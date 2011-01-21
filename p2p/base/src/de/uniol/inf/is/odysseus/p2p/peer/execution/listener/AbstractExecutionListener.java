@@ -6,11 +6,11 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 public abstract class AbstractExecutionListener implements IExecutionListener {
 	
-	private Query query;
+	private P2PQuery query;
 	private IExecutionListenerCallback callback;
 	private Thread actualExecutionThread;
 	
@@ -27,7 +27,7 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	
 	private Map<Lifecycle, IExecutionHandler<?>> handler = null;
 
-	public AbstractExecutionListener(Query query) {
+	public AbstractExecutionListener(P2PQuery query) {
 		this.query = query;
 		this.handler = new HashMap<Lifecycle, IExecutionHandler<?>>();
 	}
@@ -47,7 +47,7 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	protected abstract void execute(IExecutionHandler<?> executionHandler);
 	
 	@Override
-	public synchronized Query getQuery() {
+	public synchronized P2PQuery getQuery() {
 		return query;
 	}
 	@Override

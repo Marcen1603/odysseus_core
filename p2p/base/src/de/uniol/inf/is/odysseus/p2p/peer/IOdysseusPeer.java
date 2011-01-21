@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 public interface IOdysseusPeer extends IPeer {
 	void registerMessageHandler(IMessageHandler messageHandler);
@@ -21,9 +21,9 @@ public interface IOdysseusPeer extends IPeer {
 	void initMessageSender();
 	void initLocalExecutionHandler();
 	void registerMessageHandler(List<IMessageHandler> messageHandler);
-	HashMap<Query, IExecutionListener> getQueries();
-	void addQuery(Query query);
-	void removeQuery(Query query);
+	HashMap<P2PQuery, IExecutionListener> getQueries();
+	void addQuery(P2PQuery query);
+	void removeQuery(P2PQuery query);
 	void deregisterMessageHandler(IMessageHandler messageHandler);
 	IMessageSender<?,?,?> getMessageSender();
 

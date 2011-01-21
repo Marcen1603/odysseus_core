@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.execution.standardlistener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.AbstractExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory; 
@@ -12,7 +12,7 @@ public class ExecutionListener extends AbstractExecutionListener{
 	
 	static Logger logger = LoggerFactory.getLogger(ExecutionListener.class);
 
-	public ExecutionListener(Query query) {
+	public ExecutionListener(P2PQuery query) {
 		super(query);
 		setCallback(new ExecutionListenerCallback());
 	}

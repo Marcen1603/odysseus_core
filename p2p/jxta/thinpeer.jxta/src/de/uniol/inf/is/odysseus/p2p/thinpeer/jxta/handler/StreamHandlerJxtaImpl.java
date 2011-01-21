@@ -1,16 +1,15 @@
 package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IStreamHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
@@ -19,23 +18,13 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 
 	static Logger logger = LoggerFactory.getLogger(StreamHandlerJxtaImpl.class);
 
-	private static final int TIMEOUT = 15000;
-
 	private PipeAdvertisement adv;
 
-	private JxtaSocket socket = null;
-
-	private ObjectInputStream iStream;
-
-	private InputStream in;
-
 	private String queryId;
-
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
 	public StreamHandlerJxtaImpl(PipeAdvertisement adv, String queryId,
 			ThinPeerJxtaImpl thinPeerJxtaImpl) {
-		super();
 		this.adv = adv;
 		this.queryId = queryId;
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
@@ -45,11 +34,11 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 
 	@Override
 	public void run() {
-		logger.debug("Bin im StreamHandler Thread");
+		JxtaSocket socket = null;
+		ObjectInputStream iStream = null;
+		InputStream in = null;
 		while (socket == null) {
 			try {
-				logger.debug("Bauen Socket auf mit diesem Adv: "
-						+ adv.toString());
 				socket = new JxtaSocket(thinPeerJxtaImpl.getNetPeerGroup(), adv);
 				socket.setSoTimeout(0);
 				break;
@@ -58,10 +47,10 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 				// e2.printStackTrace();
 			}
 		}
-
+		logger.debug("Connected to "+adv);
 		try {
 			in = socket.getInputStream();
-			this.iStream = new ObjectInputStream(in);
+			iStream = new ObjectInputStream(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

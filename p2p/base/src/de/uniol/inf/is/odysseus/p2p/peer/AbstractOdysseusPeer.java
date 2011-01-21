@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 /**
@@ -27,14 +27,14 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractOdysseusPeer.class);;
-	private HashMap<Query, IExecutionListener> queries;
+	private HashMap<P2PQuery, IExecutionListener> queries;
 	private List<IExecutionHandler<?>> executionHandler;
 	private IMessageSender<?, ?, ?> messageSender;
 	final private ISocketServerListener socketServerListener;
 	private IExecutionListenerFactory executionListenerFactory;
 
 	public AbstractOdysseusPeer(ISocketServerListener socketServerListener) {
-		this.queries = new HashMap<Query, IExecutionListener>();
+		this.queries = new HashMap<P2PQuery, IExecutionListener>();
 		this.executionHandler = new ArrayList<IExecutionHandler<?>>();
 		this.socketServerListener = socketServerListener;
 	}
@@ -104,18 +104,18 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	}
 
 	@Override
-	public HashMap<Query, IExecutionListener> getQueries() {
+	public HashMap<P2PQuery, IExecutionListener> getQueries() {
 		return queries;
 	}
 
 	@Override
-	public void addQuery(Query query) {
+	public void addQuery(P2PQuery query) {
 		// Fuer alle Peers, welche die Ausfuehrungsumgebung nutzen
 		if (getExecutionListenerFactory() != null) {
 			boolean contain = false;
-			Query actualQuery = null;
+			P2PQuery actualQuery = null;
 			// Find query with id ...??
-			for (Query q : getQueries().keySet()) {
+			for (P2PQuery q : getQueries().keySet()) {
 				if (q.getId().equals(query.getId())) {
 					contain = true;
 					actualQuery = q;
@@ -157,7 +157,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	}
 
 	@Override
-	public void removeQuery(Query query) {
+	public void removeQuery(P2PQuery query) {
 		@SuppressWarnings("unused")
 		IExecutionListener listener = getQueries().remove(query);
 		listener = null;

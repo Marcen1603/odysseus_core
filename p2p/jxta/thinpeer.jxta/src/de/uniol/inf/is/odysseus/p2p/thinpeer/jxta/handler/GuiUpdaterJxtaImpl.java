@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 
 import javax.swing.DefaultListModel;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
@@ -39,7 +39,7 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 	public void updateQueryList() {
 		synchronized (thinPeerJxtaImpl.getQueries()) {
 			DefaultListModel model = new DefaultListModel();
-			for (Query q: thinPeerJxtaImpl.getQueries()
+			for (P2PQuery q: thinPeerJxtaImpl.getQueries()
 					.keySet()) {
 				model
 						.addElement(q.getId()
@@ -76,7 +76,7 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 		}
 	}
 	
-	public int getAllBiddings(Query query) {
+	public int getAllBiddings(P2PQuery query) {
 		int biddingCounter = 0;
 		for(Subplan sub : query.getSubPlans().values()) {
 			biddingCounter += sub.getBiddings().size();

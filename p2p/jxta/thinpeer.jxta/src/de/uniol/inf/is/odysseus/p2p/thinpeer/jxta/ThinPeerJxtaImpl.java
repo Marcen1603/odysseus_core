@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.GuiUpdaterJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryNegotiationMessageHandler;
@@ -278,7 +278,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		String queryId = idGenerator.generateId();
 		queryPublisher.sendQuerySpezificationToAdminPeer(queryId, query,
 				language, adminPeer);
-		for(Query q : getQueries().keySet()) {
+		for(P2PQuery q : getQueries().keySet()) {
 			q.setStatus(Lifecycle.NEW);
 			Log.addAdminPeer(queryId,
 					adminPeerName);

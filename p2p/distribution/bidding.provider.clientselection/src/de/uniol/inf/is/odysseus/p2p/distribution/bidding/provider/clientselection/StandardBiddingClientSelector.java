@@ -13,17 +13,17 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Bid;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class StandardBiddingClientSelector<C extends IExecutionListenerCallback> extends AbstractClientSelector<C>{
 
 
-	public StandardBiddingClientSelector(int time, Query query, C callback) {
+	public StandardBiddingClientSelector(int time, P2PQuery query, C callback) {
 		super(time, query, callback);
 	}
 
-	public StandardBiddingClientSelector(int time, Query query) {
+	public StandardBiddingClientSelector(int time, P2PQuery query) {
 		super(time, query);
 	}
 
@@ -43,7 +43,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 	}
 
 	private void handleBidding() {
-		Query q = getQuery();
+		P2PQuery q = getQuery();
 		Log.logAction(q.getId(), "Werte Gebote fuer Anfrage aus");
 //		for (Query q : getQueries().keySet()) {
 			// Ist mindestens ein Gebot je Subplan vorhanden
