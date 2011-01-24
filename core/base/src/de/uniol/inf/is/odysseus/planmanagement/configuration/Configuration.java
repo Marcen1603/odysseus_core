@@ -98,15 +98,14 @@ public class Configuration<T extends ISetting<?>> extends
 	 */
 	@Override
 	public String toString() {
-		String result = "";
+		StringBuffer result = new StringBuffer();
 		for (T entry : this.entry.values()) {
-			if (!result.equals("")) {
-				result += AppEnv.LINE_SEPARATOR;
+			if (result.length() > 0) {
+				result.append(AppEnv.LINE_SEPARATOR);
 			}
-			result += "entry: " + entry.toString() + ", value: "
-					+ entry.getValue();
+			result.append("entry: ").append(entry.toString()).append(", value: ").append(entry.getValue());
 		}
 
-		return result;
+		return result.toString();
 	}
 }

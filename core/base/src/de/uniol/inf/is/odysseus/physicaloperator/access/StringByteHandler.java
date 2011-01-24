@@ -8,18 +8,19 @@ public class StringByteHandler extends AbstractAtomicByteDataHandler {
 	@Override
 	final public Object readData() throws IOException {
 		char c;
-		String out;
+		StringBuffer out;
 
 		// would have liked to use readUTF, but it didn't seem to work
 		// when talking to the c++ server
 
-		out = new String("");
+		out = new StringBuffer();
 
 		while ((c = (char) this.getStream().read()) != '\n')
-			out = out + String.valueOf(c);
+			out.append(String.valueOf(c));
+		// TODO: Was soll das??
 		c = (char) this.getStream().read();
 
-		return "" + out;
+		return out.toString();
 	}
 
 	@Override

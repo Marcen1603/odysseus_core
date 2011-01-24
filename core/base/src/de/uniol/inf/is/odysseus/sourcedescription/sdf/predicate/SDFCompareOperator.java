@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate;
 
+import java.io.Serializable;
+
 
 /**
  * @author  Marco Grawunder
  */
-public interface SDFCompareOperator {
+public interface SDFCompareOperator extends Serializable{
 
 	/**
 	 * @uml.property  name="xMLRepresentation"

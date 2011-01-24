@@ -30,7 +30,7 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 	/**
 	 * this variable will be used, if a wildcard is necessary for an id
 	 */
-	private static Long wildcard = new Long(-1);
+	private static Long wildcard = Long.valueOf(-1);
 
 	public AccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -107,7 +107,7 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 	
 	public static List<Long> nextID(){
 		ArrayList<Long> idList = new ArrayList<Long>();
-		idList.add(new Long(genID()));
+		idList.add(Long.valueOf(genID()));
 		return idList;
 	}
 	

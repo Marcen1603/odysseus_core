@@ -94,4 +94,9 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 		
 		return getName().equals(rule.getName());
 	}
+	
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
 }

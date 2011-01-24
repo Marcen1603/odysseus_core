@@ -5,24 +5,21 @@ import java.nio.ByteBuffer;
 
 public class DoubleByteHandler extends AbstractAtomicByteDataHandler {
 
-	byte data[];
-	byte buff[];
-
 	@Override
 	final public Object readData() throws IOException {
 
 		char c;
-		String out;
+		StringBuffer out;
 
 		// would have liked to use readUTF, but it didn't seem to work
 		// when talking to the c++ server
 
-		out = new String("");
+		out = new StringBuffer();
 
 		while ((c = (char) this.getStream().read()) != '\n')
-			out = out + String.valueOf(c);
+			out.append(String.valueOf(c));
 		c = (char) this.getStream().read();
-		return Double.parseDouble(out);
+		return Double.parseDouble(out.toString());
 	}
 
 	@Override

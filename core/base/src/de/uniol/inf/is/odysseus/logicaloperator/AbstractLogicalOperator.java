@@ -269,16 +269,16 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	@Override
 	public String getOwnerIDs() {
-		String result = "";
+		StringBuffer result = new StringBuffer();
 		if (owners != null) { // TODO: WARUM??
 			for (IOperatorOwner iOperatorOwner : owners) {
-				if (result != "") {
-					result += ", ";
+				if (result.length() > 0) {
+					result.append(", ");
 				}
-				result += iOperatorOwner.getID();
+				result.append(iOperatorOwner.getID());
 			}
 		}
-		return result;
+		return result.toString();
 	}
 
 	// "delegatable this", used for the delegate sink

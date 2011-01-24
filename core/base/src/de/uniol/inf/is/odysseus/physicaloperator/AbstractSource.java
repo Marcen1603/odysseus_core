@@ -518,14 +518,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	 */
 	@Override
 	public String getOwnerIDs() {
-		String result = "";
+		StringBuffer result = new StringBuffer();
 		for (IOperatorOwner iOperatorOwner : owners) {
-			if (result != "") {
-				result += ", ";
+			if (result.length() > 0) {
+				result.append(", ");
 			}
-			result += iOperatorOwner.getID();
+			result.append(iOperatorOwner.getID());
 		}
-		return result;
+		return result.toString();
 	}
 	
 	// ------------------------------------------------------------------------

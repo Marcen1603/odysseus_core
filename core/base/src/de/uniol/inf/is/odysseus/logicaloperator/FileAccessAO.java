@@ -21,7 +21,7 @@ public class FileAccessAO extends AbstractLogicalOperator implements OutputSchem
 	private static long ID = 1;
 	
 	//This variable will be used, if a wildcard is necessary for an id
-	private static Long wildcard = new Long(-1);
+	private static Long wildcard = Long.valueOf(-1);
 	
 	public FileAccessAO() {
 		super();
@@ -82,7 +82,7 @@ public class FileAccessAO extends AbstractLogicalOperator implements OutputSchem
 	
 	public static List<Long> nextID(){
 		ArrayList<Long> idList = new ArrayList<Long>();
-		idList.add(new Long(genID()));
+		idList.add(Long.valueOf(genID()));
 		return idList;
 	}
 	

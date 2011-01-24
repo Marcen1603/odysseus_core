@@ -35,7 +35,7 @@ public class SDFConstantList extends SDFSchemaElementSet<SDFConstant> {
     public static SDFConstantList intersection(SDFConstantList constantSet1, SDFConstantList constantSet2) {
                
         // Die Trivialfaelle, wenn eine der beiden Mengen leer ist, gibt es keine Schnittmenge
-        if (constantSet1 == null && constantSet2 == null){
+        if (constantSet1 == null || constantSet2 == null){
             return null;
         }
 

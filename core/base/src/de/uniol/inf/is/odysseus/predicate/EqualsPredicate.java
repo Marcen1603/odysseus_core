@@ -4,7 +4,7 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 
 	private static final long serialVersionUID = 405493232110297596L;
 	@SuppressWarnings({ "rawtypes" })
-	private static EqualsPredicate predicate = new EqualsPredicate();
+	final private static EqualsPredicate predicate = new EqualsPredicate();
 
 	@Override
 	public boolean evaluate(T input) {

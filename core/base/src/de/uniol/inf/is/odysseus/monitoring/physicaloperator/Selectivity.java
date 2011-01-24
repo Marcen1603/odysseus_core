@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POPortEvent;
 
-
 public abstract class Selectivity extends AbstractMonitoringData<Double>
 		implements IPOEventListener {
 
@@ -24,21 +23,20 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 		target.subscribe(this, POEventType.PushDone);
 		target.subscribe(this, POEventType.ProcessDone);
 	}
-	
-	public Selectivity(Selectivity other){
+
+	public Selectivity(Selectivity other) {
 		super(other);
 		this.writeCount = other.writeCount;
 		this.readCount = new int[other.readCount.length];
-		System.arraycopy(readCount, 0, this.readCount, 0, other.readCount.length);
+		System.arraycopy(readCount, 0, this.readCount, 0,
+				other.readCount.length);
 		this.readCountSum = other.readCountSum;
 	}
-	
-	
 
 	@Override
 	public void reset() {
 		this.writeCount = 0;
-		if (this.readCount == null){
+		if (this.readCount == null) {
 			this.readCount = new int[sourceCount];
 		}
 		for (int i = 0; i < sourceCount; i++) {
@@ -71,16 +69,14 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 	}
 
 	@Override
-	public void eventOccured(IEvent<?,?> event) {
+	public void eventOccured(IEvent<?, ?> event) {
 		POEvent poEvent = (POEvent) event;
-		synchronized (this.writeCount) {
-			synchronized (this.readCount) {
-				if (poEvent.getPOEventType() == POEventType.PushDone) {
-					++writeCount;
-				} else if (poEvent.getPOEventType() == POEventType.ProcessDone) {
-					this.readCount[((POPortEvent) poEvent).getPort()]++;
-					readCountSum++;
-				}
+		synchronized (this) {
+			if (poEvent.getPOEventType() == POEventType.PushDone) {
+				++writeCount;
+			} else if (poEvent.getPOEventType() == POEventType.ProcessDone) {
+				this.readCount[((POPortEvent) poEvent).getPort()]++;
+				readCountSum++;
 			}
 		}
 	}

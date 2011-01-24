@@ -22,7 +22,7 @@ public class QueryOptimizationException extends Exception {
 	 *            detailed Exception message.
 	 */
 	public QueryOptimizationException(String m) {
-		this(m, null);
+		super(m);
 	}
 
 	public QueryOptimizationException(Exception e) {
@@ -40,7 +40,6 @@ public class QueryOptimizationException extends Exception {
 	public QueryOptimizationException(String m, Throwable e) {
 		super(m
 				+ (e != null ? AppEnv.LINE_SEPARATOR + "Additional info:"
-						+ AppEnv.LINE_SEPARATOR + e.getMessage() : ""));
-		this.setStackTrace(e.getStackTrace());
+						+ AppEnv.LINE_SEPARATOR + e.getMessage() : ""),e);
 	}
 }
