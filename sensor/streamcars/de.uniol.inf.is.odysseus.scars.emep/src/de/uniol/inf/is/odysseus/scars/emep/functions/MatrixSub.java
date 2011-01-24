@@ -30,8 +30,13 @@ public class MatrixSub extends AbstractFunction<Object> {
 	 */
 	@Override
 	public Object getValue() {
-		double[][] d = new RealMatrixImpl((double[][]) getInputValue(0))
-				.subtract(new RealMatrixImpl((double[][]) getInputValue(1))).getData();
+		double[][] input0 = (double[][]) getInputValue(0);
+		Object input1 = getInputValue(1);
+		if( !(input1 instanceof double[][]) ){
+			System.out.println("Blaaaa");
+		}
+		double[][] d = new RealMatrixImpl(input0)
+				.subtract(new RealMatrixImpl((double[][])input1)).getData();
 		return d;
 	}
 
