@@ -25,7 +25,7 @@
       <view
             allowMultiple="false"
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.editor.view.ParameterView"
+            class="de.uniol.inf.is.odysseus.rcp.editor.views.ParameterView"
             icon="icons/prop.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.ParameterView"
             name="Parameters"
@@ -45,7 +45,7 @@
       <wizard
             canFinishEarly="false"
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.editor.wizard.LogicalPlanWizard"
+            class="de.uniol.inf.is.odysseus.rcp.editor.wizards.LogicalPlanWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             hasPages="true"
             icon="icons/plan.png" id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard"

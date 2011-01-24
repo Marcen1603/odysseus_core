@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.wizard;
+package de.uniol.inf.is.odysseus.rcp.editor.wizards;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;

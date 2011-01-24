@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.wizard;
+package de.uniol.inf.is.odysseus.rcp.editor.wizards;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
