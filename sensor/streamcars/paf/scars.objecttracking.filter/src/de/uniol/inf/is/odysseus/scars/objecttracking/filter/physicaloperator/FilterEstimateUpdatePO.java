@@ -67,6 +67,8 @@ public class FilterEstimateUpdatePO<M extends IProbability & IObjectTrackingLate
 
 		// traverse connection list and filter
 		for (IConnection connected : objConList) {
+			connected.getLeftPath().updateValues(object);
+			connected.getRightPath().updateValues(object);
 			compute(object, connected.getLeftPath(), connected.getRightPath());
 		}
 

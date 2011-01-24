@@ -80,6 +80,8 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 		predictedTupleIndexPath = this.getPredictedObjectListSIPath().toTupleIndexPath(object);
 		
 		for (IConnection connected : object.getMetadata().getConnectionList()) {
+			connected.getLeftPath().updateValues(object);
+			connected.getRightPath().updateValues(object);
 			compute(object, connected);
 		}
 		

@@ -41,6 +41,8 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IObjectTrackingLa
 
     // traverse connection list and filter
     for (IConnection connected : tmpConList) {
+		connected.getLeftPath().updateValues(object);
+		connected.getRightPath().updateValues(object);
 		compute(connected, object);
     }
 
