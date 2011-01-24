@@ -175,13 +175,35 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 
 	@Override
 	public boolean isInList(int[] pathToList) {
-		int listIndex = pathToList[pathToList.length-1];
+		int listIndex = pathToList.length - 1;
+		
+		if( schemaPath.getLength() < pathToList.length)
+			return false;
+		
+		for( int i = 0; i < pathToList.length; i++ ) {
+			int index = schemaPath.getSchemaIndex(i).toInt();
+			if( index != pathToList[i])
+				return false;
+		}
+		
 		return schemaPath.getSchemaIndex(listIndex).isList();
+//		int listIndex = pathToList[pathToList.length-1];
+//		return schemaPath.getSchemaIndex(listIndex).isList();
 	}
 
 	@Override
 	public boolean isInList(TupleIndexPath pathToList) {
-		int listIndex = pathToList.getLastTupleIndex().toInt();
+		int listIndex = pathToList.getLength() - 1;
+		
+		if( schemaPath.getLength() < pathToList.getLength())
+			return false;
+		
+		for( int i = 0; i < pathToList.getLength(); i++ ) {
+			int index = schemaPath.getSchemaIndex(i).toInt();
+			if( index != pathToList.getTupleIndex(i).toInt())
+				return false;
+		}
+		
 		return schemaPath.getSchemaIndex(listIndex).isList();
 	}
 
@@ -193,6 +215,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	/**
 	 * @param schema
 	 */
+	@Override
 	public void init(SDFAttributeList schema) {
 		if(isSchemaVariable(schema)) {
 			SchemaHelper helper = new SchemaHelper(schema);
@@ -205,6 +228,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	/**
 	 * @return
 	 */
+	@Override
 	public String getNameWithoutMetadata() {
 		return nameWithoutMetadata;
 	}
@@ -252,6 +276,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 			SchemaIndex index = schemaPath.getSchemaIndex(i);
 			if(isUnderList) {
 				relativePath[i] = -1;
+				isUnderList = false;
 //				relativePathIndexIndex = i;
 			} else {
 				relativePath[i] = index.getIndex();

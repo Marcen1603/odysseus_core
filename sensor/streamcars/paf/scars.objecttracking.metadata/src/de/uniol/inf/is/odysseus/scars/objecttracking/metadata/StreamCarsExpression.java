@@ -179,6 +179,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 			return this.value;
 		}
 
+		@Override
 		public boolean isVirtual() {
 			return true;
 		}

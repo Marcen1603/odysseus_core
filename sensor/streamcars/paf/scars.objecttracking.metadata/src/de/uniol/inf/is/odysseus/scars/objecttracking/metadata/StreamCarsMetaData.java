@@ -163,10 +163,12 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 		return lat;
 	}
 
+	@Override
 	public HashMap<String, Long> getOperatorLatencies() {
 		return operatorLatencies;
 	}
 
+	@Override
 	public void setOperatorLatencies(HashMap<String, Long> operatorLatencies) {
 		this.operatorLatencies = operatorLatencies;
 	}
