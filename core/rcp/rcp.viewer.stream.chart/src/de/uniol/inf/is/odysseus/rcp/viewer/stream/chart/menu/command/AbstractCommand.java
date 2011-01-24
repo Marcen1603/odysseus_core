@@ -12,7 +12,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public abstract class AbstractCommand extends AbstractHandler {
 

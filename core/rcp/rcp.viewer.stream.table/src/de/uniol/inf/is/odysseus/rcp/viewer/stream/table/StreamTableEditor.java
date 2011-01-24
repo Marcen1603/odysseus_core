@@ -18,9 +18,9 @@ import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
+import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
+import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;

@@ -71,9 +71,6 @@
          <newWizardShortcut
                id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard">
          </newWizardShortcut>
-         <newWizardShortcut
-               id="de.uniol.inf.is.odysseus.rcp.editor.text.NewWizard">
-         </newWizardShortcut>
       </perspectiveExtension>
    </extension>
    <extension

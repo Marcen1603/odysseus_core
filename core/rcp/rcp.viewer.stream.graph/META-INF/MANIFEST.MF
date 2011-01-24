@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.graph.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.rcp.viewer.stream;bundle-version="1.0.0",
  de.uniol.inf.is.jfreechart;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -14,6 +13,9 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.rcp.viewer.editors,
+ de.uniol.inf.is.odysseus.rcp.viewer.extension,
+ de.uniol.inf.is.odysseus.rcp.viewer.model.stream,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema

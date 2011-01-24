@@ -6,9 +6,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
+import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
+import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
 public class StreamEditorList implements IStreamEditorType {
 
