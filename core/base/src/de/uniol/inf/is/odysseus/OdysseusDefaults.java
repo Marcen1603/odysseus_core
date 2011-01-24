@@ -47,7 +47,7 @@ public class OdysseusDefaults {
 			if (homeDir == null || homeDir.length() == 0){
 				homeDir = odysseusDefaultHome;
 			}
-			loadProperties(homeDir);
+			loadProperties(homeDir, "odysseus.conf", props);
 			if (props.getProperty("storeUsers") == null) {
 				logger.info("No Odysseus config found.");
 				setDefaults(homeDir);
@@ -58,12 +58,12 @@ public class OdysseusDefaults {
 		}
 	}
 
-	private static void loadProperties(String odysseusHome) throws IOException,
+	private static void loadProperties(String odysseusHome, String filename, Properties properties) throws IOException,
 			FileNotFoundException {
-		File f = openOrCreateFile(odysseusHome + "odysseus.conf");
+		File f = openOrCreateFile(odysseusHome + filename);
 		FileInputStream in;
 		in = new FileInputStream(f);
-		props.load(in);
+		properties.load(in);
 		in.close();
 	}
 
