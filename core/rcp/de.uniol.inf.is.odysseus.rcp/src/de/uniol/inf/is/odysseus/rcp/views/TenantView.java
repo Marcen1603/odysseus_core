@@ -54,14 +54,6 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 
 		UserManagement.getInstance().addUserManagementListener(this);
 		TenantManagement.getInstance().addTenantManagementListener(this);
-
-		// Create the help context id for the viewer's control
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(viewer.getControl(),
-						"de.uniol.inf.is.odysseus.rcp.tenants.view.viewer");
-
 	}
 
 	@Override

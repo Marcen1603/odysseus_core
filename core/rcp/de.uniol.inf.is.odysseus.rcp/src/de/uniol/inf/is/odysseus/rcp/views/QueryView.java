@@ -37,7 +37,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphEditorConstants;
 
 public class QueryView extends ViewPart implements
 		IPlanModificationListener {
@@ -298,7 +297,7 @@ public class QueryView extends ViewPart implements
 
 				try {
 					handlerService.executeCommand(
-							IGraphEditorConstants.CALL_GRAPH_EDITOR_COMMAND_ID,
+							"de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor",
 							null);
 				} catch (Exception ex) {
 					ex.printStackTrace();
