@@ -245,6 +245,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.QueryViewCopyCommand"
             name="Query View Copy">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.LoginCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.LoginUserCommand"
+            name="Login User">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -354,6 +359,15 @@
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
                icon="icons/refresh.gif"
                label="Refresh"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:file?after=new">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.LoginUserCommand"
+               label="Change User..."
                style="push">
          </command>
       </menuContribution>

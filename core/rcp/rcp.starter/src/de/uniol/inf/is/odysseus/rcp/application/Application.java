@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.rcp.user.Login;
+import de.uniol.inf.is.odysseus.rcp.Login;
 
 /**
  * This class controls all aspects of the application's execution

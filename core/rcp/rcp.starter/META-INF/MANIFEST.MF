@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.status,
- de.uniol.inf.is.odysseus.rcp.user,
  de.uniol.inf.is.odysseus.usermanagement,
  org.apache.log4j,
  org.apache.log4j.spi
