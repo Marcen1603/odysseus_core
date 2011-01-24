@@ -72,6 +72,7 @@ public class CovarianceExpressionMatrix {
 		double[][] covarianceMatrix = new double[this.expressionMatrix.length][this.expressionMatrix[0].length];
 
 		HashMap<String, Double> expressionValueCache = new HashMap<String, Double>();
+		expressionValueCache.put("(0.0)", 0.0);
 		HashMap<String, Object> attributValueCache = new HashMap<String, Object>();
 
 		for (int i = 0; i < this.expressionMatrix.length; i++) {
@@ -86,6 +87,9 @@ public class CovarianceExpressionMatrix {
 							this.schema, objectIterator);
 					covarianceMatrix[i][j] = calculateValue(
 							this.expressionMatrix[i][j], attributValueCache);
+					if(covarianceMatrix[i][j] == 0.0f) {
+						covarianceMatrix[i][j] = 0.0001f;
+					}
 					expressionValueCache.put(expressionString,
 							covarianceMatrix[i][j]);
 				}

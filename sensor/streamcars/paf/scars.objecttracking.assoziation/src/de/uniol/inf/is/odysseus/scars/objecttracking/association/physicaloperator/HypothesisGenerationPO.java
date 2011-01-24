@@ -137,8 +137,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 		// get scanned objects
 		TupleIndexPath path = carsFromscannedData.toTupleIndexPath((MVRelationalTuple<M>) scannedObject);
-		replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputScannedObjListPath);
-		association[1] = new MVRelationalTuple<M>((MVRelationalTuple<M>) path.getTupleObject());
+		association[1] = new MVRelationalTuple<M>(replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputScannedObjListPath));
 		
 
 		// get predicted objects
@@ -146,8 +145,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 			association[2] = new MVRelationalTuple<M>(0);
 		} else {
 			path = carsFromPredictedData.toTupleIndexPath(predictedObject);
-			replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputPredictedObjListPath);
-			association[2] =  new MVRelationalTuple<M>((MVRelationalTuple<M>) path.getTupleObject());
+			association[2] =  new MVRelationalTuple<M>(replaceMetaDataNames(path, this.outputScannedObjListPath, this.outputPredictedObjListPath));
 		}
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
@@ -161,7 +159,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		return base;
 	}
 
-	private void replaceMetaDataNames(TupleIndexPath tupleIndexPath, String sourceName, String outputName) {
+	private MVRelationalTuple<M> replaceMetaDataNames(TupleIndexPath tupleIndexPath, String sourceName, String outputName) {
+		ArrayList<Object> list = new ArrayList<Object>();
 		for (TupleInfo car : tupleIndexPath) {
 			@SuppressWarnings("unchecked")
 			MVRelationalTuple<M> carObject = (MVRelationalTuple<M>) car.tupleObject;
@@ -171,7 +170,9 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 				newAttributeMapping.set(i, newAttributeMapping.get(i).replace(sourceName, outputName));
 			}
 			carObject.getMetadata().setAttributeMapping(newAttributeMapping);
+			list.add(carObject);
 		}
+		return new MVRelationalTuple<M>(list.toArray(new Object[0]));
 	}
 
 	@Override

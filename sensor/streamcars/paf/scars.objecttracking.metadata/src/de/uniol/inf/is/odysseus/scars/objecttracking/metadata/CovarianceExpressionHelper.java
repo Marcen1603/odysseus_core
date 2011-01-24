@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 public class CovarianceExpressionHelper {
 	
-
 	public CovarianceExpressionHelper() {
 	}
 	
@@ -24,6 +23,8 @@ public class CovarianceExpressionHelper {
 				}
 			}
 		}
+	
+		
 		double[][] initialMatrix = cov.getCovariance();
 		double[][] resultMatrix = new double[attributePositions.size()][attributePositions.size()];
 		for (int i = 0; i < attributePositions.size(); i++) {

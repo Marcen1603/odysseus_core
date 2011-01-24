@@ -150,7 +150,6 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 				double newRating = expression.getDoubleValue();
 
 				if (newRating > 0) {
-					
 					if (currentRating == -1) {
 						newObjConList.add(new Connection(absScanTupleIndexPath, absPredTupleIndexPath, newRating));
 					} else if (newRating != currentRating) {

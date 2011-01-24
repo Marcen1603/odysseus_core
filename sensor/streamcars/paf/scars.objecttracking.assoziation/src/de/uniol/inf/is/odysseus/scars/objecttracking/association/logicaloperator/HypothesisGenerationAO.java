@@ -63,7 +63,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 		// Hier wird AUCH das rechte Schema genutzt damit die neu erkannten
 		// Objekte das gleiche
-		// Schema haben wie die prädizierten Objekte, auch wenn sie nicht alle
+		// Schema haben wie die prï¿½dizierten Objekte, auch wenn sie nicht alle
 		// Attribute davon
 		// besitzen --> alles aufs globale Schema mappen
 		helper = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema().clone());
@@ -80,6 +80,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		SchemaHelper helper2 = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema().clone());
 		SDFAttribute predictedObjects = helper2.getAttribute(this.sourcePredictedObjListPath).clone();
 		this.outputPredictedObjListPath = this.sourcePredictedObjListPath.replace(predictedObjects.getAttributeName(), PREDICTED_OBJECTS_NAME);
+		String oldSource = predictedObjects.getSourceName();
+		
 		// set new list name
 		predictedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
 
@@ -100,6 +102,10 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		// TODO: die metadaten aus dem inputschema mitnehmen
 		SDFAttributeListExtended newSchema = new SDFAttributeListExtended();
 		newSchema.addAttribute(association);
+
+		
+		this.outputPredictedObjListPath = this.outputPredictedObjListPath.replace(oldSource, helper.getSourceName());
+	
 
 		return newSchema;
 	}

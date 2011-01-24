@@ -127,7 +127,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		// Association
 		if (obj0 instanceof MVRelationalTuple) {
 			MVRelationalTuple<M> associationMainObject = (MVRelationalTuple<M>) obj0;
-			resultTuple = new MVRelationalTuple<M>(associationMainObject);
+//			resultTuple = new MVRelationalTuple<M>(associationMainObject);
 			MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput
 					.getSchemaIndexPath(this.associationObjListPath)
 					.toTupleIndexPath(associationMainObject).getTupleObject();
