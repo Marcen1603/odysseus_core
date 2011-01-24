@@ -102,11 +102,10 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 
 			for (int j = 0; j < predCount; j++) {
 
-				absScanTupleIndexPath = scannedTupleIndexPath.appendClone(i);
-				absPredTupleIndexPath = predictedTupleIndexPath.appendClone(j);
-
 				// getRatingForElementPair returns -1 if there is no
 				// connection for the given objects
+				absScanTupleIndexPath = scannedTupleIndexPath.appendClone(0).appendClone(i);
+				absPredTupleIndexPath = predictedTupleIndexPath.appendClone(0).appendClone(j);
 				double currentRating = object.getMetadata().getConnectionList().getRatingForElementPair(absScanTupleIndexPath, absPredTupleIndexPath);
 
 				for (IStreamCarsExpressionVariable ivar : expression.getVariables()) {
@@ -151,6 +150,7 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 				double newRating = expression.getDoubleValue();
 
 				if (newRating > 0) {
+					
 					if (currentRating == -1) {
 						newObjConList.add(new Connection(absScanTupleIndexPath, absPredTupleIndexPath, newRating));
 					} else if (newRating != currentRating) {
