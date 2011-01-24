@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.buildConfiguration" name="Query Build Configuration" schema="schema/de.uniol.inf.is.odysseus.rcp.buildConfiguration.exsd"/>
    <extension
          point="org.eclipse.ui.startup">
       <startup
@@ -37,6 +38,21 @@
             name="Sources"
             restorable="true">
       </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.views.QueryView"
+            icon="icons/prop_ps.gif"
+            id="de.uniol.inf.is.odysseus.rcp.views.QueryView"
+            name="Queries"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.views.PartialPlanView"
+            id="de.uniol.inf.is.odysseus.rcp.views.PartialPlanView"
+            name="Partial Plan"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -57,6 +73,21 @@
                ratio="0.30f"
                relationship="left"
                relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective">
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.rcp.views.QueryView"
+               minimized="false"
+               moveable="true"
+               ratio="0.7"
+               relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
                showTitle="true"
                standalone="false"
                visible="true">
@@ -119,6 +150,101 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
             name="Collapse Sources View">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
+            name="Start Scheduler">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StopSchedulerCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.StopSchedulerCommand"
+            name="Stop Scheduler">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
+            name="NMSN">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.NMQNCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.NMQNCommand"
+            name="NMQN">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.AddQueryCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.AddQueryCommand"
+            name="Add Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryParameter"
+               name="Query Parameter"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.ParserParameter"
+               name="Parser Parameter"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.TransformationConfigurationNameParameter"
+               name="Transformation Configuration Name Parameter"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.UserNameParameter"
+               name="Username Parameter"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.UserPasswordParameter"
+               name="Userpassword Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
+            name="Remove Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryIDParameter"
+               name="QueryID Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand"
+            name="Show Query Dialog">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
+            name="Start Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryIDParameter"
+               name="QueryID Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
+            name="Stop Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryIDParameter"
+               name="QueryID Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
+            name="Refresh Query View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.QueryViewCopyCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.QueryViewCopyCommand"
+            name="Query View Copy">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -145,6 +271,90 @@
                label="Collapse All"
                style="push"
                tooltip="Collapse All">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="OSGi Commands">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand"
+                  label="Fast Query..."
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
+                  label="Start Scheduler"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.StopSchedulerCommand"
+                  label="Stop Scheduler"
+                  style="push">
+            </command>
+            <separator
+                  name="OSGiCommandsSeparator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
+                  label="Nexmark Example Sources"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.NMQNCommand"
+                  label="Nexmark Example Queries"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.QueryView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.QueryView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
+               label="Start Query"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
+               label="Stop Query"
+               style="push">
+         </command>
+         <separator
+               name="Separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
+               label="Remove Query"
+               style="push">
+         </command>
+         <separator
+               name="Separator3"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.QueryViewCopyCommand"
+               label="Copy Querytext"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
          </command>
       </menuContribution>
    </extension>
