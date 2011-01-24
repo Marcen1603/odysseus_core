@@ -6,7 +6,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanEditorPart"
+            class="de.uniol.inf.is.odysseus.rcp.editor.editors.LogicalPlanEditor"
             default="false"
             extensions="pln"
             icon="icons/plan.png"
@@ -17,7 +17,7 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="de.uniol.inf.is.odysseus.rcp.editor.activator.Startup">
+            class="de.uniol.inf.is.odysseus.rcp.editor.startup.Startup">
       </startup>
    </extension>
    <extension
@@ -25,7 +25,7 @@
       <view
             allowMultiple="false"
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.editor.view.ParameterViewPart"
+            class="de.uniol.inf.is.odysseus.rcp.editor.view.ParameterView"
             icon="icons/prop.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.ParameterView"
             name="Parameters"

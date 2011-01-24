@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor;
+package de.uniol.inf.is.odysseus.rcp.editor.editors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -50,13 +50,13 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
-public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener, PropertyChangeListener {
+public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener, PropertyChangeListener {
 
 	private OperatorPlan plan;
 	private static PaletteRoot paletteModel = null;
 	private boolean isDirty = false;
 
-	public LogicalPlanEditorPart() {
+	public LogicalPlanEditor() {
 		super();
 		setEditDomain(new DefaultEditDomain(this));
 		GlobalState.getActiveDatadictionary().addListener(this);
@@ -210,7 +210,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 			return getSite().getPage();
 		} else if (adapter == ISelectionProvider.class) {
 			return this.getSite().getSelectionProvider();
-		} else if (adapter == LogicalPlanEditorPart.class) {
+		} else if (adapter == LogicalPlanEditor.class) {
 			return this;
 		}
 		return super.getAdapter(adapter);

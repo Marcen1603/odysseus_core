@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanEditorPart;
-import de.uniol.inf.is.odysseus.rcp.editor.activator.Activator;
+import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.editors.LogicalPlanEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
@@ -30,7 +30,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		if (Activator.getExecutor() == null) {
+		if (OdysseusRCPEditorPlugIn.getExecutor() == null) {
 			System.out.println("AdvancedExecutor is null");
 			return null;
 		}
@@ -39,8 +39,8 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 
 		try {
-			if (editorPart instanceof LogicalPlanEditorPart) {
-				LogicalPlanEditorPart part = (LogicalPlanEditorPart) editorPart;
+			if (editorPart instanceof LogicalPlanEditor) {
+				LogicalPlanEditor part = (LogicalPlanEditor) editorPart;
 
 				// Plan validieren
 				if (!validatePlan(part.getOperatorPlan())) {
@@ -94,7 +94,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		try {
 			for (Operator sink : sinks) {
 				printLogicalPlan(sink.getLogicalOperator(), 0);
-				Activator.getExecutor().addQuery(sink.getLogicalOperator(), user,dd,
+				OdysseusRCPEditorPlugIn.getExecutor().addQuery(sink.getLogicalOperator(), user,dd,
 						new ParameterTransformationConfiguration(new TransformationConfiguration("relational", ITimeInterval.class)));
 			}
 		} catch (PlanManagementException ex) {

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor;
+package de.uniol.inf.is.odysseus.rcp.editor.editors;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +20,8 @@ import org.eclipse.gef.requests.CreationFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.rcp.editor.activator.Activator;
+import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.OperatorGroupRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorFactory;
 
 public class PaletteFactory {
@@ -38,7 +39,7 @@ public class PaletteFactory {
 		
 		// Operatoren
 		List<String> builderNames = new ArrayList<String>(OperatorBuilderFactory.getOperatorBuilderNames());
-		ImageDescriptor imageDesc = Activator.getImageDescriptor("icons/operatorIcon.png");
+		ImageDescriptor imageDesc = OdysseusRCPEditorPlugIn.getImageDescriptor("icons/operatorIcon.png");
 		Collections.sort(builderNames);
 		
 		for( String builderName : builderNames ) {
@@ -79,7 +80,7 @@ public class PaletteFactory {
 		toolbar.add(new MarqueeToolEntry());
 
 		// Add (solid-line) connection tool
-		ImageDescriptor imageDesc = Activator.getImageDescriptor("icons/connection.gif");
+		ImageDescriptor imageDesc = OdysseusRCPEditorPlugIn.getImageDescriptor("icons/connection.gif");
 		tool = new ConnectionCreationToolEntry("Connection", "Create a connection", new CreationFactory() {
 			@Override
 			public Object getNewObject() {

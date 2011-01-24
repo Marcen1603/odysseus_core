@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.parameter;
+package de.uniol.inf.is.odysseus.rcp.editor.view;
 
 public interface IParameterView {
 

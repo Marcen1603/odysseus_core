@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Logical Plan Editor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor;singleton:=true
 Bundle-Version: 1.0.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.activator.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
@@ -39,5 +39,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.eclipse.ui.part,
  org.eclipse.ui.wizards.newresource,
  org.slf4j;version="1.5.6"
-Export-Package: de.uniol.inf.is.odysseus.rcp.editor.parameter
+Export-Package: de.uniol.inf.is.odysseus.rcp.editor,
+ de.uniol.inf.is.odysseus.rcp.editor.parameter
 Service-Component: OSGI-INF/Executor.xml

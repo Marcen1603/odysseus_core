@@ -25,14 +25,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.rcp.editor.ParameterEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
-import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterView;
-import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
-public class ParameterViewPart extends ViewPart implements IViewPart, ISelectionListener, IParameterView, IDataDictionaryListener{
+public class ParameterView extends ViewPart implements IViewPart, ISelectionListener, IParameterView, IDataDictionaryListener{
 
 	private static final String ERROR_PREFIX = "- ";
 	

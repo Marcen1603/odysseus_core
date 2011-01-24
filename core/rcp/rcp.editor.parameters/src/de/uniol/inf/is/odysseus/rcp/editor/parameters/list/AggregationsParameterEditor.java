@@ -90,7 +90,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 			public void widgetSelected(SelectionEvent e) {
 				addNewRow();
 				tableViewer.refresh();
-				getView().layout();
+				refreshView();
 				
 				save();
 			}
@@ -109,7 +109,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 				
 				// neu zeichnen
 				tableViewer.refresh();
-				getView().layout();
+				refreshView();
 				
 				save();
 			}

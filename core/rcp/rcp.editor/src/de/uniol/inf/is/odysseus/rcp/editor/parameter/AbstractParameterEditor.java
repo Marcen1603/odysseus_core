@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
+import de.uniol.inf.is.odysseus.rcp.editor.view.IParameterView;
 
 public abstract class AbstractParameterEditor implements IParameterEditor {
 
@@ -61,8 +62,13 @@ public abstract class AbstractParameterEditor implements IParameterEditor {
 			return null;
 		}
 	}
+	
+	protected void refreshView() {
+		getView().layout();
+		getView().refresh();
+	}
 
-	protected IParameterView getView() {
+	private IParameterView getView() {
 		return view;
 	}
 }

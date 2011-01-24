@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.activator;
+package de.uniol.inf.is.odysseus.rcp.editor;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -10,22 +10,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.rcp.editor.ILogicalPlanEditorConstants;
-import de.uniol.inf.is.odysseus.rcp.editor.OperatorGroupRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
-import de.uniol.inf.is.odysseus.rcp.editor.parameter.ParameterEditorRegistry;
 
-public class Activator extends AbstractUIPlugin {
+public class OdysseusRCPEditorPlugIn extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.editor"; //$NON-NLS-1$
 	
-	private static Activator plugin;
-	private final Logger logger = LoggerFactory.getLogger(Activator.class);
+	public static final String LOGICAL_PLAN_EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.LogicalPlanEditor";
+	public static final String NEW_LOGICAL_PLAN_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.editor.NewLogicalPlanCommand";
+	
+	public static final String FILENAME_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.editor.FilenameParameter";
+	
+	public static final String PARAMETERS_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.editor.ParameterView";
+	
+	public static final String PARAMETER_EDITOR_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor";
+	public static final String OPERATOR_GROUP_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.editor.OperatorGroup";
+	
+	public static final String LOGICAL_PLAN_FILE_EXTENSION = "pln";
+	
+	private static OdysseusRCPEditorPlugIn plugin;
+	private final Logger logger = LoggerFactory.getLogger(OdysseusRCPEditorPlugIn.class);
 	private static IExecutor executor = null;
 	
-	public Activator() {
-	}
-
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -40,7 +46,7 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	public static Activator getDefault() {
+	public static OdysseusRCPEditorPlugIn getDefault() {
 		return plugin;
 	}
 
@@ -62,7 +68,7 @@ public class Activator extends AbstractUIPlugin {
 	
 	private void resolveExtensions() {
 		// Löst die Extensions für die Parametereditoren auf
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ILogicalPlanEditorConstants.PARAMETER_EDITOR_EXTENSION_ID);
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(PARAMETER_EDITOR_EXTENSION_ID);
 		
 		// operatoren
 		for( int i = 0; i < elements.length; i++ ) {
@@ -85,7 +91,7 @@ public class Activator extends AbstractUIPlugin {
 		}
 		
 		// Extensions für Operatorgruppen
-		elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ILogicalPlanEditorConstants.OPERATOR_GROUP_EXTENSION_ID);
+		elements = Platform.getExtensionRegistry().getConfigurationElementsFor(OPERATOR_GROUP_EXTENSION_ID);
 		
 		// Gruppen
 		for( int i = 0; i < elements.length; i++ ) {

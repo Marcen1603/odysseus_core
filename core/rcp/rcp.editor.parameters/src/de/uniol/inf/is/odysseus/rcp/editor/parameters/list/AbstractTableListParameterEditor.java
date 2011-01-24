@@ -162,7 +162,7 @@ public abstract class AbstractTableListParameterEditor<T, U, V> extends Abstract
 	
 	public final void refresh() {
 		getTableViewer().refresh();
-		getView().layout();
+		refreshView();
 	}
 	
 	protected List<U> load(List<T> rawData) {

@@ -1,7 +1,9 @@
-package de.uniol.inf.is.odysseus.rcp.editor.parameter;
+package de.uniol.inf.is.odysseus.rcp.editor;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 
 public class ParameterEditorRegistry {
 

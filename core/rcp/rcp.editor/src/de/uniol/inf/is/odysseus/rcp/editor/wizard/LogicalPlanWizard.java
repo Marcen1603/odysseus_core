@@ -9,7 +9,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.uniol.inf.is.odysseus.rcp.editor.ILogicalPlanEditorConstants;
+import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
@@ -45,7 +45,7 @@ public class LogicalPlanWizard extends Wizard implements INewWizard {
 
 			// open editor
 			try {
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(newFile), ILogicalPlanEditorConstants.LOGICAL_PLAN_EDITOR_ID, true);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(newFile), OdysseusRCPEditorPlugIn.LOGICAL_PLAN_EDITOR_ID, true);
 			} catch (PartInitException e) {
 				e.printStackTrace();
 			}

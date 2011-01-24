@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
+import de.uniol.inf.is.odysseus.rcp.editor.view.IParameterView;
 
 public interface IParameterEditor {
 

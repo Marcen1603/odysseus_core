@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor;
+package de.uniol.inf.is.odysseus.rcp.editor.editors;
 
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite;

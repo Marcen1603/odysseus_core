@@ -5,6 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ListParameter;
+import de.uniol.inf.is.odysseus.rcp.editor.view.IParameterView;
 
 public abstract class AbstractListParameterEditor<T> extends AbstractParameterEditor {
 
