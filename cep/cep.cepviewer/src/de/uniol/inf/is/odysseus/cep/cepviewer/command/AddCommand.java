@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.OdysseusNodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusNodeView;
 
 /**
  * This class defines the handler for the AddCommand which is called by the
