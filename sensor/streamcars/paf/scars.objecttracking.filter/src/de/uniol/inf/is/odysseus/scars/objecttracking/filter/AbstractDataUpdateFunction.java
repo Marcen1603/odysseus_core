@@ -45,7 +45,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex, HashMap<Enum<Parameters>, Object> parameters);
+	public abstract void compute(MVRelationalTuple<M> tuple, TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex, HashMap<Enum<Parameters>, Object> parameters);
 
 	public double[] getMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath) {
 

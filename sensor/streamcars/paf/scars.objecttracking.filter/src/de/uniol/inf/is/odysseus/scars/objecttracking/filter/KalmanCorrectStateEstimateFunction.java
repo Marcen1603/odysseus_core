@@ -33,7 +33,7 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void compute(TupleIndexPath scannedObjectTupleIndex,
+	public void compute(MVRelationalTuple<M> tuple, TupleIndexPath scannedObjectTupleIndex,
 			TupleIndexPath predictedObjectTupleIndex,
 			HashMap<Enum<Parameters>, Object> parameters) {
 
@@ -50,13 +50,10 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		} else {
 			gain = oldTuple.getMetadata().getGain();
 		}
-
-		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>) scannedObjectTupleIndex
-				.getTupleObject();
-
-		double[] measurementOld = getMeasurementValues(oldTuple,
+		
+		double[] measurementOld = getMeasurementValues(tuple,
 				predictedObjectTupleIndex);
-		double[] measurementNew = getMeasurementValues(newTuple,
+		double[] measurementNew = getMeasurementValues(tuple,
 				scannedObjectTupleIndex);
 
 		double[] result;
@@ -76,7 +73,7 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 
 		result = temp.getColumn(0);
 
-		setMeasurementValues(oldTuple, predictedObjectTupleIndex, result);
+		setMeasurementValues(tuple, predictedObjectTupleIndex, result);
 
 	}
 

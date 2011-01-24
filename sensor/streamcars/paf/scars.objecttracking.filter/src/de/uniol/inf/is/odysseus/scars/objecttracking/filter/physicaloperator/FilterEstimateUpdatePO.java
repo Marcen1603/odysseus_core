@@ -67,15 +67,15 @@ public class FilterEstimateUpdatePO<M extends IProbability & IObjectTrackingLate
 
 		// traverse connection list and filter
 		for (IConnection connected : objConList) {
-			compute(connected.getLeftPath(), connected.getRightPath());
+			compute(object, connected.getLeftPath(), connected.getRightPath());
 		}
 
 		object.getMetadata().setObjectTrackingLatencyEnd("Filter Est Update");
 		return object;
 	}
 
-	private void compute(TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex) {
-		this.dataUpdateFunction.compute(scannedObjectTupleIndex, predictedObjectTupleIndex, this.getParameters());
+	private void compute(MVRelationalTuple<M> tuple, TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex) {
+		this.dataUpdateFunction.compute(tuple, scannedObjectTupleIndex, predictedObjectTupleIndex, this.getParameters());
 	}
 
 	@Override
