@@ -47,7 +47,7 @@ ASSOCIATION-SEL(
                     SET-PREDICTION-OR(
                         BUFFER(
                             BROKER(${brokerSourceName1}, // Brokerdaten 
-                                    QUEUE( // Zeitgeber fÃ¼r den Broker
+                                    QUEUE( // Zeitgeber für den Broker
                                         BUFFER(
                                            ${sensorSource},
                                            ${bufferType} 
@@ -155,7 +155,7 @@ ASSOCIATION-SEL(
                         TMP-DATA-BOUNCER(
                             BUFFER(
                                 BROKER(${brokerSourceName2}, // Brokerdaten 
-                                        QUEUE( // Zeitgeber fÃ¼r den Broker
+                                        QUEUE( // Zeitgeber für den Broker
                                                ${assoSource1}
                                         )
                                 ),
@@ -181,20 +181,23 @@ ASSOCIATION-SEL(
             ),
             ${assoScanned},
             ${assoPedicted},
-            'eif(
-              AbsValue(
+            'SqrtValue(
                 MatrixEntry(
                   MatrixMult(
                     MatrixMult(
                       MatrixTrans(
-                        MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+                        MatrixSub(	[${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+                        			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
                       ),
-                    MatrixAdd(${assoScanned}:car#COVARIANCE, ${assoPedicted}:car#COVARIANCE)
+                      MatrixInv(
+                    	 MatrixAdd( ${assoScanned}:car#COVARIANCE, 
+                    			   ${assoPedicted}:car#COVARIANCE)
+                      )
                     ),
-                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], [${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+                  			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
                   ),
-                0,
-              0)
+                0,0)
               )
             <${threshold}, 100, 0)'
         ),
