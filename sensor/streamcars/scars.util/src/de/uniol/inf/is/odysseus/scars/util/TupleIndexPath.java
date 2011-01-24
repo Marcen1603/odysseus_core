@@ -33,24 +33,6 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	private SchemaIndexPath schemaIndexPath;
 	private List<Integer> listIndices;
 
-//	public static TupleIndexPath fromIntArray(int[] array, MVRelationalTuple<?> tuple, SchemaIndexPath path) {
-//		
-//		List<TupleIndex> indices = new ArrayList<TupleIndex>();
-//		
-//		Object parent = tuple;
-//		for (int i = 0; i < path.getSchemaIndices().size(); i++) {
-//			
-//			TupleIndex index = new TupleIndex((MVRelationalTuple<?>) parent, array[i], path.getSchemaIndex(i).getAttribute());
-//			indices.add(index);
-//			if (parent instanceof MVRelationalTuple)
-//				parent = ((MVRelationalTuple<?>) parent).getAttribute(path.getSchemaIndex(i).toInt());
-//			else
-//				throw new RuntimeException("Corrupted SchemaIndexPath: " + path);
-//		}		
-//		
-//		return new TupleIndexPath(indices, path); 
-//	}
-	
 	// Interner Konstruktor
 	TupleIndexPath(List<TupleIndex> indices, SchemaIndexPath schemaIndexPath) {
 		this.indices = indices;
@@ -227,6 +209,26 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	@Override
 	public TupleIndexPath clone() {
 		return new TupleIndexPath(this);
+	}
+	
+	/**
+	 * Setzt die Werte im TupleIndexPath auf Werte vom gegebenen
+	 * Tupel.
+	 * 
+	 * @param Tuple
+	 */
+	public void updateValues( MVRelationalTuple<?> tuple ) {
+		List<TupleIndex> list = new ArrayList<TupleIndex>();
+		Object parent = tuple;
+		for (int i = 0; i < indices.size(); i++) {
+			TupleIndex idx = new TupleIndex(((MVRelationalTuple<?>) parent), indices.get(i).toInt(), indices.get(i).getAttribute());
+			list.add(idx);
+
+			if (parent instanceof MVRelationalTuple)
+				parent = ((MVRelationalTuple<?>) parent).getAttribute(indices.get(i).toInt());
+		}
+		
+		indices = list;
 	}
 
 	/* ITERATOR */
