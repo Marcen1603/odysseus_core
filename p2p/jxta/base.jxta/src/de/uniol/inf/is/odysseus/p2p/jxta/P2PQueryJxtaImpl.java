@@ -34,23 +34,13 @@ public class P2PQueryJxtaImpl extends P2PQuery{
 
 
 	public void addBidding(PipeAdvertisement socket, String peerId, String subPlanId, String bid){
-		
-		synchronized(getSubPlans().get(subPlanId).getBiddings()){
-			BidJxtaImpl bidElem = new BidJxtaImpl();
-			bidElem.setResponseSocket(socket);
-			bidElem.setDate(new Date());
-			bidElem.setPeerId(peerId);
-			bidElem.setBid(bid);
-			getSubPlans().get(subPlanId).getBiddings().add(bidElem);
-		}
+		BidJxtaImpl bidElem = new BidJxtaImpl(socket, new Date(), peerId, bid);
+		getSubPlans().get(subPlanId).addBit(bidElem);
 	}
 	
 	public void addAdminBidding(PipeAdvertisement socket, PeerAdvertisement peerAdv){
 		synchronized(this.adminPeerBidding){
-			BidJxtaImpl bid = new BidJxtaImpl();
-			bid.setResponseSocket(socket);
-			bid.setDate(new Date());
-			bid.setPeer(peerAdv);
+			BidJxtaImpl bid = new BidJxtaImpl(socket, new Date(), peerAdv);
 			this.adminPeerBidding.put(socket.getPipeID().toString(), bid);
 		}
 	}
