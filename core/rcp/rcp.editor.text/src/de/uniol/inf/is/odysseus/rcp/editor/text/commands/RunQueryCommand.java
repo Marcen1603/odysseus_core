@@ -23,7 +23,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.editors.SimpleEditor;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IEditorTextParserConstants;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
@@ -48,8 +48,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		
 		// Check if we have an active Editor
 		IEditorPart part = HandlerUtil.getActiveEditor(event);
-		if( part instanceof SimpleEditor ) {
-			SimpleEditor editor = (SimpleEditor)part;
+		if( part instanceof OdysseusScriptEditor ) {
+			OdysseusScriptEditor editor = (OdysseusScriptEditor)part;
 			FileEditorInput input = (FileEditorInput)editor.getEditorInput();
 			run(input.getFile());
 			return null;

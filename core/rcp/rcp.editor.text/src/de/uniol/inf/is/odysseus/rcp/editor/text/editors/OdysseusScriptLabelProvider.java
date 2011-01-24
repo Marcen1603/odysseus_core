@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
 
-public class SimpleLabelProvider implements ILabelProvider {
+public class OdysseusScriptLabelProvider implements ILabelProvider {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {}

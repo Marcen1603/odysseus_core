@@ -5,13 +5,13 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.editors.SimpleEditor"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
             extensions="qry"
             icon="Icons/text.gif"
-            id="de.uniol.inf.is.odysseus.rcp.editor.QueryTextEditor"
-            name="Query Text Editor">
+            id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor"
+            name="Odysseus Script Editor">
       </editor>
    </extension>
    <extension
@@ -61,12 +61,12 @@
       <wizard
             canFinishEarly="false"
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.wizards.NewQueryTextWizard"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.wizards.OdysseusScriptWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             hasPages="true"
             icon="Icons/text.gif"
-            id="de.uniol.inf.is.odysseus.rcp.editor.text.NewWizard"
-            name="Query Text"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptWizard"
+            name="Odysseus Script"
             project="false">
       </wizard>
    </extension>
@@ -75,7 +75,7 @@
       <perspectiveExtension
             targetID="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective">
          <newWizardShortcut
-               id="de.uniol.inf.is.odysseus.rcp.editor.text.NewWizard">
+               id="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptWizard">
          </newWizardShortcut>
       </perspectiveExtension>
    </extension>

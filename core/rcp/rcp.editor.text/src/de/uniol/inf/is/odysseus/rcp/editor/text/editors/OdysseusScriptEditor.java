@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class SimpleEditor extends AbstractDecoratedTextEditor {
+public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 
 	private ColorManager colorManager = new ColorManager();
-	private SimpleEditorContentOutlinePage outlinePage;
+	private OdysseusScriptContentOutlinePage outlinePage;
 
-	public SimpleEditor() {
+	public OdysseusScriptEditor() {
 		super();
 		setKeyBindingScopes(new String[] { "org.eclipse.ui.textEditorScope" });
 		internal_init();
@@ -16,8 +16,8 @@ public class SimpleEditor extends AbstractDecoratedTextEditor {
 
 	protected void internal_init() {
 		configureInsertMode(SMART_INSERT, false);
-		setDocumentProvider(new SimpleDocumentProvider());
-		setSourceViewerConfiguration(new SimpleSourceViewerConfiguration(colorManager));
+		setDocumentProvider(new OdysseusScriptDocumentProvider());
+		setSourceViewerConfiguration(new OdysseusScriptViewerConfiguration(colorManager));
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class SimpleEditor extends AbstractDecoratedTextEditor {
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
 			if (outlinePage == null) {
-				outlinePage = new SimpleEditorContentOutlinePage(getDocumentProvider().getDocument(getEditorInput()).get());
+				outlinePage = new OdysseusScriptContentOutlinePage(getDocumentProvider().getDocument(getEditorInput()).get());
 			}
 			return outlinePage;
 		}

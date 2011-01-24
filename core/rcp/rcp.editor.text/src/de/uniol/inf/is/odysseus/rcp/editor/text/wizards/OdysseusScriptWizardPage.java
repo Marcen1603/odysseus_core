@@ -14,20 +14,20 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
-public class NewQueryTextWizardPage extends WizardPage {
+public class OdysseusScriptWizardPage extends WizardPage {
 
 	private static final int GRID_LAYOUT_COLUMNS = 2;
 	
 	private static final String INFORMATION_TEXT = "Note: The endling '." + OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION +"' will be automatically added";
-	private static final String NO_NAME_ERROR_TEXT = "A query name must be specified";
-	private static final String TITLE_TEXT = "New Query Text";
-	private static final String DESCRIPTION_TEXT = "Creates a new file for queries";
+	private static final String NO_NAME_ERROR_TEXT = "A name must be specified";
+	private static final String TITLE_TEXT = "New Odysseus Script";
+	private static final String DESCRIPTION_TEXT = "Creates a new file for scripts";
 	private static final String NAME_EXISTS_TEXT = "Name already in use";
 	
 	private String queryName;
 	private IContainer container;
 	
-	public NewQueryTextWizardPage(IContainer container) {
+	public OdysseusScriptWizardPage(IContainer container) {
 		super(TITLE_TEXT);
 		
 		setTitle(TITLE_TEXT);

@@ -27,13 +27,13 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserKeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 
-public class SimpleSourceViewerConfiguration extends SourceViewerConfiguration {
+public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration {
 
 	private IWhitespaceDetector whitespaceDetector;
 	private IWordDetector wordDetector;
 	private ColorManager colorManager;
 
-	public SimpleSourceViewerConfiguration(ColorManager colorManager) {
+	public OdysseusScriptViewerConfiguration(ColorManager colorManager) {
 		this.colorManager = colorManager;
 	}
 	

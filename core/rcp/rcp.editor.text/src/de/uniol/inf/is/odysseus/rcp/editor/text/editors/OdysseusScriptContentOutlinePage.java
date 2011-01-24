@@ -4,11 +4,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-public class SimpleEditorContentOutlinePage extends ContentOutlinePage {
+public class OdysseusScriptContentOutlinePage extends ContentOutlinePage {
 
 	private String queryText;
 	
-	public SimpleEditorContentOutlinePage( String queryText ) {
+	public OdysseusScriptContentOutlinePage( String queryText ) {
 		super();
 		this.queryText = queryText;
 	}
@@ -19,8 +19,8 @@ public class SimpleEditorContentOutlinePage extends ContentOutlinePage {
 		
 		TreeViewer treeViewer = getTreeViewer();
 		
-		treeViewer.setContentProvider(new SimpleContentProvider());
-		treeViewer.setLabelProvider(new SimpleLabelProvider());
+		treeViewer.setContentProvider(new OdysseusScriptContentProvider());
+		treeViewer.setLabelProvider(new OdysseusScriptLabelProvider());
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.setInput(new StringTreeRoot(queryText));
 	}

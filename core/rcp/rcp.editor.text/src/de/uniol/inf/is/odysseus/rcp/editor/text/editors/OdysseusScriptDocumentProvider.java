@@ -23,11 +23,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
-public class SimpleDocumentProvider extends AbstractDocumentProvider {
+public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
-	 */
 	@Override
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IEditorInput) {

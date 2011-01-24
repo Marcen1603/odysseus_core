@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 
-public class SimpleContentProvider implements ITreeContentProvider {
+public class OdysseusScriptContentProvider implements ITreeContentProvider {
 
 	private StringTreeRoot input;
 	private ReplacementLeaf replaceLeaf;

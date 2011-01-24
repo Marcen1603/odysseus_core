@@ -18,19 +18,19 @@ import org.eclipse.ui.part.FileEditorInput;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 
-public class NewQueryTextWizard extends Wizard implements INewWizard {
+public class OdysseusScriptWizard extends Wizard implements INewWizard {
 
-	private NewQueryTextWizardPage page;
+	private OdysseusScriptWizardPage page;
 	
-	public NewQueryTextWizard() {
+	public OdysseusScriptWizard() {
 		super();
-		setWindowTitle("New Query Text");
+		setWindowTitle("New Odysseus Script");
 		setNeedsProgressMonitor(true);
 	}
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		page = new NewQueryTextWizardPage( getFolder((IResource)selection.getFirstElement()));
+		page = new OdysseusScriptWizardPage( getFolder((IResource)selection.getFirstElement()));
 	}
 	
 	@Override
@@ -51,7 +51,7 @@ public class NewQueryTextWizard extends Wizard implements INewWizard {
 			// open editor
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(
 					new FileEditorInput(newFile), 
-					OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EDITOR_ID, 
+					OdysseusRCPEditorTextPlugIn.ODYSSEUS_SCRIPT_EDITOR_ID, 
 					true);
 			
 			return true;
@@ -62,7 +62,7 @@ public class NewQueryTextWizard extends Wizard implements INewWizard {
 	}
 	
 	protected InputStream getQueryTemplate() {
-		return new ByteArrayInputStream("#PARSER CQL\n#TRANSCFG Standard\n#QUERY\n//Your first query here".getBytes());
+		return new ByteArrayInputStream("//OdysseusScript\n#PARSER CQL\n#TRANSCFG Standard\n#QUERY\n//Your first query here".getBytes());
 	}
 
 	private static IContainer getFolder( IResource resource ) {
