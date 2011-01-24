@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.nature;
+package de.uniol.inf.is.odysseus.rcp.natures;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;

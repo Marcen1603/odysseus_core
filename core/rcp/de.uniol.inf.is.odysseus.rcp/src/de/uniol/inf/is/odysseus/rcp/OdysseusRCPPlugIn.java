@@ -49,6 +49,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 
 	public static final String BUILD_CONFIGURATION_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.buildConfiguration";
 
+	public static final String ODYSSEUS_PROJECT_NATURE_ID = "de.uniol.inf.is.odysseus.rcp.OdysseusProjectNature";
+
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;
 	

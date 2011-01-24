@@ -13,5 +13,4 @@ public interface ILogicalPlanEditorConstants {
 	
 	public static final String LOGICAL_PLAN_FILE_EXTENSION = "pln";
 	
-	public static final String ODYSSEUS_PROJECT_NATURE_ID = "de.uniol.inf.is.odysseus.rcp.editor.OdysseusProjectNature";
 }

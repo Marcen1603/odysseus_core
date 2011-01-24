@@ -77,6 +77,9 @@
                standalone="false"
                visible="true">
          </view>
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard">
+         </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective">
@@ -371,6 +374,36 @@
                style="push">
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="/Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            icon="icons/OdysseusProjectIcon.png"
+            id="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard"
+            name="Odysseus Project"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         id="OdysseusProjectNature"
+         name="Odysseus Project Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="de.uniol.inf.is.odysseus.rcp.natures.OdysseusProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/OdysseusProjectIconSmall.png"
+            id="de.uniol.inf.is.odysseus.rcp.natures.OdysseusProjectNatureImage"
+            natureId="de.uniol.inf.is.odysseus.rcp.OdysseusProjectNature">
+      </image>
    </extension>
 
 </plugin>

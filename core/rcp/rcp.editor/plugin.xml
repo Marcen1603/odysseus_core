@@ -41,6 +41,18 @@
       </command>
    </extension>
    <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.editor.wizard.LogicalPlanWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            hasPages="true"
+            icon="icons/plan.png" id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard"
+            name="Logical Plan">
+      </wizard>
+   </extension>
+   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective">
@@ -57,36 +69,12 @@
                visible="true">
          </view>
          <newWizardShortcut
-               id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusProjectWizard">
-         </newWizardShortcut>
-         <newWizardShortcut
                id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard">
          </newWizardShortcut>
          <newWizardShortcut
                id="de.uniol.inf.is.odysseus.rcp.editor.text.NewWizard">
          </newWizardShortcut>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            canFinishEarly="false"
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.editor.wizard.LogicalPlanWizard"
-            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
-            hasPages="true"
-            icon="icons/plan.png" id="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanWizard"
-            name="Logical Plan">
-      </wizard>
-      <wizard
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.editor.wizard.OdysseusProjectWizard"
-            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
-            icon="icons/OdysseusProjectIcon.png"
-            id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusProjectWizard"
-            name="Odysseus Project"
-            project="true">
-      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -136,24 +124,6 @@
                name="FILESINK">
          </operator>
       </group>
-   </extension>
-   <extension
-         id="OdysseusProjectNature"
-         name="Odysseus Project Nature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="de.uniol.inf.is.odysseus.rcp.editor.nature.OdysseusProjectNature">
-         </run>
-      </runtime>
-   </extension>
-   <extension
-         point="org.eclipse.ui.ide.projectNatureImages">
-      <image
-            icon="icons/OdysseusProjectIconSmall.png"
-            id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusProjectNatureImage"
-            natureId="de.uniol.inf.is.odysseus.rcp.editor.OdysseusProjectNature">
-      </image>
    </extension>
 
 </plugin>
