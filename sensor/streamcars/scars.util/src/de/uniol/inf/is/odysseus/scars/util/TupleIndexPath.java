@@ -192,6 +192,26 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		}
 		return indexArray;
 	}
+	
+	/**
+	 * Setzt die Werte im TupleIndexPath auf Werte vom gegebenen
+	 * Tupel.
+	 * 
+	 * @param Tuple
+	 */
+	public void updateValues( MVRelationalTuple<?> tuple ) {
+		List<TupleIndex> list = new ArrayList<TupleIndex>();
+		Object parent = tuple;
+		for (int i = 0; i < indices.size(); i++) {
+			TupleIndex idx = new TupleIndex(((MVRelationalTuple<?>) parent), indices.get(i).toInt(), indices.get(i).getAttribute());
+			list.add(idx);
+
+			if (parent instanceof MVRelationalTuple)
+				parent = ((MVRelationalTuple<?>) parent).getAttribute(indices.get(i).toInt());
+		}
+		
+		indices = list;
+	}
 
 	@Override
 	public String toString() {
