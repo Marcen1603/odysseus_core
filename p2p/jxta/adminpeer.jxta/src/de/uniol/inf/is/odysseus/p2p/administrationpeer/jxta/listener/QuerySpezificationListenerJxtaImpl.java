@@ -47,7 +47,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 		administrationPeerJxtaImpl.getDiscoveryService().addDiscoveryListener(this);
 		//TODO: In Abhängigkeit der bereits laufenden Gebote und der laufenden Anfragen eine eigene Strategie?
-		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(administrationPeerJxtaImpl.getQueries());
+		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(administrationPeerJxtaImpl);
 		
 	}
 
@@ -82,7 +82,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 						return;
 					}
 
-					if (administrationPeerJxtaImpl.getQueries().keySet().contains(adv.getQueryId()) ) {
+					if (administrationPeerJxtaImpl.hasQuery(adv.getQueryId()) ) {
 						//Diese Ausschreibung wurde schon gefunden und kann ignoriert werden
 						continue;
 					}
@@ -97,7 +97,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					q.setResponseSocketThinPeer(pipeAdv);
 					PeerAdvertisement peerAdv = administrationPeerJxtaImpl.getNetPeerGroup().getPeerAdvertisement();
 					
-						if(!administrationPeerJxtaImpl.getQueries().containsKey(q)) {
+						if(!administrationPeerJxtaImpl.hasQuery(q.getId())) {
 							administrationPeerJxtaImpl.addQuery(q);
 							Log.addQuery(adv.getQueryId());
 							Log.logAction(adv.getQueryId(), "Anfrage gefunden.");

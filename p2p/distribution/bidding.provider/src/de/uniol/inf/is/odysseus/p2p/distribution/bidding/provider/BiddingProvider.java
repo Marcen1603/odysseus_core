@@ -65,7 +65,7 @@ public class BiddingProvider extends
 
 		getRegisteredMessageHandler().add(new EventMessageHandler());
 		getRegisteredMessageHandler().add(
-				new BiddingMessageResultHandler(getPeer().getQueries()));
+				new BiddingMessageResultHandler(getPeer()));
 		for (IMessageHandler handler : getRegisteredMessageHandler()) {
 			getPeer().registerMessageHandler(handler);
 		}
@@ -101,9 +101,7 @@ public class BiddingProvider extends
 		if (getDiscoveryService() == null) {
 			return;
 		}
-		// get("1"), weil die subplaene von den senken zu den quellen gehen und
-		// wir die p2psink fuer den thin-peer wollen
-		Subplan topSink = query.getSubPlans().get("1");
+		Subplan topSink = query.getTopSink();
 		String pipeAdv = ((P2PSinkAO) topSink.getAo()).getAdv();
 		PeerAdvertisement peerAdv = PeerGroupTool.getPeerGroup()
 				.getPeerAdvertisement();

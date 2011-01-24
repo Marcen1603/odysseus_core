@@ -14,7 +14,6 @@ import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
@@ -25,15 +24,13 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.JxtaConfiguration;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.GuiUpdaterJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryNegotiationMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryPublisherHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.AdministrationPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.RandomIdGenerator;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.StandardIdGenerator;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -267,20 +264,12 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		String queryId = idGenerator.generateId();
 		queryPublisher.sendQuerySpezificationToAdminPeer(queryId, query,
 				language, adminPeer);
-		for(P2PQuery q : getQueries().keySet()) {
-			q.setStatus(Lifecycle.NEW);
-			Log.addAdminPeer(queryId,
-					adminPeerName);
-			Log.addStatus(
-					queryId, 
-					q.getStatus().toString());
-		}
-
 	}
 	
 	@Override
 	protected void initIdGenerator() {
-		this.idGenerator = new RandomIdGenerator();
+		//this.idGenerator = new RandomIdGenerator();
+		this.idGenerator = new StandardIdGenerator(this.serverResponseAddress.getID()+"");
 	}
 
 	@Override

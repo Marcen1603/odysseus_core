@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.MimeMediaType;
@@ -27,49 +25,42 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezificat
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * Gefundene Anfragen werden hier behandelt
  * 
- * @author Mart Köhler
- *
+ * @author Mart Koehler, Marco Grawunder
+ * 
  */
-public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezification> implements IQuerySpecificationHandler<S>{
-	
-	static private Logger logger = LoggerFactory.getLogger(QuerySpecificationHandlerJxtaImpl.class);
-	
-	private AbstractOdysseusPeer aPeer;
+public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezification>
+		implements IQuerySpecificationHandler<S> {
+
+	static private Logger logger = LoggerFactory
+			.getLogger(QuerySpecificationHandlerJxtaImpl.class);
+
+	private IOdysseusPeer peer;
 	private IQuerySelectionStrategy querySelectionStrategy;
 
-	public QuerySpecificationHandlerJxtaImpl(S temp2, AbstractOdysseusPeer aPeer, IQuerySelectionStrategy querySelectionStrategy, List<QueryExecutionSpezification> specifications) {
-		this.aPeer = aPeer;
+	public QuerySpecificationHandlerJxtaImpl(S querySpecification,
+			IOdysseusPeer peer,
+			IQuerySelectionStrategy querySelectionStrategy) {
+		this.peer = peer;
 		this.querySelectionStrategy = querySelectionStrategy;
-		handleQuerySpezification(temp2);
-		
+		handleQuerySpezification(querySpecification);
+
 	}
-	
-	@SuppressWarnings({"rawtypes"})
+
+	@SuppressWarnings({ "rawtypes" })
 	@Override
-	public void handleQuerySpezification(S adv) {
-		logger.debug("handle adv zu Subplan "+adv.getSubplanId());
-		P2PQueryJxtaImpl query = null;
-		for(P2PQuery q : aPeer.getQueries().keySet()) {
-			if(adv.getQueryId().equals(q.getId())) {
-				query = (P2PQueryJxtaImpl) q;
-				if(q.getSubPlans().containsKey(adv.getSubplanId())) {
-//					return;
-				}
-				break;
-			}
-		}
+	public void handleQuerySpezification(S querySpecification) {
+		logger.debug("handle adv zu Subplan " + querySpecification.getSubplanId());
 
 		PipeAdvertisement pipeAdv = null;
-		StringReader sr = new StringReader(adv.getBiddingPipe());
+		StringReader sr = new StringReader(querySpecification.getBiddingPipe());
 		XMLDocument xml = null;
 		try {
 			xml = (XMLDocument) StructuredDocumentFactory
@@ -79,74 +70,68 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		}
 		pipeAdv = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(xml);
-		PipeAdvertisement pipe =  (PipeAdvertisement) aPeer.getServerResponseAddress();
-		synchronized (aPeer.getQueries()) {
-			//Existiert die Query bereits
-			if(query==null) {
-				query = new P2PQueryJxtaImpl();
-				query.setId(adv.getQueryId());
-				query.setLanguage(adv.getLanguage());
-				query.setAdminPeerPipe(MessageTool
-						.createPipeAdvertisementFromXml(adv.getBiddingPipe()));
+		PipeAdvertisement pipe = (PipeAdvertisement) peer
+				.getServerResponseAddress();
 
-				Log.addQuery(adv.getQueryId());
-			}
-			
-			 Object obj = null;
-			  try {
-			    ByteArrayInputStream bis = new ByteArrayInputStream (adv.getSubplan().getBytes("utf-8"));
-			    Base64InputStream b64in = new Base64InputStream(bis);
-			    ObjectInputStream ois	 = new ObjectInputStream (b64in);
-			    try {
-					obj = ois.readObject();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-			  }
-			  catch (IOException ex) {
-			    ex.printStackTrace();
-			  }
-			  query.getSubPlans().put(adv.getSubplanId(), (Subplan)obj);
+		P2PQueryJxtaImpl query = (P2PQueryJxtaImpl) peer.getQuery(querySpecification
+				.getQueryId());
+
+		if (query == null) {
+			query = new P2PQueryJxtaImpl();
+			query.setId(querySpecification.getQueryId());
+			query.setLanguage(querySpecification.getLanguage());
+			query.setAdminPeerPipe(MessageTool
+					.createPipeAdvertisementFromXml(querySpecification.getBiddingPipe()));
+
+			Log.addQuery(querySpecification.getQueryId());
 		}
-		
-		
-		Log.logAction(adv.getQueryId(), "Ausgeschriebene(r) Anfrage/Teilplan gefunden: "+AbstractTreeWalker.prefixWalk(query.getSubPlans().get(adv.getSubplanId()).getAo(),
-				new AlgebraPlanToStringVisitor()));
-		
-		
-		// Strategy ob sich überhaupt beworben werden soll
-//		if (OperatorPeerJxtaImpl.getInstance().getBiddingStrategy().doBidding(
-//				null)) {
-		
+
+		Object obj = null;
+		try {
+			ByteArrayInputStream bis = new ByteArrayInputStream(querySpecification
+					.getSubplan().getBytes("utf-8"));
+			Base64InputStream b64in = new Base64InputStream(bis);
+			ObjectInputStream ois = new ObjectInputStream(b64in);
+			try {
+				obj = ois.readObject();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		query.getSubPlans().put(querySpecification.getSubplanId(), (Subplan) obj);
+
+		Log.logAction(
+				querySpecification.getQueryId(),
+				"Ausgeschriebene(r) Anfrage/Teilplan gefunden: "
+						+ AbstractTreeWalker.prefixWalk(query.getSubPlans()
+								.get(querySpecification.getSubplanId()).getAo(),
+								new AlgebraPlanToStringVisitor()));
+
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
-		if(getQuerySelectionStrategy().handleQuery(query.getSubPlans().get(adv.getSubplanId()), getaPeer())) {
+		if (getQuerySelectionStrategy().handleQuery(
+				query.getSubPlans().get(querySpecification.getSubplanId()), peer)) {
 			messageElements.put("ExecutionBid", "positive");
 			query.setStatus(Lifecycle.GRANTED);
-			aPeer.addQuery(query);
-			Log.logAction(adv.getQueryId(), "Biete auf Anfrage/Teilplan");
-//			aPeer.getQueries().put(query, aPeer.getExecutionListenerFactory().getNewInstance(query, aPeer.getExecutionHandler()));
-		}
-		else {
+			peer.addQuery(query);
+			Log.logAction(querySpecification.getQueryId(), "Biete auf Anfrage/Teilplan");
+		} else {
 			messageElements.put("ExecutionBid", "negative");
-			Log.logAction(adv.getQueryId(), "Biete nicht auf Anfrage/Teilplan");
-			aPeer.removeQuery(query);
+			Log.logAction(querySpecification.getQueryId(), "Biete nicht auf Anfrage/Teilplan");
+			peer.removeQuery(query.getId());
 		}
-		messageElements.put("queryId", adv.getQueryId());
-		
-		messageElements.put("peerId", PeerGroupTool.getPeerGroup().getPeerID().toString());
-		messageElements.put("subplanId", adv.getSubplanId());
+		messageElements.put("queryId", querySpecification.getQueryId());
+
+		messageElements.put("peerId", PeerGroupTool.getPeerGroup().getPeerID()
+				.toString());
+		messageElements.put("subplanId", querySpecification.getSubplanId());
 		messageElements.put("pipeAdvertisement", pipe);
-//			MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), pipeAdv, MessageTool
-//					.createSimpleMessage("BiddingProvider", messageElements));
-//			Log.logAction(adv.getQueryId(), "Für Anfrageausführung beworben !");
-			((JxtaMessageSender)(getaPeer().getMessageSender())).sendMessage(PeerGroupTool.getPeerGroup(), MessageTool
-					.createSimpleMessage("BiddingProvider", messageElements), pipeAdv);
+		((JxtaMessageSender) (peer.getMessageSender())).sendMessage(
+				PeerGroupTool.getPeerGroup(), MessageTool.createSimpleMessage(
+						"BiddingProvider", messageElements), pipeAdv);
 	}
-	
-	public AbstractOdysseusPeer getaPeer() {
-		return aPeer;
-	}
-	
+
 	@Override
 	public IQuerySelectionStrategy getQuerySelectionStrategy() {
 		return querySelectionStrategy;

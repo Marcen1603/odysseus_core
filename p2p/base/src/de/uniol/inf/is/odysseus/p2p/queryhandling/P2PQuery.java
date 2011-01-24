@@ -13,21 +13,40 @@ public abstract class P2PQuery implements Serializable{
 
 	private static final long serialVersionUID = -5425656893540775498L;
 	private Lifecycle currStatus;
+	private String id;
+	private String declarativeQuery;
+	private String language;
+	private ILogicalOperator logicalOperatorPlan;
+	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
+	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
+	private User user;
+	transient private IDataDictionary dataDictionary;
+	private Subplan topSink;
+
+	public P2PQuery(){
+	}
+	
+	public P2PQuery(String query, String queryID, User user) {
+		setDeclarativeQuery(queryID);
+		setId(queryID);
+		this.user = user;
+	}
+
+	public void updateWith(P2PQuery query) {
+		this.declarativeQuery = query.getDeclarativeQuery();
+		this.language = query.language;
+		this.subPlans = new HashMap<String, Subplan>(query.getSubPlans());
+		this.topSink = query.topSink;
+		this.user = query.user;
+	}
+
+	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	private String id;
-	private String declarativeQuery;
-	private String language;
-	private ILogicalOperator logicalOperatorPlan;
-	
-	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
-	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
-	private User user;
-	transient private IDataDictionary dataDictionary;
 	
 	public User getUser() {
 		return user;
@@ -59,7 +78,11 @@ public abstract class P2PQuery implements Serializable{
 		
 	}
 
-	public boolean addSubPlan(String id, Subplan subplan) {
+	public boolean addSubPlan(Subplan subplan, boolean isTopSink) {
+		if (isTopSink){
+			topSink = subplan;
+		}
+		String id = subplan.getId();
 		if(this.subPlans.get(id)==null) {
 			this.subPlans.put(id, subplan);
 			return true;
@@ -67,10 +90,10 @@ public abstract class P2PQuery implements Serializable{
 		return false;
 	}
 	
-
-	public P2PQuery(){
+	public Subplan getTopSink() {
+		return topSink;
 	}
-
+	
 	public Lifecycle getStatus() {
 		return currStatus;
 	}
@@ -97,6 +120,25 @@ public abstract class P2PQuery implements Serializable{
 		this.language = language;
 	}
 
+	
+	public ILogicalOperator getLogicalOperatorplan() {
+		return this.logicalOperatorPlan;
+	}
+	
+	public void setLogicalOperatorplan (ILogicalOperator plan) {
+		if(this.declarativeQuery!=null) {
+			this.logicalOperatorPlan = plan;
+		}
+	}
+
+	public IDataDictionary getDataDictionary() {
+		return dataDictionary;
+	}
+	
+	public void setDataDictionary(IDataDictionary dataDictionary){
+		this.dataDictionary = dataDictionary;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -121,36 +163,8 @@ public abstract class P2PQuery implements Serializable{
 			return false;
 		return true;
 	}
-	
-	public P2PQuery(String query, String queryID, User user) {
-		setDeclarativeQuery(queryID);
-		setId(queryID);
-		this.user = user;
-	}
-	
-	public ILogicalOperator getLogicalOperatorplan() {
-		return this.logicalOperatorPlan;
-	}
-	
-	public void setLogicalOperatorplan (ILogicalOperator plan) {
-		if(this.declarativeQuery!=null) {
-			this.logicalOperatorPlan = plan;
-		}
-	}
-//	public void setSubplans(ArrayList<ILogicalOperator> list) {
-//		int planCounter = 1;
-//		for(ILogicalOperator op : list) {
-//			addSubPlan(""+planCounter, new Subplan(""+planCounter, op));
-//			planCounter++;
-//		}
-//		
-//	}
 
-	public IDataDictionary getDataDictionary() {
-		return dataDictionary;
-	}
-	
-	public void setDataDictionary(IDataDictionary dataDictionary){
-		this.dataDictionary = dataDictionary;
-	}
+
+
+
 }

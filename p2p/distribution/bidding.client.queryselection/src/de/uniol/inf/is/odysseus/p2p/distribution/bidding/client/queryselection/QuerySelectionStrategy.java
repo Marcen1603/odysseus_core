@@ -19,7 +19,7 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 	@Override
 	public boolean handleQuery(Subplan subplan, IOdysseusPeer peer) {
 		
-		if(((AbstractOdysseusPeer)peer).getQueries().size()== MAXQUERIES) {
+		if(peer.getQueryCount()== MAXQUERIES) {
 			return false;
 		}
 		//Pruefen, ob adressierte Quellen ueberhaupt verwaltet werden

@@ -31,29 +31,17 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 	}
 	
 	protected IQuerySpezificationListener querySpezificationListener;
-
 	private Thread querySpezificationListenerThread;
-
 	private Thread operatorPeerListenerThread;
-	
 	private Thread aliveHandlerThread;
-	
 	private Thread hotPeerFinderThread;
-	
 	protected IAliveHandler aliveHandler;
-	
 	protected IOperatorPeerListener operatorPeerListener;
-	
 	protected IHotPeerListener hotPeerFinder;
-
 	protected ISourceListener sourceListener;
-	
 	private Thread sourceListenerThread;
-	
 	protected IMessageHandler queryResultHandler;
-	
-	protected IHotPeerStrategy hotPeerStrategy;
-	
+	protected IHotPeerStrategy hotPeerStrategy;	
 	
 	private IExecutor executor;
 	protected ISplittingStrategy splitting;
@@ -61,11 +49,9 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 	
 	private ICompiler compiler;
 
-	
 	public ICompiler getCompiler() {
 		return compiler;
 	}
-	
 	
 	public void bindCompiler(ICompiler compiler) {
 		getLogger().info("Binding Compiler" , compiler);

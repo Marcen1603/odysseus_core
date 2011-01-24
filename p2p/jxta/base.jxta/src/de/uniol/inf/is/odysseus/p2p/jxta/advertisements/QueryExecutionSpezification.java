@@ -21,7 +21,8 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 
 /**
- * Repraesentiert eine Ausschreibung eines Subplans mit einer serialisierten Version des dazugehoerigen Operatorplans
+ * Repraesentiert eine Ausschreibung eines Subplans mit einer serialisierten Version 
+ * des dazugehoerigen Operatorplans
  * 
  * @author Mart Koehler
  *

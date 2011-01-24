@@ -14,32 +14,16 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
 
 public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 
-
 	private Thread socketListenerThread;
-
 	private MainWindow gui;
-
 	protected IGuiUpdater guiUpdater;
-
 	private Thread guiUpdaterThread;
-
-//	protected IBiddingHandler queryBiddingHandler;
-
-//	private Thread queryBiddingHandlerThread;
-
 	protected IAdministrationPeerListener administrationPeerListener;
-
 	private Thread administrationPeerListenerThread;
-
 	protected ISourceListener sourceListener;
-
 	private Thread sourceListenerThread;
-
 	protected IIdGenerator idGenerator;
-
 	protected IQueryPublisher queryPublisher;
-
-//	protected IBiddingHandlerStrategy biddingHandlerStrategy;
 	
 	public HashMap<String,Object> adminPeers;
 	
@@ -59,10 +43,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 		return gui;
 	}
 
-//	public IBiddingHandlerStrategy getBiddingHandlerStrategy() {
-//		return biddingHandlerStrategy;
-//	}
-
 	private void startGui() {
 		gui = new MainWindow(this);
 		gui.setLocationRelativeTo(null);
@@ -79,15 +59,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 		this.socketListenerThread = new Thread(getSocketServerListener());
 		socketListenerThread.start();
 	}
-
-//	protected void startQueryBiddingHandler() {
-//		if (queryBiddingHandlerThread != null
-//				&& queryBiddingHandlerThread.isAlive()) {
-//			queryBiddingHandlerThread.interrupt();
-//		}
-//		this.queryBiddingHandlerThread = new Thread(queryBiddingHandler);
-//		queryBiddingHandlerThread.start();
-//	}
 
 	protected void startAdministrationPeerListener() {
 		if (administrationPeerListenerThread != null
@@ -113,7 +84,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 		init();
 		startServerSocketListener();
 		startGui();
-//		startQueryBiddingHandler();
 		startAdministrationPeerListener();
 		startSourceListener();
 	}
@@ -138,15 +108,12 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 		initLocalMessageHandler();
 		initQueryPublisher();
 		initGuiUpdater();
-//		initQueryBiddingHandler();
 		initAdministrationPeerListener();
 		initSourceListener();
 		initIdGenerator();
-//		initBiddingHandlerStrategy();
 		initAdminPeerList();
 
 	}
-
 
 	protected abstract void initServerResponseConnection();
 	
@@ -155,8 +122,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	protected abstract void initIdGenerator();
 	
 	protected abstract void initAdministrationPeerListener();
-
-//	protected abstract void initQueryBiddingHandler();
 
 	protected abstract void initGuiUpdater();
 
@@ -167,8 +132,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	protected abstract void startNetwork();
 
 	protected abstract void stopNetwork();
-
-//	protected abstract void initBiddingHandlerStrategy();
 
 	public abstract void publishQuerySpezification(String query, String language);
 

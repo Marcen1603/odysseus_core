@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJx
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
@@ -32,23 +33,19 @@ public class AdminPeerQueryResultHandlerJxtaImpl extends AbstractMessageHandler 
 		if (queryResult.equals("granted")) {
 			Log.logAction(queryId,
 					"Zusage fuer die Verwaltung der Anfrage bekommen.");
-			for (P2PQuery q : administrationPeerJxtaImpl.getQueries().keySet()) {
-				if (q.getId().equals(queryId)) {
-					// Einstieg in die Ausfuehrungsumgebung
-					q.setStatus(Lifecycle.NEW);
-					administrationPeerJxtaImpl.getQueries().get(q)
-							.startListener();
-				}
+			P2PQuery q = administrationPeerJxtaImpl.getQuery(queryId);
+			if (q != null){
+				q.setStatus(Lifecycle.NEW);
+				IExecutionListener l = administrationPeerJxtaImpl.getListenerForQuery(queryId);
+				l.startListener();
+			}else{
+				Log.logAction(queryId, "Gebot fuer nicht bekannte Anfrage bekommen");
 			}
 
 		} else if (queryResult.equals("denied")) {
 			Log.logAction(queryId,
 					"Zusage fuer die Verwaltung der Anfrage NICHT bekommen. Verwerfe Anfrage");
-			for (P2PQuery q : administrationPeerJxtaImpl.getQueries().keySet()) {
-				if (q.getId() == queryId) {
-					administrationPeerJxtaImpl.getQueries().remove(q);
-				}
-			}
+			administrationPeerJxtaImpl.removeQuery(queryId);
 		}
 
 	}

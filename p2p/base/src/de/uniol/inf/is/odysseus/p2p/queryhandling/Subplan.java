@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
  * Teilplan koennen fuer die Verarbeitung Gebote abgegeben werden
  * 
  * 
- * @author Mart Koehler
+ * @author Mart Koehler, Marco Grawunder
  * 
  */
 public class Subplan implements Serializable {
@@ -46,10 +46,6 @@ public class Subplan implements Serializable {
 
 	public String getId() {
 		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getPeerId() {

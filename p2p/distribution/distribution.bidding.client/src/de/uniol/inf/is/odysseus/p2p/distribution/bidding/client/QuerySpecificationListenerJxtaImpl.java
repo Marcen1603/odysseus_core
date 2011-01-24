@@ -51,21 +51,21 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	// This method is called if a query specification is found
 	public synchronized void discoveryEvent(DiscoveryEvent ev) {
-
 
 		DiscoveryResponseMsg res = ev.getResponse();
 		Enumeration<Advertisement> en = res.getAdvertisements();
 		if (en != null) {
 			while (en.hasMoreElements()) {
 
-				Advertisement temp2 = en.nextElement();
-				if (temp2 instanceof QueryExecutionSpezification) {
-					QueryExecutionSpezification spec = (QueryExecutionSpezification) temp2;
+				Advertisement qESp = en.nextElement();
+				if (qESp instanceof QueryExecutionSpezification) {
+					QueryExecutionSpezification spec = (QueryExecutionSpezification) qESp;
 					boolean createHandler = true;
 					logger.debug("QueryExecutionSpezifikation Anfrage: "+spec.getQueryId()+" Subplan:" +spec.getSubplanId());
+					
 					for(QueryExecutionSpezification s : getSpecifications()) {
 						if(s.getSubplanId().equals(spec.getSubplanId()))
 						{
@@ -109,7 +109,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	@Override
 	public IQuerySpecificationHandler<S> getQuerySpecificationHandler(S spec) {
-		return new QuerySpecificationHandlerJxtaImpl<S>(spec, getaPeer(), getSelectionStrategy(), specifications);
+		return new QuerySpecificationHandlerJxtaImpl<S>(spec, getaPeer(), getSelectionStrategy());
 	}
 
 	@Override

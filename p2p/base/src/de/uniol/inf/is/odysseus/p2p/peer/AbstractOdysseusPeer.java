@@ -2,39 +2,44 @@ package de.uniol.inf.is.odysseus.p2p.peer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 /**
  * 
  * 
- * @author Mart Koehler
+ * @author Mart Koehler, Marco Grawunder
  * 
  */
 public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
 	static private Logger logger = LoggerFactory
-			.getLogger(AbstractOdysseusPeer.class);;
-	private HashMap<P2PQuery, IExecutionListener> queries;
+			.getLogger(AbstractOdysseusPeer.class);
+	private HashMap<String, Pair<P2PQuery, IExecutionListener>> queryList;
 	private List<IExecutionHandler<?>> executionHandler;
 	private IMessageSender<?, ?, ?> messageSender;
 	final private ISocketServerListener socketServerListener;
 	private IExecutionListenerFactory executionListenerFactory;
 
 	public AbstractOdysseusPeer(ISocketServerListener socketServerListener) {
-		this.queries = new HashMap<P2PQuery, IExecutionListener>();
+		this.queryList = new HashMap<String, Pair<P2PQuery, IExecutionListener>>();
 		this.executionHandler = new ArrayList<IExecutionHandler<?>>();
 		this.socketServerListener = socketServerListener;
 	}
@@ -59,8 +64,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
 	@Override
 	public void bindExecutionListenerFactory(IExecutionListenerFactory factory) {
-		logger.info(
-				"Binding ExecutionListenerFactory: " + factory.getName());
+		logger.info("Binding ExecutionListenerFactory: " + factory.getName());
 		this.executionListenerFactory = factory;
 	}
 
@@ -104,52 +108,104 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	}
 
 	@Override
-	public HashMap<P2PQuery, IExecutionListener> getQueries() {
-		return queries;
+	public P2PQuery getQuery(String queryID) {
+		synchronized (queryList) {
+			Pair<P2PQuery, IExecutionListener> q = queryList.get(queryID);
+			return q != null ? q.getE1() : null;
+		}
+	}
+	
+	@Override
+	public Set<String> getQueryIds(){
+		return Collections.unmodifiableSet(queryList.keySet());
+	}
+	
+	@Override
+	public int getQueryCount() {
+		synchronized (queryList) {
+			return queryList.size();
+		}
+	}
+
+	@Override
+	public boolean hasQuery(String queryId) {
+		synchronized (queryList) {
+			return queryList.containsKey(queryId);
+		}
+	}
+
+	@Override
+	public IExecutionListener getListenerForQuery(String queryID) {
+		synchronized (queryList) {
+			Pair<P2PQuery, IExecutionListener> q = queryList.get(queryID);
+			return q != null ? q.getE2() : null;
+		}
+	}
+
+	@Override
+	public int getQueryCount(Lifecycle lifecycle) {
+		int count = 0;
+		synchronized (queryList) {
+			for (Entry<String, Pair<P2PQuery, IExecutionListener>> q : queryList
+					.entrySet()) {
+				if (q.getValue().getE1().getStatus() == lifecycle) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public int getQueryCount(List<Lifecycle> lifecycle) {
+		int count = 0;
+		synchronized (queryList) {
+			for (Entry<String, Pair<P2PQuery, IExecutionListener>> q : queryList
+					.entrySet()) {
+				if (lifecycle.contains(q.getValue().getE1().getStatus())) {
+					count++;
+				}
+			}
+		}
+		return count;
 	}
 
 	@Override
 	public void addQuery(P2PQuery query) {
-		// Fuer alle Peers, welche die Ausfuehrungsumgebung nutzen
-		if (getExecutionListenerFactory() != null) {
-			boolean contain = false;
-			P2PQuery actualQuery = null;
-			// Find query with id ...??
-			for (P2PQuery q : getQueries().keySet()) {
-				if (q.getId().equals(query.getId())) {
-					contain = true;
-					actualQuery = q;
-					break;
+		synchronized (queryList) {
+			// Fuer alle Peers, welche die Ausfuehrungsumgebung nutzen
+			if (getExecutionListenerFactory() != null) {
+				P2PQuery actualQuery = getQuery(query.getId());
+
+				if (actualQuery != null) {
+					actualQuery.updateWith(query);
+				} else {
+					List<IExecutionHandler<?>> executionHandlerCopy = new ArrayList<IExecutionHandler<?>>();
+					for (IExecutionHandler<?> handler : getExecutionHandler()) {
+						executionHandlerCopy.add(handler.clone());
+					}
+
+					IExecutionListener listener = getExecutionListenerFactory()
+							.getNewInstance(query, executionHandlerCopy);
+					queryList.put(query.getId(),
+							new Pair<P2PQuery, IExecutionListener>(query,
+									listener));
 				}
 			}
-			if (contain) {
-				Collection<Subplan> sub = query.getSubPlans().values();
-				actualQuery.addSubPlan(""
-						+ (actualQuery.getSubPlans().size() + 1), sub
-						.iterator().next());
-			} else {
-				List<IExecutionHandler<?>> executionHandlerCopy = new ArrayList<IExecutionHandler<?>>();
-				for (IExecutionHandler<?> handler : getExecutionHandler()) {
-					executionHandlerCopy.add(handler.clone());
+			// Für alle Peers bspw. Thin-Peer, welche nicht aktiv an der
+			// Anfrageausführung mitwirken und daher nur die Anfrage intern in
+			// einer Liste verwalten möchten
+			// Kann zu Fehlern führen, wenn man nicht beachtet, dass value null
+			// ist.
+			else {
+				if (!queryList.containsKey(query.getId())) {
+					queryList
+							.put(query.getId(),
+									new Pair<P2PQuery, IExecutionListener>(
+											query, null));
 				}
-
-				IExecutionListener listener = getExecutionListenerFactory()
-						.getNewInstance(query, executionHandlerCopy);
-				getQueries().put(query, listener);
-				// listener.startListener();
 			}
 		}
-		// Für alle Peers bspw. Thin-Peer, welche nicht aktiv an der
-		// Anfrageausführung mitwirken und daher nur die Anfrage intern in
-		// einer Liste verwalten möchten
-		// Kann zu Fehlern führen, wenn man nicht beachtet, dass value null
-		// ist.
-		else {
-			if (!getQueries().containsKey(query)) {
-				getQueries().put(query, null);
-			}
-		}
-
 	}
 
 	protected IExecutionListenerFactory getExecutionListenerFactory() {
@@ -157,10 +213,10 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	}
 
 	@Override
-	public void removeQuery(P2PQuery query) {
-		@SuppressWarnings("unused")
-		IExecutionListener listener = getQueries().remove(query);
-		listener = null;
+	public void removeQuery(String queryId) {
+		synchronized (queryList) {
+			queryList.remove(queryId);
+		}
 	}
 
 	@Override
