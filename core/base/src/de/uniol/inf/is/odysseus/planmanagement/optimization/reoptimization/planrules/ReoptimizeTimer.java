@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
  * @author Wolf Bauer, Tobias Witt
  * 
  */
-public class ReoptimizeTimer extends AbstractPlanReoptimizeRule implements
+final public class ReoptimizeTimer extends AbstractPlanReoptimizeRule implements
 		Runnable {
 
 	private long period;
