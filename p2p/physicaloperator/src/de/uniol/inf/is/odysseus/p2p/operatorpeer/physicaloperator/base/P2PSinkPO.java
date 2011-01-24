@@ -62,7 +62,6 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 	}
 
 	class StreamHandler extends Thread{
-		ObjectInputStream oin;
 		OutputStream outS;
 		ObjectOutputStream dout;
 		Socket socket;
@@ -97,7 +96,7 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		public void done() {
 			try {
 				//Signalisieren, dass dieser Peer fertig ist.
-				dout.writeObject(new Integer(0));
+				dout.writeObject(Integer.valueOf(0));
 				dout.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -133,8 +132,11 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		super();
 		this.peerGroup = peerGroup;
 		this.adv = MessageTool.createPipeAdvertisementFromXml(adv);
+	}
+	
+	public void startListener(){
 		ConnectionListener listener = new ConnectionListener();
-		listener.start();
+		listener.start();		
 	}
 
 

@@ -20,6 +20,7 @@ public class CacheTool {
 				SubFiles[i].delete();
 			}
 			TheFile.delete();
+			
 		}
 	}
 

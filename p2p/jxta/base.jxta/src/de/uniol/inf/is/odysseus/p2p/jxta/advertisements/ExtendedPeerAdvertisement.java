@@ -21,7 +21,7 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ExtendedPeerAdvertisement extends Advertisement implements
-		Serializable, Cloneable, Comparable {
+		Serializable, Comparable {
 
 	/**
 	 * 
@@ -206,16 +206,31 @@ public class ExtendedPeerAdvertisement extends Advertisement implements
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof ExtendedPeerAdvertisement) {
-			ExtendedPeerAdvertisement adv = (ExtendedPeerAdvertisement) obj;
-			return getID().equals(adv.getID());
-		}
-		return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ExtendedPeerAdvertisement other = (ExtendedPeerAdvertisement) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+
 
 	public void setID(ID id) {
 		this.id = (id == null ? null : id);

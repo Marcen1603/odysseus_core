@@ -55,10 +55,10 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 			e.printStackTrace();
 		}
 		Object o = null;
-		while (true) {
+		while (iStream != null) {
 			try {
 				o = iStream.readObject();
-				if ((o instanceof Integer) && (((Integer) o).equals(0))) {
+				if (o != null && (o instanceof Integer) && (((Integer) o).equals(0))) {
 					iStream.close();
 					socket.close();
 					break;

@@ -17,7 +17,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	private Thread socketListenerThread;
 	private MainWindow gui;
 	protected IGuiUpdater guiUpdater;
-	private Thread guiUpdaterThread;
 	protected IAdministrationPeerListener administrationPeerListener;
 	private Thread administrationPeerListenerThread;
 	protected ISourceListener sourceListener;
@@ -98,7 +97,6 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	}
 
 	protected void stopGuiUpdater() {
-		this.guiUpdaterThread.interrupt();
 		this.guiUpdater = null;
 	}
 

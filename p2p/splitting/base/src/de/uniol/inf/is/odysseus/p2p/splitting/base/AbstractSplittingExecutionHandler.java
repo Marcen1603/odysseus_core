@@ -29,7 +29,7 @@ public abstract class AbstractSplittingExecutionHandler<F extends AbstractSplitt
 			getFunction().setCallback(getExecutionListenerCallback());
 			ArrayList<ILogicalOperator> plan = getFunction().splitPlan(query					
 							.getLogicalOperatorplan());
-			if (plan.size() == 0 || plan == null) {
+			if (plan == null || plan.size() == 0) {
 				getExecutionListenerCallback().changeState(Lifecycle.FAILED);
 			} else {
 				for (int i = 0; i < plan.size(); i++) {

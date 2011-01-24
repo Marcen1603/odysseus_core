@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.MimeMediaType;
@@ -22,239 +23,241 @@ import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class MessageTool {
-	
-	
-	public static void sendMessage(PeerGroup netPeerGroup, PipeAdvertisement adv, Message message){
+
+	public static void sendMessage(PeerGroup netPeerGroup,
+			PipeAdvertisement adv, Message message) {
 		new MessageSender(netPeerGroup, adv, message).start();
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public static PipeAdvertisement getResponsePipe(String namespace, Message msg, int number){
-		MessageElement advElement = msg.getMessageElement(
-				namespace, "pipeAdv"+number);
+	public static PipeAdvertisement getResponsePipe(String namespace,
+			Message msg, int number) {
+		MessageElement advElement = msg.getMessageElement(namespace, "pipeAdv"
+				+ number);
 		XMLDocument theDocument = null;
 		try {
 			theDocument = (XMLDocument) StructuredDocumentFactory
-					.newStructuredDocument(advElement
-							.getMimeType(), advElement
-							.getStream());
+					.newStructuredDocument(advElement.getMimeType(),
+							advElement.getStream());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		PipeAdvertisement pipeAdv = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(theDocument);
-		
+
 		return pipeAdv;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public static PeerAdvertisement getPeerAdvertisement(String namespace, Message msg){
-		MessageElement advElement = msg.getMessageElement(
-				namespace, "peerAdv");
+	public static PeerAdvertisement getPeerAdvertisement(String namespace,
+			Message msg) {
+		MessageElement advElement = msg.getMessageElement(namespace, "peerAdv");
 		XMLDocument theDocument = null;
 		try {
 			theDocument = (XMLDocument) StructuredDocumentFactory
-					.newStructuredDocument(advElement
-							.getMimeType(), advElement
-							.getStream());
+					.newStructuredDocument(advElement.getMimeType(),
+							advElement.getStream());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		PeerAdvertisement peerAdv = (PeerAdvertisement) AdvertisementFactory
 				.newAdvertisement(theDocument);
-		
+
 		return peerAdv;
 	}
-	
-	public static String getMessageElementAsString(String namespace, String namespace2, Message msg){
-		MessageElement query = msg
-		.getMessageElement(namespace, namespace2);
+
+	public static String getMessageElementAsString(String namespace,
+			String namespace2, Message msg) {
+		MessageElement query = msg.getMessageElement(namespace, namespace2);
 		return query.toString();
 	}
-	
 
 	@SuppressWarnings("rawtypes")
-	public static PipeAdvertisement createPipeAdvertisementFromXml(String xmlAdv){
+	public static PipeAdvertisement createPipeAdvertisementFromXml(String xmlAdv) {
 		PipeAdvertisement pipeAdv = null;
 		StringReader sr = new StringReader(xmlAdv);
 		XMLDocument xml = null;
 		try {
 			xml = (XMLDocument) StructuredDocumentFactory
-					.newStructuredDocument(MimeMediaType.XMLUTF8,
-							sr);
+					.newStructuredDocument(MimeMediaType.XMLUTF8, sr);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		pipeAdv = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(xml);
-		
+
 		return pipeAdv;
-		
+
 	}
-	
-	
+
 	// Methode auskommentiert da aktuell nicht beötigt
-//	public synchronized static Object getObjectFromMessage(Message msg, String elem){
-//		MessageElement advElement = msg.getMessageElement(elem);
-//		
-//		Object obj = null;
-//		  try {
-//		    ByteArrayInputStream bis = new ByteArrayInputStream (advElement.getBytes(true));
-//		    ObjectInputStream ois = new ObjectInputStream (bis);
-//		    obj = ois.readObject();
-//		  }
-//		  catch (IOException ex) {
-//		    ex.printStackTrace();
-//		  }
-//		  catch (ClassNotFoundException ex) {
-//		    ex.printStackTrace();
-//		  }
-//		return obj;
-//	}
-	
-	
+	// public synchronized static Object getObjectFromMessage(Message msg,
+	// String elem){
+	// MessageElement advElement = msg.getMessageElement(elem);
+	//
+	// Object obj = null;
+	// try {
+	// ByteArrayInputStream bis = new ByteArrayInputStream
+	// (advElement.getBytes(true));
+	// ObjectInputStream ois = new ObjectInputStream (bis);
+	// obj = ois.readObject();
+	// }
+	// catch (IOException ex) {
+	// ex.printStackTrace();
+	// }
+	// catch (ClassNotFoundException ex) {
+	// ex.printStackTrace();
+	// }
+	// return obj;
+	// }
+
 	// Methode auskommentiert da aktuell nicht beötigt
-	
-//	public synchronized static Object getObjectFromMessage(Message msg, int number){
-//		
-//		MessageElement advElement = msg.getMessageElement("ao"+number);
-//		
-//		Object obj = null;
-//		  try {
-//		    ByteArrayInputStream bis = new ByteArrayInputStream (advElement.getBytes(true));
-//		    ObjectInputStream ois = new ObjectInputStream (bis);
-//		    obj = ois.readObject();
-//		  }
-//		  catch (IOException ex) {
-//		    ex.printStackTrace();
-//		  }
-//		  catch (ClassNotFoundException ex) {
-//		    ex.printStackTrace();
-//		  }
-//		return obj;
-//	}
-	
+
+	// public synchronized static Object getObjectFromMessage(Message msg, int
+	// number){
+	//
+	// MessageElement advElement = msg.getMessageElement("ao"+number);
+	//
+	// Object obj = null;
+	// try {
+	// ByteArrayInputStream bis = new ByteArrayInputStream
+	// (advElement.getBytes(true));
+	// ObjectInputStream ois = new ObjectInputStream (bis);
+	// obj = ois.readObject();
+	// }
+	// catch (IOException ex) {
+	// ex.printStackTrace();
+	// }
+	// catch (ClassNotFoundException ex) {
+	// ex.printStackTrace();
+	// }
+	// return obj;
+	// }
+
 	// Auskommentiert da akuell nicht benötigt
-	
-//	public static ArrayList<POEventType> getEvents(String events){
-//
-//		StringTokenizer st = new StringTokenizer(events, ",");
-//		ArrayList<POEventType> list = new ArrayList<POEventType>();
-//		while (st.hasMoreTokens()) { 	
-//			list.add(POEventType.valueOf(st.nextToken()));
-//		}
-//		return list;
-//
-//	}
-	
-	
+
+	// public static ArrayList<POEventType> getEvents(String events){
+	//
+	// StringTokenizer st = new StringTokenizer(events, ",");
+	// ArrayList<POEventType> list = new ArrayList<POEventType>();
+	// while (st.hasMoreTokens()) {
+	// list.add(POEventType.valueOf(st.nextToken()));
+	// }
+	// return list;
+	//
+	// }
+
 	@SuppressWarnings("rawtypes")
-	public static Message createSimpleMessage(String namespace, Map<String,Object> messageElements) {
+	public static Message createSimpleMessage(String namespace,
+			Map<String, Object> messageElems) {
 		Message response = new Message();
 		int pipeCounter = 0;
 		int aoCounter = 0;
-		
-		for(String elem : messageElements.keySet()) {
-			if(messageElements.get(elem) instanceof String) {
-				response.addMessageElement(namespace, new StringMessageElement(elem, (String) messageElements.get(elem), null));
-			}
-			else if(messageElements.get(elem) instanceof PeerAdvertisement) {
+
+		for (Entry entry : messageElems.entrySet()) {
+			Object elem = entry.getKey();
+			Object value = entry.getValue();
+			if (value instanceof String) {
+				response.addMessageElement(namespace, new StringMessageElement(
+						(String) elem, (String) value, null));
+			} else if (value instanceof PeerAdvertisement) {
 				TextDocumentMessageElement peerAdv = new TextDocumentMessageElement(
-			            "peerAdv", 
-			            (XMLDocument) ((PeerAdvertisement)messageElements.get(elem)).getDocument(MimeMediaType.XMLUTF8),
-			            null);
-				response.addMessageElement(namespace,peerAdv);
+						"peerAdv",
+						(XMLDocument) ((PeerAdvertisement) value)
+								.getDocument(MimeMediaType.XMLUTF8), null);
+				response.addMessageElement(namespace, peerAdv);
 			}
-			
-			
-			
-			else if(messageElements.get(elem) instanceof PipeAdvertisement) {
+
+			else if (value instanceof PipeAdvertisement) {
 				TextDocumentMessageElement responsePipeAdv = new TextDocumentMessageElement(
-			            "pipeAdv"+pipeCounter++, 
-			            (XMLDocument) ((PipeAdvertisement)messageElements.get(elem)).getDocument(MimeMediaType.XMLUTF8),
-			            null);
+						"pipeAdv" + pipeCounter++,
+						(XMLDocument) ((PipeAdvertisement) value)
+								.getDocument(MimeMediaType.XMLUTF8), null);
 				response.addMessageElement(namespace, responsePipeAdv);
-			}
-			else if(messageElements.get(elem) instanceof Subplan) {
-				byte [] data = null;
-				if (messageElements.get(elem) != null){
-					 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				      ObjectOutputStream oos;
+			} else if (value instanceof Subplan) {
+				byte[] data = null;
+				if (value != null) {
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					ObjectOutputStream oos;
 					try {
 						oos = new ObjectOutputStream(bos);
-						oos.writeObject(messageElements.get(elem));
-					    oos.flush();
-					    oos.close();
-					    bos.close();
+						oos.writeObject(value);
+						oos.flush();
+						oos.close();
+						bos.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				      data = bos.toByteArray();
+					data = bos.toByteArray();
 				}
 				System.out.println("Baue subplan bytearray zusammen");
-				MessageElement query = new ByteArrayMessageElement("subplan", null, data, null);
+				MessageElement query = new ByteArrayMessageElement("subplan",
+						null, data, null);
 				response.addMessageElement(namespace, query);
-			}
-			else {
-				byte [] data = null;
-				if (messageElements.get(elem) != null){
-					 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				      ObjectOutputStream oos;
+			} else {
+				byte[] data = null;
+				if (value != null) {
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					ObjectOutputStream oos;
 					try {
 						oos = new ObjectOutputStream(bos);
-						oos.writeObject(messageElements.get(elem));
-					    oos.flush();
-					    oos.close();
-					    bos.close();
+						oos.writeObject(value);
+						oos.flush();
+						oos.close();
+						bos.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				      data = bos.toByteArray();
+					data = bos.toByteArray();
 				}
-				
-				MessageElement query = new ByteArrayMessageElement("ao"+aoCounter++, null, data, null);
+
+				MessageElement query = new ByteArrayMessageElement("ao"
+						+ aoCounter++, null, data, null);
 				response.addMessageElement(namespace, query);
-				
+
 			}
-			
+
 		}
 		// JXTA Workaround um MessageElemente ueber Socket zu versenden.
-		response.addMessageElement(null, new StringMessageElement("empty", "empty",null));
+		response.addMessageElement(null, new StringMessageElement("empty",
+				"empty", null));
 		return response;
 	}
-	
+
 }
 
-class MessageSender extends Thread{
-	
+class MessageSender extends Thread {
+
 	PeerGroup netPeerGroup;
-	
+
 	JxtaSocket socket;
-	
+
 	PipeAdvertisement pipeAdv;
-	
+
 	Message message;
-	
-	public MessageSender(PeerGroup netPeerGroup, PipeAdvertisement pipeAdv, Message message){
+
+	public MessageSender(PeerGroup netPeerGroup, PipeAdvertisement pipeAdv,
+			Message message) {
 		this.netPeerGroup = netPeerGroup;
 		this.pipeAdv = pipeAdv;
 		this.message = message;
 	}
-	
+
 	@Override
-	public void run(){
-		while(socket == null){
+	public void run() {
+		while (socket == null) {
 			try {
-				socket = new JxtaSocket(netPeerGroup, null, pipeAdv, 16000, true);
+				socket = new JxtaSocket(netPeerGroup, null, pipeAdv, 16000,
+						true);
 				socket.setSoTimeout(0);
 				break;
 			} catch (IOException e2) {
 				socket = null;
 				e2.printStackTrace();
-				
+
 			}
 		}
-	
+
 		ObjectOutputStream oout = null;
 		try {
 			oout = new ObjectOutputStream(socket.getOutputStream());
@@ -263,25 +266,28 @@ class MessageSender extends Thread{
 		}
 
 		try {
-			oout.writeObject(message);
-			oout.flush();
-			
+			if (oout != null) {
+				oout.writeObject(message);
+				oout.flush();
+			}
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		try {
 			Thread.sleep(8000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		try {
-			oout.close();
+			if (oout != null) {
+				oout.close();
+			}
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }
-

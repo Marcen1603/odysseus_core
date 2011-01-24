@@ -63,10 +63,11 @@ public class SourceSplit extends AbstractSplittingStrategy {
 					iLogicalOperator.getOutputSchema());
 			splitList.add(tempAO);
 		}
+		// TODO: Was soll das hier ???
 		if (!(iLogicalOperator instanceof P2PAO)) {
 			// Bei Operatoren mit zwei Eingabeports
 			if (outputCount == 2) {
-
+				
 				logger.debug("Hier kommen wir auch rein, aber wir machen hier garnichts");
 				String adv2 = AdvertisementTools.createSocketAdvertisement().toString();
 				// P2PSourceAO p2paccess2 = new P2PSourceAO(adv2);

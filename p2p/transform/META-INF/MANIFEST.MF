@@ -3,8 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Transform
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.transform
 Bundle-Version: 1.0.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.p2p.transform.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.logicaloperator,

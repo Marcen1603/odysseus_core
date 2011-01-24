@@ -36,7 +36,7 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	public synchronized void changeState(Lifecycle lifecycle) {
 		getQuery().setStatus(lifecycle);
 		synchronized (this) {
-			this.notify();
+			this.notifyAll();
 		}
 
 	}

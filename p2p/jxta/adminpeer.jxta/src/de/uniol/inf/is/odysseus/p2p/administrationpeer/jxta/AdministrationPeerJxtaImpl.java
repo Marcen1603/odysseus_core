@@ -46,12 +46,13 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
-	static Logger logger = LoggerFactory.getLogger(AdministrationPeerJxtaImpl.class);
-	static Logger getLogger(){
+	static Logger logger = LoggerFactory
+			.getLogger(AdministrationPeerJxtaImpl.class);
+
+	static Logger getLogger() {
 		return logger;
 	}
 
-	
 	public HashMap<String, ExtendedPeerAdvertisement> getOperatorPeers() {
 		return operatorPeers;
 	}
@@ -60,7 +61,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 			HashMap<String, ExtendedPeerAdvertisement> operatorPeers) {
 		this.operatorPeers = operatorPeers;
 	}
-	
+
 	public PeerGroup netPeerGroup;
 
 	public HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
@@ -86,55 +87,28 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public HashMap<String, ExtendedPeerAdvertisement> operatorPeers = new HashMap<String, ExtendedPeerAdvertisement>();
 
-	private JxtaConfiguration configuration;
-
-	public void activate(){
+	public void activate() {
 		getLogger().debug("Activate Admin Peer");
-		
-		String configFile = System.getenv("PeerConfig");
-		// If no file given try first Odysseus-Home
-		if (configFile == null || configFile.trim().length() == 0) {
-			configFile = OdysseusDefaults.getHomeDir()
-					+ "/AdminPeer1Config.xml";
-			try {
-				configuration = new JxtaConfiguration(configFile);
-			} catch (IOException e) {
-				configFile = null;
-			}
 
-		}
-		// If still no configuration found try default config-File
-		// TODO: Does not work currently ...
-		if (configFile == null || configFile.trim().length() == 0) {
-			configFile = "/config/AdminPeer1Config.xml";
-		}
-
-		// JxtaConfiguration einlesen
-		try {
-			configuration = new JxtaConfiguration(configFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
-		
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
-		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
-		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("AdminPeer"));
+		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur
+		// ein Admin Peer to JVM ..
+		GlobalState.setActiveDatadictionary(DataDictionaryFactory
+				.getDefaultDataDictionary("AdminPeer"));
 
 		// TODO: Read from Config-File
 		startPeer();
 		getDistributionProvider().initializeService();
-		getLogger().info("Administration Peer started");	
-	}
-	
-	// fuer die korrekte Nutzung in OSGi muss der Konstruktor public sein. 
-	public AdministrationPeerJxtaImpl() {
-		super(new SocketServerListener() );
-		getSocketServerListener().setPeer(this);
-		getLogger().debug("Created Admin Peer");		
+		getLogger().info("Administration Peer started");
 	}
 
+	// fuer die korrekte Nutzung in OSGi muss der Konstruktor public sein.
+	public AdministrationPeerJxtaImpl() {
+		super(new SocketServerListener());
+		getSocketServerListener().setPeer(this);
+		getLogger().debug("Created Admin Peer");
+	}
 
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
@@ -162,7 +136,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initQuerySpezificationListener() {
-		querySpezificationListener = new QuerySpezificationListenerJxtaImpl((JxtaMessageSender) getMessageSender(), this);
+		querySpezificationListener = new QuerySpezificationListenerJxtaImpl(
+				(JxtaMessageSender) getMessageSender(), this);
 
 	}
 
@@ -199,11 +174,41 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	@Override
 	protected synchronized void startNetwork() {
 		getLogger().info("Starting Peer Network");
-		System.setProperty("net.jxta.logging.Logging", configuration.getLogging());
+
+		JxtaConfiguration configuration = null;
+		String configFile = System.getenv("PeerConfig");
+		// If no file given try first Odysseus-Home
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = OdysseusDefaults.getHomeDir()
+					+ "/AdminPeer1Config.xml";
+			try {
+				configuration = new JxtaConfiguration(configFile);
+			} catch (IOException e) {
+				configFile = null;
+			}
+
+		}
+		// If still no configuration found try default config-File
+		// TODO: Does not work currently ...
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = "/config/AdminPeer1Config.xml";
+		}
+
+		if (configuration == null) {
+			// JxtaConfiguration einlesen
+			try {
+				configuration = new JxtaConfiguration(configFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Cannot initialize peer");
+			}
+		}
+
+		System.setProperty("net.jxta.logging.Logging",
+				configuration.getLogging());
 		String name = configuration.getName();
 		if (configuration.isRandomName()) {
-			name = "" + name + ""
-					+ System.currentTimeMillis();
+			name = "" + name + "" + System.currentTimeMillis();
 		}
 
 		try {
@@ -252,7 +257,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 			manager.getConfigurator().setTcpEnabled(configuration.isTcp());
 			manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
 			manager.getConfigurator().setTcpIncoming(configuration.isTcp());
-			manager.getConfigurator().setUseMulticast(configuration.isMulticast());
+			manager.getConfigurator().setUseMulticast(
+					configuration.isMulticast());
 
 			if (!configuration.getTcpInterfaceAddress().equals("")) {
 				manager.getConfigurator().setTcpInterfaceAddress(
@@ -287,10 +293,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 				QueryTranslationSpezification.getAdvertisementType(),
 				new QueryTranslationSpezification.Instantiator());
 
-		AdvertisementFactory
-				.registerAdvertisementInstance(SourceAdvertisement
-						.getAdvertisementType(),
-						new SourceAdvertisement.Instantiator());
+		AdvertisementFactory.registerAdvertisementInstance(
+				SourceAdvertisement.getAdvertisementType(),
+				new SourceAdvertisement.Instantiator());
 
 		AdvertisementFactory.registerAdvertisementInstance(
 				QueryExecutionSpezification.getAdvertisementType(),
@@ -334,7 +339,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	}
 
-
 	@Override
 	protected void initHotPeerStrategy() {
 		this.hotPeerStrategy = new HotPeerStrategyRandom();
@@ -345,7 +349,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	protected void initServerResponseConnection() {
 		setServerPipeAdvertisement(AdvertisementTools
 				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
-		
+
 	}
 
 	@Override
@@ -360,9 +364,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	public void initLocalExecutionHandler() {
-		//TODO: Anders Loesen
-		for(IExecutionHandler<?> h : getExecutionHandler()) {
-			if(h.getProvidedLifecycle() == Lifecycle.NEW) {
+		// TODO: Anders Loesen
+		for (IExecutionHandler<?> h : getExecutionHandler()) {
+			if (h.getProvidedLifecycle() == Lifecycle.NEW) {
 				h.setPeer(this);
 			}
 		}

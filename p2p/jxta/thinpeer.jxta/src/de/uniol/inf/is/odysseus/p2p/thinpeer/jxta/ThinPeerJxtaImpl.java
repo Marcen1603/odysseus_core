@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	private DiscoveryService discoveryService;
-	
+
 	private PipeAdvertisement serverResponseAddress;
 
 	private NetworkManager manager = null;
@@ -46,14 +46,13 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	private HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
 
-//	private static ThinPeerJxtaImpl instance = null;
-//
-//	public static ThinPeerJxtaImpl getInstance() {
-//		if (instance == null)
-//			instance = new ThinPeerJxtaImpl();
-//		return instance;
-//	}
-
+	// private static ThinPeerJxtaImpl instance = null;
+	//
+	// public static ThinPeerJxtaImpl getInstance() {
+	// if (instance == null)
+	// instance = new ThinPeerJxtaImpl();
+	// return instance;
+	// }
 
 	@Override
 	public HashMap<String, Object> getAdminPeers() {
@@ -65,7 +64,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		getSocketServerListener().setPeer(this);
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
-		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
+		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur
+		// ein Admin Peer to JVM ..
 		GlobalState.setActiveDatadictionary(null);
 	}
 
@@ -79,14 +79,13 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	public void startNetwork() {
-		
+
 		String configFile = System.getenv("PeerConfig");
 		JxtaConfiguration configuration = null;
-		
+
 		// If no file given try first Odysseus-Home
 		if (configFile == null || configFile.trim().length() == 0) {
-			configFile = OdysseusDefaults.getHomeDir()
-					+ "/ThinPeer1Config.xml";
+			configFile = OdysseusDefaults.getHomeDir() + "/ThinPeer1Config.xml";
 			try {
 				configuration = new JxtaConfiguration(configFile);
 			} catch (IOException e) {
@@ -100,16 +99,18 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 			configFile = "/config/ThinPeer1Config.xml";
 		}
 
-		// JxtaConfiguration einlesen
-		try {
-			configuration = new JxtaConfiguration(configFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
+		if (configuration == null) {
+			// JxtaConfiguration einlesen
+			try {
+				configuration = new JxtaConfiguration(configFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Could not inint Thin Peer");
+			}
 		}
-		
 
-		System.setProperty("net.jxta.logging.Logging", configuration.getLogging());
+		System.setProperty("net.jxta.logging.Logging",
+				configuration.getLogging());
 		String name = configuration.getName();
 		if (configuration.isRandomName()) {
 			name = "" + name + "" + System.currentTimeMillis();
@@ -159,7 +160,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 			manager.getConfigurator().setTcpEnabled(configuration.isTcp());
 			manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
 			manager.getConfigurator().setTcpIncoming(configuration.isTcp());
-			manager.getConfigurator().setUseMulticast(configuration.isMulticast());
+			manager.getConfigurator().setUseMulticast(
+					configuration.isMulticast());
 
 			if (!configuration.getTcpInterfaceAddress().equals("")) {
 				manager.getConfigurator().setTcpInterfaceAddress(
@@ -200,13 +202,12 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 				QueryTranslationSpezification.getAdvertisementType(),
 				new QueryTranslationSpezification.Instantiator());
 
-		AdvertisementFactory
-				.registerAdvertisementInstance(SourceAdvertisement
-						.getAdvertisementType(),
-						new SourceAdvertisement.Instantiator());
+		AdvertisementFactory.registerAdvertisementInstance(
+				SourceAdvertisement.getAdvertisementType(),
+				new SourceAdvertisement.Instantiator());
 
-		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement
-				.getAdvertisementType(),
+		AdvertisementFactory.registerAdvertisementInstance(
+				SourceAdvertisement.getAdvertisementType(),
 				new QueryExecutionSpezification.Instantiator());
 
 		AdvertisementFactory.registerAdvertisementInstance(
@@ -221,7 +222,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	public void stopNetwork() {
 		netPeerGroup.stopApp();
 		manager.stopNetwork();
-		System.exit(0);
 	}
 
 	@Override
@@ -245,7 +245,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	protected void initAdministrationPeerListener() {
-		administrationPeerListener = new AdministrationPeerListenerJxtaImpl(this);
+		administrationPeerListener = new AdministrationPeerListenerJxtaImpl(
+				this);
 	}
 
 	@Override
@@ -265,17 +266,18 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		queryPublisher.sendQuerySpezificationToAdminPeer(queryId, query,
 				language, adminPeer);
 	}
-	
+
 	@Override
 	protected void initIdGenerator() {
-		//this.idGenerator = new RandomIdGenerator();
-		this.idGenerator = new StandardIdGenerator(this.serverResponseAddress.getID()+"");
+		// this.idGenerator = new RandomIdGenerator();
+		this.idGenerator = new StandardIdGenerator(
+				this.serverResponseAddress.getID() + "");
 	}
 
 	@Override
 	protected void initAdminPeerList() {
 		this.adminPeers = new HashMap<String, Object>();
-		
+
 	}
 
 	private void setServerPipeAdvertisement(
@@ -287,34 +289,28 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	public Object getServerResponseAddress() {
 		return this.serverResponseAddress;
 	}
-	
+
 	@Override
 	protected void initServerResponseConnection() {
 		setServerPipeAdvertisement(AdvertisementTools
 				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
 	}
 
-
 	@Override
 	public void initLocalMessageHandler() {
-			registerMessageHandler(new QueryNegotiationMessageHandler(this));
-
+		registerMessageHandler(new QueryNegotiationMessageHandler(this));
 
 	}
-
 
 	@Override
 	public void initLocalExecutionHandler() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void initMessageSender() {
 		setMessageSender(new JxtaMessageSender());
 	}
-
-
-
 
 }

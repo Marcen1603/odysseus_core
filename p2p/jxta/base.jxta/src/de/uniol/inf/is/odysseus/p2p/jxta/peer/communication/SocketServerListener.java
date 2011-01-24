@@ -136,7 +136,7 @@ public class SocketServerListener implements ISocketServerListener {
 		return (PipeAdvertisement) peer.getServerResponseAddress();
 	}
 
-	public IOdysseusPeer getPeer() {
+	public synchronized IOdysseusPeer getPeer() {
 		return peer;
 	}
 
@@ -157,12 +157,6 @@ public class SocketServerListener implements ISocketServerListener {
 			IMessageHandler messageHandler) {
 		messageHandlers.put(messageHandler.getInterestedNamespace(),
 				messageHandler);
-	}
-
-	@Override
-	public synchronized boolean deregisterMessageHandler(
-			List<IMessageHandler> messageHandler) {
-		return messageHandlers.remove(messageHandler) != null;
 	}
 
 	@Override

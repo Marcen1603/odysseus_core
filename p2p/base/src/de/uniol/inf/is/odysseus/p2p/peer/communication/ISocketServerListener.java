@@ -9,7 +9,6 @@ public interface ISocketServerListener extends Runnable {
 	public void registerMessageHandler(IMessageHandler messageHandler);
 	public void registerMessageHandler(List<IMessageHandler> messageHandler);
 	public boolean deregisterMessageHandler(IMessageHandler messageHandler);
-	public boolean deregisterMessageHandler(List<IMessageHandler> messageHandler);
 	public Collection<IMessageHandler> getMessageHandler();
 	void setPeer(IOdysseusPeer peer);
 

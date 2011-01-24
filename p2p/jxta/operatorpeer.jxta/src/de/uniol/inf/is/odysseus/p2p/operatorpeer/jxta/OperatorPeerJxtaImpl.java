@@ -88,7 +88,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			configuration = new JxtaConfiguration(configFile);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(0);
+			throw new RuntimeException("Could not init peer");
 		}
 
 		// TODO: User einlesen

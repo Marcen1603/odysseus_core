@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 
 public class AliveHandlerJxtaImpl implements IAliveHandler {
-	private final int WAIT_TIME = 10000;
+	static private final int WAIT_TIME = 10000;
 	private OperatorPeerJxtaImpl peer;
 
 	public AliveHandlerJxtaImpl(OperatorPeerJxtaImpl operatorPeerJxtaImpl) {

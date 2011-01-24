@@ -26,15 +26,15 @@ public class SuperPeerJxtaImpl extends AbstractSuperPeer {
 
 	// Wieviele Millisekunden soll probiert werden eine Verbindung
 	// mit dem P2P-Netzwerk aufzubauen bevor aufgegeben wird.
-	private static final int CONNECTION_TIME = 12000;
+	static private final int CONNECTION_TIME = 12000;
 
-	private final int tcpPort = 10801;
+	static  private final int tcpPort = 10801;
 
-	private final int httpPort = 10802;
+	static  private final int httpPort = 10802;
 
-	private final String name = "SuperPeer1";
+	static  private final String name = "SuperPeer1";
 
-	private final boolean multicast = false;
+	static private final boolean multicast = false;
 
 	public SuperPeerJxtaImpl() {
 

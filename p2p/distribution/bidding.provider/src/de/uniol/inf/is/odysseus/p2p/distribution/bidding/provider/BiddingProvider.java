@@ -37,12 +37,11 @@ public class BiddingProvider extends
 		AbstractDistributionProvider<PipeAdvertisement> {
 
 	static Logger logger = LoggerFactory.getLogger(BiddingProvider.class);
-	
-	static Logger getLogger(){
+
+	static Logger getLogger() {
 		return logger;
 	}
 
-	
 	private DiscoveryService discoveryService;
 
 	public DiscoveryService getDiscoveryService() {
@@ -70,8 +69,8 @@ public class BiddingProvider extends
 			getPeer().registerMessageHandler(handler);
 		}
 		getLogger().info("Initializing execution handler");
-		BiddingProviderExecutionHandler handler = new BiddingProviderExecutionHandler(Lifecycle.DISTRIBUTION,
-				this, getPeer());
+		BiddingProviderExecutionHandler handler = new BiddingProviderExecutionHandler(
+				Lifecycle.DISTRIBUTION, this, getPeer());
 		getRegisteredExecutionHandler().add(handler);
 		getPeer().bindExecutionHandler(handler);
 	}
@@ -105,7 +104,7 @@ public class BiddingProvider extends
 		String pipeAdv = ((P2PSinkAO) topSink.getAo()).getAdv();
 		PeerAdvertisement peerAdv = PeerGroupTool.getPeerGroup()
 				.getPeerAdvertisement();
-		
+
 		// Thin-Peer erhaelt Verbindungsinformationen zur letzten P2PSink
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
 		messageElements.put("queryId", query.getId());
@@ -116,8 +115,9 @@ public class BiddingProvider extends
 		Message message = MessageTool.createSimpleMessage("QueryNegotiation",
 				messageElements);
 
-		((JxtaMessageSender)(getPeer().getMessageSender())).sendMessage(PeerGroupTool.getPeerGroup(),
-				message, ((P2PQueryJxtaImpl) query).getResponseSocketThinPeer());
+		((JxtaMessageSender) (getPeer().getMessageSender())).sendMessage(
+				PeerGroupTool.getPeerGroup(), message,
+				((P2PQueryJxtaImpl) query).getResponseSocketThinPeer());
 		Log.logAction(query.getId(),
 				"Sende Thin-Peer Verbindungsinformationen zum Operatorplan"); // ??
 
@@ -135,7 +135,8 @@ public class BiddingProvider extends
 			adv.setSubplanId(subplan.getId());
 
 			try {
-				adv.setSubplan(new String(toBase64(subplan).toByteArray(), "utf-8"));
+				adv.setSubplan(new String(toBase64(subplan).toByteArray(),
+						"utf-8"));
 			} catch (UnsupportedEncodingException e1) {
 				e1.printStackTrace();
 			}
@@ -165,17 +166,18 @@ public class BiddingProvider extends
 			e2.printStackTrace();
 		}
 		try {
-			oos.writeObject(object);
-			b64os.flush();
-			oos.flush();
-			b64os.close();
-			oos.close();
-			bos.close();
+			if (oos != null) {
+				oos.writeObject(object);
+				b64os.flush();
+				oos.flush();
+				b64os.close();
+				oos.close();
+				bos.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return bos;
 	}
-
 
 }

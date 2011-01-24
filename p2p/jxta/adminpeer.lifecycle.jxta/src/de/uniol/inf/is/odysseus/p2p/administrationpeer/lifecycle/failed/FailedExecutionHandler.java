@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
-public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F> {
+public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F>{
 
 	public FailedExecutionHandler() {
 		super();

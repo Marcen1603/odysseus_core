@@ -22,6 +22,7 @@ public class TP2PSinkAORule extends AbstractTransformationRule<P2PSinkAO> {
 	@Override
 	public void execute(P2PSinkAO p2pSinkAO, TransformationConfiguration trafo) {		
 		P2PSinkPO<?> p2pSinkPO = new P2PSinkPO(p2pSinkAO.getAdv(), PeerGroupTool.getPeerGroup());
+		p2pSinkPO.startListener();
 		p2pSinkPO.setOutputSchema(p2pSinkAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(p2pSinkAO, p2pSinkPO);
 		for (ILogicalOperator o:toUpdate){
