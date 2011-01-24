@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.jxta.utils;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -29,7 +30,7 @@ public class JxtaConfiguration {
 	final private String tcpInterfaceAddress;
 	final private String httpInterfaceAddress;
 
-	public JxtaConfiguration(String filename) throws IOException {
+	public JxtaConfiguration(String filename) throws IOException, FileNotFoundException {
 		Properties properties = readProperties(filename);
 		name = properties.getProperty("name");
 		tcpPort = Integer.parseInt(properties.getProperty("tcpPort"));
@@ -58,17 +59,12 @@ public class JxtaConfiguration {
 	 * @throws IOException
 	 *             wenn Properties file nicht gelesen werden kann
 	 */
-	private Properties readProperties(String filename) throws IOException {
+	private Properties readProperties(String filename) throws IOException, FileNotFoundException {
 		logger.debug("Reading Peer Properties from " + filename);
 		FileInputStream in;
 		in = new FileInputStream(filename);
 		Properties properties = new Properties();
-
-		try {
-			properties.loadFromXML(in);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		properties.loadFromXML(in);
 		return properties;
 	}
 

@@ -86,10 +86,6 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		BidJxtaImpl bid = new BidJxtaImpl();
 		bid.setResponseSocket(adminPipe);
 		thinPeerJxtaImpl.addQuery(q);
-
-//		Message message = MessageTool.createSimpleMessage("DoQuery", "queryId",
-//				"query", "language", "result", queryId, query, language,
-//				"granted", thinPeerPipe);
 		
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
 		messageElements.put("queryId", queryId);
@@ -98,8 +94,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		messageElements.put("thinPeerPipe", thinPeerPipe);
 		
 		Message message = MessageTool.createSimpleMessage("DoQuery", messageElements);
-//		MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
-//				.getNetPeerGroup(), adminPipe, message);
+
 		((JxtaMessageSender)(thinPeerJxtaImpl.getMessageSender())).sendMessage(thinPeerJxtaImpl
 				.getNetPeerGroup(), message, adminPipe);
 		Log.addTab(q.getId(), query);

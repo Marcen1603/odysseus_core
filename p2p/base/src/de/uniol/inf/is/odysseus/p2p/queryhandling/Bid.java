@@ -10,10 +10,23 @@ public abstract class Bid implements Serializable{
 	private static final long serialVersionUID = -6960627612625664351L;
 	private Date date;
 	private String peerId;
-	private String subplanId;
-	private String queryId;
+//	private String subplanId;
+//	private String queryId;
 	private String bid;
 	
+	public Bid(){};
+	
+	public Bid(Date date, String peerId, String bid) {
+		this.date = date;
+		this.peerId = peerId;
+		this.bid = bid;
+	}
+
+	public Bid(Date date) {
+		this.date = date;
+		this.bid = null;
+	}
+
 	public String getBid() {
 		return bid;
 	}
@@ -22,13 +35,13 @@ public abstract class Bid implements Serializable{
 		this.bid = bid;
 	}
 
-	public String getSubplanId() {
-		return subplanId;
-	}
-
-	public void setSubplanId(String subplanId) {
-		this.subplanId = subplanId;
-	}
+//	public String getSubplanId() {
+//		return subplanId;
+//	}
+//
+//	public void setSubplanId(String subplanId) {
+//		this.subplanId = subplanId;
+//	}
 
 	public Date getDate() {
 		return date;
@@ -47,14 +60,14 @@ public abstract class Bid implements Serializable{
 	public void setPeerId(String peerId) {
 		this.peerId = peerId;
 	}
-
-	public void setQueryId(String queryId) {
-		this.queryId = queryId;
-	}
-
-	public String getQueryId() {
-		return queryId;
-	}
+//
+//	public void setQueryId(String queryId) {
+//		this.queryId = queryId;
+//	}
+//
+//	public String getQueryId() {
+//		return queryId;
+//	}
 	
 	
 

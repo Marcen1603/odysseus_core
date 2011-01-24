@@ -40,20 +40,16 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
-
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
-	
+
 	static Logger logger = LoggerFactory.getLogger(OperatorPeerJxtaImpl.class);
-	static Logger getLogger(){
+
+	static Logger getLogger() {
 		return logger;
 	}
 
-	
-	private String name = "OperatorPeer";
-	
-
 	JxtaConfiguration configuration;
-	
+
 	public DiscoveryService discoveryService;
 
 	public NetworkManager manager = null;
@@ -62,19 +58,31 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	public NetworkConfigurator networkConfigurator;
 
-	public  PipeService pipeService;
+	public PipeService pipeService;
 
 	private PipeAdvertisement serverResponseAddress;
-	
-	
+
 	public void activate() {
 		getLogger().info("OSGi Services loaded");
-		
+
 		String configFile = System.getenv("PeerConfig");
-		if (configFile == null || configFile.trim().length() == 0){
-			configFile = OdysseusDefaults.getHomeDir()+"/OperatorPeerConfig.xml";
+		// If no file given try first Odysseus-Home
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = OdysseusDefaults.getHomeDir()
+					+ "/OperatorPeer1Config.xml";
+			try {
+				configuration = new JxtaConfiguration(configFile);
+			} catch (IOException e) {
+				configFile = null;
+			}
+
 		}
-		
+		// If still no configuration found try default config-File
+		// TODO: Does not work currently ...
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = "/config/OperatorPeer1Config.xml";
+		}
+
 		// JxtaConfiguration einlesen
 		try {
 			configuration = new JxtaConfiguration(configFile);
@@ -82,23 +90,22 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			e.printStackTrace();
 			System.exit(0);
 		}
-		
+
 		// TODO: User einlesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
 		// TODO: Unterschiedliche Namen notwendig?
-		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("OperatorPeer")); 
+		GlobalState.setActiveDatadictionary(DataDictionaryFactory
+				.getDefaultDataDictionary("OperatorPeer"));
 		startPeer();
 		getDistributionClient().initializeService();
-		
-		
+
 	}
-	
+
 	public OperatorPeerJxtaImpl() {
 		super(new SocketServerListener());
 		getSocketServerListener().setPeer(this);
 	}
-		
-	
+
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
@@ -118,7 +125,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	public PipeService getPipeService() {
 		return pipeService;
 	}
-
 
 	public void setDiscoveryService(DiscoveryService discoveryService) {
 		this.discoveryService = discoveryService;
@@ -140,35 +146,37 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		this.pipeService = pipeService;
 	}
 
-
 	@Override
 	public void startNetwork() {
-		
+
+		String name = configuration.getName();
+
 		if (configuration.isRandomName()) {
 			name = "" + name + "" + System.currentTimeMillis();
 		}
-		System.setProperty("net.jxta.logging.Logging", configuration.getLogging());
+		System.setProperty("net.jxta.logging.Logging",
+				configuration.getLogging());
 
 		try {
-			CacheTool.checkForExistingConfigurationDeletion("OperatorPeer_" + name,
+			CacheTool.checkForExistingConfigurationDeletion("OperatorPeer_"
+					+ name,
 					new File(new File(".cache"), "OperatorPeer_" + name));
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		
+
 		ConfigMode peerMode = null;
-		
-		if (configuration.isUseSuperPeer()){
+
+		if (configuration.isUseSuperPeer()) {
 			peerMode = NetworkManager.ConfigMode.EDGE;
-		}
-		else{
+		} else {
 			peerMode = NetworkManager.ConfigMode.ADHOC;
 		}
-		
+
 		try {
-			manager = new NetworkManager(peerMode,
-					"OperatorPeer_" + name, new File(new File(".cache"),
-							"OperatorPeer_" + name).toURI());
+			manager = new NetworkManager(peerMode, "OperatorPeer_" + name,
+					new File(new File(".cache"), "OperatorPeer_" + name)
+							.toURI());
 
 			manager.getConfigurator().clearRelaySeeds();
 			manager.getConfigurator().clearRendezvousSeeds();
@@ -197,21 +205,23 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			manager.getConfigurator().setTcpEnabled(configuration.isTcp());
 			manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
 			manager.getConfigurator().setTcpIncoming(configuration.isTcp());
-			manager.getConfigurator().setUseMulticast(configuration.isMulticast());
-			
-			if (!configuration.getTcpInterfaceAddress().equals("")){
-				manager.getConfigurator().setTcpInterfaceAddress(configuration.getTcpInterfaceAddress());
+			manager.getConfigurator().setUseMulticast(
+					configuration.isMulticast());
+
+			if (!configuration.getTcpInterfaceAddress().equals("")) {
+				manager.getConfigurator().setTcpInterfaceAddress(
+						configuration.getTcpInterfaceAddress());
 			}
-			
-			if (!configuration.getHttpInterfaceAddress().equals("")){
-				manager.getConfigurator().setHttpInterfaceAddress(configuration.getHttpInterfaceAddress());
+
+			if (!configuration.getHttpInterfaceAddress().equals("")) {
+				manager.getConfigurator().setHttpInterfaceAddress(
+						configuration.getHttpInterfaceAddress());
 			}
-			
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
-		
 		if (manager.getNetPeerGroup() == null) {
 			try {
 				manager.startNetwork();
@@ -224,7 +234,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 		manager.waitForRendezvousConnection(configuration.getConnectionTime());
 
-		
 		netPeerGroup = manager.getNetPeerGroup();
 		PeerGroupTool.setPeerGroup(netPeerGroup);
 		this.discoveryService = this.getNetPeerGroup().getDiscoveryService();
@@ -232,11 +241,9 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 				QueryTranslationSpezification.getAdvertisementType(),
 				new QueryTranslationSpezification.Instantiator());
 
-
-		AdvertisementFactory
-				.registerAdvertisementInstance(SourceAdvertisement
-						.getAdvertisementType(),
-						new SourceAdvertisement.Instantiator());
+		AdvertisementFactory.registerAdvertisementInstance(
+				SourceAdvertisement.getAdvertisementType(),
+				new SourceAdvertisement.Instantiator());
 
 		AdvertisementFactory.registerAdvertisementInstance(
 				QueryExecutionSpezification.getAdvertisementType(),
@@ -252,58 +259,72 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	protected void initAliveHandler() {
 		this.aliveHandler = new AliveHandlerJxtaImpl(this);
-		
+
 	}
 
 	@Override
 	protected void initSources(AbstractOperatorPeer aPeer) {
-	    		
-		getSources().put("nexmark:person2", new Pair<String, String>("CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440", "CQL"));
-		getSources().put("nexmark:auction2", new Pair<String, String>("CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441", "CQL"));
-		getSources().put("nexmark:bid2", new Pair<String, String>("CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442", "CQL"));
-		List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor().getQueryBuildConfiguration("Standard");;
-		if (cfg == null){
-			  getLogger().debug("No Query Build Configuration found!!!");
-			  return;
+
+		getSources()
+				.put("nexmark:person2",
+						new Pair<String, String>(
+								"CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440",
+								"CQL"));
+		getSources()
+				.put("nexmark:auction2",
+						new Pair<String, String>(
+								"CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441",
+								"CQL"));
+		getSources()
+				.put("nexmark:bid2",
+						new Pair<String, String>(
+								"CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442",
+								"CQL"));
+		List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor()
+				.getQueryBuildConfiguration("Standard");
+		;
+		if (cfg == null) {
+			getLogger().debug("No Query Build Configuration found!!!");
+			return;
 		}
 
 		for (Pair<String, String> s : getSources().values()) {
-			try {		
+			try {
 				User user = GlobalState.getActiveUser();
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();
-				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user,dd, cfg.toArray(new IQueryBuildSetting[0])  );		
+				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, dd,
+						cfg.toArray(new IQueryBuildSetting[0]));
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 
-
-
-	
 	@Override
 	protected void initSourceHandler(AbstractOperatorPeer aPeer) {
-		this.sourceHandler = new SourceHandlerJxtaImpl((OperatorPeerJxtaImpl)aPeer);
-		
-	}
-	
-	@Override
-	protected void initServerResponseConnection() {
-		setServerPipeAdvertisement(AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
-//		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory
-//		.newAdvertisement(PipeAdvertisement.getAdvertisementType());
-//		advertisement.setPipeID(IDFactory.newPipeID(OperatorPeerJxtaImpl.getInstance()
-//		.getNetPeerGroup().getPeerGroupID()));
-//		advertisement.setType(PipeService.UnicastType);
-//		advertisement.setName("serverPipe");
-//		return advertisement;
-		
+		this.sourceHandler = new SourceHandlerJxtaImpl(
+				(OperatorPeerJxtaImpl) aPeer);
+
 	}
 
-	
+	@Override
+	protected void initServerResponseConnection() {
+		setServerPipeAdvertisement(AdvertisementTools
+				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
+		// PipeAdvertisement advertisement = (PipeAdvertisement)
+		// AdvertisementFactory
+		// .newAdvertisement(PipeAdvertisement.getAdvertisementType());
+		// advertisement.setPipeID(IDFactory.newPipeID(OperatorPeerJxtaImpl.getInstance()
+		// .getNetPeerGroup().getPeerGroupID()));
+		// advertisement.setType(PipeService.UnicastType);
+		// advertisement.setName("serverPipe");
+		// return advertisement;
+
+	}
+
 	private void setServerPipeAdvertisement(
 			PipeAdvertisement serverPipeAdvertisement) {
 		this.serverResponseAddress = serverPipeAdvertisement;
@@ -315,7 +336,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	}
 
 	@Override
-	public void initLocalMessageHandler() {		
+	public void initLocalMessageHandler() {
 	}
 
 	@Override
@@ -326,5 +347,5 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	public void initMessageSender() {
 		setMessageSender(new JxtaMessageSender());
 	}
-	
+
 }

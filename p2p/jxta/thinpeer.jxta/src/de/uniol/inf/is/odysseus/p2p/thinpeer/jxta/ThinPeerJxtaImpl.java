@@ -13,6 +13,7 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
@@ -22,6 +23,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.JxtaConfiguration;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
@@ -36,49 +38,6 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ThinPeerJxtaImpl extends AbstractThinPeer {
-
-	private String name = "ThinPeer";
-
-	private int tcpPort = 7900;
-
-	private int httpPort = 7901;
-
-	// Logging an oder aus
-	private static final String LOGGING = "OFF";
-
-	// Zum Testen um mehrere Peers gleichzeitig zu starten,
-	// dem Namen des Peers wird eine zufällge Nummernfolgen angehängt, um
-	// Den Peer im Netzwerk eindeutig zu machen.
-	private static final boolean RANDOM_NAME = true;
-
-	// Wieviele Millisekunden soll probiert werden eine Verbindung
-	// mit dem P2P-Netzwerk aufzubauen bevor aufgegeben wird.
-	private static final int CONNECTION_TIME = 12000;
-
-	// Soll Multicasting für Peers im lokalen Netzwertk aktiviert
-	// werden.
-	private static final boolean MULTICAST = true;
-
-	// Soll HTTP für den Peer aktiviert werden ? Unbedingt notwendig
-	// wenn Peer im WAN arbeiten soll.
-	private static final boolean HTTP = true;
-
-	// Soll TCP für den Peer aktiviert werden.
-	private static final boolean TCP = true;
-
-	private static final boolean USE_SUPER_PEER = false;
-
-	private static final String TCP_RENDEZVOUS_URI = "tcp://hurrikan.informatik.uni-oldenburg.de:10801";
-
-	private static final String HTTP_RENDEZVOUS_URI = "http://hurrikan.informatik.uni-oldenburg.de:10802";
-
-	private static final String TCP_RELAY_URI = "tcp://hurrikan.informatik.uni-oldenburg.de:10801";
-
-	private static final String HTTP_RELAY_URI = "http://hurrikan.informatik.uni-oldenburg.de:10802";
-
-	private static final String TCP_INTERFACE_ADDRESS = "";
-
-	private static final String HTTP_INTERFACE_ADDRESS = "";
 
 	private DiscoveryService discoveryService;
 	
@@ -123,9 +82,39 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	public void startNetwork() {
+		
+		String configFile = System.getenv("PeerConfig");
+		JxtaConfiguration configuration = null;
+		
+		// If no file given try first Odysseus-Home
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = OdysseusDefaults.getHomeDir()
+					+ "/ThinPeer1Config.xml";
+			try {
+				configuration = new JxtaConfiguration(configFile);
+			} catch (IOException e) {
+				configFile = null;
+			}
 
-		System.setProperty("net.jxta.logging.Logging", LOGGING);
-		if (RANDOM_NAME) {
+		}
+		// If still no configuration found try default config-File
+		// TODO: Does not work currently ...
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = "/config/ThinPeer1Config.xml";
+		}
+
+		// JxtaConfiguration einlesen
+		try {
+			configuration = new JxtaConfiguration(configFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+
+		System.setProperty("net.jxta.logging.Logging", configuration.getLogging());
+		String name = configuration.getName();
+		if (configuration.isRandomName()) {
 			name = "" + name + "" + System.currentTimeMillis();
 		}
 		try {
@@ -137,7 +126,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 		ConfigMode peerMode = null;
 
-		if (USE_SUPER_PEER) {
+		if (configuration.isUseSuperPeer()) {
 			peerMode = NetworkManager.ConfigMode.EDGE;
 		} else {
 			peerMode = NetworkManager.ConfigMode.ADHOC;
@@ -148,41 +137,41 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 					new File(new File(".cache"), "ThinPeer_" + name).toURI());
 			manager.getConfigurator().clearRelaySeeds();
 			manager.getConfigurator().clearRendezvousSeeds();
-			if (USE_SUPER_PEER) {
+			if (configuration.isUseSuperPeer()) {
 				manager.getConfigurator().clearRelaySeeds();
 				manager.getConfigurator().clearRendezvousSeeds();
 
 				try {
 					manager.getConfigurator().addSeedRendezvous(
-							new URI(HTTP_RENDEZVOUS_URI));
+							new URI(configuration.getHttpRendezvousUri()));
 					manager.getConfigurator().addSeedRelay(
-							new URI(HTTP_RELAY_URI));
+							new URI(configuration.getHttpRelayUri()));
 					manager.getConfigurator().addSeedRendezvous(
-							new URI(TCP_RENDEZVOUS_URI));
+							new URI(configuration.getTcpRendezvousUri()));
 					manager.getConfigurator().addSeedRelay(
-							new URI(TCP_RELAY_URI));
+							new URI(configuration.getTcpRelayUri()));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}
-			manager.getConfigurator().setTcpPort(tcpPort);
-			manager.getConfigurator().setHttpPort(httpPort);
-			manager.getConfigurator().setHttpEnabled(HTTP);
-			manager.getConfigurator().setHttpOutgoing(HTTP);
-			manager.getConfigurator().setHttpIncoming(HTTP);
-			manager.getConfigurator().setTcpEnabled(TCP);
-			manager.getConfigurator().setTcpOutgoing(TCP);
-			manager.getConfigurator().setTcpIncoming(TCP);
-			manager.getConfigurator().setUseMulticast(MULTICAST);
+			manager.getConfigurator().setTcpPort(configuration.getTcpPort());
+			manager.getConfigurator().setHttpPort(configuration.getHttpPort());
+			manager.getConfigurator().setHttpEnabled(configuration.isHttp());
+			manager.getConfigurator().setHttpOutgoing(configuration.isHttp());
+			manager.getConfigurator().setHttpIncoming(configuration.isHttp());
+			manager.getConfigurator().setTcpEnabled(configuration.isTcp());
+			manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
+			manager.getConfigurator().setTcpIncoming(configuration.isTcp());
+			manager.getConfigurator().setUseMulticast(configuration.isMulticast());
 
-			if (!TCP_INTERFACE_ADDRESS.equals("")) {
+			if (!configuration.getTcpInterfaceAddress().equals("")) {
 				manager.getConfigurator().setTcpInterfaceAddress(
-						TCP_INTERFACE_ADDRESS);
+						configuration.getTcpInterfaceAddress());
 			}
 
-			if (!HTTP_INTERFACE_ADDRESS.equals("")) {
+			if (!configuration.getHttpInterfaceAddress().equals("")) {
 				manager.getConfigurator().setTcpInterfaceAddress(
-						HTTP_INTERFACE_ADDRESS);
+						configuration.getHttpInterfaceAddress());
 			}
 
 		} catch (IOException e1) {
@@ -227,7 +216,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 				ExtendedPeerAdvertisement.getAdvertisementType(),
 				new ExtendedPeerAdvertisement.Instantiator());
 
-		manager.waitForRendezvousConnection(CONNECTION_TIME);
+		manager.waitForRendezvousConnection(configuration.getConnectionTime());
 
 	}
 

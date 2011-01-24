@@ -3,9 +3,9 @@
 <properties>
 
 <!-- Eines JxtsPeers -->
-	<entry key="name">Operator Peer 1</entry>	
-	<entry key="tcpPort">9900</entry>	
-	<entry key="httpPort">10000</entry>
+	<entry key="name">Thin Peer 1</entry>	
+	<entry key="tcpPort">7900</entry>	
+	<entry key="httpPort">7901</entry>
 	<entry key="logging">OFF</entry>
 	<entry key="randomName">true</entry>
 	<entry key="connectionTime">12000</entry>

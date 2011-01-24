@@ -19,6 +19,7 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AdminPeerQueryResultHandlerJxtaImpl;
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.JxtaConfiguration;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
@@ -59,51 +61,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		this.operatorPeers = operatorPeers;
 	}
 	
-	//TODO: Daten in Config oder Umgebung auslagern.
-
-	// Logging an oder aus
-	private static final String LOGGING = "OFF";
-	
-	private static final String name = "adminPeer";
-
-	private static final int tcpPort = 8900;
-
-	private static final int httpPort = 8901;
-
-	// Zum Testen um mehrere Peers gleichzeitig zu starten,
-	// dem Namen des Peers wird eine zufällge Nummernfolgen angehängt, um
-	// Den Peer im Netzwerk eindeutig zu machen.
-	private static final boolean RANDOM_NAME = true;
-
-	// Wieviele Millisekunden soll probiert werden eine Verbindung
-	// mit dem P2P-Netzwerk aufzubauen bevor aufgegeben wird.
-	private static final int CONNECTION_TIME = 12000;
-
-	// Soll Multicasting für Peers im lokalen Netzwertk aktiviert
-	// werden.
-	private static final boolean MULTICAST = true;
-
-	// Soll HTTP für den Peer aktiviert werden ? Unbedingt notwendig
-	// wenn Peer im WAN arbeiten soll.
-	private static final boolean HTTP = true;
-
-	// Soll TCP für den Peer aktiviert werden.
-	private static final boolean TCP = true;
-
-	private static final boolean USE_SUPER_PEER = false;
-
-	private static final String TCP_RENDEZVOUS_URI = "tcp://hurrikan.informatik.uni-oldenburg.de:10801";
-
-	private static final String HTTP_RENDEZVOUS_URI = "http://hurrikan.informatik.uni-oldenburg.de:10802";
-
-	private static final String TCP_RELAY_URI = "tcp://hurrikan.informatik.uni-oldenburg.de:10801";
-
-	private static final String HTTP_RELAY_URI = "http://hurrikan.informatik.uni-oldenburg.de:10802";
-
-	private static final String TCP_INTERFACE_ADDRESS = "";
-
-	private static final String HTTP_INTERFACE_ADDRESS = "";
-
 	public PeerGroup netPeerGroup;
 
 	public HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
@@ -129,8 +86,37 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public HashMap<String, ExtendedPeerAdvertisement> operatorPeers = new HashMap<String, ExtendedPeerAdvertisement>();
 
+	private JxtaConfiguration configuration;
+
 	public void activate(){
 		getLogger().debug("Activate Admin Peer");
+		
+		String configFile = System.getenv("PeerConfig");
+		// If no file given try first Odysseus-Home
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = OdysseusDefaults.getHomeDir()
+					+ "/AdminPeer1Config.xml";
+			try {
+				configuration = new JxtaConfiguration(configFile);
+			} catch (IOException e) {
+				configFile = null;
+			}
+
+		}
+		// If still no configuration found try default config-File
+		// TODO: Does not work currently ...
+		if (configFile == null || configFile.trim().length() == 0) {
+			configFile = "/config/AdminPeer1Config.xml";
+		}
+
+		// JxtaConfiguration einlesen
+		try {
+			configuration = new JxtaConfiguration(configFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
 		// TODO: M�ssen sich die Namen unterscheiden? Eigentlich nicht, ist nur ein Admin Peer to JVM ..
@@ -213,10 +199,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	@Override
 	protected synchronized void startNetwork() {
 		getLogger().info("Starting Peer Network");
-		System.setProperty("net.jxta.logging.Logging", LOGGING);
-		String name = "";
-		if (RANDOM_NAME) {
-			name = "" + AdministrationPeerJxtaImpl.name + ""
+		System.setProperty("net.jxta.logging.Logging", configuration.getLogging());
+		String name = configuration.getName();
+		if (configuration.isRandomName()) {
+			name = "" + name + ""
 					+ System.currentTimeMillis();
 		}
 
@@ -230,7 +216,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 		ConfigMode peerMode = null;
 
-		if (USE_SUPER_PEER) {
+		if (configuration.isUseSuperPeer()) {
 			peerMode = NetworkManager.ConfigMode.EDGE;
 		} else {
 			peerMode = NetworkManager.ConfigMode.ADHOC;
@@ -241,40 +227,40 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 					"AdministrationPeer_" + name, new File(new File(".cache"),
 							"AdministrationPeer_" + name).toURI());
 
-			if (USE_SUPER_PEER) {
+			if (configuration.isUseSuperPeer()) {
 				manager.getConfigurator().clearRelaySeeds();
 				manager.getConfigurator().clearRendezvousSeeds();
 
 				try {
 					manager.getConfigurator().addSeedRendezvous(
-							new URI(HTTP_RENDEZVOUS_URI));
+							new URI(configuration.getHttpRendezvousUri()));
 					manager.getConfigurator().addSeedRelay(
-							new URI(HTTP_RELAY_URI));
+							new URI(configuration.getHttpRelayUri()));
 					manager.getConfigurator().addSeedRendezvous(
-							new URI(TCP_RENDEZVOUS_URI));
+							new URI(configuration.getTcpRendezvousUri()));
 					manager.getConfigurator().addSeedRelay(
-							new URI(TCP_RELAY_URI));
+							new URI(configuration.getTcpRelayUri()));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}
-			manager.getConfigurator().setTcpPort(tcpPort);
-			manager.getConfigurator().setHttpPort(httpPort);
-			manager.getConfigurator().setHttpEnabled(HTTP);
-			manager.getConfigurator().setHttpOutgoing(HTTP);
-			manager.getConfigurator().setHttpIncoming(HTTP);
-			manager.getConfigurator().setTcpEnabled(TCP);
-			manager.getConfigurator().setTcpOutgoing(TCP);
-			manager.getConfigurator().setTcpIncoming(TCP);
-			manager.getConfigurator().setUseMulticast(MULTICAST);
+			manager.getConfigurator().setTcpPort(configuration.getTcpPort());
+			manager.getConfigurator().setHttpPort(configuration.getHttpPort());
+			manager.getConfigurator().setHttpEnabled(configuration.isHttp());
+			manager.getConfigurator().setHttpOutgoing(configuration.isHttp());
+			manager.getConfigurator().setHttpIncoming(configuration.isHttp());
+			manager.getConfigurator().setTcpEnabled(configuration.isTcp());
+			manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
+			manager.getConfigurator().setTcpIncoming(configuration.isTcp());
+			manager.getConfigurator().setUseMulticast(configuration.isMulticast());
 
-			if (!TCP_INTERFACE_ADDRESS.equals("")) {
+			if (!configuration.getTcpInterfaceAddress().equals("")) {
 				manager.getConfigurator().setTcpInterfaceAddress(
-						TCP_INTERFACE_ADDRESS);
+						configuration.getTcpInterfaceAddress());
 			}
-			if (!HTTP_INTERFACE_ADDRESS.equals("")) {
+			if (!configuration.getHttpInterfaceAddress().equals("")) {
 				manager.getConfigurator().setTcpInterfaceAddress(
-						HTTP_INTERFACE_ADDRESS);
+						configuration.getHttpInterfaceAddress());
 			}
 
 		} catch (IOException e1) {
@@ -292,7 +278,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 				e.printStackTrace();
 			}
 		}
-		manager.waitForRendezvousConnection(CONNECTION_TIME);
+		manager.waitForRendezvousConnection(configuration.getConnectionTime());
 		netPeerGroup = manager.getNetPeerGroup();
 		PeerGroupTool.setPeerGroup(netPeerGroup);
 		discoveryService = netPeerGroup.getDiscoveryService();

@@ -10,16 +10,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
  * Ein Subplan stellt einen Ausschnitt eines Operatorplans dar. Auf diesen
  * Teilplan koennen fuer die Verarbeitung Gebote abgegeben werden
  * 
- * TODO: Auslagern der Bidding spezifischen Elemente
  * 
- * @author Mart Köhler
+ * @author Mart Koehler
  * 
  */
 public class Subplan implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 794620650300093805L;
 	private ILogicalOperator ao;
 	private Lifecycle status;
@@ -38,6 +34,10 @@ public class Subplan implements Serializable {
 	
 	public ArrayList<Bid> getBiddings() {
 		return biddings;
+	}
+	
+	public synchronized void addBit(Bid bid){
+		biddings.add(bid);
 	}
 
 	public void setBiddings(ArrayList<Bid> biddings) {
