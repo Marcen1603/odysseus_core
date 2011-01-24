@@ -32,7 +32,7 @@ public class KeywordRegistry {
 	}
 	
 	public void loadExtensions() {
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(IEditorTextConstants.KEYWORD_EXTENSION_ID);
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID);
 		for (IConfigurationElement e : config) {
 
 			String groupName = e.getAttribute("name");

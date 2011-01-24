@@ -12,13 +12,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.IEditorTextConstants;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 public class NewQueryTextWizardPage extends WizardPage {
 
 	private static final int GRID_LAYOUT_COLUMNS = 2;
 	
-	private static final String INFORMATION_TEXT = "Note: The endling '." + IEditorTextConstants.QUERY_TEXT_EXTENSION +"' will be automatically added";
+	private static final String INFORMATION_TEXT = "Note: The endling '." + OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION +"' will be automatically added";
 	private static final String NO_NAME_ERROR_TEXT = "A query name must be specified";
 	private static final String TITLE_TEXT = "New Query Text";
 	private static final String DESCRIPTION_TEXT = "Creates a new file for queries";
@@ -76,7 +76,7 @@ public class NewQueryTextWizardPage extends WizardPage {
 	}
 	
 	public String getFullQueryName() {
-		return queryName + "." + IEditorTextConstants.QUERY_TEXT_EXTENSION;
+		return queryName + "." + OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION;
 	}
 	
 	public IContainer getFileContainer() {
@@ -111,6 +111,6 @@ public class NewQueryTextWizardPage extends WizardPage {
 	}
 	
 	private static boolean isNameAlreadyUsed( IContainer container, String name ) {
-		return container.findMember(name + "." + IEditorTextConstants.QUERY_TEXT_EXTENSION) != null;
+		return container.findMember(name + "." + OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION) != null;
 	}
 }

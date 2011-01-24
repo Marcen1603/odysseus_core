@@ -15,7 +15,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.IEditorTextConstants;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 
 public class NewQueryTextWizard extends Wizard implements INewWizard {
@@ -51,7 +51,7 @@ public class NewQueryTextWizard extends Wizard implements INewWizard {
 			// open editor
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(
 					new FileEditorInput(newFile), 
-					IEditorTextConstants.QUERY_TEXT_EDITOR_ID, 
+					OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EDITOR_ID, 
 					true);
 			
 			return true;
