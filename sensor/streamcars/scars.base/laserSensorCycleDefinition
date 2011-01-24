@@ -23,9 +23,9 @@
 
 #DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
 
-#DEFINE bouncerVal      7.1
-#DEFINE tempEvaluationVal 7.3
-#DEFINE evaluationVal   7.1
+#DEFINE bouncerVal      1.1
+#DEFINE tempEvaluationVal 1.3
+#DEFINE evaluationVal   1.1
 
 #PARSER PQLHack
 #TRANSCFG StreamCars
@@ -47,7 +47,7 @@ ASSOCIATION-SEL(
                     SET-PREDICTION-OR(
                         BUFFER(
                             BROKER(${brokerSourceName1}, // Brokerdaten 
-                                    QUEUE( // Zeitgeber für den Broker
+                                    QUEUE( // Zeitgeber fï¿½r den Broker
                                         BUFFER(
                                            ${sensorSource},
                                            ${bufferType} 
@@ -72,28 +72,30 @@ ASSOCIATION-SEL(
             ),
             ${assoScanned},
             ${assoPedicted},
-            'SqrtValue(
-                MatrixEntry(
-                  MatrixMult(
-                    MatrixMult(
-                      MatrixTrans(
-                        MatrixSub(	[${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
-                        			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
-                      ),
-                      MatrixInv(
-                    	 MatrixAdd( ${assoScanned}:car#COVARIANCE, 
-                    			   ${assoPedicted}:car#COVARIANCE)
-                      )
-                    ),
-                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
-                  			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
-                  ),
-                0,0)
-              )'
+            'eif(
+	            SqrtValue(
+	                MatrixEntry(
+	                  MatrixMult(
+	                    MatrixMult(
+	                      MatrixTrans(
+	                        MatrixSub(	[${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+	                        			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+	                      ),
+	                      MatrixInv(
+	                    	 MatrixAdd( ${assoScanned}:car#COVARIANCE, 
+	                    			   ${assoPedicted}:car#COVARIANCE)
+	                      )
+	                    ),
+	                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+	                  			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+	                  ),
+	                0,0)
+	              )
+	            <${threshold}, 100, 0)'
         ),
         ${assoScanned},
         ${assoPedicted},
-        'SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
+        'ASSOCIATION_CON_VAL - SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
     ),
     ${assoSourceName1},
     ${assoScanned},
@@ -108,20 +110,61 @@ BROKER(
             2
         ),
         ${assoPedicted},
-        FILTER-ESTIMATE(
-            FILTER-COVARIANCE(
-                FILTER-GAIN(
+        FILTER_EXP_COVARIANCE(
+            FILTER_EXP_EXTIMATE(
+                FILTER-EXP-GATE(
                     ASSOCIATION-SRC(
                         ${assoSourceName1},
                         1
                     ),
-                    ${filterAlgo}
+                    ${assoScanned}, // scanned list path
+					${assoPedicted}, // predicted list path
+					'MatrixMult(
+						${assoPedicted}:car#COVARIANCE,
+						MatrixInv(
+							MatrixAdd(
+								${assoScanned}:car#COVARIANCE,
+								${assoPedicted}:car#COVARIANCE
+							) 
+						)
+					)',
+					${assoScanned}:car:posx,
+					${assoScanned}:car:posy,
+					${assoScanned}:car:posz,
+					${assoScanned}:car:heading,
+					${assoScanned}:car:velocity,
+					SEPARATOR,
+					${assoPedicted}:car:posx,
+					${assoPedicted}:car:posy,
+					${assoPedicted}:car:posz,
+					${assoPedicted}:car:heading,
+					${assoPedicted}:car:velocity
                 ),
-                ${filterAlgo}
+				${assoScanned}, // scanned list path
+				${assoPedicted}, // predicted list path
+				${assoPedicted}:car:posx := '${assoPedicted}:car:posx + ${assoPedicted}:car:posx#GAIN * (${assoScanned}:car:posx - ${assoPedicted}:car:posx)'; 
+				${assoPedicted}:car:posy := '${assoPedicted}:car:posy + ${assoPedicted}:car:posy#GAIN * (${assoScanned}:car:posy - ${assoPedicted}:car:posy)';
+				${assoPedicted}:car:posz := '${assoPedicted}:car:posz + ${assoPedicted}:car:posz#GAIN * (${assoScanned}:car:posz - ${assoPedicted}:car:posz)';
+				${assoPedicted}:car:heading := '${assoPedicted}:car:heading + ${assoPedicted}:car:heading#GAIN * (${assoScanned}:car:heading - ${assoPedicted}:car:heading)';
+				${assoPedicted}:car:velocity := '${assoPedicted}:car:velocity + ${assoPedicted}:car:velocity#GAIN * (${assoScanned}:car:velocity - ${assoPedicted}:car:velocity)';
             ),
-            ${assoScanned},
-            ${assoPedicted},
-            ${filterAlgo}
+			${assoScanned}, // scanned list path
+			${assoPedicted}, // predicted list path
+			'MatrixAdd(
+				MatrixMult(
+					MatrixMult( 
+						MatrixSub(IDENTITY_MATRIX, ${assoPedicted}:car#GAIN), 
+						${assoPedicted}:car#COVARIANCE 
+					),
+					MatrixTrans( 
+						MatrixSub( IDENTITY_MATRIX, ${assoPedicted}:car#GAIN )
+					)
+				),
+				MatrixMult( 
+					MatrixMult( ${assoPedicted}:car#GAIN, ${assoScanned}:car#COVARIANCE ),
+					MatrixTrans( ${assoPedicted}:car#GAIN )
+				)
+			)'
         ),
         ${assoPedicted},
         TMP-DATA-BOUNCER(
@@ -155,7 +198,7 @@ ASSOCIATION-SEL(
                         TMP-DATA-BOUNCER(
                             BUFFER(
                                 BROKER(${brokerSourceName2}, // Brokerdaten 
-                                        QUEUE( // Zeitgeber für den Broker
+                                        QUEUE( // Zeitgeber fï¿½r den Broker
                                                ${assoSource1}
                                         )
                                 ),
@@ -181,7 +224,7 @@ ASSOCIATION-SEL(
             ),
             ${assoScanned},
             ${assoPedicted},
-            'SqrtValue(
+            'eif(SqrtValue(
                 MatrixEntry(
                   MatrixMult(
                     MatrixMult(
@@ -203,7 +246,7 @@ ASSOCIATION-SEL(
         ),
         ${assoScanned},
         ${assoPedicted},
-        'SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
+        'ASSOCIATION_CON_VAL - SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
     ),
     ${assoSourceName2},
     ${assoScanned},
@@ -218,20 +261,61 @@ BROKER(
             2
         ),
         ${assoPedicted},
-        FILTER-ESTIMATE(
-            FILTER-COVARIANCE(
-                FILTER-GAIN(
+        FILTER_EXP_COVARIANCE(
+            FILTER_EXP_EXTIMATE(
+                FILTER-EXP-GATE(
                     ASSOCIATION-SRC(
                         ${assoSourceName2},
                         1
                     ),
-                    ${filterAlgo}
+                    ${assoScanned}, // scanned list path
+					${assoPedicted}, // predicted list path
+					'MatrixMult(
+						${assoPedicted}:car#COVARIANCE,
+						MatrixInv(
+							MatrixAdd(
+								${assoScanned}:car#COVARIANCE,
+								${assoPedicted}:car#COVARIANCE
+							) 
+						)
+					)',
+					${assoScanned}:car:posx,
+					${assoScanned}:car:posy,
+					${assoScanned}:car:posz,
+					${assoScanned}:car:heading,
+					${assoScanned}:car:velocity,
+					SEPARATOR,
+					${assoPedicted}:car:posx,
+					${assoPedicted}:car:posy,
+					${assoPedicted}:car:posz,
+					${assoPedicted}:car:heading,
+					${assoPedicted}:car:velocity
                 ),
-                ${filterAlgo}
+				${assoScanned}, // scanned list path
+				${assoPedicted}, // predicted list path
+				${assoPedicted}:car:posx := '${assoPedicted}:car:posx + ${assoPedicted}:car:posx#GAIN * (${assoScanned}:car:posx - ${assoPedicted}:car:posx)'; 
+				${assoPedicted}:car:posy := '${assoPedicted}:car:posy + ${assoPedicted}:car:posy#GAIN * (${assoScanned}:car:posy - ${assoPedicted}:car:posy)';
+				${assoPedicted}:car:posz := '${assoPedicted}:car:posz + ${assoPedicted}:car:posz#GAIN * (${assoScanned}:car:posz - ${assoPedicted}:car:posz)';
+				${assoPedicted}:car:heading := '${assoPedicted}:car:heading + ${assoPedicted}:car:heading#GAIN * (${assoScanned}:car:heading - ${assoPedicted}:car:heading)';
+				${assoPedicted}:car:velocity := '${assoPedicted}:car:velocity + ${assoPedicted}:car:velocity#GAIN * (${assoScanned}:car:velocity - ${assoPedicted}:car:velocity)';
             ),
-            ${assoScanned},
-            ${assoPedicted},
-            ${filterAlgo}
+			${assoScanned}, // scanned list path
+			${assoPedicted}, // predicted list path
+			'MatrixAdd(
+				MatrixMult(
+					MatrixMult( 
+						MatrixSub(IDENTITY_MATRIX, ${assoPedicted}:car#GAIN), 
+						${assoPedicted}:car#COVARIANCE 
+					),
+					MatrixTrans( 
+						MatrixSub( IDENTITY_MATRIX, ${assoPedicted}:car#GAIN )
+					)
+				),
+				MatrixMult( 
+					MatrixMult( ${assoPedicted}:car#GAIN, ${assoScanned}:car#COVARIANCE ),
+					MatrixTrans( ${assoPedicted}:car#GAIN )
+				)
+			)'
         ),
         ${assoPedicted},
         ASSOCIATION-SRC(
