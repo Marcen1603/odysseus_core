@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text.editor;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;

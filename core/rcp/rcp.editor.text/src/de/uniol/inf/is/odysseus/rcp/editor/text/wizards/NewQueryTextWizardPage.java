@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text.wizard;
+package de.uniol.inf.is.odysseus.rcp.editor.text.wizards;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.Assert;

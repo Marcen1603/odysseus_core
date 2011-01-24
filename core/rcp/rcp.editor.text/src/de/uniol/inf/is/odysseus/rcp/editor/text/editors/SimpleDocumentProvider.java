@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text.editor;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

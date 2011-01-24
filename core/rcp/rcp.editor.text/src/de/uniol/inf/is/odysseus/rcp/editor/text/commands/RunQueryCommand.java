@@ -23,7 +23,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.editor.SimpleEditor;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.SimpleEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IEditorTextParserConstants;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;

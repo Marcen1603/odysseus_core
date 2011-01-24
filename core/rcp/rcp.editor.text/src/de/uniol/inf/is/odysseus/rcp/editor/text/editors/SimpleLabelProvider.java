@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text.editor;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
