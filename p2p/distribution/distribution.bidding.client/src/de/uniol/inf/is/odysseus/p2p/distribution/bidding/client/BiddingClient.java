@@ -31,7 +31,7 @@ public class BiddingClient extends AbstractDistributionClient {
 	}
 
 	private void initQueryResultHandler() {
-		this.queryResultHandler = new QueryBidResponseHandlerJxtaImpl(getPeer());
+		this.queryResultHandler = new QueryBidResponseHandlerJxtaImpl(getPeer(), getPeer().getLog());
 		getPeer().registerMessageHandler(this.queryResultHandler);
 		
 	}

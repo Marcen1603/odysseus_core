@@ -62,9 +62,9 @@ public class BiddingProvider extends
 	public void initializeService() {
 		getLogger().info("Initializing message handler");
 
-		getRegisteredMessageHandler().add(new EventMessageHandler());
+		getRegisteredMessageHandler().add(new EventMessageHandler(getPeer().getLog()));
 		getRegisteredMessageHandler().add(
-				new BiddingMessageResultHandler(getPeer()));
+				new BiddingMessageResultHandler(getPeer(), getPeer().getLog()));
 		for (IMessageHandler handler : getRegisteredMessageHandler()) {
 			getPeer().registerMessageHandler(handler);
 		}

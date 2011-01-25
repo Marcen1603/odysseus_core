@@ -97,7 +97,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 		jPanel1 = new JPanel();
 		List l = new List();
 		listResults.put(queryId, l);
-		tabs.addTab("Anfrage:" + queryId, null, jPanel1, null);
+		tabs.addTab(queryId.substring(queryId.length()-Math.min(queryId.length(), 10),queryId.length()), null, jPanel1, null);
 
 		jPanel1.setPreferredSize(new java.awt.Dimension(996, 373));
 		jPanel1.setLayout(new GridLayout(2, 1));

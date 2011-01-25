@@ -28,6 +28,7 @@ public class GrantedMessageHandler extends AbstractJxtaMessageHandler implements
 	public GrantedMessageHandler(P2PQuery query,
 			IExecutionListenerCallback callback, IOdysseusPeer peer,
 			String interestedNamespace) {
+		super(peer.getLog(), null);
 		this.query = query;
 		this.callback = callback;
 		this.setPeer(peer);

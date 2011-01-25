@@ -5,13 +5,13 @@ abstract public class AbstractMessageHandler implements IMessageHandler {
 
 	String interestedNamespace = null; 
 
+	public AbstractMessageHandler(String interestedNamespace) {
+		this.interestedNamespace = interestedNamespace;
+	}
+	
 	@Override
 	final public String getInterestedNamespace() {
 		return interestedNamespace;
-	}
-
-	final protected void setInterestedNamespace(String namespace) {
-		this.interestedNamespace = namespace;
 	}
 	
 }

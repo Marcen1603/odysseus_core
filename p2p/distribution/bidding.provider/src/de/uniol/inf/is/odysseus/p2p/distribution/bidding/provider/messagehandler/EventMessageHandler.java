@@ -2,11 +2,12 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandle
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 
 public class EventMessageHandler extends AbstractJxtaMessageHandler {
 
-	public EventMessageHandler() {
-		setInterestedNamespace("ProviderEvents");
+	public EventMessageHandler(ILogListener log) {
+		super(log,"ProviderEvents");
 	}
 
 	@Override

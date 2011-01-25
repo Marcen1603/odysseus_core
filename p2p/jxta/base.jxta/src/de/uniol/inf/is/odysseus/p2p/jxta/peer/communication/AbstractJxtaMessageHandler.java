@@ -9,12 +9,13 @@ abstract public class AbstractJxtaMessageHandler extends AbstractMessageHandler 
 
 	private ILogListener log;
 
-	protected String meas(String namespace, String element, Message msg) {
-		return MessageTool.getMessageElementAsString(namespace, element, msg);
+	public AbstractJxtaMessageHandler(ILogListener log, String interestedNamespace){
+		super(interestedNamespace);
+		this.log = log;
 	}
 	
-	public void setLogHandler(ILogListener log){
-		this.log = log;
+	protected String meas(String namespace, String element, Message msg) {
+		return MessageTool.getMessageElementAsString(namespace, element, msg);
 	}
 	
 	protected void logAction(String queryId, String message) {

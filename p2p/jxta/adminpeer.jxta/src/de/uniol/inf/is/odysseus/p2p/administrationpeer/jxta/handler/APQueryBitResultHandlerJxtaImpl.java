@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler;
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
@@ -21,7 +20,7 @@ public class APQueryBitResultHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 
 	public APQueryBitResultHandlerJxtaImpl(
 			AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
-		setInterestedNamespace("BiddingResult");
+		super(administrationPeerJxtaImpl.getLog(), "BiddingResult");
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 	}
 

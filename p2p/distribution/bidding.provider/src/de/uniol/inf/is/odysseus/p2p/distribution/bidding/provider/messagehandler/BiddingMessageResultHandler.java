@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandle
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.IQueryProvider;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
@@ -13,9 +13,9 @@ public class BiddingMessageResultHandler extends AbstractJxtaMessageHandler {
 
 	private IQueryProvider queryProvider;
 
-	public BiddingMessageResultHandler(IQueryProvider queryProvider) {
+	public BiddingMessageResultHandler(IQueryProvider queryProvider, ILogListener log) {
+		super(log, "BiddingProvider");
 		this.queryProvider = queryProvider;
-		setInterestedNamespace("BiddingProvider");
 	}
 
 	@Override

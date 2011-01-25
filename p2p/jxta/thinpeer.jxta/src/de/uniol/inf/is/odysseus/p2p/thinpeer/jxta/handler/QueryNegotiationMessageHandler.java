@@ -15,7 +15,7 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
 	public QueryNegotiationMessageHandler(ThinPeerJxtaImpl thinPeerJxtaImpl) {
-		setInterestedNamespace("QueryNegotiation");
+		super(thinPeerJxtaImpl.getLog(),"QueryNegotiation");
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
 	}
 

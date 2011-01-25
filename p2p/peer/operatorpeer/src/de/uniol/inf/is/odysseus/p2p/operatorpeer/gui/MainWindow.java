@@ -114,7 +114,7 @@ public class MainWindow extends AbstractMainWindow {
 		
 		panel.add(bottom);
 		
-		tabs.addTab(queryId, panel);
+		tabs.addTab(queryId.substring(queryId.length()-Math.min(queryId.length(), 10),queryId.length()), panel);
 		
 	}
 	@Override

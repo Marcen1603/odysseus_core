@@ -38,7 +38,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 	public void run() {
 		for(String sub : getExecutionListenerCallback().getQuery().getSubPlans().keySet()) {
 							logger.debug("Erzeuge GrantedMessageHandler " +"Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub);
-				GrantedMessageHandler handl = new GrantedMessageHandler(getExecutionListenerCallback(), "Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub, getFunction());
+				GrantedMessageHandler handl = new GrantedMessageHandler(getExecutionListenerCallback(), "Granted"+getExecutionListenerCallback().getQuery().getId()+"_"+sub, getFunction(), log);
 				this.handlerList.add(handl);
 		}
 		
@@ -49,6 +49,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 	public void setPeer(IOdysseusPeer peer) {
 		super.setPeer(peer);
 		setFunction((JxtaMessageSender) getPeer().getMessageSender());
+		this.log = getPeer().getLog();
 	}
 
 }

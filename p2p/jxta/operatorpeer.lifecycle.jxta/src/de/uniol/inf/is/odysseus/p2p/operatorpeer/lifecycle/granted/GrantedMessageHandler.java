@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
@@ -27,9 +28,9 @@ public class GrantedMessageHandler extends AbstractJxtaMessageHandler {
 	private boolean granted = false;
 
 	public GrantedMessageHandler(IExecutionListenerCallback callback,
-			String namespace, IMessageSender<?, ?, ?> sender) {
+			String namespace, IMessageSender<?, ?, ?> sender, ILogListener log) {
+		super(log, namespace);
 		this.setQuery(callback.getQuery());
-		setInterestedNamespace(namespace);
 		this.callback = callback;
 		this.messageSender = sender;
 	}
