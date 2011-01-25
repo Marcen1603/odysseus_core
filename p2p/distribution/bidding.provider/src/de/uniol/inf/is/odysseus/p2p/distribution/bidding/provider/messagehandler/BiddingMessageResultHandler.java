@@ -28,8 +28,8 @@ public class BiddingMessageResultHandler extends AbstractJxtaMessageHandler {
 
 		String peerId = meas(namespace, "peerId", msg);
 		String subplanId = meas(namespace, "subplanId", msg);
-		logAction(queryId, "Gebot (" + bid
-				+ ") von einem Operator-Peer eingegangen.");
+		logAction(queryId, "Bid (" + bid
+				+ ") from "+peerId);
 		P2PQuery actualQuery = queryProvider.getQuery(queryId);
 		if (actualQuery != null && bid.equals("positive")) {
 			((P2PQueryJxtaImpl) actualQuery).addBidding(pipeAdv, peerId,

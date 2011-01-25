@@ -29,15 +29,12 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 	private List<QueryExecutionSpezification> specifications;
 	private IOdysseusPeer peer;
 	private IQuerySelectionStrategy selectionStrategy;
-
-	private ILogListener log;
 	
 	public QuerySpecificationListenerJxtaImpl(IOdysseusPeer peer, IQuerySelectionStrategy strategy, ILogListener log) {
 		PeerGroupTool.getPeerGroup().getDiscoveryService().addDiscoveryListener(this);
 		this.peer = peer;
 		this.selectionStrategy = strategy;
 		this.specifications = new ArrayList<QueryExecutionSpezification>();
-		this.log = log;
 	}
 
 	protected List<QueryExecutionSpezification> getSpecifications() {
@@ -110,7 +107,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	@Override
 	public IQuerySpecificationHandler<S> getQuerySpecificationHandler(S spec) {
-		return new QuerySpecificationHandlerJxtaImpl<S>(spec, peer, getSelectionStrategy(), log);
+		return new QuerySpecificationHandlerJxtaImpl<S>(spec, peer, getSelectionStrategy(), peer.getLog());
 	}
 
 	@Override

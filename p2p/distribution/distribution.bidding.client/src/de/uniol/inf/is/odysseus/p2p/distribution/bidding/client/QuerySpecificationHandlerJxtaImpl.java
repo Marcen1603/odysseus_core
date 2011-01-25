@@ -44,16 +44,13 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 
 	private IOdysseusPeer peer;
 	private IQuerySelectionStrategy querySelectionStrategy;
-
-	private ILogListener log;
-
+	
 	public QuerySpecificationHandlerJxtaImpl(S querySpecification,
 			IOdysseusPeer peer, IQuerySelectionStrategy querySelectionStrategy,
 			ILogListener log) {
 		this.peer = peer;
 		this.querySelectionStrategy = querySelectionStrategy;
 		handleQuerySpezification(querySpecification);
-		this.log = log;
 	}
 
 	@SuppressWarnings({ "rawtypes" })
@@ -61,6 +58,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 	public void handleQuerySpezification(S querySpecification) {
 		logger.debug("handle adv zu Subplan "
 				+ querySpecification.getSubplanId());
+		ILogListener log = peer.getLog();
 
 		PipeAdvertisement pipeAdv = null;
 		StringReader sr = new StringReader(querySpecification.getBiddingPipe());

@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
@@ -104,7 +105,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	}
 
 	public OperatorPeerJxtaImpl() {
-		super(new SocketServerListener());
+		super(new SocketServerListener(), Log.getInstance());
 		getSocketServerListener().setPeer(this);
 	}
 
