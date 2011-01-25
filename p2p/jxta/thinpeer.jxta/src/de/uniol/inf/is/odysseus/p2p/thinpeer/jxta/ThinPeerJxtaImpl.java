@@ -108,6 +108,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 				throw new RuntimeException("Could not inint Thin Peer");
 			}
 		}
+		
+		setName(configuration.getName());
 
 		System.setProperty("net.jxta.logging.Logging",
 				configuration.getLogging());

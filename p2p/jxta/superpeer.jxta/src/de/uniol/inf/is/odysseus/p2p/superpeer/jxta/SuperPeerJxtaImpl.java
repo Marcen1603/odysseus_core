@@ -122,8 +122,12 @@ public class SuperPeerJxtaImpl extends AbstractSuperPeer {
 
 	@Override
 	public void stopPeer() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
+	}
+	
+	@Override
+	public String getName() {
+		return name;
 	}
 
 }

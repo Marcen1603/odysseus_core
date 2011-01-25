@@ -34,16 +34,16 @@ public class MainWindow extends AbstractMainWindow {
 	
 	private HashMap<String, JLabel> listSchedulerStrategy = new HashMap<String, JLabel>();
 	
-	public MainWindow() {
-		super("Odysseus Operator-Peer");
-		initGUI();
+	public MainWindow(String title) {
+		super(title);
+		initGUI(title);
 	}
 	
-	private void initGUI() {
+	private void initGUI(String titleText) {
 		try {
 			this.setLocationRelativeTo(null);
 			this.setVisible(true);
-			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			{
 				jPanel1 = new JPanel();
 				getContentPane().add(jPanel1, BorderLayout.CENTER);
@@ -51,7 +51,7 @@ public class MainWindow extends AbstractMainWindow {
 				{
 					title = new JLabel();
 					jPanel1.add(title);
-					title.setText("Odysseus Operator-Peer");
+					title.setText(titleText);
 					title.setBounds(12, 6, 445, 34);
 					title.setFont(new java.awt.Font("AlArabiya",1,28));
 				}
@@ -85,7 +85,7 @@ public class MainWindow extends AbstractMainWindow {
 		
 		information.setLayout(new GridLayout(4,2));
 		
-		information.add(new JLabel("Teilpläne:"));
+		information.add(new JLabel("Teilplaene:"));
 		JLabel subplan = new JLabel("");
 		listSubplan.put(queryId, subplan);
 		information.add(subplan);

@@ -168,7 +168,7 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 	}
 
 	private void startGui() {
-		gui = new MainWindow();
+		gui = new MainWindow(this.getName());
 	}
 
 	protected abstract void startNetwork();

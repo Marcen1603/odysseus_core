@@ -37,6 +37,8 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	private IMessageSender<?, ?, ?> messageSender;
 	final private ISocketServerListener socketServerListener;
 	private IExecutionListenerFactory executionListenerFactory;
+	
+	String name;
 
 	public AbstractOdysseusPeer(ISocketServerListener socketServerListener) {
 		this.queryList = new HashMap<String, Pair<P2PQuery, IExecutionListener>>();
@@ -239,5 +241,14 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
 	protected void setMessageSender(IMessageSender<?, ?, ?> messageSender) {
 		this.messageSender = messageSender;
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 }

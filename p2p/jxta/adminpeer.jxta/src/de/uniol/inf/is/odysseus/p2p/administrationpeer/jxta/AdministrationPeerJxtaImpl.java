@@ -203,6 +203,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 				throw new RuntimeException("Cannot initialize peer");
 			}
 		}
+		
+		setName(configuration.getName());
 
 		System.setProperty("net.jxta.logging.Logging",
 				configuration.getLogging());

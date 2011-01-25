@@ -36,16 +36,16 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				MainWindow inst = new MainWindow();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				MainWindow inst = new MainWindow();
+//				inst.setLocationRelativeTo(null);
+//				inst.setVisible(true);
+//			}
+//		});
+//	}
 
 	private JProgressBar adminPeerProgress;
 	private JButton close;
@@ -63,15 +63,15 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	private JLabel sourcesLabel;
 	AbstractThinPeer thinPeer;
 
-	public MainWindow() {
-		super("Odysseus Thin-Peer");
-		initGUI();
+	public MainWindow(String title) {
+		super(title);
+		initGUI(title);
 	}
 
-	public MainWindow(AbstractThinPeer thinPeer) {
-		super("Odysseus Thin-Peer");
+	public MainWindow(AbstractThinPeer thinPeer, String title) {
+		super(title);
 		this.thinPeer = thinPeer;
-		initGUI();
+		initGUI(title);
 	}
 
 	@Override
@@ -154,9 +154,9 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 		return sourcesProgress;
 	}
 
-	private void initGUI() {
+	private void initGUI(String titleText) {
 		try {
-			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			{
 				queryPanel = new JPanel();
 				getContentPane().add(queryPanel, BorderLayout.CENTER);
@@ -259,7 +259,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 				{
 					header = new JLabel();
 					queryPanel.add(header);
-					header.setText("Odysseus Thin-Peer");
+					header.setText(titleText);
 					header.setBounds(12, 12, 379, 40);
 					header.setFont(new java.awt.Font("AlArabiya", 1, 12));
 				}

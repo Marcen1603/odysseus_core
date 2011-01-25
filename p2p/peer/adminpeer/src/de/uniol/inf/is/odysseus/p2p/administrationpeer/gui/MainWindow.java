@@ -36,17 +36,17 @@ public class MainWindow extends AbstractMainWindow {
 	private JLabel title;
 	private JTabbedPane tabs;
 
-	public MainWindow() {
-		super("Odysseus Verwaltungs-Peer");
+	public MainWindow(String title) {
+		super(title);
 
-		initGUI();
+		initGUI(title);
 	}
 
-	private void initGUI() {
+	private void initGUI(String titleText) {
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		try {
-			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			{
 				jPanel1 = new JPanel();
 				getContentPane().add(jPanel1, BorderLayout.CENTER);
@@ -54,7 +54,7 @@ public class MainWindow extends AbstractMainWindow {
 				{
 					title = new JLabel();
 					jPanel1.add(title);
-					title.setText("Odysseus Verwaltungs-Peer");
+					title.setText(titleText);
 					title.setBounds(12, 12, 453, 32);
 					title.setFont(new java.awt.Font("AlArabiya", 1, 28));
 				}

@@ -43,7 +43,7 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	}
 
 	private void startGui() {
-		gui = new MainWindow(this);
+		gui = new MainWindow(this, this.getName());
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
 		Log.setWindow(getGui());

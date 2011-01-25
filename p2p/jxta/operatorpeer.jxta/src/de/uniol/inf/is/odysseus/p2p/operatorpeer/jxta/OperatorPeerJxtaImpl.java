@@ -91,6 +91,8 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			throw new RuntimeException("Could not init peer");
 		}
 
+		setName(configuration.getName());
+		
 		// TODO: User einlesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
 		// TODO: Unterschiedliche Namen notwendig?
@@ -314,15 +316,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	protected void initServerResponseConnection() {
 		setServerPipeAdvertisement(AdvertisementTools
 				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
-		// PipeAdvertisement advertisement = (PipeAdvertisement)
-		// AdvertisementFactory
-		// .newAdvertisement(PipeAdvertisement.getAdvertisementType());
-		// advertisement.setPipeID(IDFactory.newPipeID(OperatorPeerJxtaImpl.getInstance()
-		// .getNetPeerGroup().getPeerGroupID()));
-		// advertisement.setType(PipeService.UnicastType);
-		// advertisement.setName("serverPipe");
-		// return advertisement;
-
 	}
 
 	private void setServerPipeAdvertisement(

@@ -175,7 +175,7 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 	}
 	
 	private void startGui(){
-			gui = new MainWindow();
+			gui = new MainWindow(getName());
 	}
 	
 	protected void initWrapperPlanFactory() {
