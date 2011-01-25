@@ -9,11 +9,17 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
-public class AdminPeerQueryResultHandlerJxtaImpl extends AbstractMessageHandler {
+/**
+ * This class reacts on the answer for a bit to process a query
+ * @author Marco Grawunder
+ *
+ */
+
+public class APQueryBitResultHandlerJxtaImpl extends AbstractMessageHandler {
 
 	private AdministrationPeerJxtaImpl administrationPeerJxtaImpl;
 
-	public AdminPeerQueryResultHandlerJxtaImpl(
+	public APQueryBitResultHandlerJxtaImpl(
 			AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
 		setInterestedNamespace("BiddingResult");
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AdminPeerQueryResultHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.APQueryBitResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.HotPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.OperatorPeerListenerJxtaImpl;
@@ -361,7 +361,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	public void initLocalMessageHandler() {
-		registerMessageHandler(new AdminPeerQueryResultHandlerJxtaImpl(this));
+		registerMessageHandler(new APQueryBitResultHandlerJxtaImpl(this));
 	}
 
 	@Override
