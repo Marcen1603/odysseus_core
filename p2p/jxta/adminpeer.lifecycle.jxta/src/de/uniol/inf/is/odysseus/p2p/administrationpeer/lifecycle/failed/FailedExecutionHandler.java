@@ -11,8 +11,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F>{
 
 	public FailedExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.FAILED);
+		super(Lifecycle.FAILED);
 	}
 
 	public FailedExecutionHandler(
@@ -30,10 +29,6 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F>{
 		IExecutionListenerCallback cb = getExecutionListenerCallback();
 		List<Lifecycle> history = cb.getQuery()
 				.getHistory();
-		// if(true){
-		// getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
-		// return;
-		// }
 
 		// Jeder Schritt darf nur einmailg wiederholt werden
 		Lifecycle priorLifecycle = cb

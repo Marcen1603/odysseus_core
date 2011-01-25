@@ -118,7 +118,7 @@ public class BiddingProvider extends
 		((JxtaMessageSender) (getPeer().getMessageSender())).sendMessage(
 				PeerGroupTool.getPeerGroup(), message,
 				((P2PQueryJxtaImpl) query).getResponseSocketThinPeer());
-		Log.logAction(query.getId(),
+		log.logAction(query.getId(),
 				"Sende Thin-Peer Verbindungsinformationen zum Operatorplan"); // ??
 
 		// Anfragen ausschreiben
@@ -149,7 +149,7 @@ public class BiddingProvider extends
 			}
 		}
 		IClientSelector selector = getClientSelectorFactory().getNewInstance(
-				15000, query, getCallback());
+				15000, query, getCallback(), log);
 		Thread t = new Thread(selector);
 		t.start();
 	}

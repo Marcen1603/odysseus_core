@@ -23,8 +23,7 @@ public class SuccessExecutionHandler<F> extends AbstractExecutionHandler<F> {
 	}
 	
 	public SuccessExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.SUCCESS);
+		super(Lifecycle.SUCCESS);
 	}
 
 	public SuccessExecutionHandler(

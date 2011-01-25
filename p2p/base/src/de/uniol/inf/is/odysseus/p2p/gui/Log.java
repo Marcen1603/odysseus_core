@@ -1,99 +1,116 @@
 package de.uniol.inf.is.odysseus.p2p.gui;
 
 
-import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 
 
-public class Log {
+public class Log implements ILogListener{
 	
-	private static AbstractMainWindow window;
+	static private Log instance = new Log();
+	
+	public static Log getInstance() {
+		return instance;
+	}
+	
+	private AbstractMainWindow window;
 
-
-
-	public static void setWindow(AbstractMainWindow w) {
+	public void setWindow(AbstractMainWindow w) {
 		window = w;
 	}
 	
-	public static AbstractMainWindow getWindow() {
+	public AbstractMainWindow getWindow() {
 		return window;
 	}
 
-	public static void addQuery(String queryId) {
+	@Override
+	public void addQuery(String queryId) {
 		getWindow().addTab(queryId);
 	}
 
-	public static void logAction(String queryId, String action) {
+	@Override
+	public void logAction(String queryId, String action) {
 			getWindow().addAction(
 					queryId, action);
 	}
 
-	public static void setSubplans(String queryId, int subplans) {
+	@Override
+	public void setSubplans(String queryId, int subplans) {
 			getWindow().addSubplans(
 					queryId, subplans);
 
 	}
 
-	public static void setSplittingStrategy(String queryId,
+	@Override
+	public void setSplittingStrategy(String queryId,
 			String splittingStrategy) {
 			getWindow().addSplitting(
 					queryId, splittingStrategy);
 	}
 
-	public static void setStatus(String queryId, String status) {
+	@Override
+	public void setStatus(String queryId, String status) {
 			getWindow().addStatus(
 					queryId, status);
 	}
 
-	public static void removeQuery(String queryId) {
+	@Override
+	public void removeQuery(String queryId) {
 			getWindow().removeQuery(
 					queryId);
 	}
 
-	public static void addBid(String queryId,Integer bids) {
+	@Override
+	public void addBid(String queryId,Integer bids) {
 			getWindow().addBids(
 					queryId, bids.toString());
 	}
 	
-	public static void logEvent(String queryId, String event) {
+	@Override
+	public void logEvent(String queryId, String event) {
 			getWindow().addAction(queryId,
 					event);
 
 	}
 	
-	public static void setScheduler(String queryId, String scheduler) {
+	@Override
+	public void setScheduler(String queryId, String scheduler) {
 			getWindow().addScheduler(queryId,
 					scheduler);
 
 	}
-
-	public static void setSchedulerStrategy(String queryId,
+	
+	@Override
+	public void setSchedulerStrategy(String queryId,
 			String schedulerStrategy) {
 			getWindow().addSchedulerStrategy(
 					queryId, schedulerStrategy);
 
 	}
 
-	public static void addAdminPeer(String queryId, String adminPeerName) {
+	public void addAdminPeer(String queryId, String adminPeerName) {
 		getWindow().addAdminPeer(queryId, adminPeerName);
 		
 	}
 
-	public static void addStatus(String queryId, String string) {
+	@Override
+	public void addStatus(String queryId, String string) {
 		getWindow().addStatus(queryId, string);
 		
 	}
 
-	public static void addTab(String id, String query) {
+	@Override
+	public void addTab(String id, String query) {
 		getWindow().addTab(id, query);
 		
 	}
 
-	public static void addResult(String queryId, Object o) {
+	@Override
+	public void addResult(String queryId, Object o) {
 		getWindow().addResult(queryId, o);
 		
 	}
 	
-	public static void addEvent(String queryId, String event) {
+	public void addEvent(String queryId, String event) {
 		getWindow().addEvent(queryId, event);
 	}
 

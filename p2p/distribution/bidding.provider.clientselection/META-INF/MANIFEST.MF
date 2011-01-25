@@ -8,6 +8,7 @@ Import-Package: de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselecti
  de.uniol.inf.is.odysseus.p2p.gui,
  de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.utils,
+ de.uniol.inf.is.odysseus.p2p.peer,
  de.uniol.inf.is.odysseus.p2p.peer.communication,
  de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
  de.uniol.inf.is.odysseus.p2p.queryhandling,

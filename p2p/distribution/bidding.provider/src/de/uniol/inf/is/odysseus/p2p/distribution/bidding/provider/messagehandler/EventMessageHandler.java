@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler;
 
 import net.jxta.endpoint.Message;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 
-public class EventMessageHandler extends AbstractMessageHandler {
+public class EventMessageHandler extends AbstractJxtaMessageHandler {
 
 	public EventMessageHandler() {
 		setInterestedNamespace("ProviderEvents");
@@ -13,11 +11,9 @@ public class EventMessageHandler extends AbstractMessageHandler {
 
 	@Override
 	public void handleMessage(Object msg, String namespace) {
-		String event = MessageTool.getMessageElementAsString(
-				namespace, "event", (Message)msg);
-		String queryId = MessageTool.getMessageElementAsString(
-				namespace, "queryId", (Message)msg);
-		Log.addEvent(queryId, event);
+		String event = meas(namespace, "event", (Message) msg);
+		String queryId = meas(namespace, "queryId", (Message) msg);
+		addEvent(queryId, event);
 	}
-	
+
 }

@@ -32,8 +32,6 @@ public class NoSplitting extends
 		IExecutionHandler<AbstractSplittingStrategy> handler = new NoSplittingExecutionHandler();
 		handler.setPeer(getPeer());
 		handler.setFunction(this);
-		handler.setProvidedLifecycle(Lifecycle.SPLIT);
-
 		getPeer().bindExecutionHandler(handler);
 	}
 

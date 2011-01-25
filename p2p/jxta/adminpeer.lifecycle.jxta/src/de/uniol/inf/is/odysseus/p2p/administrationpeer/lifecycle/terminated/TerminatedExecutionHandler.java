@@ -7,8 +7,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 public class TerminatedExecutionHandler<F> extends AbstractExecutionHandler<F> {
 
 	public TerminatedExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.TERMINATED);
+		super(Lifecycle.TERMINATED);
 	}
 	
 	public TerminatedExecutionHandler(

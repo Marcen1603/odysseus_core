@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisemen
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
@@ -23,9 +24,11 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
 
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
+	private ILogListener log;
 
 	public QueryPublisherHandlerJxtaImpl(ThinPeerJxtaImpl thinPeerJxtaImpl) {
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
+		this.log = thinPeerJxtaImpl.getLog();
 	}
 	// Wie lange ist eine Ausschreibung gültig.
 	private int VALID = 15000;
@@ -61,7 +64,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		thinPeerJxtaImpl.getDiscoveryService().remotePublish(adv,
 				VALID);
 
-		Log.addTab(q.getId(), query);
+		log.addTab(q.getId(), query);
 		
 		//Hier den "Timer" starten für die Behandlung der Gebote
 		IBiddingHandler handler = new BiddingHandlerJxtaImpl(q, (JxtaMessageSender) this.thinPeerJxtaImpl.getMessageSender(), thinPeerJxtaImpl);
@@ -97,7 +100,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
 		((JxtaMessageSender)(thinPeerJxtaImpl.getMessageSender())).sendMessage(thinPeerJxtaImpl
 				.getNetPeerGroup(), message, adminPipe);
-		Log.addTab(q.getId(), query);
+		log.addTab(q.getId(), query);
 	}
 
 }

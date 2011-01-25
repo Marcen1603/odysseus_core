@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.clientselecti
 
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelector;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelectorFactory;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
@@ -14,14 +15,14 @@ public class StandardBiddingClientSelectorFactory<C extends IExecutionListenerCa
 
 	
 	@Override
-	public IClientSelector getNewInstance(int time, P2PQuery query, C callback) {
-		return new StandardBiddingClientSelector<C>(time, query, callback);
+	public IClientSelector getNewInstance(int time, P2PQuery query, C callback, ILogListener log) {
+		return new StandardBiddingClientSelector<C>(time, query, callback, log);
 	}
 
 
 	@Override
-	public IClientSelector getNewInstance(int time, P2PQuery query) {
-		IClientSelector selector = new StandardBiddingClientSelector<C>(time, query);
+	public IClientSelector getNewInstance(int time, P2PQuery query, ILogListener log) {
+		IClientSelector selector = new StandardBiddingClientSelector<C>(time, query, log);
 		return selector;
 	}
 

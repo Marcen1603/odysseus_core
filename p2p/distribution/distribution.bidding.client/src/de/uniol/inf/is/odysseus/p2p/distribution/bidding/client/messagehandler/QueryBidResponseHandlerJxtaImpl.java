@@ -2,37 +2,39 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler;
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.IQueryProvider;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
-public class QueryResultHandlerJxtaImpl extends AbstractMessageHandler {
+/**
+ * This class reacts on messages that state if a peer 
+ * should process a query/subplan
+ * @author Marco Grawunder
+ *
+ */
+
+public class QueryBidResponseHandlerJxtaImpl extends AbstractJxtaMessageHandler {
 
 	private IQueryProvider queryProvider;
 
-	public QueryResultHandlerJxtaImpl(IQueryProvider queryProvider) {
+	public QueryBidResponseHandlerJxtaImpl(IQueryProvider queryProvider) {
 		this.queryProvider = queryProvider;
 		setInterestedNamespace("BiddingClient");
 	}
 
 	@Override
-	public void handleMessage(Object _msg, String _namespace) {
+	public void handleMessage(Object _msg, String namespace) {
 		Message msg = (Message) _msg;
 
-		String namespace = (String) _namespace;
-
-		String result = MessageTool.getMessageElementAsString(namespace,
-				"result", msg);
-		String queryId = MessageTool.getMessageElementAsString(namespace,
-				"queryId", msg);
-		String subPlanId = MessageTool.getMessageElementAsString(namespace,
-				"subplanId", msg);
+		String result = meas(namespace, "result", msg);
+		String queryId = meas(namespace, "queryId", msg);
+		String subPlanId = meas(namespace, "subplanId", msg);
+		
 		if (result.equals("granted")) {
-			Log.logAction(queryId, "Erhalte Zusage fuer Teilplan " + subPlanId);
+			logAction(queryId, "Erhalte Zusage fuer Teilplan " + subPlanId);
 
 			P2PQuery q = queryProvider.getQuery(queryId);
 			if (q != null) {
@@ -57,7 +59,7 @@ public class QueryResultHandlerJxtaImpl extends AbstractMessageHandler {
 			}
 
 		} else {
-			Log.logAction(queryId,
+			logAction(queryId,
 					"Habe keine Zusage fuer die Anfrage bekommen");
 
 			P2PQuery q = queryProvider.getQuery(queryId);

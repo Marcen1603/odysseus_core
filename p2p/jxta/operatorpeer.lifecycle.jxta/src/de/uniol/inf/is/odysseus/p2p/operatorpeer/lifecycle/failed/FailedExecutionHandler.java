@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F> {
 
 	public FailedExecutionHandler(){
-		setProvidedLifecycle(Lifecycle.FAILED);
+		super(Lifecycle.FAILED);
 	}
 	
 	public FailedExecutionHandler(

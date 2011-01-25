@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.OperatorPee
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.QuerySpezificationListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.HotPeerStrategyRandom;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
@@ -105,7 +106,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	// fuer die korrekte Nutzung in OSGi muss der Konstruktor public sein.
 	public AdministrationPeerJxtaImpl() {
-		super(new SocketServerListener());
+		super(new SocketServerListener(), Log.getInstance());
 		getSocketServerListener().setPeer(this);
 		getLogger().debug("Created Admin Peer");
 	}
@@ -137,7 +138,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	@Override
 	protected void initQuerySpezificationListener() {
 		querySpezificationListener = new QuerySpezificationListenerJxtaImpl(
-				(JxtaMessageSender) getMessageSender(), this);
+				(JxtaMessageSender) getMessageSender(), this, Log.getInstance());
 
 	}
 

@@ -48,9 +48,8 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 	
 	private IDistributionClient distributionClient;
 
-
 	public AbstractOperatorPeer(ISocketServerListener socketServerListener) {
-		super(socketServerListener);
+		super(socketServerListener, Log.getInstance());
 	}
 	
 	public void bindDistributionClient(IDistributionClient dc) {
@@ -105,7 +104,7 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 	private void init() {
 		try {
 			initServerResponseConnection();
-			Log.setWindow(getGui());
+			((Log)getLog()).setWindow(getGui());
 			initExecutor();
 			initPriorityMode();
 			initMessageSender();

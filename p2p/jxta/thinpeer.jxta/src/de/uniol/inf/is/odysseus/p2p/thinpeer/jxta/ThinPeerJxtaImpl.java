@@ -14,6 +14,7 @@ import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
@@ -60,12 +61,10 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	}
 
 	ThinPeerJxtaImpl() {
-		super(new SocketServerListener());
+		super(new SocketServerListener(), Log.getInstance());
 		getSocketServerListener().setPeer(this);
 		// TODO: Nutzer auslesen
 		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
-		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur
-		// ein Admin Peer to JVM ..
 		GlobalState.setActiveDatadictionary(null);
 	}
 

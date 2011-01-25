@@ -18,8 +18,7 @@ public class NewExecutionHandler extends
 		AbstractExecutionHandler<ICompiler> {
 
 	public NewExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.NEW);
+		super(Lifecycle.NEW);
 	}
 
 	public NewExecutionHandler(NewExecutionHandler newExecutionHandler) {
@@ -45,7 +44,7 @@ public class NewExecutionHandler extends
 										.getDataDictionary());
 			} catch (QueryParseException e3) {
 				e3.printStackTrace();
-				Log.logAction(
+				log.logAction(
 						getExecutionListenerCallback().getQuery().getId(),
 						"Fehler bei der Uebersetzung der Anfrage");
 				getExecutionListenerCallback().changeState(Lifecycle.FAILED);

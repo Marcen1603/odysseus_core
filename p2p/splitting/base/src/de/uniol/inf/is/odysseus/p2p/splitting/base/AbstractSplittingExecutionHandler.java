@@ -13,8 +13,7 @@ public abstract class AbstractSplittingExecutionHandler<F extends AbstractSplitt
 		extends AbstractExecutionHandler<F> implements IExecutionHandler<F> {
 
 	public AbstractSplittingExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.SPLIT);
+		super(Lifecycle.SPLIT);
 	}
 
 	public AbstractSplittingExecutionHandler(

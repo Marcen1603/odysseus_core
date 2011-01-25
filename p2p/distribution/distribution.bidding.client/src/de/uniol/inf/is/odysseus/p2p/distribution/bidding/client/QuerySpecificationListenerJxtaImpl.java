@@ -4,20 +4,22 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationListener;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
+import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 
 public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezification> implements
 		IQuerySpecificationListener<S>, DiscoveryListener {
@@ -25,14 +27,17 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 	static Logger logger = LoggerFactory.getLogger(QuerySpecificationListenerJxtaImpl.class);
 	
 	private List<QueryExecutionSpezification> specifications;
-	private AbstractOdysseusPeer aPeer;
+	private IOdysseusPeer peer;
 	private IQuerySelectionStrategy selectionStrategy;
+
+	private ILogListener log;
 	
-	public QuerySpecificationListenerJxtaImpl(AbstractOdysseusPeer aPeer, IQuerySelectionStrategy strategy) {
+	public QuerySpecificationListenerJxtaImpl(IOdysseusPeer peer, IQuerySelectionStrategy strategy, ILogListener log) {
 		PeerGroupTool.getPeerGroup().getDiscoveryService().addDiscoveryListener(this);
-		this.aPeer = aPeer;
+		this.peer = peer;
 		this.selectionStrategy = strategy;
 		this.specifications = new ArrayList<QueryExecutionSpezification>();
+		this.log = log;
 	}
 
 	protected List<QueryExecutionSpezification> getSpecifications() {
@@ -92,10 +97,6 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	}
 	
-	public AbstractOdysseusPeer getaPeer() {
-		return aPeer;
-	}
-	
 	public IQuerySelectionStrategy getSelectionStrategy() {
 		return selectionStrategy;
 	}
@@ -109,7 +110,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	@Override
 	public IQuerySpecificationHandler<S> getQuerySpecificationHandler(S spec) {
-		return new QuerySpecificationHandlerJxtaImpl<S>(spec, getaPeer(), getSelectionStrategy());
+		return new QuerySpecificationHandlerJxtaImpl<S>(spec, peer, getSelectionStrategy(), log);
 	}
 
 	@Override

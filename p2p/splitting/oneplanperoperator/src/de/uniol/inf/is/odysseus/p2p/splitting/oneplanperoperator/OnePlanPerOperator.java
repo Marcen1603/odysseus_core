@@ -30,7 +30,6 @@ public class OnePlanPerOperator extends
 		IExecutionHandler<AbstractSplittingStrategy> handler = new OnePlanPerOperatorExecutionHandler<AbstractSplittingStrategy>();
 		handler.setPeer(getPeer());
 		handler.setFunction(this);
-		handler.setProvidedLifecycle(Lifecycle.SPLIT);
 		getPeer().bindExecutionHandler(handler);
 		
 	}

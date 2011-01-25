@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
@@ -26,8 +27,8 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	
 	public HashMap<String,Object> adminPeers;
 	
-	public AbstractThinPeer(ISocketServerListener serverListener) {
-		super(serverListener);
+	public AbstractThinPeer(ISocketServerListener serverListener, ILogListener log) {
+		super(serverListener, log);
 	}
 	
 	public HashMap<String,Object> getAdminPeers() {
@@ -46,7 +47,7 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 		gui = new MainWindow(this, this.getName());
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
-		Log.setWindow(getGui());
+		((Log)getLog()).setWindow(getGui());
 		Thread t = new Thread(guiUpdater);
 		t.start();
 	}

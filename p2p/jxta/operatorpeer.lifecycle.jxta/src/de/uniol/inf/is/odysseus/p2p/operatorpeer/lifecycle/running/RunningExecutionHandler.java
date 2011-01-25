@@ -28,8 +28,7 @@ public class RunningExecutionHandler extends
 			.getLogger(RunningExecutionHandler.class);
 
 	public RunningExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.RUNNING);
+		super(Lifecycle.RUNNING);
 	}
 
 	public RunningExecutionHandler(

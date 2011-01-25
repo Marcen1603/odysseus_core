@@ -17,8 +17,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessageSender> {
 
 	public GrantedExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.GRANTED);
+		super(Lifecycle.GRANTED);
 	}
 	
 	public GrantedExecutionHandler(

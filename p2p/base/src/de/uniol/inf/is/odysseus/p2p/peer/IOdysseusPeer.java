@@ -20,5 +20,6 @@ public interface IOdysseusPeer extends IPeer, IQueryProvider {
 	void registerMessageHandler(List<IMessageHandler> messageHandler);
 	void deregisterMessageHandler(IMessageHandler messageHandler);
 	IMessageSender<?,?,?> getMessageSender();
+	ILogListener getLog();
 
 }

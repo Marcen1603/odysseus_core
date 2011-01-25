@@ -4,13 +4,13 @@ import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.ErrorPopup;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
-public class QueryNegotiationMessageHandler extends AbstractMessageHandler {
+public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
@@ -25,8 +25,7 @@ public class QueryNegotiationMessageHandler extends AbstractMessageHandler {
 				"queryAction", (Message) msg);
 
 		if (action.equals("Bidding")) {
-			String queryId = MessageTool.getMessageElementAsString(namespace,
-					"queryId", (Message) msg);
+			String queryId = meas(namespace, "queryId", (Message) msg);
 			PipeAdvertisement pipeAdv = MessageTool.getResponsePipe(namespace,
 					(Message) msg, 0);
 			PeerAdvertisement peerAdv = MessageTool.getPeerAdvertisement(

@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 /**
  * 
@@ -37,13 +36,19 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	private IMessageSender<?, ?, ?> messageSender;
 	final private ISocketServerListener socketServerListener;
 	private IExecutionListenerFactory executionListenerFactory;
+	final private ILogListener log;
 	
 	String name;
 
-	public AbstractOdysseusPeer(ISocketServerListener socketServerListener) {
+	public AbstractOdysseusPeer(ISocketServerListener socketServerListener, ILogListener log) {
 		this.queryList = new HashMap<String, Pair<P2PQuery, IExecutionListener>>();
 		this.executionHandler = new ArrayList<IExecutionHandler<?>>();
 		this.socketServerListener = socketServerListener;
+		this.log = log;
+	}
+	
+	public ILogListener getLog() {
+		return log;
 	}
 
 	@Override

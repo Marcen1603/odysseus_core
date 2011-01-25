@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IHotPeerStrategy
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
@@ -106,8 +107,8 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 	}
 	
 	
-	public AbstractAdministrationPeer(ISocketServerListener listener) {
-		super(listener);
+	public AbstractAdministrationPeer(ISocketServerListener listener, ILogListener log) {
+		super(listener, log);
 	}
 	
 	public void bindSplitting(ISplittingStrategy splitting) {
@@ -201,7 +202,7 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 		startAliveHandler();
 		startHotPeerFinder();
 		startSocketServerListener();
-		Log.setWindow(getGui());
+		((Log)getLog()).setWindow(getGui());
 		getLogger().info("Peer Services started");
 	}
 

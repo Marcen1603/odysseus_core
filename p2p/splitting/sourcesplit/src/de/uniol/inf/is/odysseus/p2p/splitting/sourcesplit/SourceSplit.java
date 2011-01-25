@@ -29,7 +29,6 @@ public class SourceSplit extends AbstractSplittingStrategy {
 		IExecutionHandler<AbstractSplittingStrategy> handler = new SourceSplitExecutionHandler<AbstractSplittingStrategy>();
 		handler.setPeer(getPeer());
 		handler.setFunction(this);
-		handler.setProvidedLifecycle(Lifecycle.SPLIT);
 		getPeer().bindExecutionHandler(handler);
 	}
 

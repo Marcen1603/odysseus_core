@@ -15,11 +15,11 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJx
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.MaxQueryBiddingStrategyJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IThinPeerBiddingStrategy;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -42,12 +42,15 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 
 	private AdministrationPeerJxtaImpl administrationPeerJxtaImpl;
 
-	public QuerySpezificationListenerJxtaImpl(JxtaMessageSender sender, AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
+	private ILogListener log;
+
+	public QuerySpezificationListenerJxtaImpl(JxtaMessageSender sender, AdministrationPeerJxtaImpl administrationPeerJxtaImpl, ILogListener log) {
 		this.sender = sender;
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 		administrationPeerJxtaImpl.getDiscoveryService().addDiscoveryListener(this);
 		//TODO: In Abhängigkeit der bereits laufenden Gebote und der laufenden Anfragen eine eigene Strategie?
 		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(administrationPeerJxtaImpl);
+		this.log = log;
 		
 	}
 
@@ -99,9 +102,9 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					
 						if(!administrationPeerJxtaImpl.hasQuery(q.getId())) {
 							administrationPeerJxtaImpl.addQuery(q);
-							Log.addQuery(adv.getQueryId());
-							Log.logAction(adv.getQueryId(), "Anfrage gefunden.");
-							Log.logAction(adv.getQueryId(), adv.getQuery());
+							log.addQuery(adv.getQueryId());
+							log.logAction(adv.getQueryId(), "Anfrage gefunden.");
+							log.logAction(adv.getQueryId(), adv.getQuery());
 							if (biddingStrategy.bidding(q)){
 								HashMap<String, Object> messageElements = new HashMap<String, Object>();
 								messageElements.put("queryAction", "Bidding");
@@ -113,7 +116,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 										"QueryNegotiation", messageElements);
 
 								this.sender.sendMessage(administrationPeerJxtaImpl.getNetPeerGroup(), response, pipeAdv);
-								Log.logAction(adv.getQueryId(), "Fuer Anfrage beworben. Warte auf Antwort...");
+								log.logAction(adv.getQueryId(), "Fuer Anfrage beworben. Warte auf Antwort...");
 							}
 						}
 //					}
@@ -127,5 +130,6 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 		}
 
 	}
+
 
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelectorFactory;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
@@ -28,6 +29,7 @@ public abstract class AbstractDistributionProvider<R> implements IDistributionPr
 	private List<IMessageHandler> registeredMessageHandler;
 	private List<IExecutionHandler<?>> registeredExecutionHandler;
 	private IExecutionListenerCallback callback;
+	protected ILogListener log;
 	
 	public AbstractDistributionProvider () {
 		this.registeredMessageHandler = new ArrayList<IMessageHandler>();
@@ -37,6 +39,7 @@ public abstract class AbstractDistributionProvider<R> implements IDistributionPr
 	@Override
 	public void setPeer(IOdysseusPeer peer) {
 		this.peer = (AbstractOdysseusPeer) peer;
+		this.log = peer.getLog();
 	}
 	
 	@Override

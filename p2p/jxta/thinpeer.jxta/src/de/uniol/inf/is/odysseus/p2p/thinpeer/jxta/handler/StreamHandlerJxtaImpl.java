@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
+import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IStreamHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
@@ -23,11 +24,14 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 	private String queryId;
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
+	private ILogListener log;
+
 	public StreamHandlerJxtaImpl(PipeAdvertisement adv, String queryId,
 			ThinPeerJxtaImpl thinPeerJxtaImpl) {
 		this.adv = adv;
 		this.queryId = queryId;
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
+		this.log = thinPeerJxtaImpl.getLog();
 		logger.debug("Initialisiere StreamHandler auf dem Thin-Peer: "
 				+ this.adv.toString());
 	}
@@ -71,7 +75,7 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 			// Empfangene Daten der Gui hinzufuegen
 			if (!thinPeerJxtaImpl.getGui().isEnabled())
 				thinPeerJxtaImpl.getGui().setEnabled(true);
-			Log.addResult(queryId, o);
+			log.addResult(queryId, o);
 		}
 
 	}

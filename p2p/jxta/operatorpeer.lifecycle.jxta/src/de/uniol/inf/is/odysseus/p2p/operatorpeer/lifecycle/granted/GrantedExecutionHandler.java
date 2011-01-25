@@ -19,8 +19,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 	final private List<GrantedMessageHandler> handlerList;
 	
 	public GrantedExecutionHandler() {
-		super();
-		setProvidedLifecycle(Lifecycle.GRANTED);
+		super(Lifecycle.GRANTED);
 		handlerList = new ArrayList<GrantedMessageHandler>();
 	}
 

@@ -3,22 +3,23 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.granted;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jxta.endpoint.Message;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.endpoint.Message;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
-public class GrantedMessageHandler extends AbstractMessageHandler implements
+public class GrantedMessageHandler extends AbstractJxtaMessageHandler implements
 		Runnable {
 
 	static Logger logger = LoggerFactory.getLogger(GrantedMessageHandler.class);
-	
+
 	private P2PQuery query;
 	private IExecutionListenerCallback callback;
 	private IOdysseusPeer peer;
@@ -35,11 +36,10 @@ public class GrantedMessageHandler extends AbstractMessageHandler implements
 
 	@Override
 	public void handleMessage(Object msg, String namespace) {
-		String subplanId = MessageTool.getMessageElementAsString(namespace,
-				"subplanId", (Message) msg);
+		String subplanId = meas(namespace, "subplanId", (Message) msg);
 		synchronized (confirmed) {
 			this.confirmed.add(subplanId);
-			notifyAll();
+			confirmed.notifyAll();
 		}
 	}
 
@@ -66,7 +66,7 @@ public class GrantedMessageHandler extends AbstractMessageHandler implements
 		// Check if all Subplans are confirmed
 		for (String sub : query.getSubPlans().keySet()) {
 			if (!this.confirmed.contains(sub)) {
-				logger.debug("Subplan "+sub+" not confirmed. Query failed");
+				logger.debug("Subplan " + sub + " not confirmed. Query failed");
 				getCallback().changeState(Lifecycle.FAILED);
 				return;
 			}

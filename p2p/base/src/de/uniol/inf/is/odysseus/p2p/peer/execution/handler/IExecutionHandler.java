@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCa
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
 public interface IExecutionHandler<F> extends Runnable, IClone {
-	public void setProvidedLifecycle(Lifecycle lifecycle);
 	public Lifecycle getProvidedLifecycle();
 	public void setExecutionListenerCallback(IExecutionListenerCallback executionListenerCallback);
 	public IExecutionListenerCallback getExecutionListenerCallback();
