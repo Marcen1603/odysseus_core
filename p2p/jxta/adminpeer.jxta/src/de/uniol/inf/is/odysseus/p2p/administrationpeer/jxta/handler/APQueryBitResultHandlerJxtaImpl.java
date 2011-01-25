@@ -35,7 +35,7 @@ public class APQueryBitResultHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 		// AdminPeer hat Zuspruch fuer eine Anfrage bekommen.
 		if (queryResult.equals("granted")) {
 			logAction(queryId,
-					"Zusage fuer die Verwaltung der Anfrage bekommen.");
+					"Accepted query administration bid. Handle query");
 			P2PQuery q = administrationPeerJxtaImpl.getQuery(queryId);
 			if (q != null) {
 				q.setStatus(Lifecycle.NEW);
@@ -44,12 +44,12 @@ public class APQueryBitResultHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 				l.startListener();
 			} else {
 				logAction(queryId,
-						"Gebot fuer nicht bekannte Anfrage bekommen");
+						"Got bid for unkown query");
 			}
 
 		} else if (queryResult.equals("denied")) {
 			logAction(queryId,
-					"Zusage fuer die Verwaltung der Anfrage NICHT bekommen. Verwerfe Anfrage");
+					"Denied query administration bid. Remove query");
 			administrationPeerJxtaImpl.removeQuery(queryId);
 		}
 

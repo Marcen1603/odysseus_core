@@ -66,12 +66,11 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 				if (qESp instanceof QueryExecutionSpezification) {
 					QueryExecutionSpezification spec = (QueryExecutionSpezification) qESp;
 					boolean createHandler = true;
-					logger.debug("QueryExecutionSpezifikation Anfrage: "+spec.getQueryId()+" Subplan:" +spec.getSubplanId());
+					//logger.debug("QueryExecutionSpezification QueryId: "+spec.getQueryId()+" Subplan:" +spec.getSubplanId());
 					
 					for(QueryExecutionSpezification s : getSpecifications()) {
 						if(s.getSubplanId().equals(spec.getSubplanId()))
-						{
-							
+						{	
 							createHandler = false;
 							break;
 						}
@@ -79,7 +78,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 					if(createHandler) {
 						try {
 							getSpecifications().add(spec);
-							logger.debug("Erzeuge SpecificationHandler zu: "+spec.getQueryId());
+							logger.debug("Create SpecificationHandler for: "+spec.getQueryId());
 							getQuerySpecificationHandler((S) spec);
 						} catch (Exception e) {
 							e.printStackTrace();

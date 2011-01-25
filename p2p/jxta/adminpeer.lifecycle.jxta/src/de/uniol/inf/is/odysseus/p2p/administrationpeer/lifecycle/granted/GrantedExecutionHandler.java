@@ -45,7 +45,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 			if(s.getBiddings().get(0) instanceof BidJxtaImpl) {
 				messageElements.put("subplanId", s.getId());
 				getFunction().sendMessage(PeerGroupTool.getPeerGroup(), MessageTool
-						.createSimpleMessage("Granted"+cb.getQuery().getId()+"_"+ s.getId(), messageElements), ((BidJxtaImpl)s.getBiddings().get(0)).getResponseSocket());
+						.createSimpleMessage("Granted"+ s.getId(), messageElements), ((BidJxtaImpl)s.getBiddings().get(0)).getResponseSocket());
 			}
 			
 		}

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler;
 
 import net.jxta.endpoint.Message;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.IQueryProvider;

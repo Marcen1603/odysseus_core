@@ -16,10 +16,11 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+
 import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class MainWindow extends AbstractMainWindow implements ActionListener {
 	//Thin-Peer spezifisch
@@ -80,7 +81,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 			this.thinPeer.stopPeer();
 		} 
 		else if ("translateButton".equals(e.getActionCommand())) {
-			thinPeer.publishQuerySpezification(query.getText(), "CQL");
+			thinPeer.publishQuerySpezification(query.getText(), "CQL", GlobalState.getActiveUser());
 			
 		}
 
@@ -214,7 +215,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 						{
 							doQuery = new JButton();
 							jPanel1.add(doQuery);
-							doQuery.setText("Anfrage ausführen");
+							doQuery.setText("Run Query");
 							doQuery.setActionCommand("translateButton");
 							doQuery.addActionListener(this);
 							doQuery.setBounds(12, 339, 287, 29);
@@ -262,14 +263,6 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 					header.setText(titleText);
 					header.setBounds(12, 12, 379, 40);
 					header.setFont(new java.awt.Font("AlArabiya", 1, 12));
-				}
-				{
-					close = new JButton();
-					queryPanel.add(close);
-					close.addActionListener(this);
-					close.setActionCommand("stopPeer");
-					close.setText("Schließen");
-					close.setBounds(801, 482, 162, 29);
 				}
 			}
 			pack();

@@ -48,19 +48,12 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	static Logger getLogger() {
 		return logger;
 	}
-
 	JxtaConfiguration configuration;
-
 	public DiscoveryService discoveryService;
-
 	public NetworkManager manager = null;
-
 	public PeerGroup netPeerGroup;
-
 	public NetworkConfigurator networkConfigurator;
-
 	public PipeService pipeService;
-
 	private PipeAdvertisement serverResponseAddress;
 
 	public void activate() {

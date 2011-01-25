@@ -10,6 +10,7 @@ import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.event.IEvent;
+import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IP2PPOEventListener;
@@ -83,7 +84,7 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
 		messageElements.put("queryId", queryId);
 		messageElements.put("event", poEvent.getEventType().toString());
-		Message msg = MessageTool.createSimpleMessage("Event", messageElements);
+		Message msg = MessageTool.createOdysseusMessage(OdysseusMessageType.Event, messageElements);
 
 		try {
 			oout.writeObject(msg);

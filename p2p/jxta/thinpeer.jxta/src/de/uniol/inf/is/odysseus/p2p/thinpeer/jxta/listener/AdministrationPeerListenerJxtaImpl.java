@@ -12,13 +12,16 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListene
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 
+/**
+ * Class to find admin peers in network
+ * @author  Mart Koehler, Marco Grawunder
+ *
+ */
 public class AdministrationPeerListenerJxtaImpl implements
 		IAdministrationPeerListener, DiscoveryListener {
 
-	// Wie oft soll nach AdminPeers gesucht werden
 	private int WAIT_TIME = 10000;
-
-	// Wieviel Advertisements pro Peer
+	// Advertisments per Peer
 	private int ADVS_PER_PEER = 6;
 
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;

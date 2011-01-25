@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 
@@ -132,7 +133,7 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 
 	protected abstract void stopNetwork();
 
-	public abstract void publishQuerySpezification(String query, String language);
+	public abstract void publishQuerySpezification(String query, String language, User user);
 
 	public abstract void sendQuerySpezificationToAdminPeer(String query,
 			String language, String adminPeer, String adminPeerName);

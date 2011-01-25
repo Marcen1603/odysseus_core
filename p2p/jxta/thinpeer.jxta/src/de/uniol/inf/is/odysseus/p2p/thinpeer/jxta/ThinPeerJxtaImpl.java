@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryPublisherHandlerJ
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.AdministrationPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.StandardIdGenerator;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -46,14 +47,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	private PeerGroup netPeerGroup;
 
 	private HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
-
-	// private static ThinPeerJxtaImpl instance = null;
-	//
-	// public static ThinPeerJxtaImpl getInstance() {
-	// if (instance == null)
-	// instance = new ThinPeerJxtaImpl();
-	// return instance;
-	// }
 
 	@Override
 	public HashMap<String, Object> getAdminPeers() {
@@ -226,9 +219,9 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	}
 
 	@Override
-	public void publishQuerySpezification(String query, String language) {
+	public void publishQuerySpezification(String query, String language, User user) {
 		queryPublisher.publishQuerySpezification(idGenerator.generateId(),
-				query, language);
+				query, language, user);
 	}
 
 	public HashMap<String, SourceAdvertisement> getSources() {

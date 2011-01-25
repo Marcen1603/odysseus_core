@@ -1,64 +1,68 @@
 package de.uniol.inf.is.odysseus.p2p.execution.standardlistener;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.AbstractExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; 
+import org.slf4j.LoggerFactory;
 
-public class ExecutionListener extends AbstractExecutionListener{
-	
+final public class ExecutionListener extends AbstractExecutionListener {
+
 	static Logger logger = LoggerFactory.getLogger(ExecutionListener.class);
+
+	ExecutorService execService = Executors.newFixedThreadPool(1);
+	Future<?> f = null;
 
 	public ExecutionListener(P2PQuery query) {
 		super(query);
 		setCallback(new ExecutionListenerCallback());
 	}
-	
-//	@Override
-//	protected void execute(Lifecycle lifecycle) {
-//		if(getHandler().containsKey(lifecycle)) {
-//			execute(getHandler().get(lifecycle));
-//		}
-//	}
-	
+
 	@Override
-	protected void execute(IExecutionHandler<?> executionHandler){
-		if(getActualExecutionThread()!=null) {
-			getActualExecutionThread().interrupt();
+	protected synchronized void execute(IExecutionHandler<?> executionHandler) {
+		logger.debug("Executing " + executionHandler);
+		boolean useExecThreads = false;
+		if (useExecThreads) {
+			if (f != null && !f.isDone()) {
+				f.cancel(true);
+			}
+			f = execService.submit(executionHandler);
+		} else {
+			executionHandler.run();
 		}
-		// Jetzt muss man hier eigentlich warten bis der alte fertig ist ...
-		// Warum wird der �berhaupt interrupted??
-		setActualExecutionThread(new Thread(executionHandler));
-		getActualExecutionThread().start();
-	
 	}
 
 	@Override
 	public void run() {
-		
-		while(getQuery().getStatus()!=Lifecycle.TERMINATED) {
+
+		while (getQuery().getStatus() != Lifecycle.TERMINATED) {
 			Lifecycle currentQueryState = getQuery().getStatus();
-			IExecutionHandler<?> nextHandler = getHandler().get(currentQueryState);
-			logger.debug("aktueller Zustand: "+currentQueryState);
-			if(nextHandler != null) {
-				logger.debug("Executing "+nextHandler);
+			IExecutionHandler<?> nextHandler = getHandler().get(
+					currentQueryState);
+			logger.debug("Current lifecycle: " + currentQueryState);
+			if (nextHandler != null) {
 				execute(nextHandler);
 			}
-			//Sonst hängen wir ewig in einer Schleife fest, falls es keinen passenden ExecutionHandler gibt.
+			// Sonst hängen wir ewig in einer Schleife fest, falls es keinen
+			// passenden ExecutionHandler gibt.
 			else {
-				logger.warn("no Handler for Lifecycle "+currentQueryState+" found!");
+				logger.warn("no Handler for Lifecycle " + currentQueryState
+						+ " found!");
 				getCallback().changeState(Lifecycle.FAILED);
 				return;
-//				continue;
-				
+
 			}
 			synchronized (this) {
-				if(currentQueryState == getQuery().getStatus()) {
+				while (currentQueryState == getQuery().getStatus()) {
 					try {
-						this.wait();
+						this.wait(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

@@ -16,11 +16,11 @@ import org.apache.commons.codec.binary.Base64OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.BiddingMessageResultHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.EventMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelector;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
@@ -112,7 +112,7 @@ public class BiddingProvider extends
 		messageElements.put("pipeAdvertisement",
 				MessageTool.createPipeAdvertisementFromXml(pipeAdv));
 		messageElements.put("peerAdvertisement", peerAdv);
-		Message message = MessageTool.createSimpleMessage("QueryNegotiation",
+		Message message = MessageTool.createOdysseusMessage(OdysseusMessageType.QueryNegotiation,
 				messageElements);
 
 		((JxtaMessageSender) (getPeer().getMessageSender())).sendMessage(

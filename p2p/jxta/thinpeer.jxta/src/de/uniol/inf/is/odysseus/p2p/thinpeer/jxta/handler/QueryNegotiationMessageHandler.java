@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
+import de.uniol.inf.is.odysseus.p2p.OdysseusQueryAction;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
@@ -15,16 +17,16 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
 	public QueryNegotiationMessageHandler(ThinPeerJxtaImpl thinPeerJxtaImpl) {
-		super(thinPeerJxtaImpl.getLog(),"QueryNegotiation");
+		super(thinPeerJxtaImpl.getLog(),OdysseusMessageType.QueryNegotiation.name());
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
 	}
 
 	@Override
 	public void handleMessage(Object msg, String namespace) {
 		String action = MessageTool.getMessageElementAsString(namespace,
-				"queryAction", (Message) msg);
+				 "queryAction", (Message) msg);
 
-		if (action.equals("Bidding")) {
+		if (action.equals(OdysseusQueryAction.bidding)) {
 			String queryId = meas(namespace, "queryId", (Message) msg);
 			PipeAdvertisement pipeAdv = MessageTool.getResponsePipe(namespace,
 					(Message) msg, 0);
@@ -36,7 +38,7 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 			}
 
 		}
-		if (action.equals("ResultStreaming")) {
+		if (action.equals(OdysseusQueryAction.resultStreaming)) {
 			StreamHandlerJxtaImpl shandler = new StreamHandlerJxtaImpl(
 					MessageTool.getResponsePipe(namespace, (Message) msg, 0),
 					MessageTool.getMessageElementAsString(namespace, "queryId",
@@ -44,21 +46,21 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 			Thread t = new Thread(shandler);
 			t.start();
 		}
-		if (action.equals("UnknownSource")) {
+		if (action.equals(OdysseusQueryAction.unknownSource)) {
 			String queryId = MessageTool.getMessageElementAsString(
 					"UnknownSource", "query", (Message) msg);
 			thinPeerJxtaImpl.removeQuery(queryId);
 			thinPeerJxtaImpl.getGui().removeTab(queryId);
-			new ErrorPopup("Fehler bei der Uebersetzung der Anfrage.");
+			new ErrorPopup("Error in query translation.");
 		}
 
-		if (action.equals("QueryFailed")) {
+		if (action.equals(OdysseusQueryAction.queryFailed)) {
 			String queryId = MessageTool.getMessageElementAsString(
 					"QueryFailed", "queryId", (Message) msg);
 			thinPeerJxtaImpl.removeQuery(queryId);
 			thinPeerJxtaImpl.getGui().removeTab(queryId);
 			new ErrorPopup(
-					"<html>Anfrage konnte nicht verteilt werden.<br />Zu wenig Angebote.</html>");
+					"<html>Error in query distribution<br />Not enough bids.</html>");
 		}
 	}
 }

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
+import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
- * Gefundene Anfragen werden hier behandelt
+ * Handle queries
  * 
  * @author Mart Koehler, Marco Grawunder
  * 
@@ -136,8 +137,8 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		messageElements.put("subplanId", querySpecification.getSubplanId());
 		messageElements.put("pipeAdvertisement", pipe);
 		((JxtaMessageSender) (peer.getMessageSender())).sendMessage(
-				PeerGroupTool.getPeerGroup(), MessageTool.createSimpleMessage(
-						"BiddingProvider", messageElements), pipeAdv);
+				PeerGroupTool.getPeerGroup(), MessageTool.createOdysseusMessage(
+						OdysseusMessageType.BiddingProvider, messageElements), pipeAdv);
 	}
 
 	@Override

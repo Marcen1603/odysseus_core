@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
@@ -18,20 +20,19 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.BiddingHandlerStrategyStandard;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IBiddingHandlerStrategy;
 
-/**
- * TODO am besten in ein eigenes Plugin auslagern
- *
+/** 
  * Der QueryBiddingHandler schickt in regelmaessigen Abstaenden, Antworten auf
  * Bewerbungen von Verwaltungs-Peers heraus. Die Verwaltungs-Peers werden
  * daruber informiert, ob sie eine Anfrage zugeteilt bekommen oder nicht.
  * 
- * @author christian
+ * @author Christian Zillmann, Marco Grawunder
  * 
  */
 public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 
-	static Logger logger = LoggerFactory.getLogger(BiddingHandlerJxtaImpl.class);
-	
+	static Logger logger = LoggerFactory
+			.getLogger(BiddingHandlerJxtaImpl.class);
+
 	// Wie oft werden Antworten auf Bewerbungen herausgeschickt
 	private int WAIT_TIME = 10000;
 	private P2PQuery query;
@@ -39,7 +40,8 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 
 	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
-	public BiddingHandlerJxtaImpl(P2PQuery query, JxtaMessageSender sender, ThinPeerJxtaImpl thinPeerJxtaImpl) {
+	public BiddingHandlerJxtaImpl(P2PQuery query, JxtaMessageSender sender,
+			ThinPeerJxtaImpl thinPeerJxtaImpl) {
 		this.query = query;
 		this.sender = sender;
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
@@ -47,75 +49,62 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 
 	@Override
 	public void run() {
-//		while (true) {
-			try {
-				Thread.sleep(WAIT_TIME);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		try {
+			Thread.sleep(WAIT_TIME);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		if (getQuery().getStatus() == Lifecycle.NEW) {
+			List<Bid> biddings = new ArrayList<Bid>();
+			P2PQueryJxtaImpl query = ((P2PQueryJxtaImpl) getQuery());
+
+			for (Bid bid : query.getAdminPeerBidding().values()) {
+				biddings.add(bid);
 			}
-//			for (Query q : ThinPeerJxtaImpl.getInstance().getQueries().keySet()) {
-				
-				//TODO Behandlung fehlgeschlagener Verteilung zwischen Thin-Peer und Verwaltungs-Peer
-//				if (((QueryJxtaImpl)q).getAdminPeerBidding().size() == 0
-//						&& q.getStatus() == Lifecycle.OPEN) {
-//					ThinPeerJxtaImpl.getInstance().getQueries().get(s)
-//							.addRetry();
-//					if (ThinPeerJxtaImpl.getInstance().getQueries().get(s)
-//							.getRetries() > 5) {
-//						ThinPeerJxtaImpl.getInstance().getQueries().get(s)
-//								.setStatus(Status.CANCELED);
-//					}
-//					continue;
-//				}
 
-				if (getQuery()
-						.getStatus() == Lifecycle.NEW) {
-					ArrayList<Bid> biddings = new ArrayList<Bid>();
-					P2PQueryJxtaImpl query = ((P2PQueryJxtaImpl)getQuery());
-					
-					for (Bid bid : query.getAdminPeerBidding().values()) {
-						biddings.add(bid);
-					}
+			if (!biddings.isEmpty()) {
+				IBiddingHandlerStrategy strategy = new BiddingHandlerStrategyStandard();
+				Bid bid = (Bid) strategy.handleBiddings(biddings);
 
-					// Zufalls Prinzip auslagern in Strategy
-					if(!biddings.isEmpty()) {
-						IBiddingHandlerStrategy strategy = new BiddingHandlerStrategyStandard();
-						Bid bid = (Bid) strategy.handleBiddings(
-										biddings);
-	
-						HashMap<String, Object> messageElements = new HashMap<String, Object>();
-						messageElements.put("queryId", getQuery().getId());
-						messageElements.put("result", "granted");
-						this.sender.sendMessage(thinPeerJxtaImpl
-								.getNetPeerGroup(), MessageTool
-								.createSimpleMessage("BiddingResult", messageElements), ((BidJxtaImpl) bid)
+				HashMap<String, Object> messageElements = new HashMap<String, Object>();
+				// Send granted message to peer
+				messageElements.put("queryId", getQuery().getId());
+				messageElements.put("result", "granted");
+				getQuery().setStatus(Lifecycle.GRANTED);
+				this.sender.sendMessage(thinPeerJxtaImpl.getNetPeerGroup(),
+						MessageTool.createOdysseusMessage(
+								OdysseusMessageType.BiddingResult,
+								messageElements), ((BidJxtaImpl) bid)
 								.getResponseSocket());
-//						MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
-//								.getNetPeerGroup(), ((BidJxtaImpl) bid)
-//								.getResponseSocket(), MessageTool
-//								.createSimpleMessage("BiddingResult", messageElements));
-						((P2PQueryJxtaImpl) getQuery())
-								.setAdminPeerPipe(((BidJxtaImpl) bid)
-										.getResponseSocket());
-	
-						thinPeerJxtaImpl.getGui().addAdminPeer(
-								getQuery()
-										.getId(),
-								bid.getPeerId());
-	
-						thinPeerJxtaImpl.getGui().addStatus(
-								getQuery()
-										.getId(),
-								getQuery()
-										.getStatus().toString());
-					}
-
+				((P2PQueryJxtaImpl) getQuery())
+						.setAdminPeerPipe(((BidJxtaImpl) bid)
+								.getResponseSocket());
+				thinPeerJxtaImpl.getGui().addAdminPeer(getQuery().getId(),
+						bid.getPeerId());
+				thinPeerJxtaImpl.getGui().addStatus(getQuery().getId(),
+						getQuery().getStatus().toString());
+				// Send deny message to other peers? 
+				List<Bid> denyList = new ArrayList<Bid>(biddings);
+				denyList.remove(bid);
+				for (Bid b:denyList){
+					messageElements.clear();
+					messageElements.put("queryId", getQuery().getId());
+					messageElements.put("result", "denied");
+					this.sender.sendMessage(thinPeerJxtaImpl.getNetPeerGroup(),
+							MessageTool.createOdysseusMessage(
+									OdysseusMessageType.BiddingResult,
+									messageElements), ((BidJxtaImpl) b)
+									.getResponseSocket());					
 				}
-logger.debug("timer abgelaufen");
-			
-//		}
+				
+			}
+
+		}
+		logger.debug("Timer done");
+
 	}
-	
+
 	public P2PQuery getQuery() {
 		return query;
 	}

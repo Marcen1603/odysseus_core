@@ -4,6 +4,7 @@ Bundle-Name: Jxta P2P Implementation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ap.jxta;singleton:=true
 Bundle-Version: 1.0.0
 Import-Package: 
+ de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.administrationpeer,
  de.uniol.inf.is.odysseus.p2p.administrationpeer.handler,
  de.uniol.inf.is.odysseus.p2p.administrationpeer.listener,

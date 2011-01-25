@@ -20,6 +20,7 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
+import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class MessageTool {
@@ -90,63 +91,12 @@ public class MessageTool {
 
 	}
 
-	// Methode auskommentiert da aktuell nicht beötigt
-	// public synchronized static Object getObjectFromMessage(Message msg,
-	// String elem){
-	// MessageElement advElement = msg.getMessageElement(elem);
-	//
-	// Object obj = null;
-	// try {
-	// ByteArrayInputStream bis = new ByteArrayInputStream
-	// (advElement.getBytes(true));
-	// ObjectInputStream ois = new ObjectInputStream (bis);
-	// obj = ois.readObject();
-	// }
-	// catch (IOException ex) {
-	// ex.printStackTrace();
-	// }
-	// catch (ClassNotFoundException ex) {
-	// ex.printStackTrace();
-	// }
-	// return obj;
-	// }
-
-	// Methode auskommentiert da aktuell nicht beötigt
-
-	// public synchronized static Object getObjectFromMessage(Message msg, int
-	// number){
-	//
-	// MessageElement advElement = msg.getMessageElement("ao"+number);
-	//
-	// Object obj = null;
-	// try {
-	// ByteArrayInputStream bis = new ByteArrayInputStream
-	// (advElement.getBytes(true));
-	// ObjectInputStream ois = new ObjectInputStream (bis);
-	// obj = ois.readObject();
-	// }
-	// catch (IOException ex) {
-	// ex.printStackTrace();
-	// }
-	// catch (ClassNotFoundException ex) {
-	// ex.printStackTrace();
-	// }
-	// return obj;
-	// }
-
-	// Auskommentiert da akuell nicht benötigt
-
-	// public static ArrayList<POEventType> getEvents(String events){
-	//
-	// StringTokenizer st = new StringTokenizer(events, ",");
-	// ArrayList<POEventType> list = new ArrayList<POEventType>();
-	// while (st.hasMoreTokens()) {
-	// list.add(POEventType.valueOf(st.nextToken()));
-	// }
-	// return list;
-	//
-	// }
-
+	public static Message createOdysseusMessage(OdysseusMessageType type,
+			Map<String, Object> messageElems) {
+		String namespace = type.name();
+		return createSimpleMessage(namespace, messageElems);
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public static Message createSimpleMessage(String namespace,
 			Map<String, Object> messageElems) {

@@ -26,9 +26,10 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.APQueryBitRe
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.HotPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.OperatorPeerListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.QuerySpezificationListenerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.APQuerySpezificationListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.HotPeerStrategyRandom;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.MaxQueryBiddingStrategyJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
@@ -88,6 +89,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public HashMap<String, ExtendedPeerAdvertisement> operatorPeers = new HashMap<String, ExtendedPeerAdvertisement>();
 
+	private MaxQueryBiddingStrategyJxtaImpl biddingStrategy;
+
 	public void activate() {
 		getLogger().debug("Activate Admin Peer");
 
@@ -137,8 +140,12 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initQuerySpezificationListener() {
-		querySpezificationListener = new QuerySpezificationListenerJxtaImpl(
-				(JxtaMessageSender) getMessageSender(), this, Log.getInstance());
+		// TODO: Make the strategy configurable
+		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(
+				this);
+		querySpezificationListener = new APQuerySpezificationListenerJxtaImpl(
+				(JxtaMessageSender) getMessageSender(), this,
+				biddingStrategy, Log.getInstance());
 
 	}
 
@@ -204,7 +211,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 				throw new RuntimeException("Cannot initialize peer");
 			}
 		}
-		
+
 		setName(configuration.getName());
 
 		System.setProperty("net.jxta.logging.Logging",

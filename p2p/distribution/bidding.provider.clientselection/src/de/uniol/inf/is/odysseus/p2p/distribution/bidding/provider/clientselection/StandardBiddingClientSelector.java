@@ -6,8 +6,8 @@ import java.util.Random;
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.AbstractClientSelector;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
@@ -75,8 +75,8 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 				messageElements.put("queryId", q.getId());
 				messageElements.put("subplanId", subplan.getId());
 				messageElements.put("result", "granted");
-				Message response = MessageTool.createSimpleMessage(
-						"BiddingClient", messageElements);
+				Message response = MessageTool.createOdysseusMessage(
+						OdysseusMessageType.BiddingClient, messageElements);
 				log.addEvent(q.getId(),
 						"Sende Zusage fuer Teilplan " + subplan.getId());
 				// Sende die Zusage
