@@ -26,11 +26,6 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 		super(time, query, callback, log);
 	}
 
-	public StandardBiddingClientSelector(int time, P2PQuery query,
-			ILogListener log) {
-		super(time, query, log);
-	}
-
 	@Override
 	public void run() {
 		try {
@@ -48,8 +43,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 
 	private void handleBidding() {
 		P2PQuery q = getQuery();
-		log.logAction(q.getId(), "Werte Gebote fuer Anfrage aus");
-		// for (Query q : getQueries().keySet()) {
+		log.logAction(q.getId(), "Evaluate query processing bids");
 		// Ist mindestens ein Gebot je Subplan vorhanden
 		if (q.containsAllBidding() && q.getSubPlans().size() > 0
 				&& q.getStatus() != Lifecycle.RUNNING) {
@@ -108,7 +102,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 
 		if (found) {
 			// Zufaellig Selektion
-			Random random = new Random(1);
+			Random random = new Random();
 			while (true) {
 				int b = random.nextInt(biddings.size());
 				Bid bid = biddings.get(b);
