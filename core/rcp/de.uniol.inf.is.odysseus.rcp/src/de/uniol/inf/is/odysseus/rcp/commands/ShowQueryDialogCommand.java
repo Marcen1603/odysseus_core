@@ -55,8 +55,9 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
 
-		final Shell dialogShell = new Shell(parent);
+		final Shell dialogShell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE);
 		dialogShell.setSize(600, 500);
+		dialogShell.setMinimumSize(300, 300);
 		dialogShell.setText("Fast Query");
 
 		GridLayout gridLayout = new GridLayout();
@@ -74,7 +75,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		gd2.horizontalSpan = 3;
 		historyCombo.setLayoutData(gd2);
 
-		queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		queryTextField = new Text(dialogShell, SWT.WRAP | SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		queryTextField.setText(lastQuery);
 		queryTextField.addModifyListener(new ModifyListener() {
 			@Override
