@@ -142,5 +142,12 @@
          </command>
       </menuContribution>
    </extension>
-
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List"
+            label="List">
+      </editor>
+   </extension>
 </plugin>
