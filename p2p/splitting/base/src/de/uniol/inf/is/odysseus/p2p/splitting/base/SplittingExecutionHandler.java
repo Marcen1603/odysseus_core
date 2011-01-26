@@ -9,15 +9,15 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
-public abstract class AbstractSplittingExecutionHandler<F extends AbstractSplittingStrategy>
+public class SplittingExecutionHandler<F extends AbstractSplittingStrategy>
 		extends AbstractExecutionHandler<F> implements IExecutionHandler<F> {
 
-	public AbstractSplittingExecutionHandler() {
+	public SplittingExecutionHandler() {
 		super(Lifecycle.SPLIT);
 	}
 
-	public AbstractSplittingExecutionHandler(
-			AbstractSplittingExecutionHandler<F> other) {
+	public SplittingExecutionHandler(
+			SplittingExecutionHandler<F> other) {
 		super(other);
 	}
 
@@ -48,4 +48,8 @@ public abstract class AbstractSplittingExecutionHandler<F extends AbstractSplitt
 		}
 	}
 
+	@Override
+	public IExecutionHandler<F> clone() {
+		return new SplittingExecutionHandler<F>(this);
+	}
 }

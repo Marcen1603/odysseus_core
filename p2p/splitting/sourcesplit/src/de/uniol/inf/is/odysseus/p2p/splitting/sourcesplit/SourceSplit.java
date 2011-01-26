@@ -16,8 +16,8 @@ import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSourceAO;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
+import de.uniol.inf.is.odysseus.p2p.splitting.base.SplittingExecutionHandler;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class SourceSplit extends AbstractSplittingStrategy {
@@ -26,7 +26,7 @@ public class SourceSplit extends AbstractSplittingStrategy {
 	
 	@Override
 	public void initializeService() {
-		IExecutionHandler<AbstractSplittingStrategy> handler = new SourceSplitExecutionHandler<AbstractSplittingStrategy>();
+		IExecutionHandler<SourceSplit> handler = new SplittingExecutionHandler<SourceSplit>();
 		handler.setPeer(getPeer());
 		handler.setFunction(this);
 		getPeer().bindExecutionHandler(handler);

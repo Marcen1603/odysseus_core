@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
+import de.uniol.inf.is.odysseus.p2p.splitting.base.SplittingExecutionHandler;
 
 public class NoSplitting extends
 		AbstractSplittingStrategy {
@@ -29,7 +29,7 @@ public class NoSplitting extends
 
 	@Override
 	public void initializeService() {
-		IExecutionHandler<AbstractSplittingStrategy> handler = new NoSplittingExecutionHandler();
+		IExecutionHandler<NoSplitting> handler = new SplittingExecutionHandler<NoSplitting>();
 		handler.setPeer(getPeer());
 		handler.setFunction(this);
 		getPeer().bindExecutionHandler(handler);
