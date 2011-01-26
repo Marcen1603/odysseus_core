@@ -26,17 +26,25 @@ public abstract class AbstractSplittingExecutionHandler<F extends AbstractSplitt
 		if (getExecutionListenerCallback() != null && getPeer() != null) {
 			P2PQuery query = getExecutionListenerCallback().getQuery();
 			getFunction().setCallback(getExecutionListenerCallback());
-			ArrayList<ILogicalOperator> plan = getFunction().splitPlan(query					
-							.getLogicalOperatorplan());
-			if (plan == null || plan.size() == 0) {
-				getExecutionListenerCallback().changeState(Lifecycle.FAILED);
-			} else {
-				for (int i = 0; i < plan.size(); i++) {
-					getExecutionListenerCallback().getQuery().addSubPlan(
-							new Subplan(query.getId() + (i + 1), plan.get(i)), i==0);
+			int subplanID = 0;
+			for (ILogicalOperator fullPlan : query.getLogicalOperatorplan()) {
+				ArrayList<ILogicalOperator> plan = getFunction().splitPlan(
+						fullPlan);
+				if (plan == null || plan.size() == 0) {
+					getExecutionListenerCallback()
+							.changeState(Lifecycle.FAILED);
+					return;
+				} else {
+					for (int i = 0; i < plan.size(); i++) {
+						getExecutionListenerCallback().getQuery().addSubPlan(
+								new Subplan(query.getId() + "_"+(subplanID++),
+										plan.get(i)), i == 0);
+					}
 				}
-				getExecutionListenerCallback().changeState(Lifecycle.SUCCESS);
 			}
+			getExecutionListenerCallback().changeState(
+					Lifecycle.SUCCESS);
+
 		}
 	}
 

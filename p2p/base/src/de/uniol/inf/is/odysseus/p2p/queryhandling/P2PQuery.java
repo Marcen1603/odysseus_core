@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.queryhandling;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -16,7 +17,7 @@ public abstract class P2PQuery implements Serializable{
 	private String id;
 	private String declarativeQuery;
 	private String language;
-	private ILogicalOperator logicalOperatorPlan;
+	private List<ILogicalOperator> logicalOperatorPlan;
 	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
 	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
 	private User user;
@@ -121,14 +122,12 @@ public abstract class P2PQuery implements Serializable{
 	}
 
 	
-	public ILogicalOperator getLogicalOperatorplan() {
+	public List<ILogicalOperator> getLogicalOperatorplan() {
 		return this.logicalOperatorPlan;
 	}
 	
-	public void setLogicalOperatorplan (ILogicalOperator plan) {
-		if(this.declarativeQuery!=null) {
-			this.logicalOperatorPlan = plan;
-		}
+	public void addLogicalOperatorplan (ILogicalOperator plan) {
+		this.logicalOperatorPlan.add(plan);
 	}
 
 	public IDataDictionary getDataDictionary() {

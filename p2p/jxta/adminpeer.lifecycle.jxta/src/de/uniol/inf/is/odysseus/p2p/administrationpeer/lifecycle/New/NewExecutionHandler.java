@@ -14,8 +14,7 @@ import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
-public class NewExecutionHandler extends
-		AbstractExecutionHandler<ICompiler> {
+public class NewExecutionHandler extends AbstractExecutionHandler<ICompiler> {
 
 	public NewExecutionHandler() {
 		super(Lifecycle.NEW);
@@ -46,7 +45,7 @@ public class NewExecutionHandler extends
 				e3.printStackTrace();
 				log.logAction(
 						getExecutionListenerCallback().getQuery().getId(),
-						"Fehler bei der Uebersetzung der Anfrage");
+						"Error Compiling Query: " + e3.getMessage());
 				getExecutionListenerCallback().changeState(Lifecycle.FAILED);
 				// sendSourceFailure(getExecutionListenerCallback().getQuery().getId());
 				return;
@@ -58,11 +57,12 @@ public class NewExecutionHandler extends
 			}
 			try {
 				// Restruct Query
-				// TODO: Only first query will be restructed! There may be more queries
-				ILogicalOperator restructPlan = getFunction().rewritePlan(
-						plan.get(0).getLogicalPlan(), null);
-				getExecutionListenerCallback().getQuery()
-						.setLogicalOperatorplan(restructPlan);
+				for (IQuery q : plan) {
+					ILogicalOperator restructPlan = getFunction().rewritePlan(
+							q.getLogicalPlan(), null);
+					getExecutionListenerCallback().getQuery()
+							.addLogicalOperatorplan(restructPlan);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				getExecutionListenerCallback().changeState(Lifecycle.FAILED);
