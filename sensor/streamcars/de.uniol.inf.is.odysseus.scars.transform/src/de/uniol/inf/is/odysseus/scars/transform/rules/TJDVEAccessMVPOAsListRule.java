@@ -61,6 +61,16 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 				accessPO = new TestdataProviderPO<IProbability>(TestdataProviderPO.EXTENDED_PROVIDER, options, calcModelParams);
 				((TestdataProviderPO)accessPO).setSourceName(accessPOName);
 				System.out.println("TestdataProviderPO created");
+			} else if (operator.getPort() == 5012) {
+				Map<String, String> options = new HashMap<String, String>();
+				options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_LASER);
+				options.put(ExtendedProvider.CALCMODEL, ExtendedProvider.CALCMODEL_SCARS_OVERTAKE);
+				options.put(ExtendedProvider.VISIBILITY, ExtendedProvider.VISIBILITY_SCARS_FRONT);
+				Map<String, Object> calcModelParams = new HashMap<String, Object>();
+				calcModelParams.put(DefaultOvertakeCalcModel.LANE_SHIFT_FACTOR, new Float(1.5));
+				accessPO = new TestdataProviderPO<IProbability>(TestdataProviderPO.EXTENDED_PROVIDER, options, calcModelParams);
+				((TestdataProviderPO)accessPO).setSourceName(accessPOName);
+				System.out.println("TestdataProviderPO created");
 			}
 		} else {
 			accessPO = new JDVEAccessMVPO(operator.getPort());
