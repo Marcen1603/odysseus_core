@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler;
 
-import sun.security.action.GetLongAction;
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;

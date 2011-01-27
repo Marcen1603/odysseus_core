@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.p2p.jxta.peer.communication;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Collection;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
-import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 
@@ -63,7 +61,6 @@ public class SocketServerListener implements ISocketServerListener {
 					logger.debug("No ServerPipeAdvertisement set ... waiting");
 					wait(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -85,7 +82,6 @@ public class SocketServerListener implements ISocketServerListener {
 					new Thread() {
 						public void run() {
 							try {
-								OutputStream out = socket.getOutputStream();
 								InputStream in = socket.getInputStream();
 								ObjectInputStream oin = new ObjectInputStream(
 										in);
@@ -114,14 +110,12 @@ public class SocketServerListener implements ISocketServerListener {
 								}
 
 								oin.close();
-								out.close();
 								in.close();
 								try {
-									socket.close();	
+									socket.close();
 								} catch (SocketTimeoutException e) {
 									// ignore
-								}	
-								
+								}
 
 							} catch (IOException e1) {
 								e1.printStackTrace();

@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
@@ -19,9 +20,9 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
 public class P2PSinkPO<T> extends AbstractSink<T> {
-	
+
 	static private Logger logger = LoggerFactory.getLogger(P2PSinkPO.class);
-	
+
 	private String queryId;
 	private PipeAdvertisement adv;
 	public ArrayList<StreamHandler> subscribe = new ArrayList<StreamHandler>();
@@ -43,7 +44,8 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 				try {
 					logger.debug("Waiting for Server to connect");
 					socket = server.accept();
-					logger.debug("Connection from "+socket.getRemoteSocketAddress());
+					logger.debug("Connection from "
+							+ socket.getRemoteSocketAddress());
 					if (socket != null) {
 						logger.debug("Adding Handler");
 						StreamHandler temp = new StreamHandler(socket);
@@ -61,10 +63,11 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		}
 	}
 
-	class StreamHandler extends Thread{
+	class StreamHandler extends Thread {
 		OutputStream outS;
 		ObjectOutputStream dout;
 		Socket socket;
+		List<Object> linkedList = new LinkedList<Object>();
 
 		public StreamHandler(Socket socket) {
 			this.socket = socket;
@@ -74,7 +77,7 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			while(getSubscribedToSource().get(0)==null){
+			while (getSubscribedToSource().get(0) == null) {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -83,19 +86,15 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 			}
 		}
 
-		public void transfer(Object o) {
-			try {
-				// TEST
-				dout.writeObject(o);
-				dout.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
+		public synchronized void transfer(Object o) {
+			synchronized (linkedList) {
+				linkedList.add(o);
 			}
+			notifyAll();
 		}
-		
+
 		public void done() {
 			try {
-				//Signalisieren, dass dieser Peer fertig ist.
 				dout.writeObject(Integer.valueOf(0));
 				dout.flush();
 			} catch (IOException e) {
@@ -110,49 +109,59 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		
+
 		@Override
 		public void run() {
-			while (!interrupted()){
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			while (!interrupted()) {
+				synchronized (this) {
+					try {
+						wait(1000);
+						synchronized (linkedList) {
+							for (Object o : linkedList) {
+								try {
+									dout.writeObject(o);
+									dout.flush();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+							linkedList.clear();
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
-		
-	}
 
+	}
 
 	public P2PSinkPO(String adv, PeerGroup peerGroup) {
 		super();
 		this.peerGroup = peerGroup;
 		this.adv = MessageTool.createPipeAdvertisementFromXml(adv);
 	}
-	
-	public void startListener(){
-		ConnectionListener listener = new ConnectionListener();
-		listener.start();		
-	}
 
+	public void startListener() {
+		ConnectionListener listener = new ConnectionListener();
+		listener.start();
+	}
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
-		//logger.debug("Sending object "+object);
 		synchronized (subscribe) {
 			for (StreamHandler sh : subscribe) {
-				//logger.debug("to "+sh.socket.getRemoteSocketAddress());
 				sh.transfer(object);
 			}
+			if (subscribe.size() == 0) {
+				logger.warn("No recever for object");
+			}
 		}
+
 	}
 
-
-	
 	protected void process_done() {
 		synchronized (subscribe) {
 			for (StreamHandler sh : subscribe) {
@@ -161,7 +170,6 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		}
 	}
 
-	
 	public String getQueryId() {
 		return queryId;
 	}
@@ -169,15 +177,14 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 	public void setQueryId(String queryId) {
 		this.queryId = queryId;
 	}
-	
+
 	public void setAdv(PipeAdvertisement adv) {
 		this.adv = adv;
 	}
-	
+
 	public PipeAdvertisement getAdv() {
 		return adv;
 	}
-	
 
 	public PeerGroup getPeerGroup() {
 		return peerGroup;
@@ -188,17 +195,13 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 	}
 
 	@Override
-	public P2PSinkPO<T> clone()  {
+	public P2PSinkPO<T> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
-
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		throw new RuntimeException("process punctuation not implemented");
 	}
-
-
-
 
 }

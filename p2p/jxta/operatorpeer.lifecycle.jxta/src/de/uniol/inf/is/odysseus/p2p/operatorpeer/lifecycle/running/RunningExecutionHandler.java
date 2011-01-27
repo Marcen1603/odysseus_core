@@ -49,7 +49,8 @@ public class RunningExecutionHandler extends
 			for (Subplan s : getExecutionListenerCallback().getQuery()
 					.getSubPlans().values()) {
 				if (s.getStatus() == Lifecycle.GRANTED) {
-					logger.debug("Fuege hinzu: "
+					log.logAction(s.getId(), "Running Plan");
+					logger.debug("Adding plan: "
 							+ AbstractTreeWalker.prefixWalk(s.getAo(),
 									new AlgebraPlanToStringVisitor()));
 					User user = GlobalState.getActiveUser();
