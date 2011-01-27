@@ -126,14 +126,9 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		if(source == null)
 			source = buildSource();
 		if(sourceIsOk(source)){
-			//System.out.println("source is ok!"+source.toString());
 			fire(new InputDialogEvent(this, InputDialogEventType.NewSourceItem, source));
-			//System.out.println("fired new source event!");
 			dialog.close();
 			fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
-		}
-		else{
-			System.out.println("source is not ok!");
 		}
 	}
 	
@@ -165,6 +160,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	//vorlaeufige Validation
 	public boolean sourceIsOk(ISource tocheck){
+		String errorMsg = "";
 		if(tocheck != null){
 			if(!tocheck.getName().equals("")){
 				if(!tocheck.getStreamIdentifier().equals("")){
@@ -176,22 +172,43 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 							}
 							if(tocheck instanceof WindTurbine){
 								WindTurbine wt = (WindTurbine)tocheck;
-								if((wt.getHubHeight() > 1)&&(wt.getHubHeight()< 250)){
+								if((wt.getHubHeight() > 1)&&(wt.getHubHeight()<= 250)){
 									if(wt.getCutInWS() > 0){
 										if(wt.getEightyFiveWS() > 0){
 											if(wt.getPowerControl() == 0||wt.getPowerControl() == 1){
 												return true;
 											}
+											else
+												errorMsg = errorMsg+" Power control must be set \n";
 										}
+										else
+										errorMsg = errorMsg+" Value for 85% of P rated must be set\n";
 									}
+									else
+									errorMsg = errorMsg+" Value for cut in speed must be set \n";
 								}
+								else
+								errorMsg = errorMsg+" Hub heigt must be between 2 and 250 m\n ";
 							}
+							else
+							errorMsg = errorMsg+" Source type is missing\n ";
 						}
+						else
+						errorMsg = errorMsg+" Port is empty or not between 1025 and 65535\n";
 					}
+					else
+					errorMsg = errorMsg+" Host name may not be empty\n";
 				}
+				else
+				errorMsg = errorMsg+" Stream identifier may not be empty\n";
 			}
+			else
+			errorMsg = errorMsg+" Name may not be empty\n";
 		}
-		dialog.setErrorMessage("Source is not valid");
+		if(errorMsg.length()>250){
+			errorMsg = "";
+		}
+		dialog.setErrorMessage("Source is not valid: "+ errorMsg);
 		return false;
 	}
 	

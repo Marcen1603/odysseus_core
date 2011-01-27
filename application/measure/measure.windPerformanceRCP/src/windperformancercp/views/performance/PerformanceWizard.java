@@ -2,7 +2,6 @@ package windperformancercp.views.performance;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -47,8 +46,6 @@ public class PerformanceWizard extends Wizard {
 	private ArrayList<String> neededAssignments;
 	private ArrayList<ArrayList<String>> assignmentComboElements; 
 	private ArrayList<String> selectedAssignments;
-	
-	DialogSettings dialogSettings;
 	
 	
 	public PerformanceWizard(){
@@ -121,13 +118,13 @@ public class PerformanceWizard extends Wizard {
 	
 	public void setAssignmentComboElements(ArrayList<ArrayList<String>> aCE){
 		this.assignmentComboElements = aCE;		
-//		aapage.createControl(aapage.getControl().getParent());
-		//aapage.onEnterPage();
 
 	}
 	
 	public void identifierEntered(){
 		this.queryID = toqpage.getidInputValue();
+		if(queryID.equals(""))
+			toqpage.setErrorMessage("Identifier may not be empty");
 		try{getContainer().updateButtons();}
 		catch(Exception e){}
 		//System.out.println("id entered: "+queryID);
@@ -135,6 +132,8 @@ public class PerformanceWizard extends Wizard {
 	
 	public void methodComboClick(){
 		String methText = toqpage.getMethodComboValue();
+		if(methText.equals(""))
+			toqpage.setErrorMessage("Method must be chosen");
 		if(this.method != methText){
 			this.method = methText;
 			
@@ -169,7 +168,6 @@ public class PerformanceWizard extends Wizard {
 		try{getContainer().updateButtons();}
 		catch(Exception e){}
 		selectedAssignments.set(ind, attcombi);
-		//System.out.println(attcombi);
 	}
 	
 	@Override
@@ -346,7 +344,6 @@ public class PerformanceWizard extends Wizard {
 	    
 	    @Override
 	    public IWizardPage getNextPage(){
-	    	AssignAttributePage aapage = ((PerformanceWizard)getWizard()).aapage;
 	    	aapage.onEnterPage();
 	    	return aapage;
 	    }
@@ -383,26 +380,26 @@ public class PerformanceWizard extends Wizard {
 	    
 	    public void onEnterPage(){
 	    	//eigentliche seitenbefuellung
+	    	comboList.clear();
 	    	 for(int i = 0; i< neededAssignments.size(); i++){
 	 	        
-		        	Composite attComp = new Composite(container,SWT.NONE);
-		        	attComp.setLayoutData(new RowData());
-		        	attComp.setLayout(new FillLayout());
-		        	
-		        	{
-						Label attLabel = new Label(attComp, SWT.BORDER);
-						attLabel.setText(neededAssignments.get(i));
+		        Composite attComp = new Composite(container,SWT.NONE);
+		        attComp.setLayoutData(new RowData());
+		        attComp.setLayout(new FillLayout());
+		        {
+		        	Label attLabel = new Label(attComp, SWT.BORDER);
+					attLabel.setText(neededAssignments.get(i));
 						
-						Combo attCombo = new Combo(attComp,SWT.READ_ONLY);
-						attCombo.setItems(assignmentComboElements.get(i).toArray(new String[]{}));
-						comboList.add(attCombo);
-						final int j = i;
+					Combo attCombo = new Combo(attComp,SWT.READ_ONLY);
+					attCombo.setItems(assignmentComboElements.get(i).toArray(new String[]{}));
+					comboList.add(attCombo);
+					final int j = i;
 						
-						attCombo.addSelectionListener(new SelectionListener() {
-							public void widgetSelected(SelectionEvent e) { 
-								((PerformanceWizard)getWizard()).assignmentClick(j, comboList.get(j).getText());}
-							public void widgetDefaultSelected(SelectionEvent e) { 
-								((PerformanceWizard)getWizard()).assignmentClick(j, comboList.get(j).getText());}
+					attCombo.addSelectionListener(new SelectionListener() {
+						public void widgetSelected(SelectionEvent e) { 
+							((PerformanceWizard)getWizard()).assignmentClick(j, comboList.get(j).getText());}
+						public void widgetDefaultSelected(SelectionEvent e) { 
+							((PerformanceWizard)getWizard()).assignmentClick(j, comboList.get(j).getText());}
 						});
 		        	}
 		        }
@@ -413,7 +410,8 @@ public class PerformanceWizard extends Wizard {
 	    public boolean isPageComplete(){
 	    	if (getErrorMessage() != null)
 	    		return false;
-	    	
+	    	if(comboList.isEmpty()) 
+	    		return false;
 	    	for(Combo co: comboList){
 	    	   if(co.getSelectionIndex()== -1){
 	    		   return false;
