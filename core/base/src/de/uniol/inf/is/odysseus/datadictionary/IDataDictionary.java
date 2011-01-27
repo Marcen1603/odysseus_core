@@ -36,7 +36,6 @@ public interface IDataDictionary {
 	// no restric
 	public boolean emptySourceTypeMap();
 
-	@SuppressWarnings("unchecked")
 	public void setView(String viewname, ILogicalOperator topOperator,
 			User caller);
 
@@ -54,6 +53,10 @@ public interface IDataDictionary {
 
 	public ILogicalOperator getViewOrStream(String viewname, User caller);
 
+	public Set<Entry<String, ILogicalOperator>> getStreams(User caller);
+	public Set<Entry<String, ILogicalOperator>> getViews(User caller);
+
+	
 	public ILogicalOperator removeViewOrStream(String viewname, User caller);
 
 	// no restric
@@ -81,5 +84,6 @@ public interface IDataDictionary {
 	public void removeListener(IDataDictionaryListener listener);
 
 	boolean isCreatorOfObject(String caller, String objecturi);
+
 
 }

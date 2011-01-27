@@ -239,6 +239,7 @@ public class DataDictionary implements IDataDictionary {
 		return this.viewDefinitions.containsKey(name);
 	}
 
+	@Override
 	public Set<Entry<String, ILogicalOperator>> getViews(User caller) {
 		return getDefinitions(caller, viewDefinitions);
 	}
@@ -296,7 +297,7 @@ public class DataDictionary implements IDataDictionary {
 		return streamDefinitions.containsKey(name);
 	}
 
-	
+	@Override
 	public Set<Entry<String, ILogicalOperator>> getStreams(User caller) {
 		return getDefinitions(caller, streamDefinitions);
 	}
