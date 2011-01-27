@@ -4,29 +4,47 @@ import java.util.ArrayList;
 
 public class Stream {
 	private String name;
-	//private ArrayList<Attribute> attributes;
-	private ArrayList<String> attributes;
+	
+	private ArrayList<String> attributeNames;
 	
 	public Stream(String name, ArrayList<String> attribute){
 		this.name = name;
-		//this.attributes = new ArrayList<Attribute>(attribute);
-		this.attributes = new ArrayList<String>(attribute);
+		this.attributeNames = new ArrayList<String>(attribute);
+	}
+	
+	public Stream(){
+		this.name = "";
+		this.attributeNames = new ArrayList<String>();
 	}
 	
 	public String getName(){
 		return name;
 	}
 	
-	public ArrayList<String> getAttributes(){
+	public void setName(String n){
+		this.name = n;
+	}
+	
+	/*
+	public ArrayList<Attribute> getAttributes(){
 		return attributes;
+	}
+	*/
+	
+	public ArrayList<String> getAttributeNames(){
+		return attributeNames;
+	}
+	
+	public void setAttributeNames(ArrayList<String> names){
+		this.attributeNames = names;
 	}
 	
 	public String getIthAttName(int i){
-		return attributes.get(i);
+		return attributeNames.get(i).toString();
 	}
 	
 	public String toString(){
-		return this.name+" "+this.attributes.toString();
+		return this.name+" "+this.attributeNames.toString();
 	}
 
 }

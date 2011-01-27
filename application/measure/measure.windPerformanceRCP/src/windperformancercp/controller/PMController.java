@@ -36,7 +36,6 @@ public class PMController implements IController {
 		//System.out.println(this.toString()+": pmController says hello!");
 		pmodel = PerformanceModel.getInstance();
 		
-		//gen = new QueryGenerator();
 	}
 	
 	public static void setBrotherControl(SourceController scont){
@@ -62,11 +61,11 @@ public class PMController implements IController {
 	public static IEventListener presenterListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
 			if(event.getEventType().equals(InputDialogEventType.RegisterDialog)){ 
-				System.out.println(this.toString()+": Received new dialog registry event");
+				//System.out.println(this.toString()+": Received new dialog registry event");
 			}
 			
 			if(event.getEventType().equals(InputDialogEventType.DeregisterDialog)){ 
-				System.out.println(this.toString()+": Received new dialog deregistry event");
+				//System.out.println(this.toString()+": Received new dialog deregistry event");
 				
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				IPresenter pres = ideEvent.getPresenter();
@@ -78,22 +77,21 @@ public class PMController implements IController {
 			}
 			
 			if(event.getEventType().equals(InputDialogEventType.NewPerformanceItem)){
-				System.out.println(this.toString()+": Received new performance event");
+				//System.out.println(this.toString()+": Received new performance event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue(); 
-			
-				
 				pmodel.addElement(qry);
-				//System.out.println(pcontrol.callGen(src));
+	
 	//			JAXB.marshal(src, System.out);
 				
 			}
 			if(event.getEventType().equals(InputDialogEventType.DeletePerformanceItem)){
-				System.out.println(this.toString()+": Received delete performance event");
+				//System.out.println(this.toString()+": Received delete performance event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue();
 				
-				int c = pmodel.removeAllOccurences(qry);				
+				//int c = pmodel.removeAllOccurences(qry);				
+				pmodel.removeAllOccurences(qry);
 				//System.out.println(this.toString()+": Received delete source event for "+src.toString()+" from "+event.getSender().toString()+"\n Deleted "+c);
 			}			
 		}
@@ -126,8 +124,7 @@ public class PMController implements IController {
 	
 	@Override
 	public ArrayList<?> getContent() {
-		// TODO Auto-generated method stub
-		return null;
+		return pmodel.getQueryList();
 	}
 	
 	public ArrayList<ISource> getAvailableSources(){
@@ -137,6 +134,7 @@ public class PMController implements IController {
 		else
 			return new ArrayList<ISource>();
 	}
+	
 	
 	public static PMController getInstance(){
 		return instance;

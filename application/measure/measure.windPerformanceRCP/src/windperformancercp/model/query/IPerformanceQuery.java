@@ -3,9 +3,10 @@ package windperformancercp.model.query;
 import java.util.ArrayList;
 
 import windperformancercp.model.query.APerformanceQuery.PMType;
+import windperformancercp.model.sources.IDialogResult;
 import windperformancercp.model.sources.ISource;
 
-public interface IPerformanceQuery {
+public interface IPerformanceQuery extends IDialogResult {
 	
 	public void setIdentifier(String id);
 	public String getIdentifier();
@@ -14,14 +15,22 @@ public interface IPerformanceQuery {
 	public boolean register();
 	public boolean deregister();
 	public void setAssignment(String what, Stream who);
-	public ArrayList<Assignment> getAssignments(PMType what);
+	public ArrayList<Assignment> getAssignments();
+	public void setAssignments(ArrayList<Assignment> assigns);
+	public ArrayList<Assignment> getPossibleAssignments();
 	public Stream getResponsibleStream(String what);
-	public String getMethod();
+	public String getResponsibleAttribute(String what);
+	public PMType getMethod();
 	public void setMethod(APerformanceQuery.PMType type);
-	public ArrayList<ISource> getMember();
+	public ArrayList<ISource> getConcernedSrc();
+	public void setConcernedSrc(ArrayList<ISource> srcList);
+	public ArrayList<Stream> getConcernedStr();
+	public void setConcernedStr(ArrayList<Stream> strList);
 	public void addMember(ISource m);
 	public void addAllMembers(ArrayList<ISource> listm);
 	public void clearMembers();
-	public ArrayList<OperatorResult> generateSourceStreams();
-	public ArrayList<Assignment> getPossibleAssignments();
+	public ArrayList<String> generateSourceStreams();
+	public String generateQuery();
+	public OperatorResult projectStreamToAssignments(Stream str, String outputName);
+	public ArrayList<ISource> extractSourcesFromAssignments();
 }

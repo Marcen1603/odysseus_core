@@ -6,5 +6,6 @@ public interface IController {
 
 	//TODO: hier allgemeine methoden
 	public ArrayList<?> getContent();
+	
 		
 }

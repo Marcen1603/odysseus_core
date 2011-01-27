@@ -26,10 +26,10 @@ public class PQLGenerator implements IQueryGenerator {
 		
 		ArrayList<String> streamAtts = new ArrayList<String>();
 		if(attIndexes.length>0){
-			query = outputName+" = project({ attributes = [";
+			query = outputName+" = project({\n attributes = [";
 			int i;
 			for(i = 0; i< attIndexes.length-1; i++){
-				if(attIndexes[i]<instream.getAttributes().size()){
+				if(attIndexes[i]<instream.getAttributeNames().size()){
 					query = query+"'"+instream.getIthAttName(attIndexes[i])+"',";
 					streamAtts.add(instream.getIthAttName(attIndexes[i]));
 				}
@@ -37,8 +37,8 @@ public class PQLGenerator implements IQueryGenerator {
 					//TODO: Error
 				}
 			}
-			if(attIndexes[i]<instream.getAttributes().size()){
-				query = query+"'"+instream.getIthAttName(attIndexes[i])+"']},";
+			if(attIndexes[i]<instream.getAttributeNames().size()){
+				query = query+"'"+instream.getIthAttName(attIndexes[i])+"']},\n";
 				streamAtts.add(instream.getIthAttName(attIndexes[i]));}
 			else{
 				//TODO: Error
@@ -46,7 +46,7 @@ public class PQLGenerator implements IQueryGenerator {
 			query = query+instream.getName()+")\n";
 		}
 		
-		else query = instream.getName()+" = "+outputName+"\n";
+		else query = outputName+" = "+instream.getName()+"\n";
 		Stream stream = new Stream(outputName, streamAtts);
 		OperatorResult result = new OperatorResult(stream,query);
 		
@@ -56,9 +56,9 @@ public class PQLGenerator implements IQueryGenerator {
 	@Override
 	public OperatorResult generateWindow(Stream instream, Window win, String outputName){
 		String query = "";
-		query = outputName+" = window({" + win.toString()+"}, ";
+		query = outputName+" = window({\n" + win.toString()+"},\n";
 		query = query + instream.getName()+")\n";
-		OperatorResult result = new OperatorResult(new Stream(outputName,instream.getAttributes()),query);
+		OperatorResult result = new OperatorResult(new Stream(outputName,instream.getAttributeNames()),query);
 		
 		return result;
 	}
@@ -66,10 +66,10 @@ public class PQLGenerator implements IQueryGenerator {
 	@Override
 	public OperatorResult generateSelection(Stream instream, String predicate, String outputName) {
 		String query = outputName+" = select({ predicate = ";
-		query = query +  " RelationalPredicate('" +predicate+"')}, ";
+		query = query +  " RelationalPredicate('" +predicate+"')}, \n";
 		// TODO Auto-generated method stub
 		query = query+instream.getName()+")\n";
-		OperatorResult result = new OperatorResult(new Stream(outputName,instream.getAttributes()),query);
+		OperatorResult result = new OperatorResult(new Stream(outputName,instream.getAttributeNames()),query);
 		return result;
 	}
 
@@ -79,24 +79,24 @@ public class PQLGenerator implements IQueryGenerator {
 		String query = "";
 		ArrayList<String> streamAtts = new ArrayList<String>();
 		
-		query = outputName+" = aggregation({ group_by= [";
-		if(groupBy.length>0){
-			query = query+"'"+groupBy[0]+"'";
+		query = outputName+" = aggregation({";
+		if(groupBy != null){
+			query = query+"group_by= ['"+groupBy[0]+"'";
 			streamAtts.add(groupBy[0]);
 			for(int i = 1; i<groupBy.length;i++){
 				query = query+",'"+groupBy[i]+"'";
 				streamAtts.add(groupBy[i]);
 			}
-			query = query+"], aggregations = [";
-			query = query+aggregations[0].toString();
-			streamAtts.add(aggregations[0].getOutputName());
-			for(int i = 1; i<aggregations.length;i++){
-				query = query+","+aggregations[i].toString();
-				streamAtts.add(aggregations[i].getOutputName());
-			}
-			query = query+"]},"+instream.getName()+")\n";
-			
+			query = query+"],\n ";
 		}
+		query = query+"aggregations = [\n";
+		query = query+aggregations[0].toString();
+		streamAtts.add(aggregations[0].getOutputName());
+		for(int i = 1; i<aggregations.length;i++){
+			query = query+", \n"+aggregations[i].toString();
+			streamAtts.add(aggregations[i].getOutputName());
+		}
+		query = query+"]},\n"+instream.getName()+")\n";
 
 		OperatorResult result = new OperatorResult(new Stream(outputName,streamAtts),query);
 		
@@ -117,15 +117,15 @@ public class PQLGenerator implements IQueryGenerator {
 				query= query+",'"+resNames[i]+"'";
 				streamAtts.add(resNames[i]);
 			}
-			query= query+"]}, map({ expressions = [ ";
+			query= query+"]},\n map({ expressions = [ ";
 			
 			query=query+"'"+expressions[0]+"'";
 		
 			for(int i=1; i<expressions.length;i++){
-				query=query+", '"+expressions[i]+"'";
+				query=query+",\n '"+expressions[i]+"'";
 			}
 		
-			query=query+"]},"+instream.getName()+"))\n";
+			query=query+"]},\n"+instream.getName()+"))\n";
 			OperatorResult result = new OperatorResult(new Stream(outputName,streamAtts),query);
 			return result;
 		}
@@ -137,15 +137,15 @@ public class PQLGenerator implements IQueryGenerator {
 	public OperatorResult generateRename(Stream instream, String[] newAttNames,	String outputName) {
 		String query = "";
 		
-		if(newAttNames.length == instream.getAttributes().size()){
-			ArrayList<String> streamAtts = instream.getAttributes();
+		if(newAttNames.length == instream.getAttributeNames().size()){
+			ArrayList<String> streamAtts = instream.getAttributeNames();
 			query = outputName+" = rename({ aliases = ['";
 			int i;
 			for(i=0;i< newAttNames.length-1;i++){
 				query = query+newAttNames[i]+"',";
 				streamAtts.set(i, newAttNames[i]);
 			}
-			query = query+newAttNames[i]+"']},";
+			query = query+newAttNames[i]+"']},\n";
 			streamAtts.set(i, newAttNames[i]);
 			
 			query = query+instream.getName()+")\n";
@@ -161,20 +161,20 @@ public class PQLGenerator implements IQueryGenerator {
 	
 	@Override
 	public OperatorResult generateJoin(ArrayList<Stream> instreams, String predicate, String outputName) {
-		String query = outputName+" = join(";
+		String query = outputName+" = join(\n";
 		if(!predicate.equals("")){
-			query = query+"{predicate=RelationalPredicate('"+predicate+"')},";
+			query = query+"{predicate=RelationalPredicate('"+predicate+"')},\n";
 		}
 		
 		if(instreams.size()>1){
 			ArrayList<String> streamAtts = new ArrayList<String>();
 		
 			query=query+instreams.get(0).getName();
-			streamAtts.addAll(instreams.get(0).getAttributes());
+			streamAtts.addAll(instreams.get(0).getAttributeNames());
 		
 			for(int i=1;i<instreams.size();i++){
-				query=query+","+instreams.get(i).getName();
-				streamAtts.addAll(instreams.get(i).getAttributes());
+				query=query+",\n"+instreams.get(i).getName();
+				streamAtts.addAll(instreams.get(i).getAttributeNames());
 			}
 			query = query+")\n";
 		

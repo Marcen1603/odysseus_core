@@ -1,5 +1,7 @@
 package windperformancercp.views.performance;
 
+import org.eclipse.ui.IActionBars;
+
 import windperformancercp.controller.IController;
 import windperformancercp.controller.PMController;
 import windperformancercp.event.EventHandler;
@@ -10,6 +12,7 @@ import windperformancercp.event.InputDialogEventType;
 import windperformancercp.event.SourceModelEventType;
 import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
+import windperformancercp.model.query.PerformanceModel;
 import windperformancercp.model.sources.IDialogResult;
 import windperformancercp.model.sources.SourceModel;
 import windperformancercp.views.IPresenter;
@@ -20,13 +23,16 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 	IController _cont;
 	//TODO
 	SourceModel smodel;
+	PerformanceModel pmodel;
 	
 	public AssignPerformanceMeasPresenter(AssignPerformanceMeasView view){	
+		//System.out.println(this.toString()+": manage source presenter says hi!");
 		this.view = view;
 		_cont = PMController.getInstance(this);
-		//model = SourceModel.getInstance();
-		//System.out.println(this.toString()+": manage source presenter says hi!");
-		//model.subscribeToAll(modelListener);
+		//smodel = SourceModel.getInstance();
+		//smodel.subscribeToAll(modelListener);
+		pmodel = PerformanceModel.getInstance();
+		pmodel.subscribeToAll(modelListener);
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
 		
 	}
@@ -35,23 +41,34 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
 	}
 	
+	public String getQueryText(int i){
+		return pmodel.getIthElement(i).getQueryText();
+	}
+	
 	
 	public IEventListener modelListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
 			
-			/*if(event.getEventType().equals(SourceModelEventType.NewItem)){ 
-				System.out.println("received new source event, updating view!");
+			if(event.getEventType().equals(SourceModelEventType.NewItem)){ 
+				//System.out.println("received new measurement event, updating view!");
 				updateView();
+				setStatusLine("Added measurement successfully. ");
 			}
 			
 			if(event.getEventType().equals(SourceModelEventType.DeletedItem)){ 
-				System.out.println("received delete source event, updating view!");
+				//System.out.println("received delete measurement event, updating view!");
 				updateView();
+				setStatusLine("Deleted measurement successfully. ");
 			}
-			*/
+			
 		}
 	};
 
+	private void setStatusLine(String message) {
+		// Get the status line and set the text
+		IActionBars bars = view.getViewSite().getActionBars();
+		bars.getStatusLineManager().setMessage(message);
+	}
 
 
 	@Override

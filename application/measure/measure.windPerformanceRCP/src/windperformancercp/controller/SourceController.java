@@ -11,7 +11,6 @@ import windperformancercp.model.sources.MetMast;
 import windperformancercp.model.sources.SourceModel;
 import windperformancercp.model.sources.WindTurbine;
 import windperformancercp.views.IPresenter;
-import windperformancercp.views.sources.AttributeDialogPresenter;
 import windperformancercp.views.sources.ManageSourcePresenter;
 import windperformancercp.views.sources.SourceDialogPresenter;
 
@@ -20,12 +19,10 @@ public class SourceController implements IController {
 	private static SourceController instance = new SourceController();
 	private static ArrayList<ManageSourcePresenter> msrcPresenters = new ArrayList<ManageSourcePresenter>();
 	private static ArrayList<SourceDialogPresenter> srcDPresenters = new ArrayList<SourceDialogPresenter>();
-	private static ArrayList<AttributeDialogPresenter> attDPresenters = new ArrayList<AttributeDialogPresenter>();
 	
 	IController _control;
 	static PMController pcontrol;
 	static SourceModel model;
-	
 	
 
 	private SourceController(){
@@ -70,8 +67,6 @@ public class SourceController implements IController {
 					deregisterPresenter(msrcPresenters, (ManageSourcePresenter)pres);
 				if(pres instanceof SourceDialogPresenter)
 					deregisterPresenter(srcDPresenters, (SourceDialogPresenter)pres);
-				if(pres instanceof AttributeDialogPresenter)
-					deregisterPresenter(attDPresenters, (AttributeDialogPresenter)pres);
 			}
 			
 			if(event.getEventType().equals(InputDialogEventType.NewSourceItem)){
@@ -88,7 +83,6 @@ public class SourceController implements IController {
 				}
 				
 				
-				//System.out.println(pcontrol.callGen(src));
 	//			JAXB.marshal(src, System.out);
 				
 			}
@@ -114,8 +108,6 @@ public class SourceController implements IController {
 			registerPresenter(srcDPresenters, (SourceDialogPresenter) pres);
 		if(pres instanceof ManageSourcePresenter)
 			registerPresenter(msrcPresenters, (ManageSourcePresenter) pres);
-		if(pres instanceof AttributeDialogPresenter)
-			registerPresenter(attDPresenters, (AttributeDialogPresenter) pres);
 		return instance;
 	}
 

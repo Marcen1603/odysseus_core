@@ -1,17 +1,36 @@
 package windperformancercp.model.query;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 import windperformancercp.model.sources.Attribute;
 import windperformancercp.model.sources.Attribute.AttributeType;
 import windperformancercp.model.sources.ISource;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "abstractPerformanceQuery", propOrder = {
+    "identifier",
+    "method",
+    "concernedSrc",
+    "concernedStr",
+    "assignments",
+    "starttime",
+    "queryText"
+})
 public abstract class APerformanceQuery implements IPerformanceQuery {
 	
 	String identifier;
 	PMType method;
 	ArrayList<ISource> concernedSrc;
-	ArrayList<Assignment> neededAssigns = new ArrayList<Assignment>();
+	ArrayList<Stream> concernedStr;
+	ArrayList<Assignment> assignments;
+	Timestamp starttime;
 	
 	String queryText;
 	
@@ -25,22 +44,31 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	}
 
 	public APerformanceQuery(String id, PMType method,ArrayList<ISource> sources){
-		this.identifier = id;
-		this.method = method;
-		this.neededAssigns = new ArrayList<Assignment>(); 
-		this.concernedSrc = new ArrayList<ISource>(sources);
+		this();
+		
+		this.setIdentifier(id);
+		this.setMethod(method);
+		this.setConcernedSrc(sources);
+	}
+	
+	public APerformanceQuery(){
+		this.identifier = "";
+		this.method = null;
+		this.assignments = new ArrayList<Assignment>();
+		this.concernedSrc = new ArrayList<ISource>();
+		this.concernedStr = new ArrayList<Stream>();
 		Pgen = new QueryGenerator(new PQLGenerator());
 		Qgen = new QueryGenerator(new CQLGenerator());
-		
-	/*	Assignment asgn = new Assignment(Assignment.Kind.TIMESTAMP,Attribute.AttributeType.STARTTIMESTAMP);
-		neededAssigns.add(asgn);*/
+	
 		Assignment asgn = new Assignment(Attribute.AttributeType.WINDSPEED);
-		neededAssigns.add(asgn);
+		assignments.add(asgn);
 		asgn = new Assignment(Attribute.AttributeType.POWER);
-		neededAssigns.add(asgn);
+		assignments.add(asgn);
 		asgn = new Assignment(Attribute.AttributeType.AIRPRESSURE);
-		neededAssigns.add(asgn);
+		assignments.add(asgn);
 		asgn = new Assignment(AttributeType.AIRTEMPERATURE);
+		assignments.add(asgn);
+	
 	}
 	
 	@Override
@@ -75,32 +103,69 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return false;
 	}
 
+	//TODO: hier mal aufräumen
+	
+
 	@Override
-	public String getMethod() {
-		return method.toString();
+	public void setMethod(PMType type) {
+		this.method = type;
+	}
+	
+	@Override
+	public PMType getMethod() {
+		return method;
 	}
 	
 	@Override
 	public void setAssignment(String what, Stream who){
-		for(Assignment a: neededAssigns){
-			if(a.getKind().toString().equalsIgnoreCase(what))
+		for(Assignment a: assignments){
+			if(a.getAttType().toString().equalsIgnoreCase(what))
 				a.setRespStream(who);
 		}	
 	}
 	
 	@Override
 	public Stream getResponsibleStream(String what){
-		for(Assignment a: neededAssigns){
-			if(a.getKind().toString().equalsIgnoreCase(what))
+		for(Assignment a: assignments){
+			if(a.getAttType().toString().equalsIgnoreCase(what))
 				return a.getRespStream();
 		}
 		return null;
 	}
-
+	
 	@Override
-	public ArrayList<ISource> getMember() {
+	public String getResponsibleAttribute(String what){
+		for(Assignment a: assignments){
+			if(a.getAttType().toString().equalsIgnoreCase(what))
+				return a.getRespSource().getIthAtt(a.getAttributeId()).getName();
+		}
+		return "";
+	}
+
+	@XmlElementWrapper(name = "concernedSources") 
+	@XmlElement(name = "source")
+	@Override
+	public ArrayList<ISource> getConcernedSrc(){
 		return concernedSrc;
 	}
+	
+	@Override
+	public void setConcernedSrc(ArrayList<ISource> srcList) {
+		this.concernedSrc = new ArrayList<ISource>(srcList);
+	}
+	
+	@XmlElementWrapper(name = "concernedStreams") 
+	@XmlElement(name = "stream")
+	@Override
+	public ArrayList<Stream> getConcernedStr(){
+		return concernedStr;
+	}
+	
+	@Override
+	public void setConcernedStr(ArrayList<Stream> strList) {
+		this.concernedStr = new ArrayList<Stream>(strList);
+	}
+	
 	
 	@Override
 	public void addMember(ISource m){
@@ -117,27 +182,49 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		concernedSrc.clear();
 	}
 	
+	@XmlElementWrapper(name = "assignmentList") 
+	@XmlElement(name = "assignment")
 	@Override
-	public ArrayList<Assignment> getAssignments(PMType what) {
-		return neededAssigns;
+	public ArrayList<Assignment> getAssignments() {
+		return assignments;
 	}
 	
 	@Override
-	public ArrayList<OperatorResult> generateSourceStreams(){
-		ArrayList<OperatorResult> result = new ArrayList<OperatorResult>(); 
+	public void setAssignments(ArrayList<Assignment> assigns){
+		this.assignments = assigns;
+	}
+	
+	@Override
+	public ArrayList<String> generateSourceStreams(){
+		ArrayList<String> qryresult = new ArrayList<String>(); 
+		concernedStr.clear();
 		for(ISource src: concernedSrc){
 			OperatorResult current = Qgen.generateCreateStream(src);
-			result.add(current);
-			System.out.println(current.getQuery());
+			if(current != null){
+				concernedStr.add(current.getStream());
+				for(Assignment as: assignments){
+					if(as.getRespSource().equals(src))
+						as.setRespStream(current.getStream());
+				}
+				qryresult.add(current.getQuery());
+			}
+			else{
+				//TODO: Fehlermeldung
+			}
+	//		System.out.println(current.getQuery());
 		}
-		
-		return result;
+		return qryresult;
 	}
 	
+	@Override
+	public String generateQuery(){
+		return null;
+	}
+
 	@Override
 	public ArrayList<Assignment> getPossibleAssignments(){
 		ArrayList<Assignment> possibilities = new ArrayList<Assignment>();
-		for(Assignment a: neededAssigns){
+		for(Assignment a: assignments){
 			for(ISource s: concernedSrc){
 				for(Attribute at: s.getAttributeList()){
 					if(a.getAttType().equals(at.getAttType())){
@@ -150,10 +237,32 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return possibilities;
 	}
 	
-
 	@Override
-	public void setMethod(PMType type) {
-		// TODO Auto-generated method stub
+	public OperatorResult projectStreamToAssignments(Stream str, String outputName){
+		ArrayList<Integer> newattsPos = new ArrayList<Integer>(); 
+		for (Assignment as: assignments){
+			if(as.getRespStream().equals(str)){
+					newattsPos.add(as.getAttributeId());
+			}
+		}
+			
+		int[] tmp = new int[newattsPos.size()];
+		for(int i=0;i<tmp.length;i++){
+			tmp[i] = ((Integer)newattsPos.get(i)).intValue();
+		}
+		OperatorResult result = Pgen.generateProjection(str, tmp, outputName);
+		return result;
+	}
+		
+	@Override
+	public ArrayList<ISource> extractSourcesFromAssignments(){
+		ArrayList<ISource> sources = new ArrayList<ISource>();
+		for(Assignment as: assignments){
+			if(! sources.contains(as.getRespSource()))
+				sources.add(as.getRespSource());
+		}
+		this.concernedSrc = sources;
+		return sources;
 	}
 
 }

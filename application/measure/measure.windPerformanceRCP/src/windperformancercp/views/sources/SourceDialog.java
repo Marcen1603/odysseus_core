@@ -8,7 +8,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusEvent;
@@ -38,7 +37,6 @@ import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
-import windperformancercp.model.AttributeTable;
 import windperformancercp.model.sources.Attribute;
 import windperformancercp.views.AbstractUIDialog;
 import windperformancercp.views.IPresenter;
@@ -61,15 +59,16 @@ public class SourceDialog extends AbstractUIDialog {
 	public static final String PORTLABEL = "Port:";
 	private Text hhInputField;
 	public static final String HHLABEL = "Hub height:";
+	private Text cutinInputField;
+	public static final String CUTINLABEL = "Cut in WS:";
+	private Text eigthyfiveInputField;
+	public static final String EIGTHYFIVELABEL = "85% P_rated WS:";
 	private Button btnWT;
 	Group lowerLeftGroup;
 	private Button btnMM;
 	Group lowerRightGroup;
 	private Button btnRActive;
 	private Button btnRPassive;
-	private Button btnRKelvin;
-	private Button btnRCelsius;
-	private AttributeTable attributeComp;
 	private TableViewer attributeViewer;
 	private ToolBar tb_attList;
 	
@@ -79,20 +78,17 @@ public class SourceDialog extends AbstractUIDialog {
 	//Power Control
 	public static final int PC_ACTIVE = 0;
 	public static final int PC_PASSIVE = 1;
-	//Temperature Measurement Method
-	public static final int TIK = 0; //Kelvin
-	public static final int TIC = 1; //Celsius
-	
+
 	public SourceDialog(Shell parentShell) {
 		super(parentShell);
 		this.presenter = new SourceDialogPresenter(this);
 	}
 	
 
-	public SourceDialog(IShellProvider parentShell) {
+	/*public SourceDialog(IShellProvider parentShell) {
 		super(parentShell);
 		this.presenter = new SourceDialogPresenter(this);
-	}
+	}*/
 	
 	
 //TODO ein clear-button waere noch schick!	
@@ -102,19 +98,25 @@ public class SourceDialog extends AbstractUIDialog {
 		newShell.setText("New Source Dialog");
 		newShell.setMinimumSize(600, 400);
 		newShell.setSize(700, 500);
-		
 	}
+	
+	
+	public void create() {
+		    super.create();
+		    setMessage("Please enter the required fields for creating a new source: ");
+	 }
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
 		
 		Composite area = (Composite) super.createDialogArea(parent);
-		area.setLayout(new FillLayout(SWT.VERTICAL));
+		area.setLayout(new GridLayout(2, false));
 		
 		//###upper composite
-		{
 		SashForm upperComposite = new SashForm(area, SWT.FILL);
+		{
 			{
+			upperComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));	
 			Group streamInfoGroup = new Group(upperComposite,SWT.NONE);
 			streamInfoGroup.setLayout(new FormLayout());
 			streamInfoGroup.setText("Stream Information");
@@ -230,8 +232,9 @@ public class SourceDialog extends AbstractUIDialog {
 		}
 		
 		//### lower sash form with WT and MetMast Information
+		Composite lowerSash = new Composite(area, SWT.FILL);
 		{
-			Composite lowerSash = new Composite(area, SWT.FILL);
+			lowerSash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));	
 			lowerSash.setLayout(new GridLayout(4,false));
 
 			//## WindTurbine
@@ -255,17 +258,47 @@ public class SourceDialog extends AbstractUIDialog {
 				FormData hhCompFD = new FormData();
 				hhCompFD.top = new FormAttachment(lowerLeftGroup,5);
 				hhComp.setLayoutData(hhCompFD);
-				hhComp.setLayout(new FillLayout());
+				hhComp.setLayout(new GridLayout(3, false));
 		
 				Label hubHeightLbl = new Label(hhComp, SWT.NONE);
 				hubHeightLbl.setText(HHLABEL);
-				hhInputField = new Text(hhComp, SWT.BORDER | SWT.FILL);
+				hubHeightLbl.setLayoutData(new GridData());
+				hhInputField = new Text(hhComp, SWT.BORDER);
+				hhInputField.setLayoutData(new GridData(40, SWT.DEFAULT));
 				hhInputField.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent fe){}
 					public void focusLost(FocusEvent fe){presenter.hubheightEntered();}
 				});
 				Label mLabel = new Label(hhComp, SWT.NONE);
-				mLabel.setText("m");
+				mLabel.setText(" m");
+				mLabel.setLayoutData(new GridData());
+			}
+			//# cut in and 85 percent of p rated
+			Composite vComp = new Composite(lowerLeftGroup, SWT.FILL);
+			{
+				FormData vCompFD = new FormData();
+				vCompFD.top = new FormAttachment(hhComp,5);
+				vComp.setLayoutData(vCompFD);
+				vComp.setLayout(new GridLayout(4,false));
+		
+				Label cutinLbl = new Label(vComp, SWT.NONE);
+				cutinLbl.setText(CUTINLABEL);
+				cutinLbl.setLayoutData(new GridData());
+				cutinInputField = new Text(vComp, SWT.BORDER);
+				cutinInputField.setLayoutData(new GridData(40, SWT.DEFAULT));
+				cutinInputField.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.cutinEntered();}
+				});
+				Label eightyfiveLabel = new Label(vComp, SWT.NONE);
+				eightyfiveLabel.setText(EIGTHYFIVELABEL);
+				eightyfiveLabel.setLayoutData(new GridData());
+				eigthyfiveInputField = new Text(vComp, SWT.BORDER);
+				eigthyfiveInputField.setLayoutData(new GridData(40, SWT.DEFAULT));
+				eigthyfiveInputField.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent fe){}
+					public void focusLost(FocusEvent fe){presenter.eightyfiveEntered();}
+				});
 			}
 
 		
@@ -303,7 +336,6 @@ public class SourceDialog extends AbstractUIDialog {
 			}	
 		
 			//## MetMast
-			//final Group lowerRightGroup;
 			{
 				btnMM = new Button(lowerSash,SWT.RADIO);
 				btnMM.setData(MMId);
@@ -316,43 +348,7 @@ public class SourceDialog extends AbstractUIDialog {
 				lowerRightGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 				lowerLeftGroup.setLayout(new FormLayout());
 				lowerRightGroup.setText("MetMast");
-				
-				Composite tempComposite = new Composite(lowerRightGroup, SWT.FILL);
-				{
-					FormData tempCompositeFD = new FormData();
-					tempCompositeFD.top = new FormAttachment(lowerRightGroup,5);
-					tempComposite.setLayoutData(tempCompositeFD);
-					
-					tempComposite.setLayout(new FormLayout());
-					Label tempControlLbl = new Label(tempComposite, SWT.NONE);
-					tempControlLbl.setLayoutData(new FormData());
-					tempControlLbl.setText("Temperatur measured in:");
-					
-					btnRKelvin = new Button(tempComposite, SWT.RADIO);
-					FormData btnRKelvinFD = new FormData();
-					btnRKelvinFD.top = new FormAttachment(tempControlLbl,7);
-					btnRKelvinFD.left = new FormAttachment(tempComposite,5,SWT.LEFT);
-					btnRKelvin.setLayoutData(btnRKelvinFD);
-					
-					btnRKelvin.setText("Kelvin (K)");
-					btnRKelvin.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent e) { presenter.temperatureControlTypeClick();}
-					});
-					
-					btnRCelsius = new Button(tempComposite, SWT.RADIO);
-					FormData btnRCelsiusFD = new FormData();
-					btnRCelsiusFD.top = new FormAttachment(btnRKelvin,0,SWT.TOP);
-					btnRCelsiusFD.left = new FormAttachment(btnRKelvin,5);
-					btnRCelsius.setLayoutData(btnRCelsiusFD);
-					
-					btnRCelsius.setText("Celcius (C°)");
-					btnRCelsius.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent e) { presenter.temperatureControlTypeClick();}
-					});
-					
-				}
-			
-				
+	
 			}
 			
 			SelectionAdapter typeAdapter = new SelectionAdapter(){
@@ -372,7 +368,6 @@ public class SourceDialog extends AbstractUIDialog {
 			    		  presenter.srcTypeClick();
 			    		  return;
 			    	  }
-			    	  
 				}
 			};
 
@@ -458,6 +453,26 @@ public class SourceDialog extends AbstractUIDialog {
 		return hhInputField.getText();
 	}
 	
+	public void setEigthyfiveValue(String newEFV){
+		eigthyfiveInputField.setText(newEFV);
+	}
+	
+	public String getEigthyfiveValue(){
+		if(eigthyfiveInputField.getText().equals("")) return "-1";
+		return eigthyfiveInputField.getText();
+	}
+	
+	public void setCutInValue(String newCutInV){
+		cutinInputField.setText(newCutInV);
+	}
+	
+	public String getCutInValue(){
+		if(cutinInputField.getText().equals("")) return "-1";
+		return cutinInputField.getText();
+	}
+	
+	
+	
 	public String getStringSourceType(){
 		if(btnWT.getSelection() & !btnMM.getSelection()) return Integer.toString(WTId);
 		if(btnMM.getSelection() & !btnWT.getSelection()) return Integer.toString(MMId);
@@ -507,58 +522,6 @@ public class SourceDialog extends AbstractUIDialog {
 		else return -1;
 	}
 	
-	//TODO
-	public void setTemperatureMeasure(int tik){
-		if(tik == TIK){
-			btnRKelvin.setSelection(true);
-			btnRCelsius.setSelection(false);
-			return;
-		}
-		if(tik == TIC){
-			btnRKelvin.setSelection(false);
-			btnRCelsius.setSelection(true);
-			return;
-		}
-		
-		btnRKelvin.setSelection(false);
-		btnRCelsius.setSelection(false);
-		
-	}
-	
-	public int getTemperatureMeasure(){
-		if(btnRKelvin.getSelection()) return TIK;
-		if(btnRCelsius.getSelection()) return TIC;
-		else return -1;
-	}
-	
-	//TODO: nicht mehr gebraucht!
-	@Override
-	public String[] getValues(){
-		String[] result = {}; 
-		if(getSourceType() == MMId){
-			//TODO: um weitere Werte ergaenzen: vor allem um attribute!
-		
-			result = new String[]{getNameValue(), 
-							getStrIdValue(), 
-							getHostValue(), 
-							getPortValue(), 
-							attributeComp.extractElements(), 
-							Integer.toString(MMId)};
-		}
-		if(getSourceType() == WTId){
-			result = new String[]{getNameValue(), 
-							getStrIdValue(), 
-							getHostValue(), 
-							getPortValue(), 
-							attributeComp.extractElements(), 
-							Integer.toString(WTId), 
-							getHubHeightValue(), 
-							Integer.toString(getPowerControl())};
-		}
-		return result;
-	}
-	
-	
 	
 	@Override
 	public void resetView(){
@@ -566,7 +529,6 @@ public class SourceDialog extends AbstractUIDialog {
 		strInputField.setText("");
 		hostInputField.setText("");
 		portInputField.setText("");
-		attributeComp.resetView();
 		btnMM.setSelection(false);
 		btnWT.setSelection(false);
 		hhInputField.setText("");

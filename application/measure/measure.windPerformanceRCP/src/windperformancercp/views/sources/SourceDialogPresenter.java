@@ -7,8 +7,6 @@ import org.eclipse.swt.widgets.Shell;
 import windperformancercp.controller.IController;
 import windperformancercp.controller.SourceController;
 import windperformancercp.event.EventHandler;
-import windperformancercp.event.IEvent;
-import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
 import windperformancercp.event.UpdateEvent;
@@ -18,15 +16,18 @@ import windperformancercp.model.sources.IDialogResult;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.MetMast;
 import windperformancercp.model.sources.WindTurbine;
-import windperformancercp.views.AbstractUIDialog;
 import windperformancercp.views.IPresenter;
 
 public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	SourceDialog dialog;
 	ISource source;
-	ArrayList<Attribute> tmpAttList;
 	IController _cont;
 	final SourceDialogPresenter boss;
+	
+	//Attributes
+	ArrayList<Attribute> tmpAttList;
+	AttributeDialog attDialog;
+	Attribute actAtt;
 
 	//TODO: auslagern
 	int MMId = 0;
@@ -65,9 +66,9 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	public void attBtnClick(String btn, int index){
 
 		if(btn.equals("Add")){
+			this.actAtt = new Attribute("",Attribute.AttributeType.VARIOUS);
 			Shell attShell = dialog.getShell();
-			AbstractUIDialog attDialog = new AttributeDialog(attShell, Attribute.AttributeType.values());
-			attDialog.subscribe(attListener, InputDialogEventType.NewAttributeItem);
+			attDialog = new AttributeDialog(attShell, this, Attribute.AttributeType.values());
 			attDialog.open();
 		}
 		if(btn.equals("Up")){
@@ -90,23 +91,6 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		}
 	}
 	
-	
-	IEventListener attListener = new IEventListener(){
-		public void eventOccured(IEvent<?, ?> idevent){
-			//if(idevent.getEventType().equals(InputDialogEventType.NewAttributeItem)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
-				InputDialogEvent newAttevent = (InputDialogEvent) idevent;
-				Attribute att = new Attribute((Attribute)newAttevent.getValue());
-				
-			//	fire(new InputDialogEvent(boss, InputDialogEventType.NewAttributeItem, att));
-				tmpAttList.add(att);
-				if(source != null)
-					source.setAttributeList(tmpAttList);
-				updateDialog();
-			//}
-		}
-	};
-	
-	
 	public void srcTypeClick(){
 		source = buildSource();
 	}
@@ -117,24 +101,32 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		}
 	}
 	
+	public void cutinEntered(){
+		if(source != null && source instanceof WindTurbine){
+			((WindTurbine) source).setCutInWS(Double.parseDouble(dialog.getCutInValue()));
+		}
+	}
+	
+	public void eightyfiveEntered(){
+		if(source != null && source instanceof WindTurbine){
+			((WindTurbine) source).setEightyFiveWS(Double.parseDouble(dialog.getEigthyfiveValue()));
+		}
+	}
+	
+	
 	public void powerControlTypeClick(){
 		if(source != null && source instanceof WindTurbine){
 			((WindTurbine) source).setPowerControl(dialog.getPowerControl());
 		}
 	}
-	
-	public void temperatureControlTypeClick(){
-		if(source != null && source instanceof MetMast){
-			((MetMast) source).setTemperatureInKelvin(dialog.getTemperatureMeasure());
-		}
-	}
+
 	
 	public void okPressed(){
 		//TODO: Validation
 		if(source == null)
 			source = buildSource();
 		if(sourceIsOk(source)){
-			System.out.println("source is ok!"+source.toString());
+			//System.out.println("source is ok!"+source.toString());
 			fire(new InputDialogEvent(this, InputDialogEventType.NewSourceItem, source));
 			//System.out.println("fired new source event!");
 			dialog.close();
@@ -156,8 +148,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					dialog.getStrIdValue(),
 					dialog.getHostValue(),
 					Integer.parseInt(dialog.getPortValue()), 
-					tmpAttList,
-					dialog.getTemperatureMeasure());
+					tmpAttList);
 		if(dialog.getSourceType() == WTId) 
 			source = new WindTurbine(dialog.getNameValue(),
 					dialog.getStrIdValue(),
@@ -165,7 +156,9 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					Integer.parseInt(dialog.getPortValue()), 
 					tmpAttList,
 					Double.parseDouble(dialog.getHubHeightValue()),
-					dialog.getPowerControl());
+					dialog.getPowerControl(),
+					Double.parseDouble(dialog.getCutInValue()),
+					Double.parseDouble(dialog.getEigthyfiveValue()));
 		return source;
 	}
 	
@@ -178,16 +171,18 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					if(!tocheck.getHost().equals("")){
 						if(!(tocheck.getPort() < 1024 || tocheck.getPort() > 65536)){
 							if(tocheck instanceof MetMast){
-								MetMast mm = (MetMast)tocheck;
-								if(mm.getTemperatureInKelvin() == 0||mm.getTemperatureInKelvin() == 1){
+								//MetMast mm = (MetMast)tocheck;
 									return true;
-								}
 							}
 							if(tocheck instanceof WindTurbine){
 								WindTurbine wt = (WindTurbine)tocheck;
 								if((wt.getHubHeight() > 1)&&(wt.getHubHeight()< 250)){
-									if(wt.getPowerControl() == 0||wt.getPowerControl() == 1){
-										return true;
+									if(wt.getCutInWS() > 0){
+										if(wt.getEightyFiveWS() > 0){
+											if(wt.getPowerControl() == 0||wt.getPowerControl() == 1){
+												return true;
+											}
+										}
 									}
 								}
 							}
@@ -196,6 +191,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 				}
 			}
 		}
+		dialog.setErrorMessage("Source is not valid");
 		return false;
 	}
 	
@@ -218,11 +214,12 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		if(src.isWindTurbine()){
 			dialog.setSourceType(WTId);
 			dialog.setHubHeightValue(Double.toString(((WindTurbine)src).getHubHeight()));
+			dialog.setCutInValue(Double.toString(((WindTurbine)src).getCutInWS()));
+			dialog.setEigthyfiveValue(Double.toString(((WindTurbine)src).getEightyFiveWS()));
 			dialog.setPowerControl(((WindTurbine)src).getPowerControl());
 		}
 		if(src.isMetMast()){
 			dialog.setSourceType(MMId);
-			dialog.setTemperatureMeasure(((MetMast)src).getTemperatureInKelvin());
 		}
 	}
 	
@@ -235,6 +232,54 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		Attribute tmp = tmpAttList.get(ind1);
 		tmpAttList.set(ind1, tmpAttList.get(ind2));
 		tmpAttList.set(ind2, tmp);
+	}
+	
+	//AttributeDialog handler
+	public void aDNameEntered(){
+		actAtt.setName(attDialog.getNameValue());
+	}
+	
+	public void aDTypeSelected(){ //TODO throws exception
+		try{
+			actAtt.setAttType(Attribute.AttributeType.valueOf(attDialog.getComboValue()));
+		}
+		catch(Exception e){
+			//
+		}
+	}
+	
+	public void aDOkPressed(){
+		if(! attDialog.getNameValue().equals("")){
+			//check if attribute name is unique, if not, send error message to user
+			boolean taken = false;
+			for(Attribute resident: tmpAttList){
+					taken = resident.getName().equals(attDialog.getNameValue());
+					if(taken)
+						break;
+				}
+			if(taken) attDialog.setErrorMessage("Name must be unique for source");
+			else{	//name is ok
+				actAtt = new Attribute(actAtt); //fuer Zuweisung des Datatyps
+				tmpAttList.add(actAtt);
+				attDialog.close();
+				if(source != null)
+					source.setAttributeList(tmpAttList);
+				updateDialog();
+			}
+		}
+		else
+			attDialog.setErrorMessage("Name field may not be empty");
+	}
+	
+	public void aDCancelPressed(){
+		attDialog.close();
+	}
+	
+	public void aDfeedDialog(IDialogResult input) {
+		Attribute att = (Attribute) input;
+		attDialog.setNameValue(att.getName());
+		attDialog.setComboValue(att.getAttType().toString());
+		
 	}
 
 }

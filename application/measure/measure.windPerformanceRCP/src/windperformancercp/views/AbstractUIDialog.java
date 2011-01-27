@@ -1,8 +1,7 @@
 package windperformancercp.views;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import windperformancercp.event.EventHandler;
@@ -10,18 +9,16 @@ import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.IEventType;
 
-public class AbstractUIDialog extends Dialog implements IUserInputDialog{
+public class AbstractUIDialog extends TitleAreaDialog implements IUserInputDialog{
 
-	Composite par;
-	String title;
 	
 	public AbstractUIDialog(Shell parentShell) {
 		super(parentShell);
 	}
 
-	public AbstractUIDialog(IShellProvider parentShell) {
+	/*public AbstractUIDialog(IShellProvider parentShell) {
 		super(parentShell);
-	}
+	}*/
 	
 	//	Event handling
 	EventHandler eventHandler = new EventHandler();
@@ -60,7 +57,6 @@ public class AbstractUIDialog extends Dialog implements IUserInputDialog{
 	
 	public void resetView(){}
 	
-	public String[] getValues(){return new String[]{};}
 	
 	@Override
 	public void okPressed(){

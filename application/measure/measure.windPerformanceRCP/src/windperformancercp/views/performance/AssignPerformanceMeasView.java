@@ -10,19 +10,21 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
 import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.UpdateEvent;
 import windperformancercp.event.UpdateEventType;
-import windperformancercp.model.sources.ISource;
+import windperformancercp.model.query.IPerformanceQuery;
 import windperformancercp.views.IPresenter;
 
 public class AssignPerformanceMeasView extends ViewPart {
@@ -31,6 +33,7 @@ public class AssignPerformanceMeasView extends ViewPart {
 	private AssignPerformanceMeasPresenter presenter = new AssignPerformanceMeasPresenter(this);
 	
 	private TableViewer performanceViewer;
+	Text queryView;
 
 	
 	/**
@@ -39,15 +42,13 @@ public class AssignPerformanceMeasView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		//TODO: das hier besser in einen konstruktor?
 		
 		//surrounding sash form
 		SashForm sashForm = new SashForm(parent, SWT.BORDER | SWT.SMOOTH);
 		sashForm.setSashWidth(5);
 
 		
-		//sources list composite with buttons
-		
+		//performance list composite with buttons
 		Composite leftComposite = new Composite(sashForm, SWT.NONE);
 		leftComposite.setLayout(new GridLayout(1,false));
 		
@@ -77,18 +78,18 @@ public class AssignPerformanceMeasView extends ViewPart {
 		}
 		//right composite for additional information
 		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
+		rightDetailedComposite.setLayout(new FillLayout());
+		queryView = new Text(rightDetailedComposite, SWT.READ_ONLY|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
 		
 		getSite().setSelectionProvider(performanceViewer);
 		presenter.subscribeToAll(updateListener);
-		//System.out.println(this.toString()+": subscribed to invocation");
 	}
 
 	IEventListener updateListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> idevent){
-			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){ //doppelt gemoppelt? ich registriere ja nur fuer newattitem
+			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){
+				//System.out.println(this.toString()+"got general update invocation");
 				UpdateEvent updateInvoker = (UpdateEvent) idevent;
-				//ArrayList<?> list = new ArrayList<?>(updateInvoker.getValue());
-			System.out.println(this.toString()+"got general update invocation");
 				update(updateInvoker.getValue());
 			}
 			
@@ -106,8 +107,18 @@ public class AssignPerformanceMeasView extends ViewPart {
 		return this.performanceViewer.getTable().getItems();
 	}
 	
+	
 	public void update(ArrayList<?> newList){
 		performanceViewer.setInput(newList);
+		queryView.setText("");
+		if(!newList.isEmpty()){
+			performanceViewer.getTable().select(0);
+			queryView.setText(presenter.getQueryText(performanceViewer.getTable().getSelectionIndex()));
+		}
+	}
+	
+	public void setQueryView(String input){
+		queryView.setText(input);
 	}
 	
 
@@ -145,17 +156,16 @@ public class AssignPerformanceMeasView extends ViewPart {
 			return null;
 		}
 
-		//TODO
+		//TODO: "Name","Type","Sources","Lifetime","Connected"
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			ISource source = (ISource) element;
+			IPerformanceQuery query = (IPerformanceQuery) element;
 			switch(columnIndex){
-			case 0: return source.getName();
-			case 1:	if(source.isWindTurbine()) return "WindTurbine";
-			if(source.isMetMast()) return "MetMast";
-			else return "Other";
-			case 2: return source.getHost();
-			case 3:	return Integer.toString(source.getPort());
+			case 0: return query.getIdentifier();
+			case 1:	return query.getMethod().toString();
+			case 2: return Integer.toString(query.getConcernedSrc().size());
+			case 3:	return Double.toString(0.0);
+			case 4:	return Integer.toString(0);
 			
 			}
 			return null;
@@ -178,7 +188,7 @@ public class AssignPerformanceMeasView extends ViewPart {
 		@SuppressWarnings("unchecked")
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return ((ArrayList<ISource>)inputElement).toArray();
+			return ((ArrayList<IPerformanceQuery>)inputElement).toArray();
 		}
 		
 	}

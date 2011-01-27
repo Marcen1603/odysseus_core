@@ -8,8 +8,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import windperformancercp.views.IPresenter;
-import windperformancercp.views.performance.QueryWizard;
-import windperformancercp.views.performance.QueryWizardDialog;
+import windperformancercp.views.performance.PerformanceWizard;
+import windperformancercp.views.performance.PerformanceWizardDialog;
 
 public class ShowNewQueryWizardDialogCommand extends AbstractHandler implements
 		IHandler {
@@ -22,7 +22,7 @@ public class ShowNewQueryWizardDialogCommand extends AbstractHandler implements
 		final Shell dialogShell = new Shell(parent);
 		
 		//TODO: evtl. von AbstractUIDialog ableiten/IUserIDIalog
-			QueryWizardDialog dialog = new QueryWizardDialog(dialogShell, new QueryWizard()); 
+			PerformanceWizardDialog dialog = new PerformanceWizardDialog(dialogShell, new PerformanceWizard()); 
 			
 			//IPresenter presenter = dialog.getPresenter();
 			//dialog.create();

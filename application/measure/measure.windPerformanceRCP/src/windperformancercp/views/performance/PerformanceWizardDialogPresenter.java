@@ -7,6 +7,8 @@ import windperformancercp.controller.PMController;
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
+import windperformancercp.event.UpdateEvent;
+import windperformancercp.event.UpdateEventType;
 import windperformancercp.model.query.APerformanceQuery;
 import windperformancercp.model.query.Assignment;
 import windperformancercp.model.query.IPerformanceQuery;
@@ -19,7 +21,7 @@ import windperformancercp.views.IPresenter;
 
 public class PerformanceWizardDialogPresenter extends EventHandler implements IPresenter{
 	
-	QueryWizardDialog dialog;
+	PerformanceWizardDialog dialog;
 	IPerformanceQuery query;
 	ArrayList<SourceNameTuple> srcnT;
 	IController _cont;
@@ -37,7 +39,7 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		}
 	}
 
-	public PerformanceWizardDialogPresenter(QueryWizardDialog caller){
+	public PerformanceWizardDialogPresenter(PerformanceWizardDialog caller){
 		boss = this;
 		//System.out.println(this.toString()+": source dialog presenter says hi!");
 		dialog = caller;
@@ -45,25 +47,6 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		restructPAssign2 = new ArrayList<ArrayList<String>>();
 		_cont = PMController.getInstance(this);
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
-	}
-
-	/*IEventListener attListener = new IEventListener(){
-		public void eventOccured(IEvent<?, ?> idevent){
-			/*
-				InputDialogEvent newAttevent = (InputDialogEvent) idevent;
-				Attribute att = (Attribute)newAttevent.getValue();
-			//	fire(new InputDialogEvent(boss, InputDialogEventType.NewAttributeItem, att));
-				tmpAttList.add(att);
-				if(source != null)
-					source.setAttributeList(tmpAttList);
-				updateDialog();
-			//}
-		}
-	};*/
-		
-	public void finishClick(){
-		dialog.close();
-		fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
 	}
 	
 	public void typeChoosed(String id, String method){
@@ -91,11 +74,44 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		}
 	}
 	
+	public void assignmentsMade(ArrayList<String> dialogAssigns){
+		ArrayList<Assignment> finalAssignments = new ArrayList<Assignment>(); 
+		if(query != null){
+			if(!query.getPossibleAssignments().isEmpty()){
+				for(Assignment queryAssign: query.getPossibleAssignments()){
+					for(String entry: dialogAssigns){
+						if(queryAssign.toString().equals(entry)){
+							finalAssignments.add(queryAssign);
+							break;
+						}
+					}
+				}
+				query.setAssignments(finalAssignments);
+				query.extractSourcesFromAssignments();
+			}
+		}
+	}
+
+	public void finishClick(){
+		
+		for(String s: query.generateSourceStreams())
+System.out.println(s);
+//System.out.println(query.generateQuery());
+		query.generateQuery();
+		if(query != null){
+			fire(new InputDialogEvent(this, InputDialogEventType.NewPerformanceItem, query));
+			dialog.close();
+		}
+
+		fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	public void updatePossibleAssignments(){
 		if(query != null){
 			ArrayList<Assignment> possAssign = query.getPossibleAssignments();
-			ArrayList<Assignment> neededAssign = query.getAssignments(null);
+			ArrayList<Assignment> neededAssign = query.getAssignments();
 			ArrayList<String>[] restructPAssign = new ArrayList[neededAssign.size()];			
 	
 			for(int i = 0; i< restructPAssign.length; i++){
@@ -140,7 +156,7 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 	
 	public ArrayList<String> getNeededAssignments(String forWhat){
 		ArrayList<String> result = new ArrayList<String>();
-		for(Assignment a:query.getAssignments(null)){
+		for(Assignment a:query.getAssignments()){
 			result.add(a.getAttType().toString());
 		}
 		return result; 
@@ -148,6 +164,10 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 	
 	public ArrayList<ArrayList<String>> getPossibleAssignments(){
 		return restructPAssign2; 
+	}
+	
+	public void updateView(){
+		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
 	}
 	
 

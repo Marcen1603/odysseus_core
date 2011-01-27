@@ -32,7 +32,6 @@ public class ManageSourceView extends ViewPart {
 	
 	private TableViewer sourceViewer;
 
-	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
@@ -43,7 +42,6 @@ public class ManageSourceView extends ViewPart {
 		//surrounding sash form
 		SashForm sashForm = new SashForm(parent, SWT.BORDER | SWT.SMOOTH);
 		sashForm.setSashWidth(5);
-
 		
 		//sources list composite with buttons
 		
@@ -84,7 +82,7 @@ public class ManageSourceView extends ViewPart {
 			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){ 
 				UpdateEvent updateInvoker = (UpdateEvent) idevent;
 				
-			//System.out.println(this.toString()+"got general update invocation");
+		//	System.out.println(this.toString()+"got general update invocation: "+updateInvoker.getValue().toString());
 				update(updateInvoker.getValue());
 			}
 			
@@ -110,9 +108,6 @@ public class ManageSourceView extends ViewPart {
 	public IPresenter getPresenter(){
 		return presenter;
 	}
-	
-
-
 	
 	
 	class ISourceLabelProvider implements ITableLabelProvider{

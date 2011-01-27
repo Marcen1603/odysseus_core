@@ -14,7 +14,7 @@ import windperformancercp.controller.MainController;
 public class Application implements IApplication {
 
 	
-	private MainController mCont;
+	private static MainController mCont;
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
@@ -22,7 +22,7 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) {
 		Display display = PlatformUI.createDisplay();
 		try {
-			mCont = new MainController();
+			mCont = MainController.getInstance();
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if (returnCode == PlatformUI.RETURN_RESTART) {
 				return IApplication.EXIT_RESTART;
@@ -40,6 +40,7 @@ public class Application implements IApplication {
 	public void stop() {
 		if (!PlatformUI.isWorkbenchRunning())
 			return;
+		mCont.saveData();
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Display display = workbench.getDisplay();
 		display.syncExec(new Runnable() {

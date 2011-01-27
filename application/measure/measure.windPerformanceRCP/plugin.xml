@@ -59,9 +59,10 @@
          <view
                id="measure.windPerformanceRCP.assignPMView"
                minimized="false"
+               ratio="0.5"
                relationship="stack"
                relative="measure.windPerformanceRCP.sourceManagerView"
-               standalone="true">
+               standalone="false">
          </view>
       </perspectiveExtension>
       <perspectiveExtension
@@ -86,6 +87,11 @@
             <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Exit">
+            </command>
+            <command
+                  commandId="measure.windPerformanceRCP.SaveData"
+                  label="Save"
+                  style="push">
             </command>
          </menu>
       </menuContribution>
@@ -120,6 +126,11 @@
                style="push"
                tooltip="click to assign a new performance measurement to sources">
          </command>
+         <command
+               commandId="measure.windPerformanceRCP.DeletePM"
+               label="Delete Measurement"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -143,6 +154,16 @@
             defaultHandler="windperformancercp.views.commands.ShowNewQueryWizardDialogCommand"
             id="measure.windPerformanceRCP.ShowNewQueryWizardDialog"
             name="New Measurement">
+      </command>
+      <command
+            defaultHandler="windperformancercp.views.commands.SaveModelCommand"
+            id="measure.windPerformanceRCP.SaveData"
+            name="Save">
+      </command>
+      <command
+            defaultHandler="windperformancercp.views.commands.DeletePMCommand"
+            id="measure.windPerformanceRCP.DeletePM"
+            name="Delete Measurement">
       </command>
    </extension>
 

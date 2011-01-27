@@ -2,15 +2,27 @@ package windperformancercp.model.sources;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.SourceModelEvent;
 import windperformancercp.event.SourceModelEventType;
+import windperformancercp.model.IModel;
 
-
-public class SourceModel extends EventHandler{
+@XmlRootElement
+public class SourceModel extends EventHandler implements IModel {
 	
 	private static SourceModel instance = new SourceModel();
+	
+	//	@XmlElement(name = "source")
+	
+	@XmlTransient
 	private ArrayList<ISource> sourcesList;
+	
 	
 	SourceModelEvent newItemEvent = new SourceModelEvent(this,SourceModelEventType.NewItem,null);
 	SourceModelEvent deleteItemEvent = new SourceModelEvent(this,SourceModelEventType.DeletedItem,null);
@@ -68,8 +80,18 @@ public class SourceModel extends EventHandler{
 		else return null;
 	}
 	
+	@XmlElementWrapper(name = "sourcesList")
+	@XmlElementRefs( 
+		{ 
+		    @XmlElementRef( type = MetMast.class, name = "metMast"), 
+		    @XmlElementRef( type = WindTurbine.class, name = "windTurbine" ), 
+		} )
 	public ArrayList<ISource> getSourcesList(){
 		return sourcesList;
+	}
+	
+	public void setSourcesList(ArrayList<ISource> sources){
+		sourcesList = sources;
 	}
 	
 	public int getElemCount(){

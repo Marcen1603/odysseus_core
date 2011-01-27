@@ -2,14 +2,28 @@ package windperformancercp.model.query;
 
 import java.util.ArrayList;
 
-import windperformancercp.event.EventHandler;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 
-public class PerformanceModel extends EventHandler{
+import windperformancercp.event.EventHandler;
+import windperformancercp.event.SourceModelEvent;
+import windperformancercp.event.SourceModelEventType;
+import windperformancercp.model.IModel;
+import windperformancercp.model.sources.MetMast;
+import windperformancercp.model.sources.WindTurbine;
+
+public class PerformanceModel extends EventHandler implements IModel{
 	private static PerformanceModel instance = new PerformanceModel();
+	
+	@XmlElementRefs( 
+			{ 
+			    @XmlElementRef( type = MeasureIEC.class ), 
+			    @XmlElementRef( type = MeasureLangevin.class ), 
+			} ) 
 	private ArrayList<IPerformanceQuery> queryList;
 	
-	//PerformanceModelEvent newItemEvent = new PerformanceModelEvent(this,PerformanceModelType.NewItem,null);
-	//PerformanceModelEvent deleteItemEvent = new PerformanceModelEvent(this,PerformanceModelEventType.DeletedItem,null);
+	SourceModelEvent newItemEvent = new SourceModelEvent(this,SourceModelEventType.NewItem,null);
+	SourceModelEvent deleteItemEvent = new SourceModelEvent(this,SourceModelEventType.DeletedItem,null);
 	
 	private PerformanceModel(){
 		queryList = new ArrayList<IPerformanceQuery>();
@@ -25,17 +39,17 @@ public class PerformanceModel extends EventHandler{
 	
 	public void addElement(IPerformanceQuery src){
 		queryList.add(src);
-		//fire(newItemEvent);
+		fire(newItemEvent);
 	}
 	
 	public void addAll(ArrayList<IPerformanceQuery> list){
 		queryList.addAll(list);
-		//fire(newItemEvent);
+		fire(newItemEvent);
 	}
 	
 	public void removeElement(int index){
 		queryList.remove(index);
-		//fire(deleteItemEvent);
+		fire(deleteItemEvent);
 	}
 	
 	public int removeAllOccurences(IPerformanceQuery src){
@@ -44,7 +58,7 @@ public class PerformanceModel extends EventHandler{
 			queryList.remove(src);
 			c++;
 		}
-		//fire(deleteItemEvent);
+		fire(deleteItemEvent);
 		return c;
 	}
 	

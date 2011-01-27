@@ -31,6 +31,7 @@ public interface ISource extends IDialogResult, IEventHandler {
 	public int getAttIndex(Attribute att);
 	public int getNumberOfAtts();
 	public int getType();
+	public void setType(int t);
 	public boolean isWindTurbine();
 	public boolean isMetMast();
 	public boolean isConnected();

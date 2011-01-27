@@ -1,6 +1,5 @@
 package windperformancercp.views.sources;
 
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -26,32 +25,30 @@ public class AttributeDialog extends AbstractUIDialog {
 
 	public static final String ID = "measure.windPerformanceRCP.NewAttributeDialog";
 
-	private AttributeDialogPresenter presenter;
+	private SourceDialogPresenter presenter;
 	Text nameInputField;
 	Combo typeCombo;
 	Object[] comboElements;
 	
-	public AttributeDialog(Shell parentShell, Object[] cElements) {
+	public AttributeDialog(Shell parentShell, SourceDialogPresenter presenter, Object[] cElements) {
 		super(parentShell);
-		this.presenter = new AttributeDialogPresenter(this);  
+		this.presenter = presenter;
 		this.comboElements = cElements;
 	}
 
-	public AttributeDialog(IShellProvider parentShell) {
-		super(parentShell);
-		this.presenter = new AttributeDialogPresenter(this);
-	}
-	
 	@Override
 	protected void configureShell(Shell newShell){
 		super.configureShell(newShell);
 		newShell.setText("New Attribute Dialog");
+		newShell.setMinimumSize(300, 250);
+		newShell.setSize(300,250);
 	}
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
+		setMessage("Please enter name and type for the new attribute: ");
+		Composite area = new Composite(parent, SWT.FILL);
 		
-		Composite area = (Composite) super.createDialogArea(parent);
 
 		//###main composite
 		area.setLayout(new FormLayout());
@@ -71,7 +68,7 @@ public class AttributeDialog extends AbstractUIDialog {
 			nameInputField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			nameInputField.addFocusListener(new FocusListener(){
 				public void focusGained(FocusEvent fe){}
-				public void focusLost(FocusEvent fe){presenter.nameEntered();}
+				public void focusLost(FocusEvent fe){presenter.aDNameEntered();}
 			});
 			
 		}	
@@ -89,11 +86,11 @@ public class AttributeDialog extends AbstractUIDialog {
 				typeCombo.add(comboElements[i].toString());
 			}
 			typeCombo.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) { presenter.typeSelected();}
-				public void widgetDefaultSelected(SelectionEvent e) { presenter.typeSelected();}
+				public void widgetSelected(SelectionEvent e) { presenter.aDTypeSelected();}
+				public void widgetDefaultSelected(SelectionEvent e) { presenter.aDTypeSelected();}
 			});
 			typeCombo.select(0);
-			presenter.typeSelected(); //irgendwie bewirkt das obige select keinen Event (nur bei dem, sonst gehts)
+			presenter.aDTypeSelected(); //irgendwie bewirkt das obige select keinen Event (nur bei dem, sonst gehts)
 		}
 
 		return area;
@@ -133,11 +130,6 @@ public class AttributeDialog extends AbstractUIDialog {
 		typeCombo.setText(value);
 	}
 	
-
-	@Override
-	public String[] getValues(){
-		return new String[]{getNameValue(),getComboValue()};
-	}
 	
 	@Override
 	public void resetView(){
@@ -147,12 +139,12 @@ public class AttributeDialog extends AbstractUIDialog {
 			
 	@Override
 	public void okPressed(){	
-		presenter.okPressed();	
+		presenter.aDOkPressed();	
 	}
 	
 	@Override
 	public void cancelPressed(){	
-		presenter.cancelPressed();	
+		presenter.aDCancelPressed();	
 	}
 
 	

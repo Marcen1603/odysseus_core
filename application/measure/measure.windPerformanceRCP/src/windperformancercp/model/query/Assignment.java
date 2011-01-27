@@ -5,16 +5,9 @@ import windperformancercp.model.sources.ISource;
 
 public class Assignment {
 	
-		public enum Kind{
-			TIMESTAMP,
-			WINDSPEED,
-			POWER,
-			PRESSURE,
-			TEMPERATURE
-		}
 		
 		//String kind; //TODO
-		Kind kind;
+
 		Attribute.AttributeType attType;
 		ISource respSource;
 		Stream respStream;
@@ -50,7 +43,6 @@ public class Assignment {
 		}
 		
 		public Assignment(){
-			this.kind = null;
 			this.attType = null;
 			this.respSource = null;
 			this.attributeId = -1;
@@ -69,21 +61,6 @@ public class Assignment {
 			return false;
 		}
 		
-		/*public String getKind(){
-			return kind;
-		}*/
-		
-		public Kind getKind(){
-			return kind;
-		}
-		
-		/*public void setKind(String w){
-			this.kind = w; 
-		}*/
-		
-		public void setKind(Kind w){
-			this.kind = w; 
-		}
 		
 		
 		public Attribute.AttributeType getAttType(){

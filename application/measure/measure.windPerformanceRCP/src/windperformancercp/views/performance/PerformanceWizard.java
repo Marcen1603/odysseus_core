@@ -6,6 +6,7 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -31,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class QueryWizard extends Wizard {
+public class PerformanceWizard extends Wizard {
 	
 	private String queryID;
 	private String method;
@@ -45,15 +46,17 @@ public class QueryWizard extends Wizard {
 	private ArrayList<String> selectedSources;
 	private ArrayList<String> neededAssignments;
 	private ArrayList<ArrayList<String>> assignmentComboElements; 
+	private ArrayList<String> selectedAssignments;
 	
 	DialogSettings dialogSettings;
 	
 	
-	public QueryWizard(){
+	public PerformanceWizard(){
 		
 		queryID = "";
 		method = "";
 		neededAssignments = new ArrayList<String>();
+		selectedAssignments = new ArrayList<String>();
 		assignmentComboElements = new ArrayList<ArrayList<String>>();
 		selectedSources = new ArrayList<String>();
 		availableSources = new ArrayList<String>();
@@ -62,11 +65,14 @@ public class QueryWizard extends Wizard {
 		toqpage = new TypeOfQueryPage();
 		sspage = new SourceSelectPage();
 		aapage = new AssignAttributePage();
+		setNeedsProgressMonitor(true);
 		
 		addPage(toqpage);
         addPage(sspage);
         addPage(aapage);
 	}
+	
+	
 	
 	public void setQueryID(String id){
 		queryID= id;
@@ -99,14 +105,24 @@ public class QueryWizard extends Wizard {
 	}
 	
 	public void setNeededAssignments(ArrayList<String> assigns){
-		this.neededAssignments = assigns;
+			this.neededAssignments = assigns;
 		//System.out.println("set availabe sources: "+availableSources.toString());	
+	}
+	
+	public void setSelectedAssignments(ArrayList<String> assigns){
+		this.selectedAssignments = assigns;
+	//System.out.println("set selected sources: "+selectedAssignments.toString());	
+	}
+	
+	public ArrayList<String> getSelectedAssignments(){
+		//System.out.println("set availabe sources: "+selectedAssignments.toString());	
+		return this.selectedAssignments;
 	}
 	
 	public void setAssignmentComboElements(ArrayList<ArrayList<String>> aCE){
 		this.assignmentComboElements = aCE;		
-		aapage.createControl(aapage.getControl().getParent());
-		//aapage.getControl().getParent().getAccessible();
+//		aapage.createControl(aapage.getControl().getParent());
+		//aapage.onEnterPage();
 
 	}
 	
@@ -128,6 +144,9 @@ public class QueryWizard extends Wizard {
 		//System.out.println("method entered: "+method);
 	}
 	
+	/*
+	 * Called if a source has been selected and an arrow button has been pressed
+	 */
 	public void sourceSelectionClick(String btnData, int[] indexes){
 		//System.out.println("source selected: left: "+indexes[0]+", right: "+ indexes[1]);
 		try{getContainer().updateButtons();}
@@ -146,28 +165,31 @@ public class QueryWizard extends Wizard {
 		catch(Exception e){}
 	}
 	
-	public void assignmentClick(){
+	public void assignmentClick(int ind, String attcombi){
 		try{getContainer().updateButtons();}
 		catch(Exception e){}
+		selectedAssignments.set(ind, attcombi);
+		//System.out.println(attcombi);
 	}
 	
 	@Override
 	public boolean performFinish() {
 		
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 	
 	public void update(){
-				
 		toqpage.update();
 		sspage.update();
 		aapage.update();
 		getContainer().updateButtons();
 	}
 	
-
+	/*
+	 * TYPE OF QUERY PAGE
+	 */
 	public class TypeOfQueryPage extends WizardPage {
 
 		Text idInputField;
@@ -178,10 +200,10 @@ public class QueryWizard extends Wizard {
 	 
 	        setTitle("Select Performance Measure Method");
 	        setMessage("This wizard will guide you through creation of a new performance measurement.\n" +
-	        		"First Step of three: \n" +
 	        		"Please select kind of measurement: ");
 	        setPageComplete(false);
 	    }
+	    
 
 	    public void createControl(Composite parent) {
 	    	
@@ -198,7 +220,7 @@ public class QueryWizard extends Wizard {
 				nameLabel.setToolTipText("name for human readable identification");
 				idInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
 				idInputField.addModifyListener(new ModifyListener(){
-				      public void modifyText(ModifyEvent me) {((QueryWizard)getWizard()).identifierEntered();}});
+				      public void modifyText(ModifyEvent me) {((PerformanceWizard)getWizard()).identifierEntered();}});
 			}
 
 	        typeCombo = new Combo(container, SWT.READ_ONLY);
@@ -212,11 +234,11 @@ public class QueryWizard extends Wizard {
 			}
 	        
 	        typeCombo.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) { ((QueryWizard)getWizard()).methodComboClick();}
-				public void widgetDefaultSelected(SelectionEvent e) { ((QueryWizard)getWizard()).methodComboClick();}
+				public void widgetSelected(SelectionEvent e) { ((PerformanceWizard)getWizard()).methodComboClick();}
+				public void widgetDefaultSelected(SelectionEvent e) { ((PerformanceWizard)getWizard()).methodComboClick();}
 			});
 	        typeCombo.select(0);
-			((QueryWizard)getWizard()).methodComboClick();
+			((PerformanceWizard)getWizard()).methodComboClick();
 	        setControl(container);
 	    }
 	    
@@ -229,11 +251,12 @@ public class QueryWizard extends Wizard {
 	    }
 	    
 	    @Override
-	    public boolean canFlipToNextPage(){
+	    public boolean isPageComplete(){
 	    	   if (getErrorMessage() != null) return false;
-	    	   if ((typeCombo.getSelectionIndex()!=-1)&&(!idInputField.getText().equals("")))
-	    	        return true;
-	    	    return false;
+	    	   if ((typeCombo.getSelectionIndex()!=-1)&&(!idInputField.getText().equals(""))){
+	    		   return true;
+	    	   }
+	    	   return false;
 	    }
 	    
 	    public void update(){
@@ -247,6 +270,9 @@ public class QueryWizard extends Wizard {
 
 	}//end toQPage
 	
+	/*
+	 * SOURCE SELECT PAGE
+	 */
 	public class SourceSelectPage extends WizardPage {
 
         ListViewer leftlv;
@@ -257,8 +283,7 @@ public class QueryWizard extends Wizard {
 	    protected SourceSelectPage() {
 	        super("SourceSelectPage");
 	        setTitle("Select Sources");
-	        setMessage("Second Step of three: \n" +
-	        		"Now select the sources that should participate.");
+	        setMessage("Now select the sources that should participate.");
 	        setPageComplete(false);
 	    }
 
@@ -285,7 +310,7 @@ public class QueryWizard extends Wizard {
 				ti.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) { 
 						ToolItem btn = (ToolItem)e.widget;
-						((QueryWizard)getWizard()).sourceSelectionClick(
+						((PerformanceWizard)getWizard()).sourceSelectionClick(
 								btn.getData().toString(),
 								new int[]{leftlv.getList().getSelectionIndex(),rightlv.getList().getSelectionIndex()});
 					}
@@ -299,7 +324,7 @@ public class QueryWizard extends Wizard {
 	        rightlv.setContentProvider(new SourcesListContentProvider());
 	        List selectedSourcesT = rightlv.getList();
 	        selectedSourcesT.setLayoutData(new GridData(GridData.FILL_BOTH));
-	        
+
 	        setControl(container);
 	    }
 	    
@@ -312,11 +337,18 @@ public class QueryWizard extends Wizard {
 	    }
 	    
 	    @Override
-	    public boolean canFlipToNextPage(){
+	    public boolean isPageComplete(){
 	    	   if (getErrorMessage() != null) return false;
-	    	   if (!selectedSources.isEmpty())
-	    	        return true;
+	    	   if (!selectedSources.isEmpty()){
+	    	        return true;}
 	    	    return false;
+	    }
+	    
+	    @Override
+	    public IWizardPage getNextPage(){
+	    	AssignAttributePage aapage = ((PerformanceWizard)getWizard()).aapage;
+	    	aapage.onEnterPage();
+	    	return aapage;
 	    }
 	    
 	    public void update(){
@@ -325,55 +357,67 @@ public class QueryWizard extends Wizard {
 		} 
 	}//end SourceSelectPage
 
+	/*
+	 * ASSIGN ATTRIBUTE PAGE
+	 */
 	public class AssignAttributePage extends WizardPage {
-		
+		Composite container;
 		ArrayList<Combo> comboList = new ArrayList<Combo>(); 
 		
 	    protected AssignAttributePage() {
 	        super("AssignAttributePage");
 	        setTitle("Assign Attributes");
-	        setMessage("Third Step of three: \n"+	    	
-	        		"At last assign the sources attributes to the variables of the performance measurement.");
+	        setMessage("At last assign the sources attributes to the variables of the performance measurement.");
 	        setPageComplete(false);
 	    }
 
 	    public void createControl(Composite parent) {
 	    	//Fuer jede der assignattributes eine Combo mit verfuegbaren Sourceattributen
 	 
-	    	Composite container = new Composite(parent, SWT.BORDER);
-	    	container.setLayoutData(new GridData());
-	        container.setLayout(new RowLayout(SWT.VERTICAL));
-	       
-	        for(int i = 0; i< neededAssignments.size(); i++){
-	        
-	        	Composite attComp = new Composite(container,SWT.NONE);
-	        	attComp.setLayoutData(new RowData());
-	        	attComp.setLayout(new FillLayout());
-	        	
-	        	{
-					Label attLabel = new Label(attComp, SWT.BORDER);
-					attLabel.setText(neededAssignments.get(i));
-					
-	//System.out.println("assign: "+attLabel.getText());
-					Combo attCombo = new Combo(attComp,SWT.READ_ONLY);
-					attCombo.setItems(assignmentComboElements.get(i).toArray(new String[]{}));
-					
-		for(String s:assignmentComboElements.get(i).toArray(new String[]{})){
-			System.out.println(s);
-		}
-					comboList.add(attCombo);
-	        	}
-	        }
-	        
+	    	container = new Composite(parent, SWT.BORDER);
+	    	container.setLayoutData(new GridData(GridData.FILL_BOTH));
+	        container.setLayout(new RowLayout(SWT.VERTICAL));       
+	
 	        setControl(container);
 	    }
 	    
+	    public void onEnterPage(){
+	    	//eigentliche seitenbefuellung
+	    	 for(int i = 0; i< neededAssignments.size(); i++){
+	 	        
+		        	Composite attComp = new Composite(container,SWT.NONE);
+		        	attComp.setLayoutData(new RowData());
+		        	attComp.setLayout(new FillLayout());
+		        	
+		        	{
+						Label attLabel = new Label(attComp, SWT.BORDER);
+						attLabel.setText(neededAssignments.get(i));
+						
+						Combo attCombo = new Combo(attComp,SWT.READ_ONLY);
+						attCombo.setItems(assignmentComboElements.get(i).toArray(new String[]{}));
+						comboList.add(attCombo);
+						final int j = i;
+						
+						attCombo.addSelectionListener(new SelectionListener() {
+							public void widgetSelected(SelectionEvent e) { 
+								((PerformanceWizard)getWizard()).assignmentClick(j, comboList.get(j).getText());}
+							public void widgetDefaultSelected(SelectionEvent e) { 
+								((PerformanceWizard)getWizard()).assignmentClick(j, comboList.get(j).getText());}
+						});
+		        	}
+		        }
+	    }
+
+	    
 	    @Override
-	    public boolean canFlipToNextPage(){
-	    	if (getErrorMessage() != null) return false;
+	    public boolean isPageComplete(){
+	    	if (getErrorMessage() != null)
+	    		return false;
+	    	
 	    	for(Combo co: comboList){
-	    	   if(co.getSelectionIndex()== -1)
+	    	   if(co.getSelectionIndex()== -1){
 	    		   return false;
+	    	   }
 	    	}
 	    	return true;
 	    }

@@ -2,20 +2,20 @@ package windperformancercp.model.sources;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlRootElement;
 
+
+@XmlRootElement
 public class MetMast extends AbstractSource {
 	
-	int temperatureInKelvin;
-	
-	public MetMast(String name, String identifier, String hostName, int portId, ArrayList<Attribute> attList, int tempInK){
+	public MetMast(String name, String identifier, String hostName, int portId, ArrayList<Attribute> attList){
 		super(MMId, name, identifier, hostName, portId, attList, 0);
-		this.temperatureInKelvin = tempInK;
+
 		//System.out.println("MM Konstruktor: created new met mast: '"+this.toString());		
 	}
 	
 	public MetMast(){
 		super();
-		this.temperatureInKelvin = -1;
 	}
 	
 	public MetMast(MetMast copy){
@@ -23,17 +23,17 @@ public class MetMast extends AbstractSource {
 			copy.getStreamIdentifier(),
 			copy.getHost(),
 			copy.getPort(),
-			copy.getAttributeList(),
-			copy.getTemperatureInKelvin());
+			copy.getAttributeList());
 	}
 	
-	public int getTemperatureInKelvin(){
-		return this.temperatureInKelvin;
+	@Override
+	public boolean isWindTurbine() {
+		return false;
 	}
-	
-	public void setTemperatureInKelvin(int tIK){
-		this.temperatureInKelvin = tIK;
+
+	@Override
+	public boolean isMetMast() {
+		return true;
 	}
-	
 	
 }

@@ -10,22 +10,22 @@ import windperformancercp.event.IEventType;
 import windperformancercp.views.IPresenter;
 import windperformancercp.views.IUserInputDialog;
 
-public class QueryWizardDialog extends WizardDialog implements IUserInputDialog{
-//public class QueryWizardDialog extends WizardDialog {
+public class PerformanceWizardDialog extends WizardDialog implements IUserInputDialog{
 	
 	private PerformanceWizardDialogPresenter presenter;
 	
-	public QueryWizardDialog(Shell parentShell, IWizard newWizard) {
+	public PerformanceWizardDialog(Shell parentShell, IWizard newWizard) {
 		super(parentShell, newWizard);
 		this.presenter = new PerformanceWizardDialogPresenter(this);
-		((QueryWizard)this.getWizard()).setAvailableMethods(presenter.getAvailableMethods());
-		((QueryWizard)this.getWizard()).setAvailableSources(presenter.getAvailableSources());
+		((PerformanceWizard)this.getWizard()).setAvailableMethods(presenter.getAvailableMethods());
+		((PerformanceWizard)this.getWizard()).setAvailableSources(presenter.getAvailableSources());
 		this.create();
 		update();
 	}
 
 	@Override
 	protected void finishPressed(){
+		presenter.assignmentsMade(((PerformanceWizard)this.getWizard()).getSelectedAssignments());
 		presenter.finishClick();
 	}
 	
@@ -33,12 +33,13 @@ public class QueryWizardDialog extends WizardDialog implements IUserInputDialog{
 	protected void nextPressed() {
 		//System.out.println("page changed. "+this.getCurrentPage().getName());
 		if(this.getCurrentPage().getName().equals("TypeOfQueryPage")){
-			presenter.typeChoosed(((QueryWizard)this.getWizard()).getQueryID(), ((QueryWizard)this.getWizard()).getMethod());
+			presenter.typeChoosed(((PerformanceWizard)this.getWizard()).getQueryID(), ((PerformanceWizard)this.getWizard()).getMethod());
 		}
 		if(this.getCurrentPage().getName().equals("SourceSelectPage")){
-			presenter.sourcesChoosed(((QueryWizard)this.getWizard()).getSelectedSources());
-			((QueryWizard)this.getWizard()).setNeededAssignments(presenter.getNeededAssignments(null));
-			((QueryWizard)this.getWizard()).setAssignmentComboElements(presenter.getPossibleAssignments());
+			presenter.sourcesChoosed(((PerformanceWizard)this.getWizard()).getSelectedSources());
+			((PerformanceWizard)this.getWizard()).setNeededAssignments(presenter.getNeededAssignments(null));
+			((PerformanceWizard)this.getWizard()).setSelectedAssignments(presenter.getNeededAssignments(null));
+			((PerformanceWizard)this.getWizard()).setAssignmentComboElements(presenter.getPossibleAssignments());
 		}
 		  super.nextPressed();
 	}
@@ -80,19 +81,13 @@ public class QueryWizardDialog extends WizardDialog implements IUserInputDialog{
 	}
 
 	@Override
-	public String[] getValues() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void update(Object c) {
-		((QueryWizard)this.getWizard()).update();		
+		((PerformanceWizard)this.getWizard()).update();		
 	}
 	
 	@Override
 	public void update() {
-		((QueryWizard)this.getWizard()).update();		
+		((PerformanceWizard)this.getWizard()).update();		
 	}
 
 	@Override

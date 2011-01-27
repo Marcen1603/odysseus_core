@@ -2,7 +2,10 @@ package windperformancercp.model.sources;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.IEvent;
@@ -10,7 +13,15 @@ import windperformancercp.event.IEventListener;
 import windperformancercp.event.IEventType;
 
 
-//@XmlRootElement(name="source")
+@XmlType(name = "abstractSource", propOrder = {
+	    "name",
+	    "type",
+	    "streamIdentifier",
+	    "host",
+	    "port",
+	    "attributeList",
+	    "connectState"
+	})
 public abstract class AbstractSource implements ISource {
 	
 	public static final String ID = "measure.windPerformanceRCP.ASource";
@@ -18,7 +29,7 @@ public abstract class AbstractSource implements ISource {
 	private static int sourceCounter = 0;
 	private int type;
 	private int port;
-	private int id;
+	private @XmlAttribute int id;
 	private String host;
 	private String streamIdentifier;
 	private String name;
@@ -87,16 +98,21 @@ public abstract class AbstractSource implements ISource {
 	public int getType() {
 		return this.type;
 	}
+	
+	@Override
+	public void setType(int t) {
+		this.type = t;
+	}
 
 	@Override
 	public boolean isWindTurbine() {
-		if(this.type == 1) return true;
+		if(this.type == WTId) return true;
 		return false;
 	}
 
 	@Override
 	public boolean isMetMast() {
-		if(this.type == 0) return true;
+		if(this.type == MMId) return true;
 		return false;
 	}
 	
@@ -148,8 +164,9 @@ public abstract class AbstractSource implements ISource {
 		return this.id;
 	}
 	
-	@XmlElement(name="attribute")
 	@Override
+	@XmlElementWrapper(name = "attributeList") 
+	@XmlElement(name = "attribute")
 	public ArrayList<Attribute> getAttributeList(){
 		if(attributeList == null)
 			attributeList = new ArrayList<Attribute>();

@@ -19,21 +19,26 @@ import windperformancercp.views.IPresenter;
 public class ManageSourcePresenter extends EventHandler implements IPresenter{
 	
 	ManageSourceView view;
-	IController _cont;
-	SourceModel model;
+	static IController _cont;
+	static SourceModel model;
 	
 	public ManageSourcePresenter(ManageSourceView view){	
+		//System.out.println(this.toString()+": manage source presenter says hi!");
 		this.view = view;
 		_cont = SourceController.getInstance(this);
 		model = SourceModel.getInstance();
-		//System.out.println(this.toString()+": manage source presenter says hi!");
+		
 		model.subscribeToAll(modelListener);
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
-		
 	}
 	
 	public void updateView(){
-		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
+		try{
+			fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
+		}
+		catch(Exception e){
+			System.out.println(this.toString()+": "+e);
+		}
 	}
 	
 	
@@ -57,10 +62,20 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 		IActionBars bars = view.getViewSite().getActionBars();
 		bars.getStatusLineManager().setMessage(message);
 	}
+	
+	@Override
+	public void subscribeToAll(IEventListener listener) {
+		super.subscribeToAll(listener);
+		if(listener.equals(view.updateListener)){
+			updateView();
+		}
+	}
+	
+	
 
 	@Override
 	public void feedDialog(IDialogResult input) {
-		// TODO Auto-generated method stub
-		
+		//updateView();
 	}
+	
 }
