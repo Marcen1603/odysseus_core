@@ -28,8 +28,10 @@ public class SchemaGeneratorFactory {
 	public ISchemaGenerator buildSchemaGenerator(String schemaID) {
 		if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_DEFAULT)) {
 			return new DefaultSchemaGenerator();
-		} if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)) {
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)) {
 			return new AlternativeSchemaGenerator();
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_LASER)) {
+			return new LaserSchemaGenerator();
 		} else {
 			return null;
 		}

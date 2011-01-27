@@ -30,6 +30,7 @@ public class ExtendedProvider implements IProvider {
 	// option values: schema
 	public static final String SCHEMA_SCARS_DEFAULT = "schema.scars.default";
 	public static final String SCHEMA_SCARS_ALTERNATIVE = "schema.scars.alternative";
+	public static final String SCHEMA_SCARS_LASER = "schema.scars.laser";
 
 	// option values calculation model
 	public static final String CALCMODEL_SCARS_OVERTAKE = "calcmodel.scars.overtake";

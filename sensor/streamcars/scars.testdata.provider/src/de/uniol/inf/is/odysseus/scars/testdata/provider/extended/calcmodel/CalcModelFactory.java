@@ -37,6 +37,10 @@ public class CalcModelFactory {
 			if (calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
 				return new AlternativeOvertakeCalcModel();
 			}
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_LASER)) {
+			if (calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
+				return new LaserOvertakeCalcModel();
+			}
 		}
 		return null;
 	}

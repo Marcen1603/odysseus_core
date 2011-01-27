@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.scars.testdata.provider.ExtendedProvider;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IAlternativeCalcModel;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IDefaultCalcModel;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.IGenericCalcModel;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.ILaserCalcModel;
 
 public class CarModelFactory {
 	
@@ -24,6 +25,8 @@ public class CarModelFactory {
 			return new DefaultCarModel(id, (IDefaultCalcModel)calcModel);
 		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)) {
 			return new AlternativeCarModel(id, (IAlternativeCalcModel)calcModel);
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_LASER)) {
+			return new LaserCarModel(id, (ILaserCalcModel)calcModel);
 		}
 		return null;
 	}

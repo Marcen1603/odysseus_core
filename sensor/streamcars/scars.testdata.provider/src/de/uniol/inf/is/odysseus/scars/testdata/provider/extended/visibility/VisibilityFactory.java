@@ -23,6 +23,9 @@ public class VisibilityFactory {
 		} else if (ExtendedProvider.VISIBILITY_SCARS_FRONT.equals(visibilityID)
 				&& ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE.equals(schemaID)) {
 			return new FrontAlternativeVisibility();
+		} else if (ExtendedProvider.VISIBILITY_SCARS_FRONT.equals(visibilityID)
+				&& ExtendedProvider.SCHEMA_SCARS_LASER.equals(schemaID)) {
+			return new FrontLaserVisibility();
 		}
 		return null;
 	}

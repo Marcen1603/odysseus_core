@@ -17,12 +17,18 @@ public class EntranceFactory {
 	}
 
 	public IEntrance buildEntrance(String schemaID, String calcModelID) {
-		if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_DEFAULT) && 
-				calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
+		if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_DEFAULT)
+				&& calcModelID
+						.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
 			return new DefaultOvertakeEntrance();
-		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE) && 
-				calcModelID.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)
+				&& calcModelID
+						.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
 			return new AlternativeOvertakeEntrance();
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_LASER)
+				&& calcModelID
+						.equals(ExtendedProvider.CALCMODEL_SCARS_OVERTAKE)) {
+			return new LaserOvertakeEntrance();
 		}
 		return null;
 	}

@@ -21,6 +21,8 @@ public class TupleGeneratorFactory {
 			return new DefaultTupleGenerator();
 		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE)) {
 			return new AlternativeTupleGenerator();
+		} else if (schemaID.equals(ExtendedProvider.SCHEMA_SCARS_LASER)) {
+			return new LaserTupleGenerator();
 		}
 		return null;
 	}
