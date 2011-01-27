@@ -111,7 +111,7 @@ public class APQuerySpezificationListenerJxtaImpl implements
 									OdysseusMessageType.QueryNegotiation, messageElements);
 
 							sender.sendMessage(administrationPeerJxtaImpl
-									.getNetPeerGroup(), response, pipeAdv);
+									.getNetPeerGroup(), response, pipeAdv,10);
 							log.logAction(adv.getQueryId(),
 									"Bidding for query. waiting for response...");
 						} else {

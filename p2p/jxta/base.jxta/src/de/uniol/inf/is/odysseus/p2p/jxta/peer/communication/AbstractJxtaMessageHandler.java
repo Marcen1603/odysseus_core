@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.communication.AbstractMessageHandler;
 
 abstract public class AbstractJxtaMessageHandler extends AbstractMessageHandler {
 
-	private ILogListener log;
+	protected ILogListener log;
 
 	public AbstractJxtaMessageHandler(ILogListener log, String interestedNamespace){
 		super(interestedNamespace);
@@ -18,20 +18,4 @@ abstract public class AbstractJxtaMessageHandler extends AbstractMessageHandler 
 		return MessageTool.getMessageElementAsString(namespace, element, msg);
 	}
 	
-	protected void logAction(String queryId, String message) {
-		log.logAction(queryId,message);
-	}
-
-	protected void addQuery(String queryId) {
-		log.addQuery(queryId);
-	}
-
-	protected void addBid(String queryId, int size) {
-		log.addBid(queryId, size);
-	}
-	
-	protected void addEvent(String queryId, String event) {
-		log.addEvent(queryId, event);		
-	}
-
 }

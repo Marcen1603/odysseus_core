@@ -72,14 +72,27 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 				Message response = MessageTool.createOdysseusMessage(
 						OdysseusMessageType.BiddingClient, messageElements);
 				log.addEvent(q.getId(),
-						"Sende Zusage fuer Teilplan " + subplan.getId());
+						"Sending accept for subplan" + subplan.getId());
 				// Sende die Zusage
 				MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), opPeer,
-						response);
-
+					response,10);
 				subplan.setPeerId(optimalBid.getPeerId());
-
 				subplan.setResponseSocket(opPeer.toString());
+				
+				// Sende an die anderen eine Absage:
+				ArrayList<Bid> allBidddings = subplan.getBiddings();
+				allBidddings.remove(optimalBid);
+				for (Bid deny:allBidddings){
+					opPeer = ((BidJxtaImpl)deny).getResponseSocket();
+					messageElements.clear();
+					messageElements.put("queryId", q.getId());
+					messageElements.put("subplanId", subplan.getId());
+					messageElements.put("result", "denied");
+					response = MessageTool.createOdysseusMessage(
+							OdysseusMessageType.BiddingClient, messageElements);
+					MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), opPeer,
+							response, 10);
+				}
 			}
 
 			getCallback().changeState(Lifecycle.SUCCESS);
@@ -101,7 +114,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 		}
 
 		if (found) {
-			// Zufaellig Selektion
+			// random selection
 			Random random = new Random();
 			while (true) {
 				int b = random.nextInt(biddings.size());

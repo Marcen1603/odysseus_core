@@ -150,7 +150,7 @@ public class MainWindow extends AbstractMainWindow {
 	}
 
 	@Override
-	public void removeQuery(String queryId) {
+	public void removeTab(String queryId) {
 		for (int i = 0; i < tabs.getTabCount(); i++) {
 			if (tabs.getTitleAt(i).equals(queryId)) {
 				tabs.removeTabAt(i);

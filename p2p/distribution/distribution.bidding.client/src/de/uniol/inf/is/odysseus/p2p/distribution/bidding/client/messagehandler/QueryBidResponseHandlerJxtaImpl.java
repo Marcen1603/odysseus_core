@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler;
 
+import sun.security.action.GetLongAction;
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
@@ -34,7 +35,7 @@ public class QueryBidResponseHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 		String subPlanId = meas(namespace, "subplanId", msg);
 		
 		if (result.equals("granted")) {
-			logAction(queryId, "Erhalte Zusage fuer Teilplan " + subPlanId);
+			log.logAction(subPlanId, "Accepted for processing query " + subPlanId);
 
 			P2PQuery q = queryProvider.getQuery(queryId);
 			if (q != null) {
@@ -59,8 +60,9 @@ public class QueryBidResponseHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 			}
 
 		} else {
-			logAction(queryId,
-					"Habe keine Zusage fuer die Anfrage bekommen");
+			log.logAction(subPlanId,
+					"Denied to process plan. Removing plan from store");
+			log.removeQueryOrSubplan(subPlanId);
 
 			P2PQuery q = queryProvider.getQuery(queryId);
 			if (q.getId() == queryId && q.getSubPlans().size() == 1) {

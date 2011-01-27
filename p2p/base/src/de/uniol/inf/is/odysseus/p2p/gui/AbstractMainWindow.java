@@ -33,8 +33,6 @@ public abstract class AbstractMainWindow extends JFrame implements ActionListene
 	public abstract void addBids(String queryId, String s);
 
 	public abstract void addSplitting(String queryId, String s);
-
-	public abstract void removeQuery(String queryId);
 	
 	public abstract void addScheduler(String queryId, String scheduler);
 	
@@ -51,5 +49,7 @@ public abstract class AbstractMainWindow extends JFrame implements ActionListene
 	@Override
 	public abstract void actionPerformed(ActionEvent e);
 	public abstract void addAdminPeer(String queryId, String adminPeer);
+
+	public abstract void removeTab(String queryId) ;
 
 }

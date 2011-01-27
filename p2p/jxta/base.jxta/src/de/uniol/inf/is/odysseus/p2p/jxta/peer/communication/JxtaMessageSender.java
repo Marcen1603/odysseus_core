@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 public class JxtaMessageSender implements IMessageSender<PeerGroup, Message, PipeAdvertisement> {
 
 	@Override
-	public void sendMessage(PeerGroup network, Message message, PipeAdvertisement to) {
-		MessageTool.sendMessage(network, to, message);
+	public void sendMessage(PeerGroup network, Message message, PipeAdvertisement to, int maxRetries) {
+		MessageTool.sendMessage(network, to, message, maxRetries);
 	}
 
 }

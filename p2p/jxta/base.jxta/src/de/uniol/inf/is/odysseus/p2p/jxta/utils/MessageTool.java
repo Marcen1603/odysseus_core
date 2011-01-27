@@ -7,6 +7,9 @@ import java.io.StringReader;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocumentFactory;
@@ -25,13 +28,15 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class MessageTool {
 
+	static Logger logger = LoggerFactory.getLogger(MessageTool.class);
+	
 	public static void sendMessage(PeerGroup netPeerGroup,
-			PipeAdvertisement adv, Message message) {
-		new MessageSender(netPeerGroup, adv, message).start();
+			PipeAdvertisement adv, Message message, int maxRetries) {
+		new MessageSender(netPeerGroup, adv, message, maxRetries).start();
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static PipeAdvertisement getResponsePipe(String namespace,
+	public static PipeAdvertisement createResponsePipeFromMessage(String namespace,
 			Message msg, int number) {
 		MessageElement advElement = msg.getMessageElement(namespace, "pipeAdv"
 				+ number);
@@ -50,7 +55,7 @@ public class MessageTool {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static PeerAdvertisement getPeerAdvertisement(String namespace,
+	public static PeerAdvertisement createPeerAdvertisementFromMessage(String namespace,
 			Message msg) {
 		MessageElement advElement = msg.getMessageElement(namespace, "peerAdv");
 		XMLDocument theDocument = null;
@@ -96,7 +101,7 @@ public class MessageTool {
 		String namespace = type.name();
 		return createSimpleMessage(namespace, messageElems);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Message createSimpleMessage(String namespace,
 			Map<String, Object> messageElems) {
@@ -140,7 +145,6 @@ public class MessageTool {
 					}
 					data = bos.toByteArray();
 				}
-				System.out.println("Baue subplan bytearray zusammen");
 				MessageElement query = new ByteArrayMessageElement("subplan",
 						null, data, null);
 				response.addMessageElement(namespace, query);
@@ -178,24 +182,27 @@ public class MessageTool {
 
 class MessageSender extends Thread {
 
+	static Logger logger = LoggerFactory.getLogger(MessageSender.class);
+	
 	PeerGroup netPeerGroup;
-
 	JxtaSocket socket;
-
 	PipeAdvertisement pipeAdv;
-
 	Message message;
+	private int maxRetries;
 
 	public MessageSender(PeerGroup netPeerGroup, PipeAdvertisement pipeAdv,
-			Message message) {
+			Message message, int maxRetries) {
 		this.netPeerGroup = netPeerGroup;
 		this.pipeAdv = pipeAdv;
 		this.message = message;
+		this.maxRetries = maxRetries;
 	}
 
 	@Override
 	public void run() {
-		while (socket == null) {
+		int retries = 0;
+		while (socket == null && (retries < maxRetries)) {
+			retries++;
 			try {
 				socket = new JxtaSocket(netPeerGroup, null, pipeAdv, 16000,
 						true);
@@ -203,9 +210,13 @@ class MessageSender extends Thread {
 				break;
 			} catch (IOException e2) {
 				socket = null;
-				e2.printStackTrace();
-
+				// e2.printStackTrace();
 			}
+		}
+		
+		if (socket == null){
+			logger.error("Connection to "+pipeAdv+" was not possible. Aborting");
+			return;
 		}
 
 		ObjectOutputStream oout = null;
@@ -234,7 +245,9 @@ class MessageSender extends Thread {
 			if (oout != null) {
 				oout.close();
 			}
-			socket.close();
+			if (!socket.isClosed()) {
+				socket.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

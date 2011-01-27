@@ -51,7 +51,7 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 				// e2.printStackTrace();
 			}
 		}
-		logger.debug("Connected to "+adv);
+	//	logger.debug("Connected to "+adv);
 		try {
 			in = socket.getInputStream();
 			iStream = new ObjectInputStream(in);

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -115,8 +116,12 @@ public class SocketServerListener implements ISocketServerListener {
 								oin.close();
 								out.close();
 								in.close();
-
-								socket.close();
+								try {
+									socket.close();	
+								} catch (SocketTimeoutException e) {
+									// ignore
+								}	
+								
 
 							} catch (IOException e1) {
 								e1.printStackTrace();

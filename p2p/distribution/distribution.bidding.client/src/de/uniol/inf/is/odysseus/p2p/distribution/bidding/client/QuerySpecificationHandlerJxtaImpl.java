@@ -57,7 +57,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void handleQuerySpezification(S querySpecification) {
-		logger.debug("handle adv zu Subplan "
+		logger.debug("Got query specification for subplan "
 				+ querySpecification.getSubplanId());
 		ILogListener log = peer.getLog();
 
@@ -85,8 +85,8 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 			query.setAdminPeerPipe(MessageTool
 					.createPipeAdvertisementFromXml(querySpecification
 							.getBiddingPipe()));
-
-			log.addQuery(querySpecification.getQueryId());
+			// Add Subplan not Query
+			//log.addQuery(querySpecification.getQueryId());
 		}
 
 		Object obj = null;
@@ -106,9 +106,11 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		query.getSubPlans().put(querySpecification.getSubplanId(),
 				(Subplan) obj);
 
+		log.addQuery(querySpecification.getSubplanId());
+		
 		log.logAction(
-				querySpecification.getQueryId(),
-				"Ausgeschriebene(r) Anfrage/Teilplan gefunden: "
+				querySpecification.getSubplanId(),
+				"Found plan "
 						+ AbstractTreeWalker.prefixWalk(
 								query.getSubPlans()
 										.get(querySpecification.getSubplanId())
@@ -122,12 +124,12 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 			messageElements.put("ExecutionBid", "positive");
 			query.setStatus(Lifecycle.GRANTED);
 			peer.addQuery(query);
-			log.logAction(querySpecification.getQueryId(),
-					"Biete auf Anfrage/Teilplan");
+			log.logAction(querySpecification.getSubplanId(),
+					"Bid for execution");
 		} else {
 			messageElements.put("ExecutionBid", "negative");
 			log.logAction(querySpecification.getQueryId(),
-					"Biete nicht auf Anfrage/Teilplan");
+					"Do not bid.");
 			peer.removeQuery(query.getId());
 		}
 		messageElements.put("queryId", querySpecification.getQueryId());
@@ -138,7 +140,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		messageElements.put("pipeAdvertisement", pipe);
 		((JxtaMessageSender) (peer.getMessageSender())).sendMessage(
 				PeerGroupTool.getPeerGroup(), MessageTool.createOdysseusMessage(
-						OdysseusMessageType.BiddingProvider, messageElements), pipeAdv);
+						OdysseusMessageType.BiddingProvider, messageElements), pipeAdv,10);
 	}
 
 	@Override

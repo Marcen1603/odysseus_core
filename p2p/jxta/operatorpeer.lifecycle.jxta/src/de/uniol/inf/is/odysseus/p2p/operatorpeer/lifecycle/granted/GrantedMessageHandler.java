@@ -41,7 +41,7 @@ public class GrantedMessageHandler extends AbstractJxtaMessageHandler {
 		this.granted = true;
 		String query = meas(namespace, "queryId", (Message) msg);
 		String subplanId = meas(namespace, "subplanId", (Message) msg);
-		PipeAdvertisement pipeAdv = MessageTool.getResponsePipe(namespace,
+		PipeAdvertisement pipeAdv = MessageTool.createResponsePipeFromMessage(namespace,
 				(Message) msg, 0);
 		logger.debug("Erhalte im MessageHandler querid " + query
 				+ " subplanid " + subplanId);
@@ -52,7 +52,7 @@ public class GrantedMessageHandler extends AbstractJxtaMessageHandler {
 		logger.debug("Sende Granted Antwort zu Teilplan " + subplanId);
 		this.messageSender.sendMessage(PeerGroupTool.getPeerGroup(),
 				MessageTool.createSimpleMessage("Granted" + query,
-						messageElements), pipeAdv);
+						messageElements), pipeAdv, 10);
 	}
 
 	public IExecutionListenerCallback getCallback() {

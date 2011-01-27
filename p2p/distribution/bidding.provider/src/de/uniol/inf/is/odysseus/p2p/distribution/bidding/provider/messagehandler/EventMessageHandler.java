@@ -14,7 +14,7 @@ public class EventMessageHandler extends AbstractJxtaMessageHandler {
 	public void handleMessage(Object msg, String namespace) {
 		String event = meas(namespace, "event", (Message) msg);
 		String queryId = meas(namespace, "queryId", (Message) msg);
-		addEvent(queryId, event);
+		log.addEvent(queryId, event);
 	}
 
 }

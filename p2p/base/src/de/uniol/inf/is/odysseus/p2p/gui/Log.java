@@ -28,6 +28,12 @@ public class Log implements ILogListener{
 	}
 
 	@Override
+	public void removeQueryOrSubplan(String id) {
+		getWindow().removeTab(id);
+	}
+	
+	
+	@Override
 	public void logAction(String queryId, String action) {
 			getWindow().addAction(
 					queryId, action);
@@ -51,12 +57,6 @@ public class Log implements ILogListener{
 	public void setStatus(String queryId, String status) {
 			getWindow().addStatus(
 					queryId, status);
-	}
-
-	@Override
-	public void removeQuery(String queryId) {
-			getWindow().removeQuery(
-					queryId);
 	}
 
 	@Override

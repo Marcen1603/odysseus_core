@@ -28,9 +28,9 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 
 		if (action.equals(OdysseusQueryAction.bidding)) {
 			String queryId = meas(namespace, "queryId", (Message) msg);
-			PipeAdvertisement pipeAdv = MessageTool.getResponsePipe(namespace,
+			PipeAdvertisement pipeAdv = MessageTool.createResponsePipeFromMessage(namespace,
 					(Message) msg, 0);
-			PeerAdvertisement peerAdv = MessageTool.getPeerAdvertisement(
+			PeerAdvertisement peerAdv = MessageTool.createPeerAdvertisementFromMessage(
 					namespace, (Message) msg);
 			P2PQuery q = thinPeerJxtaImpl.getQuery(queryId);
 			if (q != null && (q instanceof P2PQueryJxtaImpl)) {
@@ -40,7 +40,7 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 		}
 		if (action.equals(OdysseusQueryAction.resultStreaming)) {
 			StreamHandlerJxtaImpl shandler = new StreamHandlerJxtaImpl(
-					MessageTool.getResponsePipe(namespace, (Message) msg, 0),
+					MessageTool.createResponsePipeFromMessage(namespace, (Message) msg, 0),
 					MessageTool.getMessageElementAsString(namespace, "queryId",
 							(Message) msg), thinPeerJxtaImpl);
 			Thread t = new Thread(shandler);

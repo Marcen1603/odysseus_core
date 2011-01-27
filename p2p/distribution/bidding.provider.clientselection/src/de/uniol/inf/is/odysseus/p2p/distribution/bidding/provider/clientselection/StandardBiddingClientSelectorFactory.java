@@ -20,13 +20,6 @@ public class StandardBiddingClientSelectorFactory<C extends IExecutionListenerCa
 	}
 
 
-	@Override
-	public IClientSelector getNewInstance(int time, P2PQuery query, ILogListener log) {
-		IClientSelector selector = new StandardBiddingClientSelector<C>(time, query, log);
-		return selector;
-	}
-
-
 //	@Override
 //	public IClientSelector getNewInstance(int time, Query query, C callback) {
 //		// TODO Auto-generated method stub

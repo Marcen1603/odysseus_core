@@ -17,7 +17,7 @@ public abstract class P2PQuery implements Serializable{
 	private String id;
 	private String declarativeQuery;
 	private String language;
-	private List<ILogicalOperator> logicalOperatorPlan;
+	private List<ILogicalOperator> logicalOperatorPlan = new ArrayList<ILogicalOperator>();
 	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
 	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
 	private User user;

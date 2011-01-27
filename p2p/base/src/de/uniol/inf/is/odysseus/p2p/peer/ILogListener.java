@@ -14,7 +14,7 @@ public interface ILogListener {
 
 	void setSplittingStrategy(String queryId, String splittingStrategy);
 
-	void removeQuery(String queryId);
+	void removeQueryOrSubplan(String id);
 
 	void addBid(String queryId, Integer bids);
 

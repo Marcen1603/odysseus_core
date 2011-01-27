@@ -76,7 +76,7 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 						MessageTool.createOdysseusMessage(
 								OdysseusMessageType.BiddingResult,
 								messageElements), ((BidJxtaImpl) bid)
-								.getResponseSocket());
+								.getResponseSocket(), 10);
 				((P2PQueryJxtaImpl) getQuery())
 						.setAdminPeerPipe(((BidJxtaImpl) bid)
 								.getResponseSocket());
@@ -95,7 +95,7 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 							MessageTool.createOdysseusMessage(
 									OdysseusMessageType.BiddingResult,
 									messageElements), ((BidJxtaImpl) b)
-									.getResponseSocket());					
+									.getResponseSocket(), 10);					
 				}
 				
 			}

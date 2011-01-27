@@ -117,9 +117,9 @@ public class BiddingProvider extends
 
 		((JxtaMessageSender) (getPeer().getMessageSender())).sendMessage(
 				PeerGroupTool.getPeerGroup(), message,
-				((P2PQueryJxtaImpl) query).getResponseSocketThinPeer());
+				((P2PQueryJxtaImpl) query).getResponseSocketThinPeer(),10);
 		log.logAction(query.getId(),
-				"Sende Thin-Peer Verbindungsinformationen zum Operatorplan"); // ??
+				"Send query plan connection information to thin peer"); 
 
 		// Anfragen ausschreiben
 		for (Subplan subplan : query.getSubPlans().values()) {

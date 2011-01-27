@@ -361,10 +361,5 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 		return false;
 	}
 
-	@Override
-	public void removeQuery(String queryId) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

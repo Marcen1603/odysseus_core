@@ -103,7 +103,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
 		((JxtaMessageSender) (thinPeerJxtaImpl.getMessageSender()))
 				.sendMessage(thinPeerJxtaImpl.getNetPeerGroup(), message,
-						adminPipe);
+						adminPipe, 10);
 		log.addTab(q.getId(), query);
 	}
 
