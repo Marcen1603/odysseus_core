@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.Message;
+import net.jxta.id.IDFactory;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
@@ -51,6 +52,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 				.newAdvertisement(QueryTranslationSpezification
 						.getAdvertisementType());
 		adv.setQuery(query);
+		adv.setID(IDFactory.newPipeID(thinPeerJxtaImpl.getNetPeerGroup().getPeerGroupID()));
 		adv.setBiddingPipe(thinPeerJxtaImpl.getServerResponseAddress()
 				.toString());
 		adv.setPeer(thinPeerJxtaImpl.getNetPeerGroup().getPeerAdvertisement()

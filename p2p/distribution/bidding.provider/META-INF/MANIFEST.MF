@@ -46,6 +46,5 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/BiddingProvider.xml, OSGI-INF/EventHandler.xml, OSGI-INF/BiddingMessageResultHandler.xml
-Require-Bundle: apache.codec;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.p2p.jxta
+Require-Bundle: de.uniol.inf.is.odysseus.p2p.jxta
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

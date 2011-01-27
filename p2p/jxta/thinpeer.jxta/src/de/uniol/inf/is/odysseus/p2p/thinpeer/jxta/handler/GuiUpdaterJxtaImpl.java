@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 
 import javax.swing.DefaultListModel;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
@@ -36,13 +39,13 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 	}
 
 	public void updateQueryList() {
-		DefaultListModel model = new DefaultListModel();
-		for (String qID : thinPeerJxtaImpl.getQueryIds()) {
-			P2PQuery q = thinPeerJxtaImpl.getQuery(qID);
-			model.addElement(q.getId() + "(" + getAllBiddings(q) + ") - "
-					+ q.getStatus());
-		}
-		thinPeerJxtaImpl.getGui().getQuerys().setModel(model);
+//		DefaultListModel model = new DefaultListModel();
+//		for (String qID : thinPeerJxtaImpl.getQueryIds()) {
+//			P2PQuery q = thinPeerJxtaImpl.getQuery(qID);
+//			model.addElement(q.getId() + "(" + getAllBiddings(q) + ") - "
+//					+ q.getStatus());
+//		}
+//		thinPeerJxtaImpl.getGui().getQuerys().setModel(model);
 
 	}
 
@@ -60,8 +63,8 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 	public void updateSourcesList() {
 		synchronized (thinPeerJxtaImpl.getAdminPeers()) {
 			DefaultListModel model = new DefaultListModel();
-			for (String s : thinPeerJxtaImpl.getSources().keySet()) {
-				model.addElement(s);
+			for (SourceAdvertisement s : thinPeerJxtaImpl.getSources()) {
+				model.addElement(s.getSourceName()+" from "+ s.getPeerID()+"");
 			}
 			thinPeerJxtaImpl.getGui().getSources().setModel(model);
 		}

@@ -13,11 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -47,7 +50,8 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 	public SourceListenerJxtaImpl() {
 	}
 
-	public SourceListenerJxtaImpl(IExecutor executor, AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
+	public SourceListenerJxtaImpl(IExecutor executor,
+			AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
 		this.executor = executor;
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 	}
@@ -59,8 +63,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			administrationPeerJxtaImpl
-					.getDiscoveryService()
+			administrationPeerJxtaImpl.getDiscoveryService()
 					.getRemoteAdvertisements(null, DiscoveryService.ADV,
 							"sourceName", "*", 20, this);
 		}
@@ -78,21 +81,38 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 					Object source = en.nextElement();
 					if (source instanceof SourceAdvertisement) {
 						adv = (SourceAdvertisement) source;
-						//logger.debug("Found Source " + adv.getSourceName());
-
-						administrationPeerJxtaImpl.getSources()
-								.put(adv.getSourceName(), adv);
-						User user = GlobalState.getActiveUser();
+						administrationPeerJxtaImpl.getSources().put(
+								adv.getSourceName(), adv);
 						IDataDictionary datadictionary = GlobalState
 								.getActiveDatadictionary();
+						User caller = GlobalState.getActiveUser();
+						// Login des users?
+						String viewname = adv.getSourceName();
+
 						// Nur eintragen, wenn nicht eh schon vorhanden
-						if (!datadictionary.containsViewOrStream(adv.getSourceName(),
-								user)){
-							logger.debug("Adding to DD " + adv.getSourceName());
-							List<IQueryBuildSetting<?>> cfg = executor.getQueryBuildConfiguration("Standard");
-							getExecutor().addQuery(adv.getSourceScheme(),
-									adv.getLanguage(), user, datadictionary,
-									cfg.toArray(new IQueryBuildSetting[0]));
+						if (!datadictionary.containsViewOrStream(
+								adv.getSourceName(), caller)) {
+
+							String sourceType = adv.getSourceType();
+
+
+							ILogicalOperator topOperator = (ILogicalOperator) AdvertisementTools
+									.fromBase64String(adv.getLogicalPlan());
+							SDFEntity entity = (SDFEntity) AdvertisementTools
+									.fromBase64String(adv.getEntity());
+
+							logger.debug("Adding to DD " + adv.getSourceName()
+									+ " " + sourceType + " as "+entity);
+							
+							if (adv.isView()) {
+								datadictionary.setView(viewname, topOperator,
+										caller);
+							} else {
+								datadictionary.setStream(viewname, topOperator,
+										caller);
+							}
+							datadictionary.addSourceType(viewname, sourceType);
+							datadictionary.addEntity(viewname, entity, caller);
 						}
 					} else {
 						return;

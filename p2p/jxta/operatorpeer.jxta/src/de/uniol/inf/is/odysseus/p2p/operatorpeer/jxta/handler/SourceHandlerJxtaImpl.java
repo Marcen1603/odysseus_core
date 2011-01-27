@@ -1,73 +1,83 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
+import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
- * Alle Quellen werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und
+ * Alle Streams und Views werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und
  * in regelmaessigen Abstaenden ausgeschrieben.
  * 
- * @author Mart Köhler
+ * @author Mart Koehler, Marco Grawunder
  * 
  */
 public class SourceHandlerJxtaImpl implements ISourceHandler {
 
-	private int LIFETIME = 30000;
-	private OperatorPeerJxtaImpl oPeer = null;
+	private int LIFETIME = 60000;
+	private OperatorPeerJxtaImpl peer = null;
 
 	public SourceHandlerJxtaImpl(OperatorPeerJxtaImpl aPeer) {
-		this.setoPeer(aPeer);
+		this.setPeer(aPeer);
 	}
 
 	@Override
 	public void run() {
+
 		ArrayList<SourceAdvertisement> advList = new ArrayList<SourceAdvertisement>();
-
-		User user = GlobalState.getActiveUser(); // Wollen jede View bzw. Quelle
-													// ausschreiben
-		for (Entry<String, ILogicalOperator> v : GlobalState
-				.getActiveDatadictionary().getStreamsAndViews(user)) {
-			// Create source advertisement and add to publish list
-			SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory
-					.newAdvertisement(SourceAdvertisement
-							.getAdvertisementType());
-
-			adv.setSourceName(v.getKey());
-			adv.setPeer(getoPeer().getNetPeerGroup()
-					.getPeerAdvertisement().toString());
-			adv.setSourceId(v.getKey());
-			adv.setSourceScheme(getoPeer().getSources()
-					.get(v.getKey()).getE1());
-			adv.setLanguage(getoPeer().getSources()
-					.get(v.getKey()).getE2());
-			advList.add(adv);
-
-		}
 
 		// Publish all sources
 		while (true) {
+			advList.clear();
+			User user = GlobalState.getActiveUser(); 
+			IDataDictionary dd = GlobalState.getActiveDatadictionary();
+			for (Entry<String, ILogicalOperator> v : dd
+					.getStreamsAndViews(user)) {
+				// Create source advertisement and add to publish list
+				SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory
+						.newAdvertisement(SourceAdvertisement
+								.getAdvertisementType());
+				adv.setID(IDFactory.newPipeID(getPeer().getNetPeerGroup()
+						.getPeerGroupID()));
+				adv.setSourceName(v.getKey());
+				adv.setPeer(getPeer().getNetPeerGroup().getPeerAdvertisement()
+						.toString());
+				String peerID = getPeer().getNetPeerGroup().getPeerAdvertisement().getID().toString();
+				adv.setPeerID(peerID);
+				adv.setSourceId(v.getKey());
+				adv.setLogicalPlan(AdvertisementTools.toBase64String(v
+						.getValue()));
+				adv.setEntity(AdvertisementTools.toBase64String(dd.getEntity(
+						v.getKey(), user)));
+				adv.setSourceType(dd.getSourceType(v.getKey()));
+
+				adv.setUser(AdvertisementTools.toBase64String(user));
+				advList.add(adv);
+			}
+
 			for (SourceAdvertisement adv : advList) {
 				try {
-					getoPeer().getDiscoveryService()
-							.publish(adv, LIFETIME, LIFETIME);
+					getPeer().getDiscoveryService().publish(adv, LIFETIME,
+							LIFETIME);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				getoPeer().getDiscoveryService()
-						.remotePublish(adv, 31000);
+				getPeer().getDiscoveryService().remotePublish(adv, LIFETIME);
 			}
 			try {
 				Thread.sleep(LIFETIME - 1);
@@ -80,7 +90,8 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 	public PipeAdvertisement createSocketAdvertisement() {
 		PipeID socketID = null;
-		socketID = (PipeID) IDFactory.newPipeID(getoPeer().getNetPeerGroup().getPeerGroupID());
+		socketID = (PipeID) IDFactory.newPipeID(getPeer().getNetPeerGroup()
+				.getPeerGroupID());
 		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		advertisement.setPipeID(socketID);
@@ -90,12 +101,12 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		return advertisement;
 	}
 
-	public void setoPeer(OperatorPeerJxtaImpl oPeer) {
-		this.oPeer = oPeer;
+	public void setPeer(OperatorPeerJxtaImpl oPeer) {
+		this.peer = oPeer;
 	}
 
-	public OperatorPeerJxtaImpl getoPeer() {
-		return oPeer;
+	public OperatorPeerJxtaImpl getPeer() {
+		return peer;
 	}
 
 }

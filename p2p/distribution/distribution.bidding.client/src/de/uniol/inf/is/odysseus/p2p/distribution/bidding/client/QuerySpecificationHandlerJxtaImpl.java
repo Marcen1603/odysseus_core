@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 
@@ -12,7 +10,6 @@ import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.XMLDocument;
 import net.jxta.protocol.PipeAdvertisement;
 
-import org.apache.commons.codec.binary.Base64InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySel
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
@@ -89,20 +87,8 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 			//log.addQuery(querySpecification.getQueryId());
 		}
 
-		Object obj = null;
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(
-					querySpecification.getSubplan().getBytes("utf-8"));
-			Base64InputStream b64in = new Base64InputStream(bis);
-			ObjectInputStream ois = new ObjectInputStream(b64in);
-			try {
-				obj = ois.readObject();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+		String plan = querySpecification.getSubplan();
+		Object obj = AdvertisementTools.fromBase64String(plan);
 		query.getSubPlans().put(querySpecification.getSubplanId(),
 				(Subplan) obj);
 

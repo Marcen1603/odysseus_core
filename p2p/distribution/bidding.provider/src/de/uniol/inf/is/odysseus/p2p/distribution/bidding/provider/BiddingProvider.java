@@ -1,18 +1,15 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.Message;
+import net.jxta.id.IDFactory;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 
-import org.apache.commons.codec.binary.Base64OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +21,7 @@ import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClien
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
@@ -62,7 +60,8 @@ public class BiddingProvider extends
 	public void initializeService() {
 		getLogger().info("Initializing message handler");
 
-		getRegisteredMessageHandler().add(new EventMessageHandler(getPeer().getLog()));
+		getRegisteredMessageHandler().add(
+				new EventMessageHandler(getPeer().getLog()));
 		getRegisteredMessageHandler().add(
 				new BiddingMessageResultHandler(getPeer(), getPeer().getLog()));
 		for (IMessageHandler handler : getRegisteredMessageHandler()) {
@@ -112,14 +111,14 @@ public class BiddingProvider extends
 		messageElements.put("pipeAdvertisement",
 				MessageTool.createPipeAdvertisementFromXml(pipeAdv));
 		messageElements.put("peerAdvertisement", peerAdv);
-		Message message = MessageTool.createOdysseusMessage(OdysseusMessageType.QueryNegotiation,
-				messageElements);
+		Message message = MessageTool.createOdysseusMessage(
+				OdysseusMessageType.QueryNegotiation, messageElements);
 
 		((JxtaMessageSender) (getPeer().getMessageSender())).sendMessage(
 				PeerGroupTool.getPeerGroup(), message,
-				((P2PQueryJxtaImpl) query).getResponseSocketThinPeer(),10);
+				((P2PQueryJxtaImpl) query).getResponseSocketThinPeer(), 10);
 		log.logAction(query.getId(),
-				"Send query plan connection information to thin peer"); 
+				"Send query plan connection information to thin peer");
 
 		// Anfragen ausschreiben
 		for (Subplan subplan : query.getSubPlans().values()) {
@@ -129,17 +128,11 @@ public class BiddingProvider extends
 			QueryExecutionSpezification adv = (QueryExecutionSpezification) AdvertisementFactory
 					.newAdvertisement(QueryExecutionSpezification
 							.getAdvertisementType());
-
+			adv.setID(IDFactory.newPipeID(PeerGroupTool.getPeerGroup().getPeerGroupID()));
 			adv.setBiddingPipe(((PipeAdvertisement) serverResponse).toString());
 			adv.setQueryId(query.getId());
 			adv.setSubplanId(subplan.getId());
-
-			try {
-				adv.setSubplan(new String(toBase64(subplan).toByteArray(),
-						"utf-8"));
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
+			adv.setSubplan(AdvertisementTools.toBase64String(subplan));
 			adv.setLanguage(query.getLanguage());
 			try {
 				getDiscoveryService().publish(adv, 15000, 15000);
@@ -152,32 +145,6 @@ public class BiddingProvider extends
 				15000, query, getCallback(), log);
 		Thread t = new Thread(selector);
 		t.start();
-	}
-
-	private ByteArrayOutputStream toBase64(Object object) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = null;
-		Base64OutputStream b64os = null;
-		try {
-
-			b64os = new Base64OutputStream(bos);
-			oos = new ObjectOutputStream(b64os);
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
-		try {
-			if (oos != null) {
-				oos.writeObject(object);
-				b64os.flush();
-				oos.flush();
-				b64os.close();
-				oos.close();
-				bos.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return bos;
 	}
 
 }

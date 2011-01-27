@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -46,7 +48,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	private PeerGroup netPeerGroup;
 
-	private HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
+	private Set<SourceAdvertisement> sources = new HashSet<SourceAdvertisement>();
 
 	@Override
 	public HashMap<String, Object> getAdminPeers() {
@@ -224,11 +226,11 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 				query, language, user);
 	}
 
-	public HashMap<String, SourceAdvertisement> getSources() {
+	public Set<SourceAdvertisement> getSources() {
 		return sources;
 	}
 
-	public void setSources(HashMap<String, SourceAdvertisement> sources) {
+	public void setSources(Set<SourceAdvertisement> sources) {
 		this.sources = sources;
 	}
 

@@ -41,7 +41,7 @@ public class P2PQueryJxtaImpl extends P2PQuery{
 	public void addAdminBidding(PipeAdvertisement socket, PeerAdvertisement peerAdv){
 		synchronized(this.adminPeerBidding){
 			BidJxtaImpl bid = new BidJxtaImpl(socket, new Date(), peerAdv);
-			this.adminPeerBidding.put(socket.getPipeID().toString(), bid);
+			this.adminPeerBidding.put(""+socket.getPipeID(), bid);
 		}
 	}
 		

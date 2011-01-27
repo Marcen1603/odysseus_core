@@ -33,23 +33,28 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 	private static final long serialVersionUID = 1L;
 
 	private String sourceName;
-
-	private String sourceScheme;
-
-	private String language;
-
+	private String user;
+	private String logicalPlan;
+	
 	private ID id = ID.nullID;
-
 	private String peer;
-
+	private String peerID="";
 	private String sourceId;
+	private boolean isView;
+	private String sourceType;
+	private String entity;
 
 	private final static String sourceNameTag = "sourceName";
 	private final static String idTag = "id";
 	private final static String peerTag = "peer";
+	private final static String peerIDTag = "peerID";
 	private final static String sourceIdTag = "sourceId";
-	private final static String sourceSchemeTag = "sourceScheme";
-	private final static String sourceLangTag = "language";
+	private final static String userTag = "user";
+	private final static String logicalPlanTag = "logicalplan";
+	private final static String isViewTag = "isView";
+	private final static String sourceTypeTag = "sourceType";
+	private final static String entityTag = "entity";
+	
 
 	/**
 	 * Indexable fields. Advertisements must define the indexables, in order to
@@ -57,7 +62,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 	 * network
 	 */
 	private final static String[] fields = { idTag, sourceIdTag, sourceNameTag,
-			sourceSchemeTag, sourceLangTag };
+			userTag, logicalPlanTag, peerTag ,peerIDTag, isViewTag, sourceTypeTag, entityTag};
 
 	public SourceAdvertisement(Element root) {
 		TextElement doc = (TextElement) root;
@@ -76,6 +81,9 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 		initialize(doc);
 	}
 
+	
+	
+	
 	protected void initialize(Element root) {
 		if (!TextElement.class.isInstance(root)) {
 			throw new IllegalArgumentException(getClass().getName()
@@ -120,6 +128,10 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 			setSourceName(elem.getTextValue());
 			return true;
 		}
+		if (elem.getName().equals(peerIDTag)) {
+			setPeerID(elem.getTextValue());
+			return true;
+		}		
 		if (elem.getName().equals(peerTag)) {
 			setPeer(elem.getTextValue());
 			return true;
@@ -128,12 +140,24 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 			setSourceId(elem.getTextValue());
 			return true;
 		}
-		if (elem.getName().equals(sourceSchemeTag)) {
-			setSourceScheme(elem.getTextValue());
+		if (elem.getName().equals(userTag)) {
+			setUser(elem.getTextValue());
 			return true;
 		}
-		if (elem.getName().equals(sourceLangTag)) {
-			setLanguage(elem.getTextValue());
+		if (elem.getName().equals(logicalPlanTag)) {
+			setLogicalPlan(elem.getTextValue());
+			return true;
+		}
+		if (elem.getName().equals(isViewTag)) {
+			setIsView(elem.getTextValue());
+			return true;
+		}		
+		if (elem.getName().equals(sourceTypeTag)) {
+			setSourceType(elem.getTextValue());
+			return true;
+		}
+		if (elem.getName().equals(entityTag)) {
+			setEntity(elem.getTextValue());
 			return true;
 		}
 
@@ -141,6 +165,19 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 	}
 
 	public SourceAdvertisement() {
+	}
+
+	public SourceAdvertisement(SourceAdvertisement sourceAdvertisement) {
+		sourceName = sourceAdvertisement.sourceName;
+		user = sourceAdvertisement.user;
+		logicalPlan = sourceAdvertisement.logicalPlan;
+		peer = sourceAdvertisement.peer;
+		peerID = sourceAdvertisement.peerID;
+		sourceId = sourceAdvertisement.sourceId;
+		isView = sourceAdvertisement.isView;
+		sourceType = sourceAdvertisement.sourceType;
+		entity = sourceAdvertisement.entity;
+		id = sourceAdvertisement.id;
 	}
 
 	@Override
@@ -157,13 +194,20 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 		adv.appendChild(e);
 		e = adv.createElement(peerTag, getPeer().toString().trim());
 		adv.appendChild(e);
+		e = adv.createElement(peerIDTag, getPeerID().toString().trim());
+		adv.appendChild(e);
 		e = adv.createElement(sourceIdTag, getSourceId().toString().trim());
 		adv.appendChild(e);
-		e = adv.createElement(sourceSchemeTag, getSourceScheme().toString()
-				.trim());
+		e = adv.createElement(userTag, getUser().trim());
 		adv.appendChild(e);
-		e = adv.createElement(sourceLangTag, getLanguage().toString().trim());
+		e = adv.createElement(logicalPlanTag, getLogicalPlan().trim());
 		adv.appendChild(e);
+		e = adv.createElement(isViewTag, ""+isView);
+		adv.appendChild(e);		
+		e = adv.createElement(sourceTypeTag, sourceType);
+		adv.appendChild(e);		
+		e = adv.createElement(entityTag, entity);
+		adv.appendChild(e);				
 		return adv;
 	}
 
@@ -225,20 +269,28 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 		this.sourceName = sourceName;
 	}
 
-	public void setLanguage(String language) {
-		this.language = language;
+	public void setUser(String user) {
+		this.user = user;
 	}
 
-	public String getLanguage() {
-		return language;
+	public String getUser() {
+		return user;
 	}
 
-	public String getSourceScheme() {
-		return sourceScheme;
+	public String getLogicalPlan() {
+		return logicalPlan;
 	}
 
-	public void setSourceScheme(String sourceScheme) {
-		this.sourceScheme = sourceScheme;
+	public void setLogicalPlan(String logicalPlan) {
+		this.logicalPlan = logicalPlan;
+	}
+	
+	public String getEntity() {
+		return entity;
+	}
+	
+	public void setEntity(String entity) {
+		this.entity = entity;
 	}
 
 	public String getSourceId() {
@@ -256,7 +308,36 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 	public void setPeer(String peer) {
 		this.peer = peer;
 	}
+	
+	public String getPeerID() {
+		return peerID;
+	}
+	
+	public void setPeerID(String peerID) {
+		this.peerID = peerID;
+	}
+	
+	public boolean isView(){
+		return isView;
+	}
+	
+	public void setIsView(String isView){
+		setIsView(Boolean.parseBoolean(isView));
+	}
 
+	private void setIsView(boolean isView) {
+		this.isView = isView;
+	}
+
+	public String getSourceType() {
+		return sourceType;
+	}
+	
+	public void setSourceType(String sourceType){
+		this.sourceType = sourceType;
+	}
+
+	
 	/**
 	 * Instantiator
 	 */
@@ -288,6 +369,11 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 		public Advertisement newInstance(Element root) {
 			return new SourceAdvertisement(root);
 		}
+	}
+
+	@Override
+	public SourceAdvertisement clone() {
+		return new SourceAdvertisement(this);
 	}
 
 }

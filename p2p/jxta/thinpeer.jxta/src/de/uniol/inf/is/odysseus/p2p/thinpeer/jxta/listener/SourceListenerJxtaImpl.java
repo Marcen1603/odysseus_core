@@ -49,8 +49,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 					Object temp2 = en.nextElement();
 					if (temp2 instanceof SourceAdvertisement) {
 						adv = (SourceAdvertisement) temp2;
-						thinPeerJxtaImpl.getSources().put(adv.getSourceName(),
-								adv);
+						thinPeerJxtaImpl.getSources().add(adv);
 					} else {
 						return;
 					}

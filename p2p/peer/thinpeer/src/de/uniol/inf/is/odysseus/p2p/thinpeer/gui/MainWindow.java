@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
@@ -60,10 +61,12 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	private JTextArea query;
 	private JPanel queryPanel;
 	private JLabel querysLabel;
-	private JProgressBar querysProgress;
 	private JLabel sourcesLabel;
 	AbstractThinPeer thinPeer;
 
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public MainWindow(String title) {
 		super(title);
 		initGUI(title);
@@ -169,7 +172,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 					tabs.setBounds(12, 64, 950, 415);
 					{
 						jPanel1 = new JPanel();
-						tabs.addTab("Anfrage", null, jPanel1, null);
+						tabs.addTab("Query", null, jPanel1, null);
 						jPanel1.setPreferredSize(new java.awt.Dimension(996,
 								373));
 						jPanel1.setLayout(null);
@@ -181,36 +184,22 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 							query.setBounds(12, 35, 287, 292);
 						}
 						{
-							ListModel QuerysModel = new DefaultComboBoxModel(
-									new String[] {});
-							querys = new JList();
-							jPanel1.add(querys);
-							querys.setModel(QuerysModel);
-							querys.setBounds(330, 35, 182, 292);
-						}
-						{
-							querysLabel = new JLabel();
-							jPanel1.add(querysLabel);
-							querysLabel.setText("Anfragen");
-							querysLabel.setBounds(330, 12, 58, 17);
-						}
-						{
 							adminPeersLabel = new JLabel();
 							jPanel1.add(adminPeersLabel);
-							adminPeersLabel.setText("Verwaltungs-Peers");
-							adminPeersLabel.setBounds(524, 12, 119, 17);
+							adminPeersLabel.setText("Administrationpeers");
+							adminPeersLabel.setBounds(308, 12, 119, 17);
 						}
 						{
 							makeQuery = new JLabel();
 							jPanel1.add(makeQuery);
-							makeQuery.setText("Anfrage formulieren");
+							makeQuery.setText("Query");
 							makeQuery.setBounds(12, 12, 127, 17);
 						}
 						{
 							adminPeerProgress = new JProgressBar();
 							adminPeerProgress.setIndeterminate(true);
 							jPanel1.add(adminPeerProgress);
-							adminPeerProgress.setBounds(524, 339, 182, 22);
+							adminPeerProgress.setBounds(308, 339, 182, 22);
 						}
 						{
 							doQuery = new JButton();
@@ -226,33 +215,28 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 							adminPeers = new JList();
 							jPanel1.add(adminPeers);
 							adminPeers.setModel(AdminPeersModel);
-							adminPeers.setBounds(524, 35, 182, 292);
+							adminPeers.setBounds(308, 35, 182, 292);
 						}
 						{
 							ListModel sourcesModel = new DefaultComboBoxModel(
 									new String[] {});
 							sources = new JList();
-							jPanel1.add(sources);
 							sources.setModel(sourcesModel);
-							sources.setBounds(722, 35, 182, 292);
+							sources.setBounds(500, 35, 404, 292);
+							jPanel1.add(sources);
+
 						}
 						{
 							sourcesProgress = new JProgressBar();
 							sourcesProgress.setIndeterminate(true);
 							jPanel1.add(sourcesProgress);
-							sourcesProgress.setBounds(722, 340, 182, 21);
+							sourcesProgress.setBounds(500, 340, 404, 21);
 						}
 						{
 							sourcesLabel = new JLabel();
 							jPanel1.add(sourcesLabel);
-							sourcesLabel.setText("Quellen");
-							sourcesLabel.setBounds(722, 12, 48, 17);
-						}
-						{
-							querysProgress = new JProgressBar();
-							querysProgress.setIndeterminate(true);
-							jPanel1.add(querysProgress);
-							querysProgress.setBounds(330, 340, 182, 20);
+							sourcesLabel.setText("Sources");
+							sourcesLabel.setBounds(500, 12, 48, 17);
 						}
 					}
 
