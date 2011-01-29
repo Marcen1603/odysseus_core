@@ -39,6 +39,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 
 	@SuppressWarnings("unchecked")
 	public final <K> K getAttribute(int pos) {
+		if (pos < 0) return null;
 		return (K) this.attributes[pos];
 	}
 
