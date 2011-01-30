@@ -53,7 +53,7 @@ public class QueryTextParser {
 			stmt.validate(variables);
 		}
 		
-		// Ausführen
+		// Ausfï¿½hren
 		variables = new HashMap<String, Object>();
 		int counter = 1;
 		for (PreParserStatement stmt : statements) {
@@ -92,8 +92,11 @@ public class QueryTextParser {
 				String line = text[currentLine].trim();
 
 				// Kommentare entfernen
-				line = removeComments(line).trim();
-
+				line = removeComments(line);
+				if((line == null)||(line.equals("null")))
+					continue;
+				
+				line = line.trim();
 				// Ersetzungen einsetzen
 				line = useReplacements(line, replacements).trim();
 				if (line.indexOf(REPLACEMENT_DEFINITION_KEY) != -1)
