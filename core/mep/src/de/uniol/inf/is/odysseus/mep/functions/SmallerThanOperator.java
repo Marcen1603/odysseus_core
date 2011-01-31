@@ -17,7 +17,10 @@ public class SmallerThanOperator extends AbstractBinaryOperator<Boolean> {
 
 	@Override
 	public Boolean getValue() {
-		return getNumericalInputValue(0) < getNumericalInputValue(1);
+		Double val0 = getNumericalInputValue(0);
+		Double val1 = getNumericalInputValue(1);
+//		System.out.println(val0 + " < " + val1);
+		return val0 < val1;
 	}
 
 	@Override
