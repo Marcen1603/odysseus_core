@@ -89,7 +89,6 @@ public class Editor3D implements IStreamEditorType {
 
 			counter++;
 		}
-		System.out.println(counter);
 		if (activeCubes > counter) {
 			for (int i = counter; i < activeCubes; i++) {
 				Transform3D t = new Transform3D(new Tuple3f(-1000 - i * 100, -1000 - i * 100, 1000 + i * 100));
