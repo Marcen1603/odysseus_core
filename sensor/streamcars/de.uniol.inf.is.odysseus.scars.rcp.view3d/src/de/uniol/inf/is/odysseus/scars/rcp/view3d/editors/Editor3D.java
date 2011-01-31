@@ -53,7 +53,8 @@ public class Editor3D implements IStreamEditorType {
 	private SchemaIndexPath carPath;
 	private SchemaIndexPath carsPath;
 
-	private TransformGroup[] cubes = new TransformGroup[50];
+	private static final int MAX_CUBE_COUNT = 50;
+	private TransformGroup[] cubes = new TransformGroup[MAX_CUBE_COUNT];
 	private static int activeCubes = 0;
 
 	@Override
@@ -89,13 +90,16 @@ public class Editor3D implements IStreamEditorType {
 
 			counter++;
 		}
+		if( counter >= MAX_CUBE_COUNT )
+			System.out.println("Editor3D: Zu viele Cubes benötigt:" + counter);
+		
 		if (activeCubes > counter) {
-			for (int i = counter; i < activeCubes; i++) {
+			for (int i = counter; i < Math.min(activeCubes, MAX_CUBE_COUNT); i++) {
 				Transform3D t = new Transform3D(new Tuple3f(-1000 - i * 100, -1000 - i * 100, 1000 + i * 100));
 				cubes[i].setTransform(t);
 			}
 		}
-		activeCubes = counter;
+		activeCubes = Math.min(counter, MAX_CUBE_COUNT);
 
 	}
 
