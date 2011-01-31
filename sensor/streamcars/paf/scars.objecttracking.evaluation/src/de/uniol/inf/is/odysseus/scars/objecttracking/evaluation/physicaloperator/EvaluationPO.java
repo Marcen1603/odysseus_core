@@ -68,12 +68,6 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		this.filteringObjListPath = copy.filteringObjListPath;
 		this.brokerObjListPath = copy.brokerObjListPath;
 		this.threshold = copy.getThreshold();
-		// this.sweepAssociation = (PointInTimeSweepArea<M>)
-		// copy.sweepAssociation.clone();
-		// this.sweepFiltering = (PointInTimeSweepArea<M>)
-		// copy.sweepFiltering.clone();
-		// this.sweepBroker = (PointInTimeSweepArea<M>)
-		// copy.sweepBroker.clone();
 	}
 
 	@Override
@@ -81,8 +75,6 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		super.process_open();
 		shAssociationInput = new SchemaHelper(getSubscribedToSource(0)
 				.getSchema());
-		// shFilteringInput = new SchemaHelper(getSubscribedToSource(1)
-		//		.getSchema());
 		shSecondBrokerInput = new SchemaHelper(getSubscribedToSource(2)
 				.getSchema());
 
@@ -95,20 +87,6 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		streamCollector.recieve(timestamp, port);
 		if (streamCollector.isReady())
 			send(streamCollector.getNext());
-
-		// if(port == 0 && !boolAsso) {
-		// this.associationTime = timestamp.getMainPoint();
-		// } else if (port == 1 && !boolFilter) {
-		// this.filteringTime = timestamp.getMainPoint();
-		// } else if (port == 2 && !boolBroker) {
-		// this.brokerTime = timestamp.getMainPoint();
-		// }
-		//
-		// if(timestamp.getMainPoint() > this.timestamp && this.associationTime
-		// != -1 && this.filteringTime != -1 && this.brokerTime != -1) {
-		// this.sendPunctuation(timestamp);
-		// this.timestamp = timestamp.getMainPoint();
-		// }
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -127,7 +105,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		// Association
 		if (obj0 instanceof MVRelationalTuple) {
 			MVRelationalTuple<M> associationMainObject = (MVRelationalTuple<M>) obj0;
-//			resultTuple = new MVRelationalTuple<M>(associationMainObject);
+			resultTuple = new MVRelationalTuple<M>(associationMainObject);
 			MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput
 					.getSchemaIndexPath(this.associationObjListPath)
 					.toTupleIndexPath(associationMainObject).getTupleObject();
@@ -142,20 +120,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 
 			ConnectionList connectionList = filteringMainObject.getMetadata()
 					.getConnectionList();
-			// ArrayList<MVRelationalTuple<?>> blubb = new
-			// ArrayList<MVRelationalTuple<?>>();
-			// TupleHelper helper = new TupleHelper(filteringMainObject);
-			// for( Connection conn : connectionList ) {
-			// blubb.add((MVRelationalTuple<?>)
-			// helper.getObject(conn.getLeftPath()));
-			// }
 			resultTuple = new MVRelationalTuple<M>(filteringMainObject);
-			// MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>)
-			// shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
-			// for (Object obj : filteringListObject.getAttributes()) {
-			// if( blubb.contains(obj))
-			// filteringObjList.add((MVRelationalTuple<M>)obj);
-			// }
 			for (IConnection conn : connectionList) {
 				filteringObjList.add((MVRelationalTuple<M>) conn.getLeftPath()
 						.getTupleObject());
@@ -183,6 +148,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
+				System.out.println("Cov:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -196,6 +162,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
+				System.out.println("Cov:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -209,6 +176,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
+				System.out.println("Cov:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -223,12 +191,6 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 			for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
 				tuples.setAttribute(counter++, mvRelationalTuple);
 			}
-			// SchemaIndexPath schemaPath =
-			// schemaHelper.getSchemaIndexPath(resultRemovePath);
-			// TupleIndexPath tuplePath =
-			// schemaPath.toTupleIndexPath(resultTuple);
-			// tuplePath.setTupleObject(new
-			// MVRelationalTuple<IProbability>(tuples));
 
 			Object[] association = new Object[2];
 
@@ -248,15 +210,6 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 			// Transfer the generated tuple
 			base.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(base);
-			// boolAsso = false;
-			// boolAssoEmpty = false;
-			// boolFilter = false;
-			// boolFilterEmpty = false;
-			// boolBroker = false;
-			// boolBrokerEmpty = false;
-			// associationTime = -1;
-			// filteringTime = -1;
-			// brokerTime = -1;
 		} else {
 			// Zeitstempel holen
 			Long timestamp;
@@ -266,9 +219,17 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				timestamp = ((PointInTime) obj1).getMainPoint();
 			else if (obj2 instanceof PointInTime)
 				timestamp = ((PointInTime) obj2).getMainPoint();
-			else
-				throw new IllegalArgumentException(
-						"Could not determine timestamp!");
+			else if( obj0 instanceof MVRelationalTuple ) {
+				MVRelationalTuple<M> t = (MVRelationalTuple<M>)obj0;
+				timestamp = t.getMetadata().getStart().getMainPoint();
+			} else if( obj1 instanceof MVRelationalTuple ) {
+				MVRelationalTuple<M> t = (MVRelationalTuple<M>)obj1;
+				timestamp = t.getMetadata().getStart().getMainPoint();
+			} else if( obj2 instanceof MVRelationalTuple ) {
+				MVRelationalTuple<M> t = (MVRelationalTuple<M>)obj2;
+				timestamp = t.getMetadata().getStart().getMainPoint();
+			} else
+				throw new IllegalArgumentException("Could not determine timestamp!");
 
 			// sendPunctuation(new PointInTime(timestamp));
 			// Leere Liste senden
