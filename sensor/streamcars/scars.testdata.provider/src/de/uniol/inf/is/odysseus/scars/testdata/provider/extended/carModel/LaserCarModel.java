@@ -43,7 +43,6 @@ public class LaserCarModel implements ICarModel {
 		this.id = clone.id;
 		this.heading = clone.heading;
 		this.calcModel = clone.calcModel;
-		this.calcModel.setModel(this);
 		this.posx = clone.posx;
 		this.posy = clone.posy;
 		this.posz = clone.posz;
