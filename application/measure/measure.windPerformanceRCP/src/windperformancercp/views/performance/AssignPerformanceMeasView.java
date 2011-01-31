@@ -3,8 +3,10 @@ package windperformancercp.views.performance;
 import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -72,7 +74,7 @@ public class AssignPerformanceMeasView extends ViewPart {
 				//col.pack();
 				col.setWidth(90);
 			}
-			
+		
 			sourceTable.setHeaderVisible(true);
 			sourceTable.setLinesVisible(true);
 		}
@@ -81,10 +83,18 @@ public class AssignPerformanceMeasView extends ViewPart {
 		rightDetailedComposite.setLayout(new FillLayout());
 		queryView = new Text(rightDetailedComposite, SWT.READ_ONLY|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
 		
+		performanceViewer.addSelectionChangedListener(selectionListener);
 		getSite().setSelectionProvider(performanceViewer);
 		presenter.subscribeToAll(updateListener);
 	}
 
+	ISelectionChangedListener selectionListener = new ISelectionChangedListener(){
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			queryView.setText(presenter.getQueryText(performanceViewer.getTable().getSelectionIndex()));
+		}
+	};
+	
 	IEventListener updateListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> idevent){
 			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){
@@ -95,6 +105,7 @@ public class AssignPerformanceMeasView extends ViewPart {
 			
 		}
 	};
+	
 
 	/**
 	 * Passing the focus request to the viewer's control.
@@ -110,10 +121,15 @@ public class AssignPerformanceMeasView extends ViewPart {
 	
 	public void update(ArrayList<?> newList){
 		performanceViewer.setInput(newList);
-		queryView.setText("");
 		if(!newList.isEmpty()){
-			performanceViewer.getTable().select(0);
-			queryView.setText(presenter.getQueryText(performanceViewer.getTable().getSelectionIndex()));
+			int ind = performanceViewer.getTable().getSelectionIndex();
+			
+			if((ind != -1)&&(ind < performanceViewer.getTable().getItemCount())){
+				performanceViewer.getTable().select(ind);
+			}
+			else
+				performanceViewer.getTable().select(0);
+			//queryView.setText(presenter.getQueryText(performanceViewer.getTable().getSelectionIndex()));
 		}
 	}
 	

@@ -7,7 +7,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import windperformancercp.views.IPresenter;
 import windperformancercp.views.performance.PerformanceWizard;
 import windperformancercp.views.performance.PerformanceWizardDialog;
 
@@ -24,7 +23,6 @@ public class ShowNewQueryWizardDialogCommand extends AbstractHandler implements
 		//TODO: evtl. von AbstractUIDialog ableiten/IUserIDIalog
 			PerformanceWizardDialog dialog = new PerformanceWizardDialog(dialogShell, new PerformanceWizard()); 
 			
-			//IPresenter presenter = dialog.getPresenter();
 			//dialog.create();
 			dialog.open();
 			

@@ -139,13 +139,13 @@ public class PQLGenerator implements IQueryGenerator {
 		
 		if(newAttNames.length == instream.getAttributeNames().size()){
 			ArrayList<String> streamAtts = instream.getAttributeNames();
-			query = outputName+" = rename({ aliases = ['";
+			query = outputName+" = rename({ aliases = [";
 			int i;
 			for(i=0;i< newAttNames.length-1;i++){
-				query = query+newAttNames[i]+"',";
+				query = query+"'"+newAttNames[i]+"',";
 				streamAtts.set(i, newAttNames[i]);
 			}
-			query = query+newAttNames[i]+"']},\n";
+			query = query+"'"+newAttNames[i]+"']},\n";
 			streamAtts.set(i, newAttNames[i]);
 			
 			query = query+instream.getName()+")\n";

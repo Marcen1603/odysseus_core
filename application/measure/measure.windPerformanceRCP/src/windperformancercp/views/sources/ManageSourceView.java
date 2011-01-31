@@ -3,8 +3,10 @@ package windperformancercp.views.sources;
 import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -71,12 +73,20 @@ public class ManageSourceView extends ViewPart {
 		
 		//right composite for additional information
 		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
+		sourceViewer.addSelectionChangedListener(selectionListener);
 		
 		getSite().setSelectionProvider(sourceViewer);
 		presenter.subscribeToAll(updateListener);
 		//System.out.println(this.toString()+": subscribed to invocation");
 	}
 
+	ISelectionChangedListener selectionListener = new ISelectionChangedListener(){
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			//queryView.setText(presenter.getQueryText(sourceViewer.getTable().getSelectionIndex()));
+		}
+	};
+	
 	IEventListener updateListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> idevent){
 			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){ 

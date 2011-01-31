@@ -42,15 +42,18 @@ public class ShowCopySourceDialogCommand extends AbstractHandler implements
 					IPresenter presenter = dialog.getPresenter();
 					dialog.create();
 					
-					if(source instanceof MetMast){
+					if(source instanceof MetMast){					
 						MetMast mm = new MetMast((MetMast)source);
 						((SourceDialogPresenter) presenter).feedDialog(mm);
 					}
-					if(source instanceof WindTurbine){
-						WindTurbine wt = new WindTurbine((WindTurbine)source);
-						((SourceDialogPresenter) presenter).feedDialog(wt);
-					} 
-					else return null;
+					else{
+						if(source instanceof WindTurbine){
+							WindTurbine wt = new WindTurbine((WindTurbine)source);
+							((SourceDialogPresenter) presenter).feedDialog(wt);
+						}
+						else return null;
+					}
+
 					dialog.open();
 								
 					}

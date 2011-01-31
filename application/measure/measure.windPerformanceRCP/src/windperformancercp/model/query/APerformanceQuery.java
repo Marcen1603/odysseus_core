@@ -6,10 +6,15 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import windperformancercp.model.sources.Attribute;
+import windperformancercp.model.sources.MetMast;
+import windperformancercp.model.sources.WindTurbine;
 import windperformancercp.model.sources.Attribute.AttributeType;
 import windperformancercp.model.sources.ISource;
 
@@ -20,22 +25,39 @@ import windperformancercp.model.sources.ISource;
     "concernedSrc",
     "concernedStr",
     "assignments",
-    "starttime",
-    "queryText"
+    "queryText",
+    "windspeedAttribute",
+    "powerAttribute",
+    "pressureAttribute",
+    "temperatureAttribute",
+    "pitch"
 })
 public abstract class APerformanceQuery implements IPerformanceQuery {
 	
-	String identifier;
-	PMType method;
-	ArrayList<ISource> concernedSrc;
-	ArrayList<Stream> concernedStr;
-	ArrayList<Assignment> assignments;
-	Timestamp starttime;
+	protected String identifier;
+	protected PMType method;
+	@XmlTransient
+	protected ArrayList<ISource> concernedSrc;
+	@XmlTransient
+	protected ArrayList<Stream> concernedStr;
+	@XmlTransient
+	protected ArrayList<Assignment> assignments;
+	@XmlTransient
+	protected Timestamp starttime;
+	protected boolean pitch;
 	
-	String queryText;
+
+	protected String windspeedAttribute = "";
+	protected String powerAttribute = "";
+	protected String pressureAttribute = "";
+	protected String temperatureAttribute = "";
+		
+	protected String queryText;
 	
-	QueryGenerator Pgen;
-	QueryGenerator Qgen;
+	@XmlTransient
+	protected QueryGenerator Pgen;
+	@XmlTransient
+	protected QueryGenerator Qgen;
 
 	
 	public enum PMType{
@@ -43,6 +65,29 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		Langevin
 	}
 
+	public APerformanceQuery(String id, 
+			PMType method,
+			ArrayList<ISource> sources, 
+			ArrayList<Stream> streams, 
+			String queryText, 
+			ArrayList<Assignment> assigns,
+			boolean pitch,
+			String wsAtt,
+			String powAtt,
+			String prAtt,
+			String tempAtt){
+		this(id,method,sources);
+		this.setConcernedStr(streams);
+		this.setQueryText(queryText);
+		this.setAssignments(assigns);
+		this.setPitch(pitch);
+		this.setWindspeedAttribute(wsAtt);
+		this.setPowerAttribute(powAtt);
+		this.setPressureAttribute(prAtt);
+		this.setTemperatureAttribute(tempAtt);
+		
+	}
+	
 	public APerformanceQuery(String id, PMType method,ArrayList<ISource> sources){
 		this();
 		
@@ -57,6 +102,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.assignments = new ArrayList<Assignment>();
 		this.concernedSrc = new ArrayList<ISource>();
 		this.concernedStr = new ArrayList<Stream>();
+		this.pitch = false;
 		Pgen = new QueryGenerator(new PQLGenerator());
 		Qgen = new QueryGenerator(new CQLGenerator());
 	
@@ -69,6 +115,16 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		asgn = new Assignment(AttributeType.AIRTEMPERATURE);
 		assignments.add(asgn);
 	
+	}
+	
+	@Override
+	public void extractTurbineData(){
+		for(ISource src: concernedSrc){
+			if(src.isWindTurbine()){				
+				pitch = (((WindTurbine)src).getPowerControl()==0);
+				break;
+			}
+		}
 	}
 	
 	@Override
@@ -91,18 +147,6 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.queryText = text;
 	}
 	
-	@Override
-	public boolean register() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean deregister() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	//TODO: hier mal aufräumen
 	
 
@@ -115,6 +159,17 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	public PMType getMethod() {
 		return method;
 	}
+	
+	@Override
+	public void setPitch(boolean p){
+		this.pitch = p;
+	}
+	
+	@Override
+	public boolean getPitch(){
+		return this.pitch;
+	}
+	
 	
 	@Override
 	public void setAssignment(String what, Stream who){
@@ -142,8 +197,12 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return "";
 	}
 
-	@XmlElementWrapper(name = "concernedSources") 
-	@XmlElement(name = "source")
+	@XmlElementWrapper(name = "concernedSources") 	
+	@XmlElementRefs( 
+		{ 
+		    @XmlElementRef( type = MetMast.class), 
+		    @XmlElementRef( type = WindTurbine.class), 
+		} )
 	@Override
 	public ArrayList<ISource> getConcernedSrc(){
 		return concernedSrc;
@@ -152,6 +211,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	@Override
 	public void setConcernedSrc(ArrayList<ISource> srcList) {
 		this.concernedSrc = new ArrayList<ISource>(srcList);
+		extractTurbineData();
 	}
 	
 	@XmlElementWrapper(name = "concernedStreams") 
@@ -170,11 +230,13 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	@Override
 	public void addMember(ISource m){
 		concernedSrc.add(m);
+		extractTurbineData();
 	}
 	
 	@Override
 	public void addAllMembers(ArrayList<ISource> listm){
 		concernedSrc.addAll(listm);
+		extractTurbineData();
 	}
 	
 	@Override
@@ -192,6 +254,62 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	@Override
 	public void setAssignments(ArrayList<Assignment> assigns){
 		this.assignments = assigns;
+		windspeedAttribute = getResponsibleAttribute("WINDSPEED");
+		powerAttribute = getResponsibleAttribute("POWER");
+		pressureAttribute = getResponsibleAttribute("AIRPRESSURE");
+		temperatureAttribute = getResponsibleAttribute("AIRTEMPERATURE");
+	}
+	
+	@Override
+	public void setWindspeedAttribute(String at){
+		this.windspeedAttribute = at;
+	}
+	
+	@Override
+	public String getWindspeedAttribute(){
+		return windspeedAttribute;
+	}
+	
+	@Override
+	public void setPowerAttribute(String at){
+		this.powerAttribute = at;
+	}
+	
+	@Override
+	public String getPowerAttribute(){
+		return powerAttribute;
+	}
+	
+	@Override
+	public void setPressureAttribute(String at){
+		this.pressureAttribute = at;
+	}
+	
+	@Override
+	public String getPressureAttribute(){
+		return pressureAttribute;
+	}
+	
+	@Override
+	public void setTemperatureAttribute(String at){
+		this.temperatureAttribute = at;
+	}
+	
+	@Override
+	public String getTemperatureAttribute(){
+		return temperatureAttribute;
+	}
+	
+	@Override
+	public boolean register() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deregister() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	@Override

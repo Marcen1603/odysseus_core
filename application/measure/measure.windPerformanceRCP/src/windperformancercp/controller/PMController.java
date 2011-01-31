@@ -6,13 +6,11 @@ import windperformancercp.event.IEvent;
 import windperformancercp.event.IEventListener;
 import windperformancercp.event.InputDialogEvent;
 import windperformancercp.event.InputDialogEventType;
-import windperformancercp.model.query.CQLGenerator;
 import windperformancercp.model.query.IPerformanceQuery;
-import windperformancercp.model.query.OperatorResult;
-import windperformancercp.model.query.PQLGenerator;
+import windperformancercp.model.query.MeasureIEC;
+import windperformancercp.model.query.MeasureLangevin;
 import windperformancercp.model.query.PerformanceModel;
 import windperformancercp.model.query.QueryGenerator;
-import windperformancercp.model.query.Stream;
 import windperformancercp.model.sources.ISource;
 import windperformancercp.views.IPresenter;
 import windperformancercp.views.performance.AssignPerformanceMeasPresenter;
@@ -29,13 +27,12 @@ public class PMController implements IController {
 	static SourceController scontrol;
 	static PerformanceModel pmodel;
 	QueryGenerator gen;
-	
+	Connector connector;
 
 	private PMController(){
-		
 		//System.out.println(this.toString()+": pmController says hello!");
 		pmodel = PerformanceModel.getInstance();
-		
+		connector = new Connector();
 	}
 	
 	public static void setBrotherControl(SourceController scont){
@@ -55,7 +52,7 @@ public class PMController implements IController {
 		while(list.contains(pres)){
 			list.remove(pres);
 		}
-		//pres.unSubscribeFromAll(presenterListener);
+		//pres.unSubscribeFromAll(presenterListener); //<- if I do this, I get an exception
 	}
 	
 	public static IEventListener presenterListener = new IEventListener(){
@@ -80,9 +77,15 @@ public class PMController implements IController {
 				//System.out.println(this.toString()+": Received new performance event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue(); 
-				pmodel.addElement(qry);
 	
-	//			JAXB.marshal(src, System.out);
+				if(qry instanceof MeasureIEC){
+					IPerformanceQuery newqry = new MeasureIEC((MeasureIEC)qry);
+					pmodel.addElement(newqry);
+				}
+				if(qry instanceof MeasureLangevin){
+					IPerformanceQuery newqry = new MeasureLangevin((MeasureLangevin)qry);
+					pmodel.addElement(newqry);
+				}
 				
 			}
 			if(event.getEventType().equals(InputDialogEventType.DeletePerformanceItem)){
@@ -96,31 +99,6 @@ public class PMController implements IController {
 			}			
 		}
 	};
-	
-
-
-	public String callGen(ISource src){
-			
-		QueryGenerator gen = new QueryGenerator(new CQLGenerator());
-		OperatorResult res1 = gen.generateCreateStream(src);
-		OperatorResult res2 = gen.generateRemoveStream(src);
-		QueryGenerator gen2 = new QueryGenerator(new PQLGenerator());
-		
-		ArrayList<Stream> strList = new ArrayList<Stream>();
-		strList.add(res1.getStream());
-		strList.add(res1.getStream());
-		//Aggregation agg = gen2.new Aggregation("AVG",res1.getStream().getIthAttName(0),"avg"+res1.getStream().getIthAttName(0));
-		
-		//OperatorResult res3 = gen2.generateAggregation(res1.getStream(), new String[]{res1.getStream().getIthAttName(1)}, new Aggregation[]{agg}, "aggregated");
-		//OperatorResult res3 = gen2.generateRename(res1.getStream(), new String[]{"babbel","wabbel"}, "renamed");
-		//OperatorResult res3 = gen2.generateMap(res1.getStream(), new String[]{"add","mult"}, new String[]{res1.getStream().getAttributes().get(0)+"+"+res1.getStream().getAttributes().get(1),res1.getStream().getAttributes().get(0)+"*"+res1.getStream().getAttributes().get(1)}, "mapped");
-		//OperatorResult res3 = gen2.generateSelection(res1.getStream(),res1.getStream().getIthAttName(0)+">"+2.0+" AND "+res1.getStream().getIthAttName(0)+"<"+19.0,"selected");
-		
-		OperatorResult res3 = gen2.generateJoin(strList, res1.getStream().getIthAttName(0)+"="+res1.getStream().getIthAttName(0), "joined");
-		
-		return  res1.getQuery()+res2.getQuery()+"\n"+res3.getQuery();
-		
-	}
 	
 	@Override
 	public ArrayList<?> getContent() {

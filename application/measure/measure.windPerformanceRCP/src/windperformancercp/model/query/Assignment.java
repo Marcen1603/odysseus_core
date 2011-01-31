@@ -1,7 +1,12 @@
 package windperformancercp.model.query;
 
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
+
 import windperformancercp.model.sources.Attribute;
 import windperformancercp.model.sources.ISource;
+import windperformancercp.model.sources.MetMast;
+import windperformancercp.model.sources.WindTurbine;
 
 public class Assignment {
 	
@@ -75,10 +80,15 @@ public class Assignment {
 			return respSource;
 		}
 		
+		@XmlElementRefs( 
+				{ 
+				    @XmlElementRef( type = MetMast.class, name = "metMast"), 
+				    @XmlElementRef( type = WindTurbine.class, name = "windTurbine" ), 
+				} )
 		public void setRespSource(ISource src){
 			this.respSource = src;
 		}
-
+		
 		public Stream getRespStream(){
 			return respStream;
 		}

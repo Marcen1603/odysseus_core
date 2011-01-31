@@ -4,22 +4,20 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import windperformancercp.event.EventHandler;
 import windperformancercp.event.SourceModelEvent;
 import windperformancercp.event.SourceModelEventType;
 import windperformancercp.model.IModel;
-import windperformancercp.model.sources.MetMast;
-import windperformancercp.model.sources.WindTurbine;
 
+@XmlRootElement
 public class PerformanceModel extends EventHandler implements IModel{
 	private static PerformanceModel instance = new PerformanceModel();
 	
-	@XmlElementRefs( 
-			{ 
-			    @XmlElementRef( type = MeasureIEC.class ), 
-			    @XmlElementRef( type = MeasureLangevin.class ), 
-			} ) 
+	@XmlTransient
 	private ArrayList<IPerformanceQuery> queryList;
 	
 	SourceModelEvent newItemEvent = new SourceModelEvent(this,SourceModelEventType.NewItem,null);
@@ -69,8 +67,18 @@ public class PerformanceModel extends EventHandler implements IModel{
 		else return null;
 	}
 	
+	@XmlElementWrapper(name = "queryList")
+	@XmlElementRefs( 
+		{ 
+		    @XmlElementRef( type = MeasureIEC.class), 
+		    @XmlElementRef( type = MeasureLangevin.class), 
+		} )
 	public ArrayList<IPerformanceQuery> getQueryList(){
 		return queryList;
+	}
+	
+	public void setQueryList(ArrayList<IPerformanceQuery> ql){
+		queryList = ql;
 	}
 	
 	public int getElemCount(){

@@ -18,8 +18,6 @@ public class SourceModel extends EventHandler implements IModel {
 	
 	private static SourceModel instance = new SourceModel();
 	
-	//	@XmlElement(name = "source")
-	
 	@XmlTransient
 	private ArrayList<ISource> sourcesList;
 	

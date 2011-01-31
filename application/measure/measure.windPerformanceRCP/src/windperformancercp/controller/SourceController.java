@@ -81,9 +81,7 @@ public class SourceController implements IController {
 					ISource newsrc = new MetMast((MetMast)src);
 					model.addElement(newsrc);
 				}
-				
-				
-	//			JAXB.marshal(src, System.out);
+								
 				
 			}
 			if(event.getEventType().equals(InputDialogEventType.DeleteSourceItem)){

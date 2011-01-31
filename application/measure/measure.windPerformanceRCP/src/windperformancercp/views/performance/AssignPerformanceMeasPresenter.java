@@ -42,9 +42,23 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 	}
 	
 	public String getQueryText(int i){
-		return pmodel.getIthElement(i).getQueryText();
+	int j = pmodel.getElemCount();
+		if(j!=0){
+			if((i!=-1)&&(j>i))
+				return pmodel.getIthElement(i).getQueryText();
+			else
+				return pmodel.getIthElement(0).getQueryText();
+		}
+		return "";
 	}
 	
+	@Override
+	public void subscribeToAll(IEventListener listener) {
+		super.subscribeToAll(listener);
+		if(listener.equals(view.updateListener)){
+			updateView();
+		}
+	}
 	
 	public IEventListener modelListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){

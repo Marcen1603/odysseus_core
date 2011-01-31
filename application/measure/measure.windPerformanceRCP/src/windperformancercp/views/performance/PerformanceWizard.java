@@ -35,6 +35,7 @@ public class PerformanceWizard extends Wizard {
 	
 	private String queryID;
 	private String method;
+	private int tau;
 	
 	private TypeOfQueryPage toqpage;
 	private SourceSelectPage sspage;
@@ -47,11 +48,14 @@ public class PerformanceWizard extends Wizard {
 	private ArrayList<ArrayList<String>> assignmentComboElements; 
 	private ArrayList<String> selectedAssignments;
 	
-	
+	/**
+	 * The wizard for user input of a new performance measurement
+	 */
 	public PerformanceWizard(){
 		
 		queryID = "";
 		method = "";
+		tau = 0;
 		neededAssignments = new ArrayList<String>();
 		selectedAssignments = new ArrayList<String>();
 		assignmentComboElements = new ArrayList<ArrayList<String>>();
@@ -69,7 +73,13 @@ public class PerformanceWizard extends Wizard {
         addPage(aapage);
 	}
 	
+	public void setTau(int i){
+		tau = i;
+	}
 	
+	public int getTau(){
+		return this.tau;
+	}
 	
 	public void setQueryID(String id){
 		queryID= id;
@@ -122,11 +132,18 @@ public class PerformanceWizard extends Wizard {
 	}
 	
 	public void identifierEntered(){
-		this.queryID = toqpage.getidInputValue();
-		if(queryID.equals(""))
+		String idText = toqpage.getidInputValue();
+		
+		if(idText.equals(""))
 			toqpage.setErrorMessage("Identifier may not be empty");
-		try{getContainer().updateButtons();}
-		catch(Exception e){}
+		else
+			toqpage.setErrorMessage(null);
+		if(this.queryID != idText){
+			this.queryID = idText;
+			
+			try{getContainer().updateButtons();}
+			catch(Exception e){}
+		}
 		//System.out.println("id entered: "+queryID);
 	}
 	
@@ -168,6 +185,12 @@ public class PerformanceWizard extends Wizard {
 		try{getContainer().updateButtons();}
 		catch(Exception e){}
 		selectedAssignments.set(ind, attcombi);
+	}
+	
+	public void tauValueEntered(){
+		tau = Integer.parseInt(aapage.getTauValue());
+		try{getContainer().updateButtons();}
+		catch(Exception e){}
 	}
 	
 	@Override
@@ -334,6 +357,9 @@ public class PerformanceWizard extends Wizard {
 	    	return rightlv.getList().getSelectionIndex();
 	    }
 	    
+	    /**
+	     * Returns if this page is complete, that means, at least one source is selected. 
+	     */
 	    @Override
 	    public boolean isPageComplete(){
 	    	   if (getErrorMessage() != null) return false;
@@ -342,12 +368,10 @@ public class PerformanceWizard extends Wizard {
 	    	    return false;
 	    }
 	    
-	    @Override
-	    public IWizardPage getNextPage(){
-	    	aapage.onEnterPage();
-	    	return aapage;
-	    }
-	    
+
+	    /**
+	     * Sets the sources lists
+	     */
 	    public void update(){
 			leftlv.setInput(availableSources);
 			rightlv.setInput(selectedSources);
@@ -360,6 +384,7 @@ public class PerformanceWizard extends Wizard {
 	public class AssignAttributePage extends WizardPage {
 		Composite container;
 		ArrayList<Combo> comboList = new ArrayList<Combo>(); 
+		Text tauTextField;
 		
 	    protected AssignAttributePage() {
 	        super("AssignAttributePage");
@@ -380,6 +405,14 @@ public class PerformanceWizard extends Wizard {
 	    
 	    public void onEnterPage(){
 	    	//eigentliche seitenbefuellung
+	    	if(method.equals("Langevin")){
+	    		Label tauLbl = new Label(container, SWT.NONE);
+	    		tauLbl.setText("Tau: ");
+	    		tauLbl.setToolTipText("the time difference for the langevin method");
+	    		tauTextField = new Text(container, SWT.BORDER);
+	    		tauTextField.addModifyListener(new ModifyListener(){
+				      public void modifyText(ModifyEvent me) {((PerformanceWizard)getWizard()).tauValueEntered();}});
+	    	}
 	    	comboList.clear();
 	    	 for(int i = 0; i< neededAssignments.size(); i++){
 	 	        
@@ -405,10 +438,21 @@ public class PerformanceWizard extends Wizard {
 		        }
 	    }
 
+	    public String getTauValue(){
+	    	if(tauTextField == null)
+	    		return "";
+	    	return tauTextField.getText();
+	    }
+	    
+	    public void setTauValue(String value){
+	    	this.tauTextField.setText(value);
+	    }
 	    
 	    @Override
 	    public boolean isPageComplete(){
 	    	if (getErrorMessage() != null)
+	    		return false;
+	    	if(((PerformanceWizard)getWizard()).getMethod().equals("Langevin") && getTauValue().equals(""))
 	    		return false;
 	    	if(comboList.isEmpty()) 
 	    		return false;

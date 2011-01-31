@@ -9,11 +9,18 @@ import windperformancercp.event.IEventListener;
 import windperformancercp.event.IEventType;
 import windperformancercp.views.IPresenter;
 import windperformancercp.views.IUserInputDialog;
+import windperformancercp.views.performance.PerformanceWizard.AssignAttributePage;
 
 public class PerformanceWizardDialog extends WizardDialog implements IUserInputDialog{
 	
 	private PerformanceWizardDialogPresenter presenter;
 	
+	/**
+	 * The Performance Wizard Dialog. In Reality a wrapper for the wizard, 
+	 * forwards wishes and modifications from the wizard and commands from the controller.
+	 * @param parentShell
+	 * @param newWizard
+	 */
 	public PerformanceWizardDialog(Shell parentShell, IWizard newWizard) {
 		super(parentShell, newWizard);
 		this.presenter = new PerformanceWizardDialogPresenter(this);
@@ -25,10 +32,14 @@ public class PerformanceWizardDialog extends WizardDialog implements IUserInputD
 
 	@Override
 	protected void finishPressed(){
-		presenter.assignmentsMade(((PerformanceWizard)this.getWizard()).getSelectedAssignments());
+		presenter.assignmentsMade(((PerformanceWizard)this.getWizard()).getSelectedAssignments(), ((PerformanceWizard)this.getWizard()).getTau());
 		presenter.finishClick();
 	}
 	
+	/**
+	 * Override the super method
+	 * Sets the content for the pages and forwards the wizards information to the controller
+	 */
 	@Override
 	protected void nextPressed() {
 		//System.out.println("page changed. "+this.getCurrentPage().getName());
@@ -40,6 +51,7 @@ public class PerformanceWizardDialog extends WizardDialog implements IUserInputD
 			((PerformanceWizard)this.getWizard()).setNeededAssignments(presenter.getNeededAssignments(null));
 			((PerformanceWizard)this.getWizard()).setSelectedAssignments(presenter.getNeededAssignments(null));
 			((PerformanceWizard)this.getWizard()).setAssignmentComboElements(presenter.getPossibleAssignments());
+			((AssignAttributePage)this.getCurrentPage().getNextPage()).onEnterPage();
 		}
 		  super.nextPressed();
 	}

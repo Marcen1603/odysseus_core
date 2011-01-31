@@ -39,6 +39,10 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		}
 	}
 
+	/**
+	 * Controls the PerformanceWizardDialog, is the connection between PMControl and Dialog
+	 * @param caller the dialog to control
+	 */
 	public PerformanceWizardDialogPresenter(PerformanceWizardDialog caller){
 		boss = this;
 		//System.out.println(this.toString()+": source dialog presenter says hi!");
@@ -49,6 +53,11 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));
 	}
 	
+	/**
+	 * Called if type of query is chosen, creates a new method/query
+	 * @param id
+	 * @param method
+	 */
 	public void typeChoosed(String id, String method){
 		APerformanceQuery.PMType type = APerformanceQuery.PMType.valueOf(method);
 		if(type.equals(APerformanceQuery.PMType.IEC)) 
@@ -57,6 +66,10 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 			query= new MeasureLangevin(id);
 	}
 	
+	/**
+	 * Called if concerned sources are chosen, adds them to the query and invokes the update of the possible assignments
+	 * @param sources
+	 */
 	public void sourcesChoosed(ArrayList<String> sources){
 		if(query != null){			
 			query.clearMembers();
@@ -70,13 +83,19 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 			}
 			
 			updatePossibleAssignments();
-			//query.generateSourceStreams();
 		}
 	}
 	
-	public void assignmentsMade(ArrayList<String> dialogAssigns){
+	/**
+	 * Called if assignments are made, allocates them to the queries needed assignments
+	 * @param dialogAssigns
+	 */
+	public void assignmentsMade(ArrayList<String> dialogAssigns, int tau){
 		ArrayList<Assignment> finalAssignments = new ArrayList<Assignment>(); 
 		if(query != null){
+			if(query instanceof MeasureLangevin){
+				((MeasureLangevin)query).setTau(tau);
+			}
 			if(!query.getPossibleAssignments().isEmpty()){
 				for(Assignment queryAssign: query.getPossibleAssignments()){
 					for(String entry: dialogAssigns){
@@ -92,11 +111,15 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		}
 	}
 
+	/**
+	 * Finalizes the query dedication and fires a new performance item event if query is not null 
+	 */
 	public void finishClick(){
 		
-		for(String s: query.generateSourceStreams())
-System.out.println(s);
-//System.out.println(query.generateQuery());
+		//for(String s: query.generateSourceStreams())
+			//System.out.println(s);
+		//System.out.println(query.generateQuery());
+		query.generateSourceStreams();
 		query.generateQuery();
 		if(query != null){
 			fire(new InputDialogEvent(this, InputDialogEventType.NewPerformanceItem, query));
@@ -106,7 +129,9 @@ System.out.println(s);
 		fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
 	}
 
-	
+	/**
+	 * Allocates the assignments to the combo elements
+	 */
 	@SuppressWarnings("unchecked")
 	public void updatePossibleAssignments(){
 		if(query != null){
@@ -129,15 +154,26 @@ System.out.println(s);
 	
 	}
 
+	/**
+	 * Does nothing
+	 */
 	@Override
 	public void feedDialog(IDialogResult input) {
 		
 	}
 	
+	/**
+	 * 
+	 * @return possible methods
+	 */
 	public Object[] getAvailableMethods(){
 		return APerformanceQuery.PMType.values();
 	}
 	
+	/**
+	 * Return source names (e.g.for left listViewer) and allocates the local source list
+	 * @return source names from the source model
+	 */
 	public ArrayList<String> getAvailableSources(){
 		ArrayList<ISource> sources = ((PMController)_cont).getAvailableSources();
 		//what should be visible in the left listViewer
@@ -154,6 +190,11 @@ System.out.println(s);
 		return sourceNames;
 	}
 	
+	/**
+	 * 
+	 * @param forWhat is ignored at the moment
+	 * @return needed assignments from method
+	 */
 	public ArrayList<String> getNeededAssignments(String forWhat){
 		ArrayList<String> result = new ArrayList<String>();
 		for(Assignment a:query.getAssignments()){
@@ -162,10 +203,17 @@ System.out.println(s);
 		return result; 
 	}
 	
+	/**
+	 * 
+	 * @return a list with possible assignments for each needed attribute
+	 */
 	public ArrayList<ArrayList<String>> getPossibleAssignments(){
 		return restructPAssign2; 
 	}
 	
+	/**
+	 * Fires general update event that is caught by the view and invokes its update
+	 */
 	public void updateView(){
 		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
 	}

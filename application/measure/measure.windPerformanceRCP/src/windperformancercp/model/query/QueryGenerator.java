@@ -35,17 +35,56 @@ public class QueryGenerator {
 	}
 	
 	public class Window{
-		int size;
-		int advance;
+		int size = 0;
+		int advance = 0;
 		String type;
+		int slide = 0;
+		String[] partition = null;
 		
-		public Window(int s, int a, String t){
+		public Window(String t){
+			this.type = t;
+		}
+		
+		public Window(int s, String t){
+			this.size = s;
+			this.type = t;
+		}
+		
+		public Window(int s, String t, int a){
 			this.size = s;
 			this.advance = a;
 			this.type = t;
 		}
+		
+		public Window(int s, String t, int a, int sl){
+			this(s,t,a);
+			this.slide = sl;
+		}
+		
+		public Window(int s, String t, int a, String[] par){
+			this(s,t,a);
+			this.partition = par;
+		}
+		
+		
 		public String toString(){
-			return "size = "+this.size+", advance = "+this.advance+", type = '"+this.type+"'";
+			
+			if(type.equals("unbounded"))
+				return "type = 'unbounded'";
+			
+			String res = "size = "+size+", type = '"+type+"'";
+			
+			if(advance > 0) res = res + ", advance = "+advance;
+			if(partition!=null){
+				res = res + ", partition = ['"+partition[0]+"'";
+				for(int i = 1; i< partition.length;i++){
+					res = res + ",'"+partition[i]+"'";
+				}
+				res= res+"]";
+			}
+			else
+				if(slide > 0) res = res + ", slide = "+slide;
+			return res;
 		}
 	}
 	

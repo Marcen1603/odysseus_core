@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import windperformancercp.model.query.QueryGenerator.Aggregation;
@@ -11,25 +12,44 @@ import windperformancercp.model.sources.ISource;
 import windperformancercp.model.sources.WindTurbine;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "iec_measure")
+@XmlType(name = "measureIEC", propOrder = {
+    "cutin",
+    "eightyfivepercent"
+})
+@XmlRootElement
 public class MeasureIEC extends APerformanceQuery {
 	
 
-	private double cutin = 3.0;
-	private double eightyfivepercent = 10.0;
-	private boolean pitch;
+	private double cutin = 0;
+	private double eightyfivepercent = 0;
 	
-
-	String windspeedAttribute = "";
-	String powerAttribute = "";
-	String pressureAttribute = "";
-	String temperatureAttribute = "";
+	public MeasureIEC(MeasureIEC copy){
+		this();
+		if(copy != null){
+			this.identifier = copy.getIdentifier();
+			this.concernedSrc = copy.getConcernedSrc();
+			this.concernedStr = copy.getConcernedStr();
+			this.queryText = copy.getQueryText();
+			this.assignments = copy.getAssignments();
+			this.pitch = copy.getPitch();
+			this.windspeedAttribute = copy.getWindspeedAttribute();
+			this.powerAttribute = copy.getPowerAttribute();
+			this.pressureAttribute = copy.getPressureAttribute();
+			this.temperatureAttribute = copy.getTemperatureAttribute();
+		
+			this.cutin = copy.getCutin();
+			this.eightyfivepercent = copy.getEightyfivepercent();
+			this.queryText = copy.getQueryText();
+		}
+			
+	}
 	
-
-	public MeasureIEC(String name, ArrayList<Stream> instr){
-		super(name, APerformanceQuery.PMType.IEC,new ArrayList<ISource>());
+	
+	public MeasureIEC(String name, ArrayList<ISource> insrc){
+		super(name, APerformanceQuery.PMType.IEC, insrc);
 		extractTurbineData();
 	}
+	
 	
 	public MeasureIEC(){
 		super();
@@ -42,13 +62,13 @@ public class MeasureIEC extends APerformanceQuery {
 	
 	@Override
 	public void setConcernedSrc(ArrayList<ISource> srcList) {
-		super.setConcernedSrc(srcList);
+		concernedSrc = srcList;
 		extractTurbineData();
 	}
 	
 	@Override
 	public void addMember(ISource m){
-		super.addMember(m);
+		concernedSrc.add(m);
 		extractTurbineData();
 	}
 	
@@ -58,6 +78,7 @@ public class MeasureIEC extends APerformanceQuery {
 		extractTurbineData();
 	}
 	
+	@Override
 	public void extractTurbineData(){
 		for(ISource src: concernedSrc){
 			if(src.isWindTurbine()){				
@@ -85,16 +106,6 @@ public class MeasureIEC extends APerformanceQuery {
 		return this.eightyfivepercent;
 	}
 	
-	
-	@Override
-	public void setAssignments(ArrayList<Assignment> assigns){
-		this.assignments = assigns;
-		windspeedAttribute = getResponsibleAttribute("WINDSPEED");
-		powerAttribute = getResponsibleAttribute("POWER");
-		pressureAttribute = getResponsibleAttribute("AIRPRESSURE");
-		temperatureAttribute = getResponsibleAttribute("AIRTEMPERATURE");
-	}
-	
 	@Override
 	public String generateQuery(){
 		//TODO: neue methode, die den gesamten namen eines attributes angibt: streamname.attributname
@@ -103,7 +114,8 @@ public class MeasureIEC extends APerformanceQuery {
 
 		OperatorResult actRes1;
 
-		ArrayList<Stream> streams = new ArrayList<Stream>(); 
+		ArrayList<Stream> streams = new ArrayList<Stream>();
+		
 		//projection to only needed attributes
 		for(Stream str: concernedStr){
 			if(! streams.contains(str)){
@@ -117,14 +129,14 @@ public class MeasureIEC extends APerformanceQuery {
 		actRes1 = Pgen.generateJoin(streams, "", "joinedInput");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 
-		//window
-		actRes1 = Pgen.generateWindow(actRes1.getStream(), Pgen.new Window(10,1,"time"), "windowedInput");
+		//window for aggregation
+		actRes1 = Pgen.generateWindow(actRes1.getStream(), Pgen.new Window(600,"time",1,10), "windowedInput");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
-		
+		//The IEC wants 10 minutes (=600 seconds)
 		Aggregation[] aggs = new Aggregation[assignments.size()+1];
-		aggs[0] = Pgen.new Aggregation("MAX","timestamp", "timestamp");
-		//average
+		aggs[0] = Pgen.new Aggregation("MAX",concernedStr.get(0).getName()+".timestamp", "timestamp");
+		//generate aggregations
 		for(int i = 0; i< assignments.size();i++){
 			Assignment as = assignments.get(i);		
 			aggs[i+1] = Pgen.new Aggregation("AVG",
@@ -132,50 +144,47 @@ public class MeasureIEC extends APerformanceQuery {
 					"avg_"+as.getRespStream().getIthAttName(as.getAttributeId()));
 		}
 		
+		//now average the values of the constrained data stream 
 		actRes1 = Pgen.generateAggregation(
 				actRes1.getStream(), 
-				null, 
+				null, //no group-by 
 				aggs, 
 				"avgValues");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
-		//selection on windspeed
+		//afterwards select valid bins for iec curve from interval [v_cutin-1, 1.5*v_rated0.85], here [2,19]
 		actRes1 = Pgen.generateSelection(actRes1.getStream(), 
 										"avg_"+windspeedAttribute+">"+(cutin-1)+" AND "+"avg_"+windspeedAttribute+"<"+(1.5*eightyfivepercent), 
 										"validWSpeedSelection");
 		
 		tmpQuery = tmpQuery +actRes1.getQuery();
-		
-		//compute density
-		actRes1 = Pgen.generateMap(actRes1.getStream(), 
-				new String[]{"timestamp","avg_density","avg_windspeed","avg_power"},
-				new String[]{"timestamp",
-				"100* avg_"+pressureAttribute+"/(287.058*(avg_"+temperatureAttribute+"+237.15))",
-				"avg_"+windspeedAttribute,
-				"avg_"+powerAttribute},
-				"avgValues_w_Density");
-		tmpQuery = tmpQuery +actRes1.getQuery();
-		
-		//bin and normalize data via map
+			
+		//compute density, bin and normalize data via map
 		if(pitch){
+			
+			
 			actRes1 = Pgen.generateMap(actRes1.getStream(), 
-					new String[]{actRes1.getStream().getIthAttName(0), "bin_id" ,"normalizedWSpeed", "normalizedPower"}, 
-					new String[]{actRes1.getStream().getIthAttName(0), 
-								"floor(("+actRes1.getStream().getIthAttName(2)+"*("+actRes1.getStream().getIthAttName(1)+"/1.225)^(1/3))/0.5)/2.0",
-								actRes1.getStream().getIthAttName(2)+"*("+actRes1.getStream().getIthAttName(1)+"/1.225)^(1/3)",
-								actRes1.getStream().getIthAttName(3)}, 
+					new String[]{"timestamp", "bin_id" ,"normalizedWSpeed", "normalizedPower"}, 
+					new String[]{"timestamp", 
+								"floor((avg_"+windspeedAttribute+"*(100* avg_"+pressureAttribute+"/(287.058*(avg_"+temperatureAttribute+"+237.15))/1.225)^(1/3))/0.5)/2.0",
+								"avg_"+windspeedAttribute+"*(100* avg_"+pressureAttribute+"/(287.058*(avg_"+temperatureAttribute+"+237.15))/1.225)^(1/3)",
+								"avg_"+powerAttribute}, 
 					"normalizedBinData");
 		}
 		else{ //stall
 			actRes1 = Pgen.generateMap(actRes1.getStream(), 
-					new String[]{actRes1.getStream().getIthAttName(0), "bin_id", "normalizedWSpeed", "normalizedPower"}, 
-					new String[]{actRes1.getStream().getIthAttName(0), 
-								"floor(("+actRes1.getStream().getIthAttName(2)+")/0.5)/2.0",
-								actRes1.getStream().getIthAttName(2),
-								actRes1.getStream().getIthAttName(3)+"*(1.225/"+actRes1.getStream().getIthAttName(1)+")"}, 
+					new String[]{"timestamp", "bin_id", "normalizedWSpeed", "normalizedPower"}, 
+					new String[]{"timestamp", 
+								"floor((avg_"+windspeedAttribute+")/0.5)/2.0",
+								"avg_"+windspeedAttribute,
+								"avg_"+powerAttribute+"*(1.225/100* avg_"+pressureAttribute+"/(287.058*(avg_"+temperatureAttribute+"+237.15)))"}, 
 					"normalizedBinData");
 		}
 		
+		tmpQuery = tmpQuery +actRes1.getQuery();
+		
+		//window for aggregation
+		actRes1 = Pgen.generateWindow(actRes1.getStream(), Pgen.new Window("unbounded"), "windowedPreResult");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
 		//final aggregation
