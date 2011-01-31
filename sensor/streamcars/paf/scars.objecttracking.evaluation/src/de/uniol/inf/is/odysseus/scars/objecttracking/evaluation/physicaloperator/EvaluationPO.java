@@ -148,7 +148,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
-				System.out.println("Cov:" + val);
+//				System.out.println("Cov:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -162,7 +162,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
-				System.out.println("Cov:" + val);
+//				System.out.println("Cov:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -176,7 +176,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
-				System.out.println("Cov:" + val);
+//				System.out.println("Cov:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -209,6 +209,9 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 
 			// Transfer the generated tuple
 			base.getMetadata().setObjectTrackingLatencyEnd();
+			
+//			System.out.println("Size: " + combinedListChildTmp.size() );
+			
 			transfer(base);
 		} else {
 			// Zeitstempel holen
