@@ -11,4 +11,4 @@ Import-Package: de.uniol.inf.is.odysseus.interval_latency,
  de.uniol.inf.is.odysseus.scars.objecttracking.filter.test2,
  de.uniol.inf.is.odysseus.scars.testdata.provider,
  junit.framework;version="3.8.2",
- org.junit;version="4.8.1"
+ org.junit
