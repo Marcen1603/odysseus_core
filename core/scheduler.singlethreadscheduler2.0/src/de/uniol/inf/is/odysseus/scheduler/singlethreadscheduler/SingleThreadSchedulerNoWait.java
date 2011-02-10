@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
@@ -81,11 +80,6 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 							// part is done
 							parts.remove(nextPart);
 							part = parts.iterator();
-						}
-					}
-					if (parts.size() == 0){
-						synchronized(parts){
-							parts.wait(1000);
 						}
 					}
 				}
