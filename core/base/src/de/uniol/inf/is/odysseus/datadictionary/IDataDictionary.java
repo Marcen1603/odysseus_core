@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.datadictionary;
 
+import java.sql.SQLException;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -84,6 +85,8 @@ public interface IDataDictionary {
 	public void removeListener(IDataDictionaryListener listener);
 
 	boolean isCreatorOfObject(String caller, String objecturi);
+
+	String getSourceType(String sourcename);
 
 
 }

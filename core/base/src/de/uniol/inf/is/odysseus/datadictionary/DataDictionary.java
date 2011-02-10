@@ -140,7 +140,8 @@ public class DataDictionary implements IDataDictionary {
 		sourceTypeMap.put(sourcename, sourcetype);
 	}
 
-	private String getSourceType(String sourcename) throws SQLException {
+	@Override
+	public String getSourceType(String sourcename) {
 		String value = sourceTypeMap.get(sourcename);
 		if (value == null) {
 			throw new IllegalArgumentException("missing source type for: "
@@ -152,15 +153,10 @@ public class DataDictionary implements IDataDictionary {
 	// no restric
 	@Override
 	public SDFSource createSDFSource(String sourcename) {
-		try {
-			String type = getSourceType(sourcename);
-			SDFSource source = new SDFSource(sourcename, type);
+		String type = getSourceType(sourcename);
+		SDFSource source = new SDFSource(sourcename, type);
 
-			return source;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return source;
 	}
 
 	// no restric
@@ -243,7 +239,7 @@ public class DataDictionary implements IDataDictionary {
 	public Set<Entry<String, ILogicalOperator>> getViews(User caller) {
 		return getDefinitions(caller, viewDefinitions);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Stream Management
 	// ------------------------------------------------------------------------
@@ -301,7 +297,7 @@ public class DataDictionary implements IDataDictionary {
 	public Set<Entry<String, ILogicalOperator>> getStreams(User caller) {
 		return getDefinitions(caller, streamDefinitions);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Access View or Streams
 	// ------------------------------------------------------------------------
@@ -312,15 +308,14 @@ public class DataDictionary implements IDataDictionary {
 
 		sources.addAll(getStreams(caller));
 		sources.addAll(getViews(caller));
-	
+
 		return sources;
 	}
 
 	private Set<Entry<String, ILogicalOperator>> getDefinitions(User caller,
 			IStore<String, ILogicalOperator> definitions) {
 		Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String, ILogicalOperator>>();
-		for (Entry<String, ILogicalOperator> viewEntry : definitions
-				.entrySet()) {
+		for (Entry<String, ILogicalOperator> viewEntry : definitions.entrySet()) {
 			try {
 				checkViewAccess(viewEntry.getKey(), caller,
 						DataDictionaryAction.READ);
