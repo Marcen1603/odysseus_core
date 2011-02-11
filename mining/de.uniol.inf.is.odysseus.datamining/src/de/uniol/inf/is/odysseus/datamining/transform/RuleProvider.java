@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.datamining.classification.transform.TClassifyAOR
 import de.uniol.inf.is.odysseus.datamining.classification.transform.THoeffdingTreeAORule;
 import de.uniol.inf.is.odysseus.datamining.clustering.transform.TLeaderAORule;
 import de.uniol.inf.is.odysseus.datamining.clustering.transform.TSimpleSinglePassKMeansAORule;
+import de.uniol.inf.is.odysseus.datamining.state.transform.TRecallAORule;
+import de.uniol.inf.is.odysseus.datamining.state.transform.TStateAORule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
@@ -19,6 +21,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new THoeffdingTreeAORule());
 		rules.add(new TClassifyAORule());
 		rules.add(new TSimpleSinglePassKMeansAORule());
+		rules.add(new TStateAORule());
+		rules.add(new TRecallAORule());
 		return rules;
 	}
 

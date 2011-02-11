@@ -16,8 +16,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
  * @param <T>
  *            the type of the IMetaAttribute
  */
-public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
-		Comparable<HoeffdingNode<T>> {
+public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>, Comparable<HoeffdingNode<T>> {
 
 	/**
 	 * whether the node is a leaf
@@ -136,9 +135,7 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 
 			// create a new child because no fitting one exists
 			newChild = true;
-			child = createLeaf(
-					tuple.getClassificationAttributes()[getTestAttribute()],
-					newMajority, relativeFrequency);
+			child = createLeaf(tuple.getClassificationAttributes()[getTestAttribute()], newMajority, relativeFrequency);
 			children.add(child);
 		}
 
@@ -160,8 +157,7 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 		boolean majorityChanged = false;
 		dataCube.addTuple(tuple, splitAttributes);
 		Object cubeMajorityClass = dataCube.getMajorityClass();
-		relativeFrequency = calculateRelativeFrequency(dataCube
-				.getClassCountVector());
+		relativeFrequency = calculateRelativeFrequency(dataCube.getClassCountVector());
 
 		if (!cubeMajorityClass.equals(majorityClass)) {
 			// the majority class has changed
@@ -207,8 +203,7 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 		for (Entry<Object, Integer> entry : dataVector.entrySet()) {
 			count += entry.getValue();
 		}
-		return ((double) dataVector.get(calculateMajorityClass(dataVector)))
-				/ count;
+		return ((double) dataVector.get(calculateMajorityClass(dataVector))) / count;
 	}
 
 	/*
@@ -221,7 +216,9 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 		return new HoeffdingNode<T>(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -245,8 +242,7 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 	 *            the relative frequency of the majority class
 	 * @return
 	 */
-	private HoeffdingNode<T> createLeaf(Object compareValue,
-			Object majorityClass, double relativeFrequency) {
+	private HoeffdingNode<T> createLeaf(Object compareValue, Object majorityClass, double relativeFrequency) {
 		HoeffdingNode<T> leaf = new HoeffdingNode<T>();
 		leaf.setLeaf(true);
 		leaf.setAttributeEvaluationMeasure(attributeEvaluationMeasure);
@@ -456,34 +452,45 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 	 * @param attributeEvaluationMeasure
 	 *            the evaluation measure to set
 	 */
-	public void setAttributeEvaluationMeasure(
-			AbstractAttributeEvaluationMeasure<T> attributeEvaluationMeasure) {
+	public void setAttributeEvaluationMeasure(AbstractAttributeEvaluationMeasure<T> attributeEvaluationMeasure) {
 		this.attributeEvaluationMeasure = attributeEvaluationMeasure;
 	}
 
-	/** set the child nodes
-	 * @param children the child nodes to set
+	/**
+	 * set the child nodes
+	 * 
+	 * @param children
+	 *            the child nodes to set
 	 */
 	public void setChildren(List<HoeffdingNode<T>> children) {
 		this.children = children;
 	}
 
-	/**set the data cube
-	 * @param dataCube the data cube to set
+	/**
+	 * set the data cube
+	 * 
+	 * @param dataCube
+	 *            the data cube to set
 	 */
 	public void setDataCube(DataCube<T> dataCube) {
 		this.dataCube = dataCube;
 	}
 
-	/**set whether the node is a leaf
-	 * @param leaf the node is a leaf?
+	/**
+	 * set whether the node is a leaf
+	 * 
+	 * @param leaf
+	 *            the node is a leaf?
 	 */
 	public void setLeaf(boolean leaf) {
 		this.leaf = leaf;
 	}
 
-	/** set the majority class of the node
-	 * @param majorityClass the majority class to set
+	/**
+	 * set the majority class of the node
+	 * 
+	 * @param majorityClass
+	 *            the majority class to set
 	 */
 	public void setMajorityClass(Object majorityClass) {
 		this.majorityClass = majorityClass;
@@ -500,22 +507,31 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 		this.relativeFrequency = relativeFrequency;
 	}
 
-	/** set the attributes that are possible to split the node
-	 * @param splitAttributes the positions of the attributes
+	/**
+	 * set the attributes that are possible to split the node
+	 * 
+	 * @param splitAttributes
+	 *            the positions of the attributes
 	 */
 	public void setSplitAttributes(List<Integer> splitAttributes) {
 		this.splitAttributes = splitAttributes;
 	}
 
-	/**set the attribute used to split the node
-	 * @param testAttribute the position of the attribute
+	/**
+	 * set the attribute used to split the node
+	 * 
+	 * @param testAttribute
+	 *            the position of the attribute
 	 */
 	public void setTestAttribute(int testAttribute) {
 		this.testAttribute = testAttribute;
 	}
 
-	/**set the value of the parent's split attribute
-	 * @param testValue the split value
+	/**
+	 * set the value of the parent's split attribute
+	 * 
+	 * @param testValue
+	 *            the split value
 	 */
 	public void setTestValue(Object testValue) {
 		this.testValue = testValue;
@@ -529,8 +545,7 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 	private boolean split() {
 
 		// get the split attribute
-		Integer splitAttribute = attributeEvaluationMeasure
-				.getSplitAttribute(dataCube);
+		Integer splitAttribute = attributeEvaluationMeasure.getSplitAttribute(dataCube);
 
 		if (splitAttribute == null) {
 			// do not split the node
@@ -541,11 +556,8 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 
 			// create the child nodes
 			children = new ArrayList<HoeffdingNode<T>>();
-			for (Entry<Object, HashMap<Object, Integer>> attributeEntry : dataCube
-					.getClassCountLayer(splitAttribute).entrySet()) {
-				children.add(createLeaf(attributeEntry.getKey(),
-						calculateMajorityClass(attributeEntry.getValue()),
-						calculateRelativeFrequency(attributeEntry.getValue())));
+			for (Entry<Object, HashMap<Object, Integer>> attributeEntry : dataCube.getClassCountLayer(splitAttribute).entrySet()) {
+				children.add(createLeaf(attributeEntry.getKey(), calculateMajorityClass(attributeEntry.getValue()), calculateRelativeFrequency(attributeEntry.getValue())));
 			}
 
 			// transform the node into an inner node
@@ -555,6 +567,21 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>,
 
 			return true;
 		}
+	}
+
+	@Override
+	public String toString() {
+		String s = testValue + " -> [";
+		String sep = "";
+		if (this.children != null) {
+			for (HoeffdingNode<T> child : this.children) {
+				s = s + sep + child;
+				sep = ", ";
+			}
+		}
+		s = s + "]";
+
+		return super.toString();
 	}
 
 }
