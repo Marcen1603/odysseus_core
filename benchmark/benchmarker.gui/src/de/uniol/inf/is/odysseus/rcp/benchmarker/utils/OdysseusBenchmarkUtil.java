@@ -18,20 +18,19 @@ import org.simpleframework.xml.core.Persister;
 import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
-import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.BenchmarkImpl;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 
 public class OdysseusBenchmarkUtil {
 
-	private BenchmarkImpl benchmarkrun;
+	// private BenchmarkImpl benchmarkrun;
 	private BenchmarkHolder benchmarkHolder;
 	private List<Benchmark> benchmark;
 	private BenchmarkParam param;
 
 	public OdysseusBenchmarkUtil(BenchmarkHolder benchmarkHolder) {
-		benchmarkrun = new BenchmarkImpl();
+		// benchmarkrun = new BenchmarkImpl();
 		this.benchmarkHolder = benchmarkHolder;
 		benchmark = this.benchmarkHolder.getBenchmarks();
 	}
@@ -91,7 +90,6 @@ public class OdysseusBenchmarkUtil {
 		}
 	}
 
-
 	private void configureBenchmark(IBenchmark ibenchmark, Benchmark benchmark) {
 		this.param = benchmark.getParam();
 		String query = null;
@@ -138,11 +136,11 @@ public class OdysseusBenchmarkUtil {
 			ibenchmark.setDataType(dataType);
 		}
 
-		String[] metaTypes = ibenchmark.getMetadataTypes();
-//		if (param.getMetadataTypes() != null) {
-//			String metaTypesStr = param.getMetadataTypes();
-//			metaTypes = metaTypesStr.split(":");
-//		}
+		String[] metaTypes = param.getMetadataCombination();
+		// if (param.getMetadataCombination() != null) {
+		// String metaTypesStr = param.getMetadataTypes();
+		// metaTypes = metaTypesStr.split(":");
+		// }
 
 		if (param.isPriority()) {
 			metaTypes = Arrays.copyOf(metaTypes, metaTypes.length + 1);
@@ -161,7 +159,6 @@ public class OdysseusBenchmarkUtil {
 		if (param.isExtendesPostpriorisation()) {
 			ibenchmark.setExtendedPostPriorisation(true);
 		}
-
 
 		if (param.getMaxResult() != null) {
 			Long maxResults = Long.parseLong(param.getMaxResult());

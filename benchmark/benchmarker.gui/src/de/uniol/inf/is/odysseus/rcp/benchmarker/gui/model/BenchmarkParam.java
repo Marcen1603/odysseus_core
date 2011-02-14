@@ -5,18 +5,20 @@ import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class BenchmarkParam implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private int id;
 	private String name;
 	private String scheduler;
 	private String schedulingstrategy;
 	private String bufferplacement;
 	private String dataType;
-	private String metadataTypes;
+	// private String metadataTypes;
 	private String queryLanguage;
 	private String query;
 	private String maxResult;
@@ -83,9 +85,9 @@ public class BenchmarkParam implements Serializable, Cloneable {
 		return dataType;
 	}
 
-	public String getMetadataTypes() {
-		return metadataTypes;
-	}
+	// public String getMetadataTypes() {
+	// return metadataTypes;
+	// }
 
 	public String getQueryLanguage() {
 		return queryLanguage;
@@ -161,10 +163,11 @@ public class BenchmarkParam implements Serializable, Cloneable {
 		propertyChangeSupport.firePropertyChange("dataType", this.dataType, this.dataType = dataType);
 	}
 
-	public void setMetadataTypes(String metadataTypes) {
-		propertyChangeSupport.firePropertyChange("metadataTypes", this.metadataTypes,
-				this.metadataTypes = metadataTypes);
-	}
+	// public void setMetadataTypes(String metadataTypes) {
+	// propertyChangeSupport.firePropertyChange("metadataTypes",
+	// this.metadataTypes,
+	// this.metadataTypes = metadataTypes);
+	// }
 
 	public void setQueryLanguage(String queryLanguage) {
 		propertyChangeSupport.firePropertyChange("queryLanguage", this.queryLanguage,
@@ -227,11 +230,24 @@ public class BenchmarkParam implements Serializable, Cloneable {
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
-	
+
 	public Map<String, Boolean> getAllSingleTypes() {
 		return allSingleTypes;
 	}
-	
+
+	public String[] getMetadataCombination() {
+		String[] array = null;
+		int counter = 0;
+		Set<Entry<String, Boolean>> sets = getAllSingleTypes().entrySet();
+		for (Entry<String, Boolean> entry : sets) {
+			if (entry.getValue() == true) {
+				array[counter] = entry.getKey(); // TODO hההה??
+				counter++;
+			}
+		}
+		return array;
+	}
+
 	public void setAllSingleTypes(Map<String, Boolean> allSingleTypes) {
 		this.allSingleTypes = allSingleTypes;
 	}
@@ -244,8 +260,8 @@ public class BenchmarkParam implements Serializable, Cloneable {
 	public String toString() {
 		return "BenchmarkRun [nameOfBenchmarkRun=" + name + ", scheduler=" + scheduler + ", schedulingstrategy="
 				+ schedulingstrategy + ", bufferplacement=" + bufferplacement + ", dataType=" + dataType
-				+ ", metadataTypes=" + metadataTypes + ", queryLanguage=" + queryLanguage + ", query=" + query
-				+ ", maxResult=" + maxResult + ", priority=" + priority + ", punctuations=" + punctuations
+				+ ", metadataTypes=" + ", queryLanguage=" + queryLanguage + ", query=" + query + ", maxResult="
+				+ maxResult + ", priority=" + priority + ", punctuations=" + punctuations
 				+ ", extendesPostpriorisation=" + extendedPostpriorisation + ", memoryUsage=" + memoryUsage
 				+ ", noMetada=" + noMetada + ", waitConfig=" + waitConfig + ", resultPerQuery=" + resultPerQuery
 				+ ", inputFile=" + inputFile + ", numberOfRuns=" + numberOfRuns + "]";
@@ -255,7 +271,7 @@ public class BenchmarkParam implements Serializable, Cloneable {
 	public BenchmarkParam clone() {
 		BenchmarkParam newParam;
 		try {
-			newParam =  (BenchmarkParam) super.clone();
+			newParam = (BenchmarkParam) super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 			return null;

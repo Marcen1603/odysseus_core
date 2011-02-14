@@ -14,7 +14,6 @@ import org.osgi.util.tracker.ServiceTracker;
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.serviceTracker.BufferplacementstrategyServiceTrackerCustomizer;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.serviceTracker.QueryLanguageServiceTrackerCustomizer;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.serviceTracker.SchedulerServiceTrackerCustomizer;
@@ -160,9 +159,9 @@ public class Activator extends AbstractUIPlugin {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 
-	private static IExecutor executor;
-
-	public static IExecutor getExecutor() {
-		return executor;
-	}
+//	private static IExecutor executor;
+//
+//	public static IExecutor getExecutor() {
+//		return executor;
+//	}
 }

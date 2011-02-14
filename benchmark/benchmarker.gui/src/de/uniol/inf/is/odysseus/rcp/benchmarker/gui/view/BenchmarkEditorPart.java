@@ -4,13 +4,14 @@ import static de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils.isNotBl
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -65,7 +67,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	private Combo comboSchedulingstrategy;
 	private Combo comboBufferPlacement;
 	private Text textDataType;
-	private Combo comboMetadataTypes;
+	// private Combo comboMetadataTypes;
 	private Combo comboQueryLanguage;
 	private Text textQuery;
 	private Text textMaxResults;
@@ -128,9 +130,9 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		Set<Set<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
 		for (Set<String> typeCombinations : allTypeCombination) {
 			for (String type : typeCombinations) {
-		    	if (!benchmarkParam.getAllSingleTypes().containsKey(type)) {
-			      benchmarkParam.getAllSingleTypes().put(type, false);
-		    	}
+				if (!benchmarkParam.getAllSingleTypes().containsKey(type)) {
+					benchmarkParam.getAllSingleTypes().put(type, false);
+				}
 			}
 		}
 	}
@@ -176,18 +178,14 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		parent.setLayout(gridLayout);
 		GridData gridData = new GridData();
 
-/*		// MetadataCheckboxListener
-		SelectionListener metadataSelectionListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				String element = (String) ((Button) e.getSource()).getData();
-				if (selectedTypes.contains(element)) {
-					selectedTypes.remove(element);
-				} else {
-					selectedTypes.add(element);
-				}
-			}
-		};
-		*/
+		/*
+		 * // MetadataCheckboxListener SelectionListener
+		 * metadataSelectionListener = new SelectionAdapter() { public void
+		 * widgetSelected(SelectionEvent e) { String element = (String)
+		 * ((Button) e.getSource()).getData(); if
+		 * (selectedTypes.contains(element)) { selectedTypes.remove(element); }
+		 * else { selectedTypes.add(element); } } };
+		 */
 
 		{ // SeitenLabel
 			Label labelPage = new Label(parent, SWT.NULL);
@@ -293,24 +291,28 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			gridData.grabExcessHorizontalSpace = true;
-			comboMetadataTypes = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-			comboMetadataTypes.setLayoutData(gridData);
-			for (int i = 0; i < 3; i++) {
-				comboMetadataTypes.add("Metadata Type " + i);
-			}
+			// comboMetadataTypes = new Combo(parent, SWT.DROP_DOWN |
+			// SWT.READ_ONLY | SWT.BORDER);
+			// comboMetadataTypes.setLayoutData(gridData);
+			// for (int i = 0; i < 3; i++) {
+			// comboMetadataTypes.add("Metadata Type " + i);
+			// }
+			Label labelmetadata = new Label(parent, SWT.NULL);
+			labelmetadata.setText("Select Combination: ");
 			new Label(parent, SWT.NULL);
-			bindingContext.bindValue(SWTObservables.observeSelection(comboMetadataTypes),
-					BeansObservables.observeValue(benchmarkParam, "metadataTypes"));
-			
-			// TODO ///echte metadaten:
+			// bindingContext.bindValue(SWTObservables.observeSelection(comboMetadataTypes),
+			// BeansObservables.observeValue(benchmarkParam, "metadataTypes"));
+
+			// TODO
+			// /echte metadaten:
 			Map<String, Boolean> allSingleTypes = benchmarkParam.getAllSingleTypes();
 			for (Map.Entry<String, Boolean> typeEntry : allSingleTypes.entrySet()) {
 				new Label(parent, SWT.NULL);
 				Button checkboxMetadataType = new Button(parent, SWT.CHECK);
-				//checkboxMetadataType.addSelectionListener(metadataSelectionListener);
-				checkboxMetadataType.setText(typeEntry.getKey());
+				// checkboxMetadataType.addSelectionListener(metadataSelectionListener);
+				checkboxMetadataType.setText(splitString(typeEntry.getKey()));
 				checkboxMetadataType.addSelectionListener(this);
-				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType), 
+				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType),
 						new ObservativeMapEntryValue<String, Boolean>(typeEntry));
 
 				new Label(parent, SWT.NULL);
@@ -516,11 +518,14 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		// Buttonlistener - SAVE
 		buttonStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(BenchmarkHolder.INSTANCE);
-				try {
-					util.startrun();
-				} catch (Exception e1) {
-					e1.printStackTrace();
+				if (!checkMetadataCombination()) {
+				} else {
+					OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(BenchmarkHolder.INSTANCE);
+					try {
+						util.startrun();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -585,7 +590,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		comboSchedulingstrategy.setEnabled(!readOnly);
 		comboBufferPlacement.setEnabled(!readOnly);
 		textDataType.setEnabled(!readOnly);
-		comboMetadataTypes.setEnabled(!readOnly);
+		// comboMetadataTypes.setEnabled(!readOnly);
 		comboQueryLanguage.setEnabled(!readOnly);
 		textQuery.setEnabled(!readOnly);
 		textMaxResults.setEnabled(!readOnly);
@@ -604,7 +609,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		buttonBrowser.setVisible(!readOnly);
 	}
 
-	
 	/**
 	 * Wenn eine Checkbox der Metadaten angeklickt wird
 	 */
@@ -616,7 +620,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	@Override
-	public void widgetDefaultSelected(SelectionEvent e) {	
+	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
 	/**
@@ -632,9 +636,10 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		if (!BenchmarkHolder.INSTANCE.contains(benchmarkRun.getId())
 				&& isNotBlank(benchmarkRun.getName(), benchmarkRun.getScheduler(),
 						benchmarkRun.getSchedulingstrategy(), benchmarkRun.getBufferplacement(),
-						benchmarkRun.getDataType(), benchmarkRun.getMetadataTypes(), benchmarkRun.getQueryLanguage(),
-						benchmarkRun.getWaitConfig(), benchmarkRun.getInputFile(), benchmarkRun.getNumberOfRuns())
-				&& (isNotBlank(benchmarkRun.getInputFile()) || isNotBlank(benchmarkRun.getQuery()))) {
+						benchmarkRun.getDataType(), benchmarkRun.getQueryLanguage(), benchmarkRun.getWaitConfig(),
+						benchmarkRun.getInputFile(), benchmarkRun.getNumberOfRuns())
+				&& (isNotBlank(benchmarkRun.getInputFile()) || isNotBlank(benchmarkRun.getQuery()))
+				&& trueMap(benchmarkRun.getAllSingleTypes())) {
 			// buttonAdd.setEnabled(true);
 			buttonStart.setEnabled(true);
 		} else {
@@ -649,6 +654,38 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		if (isDirty != dirty) {
 			isDirty = dirty;
 			firePropertyChange(IEditorPart.PROP_DIRTY);
+		}
+	}
+
+	private String splitString(String string) {
+		String[] stringArray = string.split("\\.");
+		int i = stringArray.length;
+		return stringArray[i - 1];
+	}
+
+	private boolean trueMap(Map<String, Boolean> map) {
+		boolean result = false;
+		Set<Entry<String, Boolean>> sets = map.entrySet();
+		for (Entry<String, Boolean> entry : sets) {
+			if (entry.getValue() == true) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	private boolean checkMetadataCombination() {
+		Set<Set<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
+		@SuppressWarnings("unchecked")
+		Set<String> set = new HashSet(Arrays.asList(benchmarkParam.getMetadataCombination()));
+		if (allTypeCombination.contains(set)) {
+			return true;
+		} else {
+			Shell s = new Shell();
+			org.eclipse.jface.dialogs.MessageDialog.openInformation(s, "Error in Metadata-Combination",
+					"The benchmark couldn't start, metadata-combination doesn't exist!");
+			return false;
+
 		}
 	}
 }

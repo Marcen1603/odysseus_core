@@ -9,17 +9,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
-
 /**
  * Diese Klasse zeichnet die View für die Parameter eines Benchmarkdurchlaufs.
  * 
  * @author Steffi
- *
+ * 
  */
 public class ParameterView extends ViewPart {
 
-	private BenchmarkParam benchmarkRun;
+	// private BenchmarkParam benchmarkRun;
 
 	private Text textQuery;
 	private Button checkButtonPriority;
