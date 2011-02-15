@@ -36,6 +36,15 @@ public class BenchmarkParam implements Serializable, Cloneable {
 	private transient PropertyChangeSupport propertyChangeSupport;
 	private boolean readOnly;
 	private Map<String, Boolean> allSingleTypes;
+	private boolean isRunnable;
+
+	public boolean isRunnable() {
+		return isRunnable;
+	}
+
+	public void setRunnable(boolean isRunnable) {
+		this.isRunnable = isRunnable;
+	}
 
 	public BenchmarkParam() {
 		propertyChangeSupport = new PropertyChangeSupport(this);
@@ -239,12 +248,12 @@ public class BenchmarkParam implements Serializable, Cloneable {
 
 	// TODO
 	public String[] getMetadataCombination() {
-	
+
 		List<String> list = new ArrayList<String>();
 		Set<Entry<String, Boolean>> sets = getAllSingleTypes().entrySet();
 		for (Entry<String, Boolean> entry : sets) {
 			if (entry.getValue() == true) {
-			list.add(entry.getKey());
+				list.add(entry.getKey());
 			}
 		}
 		return list.toArray(new String[list.size()]);

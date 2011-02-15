@@ -39,55 +39,66 @@ public class OdysseusBenchmarkUtil {
 		BundleContext ctx = de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator.getDefault().getBundle()
 				.getBundleContext();
 		for (Benchmark s : benchmark) {
-			// TODO überprüfen, ob BenchmarkRun schon results hat oder ob
-			// BenchmarkRun alle erfoderlichen Einstellungen hat
-			this.param = s.getParam();
-			System.out.println("startrun, forschleife");
-
-			ServiceTracker t = new ServiceTracker(ctx, IBenchmark.class.getName(), null);
-			t.open();
-			int wait = 100;
-			IBenchmark benchmark = (IBenchmark) t.waitForService(wait);
-			if (benchmark == null) {
-				throw new Exception("cannot find benchmark service");
-			}
-
-			int waitConfig;
-			if (param.getWaitConfig() != null) {
-				waitConfig = Integer.parseInt(param.getWaitConfig());
-			} else {
-				waitConfig = 0;
-			}
-			Thread.sleep(waitConfig);
-
-			configureBenchmark(benchmark, s);
-			System.out.println("hmmm");
-			try {
-				System.out.println("after setParameter s, als nächsten forschleife");
+			// überprüfen, ob BenchmarkRun schon results hat
+			if (!s.hasResults()) {
 				this.param = s.getParam();
-				System.out.println("hm2");
-				for (int i = 0; i < Integer.parseInt(param.getNumberOfRuns()); i++) {
-					System.out.println("hm3");
-					Collection<IBenchmarkResult<Object>> results = benchmark.runBenchmark();
-					String filename = "result" + param.getName() + i + ".xml";
+				// oder ob BenchmarkRun alle erfoderlichen Einstellungen hat
+				if (param.isRunnable()) {
+					System.out.println("startrun, forschleife");
 
-					Serializer serializer = new Persister();
-					File file = new File(filename);
-
-					FileOutputStream oStream = new FileOutputStream(file);
-					for (IBenchmarkResult<?> result : results) {
-						serializer.write(result, oStream);
+					ServiceTracker t = new ServiceTracker(ctx, IBenchmark.class.getName(), null);
+					t.open();
+					int wait = 100;
+					IBenchmark benchmark = (IBenchmark) t.waitForService(wait);
+					if (benchmark == null) {
+						throw new Exception("cannot find benchmark service");
 					}
 
-					if (param.isMemoryUsage()) {
-						String memFile = filename.replaceAll(".xml", "_memory.xml");
-						serializer.write(benchmark.getMemUsageStatistics(), new File(memFile));
+					int waitConfig;
+					if (param.getWaitConfig() != null) {
+						waitConfig = Integer.parseInt(param.getWaitConfig());
+					} else {
+						waitConfig = 0;
 					}
-					// TODO: Benchmark Resultüberpürunfg auf true setzen
-					System.out.println("Benchmarkrun erfolgreich");
+					Thread.sleep(waitConfig);
+
+					configureBenchmark(benchmark, s);
+					// TODO Result-Output festlegen
+					// Collection<IBenchmarkResult<Object>> results =
+					// benchmark.runBenchmark();
+					// String filename = DEFAULT_OUT_FILE;
+					// if (arguments.hasParameter(OUT)) {
+					// filename = arguments.get(OUT);
+					// }
+
+					System.out.println("hmmm");
+					try {
+						System.out.println("after setParameter s, als nächsten forschleife");
+						this.param = s.getParam();
+						System.out.println("hm2");
+						for (int i = 0; i < Integer.parseInt(param.getNumberOfRuns()); i++) {
+							System.out.println("hm3");
+							Collection<IBenchmarkResult<Object>> results = benchmark.runBenchmark();
+							String filename = "result" + param.getName() + i + ".xml";
+
+							Serializer serializer = new Persister();
+							File file = new File(filename);
+
+							FileOutputStream oStream = new FileOutputStream(file);
+							for (IBenchmarkResult<?> result : results) {
+								serializer.write(result, oStream);
+							}
+
+							if (param.isMemoryUsage()) {
+								String memFile = filename.replaceAll(".xml", "_memory.xml");
+								serializer.write(benchmark.getMemUsageStatistics(), new File(memFile));
+							}
+							System.out.println("Benchmarkrun erfolgreich");
+						}
+					} catch (BenchmarkException e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (BenchmarkException e) {
-				e.printStackTrace();
 			}
 		}
 	}

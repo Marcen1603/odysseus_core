@@ -94,6 +94,9 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		boolean newBench = !BenchmarkHolder.INSTANCE.contains(benchmarkParam.getId());
+		benchmarkParam.setRunnable(setIsRunnable());// Überprüft, ob Benchmarker
+													// mit diesen Einstellungen
+													// gestartet werden kann
 		Benchmark benchmark = BenchmarkStoreUtil.storeBenchmarkParam(benchmarkParam);
 
 		setDirtyState(false);
@@ -135,6 +138,10 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				}
 			}
 		}
+
+		// TODO überprüfen, ob Button Start enabled sein darf
+		// TODO Abhängigkeiten erstellen (Priority-chechbox zu
+		// postprieosation-chechbox etc.)
 	}
 
 	@Override
@@ -515,11 +522,30 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			}
 		});
 
-		// Buttonlistener - SAVE
+		// Buttonlistener - BENCHMARK STARTEN
 		buttonStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!checkMetadataCombination()) {
 				} else {
+					// Params speichern:
+					boolean newBench = !BenchmarkHolder.INSTANCE.contains(benchmarkParam.getId());
+					benchmarkParam.setRunnable(setIsRunnable());// Überprüft, ob
+																// Benchmarker
+																// mit diesen
+																// Einstellungen
+																// gestartet
+																// werden kann
+					Benchmark benchmark = BenchmarkStoreUtil.storeBenchmarkParam(benchmarkParam);
+					setDirtyState(false);
+					// Den ProjectView refreshen
+					ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getActivePage().findView(ProjectView.ID);
+					if (!newBench) {
+						projectView.refresh(benchmark);
+					} else {
+						projectView.refresh();
+					}
+					// Benchmarkrunstarten
 					OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(BenchmarkHolder.INSTANCE);
 					try {
 						util.startrun();
@@ -685,9 +711,28 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 																// TESTAUSGABE!!!!!!!!!!!!!!!!!!!!!!!!!!
 			Shell window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 			org.eclipse.jface.dialogs.MessageDialog.openInformation(window, "Error in Metadata-Combination",
-					"The benchmark couldn't start, metadata-combination doesn't exist!");
+					"Metadata-combination doesn't exist!");
 			return false;
 
 		}
+	}
+
+	// TODO ich weiß nicht wieso ich im propertychange nicht benchmarkparam
+	// bentuzt habe?! nochmal drüber nachdenken ;)
+	private boolean setIsRunnable() {
+		if (checkMetadataCombination()) {
+			if (!BenchmarkHolder.INSTANCE.contains(benchmarkParam.getId())
+					&& isNotBlank(benchmarkParam.getName(), benchmarkParam.getScheduler(),
+							benchmarkParam.getSchedulingstrategy(), benchmarkParam.getBufferplacement(),
+							benchmarkParam.getDataType(), benchmarkParam.getQueryLanguage(),
+							benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(),
+							benchmarkParam.getNumberOfRuns())
+					&& (isNotBlank(benchmarkParam.getInputFile()) || isNotBlank(benchmarkParam.getQuery()))
+					&& trueMap(benchmarkParam.getAllSingleTypes()))
+				return true;
+		} else {
+			return false;
+		}
+		return false;
 	}
 }

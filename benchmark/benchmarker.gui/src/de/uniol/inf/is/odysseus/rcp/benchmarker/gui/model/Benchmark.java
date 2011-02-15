@@ -18,11 +18,11 @@ public class Benchmark {
 		this();
 		this.param = param;
 	}
-	
+
 	public int getId() {
 		return param.getId();
 	}
-	
+
 	public String getName() {
 		return param.getName();
 	}
@@ -45,5 +45,13 @@ public class Benchmark {
 
 	public void setMetada(BenchmarkMetadata metadata) {
 		this.metadata = metadata;
+	}
+
+	public boolean hasResults() {
+		if (results.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

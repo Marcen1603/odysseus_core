@@ -62,7 +62,7 @@ public class BenchmarkStoreUtil {
 		File directory = new File(RELATIVE_FOLDER);
 		if (directory.exists()) {
 			if (!directory.isDirectory()) {
-				throw new RuntimeException("Can't load benchmarks. Wan't subdirectory and no file with name: "
+				throw new RuntimeException("Can't load benchmarks. Want subdirectory and no file with name: "
 						+ RELATIVE_FOLDER);
 			}
 
