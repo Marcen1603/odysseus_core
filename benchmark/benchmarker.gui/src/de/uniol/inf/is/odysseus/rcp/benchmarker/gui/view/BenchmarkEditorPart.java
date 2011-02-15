@@ -37,6 +37,7 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.part.EditorPart;
 
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
@@ -57,7 +58,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.OdysseusBenchmarkUtil;
  * @author Stefanie Witzke
  * 
  */
-public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, PropertyChangeListener, SelectionListener {
+public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, PropertyChangeListener {
 
 	public static final String ID = "de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorBenchmark";
 
@@ -94,7 +95,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		boolean newBench = !BenchmarkHolder.INSTANCE.contains(benchmarkParam.getId());
-		benchmarkParam.setRunnable(setIsRunnable());// Überprüft, ob Benchmarker
+		benchmarkParam.setRunnable(checkRunnable());// Überprüft, ob Benchmarker
 													// mit diesen Einstellungen
 													// gestartet werden kann
 		Benchmark benchmark = BenchmarkStoreUtil.storeBenchmarkParam(benchmarkParam);
@@ -316,11 +317,9 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			for (Map.Entry<String, Boolean> typeEntry : allSingleTypes.entrySet()) {
 				new Label(parent, SWT.NULL);
 				Button checkboxMetadataType = new Button(parent, SWT.CHECK);
-				// checkboxMetadataType.addSelectionListener(metadataSelectionListener);
 				checkboxMetadataType.setText(splitString(typeEntry.getKey()));
-				checkboxMetadataType.addSelectionListener(this);
 				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType),
-						new ObservativeMapEntryValue<String, Boolean>(typeEntry));
+						new ObservativeMapEntryValue<String, Boolean>(typeEntry, this, benchmarkParam));
 
 				new Label(parent, SWT.NULL);
 			}
@@ -398,9 +397,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			labelExtendedPostpriorisation.setText("Extended Postpriorisation ");
 
 			checkButtonExtendedPostpriorisation = new Button(parent, SWT.CHECK);
-			if (checkButtonPriority.getSelection() == false) {
-				checkButtonExtendedPostpriorisation.setEnabled(false);
-			}
 			new Label(parent, SWT.NULL);
 			bindingContext.bindValue(SWTObservables.observeSelection(checkButtonExtendedPostpriorisation),
 					BeansObservables.observeValue(benchmarkParam, "extendesPostpriorisation"));
@@ -525,26 +521,11 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		// Buttonlistener - BENCHMARK STARTEN
 		buttonStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (!checkMetadataCombination()) {
-				} else {
-					// Params speichern:
-					boolean newBench = !BenchmarkHolder.INSTANCE.contains(benchmarkParam.getId());
-					benchmarkParam.setRunnable(setIsRunnable());// Überprüft, ob
-																// Benchmarker
-																// mit diesen
-																// Einstellungen
-																// gestartet
-																// werden kann
-					Benchmark benchmark = BenchmarkStoreUtil.storeBenchmarkParam(benchmarkParam);
-					setDirtyState(false);
-					// Den ProjectView refreshen
-					ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-							.getActivePage().findView(ProjectView.ID);
-					if (!newBench) {
-						projectView.refresh(benchmark);
-					} else {
-						projectView.refresh();
-					}
+				if (checkMetadataCombination()) {
+					IWorkbenchAction save = ActionFactory.SAVE.create(PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow());
+					save.run();
+
 					// Benchmarkrunstarten
 					OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(BenchmarkHolder.INSTANCE);
 					try {
@@ -636,20 +617,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	/**
-	 * Wenn eine Checkbox der Metadaten angeklickt wird
-	 */
-	@Override
-	public void widgetSelected(SelectionEvent e) {
-		if (!isDirty) {
-			setDirtyState(true);
-		}
-	}
-
-	@Override
-	public void widgetDefaultSelected(SelectionEvent e) {
-	}
-
-	/**
 	 * Wenn sich die Eingaben verändern
 	 */
 	@Override
@@ -658,19 +625,16 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			setDirtyState(true);
 		}
 
-		BenchmarkParam benchmarkRun = ((BenchmarkParam) evt.getSource());
-		if (!BenchmarkHolder.INSTANCE.contains(benchmarkRun.getId())
-				&& isNotBlank(benchmarkRun.getName(), benchmarkRun.getScheduler(),
-						benchmarkRun.getSchedulingstrategy(), benchmarkRun.getBufferplacement(),
-						benchmarkRun.getDataType(), benchmarkRun.getQueryLanguage(), benchmarkRun.getWaitConfig(),
-						benchmarkRun.getInputFile(), benchmarkRun.getNumberOfRuns())
-				&& (isNotBlank(benchmarkRun.getInputFile()) || isNotBlank(benchmarkRun.getQuery()))
-				&& trueMap(benchmarkRun.getAllSingleTypes())) {
-			// buttonAdd.setEnabled(true);
+		checkButtons((BenchmarkParam) evt.getSource());
+		// Postpriorisation darf nur markierbar sein wenn Priority angeklickt
+		// ist
+		checkButtonExtendedPostpriorisation.setEnabled(checkButtonPriority.getSelection());
+	}
+
+	private void checkButtons(BenchmarkParam benchmarkParam) {
+		if (checkStartable(benchmarkParam)) {
 			buttonStart.setEnabled(true);
 		} else {
-			// buttonAdd.setSelection(false);
-			// buttonAdd.setEnabled(false);
 			buttonStart.setSelection(false);
 			buttonStart.setEnabled(false);
 		}
@@ -719,20 +683,23 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 	// TODO ich weiß nicht wieso ich im propertychange nicht benchmarkparam
 	// bentuzt habe?! nochmal drüber nachdenken ;)
-	private boolean setIsRunnable() {
-		if (checkMetadataCombination()) {
-			if (!BenchmarkHolder.INSTANCE.contains(benchmarkParam.getId())
-					&& isNotBlank(benchmarkParam.getName(), benchmarkParam.getScheduler(),
-							benchmarkParam.getSchedulingstrategy(), benchmarkParam.getBufferplacement(),
-							benchmarkParam.getDataType(), benchmarkParam.getQueryLanguage(),
-							benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(),
-							benchmarkParam.getNumberOfRuns())
-					&& (isNotBlank(benchmarkParam.getInputFile()) || isNotBlank(benchmarkParam.getQuery()))
-					&& trueMap(benchmarkParam.getAllSingleTypes()))
-				return true;
+	private boolean checkRunnable() {
+		if (checkStartable(benchmarkParam)) {
+			return checkMetadataCombination();
+		}
+		return false;
+	}
+
+	private boolean checkStartable(BenchmarkParam benchmarkParam) {
+		if (isNotBlank(benchmarkParam.getName(), benchmarkParam.getScheduler(),
+						benchmarkParam.getSchedulingstrategy(), benchmarkParam.getBufferplacement(),
+						benchmarkParam.getDataType(), benchmarkParam.getQueryLanguage(),
+						benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(), benchmarkParam.getNumberOfRuns())
+				&& (isNotBlank(benchmarkParam.getInputFile()) || isNotBlank(benchmarkParam.getQuery()))
+				&& trueMap(benchmarkParam.getAllSingleTypes())) {
+			return true;
 		} else {
 			return false;
 		}
-		return false;
 	}
 }

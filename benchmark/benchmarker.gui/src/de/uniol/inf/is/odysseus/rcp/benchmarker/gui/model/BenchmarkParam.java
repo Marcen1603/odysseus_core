@@ -260,7 +260,7 @@ public class BenchmarkParam implements Serializable, Cloneable {
 	}
 
 	public void setAllSingleTypes(Map<String, Boolean> allSingleTypes) {
-		this.allSingleTypes = allSingleTypes;
+		propertyChangeSupport.firePropertyChange("allSingleTypes", this.allSingleTypes, this.allSingleTypes = allSingleTypes);
 	}
 
 	protected void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
