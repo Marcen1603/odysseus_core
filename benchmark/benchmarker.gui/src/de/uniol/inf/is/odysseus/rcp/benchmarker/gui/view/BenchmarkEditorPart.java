@@ -681,8 +681,10 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		if (allTypeCombination.contains(set)) {
 			return true;
 		} else {
-			Shell s = new Shell();
-			org.eclipse.jface.dialogs.MessageDialog.openInformation(s, "Error in Metadata-Combination",
+			System.out.println("MEtadatenkombination falsch!"); // NUR
+																// TESTAUSGABE!!!!!!!!!!!!!!!!!!!!!!!!!!
+			Shell window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+			org.eclipse.jface.dialogs.MessageDialog.openInformation(window, "Error in Metadata-Combination",
 					"The benchmark couldn't start, metadata-combination doesn't exist!");
 			return false;
 

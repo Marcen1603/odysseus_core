@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -235,17 +237,17 @@ public class BenchmarkParam implements Serializable, Cloneable {
 		return allSingleTypes;
 	}
 
+	// TODO
 	public String[] getMetadataCombination() {
-		String[] array = null;
-		int counter = 0;
+	
+		List<String> list = new ArrayList<String>();
 		Set<Entry<String, Boolean>> sets = getAllSingleTypes().entrySet();
 		for (Entry<String, Boolean> entry : sets) {
 			if (entry.getValue() == true) {
-				array[counter] = entry.getKey(); // TODO hההה??
-				counter++;
+			list.add(entry.getKey());
 			}
 		}
-		return array;
+		return list.toArray(new String[list.size()]);
 	}
 
 	public void setAllSingleTypes(Map<String, Boolean> allSingleTypes) {

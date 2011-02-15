@@ -39,6 +39,8 @@ public class OdysseusBenchmarkUtil {
 		BundleContext ctx = de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator.getDefault().getBundle()
 				.getBundleContext();
 		for (Benchmark s : benchmark) {
+			// TODO überprüfen, ob BenchmarkRun schon results hat oder ob
+			// BenchmarkRun alle erfoderlichen Einstellungen hat
 			this.param = s.getParam();
 			System.out.println("startrun, forschleife");
 
@@ -67,7 +69,7 @@ public class OdysseusBenchmarkUtil {
 				for (int i = 0; i < Integer.parseInt(param.getNumberOfRuns()); i++) {
 					System.out.println("hm3");
 					Collection<IBenchmarkResult<Object>> results = benchmark.runBenchmark();
-					String filename = "result.xml";
+					String filename = "result" + param.getName() + i + ".xml";
 
 					Serializer serializer = new Persister();
 					File file = new File(filename);
@@ -81,10 +83,10 @@ public class OdysseusBenchmarkUtil {
 						String memFile = filename.replaceAll(".xml", "_memory.xml");
 						serializer.write(benchmark.getMemUsageStatistics(), new File(memFile));
 					}
+					// TODO: Benchmark Resultüberpürunfg auf true setzen
 					System.out.println("Benchmarkrun erfolgreich");
 				}
 			} catch (BenchmarkException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
