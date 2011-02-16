@@ -4,12 +4,12 @@ package measure.windperformancercp.event;
 //import org.eclipse.swt.events.TypedEvent;
 
 import measure.windperformancercp.model.IModel;
-import measure.windperformancercp.model.sources.ISource;
+import measure.windperformancercp.model.sources.IDialogResult;
 
 
-public class SourceModelEvent extends AbstractEvent<IModel, ISource>{
+public class ModelEvent extends AbstractEvent<IModel, IDialogResult>{
 	
-	public SourceModelEvent(IModel model, SourceModelEventType type, ISource value){
+	public ModelEvent(IModel model, ModelEventType type, IDialogResult value){
 		super(model, type, value);		
 	}
 		

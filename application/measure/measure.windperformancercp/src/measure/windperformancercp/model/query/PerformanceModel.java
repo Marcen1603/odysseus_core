@@ -9,9 +9,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import measure.windperformancercp.event.EventHandler;
-import measure.windperformancercp.event.SourceModelEvent;
-import measure.windperformancercp.event.SourceModelEventType;
+import measure.windperformancercp.event.ModelEvent;
+import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.model.IModel;
+import measure.windperformancercp.model.sources.IDialogResult;
 
 
 @XmlRootElement
@@ -21,8 +22,9 @@ public class PerformanceModel extends EventHandler implements IModel{
 	@XmlTransient
 	private ArrayList<IPerformanceQuery> queryList;
 	
-	SourceModelEvent newItemEvent = new SourceModelEvent(this,SourceModelEventType.NewItem,null);
-	SourceModelEvent deleteItemEvent = new SourceModelEvent(this,SourceModelEventType.DeletedItem,null);
+	ModelEvent newItemEvent = new ModelEvent(this,ModelEventType.NewItem,null);
+	ModelEvent deleteItemEvent = new ModelEvent(this,ModelEventType.DeletedItem,null);
+	ModelEvent changeItemEvent = new ModelEvent(this,ModelEventType.ModifyItem,null);
 	
 	private PerformanceModel(){
 		queryList = new ArrayList<IPerformanceQuery>();
@@ -80,10 +82,16 @@ public class PerformanceModel extends EventHandler implements IModel{
 	
 	public void setQueryList(ArrayList<IPerformanceQuery> ql){
 		queryList = ql;
+		fire(changeItemEvent);
 	}
 	
 	public int getElemCount(){
 		return queryList.size();
+	}
+
+	@Override
+	public void somethingChanged(IDialogResult res) {
+		fire(changeItemEvent);
 	}
 
 

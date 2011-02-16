@@ -7,7 +7,7 @@ import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.InputDialogEvent;
 import measure.windperformancercp.event.InputDialogEventType;
-import measure.windperformancercp.event.SourceModelEventType;
+import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.event.UpdateEvent;
 import measure.windperformancercp.event.UpdateEventType;
 import measure.windperformancercp.model.query.PerformanceModel;
@@ -92,16 +92,22 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 	public IEventListener modelListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
 			
-			if(event.getEventType().equals(SourceModelEventType.NewItem)){ 
+			if(event.getEventType().equals(ModelEventType.NewItem)){ 
 				//System.out.println("received new measurement event, updating view!");
 				updateView();
 				setStatusLine("Added measurement successfully. ");
 			}
 			
-			if(event.getEventType().equals(SourceModelEventType.DeletedItem)){ 
+			if(event.getEventType().equals(ModelEventType.DeletedItem)){ 
 				//System.out.println("received delete measurement event, updating view!");
 				updateView();
 				setStatusLine("Deleted measurement successfully. ");
+			}
+			
+			if(event.getEventType().equals(ModelEventType.ModifyItem)){ 
+				//System.out.println("received delete measurement event, updating view!");
+				updateView();
+				setStatusLine("Changed measurement successfully. ");
 			}
 			
 		}

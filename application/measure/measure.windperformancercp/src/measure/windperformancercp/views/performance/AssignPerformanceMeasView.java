@@ -189,8 +189,7 @@ public class AssignPerformanceMeasView extends ViewPart {
 			case 1:	return query.getMethod().toString();
 			case 2: return Integer.toString(query.getConcernedSrc().size());
 			case 3:	return Double.toString(0.0);
-			case 4:	return Integer.toString(0);
-			
+			case 4:	return Boolean.toString(query.getConnectStat()); 
 			}
 			return null;
 		}

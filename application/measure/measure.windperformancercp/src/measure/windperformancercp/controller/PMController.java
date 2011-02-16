@@ -6,6 +6,7 @@ import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.InputDialogEvent;
 import measure.windperformancercp.event.InputDialogEventType;
+import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.event.QueryEvent;
 import measure.windperformancercp.event.QueryEventType;
 import measure.windperformancercp.model.query.IPerformanceQuery;
@@ -94,6 +95,7 @@ public class PMController implements IController {
 				}
 				
 			}
+			
 			if(event.getEventType().equals(InputDialogEventType.DeletePerformanceItem)){
 				//System.out.println(this.toString()+": Received delete performance event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
@@ -103,35 +105,55 @@ public class PMController implements IController {
 				pmodel.removeAllOccurences(qry);
 				//System.out.println(this.toString()+": Received delete source event for "+src.toString()+" from "+event.getSender().toString()+"\n Deleted "+c);
 			}
+			
 			if(event.getEventType().equals(QueryEventType.AddQuery)){
 				QueryEvent ideEvent = (QueryEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue();
 				ArrayList<String> adders = qry.generateSourceStreams();
 				//TODO:check if sources are not already registered from other queries
 				String adderQuery = "";
+			
 				for(String s: adders){
 					adderQuery = adderQuery + s;
 				}
 				//add sources
-				connector.addQuery(adderQuery, addStreamParserID);
-				//add main query
-				connector.addQuery(qry.getQueryText(), queryParserID);			//TODO: der query hinzufuegen, sie soll wissen, wer sie erzeugt hat
+				if(connector.addQuery(adderQuery, addStreamParserID)) {
+					//TODO: tell scontrol, that specific source has been connected
+					//scontrol.somethingChanged();
+					//add main query
+					if(connector.addQuery(qry.getQueryText(), queryParserID)){ //TODO: der query hinzufuegen, sie soll wissen, wer sie erzeugt hat
+						qry.setConnectStat(true);
+						pmodel.somethingChanged(qry);
+					}
+					else{
+						//remove sources
+					}
+				}
 			}
 			
 			if(event.getEventType().equals(QueryEventType.DeleteQuery)){
 				QueryEvent ideEvent = (QueryEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue();
 				
+				
 				//remove main query
-
-				//check if sources are not involved in other queries, otherwise dont delete them
-				ArrayList<String> removers = qry.generateRemoveStreams();
-				String removerQuery = "";
-				for(String s: removers){
-					removerQuery = removerQuery + s;
-				}
-				//remove sources
-				connector.addQuery(removerQuery, addStreamParserID);
+				//if(connector.delQuery(queryID)){
+						//qry.setConnectStat(false);
+						//pmodel.somethingChanged(qry);
+					//check if sources are not involved in other queries, otherwise dont delete them
+					ArrayList<String> removers = qry.generateRemoveStreams();
+					String removerQuery = "";
+					for(String s: removers){
+						removerQuery = removerQuery + s;
+					}
+					//remove sources
+					if(connector.addQuery(removerQuery, addStreamParserID)){
+						//TODO: tell scontrol, that a source has been disconnected
+					}
+					else{
+						
+					}
+			//	}
 				
 			}
 		}

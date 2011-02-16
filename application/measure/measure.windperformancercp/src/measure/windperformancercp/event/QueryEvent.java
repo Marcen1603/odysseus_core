@@ -1,17 +1,15 @@
 package measure.windperformancercp.event;
 
 import measure.windperformancercp.model.query.IPerformanceQuery;
-import measure.windperformancercp.views.IPresenter;
 
 
-public class QueryEvent extends AbstractEvent<IPresenter, IPerformanceQuery> {
+public class QueryEvent extends AbstractEvent<Object, IPerformanceQuery> {
 	
-	public QueryEvent(IPresenter source, QueryEventType type, IPerformanceQuery value) {
-		//public InputDialogEvent(AbstractUIDialog source, InputDialogEventType type, IDialogResult value) {
+	public QueryEvent(Object source, QueryEventType type, IPerformanceQuery value) {
 			super(source,type,value);
 		}
 		
-		public IPresenter getPresenter(){
+		public Object getPresenter(){
 			return getSender();
 		}
 		

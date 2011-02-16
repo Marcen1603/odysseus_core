@@ -33,6 +33,8 @@ public interface IPerformanceQuery extends IDialogResult {
 	public Stream getResponsibleStream(String what);
 	public String getResponsibleAttribute(String what);
 	public PMType getMethod();
+	public void setConnectStat(boolean c);
+	public boolean getConnectStat();
 	public void setMethod(APerformanceQuery.PMType type);
 	public ArrayList<ISource> getConcernedSrc();
 	public void setConcernedSrc(ArrayList<ISource> srcList);

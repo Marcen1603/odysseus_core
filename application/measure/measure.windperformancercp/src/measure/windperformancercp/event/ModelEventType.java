@@ -1,7 +1,7 @@
 package measure.windperformancercp.event;
 
-public enum SourceModelEventType implements IEventType {
+public enum ModelEventType implements IEventType {
 	NewItem,
 	DeletedItem,
-	Changed
+	ModifyItem
 }

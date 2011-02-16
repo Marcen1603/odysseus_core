@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import measure.windperformancercp.event.EventHandler;
-import measure.windperformancercp.event.SourceModelEvent;
-import measure.windperformancercp.event.SourceModelEventType;
+import measure.windperformancercp.event.ModelEvent;
+import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.model.IModel;
 
 
@@ -23,8 +23,9 @@ public class SourceModel extends EventHandler implements IModel {
 	private ArrayList<ISource> sourcesList;
 	
 	
-	SourceModelEvent newItemEvent = new SourceModelEvent(this,SourceModelEventType.NewItem,null);
-	SourceModelEvent deleteItemEvent = new SourceModelEvent(this,SourceModelEventType.DeletedItem,null);
+	ModelEvent newItemEvent = new ModelEvent(this,ModelEventType.NewItem,null);
+	ModelEvent deleteItemEvent = new ModelEvent(this,ModelEventType.DeletedItem,null);
+	ModelEvent changeItemEvent = new ModelEvent(this,ModelEventType.ModifyItem,null);
 	
 	private SourceModel(){
 		sourcesList = new ArrayList<ISource>();
@@ -91,10 +92,16 @@ public class SourceModel extends EventHandler implements IModel {
 	
 	public void setSourcesList(ArrayList<ISource> sources){
 		sourcesList = sources;
+		fire(changeItemEvent);
 	}
 	
 	public int getElemCount(){
 		return sourcesList.size();
+	}
+
+	@Override
+	public void somethingChanged(IDialogResult res) {
+		fire(changeItemEvent);
 	}
 
 }

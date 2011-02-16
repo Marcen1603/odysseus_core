@@ -7,7 +7,7 @@ import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.InputDialogEvent;
 import measure.windperformancercp.event.InputDialogEventType;
-import measure.windperformancercp.event.SourceModelEventType;
+import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.event.UpdateEvent;
 import measure.windperformancercp.event.UpdateEventType;
 import measure.windperformancercp.model.sources.IDialogResult;
@@ -46,12 +46,12 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 	public IEventListener modelListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
 			
-			if(event.getEventType().equals(SourceModelEventType.NewItem)){ 
+			if(event.getEventType().equals(ModelEventType.NewItem)){ 
 				updateView();
 				setStatusLine("Added source successfully. ");
 			}
 			
-			if(event.getEventType().equals(SourceModelEventType.DeletedItem)){ 
+			if(event.getEventType().equals(ModelEventType.DeletedItem)){ 
 				updateView();
 				setStatusLine("Removed source successfully. ");
 			}
