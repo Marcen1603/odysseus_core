@@ -24,6 +24,7 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 		StreamGroupingWithAggregationPO po = new StreamGroupingWithAggregationPO(aggregateAO.getInputSchema(), aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
 		po.setOutputSchema(aggregateAO.getOutputSchema()); // Notwendig??
+		po.setDumpOnEveryObject(aggregateAO.isDumpOnEveryObject());
 		po.setMetadataType(MetadataRegistry.getMetadataType(transformConfig.getMetaTypes()));
 
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(aggregateAO, po);

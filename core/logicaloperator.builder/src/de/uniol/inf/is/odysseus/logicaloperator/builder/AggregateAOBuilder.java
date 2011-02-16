@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class AggregateAOBuilder extends AbstractOperatorBuilder {
 
+	private static final long serialVersionUID = -1182294150681714511L;
+
 	private ListParameter<SDFAttribute> groupBy = new ListParameter<SDFAttribute>(
 			"GROUP_BY", REQUIREMENT.OPTIONAL,
 			new ResolvedSDFAttributeParameter("group_by attribute",
@@ -19,10 +21,13 @@ public class AggregateAOBuilder extends AbstractOperatorBuilder {
 	private ListParameter<AggregateItem> aggregations = new ListParameter<AggregateItem>(
 			"AGGREGATIONS", REQUIREMENT.MANDATORY, new AggregateItemParameter(
 					"aggregation entry", REQUIREMENT.MANDATORY));
+	
+	private final BooleanParameter dumpOnEveryValue = new BooleanParameter(
+			"DumpOnEveryValue", REQUIREMENT.OPTIONAL);	
 
 	public AggregateAOBuilder() {
 		super(1, 1);
-		setParameters(groupBy, aggregations);
+		setParameters(groupBy, aggregations, dumpOnEveryValue);
 	}
 
 	@Override
@@ -38,6 +43,10 @@ public class AggregateAOBuilder extends AbstractOperatorBuilder {
 		for (AggregateItem item : aggregations.getValue()) {
 			ao.addAggregation(item.inAttribute, item.aggregateFunction,
 					item.outAttribute);
+		}
+		
+		if (dumpOnEveryValue.hasValue()){
+			ao.setDumpOnEveryObject(dumpOnEveryValue.getValue());
 		}
 
 		return ao;

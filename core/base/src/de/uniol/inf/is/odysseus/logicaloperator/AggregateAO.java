@@ -20,44 +20,9 @@ public class AggregateAO extends UnaryLogicalOp {
     private List<SDFAttribute> groupingAttributes = new ArrayList<SDFAttribute>();
 
     private SDFAttributeList outputSchema = null;
-
-//    @Override
-//    public int hashCode() {
-//        final int prime = 31;
-//        int result = super.hashCode();
-//        result = prime * result
-//                + ((aggregations == null) ? 0 : aggregations.hashCode());
-//        result = prime
-//                * result
-//                + ((groupingAttributes == null) ? 0 : groupingAttributes
-//                        .hashCode());
-//        return result;
-//    }
-
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj)
-//            return true;
-//        if (!super.equals(obj))
-//            return false;
-//        if (getClass() != obj.getClass())
-//            return false;
-//        AggregateAO other = (AggregateAO) obj;
-//        if (aggregations == null) {
-//            if (other.aggregations != null)
-//                return false;
-//        }
-//        else if (!aggregations.equals(other.aggregations))
-//            return false;
-//        if (groupingAttributes == null) {
-//            if (other.groupingAttributes != null)
-//                return false;
-//        }
-//        else if (!groupingAttributes.equals(other.groupingAttributes))
-//            return false;
-//        return true;
-//    }
-
+    
+    private boolean dumpOnEveryObject = false;
+    
     public AggregateAO() {
         super();
         aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>();
@@ -106,10 +71,6 @@ public class AggregateAO extends UnaryLogicalOp {
         }
     }
 
-//    public Map<AggregateFunction, SDFAttribute> getAggregationFunctions(
-//            SDFAttribute attribute) {
-//        return aggregations.get(attribute);
-//    }
 
     public Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> getAggregations() {
         return this.aggregations;
@@ -147,4 +108,13 @@ public class AggregateAO extends UnaryLogicalOp {
         return outputSchema;
     }
 
+    public void setDumpOnEveryObject(boolean dumpOnEveryObject) {
+		this.dumpOnEveryObject = dumpOnEveryObject;
+	}
+    
+    public boolean isDumpOnEveryObject() {
+		return dumpOnEveryObject;
+	}
+
+    
 }

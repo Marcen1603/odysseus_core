@@ -198,6 +198,18 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 			return this;
 		return new PointInTime(this.point - time.point);
 	}
+	
+	public PointInTime plus(PointInTime time) {
+		if (isInfinite)
+			return this;
+		return new PointInTime(this.point + time.point);
+	}
+	
+	public PointInTime plus(int time) {
+		if (isInfinite)
+			return this;
+		return new PointInTime(this.point + time);
+	}
 
 	@Override
 	public int hashCode() {

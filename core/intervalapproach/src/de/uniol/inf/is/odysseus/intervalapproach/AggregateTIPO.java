@@ -31,12 +31,12 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	class _Point implements Comparable<_Point> {
 		public PointInTime p;
 		boolean startP;
-        PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg;
+		PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg;
 
 		public _Point(
 				PointInTime p,
 				boolean startP,
-                PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg) {
+				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg) {
 			this.p = p;
 			this.startP = startP;
 			this.element_agg = element_agg;
@@ -65,6 +65,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			return result;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -98,7 +99,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			SDFAttributeList inputSchema,
 			SDFAttributeList outputSchema,
 			List<SDFAttribute> groupingAttributes,
-            Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
+			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
 			Class<Q> metadataType) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		setMetadataType(metadataType);
@@ -109,10 +110,11 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		this.metadataType = aggregatePO.metadataType;
 	}
 
-	public AggregateTIPO(SDFAttributeList inputSchema,
+	public AggregateTIPO(
+			SDFAttributeList inputSchema,
 			SDFAttributeList outputSchema,
 			List<SDFAttribute> groupingAttributes,
-            Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations) {
+			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 	}
 
@@ -124,23 +126,23 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht
 	// korrekt. Deswegen eigene Version
 	protected synchronized void updateSA(
-            DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-			R element) {
-        Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
-				.queryOverlaps(element.getMetadata());
-		// System.out.println("updateSA MinTS: "+sa.getMinTs()+"  Size:"+sa.size()+" mit "+element);
-		R e_probe = element;
-		Q t_probe = element.getMetadata();
-		// sa.dumpContent(false);
-		if (!qualifies.hasNext()) {
-			// System.out.println("updateSA initiales Einfuegen");
+			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			R elem) {
+		R e_probe = elem;
+		Q t_probe = elem.getMetadata();
+
+		// Determine elements in this sweep area that overlaps the time interval
+		// of elem
+		Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
+				.queryOverlaps(t_probe);
+		if (!qualifies.hasNext()) { // insert new partial aggregate
 			saInsert(sa, calcInit(e_probe), t_probe);
 		} else {
 			// Punktliste generieren
 			SortedSet<_Point> pl = new TreeSet<_Point>();
 			// Erst die Elemente der SweepArea
 			while (qualifies.hasNext()) {
-                PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
+				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 						.next();
 				sa.remove(element_agg);
 				ITimeInterval t_agg = element_agg.getMetadata();
@@ -159,7 +161,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			if (iter.hasNext()) {
 				p1 = iter.next();
 			}
-            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> curr_agg = p1.element_agg;
+			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> curr_agg = p1.element_agg;
 			while (iter.hasNext()) {
 				p2 = iter.next();
 				if (p1.p.before(p2.p)) { // Ansonsten w�re das ein leeres
@@ -183,21 +185,21 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						if (!p1.isDach() && p2.isDach()) { // S --> S^
 							saInsert(sa, curr_agg, newTI);
 						} else { // S^ --> S
-							saInsert(sa, calcInit(element), newTI);
+							saInsert(sa, calcInit(elem), newTI);
 						}
 						// alle anderen F�lle gehen nicht, weil sich die
 						// Intervalle schneiden!
 					} else if (p1.startP && !p2.startP) { // Schnitt (f�r alle
 						// gleich!)
-						saInsert(sa, calcMerge(curr_agg, element), newTI);
+						saInsert(sa, calcMerge(curr_agg, elem), newTI);
 					} else if (!p1.startP && p2.startP) { // Zwischelement E^
 						// --> S
 						// Muss ein Init auf dem neuen Element sein, da es hier
 						// keinen Schnitt gibt
-						saInsert(sa, calcInit(element), newTI);
+						saInsert(sa, calcInit(elem), newTI);
 					} else if (!p1.startP && !p2.startP) { // Element danach
 						if (!p1.isDach() && p2.isDach()) { // E --> E^
-							saInsert(sa, calcInit(element), newTI);
+							saInsert(sa, calcInit(elem), newTI);
 						} else { // E^ --> E
 							saInsert(sa, curr_agg, newTI);
 						}
@@ -208,14 +210,40 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		}
 	}
 
-    private PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> saInsert(
-            DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> elem,
+	// Updates SA by splitting all partial aggregates before split point
+	protected synchronized void updateSA(
+			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			PointInTime splitPoint) {
+
+		ITimeInterval t_probe = new TimeInterval(splitPoint, splitPoint.plus(1));
+
+		// Determine elements in this sweep area containing splitpoint
+		Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
+				.queryOverlaps(t_probe);
+		while (qualifies.hasNext()) {
+			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
+					.next();
+			// TODO: Is removal necessary or is update of metadata enough?
+			// Remove current element
+			sa.remove(element_agg);
+			// and split into two new elements
+			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = element_agg
+					.clone();
+			element_agg.getMetadata().setEnd(splitPoint);
+			copy.getMetadata().setStart(splitPoint);
+			sa.insert(element_agg);
+			sa.insert(copy);
+		}
+	}
+
+	private PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> saInsert(
+			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> elem,
 			Q t) {
 		// System.out.println("SA Insert "+elem);
 		elem.setMetadata(t);
 		sa.insert(elem);
 		return elem;
 	}
-	
+
 }
