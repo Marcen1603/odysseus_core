@@ -1,0 +1,257 @@
+package measure.windperformancercp.model.sources;
+
+import java.util.ArrayList;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
+
+import measure.windperformancercp.event.EventHandler;
+import measure.windperformancercp.event.IEvent;
+import measure.windperformancercp.event.IEventListener;
+import measure.windperformancercp.event.IEventType;
+
+
+
+/**
+ * Abstract implementation of ISource
+ * @author blackunicorn
+ *
+ */
+
+@XmlType(name = "abstractSource", propOrder = {
+	    "name",
+	    "type",
+	    "streamIdentifier",
+	    "host",
+	    "port",
+	    "frequency",
+	    "attributeList",
+	    "connectState"
+	})
+public abstract class AbstractSource implements ISource {
+	
+	public static final String ID = "measure.windPerformanceRCP.ASource";
+	
+	private static int sourceCounter = 0;
+	private int type;
+	private int port;
+	private @XmlAttribute int id;
+	private String host;
+	private String streamIdentifier;
+	private String name;
+	private ArrayList<Attribute> attributeList;
+	private int frequency;
+	private int connectState; //0=disconnected, 1=proceeding, 2= connected
+	
+	public static final int MMId = 0;
+	public static final int WTId = 1;
+	
+	
+	EventHandler eventHandler = new EventHandler();
+	
+	@Override
+	public void subscribe(IEventListener listener, IEventType type){
+		eventHandler.subscribe(listener, type);
+	}
+
+	@Override
+	public void unsubscribe(IEventListener listener, IEventType type){
+		eventHandler.unsubscribe(listener, type);
+	}
+
+	@Override
+	public void subscribeToAll(IEventListener listener){
+		eventHandler.subscribeToAll(listener);
+	}
+
+	@Override
+	public void unSubscribeFromAll(IEventListener listener){
+		eventHandler.unSubscribeFromAll(listener);
+	}
+
+	@Override
+	public void fire(IEvent<?, ?> event){
+		eventHandler.fire(event);
+	}
+
+
+	public AbstractSource(int typeId, String name, String strIdentifier, String hostName, int portId, ArrayList<Attribute> attList, int connectState, int freq){
+		this.type = typeId;
+		this.name = name;
+		this.streamIdentifier = strIdentifier;
+		this.host = hostName;
+		this.port = portId;
+		this.attributeList = new ArrayList<Attribute>(attList); 
+		this.connectState = connectState;
+		this.frequency = freq;
+		sourceCounter++;
+		this.id = sourceCounter;
+	}
+	
+	public AbstractSource(){
+		this.type = -1;
+		this.name = "";
+		this.streamIdentifier = "";
+		this.host = "";
+		this.port = 0;
+		this.attributeList = new ArrayList<Attribute>();
+		this.connectState = -1;
+		this.frequency = 1;
+	}
+	
+	public AbstractSource(AbstractSource copy){
+		this(copy.getType(),copy.getName(),copy.getStreamIdentifier(),copy.getHost(),copy.getPort(),copy.getAttributeList(),copy.getConnectState(), copy.getFrequency());
+	}
+	
+	@Override
+	public int getType() {
+		return this.type;
+	}
+	
+	@Override
+	public void setType(int t) {
+		this.type = t;
+	}
+
+	@Override
+	public boolean isWindTurbine() {
+		if(this.type == WTId) return true;
+		return false;
+	}
+
+	@Override
+	public boolean isMetMast() {
+		if(this.type == MMId) return true;
+		return false;
+	}
+	
+	
+	@Override
+	public String getName(){
+		return this.name;
+	}
+	
+	@Override
+	public void setName(String newName) {
+			this.name = newName;
+	}
+		
+	@Override
+	public String getStreamIdentifier(){
+		return this.streamIdentifier;
+	}
+	
+	@Override
+	public void setStreamIdentifier(String strId){
+			this.streamIdentifier = strId;
+	}
+
+	
+	@Override
+	public String getHost(){
+		return this.host;
+	}
+	
+	@Override
+	public void setHost(String newHost){
+			this.host = newHost;
+	}
+		
+	@Override
+	public int getPort() {
+		return this.port;
+	}
+	
+	@Override
+	public void setPort(int newPort) {
+			this.port = newPort;
+	}
+		
+	
+	@Override
+	public int getId() {
+		return this.id;
+	}
+	
+	@Override
+	@XmlElementWrapper(name = "attributeList") 
+	@XmlElement(name = "attribute")
+	public ArrayList<Attribute> getAttributeList(){
+		if(attributeList == null)
+			attributeList = new ArrayList<Attribute>();
+		return this.attributeList;
+	}
+	
+	@Override
+	public ArrayList<String> getAttributeNameList(){
+		ArrayList<String> nameList = new ArrayList<String>();
+		for(Attribute a: attributeList){
+			nameList.add(a.getName());
+		}
+		return nameList;
+	}
+
+	@Override
+	public void setAttributeList(ArrayList<Attribute> newAttl){
+			this.attributeList = newAttl;
+	}
+		
+	@Override
+	public Attribute getIthAtt(int i){
+		if(attributeList.size()>i){
+			return attributeList.get(i);
+		} else return null;
+	}
+	
+	@Override
+	public void setIthAtt(int i, Attribute att){
+		if(attributeList.size()>i){
+				attributeList.set(i, att);
+		} 
+	}
+	
+	@Override
+	public int getAttIndex(Attribute att){
+		return attributeList.indexOf(att);
+	}
+		
+	@Override
+	public int getNumberOfAtts(){
+		return attributeList.size();
+	}
+	
+	@Override
+	public boolean isConnected(){
+		if(connectState == 1) return true;
+		else return false;		
+	}
+	
+	@Override
+	public int getConnectState(){
+		return connectState;
+	}
+	
+	@Override
+	public void setConnectState(int i){
+			this.connectState = i;
+	}
+	
+	@Override
+	public int getFrequency(){
+		return frequency;
+	}
+	
+	@Override
+	public void setFrequency(int i){
+			this.frequency = i;
+	}
+	
+	@Override
+	public String toString(){
+		String info = "Source_ID: "+this.id+", Source_Name: "+this.name+" Stream Id: "+this.streamIdentifier+", Source_Type: "+this.type+", Port: "+this.port+", Host: "+this.host+", Attributes: "+this.attributeList.toString();
+		return info;
+	}
+	
+}
