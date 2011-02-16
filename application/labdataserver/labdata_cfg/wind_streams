@@ -11,10 +11,69 @@ CREATE STREAM flapSimComplete(
 	realPowerCRisoe DOUBLE,
 	windSpeedWT1 DOUBLE,
 	windSpeedWT2 DOUBLE
-) SOCKET localhost : 60101
+) SOCKET localhost : 60102
 
 CREATE STREAM meteoSim(
 	timestamp STARTTIMESTAMP,
 	pressure DOUBLE,
 	temperature DOUBLE
+) SOCKET localhost : 60101
+
+CREATE STREAM meteoSimFW(
+	timestamp STARTTIMESTAMP,
+	temperature DOUBLE,
+	pressure DOUBLE,
+	windDir DOUBLE
+) SOCKET localhost : 60101
+
+CREATE STREAM flapSimFW(
+	timestamp STARTTIMESTAMP,
+	windSpeedHH DOUBLE,
+	power DOUBLE
 ) SOCKET localhost : 60102
+
+CREATE STREAM flapSimFW:fs01(
+	timestamp STARTTIMESTAMP,
+	wtId INTEGER,
+	windSpeedHH DOUBLE,
+	power DOUBLE
+) SOCKET localhost : 60102
+
+
+ATTACH STREAM flapSimFW:fs02(
+	timestamp STARTTIMESTAMP,
+	wtId INTEGER,
+	windSpeedHH DOUBLE,
+	power DOUBLE
+) SOCKET localhost : 60103
+
+ATTACH STREAM flapSimFW:fs03(
+	timestamp STARTTIMESTAMP,
+	wtId INTEGER,
+	windSpeedHH DOUBLE,
+	power DOUBLE
+) SOCKET localhost : 60104
+
+ATTACH STREAM flapSimFW:fs04(
+	timestamp STARTTIMESTAMP,
+	wtId INTEGER,
+	windSpeedHH DOUBLE,
+	power DOUBLE
+) SOCKET localhost : 60105
+
+ATTACH STREAM flapSimFW:fs05(
+	timestamp STARTTIMESTAMP,
+	wtId INTEGER,
+	windSpeedHH DOUBLE,
+	power DOUBLE
+) SOCKET localhost : 60106
+
+ATTACH STREAM flapSimFW:fs06(
+	timestamp STARTTIMESTAMP,
+	wtId INTEGER,
+	windSpeedHH DOUBLE,
+	power DOUBLE
+) SOCKET localhost : 60107
+
+
+
