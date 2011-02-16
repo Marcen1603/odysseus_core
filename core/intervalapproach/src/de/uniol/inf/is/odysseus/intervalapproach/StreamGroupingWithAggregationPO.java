@@ -81,6 +81,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private final Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>>();
 	private boolean dumpOnEveryObject = false;
 
+	// private boolean dumpOnEveryObject = true;
+
 	public StreamGroupingWithAggregationPO(
 			SDFAttributeList inputSchema,
 			SDFAttributeList outputSchema,
@@ -97,7 +99,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		super.setGroupingHelper(groupingHelper);
 		initAggFunctions();
 	}
-	
+
 	public void setDumpOnEveryObject(boolean dumpOnEveryObject) {
 		this.dumpOnEveryObject = dumpOnEveryObject;
 	}
@@ -213,12 +215,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		if (sa == null) {
 			sa = new DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
-		}
-		// Falls diese SA noch nicht verwaltet wurde
-		if (sa.size() == 0) {
+			System.out
+					.println("Created new Sweep Area for group id " + groupID);
 			g.insert(sa, groupID);
 		}
-
 		// Das neue Element s in die SweepArea einfï¿½gen
 		updateSA(sa, s);
 		// System.out.println("SGA: SA "+sa);
@@ -229,11 +229,11 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private void createOutput(PointInTime startTimestamp) {
 		Integer groupID;
 		PointInTime minTs = null;
-		// Optinal Partielle Aggregate herausschreiben, die bis nun gültig sind
+		// Optinal Partielle Aggregate herausschreiben, die bis nun gï¿½ltig sind
 		if (dumpOnEveryObject) {
 			// In allen SweepAreas mit Hilfe des Zeitstempels Partielle
 			// Aggregate erzeugen, die bis
-			// zu diesem Zeitstempel gültig sind.
+			// zu diesem Zeitstempel gï¿½ltig sind.
 			for (DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
 					.values()) {
 				updateSA(sa, startTimestamp);
@@ -245,7 +245,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			// Die Gruppe mit den ï¿½ltesten Elementen heraussuchen
 			groupID = g.min();
 			// Sowie die passenden SweepArea
-			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups.get(groupID);
+			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
+					.get(groupID);
 
 			// Das ï¿½lteste Element der SweepArea auslesen
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> e_dach = sa

@@ -49,19 +49,23 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
     }
 
     @Override
-    public int getGroupID(RelationalTuple<T> elem) {
+    public Integer getGroupID(RelationalTuple<T> elem) {
         // Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
         if (gRestrict == null || gRestrict.length == 0)
-            return 0;
+            return Integer.valueOf(0);;
         // Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
         RelationalTuple<T> gTuple = elem.restrict(gRestrict, true);
         // Gibt es diese Kombination schon?
         Integer id = keyMap.get(gTuple);
         // Wenn nicht, neu eintragen
         if (id == null) {
-            id = ++maxId;
+        	id = ++maxId;
             keyMap.put(gTuple, id);
             tupleMap.put(id, gTuple);
+        	System.out.println("Created new Group "+id+" from "+gTuple+" with input "+elem);      
+        }else{
+        	System.out.println("Using Group with ID "+id+" for input "+gTuple+" "+elem);
+
         }
         return id;
     }

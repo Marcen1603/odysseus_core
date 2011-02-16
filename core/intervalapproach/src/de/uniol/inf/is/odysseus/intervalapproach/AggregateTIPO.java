@@ -223,16 +223,20 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		while (qualifies.hasNext()) {
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 					.next();
-			// TODO: Is removal necessary or is update of metadata enough?
-			// Remove current element
-			sa.remove(element_agg);
-			// and split into two new elements
-			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = element_agg
-					.clone();
-			element_agg.getMetadata().setEnd(splitPoint);
-			copy.getMetadata().setStart(splitPoint);
-			sa.insert(element_agg);
-			sa.insert(copy);
+			if (element_agg.getMetadata().getStart().before(splitPoint)) {
+				// TODO: Is removal necessary or is update of metadata enough?
+				// Remove current element
+				sa.remove(element_agg);
+				// and split into two new elements
+				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = 
+					new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>(element_agg);
+				copy.setMetadata((Q) element_agg.getMetadata().clone());
+				element_agg.getMetadata().setEnd(splitPoint);
+				sa.insert(element_agg);
+				copy.getMetadata().setStart(splitPoint);
+				sa.insert(copy);
+			}
+
 		}
 	}
 

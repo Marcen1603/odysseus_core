@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class GroupingHelper<R> {
 
-    abstract public int getGroupID(R elem);
+    abstract public Integer getGroupID(R elem);
 
     abstract public void init();
 
