@@ -270,7 +270,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> elem,
 			Q t) {
-		System.out.println("SA Insert "+elem+" "+t);
+	//	System.out.println("SA Insert "+elem+" "+t);
 		elem.setMetadata(t);
 		sa.insert(elem);
 		return elem;

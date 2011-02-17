@@ -152,8 +152,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		if (sa == null) {
 			sa = new DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
-			System.out
-					.println("Created new Sweep Area for group id " + groupID);
+		//	System.out.println("Created new Sweep Area for group id " + groupID);
 		}
 
 		// Update sweep area with new element
@@ -194,11 +193,13 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			produceResults(results, entry.getKey());
 		}
 		
+		/*
 		System.out.println("Found Bordertime "+border+" at timestamp "+timestamp);
 		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()){
 			System.out.println(entry.getKey()+" "+entry.getValue());
 		}
+		*/
 
 
 	}
@@ -213,7 +214,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			R out = getGroupingHelper().createOutputElement(groupID, r);
 			out.setMetadata(e.getMetadata());
 			transferArea.transfer(out);
-			System.out.println("Move to tranfer area "+out);
+		//	System.out.println("Move to tranfer area "+out);
 		}
 	}
 
