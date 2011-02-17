@@ -93,7 +93,7 @@ public class OdysseusBenchmarkUtil {
 						for (int i = 0; i < Integer.parseInt(param.getNumberOfRuns()); i++) {
 							System.out.println("hm3");
 							Collection<IBenchmarkResult<Object>> results = benchmark.runBenchmark();
-							String filename = "result" + param.getName() + i + ".xml";
+							String filename = "result" + param.getName() + (i+1) + ".xml";
 
 							Serializer serializer = new Persister();
 							File file = new File(filename);

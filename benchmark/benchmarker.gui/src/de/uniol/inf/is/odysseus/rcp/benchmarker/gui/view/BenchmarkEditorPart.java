@@ -18,8 +18,10 @@ import static de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils.isNotBl
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -102,6 +104,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	private Button buttonBrowser;
 	private boolean isDirty;
 
+	private List<Button> listMetadata;
+
 	public BenchmarkEditorPart() {
 		isDirty = false;
 	}
@@ -136,6 +140,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			throw new PartInitException("Invalid Input: Must be BenchmarkEditorInput");
 		setSite(site);
 		setInput(input);
+		listMetadata = new ArrayList<Button>();
 		this.benchmarkParam = ((BenchmarkEditorInput) input).getBenchmarkParam();
 		IActionBars actionBars = ((IEditorSite) getSite()).getActionBars();
 
@@ -153,10 +158,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				}
 			}
 		}
-
-		// TODO überprüfen, ob Button Start enabled sein darf
-		// TODO Abhängigkeiten erstellen (Priority-chechbox zu
-		// postprieosation-chechbox etc.)
 	}
 
 	@Override
@@ -332,6 +333,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				new Label(parent, SWT.NULL);
 				Button checkboxMetadataType = new Button(parent, SWT.CHECK);
 				checkboxMetadataType.setText(splitString(typeEntry.getKey()));
+				listMetadata.add(checkboxMetadataType);
 				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType),
 						new ObservativeMapEntryValue<String, Boolean>(typeEntry, this, benchmarkParam));
 
@@ -536,9 +538,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		buttonStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (checkMetadataCombination()) {
-					IWorkbenchAction save = ActionFactory.SAVE.create(PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow());
-					save.run();
+					doSave(null);
 
 					// Benchmarkrunstarten
 					OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(BenchmarkHolder.INSTANCE);
@@ -611,7 +611,9 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		comboSchedulingstrategy.setEnabled(!readOnly);
 		comboBufferPlacement.setEnabled(!readOnly);
 		textDataType.setEnabled(!readOnly);
-		// comboMetadataTypes.setEnabled(!readOnly);
+		for (Button b : listMetadata) {
+			b.setEnabled(!readOnly);
+		}
 		comboQueryLanguage.setEnabled(!readOnly);
 		textQuery.setEnabled(!readOnly);
 		textMaxResults.setEnabled(!readOnly);
@@ -625,8 +627,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		textInputFile.setEnabled(!readOnly);
 		textNumberOfRuns.setEnabled(!readOnly);
 		labelPageName.setEnabled(!readOnly);
-		// buttonAdd.setVisible(!readOnly);
 		buttonStart.setVisible(!readOnly);
+		buttonCopy.setVisible(!readOnly);
 		buttonBrowser.setVisible(!readOnly);
 	}
 
@@ -705,10 +707,9 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	private boolean checkStartable(BenchmarkParam benchmarkParam) {
-		if (isNotBlank(benchmarkParam.getName(), benchmarkParam.getScheduler(),
-						benchmarkParam.getSchedulingstrategy(), benchmarkParam.getBufferplacement(),
-						benchmarkParam.getDataType(), benchmarkParam.getQueryLanguage(),
-						benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(), benchmarkParam.getNumberOfRuns())
+		if (isNotBlank(benchmarkParam.getName(), benchmarkParam.getScheduler(), benchmarkParam.getSchedulingstrategy(),
+				benchmarkParam.getBufferplacement(), benchmarkParam.getDataType(), benchmarkParam.getQueryLanguage(),
+				benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(), benchmarkParam.getNumberOfRuns())
 				&& (isNotBlank(benchmarkParam.getInputFile()) || isNotBlank(benchmarkParam.getQuery()))
 				&& trueMap(benchmarkParam.getAllSingleTypes())) {
 			return true;
