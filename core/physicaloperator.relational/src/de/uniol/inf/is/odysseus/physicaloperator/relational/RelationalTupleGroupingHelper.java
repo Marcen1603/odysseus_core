@@ -76,11 +76,12 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
         	id = ++maxId;
             keyMap.put(gTuple, id);
             tupleMap.put(id, gTuple);
-        	System.out.println("Created new Group "+id+" from "+gTuple+" with input "+elem);      
-        }else{
-        	System.out.println("Using Group with ID "+id+" for input "+gTuple+" "+elem);
-
+      //  	System.out.println("Created new Group "+id+" from "+gTuple+" with input "+elem);      
         }
+        /*else{
+      		System.out.println("Using Group with ID "+id+" for input "+gTuple+" "+elem);
+
+        }*/
         return id;
     }
 
