@@ -352,5 +352,17 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		
 		return sa;
 	}
+
+	@Override
+	final public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	final public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+	
+	
 	
 }

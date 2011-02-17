@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
@@ -32,7 +33,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSweepArea;
  * predicate is fixed to the TotallyBeforePredicate
  */
 public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
-		extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>> {
+		extends AbstractSweepArea<T> implements
+		Comparable<DefaultTISweepArea<T>> {
 	// private static final Logger logger =
 	// LoggerFactory.getLogger(ITemporalSweepArea.class);
 
@@ -40,7 +42,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		super(new MetadataComparator<ITimeInterval>());
 		super.setRemovePredicate(TotallyBeforePredicate.getInstance());
 	}
-	
+
 	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea) {
 		super(defaultTISweepArea);
 	}
@@ -122,7 +124,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		}
 		return retval.iterator();
 	}
-	
+
 	public Iterator<T> extractElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (elements) {
@@ -192,14 +194,15 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 				+ " Elems \n");
 		for (T element : elements) {
 			buf.append(element).append(" ");
-			buf.append("{META ").append(
-					element.getMetadata().toString(baseTime)).append("}\n");
+			buf.append("{META ")
+					.append(element.getMetadata().toString(baseTime))
+					.append("}\n");
 		}
 		return buf.toString();
 	}
 
 	@Override
-	public DefaultTISweepArea<T> clone()  {
+	public DefaultTISweepArea<T> clone() {
 		return new DefaultTISweepArea<T>(this);
 	}
 
@@ -218,5 +221,28 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 				}
 			}
 		}
+	}
+
+	/**
+	 * Deliver all elements containing the time stamp. 
+	 * Sweep area is not changed 
+	 * @param timestamp
+	 * @return
+	 */
+	public Iterator<T> peekElementsContaing(PointInTime timestamp, boolean includingEndtime) {
+		List<T> retval = new ArrayList<T>();
+		synchronized (elements) {
+			Iterator<T> li = elements.iterator();
+			while (li.hasNext()) {
+				T s_hat = li.next();
+				if (TimeInterval.inside(s_hat.getMetadata(), timestamp)) {
+					retval.add(s_hat);
+				} 
+				if (includingEndtime && s_hat.getMetadata().getEnd().equals(timestamp)){
+					retval.add(s_hat);
+				}
+			}
+		}
+		return retval.iterator();
 	}
 }

@@ -44,15 +44,15 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 	class _Point implements Comparable<_Point> {
 		public PointInTime p;
-		boolean startP;
+		private boolean isStartPoint;
 		PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg;
 
 		public _Point(
 				PointInTime p,
-				boolean startP,
+				boolean isStartPoint,
 				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg) {
 			this.p = p;
-			this.startP = startP;
+			this.isStartPoint = isStartPoint;
 			this.element_agg = element_agg;
 		}
 
@@ -60,22 +60,30 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		public int compareTo(_Point p2) {
 			int c = this.p.compareTo(p2.p);
 			if (c == 0) {
-				if (this.startP && !p2.startP) { // Endpunkte liegen immer vor
+				if (this.isStartPoint && !p2.isStartPoint) { // Endpunkte liegen immer vor
 					// Startpunkten
 					c = 1;
-				} else if (!this.startP && p2.startP) {
+				} else if (!this.isStartPoint && p2.isStartPoint) {
 					c = -1;
 				}
 			}
 			return c;
 		}
+		
+		public boolean isStart() {
+			return isStartPoint;
+		}
 
+		public boolean isEnd() {
+			return !isStartPoint;
+		}
+	
 		@Override
 		public int hashCode() {
 			final int PRIME = 31;
 			int result = 1;
 			result = PRIME * result + ((p == null) ? 0 : p.hashCode());
-			result = PRIME * result + (startP ? 1231 : 1237);
+			result = PRIME * result + (isStartPoint ? 1231 : 1237);
 			return result;
 		}
 
@@ -94,19 +102,21 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 					return false;
 			} else if (!p.equals(other.p))
 				return false;
-			if (startP != other.startP)
+			if (isStartPoint != other.isStartPoint)
 				return false;
 			return true;
 		}
 
-		boolean isDach() {
+		boolean newElement() {
 			return element_agg == null;
 		}
 
 		@Override
 		public String toString() {
-			return (startP ? "s" : "e") + (isDach() ? "^" : "") + p;
+			return (isStartPoint ? "s" : "e") + (newElement() ? "^" : "") + p;
 		}
+
+
 	}
 
 	public AggregateTIPO(
@@ -152,9 +162,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		if (!qualifies.hasNext()) { // insert new partial aggregate
 			saInsert(sa, calcInit(e_probe), t_probe);
 		} else {
-			// Punktliste generieren
+			// Generate list of all points  
 			SortedSet<_Point> pl = new TreeSet<_Point>();
-			// Erst die Elemente der SweepArea
+			// Add intersecting sweep area elements to this point list
+			// remove element from sweep area
 			while (qualifies.hasNext()) {
 				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 						.next();
@@ -163,12 +174,11 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 				pl.add(new _Point(t_agg.getStart(), true, element_agg));
 				pl.add(new _Point(t_agg.getEnd(), false, element_agg));
 			}
-			// Dann das zu vergleichende Element
+			// Add the new Element
 			pl.add(new _Point(t_probe.getStart(), true, null));
 			pl.add(new _Point(t_probe.getEnd(), false, null));
 
-			// System.out.println("Punktliste "+pl);
-
+			// List of points is sorted ascending
 			Iterator<_Point> iter = pl.iterator();
 			_Point p1 = null;
 			_Point p2 = null;
@@ -191,30 +201,32 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 					newTI.setStart(p1.p);
 					newTI.setEnd(p2.p);
 
-					// Merken, falls zwei Dachpunkte in der Folge sind (S^-->E^)
-					if (!p2.isDach()) {
+					// Two new elements are (NewStart-->NewEnd)
+					if (!p2.newElement()) {
 						curr_agg = p2.element_agg;
 					}
-					if (p1.startP && p2.startP) { // Element vorher
-						if (!p1.isDach() && p2.isDach()) { // S --> S^
+					if (p1.isStart() && p2.isStart()) { // Element vorher
+						if (!p1.newElement() && p2.newElement()) { // OldStart --> NewStart
+							// Create new element with shorter validity
 							saInsert(sa, curr_agg, newTI);
-						} else { // S^ --> S
+						} else { // NewStart --> OldStart
 							saInsert(sa, calcInit(elem), newTI);
 						}
-						// alle anderen F�lle gehen nicht, weil sich die
-						// Intervalle schneiden!
-					} else if (p1.startP && !p2.startP) { // Schnitt (f�r alle
-						// gleich!)
+						// In all other cases the elements would not intersect
+						
+					} else if (p1.isStart() && p2.isEnd()) { 
+						// Add new element combined from current value and new element
+						// for new time interval
 						saInsert(sa, calcMerge(curr_agg, elem), newTI);
-					} else if (!p1.startP && p2.startP) { // Zwischelement E^
-						// --> S
-						// Muss ein Init auf dem neuen Element sein, da es hier
-						// keinen Schnitt gibt
+						
+					} else if (p1.isEnd() && p2.isStart()) { 
+						// No intersection --> new element 
 						saInsert(sa, calcInit(elem), newTI);
-					} else if (!p1.startP && !p2.startP) { // Element danach
-						if (!p1.isDach() && p2.isDach()) { // E --> E^
+					} else if (p1.isEnd() && p2.isEnd()) { // Element after
+						// OldEnd && NewEnd 
+						if (!p1.newElement() && p2.newElement()) {
 							saInsert(sa, calcInit(elem), newTI);
-						} else { // E^ --> E
+						} else { // New End && Old End
 							saInsert(sa, curr_agg, newTI);
 						}
 					}
@@ -258,7 +270,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> elem,
 			Q t) {
-		// System.out.println("SA Insert "+elem);
+		System.out.println("SA Insert "+elem+" "+t);
 		elem.setMetadata(t);
 		sa.insert(elem);
 		return elem;

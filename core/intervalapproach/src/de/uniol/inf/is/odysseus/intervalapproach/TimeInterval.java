@@ -172,6 +172,16 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return right.getStart().beforeOrEquals(left.getStart())
 				&& left.getEnd().beforeOrEquals(right.getEnd());
 	}
+	
+	/**
+	 * Liegt der Punkt innerhalb des Intervals
+	 * @param interval
+	 * @param timestamp
+	 * @return
+	 */
+	public static boolean inside(ITimeInterval interval, PointInTime timestamp) {
+		return interval.getStart().beforeOrEquals(timestamp) && interval.getEnd().after(timestamp);
+	}
 
 	public static TimeInterval intersection(ITimeInterval left,
 			ITimeInterval right) {
@@ -449,4 +459,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	public TimeInterval clone() {
 		return new TimeInterval(this);
 	}
+
+
 }
