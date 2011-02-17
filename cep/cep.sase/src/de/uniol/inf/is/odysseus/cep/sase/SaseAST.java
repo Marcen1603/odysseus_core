@@ -1,3 +1,5 @@
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2011-02-17 15:57:21
+
 /** Copyright [2011] [The Odysseus Team]
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +14,6 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2011-01-12 08:28:01
-
 	package de.uniol.inf.is.odysseus.cep.sase; 
 	import java.util.LinkedList;
 	import java.util.Map;
@@ -276,7 +276,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "start"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:170:1: start returns [ILogicalOperator op] : ( ^( CREATEVIEW n= NAME q= query ) | o= query );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:184:1: start returns [ILogicalOperator op] : ( ^( CREATEVIEW n= NAME q= query ) | o= query );
     public final ILogicalOperator start() throws RecognitionException {
         ILogicalOperator op = null;
 
@@ -287,7 +287,7 @@ public class SaseAST extends TreeParser {
 
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:171:3: ( ^( CREATEVIEW n= NAME q= query ) | o= query )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:185:3: ( ^( CREATEVIEW n= NAME q= query ) | o= query )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -305,7 +305,7 @@ public class SaseAST extends TreeParser {
             }
             switch (alt1) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:172:3: ^( CREATEVIEW n= NAME q= query )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:186:3: ^( CREATEVIEW n= NAME q= query )
                     {
                     match(input,CREATEVIEW,FOLLOW_CREATEVIEW_in_start75); 
 
@@ -325,7 +325,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:176:5: o= query
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:190:5: o= query
                     {
                     pushFollow(FOLLOW_query_in_start97);
                     o=query();
@@ -351,7 +351,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "query"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:179:1: query returns [ILogicalOperator op] : ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] ) ;
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:193:1: query returns [ILogicalOperator op] : ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] ) ;
     public final ILogicalOperator query() throws RecognitionException {
         ILogicalOperator op = null;
 
@@ -364,8 +364,8 @@ public class SaseAST extends TreeParser {
             List<String> sourceNames = new ArrayList<String>();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:188:3: ( ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] ) )
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:189:3: ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:202:3: ( ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:203:3: ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] )
             {
             match(input,QUERY,FOLLOW_QUERY_in_query125); 
 
@@ -428,20 +428,20 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "patternPart"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:212:1: patternPart[CepAO cepAo, List<String> sourceNames] : ^( SEQ ( state[states, sourceNames] )* ) ;
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:226:1: patternPart[CepAO cepAo, List<String> sourceNames] : ^( SEQ ( state[states, sourceNames] )* ) ;
     public final void patternPart(CepAO cepAo, List<String> sourceNames) throws RecognitionException {
 
         List<State> states = new LinkedList<State>();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:216:3: ( ^( SEQ ( state[states, sourceNames] )* ) )
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:217:3: ^( SEQ ( state[states, sourceNames] )* )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:230:3: ( ^( SEQ ( state[states, sourceNames] )* ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:231:3: ^( SEQ ( state[states, sourceNames] )* )
             {
             match(input,SEQ,FOLLOW_SEQ_in_patternPart164); 
 
             if ( input.LA(1)==Token.DOWN ) {
                 match(input, Token.DOWN, null); 
-                // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:217:9: ( state[states, sourceNames] )*
+                // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:231:9: ( state[states, sourceNames] )*
                 loop2:
                 do {
                     int alt2=2;
@@ -454,7 +454,7 @@ public class SaseAST extends TreeParser {
 
                     switch (alt2) {
                 	case 1 :
-                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:217:9: state[states, sourceNames]
+                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:231:9: state[states, sourceNames]
                 	    {
                 	    pushFollow(FOLLOW_state_in_patternPart166);
                 	    state(states, sourceNames);
@@ -527,14 +527,14 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "state"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:258:1: state[List<State> states, List<String> sourceNames] : ( ^( STATE statename= NAME attrName= NAME (not= NOTSIGN )? ) | ^( KSTATE statename= NAME attrName= NAME (not= NOTSIGN )? ) );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:272:1: state[List<State> states, List<String> sourceNames] : ( ^( STATE statename= NAME attrName= NAME (not= NOTSIGN )? ) | ^( KSTATE statename= NAME attrName= NAME (not= NOTSIGN )? ) );
     public final void state(List<State> states, List<String> sourceNames) throws RecognitionException {
         CommonTree statename=null;
         CommonTree attrName=null;
         CommonTree not=null;
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:259:3: ( ^( STATE statename= NAME attrName= NAME (not= NOTSIGN )? ) | ^( KSTATE statename= NAME attrName= NAME (not= NOTSIGN )? ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:273:3: ( ^( STATE statename= NAME attrName= NAME (not= NOTSIGN )? ) | ^( KSTATE statename= NAME attrName= NAME (not= NOTSIGN )? ) )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -552,14 +552,14 @@ public class SaseAST extends TreeParser {
             }
             switch (alt5) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:260:3: ^( STATE statename= NAME attrName= NAME (not= NOTSIGN )? )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:274:3: ^( STATE statename= NAME attrName= NAME (not= NOTSIGN )? )
                     {
                     match(input,STATE,FOLLOW_STATE_in_state190); 
 
                     match(input, Token.DOWN, null); 
                     statename=(CommonTree)match(input,NAME,FOLLOW_NAME_in_state194); 
                     attrName=(CommonTree)match(input,NAME,FOLLOW_NAME_in_state198); 
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:260:43: (not= NOTSIGN )?
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:274:43: (not= NOTSIGN )?
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -568,7 +568,7 @@ public class SaseAST extends TreeParser {
                     }
                     switch (alt3) {
                         case 1 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:260:43: not= NOTSIGN
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:274:43: not= NOTSIGN
                             {
                             not=(CommonTree)match(input,NOTSIGN,FOLLOW_NOTSIGN_in_state202); 
 
@@ -600,14 +600,14 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:279:3: ^( KSTATE statename= NAME attrName= NAME (not= NOTSIGN )? )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:293:3: ^( KSTATE statename= NAME attrName= NAME (not= NOTSIGN )? )
                     {
                     match(input,KSTATE,FOLLOW_KSTATE_in_state217); 
 
                     match(input, Token.DOWN, null); 
                     statename=(CommonTree)match(input,NAME,FOLLOW_NAME_in_state221); 
                     attrName=(CommonTree)match(input,NAME,FOLLOW_NAME_in_state225); 
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:279:44: (not= NOTSIGN )?
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:293:44: (not= NOTSIGN )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -616,7 +616,7 @@ public class SaseAST extends TreeParser {
                     }
                     switch (alt4) {
                         case 1 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:279:44: not= NOTSIGN
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:293:44: not= NOTSIGN
                             {
                             not=(CommonTree)match(input,NOTSIGN,FOLLOW_NOTSIGN_in_state229); 
 
@@ -660,10 +660,10 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "wherePart"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:297:1: wherePart[CepAO cepAo] : ( ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] ) | );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:311:1: wherePart[CepAO cepAo] : ( ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] ) | );
     public final void wherePart(CepAO cepAo) throws RecognitionException {
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:298:3: ( ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] ) | )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:312:3: ( ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] ) | )
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -681,7 +681,7 @@ public class SaseAST extends TreeParser {
             }
             switch (alt6) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:299:3: ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:313:3: ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] )
                     {
                     match(input,WHERE,FOLLOW_WHERE_in_wherePart252); 
 
@@ -702,7 +702,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:301:3: 
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:315:3: 
                     {
                     }
                     break;
@@ -721,10 +721,10 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "whereStrat"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:303:1: whereStrat[StateMachine sm] : ( ^( SKIP_TILL_NEXT_MATCH param= paramlist ) | ^( SKIP_TILL_ANY_MATCH param= paramlist ) | ^( STRICT_CONTIGUITY paramlist ) | ^( PARTITION_CONTIGUITY paramlist ) );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:317:1: whereStrat[StateMachine sm] : ( ^( SKIP_TILL_NEXT_MATCH param= paramlist ) | ^( SKIP_TILL_ANY_MATCH param= paramlist ) | ^( STRICT_CONTIGUITY paramlist ) | ^( PARTITION_CONTIGUITY paramlist ) );
     public final void whereStrat(StateMachine sm) throws RecognitionException {
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:304:3: ( ^( SKIP_TILL_NEXT_MATCH param= paramlist ) | ^( SKIP_TILL_ANY_MATCH param= paramlist ) | ^( STRICT_CONTIGUITY paramlist ) | ^( PARTITION_CONTIGUITY paramlist ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:318:3: ( ^( SKIP_TILL_NEXT_MATCH param= paramlist ) | ^( SKIP_TILL_ANY_MATCH param= paramlist ) | ^( STRICT_CONTIGUITY paramlist ) | ^( PARTITION_CONTIGUITY paramlist ) )
             int alt7=4;
             switch ( input.LA(1) ) {
             case SKIP_TILL_NEXT_MATCH:
@@ -756,7 +756,7 @@ public class SaseAST extends TreeParser {
 
             switch (alt7) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:305:3: ^( SKIP_TILL_NEXT_MATCH param= paramlist )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:319:3: ^( SKIP_TILL_NEXT_MATCH param= paramlist )
                     {
                     match(input,SKIP_TILL_NEXT_MATCH,FOLLOW_SKIP_TILL_NEXT_MATCH_in_whereStrat284); 
 
@@ -773,7 +773,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:308:3: ^( SKIP_TILL_ANY_MATCH param= paramlist )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:322:3: ^( SKIP_TILL_ANY_MATCH param= paramlist )
                     {
                     match(input,SKIP_TILL_ANY_MATCH,FOLLOW_SKIP_TILL_ANY_MATCH_in_whereStrat302); 
 
@@ -790,7 +790,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 3 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:311:3: ^( STRICT_CONTIGUITY paramlist )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:325:3: ^( STRICT_CONTIGUITY paramlist )
                     {
                     match(input,STRICT_CONTIGUITY,FOLLOW_STRICT_CONTIGUITY_in_whereStrat320); 
 
@@ -807,7 +807,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 4 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:314:3: ^( PARTITION_CONTIGUITY paramlist )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:328:3: ^( PARTITION_CONTIGUITY paramlist )
                     {
                     match(input,PARTITION_CONTIGUITY,FOLLOW_PARTITION_CONTIGUITY_in_whereStrat336); 
 
@@ -838,17 +838,17 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "paramlist"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:318:1: paramlist : ^( PARAMLIST ( attributeName )* ) ;
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:332:1: paramlist : ^( PARAMLIST ( attributeName )* ) ;
     public final void paramlist() throws RecognitionException {
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:319:3: ( ^( PARAMLIST ( attributeName )* ) )
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:320:3: ^( PARAMLIST ( attributeName )* )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:333:3: ( ^( PARAMLIST ( attributeName )* ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:334:3: ^( PARAMLIST ( attributeName )* )
             {
             match(input,PARAMLIST,FOLLOW_PARAMLIST_in_paramlist359); 
 
             if ( input.LA(1)==Token.DOWN ) {
                 match(input, Token.DOWN, null); 
-                // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:320:15: ( attributeName )*
+                // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:334:15: ( attributeName )*
                 loop8:
                 do {
                     int alt8=2;
@@ -861,7 +861,7 @@ public class SaseAST extends TreeParser {
 
                     switch (alt8) {
                 	case 1 :
-                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:320:15: attributeName
+                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:334:15: attributeName
                 	    {
                 	    pushFollow(FOLLOW_attributeName_in_paramlist361);
                 	    attributeName();
@@ -897,10 +897,10 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "attributeName"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:324:1: attributeName : ( ^( KATTRIBUTE NAME ) | ^( ATTRIBUTE NAME ) );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:338:1: attributeName : ( ^( KATTRIBUTE NAME ) | ^( ATTRIBUTE NAME ) );
     public final void attributeName() throws RecognitionException {
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:325:3: ( ^( KATTRIBUTE NAME ) | ^( ATTRIBUTE NAME ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:339:3: ( ^( KATTRIBUTE NAME ) | ^( ATTRIBUTE NAME ) )
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -918,7 +918,7 @@ public class SaseAST extends TreeParser {
             }
             switch (alt9) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:326:3: ^( KATTRIBUTE NAME )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:340:3: ^( KATTRIBUTE NAME )
                     {
                     match(input,KATTRIBUTE,FOLLOW_KATTRIBUTE_in_attributeName383); 
 
@@ -930,7 +930,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:328:3: ^( ATTRIBUTE NAME )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:342:3: ^( ATTRIBUTE NAME )
                     {
                     match(input,ATTRIBUTE,FOLLOW_ATTRIBUTE_in_attributeName395); 
 
@@ -956,21 +956,21 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "whereExpression"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:331:1: whereExpression[StateMachine stmachine] : ^( WHEREEXPRESSION ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )* ) ;
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:345:1: whereExpression[StateMachine stmachine] : ^( WHEREEXPRESSION ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )* ) ;
     public final void whereExpression(StateMachine stmachine) throws RecognitionException {
 
           List<AttributeExpression> compareExpressions = new ArrayList<AttributeExpression>();
           List assignExpressions = new ArrayList();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:336:3: ( ^( WHEREEXPRESSION ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )* ) )
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:337:3: ^( WHEREEXPRESSION ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )* )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:350:3: ( ^( WHEREEXPRESSION ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )* ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:351:3: ^( WHEREEXPRESSION ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )* )
             {
             match(input,WHEREEXPRESSION,FOLLOW_WHEREEXPRESSION_in_whereExpression425); 
 
             if ( input.LA(1)==Token.DOWN ) {
                 match(input, Token.DOWN, null); 
-                // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:339:5: ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )*
+                // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:353:5: ( compareExpression[stmachine,compareExpressions] | idexpression[stmachine.getStates(),compareExpressions] | assignment[stmachine, assignExpressions] )*
                 loop10:
                 do {
                     int alt10=4;
@@ -995,7 +995,7 @@ public class SaseAST extends TreeParser {
 
                     switch (alt10) {
                 	case 1 :
-                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:340:7: compareExpression[stmachine,compareExpressions]
+                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:354:7: compareExpression[stmachine,compareExpressions]
                 	    {
                 	    pushFollow(FOLLOW_compareExpression_in_whereExpression439);
                 	    compareExpression(stmachine, compareExpressions);
@@ -1006,7 +1006,7 @@ public class SaseAST extends TreeParser {
                 	    }
                 	    break;
                 	case 2 :
-                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:341:9: idexpression[stmachine.getStates(),compareExpressions]
+                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:355:9: idexpression[stmachine.getStates(),compareExpressions]
                 	    {
                 	    pushFollow(FOLLOW_idexpression_in_whereExpression450);
                 	    idexpression(stmachine.getStates(), compareExpressions);
@@ -1017,7 +1017,7 @@ public class SaseAST extends TreeParser {
                 	    }
                 	    break;
                 	case 3 :
-                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:342:9: assignment[stmachine, assignExpressions]
+                	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:356:9: assignment[stmachine, assignExpressions]
                 	    {
                 	    pushFollow(FOLLOW_assignment_in_whereExpression461);
                 	    assignment(stmachine, assignExpressions);
@@ -1117,7 +1117,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "compareExpression"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:412:1: compareExpression[StateMachine sm,List<AttributeExpression> compareExpressions] : ^( COMPAREEXPRESSION mathExpression[left, attribs] op= ( COMPAREOP | SINGLEEQUALS ) mathExpression[right, attribs] ) ;
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:426:1: compareExpression[StateMachine sm,List<AttributeExpression> compareExpressions] : ^( COMPAREEXPRESSION mathExpression[left, attribs] op= ( COMPAREOP | SINGLEEQUALS ) mathExpression[right, attribs] ) ;
     public final void compareExpression(StateMachine sm, List<AttributeExpression> compareExpressions) throws RecognitionException {
         CommonTree op=null;
 
@@ -1127,8 +1127,8 @@ public class SaseAST extends TreeParser {
              List<PathAttribute> attribs = new ArrayList<PathAttribute>();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:418:3: ( ^( COMPAREEXPRESSION mathExpression[left, attribs] op= ( COMPAREOP | SINGLEEQUALS ) mathExpression[right, attribs] ) )
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:419:3: ^( COMPAREEXPRESSION mathExpression[left, attribs] op= ( COMPAREOP | SINGLEEQUALS ) mathExpression[right, attribs] )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:432:3: ( ^( COMPAREEXPRESSION mathExpression[left, attribs] op= ( COMPAREOP | SINGLEEQUALS ) mathExpression[right, attribs] ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:433:3: ^( COMPAREEXPRESSION mathExpression[left, attribs] op= ( COMPAREOP | SINGLEEQUALS ) mathExpression[right, attribs] )
             {
             match(input,COMPAREEXPRESSION,FOLLOW_COMPAREEXPRESSION_in_compareExpression505); 
 
@@ -1179,7 +1179,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "assignment"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:437:1: assignment[StateMachine sm,List assignExpressions] : ^( ASSIGNMENT attributeTerm[singleAttrib] mathExpression[right,attribs] ) ;
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:451:1: assignment[StateMachine sm,List assignExpressions] : ^( ASSIGNMENT attributeTerm[singleAttrib] mathExpression[right,attribs] ) ;
     public final void assignment(StateMachine sm, List assignExpressions) throws RecognitionException {
 
           List<PathAttribute> singleAttrib = new ArrayList<PathAttribute>();
@@ -1187,8 +1187,8 @@ public class SaseAST extends TreeParser {
           StringBuffer right=new StringBuffer();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:442:2: ( ^( ASSIGNMENT attributeTerm[singleAttrib] mathExpression[right,attribs] ) )
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:443:1: ^( ASSIGNMENT attributeTerm[singleAttrib] mathExpression[right,attribs] )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:456:2: ( ^( ASSIGNMENT attributeTerm[singleAttrib] mathExpression[right,attribs] ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:457:1: ^( ASSIGNMENT attributeTerm[singleAttrib] mathExpression[right,attribs] )
             {
             match(input,ASSIGNMENT,FOLLOW_ASSIGNMENT_in_assignment573); 
 
@@ -1224,7 +1224,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "mathExpression"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:447:1: mathExpression[StringBuffer exp, List<PathAttribute> attribs] : ( ^( (op= PLUS | op= MINUS | op= MULT | op= DIVISION ) mathExpression[left, attribs] mathExpression[right, attribs] ) | attributeTerm[tmpAttrib] | num= NUMBER | lit= STRING_LITERAL );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:461:1: mathExpression[StringBuffer exp, List<PathAttribute> attribs] : ( ^( (op= PLUS | op= MINUS | op= MULT | op= DIVISION ) mathExpression[left, attribs] mathExpression[right, attribs] ) | attributeTerm[tmpAttrib] | num= NUMBER | lit= STRING_LITERAL );
     public final void mathExpression(StringBuffer exp, List<PathAttribute> attribs) throws RecognitionException {
         CommonTree op=null;
         CommonTree num=null;
@@ -1236,7 +1236,7 @@ public class SaseAST extends TreeParser {
               List<PathAttribute> tmpAttrib = new ArrayList<PathAttribute>();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:453:3: ( ^( (op= PLUS | op= MINUS | op= MULT | op= DIVISION ) mathExpression[left, attribs] mathExpression[right, attribs] ) | attributeTerm[tmpAttrib] | num= NUMBER | lit= STRING_LITERAL )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:467:3: ( ^( (op= PLUS | op= MINUS | op= MULT | op= DIVISION ) mathExpression[left, attribs] mathExpression[right, attribs] ) | attributeTerm[tmpAttrib] | num= NUMBER | lit= STRING_LITERAL )
             int alt12=4;
             switch ( input.LA(1) ) {
             case PLUS:
@@ -1273,9 +1273,9 @@ public class SaseAST extends TreeParser {
 
             switch (alt12) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:454:3: ^( (op= PLUS | op= MINUS | op= MULT | op= DIVISION ) mathExpression[left, attribs] mathExpression[right, attribs] )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:468:3: ^( (op= PLUS | op= MINUS | op= MULT | op= DIVISION ) mathExpression[left, attribs] mathExpression[right, attribs] )
                     {
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:455:5: (op= PLUS | op= MINUS | op= MULT | op= DIVISION )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:469:5: (op= PLUS | op= MINUS | op= MULT | op= DIVISION )
                     int alt11=4;
                     switch ( input.LA(1) ) {
                     case PLUS:
@@ -1307,28 +1307,28 @@ public class SaseAST extends TreeParser {
 
                     switch (alt11) {
                         case 1 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:456:7: op= PLUS
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:470:7: op= PLUS
                             {
                             op=(CommonTree)match(input,PLUS,FOLLOW_PLUS_in_mathExpression615); 
 
                             }
                             break;
                         case 2 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:457:9: op= MINUS
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:471:9: op= MINUS
                             {
                             op=(CommonTree)match(input,MINUS,FOLLOW_MINUS_in_mathExpression627); 
 
                             }
                             break;
                         case 3 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:458:9: op= MULT
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:472:9: op= MULT
                             {
                             op=(CommonTree)match(input,MULT,FOLLOW_MULT_in_mathExpression639); 
 
                             }
                             break;
                         case 4 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:459:9: op= DIVISION
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:473:9: op= DIVISION
                             {
                             op=(CommonTree)match(input,DIVISION,FOLLOW_DIVISION_in_mathExpression651); 
 
@@ -1356,7 +1356,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:464:5: attributeTerm[tmpAttrib]
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:478:5: attributeTerm[tmpAttrib]
                     {
                     pushFollow(FOLLOW_attributeTerm_in_mathExpression682);
                     attributeTerm(tmpAttrib);
@@ -1373,7 +1373,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 3 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:470:5: num= NUMBER
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:484:5: num= NUMBER
                     {
                     num=(CommonTree)match(input,NUMBER,FOLLOW_NUMBER_in_mathExpression693); 
                     exp.append(num.getText());
@@ -1381,7 +1381,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 4 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:471:5: lit= STRING_LITERAL
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:485:5: lit= STRING_LITERAL
                     {
                     lit=(CommonTree)match(input,STRING_LITERAL,FOLLOW_STRING_LITERAL_in_mathExpression703); 
                     exp.append(lit.getText());
@@ -1403,7 +1403,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "attributeTerm"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:474:1: attributeTerm[List<PathAttribute> attribs] : ( ^( KMEMBER kAttributeUsage[name,usage] member= NAME ) | ^( MEMBER attribName= NAME member= NAME ) | ^( AGGREGATION op= ( MIN | MAX | SUM | COUNT | AVG ) var= NAME (member= NAME )? ) );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:488:1: attributeTerm[List<PathAttribute> attribs] : ( ^( KMEMBER kAttributeUsage[name,usage] member= NAME ) | ^( MEMBER attribName= NAME member= NAME ) | ^( AGGREGATION op= ( MIN | MAX | SUM | COUNT | AVG ) var= NAME (member= NAME )? ) );
     public final void attributeTerm(List<PathAttribute> attribs) throws RecognitionException {
         CommonTree member=null;
         CommonTree attribName=null;
@@ -1415,7 +1415,7 @@ public class SaseAST extends TreeParser {
               StringBuffer name = new StringBuffer();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:479:3: ( ^( KMEMBER kAttributeUsage[name,usage] member= NAME ) | ^( MEMBER attribName= NAME member= NAME ) | ^( AGGREGATION op= ( MIN | MAX | SUM | COUNT | AVG ) var= NAME (member= NAME )? ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:493:3: ( ^( KMEMBER kAttributeUsage[name,usage] member= NAME ) | ^( MEMBER attribName= NAME member= NAME ) | ^( AGGREGATION op= ( MIN | MAX | SUM | COUNT | AVG ) var= NAME (member= NAME )? ) )
             int alt14=3;
             switch ( input.LA(1) ) {
             case KMEMBER:
@@ -1442,7 +1442,7 @@ public class SaseAST extends TreeParser {
 
             switch (alt14) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:480:3: ^( KMEMBER kAttributeUsage[name,usage] member= NAME )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:494:3: ^( KMEMBER kAttributeUsage[name,usage] member= NAME )
                     {
                     match(input,KMEMBER,FOLLOW_KMEMBER_in_attributeTerm727); 
 
@@ -1465,7 +1465,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:488:3: ^( MEMBER attribName= NAME member= NAME )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:502:3: ^( MEMBER attribName= NAME member= NAME )
                     {
                     match(input,MEMBER,FOLLOW_MEMBER_in_attributeTerm748); 
 
@@ -1481,7 +1481,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 3 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:493:3: ^( AGGREGATION op= ( MIN | MAX | SUM | COUNT | AVG ) var= NAME (member= NAME )? )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:507:3: ^( AGGREGATION op= ( MIN | MAX | SUM | COUNT | AVG ) var= NAME (member= NAME )? )
                     {
                     match(input,AGGREGATION,FOLLOW_AGGREGATION_in_attributeTerm775); 
 
@@ -1497,7 +1497,7 @@ public class SaseAST extends TreeParser {
                     }
 
                     var=(CommonTree)match(input,NAME,FOLLOW_NAME_in_attributeTerm846); 
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:503:5: (member= NAME )?
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:517:5: (member= NAME )?
                     int alt13=2;
                     int LA13_0 = input.LA(1);
 
@@ -1506,7 +1506,7 @@ public class SaseAST extends TreeParser {
                     }
                     switch (alt13) {
                         case 1 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:503:6: member= NAME
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:517:6: member= NAME
                             {
                             member=(CommonTree)match(input,NAME,FOLLOW_NAME_in_attributeTerm855); 
 
@@ -1540,7 +1540,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "kAttributeUsage"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:512:1: kAttributeUsage[StringBuffer name, StringBuffer usage] : ( ^( NAME CURRENT ) | ^( NAME FIRST ) | ^( NAME PREV ) | ^( NAME LEN ) );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:526:1: kAttributeUsage[StringBuffer name, StringBuffer usage] : ( ^( NAME CURRENT ) | ^( NAME FIRST ) | ^( NAME PREV ) | ^( NAME LEN ) );
     public final void kAttributeUsage(StringBuffer name, StringBuffer usage) throws RecognitionException {
         CommonTree NAME1=null;
         CommonTree NAME2=null;
@@ -1548,7 +1548,7 @@ public class SaseAST extends TreeParser {
         CommonTree NAME4=null;
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:513:3: ( ^( NAME CURRENT ) | ^( NAME FIRST ) | ^( NAME PREV ) | ^( NAME LEN ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:527:3: ( ^( NAME CURRENT ) | ^( NAME FIRST ) | ^( NAME PREV ) | ^( NAME LEN ) )
             int alt15=4;
             int LA15_0 = input.LA(1);
 
@@ -1600,7 +1600,7 @@ public class SaseAST extends TreeParser {
             }
             switch (alt15) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:514:3: ^( NAME CURRENT )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:528:3: ^( NAME CURRENT )
                     {
                     NAME1=(CommonTree)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage883); 
 
@@ -1613,7 +1613,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:517:3: ^( NAME FIRST )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:531:3: ^( NAME FIRST )
                     {
                     NAME2=(CommonTree)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage899); 
 
@@ -1626,7 +1626,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 3 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:520:3: ^( NAME PREV )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:534:3: ^( NAME PREV )
                     {
                     NAME3=(CommonTree)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage915); 
 
@@ -1639,7 +1639,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 4 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:523:3: ^( NAME LEN )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:537:3: ^( NAME LEN )
                     {
                     NAME4=(CommonTree)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage931); 
 
@@ -1666,13 +1666,13 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "idexpression"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:527:1: idexpression[List<State> states, List<AttributeExpression> compareExpressions] : ^( IDEXPRESSION var= NAME ) ;
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:541:1: idexpression[List<State> states, List<AttributeExpression> compareExpressions] : ^( IDEXPRESSION var= NAME ) ;
     public final void idexpression(List<State> states, List<AttributeExpression> compareExpressions) throws RecognitionException {
         CommonTree var=null;
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:528:3: ( ^( IDEXPRESSION var= NAME ) )
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:529:3: ^( IDEXPRESSION var= NAME )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:542:3: ( ^( IDEXPRESSION var= NAME ) )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:543:3: ^( IDEXPRESSION var= NAME )
             {
             match(input,IDEXPRESSION,FOLLOW_IDEXPRESSION_in_idexpression955); 
 
@@ -1710,13 +1710,13 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "withinPart"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:546:1: withinPart[CepAO cepAo] : ( ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? ) | );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:560:1: withinPart[CepAO cepAo] : ( ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? ) | );
     public final void withinPart(CepAO cepAo) throws RecognitionException {
         CommonTree value=null;
         CommonTree unit=null;
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:547:3: ( ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? ) | )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:561:3: ( ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? ) | )
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -1734,13 +1734,13 @@ public class SaseAST extends TreeParser {
             }
             switch (alt17) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:548:3: ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:562:3: ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? )
                     {
                     match(input,WITHIN,FOLLOW_WITHIN_in_withinPart986); 
 
                     match(input, Token.DOWN, null); 
                     value=(CommonTree)match(input,NUMBER,FOLLOW_NUMBER_in_withinPart990); 
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:550:5: (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )?
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:564:5: (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )?
                     int alt16=2;
                     int LA16_0 = input.LA(1);
 
@@ -1749,7 +1749,7 @@ public class SaseAST extends TreeParser {
                     }
                     switch (alt16) {
                         case 1 :
-                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:551:7: unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND )
+                            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:565:7: unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND )
                             {
                             unit=(CommonTree)input.LT(1);
                             if ( (input.LA(1)>=WEEK && input.LA(1)<=MILLISECOND) ) {
@@ -1778,7 +1778,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:568:3: 
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:582:3: 
                     {
                     }
                     break;
@@ -1797,13 +1797,13 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "returnPart"
-    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:570:1: returnPart[CepAO cepAo] : ( ^( RETURN ( attributeTerm[retAttr] )* ) | );
+    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:584:1: returnPart[CepAO cepAo] : ( ^( RETURN ( attributeTerm[retAttr] )* ) | );
     public final void returnPart(CepAO cepAo) throws RecognitionException {
 
         List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
 
         try {
-            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:574:3: ( ^( RETURN ( attributeTerm[retAttr] )* ) | )
+            // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:588:3: ( ^( RETURN ( attributeTerm[retAttr] )* ) | )
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -1821,13 +1821,13 @@ public class SaseAST extends TreeParser {
             }
             switch (alt19) {
                 case 1 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:575:3: ^( RETURN ( attributeTerm[retAttr] )* )
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:589:3: ^( RETURN ( attributeTerm[retAttr] )* )
                     {
                     match(input,RETURN,FOLLOW_RETURN_in_returnPart1133); 
 
                     if ( input.LA(1)==Token.DOWN ) {
                         match(input, Token.DOWN, null); 
-                        // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:575:12: ( attributeTerm[retAttr] )*
+                        // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:589:12: ( attributeTerm[retAttr] )*
                         loop18:
                         do {
                             int alt18=2;
@@ -1840,7 +1840,7 @@ public class SaseAST extends TreeParser {
 
                             switch (alt18) {
                         	case 1 :
-                        	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:575:12: attributeTerm[retAttr]
+                        	    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:589:12: attributeTerm[retAttr]
                         	    {
                         	    pushFollow(FOLLOW_attributeTerm_in_returnPart1135);
                         	    attributeTerm(retAttr);
@@ -1888,7 +1888,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:602:3: 
+                    // E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:616:3: 
                     {
                     }
                     break;
