@@ -37,7 +37,7 @@ import measure.windperformancercp.model.sources.Attribute.AttributeType;
 @XmlType(name = "abstractPerformanceQuery", propOrder = {
     "identifier",
     "method",
-    "connectStat",
+    "connectState",
     "concernedSrc",
     "concernedStr",
     "assignments",
@@ -62,7 +62,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	@XmlTransient
 	protected Timestamp starttime;
 	protected boolean pitch;
-	protected boolean connectStat = false;
+	protected boolean connectState = false;
 	
 	@XmlTransient
 	protected ArrayList<Integer> timestampAttributes;
@@ -182,12 +182,12 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	
 	@Override
 	public void setConnectStat(boolean c) {
-		this.connectStat = c;
+		this.connectState = c;
 	}
 	
 	@Override
 	public boolean getConnectStat() {
-		return connectStat;
+		return connectState;
 	}
 	
 	@Override

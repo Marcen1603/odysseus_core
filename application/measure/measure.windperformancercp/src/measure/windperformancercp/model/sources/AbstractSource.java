@@ -57,7 +57,7 @@ public abstract class AbstractSource implements ISource {
 	private String name;
 	private ArrayList<Attribute> attributeList;
 	private int frequency;
-	private int connectState; //0=disconnected, 1=proceeding, 2= connected
+	private boolean connectState; //0=disconnected, 1=proceeding, 2= connected
 	
 	public static final int MMId = 0;
 	public static final int WTId = 1;
@@ -91,7 +91,7 @@ public abstract class AbstractSource implements ISource {
 	}
 
 
-	public AbstractSource(int typeId, String name, String strIdentifier, String hostName, int portId, ArrayList<Attribute> attList, int connectState, int freq){
+	public AbstractSource(int typeId, String name, String strIdentifier, String hostName, int portId, ArrayList<Attribute> attList, boolean connectState, int freq){
 		this.type = typeId;
 		this.name = name;
 		this.streamIdentifier = strIdentifier;
@@ -111,7 +111,7 @@ public abstract class AbstractSource implements ISource {
 		this.host = "";
 		this.port = 0;
 		this.attributeList = new ArrayList<Attribute>();
-		this.connectState = -1;
+		this.connectState = false;
 		this.frequency = 1;
 	}
 	
@@ -237,19 +237,13 @@ public abstract class AbstractSource implements ISource {
 	}
 	
 	@Override
-	public boolean isConnected(){
-		if(connectState == 1) return true;
-		else return false;		
-	}
-	
-	@Override
-	public int getConnectState(){
+	public boolean getConnectState(){
 		return connectState;
 	}
 	
 	@Override
-	public void setConnectState(int i){
-			this.connectState = i;
+	public void setConnectState(boolean c){
+			this.connectState = c;
 	}
 	
 	@Override
@@ -266,6 +260,51 @@ public abstract class AbstractSource implements ISource {
 	public String toString(){
 		String info = "Source_ID: "+this.id+", Source_Name: "+this.name+" Stream Id: "+this.streamIdentifier+", Source_Type: "+this.type+", Port: "+this.port+", Host: "+this.host+", Attributes: "+this.attributeList.toString();
 		return info;
+	}
+	
+	/**
+	 * Computes equality between two sources.
+	 * Note that name and connect stat are not relevant,  
+	 * if the two are distinct in only (one or both of) this two points, they are equal.  
+	 */
+	@Override
+	public boolean equals(Object obj){
+		if(this == obj){
+			return true;
+		}
+		if(obj == null)
+			return false;
+		if(!(obj instanceof AbstractSource)){
+			return false;
+		}
+		//now they are both abstract sources
+		AbstractSource other = (AbstractSource) obj;
+		if(this.streamIdentifier.equals(other.getStreamIdentifier())){	//same stream id
+			if(this.host.equals(other.getHost())){	//same host
+				if(this.port == other.getPort()){	//same port
+					if(this.attributeList.equals(other.getAttributeList())){	//same schema
+						if(this.frequency == other.getFrequency()){ //same frequency
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Note: name and connect state are not relevant
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + port;
+		result = prime * result + frequency;
+		result = prime * result + ((streamIdentifier == null) ? 0 : streamIdentifier.hashCode());
+		result = prime * result + ((host == null) ? 0 : host.hashCode());
+		result = prime * result + ((attributeList == null) ? 0 : attributeList.hashCode());
+		return result;
+		
 	}
 	
 }

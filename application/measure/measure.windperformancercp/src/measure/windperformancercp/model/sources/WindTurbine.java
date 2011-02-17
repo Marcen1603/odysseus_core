@@ -34,13 +34,27 @@ public class WindTurbine extends AbstractSource {
 	public static final int PC_ACTIVE = 0;
 	public static final int PC_PASSIVE = 1;
 	
-	double hubHeight;
-	int powerControl;
-	double cutinWS;
-	double eightyFiveWS;
+	private double hubHeight;
+	private int powerControl;
+	private double cutinWS;
+	private double eightyFiveWS;
 	
+	/**
+	 * Modelling of a wind turbine in data stream and power control context.
+	 * Note: a new wt is always offline, t.m. not connected to the data stream system.
+	 * @param name String for identification by application user.
+	 * @param identifier The stream identifier.
+	 * @param hostName The host name, e.g. localhost.
+	 * @param portId The hosts port (between 1025 and 65532. oder so).
+	 * @param attList The stream schema.
+	 * @param hubHeight The hub height.
+	 * @param powerControl The power control type (active/passive)
+	 * @param cutin The cut in wind speed (m/s)
+	 * @param etyFive The average wind speed to get 85 percent of the rated power.
+	 * @param freq The frequency of the data stream.
+	 */
 	public WindTurbine(String name, String identifier, String hostName, int portId, ArrayList<Attribute> attList, double hubHeight, int powerControl, double cutin, double etyFive, int freq){
-		super(WTId, name, identifier, hostName, portId, attList,0, freq);
+		super(WTId, name, identifier, hostName, portId, attList, false, freq);
 		this.powerControl = powerControl;
 		this.hubHeight = hubHeight;
 		this.cutinWS = cutin;
@@ -56,6 +70,11 @@ public class WindTurbine extends AbstractSource {
 		this.eightyFiveWS = -1;
 	}
 	
+	/**
+	 * Copy of an existing wind turbine.
+	 * Note: a new wt is always offline, t.m. not connected to the data stream system.
+	 * @param copy
+	 */
 	public WindTurbine(WindTurbine copy){
 		this(copy.getName(),
 			copy.getStreamIdentifier(),

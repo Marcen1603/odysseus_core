@@ -164,7 +164,6 @@ public class ManageSourceView extends ViewPart {
 			return null;
 		}
 
-		//TODO
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			ISource source = (ISource) element;
@@ -175,7 +174,7 @@ public class ManageSourceView extends ViewPart {
 			else return "Other";
 			case 2: return source.getHost();
 			case 3:	return Integer.toString(source.getPort());
-			case 4: return Integer.toString(source.getConnectState());
+			case 4: return Boolean.toString(source.getConnectState());
 			}
 			return null;
 		}

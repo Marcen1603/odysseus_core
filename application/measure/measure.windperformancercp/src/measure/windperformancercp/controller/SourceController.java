@@ -25,7 +25,6 @@ import measure.windperformancercp.model.sources.MetMast;
 import measure.windperformancercp.model.sources.SourceModel;
 import measure.windperformancercp.model.sources.WindTurbine;
 import measure.windperformancercp.views.IPresenter;
-
 import measure.windperformancercp.views.sources.ManageSourcePresenter;
 import measure.windperformancercp.views.sources.SourceDialogPresenter;
 
@@ -37,12 +36,12 @@ public class SourceController implements IController {
 	
 	IController _control;
 	static PMController pcontrol;
-	static SourceModel model;
+	static SourceModel smodel;
 	
 
 	private SourceController(){
 		//System.out.println(this.toString()+": sourceController says hello!");
-		model = SourceModel.getInstance();
+		smodel = SourceModel.getInstance();
 	}
 	
 	public static void setBrotherControl(PMController pcont){
@@ -90,11 +89,11 @@ public class SourceController implements IController {
 				ISource src = (ISource) ideEvent.getValue();
 				if(src instanceof WindTurbine){
 					ISource newsrc = new WindTurbine((WindTurbine)src);
-					model.addElement(newsrc);
+					smodel.addElement(newsrc);
 				}
 				if(src instanceof MetMast){
 					ISource newsrc = new MetMast((MetMast)src);
-					model.addElement(newsrc);
+					smodel.addElement(newsrc);
 				}
 								
 				
@@ -103,7 +102,8 @@ public class SourceController implements IController {
 				
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				ISource src = (ISource) ideEvent.getValue();
-				int c = model.removeAllOccurences(src);				
+				//int c = smodel.removeAllOccurences(src);				
+				smodel.removeAllOccurences(src);
 				//System.out.println(this.toString()+": Received delete source event for "+src.toString()+" from "+event.getSender().toString()+"\n Deleted "+c);
 			}			
 		}
@@ -113,7 +113,7 @@ public class SourceController implements IController {
 
 	@Override
 	public ArrayList<ISource> getContent(){
-		return model.getSourcesList();
+		return smodel.getSourcesList();
 	}
 	
 	public static <E extends IPresenter> SourceController getInstance(E pres){

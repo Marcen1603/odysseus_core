@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class MetMast extends AbstractSource {
 	
 	public MetMast(String name, String identifier, String hostName, int portId, ArrayList<Attribute> attList, int freq){
-		super(MMId, name, identifier, hostName, portId, attList, 0, freq);
+		super(MMId, name, identifier, hostName, portId, attList, false, freq);
 		//System.out.println("MM Konstruktor: created new met mast: '"+this.toString());		
 	}
 	
