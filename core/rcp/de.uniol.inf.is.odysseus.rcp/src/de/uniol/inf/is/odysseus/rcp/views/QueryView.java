@@ -297,7 +297,7 @@ public class QueryView extends ViewPart implements
 
 				try {
 					handlerService.executeCommand(
-							"de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor",
+							"de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand",
 							null);
 				} catch (Exception ex) {
 					ex.printStackTrace();
