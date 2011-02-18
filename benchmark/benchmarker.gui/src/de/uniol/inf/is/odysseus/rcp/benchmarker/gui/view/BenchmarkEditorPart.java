@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.BenchmarkStoreUtil;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.ObservativeMapEntryValue;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.OdysseusBenchmarkUtil;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils;
 
 /**
  * Diese Klasse zeichnet den Editor, mit dem man Benchmarkparameter einstellen
@@ -112,22 +113,24 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		boolean newBench = !BenchmarkHolder.INSTANCE.contains(benchmarkParam.getId());
-		benchmarkParam.setRunnable(checkRunnable());// Überprüft, ob Benchmarker
-													// mit diesen Einstellungen
-													// gestartet werden kann
-		Benchmark benchmark = BenchmarkStoreUtil.storeBenchmarkParam(benchmarkParam);
+		// Überprüft, ob Benchmarker mit diesen Einstellungen gestartet werden kann
+		benchmarkParam.setRunnable(checkRunnable());
+		
+		Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
+//		boolean newBench = !benchmark.getParentGroup().contains(benchmarkParam.getId());
+
+		BenchmarkStoreUtil.storeBenchmark(benchmark);
 
 		setDirtyState(false);
 
 		// Den ProjectView refreshen
-		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView(ProjectView.ID);
-		if (!newBench) {
-			projectView.refresh(benchmark);
-		} else {
-			projectView.refresh();
-		}
+//		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+//				.findView(ProjectView.ID);
+//		if (!newBench) {
+//			projectView.refresh(benchmark);
+//		} else {
+//			projectView.refresh();
+//		}
 	}
 
 	@Override
@@ -332,7 +335,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			for (Map.Entry<String, Boolean> typeEntry : allSingleTypes.entrySet()) {
 				new Label(parent, SWT.NULL);
 				Button checkboxMetadataType = new Button(parent, SWT.CHECK);
-				checkboxMetadataType.setText(splitString(typeEntry.getKey()));
+				checkboxMetadataType.setText(StringUtils.splitString(typeEntry.getKey()));
 				listMetadata.add(checkboxMetadataType);
 				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType),
 						new ObservativeMapEntryValue<String, Boolean>(typeEntry, this, benchmarkParam));
@@ -529,8 +532,10 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		 */
 
 		buttonCopy.addSelectionListener(new SelectionAdapter() {
+			private Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
+
 			public void widgetSelected(SelectionEvent e) {
-				OpenBenchmarkHandler.copyAndOpenBenchmark(benchmarkParam);
+				OpenBenchmarkHandler.copyAndOpenBenchmark(benchmark);
 			}
 		});
 
@@ -663,12 +668,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		}
 	}
 
-	private String splitString(String string) {
-		String[] stringArray = string.split("\\.");
-		int i = stringArray.length;
-		return stringArray[i - 1];
-	}
-
 	private boolean trueMap(Map<String, Boolean> map) {
 		boolean result = false;
 		Set<Entry<String, Boolean>> sets = map.entrySet();
@@ -697,8 +696,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		}
 	}
 
-	// TODO ich weiß nicht wieso ich im propertychange nicht benchmarkparam
-	// bentuzt habe?! nochmal drüber nachdenken ;)
 	private boolean checkRunnable() {
 		if (checkStartable(benchmarkParam)) {
 			return checkMetadataCombination();

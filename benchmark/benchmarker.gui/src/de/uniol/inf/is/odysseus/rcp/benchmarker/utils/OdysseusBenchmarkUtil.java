@@ -46,7 +46,8 @@ public class OdysseusBenchmarkUtil {
 	public OdysseusBenchmarkUtil(BenchmarkHolder benchmarkHolder) {
 		// benchmarkrun = new BenchmarkImpl();
 		this.benchmarkHolder = benchmarkHolder;
-		benchmark = this.benchmarkHolder.getBenchmarks();
+		//TODO: Auf Gruppe zugreifen!!
+		//benchmark = this.benchmarkHolder.getBenchmarks();
 	}
 
 	public void startrun() throws Exception {

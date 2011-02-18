@@ -4,7 +4,12 @@
  <extension id="Commands" name="Commands" point="org.eclipse.ui.commands">
   <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.ExitHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.exit" name="Exit" /> 
   <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenBenchmarkHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.commandOpenBenchmarkeditor" name="Open Benchmarkeditor" /> 
-  <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenSearchHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.commandOpenSearchEditor" name="Search" /> 
+  <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenSearchHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.commandOpenSearchEditor" name="Search" />
+  <command
+        defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.ShowWizardHandler"
+        id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.showWizard"
+        name="New Benchmark">
+  </command> 
   </extension>
  <extension id="application" point="org.eclipse.core.runtime.applications">
  <application>
@@ -67,7 +72,12 @@
         name="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.separator1"
         visible="true">
   </separator>
-  <command commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.exit" label="Exit" style="push" /> 
+  <command commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.exit" label="Exit" style="push" />
+  <command
+        commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.showWizard"
+        label="New Benchmark"
+        style="push">
+  </command> 
   </menu>
   </menuContribution>
   </extension>

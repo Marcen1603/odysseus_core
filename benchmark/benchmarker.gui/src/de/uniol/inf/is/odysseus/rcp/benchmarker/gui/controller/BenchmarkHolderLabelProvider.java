@@ -33,6 +33,7 @@ public class BenchmarkHolderLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
+		//TODO: BenchmarkGroups brauchen ein Label hier (name oder so)
 		if (element instanceof List) {
 			List<?> listOfElements = (List<?>) element;
 			if (listOfElements.isEmpty()) {

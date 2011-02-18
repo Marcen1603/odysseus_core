@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkResult;
 
@@ -34,16 +35,18 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof List) {
-			List<?> benchmarks = ((List<?>) parentElement);
-			if (benchmarks.isEmpty()) {
+			List<?> unknownBenchmarkItem = ((List<?>) parentElement);
+			if (unknownBenchmarkItem.isEmpty()) {
 				return new Object[0];
-			} else if (benchmarks.get(0) instanceof Benchmark) {
-				return benchmarks.toArray(new Benchmark[benchmarks.size()]);
-			} else if (benchmarks.get(0) instanceof BenchmarkResult) {
-				return benchmarks.toArray(new BenchmarkResult[benchmarks.size()]);
+			} else if (unknownBenchmarkItem.get(0) instanceof BenchmarkGroup) {
+				return unknownBenchmarkItem.toArray(new BenchmarkGroup[unknownBenchmarkItem.size()]);
+			} else if (unknownBenchmarkItem.get(0) instanceof Benchmark) {
+				return unknownBenchmarkItem.toArray(new Benchmark[unknownBenchmarkItem.size()]);
+			} else if (unknownBenchmarkItem.get(0) instanceof BenchmarkResult) {
+				return unknownBenchmarkItem.toArray(new BenchmarkResult[unknownBenchmarkItem.size()]);
 			} else {
 				throw new IllegalStateException("Unknown list elements. Type is: "
-						+ benchmarks.get(0).getClass().getName());
+						+ unknownBenchmarkItem.get(0).getClass().getName());
 			}
 		} else if (parentElement instanceof Benchmark) {
 			Benchmark benchmark = (Benchmark) parentElement;
@@ -71,7 +74,9 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof Benchmark) {
-			return BenchmarkHolder.INSTANCE.getBenchmarks();
+			((Benchmark) element).getParentGroup();
+		} else if (element instanceof BenchmarkGroup) {
+			return BenchmarkHolder.INSTANCE.getBenchmarkGroups();
 		}
 		return null;
 	}

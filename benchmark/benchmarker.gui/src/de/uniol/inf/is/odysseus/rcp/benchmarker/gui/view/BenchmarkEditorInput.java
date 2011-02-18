@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 
 /**
@@ -28,18 +29,22 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
  */
 public class BenchmarkEditorInput implements IEditorInput {
 
-	private final BenchmarkParam benchmarkParam;
+	private final Benchmark benchmark;
 
-	public BenchmarkEditorInput(final BenchmarkParam param) {
-		this.benchmarkParam = param;
+	public BenchmarkEditorInput(final Benchmark benchmark) {
+		this.benchmark = benchmark;
 	}
 
 	public int getId() {
-		return benchmarkParam.getId();
+		return benchmark.getParam().getId();
 	}
 
 	public BenchmarkParam getBenchmarkParam() {
-		return benchmarkParam;
+		return benchmark.getParam();
+	}
+	
+	public Benchmark getBenchmark() {
+		return benchmark;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -60,7 +65,7 @@ public class BenchmarkEditorInput implements IEditorInput {
 
 	@Override
 	public String getName() {
-		return String.valueOf(benchmarkParam.getId());
+		return String.valueOf(getId());
 	}
 
 	@Override
@@ -70,15 +75,12 @@ public class BenchmarkEditorInput implements IEditorInput {
 
 	@Override
 	public String getToolTipText() {
-		return " ";
+		return getName();
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((benchmarkParam == null) ? 0 : benchmarkParam.hashCode());
-		return result;
+		return getId();
 	}
 
 	@Override
@@ -90,11 +92,9 @@ public class BenchmarkEditorInput implements IEditorInput {
 		if (getClass() != obj.getClass())
 			return false;
 		BenchmarkEditorInput other = (BenchmarkEditorInput) obj;
-		if (benchmarkParam == null) {
-			if (other.benchmarkParam != null)
-				return false;
-		} else if (!benchmarkParam.equals(other.benchmarkParam))
-			return false;
-		return true;
+		if (getId() == other.getId()) {
+			return true;
+		}
+		return false;
 	}
 }

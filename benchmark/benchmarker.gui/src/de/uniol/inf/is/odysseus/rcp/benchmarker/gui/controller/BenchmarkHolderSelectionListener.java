@@ -21,7 +21,7 @@ import org.eclipse.ui.IEditorPart;
 
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenBenchmarkHandler;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
-
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
 /**
  * 
  * Diese Klasse öffnet den Benchmarkparameter-Editor, wenn ein Element in der
@@ -36,8 +36,10 @@ public class BenchmarkHolderSelectionListener implements ISelectionChangedListen
 	public void selectionChanged(SelectionChangedEvent event) {
 
 		Object selectedElem = ((ITreeSelection) event.getSelection()).getFirstElement();
+		Object parentElem = ((ITreeSelection) event.getSelection()).getPaths()[0].getParentPath().getLastSegment();
+		
 		if (selectedElem instanceof BenchmarkParam) {
-			IEditorPart benchmarkEditor = OpenBenchmarkHandler.openBenchmark((BenchmarkParam) selectedElem);
+			IEditorPart benchmarkEditor = OpenBenchmarkHandler.openBenchmark((Benchmark) parentElem);
 		}
 	}
 }

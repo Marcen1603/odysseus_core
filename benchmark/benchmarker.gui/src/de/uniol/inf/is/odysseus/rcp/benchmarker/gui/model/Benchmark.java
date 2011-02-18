@@ -22,6 +22,8 @@ public class Benchmark {
 	private BenchmarkParam param;
 	private List<BenchmarkResult> results;
 	private BenchmarkMetadata metadata;
+	
+	private transient BenchmarkGroup parentGroup;
 
 	public Benchmark() {
 		super();
@@ -60,6 +62,14 @@ public class Benchmark {
 	public void setMetada(BenchmarkMetadata metadata) {
 		this.metadata = metadata;
 	}
+	
+	public BenchmarkGroup getParentGroup() {
+		return parentGroup;
+	}
+
+	public void setParentGroup(BenchmarkGroup parentGroup) {
+		this.parentGroup = parentGroup;
+	}
 
 	public boolean hasResults() {
 		if (results.isEmpty()) {
@@ -68,4 +78,21 @@ public class Benchmark {
 			return true;
 		}
 	}
+	
+	///
+
+	public void setResults(List<BenchmarkResult> results) {
+		this.results = results;
+	}
+
+	public void setMetadata(BenchmarkMetadata metadata) {
+		this.metadata = metadata;
+	}
+	
+	
+	
+	
+	
+	
+	
 }

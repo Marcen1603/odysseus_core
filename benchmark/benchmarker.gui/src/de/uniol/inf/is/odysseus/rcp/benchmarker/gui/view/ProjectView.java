@@ -45,7 +45,7 @@ public class ProjectView extends ViewPart {
 		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		treeViewer.setContentProvider(new BenchmarkHolderContentProvider());
 		treeViewer.setLabelProvider(new BenchmarkHolderLabelProvider());
-		treeViewer.setInput(BenchmarkHolder.INSTANCE.getBenchmarks());
+		treeViewer.setInput(BenchmarkHolder.INSTANCE.getBenchmarkGroups());
 		treeViewer.addSelectionChangedListener(new BenchmarkHolderSelectionListener());
 		treeViewer.expandAll();
 	}
