@@ -33,21 +33,22 @@ import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 
 public class OdysseusBenchmarkUtil {
 
-	// private BenchmarkImpl benchmarkrun;
-	private BenchmarkHolder benchmarkHolder;
+//	private BenchmarkHolder benchmarkHolder;
+	private BenchmarkGroup benchmarkGroup;
 	private List<Benchmark> benchmark;
 	private BenchmarkParam param;
 
-	public OdysseusBenchmarkUtil(BenchmarkHolder benchmarkHolder) {
-		// benchmarkrun = new BenchmarkImpl();
-		this.benchmarkHolder = benchmarkHolder;
+	public OdysseusBenchmarkUtil(BenchmarkGroup benchmarkGroup) {
+	//	this.benchmarkHolder = benchmarkHolder;
+		this.benchmarkGroup = benchmarkGroup;
 		//TODO: Auf Gruppe zugreifen!!
-		//benchmark = this.benchmarkHolder.getBenchmarks();
+		benchmark = this.benchmarkGroup.getBenchmarks();
 	}
 
 	public void startrun() throws Exception {
@@ -85,6 +86,12 @@ public class OdysseusBenchmarkUtil {
 					// if (arguments.hasParameter(OUT)) {
 					// filename = arguments.get(OUT);
 					// }
+					
+					final String RELATIVE_FOLDER = "benchmarks";
+					String folderName = StringUtils.nameToFoldername(benchmarkGroup.getName());
+					folderName = RELATIVE_FOLDER + File.separator + folderName + File.separator + s.getId();
+					
+					
 
 					System.out.println("hmmm");
 					try {
@@ -94,7 +101,7 @@ public class OdysseusBenchmarkUtil {
 						for (int i = 0; i < Integer.parseInt(param.getNumberOfRuns()); i++) {
 							System.out.println("hm3");
 							Collection<IBenchmarkResult<Object>> results = benchmark.runBenchmark();
-							String filename = "result" + param.getName() + (i+1) + ".xml";
+							String filename = folderName + File.separator + "result"+(i+1)+".xml";//"result" + param.getName() + (i+1) + ".xml";
 
 							Serializer serializer = new Persister();
 							File file = new File(filename);

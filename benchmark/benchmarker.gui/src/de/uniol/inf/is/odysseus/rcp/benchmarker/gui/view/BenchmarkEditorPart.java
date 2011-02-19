@@ -545,8 +545,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				if (checkMetadataCombination()) {
 					doSave(null);
 
-					// Benchmarkrunstarten
-					OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(BenchmarkHolder.INSTANCE);
+					Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
+					OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(benchmark.getParentGroup());
 					try {
 						util.startrun();
 					} catch (Exception e1) {

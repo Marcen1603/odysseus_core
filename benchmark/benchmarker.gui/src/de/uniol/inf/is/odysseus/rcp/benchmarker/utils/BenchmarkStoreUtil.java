@@ -124,8 +124,11 @@ public class BenchmarkStoreUtil {
 		for (File benchmarkFile : benchmarkFiles) {
 			if ("param.xml".equals(benchmarkFile.getName())) {
 				benchmark = loadBenchmark(benchmarkFile);
+//			} else if("result1.xml".equals(benchmarkFile.getName())){
+//				benchmark = loadBenchmark(benchmarkFile);
 			}
 			// TODO: Lade Results
+		
 			// TODO: Lade Metadaten
 		}
 		benchmark.setParentGroup(group);
