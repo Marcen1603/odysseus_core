@@ -4,19 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BenchmarkGroup {
-	
+
 	private final String groupName;
 
 	private final List<Benchmark> benchmarks;
-	
+
 	private int currentId;
+
+//	public BenchmarkGroup() {
+//		groupName = "";
+//		benchmarks = new ArrayList<Benchmark>();
+//	}
 
 	public BenchmarkGroup(String name) {
 		this.groupName = name;
 		benchmarks = new ArrayList<Benchmark>();
 		currentId = 0;
 	}
-	
+
 	public String getName() {
 		return groupName;
 	}
@@ -32,7 +37,7 @@ public class BenchmarkGroup {
 
 		return false;
 	}
-	
+
 	public void addBenchmark(Benchmark benchmark) {
 		benchmarks.add(benchmark);
 	}
@@ -45,11 +50,11 @@ public class BenchmarkGroup {
 		}
 		return null;
 	}
-	
+
 	public int getNextId() {
 		return ++currentId;
 	}
-	
+
 	public void recalculateNextId() {
 		for (Benchmark bench : benchmarks) {
 			if (bench.getId() > currentId) {

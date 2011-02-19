@@ -117,20 +117,20 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		benchmarkParam.setRunnable(checkRunnable());
 		
 		Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
-//		boolean newBench = !benchmark.getParentGroup().contains(benchmarkParam.getId());
+		boolean newBench = !benchmark.getParentGroup().contains(benchmarkParam.getId());
 
 		BenchmarkStoreUtil.storeBenchmark(benchmark);
 
 		setDirtyState(false);
 
 		// Den ProjectView refreshen
-//		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-//				.findView(ProjectView.ID);
-//		if (!newBench) {
-//			projectView.refresh(benchmark);
-//		} else {
-//			projectView.refresh();
-//		}
+		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.findView(ProjectView.ID);
+		if (!newBench) {
+			projectView.refresh(benchmark);
+		} else {
+			projectView.refresh();
+		}
 	}
 
 	@Override
