@@ -51,10 +51,10 @@ public class WindTurbine extends AbstractSource {
 	 * @param powerControl The power control type (active/passive)
 	 * @param cutin The cut in wind speed (m/s)
 	 * @param etyFive The average wind speed to get 85 percent of the rated power.
-	 * @param freq The frequency of the data stream.
+	 * @param freq The frequency of the data stream in Hertz.
 	 */
 	public WindTurbine(String name, String identifier, String hostName, int portId, ArrayList<Attribute> attList, double hubHeight, int powerControl, double cutin, double etyFive, int freq){
-		super(WTId, name, identifier, hostName, portId, attList, false, freq);
+		super(WTId, name, identifier, hostName, portId, attList, freq);
 		this.powerControl = powerControl;
 		this.hubHeight = hubHeight;
 		this.cutinWS = cutin;
@@ -104,18 +104,34 @@ public class WindTurbine extends AbstractSource {
 		return this.cutinWS;
 	}
 	
+	/**
+	 * Sets the average windspeed, that is necessary to get 85 percent of the rated power of the wt.
+	 * @param v windspeed in m/s
+	 */
 	public void setEightyFiveWS(double v){
 		this.eightyFiveWS = v;
 	}
 	
+	/**
+	 * Returns the average windspeed, that is necessary to get 85 percent of the rated power of the wt.
+	 * @return windspeed in m/s
+	 */
 	public double getEightyFiveWS(){
 		return this.eightyFiveWS;
 	}
 	
+	/**
+	 * Sets the power control. 
+	 * @param pc 0 = active (pitch), 1 = passive (stall)
+	 */
 	public void setPowerControl(int pc){
 		this.powerControl = pc;
 	}
 	
+	/**
+	 * Returns the power control. 
+	 * @param pc 0 = active (pitch), 1 = passive (stall)
+	 */
 	public int getPowerControl(){
 		return this.powerControl;
 	}
@@ -128,5 +144,41 @@ public class WindTurbine extends AbstractSource {
 	@Override
 	public boolean isMetMast() {
 		return false;
+	}
+	
+	/**
+	 * Returns whether two turbines are equal.
+	 * NOTE: the name or connect state is not relevant in this case. 
+	 * if a turbine has exact the same values as another, but the one is called Paul and the other Peter, then Paul equals Peter.
+	 */
+	@Override
+	public boolean equals(Object obj){
+		if(super.equals(obj)){	//in super it is checked whether the type is the same. So it must be a wind turbine.
+			WindTurbine other = (WindTurbine) obj;
+			if(Double.compare(this.cutinWS, other.getCutInWS())== 0){ //take care, they are doubles
+				if(Double.compare(this.eightyFiveWS, other.getEightyFiveWS())== 0){	
+					if(Double.compare(this.hubHeight, other.getHubHeight())== 0){
+						if(this.powerControl == other.getPowerControl()){
+							return true;
+						}
+					}
+					
+				}
+			}
+		}  
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + super.hashCode();
+		result = prime * result + (int) cutinWS; 
+		result = prime * result + (int) eightyFiveWS;
+		result = prime * result + (int) hubHeight;
+		result = prime * result + powerControl;
+		return result;
 	}
 }

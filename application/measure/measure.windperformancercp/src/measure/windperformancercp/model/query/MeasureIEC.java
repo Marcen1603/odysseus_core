@@ -21,15 +21,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import measure.windperformancercp.model.query.QueryGenerator.Aggregation;
 import measure.windperformancercp.model.sources.ISource;
 import measure.windperformancercp.model.sources.WindTurbine;
-
-import measure.windperformancercp.model.query.QueryGenerator.Aggregation;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "measureIEC", propOrder = {
     "cutin",
-    "eightyfivepercent"
+    "eightyfivepercent",
+    "aggwindowsize"
 })
 @XmlRootElement
 public class MeasureIEC extends APerformanceQuery {
@@ -37,12 +37,13 @@ public class MeasureIEC extends APerformanceQuery {
 
 	private double cutin = 0;
 	private double eightyfivepercent = 0;
+	private int aggwindowsize = 600;
 	
 	public MeasureIEC(MeasureIEC copy){
 		this();
 		if(copy != null){
 			this.identifier = copy.getIdentifier();
-			this.concernedSrc = copy.getConcernedSrc();
+			this.concernedSrcKeys = copy.getConcernedSrcKeys();
 			this.concernedStr = copy.getConcernedStr();
 			this.queryText = copy.getQueryText();
 			this.assignments = copy.getAssignments();
@@ -51,6 +52,8 @@ public class MeasureIEC extends APerformanceQuery {
 			this.powerAttribute = copy.getPowerAttribute();
 			this.pressureAttribute = copy.getPressureAttribute();
 			this.temperatureAttribute = copy.getTemperatureAttribute();
+			this.timestampAttributes = copy.getTimestampAttributes();
+			this.strGenQueries = copy.getStrGenQueries();
 		
 			this.cutin = copy.getCutin();
 			this.eightyfivepercent = copy.getEightyfivepercent();
@@ -62,7 +65,8 @@ public class MeasureIEC extends APerformanceQuery {
 	
 	public MeasureIEC(String name, ArrayList<ISource> insrc){
 		super(name, APerformanceQuery.PMType.IEC, insrc);
-		extractTurbineData();
+		extractTurbineData(insrc);
+		extractTimestampAttributes(insrc);
 	}
 	
 	
@@ -74,28 +78,11 @@ public class MeasureIEC extends APerformanceQuery {
 	public MeasureIEC(String name){
 		super(name, APerformanceQuery.PMType.IEC,new ArrayList<ISource>());
 	}
+
 	
 	@Override
-	public void setConcernedSrc(ArrayList<ISource> srcList) {
-		super.setConcernedSrc(srcList);
-		extractTurbineData();
-	}
-	
-	@Override
-	public void addMember(ISource m){
-		super.addMember(m);
-		extractTurbineData();
-	}
-	
-	@Override
-	public void addAllMembers(ArrayList<ISource> listm){
-		super.addAllMembers(listm);
-		extractTurbineData();
-	}
-	
-	@Override
-	public void extractTurbineData(){
-		for(ISource src: concernedSrc){
+	public void extractTurbineData(ArrayList<ISource> sources){
+		for(ISource src: sources){
 			if(src.isWindTurbine()){				
 				cutin = ((WindTurbine)src).getCutInWS();
 				eightyfivepercent = ((WindTurbine)src).getEightyFiveWS();
@@ -110,7 +97,7 @@ public class MeasureIEC extends APerformanceQuery {
 	}
 	
 	public double getCutin(){
-		return this.cutin;
+		return cutin;
 	}
 	
 	public void setEightyfivepercent(double d){
@@ -118,7 +105,15 @@ public class MeasureIEC extends APerformanceQuery {
 	}
 	
 	public double getEightyfivepercent(){
-		return this.eightyfivepercent;
+		return eightyfivepercent;
+	}
+	
+	public int getAggWindowSize(){
+		return aggwindowsize;
+	}
+	
+	public void setAggWindowSize(int ws){
+		this.aggwindowsize = ws;
 	}
 	
 	@Override
@@ -141,18 +136,29 @@ public class MeasureIEC extends APerformanceQuery {
 		}
 		
 		if(streams.size()>1){
+			
+			for(int i = 0; i<streams.size();i++){
+				Stream str = streams.get(i);
+			//window for join
+				actRes1 = Pgen.generateWindow(str, 
+						Pgen.new Window("tuple",1), 
+						"windowed_"+str.getName());
+				streams.set(i, actRes1.getStream());
+				tmpQuery = tmpQuery +actRes1.getQuery();
+			}
+				
 		//join all input streams
 			actRes1 = Pgen.generateJoin(streams, "", "joinedInput");
 			tmpQuery = tmpQuery +actRes1.getQuery();
 			
 			//window for aggregation
-			actRes1 = Pgen.generateWindow(actRes1.getStream(), Pgen.new Window("time",600,1,10), "windowedInput");
+			actRes1 = Pgen.generateWindow(actRes1.getStream(), Pgen.new Window("time",aggwindowsize,1,10), "windowedInput");
 			tmpQuery = tmpQuery +actRes1.getQuery();
 		}
 		else {
-			if(concernedStr.size()==0) return null;
+			if(concernedStr.size()==0) return null;	//without input stream we cannot generate a query.
 			//window for aggregation
-			actRes1 = Pgen.generateWindow(concernedStr.get(0), Pgen.new Window("time",600,1,10), "windowedInput");
+			actRes1 = Pgen.generateWindow(concernedStr.get(0), Pgen.new Window("time",aggwindowsize,1,10), "windowedInput");
 			tmpQuery = tmpQuery +actRes1.getQuery();
 		}
 		

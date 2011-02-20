@@ -87,6 +87,7 @@ public class Connector extends EventHandler {
 		try{ 
 			Collection<IQuery> tmp = ExecutorHandler.getExecutor().addQuery(query, parserId, currentUser, dd, trafoConfigParam);
 			queries.addAll(tmp);
+			//System.out.println(tmp.toString());
 			return true;
 		}
 		catch(PlanManagementException pe){

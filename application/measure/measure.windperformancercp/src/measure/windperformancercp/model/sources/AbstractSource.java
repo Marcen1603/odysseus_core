@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import measure.windperformancercp.event.EventHandler;
 import measure.windperformancercp.event.IEvent;
@@ -33,7 +35,6 @@ import measure.windperformancercp.event.IEventType;
  * @author blackunicorn
  *
  */
-
 @XmlType(name = "abstractSource", propOrder = {
 	    "name",
 	    "type",
@@ -46,24 +47,30 @@ import measure.windperformancercp.event.IEventType;
 	})
 public abstract class AbstractSource implements ISource {
 	
+	public static class Adapter extends XmlAdapter<AbstractSource,ISource> {
+	    public ISource unmarshal(AbstractSource src) { return src; }
+	    public AbstractSource marshal(ISource src) { return (AbstractSource) src; }
+	}
+	
 	public static final String ID = "measure.windPerformanceRCP.ASource";
 	
 	private static int sourceCounter = 0;
 	private int type;
-	private int port;
-	private @XmlAttribute int id;
-	private String host;
-	private String streamIdentifier;
-	private String name;
-	private ArrayList<Attribute> attributeList;
-	private int frequency;
-	private boolean connectState; //0=disconnected, 1=proceeding, 2= connected
+	protected int port;
+	protected @XmlAttribute int id;
+	protected String host;
+	protected String streamIdentifier;
+	protected String name;
+	protected ArrayList<Attribute> attributeList;
+	protected int frequency;
+	protected boolean connectState; //0=disconnected, 1=proceeding, 2= connected
 	
 	public static final int MMId = 0;
 	public static final int WTId = 1;
 	
 	
 	EventHandler eventHandler = new EventHandler();
+	
 	
 	@Override
 	public void subscribe(IEventListener listener, IEventType type){
@@ -91,14 +98,14 @@ public abstract class AbstractSource implements ISource {
 	}
 
 
-	public AbstractSource(int typeId, String name, String strIdentifier, String hostName, int portId, ArrayList<Attribute> attList, boolean connectState, int freq){
+	public AbstractSource(int typeId, String name, String strIdentifier, String hostName, int portId, ArrayList<Attribute> attList, int freq){
 		this.type = typeId;
 		this.name = name;
 		this.streamIdentifier = strIdentifier;
 		this.host = hostName;
 		this.port = portId;
 		this.attributeList = new ArrayList<Attribute>(attList); 
-		this.connectState = connectState;
+		this.connectState = false;
 		this.frequency = freq;
 		sourceCounter++;
 		this.id = sourceCounter;
@@ -116,7 +123,7 @@ public abstract class AbstractSource implements ISource {
 	}
 	
 	public AbstractSource(AbstractSource copy){
-		this(copy.getType(),copy.getName(),copy.getStreamIdentifier(),copy.getHost(),copy.getPort(),copy.getAttributeList(),copy.getConnectState(), copy.getFrequency());
+		this(copy.getType(),copy.getName(),copy.getStreamIdentifier(),copy.getHost(),copy.getPort(),copy.getAttributeList(), copy.getFrequency());
 	}
 	
 	@Override
@@ -258,7 +265,7 @@ public abstract class AbstractSource implements ISource {
 	
 	@Override
 	public String toString(){
-		String info = "Source_ID: "+this.id+", Source_Name: "+this.name+" Stream Id: "+this.streamIdentifier+", Source_Type: "+this.type+", Port: "+this.port+", Host: "+this.host+", Attributes: "+this.attributeList.toString();
+		String info = "Source_ID: "+this.id+", Source_Name: "+this.name+" Stream Id: "+this.streamIdentifier+", Source_Type: "+this.type+", Port: "+this.port+", Host: "+this.host+", Attributes: "+this.attributeList.toString()+" connectState: "+this.connectState;
 		return info;
 	}
 	
@@ -279,17 +286,20 @@ public abstract class AbstractSource implements ISource {
 		}
 		//now they are both abstract sources
 		AbstractSource other = (AbstractSource) obj;
-		if(this.streamIdentifier.equals(other.getStreamIdentifier())){	//same stream id
-			if(this.host.equals(other.getHost())){	//same host
-				if(this.port == other.getPort()){	//same port
-					if(this.attributeList.equals(other.getAttributeList())){	//same schema
-						if(this.frequency == other.getFrequency()){ //same frequency
-							return true;
+		if(this.type == other.getType()){	//wind turbine can't be met mast
+			if(this.streamIdentifier.equals(other.getStreamIdentifier())){	//same stream id
+				if(this.host.equals(other.getHost())){	//same host
+					if(this.port == other.getPort()){	//same port
+						if(this.attributeList.equals(other.getAttributeList())){	//same schema //TODO: when are two lists equal?
+							if(this.frequency == other.getFrequency()){ //same frequency
+								return true;
+							}
 						}
 					}
 				}
 			}
 		}
+		
 		//Note: name and connect state are not relevant
 		return false;
 	}
@@ -300,6 +310,7 @@ public abstract class AbstractSource implements ISource {
 		int result = 1;
 		result = prime * result + port;
 		result = prime * result + frequency;
+		result = prime * result + type;
 		result = prime * result + ((streamIdentifier == null) ? 0 : streamIdentifier.hashCode());
 		result = prime * result + ((host == null) ? 0 : host.hashCode());
 		result = prime * result + ((attributeList == null) ? 0 : attributeList.hashCode());

@@ -42,7 +42,6 @@ public class ExecutorHandler {
 	 * @param ex
 	 */
 	public void bindExecutor(IExecutor ex){
-		System.out.println(this.toString()+" bind Executor! ****************************************************");				
 		executor = ex;		
 	}
 	

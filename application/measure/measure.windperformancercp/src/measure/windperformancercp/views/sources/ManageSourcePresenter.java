@@ -69,6 +69,11 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 				updateView();
 				setStatusLine("Removed source successfully. ");
 			}
+			
+			if(event.getEventType().equals(ModelEventType.ModifyItem)){ 
+				updateView();
+				setStatusLine("Changed source successfully. ");
+			}
 		}
 	};
 

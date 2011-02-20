@@ -49,13 +49,7 @@ public class Assignment {
 			this.respSource = null;
 			this.attributeId = ind;
 		}
-		
-		
-		/*public Assignment(String kind, Attribute.AttributeType dt){
-			this();
-			this.setKind(kind);
-			this.setType(dt);
-		}*/
+
 		
 		public Assignment(Attribute.AttributeType at){
 			this();

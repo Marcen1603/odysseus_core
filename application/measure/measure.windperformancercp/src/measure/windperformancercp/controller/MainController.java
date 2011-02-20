@@ -102,12 +102,13 @@ public class MainController implements IController {
 		
 				SourceModel bla = (SourceModel) unmarshaller.unmarshal(new FileInputStream(fileNameSrc));
 		//System.out.println("bla has x elements: "+bla.getElemCount());
+				//SourceModel.getInstance().setSourcesList(bla.getSourcesList());
 				SourceModel.getInstance().setSourcesList(bla.getSourcesList());
 				reader = new FileInputStream(fileNamePm);
 				PerformanceModel blub = (PerformanceModel) unmarshaller.unmarshal(new FileInputStream(fileNamePm));
 		//System.out.println("blub has x elements: "+blub.getElemCount());
 				PerformanceModel.getInstance().setQueryList(blub.getQueryList());
-		//System.out.println("sourceModel: "+SourceModel.getInstance().getSourcesList().toString());
+		//System.out.println("sourceModel: "+SourceModel.getInstance().getSourcesListB().toString());
 			}
 		}
 		catch(IOException io){System.out.println("ioexception: "+io);}

@@ -15,6 +15,7 @@
 package measure.windperformancercp.model.query;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import measure.windperformancercp.model.sources.IDialogResult;
 import measure.windperformancercp.model.sources.ISource;
@@ -29,13 +30,16 @@ public interface IPerformanceQuery extends IDialogResult {
 	public void setQueryText(String text);
 	public boolean register();
 	public boolean deregister();
-	public void extractTurbineData();
+	public void extractTurbineData(ArrayList<ISource> sources);
 	public void setPitch(boolean p);
 	public boolean getPitch();
 	public void setAssignment(String what, Stream who);
 	public ArrayList<Assignment> getAssignments();
 	public void setAssignments(ArrayList<Assignment> assigns);
-	public ArrayList<Assignment> getPossibleAssignments();
+	
+	//public ArrayList<Assignment> getPossibleAssignments();
+	//public void setPossibleAssignments(ArrayList<Assignment> posAs);
+	
 	public void setWindspeedAttribute(String at);
 	public String getWindspeedAttribute();
 	public void setPowerAttribute(String at);
@@ -43,6 +47,9 @@ public interface IPerformanceQuery extends IDialogResult {
 	public void setPressureAttribute(String at);
 	public String getPressureAttribute();
 	public void setTemperatureAttribute(String at);
+	public QueryGenerator getQueryCreator();
+	public QueryGenerator getSourceCreator();
+	
 	public String getTemperatureAttribute();	
 	public Stream getResponsibleStream(String what);
 	public String getResponsibleAttribute(String what);
@@ -50,16 +57,38 @@ public interface IPerformanceQuery extends IDialogResult {
 	public void setConnectStat(boolean c);
 	public boolean getConnectStat();
 	public void setMethod(APerformanceQuery.PMType type);
-	public ArrayList<ISource> getConcernedSrc();
-	public void setConcernedSrc(ArrayList<ISource> srcList);
+	public ArrayList<String> getConcernedSrcKeys();	
+	public void setConcernedSrcKeys(ArrayList<String> srcList);
+	//public void setConcernedSrc(ArrayList<ISource> srcList);
+	//public void setConcernedSrc(ArrayList<ISource> srcList);
+	public void setTimestampAttributes(ArrayList<Integer> tsal);
+	public ArrayList<Integer> getTimestampAttributes();
+	
 	public ArrayList<Stream> getConcernedStr();
 	public void setConcernedStr(ArrayList<Stream> strList);
-	public void addMember(ISource m);
-	public void addAllMembers(ArrayList<ISource> listm);
+	public ArrayList<String> getStrGenQueries();
+	public void setStrGenQueries(ArrayList<String> list);
+	
+	public ArrayList<String> getStrRemQueries();
+	public void setStrRemQueries(ArrayList<String> list);
+	
+	//public void addMember(ISource m);
+	//public void addAllMembers(ArrayList<ISource> listm);
+	
+	
+	
+	public void addMemberKey(String m);
+	public void addAllMemberKeys(ArrayList<String> listm);
+	
 	public void clearMembers();
-	public ArrayList<String> generateSourceStreams();
-	public ArrayList<String> generateRemoveStreams();
+	public ArrayList<String> generateSourceStreams(ArrayList<ISource> sources);
+	public ArrayList<String> generateRemoveStreams(ArrayList<ISource> sources);
 	public String generateQuery();
-	public ArrayList<ISource> extractSourcesFromAssignments();
+	
+	//public ArrayList<ISource> extractSourcesFromAssignments();
+	
+	public ArrayList<String> extractSourcesFromAssignments();
+	public void extractTimestampAttributes(ArrayList<ISource> sources);
+	public ArrayList<Assignment> getPossibleAssignments(ArrayList<ISource> sources);
 	OperatorResult projectStreamToAssignments(Stream str, int ts, String outputName);
 }

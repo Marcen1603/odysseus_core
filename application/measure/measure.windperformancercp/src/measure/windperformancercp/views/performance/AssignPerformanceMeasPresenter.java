@@ -81,7 +81,7 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 	 * @return the beautificated query as string
 	 */
 	public String parseItBeautiful(String query){
-		
+		if(query != null){
 		String bQ = query.replaceAll("\\(\\{", "\\(\\{\n\t");
 		bQ = bQ.replaceAll("],", "],\n\t");
 		bQ = bQ.replaceAll("\\},", "\\},\n");
@@ -93,6 +93,8 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 				
 		bQ = bQ.replaceAll("\\)\n", "\\)\n\n");		
 		return bQ;
+		}
+		else return "";
 	}
 	
 	@Override

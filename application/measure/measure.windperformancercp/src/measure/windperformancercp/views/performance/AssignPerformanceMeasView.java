@@ -201,7 +201,7 @@ public class AssignPerformanceMeasView extends ViewPart {
 			switch(columnIndex){
 			case 0: return query.getIdentifier();
 			case 1:	return query.getMethod().toString();
-			case 2: return Integer.toString(query.getConcernedSrc().size());
+			case 2: return Integer.toString(query.getConcernedSrcKeys().size());
 			case 3:	return Double.toString(0.0);
 			case 4:	return Boolean.toString(query.getConnectStat()); 
 			}

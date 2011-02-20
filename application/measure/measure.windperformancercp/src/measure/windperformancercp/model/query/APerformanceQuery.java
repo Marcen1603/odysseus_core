@@ -20,28 +20,27 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import measure.windperformancercp.model.sources.Attribute;
-import measure.windperformancercp.model.sources.ISource;
-import measure.windperformancercp.model.sources.MetMast;
-import measure.windperformancercp.model.sources.WindTurbine;
 import measure.windperformancercp.model.sources.Attribute.AttributeType;
+import measure.windperformancercp.model.sources.ISource;
+import measure.windperformancercp.model.sources.WindTurbine;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "abstractPerformanceQuery", propOrder = {
     "identifier",
     "method",
-    "connectState",
-    "concernedSrc",
+    "connectState", 
+    "concernedSrcKeys",
     "concernedStr",
     "assignments",
     "queryText",
+    "strGenQueries",
+    "strRemQueries",
     "timestampAttributes",
     "windspeedAttribute",
     "powerAttribute",
@@ -54,7 +53,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	protected String identifier;
 	protected PMType method;
 	@XmlTransient
-	protected ArrayList<ISource> concernedSrc;
+	protected ArrayList<String> concernedSrcKeys;
 	@XmlTransient
 	protected ArrayList<Stream> concernedStr;
 	@XmlTransient
@@ -62,7 +61,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	@XmlTransient
 	protected Timestamp starttime;
 	protected boolean pitch;
-	protected boolean connectState = false;
+	protected boolean connectState;
 	
 	@XmlTransient
 	protected ArrayList<Integer> timestampAttributes;
@@ -74,11 +73,16 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	protected String queryText;
 	
 	@XmlTransient
+	protected ArrayList<String> strGenQueries;
+	@XmlTransient
+	protected ArrayList<String> strRemQueries;
+	
+	@XmlTransient
 	protected QueryGenerator Pgen;
 	@XmlTransient
 	protected QueryGenerator Qgen;
 
-	
+	//TODO: was machst du denn hier??
 	public enum PMType{
 		IEC,
 		Langevin
@@ -86,7 +90,8 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 
 	public APerformanceQuery(String id, 
 			PMType method,
-			ArrayList<ISource> sources, 
+			ArrayList<ISource> sources,
+	
 			ArrayList<Stream> streams, 
 			String queryText, 
 			ArrayList<Assignment> assigns,
@@ -94,8 +99,12 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 			String wsAtt,
 			String powAtt,
 			String prAtt,
-			String tempAtt){
+			String tempAtt,
+			ArrayList<String> generatorQueries){
 		this(id,method,sources);
+	
+		this.extractSourceKeys(sources);
+		this.extractTimestampAttributes(sources);
 		this.setConcernedStr(streams);
 		this.setQueryText(queryText);
 		this.setAssignments(assigns);
@@ -104,25 +113,32 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.setPowerAttribute(powAtt);
 		this.setPressureAttribute(prAtt);
 		this.setTemperatureAttribute(tempAtt);
-		
+		this.setStrGenQueries(generatorQueries);
 	}
 	
 	public APerformanceQuery(String id, PMType method,ArrayList<ISource> sources){
+	
 		this();
 		
 		this.setIdentifier(id);
 		this.setMethod(method);
-		this.setConcernedSrc(sources);
+		this.extractSourceKeys(sources);
+		this.extractTurbineData(sources);
+		this.extractTimestampAttributes(sources);
+	
+		this.connectState = false;
 	}
 	
 	public APerformanceQuery(){
 		this.identifier = "";
 		this.method = null;
 		this.assignments = new ArrayList<Assignment>();
-		this.concernedSrc = new ArrayList<ISource>();
+		this.concernedSrcKeys = new ArrayList<String>();
+		//this.concernedSrc = new ArrayList<ISource>();
 		this.concernedStr = new ArrayList<Stream>();
 		this.timestampAttributes = new ArrayList<Integer>();
 		this.pitch = false;
+		this.connectState = false;
 		Pgen = new QueryGenerator(new PQLGenerator());
 		Qgen = new QueryGenerator(new CQLGenerator());
 	
@@ -134,12 +150,13 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		assignments.add(asgn);
 		asgn = new Assignment(AttributeType.AIRTEMPERATURE);
 		assignments.add(asgn);
-	
+		this.strGenQueries = new ArrayList<String>();
+		
 	}
 	
 	@Override
-	public void extractTurbineData(){
-		for(ISource src: concernedSrc){
+	public void extractTurbineData(ArrayList<ISource> sources){
+		for(ISource src: sources){
 			if(src.isWindTurbine()){				
 				pitch = (((WindTurbine)src).getPowerControl()==0);
 				break;
@@ -200,6 +217,17 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return this.pitch;
 	}
 	
+	//TODO umbenennen.
+	@Override
+	public QueryGenerator getSourceCreator(){
+		return Qgen;
+	}
+	
+	//TODO umbenennen. 
+	@Override
+	public QueryGenerator getQueryCreator(){
+		return Pgen;
+	}
 	
 	@Override
 	public void setAssignment(String what, Stream who){
@@ -227,22 +255,28 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return "";
 	}
 
-	@XmlElementWrapper(name = "concernedSources") 	
-	@XmlElementRefs( 
-		{ 
-		    @XmlElementRef( type = MetMast.class), 
-		    @XmlElementRef( type = WindTurbine.class), 
-		} )
+
+	@XmlElementWrapper(name = "concernedSourcesKeys")
+	@XmlElement(name = "sourceKey")
 	@Override
-	public ArrayList<ISource> getConcernedSrc(){
-		return concernedSrc;
+	public ArrayList<String> getConcernedSrcKeys(){
+		return concernedSrcKeys;
+	}
+	
+	public void extractSourceKeys(ArrayList<ISource> sources){
+		ArrayList<String> sourceKeys = new ArrayList<String>();
+		for(ISource s: sources){
+			sourceKeys.add(s.getName());
+		}
+		this.concernedSrcKeys = sourceKeys;
 	}
 	
 	@Override
-	public void setConcernedSrc(ArrayList<ISource> srcList) {
-		this.concernedSrc = new ArrayList<ISource>(srcList);
-		extractTurbineData();
-		updateTimestampAttributes();
+	//public void setConcernedSrc(ArrayList<ISource> srcList) {
+	public void setConcernedSrcKeys(ArrayList<String> srcKeyList) {
+		this.concernedSrcKeys = srcKeyList;//new ArrayList<ISource>(srcList); 
+	//	extractTurbineData();	//TODO: set at creation
+	//	updateTimestampAttributes();
 	}
 	
 	@XmlElementWrapper(name = "concernedStreams") 
@@ -253,40 +287,66 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	}
 	
 	
-	@XmlElementWrapper(name = "timestampAttributeIndexList") 
-	@XmlElement(name = "timestamp")
-	public ArrayList<Integer> getTimestampAttributes(){
-		return timestampAttributes;
+	@XmlElementWrapper(name = "streamGeneratorQueryList") 
+	@XmlElement(name = "generatorQuery")
+	@Override
+	public ArrayList<String> getStrGenQueries(){
+		return strGenQueries;
 	}
 	
-	public void setTimestampAttributes(ArrayList<Integer>  tsal) {
-		this.timestampAttributes = tsal;
+	@Override
+	public void setStrRemQueries(ArrayList<String> list) {
+		this.strRemQueries = list;
+	}
+	
+	@XmlElementWrapper(name = "streamRemoverQueryList") 
+	@XmlElement(name = "removerQuery")
+	@Override
+	public ArrayList<String> getStrRemQueries(){
+		return strRemQueries;
+	}
+	
+	@Override
+	public void setStrGenQueries(ArrayList<String> list) {
+		this.strGenQueries = list;
 	}
 	
 	@Override
 	public void setConcernedStr(ArrayList<Stream> strList) {
-		this.concernedStr = new ArrayList<Stream>(strList);
+		this.concernedStr = strList;//new ArrayList<Stream>(strList);
+	}
+	
+	@XmlElementWrapper(name = "timestampAttributeIndexList") 
+	@XmlElement(name = "timestamp")
+	@Override
+	public ArrayList<Integer> getTimestampAttributes(){
+		return timestampAttributes;
+	}
+	
+	@Override
+	public void setTimestampAttributes(ArrayList<Integer> tsal) {
+		this.timestampAttributes = tsal;
 	}
 	
 	
 	@Override
-	public void addMember(ISource m){
-		concernedSrc.add(m);
-		extractTurbineData();
-		updateTimestampAttributes();
+	public void addMemberKey(String m){
+		concernedSrcKeys.add(m);
+	//	extractTurbineData();
+		//updateTimestampAttributes();
 	}
 	
 	@Override
-	public void addAllMembers(ArrayList<ISource> listm){
-		concernedSrc.addAll(listm);
-		extractTurbineData();
-		updateTimestampAttributes();
+	public void addAllMemberKeys(ArrayList<String> listm){
+		concernedSrcKeys.addAll(listm);
+	//	extractTurbineData();
+	//	updateTimestampAttributes();
 	}
 	
 	@Override
 	public void clearMembers(){
-		concernedSrc.clear();
-		updateTimestampAttributes();
+		concernedSrcKeys.clear();
+	//	updateTimestampAttributes();
 	}
 	
 	@XmlElementWrapper(name = "assignmentList") 
@@ -345,24 +405,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return temperatureAttribute;
 	}
 	
-	public void updateTimestampAttributes(){
-		boolean set = false;
-		timestampAttributes.clear();
-		for(int i =0; i< concernedSrc.size();i++){
-			ArrayList<Attribute> atts = concernedSrc.get(i).getAttributeList();
-			set = false;
-			for(int j = 0; j<atts.size();j++){
-				Attribute att = atts.get(j);
-				if(att.getAttType().equals(AttributeType.STARTTIMESTAMP)){
-					timestampAttributes.add(j);
-					set = true;
-					break;
-				}
-			}
-			if(!set)
-				timestampAttributes.add(0);
-		}
-	}
+	
 	
 	@Override
 	public boolean register() {
@@ -377,10 +420,10 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	}
 	
 	@Override
-	public ArrayList<String> generateSourceStreams(){
+	public ArrayList<String> generateSourceStreams(ArrayList<ISource> sources){
 		ArrayList<String> qryresult = new ArrayList<String>(); 
 		concernedStr.clear();
-		for(ISource src: concernedSrc){
+		for(ISource src: sources){
 			OperatorResult current = Qgen.generateCreateStream(src);
 			if(current != null){
 				concernedStr.add(current.getStream());
@@ -395,14 +438,16 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 			}
 	//		System.out.println(current.getQuery());
 		}
+		strGenQueries = qryresult;
 		return qryresult;
 	}
+
 	
 	@Override
-	public ArrayList<String> generateRemoveStreams(){
+	public ArrayList<String> generateRemoveStreams(ArrayList<ISource> sources){
 		ArrayList<String> qryresult = new ArrayList<String>(); 
-		concernedStr.clear();
-		for(ISource src: concernedSrc){
+		//concernedStr.clear();
+		for(ISource src: sources){
 			OperatorResult current = Qgen.generateRemoveStream(src);
 			if(current != null){
 				qryresult.add(current.getQuery());
@@ -412,32 +457,11 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 			}
 	//		System.out.println(current.getQuery());
 		}
+		strRemQueries = qryresult;
 		return qryresult;
 	}
-		
 	
-	@Override
-	public String generateQuery(){
-		return null;
-	}
 
-	@Override
-	public ArrayList<Assignment> getPossibleAssignments(){
-		ArrayList<Assignment> possibilities = new ArrayList<Assignment>();
-		for(Assignment a: assignments){
-			for(ISource s: concernedSrc){
-				for(Attribute at: s.getAttributeList()){
-					if(a.getAttType().equals(at.getAttType())){
-						Assignment newpos = new Assignment(a.getAttType(),s,s.getAttIndex(at));
-						possibilities.add(newpos);
-					}
-				}
-			}
-		}
-		return possibilities;
-	}
-	
-	
 	@Override
 	public OperatorResult projectStreamToAssignments(Stream str, int ts, String outputName){
 		ArrayList<Integer> newattsPos = new ArrayList<Integer>(); 
@@ -458,16 +482,56 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return result;
 		
 	}
-
-		
+	
 	@Override
-	public ArrayList<ISource> extractSourcesFromAssignments(){
-		ArrayList<ISource> sources = new ArrayList<ISource>();
-		for(Assignment as: assignments){
-			if(! sources.contains(as.getRespSource()))
-				sources.add(as.getRespSource());
+	public void extractTimestampAttributes(ArrayList<ISource> sources){
+		boolean set = false;
+		
+		ArrayList<Integer> timestampPos= new ArrayList<Integer>();
+	
+		for(ISource src: sources){
+			ArrayList<Attribute> atts = src.getAttributeList();
+			set = false;
+			for(int j = 0; j<atts.size();j++){
+				Attribute att = atts.get(j);
+				if(att.getAttType().equals(AttributeType.STARTTIMESTAMP)){
+					timestampPos.add(j);
+					set = true;
+					break;
+				}
+			}
+			if(!set)
+				timestampPos.add(0);
 		}
-		this.concernedSrc = sources;
+		setTimestampAttributes(timestampPos);
+	}
+	
+	
+	@Override
+	public ArrayList<Assignment> getPossibleAssignments(ArrayList<ISource> sources){
+		ArrayList<Assignment> possibilities = new ArrayList<Assignment>();
+		for(Assignment a: assignments){
+			for(ISource s:  sources){
+				for(Attribute at: s.getAttributeList()){
+					if(a.getAttType().equals(at.getAttType())){
+						Assignment newpos = new Assignment(a.getAttType(),s,s.getAttIndex(at));
+						possibilities.add(newpos);
+					}
+				}
+			}
+		}
+			
+		return possibilities;
+	}
+	
+	@Override
+	public ArrayList<String> extractSourcesFromAssignments(){
+		ArrayList<String> sources = new ArrayList<String>();
+		for(Assignment as: assignments){
+			if(! sources.contains(as.getRespSource().getName()))
+				sources.add(as.getRespSource().getName());
+		}
+		this.concernedSrcKeys = sources;
 		return sources;
 	}
 

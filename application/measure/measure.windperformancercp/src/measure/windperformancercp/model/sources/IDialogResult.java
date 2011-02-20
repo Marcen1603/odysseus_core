@@ -14,9 +14,9 @@
   */
 package measure.windperformancercp.model.sources;
 
-/* Ein Wrapper fuer Ergebnisse der Eingabedialoge: Attribute, Sourcen, PerformanceMeasurements..
+/** A wrapper for typical input of one of the input dialogs: Attributes, Sources, PerformanceMeasurements..
  * @author Diana von Gallera
  */
 public interface IDialogResult{
-
+	//as we can see is a lot in here.. TODO
 }

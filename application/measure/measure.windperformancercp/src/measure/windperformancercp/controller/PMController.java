@@ -15,20 +15,26 @@
 package measure.windperformancercp.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.InputDialogEvent;
 import measure.windperformancercp.event.InputDialogEventType;
-import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.event.QueryEvent;
 import measure.windperformancercp.event.QueryEventType;
+import measure.windperformancercp.model.query.Assignment;
 import measure.windperformancercp.model.query.IPerformanceQuery;
 import measure.windperformancercp.model.query.MeasureIEC;
 import measure.windperformancercp.model.query.MeasureLangevin;
+import measure.windperformancercp.model.query.OperatorResult;
 import measure.windperformancercp.model.query.PerformanceModel;
 import measure.windperformancercp.model.query.QueryGenerator;
+import measure.windperformancercp.model.query.Stream;
+import measure.windperformancercp.model.sources.Attribute;
+import measure.windperformancercp.model.sources.Attribute.AttributeType;
 import measure.windperformancercp.model.sources.ISource;
+import measure.windperformancercp.model.sources.WindTurbine;
 import measure.windperformancercp.views.IPresenter;
 import measure.windperformancercp.views.performance.AssignPerformanceMeasPresenter;
 import measure.windperformancercp.views.performance.PerformanceWizardDialogPresenter;
@@ -121,31 +127,54 @@ public class PMController implements IController {
 			}
 			
 			if(event.getEventType().equals(QueryEventType.AddQuery)){
+					
 				QueryEvent ideEvent = (QueryEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue();
-				ArrayList<String> adders = qry.generateSourceStreams();
-				//TODO:check if sources are not already registered from other queries
+				
+				//check if sources are not already registered from other queries
+				List<Boolean> connectStates = scontrol.getConnectionList(qry.getConcernedSrcKeys());
+				List<String> adders = qry.getStrGenQueries();
+				//generate list of access queries for the disconnected sources
 				String adderQuery = "";
-			
-				for(String s: adders){
-					adderQuery = adderQuery + s;
-				}
-				//add sources
-				if(connector.addQuery(adderQuery, addStreamParserID)) {
-					//TODO: tell scontrol, that specific source has been connected
-					//scontrol.somethingChanged();
-					//add main query
-					if(connector.addQuery(qry.getQueryText(), queryParserID)){ //TODO: der query hinzufuegen, sie soll wissen, wer sie erzeugt hat
-						qry.setConnectStat(true);
-						pmodel.somethingChanged(qry);
+				int j = connectStates.size();
+				//for every source the information must be set, whether it is connected or not
+				if(j == adders.size()){					
+					for(int i=0; i<j; i++){
+						adderQuery = adderQuery + ((!connectStates.get(i))? adders.get(i): "");
 					}
-					else{
-						//remove sources
+					//add sources
+					if(connector.addQuery(adderQuery, addStreamParserID)) {	
+							
+						
+						scontrol.tellWhichAreConnected(qry.getConcernedSrcKeys());
+						for(ISource bla: scontrol.getContent()){
+							System.out.println(this.toString()+" smodel :"+bla.toString()+bla.hashCode());
+						}
+						for(ISource bla: scontrol.getSourcesFromModel(qry.getConcernedSrcKeys())){
+							System.out.println(this.toString()+"qrysrc :"+bla.toString()+bla.hashCode());
+						}
+
+
+						//TODO: maybe some of the sources are already connected (not by this application). is it possible to ask odysseus for that?
+						//TODO: tell scontrol, that specific source has been connected
+						
+						//scontrol.somethingChanged();
+						//add main query
+						if(connector.addQuery(qry.getQueryText(), queryParserID)){ //TODO: der query hinzufuegen, sie soll wissen, wer sie erzeugt hat
+							qry.setConnectStat(true);
+							pmodel.somethingChanged(qry);
+						}
+						else{
+							//remove sources
+						}
 					}
 				}
+				
+		
 			}
 			
 			if(event.getEventType().equals(QueryEventType.DeleteQuery)){
+				
 				QueryEvent ideEvent = (QueryEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue();
 				
@@ -155,7 +184,7 @@ public class PMController implements IController {
 						//qry.setConnectStat(false);
 						//pmodel.somethingChanged(qry);
 					//check if sources are not involved in other queries, otherwise dont delete them
-					ArrayList<String> removers = qry.generateRemoveStreams();
+					ArrayList<String> removers = qry.getStrRemQueries();
 					String removerQuery = "";
 					for(String s: removers){
 						removerQuery = removerQuery + s;
@@ -185,6 +214,108 @@ public class PMController implements IController {
 		else
 			return new ArrayList<ISource>();
 	}
+	
+	
+/*  CODE FROM APERFORMANCE QUERY */
+	/**
+	 * Sets queries turbine data 
+	 */
+	public void extractTurbineDataForQuery(IPerformanceQuery query){
+		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
+			if(src.isWindTurbine()){				
+				query.setPitch(((WindTurbine)src).getPowerControl()==0);
+				break;
+			}
+		}
+	}
+	
+	//TODO: auf namen der timestamps ändern.
+	public void updateTimestampAttributes(IPerformanceQuery query){
+		boolean set = false;
+		
+		ArrayList<Integer> timestampPos= new ArrayList<Integer>();
+		//timestampAttributes.clear();
+		//for(int i =0; i< concernedSrc.size();i++){
+		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
+			ArrayList<Attribute> atts = src.getAttributeList();
+			set = false;
+			for(int j = 0; j<atts.size();j++){
+				Attribute att = atts.get(j);
+				if(att.getAttType().equals(AttributeType.STARTTIMESTAMP)){
+					timestampPos.add(j);
+					set = true;
+					break;
+				}
+			}
+			if(!set)
+				timestampPos.add(0);
+		}
+		query.setTimestampAttributes(timestampPos);
+	}
+	
+	
+	public void generateSourceStreams(IPerformanceQuery query){
+		ArrayList<String> qryresult = new ArrayList<String>(); 
+		ArrayList<Stream> inputStreams = new ArrayList<Stream>();
+		//concernedStr.clear();
+		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
+			OperatorResult current = query.getSourceCreator().generateCreateStream(src);
+			if(current != null){
+				
+				for(Assignment as: query.getAssignments()){
+					if(as.getRespSource().equals(src))
+						as.setRespStream(current.getStream());
+				}
+				inputStreams.add(current.getStream());
+				qryresult.add(current.getQuery());
+			}
+			else{
+				//TODO: Fehlermeldung
+			}
+	//		System.out.println(current.getQuery());
+		}
+		query.setStrGenQueries(qryresult);
+		query.setConcernedStr(inputStreams);
+	}
+	
+	
+	//evtl auch auf void umändern
+	public ArrayList<String> generateRemoveStreams(IPerformanceQuery query){
+		ArrayList<String> qryresult = new ArrayList<String>(); 
+	//	concernedStr.clear(); //nicht so sinnvoll, oder?
+		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
+			OperatorResult current = query.getSourceCreator().generateRemoveStream(src);
+			if(current != null){
+				qryresult.add(current.getQuery());
+			}
+			else{
+				//TODO: Fehlermeldung
+			}
+	//		System.out.println(current.getQuery());
+		}
+		query.setStrRemQueries(qryresult);
+		return qryresult;
+	}
+	
+	public ArrayList<Assignment> getPossibleAssignments(IPerformanceQuery query){
+		ArrayList<Assignment> possibilities = new ArrayList<Assignment>();
+		for(Assignment a: query.getAssignments()){
+			for(ISource s:  scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
+				for(Attribute at: s.getAttributeList()){
+					if(a.getAttType().equals(at.getAttType())){
+						Assignment newpos = new Assignment(a.getAttType(),s,s.getAttIndex(at));
+						possibilities.add(newpos);
+					}
+				}
+			}
+		}
+			
+		return possibilities;
+	}
+	
+	
+	//END Query Code
+	
 	
 	
 	public static PMController getInstance(){

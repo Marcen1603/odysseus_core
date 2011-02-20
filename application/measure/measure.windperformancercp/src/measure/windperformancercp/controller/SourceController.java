@@ -15,11 +15,13 @@
 package measure.windperformancercp.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.InputDialogEvent;
 import measure.windperformancercp.event.InputDialogEventType;
+import measure.windperformancercp.model.sources.Attribute;
 import measure.windperformancercp.model.sources.ISource;
 import measure.windperformancercp.model.sources.MetMast;
 import measure.windperformancercp.model.sources.SourceModel;
@@ -103,17 +105,34 @@ public class SourceController implements IController {
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				ISource src = (ISource) ideEvent.getValue();
 				//int c = smodel.removeAllOccurences(src);				
-				smodel.removeAllOccurences(src);
+				smodel.removeAllOccurences(src.getName());
 				//System.out.println(this.toString()+": Received delete source event for "+src.toString()+" from "+event.getSender().toString()+"\n Deleted "+c);
 			}			
 		}
 	};
 	
+	public List<Boolean> getConnectionList(ArrayList<String> srcKeys){
+		List<Boolean> result = new ArrayList<Boolean>();
+		for(ISource src : getSourcesFromModel(srcKeys)){
+			result.add(src.getConnectState());
+		}		
+		return result;
+	}
+	
+	public void tellWhichAreConnected(ArrayList<String> srcKeys){
+		for(ISource src : getSourcesFromModel(srcKeys)){
+			src.setConnectState(true);
+			//System.out.println(src.toString() +" in list: "+smodel.getSourcesList().contains(src));
+		}
+		smodel.somethingChanged(null);
+		
+//System.out.println(smodel.getSourcesList().toString());
+	}
 	
 
 	@Override
 	public ArrayList<ISource> getContent(){
-		return smodel.getSourcesList();
+		return smodel.getSourcesListB();
 	}
 	
 	public static <E extends IPresenter> SourceController getInstance(E pres){
@@ -128,7 +147,26 @@ public class SourceController implements IController {
 	public static SourceController getInstance(){
 		return instance;
 	}
-
+	
+	public ArrayList<String> getContentKeyList(){
+		return smodel.getSourcesKeyList();
+	}
+	
+	public ISource getSourceFromModel(String key){
+		return smodel.getElementByName(key);
+	}
+	
+	public ArrayList<ISource> getSourcesFromModel(ArrayList<String> keys){
+		ArrayList<ISource> srcs = new ArrayList<ISource>();
+		for(String key: keys){
+			srcs.add(smodel.getElementByName(key));
+		}
+		return srcs;
+	}
+	
+	public ArrayList<Attribute> getAttributesFromSource(String key){
+		return smodel.getElementByName(key).getAttributeList();
+	}
 
 	
 } //end_SourceControler

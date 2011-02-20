@@ -253,6 +253,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		dialog.setHostValue(src.getHost());
 		dialog.setPortValue(Integer.toString(src.getPort()));
 		dialog.setTableContent(src.getAttributeList());
+		dialog.setFrequencyValue(Integer.toString(src.getFrequency()));
 		tmpAttList = src.getAttributeList();
 		if(src.isWindTurbine()){
 			dialog.setSourceType(WTId);

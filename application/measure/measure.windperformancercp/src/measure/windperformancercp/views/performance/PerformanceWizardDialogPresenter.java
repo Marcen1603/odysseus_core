@@ -38,11 +38,12 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 	PerformanceWizardDialog dialog;
 	IPerformanceQuery query;
 	ArrayList<SourceNameTuple> srcnT;
+	//the actual pm controller
 	IController _cont;
 	ArrayList<ArrayList<String>> restructPAssign2;
 	final PerformanceWizardDialogPresenter boss;
 	
-
+	ArrayList<ISource> choosedSources;
 	private class SourceNameTuple{
 		public ISource src;
 		public String name;
@@ -79,6 +80,8 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 			query = new MeasureIEC(id);
 		if(type.equals(APerformanceQuery.PMType.Langevin))
 			query= new MeasureLangevin(id);
+//System.out.println(this.toString()+" type choosed: "+query.getMethod().toString());		
+
 	}
 	
 	/**
@@ -89,16 +92,20 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 	public void sourcesChoosed(ArrayList<String> sources){
 		if(query != null){			
 			query.clearMembers();
+			ArrayList<ISource> srcs = new ArrayList<ISource>();
 			
 			for(String s:sources){
 				for(SourceNameTuple t: srcnT){
 					if(t.name.equals(s)){
-						query.addMember(t.src);
+						srcs.add(t.src);
 					}
 				}
 			}
-			
-			updatePossibleAssignments();
+			choosedSources = srcs;
+			query.addAllMemberKeys(sources);
+//System.out.println(this.toString()+" added member keys: "+sources.toString());			
+			//updatePossibleAssignments(sources);
+			updatePossibleAssignments(srcs);
 		}
 	}
 	
@@ -112,8 +119,9 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		ArrayList<Assignment> finalAssignments = new ArrayList<Assignment>(); 
 		if(query != null){
 			
-			if(!query.getPossibleAssignments().isEmpty()){
-				for(Assignment queryAssign: query.getPossibleAssignments()){
+			ArrayList<Assignment> posAssigns = query.getPossibleAssignments(choosedSources);
+			if(!posAssigns.isEmpty()){
+				for(Assignment queryAssign: posAssigns){
 					for(String entry: dialogAssigns){
 						if(queryAssign.toString().equals(entry)){
 							finalAssignments.add(queryAssign);
@@ -124,11 +132,11 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 				query.setAssignments(finalAssignments);
 				query.extractSourcesFromAssignments();
 			}
-			if(query instanceof MeasureLangevin){
+			if(query instanceof MeasureLangevin){		//das ist eigentlich ein fall für extractTurbineData/->sourceData
 				((MeasureLangevin)query).setTau(tau);
 				int frequency = 0;
 				
-				for(ISource src : query.getConcernedSrc()){
+				for(ISource src : choosedSources){
 					if(src.getFrequency() > frequency)
 						frequency = src.getFrequency();
 				}
@@ -139,6 +147,7 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 				((MeasureLangevin)query).setFrequency(frequency);
 			}
 		}
+//System.out.println(this.toString()+" made assignments: "+dialogAssigns.toString());					
 	}
 
 	/**
@@ -149,13 +158,34 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 		//for(String s: query.generateSourceStreams())
 			//System.out.println(s);
 		//System.out.println(query.generateQuery());
-		query.generateSourceStreams();
-		query.generateQuery();
 		if(query != null){
+			query.extractTimestampAttributes(choosedSources);
+			query.generateSourceStreams(choosedSources);
+			query.generateRemoveStreams(choosedSources);
+		
+			query.generateQuery();
+		
+		
+		
+/*System.out.println(this.toString()+" pm create streams: "+query.getStrGenQueries().toString());
+System.out.println(this.toString()+" pm remove streams: "+query.getStrRemQueries().toString());
+System.out.println(this.toString()+" pm power attribute: "+query.getPowerAttribute().toString());
+System.out.println(this.toString()+" pm main query: "+query.getQueryText());
+*/		
 			fire(new InputDialogEvent(this, InputDialogEventType.NewPerformanceItem, query));
 			dialog.close();
+			fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
+		}
+		else{
+			dialog.setErrorMessage("something went wrong, the query is null! ");
+System.out.println(this.toString()+"query is null ");			
 		}
 
+		
+	}
+	
+	public void cancelClick(){
+		dialog.close();
 		fire(new InputDialogEvent(this,InputDialogEventType.DeregisterDialog,null));
 	}
 
@@ -163,9 +193,9 @@ public class PerformanceWizardDialogPresenter extends EventHandler implements IP
 	 * Allocates the assignments to the combo elements
 	 */
 	@SuppressWarnings("unchecked")
-	public void updatePossibleAssignments(){
+	public void updatePossibleAssignments(ArrayList<ISource> sources){
 		if(query != null){
-			ArrayList<Assignment> possAssign = query.getPossibleAssignments();
+			ArrayList<Assignment> possAssign = query.getPossibleAssignments(sources);
 			ArrayList<Assignment> neededAssign = query.getAssignments();
 			ArrayList<String>[] restructPAssign = new ArrayList[neededAssign.size()];			
 	

@@ -40,7 +40,7 @@ public class MeasureLangevin extends APerformanceQuery {
 		this();
 		if(copy != null){
 			this.identifier = copy.getIdentifier();
-			this.concernedSrc = copy.getConcernedSrc();
+			this.concernedSrcKeys = copy.getConcernedSrcKeys();
 			this.concernedStr = copy.getConcernedStr();
 			this.queryText = copy.getQueryText();
 			this.assignments = copy.getAssignments();
@@ -49,16 +49,17 @@ public class MeasureLangevin extends APerformanceQuery {
 			this.powerAttribute = copy.getPowerAttribute();
 			this.pressureAttribute = copy.getPressureAttribute();
 			this.temperatureAttribute = copy.getTemperatureAttribute();
+			this.timestampAttributes = copy.getTimestampAttributes();
 			this.queryText = copy.getQueryText();
 			this.tau = copy.getTau();
 			this.frequency = copy.getFrequency();
+			this.strGenQueries = copy.getStrGenQueries();
 		}
 	}
 	
 	public MeasureLangevin(String name, ArrayList<ISource> insrc, int tau, int frequency){
-		this.identifier = name;
-		this.method = APerformanceQuery.PMType.Langevin;
-		this.concernedSrc = insrc;
+		super(name, APerformanceQuery.PMType.Langevin, insrc);
+		extractTimestampAttributes(insrc);
 		this.tau = tau;
 		this.frequency = frequency;
 	}
@@ -76,6 +77,7 @@ public class MeasureLangevin extends APerformanceQuery {
 	
 	@Override
 	public String generateQuery(){
+
 		String tmpQuery = "";
 
 		OperatorResult actRes1;
@@ -95,11 +97,13 @@ public class MeasureLangevin extends APerformanceQuery {
 		}
 		
 		if(streams.size()>1){
-			for(Stream str: streams){
+			for(int i = 0; i<streams.size();i++){
+				Stream str = streams.get(i);
 			//window for join
 				actRes1 = Pgen.generateWindow(str, 
 						Pgen.new Window("tuple",1), 
 						"windowed_"+str.getName());
+				streams.set(i, actRes1.getStream());
 				tmpQuery = tmpQuery +actRes1.getQuery();
 			}
 			

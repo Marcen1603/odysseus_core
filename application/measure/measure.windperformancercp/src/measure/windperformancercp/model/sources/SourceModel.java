@@ -15,60 +15,74 @@
 package measure.windperformancercp.model.sources;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import measure.windperformancercp.event.EventHandler;
 import measure.windperformancercp.event.ModelEvent;
 import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.model.IModel;
+import measure.windperformancercp.model.sources.xml.XMLHashMappingHelper;
 
 
-@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "sourceModel")
 public class SourceModel extends EventHandler implements IModel {
 	
 	private static SourceModel instance = new SourceModel();
 	
+	@XmlJavaTypeAdapter(XMLHashMappingHelper.class)
+	private HashMap<String,ISource> sourcesList;
+	
 	@XmlTransient
-	private ArrayList<ISource> sourcesList;
-	
-	
-	ModelEvent newItemEvent = new ModelEvent(this,ModelEventType.NewItem,null);
-	ModelEvent deleteItemEvent = new ModelEvent(this,ModelEventType.DeletedItem,null);
-	ModelEvent changeItemEvent = new ModelEvent(this,ModelEventType.ModifyItem,null);
+	private ModelEvent newItemEvent = new ModelEvent(this,ModelEventType.NewItem,null);
+	@XmlTransient
+	private ModelEvent deleteItemEvent = new ModelEvent(this,ModelEventType.DeletedItem,null);
+	@XmlTransient
+	private ModelEvent changeItemEvent = new ModelEvent(this,ModelEventType.ModifyItem,null);
 	
 	private SourceModel(){
-		sourcesList = new ArrayList<ISource>();
+		//sourcesList = new ArrayList<ISource>();
+		sourcesList = new HashMap<String,ISource>();
 	}
 	
-	private SourceModel(ArrayList<ISource> list){
-		sourcesList = new ArrayList<ISource>(list);
+	//private SourceModel(ArrayList<ISource> list){
+	private SourceModel(HashMap<String,ISource> list){
+		sourcesList = list;//new ArrayList<ISource>(list);
 	}
 	
 	public static SourceModel getInstance(){
 		return instance;
 	}
 	
-	public void addElement(ISource src){
-		sourcesList.add(src);
+	public void addElement(ISource src){	
+		//sourcesList.add(src);
+		sourcesList.put(src.getName(), src);
 		fire(newItemEvent);
 	}
 	
-	public void addAll(ArrayList<ISource> list){
-		sourcesList.addAll(list);
+	//public void addAll(ArrayList<ISource> list){
+	public void addAll(Map<String,ISource> map){
+		//sourcesList.addAll(list);
+		sourcesList.putAll(map);
 		fire(newItemEvent);
 	}
 	
-	public void removeElement(int index){
-		sourcesList.remove(index);
+//	public void removeElement(int index){
+	//sourcesList.remove(index);
+	public void removeElement(String key){
+		sourcesList.remove(key);
 		fire(deleteItemEvent);
 	}
 	
-	public int removeAllOccurences(ISource src){
+	/*public int removeAllOccurences(ISource src){
 		int c = 0;
 		while(sourcesList.contains(src)){
 			sourcesList.remove(src);
@@ -76,8 +90,19 @@ public class SourceModel extends EventHandler implements IModel {
 		}
 		fire(deleteItemEvent);
 		return c;
+	}*/
+	
+	public int removeAllOccurences(String key){
+		int c = 0;
+		while(sourcesList.containsKey(key)){
+			sourcesList.remove(key);
+			c++;
+		}
+		fire(deleteItemEvent);
+		return c;
 	}
 	
+	/*
 	public ArrayList<ISource> getElementsByName(String n){
 		ArrayList<ISource> result = new ArrayList<ISource>(); 
 		for(ISource s: sourcesList){
@@ -85,28 +110,54 @@ public class SourceModel extends EventHandler implements IModel {
 				result.add(s);
 		}
 		return result;
+	}*/
+	
+	public ISource getElementByName(String key){
+		return sourcesList.get(key);
 	}
 	
-	public ISource getIthElement(int i){
+	
+	
+/*	public ISource getIthElement(int i){
 		if(sourcesList.size()>i){
 			return sourcesList.get(i);
 		}
 		else return null;
 	}
+*/	
 	
-	@XmlElementWrapper(name = "sourcesList")
-	@XmlElementRefs( 
-		{ 
-		    @XmlElementRef( type = MetMast.class, name = "metMast"), 
-		    @XmlElementRef( type = WindTurbine.class, name = "windTurbine" ), 
-		} )
-	public ArrayList<ISource> getSourcesList(){
-		return sourcesList;
+	public ArrayList<ISource> getSourcesListB(){
+	//public HashMap<String,ISource> getSourcesList(){
+		ArrayList<ISource> srcList = new ArrayList<ISource>(sourcesList.values()); 
+		return srcList;
 	}
 	
-	public void setSourcesList(ArrayList<ISource> sources){
+	public ArrayList<String> getSourcesKeyList(){
+		ArrayList<String> keyList = new ArrayList<String>(sourcesList.keySet());
+		return keyList;
+	}
+	
+	//public void setSourcesList(ArrayList<ISource> sources){
+	public void setSourcesList(HashMap<String,ISource> sources){
 		sourcesList = sources;
 		fire(changeItemEvent);
+	}
+	
+	//@XmlElementWrapper(name = "sourcesList")
+	//@XmlElementRefs( 
+	//	{ 
+	//	    @XmlElementRef( type = MetMast.class, name = "metMast"), 
+	//	    @XmlElementRef( type = WindTurbine.class, name = "windTurbine" ), 
+	//	} )
+	
+//	 @XmlElementRefs( 
+//		{ 
+//		    @XmlElementRef( type = MetMast.class, name = "metMast"), 
+//		    @XmlElementRef( type = WindTurbine.class, name = "windTurbine" ), 
+//		} )
+//	@XmlJavaTypeAdapter(XMLHashMappingHelper.class)
+	public HashMap<String,ISource> getSourcesList(){
+		return sourcesList;
 	}
 	
 	public int getElemCount(){

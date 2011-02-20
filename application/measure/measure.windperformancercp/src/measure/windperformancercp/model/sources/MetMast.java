@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class MetMast extends AbstractSource {
 	
 	public MetMast(String name, String identifier, String hostName, int portId, ArrayList<Attribute> attList, int freq){
-		super(MMId, name, identifier, hostName, portId, attList, false, freq);
+		super(MMId, name, identifier, hostName, portId, attList, freq);
 		//System.out.println("MM Konstruktor: created new met mast: '"+this.toString());		
 	}
 	
@@ -49,5 +49,16 @@ public class MetMast extends AbstractSource {
 	public boolean isMetMast() {
 		return true;
 	}
+
+	//Not necessary until now, because mm has no specific variables other than the ones from abstract source
+/*	@Override
+	public boolean equals(Object obj){
+		return super.equals(obj);
+	}
+	
+	@Override
+	public int hashCode(){
+	}
+*/
 	
 }

@@ -51,6 +51,11 @@ public class PerformanceWizardDialog extends WizardDialog implements IUserInputD
 		presenter.finishClick();
 	}
 	
+	@Override
+	protected void cancelPressed(){
+		presenter.cancelClick();
+	}
+	
 	/**
 	 * Override the super method
 	 * Sets the content for the pages and forwards the wizards information to the controller
