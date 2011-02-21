@@ -17,10 +17,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.rcp.starter.application"
-            name="Odysseus Product">
+            name="Streamcars Product">
          <property
                name="appName"
-               value="Odysseus Product">
+               value="Streamcars Product">
          </property>
       </product>
    </extension>

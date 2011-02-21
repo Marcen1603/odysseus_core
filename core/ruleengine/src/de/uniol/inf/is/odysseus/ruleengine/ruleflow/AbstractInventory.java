@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -144,7 +145,8 @@ public abstract class AbstractInventory implements IRuleFlow {
 	
 	public void bindRuleProvider(IRuleProvider provider) {
 		LoggerSystem.printlog(Accuracy.DEBUG, getInventoryName()+" - Loading rules for... "+provider);
-		for (IRule<?, ?> rule : provider.getRules()) {			
+		List<IRule<?,?>> rules = provider.getRules();
+		for (IRule<?, ?> rule : rules) {			
 			this.getCurrentInstance().addRule(rule, rule.getRuleFlowGroup());
 		}
 	}

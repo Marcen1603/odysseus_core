@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Base2
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.base
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.base;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach,

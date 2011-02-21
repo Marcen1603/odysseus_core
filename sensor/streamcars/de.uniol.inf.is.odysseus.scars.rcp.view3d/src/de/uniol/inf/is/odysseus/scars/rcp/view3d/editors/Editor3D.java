@@ -105,7 +105,7 @@ public class Editor3D implements IStreamEditorType {
 			counter++;
 		}
 		if( counter >= MAX_CUBE_COUNT )
-			System.out.println("Editor3D: Zu viele Cubes benötigt:" + counter);
+			System.out.println("Editor3D: Zu viele Cubes benÃ¶tigt:" + counter);
 		
 		if (activeCubes > counter) {
 			for (int i = counter; i < Math.min(activeCubes, MAX_CUBE_COUNT); i++) {
@@ -134,7 +134,7 @@ public class Editor3D implements IStreamEditorType {
 	@Override
 	public void createPartControl(Composite parent) {
 		DisplayMode DEFAULT_DISPLAY_MODE = DisplayModeSelector.getImplementation(OpenGLLayer.JOGL_SWT).getDesktopMode();
-		canvas = Canvas3DFactory.create(OpenGLLayer.JOGL_SWT, DEFAULT_DISPLAY_MODE, FullscreenMode.WINDOWED_UNDECORATED, true, FSAA.ON_8X, DisplayMode.getDefaultBPP(), parent);
+		canvas = Canvas3DFactory.create(OpenGLLayer.JOGL_SWT, DEFAULT_DISPLAY_MODE, FullscreenMode.WINDOWED_UNDECORATED, true, FSAA.OFF, DEFAULT_DISPLAY_MODE.getBPP(), parent);
 		canvas.setCentered();
 
 		env = new Xith3DEnvironment();

@@ -50,7 +50,7 @@ public class ObjectTrackingTransformationRuleProvider implements ITransformRuleP
 		rules.add(new TObjectTrackingProjectAORule());
 		rules.add(new TObjectTrackingPredictionProjectAORule());
 		rules.add(new TObjectTrackingPunctuationAORule());
-		return null;
+		return rules;
 	}
 
 }
