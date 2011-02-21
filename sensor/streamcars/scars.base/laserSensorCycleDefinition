@@ -1,256 +1,347 @@
-// Konstanten
-#DEFINE ip 192.168.0.42:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
-#DEFINE sensorName laserSensor // Quellenname
+#DEFINE bufferType      Punct
 
-// Quellendefinitionen
-#PARSER CQL
+
+#DEFINE brokerSourceName1   streamCarsBroker // QuellenName
+#DEFINE brokerScan1         streamCarsBroker.scan
+#DEFINE brokerListName1     streamCarsBroker.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+
+#DEFINE brokerSourceName2   streamCarsBroker2 // QuellenName
+#DEFINE brokerScan2         streamCarsBroker2.scan
+#DEFINE brokerListName2     streamCarsBroker2.scan:cars // Attributname der Liste der Autos in der Brokerquelle
+
+#DEFINE sensorSource    ACCESS(laserSensor) // Quellenoperator(!) des Sensors
+#DEFINE sensorScan      laserSensor.scan // Attributname der Liste der Autos in der Sensorquelle
+#DEFINE sensorListName  laserSensor.scan:cars // Attributname der Liste der Autos in der Sensorquelle
+
+#DEFINE assoScanned     laserSensor.scan:scannedObjects
+#DEFINE assoPedicted    laserSensor.scan:predictedObjects
+#DEFINE assoSourceName1 selectionSrc
+#DEFINE assoSource1     ASSOCIATION-SRC(selectionSrc, 0)
+#DEFINE assoSourceName2 selectionSrc2
+#DEFINE assoSource2     ASSOCIATION-SRC(selectionSrc2, 0)
+#DEFINE threshold       1000
+
+#DEFINE filterAlgo      KALMAN // Welcher Filterungsalgorithmus wird verwendet?
+
+#DEFINE bouncerVal      0.5
+#DEFINE tempEvaluationVal 1.0
+#DEFINE evaluationVal   0.5
+
+#PARSER PQLHack
 #TRANSCFG StreamCars
-#QUERY
-CREATE SENSOR ${sensorName} (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*1/100 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          ) 
-                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
-                                                ${sensorName}.scan:cars:car:posy*1/100 ,  
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:posz*1/100 , 
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:heading*1/100 , 
-                                                0.0 )
-                         )
-                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:velocity*1/100 )
-                         )
-                ATTRIBUTE(posx_np, FLOAT)
-                ATTRIBUTE(posy_np, FLOAT)
-                LIST( points, 
-                	RECORD( point, 
-                		ATTRIBUTE(posx, FLOAT)
-                		ATTRIBUTE(posy, FLOAT)
-                	)
-                )
-            )
-        )
+#CYCLICQUERY
+LOGICAL PLAN :
+ASSOCIATION-SEL(
+    ASSOCIATION-EXP-EVAL (
+        ASSOCIATION-EXP-GATE (
+            ASSOCIATION-GEN (     
+                 BUFFER( 
+                    ${sensorSource},
+                    ${bufferType} 
+                 ),
+                 PREDICTION(
+                    BUFFER( 
+                        ${sensorSource}, // Timestamp aus Sensor
+                        ${bufferType} 
+                    ),
+                    SET-PREDICTION-OR(
+                        BUFFER(
+                            BROKER(${brokerSourceName1}, // Brokerdaten 
+                                    QUEUE( // Zeitgeber f�r den Broker
+                                        BUFFER(
+                                           ${sensorSource},
+                                           ${bufferType} 
+                                        )
+                                    )
+                            ),
+                            ${bufferType} 
+                        ),
+                        ${brokerListName1},
+                        ${brokerListName1}:car:posx := ${brokerListName1}:car:posx +
+                            (cos(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan1}:timestamp)) * 0.001 ;
+                        ${brokerListName1}:car:posy := ${brokerListName1}:car:posy +
+                            (sin(${brokerListName1}:car:heading) * ${brokerListName1}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan1}:timestamp)) * 0.001 ;
+                        WHERE ${brokerListName1}:car:id >= 0 ;                        
+                    ),
+                    ${brokerListName1}
+                 ),
+                 ${sensorListName},
+                 ${brokerListName1}
+            ),
+            ${assoScanned},
+            ${assoPedicted},
+            'eif(
+	            SqrtValue(
+	                MatrixEntry(
+	                  MatrixMult(
+	                    MatrixMult(
+	                      MatrixTrans(
+	                        MatrixSub(	[${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+	                        			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+	                      ),
+	                      MatrixInv(
+	                    	 MatrixAdd( ${assoScanned}:car#COVARIANCE, 
+	                    			   ${assoPedicted}:car#COVARIANCE)
+	                      )
+	                    ),
+	                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+	                  			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+	                  ),
+	                0,0)
+	              )
+	            <${threshold}, 100, 0)'
+        ),
+        ${assoScanned},
+        ${assoPedicted},
+        'ASSOCIATION_CON_VAL - SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
     ),
-    laserSensor.scan:cars
-) FROM CHANNEL ${ip}
+    ${assoSourceName1},
+    ${assoScanned},
+    ${assoPedicted}
+);
 
-#QUERY
-CREATE BROKER streamCarsBroker (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*10/100 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          ) 
-                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
-                                                ${sensorName}.scan:cars:car:posy*10/100 ,  
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:posz*10/100 , 
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:heading*10/100 , 
-                                                0.0 )
-                         )
-                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:velocity*10/100 )
-                         )
-                ATTRIBUTE(posx_np, FLOAT)
-                ATTRIBUTE(posy_np, FLOAT)
-                LIST( points, 
-                	RECORD( point, 
-                		ATTRIBUTE(posx, FLOAT)
-                		ATTRIBUTE(posy, FLOAT)
-                	)
-                )
-            )
-        )
-    )
-) QUEUE (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*10/100 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          ) 
-                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
-                                                ${sensorName}.scan:cars:car:posy*10/100 ,  
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:posz*10/100 , 
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:heading*10/100 , 
-                                                0.0 )
-                         )
-                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:velocity*10/100 )
-                         )
-                ATTRIBUTE(posx_np, FLOAT)
-                ATTRIBUTE(posy_np, FLOAT)
-                LIST( points, 
-                	RECORD( point, 
-                		ATTRIBUTE(posx, FLOAT)
-                		ATTRIBUTE(posy, FLOAT)
-                	)
-                )
-            )
-        )
+BROKER( 
+    ${brokerSourceName1}, 
+    EVALUATE(
+        ASSOCIATION-SRC(
+            ${assoSourceName1},
+            2
+        ),
+        ${assoPedicted},
+        FILTER_EXP_COVARIANCE(
+            FILTER_EXP_EXTIMATE(
+                FILTER-EXP-GATE(
+                    ASSOCIATION-SRC(
+                        ${assoSourceName1},
+                        1
+                    ),
+                    ${assoScanned}, // scanned list path
+					${assoPedicted}, // predicted list path
+					'MatrixMult(
+						${assoPedicted}:car#COVARIANCE,
+						MatrixInv(
+							MatrixAdd(
+								${assoScanned}:car#COVARIANCE,
+								${assoPedicted}:car#COVARIANCE
+							) 
+						)
+					)',
+					${assoScanned}:car:posx,
+					${assoScanned}:car:posy,
+					${assoScanned}:car:posz,
+					${assoScanned}:car:heading,
+					${assoScanned}:car:velocity,
+					SEPARATOR,
+					${assoPedicted}:car:posx,
+					${assoPedicted}:car:posy,
+					${assoPedicted}:car:posz,
+					${assoPedicted}:car:heading,
+					${assoPedicted}:car:velocity
+                ),
+				${assoScanned}, // scanned list path
+				${assoPedicted}, // predicted list path
+				${assoPedicted}:car:posx := '${assoPedicted}:car:posx + ${assoPedicted}:car:posx#GAIN * (${assoScanned}:car:posx - ${assoPedicted}:car:posx)'; 
+				${assoPedicted}:car:posy := '${assoPedicted}:car:posy + ${assoPedicted}:car:posy#GAIN * (${assoScanned}:car:posy - ${assoPedicted}:car:posy)';
+				${assoPedicted}:car:posz := '${assoPedicted}:car:posz + ${assoPedicted}:car:posz#GAIN * (${assoScanned}:car:posz - ${assoPedicted}:car:posz)';
+				${assoPedicted}:car:heading := '${assoPedicted}:car:heading + ${assoPedicted}:car:heading#GAIN * (${assoScanned}:car:heading - ${assoPedicted}:car:heading)';
+				${assoPedicted}:car:velocity := '${assoPedicted}:car:velocity + ${assoPedicted}:car:velocity#GAIN * (${assoScanned}:car:velocity - ${assoPedicted}:car:velocity)';
+            ),
+			${assoScanned}, // scanned list path
+			${assoPedicted}, // predicted list path
+			'MatrixAdd(
+				MatrixMult(
+					MatrixMult( 
+						MatrixSub(IDENTITY_MATRIX, ${assoPedicted}:car#GAIN), 
+						${assoPedicted}:car#COVARIANCE 
+					),
+					MatrixTrans( 
+						MatrixSub( IDENTITY_MATRIX, ${assoPedicted}:car#GAIN )
+					)
+				),
+				MatrixMult( 
+					MatrixMult( ${assoPedicted}:car#GAIN, ${assoScanned}:car#COVARIANCE ),
+					MatrixTrans( ${assoPedicted}:car#GAIN )
+				)
+			)'
+        ),
+        ${assoPedicted},
+        TMP-DATA-BOUNCER(
+            BUFFER(
+                BROKER( ${brokerSourceName2}),
+                ${bufferType}
+            ),
+            ${brokerListName2},
+            ${bouncerVal},
+            LESS
+        ),
+        ${brokerListName2},
+        ${evaluationVal}
     )
 );
 
-#QUERY
-CREATE BROKER streamCarsBroker2 (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*1/100 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          ) 
-                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
-                                                ${sensorName}.scan:cars:car:posy*1/100 ,  
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:posz*1/100 , 
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:heading*1/100 , 
-                                                0.0 )
-                         )
-                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:velocity*1/100 )
-                         )
-                ATTRIBUTE(posx_np, FLOAT)
-                ATTRIBUTE(posy_np, FLOAT)
-                LIST( points, 
-                	RECORD( point, 
-                		ATTRIBUTE(posx, FLOAT)
-                		ATTRIBUTE(posy, FLOAT)
-                	)
-                )
-            )
-        )
+ASSOCIATION-SEL(
+    ASSOCIATION-EXP-EVAL (
+        ASSOCIATION-EXP-GATE (
+            ASSOCIATION-GEN (
+                BUFFER(
+                    ${assoSource1},
+                    ${bufferType}
+                ),
+                PREDICTION(
+                    BUFFER(
+                        ${assoSource1}, // Timestamp aus Sensor
+                        ${bufferType}
+                    ),
+                    SET-PREDICTION-OR(
+                        TMP-DATA-BOUNCER(
+                            BUFFER(
+                                BROKER(${brokerSourceName2}, // Brokerdaten 
+                                        QUEUE( // Zeitgeber f�r den Broker
+                                               ${assoSource1}
+                                        )
+                                ),
+                                ${bufferType} 
+                            ),
+                            ${brokerListName2},
+                            ${bouncerVal},
+                            GREATEREQUAL
+                        ),
+                        ${brokerListName2},
+                        ${brokerListName2}:car:posx := ${brokerListName2}:car:posx +
+                            (cos(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
+                        ${brokerListName2}:car:posy := ${brokerListName2}:car:posy +
+                            (sin(${brokerListName2}:car:heading) * ${brokerListName2}:car:velocity * 
+                            (${sensorScan}:timestamp - ${brokerScan2}:timestamp)) * 0.001;
+                        WHERE ${brokerListName2}:car:id >= 0 ; 
+                    ),
+                    ${brokerListName2}
+                ),
+                ${assoScanned},
+                ${brokerListName2}
+            ),
+            ${assoScanned},
+            ${assoPedicted},
+            'eif(SqrtValue(
+                MatrixEntry(
+                  MatrixMult(
+                    MatrixMult(
+                      MatrixTrans(
+                        MatrixSub(	[${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+                        			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+                      ),
+                      MatrixInv(
+                    	 MatrixAdd( ${assoScanned}:car#COVARIANCE, 
+                    			   ${assoPedicted}:car#COVARIANCE)
+                      )
+                    ),
+                  MatrixSub([${assoScanned}:car:posx;${assoScanned}:car:posy;${assoScanned}:car:posz], 
+                  			[${assoPedicted}:car:posx;${assoPedicted}:car:posy;${assoPedicted}:car:posz])
+                  ),
+                0,0)
+              )
+            <${threshold}, 100, 0)'
+        ),
+        ${assoScanned},
+        ${assoPedicted},
+        'ASSOCIATION_CON_VAL - SqrtValue(SquareValue(${assoScanned}:car:posx - ${assoPedicted}:car:posx) + SquareValue(${assoScanned}:car:posy - ${assoPedicted}:car:posy) + SquareValue(${assoScanned}:car:posz - ${assoPedicted}:car:posz))'
+    ),
+    ${assoSourceName2},
+    ${assoScanned},
+    ${assoPedicted}
+);
+
+BROKER( 
+    ${brokerSourceName2}, 
+    EVALUATE(
+        ASSOCIATION-SRC(
+            ${assoSourceName2},
+            2
+        ),
+        ${assoPedicted},
+        FILTER_EXP_COVARIANCE(
+            FILTER_EXP_EXTIMATE(
+                FILTER-EXP-GATE(
+                    ASSOCIATION-SRC(
+                        ${assoSourceName2},
+                        1
+                    ),
+                    ${assoScanned}, // scanned list path
+					${assoPedicted}, // predicted list path
+					'MatrixMult(
+						${assoPedicted}:car#COVARIANCE,
+						MatrixInv(
+							MatrixAdd(
+								${assoScanned}:car#COVARIANCE,
+								${assoPedicted}:car#COVARIANCE
+							) 
+						)
+					)',
+					${assoScanned}:car:posx,
+					${assoScanned}:car:posy,
+					${assoScanned}:car:posz,
+					${assoScanned}:car:heading,
+					${assoScanned}:car:velocity,
+					SEPARATOR,
+					${assoPedicted}:car:posx,
+					${assoPedicted}:car:posy,
+					${assoPedicted}:car:posz,
+					${assoPedicted}:car:heading,
+					${assoPedicted}:car:velocity
+                ),
+				${assoScanned}, // scanned list path
+				${assoPedicted}, // predicted list path
+				${assoPedicted}:car:posx := '${assoPedicted}:car:posx + ${assoPedicted}:car:posx#GAIN * (${assoScanned}:car:posx - ${assoPedicted}:car:posx)'; 
+				${assoPedicted}:car:posy := '${assoPedicted}:car:posy + ${assoPedicted}:car:posy#GAIN * (${assoScanned}:car:posy - ${assoPedicted}:car:posy)';
+				${assoPedicted}:car:posz := '${assoPedicted}:car:posz + ${assoPedicted}:car:posz#GAIN * (${assoScanned}:car:posz - ${assoPedicted}:car:posz)';
+				${assoPedicted}:car:heading := '${assoPedicted}:car:heading + ${assoPedicted}:car:heading#GAIN * (${assoScanned}:car:heading - ${assoPedicted}:car:heading)';
+				${assoPedicted}:car:velocity := '${assoPedicted}:car:velocity + ${assoPedicted}:car:velocity#GAIN * (${assoScanned}:car:velocity - ${assoPedicted}:car:velocity)';
+            ),
+			${assoScanned}, // scanned list path
+			${assoPedicted}, // predicted list path
+			'MatrixAdd(
+				MatrixMult(
+					MatrixMult( 
+						MatrixSub(IDENTITY_MATRIX, ${assoPedicted}:car#GAIN), 
+						${assoPedicted}:car#COVARIANCE 
+					),
+					MatrixTrans( 
+						MatrixSub( IDENTITY_MATRIX, ${assoPedicted}:car#GAIN )
+					)
+				),
+				MatrixMult( 
+					MatrixMult( ${assoPedicted}:car#GAIN, ${assoScanned}:car#COVARIANCE ),
+					MatrixTrans( ${assoPedicted}:car#GAIN )
+				)
+			)'
+        ),
+        ${assoPedicted},
+        ASSOCIATION-SRC(
+            ${assoSourceName2},
+            0
+        ),
+        ${assoScanned},
+        ${tempEvaluationVal}
     )
-) QUEUE (
-    RECORD( scan,
-        ATTRIBUTE(timestamp, STARTTIMESTAMP)
-        LIST( cars, 
-            RECORD( car,
-                ATTRIBUTE(type, INTEGER)
-                ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*10/100 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          ) 
-                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
-                                                ${sensorName}.scan:cars:car:posy*10/100 ,  
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:posz*10/100 , 
-                                                0.0 ,
-                                                0.0 )
-                          )
-                ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:heading*10/100 , 
-                                                0.0 )
-                         )
-                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                0.0 ,
-                                                ${sensorName}.scan:cars:car:velocity*10/100 )
-                         )
-                ATTRIBUTE(posx_np, FLOAT)
-                ATTRIBUTE(posy_np, FLOAT)
-                LIST( points, 
-                	RECORD( point, 
-                		ATTRIBUTE(posx, FLOAT)
-                		ATTRIBUTE(posy, FLOAT)
-                	)
-                )
-            )
-        )
-    )
+);
+
+JDVE-SINK(
+    TESTOP(
+        DISTANCE-OBJECT-SELECTOR(
+            BROKER(${brokerSourceName1}),
+            ${brokerListName1},
+            posx,
+            posy,
+            0,
+            50,
+            1.5,
+            1.5
+        ),
+        Bla
+    ),
+    192.168.0.42,
+    5005,
+    udp
 );

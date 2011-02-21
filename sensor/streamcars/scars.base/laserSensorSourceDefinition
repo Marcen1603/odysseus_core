@@ -1,5 +1,5 @@
 // Konstanten
-#DEFINE ip 192.168.0.42:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 l‰sst DummySource generieren
+#DEFINE ip 192.168.0.42:5001 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 l√§sst DummySource generieren
 #DEFINE sensorName laserSensor // Quellenname
 
 // Quellendefinitionen
@@ -13,35 +13,35 @@ CREATE SENSOR ${sensorName} (
             RECORD( car,
                 ATTRIBUTE(type, INTEGER)
                 ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*10/100 ,
+                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*1/100 ,
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 )
                           ) 
                 ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
-                                                ${sensorName}.scan:cars:car:posy*10/100 ,  
+                                                ${sensorName}.scan:cars:car:posy*1/100 ,  
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 )
                           )
                 ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
                                                 0.0 ,
-                                                ${sensorName}.scan:cars:car:posz*10/100 , 
+                                                ${sensorName}.scan:cars:car:posz*1/100 , 
                                                 0.0 ,
                                                 0.0 )
                           )
                 ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
                                                 0.0 ,
                                                 0.0 ,
-                                                ${sensorName}.scan:cars:car:heading*10/100 , 
+                                                ${sensorName}.scan:cars:car:heading*1/100 , 
                                                 0.0 )
                          )
                 ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 ,
-                                                ${sensorName}.scan:cars:car:velocity*10/100 )
+                                                ${sensorName}.scan:cars:car:velocity*1/100 )
                          )
                 ATTRIBUTE(posx_np, FLOAT)
                 ATTRIBUTE(posy_np, FLOAT)
@@ -164,35 +164,35 @@ CREATE BROKER streamCarsBroker2 (
             RECORD( car,
                 ATTRIBUTE(type, INTEGER)
                 ATTRIBUTE(id, INTEGER)
-                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*10/100 ,
+                ATTRIBUTE(posx, MV FLOAT       (${sensorName}.scan:cars:car:posx*1/100 ,
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 )
                           ) 
                 ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
-                                                ${sensorName}.scan:cars:car:posy*10/100 ,  
+                                                ${sensorName}.scan:cars:car:posy*1/100 ,  
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 )
                           )
                 ATTRIBUTE(posz, MV FLOAT      ( 0.0 , 
                                                 0.0 ,
-                                                ${sensorName}.scan:cars:car:posz*10/100 , 
+                                                ${sensorName}.scan:cars:car:posz*1/100 , 
                                                 0.0 ,
                                                 0.0 )
                           )
                 ATTRIBUTE(heading, MV FLOAT   ( 0.0 , 
                                                 0.0 ,
                                                 0.0 ,
-                                                ${sensorName}.scan:cars:car:heading*10/100 , 
+                                                ${sensorName}.scan:cars:car:heading*1/100 , 
                                                 0.0 )
                          )
                 ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
                                                 0.0 ,
                                                 0.0 ,
                                                 0.0 ,
-                                                ${sensorName}.scan:cars:car:velocity*10/100 )
+                                                ${sensorName}.scan:cars:car:velocity*1/100 )
                          )
                 ATTRIBUTE(posx_np, FLOAT)
                 ATTRIBUTE(posy_np, FLOAT)
