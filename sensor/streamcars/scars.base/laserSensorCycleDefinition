@@ -345,3 +345,22 @@ JDVE-SINK(
     5005,
     udp
 );
+
+JDVE-SINK(
+    TESTOP(
+        DISTANCE-OBJECT-SELECTOR(
+            BROKER(${brokerSourceName1}),
+            ${brokerListName1},
+            posx,
+            posy,
+            0,
+            50,
+            1.5,
+            1.5
+        ),
+        BlaBla
+    ),
+    192.168.0.43,
+    5006,
+    udp
+);

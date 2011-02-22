@@ -1,0 +1,4 @@
+#PARSER CQL
+#TRANSCFG StreamCars
+#QUERY
+SELECT * FROM odysseusObj;
