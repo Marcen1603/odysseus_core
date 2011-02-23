@@ -50,6 +50,7 @@ public class AggregateAO extends UnaryLogicalOp {
                 op.aggregations);
         groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
         outputSchema = op.outputSchema.clone();
+        dumpOnEveryObject = op.dumpOnEveryObject;
     }
 
     public void addAggregation(SDFAttribute attribute,
