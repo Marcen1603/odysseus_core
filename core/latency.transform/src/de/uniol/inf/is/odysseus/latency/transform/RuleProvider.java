@@ -25,7 +25,7 @@ public class RuleProvider implements ITransformRuleProvider {
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
-		rules.add(new TLatencyRule());
+		rules.add(new TJoinLatencyRule());
 		rules.add(new TLatencyCalculationRule());
 		return rules;
 	}

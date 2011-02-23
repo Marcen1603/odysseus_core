@@ -50,9 +50,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			SDFAttributeList outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
-			GroupingHelper<R> grHelper, Class<Q> metadataType) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations,
-				metadataType);
+			GroupingHelper<R> grHelper) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		setGroupingHelper(grHelper);
 		transferArea = new TITransferArea<R, R>(1);
 		transferArea.setSourcePo(this);

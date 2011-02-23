@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> {
+public class TJoinLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> {
 
 	@Override
 	public int getPriority() {

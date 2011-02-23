@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
@@ -32,18 +33,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>>
 		extends AggregatePO<Q, R, R> {
-	private Class<Q> metadataType;
 
-	public Class<Q> getMetadataType() {
-		return metadataType;
-	}
-
-	public void setMetadataType(Class<Q> metadataType) {
-		this.metadataType = metadataType;
-	}
+	protected IMetadataMergeFunction<Q> metadataMerge;
 
 	class _Point implements Comparable<_Point> {
-		public PointInTime p;
+		public PointInTime point;
 		private boolean isStartPoint;
 		PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg;
 
@@ -51,16 +45,17 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 				PointInTime p,
 				boolean isStartPoint,
 				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg) {
-			this.p = p;
+			this.point = p;
 			this.isStartPoint = isStartPoint;
 			this.element_agg = element_agg;
 		}
 
 		@Override
 		public int compareTo(_Point p2) {
-			int c = this.p.compareTo(p2.p);
+			int c = this.point.compareTo(p2.point);
 			if (c == 0) {
-				if (this.isStartPoint && !p2.isStartPoint) { // Endpunkte liegen immer vor
+				if (this.isStartPoint && !p2.isStartPoint) { // Endpunkte liegen
+																// immer vor
 					// Startpunkten
 					c = 1;
 				} else if (!this.isStartPoint && p2.isStartPoint) {
@@ -69,7 +64,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			}
 			return c;
 		}
-		
+
 		public boolean isStart() {
 			return isStartPoint;
 		}
@@ -77,12 +72,12 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		public boolean isEnd() {
 			return !isStartPoint;
 		}
-	
+
 		@Override
 		public int hashCode() {
 			final int PRIME = 31;
 			int result = 1;
-			result = PRIME * result + ((p == null) ? 0 : p.hashCode());
+			result = PRIME * result + ((point == null) ? 0 : point.hashCode());
 			result = PRIME * result + (isStartPoint ? 1231 : 1237);
 			return result;
 		}
@@ -97,10 +92,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			if (getClass() != obj.getClass())
 				return false;
 			final _Point other = (_Point) obj;
-			if (p == null) {
-				if (other.p != null)
+			if (point == null) {
+				if (other.point != null)
 					return false;
-			} else if (!p.equals(other.p))
+			} else if (!point.equals(other.point))
 				return false;
 			if (isStartPoint != other.isStartPoint)
 				return false;
@@ -113,25 +108,16 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 		@Override
 		public String toString() {
-			return (isStartPoint ? "s" : "e") + (newElement() ? "^" : "") + p;
+			return (isStartPoint ? "s" : "e") + (newElement() ? "^" : "")
+					+ point;
 		}
 
-
-	}
-
-	public AggregateTIPO(
-			SDFAttributeList inputSchema,
-			SDFAttributeList outputSchema,
-			List<SDFAttribute> groupingAttributes,
-			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
-			Class<Q> metadataType) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations);
-		setMetadataType(metadataType);
 	}
 
 	public AggregateTIPO(AggregateTIPO<Q, R> aggregatePO) {
 		super(aggregatePO);
-		this.metadataType = aggregatePO.metadataType;
+		this.metadataMerge = aggregatePO.metadataMerge.clone();
+		metadataMerge.init();
 	}
 
 	public AggregateTIPO(
@@ -140,6 +126,14 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
+	}
+
+	public IMetadataMergeFunction<Q> getMetadataMerge() {
+		return metadataMerge;
+	}
+
+	public void setMetadataMerge(IMetadataMergeFunction<Q> metadataMerge) {
+		this.metadataMerge = metadataMerge;
 	}
 
 	// Dient dazu, alle Element in der Sweep-Area mit dem neuen Element zu
@@ -162,7 +156,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		if (!qualifies.hasNext()) { // insert new partial aggregate
 			saInsert(sa, calcInit(e_probe), t_probe);
 		} else {
-			// Generate list of all points  
+			// Generate list of all points
 			SortedSet<_Point> pl = new TreeSet<_Point>();
 			// Add intersecting sweep area elements to this point list
 			// remove element from sweep area
@@ -188,42 +182,45 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> curr_agg = p1.element_agg;
 			while (iter.hasNext()) {
 				p2 = iter.next();
-				if (p1.p.before(p2.p)) { // Ansonsten w�re das ein leeres
-					// Intervall, das nicht betrachtet
-					// werden muss
-					// TODO ggflls. Metadaten aggregieren
-					Q newTI;
-					try {
-						newTI = getMetadataType().newInstance();
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-					newTI.setStart(p1.p);
-					newTI.setEnd(p2.p);
+				// Ansonsten waere das ein leeres
+				// Intervall, das nicht betrachtet
+				// werden muss
+				if (p1.point.before(p2.point)) {
 
 					// Two new elements are (NewStart-->NewEnd)
 					if (!p2.newElement()) {
 						curr_agg = p2.element_agg;
 					}
+
+					Q newTI = metadataMerge.mergeMetadata(
+							curr_agg.getMetadata(), t_probe);
+					// To avoid check
+					newTI.setEnd(PointInTime.getInfinityTime());
+					newTI.setStart(p1.point);
+					newTI.setEnd(p2.point);
+
 					if (p1.isStart() && p2.isStart()) { // Element vorher
-						if (!p1.newElement() && p2.newElement()) { // OldStart --> NewStart
+						if (!p1.newElement() && p2.newElement()) { // OldStart
+																	// -->
+																	// NewStart
 							// Create new element with shorter validity
 							saInsert(sa, curr_agg, newTI);
 						} else { // NewStart --> OldStart
 							saInsert(sa, calcInit(elem), newTI);
 						}
 						// In all other cases the elements would not intersect
-						
-					} else if (p1.isStart() && p2.isEnd()) { 
-						// Add new element combined from current value and new element
+
+					} else if (p1.isStart() && p2.isEnd()) {
+						// Add new element combined from current value and new
+						// element
 						// for new time interval
 						saInsert(sa, calcMerge(curr_agg, elem), newTI);
-						
-					} else if (p1.isEnd() && p2.isStart()) { 
-						// No intersection --> new element 
+
+					} else if (p1.isEnd() && p2.isStart()) {
+						// No intersection --> new element
 						saInsert(sa, calcInit(elem), newTI);
 					} else if (p1.isEnd() && p2.isEnd()) { // Element after
-						// OldEnd && NewEnd 
+						// OldEnd && NewEnd
 						if (!p1.newElement() && p2.newElement()) {
 							saInsert(sa, calcInit(elem), newTI);
 						} else { // New End && Old End
@@ -254,8 +251,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 				// Remove current element
 				sa.remove(element_agg);
 				// and split into two new elements
-				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = 
-					new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>(element_agg);
+				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>(
+						element_agg);
 				copy.setMetadata((Q) element_agg.getMetadata().clone());
 				element_agg.getMetadata().setEnd(splitPoint);
 				sa.insert(element_agg);
@@ -270,7 +267,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> elem,
 			Q t) {
-	//	System.out.println("SA Insert "+elem+" "+t);
+		// System.out.println("SA Insert "+elem+" "+t);
 		elem.setMetadata(t);
 		sa.insert(elem);
 		return elem;

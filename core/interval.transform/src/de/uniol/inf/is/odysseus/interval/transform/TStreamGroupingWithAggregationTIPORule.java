@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.interval.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -37,9 +39,10 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
 		StreamGroupingWithAggregationPO po = new StreamGroupingWithAggregationPO(aggregateAO.getInputSchema(), aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
-		po.setOutputSchema(aggregateAO.getOutputSchema()); // Notwendig??
+		po.setOutputSchema(aggregateAO.getOutputSchema()); 
 		po.setDumpOnEveryObject(aggregateAO.isDumpOnEveryObject());
-		po.setMetadataType(MetadataRegistry.getMetadataType(transformConfig.getMetaTypes()));
+		po.setMetadataMerge(new CombinedMergeFunction());
+		((CombinedMergeFunction) po.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(aggregateAO, po);
 		for (ILogicalOperator o : toUpdate) {
