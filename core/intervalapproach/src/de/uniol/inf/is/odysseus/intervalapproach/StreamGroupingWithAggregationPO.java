@@ -116,7 +116,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		getGroupingHelper().init();
-		logger.debug("Process open dumpOnEveryObject="+dumpOnEveryObject);
+		//logger.debug("Process open dumpOnEveryObject="+dumpOnEveryObject);
 	}
 
 	@Override
