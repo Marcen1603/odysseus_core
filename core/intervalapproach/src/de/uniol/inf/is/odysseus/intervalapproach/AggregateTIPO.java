@@ -194,10 +194,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 					Q newTI = metadataMerge.mergeMetadata(
 							curr_agg.getMetadata(), t_probe);
-					// To avoid check
-					newTI.setEnd(PointInTime.getInfinityTime());
-					newTI.setStart(p1.point);
-					newTI.setEnd(p2.point);
+					newTI.setStartAndEnd(p1.point, p2.point);
 
 					if (p1.isStart() && p2.isStart()) { // Element vorher
 						if (!p1.newElement() && p2.newElement()) { // OldStart

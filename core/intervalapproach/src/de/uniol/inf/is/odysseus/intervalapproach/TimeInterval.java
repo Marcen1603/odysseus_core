@@ -91,6 +91,11 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		}
 		this.end = end;
 	}
+	
+	@Override
+	public void setStartAndEnd(PointInTime start, PointInTime end) {
+		init(start, end);
+	}
 
 	public boolean isPoint() {
 		return start.equals(end);
