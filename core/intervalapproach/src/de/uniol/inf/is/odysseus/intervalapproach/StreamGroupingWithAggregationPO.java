@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
@@ -36,8 +39,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>>
 		extends AggregateTIPO<Q, R> {
 
-	// private DefaultTISweepArea<R> outputSweepArea = new
-	// DefaultTISweepArea<R>();
+	static final Logger logger = LoggerFactory.getLogger(StreamGroupingWithAggregationPO.class);
+	
 	final private ITransferArea<R, R> transferArea;
 	private final Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>>();
 	private boolean dumpOnEveryObject = false;
@@ -113,6 +116,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		getGroupingHelper().init();
+		logger.debug("Process open dumpOnEveryObject="+dumpOnEveryObject);
 	}
 
 	@Override
@@ -159,7 +163,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		updateSA(sa, s);
 	}
 
-	private void createOutput(PointInTime timestamp) {
+	private synchronized void createOutput(PointInTime timestamp) {
 		// optional: Build partial aggregates with validity end until timestamp
 		if (dumpOnEveryObject) {
 			for (DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
@@ -168,13 +172,21 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			}
 
 		}
+		
+		// Extract all Elements before current Time!
+		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+				.entrySet()) {
+			Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+					.getValue().extractElementsBefore(timestamp);
+			produceResults(results, entry.getKey());
+		}
 
 		// Find minimal start time stamp from elements intersecting time stamp
 		PointInTime border = timestamp;
 		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
 			Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> iter = entry
-					.getValue().peekElementsContaing(timestamp, true);
+					.getValue().peekElementsContaing(timestamp, false);
 			while (iter.hasNext()) {
 				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> v = iter
 						.next();
@@ -185,21 +197,12 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		}
 		transferArea.newHeartbeat(border, 0);
 
-		// Extract all Elements before current Time!
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()) {
-			Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-					.getValue().extractElementsBefore(timestamp);
-			produceResults(results, entry.getKey());
-		}
+//		System.out.println(this+"Found Bordertime "+border+" at timestamp "+timestamp);
+//		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+//				.entrySet()){
+//			System.out.println(entry.getKey()+" "+entry.getValue());
+//		}
 		
-		/*
-		System.out.println("Found Bordertime "+border+" at timestamp "+timestamp);
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()){
-			System.out.println(entry.getKey()+" "+entry.getValue());
-		}
-		*/
 
 
 	}
@@ -214,7 +217,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			R out = getGroupingHelper().createOutputElement(groupID, r);
 			out.setMetadata(e.getMetadata());
 			transferArea.transfer(out);
-		//	System.out.println("Move to tranfer area "+out);
+//			System.out.println(this+"Move to tranfer area "+out);
 		}
 	}
 
@@ -234,7 +237,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public synchronized void processPunctuation(PointInTime timestamp, int port) {
 		createOutput(timestamp);
 	}
 
