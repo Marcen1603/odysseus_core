@@ -51,7 +51,7 @@ public class StreamCarsHeadUp implements IStreamEditorType {
 		MVRelationalTuple<?> tuple = (MVRelationalTuple<?>) element;
 
 		TupleIndexPath tuplePath = carPath.toTupleIndexPath(tuple);
-
+		
 		if (tuplePath.getLength() <= 0) {
 			if (warning) {
 				Display.getDefault().asyncExec(new Runnable() {

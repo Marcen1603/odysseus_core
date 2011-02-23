@@ -250,6 +250,7 @@ public class DoubleEditor3D implements IStreamEditorType {
 		rl.begin(RunMode.RUN_IN_SEPARATE_THREAD);
 
 		Composite baseIcon = new Composite(base, SWT.BORDER);
+		baseIcon.setLayout(new GridLayout(1, true));
 		baseIcon.setLayoutData(data);
 
 		image = new Canvas(baseIcon, SWT.NONE);
