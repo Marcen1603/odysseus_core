@@ -51,6 +51,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSlidingTimeWindowTIPORule());
 		rules.add(new TUnboundedWindowRule());
 		
+		rules.add(new TTimeStampOrderValdiatorRule());
+		
 		return rules;
 	}
 
