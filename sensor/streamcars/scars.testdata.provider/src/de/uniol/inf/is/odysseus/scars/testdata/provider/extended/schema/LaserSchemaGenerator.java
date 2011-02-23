@@ -47,31 +47,30 @@ public class LaserSchemaGenerator implements ISchemaGenerator {
 		posx.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posx.setCovariance(Arrays.asList(new Double[] { mvValue,
 				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue }));
+				mvCorrelationValue}));
 
 		SDFAttribute posy = new SDFAttribute(sourceName, "posy");
 		posy.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posy.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
 				mvValue, mvCorrelationValue, mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue }));
+				mvCorrelationValue }));
 
 		SDFAttribute posz = new SDFAttribute(sourceName, "posz");
 		posz.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		posz.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
 				mvCorrelationValue, mvValue, mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue }));
+				mvCorrelationValue }));
 
 		SDFAttribute heading = new SDFAttribute(sourceName, "heading");
 		heading.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		heading.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue,
-				mvCorrelationValue, mvValue, mvCorrelationValue }));
+				mvCorrelationValue, mvCorrelationValue, mvValue, mvCorrelationValue }));
 
 		SDFAttribute velocity = new SDFAttribute(sourceName, "velocity");
 		velocity.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		velocity.setCovariance(Arrays.asList(new Double[] { mvCorrelationValue,
 				mvCorrelationValue, mvCorrelationValue, mvCorrelationValue,
-				mvCorrelationValue, mvCorrelationValue, mvValue }));
+				mvValue }));
 
 		SDFAttribute posx_np = new SDFAttribute(sourceName, "posx_np");
 		posx_np.setDatatype(SDFDatatypeFactory.getDatatype("Float"));
