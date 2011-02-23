@@ -75,7 +75,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 							+ start + "," + end + ")");
 		}
 		this.start = start;
-		setEnd(end);
+		this.end = end;
 	}
 
 	public boolean isEndInfinite() {
