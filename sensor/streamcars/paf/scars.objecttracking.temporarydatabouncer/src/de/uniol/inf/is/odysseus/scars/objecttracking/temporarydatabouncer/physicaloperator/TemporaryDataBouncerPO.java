@@ -80,6 +80,7 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IOb
 				val += cov[i][i];
 			}
 			if (this.operator.toUpperCase().equals(LESS)) {
+				//System.out.println("Bouncer Less: " + val);
 				if(val < this.threshold) {
 					transferCarListArrayList.add(car);
 				}
@@ -92,6 +93,7 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IOb
 					transferCarListArrayList.add(car);
 				}
 			} else if (this.operator.toUpperCase().equals(GREATER_EQUAL)) {
+				//System.out.println("Bouncer GREATER_EQUAL: " + val);
 				if(val >= this.threshold) {
 					transferCarListArrayList.add(car);
 				}

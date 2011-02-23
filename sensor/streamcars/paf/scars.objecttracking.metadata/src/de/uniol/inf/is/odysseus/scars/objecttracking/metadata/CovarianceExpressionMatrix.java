@@ -94,7 +94,7 @@ public class CovarianceExpressionMatrix {
 				String expressionString = this.expressionMatrix[i][j]
 						.getExpression();
 				if (expressionValueCache.containsKey(expressionString)) {
-					covarianceMatrix[i][j] = expressionValueCache
+						covarianceMatrix[i][j] = expressionValueCache
 							.get(expressionString);
 				} else {
 					this.expressionMatrix[i][j].replaceVaryingAttributeIndex(
@@ -106,6 +106,9 @@ public class CovarianceExpressionMatrix {
 					}
 					expressionValueCache.put(expressionString,
 							covarianceMatrix[i][j]);
+				}
+				if(covarianceMatrix[i][j] < 0) {
+					covarianceMatrix[i][j] = covarianceMatrix[i][j] * -1;
 				}
 			}
 		}

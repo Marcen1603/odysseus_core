@@ -162,7 +162,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
-//				System.out.println("Cov:" + val);
+				//System.out.println("EvalPO:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -176,7 +176,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
-//				System.out.println("Cov:" + val);
+				//System.out.println("EvalPO:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}
@@ -190,7 +190,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 				for (int i = 0; i < cov.length; i++) {
 					val += cov[i][i];
 				}
-//				System.out.println("Cov:" + val);
+				//System.out.println("EvalPO:" + val);
 				if (val < this.threshold) {
 					combinedListChildTmp.add(tuple);
 				}

@@ -43,6 +43,7 @@ public class SqrtValue extends AbstractFunction<Object>{
 	@Override
 	public Object getValue() {
 		double d = Math.sqrt((Double)getInputValue(0));
+		//System.out.println("Gating: " + d);
 		return d;
 	}
 

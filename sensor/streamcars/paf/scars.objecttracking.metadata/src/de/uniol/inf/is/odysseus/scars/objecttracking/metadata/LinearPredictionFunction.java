@@ -154,6 +154,9 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 				}
 				expressions[index].evaluate();
 				tmpCov2[row][covCol] = expressions[index].getTargetDoubleValue();
+				if(tmpCov2[row][covCol] < 0) {
+					tmpCov2[row][covCol] = tmpCov2[row][covCol] * -1; 
+				}
 //				System.out.println("... * H^T...result: " + "[" + row + "][" + covCol + "] = " +  tmpCov2[row][covCol]);
 			}
 		}
