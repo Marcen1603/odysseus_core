@@ -17,7 +17,8 @@ package de.uniol.inf.is.odysseus.scars.rcp.view3d.editors;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -123,11 +124,19 @@ public class StreamCarsHeadUp implements IStreamEditorType {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new RowLayout());
 		
-		label = new Label(parent, SWT.NONE);
-		labelText = new Label(parent, SWT.NONE);
-
+		Composite base = new Composite(parent, SWT.NONE);
+		base.setLayout(new GridLayout(1, true));
+		
+		GridData data = new GridData();
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_CENTER;
+		
+		label = new Label(base, SWT.NONE);
+		label.setLayoutData(data);
+		labelText = new Label(base, SWT.NONE);
+		labelText.setLayoutData(data);
+		
 		warn = ImageDescriptor.createFromURL(
 				Activator.getDefault().getBundle()
 						.getResource("icons/warn.png")).createImage();
@@ -137,8 +146,6 @@ public class StreamCarsHeadUp implements IStreamEditorType {
 				.createImage();
 
 		label.setImage(ok);
-
-		parent.layout(true, true);
 	}
 
 	@Override

@@ -13,6 +13,11 @@
             id="de.uniol.inf.is.odysseus.scars.rcp.view3d.StreamCarsHeadUp"
             label="StreamCars Warning">
       </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.scars.rcp.view3d.editors.DoubleEditor3D"
+            id="de.uniol.inf.is.odysseus.scars.rcp.view3d.StreamCarsHeadUp3D"
+            label="StreamCars Warning 3D">
+      </editor>
    </extension>
 
 </plugin>
