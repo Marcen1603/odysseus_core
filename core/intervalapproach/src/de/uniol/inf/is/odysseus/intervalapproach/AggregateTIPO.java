@@ -192,11 +192,11 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						curr_agg = p2.element_agg;
 					}
 
-					Q newTI = metadataMerge.mergeMetadata(
-							curr_agg.getMetadata(), t_probe);
-					newTI.setStartAndEnd(p1.point, p2.point);
 
 					if (p1.isStart() && p2.isStart()) { // Element vorher
+						Q newTI = curr_agg.getMetadata();
+						newTI.setStartAndEnd(p1.point, p2.point);
+						
 						if (!p1.newElement() && p2.newElement()) { // OldStart
 																	// -->
 																	// NewStart
@@ -211,16 +211,25 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						// Add new element combined from current value and new
 						// element
 						// for new time interval
-						saInsert(sa, calcMerge(curr_agg, elem), newTI);
+							Q newTI = metadataMerge.mergeMetadata(
+									curr_agg.getMetadata(), elem.getMetadata());
+							newTI.setStartAndEnd(p1.point, p2.point);
+							saInsert(sa, calcMerge(curr_agg, elem), newTI);
 
 					} else if (p1.isEnd() && p2.isStart()) {
 						// No intersection --> new element
+						Q newTI = elem.getMetadata();
+						newTI.setStartAndEnd(p1.point, p2.point);
 						saInsert(sa, calcInit(elem), newTI);
 					} else if (p1.isEnd() && p2.isEnd()) { // Element after
 						// OldEnd && NewEnd
 						if (!p1.newElement() && p2.newElement()) {
+							Q newTI = elem.getMetadata();
+							newTI.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, calcInit(elem), newTI);
 						} else { // New End && Old End
+							Q newTI = curr_agg.getMetadata();
+							newTI.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, curr_agg, newTI);
 						}
 					}
