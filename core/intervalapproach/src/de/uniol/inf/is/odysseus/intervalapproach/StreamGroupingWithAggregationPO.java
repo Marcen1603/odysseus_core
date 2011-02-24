@@ -43,7 +43,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	
 	final private ITransferArea<R, R> transferArea;
 	private final Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>>();
-	private boolean dumpOnEveryObject = false;
+	private int dumpAtValueCount = -1;
+	private long createOutputCounter = 0;
 
 	public StreamGroupingWithAggregationPO(
 			SDFAttributeList inputSchema,
@@ -63,8 +64,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		initAggFunctions();
 	}
 
-	public void setDumpOnEveryObject(boolean dumpOnEveryObject) {
-		this.dumpOnEveryObject = dumpOnEveryObject;
+	public void setDumpAtValueCount(int dumpAtValueCount) {
+		this.dumpAtValueCount = dumpAtValueCount;
 	}
 
 	public StreamGroupingWithAggregationPO(
@@ -164,7 +165,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	private synchronized void createOutput(PointInTime timestamp) {
 		// optional: Build partial aggregates with validity end until timestamp
-		if (dumpOnEveryObject) {
+		createOutputCounter++;
+		if (createOutputCounter >= dumpAtValueCount) {
+			createOutputCounter = 0;
 			for (DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
 					.values()) {
 				updateSA(sa, timestamp);

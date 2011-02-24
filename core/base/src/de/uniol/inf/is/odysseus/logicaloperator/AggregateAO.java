@@ -35,7 +35,7 @@ public class AggregateAO extends UnaryLogicalOp {
 
     private SDFAttributeList outputSchema = null;
     
-    private boolean dumpOnEveryObject = false;
+    private int dumpAtValueCount = -1;
     
     public AggregateAO() {
         super();
@@ -50,7 +50,7 @@ public class AggregateAO extends UnaryLogicalOp {
                 op.aggregations);
         groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
         outputSchema = op.outputSchema.clone();
-        dumpOnEveryObject = op.dumpOnEveryObject;
+        dumpAtValueCount = op.dumpAtValueCount;
     }
 
     public void addAggregation(SDFAttribute attribute,
@@ -123,12 +123,12 @@ public class AggregateAO extends UnaryLogicalOp {
         return outputSchema;
     }
 
-    public void setDumpOnEveryObject(boolean dumpOnEveryObject) {
-		this.dumpOnEveryObject = dumpOnEveryObject;
+    public void setDumpAtValueCount(int dumpAtValueCount) {
+		this.dumpAtValueCount = dumpAtValueCount;
 	}
     
-    public boolean isDumpOnEveryObject() {
-		return dumpOnEveryObject;
+    public int getDumpAtValueCount() {
+		return dumpAtValueCount;
 	}
 
     

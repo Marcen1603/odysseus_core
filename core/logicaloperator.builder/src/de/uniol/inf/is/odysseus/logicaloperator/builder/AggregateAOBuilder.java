@@ -36,12 +36,12 @@ public class AggregateAOBuilder extends AbstractOperatorBuilder {
 			"AGGREGATIONS", REQUIREMENT.MANDATORY, new AggregateItemParameter(
 					"aggregation entry", REQUIREMENT.MANDATORY));
 	
-	private final BooleanParameter dumpOnEveryValue = new BooleanParameter(
-			"DumpOnEveryValue", REQUIREMENT.OPTIONAL);	
+	private final IntegerParameter dumpAtValueCount = new IntegerParameter(
+			"DumpAtValueCount", REQUIREMENT.OPTIONAL);	
 
 	public AggregateAOBuilder() {
 		super(1, 1);
-		setParameters(groupBy, aggregations, dumpOnEveryValue);
+		setParameters(groupBy, aggregations, dumpAtValueCount);
 	}
 
 	@Override
@@ -59,8 +59,8 @@ public class AggregateAOBuilder extends AbstractOperatorBuilder {
 					item.outAttribute);
 		}
 		
-		if (dumpOnEveryValue.hasValue()){
-			ao.setDumpOnEveryObject(dumpOnEveryValue.getValue());
+		if (dumpAtValueCount.hasValue()){
+			ao.setDumpAtValueCount(dumpAtValueCount.getValue());
 		}
 
 		return ao;

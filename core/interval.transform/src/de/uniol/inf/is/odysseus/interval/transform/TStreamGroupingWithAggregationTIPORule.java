@@ -40,7 +40,7 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 		StreamGroupingWithAggregationPO po = new StreamGroupingWithAggregationPO(aggregateAO.getInputSchema(), aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
 		po.setOutputSchema(aggregateAO.getOutputSchema()); 
-		po.setDumpOnEveryObject(aggregateAO.isDumpOnEveryObject());
+		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
 		po.setMetadataMerge(new CombinedMergeFunction());
 		// ACHTUNG: Die Zeit-Metadaten werden manuell in der Aggregation gesetzt!!
 		//((CombinedMergeFunction) po.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
