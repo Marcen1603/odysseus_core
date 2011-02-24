@@ -166,7 +166,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private synchronized void createOutput(PointInTime timestamp) {
 		// optional: Build partial aggregates with validity end until timestamp
 		createOutputCounter++;
-		if (createOutputCounter >= dumpAtValueCount) {
+		if (dumpAtValueCount > 0 && createOutputCounter >= dumpAtValueCount) {
 			createOutputCounter = 0;
 			for (DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
 					.values()) {
