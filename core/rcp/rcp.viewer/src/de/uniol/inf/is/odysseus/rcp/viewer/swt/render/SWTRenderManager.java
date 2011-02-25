@@ -32,8 +32,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,13 +74,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 
 	private boolean mouseDragButtonPressed = false;
 
-	private int width;
-	private int height;
-
 	private Rectangle selectRect;
-
-	// private int updateInterval = 1000; // in ms
-	// private Thread updaterThread;
 
 	private SWTSymbolRenderer<C> renderer;
 	private IGraphView<C> graphView;
@@ -103,24 +95,6 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 
 		nodeSelector.addSelectListener(this);
 		highlightSelector.addSelectListener(this);
-
-		canvas.addListener(SWT.Resize, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-
-				final Rectangle rect = canvas.getClientArea();
-
-				if (getDisplayedGraph() != null) {
-					// Graphposition neu ausrichten
-					final Vector newPos = shift.add((rect.width - width) / 2, (rect.height - height) / 2);
-					setGraphOffset(newPos);
-				}
-
-				refreshView();
-			}
-
-		});
 
 		canvas.addKeyListener(new KeyListener() {
 
