@@ -40,7 +40,7 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
-		MenuManager manager = new MenuManager("Show Stream");
+		MenuManager manager = new MenuManager("Stream");
 		
 		for( StreamExtensionDefinition def : definitions ) {
 			CommandContributionItemParameter p = new CommandContributionItemParameter(serviceLocator, "", OdysseusRCPViewerPlugIn.SHOW_STREAM_COMMAND_ID, SWT.PUSH);

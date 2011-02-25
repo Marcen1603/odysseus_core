@@ -29,6 +29,18 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor"
             name="Call Active Graph Editor">
       </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
+            name="Break Operator">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
+            name="Step Operator">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
+            name="Resume Operator">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -75,6 +87,33 @@
             </or>
          </enabledWhen>
       </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.BreakOperatorCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="isNodeView">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.StepOperatorCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="isNodeView">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.ResumeOperatorCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="isNodeView">
+            </reference>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -102,6 +141,25 @@
                name="additions"
                visible="false">
          </separator>
+         <menu
+               id="operator"
+               label="Operator">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
+                  label="Break"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
+                  label="Step"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
+                  label="Resume"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             allPopups="false"
