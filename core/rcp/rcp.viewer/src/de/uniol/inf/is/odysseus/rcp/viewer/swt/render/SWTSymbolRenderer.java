@@ -41,10 +41,12 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 
 	private GC gc;
 	private SymbolElementContainer<C> selectionSymbol = new SymbolElementContainer<C>();
+	private SymbolElementContainer<C> highlightSymbol = new SymbolElementContainer<C>();
 	
 	
 	public SWTSymbolRenderer() {
 		selectionSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_RED )) );
+		highlightSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_BLUE )) );
 		logger.info( "SWTSymbolRenderer created" );
 	}
 	
@@ -52,18 +54,23 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 		this.gc = gc;
 	}
 	
-	public void render( IGraphView< C > graph, Collection< ? extends INodeView< C >> selectedNodes, float zoomFactor, RenderRange renderRange, Vector shift ) {
+	public void render( IGraphView< C > graph, Collection<? extends INodeView<C>> highlightedNodes, Collection< ? extends INodeView< C >> selectedNodes, float zoomFactor, RenderRange renderRange, Vector shift ) {
 		if( graph == null )
 			return;
 				
 		// Auswahl rendern
 		
 		for( INodeView<C> node : graph.getViewedNodes() ) {
-			if( contains( selectedNodes, node )) {
+			if( selectedNodes.contains(node) ) {
 				final Vector pos = node.getPosition().add( shift ).mul( zoomFactor );
 				final int height = (int)(node.getHeight() * zoomFactor);
 				final int width = (int)(node.getWidth() * zoomFactor);
 				renderSymbol( selectionSymbol,  pos, width, height, zoomFactor );
+			} else if( highlightedNodes.contains(node)) {
+				final Vector pos = node.getPosition().add( shift ).mul( zoomFactor );
+				final int height = (int)(node.getHeight() * zoomFactor);
+				final int width = (int)(node.getWidth() * zoomFactor);
+				renderSymbol( highlightSymbol,  pos, width, height, zoomFactor );
 			}
 		}
 		
@@ -121,17 +128,6 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 			
 			
 		}
-	}
-	
-	private boolean contains( Collection<? extends INodeView<C>> nodes, INodeView<C> node ) {
-		if( nodes == null )
-			return false;
-		
-		for( INodeView<C> n : nodes ) {
-			if( n == node )
-				return true;
-		}
-		return false;
 	}
 	
 	private void renderSymbol( SymbolElementContainer<C> symbol, Vector pos, int width, int height, float zoomFactor ) {

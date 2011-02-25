@@ -42,7 +42,6 @@ public class GraphSelector<C> extends DefaultSelector<INodeView<C>> {
 	@SuppressWarnings("unchecked")
 	private <T extends INodeView<C>> boolean selectPath( Collection<T> path, T start, T end ) {
 		
-		
 		if( start == end ) {
 			path.add( start );
 			return true;
