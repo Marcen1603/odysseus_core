@@ -201,7 +201,8 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 		return null;
 	}
 	
-	private Collection<INodeView<C>> getNodesInRect( Rectangle rect ) {
+	private Collection<INodeView<C>> getNodesInRect( Rectangle rect1 ) {
+		Rectangle rect = new Rectangle(rect1.x, rect1.y, rect1.width, rect1.height);
 		Collection<INodeView<C>> nodes = new ArrayList<INodeView<C>>();
 		if (rect != null && Math.abs(rect.width) > MIN_SELECTRECT && Math.abs(rect.height) > MIN_SELECTRECT) {
 
