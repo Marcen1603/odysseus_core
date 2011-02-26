@@ -49,6 +49,7 @@ public class Benchmark {
 	public Benchmark() {
 		super();
 		this.results = new ArrayList<BenchmarkResult>();
+		this.metadata = new BenchmarkMetadata();
 	}
 
 	public Benchmark(BenchmarkParam param) {

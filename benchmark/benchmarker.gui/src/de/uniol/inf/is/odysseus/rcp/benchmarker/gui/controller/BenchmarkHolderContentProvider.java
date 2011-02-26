@@ -80,9 +80,9 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof Benchmark) {
-			((Benchmark) element).getParentGroup();
-		} else 
+//		if (element instanceof Benchmark) {
+//			return ((Benchmark) element).getParentGroup();
+//		} else 
 		if (element instanceof BenchmarkGroup) {
 			return BenchmarkHolder.INSTANCE.getBenchmarkGroups();
 		}

@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.BenchmarkHolderCo
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.BenchmarkHolderLabelProvider;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.BenchmarkHolderSelectionListener;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
 
 /**
@@ -61,5 +62,9 @@ public class ProjectView extends ViewPart {
 	
 	public void refresh(Benchmark benchmark) {
 		treeViewer.refresh(benchmark, true);
+	}
+	
+	public void refresh(BenchmarkGroup group){
+		treeViewer.refresh(group, true);
 	}
 }

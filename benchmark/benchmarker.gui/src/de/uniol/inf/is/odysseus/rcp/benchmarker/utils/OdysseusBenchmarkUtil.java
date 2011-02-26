@@ -60,8 +60,6 @@ public class OdysseusBenchmarkUtil {
 				this.param = s.getParam();
 				// oder ob BenchmarkRun alle erfoderlichen Einstellungen hat
 				if (param.isRunnable()) {
-					System.out.println("startrun, forschleife");
-
 					ServiceTracker t = new ServiceTracker(ctx, IBenchmark.class.getName(), null);
 					t.open();
 					int wait = 100;
@@ -79,30 +77,19 @@ public class OdysseusBenchmarkUtil {
 					Thread.sleep(waitConfig);
 
 					configureBenchmark(benchmark, s);
-					// TODO Result-Output festlegen
-					// Collection<IBenchmarkResult<Object>> results =
-					// benchmark.runBenchmark();
-					// String filename = DEFAULT_OUT_FILE;
-					// if (arguments.hasParameter(OUT)) {
-					// filename = arguments.get(OUT);
-					// }
-					
 					final String RELATIVE_FOLDER = "benchmarks";
 					String folderName = StringUtils.nameToFoldername(benchmarkGroup.getName());
 					folderName = RELATIVE_FOLDER + File.separator + folderName + File.separator + s.getId();
 					
-					
-
-					System.out.println("hmmm");
 					try {
 						System.out.println("after setParameter s, als nächsten forschleife");
 						this.param = s.getParam();
-						System.out.println("hm2");
 						for (int i = 0; i < Integer.parseInt(param.getNumberOfRuns()); i++) {
-							System.out.println("hm3");
 							Collection<IBenchmarkResult<Object>> results = benchmark.runBenchmark();
 							String filename = folderName + File.separator + "result"+(i+1)+".xml";//"result" + param.getName() + (i+1) + ".xml";
 
+							//TODO: TreeViewer refreshen
+							
 							Serializer serializer = new Persister();
 							File file = new File(filename);
 
@@ -116,6 +103,7 @@ public class OdysseusBenchmarkUtil {
 								serializer.write(benchmark.getMemUsageStatistics(), new File(memFile));
 							}
 							System.out.println("Benchmarkrun erfolgreich");
+							s.getMetadata().getMetadataInformations();
 						}
 					} catch (BenchmarkException e) {
 						e.printStackTrace();

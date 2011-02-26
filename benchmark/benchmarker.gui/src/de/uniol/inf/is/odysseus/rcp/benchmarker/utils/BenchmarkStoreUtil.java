@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 
 public class BenchmarkStoreUtil {
 
-	private static final String RELATIVE_FOLDER = "benchmarks";
+	private static final String RELATIVE_FOLDER = "Benchmarks";
 //	private static final String BENCHMARK_FILENAME_PREFIX = "benchmark_";
 
 	/*
@@ -57,6 +57,8 @@ public class BenchmarkStoreUtil {
 		return folderName;
 	}
 
+	
+	//TODO: Metadaten speichern!!!
 	private static void storeBenchmarkInternal(String folderName, Benchmark benchmark) {
 		FileOutputStream fos = null;
 		try {
@@ -123,24 +125,45 @@ public class BenchmarkStoreUtil {
 		Benchmark benchmark = null;
 		for (File benchmarkFile : benchmarkFiles) {
 			if ("param.xml".equals(benchmarkFile.getName())) {
-				benchmark = loadBenchmark(benchmarkFile);
+				benchmark = loadBenchmarkParam(benchmarkFile);
 //			} else if("result1.xml".equals(benchmarkFile.getName())){
 //				benchmark = loadBenchmark(benchmarkFile);
 			}
 			// TODO: Lade Results
 		
-			// TODO: Lade Metadaten
+			else if("metadata.xml".equals(benchmarkFile.getName())) {
+				benchmark = loadBenchmarkMetadata(benchmarkFile); //TODO: ist das so korrekt??
+			}
 		}
 		benchmark.setParentGroup(group);
 		group.addBenchmark(benchmark);
 	}
 
-	private static Benchmark loadBenchmark(File benchmarkParamFile) {
+	private static Benchmark loadBenchmarkParam(File benchmarkParamFile) {
 
 		FileInputStream fis = null;
 		try {
 			if (benchmarkParamFile.exists()) {
 				fis = new FileInputStream(benchmarkParamFile);
+
+				XMLDecoder decoder = new XMLDecoder(fis);
+				return (Benchmark) decoder.readObject();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(fis);
+		}
+		return null;
+	}
+	
+	//????? SO RICHTIG????
+	private static Benchmark loadBenchmarkMetadata(File benchmarkMetadataFile) {
+
+		FileInputStream fis = null;
+		try {
+			if (benchmarkMetadataFile.exists()) {
+				fis = new FileInputStream(benchmarkMetadataFile);
 
 				XMLDecoder decoder = new XMLDecoder(fis);
 				return (Benchmark) decoder.readObject();

@@ -3,12 +3,7 @@
  <plugin>
  <extension id="Commands" name="Commands" point="org.eclipse.ui.commands">
   <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.ExitHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.exit" name="Exit" /> 
-  <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenBenchmarkHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.commandOpenBenchmarkeditor" name="Open Benchmarkeditor" /> 
-  <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenSearchHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.commandOpenSearchEditor" name="Search" />
-  <command
-        defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.ShowWizardHandler"
-        id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.showWizard"
-        name="New Benchmark">
+  <command defaultHandler="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.ShowWizardHandler" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.showWizard" name="New Benchmark">
   </command> 
   </extension>
  <extension id="application" point="org.eclipse.core.runtime.applications">
@@ -21,30 +16,21 @@
   </extension>
  <extension point="org.eclipse.ui.views">
   <view class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ProjectView" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.projectView" name="Navigator" restorable="true" /> 
-  <view
-        allowMultiple="true"
-        class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ParameterView"
-        id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.parameterView"
-        name="Parameter-Settings">
-  </view> 
   </extension>
  <extension point="org.eclipse.ui.perspectiveExtensions">
  <perspectiveExtension targetID="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.perspective">
   <view closeable="false" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.projectView" minimized="false" moveable="true" ratio="0.3" relationship="left" relative="org.eclipse.ui.editorss" showTitle="true" standalone="false" visible="true" /> 
-  <view
-        id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.parameterView"
-        minimized="false"
-        relationship="stack"
-        relative="org.eclipse.ui.editorss"
-        visible="false">
-  </view> 
+ <!-- <view id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.parameterView" minimized="false" relationship="stack" relative="org.eclipse.ui.editorss" visible="false"> </view> --> 
   </perspectiveExtension>
   </extension>
  <extension point="org.eclipse.ui.menus">
  <menuContribution allPopups="false" locationURI="menu:org.eclipse.ui.main.menu">
  <menu id="file" label="File">
-  <command commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.commandOpenBenchmarkeditor" label="New Benchmark File" style="push" /> 
-  <command commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.commandOpenSearchEditor" label="Search" style="push" />
+  <command
+        commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.showWizard"
+        label="New Benchmark"
+        style="push">
+  </command>
   <separator
         name="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.separator2">
   </separator>
@@ -72,18 +58,12 @@
         name="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.separator1"
         visible="true">
   </separator>
-  <command commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.exit" label="Exit" style="push" />
-  <command
-        commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.showWizard"
-        label="New Benchmark"
-        style="push">
-  </command> 
+  <command commandId="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.exit" label="Exit" style="push" /> 
   </menu>
   </menuContribution>
   </extension>
  <extension point="org.eclipse.ui.editors">
   <editor class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.BenchmarkEditorPart" default="false" extensions="bmk" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorBenchmark" name="Benchmark Editor" /> 
-  <editor class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.SearchEditorPart" default="false" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorSearch" name="SearchEditor" /> 
   </extension>
   <extension point="org.eclipse.ui.activities">
   <activity description="Disable plug-in contributions1" id="rcp_core.activity1" name="DisableIDEContribs1" />

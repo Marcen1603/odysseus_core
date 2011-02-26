@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils;
 
 public class BenchmarkWizardPage extends WizardPage {
 	private Composite container;
@@ -46,7 +47,8 @@ public class BenchmarkWizardPage extends WizardPage {
 
 		dropDown = new Combo(container, SWT.DROP_DOWN | SWT.BORDER);
 		for (BenchmarkGroup benchmarkGroup : directoryList) {
-			dropDown.setText(benchmarkGroup.toString());
+			dropDown.add(benchmarkGroup.getName());
+			System.out.println(benchmarkGroup);
 		}
 
 		// TODO sonderzeichen verbieten!!! Weil Ordner ist ;)
@@ -63,6 +65,21 @@ public class BenchmarkWizardPage extends WizardPage {
 			}
 		});
 
+		dropDown.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (StringUtils.isNotBlank(dropDown.getText())) {
+					setPageComplete(true);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		dropDown.setLayoutData(gridData);
 		// Required to avoid an error in the system

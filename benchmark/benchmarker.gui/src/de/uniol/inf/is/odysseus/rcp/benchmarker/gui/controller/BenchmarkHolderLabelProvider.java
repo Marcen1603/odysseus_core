@@ -42,7 +42,7 @@ public class BenchmarkHolderLabelProvider extends LabelProvider {
 				return "";
 			} else if (element instanceof BenchmarkGroup) {
 				return ((BenchmarkGroup) element).getName(); // TODO nochmal drüber gucken!!!
-			} else if (listOfElements.get(0) instanceof Benchmark) {
+		} else if (listOfElements.get(0) instanceof Benchmark) {
 				return "Benchmark";								// TODO wird angezeigt!
 			} else if (listOfElements.get(0) instanceof BenchmarkResult) {
 				return "Results";

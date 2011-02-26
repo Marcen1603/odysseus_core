@@ -46,7 +46,7 @@ public class BenchmarkWizard extends Wizard {
 
 		benchmark = new Benchmark(new BenchmarkParam());
 
-	//	BenchmarkGroup benchmarkGroup;
+		// BenchmarkGroup benchmarkGroup;
 		BenchmarkGroup benchmarkGroup = null;
 		for (BenchmarkGroup group : BenchmarkHolder.INSTANCE.getBenchmarkGroups()) {
 			if (pathname.equals(group.getName())) {
@@ -55,23 +55,14 @@ public class BenchmarkWizard extends Wizard {
 				break;
 			}
 		}
-		
-		if(benchmarkGroup == null){
+
+		if (benchmarkGroup == null) {
 			benchmarkGroup = new BenchmarkGroup(pathname);
 			benchmark.setParentGroup(benchmarkGroup);
 			benchmark.getParam().setId(benchmarkGroup.getNextId());
-		} else{
+		} else {
 			benchmark.getParam().setId(benchmark.getParentGroup().getNextId());
 		}
-
-//		if (groups.contains(new BenchmarkGroup(pathname))) {
-//			benchmark.setParentGroup(getBenchmarkGroup(pathname));
-//			benchmark.getParam().setId(benchmark.getParentGroup().getNextId());
-//		} else {
-//			benchmarkGroup = new BenchmarkGroup(pathname);
-//			benchmark.setParentGroup(benchmarkGroup);
-//			benchmark.getParam().setId(benchmarkGroup.getNextId());
-//		}
 
 		benchmark.getParentGroup().addBenchmark(benchmark);
 
@@ -80,25 +71,23 @@ public class BenchmarkWizard extends Wizard {
 		// Gruppe!
 		// Holt die aktuelle View von event
 
-		// openBenchmark(HandlerUtil.getActiveWorkbenchWindow(event).getActivePage(),
-		// new BenchmarkParam(
-		// BenchmarkIdHolder.INSTANCE.generateNextId()));
-
 		openBenchmark(getPage(), benchmark); // new
-																									// BenchmarkParam(benchmarkGroup.getNextId());//new
-																									// Benchmark(benchmarkGroup.getNextId()));
+		refreshNavigator(benchmark.getParentGroup()); 
+		
+		// BenchmarkParam(benchmarkGroup.getNextId());//new
+		// Benchmark(benchmarkGroup.getNextId()));
 
 		return true;
 	}
 
-	private BenchmarkGroup getBenchmarkGroup(String name) {
-		for (BenchmarkGroup bg : groups) {
-			if (bg.equals(new BenchmarkGroup(name)))
-				return bg;
-		}
-		return null;
-
-	}
+	// private BenchmarkGroup getBenchmarkGroup(String name) {
+	// for (BenchmarkGroup bg : groups) {
+	// if (bg.equals(new BenchmarkGroup(name)))
+	// return bg;
+	// }
+	// return null;
+	//
+	// }
 
 	public static IEditorPart openBenchmark(final Benchmark benchmark) {
 		return openBenchmark(getPage(), benchmark);
@@ -116,5 +105,11 @@ public class BenchmarkWizard extends Wizard {
 
 	private static IWorkbenchPage getPage() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	}
+
+	private void refreshNavigator(BenchmarkGroup group) {
+		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.findView(ProjectView.ID);
+		projectView.refresh(group);
 	}
 }
