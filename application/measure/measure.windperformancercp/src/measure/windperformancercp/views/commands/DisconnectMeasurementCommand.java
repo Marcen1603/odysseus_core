@@ -48,7 +48,9 @@ public class DisconnectMeasurementCommand extends AbstractHandler implements IHa
 				Object element = iterator.next();
 				
 				IPerformanceQuery query = (IPerformanceQuery) element;
-				presenter.fire(new QueryEvent(presenter,QueryEventType.DeleteQuery,query));
+				if(query.getConnectStat()){	//only fire if query is connected
+					presenter.fire(new QueryEvent(presenter,QueryEventType.DeleteQuery,query));
+				}
 			}
     	}
 		

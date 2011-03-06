@@ -125,8 +125,14 @@ public class SourceController implements IController {
 			//System.out.println(src.toString() +" in list: "+smodel.getSourcesList().contains(src));
 		}
 		smodel.somethingChanged(null);
-		
-//System.out.println(smodel.getSourcesList().toString());
+	}
+	
+	public void tellWhichAreDisconnected(ArrayList<String> srcKeys){
+		for(ISource src : getSourcesFromModel(srcKeys)){
+			src.setConnectState(false);
+		}
+		smodel.somethingChanged(null);
+
 	}
 	
 

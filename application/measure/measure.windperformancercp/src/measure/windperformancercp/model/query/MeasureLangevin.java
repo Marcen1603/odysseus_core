@@ -54,6 +54,7 @@ public class MeasureLangevin extends APerformanceQuery {
 			this.tau = copy.getTau();
 			this.frequency = copy.getFrequency();
 			this.strGenQueries = copy.getStrGenQueries();
+			this.strRemQueries = copy.getStrRemQueries();
 		}
 	}
 	

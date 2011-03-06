@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public interface IController {
 
-	//TODO: hier allgemeine methoden
+	//TODO: aufraeumen
 	public ArrayList<?> getContent();
 	
 		

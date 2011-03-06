@@ -100,7 +100,8 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 			String powAtt,
 			String prAtt,
 			String tempAtt,
-			ArrayList<String> generatorQueries){
+			ArrayList<String> generatorQueries,
+			ArrayList<String> removerQueries){
 		this(id,method,sources);
 	
 		this.extractSourceKeys(sources);
@@ -114,6 +115,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.setPressureAttribute(prAtt);
 		this.setTemperatureAttribute(tempAtt);
 		this.setStrGenQueries(generatorQueries);
+		this.setStrRemQueries(removerQueries);
 	}
 	
 	public APerformanceQuery(String id, PMType method,ArrayList<ISource> sources){
@@ -125,6 +127,8 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.extractSourceKeys(sources);
 		this.extractTurbineData(sources);
 		this.extractTimestampAttributes(sources);
+		this.generateSourceStreams(sources);
+		this.generateRemoveStreams(sources);
 	
 		this.connectState = false;
 	}
@@ -151,7 +155,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		asgn = new Assignment(AttributeType.AIRTEMPERATURE);
 		assignments.add(asgn);
 		this.strGenQueries = new ArrayList<String>();
-		
+		this.strRemQueries = new ArrayList<String>();
 	}
 	
 	@Override
@@ -272,13 +276,21 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	}
 	
 	@Override
-	//public void setConcernedSrc(ArrayList<ISource> srcList) {
 	public void setConcernedSrcKeys(ArrayList<String> srcKeyList) {
-		this.concernedSrcKeys = srcKeyList;//new ArrayList<ISource>(srcList); 
+		this.concernedSrcKeys = srcKeyList; 
 	//	extractTurbineData();	//TODO: set at creation
 	//	updateTimestampAttributes();
 	}
 	
+	
+	@Override
+	public void setConcernedStr(ArrayList<Stream> strList) {
+		this.concernedStr = strList;
+	}
+	
+	/**
+	 * Returns the concerned streams
+	 */
 	@XmlElementWrapper(name = "concernedStreams") 
 	@XmlElement(name = "stream")
 	@Override
@@ -286,7 +298,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return concernedStr;
 	}
 	
-	
+	/**
+	 * Returns the list of stream generation/access queries
+	 */
 	@XmlElementWrapper(name = "streamGeneratorQueryList") 
 	@XmlElement(name = "generatorQuery")
 	@Override
@@ -294,11 +308,15 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return strGenQueries;
 	}
 	
+	
 	@Override
 	public void setStrRemQueries(ArrayList<String> list) {
 		this.strRemQueries = list;
 	}
 	
+	/**
+	 * Returns the list of stream remove/deaccess queries
+	 */
 	@XmlElementWrapper(name = "streamRemoverQueryList") 
 	@XmlElement(name = "removerQuery")
 	@Override
@@ -311,10 +329,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.strGenQueries = list;
 	}
 	
-	@Override
-	public void setConcernedStr(ArrayList<Stream> strList) {
-		this.concernedStr = strList;//new ArrayList<Stream>(strList);
-	}
+	
 	
 	@XmlElementWrapper(name = "timestampAttributeIndexList") 
 	@XmlElement(name = "timestamp")
@@ -328,7 +343,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.timestampAttributes = tsal;
 	}
 	
-	
+	/**
+	 * Add a key of a new concerned source
+	 */
 	@Override
 	public void addMemberKey(String m){
 		concernedSrcKeys.add(m);
@@ -336,6 +353,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		//updateTimestampAttributes();
 	}
 	
+	/**
+	 * Adds a list of keys of new concerned sources
+	 */
 	@Override
 	public void addAllMemberKeys(ArrayList<String> listm){
 		concernedSrcKeys.addAll(listm);
@@ -343,6 +363,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	//	updateTimestampAttributes();
 	}
 	
+	/**
+	 * Clears the concerned sources key list
+	 */
 	@Override
 	public void clearMembers(){
 		concernedSrcKeys.clear();
@@ -365,6 +388,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		temperatureAttribute = getResponsibleAttribute("AIRTEMPERATURE");
 	}
 	
+	/**
+	 * Sets the name of corresponding wind speed attribute 
+	 */
 	@Override
 	public void setWindspeedAttribute(String at){
 		this.windspeedAttribute = at;
@@ -375,6 +401,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return windspeedAttribute;
 	}
 	
+	/**
+	 * Sets the name of corresponding power attribute 
+	 */
 	@Override
 	public void setPowerAttribute(String at){
 		this.powerAttribute = at;
@@ -385,6 +414,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return powerAttribute;
 	}
 	
+	/**
+	 * Sets the name of corresponding pressure attribute 
+	 */
 	@Override
 	public void setPressureAttribute(String at){
 		this.pressureAttribute = at;
@@ -395,6 +427,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return pressureAttribute;
 	}
 	
+	/**
+	 * Sets the name of corresponding temperature attribute 
+	 */
 	@Override
 	public void setTemperatureAttribute(String at){
 		this.temperatureAttribute = at;
@@ -419,6 +454,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return false;
 	}
 	
+
 	@Override
 	public ArrayList<String> generateSourceStreams(ArrayList<ISource> sources){
 		ArrayList<String> qryresult = new ArrayList<String>(); 

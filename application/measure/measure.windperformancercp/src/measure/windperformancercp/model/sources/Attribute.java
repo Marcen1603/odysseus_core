@@ -21,6 +21,7 @@ public class Attribute implements IDialogResult{
 	@XmlEnum
 	public enum AttributeType{
 		STARTTIMESTAMP,
+		ENDTIMESTAMP,
 		WINDSPEED,
 		POWER,
 		AIRTEMPERATURE,
@@ -48,9 +49,11 @@ public class Attribute implements IDialogResult{
 	public Attribute(String name, AttributeType type){
 		this.name = name;
 		this.attType = type;
+		/*	// this doesn't work!
 		switch(type)
 		{
 		case STARTTIMESTAMP: this.dataType = DataType.STARTTIMESTAMP;
+		case ENDTIMESTAMP: this.dataType = DataType.ENDTIMESTAMP;
 		case WINDSPEED: this.dataType = DataType.DOUBLE;
 		case POWER: this.dataType = DataType.DOUBLE;
 		case AIRTEMPERATURE: this.dataType = DataType.DOUBLE;
@@ -60,7 +63,24 @@ public class Attribute implements IDialogResult{
 		case VARIOUS: this.dataType = DataType.STRING; //TODO: gibt es einen beliebigen Datentyp bei Odysseus?
 		default:
 			this.dataType = DataType.DOUBLE; 
-		}
+		}*/
+		
+		if(type.equals(AttributeType.STARTTIMESTAMP)){
+			this.dataType = DataType.STARTTIMESTAMP;
+		} else  
+		if(type.equals(AttributeType.ENDTIMESTAMP)){
+			this.dataType = DataType.ENDTIMESTAMP;
+		} else
+		if(type.equals(AttributeType.STATE)){
+			this.dataType = DataType.STRING;
+		} else
+		if(type.equals(AttributeType.VARIOUS)){
+			this.dataType = DataType.STRING;
+		} else this.dataType = DataType.DOUBLE;
+		
+		
+		
+		
 		//System.out.println("created Attribute: "+this.toString());		
 	}
 	
@@ -68,7 +88,7 @@ public class Attribute implements IDialogResult{
 		this(name, Attribute.AttributeType.valueOf(type));
 	}
 	
-	public Attribute(Attribute copy){
+	public Attribute(Attribute copy){		
 		this(copy.name,copy.attType);
 	}
 	

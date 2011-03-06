@@ -42,6 +42,11 @@
             name="Performance"
             restorable="true">
       </view>
+      <view
+            class="measure.windperformancercp.views.result.ActiveQueriesView"
+            id="measure.windperformancercp.activeQueriesView"
+            name="activeQueries">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -70,10 +75,21 @@
          <view
                id="measure.windperformancercp.functionPlotterView"
                minimized="false"
-               ratio="1.0f"
-               relationship="top"
-               relative="org.eclipse.ui.editorss"
-               standalone="true"
+               ratio="0.7f"
+               relationship="right"
+               relative="measure.windperformancercp.activeQueriesView"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               closeable="false"
+               id="measure.windperformancercp.activeQueriesView"
+               minimized="false"
+               ratio="0.3f"
+               relationship="left"
+               relative="measure.windperformancercp.functionPlotterView"
+               showTitle="true"
+               standalone="false"
                visible="true">
          </view>
       </perspectiveExtension>
@@ -142,15 +158,15 @@
                tooltip="Add measurement to datastream system. ">
          </command>
          <command
+               commandId="measure.windperformancercp.DisconnectMeasurement"
+               label="Disconnect"
+               style="push">
+         </command>
+         <command
                commandId="measure.windperformancercp.DeletePM"
                label="Delete"
                style="push"
                tooltip="Delete Measurement. Befor that it is disconnected from the data stream system.">
-         </command>
-         <command
-               commandId="measure.windperformancercp.DisconnectMeasurement"
-               label="Disconnect"
-               style="push">
          </command>
       </menuContribution>
    </extension>
@@ -192,6 +208,7 @@
             name="Connect">
       </command>
       <command
+            defaultHandler="measure.windperformancercp.views.commands.DisconnectMeasurementCommand"
             id="measure.windperformancercp.DisconnectMeasurement"
             name="Disconnect">
       </command>

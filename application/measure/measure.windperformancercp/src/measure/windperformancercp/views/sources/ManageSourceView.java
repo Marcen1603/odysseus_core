@@ -15,6 +15,7 @@
 package measure.windperformancercp.views.sources;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
@@ -125,7 +126,7 @@ public class ManageSourceView extends ViewPart {
 		return this.sourceViewer.getTable().getItems();
 	}
 	
-	public void update(ArrayList<?> newList){
+	public void update(List<?> newList){
 		sourceViewer.setInput(newList);
 	}
 	

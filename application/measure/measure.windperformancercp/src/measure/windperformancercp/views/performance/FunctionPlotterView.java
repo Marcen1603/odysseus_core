@@ -14,20 +14,30 @@
   */
 package measure.windperformancercp.views.performance;
 
-import org.eclipse.swt.SWT;
+import measure.windperformancercp.controller.Connector;
+import measure.windperformancercp.views.result.ActiveQueriesPresenter;
+
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.ViewPart;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.experimental.chart.swt.ChartComposite;
 
-public class FunctionPlotterView extends ViewPart {
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ScatterPlotChart;
+
+//public class FunctionPlotterView extends ViewPart {
+public class FunctionPlotterView extends ScatterPlotChart {
 	public static final String ID = "measure.windperformancercp.functionPlotterView";
-
+	private ActiveQueriesPresenter presenter;
+	
+	public void connectToQuery(String queryId){
+	//	this.createConnection(Connector.getInstance().getQueries().get(queryId).getRoots().get(0));
+	init(Connector.getInstance().getQueries().get(queryId).getRoots().get(0));
+			
+	}
+	
+	@Override
+	public void createPartControl(Composite parent) {
+		presenter = ActiveQueriesPresenter.getInstance(this);
+		super.createPartControl(parent);
+	}
+/*
 	String title = "Test";
 	String xLabel = "Windspeed";
 	String yLabel = "Power";
@@ -75,6 +85,6 @@ public class FunctionPlotterView extends ViewPart {
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 
 }

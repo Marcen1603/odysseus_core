@@ -90,6 +90,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 			Shell attShell = dialog.getShell();
 			attDialog = new AttributeDialog(attShell, this, Attribute.AttributeType.values());
 			attDialog.open();
+			aDTypeSelected();
 		}
 		if(btn.equals("Up")){
 			if(index > 0){ //if it's 0, it is the topmost element
@@ -103,7 +104,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
         		updateDialog();
 			}
 		}
-		if(btn.equals("Delete")){
+		if(btn.equals("Delete")){			
 			if((index>=0)&&(index<tmpAttList.size())){
         		tmpAttList.remove(index);
         		updateDialog();
@@ -241,7 +242,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	public void updateDialog(){
 		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,getContent()));
-		//System.out.println(this.toString()+":fired update event!");
+	//	System.out.println(this.toString()+":fired update event!");
 	}
 	
 	@Override
@@ -285,6 +286,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	public void aDTypeSelected(){ //TODO throws exception
 		try{
+		System.out.println(this.toString()+" type selected: "+attDialog.getComboValue()+" and value of is: "+Attribute.AttributeType.valueOf(attDialog.getComboValue()));	
 			actAtt.setAttType(Attribute.AttributeType.valueOf(attDialog.getComboValue()));
 		}
 		catch(Exception e){

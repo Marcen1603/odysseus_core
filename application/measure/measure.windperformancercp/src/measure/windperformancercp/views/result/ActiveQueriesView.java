@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package measure.windperformancercp.views.performance;
+package measure.windperformancercp.views.result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +21,8 @@ import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.UpdateEvent;
 import measure.windperformancercp.event.UpdateEventType;
-import measure.windperformancercp.model.query.IPerformanceQuery;
 import measure.windperformancercp.views.IPresenter;
 
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -33,27 +31,24 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-public class AssignPerformanceMeasView extends ViewPart {
-	public static final String ID = "measure.windperformancercp.assignPMView";
+public class ActiveQueriesView extends ViewPart {
+	public static final String ID = "measure.windperformancercp.activeQueriesView";
 
-	private AssignPerformanceMeasPresenter presenter = new AssignPerformanceMeasPresenter(this);
+	//ResultPlotPresenter presenter = new ResultPlotPresenter(this);
 	
-	private TableViewer performanceViewer;
-	Text queryView;
-
+	ActiveQueriesPresenter presenter; 
+	
+	private TableViewer queryViewer;
+	
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -61,30 +56,22 @@ public class AssignPerformanceMeasView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		
-		//surrounding sash form
-		SashForm sashForm = new SashForm(parent, SWT.BORDER | SWT.SMOOTH);
-		sashForm.setSashWidth(5);
-
+		presenter = ActiveQueriesPresenter.getInstance(this);
 		
 		//performance list composite with buttons
-		Composite leftComposite = new Composite(sashForm, SWT.NONE);
-		leftComposite.setLayout(new GridLayout(1,false));
-		
-		/*ToolBar slTB = new ToolBar(leftComposite,SWT.BORDER);
-		ToolItem itm_add = new ToolItem(slTB,SWT.PUSH);
-		*/
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1,false));
 
-		performanceViewer = new TableViewer(leftComposite);
-		performanceViewer.setContentProvider(new ISourceContentProvider());
-		performanceViewer.setLabelProvider(new ISourceLabelProvider());
+		queryViewer = new TableViewer(composite);
+		queryViewer.setContentProvider(new IQueryContentProvider());
+		queryViewer.setLabelProvider(new IQueryLabelProvider());
 		
-		Table sourceTable = performanceViewer.getTable();
+		Table sourceTable = queryViewer.getTable();
 		{
 			sourceTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 			
 		
-			String[] titles ={"Name","Type","Sources","Lifetime","Connected"};
+			String[] titles ={"Id"};
 			for (int i=0;i<titles.length;i++){
 				TableColumn col = new TableColumn(sourceTable,SWT.LEFT);
 				col.setText(titles[i]);
@@ -95,26 +82,28 @@ public class AssignPerformanceMeasView extends ViewPart {
 			sourceTable.setHeaderVisible(true);
 			sourceTable.setLinesVisible(true);
 		}
-		//right composite for additional information
-		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
-		rightDetailedComposite.setLayout(new FillLayout());
-		queryView = new Text(rightDetailedComposite, SWT.READ_ONLY|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
-		
-		performanceViewer.addSelectionChangedListener(selectionListener);
-		getSite().setSelectionProvider(performanceViewer);
+	
+		queryViewer.addSelectionChangedListener(selectionListener);
+		getSite().setSelectionProvider(queryViewer);
 		presenter.subscribeToAll(updateListener);
 		
-		MenuManager menuManager = new MenuManager();
-		Menu menu = menuManager.createContextMenu(performanceViewer.getTable());
+	//	MenuManager menuManager = new MenuManager();
+	//	Menu menu = menuManager.createContextMenu(queryViewer.getTable());
 		// Set the MenuManager
-		performanceViewer.getTable().setMenu(menu);
-		getSite().registerContextMenu(menuManager, performanceViewer);
+	//	queryViewer.getTable().setMenu(menu);
+	//	getSite().registerContextMenu(menuManager, queryViewer);
 	}
 
 	ISelectionChangedListener selectionListener = new ISelectionChangedListener(){
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			queryView.setText(presenter.getQueryText(performanceViewer.getTable().getSelectionIndex()));
+			int id = queryViewer.getTable().getSelectionIndex();
+			if(id >= 0){
+				String itemName = queryViewer.getTable().getItem(id).getText(0);
+				presenter.connectViewToQuery(itemName);
+			}
+			//queryViewer.getTable().getSelectionIndex()
+		//	queryView.setText(presenter.getQueryText(queryViewer.getTable().getSelectionIndex()));
 		}
 	};
 	
@@ -137,27 +126,31 @@ public class AssignPerformanceMeasView extends ViewPart {
 	public void setFocus() {
 	}
 	
-	public TableItem[] getSources(){
-		return this.performanceViewer.getTable().getItems();
+	public TableItem[] getQueries(){
+		return this.queryViewer.getTable().getItems();
 	}
 	
 	
 	public void update(List<?> newList){
-		performanceViewer.setInput(newList);
+		queryViewer.setInput(newList);
 		if(!newList.isEmpty()){
-			int ind = performanceViewer.getTable().getSelectionIndex();
+			int ind = queryViewer.getTable().getSelectionIndex();
 			
-			if((ind != -1)&&(ind < performanceViewer.getTable().getItemCount())){
-				performanceViewer.getTable().select(ind);
+			if((ind != -1)&&(ind < queryViewer.getTable().getItemCount())){
+				queryViewer.getTable().select(ind);
 			}
 			else
-				performanceViewer.getTable().select(0);
+				queryViewer.getTable().select(0);
 			//queryView.setText(presenter.getQueryText(performanceViewer.getTable().getSelectionIndex()));
+			int id = queryViewer.getTable().getSelectionIndex();
+			String itemName = queryViewer.getTable().getItem(id).getText(0);
+			presenter.connectViewToQuery(itemName);
+			
 		}
 	}
 	
 	public void setQueryView(String input){
-		queryView.setText(input);
+		//queryView.setText(input);
 	}
 	
 
@@ -166,7 +159,7 @@ public class AssignPerformanceMeasView extends ViewPart {
 	}
 	
 	
-	class ISourceLabelProvider implements ITableLabelProvider{
+	class IQueryLabelProvider implements ITableLabelProvider{
 
 		@Override
 		public void addListener(ILabelProviderListener listener) {
@@ -195,23 +188,25 @@ public class AssignPerformanceMeasView extends ViewPart {
 			return null;
 		}
 
-		//TODO: "Name","Type","Sources","Lifetime","Connected"
+		//TODO: "PMName","Type","Sources","Lifetime"
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			IPerformanceQuery query = (IPerformanceQuery) element;
+			//IPerformanceQuery query = (IPerformanceQuery) element;
+			//IQuery query = (IQuery) element;
 			switch(columnIndex){
-			case 0: return query.getIdentifier();
-			case 1:	return query.getMethod().toString();
+			case 0: return element.toString();
+			//case 0: return Integer.toString(query.getID());
+			/*case 1:	return query.getMethod().toString();
 			case 2: return Integer.toString(query.getConcernedSrcKeys().size());
 			case 3:	return Double.toString(0.0);
-			case 4:	return Boolean.toString(query.getConnectStat()); 
+			case 4:	return Boolean.toString(query.getConnectStat());*/ 
 			}
 			return null;
 		}
 		
 	}
 
-	class ISourceContentProvider implements IStructuredContentProvider{
+	class IQueryContentProvider implements IStructuredContentProvider{
 
 		@Override
 		public void dispose() {
@@ -226,7 +221,8 @@ public class AssignPerformanceMeasView extends ViewPart {
 		@SuppressWarnings("unchecked")
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return ((ArrayList<IPerformanceQuery>)inputElement).toArray();
+			//return ((ArrayList<IQuery>)inputElement).toArray();
+			return ((ArrayList<String>)inputElement).toArray();
 		}
 		
 	}

@@ -35,7 +35,6 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 	
 	AssignPerformanceMeasView view;
 	IController _cont;
-	//TODO
 	SourceModel smodel;
 	PerformanceModel pmodel;
 	
@@ -43,8 +42,6 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 		//System.out.println(this.toString()+": manage source presenter says hi!");
 		this.view = view;
 		_cont = PMController.getInstance(this);
-		//smodel = SourceModel.getInstance();
-		//smodel.subscribeToAll(modelListener);
 		pmodel = PerformanceModel.getInstance();
 		pmodel.subscribeToAll(modelListener);
 		fire(new InputDialogEvent(this,InputDialogEventType.RegisterDialog,null));

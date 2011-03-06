@@ -54,6 +54,7 @@ public class MeasureIEC extends APerformanceQuery {
 			this.temperatureAttribute = copy.getTemperatureAttribute();
 			this.timestampAttributes = copy.getTimestampAttributes();
 			this.strGenQueries = copy.getStrGenQueries();
+			this.strRemQueries = copy.getStrRemQueries();
 		
 			this.cutin = copy.getCutin();
 			this.eightyfivepercent = copy.getEightyfivepercent();
@@ -82,11 +83,11 @@ public class MeasureIEC extends APerformanceQuery {
 	
 	@Override
 	public void extractTurbineData(ArrayList<ISource> sources){
+		super.extractTurbineData(sources);
 		for(ISource src: sources){
 			if(src.isWindTurbine()){				
 				cutin = ((WindTurbine)src).getCutInWS();
 				eightyfivepercent = ((WindTurbine)src).getEightyFiveWS();
-				pitch = (((WindTurbine)src).getPowerControl()==0);
 				break;
 			}
 		}

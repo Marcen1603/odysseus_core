@@ -16,11 +16,10 @@ package measure.windperformancercp.model.query;
 
 import java.util.ArrayList;
 
-import measure.windperformancercp.model.sources.Attribute;
-import measure.windperformancercp.model.sources.ISource;
-
 import measure.windperformancercp.model.query.QueryGenerator.Aggregation;
 import measure.windperformancercp.model.query.QueryGenerator.Window;
+import measure.windperformancercp.model.sources.Attribute;
+import measure.windperformancercp.model.sources.ISource;
 
 public class CQLGenerator implements IQueryGenerator {
 

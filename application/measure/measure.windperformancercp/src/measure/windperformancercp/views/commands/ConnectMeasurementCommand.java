@@ -48,7 +48,9 @@ public class ConnectMeasurementCommand extends AbstractHandler implements IHandl
 				Object element = iterator.next();
 				
 				IPerformanceQuery query = (IPerformanceQuery) element;
-				presenter.fire(new QueryEvent(presenter,QueryEventType.AddQuery,query));
+				if(!query.getConnectStat()){	//only fire if query is not already connected
+					presenter.fire(new QueryEvent(presenter,QueryEventType.AddQuery,query));
+				}
 			}
     	}
 		

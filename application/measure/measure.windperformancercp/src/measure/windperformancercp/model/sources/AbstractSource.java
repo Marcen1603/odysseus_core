@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -28,11 +27,9 @@ import measure.windperformancercp.event.IEvent;
 import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.IEventType;
 
-
-
 /**
  * Abstract implementation of ISource
- * @author blackunicorn
+ * @author Diana von Gallera
  *
  */
 @XmlType(name = "abstractSource", propOrder = {

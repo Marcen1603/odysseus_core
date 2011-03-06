@@ -420,7 +420,7 @@ public class SourceDialog extends AbstractUIDialog {
 			//System.out.println(this.toString()+": got update event from"+idevent.getSender().toString());
 			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){
 				UpdateEvent updateInvoker = (UpdateEvent) idevent;
-			//System.out.println(this.toString()+": got general update invocation: ");
+		//	System.out.println(this.toString()+": got general update invocation: ");
 				update(updateInvoker.getValue());
 			}
 			
@@ -432,8 +432,12 @@ public class SourceDialog extends AbstractUIDialog {
 		return presenter;
 	}
 		
-	public void update(ArrayList<?> attList){
-		setTableContent(attList);
+	@Override
+	public void update(Object attList){
+	//public void update(ArrayList<?> attList){
+		ArrayList<?> al = (ArrayList<?>) attList; 
+System.out.println(attList.toString());
+		setTableContent(al);
 	}
 	    
 	public void setNameValue(String newName){

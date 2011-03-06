@@ -27,7 +27,6 @@ import measure.windperformancercp.event.ModelEvent;
 import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.model.IModel;
 import measure.windperformancercp.model.sources.IDialogResult;
-import measure.windperformancercp.model.sources.ISource;
 
 
 @XmlRootElement
