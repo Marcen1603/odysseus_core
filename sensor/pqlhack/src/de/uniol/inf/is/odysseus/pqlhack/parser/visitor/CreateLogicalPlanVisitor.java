@@ -45,7 +45,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolv
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationEvalOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionEvalOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionGateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationGenOp;
@@ -64,12 +63,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDistanceObjectSelectorOp_Andre
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpEstimateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpGainOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTHost;

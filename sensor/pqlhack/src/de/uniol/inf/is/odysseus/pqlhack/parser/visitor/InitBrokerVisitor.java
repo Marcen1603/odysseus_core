@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationEvalOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionEvalOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationExpressionGateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationGenOp;
@@ -42,12 +41,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDistanceObjectSelectorOp_Andre
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpEstimateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterExpGainOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTHost;
@@ -430,11 +426,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		return node.childrenAccept(this, data);
 	}
 
-	@Override
-	public Object visit(ASTAssociationEvalOp node, Object data) {
-		((ArrayList)data).set(0, true);
-		return node.childrenAccept(this, data);
-	}
+
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
@@ -526,32 +518,6 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		return node.childrenAccept(this, data);
 	}
 
-  @Override
-  public Object visit(ASTFilterGainOp node, Object data)
-  {
-    // filter op is a production rule in the grammar which can
-    // have AlgebraOp() as a child. so data:=true
-	  ((ArrayList)data).set(0, true);
-	  return node.childrenAccept(this, data);
-  }
-
-  @Override
-  public Object visit(ASTFilterEstimateOp node, Object data)
-  {
-    // filter op is a production rule in the grammar which can
-    // have AlgebraOp() as a child. so data:=true
-	  ((ArrayList)data).set(0, true);
-	  return node.childrenAccept(this, data);
-  }
-
-  @Override
-  public Object visit(ASTFilterCovarianceOp node, Object data)
-  {
-    // filter op is a production rule in the grammar which can
-    // have AlgebraOp() as a child. so data:=true
-	  ((ArrayList)data).set(0, true);
-	  return node.childrenAccept(this, data);
-  }
 
 	@Override
 	public Object visit(ASTBenchmarkOpExt node, Object data) {
