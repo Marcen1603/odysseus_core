@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.operator.objectselector.physicaloperator;
+package de.uniol.inf.is.odysseus.scars.operator.objectselector.po;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
