@@ -12,7 +12,6 @@ Import-Package: de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join,
  de.uniol.inf.is.odysseus.objecttracking.predicate,
- de.uniol.inf.is.odysseus.scars.base,
  de.uniol.inf.is.odysseus.scars.metadata,
  de.uniol.inf.is.odysseus.scars.operator.jdveaccess.ao,
  de.uniol.inf.is.odysseus.scars.operator.jdveaccess.po
