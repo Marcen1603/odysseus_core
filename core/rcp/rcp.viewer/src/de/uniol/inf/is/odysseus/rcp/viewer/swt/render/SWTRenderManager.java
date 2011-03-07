@@ -121,6 +121,10 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 		canvas.addMouseMoveListener(this);
 		canvas.addMouseWheelListener(this);
 	}
+	
+	public void dispose() {
+		renderer.dispose();
+	}
 
 	public void setUpdateInterval(int interval) {
 		if (interval < 10)

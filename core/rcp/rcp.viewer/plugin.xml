@@ -41,6 +41,10 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
             name="Resume Operator">
       </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
+            name="Remove OperatorBreak">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -70,6 +74,19 @@
             </iterate>
          </with>
       </definition>
+      <definition
+            id="isOperatorBreak">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreak">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -91,26 +108,50 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.commands.BreakOperatorCommand"
             commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand">
          <enabledWhen>
-            <reference
-                  definitionId="isNodeView">
-            </reference>
+            <or>
+               <reference
+                     definitionId="isNodeView">
+               </reference>
+               <reference
+                     definitionId="isOperatorBreak">
+               </reference>
+            </or>
          </enabledWhen>
       </handler>
       <handler
             class="de.uniol.inf.is.odysseus.rcp.viewer.commands.StepOperatorCommand"
             commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand">
          <enabledWhen>
-            <reference
-                  definitionId="isNodeView">
-            </reference>
+            <or>
+               <reference
+                     definitionId="isNodeView">
+               </reference>
+               <reference
+                     definitionId="isOperatorBreak">
+               </reference>
+            </or>
          </enabledWhen>
       </handler>
       <handler
             class="de.uniol.inf.is.odysseus.rcp.viewer.commands.ResumeOperatorCommand"
             commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand">
          <enabledWhen>
+            <or>
+               <reference
+                     definitionId="isNodeView">
+               </reference>
+               <reference
+                     definitionId="isOperatorBreak">
+               </reference>
+            </or>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.RemoveOperatorBreakCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand">
+         <enabledWhen>
             <reference
-                  definitionId="isNodeView">
+                  definitionId="isOperatorBreak">
             </reference>
          </enabledWhen>
       </handler>
@@ -199,6 +240,34 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.OperatorBreakView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
+               label="Break"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
+               label="Step"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
+               label="Resume"
+               style="push">
+         </command>
+         <separator
+               name="additions"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
+               label="Remove"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
@@ -207,5 +276,16 @@
             id="de.uniol.inf.is.odysseus.rcp.streams.List"
             label="List">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.views.OperatorBreakView"
+            id="de.uniol.inf.is.odysseus.rcp.views.OperatorBreakView"
+            name="OperatorBreak View"
+            restorable="true">
+      </view>
    </extension>
 </plugin>
