@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
  * <p>
  * Physical operator to join two inputstreams:
  * <ul>
- *  <li>the predicted objects from the <strong>prediction operator</strong> ({@link de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator.PredictionPO}) and</li>
+ *  <li>the predicted objects from the <strong>prediction operator</strong> ({@link de.uniol.inf.is.odysseus.scars.operator.prediction.po.PredictionPO}) and</li>
  *  <li>the new detected objects.</li>
  * </ul>
  * </p>

@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator.PredictionAssignPO;
+import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAssignAO;
+import de.uniol.inf.is.odysseus.scars.operator.prediction.po.PredictionAssignPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
