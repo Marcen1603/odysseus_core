@@ -44,5 +44,5 @@ Export-Package: de.uniol.inf.is.odysseus.scars.operator.association.ao,
  de.uniol.inf.is.odysseus.scars.operator.sink.po,
  de.uniol.inf.is.odysseus.scars.operator.test.ao,
  de.uniol.inf.is.odysseus.scars.operator.test.po,
- de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.logicaloperator,
- de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.physicaloperator
+ de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.ao,
+ de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.po
