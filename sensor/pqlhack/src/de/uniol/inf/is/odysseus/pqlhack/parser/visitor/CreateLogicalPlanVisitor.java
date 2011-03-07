@@ -118,26 +118,22 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.AssociationDictionary;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisEvaluationAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisExpressionEvaluationAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisExpressionGatingAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.EvaluationAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterCovarianceUpdateAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterEstimateUpdateAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterExpressionCovarianceUpdateAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterExpressionEstimateUpdateAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterExpressionGainAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterGainAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionExpression;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.temporarydatabouncer.logicaloperator.TemporaryDataBouncerAO;
+import de.uniol.inf.is.odysseus.scars.operator.association.ao.AssociationDictionary;
+import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisExpressionEvaluationAO;
+import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisExpressionGatingAO;
+import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisGenerationAO;
+import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisSelectionAO;
+import de.uniol.inf.is.odysseus.scars.operator.filter.ao.FilterExpressionCovarianceUpdateAO;
+import de.uniol.inf.is.odysseus.scars.operator.filter.ao.FilterExpressionEstimateUpdateAO;
+import de.uniol.inf.is.odysseus.scars.operator.filter.ao.FilterExpressionGainAO;
 import de.uniol.inf.is.odysseus.scars.operator.jdvesink.logicaloperator.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.objectselector.logicaloperator.DistanceObjectSelectorAO;
 import de.uniol.inf.is.odysseus.scars.operator.objectselector.logicaloperator.DistanceObjectSelectorAOAndre;
+import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAO;
+import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.scars.xmlprofiler.logicaloperator.XMLProfilerAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
@@ -1158,44 +1154,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return data;
 	}
 
-	@Override
-	public Object visit(ASTAssociationEvalOp node, Object data) {
-		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
-
-		HypothesisEvaluationAO eval = new HypothesisEvaluationAO();
-		// first the output schema is empty, it will be
-		// filled by the projection attributes
-
-		ArrayList newData = new ArrayList();
-		newData.add(attrRes);
-
-		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
-		int sourceOutPort = ((Integer) childData.get(2)).intValue();
-		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-		eval.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
-
-		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
-		eval.setFunctionID(identifier.getName());
-
-		HashMap<String, String> params = buildKeyMap((ASTKeyValueList) node.jjtGetChild(2));
-		eval.setAlgorithmParameter(params);
-
-		identifier = (ASTIdentifier) node.jjtGetChild(3);
-		eval.initPaths(((ASTIdentifier) node.jjtGetChild(4)).getName(), ((ASTIdentifier) node.jjtGetChild(3)).getName());
-
-		if (node.jjtGetNumChildren() == 6) {
-			params = buildKeyMap((ASTKeyValueList) node.jjtGetChild(5));
-			eval.setMeasurementPairs(params);
-		} else {
-			eval.setMeasurementPairs(new HashMap<String, String>());
-		}
-
-		// pass only the attribute resolver to the children
-		((ArrayList) data).add(eval);
-		((ArrayList) data).add(new Integer(0));
-
-		return data;
-	}
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
@@ -1718,255 +1676,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		((ArrayList) data).add(new Integer(0));
 
 		return data;
-	}
-
-	@Override
-	public Object visit(ASTFilterGainOp node, Object data) {
-		//
-		// preparation
-		//
-
-		// set output port
-		final int OUTPUT_PORT = 0;
-
-		// set convention constants
-		final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
-		final int DATA_LIST_INDEX_OF_OPERATOR = 1;
-		final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
-
-		// set grammar specific constants
-		final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
-		final int CHILD_INDEX_OF_FUNCTION_ID = 1;
-
-		// cast filter data
-		// filter data should be a List<Object> implementation (this is a
-		// convention)
-		List<Object> dataList = null;
-
-		if (!(data instanceof List<?>)) {
-			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
-		}
-		try {
-			dataList = (List<Object>) data;
-		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
-		}
-
-		// get attribute resolver out of data list
-		Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
-
-		//
-		// pass on visitor to nodes if necessary
-		//
-
-		// pass on to embedded ao (node 0)
-		List<Object> node0DataList = new ArrayList<Object>();
-		node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
-		node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(this, node0DataList));
-
-		//
-		// get input data out of child nodes and their output data
-		//
-
-		// get embedded operator and its source output port
-		// out of child node 0's returned data list
-		AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR);
-		final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT))
-				.intValue();
-
-		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
-
-		//
-		// create Filter AO
-		// and initialize it
-		//
-
-		FilterGainAO filterAO = new FilterGainAO();
-
-		filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT, embeddedAO.getOutputSchema());
-		// set function id
-		filterAO.setFunctionID(functionID);
-
-		//
-		// return data according to convention
-		//
-
-		dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
-		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
-
-		return dataList;
-	}
-
-	@Override
-	public Object visit(ASTFilterEstimateOp node, Object data) {
-		//
-		// preparation
-		//
-
-		// set output port
-		final int OUTPUT_PORT = 0;
-
-		// set convention constants
-		final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
-		final int DATA_LIST_INDEX_OF_OPERATOR = 1;
-		final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
-
-		// set grammar specific constants
-		final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
-		final int CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST = 1;
-		final int CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST = 2;
-		final int CHILD_INDEX_OF_FUNCTION_ID = 3;
-
-		// cast filter data
-		// filter data should be a List<Object> implementation (this is a
-		// convention)
-		List<Object> dataList = null;
-
-		if (!(data instanceof List<?>)) {
-			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
-		}
-		try {
-			dataList = (List<Object>) data;
-		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
-		}
-
-		// get attribute resolver out of data list
-		Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
-
-		//
-		// pass on visitor to nodes if necessary
-		//
-
-		// pass on to embedded ao (node 0)
-		List<Object> node0DataList = new ArrayList<Object>();
-		node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
-		node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(this, node0DataList));
-
-		//
-		// get input data out of child nodes and their output data
-		//
-
-		// get embedded operator and its source output port
-		// out of child node 0's returned data list
-		AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR);
-		final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT))
-				.intValue();
-
-		// get path to new car list out of child 1 (its name)
-		String pathToNewCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST)).getName();
-
-		// get path to new car list out of child 2 (its name)
-		String pathToOldCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST)).getName();
-
-		// get path to new car list out of child 3 (its name)
-		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
-
-		//
-		// create Filter AO
-		// and initialize it
-		//
-
-		FilterEstimateUpdateAO filterAO = new FilterEstimateUpdateAO();
-
-		filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT, embeddedAO.getOutputSchema());
-
-		// set path to new car list
-		filterAO.setNewObjListPath(pathToNewCarList);
-
-		// set path to old car list
-		filterAO.setOldObjListPath(pathToOldCarList);
-
-		// set function id
-		filterAO.setFunctionID(functionID);
-
-		//
-		// return data according to convention
-		//
-
-		dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
-		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
-
-		return dataList;
-	}
-
-	@Override
-	public Object visit(ASTFilterCovarianceOp node, Object data) {
-		//
-		// preparation
-		//
-
-		// set output port
-		final int OUTPUT_PORT = 0;
-
-		// set convention constants
-		final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
-		final int DATA_LIST_INDEX_OF_OPERATOR = 1;
-		final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
-
-		// set grammar specific constants
-		final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
-		final int CHILD_INDEX_OF_FUNCTION_ID = 1;
-
-		// cast filter data
-		// filter data should be a List<Object> implementation (this is a
-		// convention)
-		List<Object> dataList = null;
-
-		if (!(data instanceof List<?>)) {
-			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
-		}
-		try {
-			dataList = (List<Object>) data;
-		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
-		}
-
-		// get attribute resolver out of data list
-		Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
-
-		//
-		// pass on visitor to nodes if necessary
-		//
-
-		// pass on to embedded ao (node 0)
-		List<Object> node0DataList = new ArrayList<Object>();
-		node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
-		node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(this, node0DataList));
-
-		//
-		// get input data out of child nodes and their output data
-		//
-
-		// get embedded operator and its source output port
-		// out of child node 0's returned data list
-		AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR);
-		final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT))
-				.intValue();
-
-		// get path to new car list out of child 3 (its name)
-		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
-
-		//
-		// create Filter AO
-		// and initialize it
-		//
-
-		FilterCovarianceUpdateAO filterAO = new FilterCovarianceUpdateAO();
-
-		filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT, embeddedAO.getOutputSchema());
-
-		// set function id
-		filterAO.setFunctionID(functionID);
-
-		//
-		// return data according to convention
-		//
-
-		dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
-		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
-
-		return dataList;
 	}
 
 	@Override
