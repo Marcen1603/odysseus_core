@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordEntryDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
-import de.uniol.inf.is.odysseus.scars.base.SensorAccessAO;
+import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.JDVEAccessMVAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -83,7 +83,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist
 		// (extra Klasse oder so)
 		// accessao bauen
-		SensorAccessAO source = new SensorAccessAO(new SDFSource(name,
+		JDVEAccessMVAO source = new JDVEAccessMVAO(new SDFSource(name,
 				"JDVEAccessMVPO"));
 		source.setPort(port.intValue());
 		source.setHost(host);
