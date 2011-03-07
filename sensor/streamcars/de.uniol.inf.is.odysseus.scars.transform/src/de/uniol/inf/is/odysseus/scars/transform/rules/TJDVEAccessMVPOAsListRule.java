@@ -28,9 +28,6 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.scars.base.DummyAccessMVPO;
 import de.uniol.inf.is.odysseus.scars.base.JDVEAccessMVPO;
 import de.uniol.inf.is.odysseus.scars.base.SensorAccessAO;
-import de.uniol.inf.is.odysseus.scars.operator.testdata.TestdataProviderPO;
-import de.uniol.inf.is.odysseus.scars.testdata.provider.ExtendedProvider;
-import de.uniol.inf.is.odysseus.scars.testdata.provider.extended.calcmodel.DefaultOvertakeCalcModel;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -51,41 +48,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 			if (operator.getPort() == 5001) {
 				accessPO = new DummyAccessMVPO();
 				System.out.println("DummyAccessMVPO created");
-			} else if (operator.getPort() == 5002) {
-				accessPO = new TestdataProviderPO();
-				((TestdataProviderPO)accessPO).setSourceName(accessPOName);
-				System.out.println("TestdataProviderPO created");
-			} else if (operator.getPort() == 5010) {
-				Map<String, String> options = new HashMap<String, String>();
-				options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_DEFAULT);
-				options.put(ExtendedProvider.CALCMODEL, ExtendedProvider.CALCMODEL_SCARS_OVERTAKE);
-				options.put(ExtendedProvider.VISIBILITY, ExtendedProvider.VISIBILITY_SCARS_FRONT);
-				Map<String, Object> calcModelParams = new HashMap<String, Object>();
-				calcModelParams.put(DefaultOvertakeCalcModel.LANE_SHIFT_FACTOR, new Float(1.5));
-				accessPO = new TestdataProviderPO<IProbability>(TestdataProviderPO.EXTENDED_PROVIDER, options, calcModelParams);
-				((TestdataProviderPO)accessPO).setSourceName(accessPOName);
-				System.out.println("TestdataProviderPO created");
-			} else if (operator.getPort() == 5011) {
-				Map<String, String> options = new HashMap<String, String>();
-				options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_ALTERNATIVE);
-				options.put(ExtendedProvider.CALCMODEL, ExtendedProvider.CALCMODEL_SCARS_OVERTAKE);
-				options.put(ExtendedProvider.VISIBILITY, ExtendedProvider.VISIBILITY_SCARS_FRONT);
-				Map<String, Object> calcModelParams = new HashMap<String, Object>();
-				calcModelParams.put(DefaultOvertakeCalcModel.LANE_SHIFT_FACTOR, new Float(1.5));
-				accessPO = new TestdataProviderPO<IProbability>(TestdataProviderPO.EXTENDED_PROVIDER, options, calcModelParams);
-				((TestdataProviderPO)accessPO).setSourceName(accessPOName);
-				System.out.println("TestdataProviderPO created");
-			} else if (operator.getPort() == 5012) {
-				Map<String, String> options = new HashMap<String, String>();
-				options.put(ExtendedProvider.SCHEMA, ExtendedProvider.SCHEMA_SCARS_LASER);
-				options.put(ExtendedProvider.CALCMODEL, ExtendedProvider.CALCMODEL_SCARS_OVERTAKE);
-				options.put(ExtendedProvider.VISIBILITY, ExtendedProvider.VISIBILITY_SCARS_FRONT);
-				Map<String, Object> calcModelParams = new HashMap<String, Object>();
-				calcModelParams.put(DefaultOvertakeCalcModel.LANE_SHIFT_FACTOR, new Float(1.5));
-				accessPO = new TestdataProviderPO<IProbability>(TestdataProviderPO.EXTENDED_PROVIDER, options, calcModelParams);
-				((TestdataProviderPO)accessPO).setSourceName(accessPOName);
-				System.out.println("TestdataProviderPO created");
-			}
+			} 
 		} else {
 			accessPO = new JDVEAccessMVPO(operator.getPort());
 			System.out.println("JDVEAccessMVPO created");
