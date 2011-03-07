@@ -36,4 +36,6 @@ Export-Package: de.uniol.inf.is.odysseus.scars.operator.association.ao,
  de.uniol.inf.is.odysseus.scars.operator.prediction.ao,
  de.uniol.inf.is.odysseus.scars.operator.prediction.po,
  de.uniol.inf.is.odysseus.scars.operator.sink.ao,
- de.uniol.inf.is.odysseus.scars.operator.sink.po
+ de.uniol.inf.is.odysseus.scars.operator.sink.po,
+ de.uniol.inf.is.odysseus.scars.operator.test.ao,
+ de.uniol.inf.is.odysseus.scars.operator.test.po
