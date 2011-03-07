@@ -120,7 +120,7 @@ import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisExpressi
 import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisExpressionGatingAO;
 import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisSelectionAO;
-import de.uniol.inf.is.odysseus.scars.operator.bouncer.logicaloperator.TemporaryDataBouncerAO;
+import de.uniol.inf.is.odysseus.scars.operator.bouncer.ao.TemporaryDataBouncerAO;
 import de.uniol.inf.is.odysseus.scars.operator.evaluation.ao.EvaluationAO;
 import de.uniol.inf.is.odysseus.scars.operator.filter.ao.FilterExpressionCovarianceUpdateAO;
 import de.uniol.inf.is.odysseus.scars.operator.filter.ao.FilterExpressionEstimateUpdateAO;

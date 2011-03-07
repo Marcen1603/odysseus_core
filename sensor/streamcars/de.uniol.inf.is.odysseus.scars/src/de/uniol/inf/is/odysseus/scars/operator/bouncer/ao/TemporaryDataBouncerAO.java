@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.operator.bouncer.logicaloperator;
+package de.uniol.inf.is.odysseus.scars.operator.bouncer.ao;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;

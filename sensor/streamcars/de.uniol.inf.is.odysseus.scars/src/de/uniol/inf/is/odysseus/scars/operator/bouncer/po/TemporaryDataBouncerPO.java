@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.operator.bouncer.physicaloperator;
+package de.uniol.inf.is.odysseus.scars.operator.bouncer.po;
 
 
 import java.util.ArrayList;

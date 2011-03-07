@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.scars.operator.bouncer.logicaloperator.TemporaryDataBouncerAO;
-import de.uniol.inf.is.odysseus.scars.operator.bouncer.physicaloperator.TemporaryDataBouncerPO;
+import de.uniol.inf.is.odysseus.scars.operator.bouncer.ao.TemporaryDataBouncerAO;
+import de.uniol.inf.is.odysseus.scars.operator.bouncer.po.TemporaryDataBouncerPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

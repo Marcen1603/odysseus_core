@@ -49,7 +49,6 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 	private List<String> restrictedScanVariables;
 	
 	private CovarianceHelper predCovHelper;
-	private CovarianceHelper scanCovHelper;
 	
 	private CovarianceExpressionHelper covHelper;
 	
@@ -70,7 +69,6 @@ public class FilterExpressionGainPO<M extends IProbability & IObjectTrackingLate
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		predCovHelper = new CovarianceHelper(this.getRestrictedPredVariables().toArray(new String[0]), this.getOutputSchema());
-		scanCovHelper = new CovarianceHelper(this.getRestrictedScanVariables().toArray(new String[0]), this.getOutputSchema());
 		covHelper = new CovarianceExpressionHelper();
 	}
 

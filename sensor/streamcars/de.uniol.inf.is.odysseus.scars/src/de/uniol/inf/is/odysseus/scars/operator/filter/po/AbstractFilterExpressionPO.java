@@ -40,8 +40,6 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 	
 	private String expressionString;
 	protected IStreamCarsExpression expression;
-
-	private String[] restrictedVariables;
 	
 	public void setExpression(IStreamCarsExpression expression) {
 		this.expression = expression;
@@ -63,6 +61,7 @@ public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjec
 		this.setInputSchema(copy.getInputSchema().clone());
 	}
 	
+	@Override
 	protected void process_open() throws OpenFailedException {
 		if(expressionString != null) {
 			this.expressionString = this.expressionString.replace("'", "");
