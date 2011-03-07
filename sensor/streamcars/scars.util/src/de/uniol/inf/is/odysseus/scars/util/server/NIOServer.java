@@ -13,7 +13,7 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.scars.operator.sink.server;
+package de.uniol.inf.is.odysseus.scars.util.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
