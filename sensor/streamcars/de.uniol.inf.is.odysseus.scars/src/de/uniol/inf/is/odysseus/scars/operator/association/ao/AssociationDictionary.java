@@ -12,11 +12,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.operator.association.logicaloperator;
+package de.uniol.inf.is.odysseus.scars.operator.association.ao;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.scars.operator.association.logicaloperator.HypothesisSelectionAO;
+import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisSelectionAO;
 
 public class AssociationDictionary {
 
