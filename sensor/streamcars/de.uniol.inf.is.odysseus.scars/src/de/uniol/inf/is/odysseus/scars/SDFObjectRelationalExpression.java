@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.base;
+package de.uniol.inf.is.odysseus.scars;
 
 import java.util.List;
 

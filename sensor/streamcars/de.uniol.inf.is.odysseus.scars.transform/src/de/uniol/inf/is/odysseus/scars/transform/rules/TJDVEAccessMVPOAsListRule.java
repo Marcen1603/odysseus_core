@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.scars.base.DummyAccessMVPO;
 import de.uniol.inf.is.odysseus.scars.base.JDVEAccessMVPO;
 import de.uniol.inf.is.odysseus.scars.base.SensorAccessAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -44,16 +43,9 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 		AbstractSensorAccessPO<?, ?> accessPO = null;
 		System.out.println("Host = " + operator.getHost());
 			
-		if( "127.0.0.1".equals(operator.getHost())) {
-			if (operator.getPort() == 5001) {
-				accessPO = new DummyAccessMVPO();
-				System.out.println("DummyAccessMVPO created");
-			} 
-		} else {
-			accessPO = new JDVEAccessMVPO(operator.getPort());
-			System.out.println("JDVEAccessMVPO created");
-		}
-		
+		accessPO = new JDVEAccessMVPO(operator.getPort());
+		System.out.println("JDVEAccessMVPO created");
+			
 		if(accessPO != null) {
 			accessPO.setObjectListPath(((SensorAccessAO) operator).getObjectListPath());
 		}

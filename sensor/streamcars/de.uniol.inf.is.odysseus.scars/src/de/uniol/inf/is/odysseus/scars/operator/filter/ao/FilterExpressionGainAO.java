@@ -20,7 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterExpressionGainAO <M extends IProbability & IGain> extends UnaryLogicalOp {

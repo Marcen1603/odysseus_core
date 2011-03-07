@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaDataInitializer;
+import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsMetaDataInitializer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

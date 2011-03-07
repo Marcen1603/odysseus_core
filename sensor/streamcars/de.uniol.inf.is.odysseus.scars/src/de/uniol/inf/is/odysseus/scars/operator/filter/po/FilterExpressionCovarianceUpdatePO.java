@@ -22,12 +22,12 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceExpressionHelper;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
+import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
+import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
+import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
+import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 

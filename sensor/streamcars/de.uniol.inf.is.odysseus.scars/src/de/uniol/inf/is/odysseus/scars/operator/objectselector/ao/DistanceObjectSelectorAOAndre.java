@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
+import de.uniol.inf.is.odysseus.scars.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

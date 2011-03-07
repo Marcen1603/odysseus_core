@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
+import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;

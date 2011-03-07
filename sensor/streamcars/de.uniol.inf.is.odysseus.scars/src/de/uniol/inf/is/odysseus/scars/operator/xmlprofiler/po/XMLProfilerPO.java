@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.profiler.ScarsXMLProfiler;
 
 public class XMLProfilerPO<M extends IProbability & ITimeInterval & IConnectionContainer & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>>

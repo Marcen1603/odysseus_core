@@ -19,14 +19,14 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceExpressionHelper;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.CovarianceHelper;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpressionVariable;
+import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
+import de.uniol.inf.is.odysseus.scars.metadata.CovarianceHelper;
+import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
+import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
+import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpressionVariable;
+import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpression;
+import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 /**
  * <p>
  * Physical operator for the <i>expression based</i> rating of <strong>Connections</strong>
- * ({@link de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection}). The expressions
+ * ({@link de.uniol.inf.is.odysseus.scars.metadata.Connection}). The expressions
  * is set within the query. Only existing connections will be considered. To rate each
  * possible pair of detected and predicted objects, HypothesisExpressionGatingPO
  * ({@link HypothesisExpressionGatingPO}) should be used.
