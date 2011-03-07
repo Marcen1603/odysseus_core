@@ -17,13 +17,13 @@ package de.uniol.inf.is.odysseus.scars.transform.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.HypothesisSelectionPO;
+import de.uniol.inf.is.odysseus.scars.operator.association.logicaloperator.HypothesisSelectionAO;
+import de.uniol.inf.is.odysseus.scars.operator.association.physicaloperator.HypothesisSelectionPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
