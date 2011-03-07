@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.base;
+package de.uniol.inf.is.odysseus.scars;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.scars.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
