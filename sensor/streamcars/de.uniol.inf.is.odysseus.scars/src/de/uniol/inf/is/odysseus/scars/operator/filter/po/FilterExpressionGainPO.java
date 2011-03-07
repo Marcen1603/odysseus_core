@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 
 
 /**

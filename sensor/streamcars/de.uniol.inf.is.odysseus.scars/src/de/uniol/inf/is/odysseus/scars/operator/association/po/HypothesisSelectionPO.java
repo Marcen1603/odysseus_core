@@ -29,10 +29,10 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
 
 /**
  * <p>

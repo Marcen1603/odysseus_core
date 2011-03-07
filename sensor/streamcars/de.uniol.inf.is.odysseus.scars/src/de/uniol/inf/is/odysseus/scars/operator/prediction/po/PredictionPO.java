@@ -27,11 +27,11 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionFunctionContainer;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.StreamCollector;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTrackingLatency &  IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {

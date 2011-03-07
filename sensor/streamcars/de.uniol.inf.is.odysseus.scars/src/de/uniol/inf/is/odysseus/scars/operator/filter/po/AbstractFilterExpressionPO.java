@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {

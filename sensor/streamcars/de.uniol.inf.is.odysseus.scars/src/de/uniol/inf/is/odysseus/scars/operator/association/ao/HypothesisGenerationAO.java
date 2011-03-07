@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;

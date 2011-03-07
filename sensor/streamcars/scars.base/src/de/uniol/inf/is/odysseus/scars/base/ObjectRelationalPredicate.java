@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;

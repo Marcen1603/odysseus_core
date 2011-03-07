@@ -22,9 +22,9 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.util.SchemaInfo;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIterator;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaInfo;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIterator;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;

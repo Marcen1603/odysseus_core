@@ -30,10 +30,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.scars.rcp.view3d.Activator;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class StreamCarsHeadUp implements IStreamEditorType {

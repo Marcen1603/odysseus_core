@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 
 /**
  * ConnectionList is a special ArrayList which contains rated connections. It brings some functions

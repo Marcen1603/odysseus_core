@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.scars.util.CovarianceMapper;
+import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class CovarianceHelper {

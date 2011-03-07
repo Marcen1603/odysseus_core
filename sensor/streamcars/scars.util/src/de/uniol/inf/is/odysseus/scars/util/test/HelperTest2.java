@@ -15,11 +15,11 @@
 package de.uniol.inf.is.odysseus.scars.util.test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class HelperTest2 {

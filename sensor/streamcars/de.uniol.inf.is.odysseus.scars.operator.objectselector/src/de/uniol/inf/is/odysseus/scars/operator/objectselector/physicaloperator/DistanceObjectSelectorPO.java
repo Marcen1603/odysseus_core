@@ -25,11 +25,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIterator;
 
 public class DistanceObjectSelectorPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval> extends
 		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {

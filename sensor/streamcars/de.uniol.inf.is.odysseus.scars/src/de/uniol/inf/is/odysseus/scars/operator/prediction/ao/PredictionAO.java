@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAO;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {

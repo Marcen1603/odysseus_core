@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.scars.util.test;
 
-import de.uniol.inf.is.odysseus.scars.util.CovarianceMapper;
+import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 
 public class CovarianceMapperTest {
 

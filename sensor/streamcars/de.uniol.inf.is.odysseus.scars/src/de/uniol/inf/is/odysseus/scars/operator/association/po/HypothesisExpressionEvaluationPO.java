@@ -27,10 +27,10 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLat
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IStreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsExpressionVariable;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 
 /**
  * <p>

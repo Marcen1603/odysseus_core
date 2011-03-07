@@ -31,9 +31,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.StreamCollector;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.StreamCollector;
 
 public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {

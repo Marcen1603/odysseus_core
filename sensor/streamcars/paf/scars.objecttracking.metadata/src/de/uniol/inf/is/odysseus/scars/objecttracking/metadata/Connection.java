@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 
 /**
  * This class represents a rated connection between two objects. It could be used to define the connections between cars within
