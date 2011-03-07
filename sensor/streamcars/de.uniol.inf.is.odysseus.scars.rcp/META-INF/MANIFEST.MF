@@ -42,3 +42,4 @@ Import-Package: de.uniol.inf.is.odysseus.metadata,
  org.xith3d.scenegraph.primitives
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml
+Export-Package: de.uniol.inf.is.odysseus.scars.rcp
