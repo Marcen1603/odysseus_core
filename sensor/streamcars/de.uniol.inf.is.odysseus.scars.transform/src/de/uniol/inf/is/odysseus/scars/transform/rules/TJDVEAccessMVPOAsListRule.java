@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractS
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.JDVEAccessMVPO;
-import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.SensorAccessAO;
+import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.JDVEAccessMVAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -44,7 +44,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 		System.out.println("JDVEAccessMVPO created");
 			
 		if(accessPO != null) {
-			accessPO.setObjectListPath(((SensorAccessAO) operator).getObjectListPath());
+			accessPO.setObjectListPath(((JDVEAccessMVAO) operator).getObjectListPath());
 		}
 		
 		accessPO.setOutputSchema(operator.getOutputSchema());
