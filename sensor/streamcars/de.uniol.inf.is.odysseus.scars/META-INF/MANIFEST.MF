@@ -25,6 +25,8 @@ Import-Package: de.uniol.inf.is.odysseus,
  weka.core
 Export-Package: de.uniol.inf.is.odysseus.scars.operator.association.ao,
  de.uniol.inf.is.odysseus.scars.operator.association.po,
+ de.uniol.inf.is.odysseus.scars.operator.evaluation.ao,
+ de.uniol.inf.is.odysseus.scars.operator.evaluation.po,
  de.uniol.inf.is.odysseus.scars.operator.filter.ao,
  de.uniol.inf.is.odysseus.scars.operator.filter.po,
  de.uniol.inf.is.odysseus.scars.operator.prediction.ao,
