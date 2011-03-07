@@ -40,9 +40,9 @@ public class ScarsQueryBuildConfiguration implements IQueryBuildConfiguration {
 				"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime",
 		
 				// StreamCars
-				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer",
-				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain",
-				"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IObjectTrackingLatency");
+				"de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer",
+				"de.uniol.inf.is.odysseus.scars.metadata.IGain",
+				"de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency");
 
 
 		cfg.setOption("IBrokerInterval", true);
