@@ -121,6 +121,7 @@ import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisExpressi
 import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisSelectionAO;
 import de.uniol.inf.is.odysseus.scars.operator.bouncer.ao.TemporaryDataBouncerAO;
+import de.uniol.inf.is.odysseus.scars.operator.brokerinit.BrokerInitAO;
 import de.uniol.inf.is.odysseus.scars.operator.evaluation.ao.EvaluationAO;
 import de.uniol.inf.is.odysseus.scars.operator.filter.ao.FilterExpressionCovarianceUpdateAO;
 import de.uniol.inf.is.odysseus.scars.operator.filter.ao.FilterExpressionEstimateUpdateAO;
@@ -139,7 +140,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.infs.is.odysseus.scars.operator.brokerinit.BrokerInitAO;
 
 /**
  * This visitor creates the logical plan from a procedural expression.
