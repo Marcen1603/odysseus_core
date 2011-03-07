@@ -131,7 +131,7 @@ import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.operator.sink.ao.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
-import de.uniol.inf.is.odysseus.scars.xmlprofiler.logicaloperator.XMLProfilerAO;
+import de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.logicaloperator.XMLProfilerAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
