@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TTestAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TBrokerInitAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TDistanceObjectSelectorAOAndreRule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TDistanceObjectSelectorAORule;
@@ -63,6 +64,7 @@ public class StreamCarsRuleProvider implements ITransformRuleProvider{
 		rules.add(new TFilterExpressionCovarianceAORule());
 		rules.add(new TFilterExpressionEstimateAORule());
 		rules.add(new TFilterExpressionGainAORule());
+		rules.add(new TTestAORule());
 		return rules;
 	}
 
