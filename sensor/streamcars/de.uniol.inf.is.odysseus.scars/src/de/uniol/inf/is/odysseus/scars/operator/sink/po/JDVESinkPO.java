@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.operator.sink.physicaloperator;
+package de.uniol.inf.is.odysseus.scars.operator.sink.po;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
