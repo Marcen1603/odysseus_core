@@ -27,9 +27,9 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.scars.operator.MetadataObjectRelationalCreationPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -71,15 +71,15 @@ public class TMetadataObjectRelationalCreationPORule extends AbstractTransformat
 		Class type = MetadataRegistry.getMetadataType(config.getMetaTypes());
 		System.out.println("Metadata in use: " + type);
 		
-		MetadataObjectRelationalCreationPO po = null;
+		MetadataCreationPO po = null;
 		for(PhysicalSubscription<ISink> sub : (Collection<PhysicalSubscription<ISink>>)operator.getSubscriptions()){
-			if ((sub.getTarget() instanceof MetadataObjectRelationalCreationPO) && ((MetadataObjectRelationalCreationPO)sub.getTarget()).getType() == type) {
-				po = (MetadataObjectRelationalCreationPO)sub.getTarget();
+			if ((sub.getTarget() instanceof MetadataCreationPO) && ((MetadataCreationPO)sub.getTarget()).getType() == type) {
+				po = (MetadataCreationPO)sub.getTarget();
 				break;
 			}
 		}
 		if (po == null) {
-			po = new MetadataObjectRelationalCreationPO(type);
+			po = new MetadataCreationPO(type);
 			po.setOutputSchema(operator.getOutputSchema());
 			operator.subscribeSink(po, 0, 0, operator.getOutputSchema()); 
 		}
