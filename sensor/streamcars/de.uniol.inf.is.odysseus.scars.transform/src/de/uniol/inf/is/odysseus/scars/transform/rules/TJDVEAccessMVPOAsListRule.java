@@ -15,18 +15,15 @@
 package de.uniol.inf.is.odysseus.scars.transform.rules;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.scars.base.JDVEAccessMVPO;
-import de.uniol.inf.is.odysseus.scars.base.SensorAccessAO;
+import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.JDVEAccessMVPO;
+import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.SensorAccessAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

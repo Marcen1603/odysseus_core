@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.base;
+package de.uniol.inf.is.odysseus.scars.operator.jdveaccess;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
