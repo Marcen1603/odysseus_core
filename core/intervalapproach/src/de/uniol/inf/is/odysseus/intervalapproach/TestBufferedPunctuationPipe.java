@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.util.LoggerHelper;
  * 
  * @author Jonas Jacobi, André Bolles
  */
-public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M extends ITimeInterval> extends AbstractIterablePipe<T, T>
+public class TestBufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M extends ITimeInterval> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
 
 	protected static Logger _logger = null;
@@ -56,17 +56,17 @@ public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M ex
 	protected Lock transferLock = new ReentrantLock();
 	protected LinkedList<PointInTime> punctuations = new LinkedList<PointInTime>();
 
-	public BufferedPunctuationPipe2() {
+	public TestBufferedPunctuationPipe() {
 		super();
-		final BufferedPunctuationPipe2<T, M> t = this;
+		final TestBufferedPunctuationPipe<T, M> t = this;
 		this.addMonitoringData("selectivity",
 				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 	}
 
-	public BufferedPunctuationPipe2(BufferedPunctuationPipe2<T, M> bufferedPunctuationPipe) {
+	public TestBufferedPunctuationPipe(TestBufferedPunctuationPipe<T, M> bufferedPunctuationPipe) {
 		super(bufferedPunctuationPipe);
 		buffer.addAll(bufferedPunctuationPipe.buffer);
-		final BufferedPunctuationPipe2<T, M> t = this;
+		final TestBufferedPunctuationPipe<T, M> t = this;
 		this.addMonitoringData("selectivity",
 				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 
@@ -187,8 +187,8 @@ public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M ex
 	}
 
 	@Override
-	public BufferedPunctuationPipe2<T, M> clone() {
-		return new BufferedPunctuationPipe2<T, M>(this);
+	public TestBufferedPunctuationPipe<T, M> clone() {
+		return new TestBufferedPunctuationPipe<T, M>(this);
 	}
 
 	int p = 0;
@@ -200,10 +200,10 @@ public class BufferedPunctuationPipe2<T extends IMetaAttributeContainer<M>, M ex
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof BufferedPunctuationPipe2)) {
+		if(!(ipo instanceof TestBufferedPunctuationPipe)) {
 			return false;
 		}
-		BufferedPunctuationPipe2 bpp2 = (BufferedPunctuationPipe2) ipo;
+		TestBufferedPunctuationPipe bpp2 = (TestBufferedPunctuationPipe) ipo;
 		if(this.hasSameSources(bpp2)) {
 			return true;
 		}

@@ -18,7 +18,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.BufferedPunctuationPipe2;
+import de.uniol.inf.is.odysseus.intervalapproach.TestBufferedPunctuationPipe;
 import de.uniol.inf.is.odysseus.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -33,7 +33,7 @@ public class TBenchmarkBufferAOToPuncPipe2Rule extends AbstractTransformationRul
 
 	@Override
 	public void execute(BufferAO operator, TransformationConfiguration config) {
-		BufferedPunctuationPipe2 po = new BufferedPunctuationPipe2();
+		TestBufferedPunctuationPipe po = new TestBufferedPunctuationPipe();
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
