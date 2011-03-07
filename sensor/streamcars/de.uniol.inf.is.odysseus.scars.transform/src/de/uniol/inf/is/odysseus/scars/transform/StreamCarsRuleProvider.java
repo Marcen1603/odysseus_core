@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisExpressionEvalu
 import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisExpressionGatingAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisGenarationAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisSelectionAORule;
-import de.uniol.inf.is.odysseus.scars.transform.rules.TInitializationAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TJDVEAccessMVPOAsListRule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TJDVESinkAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TMetadataInitLatencyProbabilityStreamCarsRule;
@@ -60,7 +59,6 @@ public class StreamCarsRuleProvider implements ITransformRuleProvider{
 		rules.add(new THypothesisEvaluationAORule());
 		rules.add(new THypothesisGenarationAORule());
 		rules.add(new THypothesisSelectionAORule());
-		rules.add(new TInitializationAORule());
 		rules.add(new TJDVESinkAORule());
 		rules.add(new TJDVEAccessMVPOAsListRule());
 		rules.add(new TMetadataInitLatencyProbabilityStreamCarsRule());
