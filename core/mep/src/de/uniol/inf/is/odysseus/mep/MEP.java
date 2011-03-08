@@ -26,9 +26,16 @@ import de.uniol.inf.is.odysseus.mep.functions.DivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.DoubleToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.EqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.FloorFunction;
+import de.uniol.inf.is.odysseus.mep.functions.GetAbsoluteValue;
 import de.uniol.inf.is.odysseus.mep.functions.GreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.GreaterThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.IfFunction;
+import de.uniol.inf.is.odysseus.mep.functions.MatrixAdd;
+import de.uniol.inf.is.odysseus.mep.functions.MatrixGetEntry;
+import de.uniol.inf.is.odysseus.mep.functions.MatrixInvert;
+import de.uniol.inf.is.odysseus.mep.functions.MatrixMult;
+import de.uniol.inf.is.odysseus.mep.functions.MatrixSub;
+import de.uniol.inf.is.odysseus.mep.functions.MatrixTranspose;
 import de.uniol.inf.is.odysseus.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.ModuloOperator;
 import de.uniol.inf.is.odysseus.mep.functions.MultiplicationOperator;
@@ -41,6 +48,8 @@ import de.uniol.inf.is.odysseus.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.SmallerThanOperator;
+import de.uniol.inf.is.odysseus.mep.functions.SqrtValue;
+import de.uniol.inf.is.odysseus.mep.functions.SquareValue;
 import de.uniol.inf.is.odysseus.mep.functions.ToNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.ToStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UnaryMinusOperator;
@@ -99,6 +108,16 @@ public class MEP {
 		registerFunction(new ToNumberFunction());
 		registerFunction(new ToStringFunction());
 		registerFunction(new RandomFunction());
+
+		registerFunction(new MatrixInvert());
+		registerFunction(new MatrixAdd());
+		registerFunction(new MatrixSub());
+		registerFunction(new MatrixMult());
+		registerFunction(new MatrixTranspose());
+		registerFunction(new MatrixGetEntry());
+		registerFunction(new GetAbsoluteValue());
+		registerFunction(new SquareValue());
+		registerFunction(new SqrtValue());
 	}
 
 	public static void registerFunction(IFunction<?> function) {
