@@ -61,7 +61,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 			isBreaked = true;
 			fireBreakStartEvent();
 			
-			System.out.println(this + " : Start Break");
+//			System.out.println(this + " : Start Break");
 			
 			return true;
 
@@ -89,7 +89,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 		sink = null;
 		fireBreakEndEvent();
 		
-		System.out.println(this + " : End Break");
+//		System.out.println(this + " : End Break");
 	}
 	
 	public void flush() {
@@ -127,7 +127,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 	
 				@Override
 				public void run() {
-					System.out.println("Send step");
+//					System.out.println("Send step");
 					if( buffer != null && buffer.size() > 0 )
 						buffer.transferNext();
 				}
@@ -138,7 +138,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 			t.start();
 		}
 		
-		System.out.println(this + " : Step");
+//		System.out.println(this + " : Step");
 	}
 	
 	public final ISource<?> getOperator() {
