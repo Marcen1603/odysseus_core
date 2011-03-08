@@ -72,7 +72,7 @@ public class CQLGenerator implements IQueryGenerator {
 	}
 
 	@Override
-	public OperatorResult generateAggregation(Stream instream, String[] groupBy, Aggregation[] aggregations,
+	public OperatorResult generateAggregation(Stream instream, String[] groupBy, int dumpValueCnt, Aggregation[] aggregations,
 			String outputName){
 		// TODO Auto-generated method stub
 		return null;

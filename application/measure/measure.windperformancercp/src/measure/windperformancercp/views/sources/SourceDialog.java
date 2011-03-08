@@ -143,11 +143,13 @@ public class SourceDialog extends AbstractUIDialog {
 				FormData nameCompFD = new FormData();
 				nameCompFD.top = new FormAttachment(streamInfoGroup,0);
 				nameComp.setLayoutData(nameCompFD);
-				nameComp.setLayout(new FillLayout());
+				//nameComp.setLayout(new FillLayout());
+				nameComp.setLayout(new GridLayout(2,false));
 				Label nameLabel = new Label(nameComp, SWT.BORDER);
 				nameLabel.setText(NAMELABEL);
 				nameLabel.setToolTipText("name for human readable identification");
 				nameInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
+				nameInputField.setLayoutData(new GridData(120, SWT.DEFAULT));
 				nameInputField.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent fe){}
 					public void focusLost(FocusEvent fe){presenter.nameEntered();}
@@ -159,11 +161,13 @@ public class SourceDialog extends AbstractUIDialog {
 				FormData strInputCompFD = new FormData();
 				strInputCompFD.top = new FormAttachment(nameComp,5);
 				strInputComp.setLayoutData(strInputCompFD);
-				strInputComp.setLayout(new FillLayout());
+				//strInputComp.setLayout(new FillLayout());
+				strInputComp.setLayout(new GridLayout(2,false));
 				Label strInputLabel = new Label(strInputComp, SWT.BORDER);
 				strInputLabel.setText(STREAMLABEL);
 				strInputLabel.setToolTipText("stream identification for DSMS");
 				strInputField = new Text(strInputComp, SWT.SINGLE | SWT.BORDER);
+				strInputField.setLayoutData(new GridData(120, SWT.DEFAULT));
 				strInputField.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent fe){}
 					public void focusLost(FocusEvent fe){presenter.streamIdEntered();}
@@ -175,11 +179,13 @@ public class SourceDialog extends AbstractUIDialog {
 				FormData hostCompFD = new FormData();
 				hostCompFD.top = new FormAttachment(strInputComp,5);
 				hostComp.setLayoutData(hostCompFD);
-				hostComp.setLayout(new FillLayout());
+				//hostComp.setLayout(new FillLayout());
+				hostComp.setLayout(new GridLayout(2,false));
 				Label hostLabel = new Label(hostComp, SWT.NONE);
 				hostLabel.setText(HOSTLABEL);
 				hostLabel.setToolTipText("name of the host where the stream is located, e.g. 'localhost'");
 				hostInputField = new Text(hostComp, SWT.SINGLE | SWT.BORDER);
+				hostInputField.setLayoutData(new GridData(120, SWT.DEFAULT));
 				hostInputField.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent fe){}
 					public void focusLost(FocusEvent fe){presenter.hostEntered();}

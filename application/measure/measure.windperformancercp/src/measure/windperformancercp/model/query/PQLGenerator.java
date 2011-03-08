@@ -88,7 +88,7 @@ public class PQLGenerator implements IQueryGenerator {
 	}
 
 	@Override
-	public OperatorResult generateAggregation(Stream instream, String[] groupBy, Aggregation[] aggregations,
+	public OperatorResult generateAggregation(Stream instream, String[] groupBy, int dumpValueCnt, Aggregation[] aggregations,
 			String outputName) {
 		String query = "";
 		ArrayList<String> streamAtts = new ArrayList<String>();
@@ -102,6 +102,9 @@ public class PQLGenerator implements IQueryGenerator {
 				streamAtts.add(groupBy[i]);
 			}
 			query = query+"],";
+		}
+		if(dumpValueCnt != 0){
+			query = query+"DumpAtValueCount = "+dumpValueCnt+",";
 		}
 		query = query+"aggregations = [";
 		query = query+aggregations[0].toString();

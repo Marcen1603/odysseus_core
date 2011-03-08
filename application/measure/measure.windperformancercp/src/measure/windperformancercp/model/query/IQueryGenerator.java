@@ -26,7 +26,7 @@ public interface IQueryGenerator {
 	public OperatorResult generateProjection(Stream instream, int[] attIndexes, String outputName);
 	public OperatorResult generateWindow(Stream instream, Window win, String outputName);
 	public OperatorResult generateSelection(Stream instream, String predicate, String outputName);
-	public OperatorResult generateAggregation(Stream instream, String[] groupBy, Aggregation[] aggregations, String outputName);
+	public OperatorResult generateAggregation(Stream instream, String[] groupBy, int dumpValueCnt, Aggregation[] aggregations, String outputName);
 	public OperatorResult generateMap(Stream instream, String[] resNames, String[] expressions, String outputName);
 	public OperatorResult generateRename(Stream instream, String[] newAttNames, String outputName);
 	public OperatorResult generateJoin(ArrayList<Stream> instreams, String predicate, String outputName);

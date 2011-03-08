@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -39,8 +40,7 @@ import measure.windperformancercp.event.IEventType;
 	    "host",
 	    "port",
 	    "frequency",
-	    "attributeList",
-	    "connectState"
+	    "attributeList"
 	})
 public abstract class AbstractSource implements ISource {
 	
@@ -60,6 +60,7 @@ public abstract class AbstractSource implements ISource {
 	protected String name;
 	protected ArrayList<Attribute> attributeList;
 	protected int frequency;
+	@XmlTransient
 	protected boolean connectState; //0=disconnected, 1=proceeding, 2= connected
 	
 	public static final int MMId = 0;
@@ -240,11 +241,13 @@ public abstract class AbstractSource implements ISource {
 		return attributeList.size();
 	}
 	
+	
 	@Override
 	public boolean getConnectState(){
 		return connectState;
 	}
 	
+	@XmlTransient
 	@Override
 	public void setConnectState(boolean c){
 			this.connectState = c;

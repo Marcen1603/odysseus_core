@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -249,11 +248,13 @@ public class PerformanceWizard extends Wizard {
 				FormData nameCompFD = new FormData();
 				nameCompFD.top = new FormAttachment(parent,0);
 				nameComp.setLayoutData(nameCompFD);
-				nameComp.setLayout(new FillLayout());
+				//nameComp.setLayout(new FillLayout());
+				nameComp.setLayout(new GridLayout(2, false));
 				Label nameLabel = new Label(nameComp, SWT.BORDER);
 				nameLabel.setText("Identifier: ");
 				nameLabel.setToolTipText("name for human readable identification");
 				idInputField = new Text(nameComp, SWT.SINGLE | SWT.BORDER);
+				idInputField.setLayoutData(new GridData(150, SWT.DEFAULT));
 				idInputField.addModifyListener(new ModifyListener(){
 				      public void modifyText(ModifyEvent me) {((PerformanceWizard)getWizard()).identifierEntered();}});
 			}

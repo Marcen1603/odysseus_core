@@ -150,8 +150,8 @@ public class QueryGenerator {
 	public OperatorResult generateSelection(Stream instream, String predicate, String outputName){
 		return this.language.generateSelection(instream, predicate, outputName);
 	}
-	public OperatorResult generateAggregation(Stream instream, String[] groupBy, Aggregation[] aggregations, String outputName){
-		return this.language.generateAggregation(instream, groupBy, aggregations, outputName);
+	public OperatorResult generateAggregation(Stream instream, String[] groupBy, int dumpValueCnt, Aggregation[] aggregations, String outputName){
+		return this.language.generateAggregation(instream, groupBy, dumpValueCnt, aggregations, outputName);
 	}
 	public OperatorResult generateRename(Stream instream, String[] newAttNames, String outputName) {
 		return this.language.generateRename(instream, newAttNames, outputName);

@@ -180,6 +180,7 @@ public class MeasureIEC extends APerformanceQuery {
 		actRes1 = Pgen.generateAggregation(
 				actRes1.getStream(), 
 				null, //no group-by 
+				0, //no dumping
 				aggs, 
 				"avgValues");
 		tmpQuery = tmpQuery +actRes1.getQuery();
@@ -194,7 +195,7 @@ public class MeasureIEC extends APerformanceQuery {
 		//compute density, bin and normalize data via map
 		if(pitch){
 			
-			
+			//note: temperature must be recalculated to Kelvin with formula degK = (287.058*(degC+237.15))
 			actRes1 = Pgen.generateMap(actRes1.getStream(), 
 					new String[]{"timestamp", "bin_id" ,"normalizedWSpeed", "normalizedPower"}, 
 					new String[]{"timestamp", 
@@ -209,7 +210,7 @@ public class MeasureIEC extends APerformanceQuery {
 					new String[]{"timestamp", 
 								"floor((avg_"+windspeedAttribute+")/0.5)/2.0",
 								"avg_"+windspeedAttribute,
-								"avg_"+powerAttribute+"*(1.225/100* avg_"+pressureAttribute+"/(287.058*(avg_"+temperatureAttribute+"+237.15)))"}, 
+								"avg_"+powerAttribute+"*(1.225/(100* avg_"+pressureAttribute+"/(287.058*(avg_"+temperatureAttribute+"+237.15))))"}, 
 					"normalizedBinData");
 		}
 		
@@ -222,6 +223,7 @@ public class MeasureIEC extends APerformanceQuery {
 		//final aggregation
 		actRes1 = Pgen.generateAggregation(actRes1.getStream(), 
 				new String[]{actRes1.getStream().getIthAttName(1)}, 
+				10,		//DumpAtValueCount
 				new Aggregation[]{
 					Pgen.new Aggregation("MAX",actRes1.getStream().getIthAttName(0), "final_timestamp"),
 					Pgen.new Aggregation("AVG",actRes1.getStream().getIthAttName(2), "final_WSpeed"),

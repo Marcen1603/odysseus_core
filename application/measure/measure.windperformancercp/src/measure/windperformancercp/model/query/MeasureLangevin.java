@@ -161,11 +161,6 @@ public class MeasureLangevin extends APerformanceQuery {
 
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
-		//window 'waiter for next data element', window for join
-		actRes1 = Pgen.generateWindow(actRes1.getStream(), 
-				Pgen.new Window("time",tau+1,1), 
-				"windowed_nBD_wnE");
-		tmpQuery = tmpQuery +actRes1.getQuery();
 		
 		//project 'normalized bin data' to timestamp and power 
 		actRes2 = Pgen.generateProjection(actRes1.getStream(), 
@@ -184,6 +179,12 @@ public class MeasureLangevin extends APerformanceQuery {
 				Pgen.new Window("tuple",1), 
 				"windowed_TPTI");
 		tmpQuery = tmpQuery +actRes2.getQuery();
+		
+		//window 'waiter for next data element', window for join
+		actRes1 = Pgen.generateWindow(actRes1.getStream(), 
+				Pgen.new Window("time",tau+1,1), 
+				"windowed_nBD_wnE");
+		tmpQuery = tmpQuery +actRes1.getQuery();
 		
 		//the join for computing the difference P_(t+tau) - P_t
 		streams = new ArrayList<Stream>();
@@ -216,13 +217,14 @@ public class MeasureLangevin extends APerformanceQuery {
 		
 		actRes1 = Pgen.generateAggregation(actRes1.getStream(), 
 				new String[]{"Vbin_id","Pbin_id"}, 
+				50, //DumpAtValueCount
 				aggs, 
 				"precomputedDriftAndDiffusionData");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 	
 		//select the bins with enough data in it
 		actRes1 = Pgen.generateSelection(actRes1.getStream(), 
-				"N > 100",	//TODO: parametrize me!
+				"N > 99",	//TODO: parametrize me!
 				"validBins");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
@@ -248,7 +250,8 @@ public class MeasureLangevin extends APerformanceQuery {
 		tmpQuery = tmpQuery +actRes2.getQuery();
 		
 		actRes3 = Pgen.generateAggregation(actRes2.getStream(), 
-				new String[]{"Vbin_id"}, 
+				new String[]{"Vbin_id"},
+				1, //DumpAtValueCount
 				new Aggregation[]{Pgen.new Aggregation("MIN","D1", "MinD1Neg")}, 
 				"minNegD1");
 		tmpQuery = tmpQuery +actRes3.getQuery();
@@ -256,12 +259,20 @@ public class MeasureLangevin extends APerformanceQuery {
 		actRes3 = Pgen.generateRename(actRes3.getStream(), 
 				new String[]{"vbin_id","MinD1Neg"}, 
 				"renamedMinNegforJoining");
+		
+		tmpQuery = tmpQuery +actRes3.getQuery();
+				
+		//actRes2 = Pgen.generateWindow(actRes2.getStream(), Pgen.new Window("unbounded"), "windowedNegData");
+		//actRes3 = Pgen.generateWindow(actRes3.getStream(), Pgen.new Window("unbounded"), "windowedMinNegData");
+		actRes2 = Pgen.generateWindow(actRes2.getStream(), Pgen.new Window("tuple", 1, 1, new String[]{"Vbin_id"}), "windowedNegData2");
+		tmpQuery = tmpQuery +actRes2.getQuery();
+		actRes3 = Pgen.generateWindow(actRes3.getStream(), Pgen.new Window("tuple", 1, 1, new String[]{"vbin_id"}), "windowedMinNegData");
 		tmpQuery = tmpQuery +actRes3.getQuery();
 		
 		streams = new ArrayList<Stream>();
 		streams.add(actRes2.getStream());
 		streams.add(actRes3.getStream());
-		
+				
 		actRes2 = Pgen.generateJoin(streams, 
 				"Vbin_id = vbin_id", 
 				"signSplittedNegDataWithMin");
@@ -299,21 +310,28 @@ public class MeasureLangevin extends APerformanceQuery {
 		
 		actRes3 = Pgen.generateAggregation(actRes1.getStream(), 
 				new String[]{"Vbin_id"}, 
+				1, //DumpAtValueCount
 				new Aggregation[]{Pgen.new Aggregation("MIN","D1", "MinD1Pos")}, 
 				"minPosD1");
 		tmpQuery = tmpQuery +actRes3.getQuery();
 		
 		actRes3 = Pgen.generateRename(actRes3.getStream(), 
-				new String[]{"vbin_id","MinD1Pos"}, 
+				new String[]{"Vbin_idPos","MinD1Pos"}, 
 				"renamedMinPosforJoining");
 		tmpQuery = tmpQuery +actRes3.getQuery();
 		
+		//actRes3 = Pgen.generateWindow(actRes3.getStream(), Pgen.new Window("unbounded"), "windowedMinPosData");
+		actRes1 = Pgen.generateWindow(actRes1.getStream(), Pgen.new Window("tuple", 1, 1, new String[]{"Vbin_id"}), "windowedPosData2");
+		tmpQuery = tmpQuery +actRes1.getQuery();
+		actRes3 = Pgen.generateWindow(actRes3.getStream(), Pgen.new Window("tuple", 1, 1, new String[]{"Vbin_idPos"}), "windowedMinPosData");
+		tmpQuery = tmpQuery +actRes3.getQuery();
+				
 		streams = new ArrayList<Stream>();
 		streams.add(actRes1.getStream());
 		streams.add(actRes3.getStream());
-		
+		//join of positive data with min pos data		
 		actRes1 = Pgen.generateJoin(streams, 
-				"Vbin_id = vbin_id", 
+				"Vbin_id = Vbin_idPos", 
 				"signSplittedPosDataWithMin");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
@@ -336,10 +354,14 @@ public class MeasureLangevin extends APerformanceQuery {
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
 		
+		actRes1 = Pgen.generateWindow(actRes1.getStream(), Pgen.new Window("tuple", 1, 1, new String[]{"Vbin_idPos"}), "windowedPosforCombineJoin");
+		tmpQuery = tmpQuery +actRes1.getQuery();
+		actRes2 = Pgen.generateWindow(actRes2.getStream(), Pgen.new Window("tuple", 1, 1, new String[]{"Vbin_idNeg"}), "windowedNegforCombineJoin");
+		tmpQuery = tmpQuery +actRes2.getQuery();
 		//join pos and neg data
 		streams = new ArrayList<Stream>();
-		streams.add(actRes1.getStream());
-		streams.add(actRes2.getStream());
+		streams.add(actRes1.getStream());	//pos Data
+		streams.add(actRes2.getStream());	//neg Data
 		
 		actRes1 = Pgen.generateJoin(streams,
 				"Vbin_idPos = Vbin_idNeg",
@@ -350,6 +372,14 @@ public class MeasureLangevin extends APerformanceQuery {
 		actRes1 = Pgen.generateSelection(actRes1.getStream(), 
 				"Pbin_idPos <= Pbin_idNeg", 
 				"selectStableFPScenario");
+		tmpQuery = tmpQuery +actRes1.getQuery();
+		
+		//linear interpolation
+		actRes1 = Pgen.generateMap(actRes1.getStream(), 
+				new String[]{"FPVbin_id","FPPbin_id","FPError"},
+				new String[]{"Vbin_idPos",
+			"- MinD1Pos*(Pbin_idNeg - Pbin_idPos) /(MinD1Neg - MinD1Pos)",
+			"Pbin_idNeg-Pbin_idPos"}, "fixPoints");
 		tmpQuery = tmpQuery +actRes1.getQuery();
 		
 		
