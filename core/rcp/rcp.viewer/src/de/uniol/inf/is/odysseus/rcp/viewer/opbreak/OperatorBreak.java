@@ -3,7 +3,10 @@ package de.uniol.inf.is.odysseus.rcp.viewer.opbreak;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 
 public class OperatorBreak implements IBufferedPipeListener {
 
@@ -12,10 +15,15 @@ public class OperatorBreak implements IBufferedPipeListener {
 	private List<IOperatorBreakListener> listeners = new ArrayList<IOperatorBreakListener>();
 	private boolean isBreaked = false;
 	
+	private int sourceOutPort;
+	private int sinkInPort;
+	private ISink<?> sink;
+	
 	public OperatorBreak( ISource<?> source ) {
 		operator = source;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public boolean startBreak() {
 		if( isBreaked ) return true;
 		
@@ -23,14 +31,29 @@ public class OperatorBreak implements IBufferedPipeListener {
 
 		if (subCount == 1) {
 
-			// TODO: Buffer erstellen (BufferedPipe verwenden)
-			// Buffer einklinken
-			// Listener in Buffer eintragen
+			// Neuer Buffer
+			buffer = new BufferedPipeWithListener();
+			buffer.addListener(this);
+
+			// Subscription erhalten, welchen wir ersetzen wollen
+			PhysicalSubscription subscription = operator.getSubscriptions().iterator().next();
+			sink = (ISink)subscription.getTarget();
+			sourceOutPort = subscription.getSourceOutPort();
+			sinkInPort = subscription.getSinkInPort();
 			
-			// Wenn die OperatorBreakView noch nicht angezeigt wird, danach 
-			// fragen und ggfs. anzeigen lassen
+			insertBuffer(operator, sourceOutPort, sink, sinkInPort, buffer);
 			
-			
+			try {
+				buffer.open();
+			} catch (OpenFailedException e) {
+				// Zurückfahren
+				e.printStackTrace();
+				removeBuffer(operator, sourceOutPort, sink, sinkInPort, buffer);
+				buffer = null;
+				sink = null;
+				return false;
+			}
+
 			isBreaked = true;
 			fireBreakStartEvent();
 			
@@ -49,20 +72,65 @@ public class OperatorBreak implements IBufferedPipeListener {
 	public void endBreak() {
 		if( !isBreaked ) return;
 		
-		// TODO: Buffer entfernen
+		// bisher gespeicherte Daten senden
+		flush();
+		
+		removeBuffer(operator, sourceOutPort, sink, sinkInPort, buffer);
 		
 		isBreaked = false;
+		buffer = null;
+		sink = null;
 		fireBreakEndEvent();
 		
 		System.out.println(this + " : End Break");
+	}
+	
+	public void flush() {
+		while( buffer.size() > 0) {
+			buffer.transferNext();
+		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected static void insertBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferedPipeWithListener buffer ) {
+		// Alte Verbindung entfernen
+		source.disconnectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
+		
+		// Neue Verbindung erstellen
+		source.connectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
+		buffer.connectSink(sink, sinkInPort, 0, buffer.getOutputSchema());
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected static void removeBuffer( ISource source, int sourceOutPort, ISink sink, int sinkInPort, BufferedPipeWithListener buffer ) {
+		// Alte Verbindungen trennen
+		buffer.disconnectSink(sink, sinkInPort, 0, buffer.getOutputSchema());
+		source.disconnectSink(buffer, 0, sourceOutPort, source.getOutputSchema());
+		
+		// Neue (alte) Verbindung herstellen
+		source.connectSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema());
 	}
 	
 	public void step() {
 		if( !isBreaked ) 
 			return;
 		
-		// Hier genau ein Element
-		// des Buffers weiterschicken
+		if( buffer.size() > 0 ) {
+			Thread t = new Thread( new Runnable() {
+	
+				@Override
+				public void run() {
+					System.out.println("Send step");
+					if( buffer != null && buffer.size() > 0 )
+						buffer.transferNext();
+				}
+				
+			});
+			t.setDaemon(false);
+			t.setName("OperatorBreak Transfer Step");
+			t.start();
+		}
+		
 		System.out.println(this + " : Step");
 	}
 	
@@ -70,8 +138,8 @@ public class OperatorBreak implements IBufferedPipeListener {
 		return operator;
 	}
 	
-	public final BufferedPipeWithListener<?> getBuffer() {
-		return buffer;
+	public final int getBufferSize() {
+		return buffer != null ? buffer.size() : 0;
 	}
 	
 	public void addListener( IOperatorBreakListener listener ) {

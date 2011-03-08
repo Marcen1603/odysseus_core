@@ -73,8 +73,7 @@ public class OperatorBreakView extends ViewPart implements IOperatorBreakManager
 			@Override
 			public void update(ViewerCell cell) {
 				OperatorBreak ob = (OperatorBreak) cell.getElement();
-				if (ob.getBuffer() != null)
-					cell.setText(String.valueOf(ob.getBuffer().size()));
+				cell.setText(String.valueOf(ob.getBufferSize()));
 			}
 		});
 		tableColumnLayout.setColumnData(elementColumn.getColumn(), new ColumnWeightData(1, 25, true));

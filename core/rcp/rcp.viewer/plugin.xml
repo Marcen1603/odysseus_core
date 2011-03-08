@@ -45,6 +45,10 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
             name="Remove OperatorBreak">
       </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
+            name="Flush OperatorBreak">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -150,9 +154,28 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.commands.RemoveOperatorBreakCommand"
             commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand">
          <enabledWhen>
-            <reference
-                  definitionId="isOperatorBreak">
-            </reference>
+            <or>
+               <reference
+                     definitionId="isOperatorBreak">
+               </reference>
+               <reference
+                     definitionId="isNodeView">
+               </reference>
+            </or>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.FlushOperatorBreakCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand">
+         <enabledWhen>
+            <or>
+               <reference
+                     definitionId="isOperatorBreak">
+               </reference>
+               <reference
+                     definitionId="isNodeView">
+               </reference>
+            </or>
          </enabledWhen>
       </handler>
    </extension>
@@ -184,7 +207,7 @@
          </separator>
          <menu
                id="operator"
-               label="Operator">
+               label="Break Operator">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
                   label="Break"
@@ -196,8 +219,22 @@
                   style="push">
             </command>
             <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
+                  label="Flush"
+                  style="push">
+            </command>
+            <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
                   label="Resume"
+                  style="push">
+            </command>
+            <separator
+                  name="additions"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
+                  label="Remove"
                   style="push">
             </command>
          </menu>
@@ -254,6 +291,11 @@
                style="push">
          </command>
          <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
+               label="Flush"
+               style="push">
+         </command>
+         <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
                label="Resume"
                style="push">
@@ -284,7 +326,7 @@
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.views.OperatorBreakView"
             id="de.uniol.inf.is.odysseus.rcp.views.OperatorBreakView"
-            name="OperatorBreak View"
+            name="Break Operator"
             restorable="true">
       </view>
    </extension>
