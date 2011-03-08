@@ -6,7 +6,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -52,15 +55,18 @@ public class BreakOperatorCommand extends AbstractHandler implements IHandler {
 						final ISource<?> src = (ISource<?>) operator;
 						ob = new OperatorBreak(src);
 						OperatorBreakManager.getInstance().add(ob);
-					} else 
-						System.out.println("Operator " + operator + " is not a source-Operator");
-					
-				}
-			} else if (selObject instanceof OperatorBreak) 
-				ob = (OperatorBreak) selObject;
-			
+					} else {
+						MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+						box.setMessage("Only sources can be breaked");
+						box.setText("Error");
+						box.open();
+					}
 
-			if( ob != null ) {
+				}
+			} else if (selObject instanceof OperatorBreak)
+				ob = (OperatorBreak) selObject;
+
+			if (ob != null) {
 				if (!ob.isBreaked()) {
 					if (ob.startBreak())
 						return true;
@@ -68,12 +74,11 @@ public class BreakOperatorCommand extends AbstractHandler implements IHandler {
 						System.out.println("Could not start breaking");
 						OperatorBreakManager.getInstance().remove(ob);
 					}
-				} else 
+				} else
 					System.out.println("Already breaking");
 
-			} else 
+			} else
 				System.out.println("No OperatorBreak found");
-			
 
 		}
 

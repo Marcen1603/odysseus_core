@@ -3,6 +3,10 @@ package de.uniol.inf.is.odysseus.rcp.viewer.opbreak;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.PlatformUI;
+
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -64,7 +68,10 @@ public class OperatorBreak implements IBufferedPipeListener {
 		} else {
 			// Fehlermeldung, dass der Operator
 			// genau eine Senke haben muss
-			System.out.println("Operator " + operator + " must have 1 sinks, but have " + subCount);
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+			box.setMessage("Only sources with exact one sink can be breaked");
+			box.setText("Error");
+			box.open();
 			return false;
 		}
 	}
