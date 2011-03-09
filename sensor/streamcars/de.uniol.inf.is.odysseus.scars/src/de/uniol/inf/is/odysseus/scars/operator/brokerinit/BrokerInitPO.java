@@ -21,7 +21,6 @@ public class BrokerInitPO<R> extends AbstractPipe<R, R> {
 
 	private int size = 1;
 	private int counter = 0;
-	private int punctuationCounter = 0;
 	
 	public BrokerInitPO() {
 		
