@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.operator.brokerinit;
+package de.uniol.inf.is.odysseus.scars.operator.brokerinit.ao;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
