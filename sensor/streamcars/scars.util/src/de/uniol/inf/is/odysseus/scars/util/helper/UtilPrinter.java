@@ -119,27 +119,4 @@ public class UtilPrinter {
     }
   }
 
-  public static <T> void printInfo(T[] array) {
-    String line = "";
-    if (array != null) {
-      for (Object object : array) {
-        line += line.isEmpty() ? "[ " + object.toString() : " ; " + object.toString();
-      }
-      System.out.println(line + " ]");
-      return;
-    }
-    System.out.println("[ ]");
-  }
-  
-  public static void printInfo(double[] array) {
-    String line = "";
-    if (array != null) {
-      for (Object object : array) {
-        line += line.isEmpty() ? "[ " + object.toString() : " ; " + object.toString();
-      }
-      System.out.println("Size: " + array.length + " - " + line + " ]");
-      return;
-    }
-    System.out.println("Size: 0 - " +"[ ]");
-  }
 }
