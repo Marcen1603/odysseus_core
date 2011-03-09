@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.StreamCollector;
+import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 
 public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -62,7 +62,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 
 	private double threshold;
 
-	private StreamCollector streamCollector;
+	private PortSync streamCollector;
 	private SchemaHelper shAssociationInput;
 	// private SchemaHelper shFilteringInput;
 	private SchemaHelper shSecondBrokerInput;
@@ -92,7 +92,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		shSecondBrokerInput = new SchemaHelper(getSubscribedToSource(2)
 				.getSchema());
 
-		streamCollector = new StreamCollector(getSubscribedToSource().size());
+		streamCollector = new PortSync(getSubscribedToSource().size());
 		helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
 	}
 

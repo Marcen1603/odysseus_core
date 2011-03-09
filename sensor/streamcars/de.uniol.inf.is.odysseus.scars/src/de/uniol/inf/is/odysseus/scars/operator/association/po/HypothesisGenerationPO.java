@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.StreamCollector;
+import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
 
@@ -55,7 +55,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	private String outputPredictedObjListPath;
 	private String outputScannedObjListPath;
 	
-	StreamCollector streamCollector;
+	PortSync streamCollector;
 
 	private SchemaHelper helper;
 	private SchemaHelper helper2;
@@ -78,7 +78,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		streamCollector = new StreamCollector(getSubscribedToSource().size());
+		streamCollector = new PortSync(getSubscribedToSource().size());
 		helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		helper2 = new SchemaHelper(getSubscribedToSource(1).getSchema());
 

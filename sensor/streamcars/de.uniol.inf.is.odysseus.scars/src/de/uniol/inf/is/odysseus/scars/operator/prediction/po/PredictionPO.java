@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.StreamCollector;
+import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -42,7 +42,7 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 
 	private PredictionFunctionContainer<M> predictionFunctions;
 
-	private StreamCollector streamCollector;
+	private PortSync streamCollector;
 
 	public PredictionPO() {
 	}
@@ -79,7 +79,7 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 		SchemaHelper helper2 = new SchemaHelper(scanSchema);
 		currentScanTimeSchemaPath = helper2.getSchemaIndexPath(helper2.getStartTimestampFullAttributeName());
 
-		streamCollector = new StreamCollector(getSubscribedToSource().size());
+		streamCollector = new PortSync(getSubscribedToSource().size());
 	}
 
 	@Override
