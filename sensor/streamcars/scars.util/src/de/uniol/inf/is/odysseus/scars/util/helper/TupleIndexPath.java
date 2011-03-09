@@ -46,24 +46,6 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	private List<TupleIndex> indices;
 	private SchemaIndexPath schemaIndexPath;
 	private List<Integer> listIndices;
-
-//	public static TupleIndexPath fromIntArray(int[] array, MVRelationalTuple<?> tuple, SchemaIndexPath path) {
-//		
-//		List<TupleIndex> indices = new ArrayList<TupleIndex>();
-//		
-//		Object parent = tuple;
-//		for (int i = 0; i < path.getSchemaIndices().size(); i++) {
-//			
-//			TupleIndex index = new TupleIndex((MVRelationalTuple<?>) parent, array[i], path.getSchemaIndex(i).getAttribute());
-//			indices.add(index);
-//			if (parent instanceof MVRelationalTuple)
-//				parent = ((MVRelationalTuple<?>) parent).getAttribute(path.getSchemaIndex(i).toInt());
-//			else
-//				throw new RuntimeException("Corrupted SchemaIndexPath: " + path);
-//		}		
-//		
-//		return new TupleIndexPath(indices, path); 
-//	}
 	
 	// Interner Konstruktor
 	TupleIndexPath(List<TupleIndex> indices, SchemaIndexPath schemaIndexPath) {
@@ -90,6 +72,14 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 			this.listIndices.add(i);
 	}
 
+	/**
+	 * Liefert einen neuen Tupelindexpfad, der dem urprünglichen
+	 * gleicht, aber den neuen angegebenen Index erweitert wurde.
+	 * 
+	 * @param index Neuer Index, der an das neue Tupelindexpfad angehängt werden soll
+	 * 
+	 * @return Neuer Tupelindexpfad mit zusätzlichem Index
+	 */
 	public TupleIndexPath appendClone( int index ) {
 		TupleIndexPath c = clone();
 		SchemaIndexPath path = c.schemaIndexPath.appendClone(index);

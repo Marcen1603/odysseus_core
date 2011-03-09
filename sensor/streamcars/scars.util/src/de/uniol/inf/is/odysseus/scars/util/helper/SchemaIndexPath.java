@@ -89,6 +89,14 @@ public class SchemaIndexPath {
 		return indices.size();
 	}
 	
+	/**
+	 * Liefert einen neuen Schemaindexpfad, der dem urprünglichen
+	 * gleicht, aber den neuen angegebenen Index erweitert wurde.
+	 * 
+	 * @param index Neuer Index, der an das neue Schemaindexpfad angehängt werden soll
+	 * 
+	 * @return Neuer Schemaindexpfad mit zusätzlichem Index
+	 */
 	public SchemaIndexPath appendClone( int index ) {
 		List<SchemaIndex> i = new ArrayList<SchemaIndex>(indices);
 		SDFAttribute att = to;
