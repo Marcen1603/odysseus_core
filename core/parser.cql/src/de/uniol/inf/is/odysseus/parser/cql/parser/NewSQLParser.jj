@@ -983,7 +983,7 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.setType("String");  }| < K_MV >  (    < K_INTEGER >    {      jjtn000.setType("MV Integer");    }  | < K_FLOAT >    {      jjtn000.setType("MV Float");    }  | < K_DOUBLE >    {      jjtn000.setType("MV");    }  | < K_LONG >    {      jjtn000.setType("MV Long");    }  ) [ MVCovarianceRow() ]| < K_DATE > format = DateFormat()/*@bgen(jjtree)*/
+/*@egen*/  {    jjtn000.setType("String");  }| < K_MV >  (    < K_INTEGER >    {      jjtn000.setType("MV Integer");    }  | < K_FLOAT >    {      jjtn000.setType("MV Float");    }  | < K_DOUBLE >    {      jjtn000.setType("MV");    }  | < K_LONG >    {      jjtn000.setType("MV Long");    }  )  [ MVCovarianceRow() ]| < K_DATE > format = DateFormat()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -1024,7 +1024,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) MVCovarianceRow */
   try {
-/*@egen*/  "(" Expression() ("," Expression() )* ")"/*@bgen(jjtree)*/
+/*@egen*/  "(" Expression()  (    "," Expression()  )*  ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2163,7 +2163,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  Long size;  Long advance;  Long value;}{/*@bgen(jjtree) StreamSQLWindow */
   try {
-/*@egen*/  (    < K_SIZE > size = Time() < K_ADVANCE > advance = Time()    {      jjtn000.setType(ASTWindow.Type.TIME);      jjtn000.setSize(size);      jjtn000.setAdvance(advance);    }    (      < K_TIME >    | < K_TUPLE >      {        jjtn000.setType(ASTWindow.Type.TUPLE);      }    )    [      value = Slide()      {        jjtn000.setSlide(value);      }    ]    [ < K_PARTITION > < K_BY > Partition() ] [ < K_VALID > < K_ALWAYS > ]    /** [      < K_OFFSET > value = Integer()      {        jjtThis.setOffset(value);      }    ]    [      < K_TIMEOUT > value = Integer()      {        jjtThis.setOffset(value);      }    ]*/  )| < K_UNBOUNDED >/*@bgen(jjtree)*/
+/*@egen*/  (    < K_SIZE > size = Time()    {      jjtn000.setType(ASTWindow.Type.TIME);      jjtn000.setSize(size);    }    [      < K_ADVANCE > advance = Time()      {        jjtn000.setAdvance(advance);      }    ]    (      < K_TIME >    | < K_TUPLE >      {        jjtn000.setType(ASTWindow.Type.TUPLE);      }    )    [      value = Slide()      {        jjtn000.setSlide(value);      }    ]    [ < K_PARTITION > < K_BY > Partition() ] [ < K_VALID > < K_ALWAYS > ]    /** [      < K_OFFSET > value = Integer()      {        jjtThis.setOffset(value);      }    ]    [      < K_TIMEOUT > value = Integer()      {        jjtThis.setOffset(value);      }    ]*/  )| < K_UNBOUNDED >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -2674,14 +2674,14 @@
   ASTCreateSLAStatement jjtn000 = new ASTCreateSLAStatement(JJTCREATESLASTATEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/  Long limit; }{/*@bgen(jjtree) CreateSLAStatement */
+/*@egen*/  Long limit;}{/*@bgen(jjtree) CreateSLAStatement */
   try {
 /*@egen*/  < K_CREATE > < K_SLA > Identifier() < K_TIME > limit = Time() < K_WITH > PercentileConstraint()  (    "," PercentileConstraint()  )*/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {	jjtn000.setLimit(limit);  }/*@bgen(jjtree)*/
+/*@egen*/  {    jjtn000.setLimit(limit);  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2920,7 +2920,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) GrantRoleStatement */
   try {
-/*@egen*/  < K_GRANT > < K_ROLE > IdentifierList()  < K_TO > Identifier()/*@bgen(jjtree)*/
+/*@egen*/  < K_GRANT > < K_ROLE > IdentifierList() < K_TO > Identifier()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2946,7 +2946,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) RevokeRoleStatement */
   try {
-/*@egen*/  < K_REVOKE > < K_ROLE > IdentifierList()  < K_FROM > Identifier()/*@bgen(jjtree)*/
+/*@egen*/  < K_REVOKE > < K_ROLE > IdentifierList() < K_FROM > Identifier()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2966,7 +2966,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void GrantStatement() :{/*@bgen(jjtree) GrantStatement */
+/*@egen*/}void GrantStatement() :{/*@bgen(jjtree) GrantStatement */
   ASTGrantStatement jjtn000 = new ASTGrantStatement(JJTGRANTSTATEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
