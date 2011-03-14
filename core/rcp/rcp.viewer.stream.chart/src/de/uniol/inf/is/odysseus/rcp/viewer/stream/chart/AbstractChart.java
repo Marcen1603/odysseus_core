@@ -52,6 +52,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IChartSettingChangeable, IStreamElementListener<Object> {
+	public AbstractChart() {
+	}
 
 	protected static ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
 	protected static ImageDescriptor IMG_COG = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
@@ -147,12 +149,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	}
 
-	protected abstract void processElement(List<T> tuple, M metadata, int port);
-
-	@Override
-	public void punctuationElementRecieved(PointInTime point, int port) {
-
-	}
+	protected abstract void processElement(List<T> tuple, M metadata, int port);	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -193,7 +190,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	protected abstract void decorateChart(JFreeChart thechart);
 
 	private SDFAttributeList extractSchema(IStreamConnection<?> streamConnection) {
-		ISource<?>[] sources = streamConnection.getSources().toArray(new ISource<?>[0]);
+		ISource<?>[] sources = streamConnection.getSources().toArray(new ISource<?>[0]);		
 		return sources[0].getOutputSchema();
 	}
 
@@ -306,4 +303,9 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		this.viewSchema.setChoosenAttributes(choosenAttributes);
 		chartSettingsChanged();		
 	}
+	
+	@Override
+	public void punctuationElementRecieved(PointInTime point, int port) {
+
+	}	
 }
