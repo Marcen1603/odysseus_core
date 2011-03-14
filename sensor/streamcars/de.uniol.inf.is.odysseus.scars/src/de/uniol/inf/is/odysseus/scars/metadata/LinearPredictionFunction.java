@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.scars.metadata;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
@@ -183,13 +184,21 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	}
 	
 	protected void setValue(int[] path, MVRelationalTuple<M> root, Object value) {
-		MVRelationalTuple<?> currentTuple = root;
-		for(int depth=0; depth<path.length-1; depth++) {
-			currentTuple = ((MVRelationalTuple<?>) currentTuple).<MVRelationalTuple<?>>getAttribute(path[depth]);
+		Object currentAttr = root;
+		int depth = path.length-1;
+		for(int i=0; i<depth; i++) {
+			if(currentAttr instanceof MVRelationalTuple) {
+				currentAttr = ((MVRelationalTuple<?>)currentAttr).getAttribute(path[i]);
+			} else if(currentAttr instanceof List) {
+				currentAttr = ((List<?>)currentAttr).get(path[i]);
+			}
 		}
-		Object oldValue = currentTuple.getAttribute(path[path.length - 1]);
-		Object newValue = TypeCaster.cast(value, oldValue);
-		currentTuple.setAttribute(path[path.length-1], newValue);
+		
+		if(currentAttr instanceof MVRelationalTuple) {
+			Object oldValue = ((MVRelationalTuple<?>)currentAttr).getAttribute(path[path.length - 1]);
+			Object newValue = TypeCaster.cast(value, oldValue);
+			((MVRelationalTuple<?>)currentAttr).setAttribute(path[depth], newValue);
+		}
 	}
 	
 	@Override
