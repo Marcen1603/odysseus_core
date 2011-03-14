@@ -19,6 +19,10 @@ import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * 
+ * @author Benjamin G
+ */
 public interface IStreamCarsExpressionVariable {
 
 	public IStreamCarsExpression getParent();

@@ -20,9 +20,8 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * 
+ * Die IStreamCarsExpression dient zur Kapsellung eines mathematischen Ausdrucks.
  * @author Benjamin G
- *
  */
 public interface IStreamCarsExpression {
 	

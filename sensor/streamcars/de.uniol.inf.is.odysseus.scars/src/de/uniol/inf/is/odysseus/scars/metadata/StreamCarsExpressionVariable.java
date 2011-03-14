@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.scars.metadata;
 
 import java.util.Arrays;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -177,12 +178,21 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 
 	@Override
 	public void bindTupleValue(MVRelationalTuple<?> tuple) {
-		MVRelationalTuple<?> current = tuple;
+		Object currentAttr = tuple;
 		int depth = absolutePath.length - 1;
 		for(int i=0; i<depth; i++) {
-			current = (MVRelationalTuple<?>)current.getAttribute(absolutePath[i]);
+			if(currentAttr instanceof MVRelationalTuple) {
+				currentAttr = ((MVRelationalTuple<?>)currentAttr).getAttribute(absolutePath[i]);
+			} else if(currentAttr instanceof List) {
+				currentAttr = ((List<?>)currentAttr).get(absolutePath[i]);
+			}
 		}
-		bind(current.getAttribute(absolutePath[depth]));
+		
+		if(currentAttr instanceof MVRelationalTuple) {
+			bind(((MVRelationalTuple<?>)currentAttr).getAttribute(absolutePath[depth]));
+		} else if(currentAttr instanceof List) {
+			bind(((List<?>)currentAttr).get(absolutePath[depth]));
+		}
 	}
 
 	@Override
