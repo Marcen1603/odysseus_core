@@ -16,24 +16,39 @@ package de.uniol.inf.is.odysseus.rcp.benchmarker.utils;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
-import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkMetadata;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkResult;
+import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ProjectView;
 
+/**
+ * Diese Klasse speichert/lädt die Objekte/.XMLs und löscht Ergebnisse
+ * 
+ * @author Stefanie Witzke
+ * 
+ */
 public class BenchmarkStoreUtil {
 
+	private static final String RESULT_PREFIX = "result";
 	private static final String RELATIVE_FOLDER = "Benchmarks";
-//	private static final String BENCHMARK_FILENAME_PREFIX = "benchmark_";
 
 	/*
 	 * -------------------- Benchmarks speichern --------------------
@@ -49,28 +64,42 @@ public class BenchmarkStoreUtil {
 	}
 
 	private static String createFolderNameAndFolders(Benchmark benchmark) {
-		BenchmarkGroup benchmarkGroup = benchmark.getParentGroup();
-
-		String folderName = StringUtils.nameToFoldername(benchmarkGroup.getName());
-		folderName = RELATIVE_FOLDER + File.separator + folderName + File.separator + benchmark.getId();
+		String folderName = createFolderName(benchmark);
 		new File(folderName).mkdirs();
 		return folderName;
 	}
 
-	
-	//TODO: Metadaten speichern!!!
+	private static String createFolderName(Benchmark benchmark) {
+		BenchmarkGroup benchmarkGroup = benchmark.getParentGroup();
+
+		String folderName = StringUtils.nameToFoldername(benchmarkGroup.getName());
+		folderName = RELATIVE_FOLDER + File.separator + folderName + File.separator + benchmark.getId();
+		return folderName;
+	}
+
 	private static void storeBenchmarkInternal(String folderName, Benchmark benchmark) {
+		BenchmarkMetadata metadata = benchmark.getMetadata();
 		FileOutputStream fos = null;
 		try {
-			//String path = folderName + File.separator + BENCHMARK_FILENAME_PREFIX + benchmark.getId() + ".xml";
+			String folder = folderName + File.separator;
+			String path = folder + "param.xml";
 
-			String path = folderName + File.separator + "param.xml";
-			
 			File outputFile = new File(path);
 			fos = new FileOutputStream(outputFile);
 			XMLEncoder encoder = new XMLEncoder(fos);
 			encoder.writeObject(benchmark);
 			encoder.close();
+
+			FileOutputStream fosMeta = null;
+			try {
+				File outputMetadataFile = new File(folder + "metadata.xml");
+				fosMeta = new FileOutputStream(outputMetadataFile);
+				XMLEncoder metadataEncoder = new XMLEncoder(fosMeta);
+				metadataEncoder.writeObject(metadata);
+				metadataEncoder.close();
+			} finally {
+				close(fosMeta);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
@@ -115,6 +144,34 @@ public class BenchmarkStoreUtil {
 		group.recalculateNextId();
 	}
 
+	public static void loadResultsOfGroupAndBenchmark(Benchmark benchmark) {
+		String benchmarkFolder = createFolderName(benchmark);
+
+		File[] resultFiles = new File(benchmarkFolder).listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				String fileName = pathname.getName();
+				if (fileName.startsWith(RESULT_PREFIX) && fileName.endsWith(".xml")) {
+					return true;
+				}
+				return false;
+			}
+		});
+
+		List<BenchmarkResult> results = new ArrayList<BenchmarkResult>(resultFiles.length);
+		for (File resultFile : resultFiles) {
+			results.add(loadBenchmarkResult(resultFile));
+		}
+
+		benchmark.setResults(results);
+	}
+
+	/**
+	 * Diese Methode wandelt die XML-Dateien in Objekte um
+	 * 
+	 * @param group
+	 * @param benchmarkDirectory
+	 */
 	private static void loadBenchmarksOfGroup(BenchmarkGroup group, File benchmarkDirectory) {
 		if (!benchmarkDirectory.isDirectory()) {
 			throw new RuntimeException("Can't load benchmarks. Want directory and no file with name: "
@@ -123,50 +180,70 @@ public class BenchmarkStoreUtil {
 
 		File[] benchmarkFiles = benchmarkDirectory.listFiles();
 		Benchmark benchmark = null;
+		BenchmarkMetadata metadata = null;
+		List<BenchmarkResult> results = new ArrayList<BenchmarkResult>();
 		for (File benchmarkFile : benchmarkFiles) {
+			// param.xml in BenchmarkParam
 			if ("param.xml".equals(benchmarkFile.getName())) {
-				benchmark = loadBenchmarkParam(benchmarkFile);
-//			} else if("result1.xml".equals(benchmarkFile.getName())){
-//				benchmark = loadBenchmark(benchmarkFile);
-			}
-			// TODO: Lade Results
-		
-			else if("metadata.xml".equals(benchmarkFile.getName())) {
-				benchmark = loadBenchmarkMetadata(benchmarkFile); //TODO: ist das so korrekt??
+				benchmark = loadBenchmarkObject(benchmarkFile, Benchmark.class);
+				// result*.xml in BenchmarkResult
+			} else if (benchmarkFile.getName().contains(RESULT_PREFIX) && benchmarkFile.getName().endsWith(".xml")) {
+				results.add(loadBenchmarkResult(benchmarkFile));
+				// metadata.xml in BenchmarkMetadata
+			} else if ("metadata.xml".equals(benchmarkFile.getName())) {
+				metadata = loadBenchmarkObject(benchmarkFile, BenchmarkMetadata.class);
 			}
 		}
+
+		if (benchmark == null) {
+			throw new IllegalStateException("Can't find Benchmark (param.xml)");
+		}
+		benchmark.setMetadata(metadata);
+		benchmark.setResults(results);
 		benchmark.setParentGroup(group);
 		group.addBenchmark(benchmark);
 	}
 
-	private static Benchmark loadBenchmarkParam(File benchmarkParamFile) {
-
-		FileInputStream fis = null;
+	/**
+	 * Benchmark-Ergebnisse laden
+	 * 
+	 * @param benchmarkFile
+	 * @return
+	 */
+	private static BenchmarkResult loadBenchmarkResult(File benchmarkFile) {
+		BenchmarkResult result = new BenchmarkResult();
+		String name = benchmarkFile.getName().substring(6);
+		name = name.replace(".xml", "");
+		result.setId(Integer.parseInt(name));
+		BufferedReader reader = null;
 		try {
-			if (benchmarkParamFile.exists()) {
-				fis = new FileInputStream(benchmarkParamFile);
-
-				XMLDecoder decoder = new XMLDecoder(fis);
-				return (Benchmark) decoder.readObject();
+			StringBuilder stringBuilder = new StringBuilder();
+			reader = new BufferedReader(new FileReader(benchmarkFile));
+			while (reader.ready()) {
+				stringBuilder.append(reader.readLine()).append(System.getProperty("line.separator"));
 			}
+			result.setResultXml(stringBuilder.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			close(fis);
+			try {
+				reader.close();
+			} catch (Exception e) {
+			}
 		}
-		return null;
+		return result;
 	}
-	
-	//????? SO RICHTIG????
-	private static Benchmark loadBenchmarkMetadata(File benchmarkMetadataFile) {
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static <T> T loadBenchmarkObject(File benchmarkPartFile, Class T) {
 
 		FileInputStream fis = null;
 		try {
-			if (benchmarkMetadataFile.exists()) {
-				fis = new FileInputStream(benchmarkMetadataFile);
+			if (benchmarkPartFile.exists()) {
+				fis = new FileInputStream(benchmarkPartFile);
 
 				XMLDecoder decoder = new XMLDecoder(fis);
-				return (Benchmark) decoder.readObject();
+				return (T) decoder.readObject();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -194,5 +271,49 @@ public class BenchmarkStoreUtil {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/*
+	 * Ergebnisse löschen
+	 */
+
+	/**
+	 * Diese Methode löscht das übergebene Ergebnis
+	 * 
+	 * @param benchmark
+	 * @param result
+	 */
+	public static void deleteResult(Benchmark benchmark, BenchmarkResult result) {
+		String path = createFolderName(benchmark);
+		path = path + File.separator + RESULT_PREFIX + result.getId() + ".xml";
+		try {
+			File file = new File(path);
+			if (file.canWrite()) {
+				file.delete();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		benchmark.getResults().remove(result);
+		// TreeViewer aktualisieren
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				ProjectView.getDefault().refresh();
+			}
+		});
+		// Result-Fenster schliessen
+		PlatformUI
+				.getWorkbench()
+				.getActiveWorkbenchWindow()
+				.getActivePage()
+				.closeEditor(
+						PlatformUI
+								.getWorkbench()
+								.getActiveWorkbenchWindow()
+								.getActivePage()
+								.findEditor(
+										PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+												.getActiveEditor().getEditorInput()), false);
 	}
 }

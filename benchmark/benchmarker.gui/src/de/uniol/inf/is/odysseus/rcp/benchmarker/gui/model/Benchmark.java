@@ -21,35 +21,40 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Diese Klasse enthält die Daten eines Benchmarks
+ * 
+ * @author Stefanie Witzke
+ * 
+ */
 public class Benchmark {
 	static {
-		// Weil der XML-Decoder transient ignoriert...
+		// Weil der XML-Decoder transient ignoriert:
 		BeanInfo info;
 		try {
 			info = Introspector.getBeanInfo(Benchmark.class);
 			PropertyDescriptor[] propertyDescriptors = info.getPropertyDescriptors();
 			for (int i = 0; i < propertyDescriptors.length; ++i) {
 				PropertyDescriptor pd = propertyDescriptors[i];
-				if (pd.getName().equals("parentGroup")) {
+				if (pd.getName().equals("parentGroup") || pd.getName().equals("metadata")
+						|| pd.getName().equals("results")) {
 					pd.setValue("transient", Boolean.TRUE);
 				}
 			}
 		} catch (IntrospectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+
 	private BenchmarkParam param;
 	private List<BenchmarkResult> results;
-	private BenchmarkMetadata metadata;
 
+	private transient BenchmarkMetadata metadata;
 	private transient BenchmarkGroup parentGroup;
 
 	public Benchmark() {
 		super();
 		this.results = new ArrayList<BenchmarkResult>();
-		this.metadata = new BenchmarkMetadata();
 	}
 
 	public Benchmark(BenchmarkParam param) {
@@ -81,7 +86,7 @@ public class Benchmark {
 		return metadata;
 	}
 
-	public void setMetada(BenchmarkMetadata metadata) {
+	public void setMetadata(BenchmarkMetadata metadata) {
 		this.metadata = metadata;
 	}
 
@@ -101,14 +106,7 @@ public class Benchmark {
 		}
 	}
 
-	// /
-
 	public void setResults(List<BenchmarkResult> results) {
 		this.results = results;
 	}
-
-	public void setMetadata(BenchmarkMetadata metadata) {
-		this.metadata = metadata;
-	}
-
 }

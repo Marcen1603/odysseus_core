@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view;
 
 import static de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils.isNotBlank;
@@ -29,6 +29,9 @@ import java.util.Set;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -41,6 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -51,9 +55,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.part.EditorPart;
 
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
@@ -61,7 +63,6 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.TextboxVerifier;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenBenchmarkHandler;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
-import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.BenchmarkStoreUtil;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.ObservativeMapEntryValue;
@@ -80,12 +81,12 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	public static final String ID = "de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorBenchmark";
 
 	private BenchmarkParam benchmarkParam;
+	private Benchmark benchmark;
 	private Text textNameBenchmark;
 	private Combo comboScheduler;
 	private Combo comboSchedulingstrategy;
 	private Combo comboBufferPlacement;
 	private Text textDataType;
-	// private Combo comboMetadataTypes;
 	private Combo comboQueryLanguage;
 	private Text textQuery;
 	private Text textMaxResults;
@@ -99,12 +100,12 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	private Text textInputFile;// browser
 	private Text textNumberOfRuns;
 	private Label labelPageName;
-	// private Button buttonAdd;
 	private Button buttonStart;
 	private Button buttonCopy;
 	private Button buttonBrowser;
+	private Button buttonAbortBenchmark;
 	private boolean isDirty;
-
+	private boolean readOnly;
 	private List<Button> listMetadata;
 
 	public BenchmarkEditorPart() {
@@ -113,24 +114,24 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// Überprüft, ob Benchmarker mit diesen Einstellungen gestartet werden kann
+		// Überprüft, ob Benchmarker mit diesen Einstellungen gestartet werden
+		// kann
 		benchmarkParam.setRunnable(checkRunnable());
-		
+		buttonStart.setEnabled(benchmarkParam.isRunnable());
+
 		Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
-		boolean newBench = !benchmark.getParentGroup().contains(benchmarkParam.getId());
 
 		BenchmarkStoreUtil.storeBenchmark(benchmark);
 
 		setDirtyState(false);
 
+		labelPageName.setText(benchmark.getParentGroup().getName() + ":  " + benchmark.getName());
 		// Den ProjectView refreshen
-		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView(ProjectView.ID);
-		if (!newBench) {
-			projectView.refresh(benchmark);
-		} else {
-			projectView.refresh();
-		}
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				ProjectView.getDefault().refresh();
+			}
+		});
 	}
 
 	@Override
@@ -153,6 +154,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		actionBars.setGlobalActionHandler("org.eclipse.ui.file.saveAll",
 				ActionFactory.SAVE_ALL.create(getSite().getWorkbenchWindow()));
 
+		// vorhandene Metadaten aus Odysseus holen
 		Set<Set<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
 		for (Set<String> typeCombinations : allTypeCombination) {
 			for (String type : typeCombinations) {
@@ -160,6 +162,10 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 					benchmarkParam.getAllSingleTypes().put(type, false);
 				}
 			}
+		}
+		benchmark = ((BenchmarkEditorInput) input).getBenchmark();
+		if (benchmark.hasResults()) {
+			benchmarkParam.setReadOnly(true);
 		}
 	}
 
@@ -204,21 +210,12 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		parent.setLayout(gridLayout);
 		GridData gridData = new GridData();
 
-		/*
-		 * // MetadataCheckboxListener SelectionListener
-		 * metadataSelectionListener = new SelectionAdapter() { public void
-		 * widgetSelected(SelectionEvent e) { String element = (String)
-		 * ((Button) e.getSource()).getData(); if
-		 * (selectedTypes.contains(element)) { selectedTypes.remove(element); }
-		 * else { selectedTypes.add(element); } } };
-		 */
-
 		{ // SeitenLabel
 			Label labelPage = new Label(parent, SWT.NULL);
 			labelPage.setText("    ");
 
 			labelPageName = new Label(parent, SWT.None);
-			labelPageName.setText("Settings " + benchmarkParam.getId());
+			labelPageName.setText(benchmark.getParentGroup().getName() + ":  " + benchmark.getName());
 			new Label(parent, SWT.NULL);
 		}
 
@@ -317,20 +314,11 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			gridData.grabExcessHorizontalSpace = true;
-			// comboMetadataTypes = new Combo(parent, SWT.DROP_DOWN |
-			// SWT.READ_ONLY | SWT.BORDER);
-			// comboMetadataTypes.setLayoutData(gridData);
-			// for (int i = 0; i < 3; i++) {
-			// comboMetadataTypes.add("Metadata Type " + i);
-			// }
+
 			Label labelmetadata = new Label(parent, SWT.NULL);
 			labelmetadata.setText("Select Combination: ");
 			new Label(parent, SWT.NULL);
-			// bindingContext.bindValue(SWTObservables.observeSelection(comboMetadataTypes),
-			// BeansObservables.observeValue(benchmarkParam, "metadataTypes"));
 
-			// TODO
-			// /echte metadaten:
 			Map<String, Boolean> allSingleTypes = benchmarkParam.getAllSingleTypes();
 			for (Map.Entry<String, Boolean> typeEntry : allSingleTypes.entrySet()) {
 				new Label(parent, SWT.NULL);
@@ -339,7 +327,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				listMetadata.add(checkboxMetadataType);
 				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType),
 						new ObservativeMapEntryValue<String, Boolean>(typeEntry, this, benchmarkParam));
-
 				new Label(parent, SWT.NULL);
 			}
 		}
@@ -513,50 +500,58 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		{ // Next_Save_-Buttons
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			gridData.grabExcessHorizontalSpace = true;
-			/*
-			 * buttonAdd = new Button(parent, SWT.PUSH);
-			 * buttonAdd.setText("Add Settings"); buttonAdd.setEnabled(false);
-			 */
 			buttonCopy = new Button(parent, SWT.PUSH);
 			buttonCopy.setText("Copy Settings as New");
 			buttonStart = new Button(parent, SWT.PUSH);
 			buttonStart.setText("Start Benchmarker");
 			buttonStart.setEnabled(false);
+			buttonAbortBenchmark = new Button(parent, SWT.PUSH);
+			buttonAbortBenchmark.setText("Abort Benchmarkprozess");
+			buttonAbortBenchmark.setEnabled(false);
 		}
 
-		/*
-		 * // Buttonlistener - NEXT buttonAdd.addSelectionListener(new
-		 * SelectionAdapter() {
-		 * 
-		 * @Override public void widgetSelected(SelectionEvent e) { } });
-		 */
-
 		buttonCopy.addSelectionListener(new SelectionAdapter() {
-			private Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
-
 			public void widgetSelected(SelectionEvent e) {
 				OpenBenchmarkHandler.copyAndOpenBenchmark(benchmark);
+			}
+		});
+
+		buttonAbortBenchmark.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				OdysseusBenchmarkUtil util = OdysseusBenchmarkUtil.getDefault();
+				util.setAbortProzess(true);
+				buttonAbortBenchmark.setEnabled(false);
 			}
 		});
 
 		// Buttonlistener - BENCHMARK STARTEN
 		buttonStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+
 				if (checkMetadataCombination()) {
+					buttonAbortBenchmark.setEnabled(true);
 					doSave(null);
 
 					Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
-					OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(benchmark.getParentGroup());
-					try {
-						util.startrun();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+					final OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(benchmark.getParentGroup());
+					Job job = new Job("Benchmarkprozess") {
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								util.run();
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+							monitor.done();
+							return Status.OK_STATUS;
+						}
+					};
+					job.schedule();
 				}
 			}
 		});
 
-		// Abhängigkeit von Extenden_Postpriorisation zu Priority
+		// Abhängigkeit von Extended_Postpriorisation zu Priority
 		checkButtonPriority.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -582,11 +577,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				} else {
 					checkButtonResultPerQuery.setEnabled(true);
 				}
-
-				// Testen
-				System.out.println(benchmarkParam.getDataType());
-				System.out.println(benchmarkParam.getScheduler());
-				System.out.println(benchmarkParam.getSchedulingstrategy());
 			}
 		});
 
@@ -599,8 +589,10 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 		benchmarkParam.addPropertyChangeListener(this);
 
+		benchmarkParam.setReadOnly(benchmark.hasResults());
 		checkEditorMode();
-		// ueberpruefe ob die Buttons aktiviert/deaktiviert sein muessen.
+
+		// überprüfe ob die Buttons aktiviert/deaktiviert sein muessen.
 		propertyChange(new PropertyChangeEvent(benchmarkParam, null, null, null));
 		setDirtyState(false);
 	}
@@ -610,7 +602,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	 * geändert werden dürfen und setzt sie ggf. auf Enabled(false)
 	 */
 	public void checkEditorMode() {
-		boolean readOnly = benchmarkParam.isReadOnly();
+		readOnly = benchmarkParam.isReadOnly();
 		textNameBenchmark.setEnabled(!readOnly);
 		comboScheduler.setEnabled(!readOnly);
 		comboSchedulingstrategy.setEnabled(!readOnly);
@@ -633,7 +625,6 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		textNumberOfRuns.setEnabled(!readOnly);
 		labelPageName.setEnabled(!readOnly);
 		buttonStart.setVisible(!readOnly);
-		buttonCopy.setVisible(!readOnly);
 		buttonBrowser.setVisible(!readOnly);
 	}
 
@@ -647,11 +638,24 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		}
 
 		checkButtons((BenchmarkParam) evt.getSource());
-		// Postpriorisation darf nur markierbar sein wenn Priority angeklickt
+		// Postpriorisation darf nur markierbar sein, wenn Priority angeklickt
 		// ist
 		checkButtonExtendedPostpriorisation.setEnabled(checkButtonPriority.getSelection());
+		// Result_Per_Query darf nur markierbar sein, wenn Max_Results nicht
+		// leer ist
+		checkButtonResultPerQuery.setEnabled(!textMaxResults.getText().isEmpty());
+		// Input_File ist read-only, wenn in Query etwas steht
+		textInputFile.setEnabled(textQuery.getText().isEmpty());
+		buttonBrowser.setEnabled(textQuery.getText().isEmpty() && readOnly == false);
+		// Query ist read-only, wenn in Input_File etwas steht
+		textQuery.setEnabled(textInputFile.getText().isEmpty() && readOnly == false);
 	}
 
+	/**
+	 * Macht den Button "Start Benchmark" auf read-only/anklickbar
+	 * 
+	 * @param benchmarkParam
+	 */
 	private void checkButtons(BenchmarkParam benchmarkParam) {
 		if (checkStartable(benchmarkParam)) {
 			buttonStart.setEnabled(true);
@@ -679,6 +683,12 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		return result;
 	}
 
+	/**
+	 * überprüft die angeklickte Metadata-Kombination
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
 	private boolean checkMetadataCombination() {
 		Set<Set<String>> allTypeCombination = MetadataRegistry.getAvailableMetadataCombinations();
 		@SuppressWarnings("unchecked")
@@ -686,16 +696,19 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		if (allTypeCombination.contains(set)) {
 			return true;
 		} else {
-			System.out.println("MEtadatenkombination falsch!"); // NUR
-																// TESTAUSGABE!!!!!!!!!!!!!!!!!!!!!!!!!!
 			Shell window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 			org.eclipse.jface.dialogs.MessageDialog.openInformation(window, "Error in Metadata-Combination",
 					"Metadata-combination doesn't exist!");
 			return false;
-
 		}
 	}
 
+	/**
+	 * überprüft, ob BenchmarkProzess mit diesen
+	 * Benchmark-Parameter-Einstellungen gestartet werden kann
+	 * 
+	 * @return
+	 */
 	private boolean checkRunnable() {
 		if (checkStartable(benchmarkParam)) {
 			return checkMetadataCombination();
@@ -703,10 +716,18 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		return false;
 	}
 
+	/**
+	 * überprüft, ob die erforderten Felder zum Starten des Benchmarkprozesses
+	 * ausgefüllt sind
+	 * 
+	 * @param benchmarkParam
+	 * @return
+	 */
 	private boolean checkStartable(BenchmarkParam benchmarkParam) {
 		if (isNotBlank(benchmarkParam.getName(), benchmarkParam.getScheduler(), benchmarkParam.getSchedulingstrategy(),
 				benchmarkParam.getBufferplacement(), benchmarkParam.getDataType(), benchmarkParam.getQueryLanguage(),
-				benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(), benchmarkParam.getNumberOfRuns())
+				benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(), benchmarkParam.getMaxResult(),
+				benchmarkParam.getNumberOfRuns())
 				&& (isNotBlank(benchmarkParam.getInputFile()) || isNotBlank(benchmarkParam.getQuery()))
 				&& trueMap(benchmarkParam.getAllSingleTypes())) {
 			return true;

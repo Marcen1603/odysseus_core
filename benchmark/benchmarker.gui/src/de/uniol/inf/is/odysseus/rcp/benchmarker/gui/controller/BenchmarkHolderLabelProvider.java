@@ -34,27 +34,20 @@ public class BenchmarkHolderLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		// TODO: BenchmarkGroups brauchen ein Label hier (name oder so)
-
 		if (element instanceof List) {
-			List<?> listOfElements = (List<?>) element;
-			if (listOfElements.isEmpty()) {
-				return "";
-			} else if (element instanceof BenchmarkGroup) {
-				return ((BenchmarkGroup) element).getName(); // TODO nochmal drüber gucken!!!
-		} else if (listOfElements.get(0) instanceof Benchmark) {
-				return "Benchmark";								// TODO wird angezeigt!
-			} else if (listOfElements.get(0) instanceof BenchmarkResult) {
+			if (((List<?>) element).get(0) instanceof BenchmarkResult) {
 				return "Results";
 			}
 		} else if (element instanceof Benchmark) {
-			return ((Benchmark) element).getParam().getName();
+			return "Benchmark (Name: " + ((Benchmark) element).getParam().getName() + ")";
 		} else if (element instanceof BenchmarkGroup) {
 			return ((BenchmarkGroup) element).getName();
 		} else if (element instanceof BenchmarkParam) {
 			return "Parameters";
 		} else if (element instanceof BenchmarkMetadata) {
 			return "Metadata";
+		} else if (element instanceof BenchmarkResult) {
+			return "Result " + ((BenchmarkResult) element).getId();
 		}
 		return super.getText(element);
 	}

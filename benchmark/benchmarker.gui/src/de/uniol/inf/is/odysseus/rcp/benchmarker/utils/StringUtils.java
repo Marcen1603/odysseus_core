@@ -24,6 +24,20 @@ public final class StringUtils {
 
 	private StringUtils() {
 	}
+	
+	public static boolean strContains(int number, String containsThis) {
+		return strContains(String.valueOf(number), containsThis);
+	}
+	
+	public static boolean strContains(String string, String containsThis) {
+		if (containsThis == null) {
+			return true;
+		}
+		if (string == null) {
+			return false;
+		}
+		return string.contains(containsThis);
+	}
 
 	public static boolean isEmpty(String str) {
 		if (str == null || str.isEmpty()) {

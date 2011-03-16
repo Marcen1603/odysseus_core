@@ -44,8 +44,6 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.benchmarker.gui"; //$NON-NLS-1$
 
-	public final static String BENCHMARK_FILE = "benchmarks.xml";
-
 	// The shared instance
 	private static Activator plugin;
 	private ServiceTracker schedulerServiceTracker;
@@ -172,10 +170,4 @@ public class Activator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-
-//	private static IExecutor executor;
-//
-//	public static IExecutor getExecutor() {
-//		return executor;
-//	}
 }

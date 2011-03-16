@@ -25,6 +25,13 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkResult;
 
+/**
+ * Diese Klasse geht die Objekte durch, damit der TreeViewer den Inhalt anzeigen
+ * kann
+ * 
+ * @author Stefanie Witzke
+ * 
+ */
 public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 
 	@Override
@@ -48,13 +55,11 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 				throw new IllegalStateException("Unknown list elements. Type is: "
 						+ unknownBenchmarkItem.get(0).getClass().getName());
 			}
-		}else if (parentElement instanceof BenchmarkGroup) {
+		} else if (parentElement instanceof BenchmarkGroup) {
 			BenchmarkGroup benchmarkGroup = (BenchmarkGroup) parentElement;
-			List<Object> benchmarkGroupItems = new ArrayList<Object>(3);
-			addIfNotNullAndNotEmpty(benchmarkGroupItems, benchmarkGroup.getBenchmarks());
-			return benchmarkGroupItems.toArray(new Object[benchmarkGroupItems.size()]);
-			
-			
+			List<Benchmark> benchmarkGroupItems = new ArrayList<Benchmark>();
+			benchmarkGroupItems.addAll(benchmarkGroup.getBenchmarks());
+			return benchmarkGroupItems.toArray(new Benchmark[benchmarkGroupItems.size()]);
 		} else if (parentElement instanceof Benchmark) {
 			Benchmark benchmark = (Benchmark) parentElement;
 			List<Object> benchmarkItems = new ArrayList<Object>(3);
@@ -66,9 +71,10 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void addIfNotNullAndNotEmpty(List<Object> list, Object obj) {
 		if (obj != null) {
-			// skip if obj is an empty list
+			// abbrechen, wenn Objekt eine leere Liste ist
 			if (obj instanceof List) {
 				if (((List) obj).isEmpty()) {
 					return;
@@ -80,9 +86,6 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-//		if (element instanceof Benchmark) {
-//			return ((Benchmark) element).getParentGroup();
-//		} else 
 		if (element instanceof BenchmarkGroup) {
 			return BenchmarkHolder.INSTANCE.getBenchmarkGroups();
 		}
@@ -95,8 +98,8 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 			return !((List<?>) element).isEmpty();
 		} else if (element instanceof Benchmark) {
 			return true;
-		} else if (element instanceof BenchmarkGroup) { //oooooooooooooooooo
-			return true; //ooooooooooooooooooooooooooooooooooooooooooooooooo
+		} else if (element instanceof BenchmarkGroup) {
+			return true;
 		}
 		return false;
 	}

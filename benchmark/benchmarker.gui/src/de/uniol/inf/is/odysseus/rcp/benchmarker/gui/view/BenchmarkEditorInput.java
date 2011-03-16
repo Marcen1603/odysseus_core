@@ -36,7 +36,7 @@ public class BenchmarkEditorInput implements IEditorInput {
 	}
 
 	public int getId() {
-		return benchmark.getParam().getId();
+		return benchmark.getParentGroup().hashCode() + benchmark.getParam().getId();
 	}
 
 	public BenchmarkParam getBenchmarkParam() {

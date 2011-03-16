@@ -14,8 +14,33 @@
   */
 package de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model;
 
+/**
+ * Diese Klasse enthält die Daten eines BenchmarkResult
+ * @author Stefanie Witzke
+ *
+ */
 public class BenchmarkResult {
-	//TODO Liste mit results
 	
-	//TODO int getResults(){ }
+	private int id;
+	private String resultXml;
+
+	public BenchmarkResult() {
+		super();
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getResultXml() {
+		return resultXml;
+	}
+
+	public void setResultXml(String resultXml) {
+		this.resultXml = resultXml;
+	}
 }

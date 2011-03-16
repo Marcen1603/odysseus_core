@@ -17,6 +17,11 @@ package de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Diese Klasse enthält die Daten des BenchmarkHolder
+ * @author Stefanie Witzke
+ *
+ */
 public enum BenchmarkHolder {
 
 	INSTANCE;

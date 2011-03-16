@@ -14,46 +14,30 @@
  */
 package de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator;
-import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils;
+/**
+ * Diese Klasse enthält die Daten für BenchmarkMetadata
+ * 
+ * @author Stefanie Witzke
+ * 
+ */
+public class BenchmarkMetadata implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-public class BenchmarkMetadata {
-	private String version;
-	private String name;
+	private Map<String, String> metadata;
 
-	public void getMetadataInformations() {
-		BundleContext context = Activator.getDefault().getBundle().getBundleContext();
-		Bundle[] bundles = context.getBundles();
-		if (bundles == null) {
-			System.out.println("BUNDLES IST NULL!!!!");
-		} else {
-			for (int i = 0; i < bundles.length; i++) {
-				Bundle bundle = bundles[i];
-				// bundleId = Long.toString(bundle.getBundleId());
-				version = bundle.getVersion().getQualifier();
-				name = StringUtils.splitString(bundle.getSymbolicName());
-				 System.out.println("BUNDLEVERSION = " + version +
-				 "BUNDLENAME = " + name);
-			}
-		}
+	public BenchmarkMetadata() {
+		metadata = new HashMap<String, String>();
 	}
 
-	public String getVersion() {
-		return version;
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public Map<String, String> getMetadata() {
+		return metadata;
 	}
 }

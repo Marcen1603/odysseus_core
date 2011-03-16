@@ -36,20 +36,8 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.BenchmarkEditorPart;
  */
 public class OpenBenchmarkHandler extends AbstractHandler {
 
-	// private static int count = 0;
-
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// TODO: Wir brauchen hier noch die BEnchmarkgroup
-		// Entweder aus BenchmarkHolder holen oder neue Group anlegen
-
-		// TODO: Benchmark erzeugen und ParentGroup zuweisen!*
-		// TODO: Benchmark übergeben statt Param - aber mit nächster ID aus der
-		// Gruppe!
-		// Holt die aktuelle View von event
-		// openBenchmark(HandlerUtil.getActiveWorkbenchWindow(event).getActivePage(),
-		// new BenchmarkParam(
-		// BenchmarkIdHolder.INSTANCE.generateNextId()));
 		return null;
 	}
 
@@ -67,6 +55,11 @@ public class OpenBenchmarkHandler extends AbstractHandler {
 		return null;
 	}
 
+	/**
+	 * Die Methode öffnet eine Copy des Benchmarkparameter-Editors
+	 * 
+	 * @param benchmark
+	 */
 	public static IEditorPart copyAndOpenBenchmark(final Benchmark benchmark) {
 		BenchmarkGroup parentGroup = benchmark.getParentGroup();
 
@@ -74,11 +67,12 @@ public class OpenBenchmarkHandler extends AbstractHandler {
 		copyParam.setId(parentGroup.getNextId());
 		Benchmark copyBenchmark = new Benchmark(copyParam);
 		copyBenchmark.setParentGroup(parentGroup);
+		copyBenchmark.getParam().setReadOnly(false);
+		parentGroup.addBenchmark(copyBenchmark);
 		return openBenchmark(getPage(), copyBenchmark);
 	}
 
 	private static IWorkbenchPage getPage() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
-
 }

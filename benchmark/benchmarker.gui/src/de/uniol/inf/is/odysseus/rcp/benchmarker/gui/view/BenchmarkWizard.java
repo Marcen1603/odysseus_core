@@ -1,3 +1,17 @@
+/** Copyright [2011] [The Odysseus Team]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view;
 
 import java.util.List;
@@ -12,15 +26,20 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
-import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.BenchmarkStoreUtil;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils;
 
+/**
+ * Diese Klasse fügt dem Wizard die Seiten hinzu und ruft den BenchmarkEditor
+ * auf
+ * 
+ * @author Stefanie Witzke
+ * 
+ */
 public class BenchmarkWizard extends Wizard {
 
 	private BenchmarkWizardPage page;
 	private Benchmark benchmark;
 	private List<BenchmarkGroup> groups;
-	private BenchmarkGroup benchmarkGroup;
 
 	public BenchmarkWizard() {
 		super();
@@ -31,7 +50,6 @@ public class BenchmarkWizard extends Wizard {
 	public void addPages() {
 		page = new BenchmarkWizardPage();
 		addPage(page);
-
 	}
 
 	@Override
@@ -39,14 +57,11 @@ public class BenchmarkWizard extends Wizard {
 		// gibt den directorypfad bzw. den directiorynamen aus
 		String path = page.getDropDown();
 		String pathname = StringUtils.splitString(path);
-		// TODO: Wir brauchen hier noch die BEnchmarkgroup
-		// Entweder aus BenchmarkHolder holen oder neue Group anlegen
 
-		groups = BenchmarkHolder.INSTANCE.getBenchmarkGroups();
+		setGroups(BenchmarkHolder.INSTANCE.getBenchmarkGroups());
 
 		benchmark = new Benchmark(new BenchmarkParam());
 
-		// BenchmarkGroup benchmarkGroup;
 		BenchmarkGroup benchmarkGroup = null;
 		for (BenchmarkGroup group : BenchmarkHolder.INSTANCE.getBenchmarkGroups()) {
 			if (pathname.equals(group.getName())) {
@@ -60,34 +75,17 @@ public class BenchmarkWizard extends Wizard {
 			benchmarkGroup = new BenchmarkGroup(pathname);
 			benchmark.setParentGroup(benchmarkGroup);
 			benchmark.getParam().setId(benchmarkGroup.getNextId());
+			BenchmarkHolder.INSTANCE.addBenchmarkGroup(benchmarkGroup);
 		} else {
 			benchmark.getParam().setId(benchmark.getParentGroup().getNextId());
 		}
 
 		benchmark.getParentGroup().addBenchmark(benchmark);
 
-		// TODO: Benchmark erzeugen und ParentGroup zuweisen!*
-		// TODO: Benchmark übergeben statt Param - aber mit nächster ID aus der
-		// Gruppe!
-		// Holt die aktuelle View von event
-
-		openBenchmark(getPage(), benchmark); // new
-		refreshNavigator(benchmark.getParentGroup()); 
-		
-		// BenchmarkParam(benchmarkGroup.getNextId());//new
-		// Benchmark(benchmarkGroup.getNextId()));
-
+		openBenchmark(getPage(), benchmark); // neu
+		refreshNavigator();
 		return true;
 	}
-
-	// private BenchmarkGroup getBenchmarkGroup(String name) {
-	// for (BenchmarkGroup bg : groups) {
-	// if (bg.equals(new BenchmarkGroup(name)))
-	// return bg;
-	// }
-	// return null;
-	//
-	// }
 
 	public static IEditorPart openBenchmark(final Benchmark benchmark) {
 		return openBenchmark(getPage(), benchmark);
@@ -107,9 +105,17 @@ public class BenchmarkWizard extends Wizard {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-	private void refreshNavigator(BenchmarkGroup group) {
+	private void refreshNavigator() {
 		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.findView(ProjectView.ID);
-		projectView.refresh(group);
+		projectView.refresh();
+	}
+
+	public void setGroups(List<BenchmarkGroup> groups) {
+		this.groups = groups;
+	}
+
+	public List<BenchmarkGroup> getGroups() {
+		return groups;
 	}
 }

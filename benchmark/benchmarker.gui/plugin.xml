@@ -15,11 +15,16 @@
   <perspective name="RCP Perspective" class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Perspective" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.perspective" /> 
   </extension>
  <extension point="org.eclipse.ui.views">
-  <view class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ProjectView" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.projectView" name="Navigator" restorable="true" /> 
+   <view class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ProjectView" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.projectView" name="Navigator" restorable="true" /> 
+ <view name="Progress View"
+        icon="icons/pview.gif"
+         category="org.eclipse.ui"
+         class="org.eclipse.ui.ExtensionFactory:progressView"
+         id="org.eclipse.ui.views.ProgressView"/>
   </extension>
  <extension point="org.eclipse.ui.perspectiveExtensions">
  <perspectiveExtension targetID="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.perspective">
-  <view closeable="false" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.projectView" minimized="false" moveable="true" ratio="0.3" relationship="left" relative="org.eclipse.ui.editorss" showTitle="true" standalone="false" visible="true" /> 
+  <view closeable="false" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.projectView" minimized="false" moveable="true" ratio="0.25" relationship="left" relative="org.eclipse.ui.editorss" showTitle="true" standalone="false" visible="true" />
  <!-- <view id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.parameterView" minimized="false" relationship="stack" relative="org.eclipse.ui.editorss" visible="false"> </view> --> 
   </perspectiveExtension>
   </extension>
@@ -63,7 +68,23 @@
   </menuContribution>
   </extension>
  <extension point="org.eclipse.ui.editors">
-  <editor class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.BenchmarkEditorPart" default="false" extensions="bmk" id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorBenchmark" name="Benchmark Editor" /> 
+  <editor class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.BenchmarkEditorPart" 
+  	default="false" 
+ 	 extensions="bmk" 
+	  id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorBenchmark" 
+	  name="Benchmark Editor" />
+  <editor
+        class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.MetadataEditorPart"
+        default="false"
+        id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorMetadata"
+        name="Metadata">
+  </editor>
+  <editor
+        class="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ResultEditorPart"
+        default="false"
+        id="de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorResult"
+        name="Result">
+  </editor> 
   </extension>
   <extension point="org.eclipse.ui.activities">
   <activity description="Disable plug-in contributions1" id="rcp_core.activity1" name="DisableIDEContribs1" />

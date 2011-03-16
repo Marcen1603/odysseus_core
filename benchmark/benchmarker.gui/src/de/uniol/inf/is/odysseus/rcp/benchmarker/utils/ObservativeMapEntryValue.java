@@ -22,6 +22,13 @@ import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 
+/**
+ * Diese Klasse observiert die Map-Einträge
+ * @author Stefanie Witzke
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class ObservativeMapEntryValue<K, V> extends AbstractObservableValue {
 
 	private Map.Entry<K, V> entry;
