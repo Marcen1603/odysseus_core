@@ -75,6 +75,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private boolean useLoadShedding;
 	private boolean extendedPostPriorisation = false;
 	private boolean useBenchmarkMemUsage = false;
+	private boolean sourcesCreated = false;
 
 	private User user = UserManagement.getInstance().getSuperUser();
 	private IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Benchmark");
@@ -144,6 +145,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	public Collection<IBenchmarkResult<ILatency>> runBenchmark()
 			throws BenchmarkException {
 
+		clearExecutor();
 		createNexmarkSources();
 
 		IBenchmarkResult<ILatency> result = resultFactory
@@ -258,6 +260,19 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		}
 	}
 
+	private void clearExecutor() {
+		this.sinks.clear();
+		this.executor.getExecutionPlan().close();
+		for(IQuery q : this.executor.getQueries()){
+			try {
+				this.executor.removeQuery(q.getID(), user);
+			} catch (PlanManagementException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		
+	}
+
 	private int getQueryId(IPhysicalOperator curRoot) {
 		for (IQuery q : this.executor.getQueries()) {
 			if (q.getRoots().contains(curRoot)) {
@@ -269,6 +284,9 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 	@SuppressWarnings("unchecked")
 	private void createNexmarkSources() {
+		if (sourcesCreated)
+			return;
+		
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
 		q[1] = "CREATE STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
@@ -284,6 +302,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 				e.printStackTrace();
 			}
 		}
+		sourcesCreated = true;
 	}
 
 	@Override
