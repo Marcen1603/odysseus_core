@@ -57,5 +57,4 @@ public class BufferplacementstrategyServiceTrackerCustomizer implements ServiceT
 		bufferplacementstrategyNames.remove(reference.getProperty("component.Name").toString());
 		context.ungetService(reference);
 	}
-
 }
