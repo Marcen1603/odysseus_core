@@ -59,6 +59,15 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		return retval.iterator();
 	}
 
+	/**
+	 * Removes all elements from this sweep area that
+	 * are totally before "element". The while loop in
+	 * this method can be broken, if the next element
+	 * has a start timestamp that is after or equals
+	 * to the start timestamp of "element", because the
+	 * elements in the sweep area are ordered by their
+	 * start timestamps.
+	 */
 	@Override
 	public void purgeElements(T element, Order order) {
 		synchronized (elements) {
@@ -66,12 +75,16 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 			int i = 0;
 
 			while (it.hasNext()) {
-				if (getRemovePredicate().evaluate(it.next(), element)) {
+				T cur = it.next();
+				if (getRemovePredicate().evaluate(cur, element)) {
 					++i;
 					it.remove();
-				} else {
+				}
+				
+				if(cur.getMetadata().getStart().afterOrEquals(element.getMetadata().getStart())){
 					return;
 				}
+				
 			}
 		}
 	}
