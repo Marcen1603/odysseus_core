@@ -1,28 +1,36 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+@LogicalOperator(name = "FILESINK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE)
 public class FileSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -5468128562016704956L;
-	final String filename;
-	final String sinkType;
-	final long writeAfterElements;
-	
+	String filename;
+	String sinkType;
+	long writeAfterElements = -1;
+
+	public FileSinkAO() {
+	}
+
 	public FileSinkAO(String filename, String sinkType, long writeAfterElements) {
 		this.filename = filename;
 		this.sinkType = sinkType;
@@ -35,7 +43,22 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.sinkType = fileSinkAO.sinkType;
 		this.writeAfterElements = fileSinkAO.writeAfterElements;
 	}
-	
+
+	@Parameter(name = "FILE", type = StringParameter.class)
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	@Parameter(name = "FILETYPE", type = StringParameter.class, optional = true)
+	public void setSinkType(String sinkType) {
+		this.sinkType = sinkType;
+	}
+
+	@Parameter(type = LongParameter.class, optional = true)
+	public void setCacheSize(long value) {
+		this.writeAfterElements = value;
+	}
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return null;
@@ -53,10 +76,9 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	public String getSinkType() {
 		return sinkType;
 	}
-	
+
 	public long getWriteAfterElements() {
 		return writeAfterElements;
 	}
-
 
 }

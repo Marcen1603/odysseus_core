@@ -14,12 +14,17 @@
   */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.EnumParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Jonas Jacobi
  */
+@LogicalOperator(name="EXISTENCE", minInputPorts=2, maxInputPorts=2)
 public class ExistenceAO extends BinaryLogicalOp implements Cloneable {
 
 //	@Override
@@ -68,12 +73,13 @@ public class ExistenceAO extends BinaryLogicalOp implements Cloneable {
 		return new ExistenceAO(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void setPredicate(IPredicate predicate) {
+	@Parameter(type=PredicateParameter.class)
+	public void setPredicate(@SuppressWarnings("rawtypes") IPredicate predicate) {
 		super.setPredicate(predicate);
 	}
 
+	@Parameter(type=EnumParameter.class)
 	public void setType(Type type) {
 		this.type = type;
 	}

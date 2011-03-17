@@ -19,11 +19,8 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
 public abstract class ASTWindow extends SimpleNode {
-	public static enum Type {
-		TIME, TUPLE
-	}
 
-	protected Type type;
+	protected WindowType type;
 	private Long size;
 	private Long advance;
 
@@ -41,7 +38,7 @@ public abstract class ASTWindow extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public void setType(Type type) {
+	public void setType(WindowType type) {
 		this.type = type;
 	}
 
@@ -74,7 +71,9 @@ public abstract class ASTWindow extends SimpleNode {
 		return null;
 	}
 
-	public abstract WindowType getType();
+	public final WindowType getType() {
+		return this.type;
+	}
 
 	public boolean hasOffset() {
 		return false;

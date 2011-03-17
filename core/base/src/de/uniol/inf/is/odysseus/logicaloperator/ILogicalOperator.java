@@ -57,4 +57,5 @@ public interface ILogicalOperator extends IOwnedOperator,
 
 //	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a);
 	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a);
+	public boolean isValid();
 }

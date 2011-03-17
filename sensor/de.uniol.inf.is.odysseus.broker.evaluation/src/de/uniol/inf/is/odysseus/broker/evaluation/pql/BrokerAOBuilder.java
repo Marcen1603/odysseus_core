@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.broker.evaluation.pql;
 
 import java.util.List;
@@ -23,21 +23,23 @@ import de.uniol.inf.is.odysseus.broker.evaluation.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.evaluation.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.evaluation.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.DirectParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ListParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BrokerAOBuilder extends AbstractOperatorBuilder {
 
-	IParameter<String> nameAttribute = new DirectParameter<String>("NAME", REQUIREMENT.MANDATORY);
-	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>("SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter("ATTRIBUTE",
-			REQUIREMENT.MANDATORY));
+	IParameter<String> nameAttribute = new StringParameter("NAME",
+			REQUIREMENT.MANDATORY);
+	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
+			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
+					"ATTRIBUTE", REQUIREMENT.MANDATORY));
 	private final IntegerParameter queuePort = new IntegerParameter("Q",
 			REQUIREMENT.OPTIONAL);
 	private final IntegerParameter dataPort = new IntegerParameter("O",
@@ -47,11 +49,11 @@ public class BrokerAOBuilder extends AbstractOperatorBuilder {
 
 	public BrokerAOBuilder() {
 		super(0, 2);
-		setParameters(nameAttribute);
-		setParameters(attributes);
-		setParameters(inPort);
-		setParameters(dataPort);
-		setParameters(queuePort);
+		addParameters(nameAttribute);
+		addParameters(attributes);
+		addParameters(inPort);
+		addParameters(dataPort);
+		addParameters(queuePort);
 	}
 
 	@Override
@@ -67,29 +69,32 @@ public class BrokerAOBuilder extends AbstractOperatorBuilder {
 		// first occurrence?!
 		createEntriesIfNecessary();
 
-		
 		int currentIn = getInPort();
 		int currentOut = getOutPort();
 		int currentQueue = getQueuePort();
-		
+
 		// create a logical op
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
 		// and consume a writing port, because at least one input is
-		// possible...		
+		// possible...
 		broker.setInPort(currentIn);
 		broker.setOutPort(currentOut);
 		broker.setQueuePort(currentQueue);
 
 		// this is our mapping from queue-in to data-out, so we need a QPM:
 		QueuePortMapping qpm = new QueuePortMapping(currentOut, currentQueue);
-		BrokerDictionary.getInstance().addQueuePortMapping(broker.getName(), qpm);
+		BrokerDictionary.getInstance().addQueuePortMapping(broker.getName(),
+				qpm);
 
 		// so, reading and writing data are first continuous (cyclic will be
 		// set during transform)
 		// and queue is a timestamp-port
-		BrokerDictionary.getInstance().setReadTypeForPort(name, currentOut, ReadTransaction.Continuous);
-		BrokerDictionary.getInstance().setWriteTypeForPort(name, currentIn, WriteTransaction.Continuous);
-		BrokerDictionary.getInstance().setWriteTypeForPort(name, currentQueue, WriteTransaction.Timestamp);				
+		BrokerDictionary.getInstance().setReadTypeForPort(name, currentOut,
+				ReadTransaction.Continuous);
+		BrokerDictionary.getInstance().setWriteTypeForPort(name, currentIn,
+				WriteTransaction.Continuous);
+		BrokerDictionary.getInstance().setWriteTypeForPort(name, currentQueue,
+				WriteTransaction.Timestamp);
 		return broker;
 	}
 
@@ -97,15 +102,20 @@ public class BrokerAOBuilder extends AbstractOperatorBuilder {
 		String name = nameAttribute.getValue();
 		if (!BrokerDictionary.getInstance().brokerExists(name)) {
 			if (super.getInputOperatorCount() > 0) {
-				SDFAttributeList schema = super.getInputOperator(0).getOutputSchema();
-				BrokerDictionary.getInstance().addBroker(name, schema, generateQueueSchema());
+				SDFAttributeList schema = super.getInputOperator(0)
+						.getOutputSchema();
+				BrokerDictionary.getInstance().addBroker(name, schema,
+						generateQueueSchema());
 			} else {
 				if (attributes.hasValue()) {
 					List<SDFAttribute> attributeList = attributes.getValue();
-					SDFAttributeList schema = new SDFAttributeList(attributeList);
-					BrokerDictionary.getInstance().addBroker(name, schema, generateQueueSchema());
+					SDFAttributeList schema = new SDFAttributeList(
+							attributeList);
+					BrokerDictionary.getInstance().addBroker(name, schema,
+							generateQueueSchema());
 				} else {
-					throw new RuntimeException("Attributes has to be set, if broker is used for the first time and there is no other input");
+					throw new RuntimeException(
+							"Attributes has to be set, if broker is used for the first time and there is no other input");
 				}
 			}
 			BrokerDictionary.getInstance().setCurrentInputPort(name, 0);
@@ -118,50 +128,60 @@ public class BrokerAOBuilder extends AbstractOperatorBuilder {
 		queueSchema.add(new SDFAttribute("broker", "timestamp"));
 		return queueSchema;
 	}
-	
-	private int getInPort(){
+
+	private int getInPort() {
 		String name = nameAttribute.getValue();
 		int current = BrokerDictionary.getInstance().getCurrentInputPort(name);
-		if(inPort.hasValue()){
+		if (inPort.hasValue()) {
 			int port = inPort.getValue();
-			if(current<=port){
-				BrokerDictionary.getInstance().setCurrentInputPort(name, port + 1);
+			if (current <= port) {
+				BrokerDictionary.getInstance().setCurrentInputPort(name,
+						port + 1);
 			}
 			current = port;
-		}else{
-			BrokerDictionary.getInstance().setCurrentInputPort(name, current + 1);
-		}			
+		} else {
+			BrokerDictionary.getInstance().setCurrentInputPort(name,
+					current + 1);
+		}
 		return current;
 	}
 
-	private int getQueuePort(){
+	private int getQueuePort() {
 		String name = nameAttribute.getValue();
 		int current = BrokerDictionary.getInstance().getCurrentInputPort(name);
-		if(queuePort.hasValue()){
+		if (queuePort.hasValue()) {
 			int port = queuePort.getValue();
-			if(current<=port){
-				BrokerDictionary.getInstance().setCurrentInputPort(name, port + 1);
+			if (current <= port) {
+				BrokerDictionary.getInstance().setCurrentInputPort(name,
+						port + 1);
 			}
 			current = port;
-		}else{
-			BrokerDictionary.getInstance().setCurrentInputPort(name, current + 1);
-		}			
+		} else {
+			BrokerDictionary.getInstance().setCurrentInputPort(name,
+					current + 1);
+		}
 		return current;
 	}
-	
-	private int getOutPort(){
+
+	private int getOutPort() {
 		String name = nameAttribute.getValue();
 		int current = BrokerDictionary.getInstance().getCurrentOutputPort(name);
-		if(dataPort.hasValue()){
+		if (dataPort.hasValue()) {
 			int port = dataPort.getValue();
-			if(current<=port){
-				BrokerDictionary.getInstance().setCurrentOuputPort(name, port + 1);
+			if (current <= port) {
+				BrokerDictionary.getInstance().setCurrentOuputPort(name,
+						port + 1);
 			}
 			current = port;
-		}else{
-			BrokerDictionary.getInstance().setCurrentOuputPort(name, current + 1);
-		}			
+		} else {
+			BrokerDictionary.getInstance().setCurrentOuputPort(name,
+					current + 1);
+		}
 		return current;
 	}
 
+	@Override
+	public BrokerAOBuilder cleanCopy() {
+		return new BrokerAOBuilder();
+	}
 }

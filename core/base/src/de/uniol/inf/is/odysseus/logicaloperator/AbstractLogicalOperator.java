@@ -51,6 +51,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private Map<Integer, Subscription<ISource<?>>> physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>();
 	// cache access to bounded physOperators
 	private Map<Integer, ISource<?>> physInputOperators = new HashMap<Integer, ISource<?>>();
+	
+	transient private List<Exception> errors = new ArrayList<Exception>();
 
 	public Map<Integer, ISource<?>> getPhysInputOperators() {
 		return physInputOperators;
@@ -462,6 +464,23 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	final public int hashCode() {
 		return super.hashCode();
+	}
+	
+	@Override
+	public boolean isValid() {
+		return true;
+	}
+	
+	protected void addError(Exception e){
+		this.errors.add(e);
+	}
+	
+	protected void clearErrors() {
+		this.errors.clear();
+	}
+	
+	public List<Exception> getErrors() {
+		return Collections.unmodifiableList(this.errors);
 	}
 
 }

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
@@ -75,8 +76,8 @@ public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>
 	}
 	
 	@Override
-	public WindowContentType getWindowContentType() {
-		return WindowContentType.ELEMENT_BASED;
+	public WindowType getWindowType() {
+		return WindowType.TUPLE;
 	}
 
 	@Override

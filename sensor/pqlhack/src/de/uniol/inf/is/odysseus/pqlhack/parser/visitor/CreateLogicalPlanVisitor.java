@@ -382,7 +382,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTSlidingTimeWindow node, Object data) {
-		WindowAO win = new WindowAO(WindowType.SLIDING_TIME_WINDOW);
+		WindowAO win = new WindowAO(WindowType.TIME);
 
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();

@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement;
 
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
+
 /**
  * Used by MigrationHelper to abstract from window appraoches.
  * 
@@ -21,11 +23,7 @@ package de.uniol.inf.is.odysseus.planmanagement;
  *
  */
 public interface IWindow {
-	public enum WindowContentType {
-		ELEMENT_BASED,
-		TIME_BASED,
-		OTHER
-	};
+	
 	public long getWindowSize();
-	public WindowContentType getWindowContentType();
+	public WindowType getWindowType();
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 @ SuppressWarnings("all") public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, NewSQLParserConstants {/*@bgen(jjtree)*/
   protected static JJTNewSQLParserState jjtree = new JJTNewSQLParserState();
 
@@ -3813,7 +3814,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
       case K_SIZE:
         jj_consume_token(K_SIZE);
         size = Time();
-      jjtn000.setType(ASTWindow.Type.TIME);
+      jjtn000.setType(WindowType.TIME);
       jjtn000.setSize(size);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_ADVANCE:
@@ -3831,7 +3832,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
           break;
         case K_TUPLE:
           jj_consume_token(K_TUPLE);
-        jjtn000.setType(ASTWindow.Type.TUPLE);
+        jjtn000.setType(WindowType.TUPLE);
           break;
         default:
           jj_la1[99] = jj_gen;
@@ -5362,11 +5363,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     try { return !jj_3_41(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(40, xla); }
-  }
-
-  static private boolean jj_3_21() {
-    if (jj_3R_44()) return true;
-    return false;
   }
 
   static private boolean jj_3R_114() {
@@ -7126,6 +7122,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_216()) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3_21() {
+    if (jj_3R_44()) return true;
     return false;
   }
 

@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import java.util.Collection;
@@ -26,7 +26,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TRelationalSlidingElementWindowTIPORule extends AbstractTransformationRule<WindowAO> {
+public class TRelationalSlidingElementWindowTIPORule extends
+		AbstractTransformationRule<WindowAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,10 +35,13 @@ public class TRelationalSlidingElementWindowTIPORule extends AbstractTransformat
 	}
 
 	@Override
-	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
-		RelationalSlidingElementWindowTIPO windowPO = new RelationalSlidingElementWindowTIPO(windowAO);
+	public void execute(WindowAO windowAO,
+			TransformationConfiguration transformConfig) {
+		RelationalSlidingElementWindowTIPO windowPO = new RelationalSlidingElementWindowTIPO(
+				windowAO);
 		windowPO.setOutputSchema(windowAO.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowPO);
+		Collection<ILogicalOperator> toUpdate = transformConfig
+				.getTransformationHelper().replace(windowAO, windowPO);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
@@ -46,10 +50,13 @@ public class TRelationalSlidingElementWindowTIPORule extends AbstractTransformat
 	}
 
 	@Override
-	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+	public boolean isExecutable(WindowAO operator,
+			TransformationConfiguration transformConfig) {
+		if (transformConfig.getMetaTypes().contains(
+				ITimeInterval.class.getCanonicalName())) {
 			if (operator.isAllPhysicalInputSet())
-				if (operator.getWindowType() == WindowType.SLIDING_TUPLE_WINDOW || operator.getWindowType() == WindowType.JUMPING_TUPLE_WINDOW) {
+				if (operator.getWindowType() == WindowType.TUPLE
+						&& operator.getWindowSlide() == -1) {
 					if (operator.isPartitioned()) {
 						return true;
 					}
@@ -62,7 +69,7 @@ public class TRelationalSlidingElementWindowTIPORule extends AbstractTransformat
 	public String getName() {
 		return "WindowAO -> RelationalSlidingElementWindowTIPO";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;

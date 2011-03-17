@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorAO;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorTIPO;
+import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimeStampOrderValidatorAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

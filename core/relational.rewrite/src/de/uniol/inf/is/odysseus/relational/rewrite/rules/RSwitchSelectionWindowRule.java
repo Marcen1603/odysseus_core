@@ -19,6 +19,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
@@ -49,17 +50,8 @@ public class RSwitchSelectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	}
 
 	@Override
-	public boolean isExecutable(WindowAO win, RewriteConfiguration config) {		
-		switch (win.getWindowType()) {
-		case FIXED_TIME_WINDOW:
-		case PERIODIC_TIME_WINDOW:
-		case SLIDING_TIME_WINDOW:
-		case JUMPING_TIME_WINDOW:
-			return true;
-		default:
-			return false;
-		}
-
+	public boolean isExecutable(WindowAO win, RewriteConfiguration config) {
+		return win.getWindowType() == WindowType.TIME;
 	}
 
 	@Override

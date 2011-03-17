@@ -71,32 +71,6 @@ public class ASTStreamSQLWindow extends ASTWindow {
 	}
 
 	@Override
-	public WindowType getType() {
-		if (this.isUnbounded) {
-			return WindowType.UNBOUNDED;
-		}
-		if (this.type == Type.TUPLE) {
-			if (this.slide != null) {
-				return WindowType.PERIODIC_TUPLE_WINDOW;
-			}
-			if (getAdvance() == null || getAdvance() == 1) {
-				return WindowType.SLIDING_TUPLE_WINDOW;
-			} else {
-				return WindowType.JUMPING_TUPLE_WINDOW;
-			}
-		} else {
-			if (this.slide != null) {
-				return WindowType.PERIODIC_TIME_WINDOW;
-			}
-			if (getAdvance() == null || getAdvance() == 1) {
-				return WindowType.SLIDING_TIME_WINDOW;
-			} else {
-				return WindowType.JUMPING_TIME_WINDOW;
-			}
-		}
-	}
-
-	@Override
 	public long getOffset() {
 		return this.offset;
 	}

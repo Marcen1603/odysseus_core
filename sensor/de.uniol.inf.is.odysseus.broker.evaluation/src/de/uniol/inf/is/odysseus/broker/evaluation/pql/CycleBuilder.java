@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.broker.evaluation.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.evaluation.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.evaluation.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -38,7 +38,7 @@ public class CycleBuilder extends AbstractOperatorBuilder{
 	
 	public CycleBuilder() {
 		super(1, 1);		
-		setParameters(numbers);
+		addParameters(numbers);
 	}
 
 	@Override
@@ -102,6 +102,10 @@ public class CycleBuilder extends AbstractOperatorBuilder{
 		SDFAttributeList queueSchema = new SDFAttributeList();
 		queueSchema.add(new SDFAttribute("broker", "timestamp"));
 		return queueSchema;
+	}
+	
+	public CycleBuilder cleanCopy() {
+		return new CycleBuilder();
 	}
 	
 }

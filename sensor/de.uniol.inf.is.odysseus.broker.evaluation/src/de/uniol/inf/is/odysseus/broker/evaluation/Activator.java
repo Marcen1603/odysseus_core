@@ -18,8 +18,10 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.broker.benchmarker.BenchmarkService;
+import de.uniol.inf.is.odysseus.broker.evaluation.pql.BrokerAOBuilder;
 import de.uniol.inf.is.odysseus.broker.evaluation.pql.CycleBuilder;
 import de.uniol.inf.is.odysseus.broker.evaluation.pql.FreqCycleBuilder;
+import de.uniol.inf.is.odysseus.broker.evaluation.pql.UpdateEvaluationAOBuilder;
 import de.uniol.inf.is.odysseus.broker.evaluation.rules.TBenchmarkAORule;
 import de.uniol.inf.is.odysseus.broker.evaluation.rules.TBrokerAORule;
 import de.uniol.inf.is.odysseus.broker.evaluation.rules.TBrokerCycleDetectionRule;
@@ -53,10 +55,10 @@ public class Activator implements BundleActivator {
 		
 		
 		//loading PQL
-//		OperatorBuilderFactory.putOperatorBuilderType("BROKER", BrokerAOBuilder.class);
-//		OperatorBuilderFactory.putOperatorBuilderType("UPEVAL", UpdateEvaluationAOBuilder.class);
-		OperatorBuilderFactory.putOperatorBuilderType("CYCLE", CycleBuilder.class);
-		OperatorBuilderFactory.putOperatorBuilderType("FREQCYCLE", FreqCycleBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType("BROKER", new BrokerAOBuilder());
+		OperatorBuilderFactory.putOperatorBuilderType("UPEVAL", new UpdateEvaluationAOBuilder());
+		OperatorBuilderFactory.putOperatorBuilderType("CYCLE", new CycleBuilder());
+		OperatorBuilderFactory.putOperatorBuilderType("FREQCYCLE", new FreqCycleBuilder());
 		
 	}
 
@@ -65,6 +67,10 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
+		OperatorBuilderFactory.removeOperatorBuilderType("BROKER");
+		OperatorBuilderFactory.removeOperatorBuilderType("UPEVAL");
+		OperatorBuilderFactory.removeOperatorBuilderType("CYCLE");
+		OperatorBuilderFactory.removeOperatorBuilderType("FREQCYCLE");
 		Activator.context = null;		
 	}
 	

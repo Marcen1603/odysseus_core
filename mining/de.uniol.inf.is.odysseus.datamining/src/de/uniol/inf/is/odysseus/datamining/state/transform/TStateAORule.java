@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.datamining.state.transform;
 
-import de.uniol.inf.is.odysseus.datamining.state.logicaloperator.StateAO;
 import de.uniol.inf.is.odysseus.datamining.state.physicaloperator.StatePO;
+import de.uniol.inf.is.odysseus.logicaloperator.datamining.state.StateAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

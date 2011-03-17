@@ -18,6 +18,9 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -25,6 +28,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Marco Grawunder
  * 
  */
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="SELECT")
 public class SelectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514846L;
 
@@ -40,6 +44,13 @@ public class SelectAO extends UnaryLogicalOp {
 		setPredicate(predicate);
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
+	@Parameter(type=PredicateParameter.class)
+	public void setPredicate(IPredicate predicate) {
+			super.setPredicate(predicate);
+	}
+	
 	@Override
 	public SelectAO clone() {
 		return new SelectAO(this);

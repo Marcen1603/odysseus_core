@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
 /** Token Manager. */
 public class NewSQLParserTokenManager implements NewSQLParserConstants

@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.datamining.classification.transform;
 
-import de.uniol.inf.is.odysseus.datamining.classification.logicaloperator.ClassifyAO;
 import de.uniol.inf.is.odysseus.datamining.classification.physicaloperator.ClassifyPO;
+import de.uniol.inf.is.odysseus.logicaloperator.datamining.classification.ClassifyAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

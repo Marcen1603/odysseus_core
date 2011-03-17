@@ -7,6 +7,7 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.collection,
  de.uniol.inf.is.odysseus.event,
  de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.physicaloperator,
@@ -23,5 +24,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j.impl;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
- de.uniol.inf.is.odysseus.intervalapproach.window
+ de.uniol.inf.is.odysseus.intervalapproach.window,
+ de.uniol.inf.is.odysseus.logicaloperator.intervalapproach
 Bundle-Activator: de.uniol.inf.is.odysseus.intervalapproach.Activator

@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.benchmark.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkPO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.PriorityBenchmarkPO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BenchmarkAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;

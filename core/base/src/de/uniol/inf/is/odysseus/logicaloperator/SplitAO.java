@@ -18,9 +18,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+@LogicalOperator(name="SPLIT", minInputPorts=1, maxInputPorts=1)
 public class SplitAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8015847502104587689L;
@@ -39,6 +43,7 @@ public class SplitAO extends UnaryLogicalOp {
 		return Collections.unmodifiableList(predicates);
 	}
 
+	@Parameter(type=PredicateParameter.class, isList=true)
 	public void setPredicates(List<IPredicate<?>> predicates) {
 		this.predicates = new ArrayList<IPredicate<?>>(predicates);
 	}

@@ -15,8 +15,8 @@
 package de.uniol.inf.is.odysseus.datamining.clustering.transform;
 
 import de.uniol.inf.is.odysseus.datamining.clustering.EuclidianDistance;
-import de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator.LeaderAO;
 import de.uniol.inf.is.odysseus.datamining.clustering.physicaloperator.LeaderPO;
+import de.uniol.inf.is.odysseus.logicaloperator.datamining.clustering.LeaderAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

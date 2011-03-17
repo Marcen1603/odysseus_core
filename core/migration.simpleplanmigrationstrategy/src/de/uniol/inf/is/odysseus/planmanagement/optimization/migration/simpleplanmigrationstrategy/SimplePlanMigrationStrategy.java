@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.physicaloperator.BlockingBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
@@ -34,7 +35,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.UnionPO;
 import de.uniol.inf.is.odysseus.planmanagement.IWindow;
-import de.uniol.inf.is.odysseus.planmanagement.IWindow.WindowContentType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -120,7 +120,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// get longest window
 		IWindow wMax = MigrationHelper.getLongestWindow(lastOperatorNewPlan);
-		if (wMax != null && wMax.getWindowContentType() != WindowContentType.TIME_BASED) {
+		if (wMax != null && wMax.getWindowType() != WindowType.TIME) {
 			throw new QueryOptimizationException(
 					"Only time based windows are supported.");
 		}
@@ -256,7 +256,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			this.logger
 					.debug("No windows, can finish parallel execution instantly.");
 			finishedParallelExecution(context);
-		} else if (wMax.getWindowContentType() == WindowContentType.TIME_BASED) {
+		} else if (wMax.getWindowType() == WindowType.TIME) {
 			new Thread(new ParallelExecutionWaiter(this, context)).start();
 			this.logger.debug("ParallelExecutionWaiter started with "
 					+ wMax.getWindowSize() + "ms waiting period.");

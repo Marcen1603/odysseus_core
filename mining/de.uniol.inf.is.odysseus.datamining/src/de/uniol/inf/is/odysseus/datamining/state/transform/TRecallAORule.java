@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.datamining.state.transform;
 
-import de.uniol.inf.is.odysseus.datamining.state.logicaloperator.RecallAO;
 import de.uniol.inf.is.odysseus.datamining.state.physicaloperator.RecallPO;
+import de.uniol.inf.is.odysseus.logicaloperator.datamining.state.RecallAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

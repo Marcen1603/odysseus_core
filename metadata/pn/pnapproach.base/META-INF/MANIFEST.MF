@@ -20,3 +20,4 @@ Export-Package: de.uniol.inf.is.odysseus.pnapproach.base,
  de.uniol.inf.is.odysseus.pnapproach.base.metadata,
  de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator,
  de.uniol.inf.is.odysseus.pnapproach.base.sweeparea
+Require-Bundle: de.uniol.inf.is.odysseus
