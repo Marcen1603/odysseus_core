@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.ByteParameter;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-@LogicalOperator(name = "PRIORITY", minInputPorts = 1, maxInputPorts = 1)
 public class PriorityAO<T> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -4615895793429076670L;
