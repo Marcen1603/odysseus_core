@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.kdds.frequent.transform;
 
-import de.uniol.inf.is.odysseus.kdds.frequent.logical.FrequentItemAO;
 import de.uniol.inf.is.odysseus.kdds.frequent.physical.LossyCountingFrequentItem;
 import de.uniol.inf.is.odysseus.kdds.frequent.physical.SimpleFrequentItemPO;
 import de.uniol.inf.is.odysseus.kdds.frequent.physical.SpaceSavingFrequentItem;
+import de.uniol.inf.is.odysseus.logicaloperator.kdds.frequent.FrequentItemAO;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
