@@ -23,8 +23,8 @@ import measure.windperformancercp.event.InputDialogEvent;
 import measure.windperformancercp.event.InputDialogEventType;
 import measure.windperformancercp.event.UpdateEvent;
 import measure.windperformancercp.event.UpdateEventType;
+import measure.windperformancercp.model.IDialogResult;
 import measure.windperformancercp.model.sources.Attribute;
-import measure.windperformancercp.model.sources.IDialogResult;
 import measure.windperformancercp.model.sources.ISource;
 import measure.windperformancercp.model.sources.MetMast;
 import measure.windperformancercp.model.sources.WindTurbine;
@@ -326,6 +326,11 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 		attDialog.setNameValue(att.getName());
 		attDialog.setComboValue(att.getAttType().toString());
 		
+	}
+	
+	@Override
+	public void notifyUser(String message){
+		dialog.setMessage(message);
 	}
 
 }

@@ -20,7 +20,6 @@ import measure.windperformancercp.event.IEventListener;
 import measure.windperformancercp.event.IEventType;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 
 

@@ -40,6 +40,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * The view which lists the current active queries to the user 
+ * (and gives him/her the possibility to select one to take a look at the results).
+ * @author Diana von Gallera
+ *
+ */
 public class ActiveQueriesView extends ViewPart {
 	public static final String ID = "measure.windperformancercp.activeQueriesView";
 
@@ -87,6 +93,8 @@ public class ActiveQueriesView extends ViewPart {
 		getSite().setSelectionProvider(queryViewer);
 		presenter.subscribeToAll(updateListener);
 		
+		//if you want to have a context menu, then uncomment the following (and do the necessary stuff with commands)
+		
 	//	MenuManager menuManager = new MenuManager();
 	//	Menu menu = menuManager.createContextMenu(queryViewer.getTable());
 		// Set the MenuManager
@@ -94,12 +102,17 @@ public class ActiveQueriesView extends ViewPart {
 	//	getSite().registerContextMenu(menuManager, queryViewer);
 	}
 
+	/**
+	 * Event Listener if selection by the user has changed.
+	 */
 	ISelectionChangedListener selectionListener = new ISelectionChangedListener(){
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			int id = queryViewer.getTable().getSelectionIndex();
 			if(id >= 0){
+				//get the name of the query
 				String itemName = queryViewer.getTable().getItem(id).getText(0);
+				//connect view to this query
 				presenter.connectViewToQuery(itemName);
 			}
 			//queryViewer.getTable().getSelectionIndex()
@@ -107,6 +120,9 @@ public class ActiveQueriesView extends ViewPart {
 		}
 	};
 	
+	/**
+	 * Event Listener if the list of connected queries has changed.
+	 */
 	IEventListener updateListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> idevent){
 			if(idevent.getEventType().equals(UpdateEventType.GeneralUpdate)){
@@ -126,6 +142,10 @@ public class ActiveQueriesView extends ViewPart {
 	public void setFocus() {
 	}
 	
+	/**
+	 * 
+	 * @return List of connected query names
+	 */
 	public TableItem[] getQueries(){
 		return this.queryViewer.getTable().getItems();
 	}
@@ -142,7 +162,7 @@ public class ActiveQueriesView extends ViewPart {
 			else
 				queryViewer.getTable().select(0);
 			//queryView.setText(presenter.getQueryText(performanceViewer.getTable().getSelectionIndex()));
-			int id = queryViewer.getTable().getSelectionIndex();
+			int id = queryViewer.getTable().getSelectionIndex(); //doppelt gemoppelt... sollte wohl 0 sein.//TODO
 			String itemName = queryViewer.getTable().getItem(id).getText(0);
 			presenter.connectViewToQuery(itemName);
 			
@@ -158,7 +178,7 @@ public class ActiveQueriesView extends ViewPart {
 		return presenter;
 	}
 	
-	
+	//The label provider for the table viewer
 	class IQueryLabelProvider implements ITableLabelProvider{
 
 		@Override
@@ -195,7 +215,6 @@ public class ActiveQueriesView extends ViewPart {
 			//IQuery query = (IQuery) element;
 			switch(columnIndex){
 			case 0: return element.toString();
-			//case 0: return Integer.toString(query.getID());
 			/*case 1:	return query.getMethod().toString();
 			case 2: return Integer.toString(query.getConcernedSrcKeys().size());
 			case 3:	return Double.toString(0.0);
@@ -205,7 +224,8 @@ public class ActiveQueriesView extends ViewPart {
 		}
 		
 	}
-
+	
+	//The content provider for the table viewer
 	class IQueryContentProvider implements IStructuredContentProvider{
 
 		@Override

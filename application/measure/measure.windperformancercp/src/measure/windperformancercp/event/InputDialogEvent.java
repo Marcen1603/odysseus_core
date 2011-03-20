@@ -14,7 +14,7 @@
   */
 package measure.windperformancercp.event;
 
-import measure.windperformancercp.model.sources.IDialogResult;
+import measure.windperformancercp.model.IDialogResult;
 import measure.windperformancercp.views.IPresenter;
 
 public class InputDialogEvent extends AbstractEvent<IPresenter, IDialogResult> {

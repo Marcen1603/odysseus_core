@@ -24,7 +24,7 @@ import measure.windperformancercp.event.InputDialogEventType;
 import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.event.UpdateEvent;
 import measure.windperformancercp.event.UpdateEventType;
-import measure.windperformancercp.model.sources.IDialogResult;
+import measure.windperformancercp.model.IDialogResult;
 import measure.windperformancercp.model.sources.SourceModel;
 import measure.windperformancercp.views.IPresenter;
 
@@ -49,7 +49,8 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 	
 	public void updateView(){
 		try{
-			fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
+			//fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,_cont.getContent()));
+			fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,model.getSourcesListB()));
 		}
 		catch(Exception e){
 			System.out.println(this.toString()+": "+e);
@@ -84,13 +85,17 @@ public class ManageSourcePresenter extends EventHandler implements IPresenter{
 	}
 	
 	@Override
+	public void notifyUser(String message){
+		setStatusLine(message);
+	}
+	
+	@Override
 	public void subscribeToAll(IEventListener listener) {
 		super.subscribeToAll(listener);
 		if(listener.equals(view.updateListener)){
 			updateView();
 		}
 	}
-	
 	
 
 	@Override

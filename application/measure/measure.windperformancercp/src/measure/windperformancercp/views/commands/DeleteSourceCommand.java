@@ -34,10 +34,17 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import measure.windperformancercp.views.sources.ManageSourceView;
 
+/**
+ * Encapsulates the deletion of a source from the list (SourceModel) via firing a deleteSourceEvent
+ * which is catched by the SourceController
+ * @author Diana von Gallera
+ *
+ */
 public class DeleteSourceCommand extends AbstractHandler implements
 		IHandler {
 	public static final String ID = "measure.windperformancercp.DeleteSource";
 
+	@SuppressWarnings(value="unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();

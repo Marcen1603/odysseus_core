@@ -15,8 +15,9 @@
 package measure.windperformancercp.views;
 
 import measure.windperformancercp.event.IEventHandler;
-import measure.windperformancercp.model.sources.IDialogResult;
+import measure.windperformancercp.model.IDialogResult;
 
 public interface IPresenter extends IEventHandler{
 	public void feedDialog(IDialogResult input);
+	public void notifyUser(String message);
 }

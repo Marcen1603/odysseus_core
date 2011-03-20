@@ -40,7 +40,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowCoolBar(false);
 		configurer.setShowPerspectiveBar(true);
 		configurer.setShowStatusLine(true);
-		configurer.setTitle("WT Performance Measurer");
+		configurer.setTitle("WindPerformanceRCP");
 	}
 
 	@Override

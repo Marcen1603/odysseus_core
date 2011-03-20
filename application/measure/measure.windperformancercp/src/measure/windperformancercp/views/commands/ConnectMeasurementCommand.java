@@ -31,9 +31,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-
+/**
+ * Encapsulates the connection of a performance measurement via firing 
+ * addquery event (which is catched by PMController)
+ * @author Diana von Gallera
+ *
+ */
 public class ConnectMeasurementCommand extends AbstractHandler implements IHandler {
 
+	@SuppressWarnings(value="unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
@@ -50,6 +56,9 @@ public class ConnectMeasurementCommand extends AbstractHandler implements IHandl
 				IPerformanceQuery query = (IPerformanceQuery) element;
 				if(!query.getConnectStat()){	//only fire if query is not already connected
 					presenter.fire(new QueryEvent(presenter,QueryEventType.AddQuery,query));
+				}
+				else{
+					presenter.notifyUser("Connection was not successful! Selected Query is already connected.");
 				}
 			}
     	}

@@ -43,6 +43,7 @@ public class MainController implements IController {
 	
 	private MainController(){
 		try{
+			//prepare data loading and saving via jaxb
 			jaxbContext = JAXBContext.newInstance("measure.windperformancercp");
 			marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
@@ -54,11 +55,13 @@ public class MainController implements IController {
 			System.out.println("Error while unmarshalling data: "+ex);
 		}
 		//System.out.println(this.toString()+": mainController says hi");
+		
+		//create controller
 		srcControl = SourceController.getInstance();
 		pmControl = PMController.getInstance();
 		
-		srcControl.setBrotherControl(pmControl);
-		pmControl.setBrotherControl(srcControl);
+		SourceController.setBrotherControl(pmControl);
+		PMController.setBrotherControl(srcControl);
 		
 		
 	}

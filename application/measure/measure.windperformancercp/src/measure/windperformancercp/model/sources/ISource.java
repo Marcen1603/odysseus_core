@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import measure.windperformancercp.event.IEventHandler;
+import measure.windperformancercp.model.IDialogResult;
 
 /**
  * Diese Schnittstelle kapselt moegliche Sourcen in diesem Kontext (Windenergieanlagen, Messmaste...)

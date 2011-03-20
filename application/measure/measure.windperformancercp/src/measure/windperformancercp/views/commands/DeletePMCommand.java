@@ -34,10 +34,17 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import measure.windperformancercp.model.query.IPerformanceQuery;
 import measure.windperformancercp.views.performance.AssignPerformanceMeasView;
 
+/**
+ * Encapsulates the deletion of a performance measurement from the list (PerformanceModel) via firing 
+ * deletion event
+ * @author Diana von Gallera
+ *
+ */
 public class DeletePMCommand extends AbstractHandler implements
 		IHandler {
 	public static final String ID = "measure.windperformancercp.DeletePM";
 
+	@SuppressWarnings(value="unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();

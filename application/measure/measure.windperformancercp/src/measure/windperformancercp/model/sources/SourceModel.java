@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import measure.windperformancercp.event.EventHandler;
 import measure.windperformancercp.event.ModelEvent;
 import measure.windperformancercp.event.ModelEventType;
+import measure.windperformancercp.model.IDialogResult;
 import measure.windperformancercp.model.IModel;
 import measure.windperformancercp.model.sources.xml.XMLHashMappingHelper;
 

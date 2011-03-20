@@ -15,12 +15,23 @@
 package measure.windperformancercp.model;
 
 import measure.windperformancercp.event.IEventHandler;
-import measure.windperformancercp.model.sources.IDialogResult;
+import measure.windperformancercp.model.IDialogResult;
 
+/**
+ * Interface for models (e.g. source model, performance model, where the global ressources are kept)
+ * @author Diana von Gallera
+ *
+ */
 public interface IModel extends IEventHandler {
 	//TODO: make it complete
+	/**
+	 * Returns the number of elements (sources, data stream questions..)
+	 */
 	public int getElemCount();
 //	public Object getIthElement(int i);
+	/**
+	 * fires a model event
+	 */
 	public void somethingChanged(IDialogResult res);
 
 }

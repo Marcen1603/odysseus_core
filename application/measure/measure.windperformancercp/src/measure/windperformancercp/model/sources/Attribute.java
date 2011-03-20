@@ -16,6 +16,8 @@ package measure.windperformancercp.model.sources;
 
 import javax.xml.bind.annotation.XmlEnum;
 
+import measure.windperformancercp.model.IDialogResult;
+
 public class Attribute implements IDialogResult{
 	//Datentyp, einer aus Double, Timestamp, Int ...
 	@XmlEnum

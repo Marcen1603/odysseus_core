@@ -21,7 +21,6 @@ import java.util.Map;
 
 import measure.windperformancercp.ExecutorHandler;
 import measure.windperformancercp.event.EventHandler;
-import measure.windperformancercp.model.result.PlotSink;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,6 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
@@ -52,12 +50,11 @@ public class Connector extends EventHandler {
 	User currentUser;
 	static Connector instance = new Connector();
 	private Map<String,IQuery> queries = new HashMap<String,IQuery>();
-	//static List<IQuery> queries = new ArrayList<IQuery>();
+	//private List<String> hostPortConcat = new ArrayList<String>();
 	
 	private ParameterTransformationConfiguration trafoConfigParam = 
 		new ParameterTransformationConfiguration(new TransformationConfiguration("relational", 
 				ITimeInterval.class, ILatency.class));
-		//new ParameterTransformationConfiguration(new StandardQueryBuildConfiguration());
 	ExecutorHandler execHandler;
 		
 
@@ -138,7 +135,7 @@ public class Connector extends EventHandler {
 		}
 		catch(PlanManagementException pe){
 			System.out.println(this.toString()+" - PlanManagementException: "+pe);
-			ExecutorHandler.getExecutor().getInfos();
+			//ExecutorHandler.getExecutor().getInfos();
 			return false;
 		}
 	
@@ -160,7 +157,7 @@ public class Connector extends EventHandler {
 			catch(PlanManagementException pe){
 			
 				System.out.println(this.toString()+" - PlanManagementException: "+pe);
-				ExecutorHandler.getExecutor().getInfos();
+				//System.out.println(ExecutorHandler.getExecutor().getInfos());
 				return false;
 			}
 		}

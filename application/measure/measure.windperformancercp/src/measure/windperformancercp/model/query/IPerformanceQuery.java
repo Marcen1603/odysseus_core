@@ -17,7 +17,7 @@ package measure.windperformancercp.model.query;
 import java.util.ArrayList;
 
 import measure.windperformancercp.model.query.APerformanceQuery.PMType;
-import measure.windperformancercp.model.sources.IDialogResult;
+import measure.windperformancercp.model.IDialogResult;
 import measure.windperformancercp.model.sources.ISource;
 
 public interface IPerformanceQuery extends IDialogResult {

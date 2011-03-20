@@ -29,7 +29,11 @@ import measure.windperformancercp.model.sources.Attribute.AttributeType;
 import measure.windperformancercp.model.sources.ISource;
 import measure.windperformancercp.model.sources.WindTurbine;
 
-
+/**
+ * Standard implementation of a performance query 
+ * @author Diana von Gallera
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "abstractPerformanceQuery", propOrder = {
     "identifier",
@@ -49,45 +53,74 @@ import measure.windperformancercp.model.sources.WindTurbine;
     "pitch"
 })
 public abstract class APerformanceQuery implements IPerformanceQuery {
-	
+	//the name for the user
 	protected String identifier;
+	//the type of the performance query
 	protected PMType method;
+	//the names of the involved sources
 	@XmlTransient
 	protected ArrayList<String> concernedSrcKeys;
+	//the resulting data stream sources
 	@XmlTransient
 	protected ArrayList<Stream> concernedStr;
+	//the assignments between source and stream attributes
 	@XmlTransient
 	protected ArrayList<Assignment> assignments;
-	@XmlTransient
-	protected Timestamp starttime;
+	
+	//a timestamp for query starting for possible later purposes
+	//@XmlTransient
+	//protected Timestamp starttime;
 	protected boolean pitch;
+	//the connection state to the dsms
 	protected boolean connectState;
 	
+	//the names of the corresponding attributes in the corresponding sources
 	@XmlTransient
 	protected ArrayList<Integer> timestampAttributes;
 	protected String windspeedAttribute = "";
 	protected String powerAttribute = "";
 	protected String pressureAttribute = "";
 	protected String temperatureAttribute = "";
-		
+	
+	//the resulting query text
 	protected String queryText;
 	
+	//the source registration/create stream query text
 	@XmlTransient
 	protected ArrayList<String> strGenQueries;
+	//the source  deristration/remove stream query text
 	@XmlTransient
 	protected ArrayList<String> strRemQueries;
 	
+	//the pql query generator for main query
 	@XmlTransient
 	protected QueryGenerator Pgen;
+	//the cql query generator for stream creation and deletion
 	@XmlTransient
 	protected QueryGenerator Qgen;
 
-	//TODO: was machst du denn hier??
+	//Das geht sicher auch anders
+	//possibilites for query methody until now 
 	public enum PMType{
 		IEC,
 		Langevin
 	}
-
+	/**
+	 * Constructor for Abstract Performance Measurement
+	 * @param id The name.
+	 * @param method The type of performance query.
+	 * @param sources The involved sources.
+	 * @param streams The resulting data stream sources.
+	 * @param queryText The resulting query text.
+	 * @param assigns The assignments between source attributes and needed attributes.
+	 * @param pitch Power control type of wind turbine for normalization.
+	 * @param wsAtt Name of windspeed attribute.
+	 * @param powAtt Name of power attribute.
+	 * @param prAtt Name of pressure attribute.
+	 * @param tempAttName of temperature attribute.
+	 * @param generatorQueries Generator queries for data stream source generation.
+	 * @param removerQueries Remover queries for data stream source deletion.
+	 */
 	public APerformanceQuery(String id, 
 			PMType method,
 			ArrayList<ISource> sources,
@@ -132,7 +165,7 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	
 		this.connectState = false;
 	}
-	
+	//zero arg constructor for serialization (JAXB).
 	public APerformanceQuery(){
 		this.identifier = "";
 		this.method = null;
@@ -158,6 +191,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		this.strRemQueries = new ArrayList<String>();
 	}
 	
+	/**
+	 * Get the power control type from first wind turbine.
+	 */
 	@Override
 	public void extractTurbineData(ArrayList<ISource> sources){
 		for(ISource src: sources){
@@ -187,8 +223,6 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 	public void setQueryText(String text){
 		this.queryText = text;
 	}
-	
-	//TODO: hier mal aufräumen
 	
 
 	@Override
@@ -241,6 +275,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		}	
 	}
 	
+	/**
+	 * Returns the stream to the given kind of attribute
+	 */
 	@Override
 	public Stream getResponsibleStream(String what){
 		for(Assignment a: assignments){
@@ -250,6 +287,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return null;
 	}
 	
+	/**
+	 * Returns the name of the attribute which is responsible for the given kind
+	 */
 	@Override
 	public String getResponsibleAttribute(String what){
 		for(Assignment a: assignments){
@@ -379,6 +419,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return assignments;
 	}
 	
+	/**
+	 * Searches the needed attributes from the given assignments
+	 */
 	@Override
 	public void setAssignments(ArrayList<Assignment> assigns){
 		this.assignments = assigns;
@@ -454,7 +497,10 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return false;
 	}
 	
-
+	/**
+	 * Produces the data stream source generation query strings for each source
+	 * via the set CGen 
+	 */
 	@Override
 	public ArrayList<String> generateSourceStreams(ArrayList<ISource> sources){
 		ArrayList<String> qryresult = new ArrayList<String>(); 
@@ -478,7 +524,10 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return qryresult;
 	}
 
-	
+	/**
+	 * Produces the data stream source deletion query strings for each source
+	 * via the set CGen 
+	 */
 	@Override
 	public ArrayList<String> generateRemoveStreams(ArrayList<ISource> sources){
 		ArrayList<String> qryresult = new ArrayList<String>(); 
@@ -497,7 +546,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return qryresult;
 	}
 	
-
+	/**
+	 * Projection query generation right after creation to only needed attributes.
+	 */
 	@Override
 	public OperatorResult projectStreamToAssignments(Stream str, int ts, String outputName){
 		ArrayList<Integer> newattsPos = new ArrayList<Integer>(); 
@@ -519,6 +570,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		
 	}
 	
+	/**
+	 * Searches timestamp attributes in source attributes and sets the actual timestamp attribute of this query.
+	 */
 	@Override
 	public void extractTimestampAttributes(ArrayList<ISource> sources){
 		boolean set = false;
@@ -542,7 +596,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		setTimestampAttributes(timestampPos);
 	}
 	
-	
+	/**
+	 * Compute cartesian product for all right possibilities to present them to the user for selection
+	 */
 	@Override
 	public ArrayList<Assignment> getPossibleAssignments(ArrayList<ISource> sources){
 		ArrayList<Assignment> possibilities = new ArrayList<Assignment>();
@@ -560,6 +616,9 @@ public abstract class APerformanceQuery implements IPerformanceQuery {
 		return possibilities;
 	}
 	
+	/**
+	 * Return the sources keys from list of assignments
+	 */
 	@Override
 	public ArrayList<String> extractSourcesFromAssignments(){
 		ArrayList<String> sources = new ArrayList<String>();

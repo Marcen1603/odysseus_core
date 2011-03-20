@@ -34,10 +34,17 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import measure.windperformancercp.views.sources.SourceDialog;
 import measure.windperformancercp.views.sources.SourceDialogPresenter;
 
+/**
+ * Encapsulates the opening of a new source dialog and fills in the values of the selected source
+ * selection provider is the tabViewer in ManageSourceView
+ * @author Diana von Gallera
+ *
+ */
 public class ShowCopySourceDialogCommand extends AbstractHandler implements
 		IHandler {
 	public static final String ID = "measure.windperformancercp.ShowCopySourceDialog";
 		 
+	@SuppressWarnings(value="unchecked")
 	    @Override
 	    public Object execute(ExecutionEvent event) throws ExecutionException {
 	    	

@@ -23,23 +23,24 @@ import measure.windperformancercp.event.InputDialogEvent;
 import measure.windperformancercp.event.InputDialogEventType;
 import measure.windperformancercp.event.QueryEvent;
 import measure.windperformancercp.event.QueryEventType;
-import measure.windperformancercp.model.query.Assignment;
 import measure.windperformancercp.model.query.IPerformanceQuery;
 import measure.windperformancercp.model.query.MeasureIEC;
 import measure.windperformancercp.model.query.MeasureLangevin;
-import measure.windperformancercp.model.query.OperatorResult;
 import measure.windperformancercp.model.query.PerformanceModel;
-import measure.windperformancercp.model.query.QueryGenerator;
-import measure.windperformancercp.model.query.Stream;
-import measure.windperformancercp.model.sources.Attribute;
-import measure.windperformancercp.model.sources.Attribute.AttributeType;
 import measure.windperformancercp.model.sources.ISource;
-import measure.windperformancercp.model.sources.WindTurbine;
 import measure.windperformancercp.views.IPresenter;
 import measure.windperformancercp.views.performance.AssignPerformanceMeasPresenter;
 import measure.windperformancercp.views.performance.PerformanceWizardDialogPresenter;
 import measure.windperformancercp.views.result.ActiveQueriesPresenter;
 
+/**
+ * Does the main work for the performance measurement managing.
+ * e.g.: manage performance model data (add, delete, modify)
+ * provides available model data fpr the views
+ * invokes query creation and connection/disconnection
+ * @author Diana von Gallera
+ *
+ */
 public class PMController implements IController {
 
 	private static ArrayList<PerformanceWizardDialogPresenter> pwdPresenters = new ArrayList<PerformanceWizardDialogPresenter>();
@@ -51,7 +52,6 @@ public class PMController implements IController {
 	IController _control;
 	static SourceController scontrol;
 	static PerformanceModel pmodel;
-	static QueryGenerator gen;
 	static Connector connector;
 	
 	static final String addStreamParserID = "CQL";
@@ -63,6 +63,10 @@ public class PMController implements IController {
 		connector = Connector.getInstance();
 	}
 	
+	/** 
+	 * Sets the source controller. Called by main controller.
+	 * @param scont The instance of the source controller.
+	 */
 	public static void setBrotherControl(SourceController scont){
 		scontrol = scont;
 		if(scontrol == null){
@@ -70,12 +74,24 @@ public class PMController implements IController {
 		}
 	}
 	
+	/**
+	 * Adds a presenter to the list of presenters and subscribes to its events.
+	 * @param <E>
+	 * @param list
+	 * @param pres
+	 */
 	public static <E extends IPresenter> void registerPresenter(ArrayList<E> list, E pres){
 		pres.subscribeToAll(presenterListener);
 		list.add(pres);
 	}
 	
-	
+	/**
+	 * Deletes a presenter to the list of presenters and subscribes to its events.
+	 * TODO: unsubscription. If you uncomment the lower line, the application crashes!
+	 * @param <E>
+	 * @param list
+	 * @param pres
+	 */
 	public static <E extends IPresenter> void deregisterPresenter(ArrayList<E> list, E pres){
 		while(list.contains(pres)){
 			list.remove(pres);
@@ -83,12 +99,17 @@ public class PMController implements IController {
 		//pres.unSubscribeFromAll(presenterListener); //<- if I do this, I get an exception
 	}
 	
+	/**
+	 * The main event listener for the presenters. 
+	 * Invokes several actions: query creation, deletion, connection..
+	 */
 	public static IEventListener presenterListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
+			//Registration request of a presenter
 			if(event.getEventType().equals(InputDialogEventType.RegisterDialog)){ 
 				//System.out.println(this.toString()+": Received new dialog registry event");
 			}
-			
+			//Deregistration request of a presenter
 			if(event.getEventType().equals(InputDialogEventType.DeregisterDialog)){ 
 				//System.out.println(this.toString()+": Received new dialog deregistry event");
 				
@@ -102,7 +123,7 @@ public class PMController implements IController {
 				if(pres instanceof ActiveQueriesPresenter)
 					deregisterPresenter(rpPresenters, (ActiveQueriesPresenter)pres);
 			}
-			
+			//Add event of a performance query
 			if(event.getEventType().equals(InputDialogEventType.NewPerformanceItem)){
 				//System.out.println(this.toString()+": Received new performance event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
@@ -119,65 +140,66 @@ public class PMController implements IController {
 				}
 				
 			}
-			
+			//Delete event of a performance query
 			if(event.getEventType().equals(InputDialogEventType.DeletePerformanceItem)){
 				//System.out.println(this.toString()+": Received delete performance event");
 				InputDialogEvent ideEvent = (InputDialogEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue();
 				
-				//int c = pmodel.removeAllOccurences(qry);				
 				pmodel.removeAllOccurences(qry);
 				//System.out.println(this.toString()+": Received delete source event for "+src.toString()+" from "+event.getSender().toString()+"\n Deleted "+c);
 			}
-			
+			//Connection request event for a query  
 			if(event.getEventType().equals(QueryEventType.AddQuery)){
 					
 				QueryEvent ideEvent = (QueryEvent) event;
 				IPerformanceQuery qry = (IPerformanceQuery) ideEvent.getValue();
-				
-				//check if sources are not already registered from other queries
-				List<Boolean> connectStates = scontrol.getConnectionList(qry.getConcernedSrcKeys());
-				List<String> adders = qry.getStrGenQueries();
-				//generate list of access queries for the disconnected sources
-				String adderQuery = "";
-				int j = connectStates.size();
-				//for every source the information must be set, whether it is connected or not
-				if(j == adders.size()){					
-					for(int i=0; i<j; i++){
-						adderQuery = adderQuery + ((!connectStates.get(i))? adders.get(i): "");
-					}
-					
-					boolean validSources = false; //indicates if sources are added properly
-					//add sources
-					
-					if(adderQuery.equals("")){	//sources are already connected
-						validSources = true;
-					}
-					
-					if(connector.addQuery(adderQuery, addStreamParserID, new ArrayList<String>())) {	
-						validSources = true;	
-						//tell scontrol, that specific source has been connected
-						scontrol.tellWhichAreConnected(qry.getConcernedSrcKeys());
-						//TODO: maybe some of the sources are already connected (not by this application). is it possible to ask odysseus for that?
-					}
-					
-					if(validSources){
-						//add main query
-						List<String> names = new ArrayList<String>();
-						names.add(qry.getIdentifier());
-			//TODO: new thread or something else s.t. programm is not blocked			
-						if(connector.addQuery(qry.getQueryText(), queryParserID, names)){ //TODO: der query hinzufuegen, sie soll wissen, wer sie erzeugt hat
-							qry.setConnectStat(true);
-							pmodel.somethingChanged(qry);
+				if(!qry.getConnectStat()){
+					//check if sources are not already registered from other queries
+					List<Boolean> connectStates = scontrol.getConnectionList(qry.getConcernedSrcKeys());
+					List<String> adders = qry.getStrGenQueries();
+					//generate list of access queries for the disconnected sources
+					String adderQuery = "";
+					int j = connectStates.size();
+					//for every source the information must be set, whether it is connected or not
+					if(j == adders.size()){					
+						for(int i=0; i<j; i++){
+							adderQuery = adderQuery + ((!connectStates.get(i))? adders.get(i): "");
 						}
-						else{
-							System.out.println(this.toString()+" error at connection of measurement");
-							//remove sources which are not responsible for other queries
+						
+						boolean validSources = false; //indicates if sources are added properly
+						//add sources
+						
+						if(adderQuery.equals("")){	//sources are already connected
+							validSources = true;
 						}
-					} //TODO: else error: failure at source connection
+						
+						if(connector.addQuery(adderQuery, addStreamParserID, new ArrayList<String>())) {	
+							validSources = true;	
+							//tell scontrol, that specific source has been connected
+							scontrol.tellWhichAreConnected(qry.getConcernedSrcKeys());
+							//TODO: maybe some of the sources are already connected (not by this application). is it possible to ask odysseus for that?
+						}
+						
+						if(validSources){
+							//add main query
+							List<String> names = new ArrayList<String>();
+							names.add(qry.getIdentifier());
+			//maybe here a new thread could be created		
+							if(connector.addQuery(qry.getQueryText(), queryParserID, names)){ //TODO: der query hinzufuegen, sie soll wissen, wer sie erzeugt hat
+								qry.setConnectStat(true);
+								pmodel.somethingChanged(qry);
+							}
+							else{
+								System.out.println(this.toString()+" error at connection of measurement");
+								apmPresenters.get(0).notifyUser("Connection was not successful! Error at connection.");
+								//remove sources which are not responsible for other queries
+							}
+						} 
+					}
 				}
 			}
-			
+			//Disconnection request event for a performance query
 			if(event.getEventType().equals(QueryEventType.DeleteQuery)){
 				
 				QueryEvent ideEvent = (QueryEvent) event;
@@ -188,7 +210,7 @@ public class PMController implements IController {
 				if(connector.delQuery(qry.getIdentifier())){
 						qry.setConnectStat(false);
 						pmodel.somethingChanged(qry);
-					//check if sources are not involved in other queries, otherwise dont delete them
+					//TODO: check if sources are not involved in other queries, otherwise dont delete them
 					ArrayList<String> removers = qry.getStrRemQueries();
 					String removerQuery = "";
 					for(String s: removers){
@@ -196,26 +218,30 @@ public class PMController implements IController {
 					}
 					//remove sources
 					if(removerQuery != ""){
-					//if(connector.addQuery(removerQuery, addStreamParserID, new ArrayList<String>())){
 						if(connector.addQuery(removerQuery, addStreamParserID, new ArrayList<String>())){						
 							scontrol.tellWhichAreDisconnected(qry.getConcernedSrcKeys());						
-						//TODO: tell scontrol, that a source has been disconnected
 						}
 						else{
 						
 						}
 					}
 				}
-				
 			}
 		}
 	};
 	
+	/**
+	 * Returns the content of the own model (performance model)
+	 */
 	@Override
 	public ArrayList<?> getContent() {
 		return pmodel.getQueryList();
 	}
 	
+	/**
+	 * 
+	 * @return The content of the source model
+	 */
 	public ArrayList<ISource> getAvailableSources(){
 		ArrayList<ISource> src = scontrol.getContent();
 		if(src != null)
@@ -223,108 +249,6 @@ public class PMController implements IController {
 		else
 			return new ArrayList<ISource>();
 	}
-	
-	
-/*  CODE FROM APERFORMANCE QUERY */
-	/**
-	 * Sets queries turbine data 
-	 */
-	public void extractTurbineDataForQuery(IPerformanceQuery query){
-		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
-			if(src.isWindTurbine()){				
-				query.setPitch(((WindTurbine)src).getPowerControl()==0);
-				break;
-			}
-		}
-	}
-	
-	//TODO: auf namen der timestamps ändern.
-	public void updateTimestampAttributes(IPerformanceQuery query){
-		boolean set = false;
-		
-		ArrayList<Integer> timestampPos= new ArrayList<Integer>();
-		//timestampAttributes.clear();
-		//for(int i =0; i< concernedSrc.size();i++){
-		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
-			ArrayList<Attribute> atts = src.getAttributeList();
-			set = false;
-			for(int j = 0; j<atts.size();j++){
-				Attribute att = atts.get(j);
-				if(att.getAttType().equals(AttributeType.STARTTIMESTAMP)){
-					timestampPos.add(j);
-					set = true;
-					break;
-				}
-			}
-			if(!set)
-				timestampPos.add(0);
-		}
-		query.setTimestampAttributes(timestampPos);
-	}
-	
-	
-	public void generateSourceStreams(IPerformanceQuery query){
-		ArrayList<String> qryresult = new ArrayList<String>(); 
-		ArrayList<Stream> inputStreams = new ArrayList<Stream>();
-		//concernedStr.clear();
-		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
-			OperatorResult current = query.getSourceCreator().generateCreateStream(src);
-			if(current != null){
-				
-				for(Assignment as: query.getAssignments()){
-					if(as.getRespSource().equals(src))
-						as.setRespStream(current.getStream());
-				}
-				inputStreams.add(current.getStream());
-				qryresult.add(current.getQuery());
-			}
-			else{
-				//TODO: Fehlermeldung
-			}
-	//		System.out.println(current.getQuery());
-		}
-		query.setStrGenQueries(qryresult);
-		query.setConcernedStr(inputStreams);
-	}
-	
-	
-	//evtl auch auf void umändern
-	public ArrayList<String> generateRemoveStreams(IPerformanceQuery query){
-		ArrayList<String> qryresult = new ArrayList<String>(); 
-	//	concernedStr.clear(); //nicht so sinnvoll, oder?
-		for(ISource src: scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
-			OperatorResult current = query.getSourceCreator().generateRemoveStream(src);
-			if(current != null){
-				qryresult.add(current.getQuery());
-			}
-			else{
-				//TODO: Fehlermeldung
-			}
-	//		System.out.println(current.getQuery());
-		}
-		query.setStrRemQueries(qryresult);
-		return qryresult;
-	}
-	
-	public ArrayList<Assignment> getPossibleAssignments(IPerformanceQuery query){
-		ArrayList<Assignment> possibilities = new ArrayList<Assignment>();
-		for(Assignment a: query.getAssignments()){
-			for(ISource s:  scontrol.getSourcesFromModel(query.getConcernedSrcKeys())){
-				for(Attribute at: s.getAttributeList()){
-					if(a.getAttType().equals(at.getAttType())){
-						Assignment newpos = new Assignment(a.getAttType(),s,s.getAttIndex(at));
-						possibilities.add(newpos);
-					}
-				}
-			}
-		}
-			
-		return possibilities;
-	}
-	
-	
-	//END Query Code
-	
 	
 	
 	public static PMController getInstance(){

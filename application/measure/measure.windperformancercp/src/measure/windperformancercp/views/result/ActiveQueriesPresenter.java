@@ -28,14 +28,19 @@ import measure.windperformancercp.event.InputDialogEventType;
 import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.event.UpdateEvent;
 import measure.windperformancercp.event.UpdateEventType;
+import measure.windperformancercp.model.IDialogResult;
 import measure.windperformancercp.model.query.PerformanceModel;
-import measure.windperformancercp.model.sources.IDialogResult;
 import measure.windperformancercp.views.IPresenter;
 import measure.windperformancercp.views.performance.FunctionPlotterView;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * Manage the communication between ActiveQueriesView and PerformanceController
+ * @author Diana von Gallera
+ *
+ */
 public class ActiveQueriesPresenter extends EventHandler implements IPresenter{
 	
 	private static ActiveQueriesPresenter instance = new ActiveQueriesPresenter(); 
@@ -43,7 +48,6 @@ public class ActiveQueriesPresenter extends EventHandler implements IPresenter{
 	IController _cont;
 	private static List<FunctionPlotterView> plotterViews;
 	boolean alreadyConnected = false;
-	//TODO
 	
 	static PerformanceModel pmodel;
 	
@@ -57,6 +61,10 @@ public class ActiveQueriesPresenter extends EventHandler implements IPresenter{
 		//System.out.println(this.toString()+": result plot presenter says hi from no-arg-contructor!");
 	}
 	
+	/**
+	 * The constructor for the view.
+	 * @param caller
+	 */
 	private ActiveQueriesPresenter(ActiveQueriesView caller){	
 		//instance = this;
 		view = caller;
@@ -77,10 +85,9 @@ public class ActiveQueriesPresenter extends EventHandler implements IPresenter{
 		list.addAll(Connector.getInstance().getQueries().keySet());
 		fire(new UpdateEvent(this,UpdateEventType.GeneralUpdate,list));
 	}
+		
 	
-	
-	
-	
+	//EVENT HANDLING
 	@Override
 	public void subscribeToAll(IEventListener listener) {
 		super.subscribeToAll(listener);
@@ -91,19 +98,11 @@ public class ActiveQueriesPresenter extends EventHandler implements IPresenter{
 		}
 	}
 	
+	/**
+	 * The event listener for the performance model
+	 */
 	public IEventListener modelListener = new IEventListener(){
 		public void eventOccured(IEvent<?, ?> event){
-			//System.out.println(this.toString()+" received an event. updating view!");
-			/*if(event.getEventType().equals(QueryEventType.DeleteQuery)){ 
-				//System.out.println("received new measurement event, updating view!");
-				updateView();
-				setStatusLine("A query has been disconnected. ");
-			}
-			if(event.getEventType().equals(QueryEventType.AddQuery)){ 
-				//System.out.println("received new measurement event, updating view!");
-				updateView();
-				setStatusLine("A query has been connected. ");
-			}*/
 			
 			if(event.getEventType().equals(ModelEventType.ModifyItem)){ 
 				//System.out.println("received new measurement event, updating view!");
@@ -121,16 +120,25 @@ public class ActiveQueriesPresenter extends EventHandler implements IPresenter{
 		}
 	};
 
+	/**
+	 * Sets the status line for the user.
+	 * @param message What we want to tell the user.
+	 */
 	private void setStatusLine(String message) {
 		// Get the status line and set the text
 		IActionBars bars = view.getViewSite().getActionBars();
 		bars.getStatusLineManager().setMessage(message);
 	}
 	
+	@Override
+	public void notifyUser(String message){
+		setStatusLine(message);
+	}
+	
 	public void connectViewToQuery(String qid){
 	//System.out.println(this.toString()+" called connectViewToQuery. query id: "+qid+" plotter views size: "+plotterViews.size());	
 		if(plotterViews.size() > 0) {
-			plotterViews.get(0).connectToQuery(qid);
+			plotterViews.get(0).connectToQuery(qid);	//hm, das geht besser. Falls es mal mehr als einen view geben sollte, sollte der betreffende damit verbunden werden (hash map (string, function plotter)
 			alreadyConnected = true;
 		}
 	}

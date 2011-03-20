@@ -31,9 +31,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-
+/**
+ * Encapsulates the disconnection of the selected performance measurement from odysseus
+ * @author Diana von Gallera
+ *
+ */
 public class DisconnectMeasurementCommand extends AbstractHandler implements IHandler {
 
+	@SuppressWarnings(value="unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
@@ -43,7 +48,7 @@ public class DisconnectMeasurementCommand extends AbstractHandler implements IHa
 		
     	if(selection != null & selection instanceof IStructuredSelection){
 			IStructuredSelection strucSelection = (IStructuredSelection) selection;
-						
+				
 			for (Iterator<Object> iterator = (Iterator<Object>) strucSelection.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
 				

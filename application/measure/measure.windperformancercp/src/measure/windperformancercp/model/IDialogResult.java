@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package measure.windperformancercp.model.sources;
+package measure.windperformancercp.model;
 
 /** A wrapper for typical input of one of the input dialogs: Attributes, Sources, PerformanceMeasurements..
  * @author Diana von Gallera

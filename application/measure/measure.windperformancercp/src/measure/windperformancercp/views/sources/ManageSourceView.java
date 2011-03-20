@@ -80,7 +80,7 @@ public class ManageSourceView extends ViewPart {
 				TableColumn col = new TableColumn(sourceTable,SWT.LEFT);
 				col.setText(titles[i]);
 				//col.pack();
-				col.setWidth(100);
+				col.setWidth(150);
 			}
 			
 			sourceTable.setHeaderVisible(true);
@@ -88,7 +88,7 @@ public class ManageSourceView extends ViewPart {
 		}
 		
 		//right composite for additional information
-		Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
+	//	Composite rightDetailedComposite = new Composite(sashForm, SWT.NONE);
 		sourceViewer.addSelectionChangedListener(selectionListener);
 		
 		getSite().setSelectionProvider(sourceViewer);

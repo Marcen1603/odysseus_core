@@ -24,8 +24,8 @@ import measure.windperformancercp.event.InputDialogEventType;
 import measure.windperformancercp.event.ModelEventType;
 import measure.windperformancercp.event.UpdateEvent;
 import measure.windperformancercp.event.UpdateEventType;
+import measure.windperformancercp.model.IDialogResult;
 import measure.windperformancercp.model.query.PerformanceModel;
-import measure.windperformancercp.model.sources.IDialogResult;
 import measure.windperformancercp.model.sources.SourceModel;
 import measure.windperformancercp.views.IPresenter;
 
@@ -130,6 +130,11 @@ public class AssignPerformanceMeasPresenter extends EventHandler implements IPre
 		// Get the status line and set the text
 		IActionBars bars = view.getViewSite().getActionBars();
 		bars.getStatusLineManager().setMessage(message);
+	}
+	
+	@Override
+	public void notifyUser(String message){
+		setStatusLine(message);
 	}
 
 
