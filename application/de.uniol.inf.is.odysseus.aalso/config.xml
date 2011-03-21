@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+<commandlistener>
+<enable>true</enable>
+<tcpport>4444</tcpport>
+</commandlistener>
+<ui>
+<usegui>true</usegui>
+<speed>50</speed>
+<gradientcache>
+<prefill>true</prefill>
+<size>100</size>
+</gradientcache>
+<recentsimulation>C:\\Users\\Horizon\\Desktop\\IDEAAL.jar</recentsimulation>
+</ui>
+<output>
+<type>odys</type>
+<odys>
+</odys>
+<csv>
+<path>C:\\Users\\Horizon\\SiafuContext.csv</path>
+<interval>300</interval>
+<keephistory>true</keephistory>
+</csv>
+</output>
+</configuration>
