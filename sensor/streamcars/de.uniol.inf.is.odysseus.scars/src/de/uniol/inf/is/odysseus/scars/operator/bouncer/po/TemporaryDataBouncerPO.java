@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.scars.operator.bouncer.po;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
@@ -65,14 +66,14 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IOb
 
 		SchemaHelper sh = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		// Get the list of cars
-		MVRelationalTuple<M> carListTuple = (MVRelationalTuple<M>) sh.getSchemaIndexPath(this.objListPath).toTupleIndexPath(object).getTupleObject();
+		List<Object> carListTuple = (List<Object>) sh.getSchemaIndexPath(this.objListPath).toTupleIndexPath(object).getTupleObject();
 		// Init an arraylist for the elements that should be transfered
 		ArrayList<MVRelationalTuple<M>> transferCarListArrayList = new ArrayList<MVRelationalTuple<M>>();
 
 		PointInTime timestamp = object.getMetadata().getStart();
 
 		double val = 0;
-		for(Object carObject : carListTuple.getAttributes()) {
+		for(Object carObject : carListTuple) {
 			MVRelationalTuple<M> car = (MVRelationalTuple<M>) carObject;
 			val = 0;
 			double[][] cov = car.getMetadata().getCovariance();
@@ -104,15 +105,15 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IOb
 			}
 		}
 
-		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(transferCarListArrayList.size());
-		int counter = 0;
-		for (MVRelationalTuple<M> mvRelationalTuple : transferCarListArrayList) {
-			tuples.setAttribute(counter++, mvRelationalTuple);
-		}
+//		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(transferCarListArrayList.size());
+//		int counter = 0;
+//		for (MVRelationalTuple<M> mvRelationalTuple : transferCarListArrayList) {
+//			tuples.setAttribute(counter++, mvRelationalTuple);
+//		}
 
 		SchemaIndexPath schemaPath = sh.getSchemaIndexPath(this.objListPath);
 		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(object);
-		tuplePath.setTupleObject(tuples);
+		tuplePath.setTupleObject(transferCarListArrayList);
 
 		// Falls NICHTS weitergeleitet wird -> punctuation senden
 		if(transferCarListArrayList.size() == 0) {

@@ -83,7 +83,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	public TupleIndexPath appendClone( int index ) {
 		TupleIndexPath c = clone();
 		SchemaIndexPath path = c.schemaIndexPath.appendClone(index);
-		c.indices.add(new TupleIndex((MVRelationalTuple<?>)c.getLastTupleIndex().getValue(), index, path.getAttribute()));
+		c.indices.add(new TupleIndex(c.getLastTupleIndex().getValue(), index, path.getAttribute()));
 		c.listIndices.add(index);
 		c.schemaIndexPath = path;
 		return c;
@@ -207,11 +207,14 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		List<TupleIndex> list = new ArrayList<TupleIndex>();
 		Object parent = tuple;
 		for (int i = 0; i < indices.size(); i++) {
-			TupleIndex idx = new TupleIndex(((MVRelationalTuple<?>) parent), indices.get(i).toInt(), indices.get(i).getAttribute());
+			TupleIndex idx = new TupleIndex(parent, indices.get(i).toInt(), indices.get(i).getAttribute());
 			list.add(idx);
 
 			if (parent instanceof MVRelationalTuple)
 				parent = ((MVRelationalTuple<?>) parent).getAttribute(indices.get(i).toInt());
+			else if( parent instanceof List ) 
+				parent = ((List<?>)parent).get(indices.get(i).toInt());
+				
 		}
 		
 		indices = list;
@@ -268,9 +271,14 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	void nextStep(int listNumber) {
 		int listIndex = listIndices.get(listNumber);
 
-		MVRelationalTuple<?> obj = (MVRelationalTuple<?>) indices.get(listIndex).getValue();
+		Object obj = indices.get(listIndex).getValue();
+//		MVRelationalTuple<?> obj = (MVRelationalTuple<?>) indices.get(listIndex).getValue();
 		int index = indices.get(listIndex + 1).getValueIndex();
-		int maxIndex = obj.getAttributeCount();
+		int maxIndex = 0;
+		if( obj instanceof MVRelationalTuple )
+			maxIndex = ((MVRelationalTuple)obj).getAttributeCount();
+		else
+			maxIndex = ((List)obj).size();
 		index++;
 
 		if (index >= maxIndex)
@@ -293,24 +301,50 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		}
 		int lastListIndex = listIndices.get(listIndices.size() - 1);
 
-		MVRelationalTuple<?> obj = (MVRelationalTuple<?>) indices.get(lastListIndex).getValue();
-		if( obj.getAttributeCount() == 0) {
+		Object obj = indices.get(lastListIndex).getValue();
+		if( obj instanceof MVRelationalTuple) {
+			MVRelationalTuple tuple = (MVRelationalTuple)obj;
+			
+			if( tuple.getAttributeCount() == 0) {
+				return false;
+			}
+			if (lastListIndex == indices.size() - 1) {
+				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getSubattribute(0);
+				indices.add(new TupleIndex(tuple, 0, lastAttribute));
+				List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
+				List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();
+				newIdx.addAll(idx);
+				newIdx.add(new SchemaIndex(0, lastAttribute));
+				schemaIndexPath = new SchemaIndexPath(newIdx, lastAttribute);
+			}
+
+			int actIndex = indices.get(lastListIndex + 1).getValueIndex();
+			int maxIndex = tuple.getAttributeCount();
+
+			return actIndex < maxIndex;
+			
+		} else if( obj instanceof List ) {
+			List<Object> tuple = (List<Object>)obj;
+			
+			if( tuple.size() == 0) {
+				return false;
+			}
+			if (lastListIndex == indices.size() - 1) {
+				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getSubattribute(0);
+				indices.add(new TupleIndex(obj, 0, lastAttribute));
+				List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
+				List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();
+				newIdx.addAll(idx);
+				newIdx.add(new SchemaIndex(0, lastAttribute));
+				schemaIndexPath = new SchemaIndexPath(newIdx, lastAttribute);
+			}
+
+			int actIndex = indices.get(lastListIndex + 1).getValueIndex();
+			int maxIndex = tuple.size();
+
+			return actIndex < maxIndex;
+		} else
 			return false;
-		}
-		if (lastListIndex == indices.size() - 1) {
-			SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getSubattribute(0);
-			indices.add(new TupleIndex(obj, 0, lastAttribute));
-			List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
-			List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();
-			newIdx.addAll(idx);
-			newIdx.add(new SchemaIndex(0, lastAttribute));
-			schemaIndexPath = new SchemaIndexPath(newIdx, lastAttribute);
-		}
-
-		int actIndex = indices.get(lastListIndex + 1).getValueIndex();
-		int maxIndex = obj.getAttributeCount();
-
-		return actIndex < maxIndex;
 	}
 
 	@Override

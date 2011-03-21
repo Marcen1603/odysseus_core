@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scars.util.helper;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
@@ -33,17 +35,21 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
  */
 public class TupleIndex {
 
-	private MVRelationalTuple<?> parent;
+	private Object parent;
 	private int valueIndex;
 	private SDFAttribute attribute;
 	private Object value;
 
 	// Interner Konstruktor
-	TupleIndex(MVRelationalTuple<?> parent, int valueIndex, SDFAttribute attribute) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	TupleIndex(Object parent, int valueIndex, SDFAttribute attribute) {
 		this.parent = parent;
 		this.valueIndex = valueIndex;
 		this.attribute = attribute;
-		this.value = this.parent.getAttribute(this.valueIndex);
+		if( parent instanceof MVRelationalTuple)
+			this.value = ((MVRelationalTuple)this.parent).getAttribute(this.valueIndex);
+		else if( parent instanceof List)
+			this.value = ((List<Object>)this.parent).get(this.valueIndex);
 	}
 
 	TupleIndex(TupleIndex other) {
@@ -59,7 +65,7 @@ public class TupleIndex {
 	 * 
 	 * @return Übergeordnetes MVRelationalTuple<?>
 	 */
-	public MVRelationalTuple<?> getParent() {
+	public Object getParent() {
 		return parent;
 	}
 
@@ -92,8 +98,12 @@ public class TupleIndex {
 	 * @param obj
 	 *            Neuer Wert.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setValue(Object obj) {
-		parent.setAttribute(valueIndex, obj);
+		if( parent instanceof MVRelationalTuple)
+			((MVRelationalTuple)parent).setAttribute(valueIndex, obj);
+		else if( parent instanceof List ) 
+			((List<Object>)parent).set(valueIndex, obj);
 	}
 
 	/**

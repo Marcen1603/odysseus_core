@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -130,23 +131,23 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 		MVRelationalTuple<M> scan = (MVRelationalTuple<M>)tuple.getAttribute(0);
 		
 		Object timestamp = scan.getAttribute(0);
-		MVRelationalTuple<M> cars = (MVRelationalTuple<M>)scan.getAttribute(1);
-		ArrayList<MVRelationalTuple<M>> validCars = new ArrayList<MVRelationalTuple<M>>();
+		List<Object> cars = (List<Object>)scan.getAttribute(1);
+		List<Object> validCars = new ArrayList<Object>();
 		
-		for (int i = 0; i < cars.getAttributeCount(); i++) {
-			MVRelationalTuple<M> car = (MVRelationalTuple<M>)cars.getAttribute(i);
+		for (int i = 0; i < cars.size(); i++) {
+			MVRelationalTuple<M> car = (MVRelationalTuple<M>)cars.get(i);
 			if (((Integer)car.getAttribute(1)) != -1) {
 				validCars.add(car);
 			}
 		}
 		
-		MVRelationalTuple<M> newCars = new MVRelationalTuple<M>(validCars.size());
-		for (int i = 0; i < validCars.size(); i++) {
-			newCars.setAttribute(i, validCars.get(i));
-		}
+//		MVRelationalTuple<M> newCars = new MVRelationalTuple<M>(validCars.size());
+//		for (int i = 0; i < validCars.size(); i++) {
+//			newCars.setAttribute(i, validCars.get(i));
+//		}
 		
 		newScan.setAttribute(0, timestamp);
-		newScan.setAttribute(1, newCars);
+		newScan.setAttribute(1, validCars);
 		newTuple.setAttribute(0, newScan);
 		
 		return newTuple;
@@ -224,17 +225,19 @@ class JDVEData<M extends IProbability> {
 		return recordTuple;
 	}
 
-	public MVRelationalTuple<M> parseList(SDFAttribute schema, ByteBuffer bb) {
+	public List<Object> parseList(SDFAttribute schema, ByteBuffer bb) {
 		// int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
 		// System.out.println(count);
 		long count = bb.getLong();
-		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>((int)count);
+//		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>((int)count);
 
+		List<Object> objects = new ArrayList<Object>((int)count);
 		for (int i = 0; i < count; i++) {
 			Object obj = parseNext(schema.getSubattribute(0), bb);
-			recordTuple.setAttribute(i, obj);
+			objects.add(obj);
+//			recordTuple.setAttribute(i, obj);
 		}
-		return recordTuple;
+		return objects;
 	}
 
 	public Object parseAttribute(SDFAttribute schema, ByteBuffer bb) {

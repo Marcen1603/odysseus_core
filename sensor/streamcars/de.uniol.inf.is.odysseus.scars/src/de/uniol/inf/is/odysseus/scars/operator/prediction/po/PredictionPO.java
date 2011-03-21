@@ -27,9 +27,9 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
+import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -132,9 +132,9 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 
 		if (currentScanTuple != null) {
 			TupleHelper helper = new TupleHelper(currentScanTuple);
-			MVRelationalTuple<?> list = (MVRelationalTuple<?>) helper.getObject(objListPath);
-			for (int index = 0; index < list.getAttributeCount(); index++) {
-				MVRelationalTuple<M> obj = list.getAttribute(index);
+			List<Object> list = (List<Object>) helper.getObject(objListPath);
+			for (int index = 0; index < list.size(); index++) {
+				MVRelationalTuple<M> obj = (MVRelationalTuple<M>)list.get(index);
 				IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
 				if (pf != null) {
 					pf.predictData(currentScanTuple, currentTimeTuple, index);

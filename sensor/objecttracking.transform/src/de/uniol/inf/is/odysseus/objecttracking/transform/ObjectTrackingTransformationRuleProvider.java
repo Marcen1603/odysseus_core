@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TMetadataInit_Latency_Probability_Rule;
+import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TMetadataObjectRelationalCreationPORule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TObjectTrackingPredictionAssignAORule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TObjectTrackingPunctuationAORule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.access.TAccessAOSILABRule;
@@ -50,6 +51,7 @@ public class ObjectTrackingTransformationRuleProvider implements ITransformRuleP
 		rules.add(new TObjectTrackingProjectAORule());
 		rules.add(new TObjectTrackingPredictionProjectAORule());
 		rules.add(new TObjectTrackingPunctuationAORule());
+		rules.add(new TMetadataObjectRelationalCreationPORule());
 		return rules;
 	}
 

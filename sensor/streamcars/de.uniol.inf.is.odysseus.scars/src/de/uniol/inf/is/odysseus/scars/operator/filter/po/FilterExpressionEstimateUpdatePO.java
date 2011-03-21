@@ -130,14 +130,28 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void setValue(int[] path, MVRelationalTuple<M> root, Object value) {
-		MVRelationalTuple<?> currentTuple = root;
+		Object currentTuple = root;
 		for(int depth=0; depth<path.length-1; depth++) {
-			currentTuple = ((MVRelationalTuple<?>) currentTuple).<MVRelationalTuple<?>>getAttribute(path[depth]);
+			if( currentTuple instanceof MVRelationalTuple) {
+				currentTuple = ((MVRelationalTuple<?>) currentTuple).getAttribute(path[depth]);
+			} else if( currentTuple instanceof List) {
+				currentTuple = ((List<?>) currentTuple).get(path[depth]);
+			}
 		}
-		Object oldValue = currentTuple.getAttribute(path[path.length - 1]);
-		Object newValue = TypeCaster.cast(value, oldValue);
-		currentTuple.setAttribute(path[path.length-1], newValue);
+		Object oldValue = null;
+		if( currentTuple instanceof MVRelationalTuple ) {
+			oldValue = ((MVRelationalTuple<?>)currentTuple).getAttribute(path[path.length - 1]);
+			Object newValue = TypeCaster.cast(value, oldValue);
+			((MVRelationalTuple<?>)currentTuple).setAttribute(path[path.length-1], newValue);
+
+		} else if( currentTuple instanceof List ) {
+			oldValue = ((List<?>)currentTuple).get(path[path.length - 1]);
+			Object newValue = TypeCaster.cast(value, oldValue);
+			((List<Object>)currentTuple).set(path[path.length-1], newValue);
+		}
+			
 	}
 
 	@Override

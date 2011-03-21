@@ -67,6 +67,7 @@ public class TupleHelper {
 	 * @param path Pfad zu einem Tupel als Schemaindexpfad
 	 * @return Das Objekt, welches sich an der angegebenen Stelle im Tupel befindet
 	 */
+	@SuppressWarnings("unchecked")
 	public Object getObject(int[] path ) {
 		Object actualAttribute = null;
 		Object[] actualList = tuple.getAttributes();
@@ -74,6 +75,8 @@ public class TupleHelper {
 			actualAttribute = actualList[path[i]];
 			if( actualAttribute instanceof MVRelationalTuple<?>) {
 				actualList = ((MVRelationalTuple<?>)actualAttribute).getAttributes();
+			} else if( actualAttribute instanceof List ) {
+				actualList = ((List<Object>)actualAttribute).toArray();
 			}
 		}
 

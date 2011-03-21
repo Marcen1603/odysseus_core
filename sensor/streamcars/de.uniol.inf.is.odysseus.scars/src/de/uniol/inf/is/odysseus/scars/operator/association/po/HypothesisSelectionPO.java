@@ -206,16 +206,11 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		}
 
 		// PORT: 0, get new not matching objects
-		List<Object> scannedNotMatchedObjects = getDifferenceSet(object, this.scannedObjectListPath.toTupleIndexPath(object), matchedObjects);
-		MVRelationalTuple<M> scannedTuple = new MVRelationalTuple<M>(scannedNotMatchedObjects.size());
-		for (int i = 0; i < scannedNotMatchedObjects.size(); i++) {
-			scannedTuple.setAttribute(i, scannedNotMatchedObjects.get(i));
-		}
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setMetadata((M)object.getMetadata().clone());
 		Object[] objArray = new Object[2];
 		objArray[0] = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName()).toTupleIndexPath(object).getTupleObject();
-		objArray[1] = scannedTuple;
+		objArray[1] = getDifferenceSet(object, this.scannedObjectListPath.toTupleIndexPath(object), matchedObjects);
 		base.setAttribute(0, new MVRelationalTuple<M>(objArray));
 
 		base.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
@@ -225,13 +220,13 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		// PORT: 2, get predicted not matching objects
 		List<Object> predictedNotMatchedObjects = getDifferenceSet(object, this.predictedObjectListPath.toTupleIndexPath(object), matchedObjects);
 		if (predictedNotMatchedObjects.size() > 0) {
-			MVRelationalTuple<M> predictedTuple = new MVRelationalTuple<M>(predictedNotMatchedObjects.size());
-			for (int i = 0; i < predictedNotMatchedObjects.size(); i++) {
-				predictedTuple.setAttribute(i, predictedNotMatchedObjects.get(i));
-			}
+//			MVRelationalTuple<M> predictedTuple = new MVRelationalTuple<M>(predictedNotMatchedObjects.size());
+//			for (int i = 0; i < predictedNotMatchedObjects.size(); i++) {
+//				predictedTuple.setAttribute(i, predictedNotMatchedObjects.get(i));
+//			}
 			MVRelationalTuple<M> predictedNotMatchedTuple = object.clone();
 			TupleIndexPath predictedObjectList = this.predictedObjectListPath.toTupleIndexPath(predictedNotMatchedTuple);
-			predictedObjectList.setTupleObject(predictedTuple);
+			predictedObjectList.setTupleObject(predictedNotMatchedObjects);
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(predictedNotMatchedTuple.clone(), 2);

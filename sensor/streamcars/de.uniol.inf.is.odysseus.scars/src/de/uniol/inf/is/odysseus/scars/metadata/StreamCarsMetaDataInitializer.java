@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scars.metadata;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -138,13 +140,14 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 				.toTupleIndexPath(tupleGiven);
 		if (objectListTupleIndexPath != null) {
 			@SuppressWarnings("unchecked")
-			MVRelationalTuple<M> objList = (MVRelationalTuple<M>) objectListTupleIndexPath
+			List<Object> objList = (List<Object>) objectListTupleIndexPath
 					.getTupleObject();
 
 			this.covarianceExpressionMatrix.setRootTuple(tupleGiven);
 			CovarianceMapper mapper = new CovarianceMapper(this.schema);
-			for (int k = 0; k < objList.getAttributeCount(); k++) {
-				MVRelationalTuple<M> object = objList.getAttribute(k);
+			for (int k = 0; k < objList.size(); k++) {
+				@SuppressWarnings("unchecked")
+				MVRelationalTuple<M> object = (MVRelationalTuple<M>)objList.get(k);
 				object.getMetadata().setCovariance(
 						this.covarianceExpressionMatrix.calculateMatrix(k));
 				object.getMetadata().setAttributeMapping(mapper.getMapping());

@@ -151,15 +151,15 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 		// get scanned objects
 		TupleIndexPath path = carsFromscannedData.toTupleIndexPath((MVRelationalTuple<M>) scannedObject);
-		association[1] = new MVRelationalTuple<M>(replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputScannedObjListPath));
+		association[1] = replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputScannedObjListPath);
 		
 
 		// get predicted objects
 		if(predictedObject == null) {
-			association[2] = new MVRelationalTuple<M>(0);
+			association[2] = new ArrayList<Object>();
 		} else {
 			path = carsFromPredictedData.toTupleIndexPath(predictedObject);
-			association[2] =  new MVRelationalTuple<M>(replaceMetaDataNames(path, this.outputScannedObjListPath, this.outputPredictedObjListPath));
+			association[2] = replaceMetaDataNames(path, this.outputScannedObjListPath, this.outputPredictedObjListPath);
 		}
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
@@ -173,8 +173,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		return base;
 	}
 
-	private MVRelationalTuple<M> replaceMetaDataNames(TupleIndexPath tupleIndexPath, String sourceName, String outputName) {
-		ArrayList<Object> list = new ArrayList<Object>();
+	private List<Object> replaceMetaDataNames(TupleIndexPath tupleIndexPath, String sourceName, String outputName) {
+		List<Object> list = new ArrayList<Object>();
 		for (TupleInfo car : tupleIndexPath) {
 			@SuppressWarnings("unchecked")
 			MVRelationalTuple<M> carObject = (MVRelationalTuple<M>) car.tupleObject;
@@ -186,7 +186,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 			carObject.getMetadata().setAttributeMapping(newAttributeMapping);
 			list.add(carObject);
 		}
-		return new MVRelationalTuple<M>(list.toArray(new Object[0]));
+		return list;
 	}
 
 	@Override

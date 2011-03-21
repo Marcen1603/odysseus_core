@@ -109,7 +109,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		Object obj1 = next.get(1); // Filter
 		Object obj2 = next.get(2); // Temp. Broker
 
-		ArrayList<MVRelationalTuple<M>> combinedListChildTmp = new ArrayList<MVRelationalTuple<M>>();
+		List<Object> combinedListChildTmp = new ArrayList<Object>();
 		MVRelationalTuple<M> resultTuple = null;
 
 		List<MVRelationalTuple<M>> associationObjList = new ArrayList<MVRelationalTuple<M>>();
@@ -120,10 +120,10 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		if (obj0 instanceof MVRelationalTuple) {
 			MVRelationalTuple<M> associationMainObject = (MVRelationalTuple<M>) obj0;
 			resultTuple = new MVRelationalTuple<M>(associationMainObject);
-			MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput
+			List<Object> associationListObject = (List<Object>) shAssociationInput
 					.getSchemaIndexPath(this.associationObjListPath)
 					.toTupleIndexPath(associationMainObject).getTupleObject();
-			for (Object obj : associationListObject.getAttributes()) {
+			for (Object obj : associationListObject) {
 				associationObjList.add((MVRelationalTuple<M>) obj);
 			}
 		}
@@ -144,10 +144,10 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		if (obj2 instanceof MVRelationalTuple) {
 			MVRelationalTuple<M> brokerMainObject = (MVRelationalTuple<M>) obj2;
 			resultTuple = new MVRelationalTuple<M>(brokerMainObject);
-			MVRelationalTuple<M> brokerListObject = (MVRelationalTuple<M>) shSecondBrokerInput
+			List<Object> brokerListObject = (List<Object>) shSecondBrokerInput
 					.getSchemaIndexPath(this.brokerObjListPath)
 					.toTupleIndexPath(brokerMainObject).getTupleObject();
-			for (Object obj : brokerListObject.getAttributes()) {
+			for (Object obj : brokerListObject) {
 				brokerObjList.add((MVRelationalTuple<M>) obj);
 			}
 		}
@@ -199,12 +199,12 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 
 		// Generate the output tuple
 		if (combinedListChildTmp.size() > 0) {
-			MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(
-					combinedListChildTmp.size());
-			int counter = 0;
-			for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
-				tuples.setAttribute(counter++, mvRelationalTuple);
-			}
+//			MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(
+//					combinedListChildTmp.size());
+//			int counter = 0;
+//			for (MVRelationalTuple<M> mvRelationalTuple : combinedListChildTmp) {
+//				tuples.setAttribute(counter++, mvRelationalTuple);
+//			}
 
 			Object[] association = new Object[2];
 
@@ -215,7 +215,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 					.getTupleObject();
 
 			// get scanned objects
-			association[1] = new MVRelationalTuple<M>(tuples);
+			association[1] = combinedListChildTmp;
 
 			MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 			base.setMetadata(resultTuple.getMetadata());
@@ -254,7 +254,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 
 			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(2);
 			tuple.setAttribute(0, new Long(timestamp));
-			tuple.setAttribute(1, new MVRelationalTuple<M>(0));
+			tuple.setAttribute(1, new ArrayList<Object>(0));
 
 			base.setAttribute(0, tuple);
 			base.setMetadata((M) new StreamCarsMetaData()); // Böse

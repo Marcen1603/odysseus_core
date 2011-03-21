@@ -14,6 +14,8 @@
  */
 package de.uniol.inf.is.odysseus.scars.operator.association.po;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -115,10 +117,10 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 		TupleIndexPath absScanTupleIndexPath;
 		TupleIndexPath absPredTupleIndexPath;
 
-		int scanCount = ((MVRelationalTuple<M>) scannedTupleIndexPath
-				.getTupleObject()).getAttributeCount();
-		int predCount = ((MVRelationalTuple<M>) predictedTupleIndexPath
-				.getTupleObject()).getAttributeCount();
+		int scanCount = ((List<Object>) scannedTupleIndexPath
+				.getTupleObject()).size();
+		int predCount = ((List<Object>) predictedTupleIndexPath
+				.getTupleObject()).size();
 
 		for (int i = 0; i < scanCount; i++) {
 

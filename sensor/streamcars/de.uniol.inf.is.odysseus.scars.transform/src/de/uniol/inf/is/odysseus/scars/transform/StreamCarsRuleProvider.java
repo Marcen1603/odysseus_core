@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
-import de.uniol.inf.is.odysseus.scars.transform.rules.TTestAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TBrokerInitAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TDistanceObjectSelectorAOAndreRule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TDistanceObjectSelectorAORule;
@@ -33,11 +32,11 @@ import de.uniol.inf.is.odysseus.scars.transform.rules.THypothesisSelectionAORule
 import de.uniol.inf.is.odysseus.scars.transform.rules.TJDVEAccessMVPOAsListRule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TJDVESinkAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TMetadataInitLatencyProbabilityStreamCarsRule;
-import de.uniol.inf.is.odysseus.scars.transform.rules.TMetadataObjectRelationalCreationPORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TPredictionAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TPredictionAssignPORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TScarsXMLProfilerAORule;
 import de.uniol.inf.is.odysseus.scars.transform.rules.TTemporaryDataBouncerAORule;
+import de.uniol.inf.is.odysseus.scars.transform.rules.TTestAORule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 public class StreamCarsRuleProvider implements ITransformRuleProvider{
@@ -53,7 +52,6 @@ public class StreamCarsRuleProvider implements ITransformRuleProvider{
 		rules.add(new TJDVESinkAORule());
 		rules.add(new TJDVEAccessMVPOAsListRule());
 		rules.add(new TMetadataInitLatencyProbabilityStreamCarsRule());
-		rules.add(new TMetadataObjectRelationalCreationPORule());
 		rules.add(new TPredictionAORule());
 		rules.add(new TPredictionAssignPORule());
 		rules.add(new TScarsXMLProfilerAORule());

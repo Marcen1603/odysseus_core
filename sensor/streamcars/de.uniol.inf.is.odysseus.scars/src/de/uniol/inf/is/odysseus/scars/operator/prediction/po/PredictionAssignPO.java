@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.prediction.po;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -59,8 +61,8 @@ public class PredictionAssignPO<M extends ITimeInterval & IProbability & IObject
 		TupleHelper helper = new TupleHelper(object);
 		Object listObj = helper.getObject(pathToList);
 
-		if(listObj instanceof MVRelationalTuple<?>) {
-			Object[] objList = ((MVRelationalTuple<?>) listObj).getAttributes();
+		if(listObj instanceof List) {
+			Object[] objList = ((List<Object>) listObj).toArray();
 			if( objList.length == 0 ) {
 				sendPunctuation(object.getMetadata().getStart().clone());
 				return;

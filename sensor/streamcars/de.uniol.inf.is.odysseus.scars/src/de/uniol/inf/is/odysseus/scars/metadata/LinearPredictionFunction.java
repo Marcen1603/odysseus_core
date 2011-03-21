@@ -178,6 +178,8 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 		for(int depth=0; depth<path.length; depth++) {
 			if(currentTuple instanceof MVRelationalTuple<?>) {
 				currentTuple = ((MVRelationalTuple<?>) currentTuple).getAttribute(path[depth]);
+			} else if(currentTuple instanceof List) {
+				currentTuple = ((List<?>)currentTuple).get(path[depth]);
 			}
 		}
 		return currentTuple;
