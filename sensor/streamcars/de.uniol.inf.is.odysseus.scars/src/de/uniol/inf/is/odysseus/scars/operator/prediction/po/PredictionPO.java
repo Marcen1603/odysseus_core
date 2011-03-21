@@ -128,6 +128,7 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 	}
 
 	// @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private MVRelationalTuple<M> predictData(MVRelationalTuple<M> currentTimeTuple, MVRelationalTuple<M> currentScanTuple) {
 
 		if (currentScanTuple != null) {
