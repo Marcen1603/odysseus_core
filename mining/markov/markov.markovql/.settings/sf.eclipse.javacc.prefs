@@ -1,0 +1,7 @@
+#Thu Feb 03 15:09:24 CET 2011
+CLEAR_CONSOLE=false
+JJ_NATURE=true
+RUNTIME_JJJAR=C\:/Program Files/Eclipse/plugins/sf.eclipse.javacc_1.5.22/javacc.jar
+RUNTIME_JTBJAR=C\:/Program Files/Eclipse/plugins/sf.eclipse.javacc_1.5.22/jtb-1.4.3.jar
+SUPPRESS_WARNINGS=false
+eclipse.preferences.version=1
