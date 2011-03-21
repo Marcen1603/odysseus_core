@@ -59,6 +59,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 				tuple.addAttribute(new Long(time));
 				tuple.addAttribute(new Integer(transId));
 				tuple.addAttribute(new Integer(itemId));
+				tuple.addAttribute(38);
 				tuples.add(tuple);
 			}
 
