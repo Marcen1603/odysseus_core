@@ -52,7 +52,7 @@ public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 	
 	@Override
 	public AvgSumPartialAggregate<R> clone(){
-		return new AvgSumPartialAggregate(this);
+		return new AvgSumPartialAggregate<R>(this);
 	}
 	
 
