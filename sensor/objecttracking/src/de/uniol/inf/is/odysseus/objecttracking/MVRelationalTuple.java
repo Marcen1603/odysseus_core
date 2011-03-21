@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.objecttracking;
 
 import java.io.Serializable;
@@ -41,15 +41,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * 
  */
 @SuppressWarnings("unchecked")
-public class MVRelationalTuple<T extends IProbability> extends
-		RelationalTuple<T> implements Serializable {
-	
+public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T> implements Serializable {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8921538607877809462L;
 	private int[] measurementValuePositions;
-	
 
 	/**
 	 * Erzeugt ein neues Object, anhand der Zeile und des Trennzeichens
@@ -61,10 +59,9 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 * @param noOfAttribs
 	 *            enthaelt die Anzahl der Attribute (Effizienzgr�nde)
 	 */
-	public MVRelationalTuple(SDFAttributeList schema, String line,
-			char delimiter) {
+	public MVRelationalTuple(SDFAttributeList schema, String line, char delimiter) {
 		super();
-//		super(schema, line, delimiter);
+		// super(schema, line, delimiter);
 		// if(this.getAttribute(3).equals(19.3906)){
 		// try{
 		// throw new Exception("Doppelt.");
@@ -73,7 +70,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 		// }
 		// }
 		this.attributes = splittLineToAttributes(line, delimiter, schema);
-		
+
 		this.findMeasurementValuePositions(schema);
 	}
 
@@ -110,18 +107,34 @@ public class MVRelationalTuple<T extends IProbability> extends
 		// }
 		if (copy.measurementValuePositions != null) {
 			this.measurementValuePositions = new int[copy.measurementValuePositions.length];
-			System.arraycopy(copy.measurementValuePositions, 0,
-					this.measurementValuePositions, 0,
-					copy.measurementValuePositions.length);
+			System.arraycopy(copy.measurementValuePositions, 0, this.measurementValuePositions, 0, copy.measurementValuePositions.length);
 		}
-		
-		// deep copy for objectrelationals (by Timo M.)
-		for( int i = 0; i < getAttributeCount(); i++ ) {
+
+		// deep copy for objectrelationals
+		for (int i = 0; i < getAttributeCount(); i++) {
 			Object attribute = getAttribute(i);
-			if( attribute instanceof MVRelationalTuple ) {
-				setAttribute(i, new MVRelationalTuple<T>((MVRelationalTuple<T>)attribute)); // recursive copy
+			if (attribute instanceof MVRelationalTuple) {
+				setAttribute(i, new MVRelationalTuple<T>((MVRelationalTuple<T>) attribute)); // recursive
+																								// copy
+			} else if (attribute instanceof List) {
+				setAttribute(i, copyList((List<Object>) attribute)); // recursive
+																		// copy
+
 			}
 		}
+	}
+
+	private List<Object> copyList(List<Object> attribute) {
+		List<Object> oldList = attribute;
+		List<Object> newList = new ArrayList<Object>(oldList.size());
+		for (Object obj : oldList) {
+			if (obj instanceof MVRelationalTuple) {
+				newList.add(new MVRelationalTuple((MVRelationalTuple) obj));
+			} else if (obj instanceof List) {
+				newList.add(copyList((List<Object>) obj));
+			}
+		}
+		return newList;
 	}
 
 	/**
@@ -195,26 +208,26 @@ public class MVRelationalTuple<T extends IProbability> extends
 		// }
 		this.findMeasurementValuePositions(schema);
 	}
-	
-//	public Object getORAttribute(int[] path ) {
-//		Object actualAttribute = null;
-//		Object[] actualList = getAttributes();
-//		for( int i = 0; i < path.length; i++ ) {
-//			actualAttribute = actualList[path[i]];
-//			if( actualAttribute instanceof MVRelationalTuple<?>) {
-//				actualList = ((MVRelationalTuple<?>)actualAttribute).getAttributes();
-//			}
-//		}
-//
-//		return actualAttribute;
-//	}
+
+	// public Object getORAttribute(int[] path ) {
+	// Object actualAttribute = null;
+	// Object[] actualList = getAttributes();
+	// for( int i = 0; i < path.length; i++ ) {
+	// actualAttribute = actualList[path[i]];
+	// if( actualAttribute instanceof MVRelationalTuple<?>) {
+	// actualList = ((MVRelationalTuple<?>)actualAttribute).getAttributes();
+	// }
+	// }
+	//
+	// return actualAttribute;
+	// }
 
 	private boolean checkDataType(Object object, SDFAttribute attribute) {
-	    
-	    if (object instanceof SetEntry[]) {
-	        return SDFORDatatypes.isSet(attribute.getDatatype());
-	    }
-	       
+
+		if (object instanceof SetEntry[]) {
+			return SDFORDatatypes.isSet(attribute.getDatatype());
+		}
+
 		if (object instanceof String) {
 			return SDFDatatypes.isString(attribute.getDatatype());
 		}
@@ -223,8 +236,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 			if (attribute.getDatatype().equals("Integer")) {
 				return true;
 			}
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
-					.iterator();
+			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
 
 			while (i.hasNext()) {
 				SDFDatatypeConstraint constraint = i.next();
@@ -235,23 +247,18 @@ public class MVRelationalTuple<T extends IProbability> extends
 			return false;
 		}
 		if (object instanceof Long) {
-			if (attribute.getDatatype().equals("Long")
-					|| attribute.getDatatype().equals("Date")) {
+			if (attribute.getDatatype().equals("Long") || attribute.getDatatype().equals("Date")) {
 				return true;
 			}
 		}
 		if (object instanceof Double) {
-			if (attribute.getDatatype().equals("Double")
-					|| SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
+			if (attribute.getDatatype().equals("Double") || SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
 				return true;
 			}
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
-					.iterator();
+			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
 			while (i.hasNext()) {
 				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isRational(constraint)
-						|| SDFDatatypeConstraints
-								.isMeasurementValue(constraint)) {
+				if (SDFDatatypeConstraints.isRational(constraint) || SDFDatatypeConstraints.isMeasurementValue(constraint)) {
 					return true;
 				}
 			}
@@ -284,7 +291,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 			this.measurementValuePositions[i] = list.get(i);
 		}
 	}
-	
+
 	public int[] getMeasurementValuePositions() {
 		return measurementValuePositions;
 	}
@@ -296,12 +303,11 @@ public class MVRelationalTuple<T extends IProbability> extends
 	public double[] getMeasurementValues() {
 		double[] mvs = new double[this.measurementValuePositions.length];
 		for (int i = 0; i < this.measurementValuePositions.length; i++) {
-			mvs[i] = ((Double) this.attributes[this.measurementValuePositions[i]])
-					.doubleValue();
+			mvs[i] = ((Double) this.attributes[this.measurementValuePositions[i]]).doubleValue();
 		}
 		return mvs;
 	}
-	
+
 	/**
 	 * erzeugen eines neuen Objektes, in dem nur die Attribute betrachtet
 	 * werden, die in der attrList uebergeben werden, die Reihenfolge des neuen
@@ -335,9 +341,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 *             adequate.
 	 */
 	@Deprecated
-	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix,
-			RealMatrix b, SDFAttributeList overwriteSchema,
-			SDFAttributeList originalSchema) {
+	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix, RealMatrix b, SDFAttributeList overwriteSchema, SDFAttributeList originalSchema) {
 
 		MVRelationalTuple newAttrList = null;
 
@@ -358,8 +362,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 		if (matrix != null) {
 			double[] mv = new double[this.measurementValuePositions.length];
 			for (int i = 0; i < this.measurementValuePositions.length; i++) {
-				mv[i] = (Double) this
-						.getAttribute(this.measurementValuePositions[i]);
+				mv[i] = (Double) this.getAttribute(this.measurementValuePositions[i]);
 			}
 			RealMatrix m = new RealMatrixImpl(mv);
 
@@ -417,26 +420,20 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 *            modified.
 	 * @return
 	 */
-	public MVRelationalTuple<T> restrict(int[] restrictList,
-			RealMatrix restrictMatrix, boolean createNew) {
+	public MVRelationalTuple<T> restrict(int[] restrictList, RealMatrix restrictMatrix, boolean createNew) {
 		if (!createNew) {
-			MVRelationalTuple<T> modifiedAttrs = (MVRelationalTuple<T>) super
-					.restrict(restrictList, createNew);
+			MVRelationalTuple<T> modifiedAttrs = (MVRelationalTuple<T>) super.restrict(restrictList, createNew);
 			/**
 			 * If no measurement attributes are in the output schema, the
 			 * restrictMatrix will be null. In this case nothing has to be done.
 			 */
 			if (restrictMatrix != null) {
-				double[][] modifiedCovariance = restrictMatrix.multiply(
-						new RealMatrixImpl(modifiedAttrs.getMetadata()
-								.getCovariance())).multiply(
-						restrictMatrix.transpose()).getData();
+				double[][] modifiedCovariance = restrictMatrix.multiply(new RealMatrixImpl(modifiedAttrs.getMetadata().getCovariance())).multiply(restrictMatrix.transpose()).getData();
 				modifiedAttrs.getMetadata().setCovariance(modifiedCovariance);
 			}
 			return modifiedAttrs;
 		} else {
-			MVRelationalTuple<T> newTuple = new MVRelationalTuple<T>(
-					restrictList.length);
+			MVRelationalTuple<T> newTuple = new MVRelationalTuple<T>(restrictList.length);
 			Object[] newAttrs = new Object[restrictList.length];
 
 			for (int i = 0; i < restrictList.length; i++) {
@@ -450,9 +447,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 			 * restrictMatrix will be null. In this case nothing has to be done.
 			 */
 			if (restrictMatrix != null) {
-				double[][] modifiedCovariance = restrictMatrix.multiply(
-						new RealMatrixImpl(this.getMetadata().getCovariance()))
-						.multiply(restrictMatrix.transpose()).getData();
+				double[][] modifiedCovariance = restrictMatrix.multiply(new RealMatrixImpl(this.getMetadata().getCovariance())).multiply(restrictMatrix.transpose()).getData();
 
 				newTuple.getMetadata().setCovariance(modifiedCovariance);
 			}
@@ -466,62 +461,58 @@ public class MVRelationalTuple<T extends IProbability> extends
 	public MVRelationalTuple<T> clone() {
 		return new MVRelationalTuple<T>(this);
 	}
-	
+
 	public final boolean equals(MVRelationalTuple<T> o) {
 		return this.compareTo((MVRelationalTuple<T>) o) == 0;
 	}
-	
-    @SuppressWarnings("unchecked")
-    public int compareTo(MVRelationalTuple<T> tuple) {
-        int min = tuple.getAttributeCount();
-        if (min > this.attributes.length) {
-            min = this.attributes.length;
-        }
-        int compare = 0;
-        int i = 0;
-        for (i = 0; i < min && compare == 0; i++) {
-            try {
-                Object objectB = tuple.getAttribute(i);
-                if(objectB instanceof SetEntry[]) {
-                    int containedInA = 0;
-                    
-                    List setA = 
-                        Arrays.asList((SetEntry[]) this.attributes[i]);
-                    List setB = 
-                        Arrays.asList((SetEntry[]) objectB);
-                    
-                    for(Object b : setB) {
-                        if(setA.contains(b)) {
-                            containedInA++;
-                        }
-                    }
-                    if(containedInA == setB.size()) {
-                        if(containedInA == setA.size()) {
-                            return 0;
-                        } else {
-                            return 1;
-                        }
-                    } else {
-                        return -1;
-                    }
-                } else {
-                compare = 
-                    ((Comparable) this.attributes[i]).
-                        compareTo(tuple.getAttribute(i));
-                }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
-        if (compare < 0) {
-            compare = (-1) * i;
-        }
-        if (compare > 0) {
-            compare = i;
-        }
-        return compare;
-    }
-    
+
+	@SuppressWarnings("unchecked")
+	public int compareTo(MVRelationalTuple<T> tuple) {
+		int min = tuple.getAttributeCount();
+		if (min > this.attributes.length) {
+			min = this.attributes.length;
+		}
+		int compare = 0;
+		int i = 0;
+		for (i = 0; i < min && compare == 0; i++) {
+			try {
+				Object objectB = tuple.getAttribute(i);
+				if (objectB instanceof SetEntry[]) {
+					int containedInA = 0;
+
+					List setA = Arrays.asList((SetEntry[]) this.attributes[i]);
+					List setB = Arrays.asList((SetEntry[]) objectB);
+
+					for (Object b : setB) {
+						if (setA.contains(b)) {
+							containedInA++;
+						}
+					}
+					if (containedInA == setB.size()) {
+						if (containedInA == setA.size()) {
+							return 0;
+						} else {
+							return 1;
+						}
+					} else {
+						return -1;
+					}
+				} else {
+					compare = ((Comparable) this.attributes[i]).compareTo(tuple.getAttribute(i));
+				}
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
+		if (compare < 0) {
+			compare = (-1) * i;
+		}
+		if (compare > 0) {
+			compare = i;
+		}
+		return compare;
+	}
+
 	/**
 	 * Splittet die Zeile anhand des Trennzeichens in ein Array von Strings mit
 	 * den jeweiligen Attributen auf
@@ -534,17 +525,13 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 *            enthaelt die Anzahl der Attribute
 	 * @returns Array mit den Attributen
 	 */
-	protected final static Object[] splittLineToAttributes(final String line,
-			final char delimiter, final SDFAttributeList schema) {
-		String[] attributes = line.split(Pattern.quote(new String(
-				new char[] { delimiter })));
+	protected final static Object[] splittLineToAttributes(final String line, final char delimiter, final SDFAttributeList schema) {
+		String[] attributes = line.split(Pattern.quote(new String(new char[] { delimiter })));
 		// Pattern p = Pattern.compile("(.*)[(" + delimiter + ".*)*");
 		// Matcher m = p.matcher(line);
 		int count = attributes.length;
 		if (count != schema.size()) {
-			throw new IllegalArgumentException(
-					"invalid number of attributes: got " + count + " expected "
-							+ schema.size());
+			throw new IllegalArgumentException("invalid number of attributes: got " + count + " expected " + schema.size());
 		}
 		//
 		Object[] tokens = new Object[attributes.length];
@@ -553,9 +540,8 @@ public class MVRelationalTuple<T extends IProbability> extends
 		}
 		return tokens;
 	}
-	
-	private final static Object convertAttribute(String stringValue,
-			SDFAttribute attribute) {
+
+	private final static Object convertAttribute(String stringValue, SDFAttribute attribute) {
 		if (SDFDatatypes.isString(attribute.getDatatype())) {
 			return stringValue;
 		}
@@ -568,8 +554,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 		}
 		// TODO richtig machen mit den datentypen
 		if (SDFDatatypes.isNumerical(attribute.getDatatype())) {
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
-					.iterator();
+			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
 			while (i.hasNext()) {
 				SDFDatatypeConstraint constraint = i.next();
 				if (SDFDatatypeConstraints.isInteger(constraint)) {
@@ -580,12 +565,9 @@ public class MVRelationalTuple<T extends IProbability> extends
 				}
 			}
 
-			throw new IllegalArgumentException(
-					"missing datatype constraint for numerical attribute (integer/rational)");
+			throw new IllegalArgumentException("missing datatype constraint for numerical attribute (integer/rational)");
 		}
 
-		throw new IllegalArgumentException("attributes of type "
-				+ attribute.getDatatype() + " can't be used with "
-				+ RelationalTuple.class);
+		throw new IllegalArgumentException("attributes of type " + attribute.getDatatype() + " can't be used with " + RelationalTuple.class);
 	}
 }

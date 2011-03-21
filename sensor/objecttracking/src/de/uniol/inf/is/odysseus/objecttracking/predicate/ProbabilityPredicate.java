@@ -18,13 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import matlab.MatLab;
-
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
-
-import com.mathworks.toolbox.javabuilder.MWException;
-import com.mathworks.toolbox.javabuilder.MWNumericArray;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -84,7 +79,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 	String calculationType;
 
-	MatLab matlab;
+//	MatLab matlab;
 
 	String compareOperator;
 
@@ -162,27 +157,27 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 	@Override
 	public void init() {
-		if(this.matlab == null){
-			try {
-				this.matlab = new MatLab();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+//		if(this.matlab == null){
+//			try {
+//				this.matlab = new MatLab();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 	
 	@Override
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
-		
-		if(this.matlab == null){
-			try{
-				this.matlab = new MatLab();
-			}catch(Exception e ){
-				e.printStackTrace();
-			}
-		}
+//		this.leftSchema = leftSchema;
+//		this.rightSchema = rightSchema;
+//		
+//		if(this.matlab == null){
+//			try{
+//				this.matlab = new MatLab();
+//			}catch(Exception e ){
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	/**
@@ -226,12 +221,11 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 			Object[] matlabRes = null;
 			double resProb = 0;
-			try {
+//			try {
 				// Only calc multivariate, if dim > 1
 				if (xLow.length > 1) {
 					// start = System.nanoTime();
-					matlabRes = this.matlab.calcMVN(1, this.xLow, this.xUp, mu,
-							sigma);
+					matlabRes = null; //this.matlab.calcMVN(1, this.xLow, this.xUp, mu,sigma);
 					// end = System.nanoTime();
 				}
 				// calc normal if dim = 1
@@ -240,15 +234,15 @@ public class ProbabilityPredicate<T extends IProbability> extends
 					x[0] = xLow[0];
 					x[1] = xUp[0];
 					// start = System.nanoTime();
-					matlabRes = this.matlab.calcNormCDF(1, x, mu, sigma);
+					matlabRes = null; //this.matlab.calcNormCDF(1, x, mu, sigma);
 					// end = System.nanoTime();
 				}
 				// System.out.println("Mathe: " + (end - start));
-			} catch (MWException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			resProb = ((MWNumericArray) matlabRes[0]).getDouble();
+//			} catch (MWException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			resProb = 0.0;//((MWNumericArray) matlabRes[0]).getDouble();
 
 			if (this.compareOperator.equals("<")) {
 				return resProb < this.prob;
@@ -292,20 +286,20 @@ public class ProbabilityPredicate<T extends IProbability> extends
 				double[][] sigma = projectedLeftCov.getData();
 
 				Object[] matlabRes = null;
-				try {
+//				try {
 
 					double[] x = new double[2];
 					x[0] = xLow[0];
 					x[1] = xUp[0];
 					// start = System.nanoTime();
-					matlabRes = this.matlab.calcNormCDF(1, x, mu, sigma);
+					matlabRes = null; //this.matlab.calcNormCDF(1, x, mu, sigma);
 					// end = System.nanoTime();
 					// System.out.println("Mathe: " + (end - start));
-				} catch (MWException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				resProb[i] = ((MWNumericArray) matlabRes[0]).getDouble();
+//				} catch (MWException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				resProb[i] = 0.0; //((MWNumericArray) matlabRes[0]).getDouble();
 			}
 
 			for (int i = 0; i < resProb.length; i++) {
@@ -412,12 +406,12 @@ public class ProbabilityPredicate<T extends IProbability> extends
 				.getData();
 
 		Object[] matlabRes = null;
-		try {
+//		try {
 			// Only calc multivariate, if dim > 1
 			if (xLow.length > 1) {
 				System.nanoTime();
-				matlabRes = this.matlab.calcMVN(1, this.xLow, this.xUp,
-						resultVector, resultCov);
+				matlabRes = null; //this.matlab.calcMVN(1, this.xLow, this.xUp,
+						// resultVector, resultCov);
 			}
 			// calc normal if dim = 1
 			else {
@@ -425,17 +419,17 @@ public class ProbabilityPredicate<T extends IProbability> extends
 				x[0] = xLow[0];
 				x[1] = xUp[0];
 				System.nanoTime();
-				matlabRes = this.matlab.calcNormCDF(1, x, resultVector,
-						resultCov);
+				matlabRes = null; //this.matlab.calcNormCDF(1, x, resultVector,
+						// resultCov);
 			}
 
 			// matlabRes = this.matlab.calcMVN(1, this.xLow, this.xUp,
 			// resultVector, resultCov);
-		} catch (MWException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		double resProb = ((MWNumericArray) matlabRes[0]).getDouble();
+//		} catch (MWException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		double resProb = 0.0; //((MWNumericArray) matlabRes[0]).getDouble();
 
 		// TODO kann man bestimmt sch�ner machen
 		if (this.compareOperator.equals("<")) {
