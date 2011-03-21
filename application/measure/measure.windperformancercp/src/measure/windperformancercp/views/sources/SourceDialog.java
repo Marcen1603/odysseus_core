@@ -232,13 +232,13 @@ public class SourceDialog extends AbstractUIDialog {
 		//## upper right composite: attribute table
 			Composite attributeComp = new Composite(upperComposite, SWT.NONE);
 			{
-				//attributeComp = new AttributeTable(upperComposite, SWT.RIGHT);
 				attributeComp.setLayout(new GridLayout(2,false));
 				
 				attributeViewer = new TableViewer(attributeComp);
 				attributeViewer.setContentProvider(new AttributeContentProvider());
 				attributeViewer.setLabelProvider(new AttributeLabelProvider());
 				
+				//the attribute list/table/whatever
 				Table attributeTable = attributeViewer.getTable();
 				{
 					attributeTable.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -252,7 +252,7 @@ public class SourceDialog extends AbstractUIDialog {
 					attributeTable.setHeaderVisible(true);
 					attributeTable.setLinesVisible(true);
 				}
-
+				//the toolbar for the attribute list
 				tb_attList = new ToolBar(attributeComp,SWT.BORDER|SWT.VERTICAL);
 				{
 					String[] ti_labels = {"Add","Up","Down","Delete"};
@@ -280,7 +280,6 @@ public class SourceDialog extends AbstractUIDialog {
 			lowerSash.setLayout(new GridLayout(4,false));
 
 			//## WindTurbine
-			//final Group lowerLeftGroup;
 			{
 			btnWT = new Button(lowerSash,SWT.RADIO);
 			btnWT.setData(WTId);
@@ -429,7 +428,6 @@ public class SourceDialog extends AbstractUIDialog {
 		//	System.out.println(this.toString()+": got general update invocation: ");
 				update(updateInvoker.getValue());
 			}
-			
 		}
 	};
 	
@@ -440,9 +438,7 @@ public class SourceDialog extends AbstractUIDialog {
 		
 	@Override
 	public void update(Object attList){
-	//public void update(ArrayList<?> attList){
 		ArrayList<?> al = (ArrayList<?>) attList; 
-System.out.println(attList.toString());
 		setTableContent(al);
 	}
 	    

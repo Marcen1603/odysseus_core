@@ -59,28 +59,71 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	}
 		
 	public void nameEntered(){
-		if(source != null)
-			source.setName(dialog.getNameValue());
+		String value = dialog.getNameValue();
+		if(validWord(value)){
+			notifyUserWithError(null);
+			if(source != null){
+				source.setName(value);
+			}
+		}
+		else{
+			notifyUserWithError("Name value is not valid. Only may contain letters and digits.");
+		}
 	}
 	
 	public void streamIdEntered(){
-		if(source != null)
-			source.setStreamIdentifier(dialog.getStrIdValue());
+		String value = dialog.getStrIdValue();
+		if(validWord(value)){
+			notifyUserWithError(null);
+			if(source != null){
+				source.setStreamIdentifier(value);
+			}
+		}
+		else{
+			notifyUserWithError("Stream id value is not valid. Only may contain letters and digits.");
+		}
+	
 	}
 	
 	public void hostEntered(){
-		if(source != null)
-			source.setHost(dialog.getHostValue());
+		String value = dialog.getHostValue();
+		if(validWord(value)){
+			notifyUserWithError(null);
+			if(source != null){
+				source.setHost(value);
+			}
+		}
+		else{
+			notifyUserWithError("Host name is not valid. Only may contain letters and digits.");
+		}
 	}
 	
 	public void portEntered(){
-		if(source != null)
-			source.setPort(Integer.parseInt(dialog.getPortValue()));
+		String value = dialog.getPortValue();
+		if(validInt(value)){
+			notifyUserWithError(null);
+			if(source != null){
+				source.setPort(Integer.parseInt(value));
+			}
+		}
+		else{	
+				notifyUserWithError("Port is not valid.");
+				source.setPort(1);
+			}
 	}
 	
 	public void frequencyEntered(){
-		if(source != null)
-			source.setFrequency(Integer.parseInt(dialog.getFrequencyValue()));
+		String value = dialog.getFrequencyValue();
+		if(validInt(value)){
+			notifyUserWithError(null);
+			if(source != null){
+				source.setFrequency(Integer.parseInt(value));
+			}
+		}
+		else{
+				notifyUserWithError("Frequency value is not valid.");
+				source.setFrequency(0);
+			}		
 	}
 	
 	public void attBtnClick(String btn, int index){
@@ -117,20 +160,44 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	}
 	
 	public void hubheightEntered(){
-		if(source != null && source instanceof WindTurbine){
-			((WindTurbine) source).setHubHeight(Double.parseDouble(dialog.getHubHeightValue()));
+		String value = dialog.getHubHeightValue();
+		if(validDouble(value)||validInt(value)){
+			notifyUserWithError(null);
+			if(source != null && source instanceof WindTurbine){
+				((WindTurbine) source).setHubHeight(Double.parseDouble(value));
+			}
+		}
+		else{
+			notifyUserWithError("Hub height value is not valid.");
+			((WindTurbine) source).setHubHeight(0.0);
 		}
 	}
 	
 	public void cutinEntered(){
-		if(source != null && source instanceof WindTurbine){
-			((WindTurbine) source).setCutInWS(Double.parseDouble(dialog.getCutInValue()));
+		String value = dialog.getCutInValue();
+		if(validDouble(value)||validInt(value)){
+			notifyUserWithError(null);
+			if(source != null && source instanceof WindTurbine){
+				((WindTurbine) source).setCutInWS(Double.parseDouble(value));
+			}
+		}
+		else{
+			notifyUserWithError("Cut in value is not valid.");
+			((WindTurbine) source).setCutInWS(0.0);
 		}
 	}
 	
 	public void eightyfiveEntered(){
-		if(source != null && source instanceof WindTurbine){
-			((WindTurbine) source).setEightyFiveWS(Double.parseDouble(dialog.getEigthyfiveValue()));
+		String value = dialog.getEigthyfiveValue();
+		if(validDouble(value)||validInt(value)){
+			notifyUserWithError(null);
+			if(source != null && source instanceof WindTurbine){
+				((WindTurbine) source).setEightyFiveWS(Double.parseDouble(value));
+			}
+		}
+		else{
+			notifyUserWithError("Eigthy five percent value is not valid.");
+			((WindTurbine) source).setEightyFiveWS(0.0);
 		}
 	}
 	
@@ -159,15 +226,17 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	}
 	
 	private ISource buildSource(){
-		if(dialog.getSourceType() == MMId) 
-			source = new MetMast(dialog.getNameValue(),
+		try{
+			if(dialog.getSourceType() == MMId){ 
+				source = new MetMast(dialog.getNameValue(),
 					dialog.getStrIdValue(),
 					dialog.getHostValue(),
 					Integer.parseInt(dialog.getPortValue()), 
 					tmpAttList,
 					Integer.parseInt(dialog.getFrequencyValue()));
-		if(dialog.getSourceType() == WTId) 
-			source = new WindTurbine(dialog.getNameValue(),
+			}
+			if(dialog.getSourceType() == WTId){ 
+				source = new WindTurbine(dialog.getNameValue(),
 					dialog.getStrIdValue(),
 					dialog.getHostValue(),
 					Integer.parseInt(dialog.getPortValue()), 
@@ -177,19 +246,43 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 					Double.parseDouble(dialog.getCutInValue()),
 					Double.parseDouble(dialog.getEigthyfiveValue()),
 					Integer.parseInt(dialog.getFrequencyValue()));
+			}
+		}
+		catch(Exception e){
+			source = null;
+			System.out.println(this.toString()+": Error at building source");
+		}
 		return source;
 	}
 	
+	//Validation der eingegeben Textfelder
+	public boolean noNumberAtStart(String s){
+		return s.matches("^[^\\d].*");
+	}
 	
-	//vorlaeufige Validation
+	public boolean validDouble(String s){
+		return s.matches("^[\\d]+.[\\d]+$");
+	}
+	
+	public boolean validInt(String s){
+		return s.matches("^[\\d]+$");
+	}
+	
+	public boolean validWord(String s){
+		return s.matches("^[\\w]+$");
+	}
+	
+	// Validation der erzeugten Quelle
 	public boolean sourceIsOk(ISource tocheck){
-		String errorMsg = "";
+		String errorMsg = "";		
+		
 		if(tocheck != null){
 			if(!tocheck.getName().equals("")){
+				//if(tocheck.getName().matches("[\\w]")){
 				if(!tocheck.getStreamIdentifier().equals("")){
 					if(!tocheck.getHost().equals("")){
 						if(!(tocheck.getPort() < 1024 || tocheck.getPort() > 65536)){
-							if(!(tocheck.getFrequency() < 1)){
+							if(tocheck.getFrequency() > 0){
 								if(tocheck instanceof MetMast){
 								//MetMast mm = (MetMast)tocheck;
 									return true;
@@ -206,10 +299,10 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 													errorMsg = errorMsg+" Power control must be set \n";
 											}
 											else
-											errorMsg = errorMsg+" Value for 85% of P rated must be set\n";
+											errorMsg = errorMsg+" Value for 85% of P rated must be set and valid \n";
 										}
 										else
-										errorMsg = errorMsg+" Value for cut in speed must be set \n";
+										errorMsg = errorMsg+" Value for cut in speed must be set and valid \n";
 									}
 									else
 									errorMsg = errorMsg+" Hub heigt must be between 2 and 250 m\n ";
@@ -232,8 +325,9 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 			else
 			errorMsg = errorMsg+" Name may not be empty\n";
 		}
-		if(errorMsg.length()>250){
-			errorMsg = "";
+		//user made too much wrong
+		if(errorMsg.length()>250){ 
+			errorMsg = "Several fields were not valid.";
 		}
 		dialog.setErrorMessage("Source is not valid: "+ errorMsg);
 		return false;
@@ -286,7 +380,7 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	
 	public void aDTypeSelected(){ //TODO throws exception
 		try{
-		System.out.println(this.toString()+" type selected: "+attDialog.getComboValue()+" and value of is: "+Attribute.AttributeType.valueOf(attDialog.getComboValue()));	
+		//System.out.println(this.toString()+" type selected: "+attDialog.getComboValue()+" and value of is: "+Attribute.AttributeType.valueOf(attDialog.getComboValue()));	
 			actAtt.setAttType(Attribute.AttributeType.valueOf(attDialog.getComboValue()));
 		}
 		catch(Exception e){
@@ -331,6 +425,10 @@ public class SourceDialogPresenter extends EventHandler implements IPresenter{
 	@Override
 	public void notifyUser(String message){
 		dialog.setMessage(message);
+	}
+	
+	public void notifyUserWithError(String message){
+		dialog.setErrorMessage(message);
 	}
 
 }
