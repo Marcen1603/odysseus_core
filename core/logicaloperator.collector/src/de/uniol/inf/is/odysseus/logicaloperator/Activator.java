@@ -19,7 +19,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +28,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
@@ -37,6 +38,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 
 public class Activator implements BundleActivator, BundleListener {
 
+	Logger logger = LoggerFactory.getLogger(Activator.class);
+	
 	//
 	// private static final String SPLIT = "SPLIT";
 	// private static final String ACCESS = "ACCESS";
@@ -170,7 +173,7 @@ public class Activator implements BundleActivator, BundleListener {
 			BeanInfo beanInfo = Introspector.getBeanInfo(curOp, Object.class);
 			for (PropertyDescriptor curProperty : beanInfo
 					.getPropertyDescriptors()) {
-				Method writeMethod = curProperty.getWriteMethod();
+				Method writeMethod = curProperty.getWriteMethod();				
 				if (writeMethod != null
 						&& writeMethod.isAnnotationPresent(Parameter.class)) {
 					Parameter parameterAnnotation = writeMethod
@@ -178,6 +181,7 @@ public class Activator implements BundleActivator, BundleListener {
 					parameters.put(parameterAnnotation, writeMethod);
 				}
 			}
+			logger.debug("Create GenericOperatorBuilder Builder for "+curOp+" with parameters "+parameters);
 			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp,
 					parameters, logicalOperatorAnnotation.minInputPorts(),
 					logicalOperatorAnnotation.maxInputPorts());
