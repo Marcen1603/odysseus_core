@@ -33,7 +33,7 @@ public class WindowAO extends UnaryLogicalOp {
 
 	private WindowType windowType = null;
 
-	private long windowSize = 1;
+	private long windowSize = -1;
 
 	private long windowAdvance = -1;
 
