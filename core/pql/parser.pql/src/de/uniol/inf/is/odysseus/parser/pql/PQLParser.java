@@ -115,14 +115,14 @@ public class PQLParser implements IQueryParser {
 	}
 
 	public static void initQueryParameters(Map<String, Object> parameterValues) {
-		initParameters(queryParameters.values(), parameterValues);
+		initParameters(" unknown ",queryParameters.values(), parameterValues);
 	}
 
 	public static IParameter<?> getQueryParameter(String name) {
 		return queryParameters.get(name);
 	}
 
-	public static void initParameters(
+	public static void initParameters(String operatorName,
 			Collection<IParameter<?>> parameterObjects,
 			Map<String, Object> parameterValues) {
 		Map<String, Object> tmpParameters = new HashMap<String, Object>(
@@ -134,7 +134,7 @@ public class PQLParser implements IQueryParser {
 				parameter.setInputValue(null);
 				if (parameter.isMandatory()) {
 					throw new IllegalArgumentException(
-							"missing mandatory parameter: " + parameterName);
+							"missing mandatory parameter: " + parameterName+" for "+operatorName);
 				}
 			} else {
 				Object value = parameterValues.get(parameterName);
