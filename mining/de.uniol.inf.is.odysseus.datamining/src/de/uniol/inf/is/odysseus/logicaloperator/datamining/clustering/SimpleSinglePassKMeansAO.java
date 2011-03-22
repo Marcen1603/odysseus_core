@@ -12,9 +12,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator;
+package de.uniol.inf.is.odysseus.logicaloperator.datamining.clustering;
 
+import de.uniol.inf.is.odysseus.datamining.builder.AttributeOutOfRangeException;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 
 /**
  * This class represents the logical operator for the simple single pass k-means
@@ -23,8 +27,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
  * @author Kolja Blohm
  * 
  */
+@LogicalOperator(name="SIMPLESINGLEPASSKMEANS", minInputPorts=1, maxInputPorts=1)
 public class SimpleSinglePassKMeansAO extends AbstractClusteringAO {
 
+	private static final String CLUSTERCOUNT = "CLUSTERCOUNT";
 	private static final long serialVersionUID = 288269790951499746L;
 	private int clusterCount;
 	private int bufferSize;
@@ -74,6 +80,7 @@ public class SimpleSinglePassKMeansAO extends AbstractClusteringAO {
 	 * @param clusterCount
 	 *            the number of clusters.
 	 */
+	@Parameter(type=IntegerParameter.class)
 	public void setClusterCount(int clusterCount) {
 		this.clusterCount = clusterCount;
 	}
@@ -85,6 +92,7 @@ public class SimpleSinglePassKMeansAO extends AbstractClusteringAO {
 	 * @param bufferSize
 	 *            the buffer size.
 	 */
+	@Parameter(type=IntegerParameter.class)
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
@@ -98,4 +106,19 @@ public class SimpleSinglePassKMeansAO extends AbstractClusteringAO {
 		return bufferSize;
 	}
 
+	@Override
+	public boolean isValid() {
+		boolean isValid = super.isValid();
+		if (clusterCount <= 0) {
+			addError(new AttributeOutOfRangeException(CLUSTERCOUNT,
+					"has to be greater than zero"));
+			isValid = false;
+		} else if (bufferSize < clusterCount) {
+			addError(new AttributeOutOfRangeException("BUFFERSIZE",
+					"has to be equal or greater than the value of "
+							+ CLUSTERCOUNT));
+			isValid = false;
+		}
+		return isValid;
+	}
 }

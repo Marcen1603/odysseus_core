@@ -1,15 +1,21 @@
-package de.uniol.inf.is.odysseus.datamining.state.logicaloperator;
+package de.uniol.inf.is.odysseus.logicaloperator.datamining.state;
+
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
+@LogicalOperator(name = "RECALL", minInputPorts = 1, maxInputPorts = 1)
 public class RecallAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1034411520230158353L;
 
-	public SDFAttributeList schemaToCheck;
+	public List<SDFAttribute> schemaToCheck;
 
 	public RecallAO(RecallAO recallAO) {
 		super(recallAO);
@@ -38,11 +44,12 @@ public class RecallAO extends UnaryLogicalOp {
 		return new RecallAO(this);
 	}
 
-	public void setSchemaToCheck(SDFAttributeList schemaToCheck) {
+	@Parameter(type=ResolvedSDFAttributeParameter.class, isList=true)
+	public void setSchemaToCheck(List<SDFAttribute> schemaToCheck) {
 		this.schemaToCheck = schemaToCheck;
 	}
 
-	public SDFAttributeList getSchemaToCheck() {
+	public List<SDFAttribute> getSchemaToCheck() {
 		return this.schemaToCheck;
 	}
 
@@ -50,7 +57,8 @@ public class RecallAO extends UnaryLogicalOp {
 		int[] liste = new int[this.schemaToCheck.size()];
 		for (int s = 0; s < this.schemaToCheck.size(); s++) {
 			for (int i = 0; i < this.getInputSchema().size(); i++) {
-				if (this.getInputSchema().get(i).getAttributeName().equals(this.schemaToCheck.get(s).getAttributeName())) {
+				if (this.getInputSchema().get(i).getAttributeName()
+						.equals(this.schemaToCheck.get(s).getAttributeName())) {
 					liste[s] = i;
 				}
 			}

@@ -1,20 +1,26 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
-package de.uniol.inf.is.odysseus.datamining.classification.logicaloperator;
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.logicaloperator.datamining.classification;
 
+import de.uniol.inf.is.odysseus.datamining.builder.AttributeOutOfRangeException;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -26,6 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * @author Sven Vorlauf
  * 
  */
+@LogicalOperator(name = "HOEFFDINGTREE", minInputPorts = 1, maxInputPorts = 1)
 public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 
 	/**
@@ -96,6 +103,7 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 	 * @param labelAttribute
 	 *            the attribute to set
 	 */
+	@Parameter(type=ResolvedSDFAttributeParameter.class)
 	public void setLabelAttribute(SDFAttribute labelAttribute) {
 		this.labelAttribute = labelAttribute;
 
@@ -118,6 +126,7 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 	 * @param probability
 	 *            the probability to set
 	 */
+	@Parameter(type = DoubleParameter.class)
 	public void setProbability(Double probability) {
 		this.probability = probability;
 	}
@@ -128,6 +137,7 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 	 * @param attributeEvaluationMeasure
 	 *            the name of the measure
 	 */
+	@Parameter(name="EVALUATIONMEASURE", type=StringParameter.class, optional = true)
 	public void setAttributeEvaluationMeasure(String attributeEvaluationMeasure) {
 		this.attributeEvaluationMeasure = attributeEvaluationMeasure;
 
@@ -140,6 +150,18 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 	 */
 	public String getAttributeEvaluationMeasure() {
 		return attributeEvaluationMeasure;
+	}
+
+	@Override
+	public boolean isValid() {
+		boolean isValid = super.isValid();
+		if (probability < 0 || probability > 1) {
+			addError(new AttributeOutOfRangeException("PROBABILITY",
+					"has to be between 0 and 1"));
+			isValid = false;
+		}
+
+		return isValid;
 	}
 
 }

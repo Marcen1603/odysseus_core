@@ -1,21 +1,27 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
-package de.uniol.inf.is.odysseus.datamining.classification.logicaloperator;
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.logicaloperator.datamining.classification;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -27,6 +33,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * @author Sven Vorlauf
  * 
  */
+@LogicalOperator(name = "CLASSIFY", minInputPorts = 2, maxInputPorts = 2)
 public class ClassifyAO extends BinaryLogicalOp {
 
 	/**
@@ -37,7 +44,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 	/**
 	 * the attributes that have been used to create the classifier
 	 */
-	protected SDFAttributeList attributes;
+	protected List<SDFAttribute> attributes;
 
 	/**
 	 * the attribute holding the class
@@ -82,7 +89,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 */
 	public ClassifyAO(ClassifyAO copy) {
 		super(copy);
-		this.attributes = copy.getAttributes().clone();
+		this.attributes = new ArrayList<SDFAttribute>(copy.getAttributes());
 		if (copy.labelAttribute != null) {
 			this.labelAttribute = copy.labelAttribute.clone();
 		}
@@ -93,7 +100,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 * 
 	 * @return the attributes
 	 */
-	public SDFAttributeList getAttributes() {
+	public List<SDFAttribute> getAttributes() {
 		return attributes;
 	}
 
@@ -132,8 +139,8 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 *            the schema holding the attributes to determine the positions
 	 * @return the positions of the attributes
 	 */
-	public static int[] calcRestrictList(SDFAttributeList in,
-			SDFAttributeList out) {
+	public static int[] calcRestrictList(List<SDFAttribute> in,
+			List<SDFAttribute> out) {
 		int[] ret = new int[out.size()];
 		int i = 0;
 		for (SDFAttribute a : out) {
@@ -158,7 +165,8 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 * @param attributes
 	 *            the attributes to set
 	 */
-	public void setAttributes(SDFAttributeList attributes) {
+	@Parameter(type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setAttributes(List<SDFAttribute> attributes) {
 		this.attributes = attributes;
 
 	}
@@ -180,6 +188,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 * @param labelAttribute
 	 *            the attribute to set
 	 */
+	@Parameter(type = ResolvedSDFAttributeParameter.class, optional = true)
 	public void setLabelAttribute(SDFAttribute labelAttribute) {
 		this.labelAttribute = labelAttribute;
 	}

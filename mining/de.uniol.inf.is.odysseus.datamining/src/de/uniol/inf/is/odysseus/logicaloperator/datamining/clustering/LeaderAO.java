@@ -12,7 +12,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator;
+package de.uniol.inf.is.odysseus.logicaloperator.datamining.clustering;
+
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.DoubleParameter;
 
 /**
  * This class represents the logical operator for the leader algorithm.
@@ -20,6 +24,7 @@ package de.uniol.inf.is.odysseus.datamining.clustering.logicaloperator;
  * @author Kolja Blohm
  * 
  */
+@LogicalOperator(name="LEADER", minInputPorts=1, maxInputPorts=1)
 public class LeaderAO extends AbstractClusteringAO {
 
 	private static final long serialVersionUID = -5809997584476169607L;
@@ -69,6 +74,7 @@ public class LeaderAO extends AbstractClusteringAO {
 	 * @param threshold
 	 *            the threshold.
 	 */
+	@Parameter(type=DoubleParameter.class)
 	public void setThreshold(Double threshold) {
 
 		this.threshold = threshold;
