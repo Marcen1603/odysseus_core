@@ -150,7 +150,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
         return returnTuple;
     }
 
-    private IEvaluator<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
+    protected IEvaluator<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
             AggregateFunction key, int[] pos) {
         IEvaluator<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
         if ((key.getName().equalsIgnoreCase("AVG"))
