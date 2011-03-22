@@ -18,6 +18,8 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -52,12 +54,18 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 		return calcRestrictList(this.getInputSchema(), this.getOutputSchema());
 	}
 
-	@Override
+	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
+	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
+		this.outputSchema = new SDFAttributeList();
+		this.outputSchema.addAll(outputSchema);
+	}
+	
+	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		this.outputSchema = outputSchema.clone();
 	}
-
+	
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
