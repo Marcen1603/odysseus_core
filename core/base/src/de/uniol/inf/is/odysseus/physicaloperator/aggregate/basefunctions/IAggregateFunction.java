@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions;
 
-public interface IAggregateFunction<R> extends IInitializer<R>, IMerger<R>,
-		IEvaluator<R> {
+public interface IAggregateFunction<R,W> extends IInitializer<R>, IMerger<R>,
+		IEvaluator<R,W> {
 	public String getName();
 	@Override
 	public int hashCode();

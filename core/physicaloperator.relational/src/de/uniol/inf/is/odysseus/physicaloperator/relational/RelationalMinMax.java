@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.MinMax;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class RelationalMinMax extends MinMax<RelationalTuple<?>> {
+public class RelationalMinMax extends MinMax<RelationalTuple<?>,RelationalTuple<?>> {
 
 	int[] attrList = new int[1];
 

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class Nest<R> extends AbstractAggregateFunction<R> {
+abstract public class Nest<R,W> extends AbstractAggregateFunction<R,W> {
 
 	protected Nest() {
 		super("NEST");

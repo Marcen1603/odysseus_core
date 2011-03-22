@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class MinMax<T extends Comparable<T>> extends AbstractAggregateFunction<T>{
+abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggregateFunction<R, W>{
 	
 	boolean isMax = true;
 	
@@ -28,17 +28,17 @@ abstract public class MinMax<T extends Comparable<T>> extends AbstractAggregateF
 		
 	
 	@Override
-	public IPartialAggregate<T> init(T in) {
-		return new ElementPartialAggregate<T>(in);
+	public IPartialAggregate<R> init(R in) {
+		return new ElementPartialAggregate<R>(in);
 	}
 
 	@Override
-	public IPartialAggregate<T> merge(IPartialAggregate<T> p, T toMerge, boolean createNew) {
-		ElementPartialAggregate<T> pa = null;
+	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
+		ElementPartialAggregate<R> pa = null;
 		if (createNew){
-			pa = new ElementPartialAggregate<T>(p);
+			pa = new ElementPartialAggregate<R>(p);
 		}else{
-			pa = (ElementPartialAggregate<T>) p;	
+			pa = (ElementPartialAggregate<R>) p;	
 		}		
 		if (isMax){
 			if (pa.getElem().compareTo(toMerge) < 0){
@@ -53,8 +53,8 @@ abstract public class MinMax<T extends Comparable<T>> extends AbstractAggregateF
 	}
 
 	@Override
-	public T evaluate(IPartialAggregate<T> p) {
-		ElementPartialAggregate<T> pa = (ElementPartialAggregate<T>) p;
+	public W evaluate(IPartialAggregate<R> p) {
+		ElementPartialAggregate<W> pa = (ElementPartialAggregate<W>) p;
 		return pa.getElem();
 	}
 

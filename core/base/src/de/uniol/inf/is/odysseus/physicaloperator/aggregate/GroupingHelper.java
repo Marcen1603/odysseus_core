@@ -22,14 +22,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IInitia
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IMerger;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public abstract class GroupingHelper<R> {
+public abstract class GroupingHelper<R, W> {
 
     abstract public Integer getGroupID(R elem);
 
     abstract public void init();
 
-    abstract public R createOutputElement(Integer groupID,
-            PairMap<SDFAttributeList, AggregateFunction, R, ?> r);
+    abstract public W createOutputElement(Integer groupID,
+            PairMap<SDFAttributeList, AggregateFunction, W, ?> r);
 
     abstract public IInitializer<R> getInitAggFunction(
             FESortedPair<SDFAttributeList, AggregateFunction> p);
@@ -37,7 +37,7 @@ public abstract class GroupingHelper<R> {
     abstract public IMerger<R> getMergerAggFunction(
             FESortedPair<SDFAttributeList, AggregateFunction> p);
 
-    abstract public IEvaluator<R> getEvaluatorAggFunction(
+    abstract public IEvaluator<R,W> getEvaluatorAggFunction(
             FESortedPair<SDFAttributeList, AggregateFunction> p);
 
 }

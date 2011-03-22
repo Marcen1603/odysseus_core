@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
-        GroupingHelper<RelationalTuple<T>> {
+        GroupingHelper<RelationalTuple<T>, RelationalTuple<T>> {
 
     Map<RelationalTuple<T>, Integer> keyMap = null;
     Map<Integer, RelationalTuple<T>> tupleMap = null;
@@ -49,7 +49,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
     // TODO lieber eine factory uebergeben, die e.g. immer die selben instanzen
     // liefert, dann kann auf einiges
     // gecaste verzichtet werden, weil die typinformationen vorhanden sind
-    static private Map<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<RelationalTuple<?>>> fMap = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<RelationalTuple<?>>>();
+    static private Map<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<RelationalTuple<?>,RelationalTuple<?>>> fMap = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<RelationalTuple<?>,RelationalTuple<?>>>();
 
     public RelationalTupleGroupingHelper(SDFAttributeList inputSchema,
             SDFAttributeList outputSchema,
@@ -150,9 +150,9 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
         return returnTuple;
     }
 
-    private IEvaluator<RelationalTuple<?>> createAggFunction(
+    private IEvaluator<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
             AggregateFunction key, int[] pos) {
-        IEvaluator<RelationalTuple<?>> aggFunc = null;
+        IEvaluator<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
         if ((key.getName().equalsIgnoreCase("AVG"))
                 || (key.getName().equalsIgnoreCase("SUM"))) {
             aggFunc = RelationalAvgSum.getInstance(pos[0], (key.getName()
@@ -182,9 +182,9 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 
     @SuppressWarnings("unchecked")
     @Override
-    public IEvaluator<RelationalTuple<T>> getEvaluatorAggFunction(
+    public IEvaluator<RelationalTuple<T>, RelationalTuple<T>> getEvaluatorAggFunction(
             FESortedPair<SDFAttributeList, AggregateFunction> p) {
-        IEvaluator<RelationalTuple<?>> eval = fMap.get(p);
+        IEvaluator<RelationalTuple<?>, RelationalTuple<?>> eval = fMap.get(p);
         if (eval == null) {
             int[] posArray = new int[p.getE1().size()];
             for (int i = 0; i < p.getE1().size(); ++i) {

@@ -31,8 +31,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>>
-		extends AggregatePO<Q, R, R> {
+public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W>
+		extends AggregatePO<Q, R, R, W> {
 
 	protected IMetadataMergeFunction<Q> metadataMerge;
 
@@ -114,7 +114,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 	}
 
-	public AggregateTIPO(AggregateTIPO<Q, R> aggregatePO) {
+	public AggregateTIPO(AggregateTIPO<Q, R, W> aggregatePO) {
 		super(aggregatePO);
 		this.metadataMerge = aggregatePO.metadataMerge.clone();
 		metadataMerge.init();

@@ -36,12 +36,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>>
-		extends AggregateTIPO<Q, R> {
+public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IMetaAttributeContainer<Q>>
+		extends AggregateTIPO<Q, R, W> {
 
 	static final Logger logger = LoggerFactory.getLogger(StreamGroupingWithAggregationPO.class);
 	
-	final private ITransferArea<R, R> transferArea;
+	final private ITransferArea<W, W> transferArea;
 	private final Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>>();
 	private int dumpAtValueCount = -1;
 	private long createOutputCounter = 0;
@@ -51,15 +51,15 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			SDFAttributeList outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
-			GroupingHelper<R> grHelper) {
+			GroupingHelper<R, W> grHelper) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		setGroupingHelper(grHelper);
-		transferArea = new TITransferArea<R, R>(1);
+		transferArea = new TITransferArea<W, W>(1);
 		transferArea.setSourcePo(this);
 	}
 
 	@Override
-	public void setGroupingHelper(GroupingHelper<R> groupingHelper) {
+	public void setGroupingHelper(GroupingHelper<R, W> groupingHelper) {
 		super.setGroupingHelper(groupingHelper);
 		initAggFunctions();
 	}
@@ -74,12 +74,12 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
-		transferArea = new TITransferArea<R, R>(1);
+		transferArea = new TITransferArea<W, W>(1);
 		transferArea.setSourcePo(this);
 	}
 
 	public StreamGroupingWithAggregationPO(
-			StreamGroupingWithAggregationPO<Q, R> agg) {
+			StreamGroupingWithAggregationPO<Q, R, W> agg) {
 		super(agg);
 		transferArea = agg.transferArea.clone();
 		groups.putAll(agg.groups);
@@ -215,8 +215,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		while (results.hasNext()) {
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
-			PairMap<SDFAttributeList, AggregateFunction, R, ? extends ITimeInterval> r = calcEval(e);
-			R out = getGroupingHelper().createOutputElement(groupID, r);
+			PairMap<SDFAttributeList, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
+			W out = getGroupingHelper().createOutputElement(groupID, r);
 			out.setMetadata(e.getMetadata());
 			transferArea.transfer(out);
 //			System.out.println(this+"Move to tranfer area "+out);
@@ -224,8 +224,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	public StreamGroupingWithAggregationPO<Q, R> clone() {
-		return new StreamGroupingWithAggregationPO<Q, R>(this);
+	public StreamGroupingWithAggregationPO<Q, R, W> clone() {
+		return new StreamGroupingWithAggregationPO<Q, R, W>(this);
 	}
 
 	/**

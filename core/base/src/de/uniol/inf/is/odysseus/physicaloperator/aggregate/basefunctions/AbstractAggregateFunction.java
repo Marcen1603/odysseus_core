@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions;
 
-abstract public class AbstractAggregateFunction<R> implements IAggregateFunction<R> {
+abstract public class AbstractAggregateFunction<R,W> implements IAggregateFunction<R,W> {
 
 	String name = "";
 	

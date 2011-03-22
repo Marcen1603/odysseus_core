@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * 
  */
 public class AggregationBean extends
-		AbstractAggregateFunction<RelationalTuple<?>> {
+		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	/** The bean instance */
 	private Object bean;

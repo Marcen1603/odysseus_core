@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.intervalapproach.AggregateTIPO;
 
 public class TAggregateLatencyRule extends
-		AbstractTransformationRule<AggregateTIPO<?, ?>> {
+		AbstractTransformationRule<AggregateTIPO<?, ?, ?>> {
 
 	@Override
 	public int getPriority() {
@@ -18,14 +18,14 @@ public class TAggregateLatencyRule extends
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(AggregateTIPO<?, ?> operator,
+	public void execute(AggregateTIPO<?, ?, ?> operator,
 			TransformationConfiguration config) {
 		((CombinedMergeFunction)operator.getMetadataMerge()).add(new LatencyMergeFunction());		
 		
 	}
 
 	@Override
-	public boolean isExecutable(AggregateTIPO<?, ?> operator,
+	public boolean isExecutable(AggregateTIPO<?, ?,?> operator,
 			TransformationConfiguration config) {
 		if(operator.getMetadataMerge() instanceof CombinedMergeFunction){
 			if(config.getMetaTypes().contains("de.uniol.inf.is.odysseus.latency.ILatency")){

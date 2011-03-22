@@ -36,19 +36,19 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttributeContainer<? extends M>, A extends IClone>
-        extends AbstractPipe<R, R> {
+abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttributeContainer<? extends M>, A extends IClone, W>
+        extends AbstractPipe<R, W> {
 
     private Map<FESortedPair<SDFAttributeList, AggregateFunction>, IInitializer<A>> init = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IInitializer<A>>();
 
     private Map<FESortedPair<SDFAttributeList, AggregateFunction>, IMerger<A>> merger = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IMerger<A>>();
 
-    private Map<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<A>> eval = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<A>>();
+    private Map<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<A, W>> eval = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<A, W>>();
 
     private SDFAttributeList inputSchema = null;
     private Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = null;
 
-    private GroupingHelper<R> groupingHelper;
+    private GroupingHelper<R, W> groupingHelper;
 
     private final SDFAttributeList outputSchema;
 
@@ -56,11 +56,11 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 
     // private AggregateAO algebraOp;
 
-    public GroupingHelper<R> getGroupingHelper() {
+    public GroupingHelper<R, W> getGroupingHelper() {
         return groupingHelper;
     }
 
-    public void setGroupingHelper(GroupingHelper<R> groupingHelper) {
+    public void setGroupingHelper(GroupingHelper<R, W> groupingHelper) {
         this.groupingHelper = groupingHelper;
     }
 
@@ -92,12 +92,12 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
         return outputSchema;
     }
 
-    public AggregatePO(AggregatePO<M, R, A> agg) {
+    public AggregatePO(AggregatePO<M, R, A, W> agg) {
         init = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IInitializer<A>>(
                 agg.init);
         merger = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IMerger<A>>(
                 agg.merger);
-        eval = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<A>>(
+        eval = new HashMap<FESortedPair<SDFAttributeList, AggregateFunction>, IEvaluator<A, W>>(
                 agg.eval);
         this.inputSchema = agg.inputSchema;
         this.outputSchema = agg.outputSchema;
@@ -118,11 +118,11 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
     }
 
     public void setAggregationFunction(
-            FESortedPair<SDFAttributeList, AggregateFunction> p, IEvaluator<A> e) {
+            FESortedPair<SDFAttributeList, AggregateFunction> p, IEvaluator<A,W> e) {
         eval.put(p, e);
     }
 
-    protected IEvaluator<A> getEvalFunction(
+    protected IEvaluator<A, W> getEvalFunction(
             FESortedPair<SDFAttributeList, AggregateFunction> p) {
         return eval.get(p);
     }
@@ -181,13 +181,13 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
     }
 
     // Auswerten aller Elemente in der toEval map (mit dem passenden Evaluator)
-    protected PairMap<SDFAttributeList, AggregateFunction, A, M> calcEval(
+    protected PairMap<SDFAttributeList, AggregateFunction, W, M> calcEval(
             PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M> toEval) {
-        PairMap<SDFAttributeList, AggregateFunction, A, M> ret = new PairMap<SDFAttributeList, AggregateFunction, A, M>();
+        PairMap<SDFAttributeList, AggregateFunction, W, M> ret = new PairMap<SDFAttributeList, AggregateFunction, W, M>();
         for (Entry<FESortedPair<SDFAttributeList, AggregateFunction>, IPartialAggregate<A>> e : toEval
                 .entrySet()) {
-            IEvaluator<A> eval = getEvalFunction(e.getKey());
-            A value = eval.evaluate(e.getValue());
+            IEvaluator<A, W> eval = getEvalFunction(e.getKey());
+            W value = eval.evaluate(e.getValue());
             ret.put(e.getKey(), value);
         }
         return ret;
@@ -199,7 +199,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
     		return false;
     	}
 		
-		AggregatePO<M,R,A> apo = (AggregatePO<M,R,A>) ipo;
+		AggregatePO<M,R,A, W> apo = (AggregatePO<M,R,A, W>) ipo;
 		
 		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
 		if(!this.hasSameSources(ipo)) {

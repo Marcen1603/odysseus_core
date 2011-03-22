@@ -17,25 +17,25 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class Count<T> extends AbstractAggregateFunction<T> {
+abstract public class Count<R, W> extends AbstractAggregateFunction<R, W> {
 	
 	protected Count() {
 		super("COUNT");
 	}
 	
 	@Override
-	public IPartialAggregate<T> init(T in) {
-		IPartialAggregate<T> pa = new CountPartialAggregate<T>(1); 
+	public IPartialAggregate<R> init(R in) {
+		IPartialAggregate<R> pa = new CountPartialAggregate<R>(1); 
 		return pa;
 	}
 
 	@Override
-	public synchronized IPartialAggregate<T> merge(IPartialAggregate<T> p, T toMerge, boolean createNew) {
-		CountPartialAggregate<T> pa = null;
+	public synchronized IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
+		CountPartialAggregate<R> pa = null;
 		if (createNew){
-			pa = new CountPartialAggregate<T>(((CountPartialAggregate<T>) p).getCount());
+			pa = new CountPartialAggregate<R>(((CountPartialAggregate<R>) p).getCount());
 		}else{
-			pa = (CountPartialAggregate<T>) p;
+			pa = (CountPartialAggregate<R>) p;
 		}		
 		pa.add();
 		return pa;

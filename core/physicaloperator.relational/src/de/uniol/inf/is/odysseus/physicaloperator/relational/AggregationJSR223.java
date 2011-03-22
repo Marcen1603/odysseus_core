@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * 
  */
 public class AggregationJSR223 extends
-		AbstractAggregateFunction<RelationalTuple<?>> {
+		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public static final String KEY_ATTRIBUTE = "attr";

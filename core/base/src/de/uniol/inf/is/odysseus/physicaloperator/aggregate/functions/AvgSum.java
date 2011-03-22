@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 
-abstract public class AvgSum<T> extends AbstractAggregateFunction<T>{
+abstract public class AvgSum<R, W> extends AbstractAggregateFunction<R, W>{
 
 	boolean isAvg;
 	
