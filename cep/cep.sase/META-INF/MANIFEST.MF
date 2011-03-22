@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CEP Sase
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.sase
 Bundle-Version: 1.0.0
-Bundle-ClassPath: antlr-runtime-3.2.jar,
- .
+Bundle-ClassPath: .
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.epa.metamodel.relational,
@@ -25,4 +24,5 @@ Export-Package: de.uniol.inf.is.odysseus.cep.sase
 Service-Component: OSGI-INF/SaseRelational.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.cep.sase.SaseBuilder
 Bundle-ActivationPolicy: lazy
-Require-Bundle: de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus,
+ ANTLR3_3;bundle-version="1.0.0"

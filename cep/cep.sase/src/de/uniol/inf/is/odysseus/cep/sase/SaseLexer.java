@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2011-02-17 15:57:40
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2011-03-22 16:01:59
  
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.cep.sase;
 
 
 import org.antlr.runtime.*;
+import org.antlr.runtime.Lexer;
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
