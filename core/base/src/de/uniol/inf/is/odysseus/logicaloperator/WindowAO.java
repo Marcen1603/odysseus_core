@@ -85,7 +85,7 @@ public class WindowAO extends UnaryLogicalOp {
 		return windowSize;
 	}
 
-	@Parameter(type = LongParameter.class, name = "SIZE")
+	@Parameter(type = LongParameter.class, name = "SIZE", optional = true)
 	public void setWindowSize(long windowSize) {
 		this.windowSize = windowSize;
 	}
