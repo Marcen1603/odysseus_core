@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTAlgorithm;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTEmissions;
-import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTForStream;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTHiddenMarkovModel;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTObservations;
@@ -22,12 +19,10 @@ import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTStateList;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTStates;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTTransitions;
 import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
-import de.uniol.inf.is.odysseus.markov.model.algorithm.IMarkovAlgorithm;
-import de.uniol.inf.is.odysseus.markov.model.algorithm.MarkovAlgorithmDictionary;
+import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModelDictionary;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Observation;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
-import de.uniol.inf.is.odysseus.markov.operator.logical.MarkovAO;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
@@ -36,32 +31,20 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class MarkovQLVisitor extends AbstractMarkovQLVisitor{
 
 	private List<IQuery> plans = new ArrayList<IQuery>();
-	private User caller;
-	private IDataDictionary dataDictionary;
-	private List<HiddenMarkovModel> hmms = new ArrayList<HiddenMarkovModel>();
 
 	public MarkovQLVisitor(User user, IDataDictionary dd) {
-		this.caller = user;
-		this.dataDictionary = dd;
+		
 	}	
 
 	@Override
 	public Object visit(ASTQuery node, Object data) {
-		for(int i=0;i<node.jjtGetNumChildren();i=i+3){
-			IMarkovAlgorithm algorithm = (IMarkovAlgorithm) node.jjtGetChild(i).jjtAccept(this, data);
-			HiddenMarkovModel hmm = (HiddenMarkovModel)node.jjtGetChild(i+1).jjtAccept(this, data);
-			ILogicalOperator source = (ILogicalOperator)node.jjtGetChild(i+2).jjtAccept(this, data);
-						
-			hmms.add(hmm);
-			// build plan
-			ILogicalOperator ao = new MarkovAO(hmm, algorithm);
-			source.subscribeSink(ao, 0, 0, source.getOutputSchema());
-			
+		for(int i=0;i<node.jjtGetNumChildren();i++){			
+			HiddenMarkovModel hmm = (HiddenMarkovModel)node.jjtGetChild(i).jjtAccept(this, data);								
+			HiddenMarkovModelDictionary.getInstance().addHMM(hmm.getName(), hmm);
 			// pack into query
-			IQuery query = new Query();		
-			query.setLogicalPlan(ao, true);
+			//IQuery query = new Query();					
 			// and remember it
-			plans.add(query);
+			//plans.add(query);
 		}		
 		return plans;
 	}
@@ -75,10 +58,7 @@ public class MarkovQLVisitor extends AbstractMarkovQLVisitor{
 		return hmm;
 	}	
 
-	public List<IQuery> getPlans() {
-		for(HiddenMarkovModel hmm : this.hmms){
-			System.out.println("HMM: "+hmm.toString());
-		}
+	public List<IQuery> getPlans() {		
 		return plans;
 	}
 
@@ -222,25 +202,5 @@ public class MarkovQLVisitor extends AbstractMarkovQLVisitor{
 			probabilities.add((Transition) node.jjtGetChild(i).jjtAccept(this, data));
 		}
 		return probabilities;
-	}
-
-	@Override
-	public Object visit(ASTAlgorithm node, Object data) {
-		ASTIdentifier ident = (ASTIdentifier)node.jjtGetChild(0);
-		String algorithmName = (String)ident.jjtGetValue();
-		if(MarkovAlgorithmDictionary.getInstance().exists(algorithmName)){
-			return MarkovAlgorithmDictionary.getInstance().createNewAlgorithm(algorithmName);
-		}else{
-			throw new RuntimeException(new QueryParseException("Algorithm "+algorithmName+" does not exist for the hidden markov model!"));
-		}		
-	}
-
-	@Override
-	public Object visit(ASTForStream node, Object data) {
-		ASTIdentifier ident = (ASTIdentifier)node.jjtGetChild(0);
-		String streamName = (String)ident.jjtGetValue();
-		ILogicalOperator op = this.dataDictionary.getViewOrStream(streamName, this.caller);
-		return op;
 	}	
-
 }

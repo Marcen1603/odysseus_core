@@ -1,13 +1,17 @@
 package de.uniol.inf.is.odysseus.markov.operator.transform;
 
+import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
 import de.uniol.inf.is.odysseus.markov.operator.logical.MarkovAO;
-import de.uniol.inf.is.odysseus.markov.operator.physical.MarkovPO;
+import de.uniol.inf.is.odysseus.markov.operator.logical.MarkovGroupingHelper;
+import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TMarkovAORule extends AbstractTransformationRule<MarkovAO>{
+public class TMarkovAORule extends AbstractTransformationRule<MarkovAO> {
 
 	@Override
 	public int getPriority() {
@@ -16,20 +20,30 @@ public class TMarkovAORule extends AbstractTransformationRule<MarkovAO>{
 
 	@Override
 	public void execute(MarkovAO operator, TransformationConfiguration config) {
-		MarkovPO po = new MarkovPO(operator.getHiddenMarkovModel(), operator.getAlgorithm());
+		StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>> po = new StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>>(operator.getInputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(),
+				operator.getAggregations());
+		po.setOutputSchema(operator.getOutputSchema());
+		po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
+		po.setGroupingHelper(new MarkovGroupingHelper(operator.getInputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(),
+				operator.getAggregations(), operator.getHiddenMarkovModel()));			
 		replace(operator, po, config);
 		retract(operator);
-		
+
 	}
 
 	@Override
 	public boolean isExecutable(MarkovAO operator, TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
+		if(config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+			if (operator.isAllPhysicalInputSet()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public String getName() {
-		return "MarkovAO -> MarkovPO";
+		return "MarkovAO -> AggregatePO";
 	}
 
 	@Override

@@ -1,11 +1,16 @@
-package de.uniol.inf.is.odysseus.markov.operator.logical;
+package de.uniol.inf.is.odysseus.markov.operator;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.markov.operator.logical.MarkovAOBuilder;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	
+	private static final String MARKOV = "MARKOV";
 
 	static BundleContext getContext() {
 		return context;
@@ -17,6 +22,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		OperatorBuilderFactory.putOperatorBuilderType(MARKOV, new MarkovAOBuilder());
 	}
 
 	/*
@@ -25,6 +31,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+		OperatorBuilderFactory.removeOperatorBuilderType(MARKOV);
 	}
 
 }
