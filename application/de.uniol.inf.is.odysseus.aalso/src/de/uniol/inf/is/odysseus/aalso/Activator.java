@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.aalso;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.aalso.control.Siafu;
+import de.uniol.inf.is.odysseus.aalso.control.Controller;
 
 public class Activator implements BundleActivator {
 
@@ -19,7 +19,8 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		Siafu.main(new String[]{"-c=config.xml", "-s=IDEAAL.jar"});
+		// Siafu.main(new String[]{"-c=config.xml", "-s=IDEAAL.jar"});
+		new Controller("simulationConfigs/config.xml", "simulations/IDEAAL.jar");
 	}
 
 	/*
@@ -29,5 +30,4 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
-
 }

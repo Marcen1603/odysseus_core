@@ -56,8 +56,8 @@ public final class Siafu {
 	 * @param args the command line args
 	 */
 	public static void main(final String[] args) {
-		String configPath = "";
-		String simulationPath = "";
+		String configPath = "simulationConfigs/config.xml";
+		String simulationPath = "simulations/IDEAAL.jar";
 
 		for (int i = 0; i < args.length; i++) {
 			try {
