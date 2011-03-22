@@ -54,10 +54,6 @@ public class WindowAO extends UnaryLogicalOp {
 		this.windowSlide = slide;
 	}
 
-	public void setWindowSlide(String size) {
-		this.windowSlide = Long.parseLong(size);
-	}
-
 	@Parameter(type = LongParameter.class, name = "ADVANCE", optional = true)
 	public void setWindowAdvance(long windowAdvance) {
 		this.windowAdvance = windowAdvance;
