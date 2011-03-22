@@ -63,10 +63,6 @@ public class WindowAO extends UnaryLogicalOp {
 		this.windowAdvance = windowAdvance;
 	}
 
-	public void setWindowAdvance(String size) {
-		this.windowAdvance = Long.parseLong(size);
-	}
-
 	public WindowAO(WindowType windowType) {
 		super();
 		this.windowType = windowType;
@@ -98,7 +94,7 @@ public class WindowAO extends UnaryLogicalOp {
 		this.windowSize = windowSize;
 	}
 
-	public void setWindowSize(String size) {
+	public void setWindowSizeString(String size) {
 		this.windowSize = Long.parseLong(size);
 	}
 
