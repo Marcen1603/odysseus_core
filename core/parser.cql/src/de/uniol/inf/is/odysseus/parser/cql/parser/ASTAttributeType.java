@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class ASTAttributeType extends SimpleNode {
 	private SDFDatatype type;
 	

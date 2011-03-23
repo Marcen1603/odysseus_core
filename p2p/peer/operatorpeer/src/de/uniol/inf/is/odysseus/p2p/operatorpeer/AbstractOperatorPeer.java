@@ -20,7 +20,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.collection.Pair;
+import de.uniol.inf.is.odysseus.collection.IPair;
+import de.uniol.inf.is.odysseus.collection.ClonablePair;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
@@ -59,7 +60,7 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 
 	private Thread sourceHandlerThread;
 	
-	protected HashMap<String, Pair<String,String>> sources = new HashMap<String, Pair<String,String>>();
+	protected HashMap<String, IPair<String,String>> sources = new HashMap<String, IPair<String,String>>();
 	
 	private IDistributionClient distributionClient;
 
@@ -90,11 +91,11 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 		return distributionClient;
 	}
 
-	public HashMap<String, Pair<String, String>> getSources() {
+	public HashMap<String, IPair<String, String>> getSources() {
 		return sources;
 	}
 
-	public void setSources(HashMap<String, Pair<String, String>> sources) {
+	public void setSources(HashMap<String, IPair<String, String>> sources) {
 		this.sources = sources;
 	}
 

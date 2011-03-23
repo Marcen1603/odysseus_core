@@ -14,8 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions;
 
+import de.uniol.inf.is.odysseus.IClone;
 
 
-public interface IPartialAggregate<T>{
+
+public interface IPartialAggregate<T> extends IClone{
 	public IPartialAggregate<T> clone();
 }

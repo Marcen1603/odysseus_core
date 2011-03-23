@@ -13,6 +13,9 @@
   * limitations under the License.
   */
 package de.uniol.inf.is.odysseus.collection;
+
+import de.uniol.inf.is.odysseus.IClone;
+
 /**
  * First Element Sorted Pair
  * @author Marco Grawunder
@@ -20,17 +23,23 @@ package de.uniol.inf.is.odysseus.collection;
  * @param <E1>
  * @param <E2>
  */
-public class FESortedPair<E1 extends Comparable<E1>,E2> extends Pair<E1, E2> implements Comparable<FESortedPair<E1,E2>>{
+public class FESortedClonablePair<E1 extends Comparable<E1>&IClone,E2 extends IClone> extends ClonablePair<E1, E2> implements Comparable<FESortedClonablePair<E1,E2>>, IClone{
 		
-	public FESortedPair(E1 e1, E2 e2) {
+	public FESortedClonablePair(E1 e1, E2 e2) {
 		super(e1, e2);
 	}
 
+	public FESortedClonablePair(FESortedClonablePair<E1, E2> feSortedPair, boolean deepClone) {
+		super(feSortedPair,deepClone);
+	}
+
 	@Override
-	public int compareTo(FESortedPair<E1, E2> o) {
+	public int compareTo(FESortedClonablePair<E1, E2> o) {
 		return this.getE1().compareTo(o.getE1());
 	}
 	
+	public FESortedClonablePair<E1, E2> clone(){
+		return new FESortedClonablePair<E1, E2>(this,false);
+	}
 	
 }
-

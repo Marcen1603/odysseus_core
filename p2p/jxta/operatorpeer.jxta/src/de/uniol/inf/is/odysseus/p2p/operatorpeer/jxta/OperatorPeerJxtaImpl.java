@@ -20,9 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
@@ -32,7 +29,12 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -298,7 +300,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			return;
 		}
 
-		for (Pair<String, String> s : getSources().values()) {
+		for (IPair<String, String> s : getSources().values()) {
 			try {
 				User user = GlobalState.getActiveUser();
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();

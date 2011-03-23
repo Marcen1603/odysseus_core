@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W>
+public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IClone>
 		extends AggregatePO<Q, R, R, W> {
 
 	protected IMetadataMergeFunction<Q> metadataMerge;
@@ -258,7 +259,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 				sa.remove(element_agg);
 				// and split into two new elements
 				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>(
-						element_agg);
+						element_agg, true);
+				
 				copy.setMetadata((Q) element_agg.getMetadata().clone());
 				element_agg.getMetadata().setEnd(splitPoint);
 				sa.insert(element_agg);

@@ -20,8 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.uniol.inf.is.odysseus.IClone;
+
 public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
-        implements Comparable<SDFAttributeList>, Serializable {
+        implements Comparable<SDFAttributeList>, Serializable, IClone {
 
     private static final long serialVersionUID = 5218658682722448980L;
 

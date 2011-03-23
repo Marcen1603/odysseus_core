@@ -21,7 +21,7 @@ import java.util.Iterator;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class ASTSimpleTuple extends SimpleNode {
 	public ASTSimpleTuple(int id) {
 		super(id);

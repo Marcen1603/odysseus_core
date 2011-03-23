@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 
 public class AuroraMinLatency extends AbstractExecListScheduling {
 

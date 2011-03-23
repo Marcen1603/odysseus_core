@@ -14,16 +14,18 @@
   */
 package de.uniol.inf.is.odysseus.collection;
 
-public class Pair<E1, E2> implements IPair<E1, E2>{
+import de.uniol.inf.is.odysseus.IClone;
 
-	protected E1 e1;
-	protected E2 e2;
+public class ClonablePair<E1 extends IClone, E2 extends IClone> extends CloneableIdPair<E1, E2>{
+
 	
-	public Pair(E1 e1, E2 e2) {
-		this.e1 = e1;
-		this.e2 = e2;
+	public ClonablePair(E1 e1, E2 e2) {
+		super(e1,e2);
 	}
 	
+	public ClonablePair(ClonablePair<E1, E2> pair, boolean deepClone) {
+		super(pair,deepClone);
+	}
 
 	@Override
 	public int hashCode() {
@@ -53,30 +55,6 @@ public class Pair<E1, E2> implements IPair<E1, E2>{
 		} else if (!e2.equals(other.e2))
 			return false;
 		return true;
-	}
-
-
-	@Override
-	public E1 getE1() {
-		return e1;
-	}
-
-
-	@Override
-	public void setE1(E1 e1) {
-		this.e1 = e1;
-	}
-
-
-	@Override
-	public E2 getE2() {
-		return e2;
-	}
-
-
-	@Override
-	public void setE2(E2 e2) {
-		this.e2 = e2;
 	}
 	
 }

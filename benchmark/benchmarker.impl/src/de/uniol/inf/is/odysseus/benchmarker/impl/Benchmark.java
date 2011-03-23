@@ -28,8 +28,9 @@ import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
+import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.collection.ClonablePair;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.IEvent;
@@ -40,7 +41,6 @@ import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -70,7 +70,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private IBenchmarkResultFactory<ILatency> resultFactory;
 	private String[] metadataTypes;
 	private ArrayList<IQueryBuildSetting<?>> buildParameters;
-	private List<Pair<String, String>> queries;
+	private List<IPair<String, String>> queries;
 	private boolean usePunctuations;
 	private boolean useLoadShedding;
 	private boolean extendedPostPriorisation = false;
@@ -95,7 +95,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		this.dataType = "relational";
 		this.maxResults = -1;
 		this.buildParameters = null;
-		this.queries = new ArrayList<Pair<String, String>>();
+		this.queries = new ArrayList<IPair<String, String>>();
 		this.buildParameters = new ArrayList<IQueryBuildSetting<?>>();
 		this.metadataTypes = new String[] { ITimeInterval.class.getName(),
 				ILatency.class.getName() };
@@ -115,7 +115,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		this.queries.add(new Pair<String, String>(language, query));
 	}
 
-	public List<Pair<String, String>> getQueries() {
+	public List<IPair<String, String>> getQueries() {
 		return this.queries;
 	}
 
@@ -194,7 +194,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			parameters
 					.add(new ParameterBufferPlacementStrategy(bufferPlacement));
 
-			for (Pair<String, String> query : getQueries()) {
+			for (IPair<String, String> query : getQueries()) {
 				String parserId = query.getE1();
 				String queryString = query.getE2();
 				if (parserId.equalsIgnoreCase(SCRIPT_PARSER)) {

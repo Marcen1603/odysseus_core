@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 
 public class ASTMatrixExpression extends SimpleNode {
   public ArrayList matrix;

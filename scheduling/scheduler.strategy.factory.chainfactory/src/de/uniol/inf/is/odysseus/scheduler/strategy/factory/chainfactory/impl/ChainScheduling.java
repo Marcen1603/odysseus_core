@@ -23,7 +23,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.collection.FESortedPair;
+import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
@@ -63,7 +64,7 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		calculateLowerEnvelopes(pathes, progressCharts);
 		
 		// Jetzt alle Pfade nach der Steigung sortieren
-		PriorityQueue<FESortedPair<OperatorPoint, IIterableSource<?>>> opPointList = new PriorityQueue<FESortedPair<OperatorPoint, IIterableSource<?>>>();
+		PriorityQueue<FESortedClonablePair<OperatorPoint, IIterableSource<?>>> opPointList = new PriorityQueue<FESortedClonablePair<OperatorPoint, IIterableSource<?>>>();
 		// Dazu zunächst sammeln
 		for (Entry<List<IIterableSource<?>>, OperatorPoint[]> e : progressCharts.entrySet()) {
 			List<IIterableSource<?>> sources = e.getKey();
@@ -73,14 +74,14 @@ public class ChainScheduling extends AbstractExecListScheduling {
 			for (int i=0;i<points.length-1; i++){
 				if (sIter.hasNext()){
 					IIterableSource<?> v = sIter.next();
-					opPointList.add(new FESortedPair<OperatorPoint, IIterableSource<?>>(
+					opPointList.add(new FESortedClonablePair<OperatorPoint, IIterableSource<?>>(
 							points[i], v));
 				}
 			}
 		}
 				
 		List<IIterableSource<?>> execList = new LinkedList<IIterableSource<?>>();
-		for (FESortedPair<OperatorPoint, IIterableSource<?>> p : opPointList) {
+		for (FESortedClonablePair<OperatorPoint, IIterableSource<?>> p : opPointList) {
 			execList.add(p.getE2());
 		}
 		return execList;
@@ -224,7 +225,7 @@ public class ChainScheduling extends AbstractExecListScheduling {
  * @author Andreas Ziesenitz
  * 
  */
-class OperatorPoint implements Comparable<OperatorPoint> {
+class OperatorPoint implements Comparable<OperatorPoint>, IClone{
 
 	public double t;
 	public double s;
@@ -233,6 +234,12 @@ class OperatorPoint implements Comparable<OperatorPoint> {
 	public OperatorPoint(double t, double s) {
 		this.t = t;
 		this.s = s;
+	}
+
+	public OperatorPoint(OperatorPoint operatorPoint) {
+		this.t = operatorPoint.t;
+		this.s = operatorPoint.s;
+		this.d = operatorPoint.d;
 	}
 
 	@Override
@@ -250,6 +257,10 @@ class OperatorPoint implements Comparable<OperatorPoint> {
 	@Override
 	public String toString() {
 		return "t=" + t + " s=" + s + " d=" + d;
+	}
+	
+	public OperatorPoint clone(){
+		return new OperatorPoint(this);
 	}
 
 }

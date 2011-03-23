@@ -25,7 +25,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.security.krb5.internal.crypto.Nonce;
+
+import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
+import de.uniol.inf.is.odysseus.collection.ClonablePair;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
@@ -45,7 +49,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractOdysseusPeer.class);
-	private HashMap<String, Pair<P2PQuery, IExecutionListener>> queryList;
+	private HashMap<String, IPair<P2PQuery, IExecutionListener>> queryList;
 	private List<IExecutionHandler<?>> executionHandler;
 	private IMessageSender<?, ?, ?> messageSender;
 	final private ISocketServerListener socketServerListener;
@@ -55,7 +59,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	String name;
 
 	public AbstractOdysseusPeer(ISocketServerListener socketServerListener, ILogListener log) {
-		this.queryList = new HashMap<String, Pair<P2PQuery, IExecutionListener>>();
+		this.queryList = new HashMap<String, IPair<P2PQuery, IExecutionListener>>();
 		this.executionHandler = new ArrayList<IExecutionHandler<?>>();
 		this.socketServerListener = socketServerListener;
 		this.log = log;
@@ -131,7 +135,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	@Override
 	public P2PQuery getQuery(String queryID) {
 		synchronized (queryList) {
-			Pair<P2PQuery, IExecutionListener> q = queryList.get(queryID);
+			IPair<P2PQuery, IExecutionListener> q = queryList.get(queryID);
 			return q != null ? q.getE1() : null;
 		}
 	}
@@ -158,7 +162,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	@Override
 	public IExecutionListener getListenerForQuery(String queryID) {
 		synchronized (queryList) {
-			Pair<P2PQuery, IExecutionListener> q = queryList.get(queryID);
+			IPair<P2PQuery, IExecutionListener> q = queryList.get(queryID);
 			return q != null ? q.getE2() : null;
 		}
 	}
@@ -167,7 +171,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	public int getQueryCount(Lifecycle lifecycle) {
 		int count = 0;
 		synchronized (queryList) {
-			for (Entry<String, Pair<P2PQuery, IExecutionListener>> q : queryList
+			for (Entry<String, IPair<P2PQuery, IExecutionListener>> q : queryList
 					.entrySet()) {
 				if (q.getValue().getE1().getStatus() == lifecycle) {
 					count++;
@@ -181,7 +185,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	public int getQueryCount(List<Lifecycle> lifecycle) {
 		int count = 0;
 		synchronized (queryList) {
-			for (Entry<String, Pair<P2PQuery, IExecutionListener>> q : queryList
+			for (Entry<String, IPair<P2PQuery, IExecutionListener>> q : queryList
 					.entrySet()) {
 				if (lifecycle.contains(q.getValue().getE1().getStatus())) {
 					count++;

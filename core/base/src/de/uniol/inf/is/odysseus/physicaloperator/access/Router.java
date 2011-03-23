@@ -30,6 +30,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
 
 public class Router extends Thread {
@@ -46,7 +47,7 @@ public class Router extends Thread {
 	Selector selector = null;
 	static Router instance = null;
 	private Map<IRouterReceiver,SocketChannel> routerReceiverMap = new HashMap<IRouterReceiver, SocketChannel>();
-	private LinkedList<Pair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<Pair<SocketChannel, IRouterReceiver>>();
+	private LinkedList<IPair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<IPair<SocketChannel, IRouterReceiver>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
 
@@ -195,7 +196,7 @@ public class Router extends Thread {
 	private synchronized void processRegister() {
 		synchronized (deferredList) {
 			while (deferredList.size() > 0) {
-				Pair<SocketChannel, IRouterReceiver> pair = deferredList
+				IPair<SocketChannel, IRouterReceiver> pair = deferredList
 						.poll();
 				try {
 					getLogger().debug("Registering "+pair.getE1()+" "+pair.getE2());

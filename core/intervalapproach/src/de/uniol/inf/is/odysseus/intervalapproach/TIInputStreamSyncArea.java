@@ -20,6 +20,7 @@ import java.util.PriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -44,10 +45,10 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 	
 	final protected PointInTime[] minTs;
 	protected IProcessInternal<T> po;
-	private PriorityQueue<Pair<T, Integer>> inputQueue = new PriorityQueue<Pair<T, Integer>>(
-			10, new Comparator<Pair<T, Integer>>() {
+	private PriorityQueue<IPair<T, Integer>> inputQueue = new PriorityQueue<IPair<T, Integer>>(
+			10, new Comparator<IPair<T, Integer>>() {
 				@Override
-				public int compare(Pair<T, Integer> left, Pair<T, Integer> right) {
+				public int compare(IPair<T, Integer> left, IPair<T, Integer> right) {
 					return left.getE1().getMetadata()
 							.compareTo(right.getE1().getMetadata());
 				};
@@ -93,7 +94,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 
 	@Override
 	public void done() {
-		for (Pair<T, Integer> element : inputQueue) {
+		for (IPair<T, Integer> element : inputQueue) {
 			po.process_internal(element.getE1(), element.getE2());
 		}
 		inputQueue.clear();
@@ -122,7 +123,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 			synchronized (this.inputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
-				Pair<T, Integer> elem = this.inputQueue.peek();
+				IPair<T, Integer> elem = this.inputQueue.peek();
 				while (elem != null
 						&& elem.getE1().getMetadata().getStart()
 								.beforeOrEquals(minimum)) {

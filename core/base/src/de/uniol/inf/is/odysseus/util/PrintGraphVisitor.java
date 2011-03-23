@@ -16,20 +16,21 @@ package de.uniol.inf.is.odysseus.util;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.collection.IdentityPair;
+import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.collection.CloneableIdPair;
 
-public class PrintGraphVisitor<T> implements IGraphNodeVisitor<T,String>{
+public class PrintGraphVisitor<T extends IClone> implements IGraphNodeVisitor<T,String>{
 
-	private ArrayList<IdentityPair<T,T>> visited;
+	private ArrayList<CloneableIdPair<T,T>> visited;
 	private String graph;
 	
 	public PrintGraphVisitor(){
-		this.visited = new ArrayList<IdentityPair<T,T>>();
+		this.visited = new ArrayList<CloneableIdPair<T,T>>();
 		this.graph = "";
 	}
 	
 	public void clear(){
-		this.visited = new ArrayList<IdentityPair<T, T>>();
+		this.visited = new ArrayList<CloneableIdPair<T, T>>();
 		this.graph = "";
 	}
 	
@@ -44,20 +45,20 @@ public class PrintGraphVisitor<T> implements IGraphNodeVisitor<T,String>{
 
 	@Override
 	public void beforeFromSinkToSourceAction(T sink, T source) {
-		if(!this.visited.contains(new IdentityPair<T,T>(source, sink))){
+		if(!this.visited.contains(new CloneableIdPair<T,T>(source, sink))){
 			graph += sink.toString() + " <-- " + source.toString() + "\n";
 		}
 		
-		this.visited.add(new IdentityPair<T,T>(source,sink));
+		this.visited.add(new CloneableIdPair<T,T>(source,sink));
 	}
 
 	@Override
 	public void beforeFromSourceToSinkAction(T source, T sink) {
-		if(!this.visited.contains(new IdentityPair<T,T>(source, sink))){
+		if(!this.visited.contains(new CloneableIdPair<T,T>(source, sink))){
 			graph += source.toString() + " --> " + sink.toString() + "\n";
 		}
 		
-		this.visited.add(new IdentityPair<T,T>(source,sink));
+		this.visited.add(new CloneableIdPair<T,T>(source,sink));
 	}
 
 	@Override

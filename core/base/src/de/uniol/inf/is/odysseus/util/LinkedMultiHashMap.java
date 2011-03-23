@@ -23,14 +23,15 @@ import java.util.Set;
 
 import org.apache.commons.collections.map.MultiValueMap;
 
+import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
 
 public class LinkedMultiHashMap<K, V> implements Map<K, Collection<V>> {
 
 	private class ValueIterator implements Iterator<V> {
 
-		private Iterator<Pair<K, V>> iterator;
-		private Pair<K, V> curElement;
+		private Iterator<IPair<K, V>> iterator;
+		private IPair<K, V> curElement;
 
 		public ValueIterator() {
 			this.iterator = entries.iterator();
@@ -57,7 +58,7 @@ public class LinkedMultiHashMap<K, V> implements Map<K, Collection<V>> {
 	}
 
 	final private MultiValueMap map = new MultiValueMap();
-	final private LinkedList<Pair<K, V>> entries = new LinkedList<Pair<K, V>>();
+	final private LinkedList<IPair<K, V>> entries = new LinkedList<IPair<K, V>>();
 
 	public LinkedMultiHashMap() {
 	}

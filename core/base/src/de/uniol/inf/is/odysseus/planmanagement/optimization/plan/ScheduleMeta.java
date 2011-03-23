@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.ICSVToString;
+import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
 
 public class ScheduleMeta implements ICSVToString{
@@ -27,7 +28,7 @@ public class ScheduleMeta implements ICSVToString{
 	private double rate;
 	private long allSchedulings;
 	
-	final private LinkedList<Pair<Long, Boolean>> history;
+	final private LinkedList<IPair<Long, Boolean>> history;
 
 	public ScheduleMeta(long lastSchedule) {
 		super();
@@ -35,7 +36,7 @@ public class ScheduleMeta implements ICSVToString{
 		this.inTimeCount = 0;
 		this.allSchedulings = 0;
 		this.lastDiff = 0;
-		history = new LinkedList<Pair<Long, Boolean>>();
+		history = new LinkedList<IPair<Long, Boolean>>();
 	}
 
 	public ScheduleMeta(ScheduleMeta other) {
@@ -43,7 +44,7 @@ public class ScheduleMeta implements ICSVToString{
 		this.inTimeCount = other.inTimeCount;
 		this.allSchedulings = other.allSchedulings;
 		this.lastDiff = other.lastDiff;
-		history = new LinkedList<Pair<Long, Boolean>>(other.history);
+		history = new LinkedList<IPair<Long, Boolean>>(other.history);
 	}
 
 	public void csvPrint(StringBuffer toPrint) {
@@ -77,9 +78,9 @@ public class ScheduleMeta implements ICSVToString{
 
 	public void drainHistory(long before) {
 		synchronized (history) {
-			Iterator<Pair<Long, Boolean>> iter = history.iterator();
+			Iterator<IPair<Long, Boolean>> iter = history.iterator();
 			while (iter.hasNext()) {
-				Pair<Long, Boolean> entry = iter.next();
+				IPair<Long, Boolean> entry = iter.next();
 				if (entry.getE1().longValue() < getNow() - before) {
 					iter.remove();
 					if (entry.getE2()) {

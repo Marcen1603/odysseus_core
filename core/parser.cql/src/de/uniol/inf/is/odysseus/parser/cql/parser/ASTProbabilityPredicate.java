@@ -17,7 +17,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class ASTProbabilityPredicate extends AbstractPredicate {
   private ArrayList xLow;
   private ArrayList xUp;

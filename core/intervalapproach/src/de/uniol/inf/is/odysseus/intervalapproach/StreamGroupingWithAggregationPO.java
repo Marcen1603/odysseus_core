@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.collection.FESortedPair;
+import de.uniol.inf.is.odysseus.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -95,7 +95,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 						.get(attrList);
 				for (Entry<AggregateFunction, SDFAttribute> e : funcs
 						.entrySet()) {
-					FESortedPair<SDFAttributeList, AggregateFunction> p = new FESortedPair<SDFAttributeList, AggregateFunction>(
+					FESortedClonablePair<SDFAttributeList, AggregateFunction> p = new FESortedClonablePair<SDFAttributeList, AggregateFunction>(
 							attrList, e.getKey());
 					setAggregationFunction(p, getGroupingHelper()
 							.getInitAggFunction(p));

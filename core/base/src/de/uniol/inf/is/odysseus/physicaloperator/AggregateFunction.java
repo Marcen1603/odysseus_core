@@ -18,8 +18,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.IClone;
+
 public class AggregateFunction implements Comparable<AggregateFunction>,
-		Serializable {
+		Serializable, IClone {
 
 	/**
 * 
@@ -31,6 +33,11 @@ public class AggregateFunction implements Comparable<AggregateFunction>,
 	public AggregateFunction(String name) {
 		super();
 		this.name = name;
+	}
+
+	public AggregateFunction(AggregateFunction aggregateFunction) {
+		this.name = aggregateFunction.name;
+		this.properties = new HashMap<String, String>(aggregateFunction.properties);
 	}
 
 	public String getName() {
@@ -62,6 +69,10 @@ public class AggregateFunction implements Comparable<AggregateFunction>,
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public AggregateFunction clone(){
+		return new AggregateFunction(this);
 	}
 
 }
