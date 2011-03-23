@@ -4,27 +4,23 @@ package de.uniol.inf.is.odysseus.markov.markovql.parser;
 public interface MarkovQLParserTreeConstants
 {
   public int JJTQUERY = 0;
-  public int JJTALGORITHM = 1;
-  public int JJTFORSTREAM = 2;
-  public int JJTHIDDENMARKOVMODEL = 3;
-  public int JJTIDENTIFIER = 4;
-  public int JJTQUOTEDIDENTIFIER = 5;
-  public int JJTSTATES = 6;
-  public int JJTOBSERVATIONS = 7;
-  public int JJTTRANSITIONS = 8;
-  public int JJTEMISSIONS = 9;
-  public int JJTSTARTPROBABILITY = 10;
-  public int JJTPROBABILTYLIST = 11;
-  public int JJTPROBABILITY = 12;
-  public int JJTPROBABILITYTRANSITIONLIST = 13;
-  public int JJTPROBABILITYTRANSITION = 14;
-  public int JJTSTATELIST = 15;
+  public int JJTHIDDENMARKOVMODEL = 1;
+  public int JJTIDENTIFIER = 2;
+  public int JJTQUOTEDIDENTIFIER = 3;
+  public int JJTSTATES = 4;
+  public int JJTOBSERVATIONS = 5;
+  public int JJTTRANSITIONS = 6;
+  public int JJTEMISSIONS = 7;
+  public int JJTSTARTPROBABILITY = 8;
+  public int JJTPROBABILTYLIST = 9;
+  public int JJTPROBABILITY = 10;
+  public int JJTPROBABILITYTRANSITIONLIST = 11;
+  public int JJTPROBABILITYTRANSITION = 12;
+  public int JJTSTATELIST = 13;
 
 
   public String[] jjtNodeName = {
     "Query",
-    "Algorithm",
-    "ForStream",
     "HiddenMarkovModel",
     "Identifier",
     "QuotedIdentifier",
@@ -40,4 +36,4 @@ public interface MarkovQLParserTreeConstants
     "StateList",
   };
 }
-/* JavaCC - OriginalChecksum=19923ea2910dfc44fdf66c652162eb11 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4fb35e0febf9c0960cf05dd0803eb18a (do not edit this line) */

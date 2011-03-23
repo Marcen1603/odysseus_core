@@ -13,33 +13,43 @@ public interface MarkovQLParserConstants {
   /** RegularExpression Id. */
   int K_APPLY = 7;
   /** RegularExpression Id. */
-  int K_EMISSIONS = 8;
+  int K_AS = 8;
   /** RegularExpression Id. */
-  int K_FOR = 9;
+  int K_CQL = 9;
   /** RegularExpression Id. */
-  int K_HIDDEN = 10;
+  int K_EMISSIONS = 10;
   /** RegularExpression Id. */
-  int K_MARKOV = 11;
+  int K_FOR = 11;
   /** RegularExpression Id. */
-  int K_MODEL = 12;
+  int K_HIDDEN = 12;
   /** RegularExpression Id. */
-  int K_OBSERVATIONS = 13;
+  int K_MARKOV = 13;
   /** RegularExpression Id. */
-  int K_START_PROBABILITY = 14;
+  int K_MODEL = 14;
   /** RegularExpression Id. */
-  int K_STATES = 15;
+  int K_OBSERVATIONS = 15;
   /** RegularExpression Id. */
-  int K_TO = 16;
+  int K_PQL = 16;
   /** RegularExpression Id. */
-  int K_TRANSITIONS = 17;
+  int K_START_PROBABILITY = 17;
   /** RegularExpression Id. */
-  int IDENTIFIER = 18;
+  int K_STATES = 18;
   /** RegularExpression Id. */
-  int LETTER = 19;
+  int K_STREAM_SQL = 19;
   /** RegularExpression Id. */
-  int DIGIT = 20;
+  int K_TO = 20;
   /** RegularExpression Id. */
-  int FLOAT = 21;
+  int K_TRANSITIONS = 21;
+  /** RegularExpression Id. */
+  int CQLSTRING = 22;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 23;
+  /** RegularExpression Id. */
+  int LETTER = 24;
+  /** RegularExpression Id. */
+  int DIGIT = 25;
+  /** RegularExpression Id. */
+  int FLOAT = 26;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -54,16 +64,21 @@ public interface MarkovQLParserConstants {
     "<token of kind 5>",
     "<token of kind 6>",
     "\"APPLY\"",
+    "\"AS\"",
+    "\"CQL\"",
     "\"EMISSIONS\"",
     "\"FOR\"",
     "\"HIDDEN\"",
     "\"MARKOV\"",
     "\"MODEL\"",
     "\"OBSERVATIONS\"",
+    "\"PQL\"",
     "\"START\"",
     "\"STATES\"",
+    "\"STREAMSQL\"",
     "\"TO\"",
     "\"TRANSITIONS\"",
+    "<CQLSTRING>",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",

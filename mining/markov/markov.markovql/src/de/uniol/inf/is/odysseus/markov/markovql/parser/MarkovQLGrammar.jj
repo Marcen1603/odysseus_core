@@ -2,13 +2,13 @@
 /*@egen*/options{  JDK_VERSION = "1.5";  IGNORE_CASE = true;                                                                                                   }PARSER_BEGIN(MarkovQLParser)package de.uniol.inf.is.odysseus.markov.markovql.parser;import java.util.List;import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;@SuppressWarnings("all")public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected static JJTMarkovQLParserState jjtree = new JJTMarkovQLParserState();
 
-/*@egen*/ }PARSER_END(MarkovQLParser)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}TOKEN : /* CONSTANTS */{    < K_APPLY : "APPLY" >| < K_EMISSIONS : "EMISSIONS" >| < K_FOR : "FOR" >| < K_HIDDEN : "HIDDEN" >| < K_MARKOV : "MARKOV" >| < K_MODEL : "MODEL" >| < K_OBSERVATIONS : "OBSERVATIONS" >| < K_START_PROBABILITY : "START" >| < K_STATES : "STATES" >| < K_TO : "TO" >| < K_TRANSITIONS : "TRANSITIONS" >}TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >| < FLOAT : (< DIGIT >)+ ("." (< DIGIT >)+ )? > }ASTQuery Query() :{/*@bgen(jjtree) Query */
+/*@egen*/ }PARSER_END(MarkovQLParser)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}TOKEN : /* CONSTANTS */{    < K_APPLY : "APPLY" >| < K_AS : "AS" >| < K_CQL : "CQL" >| < K_EMISSIONS : "EMISSIONS" >| < K_FOR : "FOR" >| < K_HIDDEN : "HIDDEN" >| < K_MARKOV : "MARKOV" >| < K_MODEL : "MODEL" >| < K_OBSERVATIONS : "OBSERVATIONS" >| < K_PQL : "PQL" >| < K_START_PROBABILITY : "START" >| < K_STATES : "STATES" >| < K_STREAM_SQL : "STREAMSQL" >| < K_TO : "TO" >| < K_TRANSITIONS : "TRANSITIONS" >}TOKEN : /* IDENTIFIERS */{  < CQLSTRING : "[" (~[ "[", "]" ])+ "]">| < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >| < FLOAT : (< DIGIT >)+ ("." (< DIGIT >)+ )? > }  ASTQuery Query() :{/*@bgen(jjtree) Query */
   ASTQuery jjtn000 = new ASTQuery(JJTQUERY);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) Query */
         try {
-/*@egen*/  	( Algorithm() HiddenMarkovModel() ForStream() [";"] )+/*@bgen(jjtree)*/
+/*@egen*/  	( HiddenMarkovModel() [";"] )+/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -33,58 +33,6 @@
             jjtree.closeNodeScope(jjtn000, true);
           }
         }
-/*@egen*/}void Algorithm():{/*@bgen(jjtree) Algorithm */
-  ASTAlgorithm jjtn000 = new ASTAlgorithm(JJTALGORITHM);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) Algorithm */
-  try {
-/*@egen*/  < K_APPLY > Identifier() < K_TO >/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
-/*@egen*/}  void ForStream():{/*@bgen(jjtree) ForStream */
-  ASTForStream jjtn000 = new ASTForStream(JJTFORSTREAM);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) ForStream */
-  try {
-/*@egen*/  < K_FOR > Identifier()/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
 /*@egen*/}void HiddenMarkovModel() :{/*@bgen(jjtree) HiddenMarkovModel */
   ASTHiddenMarkovModel jjtn000 = new ASTHiddenMarkovModel(JJTHIDDENMARKOVMODEL);
   boolean jjtc000 = true;

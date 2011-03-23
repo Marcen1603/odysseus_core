@@ -5,8 +5,6 @@ public interface MarkovQLParserVisitor
 {
   public Object visit(SimpleNode node, Object data);
   public Object visit(ASTQuery node, Object data);
-  public Object visit(ASTAlgorithm node, Object data);
-  public Object visit(ASTForStream node, Object data);
   public Object visit(ASTHiddenMarkovModel node, Object data);
   public Object visit(ASTIdentifier node, Object data);
   public Object visit(ASTQuotedIdentifier node, Object data);
@@ -21,4 +19,4 @@ public interface MarkovQLParserVisitor
   public Object visit(ASTProbabilityTransition node, Object data);
   public Object visit(ASTStateList node, Object data);
 }
-/* JavaCC - OriginalChecksum=1278457611dfb0e932554f6fa5b2460c (do not edit this line) */
+/* JavaCC - OriginalChecksum=37edb3dce27eb914c844c54351aa5485 (do not edit this line) */

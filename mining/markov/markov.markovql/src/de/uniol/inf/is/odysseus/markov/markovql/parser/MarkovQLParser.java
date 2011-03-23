@@ -17,19 +17,17 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     try {
       label_1:
       while (true) {
-        Algorithm();
         HiddenMarkovModel();
-        ForStream();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 22:
-          jj_consume_token(22);
+        case 27:
+          jj_consume_token(27);
           break;
         default:
           jj_la1[0] = jj_gen;
           ;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_APPLY:
+        case K_HIDDEN:
           ;
           break;
         default:
@@ -62,65 +60,6 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     throw new Error("Missing return statement in function");
   }
 
-  static final public void Algorithm() throws ParseException {
- /*@bgen(jjtree) Algorithm */
-  ASTAlgorithm jjtn000 = new ASTAlgorithm(JJTALGORITHM);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-    try {
-      jj_consume_token(K_APPLY);
-      Identifier();
-      jj_consume_token(K_TO);
-    } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      {if (true) throw (RuntimeException)jjte000;}
-    }
-    if (jjte000 instanceof ParseException) {
-      {if (true) throw (ParseException)jjte000;}
-    }
-    {if (true) throw (Error)jjte000;}
-    } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-    }
-  }
-
-  static final public void ForStream() throws ParseException {
- /*@bgen(jjtree) ForStream */
-  ASTForStream jjtn000 = new ASTForStream(JJTFORSTREAM);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-    try {
-      jj_consume_token(K_FOR);
-      Identifier();
-    } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      {if (true) throw (RuntimeException)jjte000;}
-    }
-    if (jjte000 instanceof ParseException) {
-      {if (true) throw (ParseException)jjte000;}
-    }
-    {if (true) throw (Error)jjte000;}
-    } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-    }
-  }
-
   static final public void HiddenMarkovModel() throws ParseException {
  /*@bgen(jjtree) HiddenMarkovModel */
   ASTHiddenMarkovModel jjtn000 = new ASTHiddenMarkovModel(JJTHIDDENMARKOVMODEL);
@@ -131,11 +70,11 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       jj_consume_token(K_MARKOV);
       jj_consume_token(K_MODEL);
       Identifier();
-      jj_consume_token(23);
+      jj_consume_token(28);
       States();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 24:
-        jj_consume_token(24);
+      case 29:
+        jj_consume_token(29);
         break;
       default:
         jj_la1[2] = jj_gen;
@@ -143,8 +82,8 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       }
       Observations();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 24:
-        jj_consume_token(24);
+      case 29:
+        jj_consume_token(29);
         break;
       default:
         jj_la1[3] = jj_gen;
@@ -152,8 +91,8 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       }
       Transitions();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 24:
-        jj_consume_token(24);
+      case 29:
+        jj_consume_token(29);
         break;
       default:
         jj_la1[4] = jj_gen;
@@ -161,15 +100,15 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       }
       Emissions();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 24:
-        jj_consume_token(24);
+      case 29:
+        jj_consume_token(29);
         break;
       default:
         jj_la1[5] = jj_gen;
         ;
       }
       StartProbability();
-      jj_consume_token(25);
+      jj_consume_token(30);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -215,15 +154,15 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);
     try {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 26:
-        jj_consume_token(26);
+      case 31:
+        jj_consume_token(31);
         Identifier();
-        jj_consume_token(26);
+        jj_consume_token(31);
         break;
-      case 27:
-        jj_consume_token(27);
+      case 32:
+        jj_consume_token(32);
         Identifier();
-        jj_consume_token(27);
+        jj_consume_token(32);
         break;
       default:
         jj_la1[6] = jj_gen;
@@ -258,10 +197,10 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_STATES);
-      jj_consume_token(28);
-      jj_consume_token(29);
+      jj_consume_token(33);
+      jj_consume_token(34);
       StateList();
-      jj_consume_token(30);
+      jj_consume_token(35);
     } catch (Throwable jjte000) {
    if (jjtc000) {
      jjtree.clearNodeScope(jjtn000);
@@ -290,10 +229,10 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_OBSERVATIONS);
-      jj_consume_token(28);
-      jj_consume_token(29);
+      jj_consume_token(33);
+      jj_consume_token(34);
       StateList();
-      jj_consume_token(30);
+      jj_consume_token(35);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -322,10 +261,10 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_TRANSITIONS);
-      jj_consume_token(28);
-      jj_consume_token(29);
+      jj_consume_token(33);
+      jj_consume_token(34);
       ProbabilityTransitionList();
-      jj_consume_token(30);
+      jj_consume_token(35);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -354,10 +293,10 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_EMISSIONS);
-      jj_consume_token(28);
-      jj_consume_token(29);
+      jj_consume_token(33);
+      jj_consume_token(34);
       ProbabilityTransitionList();
-      jj_consume_token(30);
+      jj_consume_token(35);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -386,10 +325,10 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(K_START_PROBABILITY);
-      jj_consume_token(28);
-      jj_consume_token(29);
+      jj_consume_token(33);
+      jj_consume_token(34);
       ProbabiltyList();
-      jj_consume_token(30);
+      jj_consume_token(35);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -421,14 +360,14 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       label_2:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 24:
+        case 29:
           ;
           break;
         default:
           jj_la1[7] = jj_gen;
           break label_2;
         }
-        jj_consume_token(24);
+        jj_consume_token(29);
         Probability();
       }
     } catch (Throwable jjte000) {
@@ -459,7 +398,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);Token t;
     try {
       QuotedIdentifier();
-      jj_consume_token(31);
+      jj_consume_token(36);
       t = jj_consume_token(FLOAT);
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
@@ -495,14 +434,14 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       label_3:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 24:
+        case 29:
           ;
           break;
         default:
           jj_la1[8] = jj_gen;
           break label_3;
         }
-        jj_consume_token(24);
+        jj_consume_token(29);
         ProbabilityTransition();
       }
     } catch (Throwable jjte000) {
@@ -533,7 +472,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   jjtree.openNodeScope(jjtn000);
     try {
       QuotedIdentifier();
-      jj_consume_token(32);
+      jj_consume_token(37);
       Probability();
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -566,14 +505,14 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       label_4:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 24:
+        case 29:
           ;
           break;
         default:
           jj_la1[9] = jj_gen;
           break label_4;
         }
-        jj_consume_token(24);
+        jj_consume_token(29);
         QuotedIdentifier();
       }
     } catch (Throwable jjte000) {
@@ -615,10 +554,10 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x400000,0x80,0x1000000,0x1000000,0x1000000,0x1000000,0xc000000,0x1000000,0x1000000,0x1000000,};
+      jj_la1_0 = new int[] {0x8000000,0x1000,0x20000000,0x20000000,0x20000000,0x20000000,0x80000000,0x20000000,0x20000000,0x20000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -759,7 +698,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[33];
+    boolean[] la1tokens = new boolean[38];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -776,7 +715,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
         }
       }
     }
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < 38; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
