@@ -20,7 +20,7 @@ public class TMarkovAORule extends AbstractTransformationRule<MarkovAO> {
 
 	@Override
 	public void execute(MarkovAO operator, TransformationConfiguration config) {
-		StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>> po = new StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>>(operator.getInputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(),
+		StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>> po = new StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>>(operator.getInputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(),
 				operator.getAggregations());
 		po.setOutputSchema(operator.getOutputSchema());
 		po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());

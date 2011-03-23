@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.Abstrac
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class ViterbiAggregationFunction extends AbstractAggregateFunction<RelationalTuple<?>>{
+public class ViterbiAggregationFunction extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>>{
 
 	private HiddenMarkovModel hmm;	
 	

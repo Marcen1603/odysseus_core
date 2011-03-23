@@ -24,8 +24,8 @@ public class MarkovGroupingHelper<T extends IMetaAttribute> extends RelationalTu
 		this.hmm = hmm;
 	}
 	
-	protected IEvaluator<RelationalTuple<?>> createAggFunction(AggregateFunction key, int[] pos) {
-		IEvaluator<RelationalTuple<?>> aggFunc = null;		
+	protected IEvaluator<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(AggregateFunction key, int[] pos) {
+		IEvaluator<RelationalTuple<?>,RelationalTuple<?>> aggFunc = null;		
 		if ((key.getName().equalsIgnoreCase("FORWARD"))) {
 			aggFunc = new ForwardAggregationFunction(this.hmm);
 		} else if (key.getName().equalsIgnoreCase("VITERBI")) {
