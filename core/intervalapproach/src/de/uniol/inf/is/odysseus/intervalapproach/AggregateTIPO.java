@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IClone>
-		extends AggregatePO<Q, R, R, W> {
+		extends AggregatePO<Q, R, W> {
 
 	protected IMetadataMergeFunction<Q> metadataMerge;
 

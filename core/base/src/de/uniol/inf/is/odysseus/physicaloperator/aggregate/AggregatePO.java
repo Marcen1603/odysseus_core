@@ -36,14 +36,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttributeContainer<? extends M>, A extends IClone, W extends IClone>
+abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttributeContainer<? extends M> & IClone, W extends IClone>
         extends AbstractPipe<R, W> {
 
-    private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<A>> init = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<A>>();
+    private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<R>> init = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<R>>();
 
-    private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<A>> merger = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<A>>();
+    private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<R>> merger = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<R>>();
 
-    private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<A, W>> eval = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<A, W>>();
+    private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<R, W>> eval = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<R, W>>();
 
     private SDFAttributeList inputSchema = null;
     private Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = null;
@@ -92,12 +92,12 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
         return outputSchema;
     }
 
-    public AggregatePO(AggregatePO<M, R, A, W> agg) {
-        init = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<A>>(
+    public AggregatePO(AggregatePO<M, R, W> agg) {
+        init = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<R>>(
                 agg.init);
-        merger = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<A>>(
+        merger = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<R>>(
                 agg.merger);
-        eval = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<A, W>>(
+        eval = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<R, W>>(
                 agg.eval);
         this.inputSchema = agg.inputSchema;
         this.outputSchema = agg.outputSchema;
@@ -108,31 +108,31 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 
     public void setAggregationFunction(
             FESortedClonablePair<SDFAttributeList, AggregateFunction> p,
-            IInitializer<A> i) {
+            IInitializer<R> i) {
         init.put(p, i);
     }
 
     public void setAggregationFunction(
-            FESortedClonablePair<SDFAttributeList, AggregateFunction> p, IMerger<A> m) {
+            FESortedClonablePair<SDFAttributeList, AggregateFunction> p, IMerger<R> m) {
         merger.put(p, m);
     }
 
     public void setAggregationFunction(
-            FESortedClonablePair<SDFAttributeList, AggregateFunction> p, IEvaluator<A,W> e) {
+            FESortedClonablePair<SDFAttributeList, AggregateFunction> p, IEvaluator<R,W> e) {
         eval.put(p, e);
     }
 
-    protected IEvaluator<A, W> getEvalFunction(
+    protected IEvaluator<R, W> getEvalFunction(
             FESortedClonablePair<SDFAttributeList, AggregateFunction> p) {
         return eval.get(p);
     }
 
-    protected IMerger<A> getMergeFunction(
+    protected IMerger<R> getMergeFunction(
             FESortedClonablePair<SDFAttributeList, AggregateFunction> p) {
         return merger.get(p);
     }
 
-    protected IInitializer<A> getInitFunction(
+    protected IInitializer<R> getInitFunction(
             FESortedClonablePair<SDFAttributeList, AggregateFunction> p) {
         return init.get(p);
     }
@@ -140,9 +140,9 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
     // Erzeugen der initialen Map fï¿½r alle
     // Attribut/Aggregierungsfunktion-Paare,
     // abgebildet auf Partielle Aggregate
-    protected PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M> calcInit(
-            A element) {
-        PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M> ret = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M>();
+    protected PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M> calcInit(
+            R element) {
+        PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M> ret = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M>();
         // Hier ggf. direkt die Liste der zu aggregierenden Attribute auslesen
         for (SDFAttributeList attrList : aggregations.keySet()) {
             if (SDFAttributeList.subset(attrList, inputSchema)) {
@@ -151,7 +151,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
                 for (Entry<AggregateFunction, SDFAttribute> e : funcs
                         .entrySet()) {
                     // Achtung! Das Eingabeattribut, nicht das Ausgabeattribut
-                    IPartialAggregate<A> pa = getInitFunction(
+                    IPartialAggregate<R> pa = getInitFunction(
                             new FESortedClonablePair<SDFAttributeList, AggregateFunction>(
                                     attrList, e.getKey())).init(element);
                     ret.put(attrList, e.getKey(), pa);
@@ -161,19 +161,18 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
         return ret;
     }
 
-    // TODO: PairMap<...,R> gemacht. Richtig so?
-    // Mergen aller Elemente in der toMerge-Map mit dem element vom Typ A (mit
+    // Mergen aller Elemente in der toMerge-Map mit dem element vom Typ R (mit
     // dem passenden Merger)
-    protected synchronized PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M> calcMerge(
-            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M> toMerge,
-            A element) {
-        PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M> ret = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M>();
+    protected synchronized PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M> calcMerge(
+            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M> toMerge,
+            R element) {
+        PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M> ret = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M>();
 
         // Jedes Element in toMerge mit element mergen
-        for (Entry<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IPartialAggregate<A>> e : toMerge
+        for (Entry<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IPartialAggregate<R>> e : toMerge
                 .entrySet()) {
-            IMerger<A> mf = getMergeFunction(e.getKey());
-            IPartialAggregate<A> pa = mf.merge(e.getValue(), element, true);
+            IMerger<R> mf = getMergeFunction(e.getKey());
+            IPartialAggregate<R> pa = mf.merge(e.getValue(), element, true);
             ret.put(e.getKey(), pa);
         }
 
@@ -182,11 +181,11 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 
     // Auswerten aller Elemente in der toEval map (mit dem passenden Evaluator)
     protected PairMap<SDFAttributeList, AggregateFunction, W, M> calcEval(
-            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<A>, M> toEval) {
+            PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, M> toEval) {
         PairMap<SDFAttributeList, AggregateFunction, W, M> ret = new PairMap<SDFAttributeList, AggregateFunction, W, M>();
-        for (Entry<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IPartialAggregate<A>> e : toEval
+        for (Entry<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IPartialAggregate<R>> e : toEval
                 .entrySet()) {
-            IEvaluator<A, W> eval = getEvalFunction(e.getKey());
+            IEvaluator<R, W> eval = getEvalFunction(e.getKey());
             W value = eval.evaluate(e.getValue());
             ret.put(e.getKey(), value);
         }
@@ -200,7 +199,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
     	}
 		
 		@SuppressWarnings("unchecked")
-		AggregatePO<M,R,A, W> apo = (AggregatePO<M,R,A, W>) ipo;
+		AggregatePO<M,R, W> apo = (AggregatePO<M,R, W>) ipo;
 		
 		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
 		if(!this.hasSameSources(ipo)) {
