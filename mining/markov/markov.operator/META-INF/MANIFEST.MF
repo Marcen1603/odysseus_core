@@ -33,3 +33,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Export-Package: de.uniol.inf.is.odysseus.markov.operator.logical,
  de.uniol.inf.is.odysseus.markov.operator.transform
 Service-Component: OSGI-INF/RuleService.xml
+Require-Bundle: de.uniol.inf.is.odysseus

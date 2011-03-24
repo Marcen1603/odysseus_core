@@ -23,16 +23,13 @@ import de.uniol.inf.is.odysseus.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.GroupingHelper;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IEvaluator;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IInitializer;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IMerger;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
-        GroupingHelper<RelationalTuple<T>, RelationalTuple<T>> {
+public class RelationalGroupProcessor<T extends IMetaAttribute> implements
+        IGroupProcessor<RelationalTuple<T>, RelationalTuple<T>> {
 
     Map<RelationalTuple<T>, Integer> keyMap = null;
     Map<Integer, RelationalTuple<T>> tupleMap = null;
@@ -44,14 +41,8 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
     final private SDFAttributeList inputSchema;
     final private SDFAttributeList outputSchema;
     final private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations;
-    // Da Initializer, Evaluator und Merger auf der selben Klasse basieren,
-    // reicht hier eine Map
-    // TODO lieber eine factory uebergeben, die e.g. immer die selben instanzen
-    // liefert, dann kann auf einiges
-    // gecaste verzichtet werden, weil die typinformationen vorhanden sind
-    static private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<RelationalTuple<?>,RelationalTuple<?>>> fMap = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<RelationalTuple<?>,RelationalTuple<?>>>();
-
-    public RelationalTupleGroupingHelper(SDFAttributeList inputSchema,
+ 
+    public RelationalGroupProcessor(SDFAttributeList inputSchema,
             SDFAttributeList outputSchema,
             List<SDFAttribute> groupingAttributes,
             Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
@@ -123,9 +114,6 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
     public RelationalTuple<T> createOutputElement(
             Integer groupID,
             PairMap<SDFAttributeList, AggregateFunction, RelationalTuple<T>, ?> r) {
-        // ANDRE: do not use schema in a relational tuple
-        // RelationalTuple<T> returnTuple = new
-        // RelationalTuple<T>(outputSchema);
         RelationalTuple<T> returnTuple = new RelationalTuple<T>(outputSchema
                 .size());
 
@@ -150,64 +138,4 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
         return returnTuple;
     }
 
-    protected IEvaluator<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
-            AggregateFunction key, int[] pos) {
-        IEvaluator<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
-        if ((key.getName().equalsIgnoreCase("AVG"))
-                || (key.getName().equalsIgnoreCase("SUM"))) {
-            aggFunc = RelationalAvgSum.getInstance(pos[0], (key.getName()
-                    .equalsIgnoreCase("AVG")) ? true : false);
-        }
-        else if (key.getName().equalsIgnoreCase("COUNT")) {
-            aggFunc = RelationalCount.getInstance();
-        }
-        else if ((key.getName().equalsIgnoreCase("MIN"))
-                || (key.getName().equalsIgnoreCase("MAX"))) {
-            aggFunc = RelationalMinMax.getInstance(pos[0], (key.getName()
-                    .equalsIgnoreCase("MAX")) ? true : false);
-        }else if((key.getName().equalsIgnoreCase("NEST"))){
-        	aggFunc = new RelationalNest(pos);
-        }
-        else if (key.getName().equalsIgnoreCase("BEAN")) {
-            aggFunc = new AggregationBean(pos, key.getProperty("resource"));
-        }
-        else if (key.getName().equalsIgnoreCase("SCRIPT")) {
-            aggFunc = new AggregationJSR223(pos, key.getProperty("resource"));
-        }
-        else {
-            throw new IllegalArgumentException("No such Aggregationfunction");
-        }
-        return aggFunc;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public IEvaluator<RelationalTuple<T>, RelationalTuple<T>> getEvaluatorAggFunction(
-            FESortedClonablePair<SDFAttributeList, AggregateFunction> p) {
-        IEvaluator<RelationalTuple<?>, RelationalTuple<?>> eval = fMap.get(p);
-        if (eval == null) {
-            int[] posArray = new int[p.getE1().size()];
-            for (int i = 0; i < p.getE1().size(); ++i) {
-                SDFAttribute attr = p.getE1().get(i);
-                posArray[i] = inputSchema.indexOf(attr);
-            }
-            eval = createAggFunction(p.getE2(), posArray);
-        }
-        return (IEvaluator) eval;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public IInitializer<RelationalTuple<T>> getInitAggFunction(
-            FESortedClonablePair<SDFAttributeList, AggregateFunction> p) {
-        // Zur Zeit keine unterschiedlichen Aggregationsfunktionen
-        return (IInitializer<RelationalTuple<T>>) getEvaluatorAggFunction(p);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public IMerger<RelationalTuple<T>> getMergerAggFunction(
-            FESortedClonablePair<SDFAttributeList, AggregateFunction> p) {
-        return (IMerger) getEvaluatorAggFunction(p);
-    }
 }

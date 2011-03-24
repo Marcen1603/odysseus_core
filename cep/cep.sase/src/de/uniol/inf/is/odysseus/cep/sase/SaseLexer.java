@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2011-03-22 16:01:59
+// $ANTLR 3.3 Nov 30, 2010 12:50:56 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2011-03-24 15:51:11
  
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -18,68 +18,67 @@ package de.uniol.inf.is.odysseus.cep.sase;
 
 
 import org.antlr.runtime.*;
-import org.antlr.runtime.Lexer;
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
 public class SaseLexer extends Lexer {
-    public static final int WEEK=18;
-    public static final int WHERE=8;
-    public static final int MILLISECOND=23;
-    public static final int POINT=35;
-    public static final int LETTER=50;
-    public static final int MAX=30;
-    public static final int FLOAT=47;
-    public static final int DAY=19;
-    public static final int COUNT=32;
-    public static final int EQUALS=40;
-    public static final int AND=14;
-    public static final int SUM=31;
-    public static final int SPACE=54;
     public static final int EOF=-1;
-    public static final int LBRACKET=44;
-    public static final int PATTERN=7;
-    public static final int SINGLEEQUALS=39;
-    public static final int NAME=51;
     public static final int CREATE=4;
-    public static final int STRING_LITERAL=53;
-    public static final int NOTSIGN=42;
-    public static final int LEFTCURLY=12;
-    public static final int SEQ=11;
-    public static final int COMMA=43;
-    public static final int AVG=28;
-    public static final int RETURN=10;
-    public static final int RIGHTCURLY=13;
-    public static final int DIVISION=36;
-    public static final int PLUS=33;
-    public static final int DIGIT=49;
-    public static final int RBRACKET=45;
     public static final int STREAM=5;
-    public static final int BBRACKETRIGHT=17;
-    public static final int INTEGER=46;
-    public static final int SECOND=22;
     public static final int VIEW=6;
-    public static final int NUMBER=48;
-    public static final int WHITESPACE=58;
-    public static final int MIN=29;
-    public static final int MINUS=34;
-    public static final int MULT=37;
-    public static final int HOUR=20;
-    public static final int SKIP_TILL_NEXT_MATCH=24;
-    public static final int NEWLINE=57;
-    public static final int NONCONTROL_CHAR=52;
-    public static final int BBRACKETLEFT=16;
-    public static final int PARTITION_CONTIGUITY=27;
-    public static final int ASSIGN=41;
+    public static final int PATTERN=7;
+    public static final int WHERE=8;
     public static final int WITHIN=9;
-    public static final int SKIP_TILL_ANY_MATCH=25;
+    public static final int RETURN=10;
+    public static final int SEQ=11;
+    public static final int LEFTCURLY=12;
+    public static final int RIGHTCURLY=13;
+    public static final int AND=14;
     public static final int LEN=15;
-    public static final int LOWER=55;
+    public static final int BBRACKETLEFT=16;
+    public static final int BBRACKETRIGHT=17;
+    public static final int WEEK=18;
+    public static final int DAY=19;
+    public static final int HOUR=20;
     public static final int MINUTE=21;
+    public static final int SECOND=22;
+    public static final int MILLISECOND=23;
+    public static final int SKIP_TILL_NEXT_MATCH=24;
+    public static final int SKIP_TILL_ANY_MATCH=25;
     public static final int STRICT_CONTIGUITY=26;
+    public static final int PARTITION_CONTIGUITY=27;
+    public static final int AVG=28;
+    public static final int MIN=29;
+    public static final int MAX=30;
+    public static final int SUM=31;
+    public static final int COUNT=32;
+    public static final int PLUS=33;
+    public static final int MINUS=34;
+    public static final int POINT=35;
+    public static final int DIVISION=36;
+    public static final int MULT=37;
     public static final int COMPAREOP=38;
+    public static final int SINGLEEQUALS=39;
+    public static final int EQUALS=40;
+    public static final int ASSIGN=41;
+    public static final int NOTSIGN=42;
+    public static final int COMMA=43;
+    public static final int LBRACKET=44;
+    public static final int RBRACKET=45;
+    public static final int INTEGER=46;
+    public static final int FLOAT=47;
+    public static final int NUMBER=48;
+    public static final int DIGIT=49;
+    public static final int LETTER=50;
+    public static final int NAME=51;
+    public static final int NONCONTROL_CHAR=52;
+    public static final int STRING_LITERAL=53;
+    public static final int SPACE=54;
+    public static final int LOWER=55;
     public static final int UPPER=56;
+    public static final int NEWLINE=57;
+    public static final int WHITESPACE=58;
 
     // delegates
     // delegators
@@ -3588,15 +3587,15 @@ public class SaseLexer extends Lexer {
     }
     static final String DFA17_eotS =
         "\1\uffff\6\35\2\uffff\2\35\2\uffff\3\35\6\uffff\1\65\12\uffff\23"+
-        "\35\2\uffff\3\35\1\120\2\35\1\123\7\35\1\133\1\134\1\135\1\136\1"+
-        "\35\1\142\1\35\1\144\4\35\1\uffff\2\35\1\uffff\1\153\4\35\1\160"+
-        "\1\35\4\uffff\1\136\1\163\1\35\1\uffff\1\35\1\uffff\1\35\1\170\4"+
-        "\35\1\uffff\2\35\1\177\1\35\1\uffff\1\160\1\35\1\uffff\1\163\2\35"+
-        "\1\u0084\1\uffff\1\u0085\1\35\1\u0087\3\35\1\uffff\1\u008c\1\u008d"+
-        "\1\u008f\1\35\2\uffff\1\35\1\uffff\1\u0087\1\35\1\u0093\1\35\2\uffff"+
-        "\1\u008f\1\uffff\3\35\1\uffff\16\35\1\u00a7\4\35\1\uffff\1\u00a7"+
-        "\20\35\1\u00bd\3\35\1\uffff\4\35\1\u00c5\1\35\1\u00c7\1\uffff\1"+
-        "\u00c8\2\uffff";
+        "\35\2\uffff\3\35\1\120\2\35\1\123\7\35\1\133\1\134\1\135\1\137\1"+
+        "\35\1\142\1\35\1\144\4\35\1\uffff\2\35\1\uffff\1\153\4\35\1\161"+
+        "\1\35\3\uffff\1\137\1\uffff\1\164\1\35\1\uffff\1\35\1\uffff\1\35"+
+        "\1\170\4\35\1\uffff\2\35\1\177\1\35\1\161\1\uffff\1\35\1\164\1\uffff"+
+        "\2\35\1\u0084\1\uffff\1\u0085\1\35\1\u0088\3\35\1\uffff\1\u008c"+
+        "\1\u008d\1\u008f\1\35\2\uffff\1\35\1\u0088\1\uffff\1\35\1\u0093"+
+        "\1\35\2\uffff\1\u008f\1\uffff\3\35\1\uffff\16\35\1\u00a8\4\35\1"+
+        "\u00a8\1\uffff\20\35\1\u00bd\3\35\1\uffff\4\35\1\u00c5\1\35\1\u00c7"+
+        "\1\uffff\1\u00c8\2\uffff";
     static final String DFA17_eofS =
         "\u00c9\uffff";
     static final String DFA17_minS =
@@ -3606,16 +3605,17 @@ public class SaseLexer extends Lexer {
         "\1\131\1\125\1\114\1\130\2\uffff\1\101\1\116\1\105\1\60\1\117\1"+
         "\120\1\60\1\127\2\124\1\122\1\110\1\113\1\125\4\60\1\122\1\60\1"+
         "\114\1\60\2\124\1\101\1\103\1\uffff\1\116\1\137\1\uffff\1\60\1\105"+
-        "\1\111\1\105\1\111\1\60\1\122\4\uffff\2\60\1\124\1\uffff\1\111\1"+
-        "\uffff\1\105\1\60\1\115\1\124\1\104\1\124\1\uffff\1\122\1\124\1"+
-        "\60\1\116\1\uffff\1\60\1\116\1\uffff\1\60\1\105\1\123\1\60\1\uffff"+
-        "\1\60\1\137\1\60\1\111\1\116\1\111\1\uffff\3\60\1\105\2\uffff\1"+
-        "\103\1\uffff\1\60\1\114\1\60\1\117\2\uffff\1\60\1\uffff\1\103\1"+
-        "\117\1\114\1\uffff\1\116\1\117\1\116\2\137\1\116\1\124\1\101\1\103"+
-        "\1\104\1\111\1\105\1\116\1\117\1\60\1\107\1\130\1\131\1\116\1\uffff"+
-        "\1\60\1\125\1\124\1\137\1\124\1\111\1\137\1\115\1\111\1\124\1\115"+
-        "\1\101\1\107\1\131\1\101\1\124\1\125\1\60\1\124\1\103\1\111\1\uffff"+
-        "\1\103\1\110\1\124\1\110\1\60\1\131\1\60\1\uffff\1\60\2\uffff";
+        "\1\111\1\105\1\111\1\60\1\122\3\uffff\1\60\1\uffff\1\60\1\124\1"+
+        "\uffff\1\111\1\uffff\1\105\1\60\1\115\1\124\1\104\1\124\1\uffff"+
+        "\1\122\1\124\1\60\1\116\1\60\1\uffff\1\116\1\60\1\uffff\1\105\1"+
+        "\123\1\60\1\uffff\1\60\1\137\1\60\1\111\1\116\1\111\1\uffff\3\60"+
+        "\1\105\2\uffff\1\103\1\60\1\uffff\1\114\1\60\1\117\2\uffff\1\60"+
+        "\1\uffff\1\103\1\117\1\114\1\uffff\1\116\1\117\1\116\2\137\1\116"+
+        "\1\124\1\101\1\103\1\104\1\111\1\105\1\116\1\117\1\60\1\107\1\130"+
+        "\1\131\1\116\1\60\1\uffff\1\125\1\124\1\137\1\124\1\111\1\137\1"+
+        "\115\1\111\1\124\1\115\1\101\1\107\1\131\1\101\1\124\1\125\1\60"+
+        "\1\124\1\103\1\111\1\uffff\1\103\1\110\1\124\1\110\1\60\1\131\1"+
+        "\60\1\uffff\1\60\2\uffff";
     static final String DFA17_maxS =
         "\1\176\1\162\1\165\1\151\1\141\1\151\1\145\2\uffff\1\166\1\145"+
         "\2\uffff\1\141\1\157\1\151\6\uffff\1\75\12\uffff\1\145\1\165\1\162"+
@@ -3623,25 +3623,25 @@ public class SaseLexer extends Lexer {
         "\1\156\1\171\1\165\1\156\1\170\2\uffff\1\141\1\156\1\151\1\172\1"+
         "\157\1\160\1\172\1\167\2\164\1\162\1\150\1\153\1\165\4\172\1\162"+
         "\1\172\1\154\1\172\2\164\1\141\1\143\1\uffff\1\156\1\137\1\uffff"+
-        "\1\172\1\145\1\151\1\145\1\151\1\172\1\162\4\uffff\2\172\1\164\1"+
-        "\uffff\1\151\1\uffff\1\145\1\172\1\155\1\164\1\144\1\164\1\uffff"+
-        "\1\162\1\164\1\172\1\156\1\uffff\1\172\1\156\1\uffff\1\172\1\145"+
-        "\1\163\1\172\1\uffff\1\172\1\137\1\172\1\151\1\156\1\151\1\uffff"+
-        "\3\172\1\145\2\uffff\1\143\1\uffff\1\172\1\154\1\172\1\157\2\uffff"+
-        "\1\172\1\uffff\1\143\1\157\1\154\1\uffff\1\156\1\157\1\156\2\137"+
-        "\1\156\1\164\1\156\1\143\1\144\1\151\1\145\1\156\1\157\1\172\1\147"+
-        "\1\170\1\171\1\156\1\uffff\1\172\1\165\1\164\1\137\1\164\1\151\1"+
-        "\137\1\155\1\151\1\164\1\155\1\141\1\147\1\171\1\141\1\164\1\165"+
-        "\1\172\1\164\1\143\1\151\1\uffff\1\143\1\150\1\164\1\150\1\172\1"+
-        "\171\1\172\1\uffff\1\172\2\uffff";
+        "\1\172\1\145\1\151\1\145\1\151\1\172\1\162\3\uffff\1\172\1\uffff"+
+        "\1\172\1\164\1\uffff\1\151\1\uffff\1\145\1\172\1\155\1\164\1\144"+
+        "\1\164\1\uffff\1\162\1\164\1\172\1\156\1\172\1\uffff\1\156\1\172"+
+        "\1\uffff\1\145\1\163\1\172\1\uffff\1\172\1\137\1\172\1\151\1\156"+
+        "\1\151\1\uffff\3\172\1\145\2\uffff\1\143\1\172\1\uffff\1\154\1\172"+
+        "\1\157\2\uffff\1\172\1\uffff\1\143\1\157\1\154\1\uffff\1\156\1\157"+
+        "\1\156\2\137\1\156\1\164\1\156\1\143\1\144\1\151\1\145\1\156\1\157"+
+        "\1\172\1\147\1\170\1\171\1\156\1\172\1\uffff\1\165\1\164\1\137\1"+
+        "\164\1\151\1\137\1\155\1\151\1\164\1\155\1\141\1\147\1\171\1\141"+
+        "\1\164\1\165\1\172\1\164\1\143\1\151\1\uffff\1\143\1\150\1\164\1"+
+        "\150\1\172\1\171\1\172\1\uffff\1\172\2\uffff";
     static final String DFA17_acceptS =
         "\7\uffff\1\11\1\12\2\uffff\1\15\1\16\3\uffff\1\36\1\37\1\40\1\41"+
         "\1\42\1\43\1\uffff\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56"+
         "\1\57\23\uffff\1\45\1\44\32\uffff\1\10\2\uffff\1\34\7\uffff\1\13"+
-        "\1\31\1\14\1\20\3\uffff\1\32\1\uffff\1\33\6\uffff\1\3\4\uffff\1"+
-        "\17\2\uffff\1\21\4\uffff\1\35\6\uffff\1\5\4\uffff\1\1\1\2\1\uffff"+
-        "\1\23\4\uffff\1\6\1\7\1\uffff\1\22\3\uffff\1\4\23\uffff\1\24\25"+
-        "\uffff\1\27\7\uffff\1\26\1\uffff\1\25\1\30";
+        "\1\31\1\14\1\uffff\1\20\2\uffff\1\32\1\uffff\1\33\6\uffff\1\3\5"+
+        "\uffff\1\17\2\uffff\1\21\3\uffff\1\35\6\uffff\1\5\4\uffff\1\1\1"+
+        "\2\2\uffff\1\23\3\uffff\1\6\1\7\1\uffff\1\22\3\uffff\1\4\24\uffff"+
+        "\1\24\24\uffff\1\27\7\uffff\1\26\1\uffff\1\25\1\30";
     static final String DFA17_specialS =
         "\u00c9\uffff}>";
     static final String[] DFA17_transitionS = {
@@ -3722,8 +3722,8 @@ public class SaseLexer extends Lexer {
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
-            "\13\35\6\uffff\22\35\1\137\7\35\4\uffff\1\35\1\uffff\22\35"+
-            "\1\137\7\35",
+            "\13\35\6\uffff\22\35\1\136\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\136\7\35",
             "\1\140\37\uffff\1\140",
             "\13\35\6\uffff\24\35\1\141\5\35\4\uffff\1\35\1\uffff\24\35"+
             "\1\141\5\35",
@@ -3742,16 +3742,16 @@ public class SaseLexer extends Lexer {
             "\1\155\37\uffff\1\155",
             "\1\156\37\uffff\1\156",
             "\1\157\37\uffff\1\157",
-            "\13\35\6\uffff\22\35\1\161\7\35\4\uffff\1\35\1\uffff\22\35"+
-            "\1\161\7\35",
+            "\13\35\6\uffff\22\35\1\160\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\160\7\35",
             "\1\162\37\uffff\1\162",
             "",
             "",
             "",
-            "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
-            "\13\35\6\uffff\22\35\1\164\7\35\4\uffff\1\35\1\uffff\22\35"+
-            "\1\164\7\35",
+            "",
+            "\13\35\6\uffff\22\35\1\163\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\163\7\35",
             "\1\165\37\uffff\1\165",
             "",
             "\1\166\37\uffff\1\166",
@@ -3767,19 +3767,19 @@ public class SaseLexer extends Lexer {
             "\1\176\37\uffff\1\176",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u0080\37\uffff\1\u0080",
-            "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "",
             "\1\u0081\37\uffff\1\u0081",
-            "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "",
             "\1\u0082\37\uffff\1\u0082",
             "\1\u0083\37\uffff\1\u0083",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u0086",
-            "\13\35\6\uffff\22\35\1\u0088\7\35\4\uffff\1\35\1\uffff\22"+
-            "\35\1\u0088\7\35",
+            "\13\35\6\uffff\22\35\1\u0087\7\35\4\uffff\1\35\1\uffff\22"+
+            "\35\1\u0087\7\35",
             "\1\u0089\37\uffff\1\u0089",
             "\1\u008a\37\uffff\1\u008a",
             "\1\u008b\37\uffff\1\u008b",
@@ -3792,8 +3792,8 @@ public class SaseLexer extends Lexer {
             "",
             "",
             "\1\u0091\37\uffff\1\u0091",
-            "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "",
             "\1\u0092\37\uffff\1\u0092",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u0094\37\uffff\1\u0094",
@@ -3819,14 +3819,14 @@ public class SaseLexer extends Lexer {
             "\1\u00a4\37\uffff\1\u00a4",
             "\1\u00a5\37\uffff\1\u00a5",
             "\1\u00a6\37\uffff\1\u00a6",
-            "\13\35\6\uffff\22\35\1\u00a8\7\35\4\uffff\1\35\1\uffff\22"+
-            "\35\1\u00a8\7\35",
+            "\13\35\6\uffff\22\35\1\u00a7\7\35\4\uffff\1\35\1\uffff\22"+
+            "\35\1\u00a7\7\35",
             "\1\u00a9\37\uffff\1\u00a9",
             "\1\u00aa\37\uffff\1\u00aa",
             "\1\u00ab\37\uffff\1\u00ab",
             "\1\u00ac\37\uffff\1\u00ac",
-            "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
+            "",
             "\1\u00ad\37\uffff\1\u00ad",
             "\1\u00ae\37\uffff\1\u00ae",
             "\1\u00af",

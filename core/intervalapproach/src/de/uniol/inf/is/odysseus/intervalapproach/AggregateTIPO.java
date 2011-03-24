@@ -241,6 +241,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	}
 
 	// Updates SA by splitting all partial aggregates before split point
+	@SuppressWarnings("unchecked")
 	protected synchronized void updateSA(
 			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PointInTime splitPoint) {

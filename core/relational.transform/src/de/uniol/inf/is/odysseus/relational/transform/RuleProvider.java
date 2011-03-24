@@ -30,7 +30,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TAccessAOAtomicDataRule());
 		rules.add(new TAccessAORelationalByteBufferRule());
 		rules.add(new TFixedSetAccessAORule());
-		rules.add(new TAggregateAORule());
+		rules.add(new TAggregatePORule());
 		rules.add(new TMapAORule());
 		rules.add(new TProjectAORule());	
 		

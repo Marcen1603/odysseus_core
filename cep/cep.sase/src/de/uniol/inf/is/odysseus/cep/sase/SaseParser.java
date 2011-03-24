@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2011-03-22 16:01:59
+// $ANTLR 3.3 Nov 30, 2010 12:50:56 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2011-03-24 15:51:12
  
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -30,85 +30,85 @@ public class SaseParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "CREATE", "STREAM", "VIEW", "PATTERN", "WHERE", "WITHIN", "RETURN", "SEQ", "LEFTCURLY", "RIGHTCURLY", "AND", "LEN", "BBRACKETLEFT", "BBRACKETRIGHT", "WEEK", "DAY", "HOUR", "MINUTE", "SECOND", "MILLISECOND", "SKIP_TILL_NEXT_MATCH", "SKIP_TILL_ANY_MATCH", "STRICT_CONTIGUITY", "PARTITION_CONTIGUITY", "AVG", "MIN", "MAX", "SUM", "COUNT", "PLUS", "MINUS", "POINT", "DIVISION", "MULT", "COMPAREOP", "SINGLEEQUALS", "EQUALS", "ASSIGN", "NOTSIGN", "COMMA", "LBRACKET", "RBRACKET", "INTEGER", "FLOAT", "NUMBER", "DIGIT", "LETTER", "NAME", "NONCONTROL_CHAR", "STRING_LITERAL", "SPACE", "LOWER", "UPPER", "NEWLINE", "WHITESPACE", "KSTATE", "STATE", "KTYPE", "TYPE", "WHEREEXPRESSION", "MATHEXPRESSION", "TERM", "ATTRIBUTE", "KATTRIBUTE", "PARAMLIST", "KMEMBER", "MEMBER", "COMPAREEXPRESSION", "ASSIGNMENT", "IDEXPRESSION", "AGGREGATION", "CREATEVIEW", "QUERY", "NOT", "PREV", "FIRST", "CURRENT", "KOMMA"
     };
-    public static final int TERM=65;
-    public static final int WEEK=18;
-    public static final int WHERE=8;
-    public static final int MEMBER=70;
-    public static final int MILLISECOND=23;
-    public static final int KSTATE=59;
-    public static final int POINT=35;
-    public static final int LETTER=50;
-    public static final int ATTRIBUTE=66;
-    public static final int MAX=30;
-    public static final int EQUALS=40;
-    public static final int COUNT=32;
-    public static final int DAY=19;
-    public static final int FLOAT=47;
-    public static final int NOT=77;
-    public static final int SUM=31;
-    public static final int AND=14;
-    public static final int MATHEXPRESSION=64;
-    public static final int SPACE=54;
     public static final int EOF=-1;
-    public static final int TYPE=62;
-    public static final int PATTERN=7;
-    public static final int LBRACKET=44;
-    public static final int SINGLEEQUALS=39;
-    public static final int COMPAREEXPRESSION=71;
-    public static final int NAME=51;
     public static final int CREATE=4;
-    public static final int STRING_LITERAL=53;
-    public static final int NOTSIGN=42;
-    public static final int LEFTCURLY=12;
-    public static final int SEQ=11;
-    public static final int COMMA=43;
-    public static final int AVG=28;
-    public static final int KATTRIBUTE=67;
-    public static final int RETURN=10;
-    public static final int RIGHTCURLY=13;
-    public static final int DIVISION=36;
-    public static final int PLUS=33;
-    public static final int DIGIT=49;
-    public static final int RBRACKET=45;
     public static final int STREAM=5;
-    public static final int BBRACKETRIGHT=17;
-    public static final int INTEGER=46;
-    public static final int STATE=60;
-    public static final int IDEXPRESSION=73;
-    public static final int SECOND=22;
     public static final int VIEW=6;
-    public static final int KMEMBER=69;
-    public static final int NUMBER=48;
-    public static final int PARAMLIST=68;
-    public static final int WHITESPACE=58;
-    public static final int MIN=29;
-    public static final int MINUS=34;
-    public static final int MULT=37;
-    public static final int HOUR=20;
-    public static final int CURRENT=80;
-    public static final int PREV=78;
-    public static final int SKIP_TILL_NEXT_MATCH=24;
-    public static final int WHEREEXPRESSION=63;
-    public static final int NEWLINE=57;
-    public static final int NONCONTROL_CHAR=52;
-    public static final int AGGREGATION=74;
-    public static final int BBRACKETLEFT=16;
-    public static final int KOMMA=81;
-    public static final int PARTITION_CONTIGUITY=27;
-    public static final int ASSIGN=41;
+    public static final int PATTERN=7;
+    public static final int WHERE=8;
     public static final int WITHIN=9;
-    public static final int SKIP_TILL_ANY_MATCH=25;
-    public static final int QUERY=76;
+    public static final int RETURN=10;
+    public static final int SEQ=11;
+    public static final int LEFTCURLY=12;
+    public static final int RIGHTCURLY=13;
+    public static final int AND=14;
     public static final int LEN=15;
-    public static final int ASSIGNMENT=72;
-    public static final int KTYPE=61;
-    public static final int LOWER=55;
+    public static final int BBRACKETLEFT=16;
+    public static final int BBRACKETRIGHT=17;
+    public static final int WEEK=18;
+    public static final int DAY=19;
+    public static final int HOUR=20;
     public static final int MINUTE=21;
-    public static final int CREATEVIEW=75;
-    public static final int COMPAREOP=38;
+    public static final int SECOND=22;
+    public static final int MILLISECOND=23;
+    public static final int SKIP_TILL_NEXT_MATCH=24;
+    public static final int SKIP_TILL_ANY_MATCH=25;
     public static final int STRICT_CONTIGUITY=26;
+    public static final int PARTITION_CONTIGUITY=27;
+    public static final int AVG=28;
+    public static final int MIN=29;
+    public static final int MAX=30;
+    public static final int SUM=31;
+    public static final int COUNT=32;
+    public static final int PLUS=33;
+    public static final int MINUS=34;
+    public static final int POINT=35;
+    public static final int DIVISION=36;
+    public static final int MULT=37;
+    public static final int COMPAREOP=38;
+    public static final int SINGLEEQUALS=39;
+    public static final int EQUALS=40;
+    public static final int ASSIGN=41;
+    public static final int NOTSIGN=42;
+    public static final int COMMA=43;
+    public static final int LBRACKET=44;
+    public static final int RBRACKET=45;
+    public static final int INTEGER=46;
+    public static final int FLOAT=47;
+    public static final int NUMBER=48;
+    public static final int DIGIT=49;
+    public static final int LETTER=50;
+    public static final int NAME=51;
+    public static final int NONCONTROL_CHAR=52;
+    public static final int STRING_LITERAL=53;
+    public static final int SPACE=54;
+    public static final int LOWER=55;
     public static final int UPPER=56;
+    public static final int NEWLINE=57;
+    public static final int WHITESPACE=58;
+    public static final int KSTATE=59;
+    public static final int STATE=60;
+    public static final int KTYPE=61;
+    public static final int TYPE=62;
+    public static final int WHEREEXPRESSION=63;
+    public static final int MATHEXPRESSION=64;
+    public static final int TERM=65;
+    public static final int ATTRIBUTE=66;
+    public static final int KATTRIBUTE=67;
+    public static final int PARAMLIST=68;
+    public static final int KMEMBER=69;
+    public static final int MEMBER=70;
+    public static final int COMPAREEXPRESSION=71;
+    public static final int ASSIGNMENT=72;
+    public static final int IDEXPRESSION=73;
+    public static final int AGGREGATION=74;
+    public static final int CREATEVIEW=75;
+    public static final int QUERY=76;
+    public static final int NOT=77;
+    public static final int PREV=78;
     public static final int FIRST=79;
+    public static final int CURRENT=80;
+    public static final int KOMMA=81;
 
     // delegates
     // delegators
@@ -424,7 +424,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: returnPart, patternPart, withinPart, wherePart
+            // elements: returnPart, withinPart, wherePart, patternPart
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -547,7 +547,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: timeunit, WITHIN, NUMBER
+            // elements: WITHIN, NUMBER, timeunit
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -745,7 +745,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: WHERE, skipPart, whereExpressions
+                    // elements: whereExpressions, skipPart, WHERE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1144,7 +1144,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: RETURN, attributeTerm
+            // elements: attributeTerm, RETURN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1281,7 +1281,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: SEQ, stateDef
+            // elements: stateDef, SEQ
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1527,7 +1527,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ktypeDefinition, NOTSIGN
+                    // elements: NOTSIGN, ktypeDefinition
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3211,7 +3211,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: op, f2, f1
+                    // elements: f1, f2, op
                     // token labels: op
                     // rule labels: retval, f1, f2
                     // token list labels: 
@@ -3265,7 +3265,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: mathExpression, sAttributeName
+                    // elements: sAttributeName, mathExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3835,7 +3835,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: aName, member
+                    // elements: member, aName
                     // token labels: member, aName
                     // rule labels: retval
                     // token list labels: 
@@ -4062,7 +4062,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: var, aggop, member
+                    // elements: member, var, aggop
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4144,7 +4144,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: var, member, aggop
+                    // elements: aggop, member, var
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 

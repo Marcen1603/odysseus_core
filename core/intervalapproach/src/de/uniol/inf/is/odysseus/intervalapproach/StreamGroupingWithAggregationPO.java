@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.GroupingHelper;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -51,17 +50,16 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			SDFAttributeList outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
-			GroupingHelper<R, W> grHelper) {
+			IGroupProcessor<R, W> grProcessor) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
-		setGroupingHelper(grHelper);
+		setGroupProcessor(grProcessor);
 		transferArea = new TITransferArea<W, W>(1);
 		transferArea.setSourcePo(this);
 	}
 
 	@Override
-	public void setGroupingHelper(GroupingHelper<R, W> groupingHelper) {
-		super.setGroupingHelper(groupingHelper);
-		initAggFunctions();
+	public void setGroupProcessor(IGroupProcessor<R, W> groupProcessor) {
+		super.setGroupProcessor(groupProcessor);
 	}
 
 	public void setDumpAtValueCount(int dumpAtValueCount) {
@@ -85,28 +83,6 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		groups.putAll(agg.groups);
 	}
 
-	protected void initAggFunctions() {
-
-		Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = getAggregations();
-
-		for (SDFAttributeList attrList : aggregations.keySet()) {
-			if (SDFAttributeList.subset(attrList, getInputSchema())) {
-				Map<AggregateFunction, SDFAttribute> funcs = aggregations
-						.get(attrList);
-				for (Entry<AggregateFunction, SDFAttribute> e : funcs
-						.entrySet()) {
-					FESortedClonablePair<SDFAttributeList, AggregateFunction> p = new FESortedClonablePair<SDFAttributeList, AggregateFunction>(
-							attrList, e.getKey());
-					setAggregationFunction(p, getGroupingHelper()
-							.getInitAggFunction(p));
-					setAggregationFunction(p, getGroupingHelper()
-							.getMergerAggFunction(p));
-					setAggregationFunction(p, getGroupingHelper()
-							.getEvaluatorAggFunction(p));
-				}
-			}
-		}
-	}
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -115,8 +91,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
-		getGroupingHelper().init();
-		//logger.debug("Process open dumpOnEveryObject="+dumpOnEveryObject);
+		getGroupProcessor().init();
 	}
 
 	@Override
@@ -139,17 +114,12 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-		// ReadOnly ist egal
-		process(object);
-	}
+		
+		// Determine if there is any data from previous runs to write
+		createOutput(object.getMetadata().getStart());
 
-
-	private synchronized void process(R s) {
-	
-		createOutput(s.getMetadata().getStart());
-
-		// Create group ID from input tupel
-		Integer groupID = getGroupingHelper().getGroupID(s);
+		// Create group ID from input object
+		Integer groupID = getGroupProcessor().getGroupID(object);
 		// Find or create sweep area for group
 		DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 				.get(groupID);
@@ -160,8 +130,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		}
 
 		// Update sweep area with new element
-		updateSA(sa, s);
+		updateSA(sa, object);
 	}
+
 
 	private synchronized void createOutput(PointInTime timestamp) {
 		// optional: Build partial aggregates with validity end until timestamp
@@ -216,7 +187,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
 			PairMap<SDFAttributeList, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
-			W out = getGroupingHelper().createOutputElement(groupID, r);
+			W out = getGroupProcessor().createOutputElement(groupID, r);
 			out.setMetadata(e.getMetadata());
 			transferArea.transfer(out);
 //			System.out.println(this+"Move to tranfer area "+out);

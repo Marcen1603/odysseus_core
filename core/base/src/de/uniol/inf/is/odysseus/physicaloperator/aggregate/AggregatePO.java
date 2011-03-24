@@ -39,16 +39,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttributeContainer<? extends M> & IClone, W extends IClone>
         extends AbstractPipe<R, W> {
 
+	// PartialAggregate functions for different combinations of attributes and aggregations functions 
     private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<R>> init = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IInitializer<R>>();
-
     private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<R>> merger = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IMerger<R>>();
-
     private Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<R, W>> eval = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, IEvaluator<R, W>>();
 
-    private SDFAttributeList inputSchema = null;
+    // 
     private Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = null;
 
-    private GroupingHelper<R, W> groupingHelper;
+    private SDFAttributeList inputSchema = null;
+    private IGroupProcessor<R, W> groupProcessor;
 
     private final SDFAttributeList outputSchema;
 
@@ -56,12 +56,12 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 
     // private AggregateAO algebraOp;
 
-    public GroupingHelper<R, W> getGroupingHelper() {
-        return groupingHelper;
+    public IGroupProcessor<R, W> getGroupProcessor() {
+        return groupProcessor;
     }
 
-    public void setGroupingHelper(GroupingHelper<R, W> groupingHelper) {
-        this.groupingHelper = groupingHelper;
+    public void setGroupProcessor(IGroupProcessor<R, W> groupProcessor) {
+        this.groupProcessor = groupProcessor;
     }
 
     public AggregatePO(
@@ -103,21 +103,21 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
         this.outputSchema = agg.outputSchema;
         this.groupingAttributes = agg.groupingAttributes;
         this.aggregations = agg.aggregations;
-        this.groupingHelper = agg.groupingHelper;
+        this.groupProcessor = agg.groupProcessor;
     }
 
-    public void setAggregationFunction(
+    public void setInitFunction(
             FESortedClonablePair<SDFAttributeList, AggregateFunction> p,
             IInitializer<R> i) {
         init.put(p, i);
     }
 
-    public void setAggregationFunction(
+    public void setMergeFunction(
             FESortedClonablePair<SDFAttributeList, AggregateFunction> p, IMerger<R> m) {
         merger.put(p, m);
     }
 
-    public void setAggregationFunction(
+    public void setEvalFunction(
             FESortedClonablePair<SDFAttributeList, AggregateFunction> p, IEvaluator<R,W> e) {
         eval.put(p, e);
     }
@@ -205,7 +205,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 		if(!this.hasSameSources(ipo)) {
 			return false;
 		}
-		if(this.groupingHelper.getClass().toString().equals(apo.groupingHelper.getClass().toString())
+		if(this.groupProcessor.getClass().toString().equals(apo.groupProcessor.getClass().toString())
 				&& this.inputSchema.compareTo(apo.inputSchema) == 0
 				&& this.outputSchema.compareTo(apo.outputSchema) == 0
 				&& this.groupingAttributes.size() == apo.groupingAttributes.size()) {
