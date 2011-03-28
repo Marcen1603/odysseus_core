@@ -26,7 +26,7 @@ public class CepAO<T> extends AbstractLogicalOperator implements OutputSchemaSet
 
 	private static final long serialVersionUID = 1L;
 
-	public StateMachine<T> stateMachine = new StateMachine<T>();
+	private StateMachine<T> stateMachine = new StateMachine<T>();
 	private SDFAttributeList outSchema;
 	private Map<Integer, String> portNames = new HashMap<Integer, String>();
 	
