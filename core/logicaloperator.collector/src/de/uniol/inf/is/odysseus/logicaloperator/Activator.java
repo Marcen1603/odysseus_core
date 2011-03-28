@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 public class Activator implements BundleActivator, BundleListener {
 
 	Logger logger = LoggerFactory.getLogger(Activator.class);
-	
+
 	//
 	// private static final String SPLIT = "SPLIT";
 	// private static final String ACCESS = "ACCESS";
@@ -87,7 +87,7 @@ public class Activator implements BundleActivator, BundleListener {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		
+
 	}
 
 	@Override
@@ -107,17 +107,20 @@ public class Activator implements BundleActivator, BundleListener {
 	@SuppressWarnings("unchecked")
 	private void removeBundle(Bundle bundle) {
 		Enumeration<URL> entries = bundle.findEntries(
-				"de.uniol.inf.is.odysseus.logicaloperator", "*.class", true);
+				"de.uniol.inf.is.odysseus", "*.class", true);
+
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
-			Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
-					bundle, curURL);
-			if (classObject == null) {
-				continue;
+			if (curURL.toString().contains(".logicaloperator")) {
+				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
+						bundle, curURL);
+				if (classObject == null) {
+					continue;
+				}
+				String operatorName = classObject.getAnnotation(
+						LogicalOperator.class).name();
+				operatorBuilders.remove(operatorName);
 			}
-			String operatorName = classObject.getAnnotation(
-					LogicalOperator.class).name();
-			operatorBuilders.remove(operatorName);
 		}
 	}
 
@@ -143,7 +146,7 @@ public class Activator implements BundleActivator, BundleListener {
 	@SuppressWarnings("unchecked")
 	private void searchBundle(Bundle bundle) {
 		Enumeration<URL> entries = bundle.findEntries(
-				"/bin/de/uniol/inf/is/odysseus/logicaloperator", "*.class",
+				"/bin/de/uniol/inf/is/odysseus", "*.class",
 				true);
 		// collect logical operators and register parameters first
 		// add logical operators afterwards, because they may need the newly
@@ -153,12 +156,14 @@ public class Activator implements BundleActivator, BundleListener {
 		}
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
-			Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
-					bundle, curURL);
-			if (classObject == null) {
-				continue;
-			} else {
-				addLogicalOperator(classObject);
+			if (curURL.toString().contains("/logicaloperator")) {
+				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
+						bundle, curURL);
+				if (classObject == null) {
+					continue;
+				} else {
+					addLogicalOperator(classObject);
+				}
 			}
 		}
 	}
@@ -173,7 +178,7 @@ public class Activator implements BundleActivator, BundleListener {
 			BeanInfo beanInfo = Introspector.getBeanInfo(curOp, Object.class);
 			for (PropertyDescriptor curProperty : beanInfo
 					.getPropertyDescriptors()) {
-				Method writeMethod = curProperty.getWriteMethod();				
+				Method writeMethod = curProperty.getWriteMethod();
 				if (writeMethod != null
 						&& writeMethod.isAnnotationPresent(Parameter.class)) {
 					Parameter parameterAnnotation = writeMethod
@@ -181,11 +186,12 @@ public class Activator implements BundleActivator, BundleListener {
 					parameters.put(parameterAnnotation, writeMethod);
 				}
 			}
-			logger.debug("Create GenericOperatorBuilder Builder for "+curOp+" with parameters "+parameters);
+			logger.debug("Create GenericOperatorBuilder Builder for " + curOp
+					+ " with parameters " + parameters);
 			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp,
 					parameters, logicalOperatorAnnotation.minInputPorts(),
 					logicalOperatorAnnotation.maxInputPorts());
-			
+
 			OperatorBuilderFactory.putOperatorBuilderType(
 					logicalOperatorAnnotation.name(), builder);
 		} catch (Exception e) {
