@@ -1,0 +1,11 @@
+#Mon Mar 21 13:27:02 CET 2011
+CLEAR_CONSOLE=true
+JAVACC_OPTIONS=-JDK_VERSION\=1.6
+JJDOC_OPTIONS=
+JJTREE_OPTIONS=
+JJ_NATURE=true
+JTB_OPTIONS=-ia -jd -tk
+RUNTIME_JJJAR=C\:/eclipse36/plugins/sf.eclipse.javacc_1.5.22/javacc.jar
+RUNTIME_JTBJAR=C\:/eclipse36/plugins/sf.eclipse.javacc_1.5.22/jtb-1.4.3.jar
+SUPPRESS_WARNINGS=false
+eclipse.preferences.version=1
