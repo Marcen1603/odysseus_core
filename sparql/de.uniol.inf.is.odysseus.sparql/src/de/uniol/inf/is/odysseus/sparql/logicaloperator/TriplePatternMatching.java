@@ -9,11 +9,11 @@
 
 package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sparql.parserLR.helper.Triple;
-import de.uniol.inf.is.odysseus.sparql.parserLR.helper.Variable;
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
 
 /**
  * This operator repesents a triple pattern matching operator. This logical

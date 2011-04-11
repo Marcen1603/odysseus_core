@@ -1,0 +1,1533 @@
+// ARQ/SPARQL Grammar - native syntax for the query engine
+// Author:  Andy Seaborne andy.seaborne@hp.com
+// (c) Copyright 2004, 2005, 2006, 2007 Hewlett-Packard Development Company, LP
+// All rights reserved.
+// See end of file for details.
+//
+// Constraint expression is derived from Java : 
+// example java1.2-a.jj grammer in JavaCC distribution
+// Much modifed over time.
+
+options
+{
+   LOOKAHEAD = 6;
+   FORCE_LA_CHECK = true;
+   JAVA_UNICODE_ESCAPE = true ;
+   UNICODE_INPUT = false ;
+
+  	STATIC = false ;
+//  DEBUG_PARSER          = true ;
+//  DEBUG_TOKEN_MANAGER   = true ;
+
+  IGNORE_CASE = true;
+  MULTI = true;
+  VISITOR = true;
+  //  NODE_DEFAULT_VOID=true;
+  JJTREE_OUTPUT_DIRECTORY = "./ast";
+  NODE_PACKAGE = "de.uniol.inf.is.odysseus.sparql.parser.ast";
+//  DEBUG_PARSER = false;
+  //DEBUG_TOKEN_MANAGER = false;
+}
+
+PARSER_BEGIN(SPARQLParser)
+/*
+ * (c) Copyright 2004, 2005, 2006, 2007 Hewlett-Packard Development Company, LP
+ * All rights reserved.
+ */
+
+package de.uniol.inf.is.odysseus.sparql.parser.ast;
+
+import java.util.List;
+import java.util.ArrayList;
+
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.*;
+
+import de.uniol.inf.is.odysseus.logicaloperator.*;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
+import de.uniol.inf.is.odysseus.sparql.parser.*;
+import de.uniol.inf.is.odysseus.sparql.*;
+
+public class SPARQLParser extends SPARQLParserBase
+{
+}
+PARSER_END(SPARQLParser)
+
+void CompilationUnit(): { }
+{
+  Query() <EOF>
+}
+
+ASTQuery Query() : { }
+{
+  ( Prologue()
+  ( SelectQuery() | ConstructQuery() | DescribeQuery() | AskQuery() )) |
+  
+  CreateStatement()
+  {return jjtThis;}
+}
+
+void CreateStatement() :
+{}
+{
+  ( < CREATE > | < ATTACH > | < ADD > )
+    < STREAM > IRIref()
+  
+  ( < FROM > | < WITH > )
+  
+  ( Socket() | Channel() | CSVSource())
+ 
+}
+
+void Socket() :
+{}
+{
+  < SOCKET >
+  
+  Host() <COLON> <INTEGER>
+}
+
+void Channel() :
+{}
+{
+  < CHANNEL > Host() <COLON> <INTEGER>
+}
+
+void Host() :
+{
+  Token value;
+}
+{
+  value = < IPADDRESS >
+  {
+    jjtThis.setValue(value.image);
+  }
+| Identifier()
+}
+
+void CSVSource() :
+{
+  Token t;
+}
+{
+  < CSV > t = < STRING_LITERAL1 >
+  {
+    jjtThis.setURL(t.image.substring(1, t.image.length() - 1));
+  }
+}
+
+void Identifier() :
+{
+  Token t;
+}
+{
+  t = < IDENTIFIER >
+  {
+    jjtThis.setName(t.image);
+  }
+}
+
+void Prologue() : {}
+{
+  ( BaseDecl() ) ?
+  ( PrefixDecl() )*
+}
+
+void BaseDecl() : { INode base; }
+{
+  <BASE> base = IRI_REF()
+	{ this.setBaseURI(base.getName()) ; }
+}
+
+
+void PrefixDecl() : { Token t ; INode iri ; }
+{
+    <PREFIX> t = <PNAME_NS> iri = IRI_REF()
+      { this.putPrefix(t.image, iri.getName()) ; }
+}
+
+// ---- Query type clauses
+
+void SelectQuery() : { Variable v = null; Aggregation agg; List<SourceInfo> sources= new ArrayList<SourceInfo>();}
+{
+  <SELECT>
+    //{ getQuery().setQuerySelectType() ; }
+  ( <DISTINCT> { jjtThis.setDistinct(true);}
+  | <REDUCED> { jjtThis.setDistinct(true); } // reduced is used in the way of distinct
+  )?
+  (
+    (( v = Var() { jjtThis.addResultVar(v) ; } )
+    |
+     ( agg = Aggregation() 
+   		{ 	jjtThis.addAggregation(agg); 
+   		} 
+   	  )
+    )+
+    { jjtThis.setResultStar(false) ; }
+  |
+    <STAR> { jjtThis.setResultStar(true) ; }
+  )
+
+  [ FromClause(sources) {jjtThis.setSources(sources);}]
+  WhereClause()
+  [ GroupBy() ]
+  /* [ Having() ] */
+  SolutionModifier()
+}
+
+void ConstructQuery() : { List<SourceInfo > sources = new ArrayList<SourceInfo >();}
+{
+  <CONSTRUCT>
+//    { getQuery().setQueryConstructType() ;
+//      setInConstructTemplate(true) ; }
+  ConstructTemplate()
+//    { setInConstructTemplate(false) ;
+//      getQuery().setQueryResultStar(false) ;
+//      getQuery().setConstructTemplate(t) ; }
+  [ FromClause(sources) ]
+  WhereClause()
+  SolutionModifier()
+}
+
+void DescribeQuery() : { INode n ; List<SourceInfo > sources = new ArrayList<SourceInfo >();}
+{
+  <DESCRIBE>
+  (
+    ( n = VarOrIRIref() )+
+  |
+    <STAR>
+  )
+  [ FromClause(sources) ]
+  ( WhereClause() )?
+  SolutionModifier()
+}
+
+void AskQuery() : {List<SourceInfo > sources = new ArrayList<SourceInfo >();}
+{
+  <ASK>
+  [ FromClause(sources) ]
+  WhereClause()
+}
+
+// ----
+
+// This non terminal defines a FROM-part in a sparql query.
+// It can contain persistent rdf sources or rdf streams but
+// not both.
+
+void FromClause(List<SourceInfo> sources) : {}
+{
+  ( DatastreamClause(sources))
+}
+
+// NOT USED AT THE MOMENT
+//void DatasetClause(List<SourceInfo> sources) : {SourceInfo si;}
+//{
+//  ( <FROM> si=DefaultGraphClause() {sources.add(si);}
+//  | <FROM> si=NamedGraphClause(){sources.add(si);}
+//   )+
+//}
+
+
+// =============== BEGIN STREAM ===================
+// This is the new part to define some data streams
+// FROM STREAM and FROM NAMED STREAM
+
+
+void DatastreamClause(List<SourceInfo> sources) : {SourceInfo si;}
+{
+  ( <FROM> si=StreamClause(){sources.add(si);})+
+}
+// ================ END STREAM ====================
+
+// NOT USED AT THE MOMENT
+//void DefaultGraphClause() : { Node n ; }
+//{
+//  <GRAPH>
+//  n = SourceSelector()
+//  {
+//    // This checks for duplicates
+//    getQuery().addGraphURI(n.getURI()) ;
+//  }
+//}
+
+// NOT USED AT THE MOMENT
+//void NamedGraphClause() : { Node n ; }
+//{
+//  <NAMED> <GRAPH>
+//  n = SourceSelector()
+//  {
+//    // This checks for duplicates
+//    getQuery().addNamedGraphURI(n.getURI()) ;
+//  }
+//}
+
+
+// =============== BEGIN STREAM ===================
+// This is a default stream clause
+// FROM STREAM
+SourceInfo StreamClause() : 
+{ 
+    INode streamName;
+    WindowAO window;
+    AccessAO access;
+    boolean named = false;
+}
+{
+  <STREAM> [<NAMED>{named=true;}]
+  streamName = SourceSelector()
+  window = Window()
+  {
+    SDFSource sdfSource = new SDFSource(streamName.getName(), SPARQLAccessSourceTypes.RDF);
+	access = new AccessAO(sdfSource);
+
+	SourceInfo si = new SourceInfo(streamName.getName(), access, window);
+	si.setDefaultStream(!named);
+
+	return si;
+  }
+}
+
+
+Aggregation Aggregation() : {Variable v; Aggregation agg ;}
+{
+	(<AVG> <LPAREN> v = Var() <RPAREN>
+		{ 	agg = new Aggregation(v, AggregateFunction.AVG); } |
+	 <MIN> <LPAREN> v = Var() <RPAREN>
+		{ 	agg = new Aggregation(v, AggregateFunction.MIN); } |
+	 <MAX> <LPAREN> v = Var() <RPAREN>
+	 	{ 	agg = new Aggregation(v, AggregateFunction.MAX); } |
+	 <SUM> <LPAREN> v = Var() <RPAREN>
+	 	{ 	agg = new Aggregation(v, AggregateFunction.SUM); } |
+	 <COUNT> <LPAREN> v = Var() <RPAREN>
+	 	{ 	agg = new Aggregation(v, AggregateFunction.COUNT); }
+	)
+	{return agg;}
+}
+
+WindowAO Window() : {WindowAO window = null;}
+{
+
+  ( window = SlidingTimeWindow() | window = SlidingTupelWindow() )
+  {return window;}
+}
+
+WindowAO SlidingTimeWindow() : 
+{
+    WindowAO window = null;
+    long range = 1;
+    long delta = 1;
+}
+{
+  <WINDOW> <RANGE> range = ValueSpecification()
+  (	<ADVANCE> delta = ValueSpecification() )?
+  {
+    window = new WindowAO(WindowType.TIME);
+    window.setWindowSize(range);
+    window.setWindowAdvance(delta);
+    return window;
+  }
+}
+
+WindowAO SlidingTupelWindow() :
+{
+  	WindowAO window = null;
+  	Token rangeToken = null;
+  	Token deltaToken = null;
+  	long range = 1;
+  	long delta = 1;
+}
+{
+  <WINDOW> <ELEMS> rangeToken = <INTEGER> (< ADVANCE > deltaToken = < INTEGER >)?
+  {
+
+    range = Long.parseLong(rangeToken.toString());
+    if(deltaToken != null){      delta = Long.parseLong(deltaToken.toString());
+    }
+    window = new WindowAO(WindowType.TUPLE);
+    window.setWindowSize(range);
+    window.setWindowAdvance(delta);
+    return window;
+  }
+}
+
+//ElementSimpleWindow FixedWindow() : 
+//{
+//    ElementSimpleWindow fw = null;
+//    ElementValueSpecification vs = null;
+//}
+//{
+//  <WINDOW> <RANGE> vs = ValueSpecification() <FIXED>
+//  {
+//    fw = new ElementSimpleWindow(WindowType.JUMPING_TIME_WINDOW);
+//    fw.setRange(vs.getValue(), vs.getTimeunit());
+//    fw.setDelta(vs.getValue(), vs.getTimeunit());
+//    return fw;
+//  }
+//}
+
+//ElementPredicateWindow PWindow() : {ElementPredicateWindow epw = null; ElementWindow ew = null;}
+//{
+//  epw = StartEndPWindow() ew = WindowNotPWindow()
+//  {epw.setReducingWindow(ew);
+//   return epw;}
+//}
+
+//ElementStartEndPredicateWindow StartEndPWindow() : 
+//{
+//    ElementStartEndPredicateWindow sepw = new ElementStartEndPredicateWindow();
+//    ElementStartEndPredicate start = null;
+//    Element startFilter = null;
+//    ElementStartEndPredicate end = null;
+//    Element endFilter = null;}
+//{
+//  <PWINDOW> <START> start = StartEndPredicate() [<DOT> startFilter = Filter()]
+//  <END> end = StartEndPredicate() [<DOT> endFilter = Filter()]
+//    { start.setFilter((ElementFilter)startFilter);
+//      end.setFilter((ElementFilter)endFilter);
+//      sepw.setStart(start);
+//      sepw.setEnd(end);
+//      return sepw;
+//    }
+//}
+
+WindowAO WindowNotPWindow() : {WindowAO window= null;}
+{
+  ( window = SlidingTimeWindow() | window = SlidingTupelWindow() )
+ 	{ 	  return window; 	} 	
+}
+
+//ElementStartEndPredicate StartEndPredicate() : 
+//{ElementStartEndPredicate sep = new ElementStartEndPredicate();
+// Triple t = null;
+// Node subjectNode = null;
+// Node predicateNode = null;
+// Node objectNode = null;
+//}
+//{
+//  (subjectNode = VarOrIRIref() | subjectNode = BlankNode()) predicateNode = VarOrIRIref() 
+//    ( objectNode = PWindowGraphTerm() | objectNode = VarOrIRIref())
+//    { t = new Triple(subjectNode, predicateNode, objectNode); 
+//      sep.setTriple(t);
+//      return sep;
+//    }
+//}
+
+//Node PWindowGraphTerm() : {Node n = null;}
+//{
+//  (n = IRIref() | n = RDFLiteral() | n = NumericLiteral() | n = BooleanLiteral())
+//  { return n; }
+//}
+
+long ValueSpecification() : 
+{
+    Token size = null;
+    int factor = 1;
+}
+{
+  size = <INTEGER> [factor = Timeunit()]
+  { long longValue = Long.parseLong(size.toString());
+	return longValue * factor;}
+}
+
+/**
+This rule returns the factor to multiply with to get a window size in milliseconds.
+E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
+*/
+int Timeunit() : {int factor = 1;}
+{
+  (<MS> {factor = 1;}
+  | <S>  {factor = 1000;}  
+  | <MINUTE> {factor = 60000;}
+  | <HOUR> {factor = 3600000;} 
+  | <DAY> {factor  = 86400000;}
+  | <WEEK> {factor = 604800000;}
+  )
+  {return factor;}
+}
+// ================ END STREAM ====================
+
+INode SourceSelector() : {INode iri;}
+{
+  iri = IRI_REF()
+  { 
+    return iri;
+  }
+}
+
+
+void WhereClause() : { }
+{
+   <WHERE> GroupGraphPattern()
+}
+
+void GroupBy() : { INode v; }
+{
+	<GROUP> <BY> <LPAREN> ( v = Var() )+ <RPAREN>
+}
+
+void SolutionModifier() : { }
+{
+  ( OrderClause() )?
+  ( LimitOffsetClauses() )?
+}
+
+void LimitOffsetClauses() : { }
+{
+  // SPARQL does not care about the order here.
+  // SQL (where implemented) does (it's LIMIT then OFFSET generally)
+  // But that is counter intuitive as it's applied the other way round
+  (
+    LimitClause() (OffsetClause())?
+  |
+    OffsetClause() (LimitClause())?
+  )
+}
+
+
+
+void OrderClause() : { }
+{
+  <ORDER> <BY> ( OrderCondition() )+
+}
+
+void OrderCondition() :
+{ int direction = 0 ; INode v = null ; }
+{
+  (
+    ( // These are for clarity in the HTML
+      ( <ASC> 
+      | <DESC> )
+      BrackettedExpression()
+    )
+  |
+    ( Constraint()
+    | v = Var() //{ expr = asExpr(v) ; } 
+    )
+  )
+}
+
+void LimitClause() : { Token t ; }
+{
+  <LIMIT> t = <INTEGER>
+}
+
+void OffsetClause() : { Token t ; }
+{
+  <OFFSET> t = <INTEGER>
+}
+
+// ---- General Graph Pattern 
+
+void GroupGraphPattern() : { WindowAO window; }
+{
+    
+  <LBRACE>
+  // Ensure two BGP's can't be next to each other
+  // Done by seeing if there is a non-BGP and recursing
+  // if there is an intermediate
+  (
+    TriplesBlock()
+  )?
+  (
+    ( GraphPatternNotTriples() | Filter() )
+    (<DOT>)?
+
+    (
+      TriplesBlock()
+    )?
+  )*
+
+  ( window=WindowNotPWindow(){jjtThis.setWindowAO(window);})?
+  <RBRACE>
+}
+
+void TriplesBlock() : {
+  List<List<Triple >> triples = new ArrayList<List<Triple>>();
+  List<Triple> curSubjTriples; 
+}
+{
+  curSubjTriples= TriplesSameSubject()  {
+    triples.add(curSubjTriples);  }
+  ( <DOT> ( curSubjTriples=TriplesSameSubject()
+  			{triples.add(curSubjTriples);}
+  			)
+  )*
+  ( <DOT>)?
+  {
+    jjtThis.setTriples(triples);  }
+}
+
+// @@ Ready to be deleted
+// Element GroupGraphPattern() : { Element el = null ; ElementTriplesBlock acc = null ; }
+// {
+//     { ElementGroup elg = new ElementGroup() ; }
+//   <LBRACE>
+//       { startGroup(elg) ; }
+//   // Ensure two BGP's can't be next to each other
+//   // Done by seeing if there is a non-BGP and recursing
+//   // if there is an intermediate
+//   (
+//     { acc = new ElementTriplesBlock() ;
+//       startTriplesBlock(acc) ;
+//     }
+//     el = TriplesBlock(acc)
+//     { endTriplesBlock(acc) ;
+//       elg.addElement(el) ; } 
+//   )?
+//   (
+//     ( el = GraphPatternNotTriples() | el = Filter() )
+//     { elg.addElement(el) ; }
+//     (<DOT>)?
+// 
+//     (
+//       { acc = new ElementTriplesBlock() ;
+//         startTriplesBlock(acc) ;
+//       }
+//       el = TriplesBlock(acc)
+//       { endTriplesBlock(acc) ;
+//         elg.addElement(el) ; } 
+//     )?
+//   )*
+//       { endGroup(elg) ; }
+//   <RBRACE>
+//     { return elg ; }
+// }
+
+// Element GroupGraphPattern() : {}
+// {
+//     { ElementGroup elg = new ElementGroup() ; }
+//   <LBRACE>
+//       { startGroup(elg) ; }
+//     GraphPatternElement(elg)
+//       { endGroup(elg) ; }
+//   <RBRACE>
+//     { return elg ; }
+// }
+// 
+// 
+// // Without {}
+// // If the recusion is removed can roll GraphPatternElement into GroupGraphPattern()
+// 
+// void GraphPatternElement(ElementGroup elg) : 
+//     { Element el = null ; ElementTriplesBlock acc = null ; }
+// {
+//   // Ensure two BGP's can't be next to each other
+//   // Done by seeing if there is a non-BGP and recursing
+//   // if there is an intermediate
+//   (
+//     { acc = new ElementTriplesBlock() ;
+//       startTriplesBlock(acc) ;
+//     }
+//     el = TriplesBlock(acc)
+//     { endTriplesBlock(acc) ;
+//       elg.addElement(el) ; } 
+//   )?
+//   (
+//     ( el = GraphPatternNotTriples()
+//     | el = Filter()                 
+//     )
+//     { elg.addElement(el) ; }
+//     (<DOT>)?
+//     GraphPatternElement(elg)
+//   )?
+// }
+// 
+// 
+// Element TriplesBlock(ElementTriplesBlock acc) : { }
+// {
+//   { if ( acc == null )
+//       acc = new ElementTriplesBlock() ;
+//   }
+//   TriplesSameSubject(acc)
+//   ( <DOT> (TriplesBlock(acc))? )?
+//     { return acc ; }
+// }
+
+
+// -----
+
+void GraphPatternNotTriples() : { }
+{
+ (
+   OptionalGraphPattern()
+ |
+   // "GroupPattern" or "GroupPattern" union "GroupPattern"
+   GroupOrUnionGraphPattern()
+ |
+   GraphGraphPattern()
+
+ )
+}
+
+// ---- Definitions of each pattern element
+
+void OptionalGraphPattern() : { }
+{ <OPTIONAL> GroupGraphPattern()
+}
+
+void GraphGraphPattern() : { }
+{
+  <GRAPH> VarOrIRIref() GroupGraphPattern()
+}
+
+// G (union G)* can be a single group pattern
+// or a group pattern as part of an union.
+void GroupOrUnionGraphPattern() :
+{ }
+{
+  GroupGraphPattern()
+  ( <UNION>
+    
+  GroupGraphPattern()
+  )*
+}
+void Filter() : { }
+{
+  <FILTER> Constraint()
+}
+
+void Constraint() : { }
+{
+  ( BrackettedExpression()
+  | BuiltInCall()
+  | FunctionCall()
+  )
+}
+
+
+void FunctionCall() : { }
+{
+  IRIref() ArgList()
+}
+
+SimpleNode ArgList() :
+{ 
+	String str = "";
+	SimpleNode expr;
+}
+{
+  (
+    <NIL>
+  |
+   // Was <LPAREN> ( Expression() (<COMMA> Expression() )* )? <RPAREN>
+    <LPAREN>
+      expr=Expression(){str+= "(" + expr.toString();}
+      (<COMMA> expr=Expression() {str += ", " + expr.toString();} )*
+    <RPAREN> {str+= ")";}
+   )
+   
+   {
+   	jjtThis.setString(str);
+   	return jjtThis;
+   }
+}
+
+// -------- Construct patterns
+
+void ConstructTemplate() : { }
+{
+  <LBRACE>
+    (ConstructTriples())?
+  <RBRACE>
+}
+
+void ConstructTriples() : { }
+{
+    TriplesSameSubject()
+    (<DOT> (ConstructTriples())? )?
+}
+
+// -------- Triple lists with property and object lists
+
+List<Triple> TriplesSameSubject() :
+{
+  List<Triple > triples = new ArrayList<Triple>();
+  INode subject;
+  PropertiesAndObjects paos;
+}
+{
+  subject = VarOrTerm()
+  paos=PropertyListNotEmpty()
+  {
+    for(INode curProp: paos.getProperties()){
+      for(INode curObject: paos.getObjects(curProp)){
+      	triples.add(new Triple(subject, curProp, curObject));        }    }  }
+|
+  // Any of the triple generating syntax elements
+  subject = TriplesNode()
+  PropertyList()
+}
+
+PropertiesAndObjects PropertyListNotEmpty() :
+{ PropertiesAndObjects paos = new PropertiesAndObjects();
+  INode predicate ;
+  List<INode > objects;
+}
+{
+  predicate = Verb()
+  objects=ObjectList()  {
+    paos.putPropertyAndObjects(predicate, objects);  }
+  (<SEMICOLON> (predicate = Verb() objects=ObjectList()  	{
+  	  paos.putPropertyAndObjects(predicate, objects);  	}
+  )? )*
+  {
+    return paos;  }
+
+}
+
+PropertiesAndObjects PropertyList() : { PropertiesAndObjects paos;}
+{
+  ( paos=PropertyListNotEmpty()  {
+    return paos;  } ) ?
+}
+
+// // Recursive
+// void PropertyListNotEmpty(Node s, TripleCollector acc) : { Node p ; }
+// {
+//   p = Verb()
+//   ObjectList(s, p, acc)
+//   (<SEMICOLON> PropertyList(s, acc) ) ?
+// #ifdef ARQ
+//   |
+//   Reification(s, acc)
+// #endif
+// }
+
+// // Recursive
+// void ObjectList(Node s, Node p, TripleCollector acc): { Node o ; } 
+// {
+//     { int mark = acc.mark() ; }
+//   o = GraphNode(acc) 
+//     { insert(acc, mark, s, p, o) ; }
+//   ( <COMMA> ObjectList(s, p , acc) )?
+// }
+
+List<INode> ObjectList():
+{
+  List<INode > objects = new ArrayList<INode >();
+  INode obj;
+}
+{
+  obj=Object()  {
+    objects.add(obj);  }
+  ( <COMMA> obj=Object()  {
+    objects.add(obj);  }
+   )*
+   {
+     return objects;   }
+}
+
+INode Object(): {INode object;}
+{
+  object = GraphNode()
+}
+
+INode Verb() : {INode p ; Token t;}
+{
+//   ( p = VarOrBlankNodeOrIRIref() | <KW_A> { p = nRDFtype ; } )
+  ( p = VarOrIRIref() | t=<KW_A>{ p = new Literal(t.image);}  )
+    { return p ; }
+}
+
+// -------- Triple expansions
+
+// Anything that can stand in a node slot and which is
+// a number of triples
+
+INode TriplesNode() : { INode n ; }
+{
+  Collection()
+ |
+  BlankNodePropertyList()
+}
+
+void BlankNodePropertyList() : { }
+{
+  <LBRACKET>
+  PropertyListNotEmpty()
+  <RBRACKET>
+}
+// ------- RDF collections
+
+void Collection() :
+    {INode graphNode;}
+{
+  <LPAREN>
+  (
+    graphNode = GraphNode()
+  ) +
+  // Not * here - "()" is handled separately.
+  <RPAREN>
+}
+
+// -------- Nodes in a graph pattern or template
+
+INode GraphNode() : { INode n ; }
+{
+  n = VarOrTerm() { return n ; }
+ |
+  n = TriplesNode() { return n ; }
+}
+
+INode VarOrTerm() : {INode n = null ; }
+{
+  ( n = Var() | n = GraphTerm() )
+  { return n ; }
+}
+
+// Property (if no bNodes) + DESCRIBE
+INode VarOrIRIref() : {INode n = null ; }
+{
+  ( n = Var() | n = IRIref() )
+  { return n ; }
+}
+
+// // GRAPH and property if including blank nodes are properties.
+// Node VarOrBlankNodeOrIRIref() : {Node n = null ; }
+// {
+//   ( n = Var() | n = BlankNode() | n = IRIref() )
+//   { return n ; }
+// }
+
+Variable Var() : { Token t ;}
+{
+    ( t = <VAR1> | t = <VAR2> )
+    { return new Variable(t.image) ; }
+}
+
+INode GraphTerm() : { INode n ; }
+{
+  n = IRIref() { return n ; }
+| n = RDFLiteral() { return n ; }
+| n = NumericLiteral() { return n ; }
+| n = BooleanLiteral() { return n ; }
+| n = BlankNode() { return n ; }
+  //  <LPAREN> <RPAREN>     { return nRDFnil ; }
+| <NIL>{return BlankNode.NIL;}
+}
+
+// -------- Constraint syntax
+
+SimpleNode Expression() : { }
+{
+  ConditionalOrExpression(){return jjtThis;}
+}
+
+SimpleNode ConditionalOrExpression() : { }
+{
+  ConditionalAndExpression()
+  ( <SC_OR> ConditionalAndExpression()
+  )*
+  
+  {return jjtThis;}
+}
+
+SimpleNode ConditionalAndExpression() : { }
+{
+  ValueLogical()
+  ( <SC_AND> ValueLogical()
+  )*
+  {return jjtThis;}
+}
+
+SimpleNode ValueLogical() : { }
+{
+  RelationalExpression()
+  {return jjtThis;}
+}
+
+SimpleNode RelationalExpression() : { Token t = null; }
+{
+  NumericExpression()
+  (
+    t=<EQ> NumericExpression()
+  | t=<NE> NumericExpression()
+  | t=<LT> NumericExpression()
+  | t=<GT> NumericExpression()
+  | t=<LE> NumericExpression()
+  | t=<GE> NumericExpression()
+  )?
+
+  {
+    if(t != null){      jjtThis.setCompareOperator(t.image);
+    }  }
+  {return jjtThis;}
+}
+
+SimpleNode NumericExpression () : { }
+{
+  AdditiveExpression(){return jjtThis;}
+}
+
+SimpleNode AdditiveExpression() :
+{ String str = "";
+  SimpleNode tempExpr;
+  INode lit;
+}
+{
+  tempExpr=MultiplicativeExpression()  {
+    str += tempExpr.toString();  }
+  ( <PLUS> tempExpr = MultiplicativeExpression(){str += " + " + tempExpr.toString();}
+  | <MINUS> tempExpr = MultiplicativeExpression(){str += " - " + tempExpr.toString();}
+  | lit=NumericLiteralPositive(){str += lit.getName();}
+  | lit=NumericLiteralNegative(){str += lit.getName();}
+  )*
+
+  {
+    jjtThis.setString(str);  }
+  {return jjtThis;}
+}
+
+SimpleNode MultiplicativeExpression() :
+{
+  String str = "";
+  SimpleNode tempExpr;
+}
+{
+  tempExpr=UnaryExpression(){str += tempExpr.toString();}
+  ( <STAR> tempExpr=UnaryExpression(){str+=" * " + tempExpr.toString();}
+  | <SLASH> tempExpr=UnaryExpression(){str += "/" + tempExpr.toString();}
+//   | <REM>   expr2 = UnaryExpression()
+//     { expr1 = new E_Modulus(expr1, expr2) ; }
+  )*
+  {
+  	jjtThis.setString(str);
+    return jjtThis;
+  }
+}
+
+SimpleNode UnaryExpression() : 
+{
+	String str = "";
+	SimpleNode tempExpr;
+}
+{
+  /*<BANG> tempExpr=PrimaryExpression(){str+=tempExpr.toString();}*/
+  /*|*/ 
+  <PLUS> tempExpr=PrimaryExpression(){str += " + " + tempExpr.toString();} 
+  | <MINUS> tempExpr=PrimaryExpression(){str += " - " + tempExpr.toString();}
+  | tempExpr=PrimaryExpression(){str+= tempExpr.toString();}
+  {
+  	jjtThis.setString(str);
+  	return jjtThis;
+  }
+}
+
+SimpleNode PrimaryExpression() : 
+{
+	SimpleNode expr;
+	String str;
+	INode node;
+}
+{
+  ( expr=BrackettedExpression(){jjtThis.setString(expr.toString());}
+  | expr=BuiltInCall(){jjtThis.setString(expr.toString());}
+  | expr=IRIrefOrFunction(){jjtThis.setString(expr.toString());}
+
+// NOT  | gn = VarOrTerm()           { return asExpr(gn) ; }
+// Because of IRIrefOrFunction vs <NIL> and blank nodes
+  | node=RDFLiteral(){jjtThis.setString(node.getName());}
+  | node=NumericLiteral(){jjtThis.setString(node.getName());}
+  | node=BooleanLiteral(){jjtThis.setString(node.getName());}
+  | node=Var(){jjtThis.setString(node.getName());}
+  )
+  {return jjtThis;}
+}
+
+SimpleNode BrackettedExpression() : 
+{
+}
+{
+    <LPAREN> Expression() <RPAREN> // String is set directly in ASTBrackettedExpression.toString()
+    {return jjtThis;}
+}
+
+SimpleNode BuiltInCall() : 
+{
+	String str = "";
+	SimpleNode node;
+	SimpleNode node2;
+	Variable var;
+}
+{
+    // STR
+    <STR> <LPAREN> node=Expression() <RPAREN> {jjtThis.setString("str(" + node.toString() + ")");}
+  | // Lang
+    <LANG> <LPAREN> node=Expression() <RPAREN> {jjtThis.setString("lang(" + node.toString() + ")");}
+  |// Langmatches
+    <LANGMATCHES>
+       <LPAREN> node=Expression() <COMMA> node2=Expression() <RPAREN>
+       {jjtThis.setString("langMatches(" + node.toString() + ", " + node2.toString() + ")");}
+
+  | // Datatype
+    <DTYPE> <LPAREN> node=Expression() <RPAREN>{jjtThis.setString("datatype(" + node.toString() + ")");}
+
+  | <BOUND> <LPAREN> var=Var() <RPAREN>{jjtThis.setString("bound(" + var.getName() + ")");}
+
+  | <SAME_TERM> <LPAREN> node=Expression() <COMMA> node2=Expression() <RPAREN>
+  {jjtThis.setString("sameTerm(" + node.toString() + ", " + node2.toString() + ")");}
+
+  | <IS_IRI> <LPAREN> node=Expression() <RPAREN>
+  {jjtThis.setString("isIRI(" + node.toString() + ")");}
+
+  | <IS_URI> <LPAREN> node=Expression() <RPAREN>
+	{jjtThis.setString("isURI(" + node.toString() + ")");}
+	
+  | <IS_BLANK> <LPAREN> node=Expression() <RPAREN>
+	{jjtThis.setString("isBlank(" + node.toString() + ")");}
+	
+  | <IS_LITERAL> <LPAREN> node=Expression() <RPAREN>
+	{jjtThis.setString("isLiteral(" + node.toString() + ")");}
+	
+  | // Regular expression matcher
+    node=RegexExpression(){jjtThis.setString(node.toString());}
+    
+    {return jjtThis;}
+}
+
+SimpleNode RegexExpression() :
+{ }
+{/* String is produced directly in ASTRegexExpression.toString() */
+    <REGEX> <LPAREN>
+      Expression()
+      <COMMA>
+      Expression()
+      ( <COMMA> Expression() ) ?
+    <RPAREN>
+}
+
+// The case of "q:name()" or just "q:name"
+// by expanding out FunctionCall()
+
+SimpleNode IRIrefOrFunction() :
+{
+	INode n;
+	String str ="";
+	SimpleNode argList;
+}
+{
+  n=IRIref(){str+=n.getName();}
+  ( argList=ArgList(){str += argList.toString();} )?
+  
+  {return jjtThis;}
+}
+
+INode RDFLiteral() : 
+{
+	String name;
+	String lang;
+	INode n;
+	
+	Literal lit;
+}
+{
+  name=String(){lit = new Literal(name);}
+  // Optional lang tag and datatype.
+  ( <AT> lang=String() {lit.setLanguage(lang);})?
+  ( <DATATYPE> n=IRIref() {lit.setDatatype(n.getName());})?
+  
+  {return lit;}
+}
+
+
+INode NumericLiteral() : { INode n ; }
+{
+  (
+    n = NumericLiteralUnsigned()
+  | n = NumericLiteralPositive()
+  | n = NumericLiteralNegative()
+  )
+  { return n ; }
+
+}
+
+INode NumericLiteralUnsigned() : { Token t ; }
+{
+  t = <INTEGER> { return new Literal(t.image) ; }
+| t = <DECIMAL> { return new Literal(t.image) ; }
+| t = <DOUBLE> { return new Literal(t.image) ; }
+}
+
+INode NumericLiteralPositive() : { Token t ; }
+{
+  t = <INTEGER_POSITIVE> { return new Literal(t.image) ; }
+| t = <DECIMAL_POSITIVE> { return new Literal(t.image) ; }
+| t = <DOUBLE_POSITIVE> { return new Literal(t.image) ; }
+}
+
+INode NumericLiteralNegative() : { Token t ; }
+{
+  t = <INTEGER_NEGATIVE> { return new Literal(t.image) ; }
+| t = <DECIMAL_NEGATIVE> { return new Literal(t.image) ; }
+| t = <DOUBLE_NEGATIVE> { return new Literal(t.image) ; }
+}
+
+
+INode BooleanLiteral() : {}
+{
+  <TRUE>  {    return new Literal("true");  }
+ |
+  <FALSE>  {    return new Literal("false");  }  
+}
+
+String String() : { Token t ; String lex ; }
+{
+  ( t = <STRING_LITERAL1> { lex = stripQuotes(t.image) ; }
+  | t = <STRING_LITERAL2> { lex = stripQuotes(t.image) ; }
+  | t = <STRING_LITERAL_LONG1> { lex = stripQuotes(t.image) ; }
+  | t = <STRING_LITERAL_LONG2> { lex = stripQuotes(t.image) ; }
+  )
+    {
+      lex = unescapeStr(lex, t.beginLine, t.beginColumn) ;
+      return lex ;
+    }
+}
+
+INode IRIref() : { INode n; }
+{
+  n = IRI_REF() { return n ; }
+|
+  n = PrefixedName() { return n ; }
+}
+
+Literal PrefixedName() : { Token t ; }
+{
+  ( t = <PNAME_LN>
+    { return new Literal(t.image); }
+  |
+    t = <PNAME_NS>
+    { return new Literal(t.image); }
+  )
+}
+
+BlankNode BlankNode() : { Token t = null ; }
+{
+  t = <BLANK_NODE_LABEL>
+    { return new BlankNode(t.image); }
+|
+//  <LBRACKET> <RBRACKET> { return createBNode() ; }
+  <ANON> { return createBlankNode() ; }
+
+}
+
+IRI IRI_REF() : { Token t ; }
+{
+  t = <IRIref>
+  { return new IRI(t.image); }
+}
+
+// ------------------------------------------
+// Tokens
+
+// Comments and whitespace
+
+SKIP : { " " | "\t" | "\n" | "\r" | "\f" }
+
+TOKEN: { <#WS: " " | "\t" | "\n" | "\r" | "\f"> }
+
+SPECIAL_TOKEN :
+{ <SINGLE_LINE_COMMENT: "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")? > }
+
+// Main tokens */
+
+TOKEN:
+{
+   // Includes # for relative URIs
+   <IRIref: "<" (~[ ">","<", "\"", "{", "}", "^", "\\", "|", "`",
+                      "\u0000"-"\u0020"])* ">" >
+| <PNAME_NS: (<PN_PREFIX>)? ":" >
+| <PNAME_LN: <PNAME_NS> <PN_LOCAL> >
+| <BLANK_NODE_LABEL: "_:" <PN_LOCAL> >
+| <VAR1: "?" <VARNAME> >
+| <VAR2: "$" <VARNAME> >
+| <LANGTAG: <AT> (<A2Z>)+("-" (<A2ZN>)+)* >
+| <#A2Z: ["a"-"z","A"-"Z"]>
+| <#A2ZN: ["a"-"z","A"-"Z","0"-"9"]>
+}
+
+// -------------------------------------------------
+// Keyworks : includes operators that are words and should be
+// before general things like IDENTIFIER which swallow almost
+// anything
+
+TOKEN : { <KW_A: "a" > }
+
+TOKEN [IGNORE_CASE] :
+{
+// Prologue
+   < BASE: "base" >
+| < PREFIX: "prefix" >
+
+// Result forms
+| < SELECT: "select" >
+| < DISTINCT: "distinct" >
+| < REDUCED: "reduced" >
+| < DESCRIBE: "describe" >
+| < CONSTRUCT: "construct" >
+| < ASK: "ask" >
+
+| < LIMIT: "limit" >
+| < OFFSET: "offset" >
+| < ORDER: "order" >
+| < BY: "by" >
+| < GROUP: "group">
+
+| < ASC: "asc" >
+| < DESC: "desc" >
+
+// Aggregation Functions
+| < AVG: "avg" >
+| < MAX: "max" >
+| < MIN: "min" >
+| < SUM: "sum" >
+| < COUNT: "count" >
+
+// Dataset
+| < NAMED: "named" >
+| < FROM: "from" >
+| < STREAM: "stream" >
+
+| < CREATE : "create" >
+| < ATTACH: "attach" >
+| < ADD: "add" >
+| < WITH: "with">
+| < CSV: "csv">
+| < CHANNEL: "channel">
+| < #DIGIT : [ "0"-"9" ] >
+| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >
+| < SOCKET: "socket">
+
+// Window
+| < WINDOW: "window" >
+| < RANGE: "range" >
+| < SLIDE: "slide" >
+| < ADVANCE: "advance" >
+| < FIXED: "fixed" >
+| < ELEMS: "elems" > 
+| < PWINDOW: "pwindow" >
+| < START: "start" >
+| < END: "end" >
+
+// Timeunit
+| < MS: "MS" >
+| < S: "S" >
+| < MINUTE: "minute" >
+| < HOUR: "hour" >
+| < DAY: "day" >
+| < WEEK: "week" >
+| < MONTH: "month" >
+| < YEAR: "year" >
+
+// Graph pattern operators 
+| < WHERE: "where" >
+| < AND: "and" >
+| < GRAPH: "graph" >
+| < OPTIONAL: "optional" >
+| < UNION: "union" >
+
+
+
+
+
+
+| < FILTER: "filter" >
+
+// Expression operators
+| < BOUND: "bound" >
+| < STR: "str" >
+// |  < URI:         "uri" >
+| < DTYPE: "datatype" >
+| < LANG: "lang" >
+| < LANGMATCHES: "langmatches" >
+//|  < IS_IRI:      ("isIRI"|"isURI") >
+| < IS_URI: "isURI" >
+| < IS_IRI: "isIRI" >
+| < IS_BLANK: "isBlank" >
+| < IS_LITERAL: "isLiteral" >
+| < REGEX: "regex" >
+| < SAME_TERM: "sameTerm" >
+
+| <TRUE: "true" >
+| <FALSE: "false" >
+}
+
+// -------------------------------------------------
+
+TOKEN :
+{
+  < #DIGITS: (["0"-"9"])+>
+| < INTEGER: <DIGITS> >
+| < DECIMAL: ( <DIGITS> "." (<DIGITS>)* | "." <DIGITS> ) >
+| < DOUBLE: // Required exponent.
+      (
+        (["0"-"9"])+ "." (["0"-"9"])* <EXPONENT>
+        | "." (["0"-"9"])+ (<EXPONENT>)
+        | (["0"-"9"])+ <EXPONENT>
+      )
+      >
+
+| < INTEGER_POSITIVE: <PLUS> <INTEGER> >
+| < DECIMAL_POSITIVE: <PLUS> <DECIMAL> >
+| < DOUBLE_POSITIVE: <PLUS> <DOUBLE> >
+
+| < INTEGER_NEGATIVE: <MINUS> <INTEGER> >
+| < DECIMAL_NEGATIVE: <MINUS> <DECIMAL> >
+| < DOUBLE_NEGATIVE: <MINUS> <DOUBLE> >
+
+| < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+| < #QUOTE_3D: "\"\"\"">
+| < #QUOTE_3S: "'''">
+| <ECHAR: "\\" ( "t"|"b"|"n"|"r"|"f"|"\\"|"\""|"'") >
+| < STRING_LITERAL1:
+      // Single quoted string
+      "'" ( (~["'","\\","\n","\r"]) | <ECHAR> )* "'" >
+| < STRING_LITERAL2:
+    // Double quoted string
+      "\"" ( (~["\"","\\","\n","\r"]) | <ECHAR> )* "\"" >
+| < STRING_LITERAL_LONG1:
+     <QUOTE_3S>
+      ( ("'" | "''")? (~["'","\\"] | <ECHAR> ))*
+     <QUOTE_3S> >
+
+| < STRING_LITERAL_LONG2:
+     <QUOTE_3D>
+      ( ("\"" | "\"\"")? (~["\"","\\"] | <ECHAR> ))*
+     <QUOTE_3D> >
+
+| < IDENTIFIER :
+    (< LETTER >)+
+    (
+      < DIGIT >
+    | < LETTER >
+    | < SPECIAL_CHARS >
+    )* >
+| < #LETTER : [ "a"-"z", "A"-"Z" ] >
+| < #SPECIAL_CHARS :
+    ":"
+  | "_"
+  | "."
+  | "*" >
+}
+
+TOKEN :
+{
+  < LPAREN: "(" >
+| < RPAREN: ")" >
+
+| <NIL: <LPAREN> (<WS>|<SINGLE_LINE_COMMENT>)* <RPAREN> >
+
+| < LBRACE: "{" >
+| < RBRACE: "}" >
+
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < ANON: <LBRACKET> (<WS>|<SINGLE_LINE_COMMENT>)* <RBRACKET> >
+
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < DOT: "." >
+}
+
+// Operator
+
+TOKEN :
+{
+  < EQ: "=" >
+| < NE: "!=" >
+| < GT: ">" >
+| < LT: "<" >
+| < LE: "<=" > // Maybe: | "=>" >
+| < GE: ">=" > // Maybe: | "=<" >
+
+| < BANG: "!" >
+| < TILDE: "~" >
+| < COLON: ":" >
+
+| < SC_OR: "||" >
+| < SC_AND: "&&" >
+
+| < PLUS: "+" >
+| < MINUS: "-" >
+| < STAR: "*" >
+| < SLASH: "/" >
+
+//| < AMP: "&" >
+//| < REM: "%" >
+
+| < DATATYPE: "^^">
+| < AT: "@">
+}
+
+// See XML chars.txt for notes
+
+TOKEN:
+{
+  // XML 1.1 NCNameStartChar without "_"
+  <#PN_CHARS_BASE:
+          ["A"-"Z"] | ["a"-"z"] |
+          ["\u00C0"-"\u00D6"] | ["\u00D8"-"\u00F6"] | ["\u00F8"-"\u02FF"] |
+          ["\u0370"-"\u037D"] | ["\u037F"-"\u1FFF"] |
+          ["\u200C"-"\u200D"] | ["\u2070"-"\u218F"] | ["\u2C00"-"\u2FEF"] |
+          ["\u3001"-"\uD7FF"] | ["\uF900"-"\uFFFD"]
+          >
+          // [#x10000-#xEFFFF]
+|
+  <#PN_CHARS_U: <PN_CHARS_BASE> | "_" >
+|
+// No DOT
+  <#PN_CHARS: (<PN_CHARS_U> | "-" | ["0"-"9"] | "\u00B7" |
+              ["\u0300"-"\u036F"] | ["\u203F"-"\u2040"] ) >
+|
+  // No leading "_", no trailing ".", can have dot inside prefix name.
+  <#PN_PREFIX: <PN_CHARS_BASE> ((<PN_CHARS>|".")* <PN_CHARS>)? >
+|
+  // With a leading "_", no dot at end of local name.
+  <#PN_LOCAL: (<PN_CHARS_U> | ["0"-"9"]) ((<PN_CHARS>|".")* <PN_CHARS>)? >
+|
+  // NCNAME without "-" and ".", allowing leading digits.
+  <#VARNAME: ( <PN_CHARS_U> | ["0"-"9"] )
+             ( <PN_CHARS_U> | ["0"-"9"] | "\u00B7" |
+               ["\u0300"-"\u036F"] | ["\u203F"-"\u2040"] )* >
+}
+
+// Catch-all tokens.  Must be last.  
+// Any non-whitespace.  Causes a parser exception, rather than a
+// token manager error (with hidden line numbers).
+// Only bad IRIs (e.g. spaces) now give unhelpful parse errors.
+TOKEN:
+{
+  <#UNKNOWN: (~[" ","\t","\n","\r","\f" ])+ >
+}
+
+/*
+ * (c) Copyright 2004, 2005, 2006, 2007 Hewlett-Packard Development Company, LP
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/*
+# Local Variables:
+# tab-width: 4
+# indent-tabs-mode: nil
+# comment-default-style: "//"
+# End:
+*/
