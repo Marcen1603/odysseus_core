@@ -2,19 +2,19 @@ package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
 public class Aggregation {
 
-	private Variable var;
-	private AggregateFunction func;
+	private Variable v;
+	private AggregateFunctionName func;
 	
-	public Aggregation(Variable v, AggregateFunction func){
-		this.var = v;
+	public Aggregation(Variable var, AggregateFunctionName func){
+		this.v = var;
 		this.func = func;
 	}
-	
-	public Variable getVar(){
-		return this.var;
-	}
-	
-	public AggregateFunction getAggFunc(){
+		
+	public AggregateFunctionName getAggFunc(){
 		return this.func;
+	}
+
+	public Variable getVariable() {
+		return v;
 	}
 }

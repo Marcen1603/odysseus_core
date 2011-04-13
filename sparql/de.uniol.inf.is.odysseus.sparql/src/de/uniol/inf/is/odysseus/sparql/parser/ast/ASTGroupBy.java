@@ -2,14 +2,24 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
+
 public
 class ASTGroupBy extends SimpleNode {
-  public ASTGroupBy(int id) {
+  
+	private List<Variable> variables;
+	
+	public ASTGroupBy(int id) {
     super(id);
+    this.variables = new ArrayList<Variable>();
   }
 
   public ASTGroupBy(SPARQLParser p, int id) {
     super(p, id);
+    this.variables = new ArrayList<Variable>();
   }
 
 
@@ -17,5 +27,14 @@ class ASTGroupBy extends SimpleNode {
   public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public void addVariable(Variable v){
+	  this.variables.add(v);
+  }
+  
+  public List<Variable> getVariables(){
+	  return this.variables;
+  }
+  
 }
 /* JavaCC - OriginalChecksum=caa36fda60a813fd49cfcaa3d6fbb262 (do not edit this line) */

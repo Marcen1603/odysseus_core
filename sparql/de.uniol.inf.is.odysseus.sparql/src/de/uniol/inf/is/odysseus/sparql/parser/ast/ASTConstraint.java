@@ -4,7 +4,18 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 public
 class ASTConstraint extends SimpleNode {
-  public ASTConstraint(int id) {
+  
+	String string;
+	
+	public String toString() {
+		return string;
+	}
+
+	public void setString(String string) {
+		this.string = string;
+	}
+
+	public ASTConstraint(int id) {
     super(id);
   }
 

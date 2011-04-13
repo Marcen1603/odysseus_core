@@ -4,7 +4,18 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 public
 class ASTBaseDecl extends SimpleNode {
-  public ASTBaseDecl(int id) {
+  
+	String baseURI;
+	
+	public String getBaseURI() {
+		return baseURI;
+	}
+
+	public void setBaseURI(String baseURI) {
+		this.baseURI = baseURI;
+	}
+
+	public ASTBaseDecl(int id) {
     super(id);
   }
 

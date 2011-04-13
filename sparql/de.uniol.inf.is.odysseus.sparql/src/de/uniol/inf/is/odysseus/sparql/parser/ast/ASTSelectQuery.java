@@ -17,8 +17,16 @@ class ASTSelectQuery extends SimpleNode {
 	private boolean resultStar;
 
 	private List<Variable> resultVars;
-	
 	private List<Aggregation> aggregations;
+	/**
+	 * This list contains at the i-th position
+	 * a 0, if the i-th element in the result
+	 * schema is a variable. It contains a 1 at
+	 * the i-th position, if the element at the
+	 * i-th position in the result schema is
+	 * an aggregation. 
+	 */
+	private List<Integer> varOrAgg;
 	
 	private List<SourceInfo> defaultStreams;
 	private List<SourceInfo> namedStreams;
@@ -30,6 +38,8 @@ class ASTSelectQuery extends SimpleNode {
   public ASTSelectQuery(int id) {
     super(id);
     this.resultVars = new ArrayList<Variable>();
+    this.aggregations = new ArrayList<Aggregation>();
+    this.varOrAgg = new ArrayList<Integer>();
     this.defaultStreams = new ArrayList<SourceInfo>();
     this.namedStreams = new ArrayList<SourceInfo>();
   }
@@ -89,6 +99,18 @@ class ASTSelectQuery extends SimpleNode {
   
   public List<Aggregation> getAggregations(){
 	  return this.aggregations;
+  }
+  
+  public void addVarOrAgg(int i){
+	  this.varOrAgg.add(new Integer(i));
+  }
+  
+  public int getOutputSchemaSize(){
+	  return this.varOrAgg.size();
+  }
+  
+  public int getVarOrAgg(int pos){
+	  return this.varOrAgg.get(pos).intValue();
   }
   
 	public boolean isResultStar() {

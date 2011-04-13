@@ -4,7 +4,11 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 public
 class ASTPrefixDecl extends SimpleNode {
-  public ASTPrefixDecl(int id) {
+  
+	String prefix;
+	String iri;
+	
+	public ASTPrefixDecl(int id) {
     super(id);
   }
 
@@ -16,6 +20,19 @@ class ASTPrefixDecl extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  public void putPrefix(String prefix, String iri){
+	  this.prefix = prefix;
+	  this.iri = iri;
+  }
+  
+  public String getPrefix(){
+	  return this.prefix;
+  }
+  
+  public String getIRI(){
+	  return this.iri;
   }
 }
 /* JavaCC - OriginalChecksum=575d4aa218341dc3f8e121e9df6e47d3 (do not edit this line) */

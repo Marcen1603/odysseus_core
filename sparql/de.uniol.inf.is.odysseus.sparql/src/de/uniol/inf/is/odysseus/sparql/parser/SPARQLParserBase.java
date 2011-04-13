@@ -9,35 +9,11 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.BlankNode;
 public class SPARQLParserBase {
 
 	
+	
 	private int blankNodeCounter;
 	
-	private String baseURI;
-	private HashMap<String, String> prefixes;
-	
 	public SPARQLParserBase(){
-		this.baseURI = null;
-		this.prefixes = new HashMap<String, String>();
 		this.blankNodeCounter = 0;
-	}
-
-	public void setBaseURI(String base){
-		this.baseURI = base;
-	}
-
-	public String getBaseURI(){
-		return this.baseURI;
-	}
-	
-	public void putPrefix(String prefix, String uri){
-		this.prefixes.put(prefix, uri);
-	}
-	
-	public Set<String> getPrefixes(){
-		return this.prefixes.keySet();
-	}
-	
-	public String getURIForPrefix(String prefix){
-		return this.prefixes.get(prefix);
 	}
 	
 	/**

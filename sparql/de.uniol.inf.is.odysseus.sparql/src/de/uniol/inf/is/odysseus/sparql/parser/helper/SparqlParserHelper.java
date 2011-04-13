@@ -1,7 +1,6 @@
-package de.uniol.inf.is.odysseus.sparql.parser.helper;
+package de.uniol.inf.is.odysseus.sparql.parserLR.helper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -21,13 +20,6 @@ public class SparqlParserHelper {
 
 	// ===============================================================================================
 	// PUBLIC METHODS THAT CAN BE ACCESSED FROM SPARQL GRAMMAR
-
-	
-	
-
-	
-	
-	
 	
 	public static JoinAO createJoin(ILogicalOperator left, ILogicalOperator right){
 		JoinAO join = new JoinAO();
@@ -64,7 +56,7 @@ public class SparqlParserHelper {
 			
 		}
 		else{
-//			TriplePatternMatching tpm = new TriplePatternMatching();
+			TriplePatternMatching tpm = new TriplePatternMatching();
 		}
 		
 		return op;

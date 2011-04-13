@@ -376,7 +376,7 @@ void BaseDecl() : {/*@bgen(jjtree) BaseDecl */
           jjtc000 = false;
         }
 /*@egen*/
-	{ this.setBaseURI(base.getName()) ; }/*@bgen(jjtree)*/
+	{ jjtn000.setBaseURI(base.getName()) ; }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -414,7 +414,7 @@ void PrefixDecl() : {/*@bgen(jjtree) PrefixDecl */
         jjtc000 = false;
       }
 /*@egen*/
-      { this.putPrefix(t.image, iri.getName()) ; }/*@bgen(jjtree)*/
+      { jjtn000.putPrefix(t.image, iri.getName()) ; }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -453,10 +453,16 @@ void SelectQuery() : {/*@bgen(jjtree) SelectQuery */
   | <REDUCED> { jjtn000.setDistinct(true); } // reduced is used in the way of distinct
   )?
   (
-    (( v = Var() { jjtn000.addResultVar(v) ; } )
+    (( v = Var() 
+    	{ 
+    		jjtn000.addResultVar(v) ;
+    		jjtn000.addVarOrAgg(0);
+    	} 
+      )
     |
      ( agg = Aggregation() 
-   		{ 	jjtn000.addAggregation(agg); 
+   		{ 	jjtn000.addAggregation(agg);
+   			jjtn000.addVarOrAgg(1);
    		} 
    	  )
     )+
@@ -1193,7 +1199,7 @@ void GroupBy() : {/*@bgen(jjtree) GroupBy */
 {/*@bgen(jjtree) GroupBy */
         try {
 /*@egen*/
-	<GROUP> <BY> <LPAREN> ( v = Var() )+ <RPAREN>/*@bgen(jjtree)*/
+	<GROUP> <BY> <LPAREN> ( v = Var() {jjtn000.addVariable(v);} )+ <RPAREN>/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1753,16 +1759,31 @@ void Filter() : {/*@bgen(jjtree) Filter */
 }
 
 void Constraint() : {/*@bgen(jjtree) Constraint */
-  ASTConstraint jjtn000 = new ASTConstraint(JJTCONSTRAINT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/ }
+                      ASTConstraint jjtn000 = new ASTConstraint(JJTCONSTRAINT);
+                      boolean jjtc000 = true;
+                      jjtree.openNodeScope(jjtn000);
+/*@egen*/ SimpleNode n; }
 {/*@bgen(jjtree) Constraint */
   try {
 /*@egen*/
-  ( BrackettedExpression()
-  | BuiltInCall()
-  | FunctionCall()
+  ( n=BrackettedExpression()/*@bgen(jjtree)*/
+                            {
+                              jjtree.closeNodeScope(jjtn000, true);
+                              jjtc000 = false;
+                            }
+/*@egen*/{jjtn000.setString(n.toString());}
+  | n=BuiltInCall()/*@bgen(jjtree)*/
+                   {
+                     jjtree.closeNodeScope(jjtn000, true);
+                     jjtc000 = false;
+                   }
+/*@egen*/{jjtn000.setString(n.toString());}
+  | n=FunctionCall()/*@bgen(jjtree)*/
+                    {
+                      jjtree.closeNodeScope(jjtn000, true);
+                      jjtc000 = false;
+                    }
+/*@egen*/{jjtn000.setString(n.toString());}
   )/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {

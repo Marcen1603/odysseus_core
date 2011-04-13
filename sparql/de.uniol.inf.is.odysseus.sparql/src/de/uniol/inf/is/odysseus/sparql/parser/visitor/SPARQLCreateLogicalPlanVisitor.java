@@ -1,6 +1,30 @@
 package de.uniol.inf.is.odysseus.sparql.parser.visitor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
+import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
+import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAdditiveExpression;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAggregation;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTArgList;
@@ -86,13 +110,20 @@ import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTVerb;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTWhereClause;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTWindow;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTWindowNotPWindow;
+import de.uniol.inf.is.odysseus.sparql.parser.ast.Node;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.SPARQLParserVisitor;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.SimpleNode;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.AggregateFunctionName;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.Aggregation;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 
 /**
  * This visitor creates a logical SPARQL plan from a SPARQL query.
+ * IMPORTANT: data[0] = the logical operator generated from child nodes
  * 
  * Andre Bolles <andre.bolles@uni-oldenburg.de>
  *
@@ -103,7 +134,16 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	private IDataDictionary dd;
 	
 	
+	private HashMap<String, String> prefixes;
+	private String baseURI;
+	
+	private List<SourceInfo> namedStreams;
+	private List<SourceInfo> defaultStreams;
+	
 	public SPARQLCreateLogicalPlanVisitor(){
+		this.prefixes = new HashMap<String, String>();
+		this.namedStreams = new ArrayList<SourceInfo>();
+		this.defaultStreams = new ArrayList<SourceInfo>();
 	}
 	
 	
@@ -129,7 +169,18 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
 	@Override
 	public Object visit(ASTQuery node, Object data) {
-		return node.childrenAccept(this, data);
+		// create statement
+		if(node.jjtGetChild(0) instanceof ASTCreateStatement){
+			return node.jjtGetChild(0).jjtAccept(this, data);
+		}
+		// prologue statement
+		else{
+			// prologue statement
+			node.jjtGetChild(0).jjtAccept(this, data);
+			
+			// query statement
+			return node.jjtGetChild(1).jjtAccept(this, data);
+		}
 	}
 
 	@Override
@@ -139,17 +190,210 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
 	@Override
 	public Object visit(ASTBaseDecl node, Object data) {
-		return node.childrenAccept(this, data);
+		this.baseURI = node.getBaseURI();
+		return null;
 	}
 
 	@Override
 	public Object visit(ASTPrefixDecl node, Object data) {
-		return node.childrenAccept(this, data);
+		this.prefixes.put(node.getPrefix(), node.getIRI());
+		return null;
 	}
 
 	@Override
 	public Object visit(ASTSelectQuery node, Object data) {
-		return node.childrenAccept(this, data);
+		
+		// the data that can be passed to child nodes
+		ArrayList newData = new ArrayList();
+		
+		ILogicalOperator logOp = null;
+		
+		this.defaultStreams = node.getDefaultStreams();
+		this.namedStreams = node.getNamedStreams();
+		
+		// check if all streams are available
+		for(SourceInfo si: this.defaultStreams){
+			boolean found = false;
+			if(this.dd.containsViewOrStream(si.getStreamName(), this.user)){
+				found = true;
+				continue;
+			}
+			if(!found){
+				throw new RuntimeException("No stream definition found for default stream: '" + si.getStreamName() + "'");
+			}
+		}
+		
+		for(SourceInfo si: this.namedStreams){
+			boolean found = false;
+			if(this.dd.containsViewOrStream(si.getStreamName(), this.user)){
+				found = true;
+				continue;
+			}
+			if(!found){
+				throw new RuntimeException("No stream definition found for named stream: '" + si.getStreamName() + "'");
+			}
+		}
+		
+		ILogicalOperator inputForProjection = null;
+		for(int i = 0; i<node.jjtGetNumChildren(); i++){
+			Node curChild = node.jjtGetChild(i);
+			if(curChild instanceof ASTWhereClause){
+				inputForProjection = (ILogicalOperator)((ArrayList)curChild.jjtAccept(this, newData)).get(0);
+				break;
+			}
+		}
+		
+		
+		if(node.isResultStar()){
+			logOp = new ProjectAO();
+		}
+		else{
+			if(node.getAggregations().isEmpty()){
+				ProjectAO projectAO = new ProjectAO();
+				
+				SDFAttributeList outputSchema = new SDFAttributeList();
+				
+				/* In SPARQL Variables are used only for natural joins.
+				 * Odysseus does not provide a natural join and therefore
+				 * simply uses an equi join. However, in this case one
+				 * or more attributes with the same name but different
+				 * source information is available. Since all attributes
+				 * with the same name must have the same value, at this place
+				 * we can simply take the first attribute with the correct name.
+				 */
+				for(Variable curVar: node.getResultVars()){
+					for(SDFAttribute curAttr: inputForProjection.getOutputSchema()){
+						if(curAttr.getAttributeName().equals(curVar)){
+							outputSchema.add(curAttr);
+							break;
+						}
+					}
+				}
+				
+				projectAO.setOutputSchema(outputSchema);
+				logOp = projectAO;
+			}
+			else{
+				AggregateAO aggAO = new AggregateAO();
+				
+				// connect to the input operator
+				aggAO.subscribeToSource(inputForProjection, 0, 0, inputForProjection.getOutputSchema());
+				
+				Iterator<Variable> resVarsIter = node.getResultVars().iterator();
+				Iterator<Aggregation> resAggIter = node.getAggregations().iterator();
+				
+				for(int i = 0; i<node.getOutputSchemaSize(); i++){
+					int varOrAgg = node.getVarOrAgg(i);
+					// it's a grouping variable
+					if(varOrAgg == 0){
+						Variable gv = resVarsIter.next();
+						
+						/* In SPARQL Variables are used only for natural joins.
+						 * Odysseus does not provide a natural join and therefore
+						 * simply uses an equi join. However, in this case one
+						 * or more attributes with the same name but different
+						 * source information is available. Since all attributes
+						 * with the same name must have the same value, at this place
+						 * we can simply take the first attribute with the correct name.
+						 */
+						for(SDFAttribute curAttr: aggAO.getInputSchema()){
+							if(curAttr.getAttributeName().equals(gv.getName())){
+								aggAO.addGroupingAttribute(curAttr);
+								break;
+							}
+						}
+					}
+					// it's an aggregation
+					else{
+						Aggregation agg = resAggIter.next();
+						Variable aggVar = agg.getVariable();
+						
+						SDFAttribute aggAttr = null;
+						// find the input attribute
+						for(SDFAttribute curAttr: aggAO.getInputSchema()){
+							if(curAttr.getAttributeName().equals(aggVar.getName())){
+								aggAttr = curAttr;
+								break;
+							}
+						}
+						
+						de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction physAggFunc = 
+							new de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction(agg.getAggFunc().toString());
+						aggAO.addAggregation(aggAttr, physAggFunc, outAttribute(aggAttr.getAttributeName(), agg.getAggFunc()));
+					}
+				}
+				
+				// now check the group by clause
+				for(int i = 0; i<node.jjtGetNumChildren(); i++){
+					Node curNode = node.jjtGetChild(i);
+					if(curNode instanceof ASTGroupBy){
+						ASTGroupBy gb = (ASTGroupBy)curNode;
+						List<Variable> variables = gb.getVariables();
+						
+						List<SDFAttribute> groupingAttrs = aggAO.getGroupingAttributes();
+						// check if each grouping variable is in the list of grouping attributes
+						// of the aggregation. If not, add the current variable
+						for(Variable curVar: variables){
+							boolean found = false;
+							for(SDFAttribute curAttr: groupingAttrs){
+								if(curAttr.getAttributeName().equals(curVar.getName())){
+									found = true;
+									break;
+								}
+							}
+							
+							if(!found){
+								/* In SPARQL Variables are used only for natural joins.
+								 * Odysseus does not provide a natural join and therefore
+								 * simply uses an equi join. However, in this case one
+								 * or more attributes with the same name but different
+								 * source information is available. Since all attributes
+								 * with the same name must have the same value, at this place
+								 * we can simply take the first attribute with the correct name.
+								 */
+								for(SDFAttribute curAttr: aggAO.getInputSchema()){
+									if(curAttr.getAttributeName().equals(curVar.getName())){
+										aggAO.addGroupingAttribute(curAttr);
+										break;
+									}
+								}
+							}
+						}
+						
+						// vice versa: check, if each grouping attribute is in the grouping
+						// clause. If not, throw an exception.
+						for(SDFAttribute groupingAttr: aggAO.getGroupingAttributes()){
+							boolean found = false;
+							for(Variable curVar: variables){
+								if(groupingAttr.getAttributeName().equals(curVar.getName())){
+									found = true;
+									break;
+								}
+							}
+							
+							if(!found){
+								throw new RuntimeException("No grouping defined over variable '" + groupingAttr.getAttributeName() + "'.");
+							}
+						}
+					}
+				}
+				
+				logOp = aggAO;
+			}
+		}
+		
+		
+		logOp.subscribeToSource(inputForProjection, 0, 0, inputForProjection.getOutputSchema());		
+		
+		if(node.isDistinct()){
+			ILogicalOperator duplAO = new DuplicateElimination();
+			duplAO.subscribeToSource(logOp, 0, 0, logOp.getOutputSchema());
+			logOp=duplAO;
+		}
+		
+		((ArrayList)data).set(0, logOp);
+		
+		return data;
 	}
 
 	@Override
@@ -219,7 +463,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	}
 
 	@Override
-	public Object visit(ASTWhereClause node, Object data) {
+	public Object visit(ASTWhereClause node, Object data) {		
 		return node.childrenAccept(this, data);
 	}
 
@@ -260,7 +504,233 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
 	@Override
 	public Object visit(ASTGroupGraphPattern node, Object data) {
-		return node.childrenAccept(this, data);
+		// the data that can be passed to the child nodes
+		ArrayList newData = new ArrayList();
+		
+		// this is the window that can be defined in a basic
+		// graph pattern
+		WindowAO explicitWindow = node.getWindowAO();
+		
+		// top logical operator, that results from this group graph pattern.
+		ILogicalOperator topOfGroupGraphPattern = null;
+		
+		// the first child can be 
+		// a TriplesBlock,
+		// a GraphPatternNotTriples,
+		// a Filter,
+		// an window,
+		// or nothing
+		
+		List<ILogicalOperator> topsOfNestedPatterns = new ArrayList<ILogicalOperator>();
+		
+		// in this list for each top operator of nested patterns
+		// a value is stored if the corresponding operator in the
+		// above list, results from an optional graph pattern.
+		// This is necessary to distinguish between join and left join
+		// of these operators.
+		List<Boolean> isOptional = new ArrayList<Boolean>();
+		
+		// the filter must be set at last, since it can
+		// be placed before other triples patterns
+		ASTConstraint filterConstraint = null;
+		
+		for(int i = 0; i<node.jjtGetNumChildren(); i++){
+			Node child = node.jjtGetChild(i);
+			if(child instanceof ASTTriplesBlock){
+				ILogicalOperator topOfTriplesBlock = null;
+				
+				// create a join from all the triples with the following
+				// procedure:
+				// join two triples with two default streams defined results
+				// in the following plan
+				//					join
+				//				  /      \
+				//              tpm      tpm
+				//               |        |
+				//			   union    union
+				//            /     \  /     \
+				//           w      w  w     w
+				ASTTriplesBlock triplesBlock = (ASTTriplesBlock)child;
+				List<List<Triple>> triples = triplesBlock.getTriples();
+				
+				// each list of triples in the list "triples"
+				// contains triples with the same subject
+				// so first generate a join for each of these same
+				// subject triples
+				for(List<Triple> sameSubjTriples: triples){
+					List<TriplePatternMatching> tpmAOs = new ArrayList<TriplePatternMatching>();
+					for(Triple curTriple: sameSubjTriples){
+						TriplePatternMatching tpm = new TriplePatternMatching(curTriple);
+						
+						// for each default stream get the access ao from the data dictionary
+						// and add a window
+						List<WindowAO> windowOps = new ArrayList<WindowAO>();
+						for(int di = 0; di<this.defaultStreams.size(); di++){
+							WindowAO win = null;
+							ILogicalOperator accessAO = this.dd.getViewOrStream(this.defaultStreams.get(di).getStreamName(), this.user);
+							if(explicitWindow != null){
+								explicitWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
+								win = explicitWindow;
+							}
+							// there is no explicit window so use the default window
+							else{
+								WindowAO defaultWindow = this.defaultStreams.get(di).getWindowOp().clone(); 
+								defaultWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
+								win = defaultWindow;
+							}
+							
+							windowOps.add(win);
+						}
+						
+						// now union all window aos
+						if(windowOps.size() == 1){
+							// the windowOps can be connected directly to the triple pattern matchin
+							tpm.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
+						}
+						else if(windowOps.size() > 1){
+							// a union operator is necessary
+							UnionAO union = new UnionAO();
+							union.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
+							union.subscribeToSource(windowOps.get(1), 1, 0, windowOps.get(1).getOutputSchema());
+							
+							// process further unions
+							for(int ui = 2; ui<windowOps.size(); ui++ ){
+								UnionAO innerUnion = new UnionAO();
+								innerUnion.subscribeToSource(union, 0, 0, union.getOutputSchema());
+								innerUnion.subscribeToSource(windowOps.get(ui), 1, 0, windowOps.get(ui).getOutputSchema());
+								union = innerUnion;
+							}
+							
+							tpm.subscribeToSource(union, 0, 0, union.getOutputSchema());
+						}
+						else{
+							throw new RuntimeException("No default streams defined in GroupGraphPattern.");
+						}
+						
+						tpmAOs.add(tpm);
+					}
+					
+					// join all triple pattern matchings
+					if(tpmAOs.size() == 1){
+						topOfTriplesBlock = tpmAOs.get(0);
+					}
+					else if(tpmAOs.size() > 1){
+						JoinAO join = new JoinAO();
+						join.subscribeToSource(tpmAOs.get(0), 0, 0, tpmAOs.get(0).getOutputSchema());
+						join.subscribeToSource(tpmAOs.get(1), 1, 0, tpmAOs.get(1).getOutputSchema());
+						
+						// create join predicate
+						// each variable that is in both schemas must be equal
+						SDFAttributeList commonVars = this.getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+						IPredicate joinPred = this.createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
+						join.setPredicate(joinPred);
+						
+						
+						// process further joins
+						for(int ji = 2; ji<tpmAOs.size(); ji++){
+							JoinAO innerJoin = new JoinAO();
+							innerJoin.subscribeToSource(join, 0, 0, join.getOutputSchema());
+							innerJoin.subscribeToSource(tpmAOs.get(ji), 1, 0, tpmAOs.get(ji).getOutputSchema());
+							
+							// create join predicate
+							// each variable that is in both schemas must be equal
+							SDFAttributeList innerCommonVars = this.getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+							IPredicate innerJoinPred = this.createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+							innerJoin.setPredicate(innerJoinPred);
+							
+							join = innerJoin;
+						}
+						
+						topOfTriplesBlock = join;
+					}
+				}
+				
+				topsOfNestedPatterns.add(topOfTriplesBlock);
+				isOptional.add(true);
+				
+			}
+			else if(child instanceof ASTGraphPatternNotTriples){
+				// get the child of this graph pattern, because
+				// this is the relevant one
+				// jjt: GraphPatternNotTriples:: (OptionalGraphPattern() | GroupOrUnionGraphPattern() | GraphGraphPattern())
+				ILogicalOperator topOp = (ILogicalOperator)((ArrayList)child.jjtAccept(this, newData)).get(0);
+				
+				topsOfNestedPatterns.add(topOp);
+				isOptional.add(child.jjtGetChild(0) instanceof ASTOptionalGraphPattern);
+			}
+			else if(child instanceof ASTFilter){
+				filterConstraint = (ASTConstraint)child.jjtGetChild(0);
+				
+				//we cannot set the filter here because we need the union
+				//of schemas of all triple patterns, but not all triple
+				// patterns have been read here. So first read the rest
+				// of the triple patterns an then put the selection
+				// as parent of the corresponding join of this
+				// group graph pattern.
+				// jjt: GroupGraphPattern:: TriplesBlock | Filter | TriplesBlock (example)
+			}
+		}
+		
+		// now join all top operators that have been developed from nested patterns
+		// like triples block, nested group graph patterns and so on.
+		if(topsOfNestedPatterns.size() == 1){
+			topOfGroupGraphPattern = topsOfNestedPatterns.get(0);
+		}
+		else if(topsOfNestedPatterns.size() > 1){
+			JoinAO join = null;
+			if(isOptional.get(1)){
+				join = new LeftJoinAO();
+			}
+			else{
+				join = new JoinAO();
+			}
+			ILogicalOperator leftIn = topsOfNestedPatterns.get(0);
+			ILogicalOperator rightIn = topsOfNestedPatterns.get(1);
+			
+			join.subscribeToSource(leftIn, 0, 0, leftIn.getOutputSchema());
+			join.subscribeToSource(rightIn, 1, 0, rightIn.getOutputSchema());
+			
+			IPredicate joinPred = createJoinPredicate(
+					getCommonVariables(leftIn.getOutputSchema(), rightIn.getOutputSchema()),
+					leftIn.getOutputSchema(),
+					rightIn.getOutputSchema());
+			join.setPredicate(joinPred);
+			
+			// process further top operators
+			for(int i = 2; i<topsOfNestedPatterns.size(); i++){
+				JoinAO innerJoin = null;
+				if(isOptional.get(i)){
+					innerJoin = new LeftJoinAO();
+				}
+				else{
+					innerJoin = new JoinAO();
+				}
+				
+				innerJoin.subscribeToSource(join, 0, 0, join.getOutputSchema());
+				
+				ILogicalOperator innerRightIn = topsOfNestedPatterns.get(i);
+				innerJoin.subscribeToSource(innerRightIn, 1, 0, innerRightIn.getOutputSchema());
+				
+				IPredicate innerJoinPred = createJoinPredicate(
+						getCommonVariables(join.getOutputSchema(), innerRightIn.getOutputSchema()),
+						join.getOutputSchema(),
+						innerRightIn.getOutputSchema());
+				innerJoin.setPredicate(innerJoinPred);
+				join = innerJoin;
+			}
+			
+			topOfGroupGraphPattern = join; 
+		}
+		else{
+			throw new RuntimeException("Empty Group Graph Pattern found.");
+		}
+		
+		if(filterConstraint != null){
+			
+		}
+		
+		((ArrayList)data).set(0, topOfGroupGraphPattern);
+		return data;
 	}
 
 	@Override
@@ -546,6 +1016,127 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	@Override
 	public Object visit(ASTIdentifier node, Object data) {
 		return node.childrenAccept(this, data);
+	}
+	
+	// ================================= utility methods =======================================
+	
+	
+	private SDFAttribute outAttribute(String attributeName,
+			AggregateFunctionName function) {
+		String funcName = function.toString() + "(" + attributeName + ")";
+		
+		// in each case the input datatype is string
+		SDFAttribute attribute = new SDFAttribute(null, funcName);
+		
+		// in each case the output datatype is string
+		attribute.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		
+		
+//		SDFAttribute attribute = this.attributeResolver.getAttribute(funcName);
+//		if (attribute == null) {
+//			SDFDatatype datatype = this.attributeResolver.getAttribute(
+//					attributeName).getDatatype();
+//			if (!isNumerical(datatype) && !function.getName().equalsIgnoreCase("COUNT")) {
+//				throw new IllegalArgumentException("function '"
+//						+ function.toString()
+//						+ "' can't be used on non scalar types");
+//			}
+//			attribute = new SDFAttribute(null, funcName);
+//			if (function.getName().equalsIgnoreCase("AVG")) {
+//				attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+//			} else if (function.getName().equalsIgnoreCase("COUNT")) {
+//				attribute
+//						.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+//			} else {
+//				// datatype equals datatype of input attribute
+//				// for other functions
+//				attribute.setDatatype(datatype);
+//			}
+//
+//			this.attributeResolver.addAttribute(attribute);
+//		}
+		return attribute;
+	}
+	
+	
+	/**
+	 * Returns a list of attributes, that occur in both schemas.
+	 * The even indices contain the attributes of the left schema.
+	 * The odd (even +1 ) indices contain the attributes of the right schema.
+	 * 
+	 * @param leftSchema
+	 * @param rightSchema
+	 * @return
+	 */
+	private static SDFAttributeList getCommonVariables(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+		SDFAttributeList commonSchema = new SDFAttributeList();
+		for(SDFAttribute leftAttr: leftSchema){
+			for(SDFAttribute rightAttr: rightSchema){
+				if(leftAttr.getAttributeName().equals(rightAttr.getAttributeName())){
+					commonSchema.add(leftAttr);
+					commonSchema.add(rightAttr);
+				}
+			}
+		}
+		return commonSchema;
+	}
+	
+	/**
+	 * Creates a join predicate of the form
+	 * a.y = b.y AND a.x = b.x from two triple patterns
+	 * like 
+	 * {?y :pred  ?x
+	 *  ?y :pred2 ?x}
+	 */
+	private static IPredicate createJoinPredicate(SDFAttributeList commonVars, SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+		// if there are no common vars, the predicate is always true
+		if(commonVars.isEmpty()){
+			return new TruePredicate();
+		}
+		
+		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
+		
+		SDFAttributeList outputSchema = SDFAttributeList.union(leftSchema, rightSchema);
+		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
+		
+		
+		String exprStr = "";
+		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
+			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
+			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
+			exprStr += curLeftAttr.getURI() + " = " + curRightAttr.getURI();
+			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+		}
+		
+		IPredicate retval = null;
+		
+		
+		// more than one common variable
+		// so build a tree of and predicates
+		if(exprs.size() > 1){
+			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
+			firstRelational.init(leftSchema, rightSchema);
+			
+			IPredicate left = firstRelational;
+			
+			for(int i = 1; i<exprs.size(); i++){
+				RelationalPredicate right = new RelationalPredicate(exprs.get(i));
+				right.init(leftSchema, rightSchema);
+				AndPredicate tempAnd = new AndPredicate(left, right);
+				left = tempAnd;
+			}
+			
+			retval = left;
+		}
+		// only one common variable, so
+		// return corresponding relational predicate
+		else if(exprs.size() == 1){
+			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
+			firstRelational.init(leftSchema, rightSchema);
+			retval = firstRelational;
+		}
+		
+		return retval;
 	}
 
 }

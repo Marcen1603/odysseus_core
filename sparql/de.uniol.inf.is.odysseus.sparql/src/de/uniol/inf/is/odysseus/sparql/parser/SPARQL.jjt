@@ -135,14 +135,14 @@ void Prologue() : {}
 void BaseDecl() : { INode base; }
 {
   <BASE> base = IRI_REF()
-	{ this.setBaseURI(base.getName()) ; }
+	{ jjtThis.setBaseURI(base.getName()) ; }
 }
 
 
 void PrefixDecl() : { Token t ; INode iri ; }
 {
     <PREFIX> t = <PNAME_NS> iri = IRI_REF()
-      { this.putPrefix(t.image, iri.getName()) ; }
+      { jjtThis.putPrefix(t.image, iri.getName()) ; }
 }
 
 // ---- Query type clauses
@@ -155,10 +155,16 @@ void SelectQuery() : { Variable v = null; Aggregation agg; List<SourceInfo> sour
   | <REDUCED> { jjtThis.setDistinct(true); } // reduced is used in the way of distinct
   )?
   (
-    (( v = Var() { jjtThis.addResultVar(v) ; } )
+    (( v = Var() 
+    	{ 
+    		jjtThis.addResultVar(v) ;
+    		jjtThis.addVarOrAgg(0);
+    	} 
+      )
     |
      ( agg = Aggregation() 
-   		{ 	jjtThis.addAggregation(agg); 
+   		{ 	jjtThis.addAggregation(agg);
+   			jjtThis.addVarOrAgg(1);
    		} 
    	  )
     )+
@@ -462,7 +468,7 @@ void WhereClause() : { }
 
 void GroupBy() : { INode v; }
 {
-	<GROUP> <BY> <LPAREN> ( v = Var() )+ <RPAREN>
+	<GROUP> <BY> <LPAREN> ( v = Var() {jjtThis.addVariable(v);} )+ <RPAREN>
 }
 
 void SolutionModifier() : { }
@@ -686,11 +692,11 @@ void Filter() : { }
   <FILTER> Constraint()
 }
 
-void Constraint() : { }
+void Constraint() : { SimpleNode n; }
 {
-  ( BrackettedExpression()
-  | BuiltInCall()
-  | FunctionCall()
+  ( n=BrackettedExpression(){jjtThis.setString(n.toString());}
+  | n=BuiltInCall(){jjtThis.setString(n.toString());}
+  | n=FunctionCall(){jjtThis.setString(n.toString());}
   )
 }
 
