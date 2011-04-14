@@ -129,15 +129,17 @@ ASTQuery Query() : {/*@bgen(jjtree) Query */
 
 void CreateStatement() :
 {/*@bgen(jjtree) CreateStatement */
-  ASTCreateStatement jjtn000 = new ASTCreateStatement(JJTCREATESTATEMENT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+        ASTCreateStatement jjtn000 = new ASTCreateStatement(JJTCREATESTATEMENT);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	INode n;
+}
 {/*@bgen(jjtree) CreateStatement */
   try {
 /*@egen*/
   ( < CREATE > | < ATTACH > | < ADD > )
-    < STREAM > IRIref()
+    < STREAM > n=IRIref(){jjtn000.setStreamName(n.getName());}
   
   ( < FROM > | < WITH > )
   
@@ -167,16 +169,28 @@ void CreateStatement() :
 
 void Socket() :
 {/*@bgen(jjtree) Socket */
-  ASTSocket jjtn000 = new ASTSocket(JJTSOCKET);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+        ASTSocket jjtn000 = new ASTSocket(JJTSOCKET);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	String host;
+	Token portToken;
+}
 {/*@bgen(jjtree) Socket */
   try {
 /*@egen*/
   < SOCKET >
   
-  Host() <COLON> <INTEGER>/*@bgen(jjtree)*/
+  host=Host() <COLON> portToken=<INTEGER>/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+  	jjtn000.setHost(host);
+  	jjtn000.setPort(Integer.parseInt(portToken.image));
+  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -201,14 +215,26 @@ void Socket() :
 
 void Channel() :
 {/*@bgen(jjtree) Channel */
-  ASTChannel jjtn000 = new ASTChannel(JJTCHANNEL);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+        ASTChannel jjtn000 = new ASTChannel(JJTCHANNEL);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	String host;
+	Token portToken;
+}
 {/*@bgen(jjtree) Channel */
   try {
 /*@egen*/
-  < CHANNEL > Host() <COLON> <INTEGER>/*@bgen(jjtree)*/
+  < CHANNEL > host=Host() <COLON> portToken=<INTEGER>/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+	  	jjtn000.setHost(host);
+	  	jjtn000.setPort(Integer.parseInt(portToken.image));
+  	}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -231,13 +257,14 @@ void Channel() :
 /*@egen*/
 }
 
-void Host() :
+String Host() :
 {/*@bgen(jjtree) Host */
   ASTHost jjtn000 = new ASTHost(JJTHOST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
   Token value;
+  String retVal;
 }
 {/*@bgen(jjtree) Host */
   try {
@@ -249,9 +276,15 @@ void Host() :
   }
 /*@egen*/
   {
-    jjtn000.setValue(value.image);
+    retVal=value.image;
   }
-| Identifier()/*@bgen(jjtree)*/
+| retVal=Identifier()/*@bgen(jjtree)*/
+{
+  jjtree.closeNodeScope(jjtn000, true);
+  jjtc000 = false;
+}
+/*@egen*/
+{return retVal;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -292,6 +325,7 @@ void CSVSource() :
   }
 /*@egen*/
   {
+    // without quotes
     jjtn000.setURL(t.image.substring(1, t.image.length() - 1));
   }/*@bgen(jjtree)*/
   } finally {
@@ -302,7 +336,7 @@ void CSVSource() :
 /*@egen*/
 }
 
-void Identifier() :
+String Identifier() :
 {/*@bgen(jjtree) Identifier */
   ASTIdentifier jjtn000 = new ASTIdentifier(JJTIDENTIFIER);
   boolean jjtc000 = true;
@@ -320,7 +354,7 @@ void Identifier() :
   }
 /*@egen*/
   {
-    jjtn000.setName(t.image);
+    return t.image;
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
@@ -782,15 +816,15 @@ Aggregation Aggregation() : {/*@bgen(jjtree) Aggregation */
         try {
 /*@egen*/
 	(<AVG> <LPAREN> v = Var() <RPAREN>
-		{ 	agg = new Aggregation(v, AggregateFunction.AVG); } |
+		{ 	agg = new Aggregation(v, AggregateFunctionName.AVG); } |
 	 <MIN> <LPAREN> v = Var() <RPAREN>
-		{ 	agg = new Aggregation(v, AggregateFunction.MIN); } |
+		{ 	agg = new Aggregation(v, AggregateFunctionName.MIN); } |
 	 <MAX> <LPAREN> v = Var() <RPAREN>
-	 	{ 	agg = new Aggregation(v, AggregateFunction.MAX); } |
+	 	{ 	agg = new Aggregation(v, AggregateFunctionName.MAX); } |
 	 <SUM> <LPAREN> v = Var() <RPAREN>
-	 	{ 	agg = new Aggregation(v, AggregateFunction.SUM); } |
+	 	{ 	agg = new Aggregation(v, AggregateFunctionName.SUM); } |
 	 <COUNT> <LPAREN> v = Var() <RPAREN>
-	 	{ 	agg = new Aggregation(v, AggregateFunction.COUNT); }
+	 	{ 	agg = new Aggregation(v, AggregateFunctionName.COUNT); }
 	)/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
@@ -1199,7 +1233,7 @@ void GroupBy() : {/*@bgen(jjtree) GroupBy */
 {/*@bgen(jjtree) GroupBy */
         try {
 /*@egen*/
-	<GROUP> <BY> <LPAREN> ( v = Var() {jjtn000.addVariable(v);} )+ <RPAREN>/*@bgen(jjtree)*/
+	<GROUP> <BY> <LPAREN> ( v = Var() {jjtn000.addVariable((Variable)v);} )+ <RPAREN>/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1660,14 +1694,14 @@ void OptionalGraphPattern() : {/*@bgen(jjtree) OptionalGraphPattern */
 }
 
 void GraphGraphPattern() : {/*@bgen(jjtree) GraphGraphPattern */
-  ASTGraphGraphPattern jjtn000 = new ASTGraphGraphPattern(JJTGRAPHGRAPHPATTERN);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/ }
+                             ASTGraphGraphPattern jjtn000 = new ASTGraphGraphPattern(JJTGRAPHGRAPHPATTERN);
+                             boolean jjtc000 = true;
+                             jjtree.openNodeScope(jjtn000);
+/*@egen*/ INode n; }
 {/*@bgen(jjtree) GraphGraphPattern */
   try {
 /*@egen*/
-  <GRAPH> VarOrIRIref() GroupGraphPattern()/*@bgen(jjtree)*/
+  <GRAPH> n=VarOrIRIref(){jjtn000.setGraphTerm(n);} GroupGraphPattern()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1808,15 +1842,21 @@ void Constraint() : {/*@bgen(jjtree) Constraint */
 }
 
 
-void FunctionCall() : {/*@bgen(jjtree) FunctionCall */
-  ASTFunctionCall jjtn000 = new ASTFunctionCall(JJTFUNCTIONCALL);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/ }
+SimpleNode FunctionCall() : {/*@bgen(jjtree) FunctionCall */
+                              ASTFunctionCall jjtn000 = new ASTFunctionCall(JJTFUNCTIONCALL);
+                              boolean jjtc000 = true;
+                              jjtree.openNodeScope(jjtn000);
+/*@egen*/ INode fName; SimpleNode argList;}
 {/*@bgen(jjtree) FunctionCall */
   try {
 /*@egen*/
-  IRIref() ArgList()/*@bgen(jjtree)*/
+  fName=IRIref() argList=ArgList()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {jjtn000.setString(fName.getName() + argList.toString());}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1836,7 +1876,7 @@ void FunctionCall() : {/*@bgen(jjtree) FunctionCall */
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/
+/*@egen*/ 
 }
 
 SimpleNode ArgList() :

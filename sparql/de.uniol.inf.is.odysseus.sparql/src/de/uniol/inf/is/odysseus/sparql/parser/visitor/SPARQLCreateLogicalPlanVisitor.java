@@ -3,20 +3,25 @@ package de.uniol.inf.is.odysseus.sparql.parser.visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -115,6 +120,8 @@ import de.uniol.inf.is.odysseus.sparql.parser.ast.SPARQLParserVisitor;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.SimpleNode;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.AggregateFunctionName;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Aggregation;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.INode;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
@@ -204,7 +211,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	public Object visit(ASTSelectQuery node, Object data) {
 		
 		// the data that can be passed to child nodes
-		ArrayList newData = new ArrayList();
+		LinkedList newData = new LinkedList();
 		
 		ILogicalOperator logOp = null;
 		
@@ -238,7 +245,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		for(int i = 0; i<node.jjtGetNumChildren(); i++){
 			Node curChild = node.jjtGetChild(i);
 			if(curChild instanceof ASTWhereClause){
-				inputForProjection = (ILogicalOperator)((ArrayList)curChild.jjtAccept(this, newData)).get(0);
+				inputForProjection = (ILogicalOperator)((LinkedList)curChild.jjtAccept(this, newData)).get(0);
 				break;
 			}
 		}
@@ -391,7 +398,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			logOp=duplAO;
 		}
 		
-		((ArrayList)data).set(0, logOp);
+		((LinkedList)data).set(0, logOp);
 		
 		return data;
 	}
@@ -505,7 +512,11 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	@Override
 	public Object visit(ASTGroupGraphPattern node, Object data) {
 		// the data that can be passed to the child nodes
-		ArrayList newData = new ArrayList();
+		LinkedList newData = new LinkedList();
+		LinkedList oldData = (LinkedList)data;
+		for(int i = 0; i<oldData.size(); i++){
+			newData.add(oldData.get(i));
+		}
 		
 		// this is the window that can be defined in a basic
 		// graph pattern
@@ -562,51 +573,90 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 					for(Triple curTriple: sameSubjTriples){
 						TriplePatternMatching tpm = new TriplePatternMatching(curTriple);
 						
-						// for each default stream get the access ao from the data dictionary
-						// and add a window
-						List<WindowAO> windowOps = new ArrayList<WindowAO>();
-						for(int di = 0; di<this.defaultStreams.size(); di++){
+						// check, if there is a variable
+						LinkedList dataList = (LinkedList)data;
+						if(dataList.size() > 0){
+							// get the name of the named stream to build the plan for
+							String namedStream = null;
+							INode graphTerm = ((INode)dataList.getFirst());
+							if(graphTerm.isVariable()){
+								namedStream = (String)dataList.get(1); 
+								tpm.setGraphVar((Variable)graphTerm);
+							}
+							else{
+								namedStream = ((INode)dataList.getFirst()).getName();
+							}
+							
+							// get the access ao for the named stream
+							ILogicalOperator accessAO = this.dd.getViewOrStream(namedStream, this.user);
+							
+							// get the window for the named stream
 							WindowAO win = null;
-							ILogicalOperator accessAO = this.dd.getViewOrStream(this.defaultStreams.get(di).getStreamName(), this.user);
 							if(explicitWindow != null){
-								explicitWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
 								win = explicitWindow;
 							}
-							// there is no explicit window so use the default window
 							else{
-								WindowAO defaultWindow = this.defaultStreams.get(di).getWindowOp().clone(); 
-								defaultWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
-								win = defaultWindow;
+								// there is no explicit window, so take the window
+								// from the corresponding named stream.
+								
+								for(SourceInfo si: this.namedStreams){
+									if(si.getStreamName().equals(namedStream)){
+										win = si.getWindowOp();
+										break;
+									}
+								}
 							}
 							
-							windowOps.add(win);
+							win.subscribeToSource(accessAO, 0, 0, accessAO.getOutputSchema());
+							tpm.subscribeToSource(win, 0, 0, win.getOutputSchema());
 						}
-						
-						// now union all window aos
-						if(windowOps.size() == 1){
-							// the windowOps can be connected directly to the triple pattern matchin
-							tpm.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
-						}
-						else if(windowOps.size() > 1){
-							// a union operator is necessary
-							UnionAO union = new UnionAO();
-							union.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
-							union.subscribeToSource(windowOps.get(1), 1, 0, windowOps.get(1).getOutputSchema());
-							
-							// process further unions
-							for(int ui = 2; ui<windowOps.size(); ui++ ){
-								UnionAO innerUnion = new UnionAO();
-								innerUnion.subscribeToSource(union, 0, 0, union.getOutputSchema());
-								innerUnion.subscribeToSource(windowOps.get(ui), 1, 0, windowOps.get(ui).getOutputSchema());
-								union = innerUnion;
+						// do it for all default streams
+						else if(dataList.size() == 0){
+							// for each default stream get the access ao from the data dictionary
+							// and add a window
+							List<WindowAO> windowOps = new ArrayList<WindowAO>();
+							for(int di = 0; di<this.defaultStreams.size(); di++){
+								WindowAO win = null;
+								ILogicalOperator accessAO = this.dd.getViewOrStream(this.defaultStreams.get(di).getStreamName(), this.user);
+								if(explicitWindow != null){
+									explicitWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
+									win = explicitWindow;
+								}
+								// there is no explicit window so use the default window
+								else{
+									WindowAO defaultWindow = this.defaultStreams.get(di).getWindowOp().clone(); 
+									defaultWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
+									win = defaultWindow;
+								}
+								
+								windowOps.add(win);
 							}
 							
-							tpm.subscribeToSource(union, 0, 0, union.getOutputSchema());
+							// now union all window aos
+							if(windowOps.size() == 1){
+								// the windowOps can be connected directly to the triple pattern matchin
+								tpm.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
+							}
+							else if(windowOps.size() > 1){
+								// a union operator is necessary
+								UnionAO union = new UnionAO();
+								union.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
+								union.subscribeToSource(windowOps.get(1), 1, 0, windowOps.get(1).getOutputSchema());
+								
+								// process further unions
+								for(int ui = 2; ui<windowOps.size(); ui++ ){
+									UnionAO innerUnion = new UnionAO();
+									innerUnion.subscribeToSource(union, 0, 0, union.getOutputSchema());
+									innerUnion.subscribeToSource(windowOps.get(ui), 1, 0, windowOps.get(ui).getOutputSchema());
+									union = innerUnion;
+								}
+								
+								tpm.subscribeToSource(union, 0, 0, union.getOutputSchema());
+							}
+							else{
+								throw new RuntimeException("No default streams defined in GroupGraphPattern.");
+							}
 						}
-						else{
-							throw new RuntimeException("No default streams defined in GroupGraphPattern.");
-						}
-						
 						tpmAOs.add(tpm);
 					}
 					
@@ -653,9 +703,11 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 				// get the child of this graph pattern, because
 				// this is the relevant one
 				// jjt: GraphPatternNotTriples:: (OptionalGraphPattern() | GroupOrUnionGraphPattern() | GraphGraphPattern())
-				ILogicalOperator topOp = (ILogicalOperator)((ArrayList)child.jjtAccept(this, newData)).get(0);
+				ILogicalOperator topOp = (ILogicalOperator)((LinkedList)child.jjtAccept(this, newData)).getFirst();
 				
 				topsOfNestedPatterns.add(topOp);
+				// if the child of GraphPatternNotTriples is an OptionalGraphPattern,
+				// we need a left join, so set the field in isOptional to "true"
 				isOptional.add(child.jjtGetChild(0) instanceof ASTOptionalGraphPattern);
 			}
 			else if(child instanceof ASTFilter){
@@ -725,11 +777,20 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			throw new RuntimeException("Empty Group Graph Pattern found.");
 		}
 		
+		// If there is a filter expression in this
+		// group graph pattern, we need a select
+		// as top operator of this group graph pattern
 		if(filterConstraint != null){
-			
+			SelectAO select = new SelectAO();
+			IAttributeResolver attrRes = new SPARQLDirectAttributeResolver(topOfGroupGraphPattern.getOutputSchema());
+			SDFExpression expr = new SDFExpression(null, filterConstraint.toString(), attrRes);
+			IPredicate selectPred = new RelationalPredicate(expr);
+			select.setPredicate(selectPred);
+			select.subscribeTo(topOfGroupGraphPattern, topOfGroupGraphPattern.getOutputSchema());
+			topOfGroupGraphPattern = select;
 		}
 		
-		((ArrayList)data).set(0, topOfGroupGraphPattern);
+		((LinkedList)data).addFirst(topOfGroupGraphPattern);
 		return data;
 	}
 
@@ -750,11 +811,108 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
 	@Override
 	public Object visit(ASTGraphGraphPattern node, Object data) {
-		return node.childrenAccept(this, data);
+		// if the graph term is an iri, than create a subplan for
+		// this iri and return it
+		if(!node.getGraphTerm().isVariable()){
+			// the second child is the nested pattern
+			
+			LinkedList newData = new LinkedList();
+			// set the graph term at the first position
+			newData.add(node.getGraphTerm());
+			// at the second position put the current
+			// named stream for which the plan is build
+			newData.add(node.getGraphTerm().getName());
+			
+			ILogicalOperator topOfNested = (ILogicalOperator)((LinkedList)node.jjtGetChild(1).jjtAccept(this, newData)).getFirst();
+			((LinkedList)data).addFirst(topOfNested);
+			return data;
+		}
+		// else if the graph term is a variable, than
+		// create a subplan for each named stream
+		// and union all these plans. Return the
+		// top union operator
+		else{
+			// do it for every named stream
+			ArrayList<ILogicalOperator> topOps = new ArrayList<ILogicalOperator>();
+			for(SourceInfo si: this.namedStreams){
+				LinkedList newData = new LinkedList();
+				// set the graph term at the first position
+				newData.add(node.getGraphTerm());
+				// at the second position put the current
+				// named stream for which the plan is build
+				newData.add(si.getStreamName());
+				
+				ILogicalOperator topOfNested = (ILogicalOperator)((LinkedList)node.jjtGetChild(1).jjtAccept(this, newData)).getFirst();
+				topOps.add(topOfNested);
+			}
+			
+			// union all nested operators
+			if(topOps.size()== 1){
+				((LinkedList)data).addFirst(topOps.get(0));
+			}
+			else if(topOps.size() > 1){
+				UnionAO union = new UnionAO();
+				
+				union.subscribeToSource(topOps.get(0), 0, 0, topOps.get(0).getOutputSchema());
+				union.subscribeToSource(topOps.get(1), 1, 0, topOps.get(1).getOutputSchema());
+				
+				for(int i = 2; i<topOps.size(); i++){
+					UnionAO innerUnion = new UnionAO();
+					innerUnion.subscribeToSource(union, 0, 0, union.getOutputSchema());
+					innerUnion.subscribeToSource(topOps.get(i), 1, 0, topOps.get(i).getOutputSchema());
+					
+					union = innerUnion;
+				}
+				((LinkedList)data).addFirst(union);
+				
+			}
+			else{
+				throw new RuntimeException("No nested pattern in GraphGraphPattern.");
+			}
+		}
+		
+		return data;
 	}
 
 	@Override
 	public Object visit(ASTGroupOrUnionGraphPattern node, Object data) {
+		LinkedList newData = new LinkedList();
+		
+		List<ILogicalOperator> topsOfNestedGroupGraphPatterns = new LinkedList<ILogicalOperator>();
+		for(int i = 0; i<node.jjtGetNumChildren(); i++){
+			topsOfNestedGroupGraphPatterns.add((ILogicalOperator)((LinkedList)node.jjtGetChild(i).jjtAccept(this, newData)).getFirst());
+		}
+		
+		// only 1 group graph pattern as child so return the corresponding
+		// top operator
+		if(topsOfNestedGroupGraphPatterns.size() == 1){
+			((LinkedList)data).addFirst(topsOfNestedGroupGraphPatterns.get(0));
+		}
+		// more than 1 group graph pattern, so build a tree of unions
+		// and return the top union operator
+		else if(topsOfNestedGroupGraphPatterns.size() > 1){
+			UnionAO union = new UnionAO();
+			ILogicalOperator leftInput = topsOfNestedGroupGraphPatterns.get(0);
+			ILogicalOperator rightInput = topsOfNestedGroupGraphPatterns.get(1);
+			
+			union.subscribeToSource(leftInput, 0, 0, leftInput.getOutputSchema());
+			union.subscribeToSource(rightInput, 1, 0, rightInput.getOutputSchema());
+			
+			for(int i = 2; i<topsOfNestedGroupGraphPatterns.size(); i++){
+				UnionAO innerUnion = new UnionAO();
+				ILogicalOperator innerRightInput = topsOfNestedGroupGraphPatterns.get(i);
+				innerUnion.subscribeToSource(union, 0, 0, union.getOutputSchema());
+				innerUnion.subscribeSink(innerRightInput, 1, 0, innerRightInput.getOutputSchema());
+				
+				union = innerUnion;
+			}
+			
+			((LinkedList)data).addFirst(union);
+		}
+		else{
+			throw new RuntimeException("No child in GroupOrUnionGraphPattern.");
+		}
+		
 		return node.childrenAccept(this, data);
 	}
 
@@ -990,8 +1148,39 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) {
-		return node.childrenAccept(this, data);
+		// the second child is either socket or channel or csv source
+		Node child = node.jjtGetChild(1);
+		AccessAO accAO = null;
+		if(child instanceof ASTSocket){
+			ASTSocket socket = (ASTSocket)child;
+			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_Access_Socket"));
+			accAO.setHost(socket.getHost());
+			accAO.setPort(socket.getPort());
+			
+			((LinkedList)data).addFirst(accAO);
+		}
+		else if(child instanceof ASTChannel){
+			ASTChannel channel = (ASTChannel)child;
+			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_ACCESS_Channel"));
+			accAO.setHost(channel.getHost());
+			accAO.setPort(channel.getPort());
+			
+			((LinkedList)data).addFirst(accAO);
+		}
+		else if(child instanceof ASTCSVSource){
+			ASTCSVSource csv = (ASTCSVSource)child;
+			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_ACCESS_CSV"));
+			accAO.setFileURL(csv.getURL());
+			
+			((LinkedList)data).addFirst(accAO);
+		}
+		else{
+			throw new RuntimeException("No access specification (Socket|Channel|CSV) given for stream definition.");
+		}
+					
+		return data;
 	}
+
 
 	@Override
 	public Object visit(ASTSocket node, Object data) {

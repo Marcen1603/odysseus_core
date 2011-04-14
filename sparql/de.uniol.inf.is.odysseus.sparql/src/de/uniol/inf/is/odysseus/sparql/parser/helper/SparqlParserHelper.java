@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sparql.parserLR.helper;
+package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class SparqlParserHelper {
 			
 		}
 		else{
-			TriplePatternMatching tpm = new TriplePatternMatching();
+//			TriplePatternMatching tpm = new TriplePatternMatching();
 		}
 		
 		return op;

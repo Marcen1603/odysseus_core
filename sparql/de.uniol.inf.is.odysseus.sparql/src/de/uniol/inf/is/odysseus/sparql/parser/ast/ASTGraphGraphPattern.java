@@ -2,9 +2,22 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
+import de.uniol.inf.is.odysseus.sparql.parser.helper.INode;
+
 public
 class ASTGraphGraphPattern extends SimpleNode {
-  public ASTGraphGraphPattern(int id) {
+  
+	INode graphTerm;
+	
+	public INode getGraphTerm() {
+		return graphTerm;
+	}
+
+	public void setGraphTerm(INode graphTerm) {
+		this.graphTerm = graphTerm;
+	}
+
+	public ASTGraphGraphPattern(int id) {
     super(id);
   }
 

@@ -101,9 +101,9 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
 
   final public void CreateStatement() throws ParseException {
  /*@bgen(jjtree) CreateStatement */
-  ASTCreateStatement jjtn000 = new ASTCreateStatement(JJTCREATESTATEMENT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+        ASTCreateStatement jjtn000 = new ASTCreateStatement(JJTCREATESTATEMENT);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);INode n;
     try {
       if (jj_2_7(6)) {
         jj_consume_token(CREATE);
@@ -116,7 +116,8 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
         throw new ParseException();
       }
       jj_consume_token(STREAM);
-      IRIref();
+      n = IRIref();
+                          jjtn000.setStreamName(n.getName());
       if (jj_2_10(6)) {
         jj_consume_token(FROM);
       } else if (jj_2_11(6)) {
@@ -158,14 +159,19 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
 
   final public void Socket() throws ParseException {
  /*@bgen(jjtree) Socket */
-  ASTSocket jjtn000 = new ASTSocket(JJTSOCKET);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+        ASTSocket jjtn000 = new ASTSocket(JJTSOCKET);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);String host;
+        Token portToken;
     try {
       jj_consume_token(SOCKET);
-      Host();
+      host = Host();
       jj_consume_token(COLON);
-      jj_consume_token(INTEGER);
+      portToken = jj_consume_token(INTEGER);
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+        jjtn000.setHost(host);
+        jjtn000.setPort(Integer.parseInt(portToken.image));
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -189,14 +195,19 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
 
   final public void Channel() throws ParseException {
  /*@bgen(jjtree) Channel */
-  ASTChannel jjtn000 = new ASTChannel(JJTCHANNEL);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+        ASTChannel jjtn000 = new ASTChannel(JJTCHANNEL);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);String host;
+        Token portToken;
     try {
       jj_consume_token(CHANNEL);
-      Host();
+      host = Host();
       jj_consume_token(COLON);
-      jj_consume_token(INTEGER);
+      portToken = jj_consume_token(INTEGER);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+                jjtn000.setHost(host);
+                jjtn000.setPort(Integer.parseInt(portToken.image));
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -218,19 +229,23 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
     }
   }
 
-  final public void Host() throws ParseException {
+  final public String Host() throws ParseException {
  /*@bgen(jjtree) Host */
   ASTHost jjtn000 = new ASTHost(JJTHOST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token value;
+  String retVal;
     try {
       if (jj_2_15(6)) {
         value = jj_consume_token(IPADDRESS);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-    jjtn000.setValue(value.image);
+    retVal=value.image;
       } else if (jj_2_16(6)) {
-        Identifier();
+        retVal = Identifier();
+  jjtree.closeNodeScope(jjtn000, true);
+  jjtc000 = false;
+ {if (true) return retVal;}
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -254,6 +269,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
       jjtree.closeNodeScope(jjtn000, true);
     }
     }
+    throw new Error("Missing return statement in function");
   }
 
   final public void CSVSource() throws ParseException {
@@ -266,6 +282,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
       t = jj_consume_token(STRING_LITERAL1);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
+    // without quotes
     jjtn000.setURL(t.image.substring(1, t.image.length() - 1));
     } finally {
     if (jjtc000) {
@@ -274,7 +291,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
     }
   }
 
-  final public void Identifier() throws ParseException {
+  final public String Identifier() throws ParseException {
  /*@bgen(jjtree) Identifier */
   ASTIdentifier jjtn000 = new ASTIdentifier(JJTIDENTIFIER);
   boolean jjtc000 = true;
@@ -283,12 +300,13 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
       t = jj_consume_token(IDENTIFIER);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-    jjtn000.setName(t.image);
+    {if (true) return t.image;}
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
     }
+    throw new Error("Missing return statement in function");
   }
 
   final public void Prologue() throws ParseException {
@@ -778,31 +796,31 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
         jj_consume_token(LPAREN);
         v = Var();
         jj_consume_token(RPAREN);
-                        agg = new Aggregation(v, AggregateFunction.AVG);
+                        agg = new Aggregation(v, AggregateFunctionName.AVG);
       } else if (jj_2_39(6)) {
         jj_consume_token(MIN);
         jj_consume_token(LPAREN);
         v = Var();
         jj_consume_token(RPAREN);
-                        agg = new Aggregation(v, AggregateFunction.MIN);
+                        agg = new Aggregation(v, AggregateFunctionName.MIN);
       } else if (jj_2_40(6)) {
         jj_consume_token(MAX);
         jj_consume_token(LPAREN);
         v = Var();
         jj_consume_token(RPAREN);
-                        agg = new Aggregation(v, AggregateFunction.MAX);
+                        agg = new Aggregation(v, AggregateFunctionName.MAX);
       } else if (jj_2_41(6)) {
         jj_consume_token(SUM);
         jj_consume_token(LPAREN);
         v = Var();
         jj_consume_token(RPAREN);
-                        agg = new Aggregation(v, AggregateFunction.SUM);
+                        agg = new Aggregation(v, AggregateFunctionName.SUM);
       } else if (jj_2_42(6)) {
         jj_consume_token(COUNT);
         jj_consume_token(LPAREN);
         v = Var();
         jj_consume_token(RPAREN);
-                        agg = new Aggregation(v, AggregateFunction.COUNT);
+                        agg = new Aggregation(v, AggregateFunctionName.COUNT);
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -1208,7 +1226,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       label_5:
       while (true) {
         v = Var();
-                                           jjtn000.addVariable(v);
+                                           jjtn000.addVariable((Variable)v);
         if (jj_2_56(6)) {
           ;
         } else {
@@ -1710,12 +1728,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   final public void GraphGraphPattern() throws ParseException {
                             /*@bgen(jjtree) GraphGraphPattern */
-  ASTGraphGraphPattern jjtn000 = new ASTGraphGraphPattern(JJTGRAPHGRAPHPATTERN);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+                             ASTGraphGraphPattern jjtn000 = new ASTGraphGraphPattern(JJTGRAPHGRAPHPATTERN);
+                             boolean jjtc000 = true;
+                             jjtree.openNodeScope(jjtn000);INode n;
     try {
       jj_consume_token(GRAPH);
-      VarOrIRIref();
+      n = VarOrIRIref();
+                          jjtn000.setGraphTerm(n);
       GroupGraphPattern();
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -1853,14 +1872,17 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     }
   }
 
-  final public void FunctionCall() throws ParseException {
-                       /*@bgen(jjtree) FunctionCall */
-  ASTFunctionCall jjtn000 = new ASTFunctionCall(JJTFUNCTIONCALL);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+  final public SimpleNode FunctionCall() throws ParseException {
+                             /*@bgen(jjtree) FunctionCall */
+                              ASTFunctionCall jjtn000 = new ASTFunctionCall(JJTFUNCTIONCALL);
+                              boolean jjtc000 = true;
+                              jjtree.openNodeScope(jjtn000);INode fName; SimpleNode argList;
     try {
-      IRIref();
-      ArgList();
+      fName = IRIref();
+      argList = ArgList();
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+   jjtn000.setString(fName.getName() + argList.toString());
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1880,6 +1902,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       jjtree.closeNodeScope(jjtn000, true);
     }
     }
+    throw new Error("Missing return statement in function");
   }
 
   final public SimpleNode ArgList() throws ParseException {
@@ -4959,80 +4982,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     finally { jj_save(181, xla); }
   }
 
-  private boolean jj_3R_52() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_92()) {
-    jj_scanpos = xsp;
-    if (jj_3_93()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_156() {
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
-  private boolean jj_3_92() {
-    if (jj_3R_61()) return true;
-    if (jj_3R_62()) return true;
-    return false;
-  }
-
-  private boolean jj_3_90() {
-    if (jj_3R_60()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_85() {
-    if (jj_3R_72()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_156()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_91() {
-    if (jj_scan_token(DOT)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_90()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_60() {
-    if (jj_3R_52()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_91()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_155() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_59()) return true;
-    return false;
-  }
-
-  private boolean jj_3_89() {
-    if (jj_3R_60()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_86() {
-    if (jj_scan_token(REGEX)) return true;
-    if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_59()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_59()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_155()) jj_scanpos = xsp;
-    if (jj_scan_token(RPAREN)) return true;
-    return false;
-  }
-
   private boolean jj_3R_93() {
     if (jj_scan_token(LBRACE)) return true;
     Token xsp;
@@ -5053,16 +5002,16 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_44() {
-    if (jj_3R_38()) return true;
-    return false;
-  }
-
   private boolean jj_3_153() {
     if (jj_scan_token(IS_LITERAL)) return true;
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_59()) return true;
     if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_44() {
+    if (jj_3R_38()) return true;
     return false;
   }
 
@@ -5165,16 +5114,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_37() {
-    if (jj_scan_token(WINDOW)) return true;
-    if (jj_scan_token(RANGE)) return true;
-    if (jj_3R_39()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_45()) jj_scanpos = xsp;
-    return false;
-  }
-
   private boolean jj_3_146() {
     if (jj_scan_token(LANGMATCHES)) return true;
     if (jj_scan_token(LPAREN)) return true;
@@ -5182,6 +5121,16 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_59()) return true;
     if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_37() {
+    if (jj_scan_token(WINDOW)) return true;
+    if (jj_scan_token(RANGE)) return true;
+    if (jj_3R_39()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_45()) jj_scanpos = xsp;
     return false;
   }
 
@@ -5198,11 +5147,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_84() {
-    if (jj_3R_57()) return true;
-    return false;
-  }
-
   private boolean jj_3_144() {
     if (jj_scan_token(STR)) return true;
     if (jj_scan_token(LPAREN)) return true;
@@ -5211,8 +5155,8 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_83() {
-    if (jj_3R_47()) return true;
+  private boolean jj_3_84() {
+    if (jj_3R_57()) return true;
     return false;
   }
 
@@ -5250,6 +5194,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3_83() {
+    if (jj_3R_47()) return true;
     return false;
   }
 
@@ -5303,16 +5252,16 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_82() {
-    if (jj_scan_token(UNION)) return true;
-    if (jj_3R_56()) return true;
-    return false;
-  }
-
   private boolean jj_3R_47() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_59()) return true;
     if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_82() {
+    if (jj_scan_token(UNION)) return true;
+    if (jj_3R_56()) return true;
     return false;
   }
 
@@ -5374,15 +5323,15 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3_142() {
+    if (jj_3R_75()) return true;
+    return false;
+  }
+
   private boolean jj_3R_55() {
     if (jj_scan_token(GRAPH)) return true;
     if (jj_3R_34()) return true;
     if (jj_3R_56()) return true;
-    return false;
-  }
-
-  private boolean jj_3_142() {
-    if (jj_3R_75()) return true;
     return false;
   }
 
@@ -5412,13 +5361,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_37() {
-    if (jj_scan_token(NAMED)) return true;
+  private boolean jj_3_137() {
+    if (jj_3R_47()) return true;
     return false;
   }
 
-  private boolean jj_3_137() {
-    if (jj_3R_47()) return true;
+  private boolean jj_3_37() {
+    if (jj_scan_token(NAMED)) return true;
     return false;
   }
 
@@ -5626,18 +5575,18 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3_124() {
+    if (jj_scan_token(GE)) return true;
+    if (jj_3R_79()) return true;
+    return false;
+  }
+
   private boolean jj_3R_21() {
     if (jj_scan_token(ASK)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_35()) jj_scanpos = xsp;
     if (jj_3R_35()) return true;
-    return false;
-  }
-
-  private boolean jj_3_124() {
-    if (jj_scan_token(GE)) return true;
-    if (jj_3R_79()) return true;
     return false;
   }
 
@@ -5659,19 +5608,14 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_34() {
-    if (jj_3R_35()) return true;
-    return false;
-  }
-
   private boolean jj_3_120() {
     if (jj_scan_token(NE)) return true;
     if (jj_3R_79()) return true;
     return false;
   }
 
-  private boolean jj_3_33() {
-    if (jj_3R_32()) return true;
+  private boolean jj_3_34() {
+    if (jj_3R_35()) return true;
     return false;
   }
 
@@ -5700,6 +5644,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3_33() {
+    if (jj_3R_32()) return true;
     return false;
   }
 
@@ -5763,11 +5712,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_73() {
-    if (jj_3R_50()) return true;
-    return false;
-  }
-
   private boolean jj_3R_77() {
     if (jj_3R_78()) return true;
     Token xsp;
@@ -5775,6 +5719,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       xsp = jj_scanpos;
       if (jj_3_118()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3_73() {
+    if (jj_3R_50()) return true;
     return false;
   }
 
@@ -5825,6 +5774,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3R_59() {
+    if (jj_3R_98()) return true;
+    return false;
+  }
+
   private boolean jj_3R_48() {
     if (jj_3R_52()) return true;
     Token xsp;
@@ -5834,11 +5788,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     }
     xsp = jj_scanpos;
     if (jj_3_78()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_59() {
-    if (jj_3R_98()) return true;
     return false;
   }
 
@@ -5857,23 +5806,23 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_23() {
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
   private boolean jj_3_116() {
     if (jj_scan_token(NIL)) return true;
     return false;
   }
 
-  private boolean jj_3_75() {
-    if (jj_3R_48()) return true;
+  private boolean jj_3_23() {
+    if (jj_3R_31()) return true;
     return false;
   }
 
   private boolean jj_3_115() {
     if (jj_3R_76()) return true;
+    return false;
+  }
+
+  private boolean jj_3_75() {
+    if (jj_3R_48()) return true;
     return false;
   }
 
@@ -5884,16 +5833,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private boolean jj_3_113() {
     if (jj_3R_74()) return true;
-    return false;
-  }
-
-  private boolean jj_3_72() {
-    if (jj_3R_49()) return true;
-    return false;
-  }
-
-  private boolean jj_3_74() {
-    if (jj_scan_token(DOT)) return true;
     return false;
   }
 
@@ -5921,6 +5860,16 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3_72() {
+    if (jj_3R_49()) return true;
+    return false;
+  }
+
+  private boolean jj_3_74() {
+    if (jj_scan_token(DOT)) return true;
     return false;
   }
 
@@ -5958,6 +5907,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3_109() {
+    if (jj_scan_token(VAR1)) return true;
+    return false;
+  }
+
   private boolean jj_3_25() {
     Token xsp;
     if (jj_3_24()) return true;
@@ -5965,11 +5919,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       xsp = jj_scanpos;
       if (jj_3_24()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3_109() {
-    if (jj_scan_token(VAR1)) return true;
     return false;
   }
 
@@ -5988,13 +5937,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_20() {
-    if (jj_scan_token(REDUCED)) return true;
+  private boolean jj_3_108() {
+    if (jj_3R_72()) return true;
     return false;
   }
 
-  private boolean jj_3_108() {
-    if (jj_3R_72()) return true;
+  private boolean jj_3_20() {
+    if (jj_scan_token(REDUCED)) return true;
     return false;
   }
 
@@ -6032,6 +5981,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3_106() {
+    if (jj_3R_71()) return true;
+    return false;
+  }
+
   private boolean jj_3R_56() {
     if (jj_scan_token(LBRACE)) return true;
     Token xsp;
@@ -6047,11 +6001,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_106() {
-    if (jj_3R_71()) return true;
-    return false;
-  }
-
   private boolean jj_3R_29() {
     if (jj_scan_token(PREFIX)) return true;
     if (jj_scan_token(PNAME_NS)) return true;
@@ -6061,12 +6010,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private boolean jj_3_107() {
     if (jj_3R_30()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_43() {
-    if (jj_scan_token(OFFSET)) return true;
-    if (jj_scan_token(INTEGER)) return true;
     return false;
   }
 
@@ -6080,8 +6023,8 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_44() {
-    if (jj_scan_token(LIMIT)) return true;
+  private boolean jj_3R_43() {
+    if (jj_scan_token(OFFSET)) return true;
     if (jj_scan_token(INTEGER)) return true;
     return false;
   }
@@ -6091,9 +6034,9 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_28() {
-    if (jj_scan_token(BASE)) return true;
-    if (jj_3R_90()) return true;
+  private boolean jj_3R_44() {
+    if (jj_scan_token(LIMIT)) return true;
+    if (jj_scan_token(INTEGER)) return true;
     return false;
   }
 
@@ -6104,6 +6047,12 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     jj_scanpos = xsp;
     if (jj_3_106()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3R_28() {
+    if (jj_scan_token(BASE)) return true;
+    if (jj_3R_90()) return true;
     return false;
   }
 
@@ -6147,6 +6096,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3_104() {
+    if (jj_3R_63()) return true;
+    return false;
+  }
+
   private boolean jj_3R_22() {
     Token xsp;
     xsp = jj_scanpos;
@@ -6160,11 +6114,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private boolean jj_3_64() {
     if (jj_scan_token(ASC)) return true;
-    return false;
-  }
-
-  private boolean jj_3_104() {
-    if (jj_3R_63()) return true;
     return false;
   }
 
@@ -6229,11 +6178,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_21()) return true;
-    return false;
-  }
-
   private boolean jj_3R_68() {
     if (jj_scan_token(LPAREN)) return true;
     Token xsp;
@@ -6258,14 +6202,14 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_26() {
-    if (jj_scan_token(CSV)) return true;
-    if (jj_scan_token(STRING_LITERAL1)) return true;
+  private boolean jj_3_99() {
+    if (jj_scan_token(KW_A)) return true;
     return false;
   }
 
-  private boolean jj_3_99() {
-    if (jj_scan_token(KW_A)) return true;
+  private boolean jj_3R_26() {
+    if (jj_scan_token(CSV)) return true;
+    if (jj_scan_token(STRING_LITERAL1)) return true;
     return false;
   }
 
@@ -6277,6 +6221,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3R_69() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_3R_62()) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
   private boolean jj_3_61() {
     if (jj_3R_44()) return true;
     Token xsp;
@@ -6285,20 +6236,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_69() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_3R_62()) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
   private boolean jj_3R_90() {
     if (jj_scan_token(IRIref)) return true;
     return false;
   }
 
-  private boolean jj_3_16() {
-    if (jj_3R_27()) return true;
+  private boolean jj_3_101() {
+    if (jj_3R_69()) return true;
     return false;
   }
 
@@ -6312,16 +6256,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_101() {
-    if (jj_3R_69()) return true;
-    return false;
-  }
-
-  private boolean jj_3_14() {
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
   private boolean jj_3R_63() {
     Token xsp;
     xsp = jj_scanpos;
@@ -6332,8 +6266,33 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3_16() {
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
   private boolean jj_3_100() {
     if (jj_3R_68()) return true;
+    return false;
+  }
+
+  private boolean jj_3_182() {
+    if (jj_scan_token(ANON)) return true;
+    return false;
+  }
+
+  private boolean jj_3_58() {
+    if (jj_3R_42()) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_21()) return true;
+    return false;
+  }
+
+  private boolean jj_3_57() {
+    if (jj_3R_41()) return true;
     return false;
   }
 
@@ -6344,36 +6303,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     jj_scanpos = xsp;
     if (jj_3_16()) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3_182() {
-    if (jj_scan_token(ANON)) return true;
-    return false;
-  }
-
-  private boolean jj_3_15() {
-    if (jj_scan_token(IPADDRESS)) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(ADD)) return true;
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
-  private boolean jj_3_58() {
-    if (jj_3R_42()) return true;
-    return false;
-  }
-
-  private boolean jj_3_57() {
-    if (jj_3R_41()) return true;
     return false;
   }
 
@@ -6388,6 +6317,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       if (jj_3_56()) { jj_scanpos = xsp; break; }
     }
     if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_15() {
+    if (jj_scan_token(IPADDRESS)) return true;
     return false;
   }
 
@@ -6415,14 +6349,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_25() {
-    if (jj_scan_token(CHANNEL)) return true;
-    if (jj_3R_94()) return true;
-    if (jj_scan_token(COLON)) return true;
-    if (jj_scan_token(INTEGER)) return true;
-    return false;
-  }
-
   private boolean jj_3_98() {
     if (jj_3R_34()) return true;
     return false;
@@ -6430,11 +6356,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private boolean jj_3_180() {
     if (jj_scan_token(PNAME_NS)) return true;
-    return false;
-  }
-
-  private boolean jj_3_13() {
-    if (jj_3R_25()) return true;
     return false;
   }
 
@@ -6448,24 +6369,14 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_35() {
-    if (jj_scan_token(WHERE)) return true;
-    if (jj_3R_56()) return true;
-    return false;
-  }
-
   private boolean jj_3_179() {
     if (jj_scan_token(PNAME_LN)) return true;
     return false;
   }
 
-  private boolean jj_3_11() {
-    if (jj_scan_token(WITH)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_scan_token(ATTACH)) return true;
+  private boolean jj_3R_35() {
+    if (jj_scan_token(WHERE)) return true;
+    if (jj_3R_56()) return true;
     return false;
   }
 
@@ -6484,11 +6395,21 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_24() {
-    if (jj_scan_token(SOCKET)) return true;
+  private boolean jj_3R_25() {
+    if (jj_scan_token(CHANNEL)) return true;
     if (jj_3R_94()) return true;
     if (jj_scan_token(COLON)) return true;
     if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_14() {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(ADD)) return true;
     return false;
   }
 
@@ -6497,8 +6418,8 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_19()) return true;
+  private boolean jj_3_3() {
+    if (jj_3R_20()) return true;
     return false;
   }
 
@@ -6517,23 +6438,8 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_12() {
-    if (jj_3R_24()) return true;
-    return false;
-  }
-
   private boolean jj_3R_96() {
     if (jj_3R_90()) return true;
-    return false;
-  }
-
-  private boolean jj_3_10() {
-    if (jj_scan_token(FROM)) return true;
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_scan_token(CREATE)) return true;
     return false;
   }
 
@@ -6543,31 +6449,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3R_23() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_7()) {
-    jj_scanpos = xsp;
-    if (jj_3_8()) {
-    jj_scanpos = xsp;
-    if (jj_3_9()) return true;
-    }
-    }
-    if (jj_scan_token(STREAM)) return true;
-    if (jj_3R_72()) return true;
-    xsp = jj_scanpos;
-    if (jj_3_10()) {
-    jj_scanpos = xsp;
-    if (jj_3_11()) return true;
-    }
-    xsp = jj_scanpos;
-    if (jj_3_12()) {
-    jj_scanpos = xsp;
-    if (jj_3_13()) {
-    jj_scanpos = xsp;
-    if (jj_3_14()) return true;
-    }
-    }
+  private boolean jj_3_13() {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
+  private boolean jj_3_176() {
+    if (jj_scan_token(STRING_LITERAL_LONG2)) return true;
     return false;
   }
 
@@ -6581,8 +6469,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_176() {
-    if (jj_scan_token(STRING_LITERAL_LONG2)) return true;
+  private boolean jj_3_175() {
+    if (jj_scan_token(STRING_LITERAL_LONG1)) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_scan_token(WITH)) return true;
     return false;
   }
 
@@ -6591,13 +6484,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_175() {
-    if (jj_scan_token(STRING_LITERAL_LONG1)) return true;
-    return false;
-  }
-
-  private boolean jj_3_53() {
-    if (jj_scan_token(HOUR)) return true;
+  private boolean jj_3R_24() {
+    if (jj_scan_token(SOCKET)) return true;
+    if (jj_3R_94()) return true;
+    if (jj_scan_token(COLON)) return true;
+    if (jj_scan_token(INTEGER)) return true;
     return false;
   }
 
@@ -6606,8 +6497,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_52() {
-    if (jj_scan_token(MINUTE)) return true;
+  private boolean jj_3_8() {
+    if (jj_scan_token(ATTACH)) return true;
+    return false;
+  }
+
+  private boolean jj_3_53() {
+    if (jj_scan_token(HOUR)) return true;
     return false;
   }
 
@@ -6623,6 +6519,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private boolean jj_3_173() {
     if (jj_scan_token(STRING_LITERAL1)) return true;
+    return false;
+  }
+
+  private boolean jj_3_52() {
+    if (jj_scan_token(MINUTE)) return true;
     return false;
   }
 
@@ -6674,35 +6575,56 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_18()) return true;
+  private boolean jj_3_12() {
+    if (jj_3R_24()) return true;
     return false;
   }
 
-  private boolean jj_3_6() {
-    if (jj_3R_23()) return true;
+  private boolean jj_3_2() {
+    if (jj_3R_19()) return true;
     return false;
   }
 
-  private boolean jj_3_5() {
-    if (jj_3R_22()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_1()) {
-    jj_scanpos = xsp;
-    if (jj_3_2()) {
-    jj_scanpos = xsp;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3_4()) return true;
-    }
-    }
-    }
+  private boolean jj_3_10() {
+    if (jj_scan_token(FROM)) return true;
     return false;
   }
 
   private boolean jj_3_172() {
     if (jj_scan_token(FALSE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_7() {
+    if (jj_scan_token(CREATE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_7()) {
+    jj_scanpos = xsp;
+    if (jj_3_8()) {
+    jj_scanpos = xsp;
+    if (jj_3_9()) return true;
+    }
+    }
+    if (jj_scan_token(STREAM)) return true;
+    if (jj_3R_72()) return true;
+    xsp = jj_scanpos;
+    if (jj_3_10()) {
+    jj_scanpos = xsp;
+    if (jj_3_11()) return true;
+    }
+    xsp = jj_scanpos;
+    if (jj_3_12()) {
+    jj_scanpos = xsp;
+    if (jj_3_13()) {
+    jj_scanpos = xsp;
+    if (jj_3_14()) return true;
+    }
+    }
     return false;
   }
 
@@ -6744,6 +6666,16 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3_1() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_3R_23()) return true;
+    return false;
+  }
+
   private boolean jj_3R_82() {
     Token xsp;
     xsp = jj_scanpos;
@@ -6759,6 +6691,23 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private boolean jj_3_168() {
     if (jj_scan_token(INTEGER_NEGATIVE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_22()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_1()) {
+    jj_scanpos = xsp;
+    if (jj_3_2()) {
+    jj_scanpos = xsp;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3_4()) return true;
+    }
+    }
+    }
     return false;
   }
 
@@ -6929,6 +6878,80 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
   private boolean jj_3_46() {
     if (jj_scan_token(ADVANCE)) return true;
     if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_52() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_92()) {
+    jj_scanpos = xsp;
+    if (jj_3_93()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_156() {
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3_92() {
+    if (jj_3R_61()) return true;
+    if (jj_3R_62()) return true;
+    return false;
+  }
+
+  private boolean jj_3_90() {
+    if (jj_3R_60()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_85() {
+    if (jj_3R_72()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_156()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_91() {
+    if (jj_scan_token(DOT)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_90()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    if (jj_3R_52()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_91()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_155() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_59()) return true;
+    return false;
+  }
+
+  private boolean jj_3_89() {
+    if (jj_3R_60()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_86() {
+    if (jj_scan_token(REGEX)) return true;
+    if (jj_scan_token(LPAREN)) return true;
+    if (jj_3R_59()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_59()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_155()) jj_scanpos = xsp;
+    if (jj_scan_token(RPAREN)) return true;
     return false;
   }
 

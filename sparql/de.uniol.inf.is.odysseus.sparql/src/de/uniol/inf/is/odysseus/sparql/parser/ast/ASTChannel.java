@@ -4,7 +4,28 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 public
 class ASTChannel extends SimpleNode {
-  public ASTChannel(int id) {
+  
+	String host;
+	int port;
+	
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	
+	public ASTChannel(int id) {
     super(id);
   }
 

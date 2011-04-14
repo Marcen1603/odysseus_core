@@ -67,10 +67,12 @@ ASTQuery Query() : { }
 }
 
 void CreateStatement() :
-{}
+{
+	INode n;
+}
 {
   ( < CREATE > | < ATTACH > | < ADD > )
-    < STREAM > IRIref()
+    < STREAM > n=IRIref(){jjtThis.setStreamName(n.getName());}
   
   ( < FROM > | < WITH > )
   
@@ -79,29 +81,45 @@ void CreateStatement() :
 }
 
 void Socket() :
-{}
+{
+	String host;
+	Token portToken;
+}
 {
   < SOCKET >
   
-  Host() <COLON> <INTEGER>
+  host=Host() <COLON> portToken=<INTEGER>
+  {
+  	jjtThis.setHost(host);
+  	jjtThis.setPort(Integer.parseInt(portToken.image));
+  }
 }
 
 void Channel() :
-{}
 {
-  < CHANNEL > Host() <COLON> <INTEGER>
+	String host;
+	Token portToken;
+}
+{
+  < CHANNEL > host=Host() <COLON> portToken=<INTEGER>
+    {
+	  	jjtThis.setHost(host);
+	  	jjtThis.setPort(Integer.parseInt(portToken.image));
+  	}
 }
 
-void Host() :
+String Host() :
 {
   Token value;
+  String retVal;
 }
 {
   value = < IPADDRESS >
   {
-    jjtThis.setValue(value.image);
+    retVal=value.image;
   }
-| Identifier()
+| retVal=Identifier()
+{return retVal;}
 }
 
 void CSVSource() :
@@ -111,18 +129,19 @@ void CSVSource() :
 {
   < CSV > t = < STRING_LITERAL1 >
   {
+    // without quotes
     jjtThis.setURL(t.image.substring(1, t.image.length() - 1));
   }
 }
 
-void Identifier() :
+String Identifier() :
 {
   Token t;
 }
 {
   t = < IDENTIFIER >
   {
-    jjtThis.setName(t.image);
+    return t.image;
   }
 }
 
@@ -297,15 +316,15 @@ SourceInfo StreamClause() :
 Aggregation Aggregation() : {Variable v; Aggregation agg ;}
 {
 	(<AVG> <LPAREN> v = Var() <RPAREN>
-		{ 	agg = new Aggregation(v, AggregateFunction.AVG); } |
+		{ 	agg = new Aggregation(v, AggregateFunctionName.AVG); } |
 	 <MIN> <LPAREN> v = Var() <RPAREN>
-		{ 	agg = new Aggregation(v, AggregateFunction.MIN); } |
+		{ 	agg = new Aggregation(v, AggregateFunctionName.MIN); } |
 	 <MAX> <LPAREN> v = Var() <RPAREN>
-	 	{ 	agg = new Aggregation(v, AggregateFunction.MAX); } |
+	 	{ 	agg = new Aggregation(v, AggregateFunctionName.MAX); } |
 	 <SUM> <LPAREN> v = Var() <RPAREN>
-	 	{ 	agg = new Aggregation(v, AggregateFunction.SUM); } |
+	 	{ 	agg = new Aggregation(v, AggregateFunctionName.SUM); } |
 	 <COUNT> <LPAREN> v = Var() <RPAREN>
-	 	{ 	agg = new Aggregation(v, AggregateFunction.COUNT); }
+	 	{ 	agg = new Aggregation(v, AggregateFunctionName.COUNT); }
 	)
 	{return agg;}
 }
@@ -468,7 +487,7 @@ void WhereClause() : { }
 
 void GroupBy() : { INode v; }
 {
-	<GROUP> <BY> <LPAREN> ( v = Var() {jjtThis.addVariable(v);} )+ <RPAREN>
+	<GROUP> <BY> <LPAREN> ( v = Var() {jjtThis.addVariable((Variable)v);} )+ <RPAREN>
 }
 
 void SolutionModifier() : { }
@@ -671,9 +690,9 @@ void OptionalGraphPattern() : { }
 { <OPTIONAL> GroupGraphPattern()
 }
 
-void GraphGraphPattern() : { }
+void GraphGraphPattern() : { INode n; }
 {
-  <GRAPH> VarOrIRIref() GroupGraphPattern()
+  <GRAPH> n=VarOrIRIref(){jjtThis.setGraphTerm(n);} GroupGraphPattern()
 }
 
 // G (union G)* can be a single group pattern
@@ -701,9 +720,10 @@ void Constraint() : { SimpleNode n; }
 }
 
 
-void FunctionCall() : { }
+SimpleNode FunctionCall() : { INode fName; SimpleNode argList;}
 {
-  IRIref() ArgList()
+  fName=IRIref() argList=ArgList()
+  {jjtThis.setString(fName.getName() + argList.toString());} 
 }
 
 SimpleNode ArgList() :

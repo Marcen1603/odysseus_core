@@ -4,7 +4,18 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 public
 class ASTCreateStatement extends SimpleNode {
-  public ASTCreateStatement(int id) {
+  
+	String streamName;
+	
+	public String getStreamName() {
+		return streamName;
+	}
+
+	public void setStreamName(String streamName) {
+		this.streamName = streamName;
+	}
+
+	public ASTCreateStatement(int id) {
     super(id);
   }
 

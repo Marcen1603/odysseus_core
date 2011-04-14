@@ -4,7 +4,18 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 public
 class ASTFunctionCall extends SimpleNode {
-  public ASTFunctionCall(int id) {
+  
+	String string;
+	
+	public String toString() {
+		return string;
+	}
+
+	public void setString(String string) {
+		this.string = string;
+	}
+
+	public ASTFunctionCall(int id) {
     super(id);
   }
 
@@ -17,5 +28,7 @@ class ASTFunctionCall extends SimpleNode {
   public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  
 }
 /* JavaCC - OriginalChecksum=db6f027c215ed47285a78f6a6ad91188 (do not edit this line) */
