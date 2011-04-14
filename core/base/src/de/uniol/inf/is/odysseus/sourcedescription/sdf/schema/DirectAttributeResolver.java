@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 public class DirectAttributeResolver implements IAttributeResolver {
 
     private static final long serialVersionUID = 692060392529144987L;
-    private final SDFAttributeList schema;
+    protected final SDFAttributeList schema;
 
     public DirectAttributeResolver(SDFAttributeList schema) {
         this.schema = schema;
