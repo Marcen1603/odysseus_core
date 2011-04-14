@@ -35,6 +35,15 @@ public class AccessAO extends AbstractLogicalOperator implements
 
 	private int port;
 	private String host;
+	private String fileURL;
+
+	public String getFileURL() {
+		return fileURL;
+	}
+
+	public void setFileURL(String fileURL) {
+		this.fileURL = fileURL;
+	}
 
 	/**
 	 * This variable will be used to generate an ID for every new input tuple
