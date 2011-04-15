@@ -10,14 +10,14 @@
 
 options
 {
-   LOOKAHEAD = 6;
-   FORCE_LA_CHECK = true;
+   //LOOKAHEAD = 6;
+   //FORCE_LA_CHECK = true;
    JAVA_UNICODE_ESCAPE = true ;
    UNICODE_INPUT = false ;
 
-  	STATIC = false ;
-//  DEBUG_PARSER          = true ;
-//  DEBUG_TOKEN_MANAGER   = true ;
+	STATIC = false;
+  DEBUG_PARSER          = true ;
+ // DEBUG_TOKEN_MANAGER   = true ;
 
   IGNORE_CASE = true;
   MULTI = true;
@@ -52,17 +52,17 @@ public class SPARQLParser extends SPARQLParserBase
 }
 PARSER_END(SPARQLParser)
 
-void CompilationUnit(): { }
+ASTQuery CompilationUnit(): { ASTQuery query;}
 {
-  Query() <EOF>
+  query=Query() <EOF>
+  {return query;}
 }
 
 ASTQuery Query() : { }
 {
-  ( Prologue()
+  (( Prologue()
   ( SelectQuery() | ConstructQuery() | DescribeQuery() | AskQuery() )) |
-  
-  CreateStatement()
+  CreateStatement())
   {return jjtThis;}
 }
 
@@ -87,8 +87,9 @@ void Socket() :
 }
 {
   < SOCKET >
-  
-  host=Host() <COLON> portToken=<INTEGER>
+// <PNAME_NS> allows a single colon
+// it's dirty hack at the moment  
+  host=Host() <PNAME_NS> portToken=<INTEGER>
   {
   	jjtThis.setHost(host);
   	jjtThis.setPort(Integer.parseInt(portToken.image));
@@ -101,7 +102,9 @@ void Channel() :
 	Token portToken;
 }
 {
-  < CHANNEL > host=Host() <COLON> portToken=<INTEGER>
+// <PNAME_NS> allows a single colon
+// it's dirty hack at the moment
+  < CHANNEL > host=Host() <PNAME_NS> portToken=<INTEGER>
     {
 	  	jjtThis.setHost(host);
 	  	jjtThis.setPort(Integer.parseInt(portToken.image));
@@ -117,6 +120,7 @@ String Host() :
   value = < IPADDRESS >
   {
     retVal=value.image;
+    return retVal;
   }
 | retVal=Identifier()
 {return retVal;}
@@ -332,7 +336,7 @@ Aggregation Aggregation() : {Variable v; Aggregation agg ;}
 WindowAO Window() : {WindowAO window = null;}
 {
 
-  ( window = SlidingTimeWindow() | window = SlidingTupelWindow() )
+  ( LOOKAHEAD(SlidingTimeWindow()) window = SlidingTimeWindow() | window = SlidingTupelWindow() )
   {return window;}
 }
 
@@ -417,7 +421,7 @@ WindowAO SlidingTupelWindow() :
 
 WindowAO WindowNotPWindow() : {WindowAO window= null;}
 {
-  ( window = SlidingTimeWindow() | window = SlidingTupelWindow() )
+  ( LOOKAHEAD(2)window = SlidingTimeWindow() | window = SlidingTupelWindow() )
  	{ 	  return window; 	} 	
 }
 
@@ -577,7 +581,7 @@ void TriplesBlock() : {
   			{triples.add(curSubjTriples);}
   			)
   )*
-  ( <DOT>)?
+  //( <DOT>)?
   {
     jjtThis.setTriples(triples);  }
 }
@@ -772,16 +776,23 @@ List<Triple> TriplesSameSubject() :
   PropertiesAndObjects paos;
 }
 {
-  subject = VarOrTerm()
-  paos=PropertyListNotEmpty()
+  (
+	  subject = VarOrTerm()
+	  paos=PropertyListNotEmpty()
+	  |
+	  // Any of the triple generating syntax elements
+	  subject = TriplesNode()
+	  paos=PropertyList()
+  )
   {
     for(INode curProp: paos.getProperties()){
       for(INode curObject: paos.getObjects(curProp)){
-      	triples.add(new Triple(subject, curProp, curObject));        }    }  }
-|
-  // Any of the triple generating syntax elements
-  subject = TriplesNode()
-  PropertyList()
+      	triples.add(new Triple(subject, curProp, curObject));  
+      }
+    }
+    
+    return triples;
+  }
 }
 
 PropertiesAndObjects PropertyListNotEmpty() :
@@ -846,6 +857,7 @@ List<INode> ObjectList():
 INode Object(): {INode object;}
 {
   object = GraphNode()
+  {return object;}
 }
 
 INode Verb() : {INode p ; Token t;}
@@ -1261,7 +1273,7 @@ TOKEN:
    // Includes # for relative URIs
    <IRIref: "<" (~[ ">","<", "\"", "{", "}", "^", "\\", "|", "`",
                       "\u0000"-"\u0020"])* ">" >
-| <PNAME_NS: (<PN_PREFIX>)? ":" >
+| <PNAME_NS: (<PN_PREFIX>)? ":">
 | <PNAME_LN: <PNAME_NS> <PN_LOCAL> >
 | <BLANK_NODE_LABEL: "_:" <PN_LOCAL> >
 | <VAR1: "?" <VARNAME> >
@@ -1467,7 +1479,7 @@ TOKEN :
 
 | < BANG: "!" >
 | < TILDE: "~" >
-| < COLON: ":" >
+//| < COLON: ":" >
 
 | < SC_OR: "||" >
 | < SC_AND: "&&" >

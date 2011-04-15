@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.sparql;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -50,7 +51,12 @@ public class SPARQL implements IQueryParser{
 			throws QueryParseException {
 		this.user= user;
 		this.dd = dd;
-		return parse(new StringReader(query), user, dd);
+		try{
+			return parse(new StringReader(query), user, dd);
+		}catch(QueryParseException e){
+			System.out.println("Query: " + query);
+			throw e;
+		}
 	}
 
 	@Override
@@ -64,13 +70,13 @@ public class SPARQL implements IQueryParser{
 			} else {
 				parser.ReInit(reader);
 			}
-			ASTQuery queryNode = parser.Query();
+			ASTQuery queryNode = parser.CompilationUnit();
 			
 			SPARQLCreateLogicalPlanVisitor visitor = new SPARQLCreateLogicalPlanVisitor();
 			
 			visitor.setUser(user);
 			visitor.setDataDictionary(dd);
-			ILogicalOperator logicalOp = (ILogicalOperator)visitor.visit(queryNode, null);
+			ILogicalOperator logicalOp = (ILogicalOperator)((LinkedList)visitor.visit(queryNode, new LinkedList())).getFirst();
 			
 			IQuery query = new Query();
 			query.setParserId(getLanguage());
@@ -86,6 +92,9 @@ public class SPARQL implements IQueryParser{
 					e.getCause());
 		} catch (Exception e) {
 			throw new QueryParseException(e);
+		} catch (Throwable t){
+			t.printStackTrace();
+			throw new QueryParseException("error.");
 		}
 	}
 

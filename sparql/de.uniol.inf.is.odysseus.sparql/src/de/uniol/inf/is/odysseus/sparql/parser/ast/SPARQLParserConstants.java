@@ -256,37 +256,35 @@ public interface SPARQLParserConstants {
   /** RegularExpression Id. */
   int TILDE = 125;
   /** RegularExpression Id. */
-  int COLON = 126;
+  int SC_OR = 126;
   /** RegularExpression Id. */
-  int SC_OR = 127;
+  int SC_AND = 127;
   /** RegularExpression Id. */
-  int SC_AND = 128;
+  int PLUS = 128;
   /** RegularExpression Id. */
-  int PLUS = 129;
+  int MINUS = 129;
   /** RegularExpression Id. */
-  int MINUS = 130;
+  int STAR = 130;
   /** RegularExpression Id. */
-  int STAR = 131;
+  int SLASH = 131;
   /** RegularExpression Id. */
-  int SLASH = 132;
+  int DATATYPE = 132;
   /** RegularExpression Id. */
-  int DATATYPE = 133;
+  int AT = 133;
   /** RegularExpression Id. */
-  int AT = 134;
+  int PN_CHARS_BASE = 134;
   /** RegularExpression Id. */
-  int PN_CHARS_BASE = 135;
+  int PN_CHARS_U = 135;
   /** RegularExpression Id. */
-  int PN_CHARS_U = 136;
+  int PN_CHARS = 136;
   /** RegularExpression Id. */
-  int PN_CHARS = 137;
+  int PN_PREFIX = 137;
   /** RegularExpression Id. */
-  int PN_PREFIX = 138;
+  int PN_LOCAL = 138;
   /** RegularExpression Id. */
-  int PN_LOCAL = 139;
+  int VARNAME = 139;
   /** RegularExpression Id. */
-  int VARNAME = 140;
-  /** RegularExpression Id. */
-  int UNKNOWN = 141;
+  int UNKNOWN = 140;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -419,7 +417,6 @@ public interface SPARQLParserConstants {
     "\">=\"",
     "\"!\"",
     "\"~\"",
-    "\":\"",
     "\"||\"",
     "\"&&\"",
     "\"+\"",

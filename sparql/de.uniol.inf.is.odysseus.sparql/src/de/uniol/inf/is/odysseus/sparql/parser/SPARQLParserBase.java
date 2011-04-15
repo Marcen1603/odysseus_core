@@ -174,7 +174,7 @@ public class SPARQLParserBase {
     }
     
     
-    protected void throwParseException(String msg, int line, int column) throws ParseException
+    protected static void throwParseException(String msg, int line, int column) throws ParseException
     {
         throw new ParseException("Line " + line + ", column " + column + ": " + msg) ;
     }

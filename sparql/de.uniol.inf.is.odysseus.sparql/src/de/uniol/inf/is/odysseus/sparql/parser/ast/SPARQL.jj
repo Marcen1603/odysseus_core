@@ -11,14 +11,14 @@
 
 options
 {
-   LOOKAHEAD = 6;
-   FORCE_LA_CHECK = true;
+   //LOOKAHEAD = 6;
+   //FORCE_LA_CHECK = true;
    JAVA_UNICODE_ESCAPE = true ;
    UNICODE_INPUT = false ;
 
-  	STATIC = false ;
-//  DEBUG_PARSER          = true ;
-//  DEBUG_TOKEN_MANAGER   = true ;
+	STATIC = false;
+  DEBUG_PARSER          = true ;
+ // DEBUG_TOKEN_MANAGER   = true ;
 
   IGNORE_CASE = true;
                
@@ -56,15 +56,21 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
 }
 PARSER_END(SPARQLParser)
 
-void CompilationUnit(): {/*@bgen(jjtree) CompilationUnit */
-  ASTCompilationUnit jjtn000 = new ASTCompilationUnit(JJTCOMPILATIONUNIT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/ }
+ASTQuery CompilationUnit(): {/*@bgen(jjtree) CompilationUnit */
+                              ASTCompilationUnit jjtn000 = new ASTCompilationUnit(JJTCOMPILATIONUNIT);
+                              boolean jjtc000 = true;
+                              jjtree.openNodeScope(jjtn000);
+/*@egen*/ ASTQuery query;}
 {/*@bgen(jjtree) CompilationUnit */
   try {
 /*@egen*/
-  Query() <EOF>/*@bgen(jjtree)*/
+  query=Query() <EOF>/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {return query;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -95,10 +101,9 @@ ASTQuery Query() : {/*@bgen(jjtree) Query */
 {/*@bgen(jjtree) Query */
   try {
 /*@egen*/
-  ( Prologue()
+  (( Prologue()
   ( SelectQuery() | ConstructQuery() | DescribeQuery() | AskQuery() )) |
-  
-  CreateStatement()/*@bgen(jjtree)*/
+  CreateStatement())/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -180,8 +185,9 @@ void Socket() :
   try {
 /*@egen*/
   < SOCKET >
-  
-  host=Host() <COLON> portToken=<INTEGER>/*@bgen(jjtree)*/
+// <PNAME_NS> allows a single colon
+// it's dirty hack at the moment  
+  host=Host() <PNAME_NS> portToken=<INTEGER>/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -225,7 +231,9 @@ void Channel() :
 {/*@bgen(jjtree) Channel */
   try {
 /*@egen*/
-  < CHANNEL > host=Host() <COLON> portToken=<INTEGER>/*@bgen(jjtree)*/
+// <PNAME_NS> allows a single colon
+// it's dirty hack at the moment
+  < CHANNEL > host=Host() <PNAME_NS> portToken=<INTEGER>/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -277,6 +285,7 @@ String Host() :
 /*@egen*/
   {
     retVal=value.image;
+    return retVal;
   }
 | retVal=Identifier()/*@bgen(jjtree)*/
 {
@@ -863,7 +872,7 @@ WindowAO Window() : {/*@bgen(jjtree) Window */
   try {
 /*@egen*/
 
-  ( window = SlidingTimeWindow() | window = SlidingTupelWindow() )/*@bgen(jjtree)*/
+  ( LOOKAHEAD(SlidingTimeWindow()) window = SlidingTimeWindow() | window = SlidingTupelWindow() )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -1027,7 +1036,7 @@ WindowAO WindowNotPWindow() : {/*@bgen(jjtree) WindowNotPWindow */
 {/*@bgen(jjtree) WindowNotPWindow */
   try {
 /*@egen*/
-  ( window = SlidingTimeWindow() | window = SlidingTupelWindow() )/*@bgen(jjtree)*/
+  ( LOOKAHEAD(2)window = SlidingTimeWindow() | window = SlidingTupelWindow() )/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
@@ -1502,13 +1511,13 @@ void TriplesBlock() : {/*@bgen(jjtree) TriplesBlock */
   ( <DOT> ( curSubjTriples=TriplesSameSubject()
   			{triples.add(curSubjTriples);}
   			)
-  )*
-  ( <DOT>)?/*@bgen(jjtree)*/
+  )*/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
 /*@egen*/
+  //( <DOT>)?
   {
     jjtn000.setTriples(triples);  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
@@ -2014,8 +2023,14 @@ List<Triple> TriplesSameSubject() :
 {/*@bgen(jjtree) TriplesSameSubject */
   try {
 /*@egen*/
-  subject = VarOrTerm()
-  paos=PropertyListNotEmpty()/*@bgen(jjtree)*/
+  (
+	  subject = VarOrTerm()
+	  paos=PropertyListNotEmpty()
+	  |
+	  // Any of the triple generating syntax elements
+	  subject = TriplesNode()
+	  paos=PropertyList()
+  )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -2024,11 +2039,12 @@ List<Triple> TriplesSameSubject() :
   {
     for(INode curProp: paos.getProperties()){
       for(INode curObject: paos.getObjects(curProp)){
-      	triples.add(new Triple(subject, curProp, curObject));        }    }  }
-|
-  // Any of the triple generating syntax elements
-  subject = TriplesNode()
-  PropertyList()/*@bgen(jjtree)*/
+      	triples.add(new Triple(subject, curProp, curObject));  
+      }
+    }
+    
+    return triples;
+  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2207,6 +2223,12 @@ INode Object(): {/*@bgen(jjtree) Object */
   try {
 /*@egen*/
   object = GraphNode()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {return object;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -3690,7 +3712,7 @@ TOKEN:
    // Includes # for relative URIs
    <IRIref: "<" (~[ ">","<", "\"", "{", "}", "^", "\\", "|", "`",
                       "\u0000"-" "])* ">" >
-| <PNAME_NS: (<PN_PREFIX>)? ":" >
+| <PNAME_NS: (<PN_PREFIX>)? ":">
 | <PNAME_LN: <PNAME_NS> <PN_LOCAL> >
 | <BLANK_NODE_LABEL: "_:" <PN_LOCAL> >
 | <VAR1: "?" <VARNAME> >
@@ -3896,7 +3918,7 @@ TOKEN :
 
 | < BANG: "!" >
 | < TILDE: "~" >
-| < COLON: ":" >
+//| < COLON: ":" >
 
 | < SC_OR: "||" >
 | < SC_AND: "&&" >

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
@@ -1154,29 +1155,51 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		if(child instanceof ASTSocket){
 			ASTSocket socket = (ASTSocket)child;
 			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_Access_Socket"));
+//			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setHost(socket.getHost());
 			accAO.setPort(socket.getPort());
 			
-			((LinkedList)data).addFirst(accAO);
+			
 		}
 		else if(child instanceof ASTChannel){
 			ASTChannel channel = (ASTChannel)child;
 			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_ACCESS_Channel"));
+//			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setHost(channel.getHost());
 			accAO.setPort(channel.getPort());
 			
-			((LinkedList)data).addFirst(accAO);
 		}
 		else if(child instanceof ASTCSVSource){
 			ASTCSVSource csv = (ASTCSVSource)child;
 			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_ACCESS_CSV"));
+//			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setFileURL(csv.getURL());
 			
-			((LinkedList)data).addFirst(accAO);
 		}
 		else{
 			throw new RuntimeException("No access specification (Socket|Channel|CSV) given for stream definition.");
 		}
+		
+		SDFAttributeList outputSchema = new SDFAttributeList();
+		
+		SDFAttribute subject = new SDFAttribute(node.getStreamName() + ".subject");
+		subject.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		outputSchema.add(subject);
+		
+		SDFAttribute predicate = new SDFAttribute(node.getStreamName() + ".predicate");
+		predicate.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		outputSchema.add(predicate);
+		
+		SDFAttribute object = new SDFAttribute(node.getStreamName() + ".object");
+		object.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		outputSchema.add(object);
+		
+		accAO.setOutputSchema(outputSchema);
+		
+		ILogicalOperator op = addTimestampAO(accAO);
+		this.dd.setStream(node.getStreamName(), op, this.user);
+		
+		((LinkedList)data).addFirst(op);
 					
 		return data;
 	}
@@ -1326,6 +1349,22 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		}
 		
 		return retval;
+	}
+
+	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
+		TimestampAO timestampAO = new TimestampAO();
+		for (SDFAttribute attr : operator.getOutputSchema()) {
+			if (attr.getDatatype().getURI().equals("StartTimestamp")) {
+				timestampAO.setStartTimestamp(attr);
+			}
+
+			if (attr.getDatatype().getURI().equals("EndTimestamp")) {
+				timestampAO.setEndTimestamp(attr);
+			}
+		}
+
+		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+		return timestampAO;
 	}
 
 }
