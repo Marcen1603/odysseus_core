@@ -262,6 +262,9 @@ public class DataDictionary implements IDataDictionary {
 	public void setStream(String streamname, ILogicalOperator plan, User caller) {
 		if (AccessControl.hasPermission(DataDictionaryAction.ADD_STREAM,
 				DataDictionaryAction.alias, caller)) {
+			if(!this.entityMap.containsKey(streamname)){
+				throw new RuntimeException("No entity for " + streamname + ". Add entity before adding access operator.");
+			}
 			if (streamDefinitions.containsKey(streamname)) {
 				throw new RuntimeException("Stream " + streamname
 						+ " already exists. Remove First");
