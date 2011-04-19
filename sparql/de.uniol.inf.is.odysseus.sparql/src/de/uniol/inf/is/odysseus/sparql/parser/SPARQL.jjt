@@ -779,10 +779,10 @@ List<Triple> TriplesSameSubject() :
   (
 	  subject = VarOrTerm()
 	  paos=PropertyListNotEmpty()
-	  |
+	  /*|
 	  // Any of the triple generating syntax elements
 	  subject = TriplesNode()
-	  paos=PropertyList()
+	  paos=PropertyList()*/
   )
   {
     for(INode curProp: paos.getProperties()){
@@ -1250,7 +1250,7 @@ BlankNode BlankNode() : { Token t = null ; }
 
 IRI IRI_REF() : { Token t ; }
 {
-  t = <IRIref>
+  (t = <IRIref> | t = <PNAME_LN>)
   { return new IRI(t.image); }
 }
 

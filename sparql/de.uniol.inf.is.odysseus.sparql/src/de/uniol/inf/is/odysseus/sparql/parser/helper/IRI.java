@@ -25,6 +25,7 @@ public class IRI implements INode {
 
 	@Override
 	public void setName(String name) {
+		this.setIRI(name);
 	}
 
 	@Override

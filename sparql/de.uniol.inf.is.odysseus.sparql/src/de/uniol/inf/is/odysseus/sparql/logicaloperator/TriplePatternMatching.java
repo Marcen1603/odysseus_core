@@ -9,9 +9,18 @@
 
 package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
 
@@ -26,6 +35,9 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
  */
 public class TriplePatternMatching extends AbstractLogicalOperator{
     
+	private static int sourceNameCounter = 0;
+	
+	
 	private Triple triple;
 	
     /**
@@ -40,7 +52,11 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
     private String stream_name;
     
     
-    /**
+    public Triple getTriple() {
+		return triple;
+	}
+
+	/**
      * the name of the virtual source. Each triple pattern
      * must have a unique virtual source name, since
      * e. g. two triple pattern over the same stream will
@@ -59,10 +75,27 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
      */
     private SDFAttributeList outputSchema;
     
+    /**
+     * The restrict list defines which attributes of an input tuple
+     * will be in the output tuple.
+     */
+//    private int[] restrictList;
+    
+    
+//    public int[] getRestrictList() {
+//		return restrictList;
+//	}
+
+	/**
+     * The is the select predicate for the physical operator.
+     * It will be generated as follows
+     * 
+     */
+    private IPredicate selectionPredicate;
+    
     public TriplePatternMatching(Triple t){
         super();
         this.triple = t;
-        this.calcOutputSchema();
     }
     
     private TriplePatternMatching(TriplePatternMatching tpm){
@@ -77,7 +110,6 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
         this.triple = t;
         this.graphVar = n;
         this.stream_name = stream_name;
-        this.calcOutputSchema();
     }
     
     public TriplePatternMatching clone(){
@@ -93,16 +125,16 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
         return retval;
     }
     
-	private void calcOutputSchema(){
-		SDFAttributeList l = new SDFAttributeList();
+	private SDFAttributeList calcOutputSchema(){
+		SDFAttributeList outputSchema = new SDFAttributeList();
 		if (triple.getSubject().isVariable()){
-			l.add(new SDFAttribute(this.sourceName, triple.getSubject().getName()));
+			outputSchema.add(new SDFAttribute(this.sourceName, triple.getSubject().getName()));
 		}
 		if (triple.getPredicate().isVariable()){
-			l.add(new SDFAttribute(this.sourceName, triple.getPredicate().getName()));
+			outputSchema.add(new SDFAttribute(this.sourceName, triple.getPredicate().getName()));
 		}
 		if (triple.getObject().isVariable()){
-			l.add(new SDFAttribute(this.sourceName, triple.getObject().getName()));
+			outputSchema.add(new SDFAttribute(this.sourceName, triple.getObject().getName()));
 		}
 // Wozu braucht man das?
 //		if (getInputAO() != null && getInputSchema() != null){
@@ -113,21 +145,94 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		if(this.graphVar != null && this.stream_name != null){
 			boolean alreadyAdded = false;
 			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName, this.graphVar.getName());
-			for(SDFAttribute a : l){
+			for(SDFAttribute a : outputSchema){
 				if(a.getQualName().equals(graphVarAtt.getQualName())){
 					alreadyAdded = true;
 				}
 			}
 			if(!alreadyAdded){
-				l.add(graphVarAtt);
+				outputSchema.add(graphVarAtt);
 			}
 		}
 		
-//		this.setOutputSchema(l);
-		
-		// also calc out id size
-//		this.calcOutIDSize();
+		return outputSchema;
 	}
+	
+//	private int[] calcRestrictList(){
+//		
+//		int[] restrictList = new int[this.outputSchema.size()];
+//		
+//		int curI = 0;
+//		if(this.triple.getSubject().isVariable()){
+//			// 0 is always the index of the subject attribute in the input schema;
+//			restrictList[curI++] = 0;
+//		}
+//		if(this.triple.getPredicate().isVariable()){
+//			// 1 is always the index of the predicate attribute in the input schema.
+//			restrictList[curI++] = 1;
+//		}
+//		if(this.triple.getObject().isVariable()){
+//			// 2 is always the index of the object attribute in the input schema.
+//			restrictList[curI++] = 2;
+//		}
+//		return restrictList;
+//	}
+	
+	public void initPredicate(){
+		SDFAttributeList inputSchema = this.getInputSchema(0);
+		IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
+		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
+		
+		if(!this.triple.getSubject().isVariable()){
+			String exprStr = inputSchema.getAttribute(0).getURI() + " = " + this.triple.getSubject().getName();
+			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+			exprs.add(expr);
+		}
+		
+		if(!this.triple.getPredicate().isVariable()){
+			String exprStr = inputSchema.getAttribute(1).getURI() + " = " + this.triple.getPredicate().getName();
+			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+			exprs.add(expr);
+		}
+		
+		if(!this.triple.getObject().isVariable()){
+			String exprStr = inputSchema.getAttribute(2).getURI() + " = " + this.triple.getObject().getName();
+			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+			exprs.add(expr);
+		}
+		
+		IPredicate pred = null;
+		
+		if(exprs.size() > 1){
+			RelationalPredicate firstPredicate = new RelationalPredicate(exprs.get(0));
+			firstPredicate.init(inputSchema, null);
+			
+			IPredicate left = firstPredicate;
+			for(int i = 1; i<exprs.size(); i++){
+				RelationalPredicate right = new RelationalPredicate(exprs.get(i));
+				right.init(inputSchema, null);
+				AndPredicate tempAnd = new AndPredicate(left, right);
+				left = tempAnd;
+			}
+			
+			pred = left;
+		}
+		
+		// there is only one predicate
+		else if(exprs.size() == 1){
+			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
+			firstRelational.init(inputSchema, null);
+			pred = firstRelational;
+		}
+		
+		// there is no predicate
+		else{
+			pred = new TruePredicate();
+		}
+		
+		this.selectionPredicate = pred;
+	}
+	
     
 //    public void calcOutIDSize(){
 //    	// the input ao might be null
@@ -158,6 +263,13 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
+		if(this.outputSchema == null){
+			// the source name must be a unique artificial name, since
+			// every triple pattern needs its own source name.
+			this.sourceName = "s" + TriplePatternMatching.sourceNameCounter++;
+			this.outputSchema = this.calcOutputSchema();
+			//this.restrictList = this.calcRestrictList();
+		}
 		return this.outputSchema;
 	}
 }

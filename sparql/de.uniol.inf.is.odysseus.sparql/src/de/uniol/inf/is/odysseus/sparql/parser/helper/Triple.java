@@ -15,6 +15,16 @@ public class Triple {
 		this.subject = subject;
 		this.predicate = predicte;
 		this.object = object;
+		
+		if(subject.getName() == null){
+			throw new RuntimeException("No name for Subject in triple. Subject: " + this.subject);
+		}
+		if(predicate.getName() == null){
+			throw new RuntimeException("No name for Predicate in triple. Predicate: " + this.predicate);
+		}
+		if(object.getName() == null){
+			throw new RuntimeException("No name for Object in triple. Object: " + this.object);
+		}
 	}
 	
 	

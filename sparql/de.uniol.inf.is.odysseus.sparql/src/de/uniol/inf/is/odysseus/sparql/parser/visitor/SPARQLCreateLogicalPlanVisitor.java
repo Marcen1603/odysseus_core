@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
@@ -399,7 +400,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			logOp=duplAO;
 		}
 		
-		((LinkedList)data).set(0, logOp);
+		((LinkedList)data).addFirst(logOp);
 		
 		return data;
 	}
@@ -610,6 +611,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							
 							win.subscribeToSource(accessAO, 0, 0, accessAO.getOutputSchema());
 							tpm.subscribeToSource(win, 0, 0, win.getOutputSchema());
+							tpm.initPredicate();
 						}
 						// do it for all default streams
 						else if(dataList.size() == 0){
@@ -637,6 +639,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							if(windowOps.size() == 1){
 								// the windowOps can be connected directly to the triple pattern matchin
 								tpm.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
+								tpm.initPredicate();
 							}
 							else if(windowOps.size() > 1){
 								// a union operator is necessary
@@ -653,6 +656,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 								}
 								
 								tpm.subscribeToSource(union, 0, 0, union.getOutputSchema());
+								tpm.initPredicate();
 							}
 							else{
 								throw new RuntimeException("No default streams defined in GroupGraphPattern.");
@@ -1151,10 +1155,28 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	public Object visit(ASTCreateStatement node, Object data) {
 		// the second child is either socket or channel or csv source
 		Node child = node.jjtGetChild(1);
+		
+		String streamName = node.getStreamName();
+		
+		// the schema
+		SDFAttributeList outputSchema = new SDFAttributeList();
+		
+		SDFAttribute subject = new SDFAttribute(streamName + ".subject");
+		subject.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		outputSchema.add(subject);
+		
+		SDFAttribute predicate = new SDFAttribute(streamName + ".predicate");
+		predicate.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		outputSchema.add(predicate);
+		
+		SDFAttribute object = new SDFAttribute(streamName + ".object");
+		object.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		outputSchema.add(object);
+		
 		AccessAO accAO = null;
 		if(child instanceof ASTSocket){
 			ASTSocket socket = (ASTSocket)child;
-			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_Access_Socket"));
+			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_Access_Socket"));
 //			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setHost(socket.getHost());
 			accAO.setPort(socket.getPort());
@@ -1163,16 +1185,16 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		}
 		else if(child instanceof ASTChannel){
 			ASTChannel channel = (ASTChannel)child;
-			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_ACCESS_Channel"));
-//			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+//			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_ACCESS_Channel"));
+			accAO = new AccessAO(new SDFSource(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setHost(channel.getHost());
 			accAO.setPort(channel.getPort());
 			
 		}
 		else if(child instanceof ASTCSVSource){
 			ASTCSVSource csv = (ASTCSVSource)child;
-			accAO = new AccessAO(new SDFSource(node.getStreamName(), "SPARQL_ACCESS_CSV"));
-//			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_ACCESS_CSV"));
+//			accAO = new AccessAO(new SDFSource(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setFileURL(csv.getURL());
 			
 		}
@@ -1180,21 +1202,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			throw new RuntimeException("No access specification (Socket|Channel|CSV) given for stream definition.");
 		}
 		
-		SDFAttributeList outputSchema = new SDFAttributeList();
-		
-		SDFAttribute subject = new SDFAttribute(node.getStreamName() + ".subject");
-		subject.setDatatype(SDFDatatypeFactory.getDatatype("String"));
-		outputSchema.add(subject);
-		
-		SDFAttribute predicate = new SDFAttribute(node.getStreamName() + ".predicate");
-		predicate.setDatatype(SDFDatatypeFactory.getDatatype("String"));
-		outputSchema.add(predicate);
-		
-		SDFAttribute object = new SDFAttribute(node.getStreamName() + ".object");
-		object.setDatatype(SDFDatatypeFactory.getDatatype("String"));
-		outputSchema.add(object);
-		
 		accAO.setOutputSchema(outputSchema);
+		
+		// before adding the acces operator, add the corresponding entity
+		SDFEntity entity = new SDFEntity(streamName);
+		entity.setAttributes(outputSchema);
+		dd.addSourceType(streamName, accAO.getSourceType());
+		dd.addEntity(streamName, entity, user);
 		
 		ILogicalOperator op = addTimestampAO(accAO);
 		this.dd.setStream(node.getStreamName(), op, this.user);
@@ -1312,12 +1326,12 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
 		
 		
-		String exprStr = "";
 		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
 			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
 			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
-			exprStr += curLeftAttr.getURI() + " = " + curRightAttr.getURI();
+			String exprStr = curLeftAttr.getURI() + " = " + curRightAttr.getURI();
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+			exprs.add(expr);
 		}
 		
 		IPredicate retval = null;

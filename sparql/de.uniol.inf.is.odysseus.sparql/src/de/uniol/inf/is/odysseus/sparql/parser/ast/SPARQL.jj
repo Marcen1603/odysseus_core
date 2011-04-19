@@ -2026,10 +2026,10 @@ List<Triple> TriplesSameSubject() :
   (
 	  subject = VarOrTerm()
 	  paos=PropertyListNotEmpty()
-	  |
+	  /*|
 	  // Any of the triple generating syntax elements
 	  subject = TriplesNode()
-	  paos=PropertyList()
+	  paos=PropertyList()*/
   )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
@@ -3678,7 +3678,7 @@ IRI IRI_REF() : {/*@bgen(jjtree) IRI_REF */
 {/*@bgen(jjtree) IRI_REF */
   try {
 /*@egen*/
-  t = <IRIref>/*@bgen(jjtree)*/
+  (t = <IRIref> | t = <PNAME_LN>)/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

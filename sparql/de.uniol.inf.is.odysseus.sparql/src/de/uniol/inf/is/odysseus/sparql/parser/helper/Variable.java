@@ -20,7 +20,7 @@ public class Variable implements INode{
 
 	@Override
 	public String getName() {
-		return null;
+		return this.name;
 	}
 
 	@Override
