@@ -5,7 +5,13 @@ public class Variable implements INode{
 	private String name;
 	
 	public Variable(String name){
-		this.name = name;
+		// remove ? and $ variable names
+		if(name.startsWith("?") || name.startsWith("$")){
+			this.name = name.substring(1);
+		}
+		else{
+			this.name = name;
+		}
 	}
 	
 	@Override
@@ -25,7 +31,12 @@ public class Variable implements INode{
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		if(name.startsWith("?") || name.startsWith("$")){
+			this.name = name.substring(1);
+		}
+		else{
+			this.name = name;
+		}
 	}
 
 	@Override

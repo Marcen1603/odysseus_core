@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTQuery;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.SPARQLParser;
 import de.uniol.inf.is.odysseus.sparql.parser.visitor.SPARQLCreateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.util.SimplePlanPrinter;
 
 public class SPARQL implements IQueryParser{
 
@@ -76,14 +77,26 @@ public class SPARQL implements IQueryParser{
 			
 			visitor.setUser(user);
 			visitor.setDataDictionary(dd);
+			
 			ILogicalOperator logicalOp = (ILogicalOperator)((LinkedList)visitor.visit(queryNode, new LinkedList())).getFirst();
+				
 			
-			IQuery query = new Query();
-			query.setParserId(getLanguage());
-			query.setLogicalPlan(logicalOp, true);
-			
+			// Dump the plan
+			SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
+			System.out.println("Logical plan:\n" + printer.createString(logicalOp));
+	
 			List<IQuery> listOfQueries = new ArrayList<IQuery>();
-			listOfQueries.add(query);
+			// an access ao must not be returned
+			if(){
+				
+			}
+			// all other operators must be returned
+			else{
+				IQuery query = new Query();
+				query.setParserId(getLanguage());
+				query.setLogicalPlan(logicalOp, true);
+				listOfQueries.add(query);
+			}
 			return listOfQueries;
 			
 		} catch (NoClassDefFoundError e) {
@@ -97,6 +110,4 @@ public class SPARQL implements IQueryParser{
 			throw new QueryParseException("error.");
 		}
 	}
-
-
 }

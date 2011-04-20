@@ -549,9 +549,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		
 		for(int i = 0; i<node.jjtGetNumChildren(); i++){
 			Node child = node.jjtGetChild(i);
-			if(child instanceof ASTTriplesBlock){
-				ILogicalOperator topOfTriplesBlock = null;
-				
+			if(child instanceof ASTTriplesBlock){				
 				// create a join from all the triples with the following
 				// procedure:
 				// join two triples with two default streams defined results
@@ -566,11 +564,15 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 				ASTTriplesBlock triplesBlock = (ASTTriplesBlock)child;
 				List<List<Triple>> triples = triplesBlock.getTriples();
 				
-				// each list of triples in the list "triples"
-				// contains triples with the same subject
-				// so first generate a join for each of these same
-				// subject triples
+
+				// for each of the same subject triples collections store the
+				// corresponding top operator.
+				List<ILogicalOperator> topOfSameSubjects = new ArrayList<ILogicalOperator>();
 				for(List<Triple> sameSubjTriples: triples){
+					// each list of triples in the list "triples"
+					// contains triples with the same subject
+					// so first generate a join for each of these same
+					// subject triples
 					List<TriplePatternMatching> tpmAOs = new ArrayList<TriplePatternMatching>();
 					for(Triple curTriple: sameSubjTriples){
 						TriplePatternMatching tpm = new TriplePatternMatching(curTriple);
@@ -667,7 +669,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 					
 					// join all triple pattern matchings
 					if(tpmAOs.size() == 1){
-						topOfTriplesBlock = tpmAOs.get(0);
+						topOfSameSubjects.add(tpmAOs.get(0));
 					}
 					else if(tpmAOs.size() > 1){
 						JoinAO join = new JoinAO();
@@ -696,12 +698,50 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							join = innerJoin;
 						}
 						
-						topOfTriplesBlock = join;
+						
+						topOfSameSubjects.add(join);
 					}
+				}				
+				
+				// create a join over the top operators of the
+				// same subject triples.
+				if(topOfSameSubjects.size()== 1){
+					topsOfNestedPatterns.add(topOfSameSubjects.get(0));
+				}
+				else if(topOfSameSubjects.size() > 1){
+					JoinAO join = new JoinAO();
+					join.subscribeToSource(topOfSameSubjects.get(0), 0, 0, topOfSameSubjects.get(0).getOutputSchema());
+					join.subscribeToSource(topOfSameSubjects.get(1), 1, 0, topOfSameSubjects.get(1).getOutputSchema());
+					
+					// create join predicate
+					// each variable that is in both schemas must be equal
+					SDFAttributeList commonVars = this.getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+					IPredicate joinPred = this.createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
+					join.setPredicate(joinPred);
+					
+					
+					// process further joins
+					for(int ji = 2; ji<topOfSameSubjects.size(); ji++){
+						JoinAO innerJoin = new JoinAO();
+						innerJoin.subscribeToSource(join, 0, 0, join.getOutputSchema());
+						innerJoin.subscribeToSource(topOfSameSubjects.get(ji), 1, 0, topOfSameSubjects.get(ji).getOutputSchema());
+						
+						// create join predicate
+						// each variable that is in both schemas must be equal
+						SDFAttributeList innerCommonVars = this.getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+						IPredicate innerJoinPred = this.createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+						innerJoin.setPredicate(innerJoinPred);
+						
+						join = innerJoin;
+					}
+					
+					topsOfNestedPatterns.add(join);
+				}
+				else{
+					throw new RuntimeException("No triples in group graph pattern.");
 				}
 				
-				topsOfNestedPatterns.add(topOfTriplesBlock);
-				isOptional.add(true);
+				isOptional.add(false);
 				
 			}
 			else if(child instanceof ASTGraphPatternNotTriples){
@@ -1329,7 +1369,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
 			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
 			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
-			String exprStr = curLeftAttr.getURI() + " = " + curRightAttr.getURI();
+			String exprStr = curLeftAttr.getPointURI() + " == " + curRightAttr.getPointURI();
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
 			exprs.add(expr);
 		}

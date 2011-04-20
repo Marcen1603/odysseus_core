@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
 
@@ -180,23 +180,25 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 	
 	public void initPredicate(){
 		SDFAttributeList inputSchema = this.getInputSchema(0);
-		IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
+		System.out.println("TriplePatternMatching.initPredicate: inputSchema = " + inputSchema);
+		
+		IAttributeResolver attrRes = new SPARQLDirectAttributeResolver(inputSchema);
 		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
 		
 		if(!this.triple.getSubject().isVariable()){
-			String exprStr = inputSchema.getAttribute(0).getURI() + " = " + this.triple.getSubject().getName();
+			String exprStr = inputSchema.getAttribute(0).getPointURI() + " == '" + this.triple.getSubject().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
 			exprs.add(expr);
 		}
 		
 		if(!this.triple.getPredicate().isVariable()){
-			String exprStr = inputSchema.getAttribute(1).getURI() + " = " + this.triple.getPredicate().getName();
+			String exprStr = inputSchema.getAttribute(1).getPointURI() + " == '" + this.triple.getPredicate().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
 			exprs.add(expr);
 		}
 		
 		if(!this.triple.getObject().isVariable()){
-			String exprStr = inputSchema.getAttribute(2).getURI() + " = " + this.triple.getObject().getName();
+			String exprStr = inputSchema.getAttribute(2).getPointURI() + " == '" + this.triple.getObject().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
 			exprs.add(expr);
 		}

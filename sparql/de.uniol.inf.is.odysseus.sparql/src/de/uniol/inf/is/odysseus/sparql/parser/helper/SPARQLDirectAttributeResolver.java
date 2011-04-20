@@ -29,29 +29,39 @@ public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{
     }
     
     /**
-     * Returns the first attribute with the name "name".
+     * Returns the first attribute with the name "name". Source
+     * information will be completely ignored.
      */
     @Override
 	public SDFAttribute getAttribute(String name)
             throws AmgigiousAttributeException, NoSuchAttributeException {
-        String[] parts = name.split("\\.", 2);
-        SDFAttribute found = null;
+    	String[] parts = name.split("\\.", 2);
+    	SDFAttribute found = null;
         for (SDFAttribute attr : schema) {
-            if (parts.length == 1) {
-                if ((attr).getAttributeName().equals(name)) {
-                    return attr;
-                }
-            }
-            else {
-                if (attr.getPointURI().equals(name)) {
-                    return attr;
-                }
-            }
+        	if (parts.length == 1) {
+	        	if ((attr).getAttributeName().equals(name)) {
+	                found = attr;
+	            	break;
+	            }
+        	}
+        	// sourceName.attrName
+        	else{
+	        	if ((attr).getPointURI().equals(name)) {
+	                found = attr;
+	            	break;
+	            }
+        	}
         }
         if (found == null) {
-            throw new NoSuchAttributeException(name);
+        	System.err.println("ERROR, no such attribute " + name);
+        	throw new NoSuchAttributeException(name);
+            
         }
         return found;
+    }
+    
+    public SPARQLDirectAttributeResolver clone(){
+    	return new SPARQLDirectAttributeResolver(this);
     }
 
 }
