@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SPARQL Transform
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.sparql.transform
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.sparql.transform.Activator
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.metadata,
+ de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.ruleengine.system,
+ de.uniol.inf.is.odysseus.sparql,
+ de.uniol.inf.is.odysseus.sparql.logicaloperator,
+ de.uniol.inf.is.odysseus.sparql.parser.helper,
+ de.uniol.inf.is.odysseus.sparql.physicaloperator,
+ de.uniol.inf.is.odysseus.transform.engine,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.osgi.framework
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/SPARQLTransformRuleService.xml
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"

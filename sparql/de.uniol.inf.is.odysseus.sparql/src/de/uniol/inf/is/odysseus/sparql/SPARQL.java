@@ -87,11 +87,7 @@ public class SPARQL implements IQueryParser{
 	
 			List<IQuery> listOfQueries = new ArrayList<IQuery>();
 			// an access ao must not be returned
-			if(){
-				
-			}
-			// all other operators must be returned
-			else{
+			if(!visitor.isCreateStatement()){
 				IQuery query = new Query();
 				query.setParserId(getLanguage());
 				query.setLogicalPlan(logicalOp, true);

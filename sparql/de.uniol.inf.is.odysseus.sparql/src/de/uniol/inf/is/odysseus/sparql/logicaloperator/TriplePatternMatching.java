@@ -103,6 +103,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
         this.graphVar = tpm.getGraphVar();
         this.stream_name = tpm.getStream_name();
         this.outputSchema = tpm.outputSchema;
+        this.selectionPredicate = tpm.selectionPredicate;
     }
     
     public TriplePatternMatching(Triple t, Variable n, String stream_name){
@@ -233,6 +234,11 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		}
 		
 		this.selectionPredicate = pred;
+	}
+	
+	@Override
+	public IPredicate getPredicate(){
+		return this.selectionPredicate;
 	}
 	
     

@@ -1,3 +1,10 @@
+CREATE STREAM rdfStream(
+	subject String,
+	predicate String,
+	object	String
+) SOCKET localhost : 22222
+
+
 CREATE STREAM groupStream(
 	groupID INTEGER,
 	timestamp STARTTIMESTAMP,

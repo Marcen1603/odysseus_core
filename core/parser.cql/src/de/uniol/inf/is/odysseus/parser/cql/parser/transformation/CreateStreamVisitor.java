@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -210,7 +211,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		} else if (node.useMVMode()) {
 			source = new AccessAO(new SDFSource(name, "RelationalAtomicDataInputStreamAccessMVPO"));
 		} else {
-			source = new AccessAO(new SDFSource(name, "RelationalAtomicDataInputStreamAccessPO"));
+			source = new AccessAO(new SDFSource(name, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 		}
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);

@@ -97,6 +97,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		}
 		
 		newTuple.setAttributes(attrs);
+		newTuple.setMetadata(element.getMetadata());
 		
 		return newTuple;
 	}

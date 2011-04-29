@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.relational.base.access.AtomicDataInputStreamAccessPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -52,7 +53,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {		
 		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null){
-			if(accessAO.getSourceType().equals("RelationalAtomicDataInputStreamAccessPO") || accessAO.getSourceType().equals("RelationalStreaming")){
+			if(accessAO.getSourceType().equals(RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS) || accessAO.getSourceType().equals("RelationalStreaming")){
 				return true;
 			}
 		}

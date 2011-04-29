@@ -5365,11 +5365,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     finally { jj_save(40, xla); }
   }
 
-  static private boolean jj_3R_114() {
-    if (jj_3R_152()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_113() {
     if (jj_3R_151()) return true;
     return false;
@@ -7127,6 +7122,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
   static private boolean jj_3_21() {
     if (jj_3R_44()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_114() {
+    if (jj_3R_152()) return true;
     return false;
   }
 

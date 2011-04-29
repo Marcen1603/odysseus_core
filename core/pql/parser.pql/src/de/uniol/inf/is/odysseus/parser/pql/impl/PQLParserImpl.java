@@ -43,7 +43,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);
     }
-    PQLParser.initParameters(builder.getParameters(), parameters);
+    PQLParser.initParameters(identifier.toUpperCase(), builder.getParameters(), parameters);
     if (!builder.validate())
     {
       throw new ValidationException(identifier, builder.getErrors());

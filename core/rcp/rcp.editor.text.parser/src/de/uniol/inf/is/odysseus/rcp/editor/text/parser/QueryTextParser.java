@@ -38,7 +38,7 @@ public class QueryTextParser {
 	public static final String REPLACEMENT_START_KEY = "${";
 	public static final String REPLACEMENT_END_KEY = "}";
 
-	public static final String SINGLE_LINE_COMMENT_KEY = "//";
+	public static final String SINGLE_LINE_COMMENT_KEY = "///";
 
 	private int currentLine;
 

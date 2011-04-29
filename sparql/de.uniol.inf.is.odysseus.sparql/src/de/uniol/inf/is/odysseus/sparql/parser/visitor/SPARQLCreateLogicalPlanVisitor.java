@@ -149,10 +149,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	private List<SourceInfo> namedStreams;
 	private List<SourceInfo> defaultStreams;
 	
+	private boolean isCreateStatement;
+	
 	public SPARQLCreateLogicalPlanVisitor(){
 		this.prefixes = new HashMap<String, String>();
 		this.namedStreams = new ArrayList<SourceInfo>();
 		this.defaultStreams = new ArrayList<SourceInfo>();
+		this.isCreateStatement = false;
 	}
 	
 	
@@ -162,6 +165,14 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	
 	public void setDataDictionary(IDataDictionary dd){
 		this.dd = dd;
+	}
+	
+	/**
+	 * 
+	 * @return True, if the last AST was from a create statement. False otherwise
+	 */
+	public boolean isCreateStatement(){
+		return this.isCreateStatement;
 	}
 	
 	// ========================= VISIT METHODS =====================================
@@ -1193,6 +1204,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) {
+		this.isCreateStatement = true;
+		
 		// the second child is either socket or channel or csv source
 		Node child = node.jjtGetChild(1);
 		
@@ -1216,8 +1229,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		AccessAO accAO = null;
 		if(child instanceof ASTSocket){
 			ASTSocket socket = (ASTSocket)child;
-			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_Access_Socket"));
-//			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+//			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_Access_Socket"));
+			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setHost(socket.getHost());
 			accAO.setPort(socket.getPort());
 			
@@ -1233,8 +1246,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		}
 		else if(child instanceof ASTCSVSource){
 			ASTCSVSource csv = (ASTCSVSource)child;
-			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_ACCESS_CSV"));
-//			accAO = new AccessAO(new SDFSource(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+//			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_ACCESS_CSV"));
+			accAO = new AccessAO(new SDFSource(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
 			accAO.setFileURL(csv.getURL());
 			
 		}
