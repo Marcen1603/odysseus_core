@@ -60,7 +60,7 @@ public class OrOperator extends AbstractBinaryOperator<Boolean> {
 	}
 
 	@Override
-	public Class<? extends Boolean> getType() {
+	public Class<? extends Boolean> getReturnType() {
 		return Boolean.class;
 	}
 

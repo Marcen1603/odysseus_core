@@ -34,7 +34,7 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 	}
 
 	@Override
-	public Class<Long> getType() {
+	public Class<Long> getReturnType() {
 		return Long.class;
 	}
 

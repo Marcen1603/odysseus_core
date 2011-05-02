@@ -48,7 +48,7 @@ public class Constant<T> implements IExpression<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends T> getType() {
+	public Class<? extends T> getReturnType() {
 		return (Class<? extends T>) value.getClass();
 	}
 

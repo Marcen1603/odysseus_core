@@ -51,7 +51,7 @@ public class SqrtValue extends AbstractFunction<Object>{
 	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
 	 */
 	@Override
-	public Class<? extends Object> getType() {
+	public Class<? extends Object> getReturnType() {
 		return double.class;
 	}
 

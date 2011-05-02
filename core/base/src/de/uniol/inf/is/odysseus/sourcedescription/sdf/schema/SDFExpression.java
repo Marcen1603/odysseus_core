@@ -214,7 +214,7 @@ public class SDFExpression implements Serializable {
 
 	
 	public Class<?> getType() {
-		return this.expression.getType();
+		return this.expression.getReturnType();
 	}
 
 	private void setValue(Object object) {

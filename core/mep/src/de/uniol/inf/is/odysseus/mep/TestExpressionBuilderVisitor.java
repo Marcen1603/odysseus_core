@@ -40,7 +40,7 @@ public class TestExpressionBuilderVisitor {
 				curVar.bind(Double.parseDouble(reader.readLine()));
 			}
 			System.out.println("expression [type= "
-					+ expression.getType().getSimpleName() + "]: "
+					+ expression.getReturnType().getSimpleName() + "]: "
 					+ expression.toString());
 			Object value = expression.getValue();
 			if (value instanceof Double[][]) {

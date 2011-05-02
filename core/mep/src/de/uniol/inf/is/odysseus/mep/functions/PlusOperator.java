@@ -36,7 +36,7 @@ public class PlusOperator extends AbstractBinaryOperator<Double> {
 	}
 
 	@Override
-	public Class<Double> getType() {
+	public Class<Double> getReturnType() {
 		return Double.class;
 	}
 

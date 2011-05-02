@@ -79,7 +79,7 @@ public class Variable implements IExpression<Object> {
 	}
 
 	@Override
-	public Class<?> getType() {
+	public Class<?> getReturnType() {
 		return type;
 	}
 

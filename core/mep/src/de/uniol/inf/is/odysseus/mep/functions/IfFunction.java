@@ -34,11 +34,11 @@ public class IfFunction extends AbstractFunction<Object> {
 	}
 
 	@Override
-	public Class<?> getType() {
+	public Class<?> getReturnType() {
 		// if then and else arguments have the same type, we are sure to return
 		// a value of that type
-		if (getArguments()[1].getType() == getArguments()[2].getType()) {
-			return getArguments()[1].getType();
+		if (getArguments()[1].getReturnType() == getArguments()[2].getReturnType()) {
+			return getArguments()[1].getReturnType();
 		}
 		// otherwise we make no guarantees
 		return Object.class;

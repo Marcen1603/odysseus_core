@@ -34,7 +34,7 @@ public class Now extends AbstractFunction<Long> {
 	}
 
 	@Override
-	public Class<? extends Long> getType() {
+	public Class<? extends Long> getReturnType() {
 		return Long.class;
 	}
 

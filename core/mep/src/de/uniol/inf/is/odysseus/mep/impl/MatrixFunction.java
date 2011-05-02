@@ -52,7 +52,7 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
 	}
 
 	@Override
-	public Class<? extends double[][]> getType() {
+	public Class<? extends double[][]> getReturnType() {
 		return double[][].class;
 	}
 

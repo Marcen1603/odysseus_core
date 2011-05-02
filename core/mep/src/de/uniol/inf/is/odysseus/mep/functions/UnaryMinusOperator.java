@@ -34,7 +34,7 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 	}
 
 	@Override
-	public Class<Double> getType() {
+	public Class<Double> getReturnType() {
 		return Double.class;
 	}
 

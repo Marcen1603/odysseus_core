@@ -61,7 +61,7 @@ public class Distance extends AbstractFunction<Double> {
 	}
 
 	@Override
-	public Class<? extends Double> getType() {
+	public Class<? extends Double> getReturnType() {
 		return Double.class;
 	}
 

@@ -54,7 +54,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		try {
 			// System.out.println("RelationalTuple "+this+" "+object);
 			RelationalTuple<T> out = object.restrict(this.restrictList, false);
-		//	logger.debug(this+" transferNext() "+object);
+			logger.debug(this+" transferNext() "+object);
 			transfer(out);
 		} catch (Exception e) {
 			e.printStackTrace();

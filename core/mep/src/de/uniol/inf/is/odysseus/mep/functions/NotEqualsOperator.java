@@ -35,7 +35,7 @@ public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
 	}
 
 	@Override
-	public Class<Boolean> getType() {
+	public Class<Boolean> getReturnType() {
 		return Boolean.class;
 	}
 

@@ -34,7 +34,7 @@ public class ToStringFunction extends AbstractFunction<String> {
 	}
 
 	@Override
-	public Class<String> getType() {
+	public Class<String> getReturnType() {
 		return String.class;
 	}
 

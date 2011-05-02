@@ -206,7 +206,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		try {
 			IExpression<?> ex1 = MEP.parse(this.expression.getExpression());
 			IExpression<?> ex2 = MEP.parse(rp2.getExpression().getExpression());
-			if(ex1.getType().equals(ex2.getType()) && ex1.isFunction()) {
+			if(ex1.getReturnType().equals(ex2.getReturnType()) && ex1.isFunction()) {
 				IFunction<?> if1 = (IFunction<?>) ex1;
 				IFunction<?> if2 = (IFunction<?>) ex2;
 				if(if1.getArity() !=2){

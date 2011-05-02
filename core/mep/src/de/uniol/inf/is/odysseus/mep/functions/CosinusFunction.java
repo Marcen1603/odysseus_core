@@ -34,7 +34,7 @@ public class CosinusFunction extends AbstractFunction<Double> {
 	}
 
 	@Override
-	public Class<Double> getType() {
+	public Class<Double> getReturnType() {
 		return Double.class;
 	}
 

@@ -34,7 +34,7 @@ public class NotOperator extends AbstractUnaryOperator<Boolean> {
 	}
 
 	@Override
-	public Class<Boolean> getType() {
+	public Class<Boolean> getReturnType() {
 		return Boolean.class;
 	}
 
