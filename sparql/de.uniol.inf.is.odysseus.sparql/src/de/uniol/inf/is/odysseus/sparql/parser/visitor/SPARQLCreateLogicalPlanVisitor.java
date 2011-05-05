@@ -277,13 +277,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 				 * Odysseus does not provide a natural join and therefore
 				 * simply uses an equi join. However, in this case one
 				 * or more attributes with the same name but different
-				 * source information is available. Since all attributes
+				 * source information are available. Since all attributes
 				 * with the same name must have the same value, at this place
 				 * we can simply take the first attribute with the correct name.
 				 */
 				for(Variable curVar: node.getResultVars()){
 					for(SDFAttribute curAttr: inputForProjection.getOutputSchema()){
-						if(curAttr.getAttributeName().equals(curVar)){
+						if(curAttr.getAttributeName().equals(curVar.getName())){
 							outputSchema.add(curAttr);
 							break;
 						}
