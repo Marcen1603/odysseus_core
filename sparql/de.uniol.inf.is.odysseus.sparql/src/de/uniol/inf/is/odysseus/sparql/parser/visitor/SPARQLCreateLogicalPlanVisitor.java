@@ -931,12 +931,12 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	}
 
 	@Override
-	public Object visit(ASTGroupOrUnionGraphPattern node, Object data) {
-		LinkedList newData = new LinkedList();
-		
+	public Object visit(ASTGroupOrUnionGraphPattern node, Object data) {		
 		List<ILogicalOperator> topsOfNestedGroupGraphPatterns = new LinkedList<ILogicalOperator>();
 		for(int i = 0; i<node.jjtGetNumChildren(); i++){
+			LinkedList newData = new LinkedList(); // everytime a child is visited we need an empty list
 			topsOfNestedGroupGraphPatterns.add((ILogicalOperator)((LinkedList)node.jjtGetChild(i).jjtAccept(this, newData)).getFirst());
+			
 		}
 		
 		// only 1 group graph pattern as child so return the corresponding
@@ -969,7 +969,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			throw new RuntimeException("No child in GroupOrUnionGraphPattern.");
 		}
 		
-		return node.childrenAccept(this, data);
+		return data;
 	}
 
 	@Override
