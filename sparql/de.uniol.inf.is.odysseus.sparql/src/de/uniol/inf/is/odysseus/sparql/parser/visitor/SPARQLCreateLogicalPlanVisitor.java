@@ -597,9 +597,11 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							if(graphTerm.isVariable()){
 								namedStream = (String)dataList.get(1); 
 								tpm.setGraphVar((Variable)graphTerm);
+								tpm.setStream_name(namedStream);
 							}
 							else{
 								namedStream = ((INode)dataList.getFirst()).getName();
+								tpm.setStream_name(namedStream); // not necessary, but for future
 							}
 							
 							// get the access ao for the named stream

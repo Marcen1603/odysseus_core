@@ -1,0 +1,10 @@
+subject;predicate;object
+iec:wtur11;rdfs:seeAlso;sdf:sparql4
+iec:wtur11;rdfs:seeAlso;sdf:sparql5
+iec:wtur12;rdfs:seeAlso;sdf:sparql4
+iec:wtur13;rdfs:seeAlso;sdf:sparql5
+iec:wtur14;rdfs:seeAlso;sdf:sparql4
+iec:wtur14;rdfs:seeAlso;sdf:sparql5
+iec:wtur15;rdfs:seeAlso;sdf:sparql6
+iec:wtur16;rdfs:seeAlso;sdf:sparql4
+iec:wtur17;rdfs:seeAlso;sdf:sparql5
