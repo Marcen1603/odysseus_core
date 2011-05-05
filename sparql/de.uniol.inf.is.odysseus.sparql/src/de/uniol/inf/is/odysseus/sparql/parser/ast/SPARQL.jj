@@ -1855,17 +1855,19 @@ SimpleNode FunctionCall() : {/*@bgen(jjtree) FunctionCall */
                               ASTFunctionCall jjtn000 = new ASTFunctionCall(JJTFUNCTIONCALL);
                               boolean jjtc000 = true;
                               jjtree.openNodeScope(jjtn000);
-/*@egen*/ INode fName; SimpleNode argList;}
+/*@egen*/ Token fName; SimpleNode argList;}
 {/*@bgen(jjtree) FunctionCall */
   try {
 /*@egen*/
-  fName=IRIref() argList=ArgList()/*@bgen(jjtree)*/
+  fName=<IDENTIFIER> argList=ArgList()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
 /*@egen*/
-  {jjtn000.setString(fName.getName() + argList.toString());}/*@bgen(jjtree)*/
+  {
+  	jjtn000.setString(fName.image + argList.toString());
+  	return jjtn000;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -3116,6 +3118,12 @@ SimpleNode BuiltInCall() :
 {/*@bgen(jjtree) BuiltInCall */
     try {
 /*@egen*/
+//	t = < IDENTIFIER > {str += t.image + "(";}
+//	(LOOKAHEAD(<LPAREN> Expression()) <LPAREN> (node=Expression() {str += node.toString();} 
+//			   (<COMMA> node=Expression() {str += "," + node.toString();})*) 
+//			   <RPAREN> 
+//	|LOOKAHEAD(<LPAREN> <RPAREN>) <LPAREN> <RPAREN> ) {str += ")";}
+
     // STR
     <STR> <LPAREN> node=Expression() <RPAREN>/*@bgen(jjtree)*/
                                               {
@@ -3154,7 +3162,6 @@ SimpleNode BuiltInCall() :
                                          jjtc000 = false;
                                        }
 /*@egen*/{jjtn000.setString("bound(" + var.getName() + ")");}
-
   | <SAME_TERM> <LPAREN> node=Expression() <COMMA> node2=Expression() <RPAREN>/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
@@ -3273,20 +3280,24 @@ SimpleNode IRIrefOrFunction() :
         jjtree.openNodeScope(jjtn000);
 /*@egen*/
 	INode n;
-	String str ="";
-	SimpleNode argList;
+	SimpleNode function;
 }
 {/*@bgen(jjtree) IRIrefOrFunction */
   try {
 /*@egen*/
-  n=IRIref(){str+=n.getName();}
-  ( argList=ArgList(){str += argList.toString();} )?/*@bgen(jjtree)*/
+  (
+  	n=IRIref() {jjtn000.setString(n.getName());}
+  | 
+   	function=FunctionCall(){jjtn000.setString(function.toString());}
+  )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
 /*@egen*/
+  //{str+=n.getName();}( argList=ArgList(){str += argList.toString();} )?
   
+  //{return jjtThis;}
   {return jjtn000;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {

@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mep;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ public class Variable implements IExpression<Object> {
 	private Object value;
 	private final String identifier;
 	private final Class<?> type;
+	private Class<?>[] acceptedTypes;
 
 	public Variable(String id) {
 		this.identifier = id;
@@ -111,5 +113,41 @@ public class Variable implements IExpression<Object> {
 	@Override
 	public Constant<Object> toConstant() {
 		throw new RuntimeException("cannot convert Variable to Constant");
+	}
+	
+	public Class<?>[] getAcceptedTypes() {
+		return acceptedTypes;
+	}
+
+	public void setAcceptedTypes(Class<?>[] acceptedTypes) {
+		this.acceptedTypes = acceptedTypes;
+	}
+
+	public void restrictAcceptedTypes(Class<?>[] restrictTypes){
+		int countOfRemovedTypes = 0;
+		for(int i = 0; i<this.acceptedTypes.length; i++){			
+			boolean foundCompatible = false;
+			for(int u = 0; u<restrictTypes.length; u++){
+				if(DataTypeUtils.compatible(this.acceptedTypes[i], restrictTypes[u])){
+					this.acceptedTypes[i] = DataTypeUtils.min(this.acceptedTypes[i], restrictTypes[u]);
+					foundCompatible = true;
+				}
+			}
+			if(!foundCompatible){
+				this.acceptedTypes[i] = null;
+				countOfRemovedTypes++;
+			}
+		}
+		
+		// remove all null values from the array;
+		Class<?>[] acceptedTypesNew = new Class<?>[this.acceptedTypes.length-countOfRemovedTypes];
+		int newIndex = 0;
+		for(int i = 0; i<this.acceptedTypes.length; i++){
+			if(this.acceptedTypes[i]!= null){
+				acceptedTypesNew[newIndex++] = this.acceptedTypes[i];
+			}
+		}
+		
+		this.acceptedTypes = acceptedTypesNew;
 	}
 }

@@ -37,5 +37,9 @@ public class RandomFunction extends AbstractFunction<Double> {
 	public Class<? extends Double> getReturnType() {
 		return Double.class;
 	}
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		throw new IllegalArgumentException("rnd has no arguments");
+	}
 
 }

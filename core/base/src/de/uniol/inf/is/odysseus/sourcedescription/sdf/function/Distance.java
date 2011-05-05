@@ -65,4 +65,19 @@ public class Distance extends AbstractFunction<Double> {
 		return Double.class;
 	}
 
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > 3){
+			throw new IllegalArgumentException("abs has only 4 arguments.");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			accTypes[0] = Double.class;
+			return accTypes;
+		}
+	}
+
 }

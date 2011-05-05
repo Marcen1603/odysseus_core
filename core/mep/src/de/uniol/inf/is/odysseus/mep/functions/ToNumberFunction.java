@@ -38,4 +38,17 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 		return Double.class;
 	}
 
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > 0){
+			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			accTypes[0] = String.class;
+			return accTypes;
+		}
+	}
 }

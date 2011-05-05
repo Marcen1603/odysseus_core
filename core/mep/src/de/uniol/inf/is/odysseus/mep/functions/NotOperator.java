@@ -42,5 +42,20 @@ public class NotOperator extends AbstractUnaryOperator<Boolean> {
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.RIGHT_TO_LEFT;
 	}
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > 0){
+			throw new IllegalArgumentException("! has only 1 argument.");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			accTypes[0] = Boolean.class;
+			return accTypes;
+		}
+	}
+
 
 }

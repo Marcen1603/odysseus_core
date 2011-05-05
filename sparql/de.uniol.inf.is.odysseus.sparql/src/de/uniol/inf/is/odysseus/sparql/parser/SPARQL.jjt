@@ -724,10 +724,12 @@ void Constraint() : { SimpleNode n; }
 }
 
 
-SimpleNode FunctionCall() : { INode fName; SimpleNode argList;}
+SimpleNode FunctionCall() : { Token fName; SimpleNode argList;}
 {
-  fName=IRIref() argList=ArgList()
-  {jjtThis.setString(fName.getName() + argList.toString());} 
+  fName=<IDENTIFIER> argList=ArgList()
+  {
+  	jjtThis.setString(fName.image + argList.toString());
+  	return jjtThis;} 
 }
 
 SimpleNode ArgList() :
@@ -1088,6 +1090,12 @@ SimpleNode BuiltInCall() :
 	Variable var;
 }
 {
+//	t = < IDENTIFIER > {str += t.image + "(";}
+//	(LOOKAHEAD(<LPAREN> Expression()) <LPAREN> (node=Expression() {str += node.toString();} 
+//			   (<COMMA> node=Expression() {str += "," + node.toString();})*) 
+//			   <RPAREN> 
+//	|LOOKAHEAD(<LPAREN> <RPAREN>) <LPAREN> <RPAREN> ) {str += ")";}
+
     // STR
     <STR> <LPAREN> node=Expression() <RPAREN> {jjtThis.setString("str(" + node.toString() + ")");}
   | // Lang
@@ -1101,7 +1109,6 @@ SimpleNode BuiltInCall() :
     <DTYPE> <LPAREN> node=Expression() <RPAREN>{jjtThis.setString("datatype(" + node.toString() + ")");}
 
   | <BOUND> <LPAREN> var=Var() <RPAREN>{jjtThis.setString("bound(" + var.getName() + ")");}
-
   | <SAME_TERM> <LPAREN> node=Expression() <COMMA> node2=Expression() <RPAREN>
   {jjtThis.setString("sameTerm(" + node.toString() + ", " + node2.toString() + ")");}
 
@@ -1140,13 +1147,17 @@ SimpleNode RegexExpression() :
 SimpleNode IRIrefOrFunction() :
 {
 	INode n;
-	String str ="";
-	SimpleNode argList;
+	SimpleNode function;
 }
 {
-  n=IRIref(){str+=n.getName();}
-  ( argList=ArgList(){str += argList.toString();} )?
+  (
+  	n=IRIref() {jjtThis.setString(n.getName());}
+  | 
+   	function=FunctionCall(){jjtThis.setString(function.toString());}
+  )
+  //{str+=n.getName();}( argList=ArgList(){str += argList.toString();} )?
   
+  //{return jjtThis;}
   {return jjtThis;}
 }
 

@@ -259,7 +259,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  Token t;}{/*@bgen(jjtree) Function */
   try {
-/*@egen*/  t = < IDENTIFIER >  {    jjtn000.setSymbol(t.image);  }  < LRND > ArgumentList() < RRND >/*@bgen(jjtree)*/
+/*@egen*/  t = < IDENTIFIER >  {    jjtn000.setSymbol(t.image);  }  (< LRND > ArgumentList() < RRND >) | (< LRND > < RRND >)/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -296,7 +296,8 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void ArgumentList()       :{}{  [    OrExpression()    (      "," OrExpression()    )*  ]}
+/*@egen*/}void ArgumentList()       :{}{  [    
+    OrExpression()    (      "," OrExpression()    )*  ]}
 
 void Matrix() :
 {/*@bgen(jjtree) Matrix */

@@ -37,5 +37,20 @@ public class CeilFunction extends AbstractFunction<Double> {
 	public Class<Double> getReturnType() {
 		return Double.class;
 	}
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > 0){
+			throw new IllegalArgumentException("ceil has only 1 argument.");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			accTypes[0] = Number.class;
+			return accTypes;
+		}
+	}
+
 
 }

@@ -43,5 +43,27 @@ public class IfFunction extends AbstractFunction<Object> {
 		// otherwise we make no guarantees
 		return Object.class;
 	}
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > 0){
+			throw new IllegalArgumentException("abs has only 1 argument.");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			switch (argPos){
+			case 0: accTypes[0] = Boolean.class;
+					break;
+			case 1:	accTypes[0] = Object.class;
+					break;
+			case 2: accTypes[0] = Object.class;
+					break;
+			}
+			
+			return accTypes;
+		}
+	}
 
 }

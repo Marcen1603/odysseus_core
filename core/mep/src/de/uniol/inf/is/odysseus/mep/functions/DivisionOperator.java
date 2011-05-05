@@ -64,4 +64,18 @@ public class DivisionOperator extends AbstractBinaryOperator<Double> {
 		return operator.getClass() == PlusOperator.class
 				|| operator.getClass() == MinusOperator.class;
 	}
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > this.getArity()-1){
+			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			accTypes[0] = Number.class;
+			return accTypes;
+		}
+	}
 }

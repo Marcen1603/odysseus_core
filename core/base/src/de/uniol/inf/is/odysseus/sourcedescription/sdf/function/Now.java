@@ -38,4 +38,7 @@ public class Now extends AbstractFunction<Long> {
 		return Long.class;
 	}
 
+	public Class<?>[] getAcceptedTypes(int argPos){
+		throw new IllegalArgumentException("Now has no arguments.");
+	}
 }

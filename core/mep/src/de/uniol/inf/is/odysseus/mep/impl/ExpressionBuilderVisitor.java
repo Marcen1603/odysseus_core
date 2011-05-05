@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mep.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,12 +40,13 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 			throw new IllegalArgumentException("no such function: " + symbol);
 		}
 		IFunction<?> function = MEP.getFunction(symbol);
-
+		
 		int arity = node.jjtGetNumChildren();
 		IExpression<?>[] expressions = new IExpression[arity];
 		for (int i = 0; i < arity; ++i) {
+			// pass the accepted types of this function for the current argument
 			expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(
-					this, data);
+					this, function.getAcceptedTypes(i));
 		}
 		function.setArguments(expressions);
 
@@ -60,12 +62,15 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 	public Object visit(ASTVariable node, Object data) {
 		String identifier = node.getIdentifier();
 		if (symbolTable.containsKey(identifier)) {
-			return symbolTable.get(identifier);
+			Variable var = symbolTable.get(identifier);
+			var.restrictAcceptedTypes((Class<?>[])data);
+			return var;
 		} else {
 			Variable variable = new Variable(identifier);
+			variable.setAcceptedTypes((Class<?>[])data);
 			symbolTable.put(identifier, variable);
 			return variable;
-		}
+		}	
 	}
 
 	@Override

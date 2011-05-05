@@ -265,6 +265,10 @@ public class SDFExpression implements Serializable {
 
 		setValue(expression.getValue());
 	}
+	
+	public ArrayList<Variable> getVariables(){
+		return this.variableArrayList;
+	}
 
 	@Override
 	public int hashCode() {

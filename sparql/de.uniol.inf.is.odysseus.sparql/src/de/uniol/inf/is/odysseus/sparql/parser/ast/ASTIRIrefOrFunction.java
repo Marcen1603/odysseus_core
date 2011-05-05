@@ -4,7 +4,18 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 public
 class ASTIRIrefOrFunction extends SimpleNode {
-  public ASTIRIrefOrFunction(int id) {
+  private String str;
+
+  
+  public void setString(String s){
+	  this.str = s;
+  }
+  
+  public String toString(){
+	  return this.str;
+  }
+  
+	public ASTIRIrefOrFunction(int id) {
     super(id);
   }
 

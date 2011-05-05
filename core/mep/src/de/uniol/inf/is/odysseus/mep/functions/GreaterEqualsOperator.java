@@ -62,4 +62,19 @@ public class GreaterEqualsOperator extends AbstractBinaryOperator<Boolean> {
 	public boolean isRightDistributiveWith(IOperator<Boolean> operator) {
 		return false;
 	}
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > this.getArity()-1){
+			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[2];
+			accTypes[0] = Number.class; // number comparison
+			accTypes[1] = String.class; // alphabetical order
+			return accTypes;
+		}
+	}
 }

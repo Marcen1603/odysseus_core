@@ -40,24 +40,30 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 
 	private static final long serialVersionUID = 1222104352250883947L;
 
-	private SDFExpression expression;
+	protected SDFExpression expression;
 
 	// stores which attributes are needed at which position for
 	// variable bindings
-	private int[] attributePositions;
+	protected int[] attributePositions;
 
 	// fromRightChannel[i] stores if the getAttribute(attributePositions[i])
 	// should be called on the left or on the right input tuple
-	private boolean[] fromRightChannel;
+	protected boolean[] fromRightChannel;
 
-	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
+	protected Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
+	protected SDFAttributeList leftSchema;
+	protected SDFAttributeList rightSchema;
+	
 	public RelationalPredicate(SDFExpression expression) {
 		this.expression = expression;
 	}
 
 	@Override
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+		this.leftSchema = leftSchema;
+		this.rightSchema = rightSchema;
+		
 		List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 		this.attributePositions = new int[neededAttributes.size()];
 		this.fromRightChannel = new boolean[neededAttributes.size()];

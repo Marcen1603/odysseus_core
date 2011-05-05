@@ -23,6 +23,8 @@ public interface IFunction<T> extends IExpression<T> {
 
 	public IExpression<?>[] getArguments();
 	
+	public Class<?>[] getAcceptedTypes(int argPos);
+	
 	public IExpression<?> getArgument(int argumentPosition);
 	
 	public String getSymbol();

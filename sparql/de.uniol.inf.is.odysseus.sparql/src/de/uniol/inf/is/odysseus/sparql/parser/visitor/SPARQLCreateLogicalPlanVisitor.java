@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.relational.base.predicate.TypeSafeRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -840,7 +840,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			SelectAO select = new SelectAO();
 			IAttributeResolver attrRes = new SPARQLDirectAttributeResolver(topOfGroupGraphPattern.getOutputSchema());
 			SDFExpression expr = new SDFExpression(null, filterConstraint.toString(), attrRes);
-			IPredicate selectPred = new RelationalPredicate(expr);
+			IPredicate selectPred = new TypeSafeRelationalPredicate(expr);
 			select.setPredicate(selectPred);
 			select.subscribeTo(topOfGroupGraphPattern, topOfGroupGraphPattern.getOutputSchema());
 			topOfGroupGraphPattern = select;
@@ -1393,13 +1393,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		// more than one common variable
 		// so build a tree of and predicates
 		if(exprs.size() > 1){
-			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
+			TypeSafeRelationalPredicate firstRelational = new TypeSafeRelationalPredicate(exprs.get(0));
 			firstRelational.init(leftSchema, rightSchema);
 			
 			IPredicate left = firstRelational;
 			
 			for(int i = 1; i<exprs.size(); i++){
-				RelationalPredicate right = new RelationalPredicate(exprs.get(i));
+				TypeSafeRelationalPredicate right = new TypeSafeRelationalPredicate(exprs.get(i));
 				right.init(leftSchema, rightSchema);
 				AndPredicate tempAnd = new AndPredicate(left, right);
 				left = tempAnd;
@@ -1410,7 +1410,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		// only one common variable, so
 		// return corresponding relational predicate
 		else if(exprs.size() == 1){
-			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
+			TypeSafeRelationalPredicate firstRelational = new TypeSafeRelationalPredicate(exprs.get(0));
 			firstRelational.init(leftSchema, rightSchema);
 			retval = firstRelational;
 		}

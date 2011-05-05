@@ -63,5 +63,19 @@ public class OrOperator extends AbstractBinaryOperator<Boolean> {
 	public Class<? extends Boolean> getReturnType() {
 		return Boolean.class;
 	}
+	
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > this.getArity()-1){
+			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			accTypes[0] = Boolean.class;
+			return accTypes;
+		}
+	}
 
 }

@@ -65,4 +65,18 @@ public class PlusOperator extends AbstractBinaryOperator<Double> {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
 
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > this.getArity()-1){
+			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[2];
+			accTypes[0] = Number.class; // mathematical +
+			accTypes[1] = String.class; // string concatenation
+			return accTypes;
+		}
+	}
 }

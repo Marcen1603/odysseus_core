@@ -56,4 +56,17 @@ public class MatrixAdd extends AbstractFunction<Object> {
 		return Object.class;
 	}
 
+	public Class<?>[] getAcceptedTypes(int argPos){
+		if(argPos < 0){
+			throw new IllegalArgumentException("negative argument index not allowed");
+		}
+		if(argPos > 1){
+			throw new IllegalArgumentException("AbsValue has only 1 argument.");
+		}
+		else{
+			Class<?>[] accTypes = new Class<?>[1];
+			accTypes[0] = double[][].class;
+			return accTypes;
+		}
+	}
 }
