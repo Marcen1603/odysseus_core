@@ -22,5 +22,9 @@ public class LeftJoinAO extends JoinAO{
 	public LeftJoinAO(LeftJoinAO joinPO) {
 		super(joinPO);
 	}
+	
+	public LeftJoinAO clone(){
+		return new LeftJoinAO(this);
+	}
 
 }

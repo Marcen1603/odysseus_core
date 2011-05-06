@@ -771,8 +771,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			else if(child instanceof ASTFilter){
 				filterConstraint = (ASTConstraint)child.jjtGetChild(0);
 				
-				//we cannot set the filter here because we need the union
-				//of schemas of all triple patterns, but not all triple
+				// we cannot set the filter here because we need the union
+				// of schemas of all triple patterns, but not all triple
 				// patterns have been read here. So first read the rest
 				// of the triple patterns an then put the selection
 				// as parent of the corresponding join of this

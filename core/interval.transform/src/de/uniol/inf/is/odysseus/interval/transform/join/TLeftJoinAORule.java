@@ -17,10 +17,9 @@ package de.uniol.inf.is.odysseus.interval.transform.join;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -31,20 +30,22 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
+public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 
 	@Override
 	public int getPriority() {	
-		return 0;
+		// must be higher than TJoinAORule, since
+		// LeftJoinAO extends JoinAO
+		return 5; 
+	
 	}
 
 	@Override
-	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
-		LeftJoinAO lj = (LeftJoinAO)joinAO;
-		JoinTIPO joinPO = new JoinTIPO();
+	public void execute(LeftJoinAO joinAO, TransformationConfiguration transformConfig) {
+		LeftJoinTIPO joinPO = new LeftJoinTIPO(joinAO.getInputSchema(0), joinAO.getInputSchema(1), joinAO.getOutputSchema());
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
-		joinPO.setTransferFunction(new TITransferArea());
+		joinPO.setTransferFunction(new LeftJoinTITransferArea());
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setOutputSchema(joinAO.getOutputSchema() == null?null:joinAO.getOutputSchema().clone());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
@@ -57,8 +58,8 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 	}
 
 	@Override
-	public boolean isExecutable(JoinAO operator, TransformationConfiguration transformConfig) {
-		if(operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)){
+	public boolean isExecutable(LeftJoinAO operator, TransformationConfiguration transformConfig) {
+		if(operator.isAllPhysicalInputSet()){
 			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 				return true;
 			}

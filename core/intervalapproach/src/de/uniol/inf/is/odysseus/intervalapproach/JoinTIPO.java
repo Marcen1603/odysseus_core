@@ -62,8 +62,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		return _logger;
 	}
 		
-	private ITemporalSweepArea<T>[] areas;
-	private IPredicate<? super T> joinPredicate;
+	protected ITemporalSweepArea<T>[] areas;
+	protected IPredicate<? super T> joinPredicate;
 
 	protected IDataMergeFunction<T> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;

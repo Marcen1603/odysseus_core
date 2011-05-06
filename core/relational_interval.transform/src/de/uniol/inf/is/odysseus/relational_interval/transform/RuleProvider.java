@@ -28,6 +28,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TApplicationTimestampRule());
 		rules.add(new TJoinTIPOInsertDataMergeRule());
 		rules.add(new TRelationalSlidingElementWindowTIPORule());
+		rules.add(new TLeftJoinTIPOInsertDataMergeRule());
 		return rules;
 	}
 

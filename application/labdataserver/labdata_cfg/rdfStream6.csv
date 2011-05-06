@@ -1,0 +1,9 @@
+subject;predicate;object
+iec:wtur1;wtur:StrCnt;45
+iec:wtur1;wtur:StopCnt;112
+iec:wtur2;wtur:StrCnt;34
+iec:wtur3;wtur:StrCnt;24
+iec:wtur3;wtur:StopCnt;89
+iec:wtur4;wtur:StrCnt;29
+iec:wtur5;wtur:StrCnt;65
+iec:wtur5;wtur:StopCnt;78

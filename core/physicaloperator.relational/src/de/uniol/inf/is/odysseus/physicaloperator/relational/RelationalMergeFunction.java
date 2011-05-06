@@ -33,7 +33,7 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 		super(resultSchemaSize);
 	}
 	
-	private RelationalMergeFunction(RelationalMergeFunction<M> original){
+	protected RelationalMergeFunction(RelationalMergeFunction<M> original){
 		super(original.schemaSize);
 	}
 	

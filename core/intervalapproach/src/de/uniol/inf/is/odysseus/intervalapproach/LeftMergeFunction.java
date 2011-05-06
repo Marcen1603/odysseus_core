@@ -16,9 +16,10 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public abstract class LeftMergeFunction<T extends IClone> implements  IDataMergeFunction<T>{
+public abstract class LeftMergeFunction<T extends IClone> implements ILeftMergeFunction<T>{
 
 	protected SDFAttributeList leftSchema;
 	protected SDFAttributeList rightSchema;
@@ -38,11 +39,7 @@ public abstract class LeftMergeFunction<T extends IClone> implements  IDataMerge
 	}
 	
 	@Override
-	public T merge(T left, T right){
-		return leftMerge(left, right);
-	}
-	
-	public abstract T leftMerge(T left, T right);
+	public abstract T merge(T left, T right);
 	
 	public abstract T createLeftFilledUp(T left);
 	

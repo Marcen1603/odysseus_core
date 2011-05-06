@@ -21,9 +21,12 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.ILeftMergeFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von Daten- und
@@ -39,15 +42,42 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 //	private static final Logger logger = LoggerFactory.getLogger(LeftJoinTIPO.class);
 	
 	private HashMap<T, PointInTime> left_t_tilde;
-	private LeftMergeFunction<T> dataMerge;
-	private JoinTISweepArea<T>[] areas;
+	private ILeftMergeFunction<T> dataMerge;
+	private JoinTISweepArea<T>[] joinAreas;
+	
+	private SDFAttributeList leftSchema;
+	private SDFAttributeList rightSchema;
+	private SDFAttributeList resultSchema;
 
+	public SDFAttributeList getLeftSchema() {
+		return leftSchema;
+	}
+
+
+	public SDFAttributeList getRightSchema() {
+		return rightSchema;
+	}
+
+
+	public SDFAttributeList getResultSchema() {
+		return resultSchema;
+	}
+
+	
+	public LeftJoinTIPO(SDFAttributeList leftSchema, SDFAttributeList rightSchema, SDFAttributeList resultSchema) {
+		this.leftSchema = leftSchema;
+		this.rightSchema = rightSchema;
+		this.resultSchema = resultSchema;
+		this.left_t_tilde = new HashMap<T, PointInTime>();
+	}
+	
+	
 	public LeftJoinTIPO(LeftMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<M> metadataMerge,
 			ITransferArea<T,T> transferFunction, JoinTISweepArea<T>[] areas) {
 		super(dataMerge, metadataMerge, transferFunction, areas);
 		this.left_t_tilde = new HashMap<T, PointInTime>();
-		this.areas = areas;
+		this.joinAreas = areas;
 		this.dataMerge = dataMerge;
 	}
 
@@ -64,7 +94,10 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			this.doRight(object, port);
 		}
 		
-		transferFunction.newElement(object, port);
+		// man muss immer den minimalen Zeitstempel der linken SweepArea wählen
+		transferFunction.newHeartbeat(this.joinAreas[0].getMinTs(), port);
+		
+//		transferFunction.newElement(object, port);
 		
 		synchronized (this) {
 			// status could change, if the other port was done and
@@ -81,14 +114,14 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		Order leftRight = Order.fromOrdinal(port);
 		
 		// purgeElemente nimmt keine Ruecksicht auf <order>
-		areas[otherport].purgeElements(object, leftRight);
+		joinAreas[otherport].purgeElements(object, leftRight);
 		
 		PointInTime t_tilde = object.getMetadata().getStart();
 		
 		Iterator<T> qualifies;
-		synchronized (this.areas) {
-			synchronized (this.areas[otherport]) {
-				qualifies = areas[otherport].queryCopy(object, leftRight);
+		synchronized (this.joinAreas) {
+			synchronized (this.joinAreas[otherport]) {
+				qualifies = joinAreas[otherport].queryCopy(object, leftRight);
 		
 				while (qualifies.hasNext()) {
 					T next = qualifies.next();
@@ -108,7 +141,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 					this.left_t_tilde.put(object, t_tilde);
 				}
 				
-				PointInTime ts_max_right = this.areas[otherport].getMaxTs();
+				PointInTime ts_max_right = this.joinAreas[otherport].getMaxTs();
 				if(ts_max_right != null && ts_max_right.after(t_tilde)){
 					@SuppressWarnings("unchecked")
 					T leftUnbound = null;
@@ -123,7 +156,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 				}
 				
 				this.left_t_tilde.put(object, t_tilde);
-				this.areas[port].insert(object);
+				this.joinAreas[port].insert(object);
 		
 		
 			}
@@ -135,7 +168,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		Order leftRight = Order.fromOrdinal(leftport);
 		Order rightLeft = Order.fromOrdinal(port);
 
-		Iterator<T> invalids = this.areas[leftport].extractElements(object, leftRight);
+		Iterator<T> invalids = this.joinAreas[leftport].extractElements(object, leftRight);
 		while(invalids.hasNext()){
 			T invalid = invalids.next();
 			PointInTime invalid_t_tilde = this.left_t_tilde.get(invalid);
@@ -148,7 +181,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			}
 		}
 		
-		Iterator<T> qualifies = this.areas[leftport].queryCopy(object, rightLeft);
+		Iterator<T> qualifies = this.joinAreas[leftport].queryCopy(object, rightLeft);
 		while(qualifies.hasNext()){
 			T e_hat = qualifies.next(); // es werden nur kompatible Partner zurueckgeliefert, die auch nach einem Join das Join Praedikat erfuellen
 			PointInTime e_hat_t_tilde = this.left_t_tilde.get(e_hat);
@@ -191,7 +224,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	@Override
 	protected void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
-			this.areas[i].clear();
+			this.joinAreas[i].clear();
 		}
 		this.transferFunction.init(this);
 	}
@@ -199,16 +232,36 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	@Override
 	protected void process_done() {
 		 transferFunction.done();
-		 areas[0].clear();
-		 areas[1].clear();
+		 joinAreas[0].clear();
+		 joinAreas[1].clear();
 	 }
 	
 	@Override
 	protected boolean isDone() { 
 		if (getSubscribedToSource(0).isDone()) {
-			return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
+			return getSubscribedToSource(1).isDone() || joinAreas[0].isEmpty();
 		} else {
-			return getSubscribedToSource(0).isDone()  && areas[1].isEmpty();
+			return getSubscribedToSource(0).isDone()  && joinAreas[1].isEmpty();
 		}
+	}
+	
+	public ITemporalSweepArea<T>[] getAreas() {
+		return joinAreas;
+	}
+	
+	public void setAreas(JoinTISweepArea<T>[] areas) {
+		this.joinAreas = areas;
+		if (this.joinPredicate != null) {
+			this.joinAreas[0].setQueryPredicate(this.joinPredicate);
+			this.joinAreas[1].setQueryPredicate(this.joinPredicate);
+		}
+	}
+	
+	public void setDataMerge(ILeftMergeFunction<T> dataMerge){
+		this.dataMerge = dataMerge;
+	}
+	
+	public ILeftMergeFunction<T> getDataMerge(){
+		return this.dataMerge;
 	}
 }

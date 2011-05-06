@@ -21,6 +21,9 @@ import de.uniol.inf.is.odysseus.interval.transform.join.TJoinAORule;
 import de.uniol.inf.is.odysseus.interval.transform.join.TJoinAOSetSARule;
 import de.uniol.inf.is.odysseus.interval.transform.join.TJoinTIPOAddMetadataMergeRule;
 import de.uniol.inf.is.odysseus.interval.transform.join.TJoinTIPOSetMetadataMerge;
+import de.uniol.inf.is.odysseus.interval.transform.join.TLeftJoinAORule;
+import de.uniol.inf.is.odysseus.interval.transform.join.TLeftJoinAOSetSARule;
+import de.uniol.inf.is.odysseus.interval.transform.join.TLeftJoinTIPOAddMetadataMergeRule;
 import de.uniol.inf.is.odysseus.interval.transform.window.TSlidingAdvanceTimeWindowTIPORule;
 import de.uniol.inf.is.odysseus.interval.transform.window.TSlidingElementWindowTIPORule;
 import de.uniol.inf.is.odysseus.interval.transform.window.TSlidingPeriodicWindowTIPORule;
@@ -52,6 +55,10 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TUnboundedWindowRule());
 		
 		rules.add(new TTimeStampOrderValdiatorRule());
+		
+		rules.add(new TLeftJoinAORule());
+		rules.add(new TLeftJoinTIPOAddMetadataMergeRule());
+		rules.add(new TLeftJoinAOSetSARule());
 		
 		return rules;
 	}
