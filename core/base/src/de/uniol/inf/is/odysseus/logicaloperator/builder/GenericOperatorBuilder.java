@@ -98,6 +98,9 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected boolean internalValidation() {
 		try {
+			if (this.operator != null) {
+				return true;
+			}
 			ILogicalOperator op = operatorClass.newInstance();
 			initOp(op);
 			boolean isValid = op.isValid();
