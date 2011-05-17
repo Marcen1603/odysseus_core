@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.latency.transform;
 
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -28,7 +29,7 @@ public class TAggregateLatencyRule extends
 	public boolean isExecutable(AggregateTIPO<?, ?,?> operator,
 			TransformationConfiguration config) {
 		if(operator.getMetadataMerge() instanceof CombinedMergeFunction){
-			if(config.getMetaTypes().contains("de.uniol.inf.is.odysseus.latency.ILatency")){
+			if(config.getMetaTypes().contains(ILatency.class.getCanonicalName())){
 				return true;
 			}
 		}

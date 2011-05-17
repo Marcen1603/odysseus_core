@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.latency.transform;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -38,7 +39,7 @@ public class TJoinLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> 
 	@Override
 	public boolean isExecutable(JoinTIPO<?, ?> joinPO, TransformationConfiguration config) {
 		if(joinPO.getMetadataMerge() instanceof CombinedMergeFunction){
-			if(config.getMetaTypes().contains("de.uniol.inf.is.odysseus.latency.ILatency")){
+			if(config.getMetaTypes().contains(ILatency.class.getCanonicalName())){
 				return true;
 			}
 		}
