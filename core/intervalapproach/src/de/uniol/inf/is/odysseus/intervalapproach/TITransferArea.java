@@ -79,10 +79,9 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 
 	@Override
 	public void done() {
-		for (W element : outputQueue) {
-			po.transfer(element);
+		while(!this.outputQueue.isEmpty()){
+			po.transfer(this.outputQueue.poll());
 		}
-		outputQueue.clear();
 	}
 
 	@Override
