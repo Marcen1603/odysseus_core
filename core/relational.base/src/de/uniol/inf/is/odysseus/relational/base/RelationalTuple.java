@@ -23,6 +23,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.ICSVToString;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.util.Primes;
 
 /**
  * Klasse repraesentiert ein Tupel im relationalen Modell und dient als
@@ -37,6 +38,9 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 
 	protected Object[] attributes;
 	protected int memSize = -1;
+	
+	private boolean containsNull = false;
+	private boolean valueChanged = true;
 
 	// -----------------------------------------------------------------
 	// static Hilfsmethoden
@@ -66,6 +70,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			this.attributes[pos] = new ArrayList<Object>();
 		}
 		((Collection<Object>) this.attributes[pos]).add(value);
+		this.valueChanged = true;
 	}
 
 	public final void setAttribute(int pos, Object value) {
@@ -77,6 +82,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		// value.getClass().getName() );
 		// }
 		this.attributes[pos] = value;
+		this.valueChanged = true;
 		// calcSize();
 	}
 
@@ -169,6 +175,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			return newTuple;
 		} else {
 			this.attributes = newAttrs;
+			this.valueChanged = true;
 			return this;
 		}
 	}
@@ -182,6 +189,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 */
 	public void setAttributes(Object[] attributes) {
 		this.attributes = attributes;
+		this.valueChanged = true;
 	}
 
 	// -----------------------------------------------------------------
@@ -202,7 +210,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 * Sortierreihenfolge ist implizit durch die Position in der Liste gegeben
 	 * wenn das aktuelle Objekt kleiner ist ist der R�ckgabewert negativ
 	 * ansonsten positiv Es wird maximal die kleinere Anzahl der Felder
-	 * verglichen
+	 * verglichen. Tupel mit NULL-Werten sind ungleich.
 	 */	
 	@Override
 	public final int compareTo(RelationalTuple<?> c) {
@@ -213,18 +221,21 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		int compare = 0;
 		int i = 0;
 		for (i = 0; i < min && compare == 0; i++) {
-			try {
-				if (this.attributes[i] instanceof Comparable<?>) {
-					compare = ((Comparable<Object>) this.attributes[i]).compareTo(c.getAttribute(i));
-				}
-			} catch (NullPointerException e) {
-				System.out.println("Exception: " + this + " " + c + " " + i);
-				System.out.println("this " + this);
-				System.out.println("c " + c);
-				System.out.println("this.attributes[i] " + this.attributes[i]);
-				System.out.println("c.getAttribute(i) " + c.getAttribute(i));
-				throw new NullPointerException();
+//			try {
+			if(this.attributes[i] == null || c.getAttribute(i) == null){
+				compare = i;
 			}
+			else if (this.attributes[i] instanceof Comparable<?>) {
+				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c.getAttribute(i));
+			}
+//			} catch (NullPointerException e) {
+//				System.out.println("Exception: " + this + " " + c + " " + i);
+//				System.out.println("this " + this);
+//				System.out.println("c " + c);
+//				System.out.println("this.attributes[i] " + this.attributes[i]);
+//				System.out.println("c.getAttribute(i) " + c.getAttribute(i));
+//				throw new NullPointerException();
+//			}
 		}
 		if (compare < 0) {
 			compare = (-1) * i;
@@ -285,7 +296,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	}
 
 	public int memSize(boolean calcNew) {
-		if (memSize == -1 || calcNew) {
+		if (this.valueChanged|| calcNew) {
 			memSize = calcSize();
 		}
 		return memSize;
@@ -357,6 +368,8 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		super(copy);
 		int attributeLength = copy.attributes.length;
 		this.attributes = new Object[attributeLength];
+		this.valueChanged = copy.valueChanged;
+		this.containsNull = copy.containsNull;
 		System.arraycopy(copy.attributes, 0, this.attributes, 0, attributeLength);
 	}
 
@@ -374,8 +387,11 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	@Override
 	public final int hashCode() {
 		int ret = 0;
-		for (Object o : this.attributes) {
-			ret += o.hashCode();
+		for (int i = 0; i<this.attributes.length; i++) {
+			Object o = this.attributes[i];
+			if(o != null){
+				ret += o.hashCode() * Primes.PRIMES[i%Primes.size()];
+			}
 		}
 		return ret;
 	}
@@ -384,4 +400,15 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return attributes;
 	}
 
+	public boolean containsNull(){
+		if(this.valueChanged){
+			for(Object o: this.attributes){
+				if(o == null){
+					this.containsNull = true;
+					break;
+				}
+			}
+		}
+		return this.containsNull;
+	}
 }
