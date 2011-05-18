@@ -76,7 +76,7 @@ public class OdysseusScriptWizard extends Wizard implements INewWizard {
 	}
 	
 	protected InputStream getQueryTemplate() {
-		return new ByteArrayInputStream("//OdysseusScript\n#PARSER CQL\n#TRANSCFG Standard\n#QUERY\n//Your first query here".getBytes());
+		return new ByteArrayInputStream("///OdysseusScript\n#PARSER CQL\n#TRANSCFG Standard\n#QUERY\n///Your first query here".getBytes());
 	}
 
 	private static IContainer getFolder( IResource resource ) {
