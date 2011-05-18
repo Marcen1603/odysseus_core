@@ -21,10 +21,6 @@ import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicByteDataHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleByteHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IntegerByteHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.StringByteHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
