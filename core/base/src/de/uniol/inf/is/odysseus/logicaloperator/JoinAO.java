@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class JoinAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 3710951139395164614L;
-	protected SDFAttributeList outputSchema = null;
+	private SDFAttributeList outputSchema = null;
 
 	public JoinAO() {
 		super();
