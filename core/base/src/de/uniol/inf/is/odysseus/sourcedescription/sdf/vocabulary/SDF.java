@@ -15,8 +15,6 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary;
 
 import java.util.ArrayList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFExtensionalDescriptions;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFIntensionalDescriptions;
 
 public class SDF {
 	static ArrayList<SDF> sdffiles = null;
@@ -59,14 +57,8 @@ public class SDF {
 		sdffiles.add(new SDFDatatypes());
 		sdffiles.add(new SDFDatatypeConstraints());
 		sdffiles.add(new SDFDescriptions());
-		sdffiles.add(new SDFExtensionalDescriptions());
 		sdffiles.add(new SDFFunctions());
-		sdffiles.add(new SDFIntensionalDescriptions());
-		sdffiles.add(new SDFMappings());
 		sdffiles.add(new SDFPredicates());
-		sdffiles.add(new SDFQualityVoc());
-		sdffiles.add(new SDFQualityDescriptions());
-		sdffiles.add(new SDFQueryVoc());
 		sdffiles.add(new SDFSchema());
 		sdffiles.add(new SDFUnits());
 
