@@ -245,7 +245,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 						}
 						for(AggregateFunction af1 : k1) {
 							for(AggregateFunction af2 : k2) {
-								if(af1.compareTo(af2) == 0) {
+								if(af1.equals(af2)) {
 									if(m1.get(af1).compareTo(m2.get(af2)) == 0) {
 										foundmatch = true;
 									}
