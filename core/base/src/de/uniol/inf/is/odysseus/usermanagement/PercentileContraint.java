@@ -44,7 +44,12 @@ public class PercentileContraint implements
 
 	@Override
 	public int compareTo(IPercentileConstraint o) {
-		return -1*Double.compare(this.getLowSlaConformanceLevel(), o.getLowSlaConformanceLevel());
+		if (getLowSlaConformanceLevel() < o.getLowSlaConformanceLevel()){
+			return -1;
+		}else if (getLowSlaConformanceLevel() > o.getLowSlaConformanceLevel()){
+			return 1;
+		}
+		return 0;
 	}
 	
 	@Override
