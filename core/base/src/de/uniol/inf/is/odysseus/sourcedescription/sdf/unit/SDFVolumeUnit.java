@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.unit;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 public class SDFVolumeUnit extends SDFUnit {
@@ -24,5 +25,14 @@ public class SDFVolumeUnit extends SDFUnit {
 
 	protected SDFVolumeUnit(String URI) {
 		super(URI);
+	}
+	
+	public SDFVolumeUnit(SDFVolumeUnit sdfVolumeUnit) {
+		super(sdfVolumeUnit);
+	}
+
+	@Override
+	public SDFElement clone() {
+		return new SDFVolumeUnit(this);
 	}
 }

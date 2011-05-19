@@ -23,6 +23,10 @@ public class SDFDatatype extends SDFElement {
 		super(URI);
 	}
 	
+	public SDFDatatype(SDFDatatype sdfDatatype) {
+		super(sdfDatatype);
+	}
+
 	@Override
 	// TODO: später wieder entfernen!!
 	public String getQualName() {
@@ -31,6 +35,11 @@ public class SDFDatatype extends SDFElement {
 		}else{
 			return getURI();
 		}
+	}
+	
+	@Override
+	public SDFElement clone() {
+		return new SDFDatatype(this);
 	}
 
 }

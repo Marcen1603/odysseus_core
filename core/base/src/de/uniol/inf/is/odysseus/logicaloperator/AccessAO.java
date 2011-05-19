@@ -30,7 +30,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 	/**
 	 * Die Uri der von diesem AccessPO gekapselten Quelle
 	 */
-	protected SDFSource source = null;
+	private SDFSource source = null;
 	private Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
 
 	private int port;
@@ -65,7 +65,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 
 	public AccessAO(AccessAO po) {
 		super(po);
-		this.source = po.source;
+		this.source = po.source.clone();
 		this.port = po.port;
 		this.host = po.host;
 		this.outputSchema = createCleanClone(po.outputSchema);

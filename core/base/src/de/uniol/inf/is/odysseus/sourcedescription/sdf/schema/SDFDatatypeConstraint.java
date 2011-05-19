@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 public class SDFDatatypeConstraint extends SDFSchemaElement {
 	/**
 	 * 
@@ -26,9 +28,18 @@ public class SDFDatatypeConstraint extends SDFSchemaElement {
 		this.cType = cType;
 	}
 
+	public SDFDatatypeConstraint(SDFDatatypeConstraint sdfDatatypeConstraint) {
+		super(sdfDatatypeConstraint);
+		this.cType = sdfDatatypeConstraint.cType;
+	}
+
 	public String getCType() {
 		return cType;
 	}
 	
+	@Override
+	public SDFElement clone() {
+		return new SDFDatatypeConstraint(this);
+	}
 	
 }

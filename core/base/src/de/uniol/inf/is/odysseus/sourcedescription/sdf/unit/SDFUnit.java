@@ -25,4 +25,8 @@ public abstract class SDFUnit extends SDFElement {
 	protected SDFUnit(String URI) {
 		super(URI);
 	}
+	
+	protected SDFUnit(SDFUnit unit){
+		super(unit);
+	}
 }

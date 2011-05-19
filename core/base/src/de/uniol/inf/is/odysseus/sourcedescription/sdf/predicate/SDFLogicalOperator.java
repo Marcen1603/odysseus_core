@@ -25,6 +25,10 @@ public abstract class SDFLogicalOperator extends SDFElement {
 	public SDFLogicalOperator(String URI) {
 		super(URI);
 	}
+	
+	public SDFLogicalOperator(SDFLogicalOperator other){
+		super(other);
+	}
 
     /**
      * Wertet des Audruck mit Hilfe des eigenen logischen Operators
@@ -34,4 +38,6 @@ public abstract class SDFLogicalOperator extends SDFElement {
      * @return die Wahrheitswert der Auswertung
      */
 	abstract public boolean evaluate(boolean left, boolean right);
+	
+	abstract public SDFLogicalOperator clone();
 }

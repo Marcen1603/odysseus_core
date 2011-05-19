@@ -33,6 +33,10 @@ public abstract class SDFPredicate extends SDFElement {
 		super(URI);
 	}
 	
+	public SDFPredicate(SDFPredicate other){
+		super(other);
+	}
+	
 	/**
 	 * @uml.property  name="allAttributes"
 	 * @uml.associationEnd  readOnly="true"
@@ -46,4 +50,6 @@ public abstract class SDFPredicate extends SDFElement {
 	public abstract String toSQL();
 	public abstract boolean isNegatived();
 	public abstract void negate();
+	
+	public abstract SDFPredicate clone();
 }

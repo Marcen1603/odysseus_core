@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.unit;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 public class SDFAreaUnit extends SDFUnit {
 	/**
 	 * 
@@ -22,5 +24,14 @@ public class SDFAreaUnit extends SDFUnit {
 
 	protected SDFAreaUnit(String URI) {
 		super(URI);
+	}
+	
+	public SDFAreaUnit(SDFAreaUnit sdfAreaUnit) {
+		super(sdfAreaUnit);
+	}
+
+	@Override
+	public SDFElement clone() {
+		return new SDFAreaUnit(this);
 	}
 }

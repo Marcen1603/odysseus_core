@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 /**
  * @author  Marco Grawunder
  */
@@ -30,6 +32,13 @@ public class SDFEntity extends SDFSchemaElement {
 
 	public SDFEntity(String URI) {
 		super(URI);
+	}
+
+	public SDFEntity(SDFEntity sdfEntity) {
+		super(sdfEntity);
+		this.idAttributes.addAll(sdfEntity.idAttributes);
+		this.attributes.addAll(sdfEntity.attributes);
+		this.constants.addAll(sdfEntity.constants);
 	}
 
 	public boolean isIdentifiying(SDFAttribute attribute){
@@ -106,4 +115,8 @@ public class SDFEntity extends SDFSchemaElement {
 		return ret.toString();
 	}
 
+	@Override
+	public SDFElement clone() {
+		return new SDFEntity(this);
+	}
 }

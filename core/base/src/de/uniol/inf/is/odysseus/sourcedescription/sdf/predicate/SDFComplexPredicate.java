@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFPredicates;
@@ -58,6 +59,13 @@ public class SDFComplexPredicate extends SDFPredicate {
 		this.op = op;
 		this.left = left;
 		this.right = right;
+	}
+
+	public SDFComplexPredicate(SDFComplexPredicate sdfComplexPredicate) {
+		super(sdfComplexPredicate);
+		this.op =  sdfComplexPredicate.op.clone();
+		this.left = sdfComplexPredicate.left.clone();
+		this.right = sdfComplexPredicate.right.clone();
 	}
 
 	/**
@@ -210,5 +218,10 @@ public class SDFComplexPredicate extends SDFPredicate {
 	@Override
 	public void negate() {
 		this.isNegatived = !this.isNegatived;
+	}
+	
+	@Override
+	public SDFComplexPredicate clone() {
+		return new SDFComplexPredicate(this);
 	}
 }

@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.unit;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 public class SDFTemperatureUnit extends SDFUnit {
 	/**
 	 * 
@@ -22,5 +24,14 @@ public class SDFTemperatureUnit extends SDFUnit {
 
 	protected SDFTemperatureUnit(String URI) {
 		super(URI);
+	}
+	
+	public SDFTemperatureUnit(SDFTemperatureUnit sdfTemperatureUnit) {
+		super(sdfTemperatureUnit);
+	}
+
+	@Override
+	public SDFElement clone() {
+		return new SDFTemperatureUnit(this);
 	}
 }

@@ -44,6 +44,12 @@ public class SDFSource extends SDFElement {
 		this.optionalAttributes = new HashMap<String, String>();
 	}
 
+	public SDFSource(SDFSource sdfSource) {
+		super(sdfSource);
+		this.sourceType = sdfSource.sourceType;
+		this.optionalAttributes = sdfSource.optionalAttributes;
+	}
+
 	public void setOptionalAttribute(String name, String value) {
 		this.optionalAttributes.put(name, value);
 	}
@@ -97,6 +103,11 @@ public class SDFSource extends SDFElement {
 		} else if (!sourceType.equals(other.sourceType))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public SDFSource clone() {
+		return new SDFSource(this);
 	}
 
 }

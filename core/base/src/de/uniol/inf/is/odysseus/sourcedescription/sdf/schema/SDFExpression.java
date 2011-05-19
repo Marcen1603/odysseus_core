@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.mep.Constant;
 import de.uniol.inf.is.odysseus.mep.IExpression;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.mep.Variable;
 /**
  * @author Jonas Jacobi
  */
-public class SDFExpression implements Serializable {
+public class SDFExpression implements Serializable, IClone {
 
 	private static final long serialVersionUID = 8658794141096208317L;
 	// Für P2P als transient gekennzeichnet

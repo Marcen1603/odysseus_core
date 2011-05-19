@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaElement implements List<T>{ 
 
     /**
@@ -208,6 +210,11 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	@Override
 	public Iterator<T> iterator() {
 		return elements.iterator();
+	}
+	
+	@Override
+	public SDFElement clone() {
+		return new SDFSchemaElementSet<SDFSchemaElement>(this);
 	}
 	
 }

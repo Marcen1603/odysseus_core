@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 public class SDFOrOperator extends SDFLogicalOperator {
 	/**
 	 * 
@@ -22,6 +24,10 @@ public class SDFOrOperator extends SDFLogicalOperator {
 
 	public SDFOrOperator(String URI) {
 		super(URI);
+	}
+
+	public SDFOrOperator(SDFOrOperator sdfOrOperator) {
+		super(sdfOrOperator);
 	}
 
 	@Override
@@ -35,5 +41,10 @@ public class SDFOrOperator extends SDFLogicalOperator {
     @Override
 	public boolean evaluate(boolean left, boolean right) {
         return (left||right);
+    }
+    
+    @Override
+    public SDFOrOperator clone() {
+    	return new SDFOrOperator(this);
     }
 }

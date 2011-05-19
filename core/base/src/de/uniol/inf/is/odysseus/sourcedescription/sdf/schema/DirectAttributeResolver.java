@@ -16,12 +16,13 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 
 /**
  * @author Jonas Jacobi
  */
-public class DirectAttributeResolver implements IAttributeResolver {
+public class DirectAttributeResolver implements IAttributeResolver, IClone {
 
     private static final long serialVersionUID = 692060392529144987L;
     protected final SDFAttributeList schema;

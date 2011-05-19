@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 /**
  * Diese Klasse verwaltet ein Praedikat
  */
-public class SDFSimplePredicate extends SDFPredicate {
+public class SDFSimplePredicate extends SDFPredicate implements IClone {
 
 	private static final long serialVersionUID = -5438161522051021911L;
 
@@ -73,7 +74,7 @@ public class SDFSimplePredicate extends SDFPredicate {
 	}
 
 	@Override
-	public Object clone() {
+	public SDFSimplePredicate clone() {
 		return new SDFSimplePredicate(this);
 	}
 

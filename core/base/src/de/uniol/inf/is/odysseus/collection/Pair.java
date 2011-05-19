@@ -41,7 +41,7 @@ public class Pair<E1, E2> implements IPair<E1, E2>{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final ClonablePair<?,?> other = (ClonablePair<?,?>) obj;
+		final Pair<?,?> other = (Pair<?,?>) obj;
 		if (e1 == null) {
 			if (other.e1 != null)
 				return false;

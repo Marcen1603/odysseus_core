@@ -66,7 +66,15 @@ public class SDFIntervall extends SDFElement{
 		super(uri);
 	}
 
-    /**
+    public SDFIntervall(SDFIntervall sdfIntervall) {
+    	super(sdfIntervall);
+    	this.leftBorder = sdfIntervall.leftBorder;
+    	this.rightBorder = sdfIntervall.rightBorder;
+    	this.leftIsOpen = sdfIntervall.leftIsOpen;
+    	this.rightIsOpen = sdfIntervall.rightIsOpen;
+    }
+
+	/**
      * 
      * @uml.property name="leftBorder"
      */
@@ -160,5 +168,9 @@ public class SDFIntervall extends SDFElement{
 		return ret.toString();
 	}
 
+	@Override
+	public SDFElement clone() {
+		return new SDFIntervall(this);
+	}
 
 }

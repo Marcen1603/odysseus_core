@@ -33,6 +33,11 @@ public class SDFDataschema extends SDFElement {
 		super(URI);
 	}
 
+	public SDFDataschema(SDFDataschema sdfDataschema) {
+		super(sdfDataschema);
+		this.entityList.addAll(sdfDataschema.entityList);
+	}
+
 	public void addEntity(SDFEntity entity) {
 		entityList.add(entity);
 	}
@@ -52,6 +57,11 @@ public class SDFDataschema extends SDFElement {
 			ret.append(getEntity(i).toString() + "\n");
 		}
 		return ret.toString();
+	}
+	
+	@Override
+	public SDFElement clone() {
+		return new SDFDataschema(this);
 	}
 
 }

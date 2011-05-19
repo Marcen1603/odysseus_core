@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.unit;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 public class SDFTimeUnit extends SDFUnit {
@@ -24,5 +25,14 @@ public class SDFTimeUnit extends SDFUnit {
 
 	protected SDFTimeUnit(String URI) {
 		super(URI);
+	}
+	
+	public SDFTimeUnit(SDFTimeUnit sdfTimeUnit) {
+		super(sdfTimeUnit);
+	}
+
+	@Override
+	public SDFElement clone() {
+		return new SDFTimeUnit(this);
 	}
 }

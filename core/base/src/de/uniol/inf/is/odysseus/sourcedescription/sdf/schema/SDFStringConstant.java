@@ -18,6 +18,7 @@
  */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
@@ -56,4 +57,9 @@ public class SDFStringConstant extends SDFConstant {
 		return true;
 	}
 
+	@Override
+	public SDFElement clone() {
+		return new SDFStringConstant(this);
+	}
+	
 }

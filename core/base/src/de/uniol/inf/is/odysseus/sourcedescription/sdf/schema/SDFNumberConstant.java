@@ -18,6 +18,7 @@
  */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
@@ -70,6 +71,11 @@ public class SDFNumberConstant extends SDFConstant {
 	@Override
 	public boolean isString() {
 		return false;
+	}
+	
+	@Override
+	public SDFElement clone() {
+		return new SDFNumberConstant(this);
 	}
 
 }

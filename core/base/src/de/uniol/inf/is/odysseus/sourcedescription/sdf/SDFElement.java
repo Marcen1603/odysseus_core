@@ -16,12 +16,13 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDF;
 
 /**
  * @author Marco Grawunder
  */
-public abstract class SDFElement implements Serializable {
+public abstract class SDFElement implements Serializable, IClone {
 
 	/**
 	 * 
@@ -182,5 +183,7 @@ public abstract class SDFElement implements Serializable {
 			return false;
 		return true;
 	}
+	
+	abstract public SDFElement clone();
 
 }

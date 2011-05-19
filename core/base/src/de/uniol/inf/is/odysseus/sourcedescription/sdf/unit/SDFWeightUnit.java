@@ -25,4 +25,13 @@ public class SDFWeightUnit extends SDFUnit {
 	protected SDFWeightUnit(String URI) {
 		super(URI);
 	}
+	
+	public SDFWeightUnit(SDFWeightUnit sdfWeightUnit) {
+		super(sdfWeightUnit);
+	}
+
+	public SDFWeightUnit clone(){
+		return new SDFWeightUnit(this);
+	}
+	
 }

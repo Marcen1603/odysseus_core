@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 
 public class CombinedMergeFunction<T extends IClone> implements
-		IMetadataMergeFunction<T> {
+		IMetadataMergeFunction<T>, IClone {
 
 	protected static Logger _logger = null;
 

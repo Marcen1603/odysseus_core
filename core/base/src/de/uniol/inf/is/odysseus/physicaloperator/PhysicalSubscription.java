@@ -56,5 +56,10 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 		return super.equals(obj);
 	}
 	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
 	
 }

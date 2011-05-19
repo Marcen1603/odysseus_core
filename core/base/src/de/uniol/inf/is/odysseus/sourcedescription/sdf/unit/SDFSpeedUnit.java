@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.unit;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 public class SDFSpeedUnit extends SDFUnit {
 	/**
 	 * 
@@ -22,5 +24,14 @@ public class SDFSpeedUnit extends SDFUnit {
 
 	protected SDFSpeedUnit(String URI) {
 		super(URI);
+	}
+	
+	public SDFSpeedUnit(SDFSpeedUnit sdfSpeedUnit) {
+		super(sdfSpeedUnit);
+	}
+
+	@Override
+	public SDFElement clone() {
+		return new SDFSpeedUnit(this);
 	}
 }

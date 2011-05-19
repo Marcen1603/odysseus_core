@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 import java.io.Serializable;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
 /**
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
  */
 
 public class SDFAttribute extends SDFSchemaElement implements
-		Comparable<SDFAttribute>, Serializable {
+		Comparable<SDFAttribute>, Serializable, IClone {
 
 	/**
 	 * An attribute consists of two parts, the sourceName and the attributeName

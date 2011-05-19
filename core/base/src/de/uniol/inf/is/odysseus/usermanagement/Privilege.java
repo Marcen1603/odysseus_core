@@ -64,32 +64,8 @@ public final class Privilege implements Serializable {
 			}
 		}
 	}
-
-	@Override
-	/**
-	 * Indicates whether some other object is "equal to" this one.
-	 * A privilege has a final owner and only references to one object.
-	 * Because of that, there can't exist another privilege with the same owner on the same object.
-	 */
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (this.hashCode() == obj.hashCode())
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		Privilege other = (Privilege) obj;
-		if (this.owner.toString() != other.getOwner()) {
-			return false;
-		}
-		if (this.objecturi != other.getObject()) {
-			return false;
-		}
-		return true;
-	}
-
+	
+	
 	/**
 	 * Returns a privileges id.
 	 * 
@@ -97,6 +73,38 @@ public final class Privilege implements Serializable {
 	 */
 	public int getID() {
 		return this.ID;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((objecturi == null) ? 0 : objecturi.hashCode());
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Privilege other = (Privilege) obj;
+		if (objecturi == null) {
+			if (other.objecturi != null)
+				return false;
+		} else if (!objecturi.equals(other.objecturi))
+			return false;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
+			return false;
+		return true;
 	}
 
 	/**

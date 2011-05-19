@@ -38,26 +38,30 @@ public final class Role extends AbstractUserManagementEntity implements
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ID;
+		return result;
+	}
+
+
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
-		if (this.hashCode() == obj.hashCode())
-			return true;
 		if (getClass() != obj.getClass())
 			return false;
 		Role other = (Role) obj;
-		if (getRolename() == null) {
-			if (other.getRolename() != null)
-				return false;
-		} else if (!getRolename().equals(other.getRolename())) {
+		if (ID != other.ID)
 			return false;
-		} else if (this.privileges.equals(other.getPrivileges())) {
-			return true;
-		}
 		return true;
 	}
+
+
 
 	/**
 	 * Returns the id of the role.

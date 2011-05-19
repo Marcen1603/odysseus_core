@@ -23,10 +23,11 @@ import java.util.Set;
 
 import org.apache.commons.collections.map.MultiValueMap;
 
+import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
 
-public class LinkedMultiHashMap<K, V> implements Map<K, Collection<V>> {
+public class LinkedMultiHashMap<K, V> implements Map<K, Collection<V>>, IClone {
 
 	private class ValueIterator implements Iterator<V> {
 

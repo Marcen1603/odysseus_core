@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	private User user;
-	private IDataDictionary dataDictionary;
 
 	@Override
 	public String getLanguage() {
@@ -71,7 +70,6 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	@Override
 	public List<IQuery> parse(Reader reader, User user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
-		this.dataDictionary = dd;
 		SaseLexer lex = null;
 		try {
 			lex = new SaseLexer(new ANTLRReaderStream(reader));
@@ -79,18 +77,22 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			throw new RuntimeException(e);
 			//throw new QueryParseException(e);
 		}
-		return processParse(lex);
+		return processParse(lex, true);
 	}
 
 	@Override
 	public List<IQuery> parse(String text, User user, IDataDictionary dd) throws QueryParseException {
-		this.user = user;
-		this.dataDictionary = dd;
-		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
-		return processParse(lex);
+		return parse(text, user, dd, true);
 	}
+	
+		public List<IQuery> parse(String text, User user, IDataDictionary dd, boolean attachSources) throws QueryParseException {
+		this.user = user;
+		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
+		return processParse(lex, attachSources);
+	}
+	
 
-	private List<IQuery> processParse(SaseLexer lexer)
+	private List<IQuery> processParse(SaseLexer lexer, boolean attachSources)
 			throws QueryParseException {
 		ArrayList<IQuery> retList = new ArrayList<IQuery>();
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -114,7 +116,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		CepVariable.setSymbolTableOperationFactory(walker.symTableOpFac);
 
 		try {
-			ILogicalOperator ao = walker.start();
+			ILogicalOperator ao = walker.start(attachSources);
 			IQuery query = new Query();
 			query.setParserId(getLanguage());
 			query.setLogicalPlan(ao, true);

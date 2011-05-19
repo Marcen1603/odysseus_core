@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.unit;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 public class SDFDistanceUnit extends SDFUnit {
@@ -24,5 +25,14 @@ public class SDFDistanceUnit extends SDFUnit {
 
 	protected SDFDistanceUnit(String URI) {
 		super(URI);
+	}
+	
+	public SDFDistanceUnit(SDFDistanceUnit sdfDistanceUnit) {
+		super(sdfDistanceUnit);
+	}
+
+	@Override
+	public SDFElement clone() {
+		return new SDFDistanceUnit(this);
 	}
 }
