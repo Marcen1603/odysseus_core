@@ -14,9 +14,15 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.strategy;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class CurrentPlanPriorityComperator implements Comparator<IScheduling> {
+public class CurrentPlanPriorityComperator implements Comparator<IScheduling>, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public int compare(IScheduling p1, IScheduling p2) {

@@ -56,7 +56,6 @@ public class SDF {
 		sdffiles = new ArrayList<SDF>();
 		sdffiles.add(new SDFDatatypes());
 		sdffiles.add(new SDFDatatypeConstraints());
-		sdffiles.add(new SDFDescriptions());
 		sdffiles.add(new SDFFunctions());
 		sdffiles.add(new SDFPredicates());
 		sdffiles.add(new SDFSchema());

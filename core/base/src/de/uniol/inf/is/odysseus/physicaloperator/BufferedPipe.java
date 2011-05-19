@@ -35,9 +35,9 @@ import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
 
-	protected static Logger _logger = null;
+	volatile protected static Logger _logger = null;
 
-	protected static Logger getLogger() {
+	synchronized protected static Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(Query.class);
 		}

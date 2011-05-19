@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class TopAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 6533111765567598018L;
-	transient private ISink<?> physicalInput;
+	transient private ISink<?> physicalInput = null;
 
 	public TopAO(TopAO po) {
 		super(po);

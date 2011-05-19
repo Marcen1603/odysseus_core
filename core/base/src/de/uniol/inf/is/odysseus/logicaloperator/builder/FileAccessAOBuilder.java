@@ -49,7 +49,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	private final LongParameter delay = new LongParameter("DELAY",
 			REQUIREMENT.OPTIONAL);
 
-	Logger logger = LoggerFactory.getLogger(FileAccessAOBuilder.class);
+	static Logger logger = LoggerFactory.getLogger(FileAccessAOBuilder.class);
 
 	public FileAccessAOBuilder() {
 		super(0, 0);

@@ -37,7 +37,7 @@ public class SDFNumberConstant extends SDFConstant {
      * @param value
      */
     public SDFNumberConstant(String URI, double value) {
-        super(URI, ""+value,SDFDatatypeFactory.getDatatype(SDFDatatypes.Number));
+        super(URI, ""+value,SDFDatatypeFactory.getDatatype(SDFDatatypes.number));
     }
 
     /**
@@ -52,7 +52,7 @@ public class SDFNumberConstant extends SDFConstant {
      * @param value
      */
     public SDFNumberConstant(String URI, String value) {
-        super(URI,value, SDFDatatypeFactory.getDatatype(SDFDatatypes.Number));
+        super(URI,value, SDFDatatypeFactory.getDatatype(SDFDatatypes.number));
     }
 
     @Override

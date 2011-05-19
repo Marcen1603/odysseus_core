@@ -30,30 +30,30 @@ public class SDFDatatypeConstraints extends SDF {
 
 	public static String hasRange = baseURI + "hasRange";
 
-	public static String Granularity = baseURI + "Granularity";
+	public static String granularity = baseURI + "Granularity";
 	
 	public static String hasCovarianceMatrix = baseURI + "hasCovarianceMatrix";
 	
 	public static String dateFormat = baseURI + "dateFormat";
 	
-	public static String IntegerNumbers = baseURI + "IntegerNumbers";
+	public static String integerNumbers = baseURI + "IntegerNumbers";
 
-	public static String RationalNumbers = baseURI + "RationalNumbers";
+	public static String rationalNumbers = baseURI + "RationalNumbers";
 	
-	public static String MeasurementValues = baseURI + "MeasurementValues";
+	public static String measurementValues = baseURI + "MeasurementValues";
 
 	public static String hasGranularity = baseURI + "hasGranularity";
 	
 	public static boolean isInteger(SDFDatatypeConstraint constraint) {
-		return constraint.getURI(false).equals(IntegerNumbers);
+		return constraint.getURI(false).equals(integerNumbers);
 	}
 	
 	public static boolean isRational(SDFDatatypeConstraint type) {
-		return type.getURI(false).equals(RationalNumbers);
+		return type.getURI(false).equals(rationalNumbers);
 	}
 	
 	public static boolean isMeasurementValue(SDFDatatypeConstraint type){
-		return type.getURI(false).equals(MeasurementValues);
+		return type.getURI(false).equals(measurementValues);
 	}
 	
 	public static boolean isDateFormat(SDFDatatypeConstraint type){

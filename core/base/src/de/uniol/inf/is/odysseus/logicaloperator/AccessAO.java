@@ -78,7 +78,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 	/**
 	 * @return the source
 	 */
-	public synchronized SDFSource getSource() {
+	public SDFSource getSource() {
 		return source;
 	}
 
@@ -86,7 +86,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 	 * @param source
 	 *            the source to set
 	 */
-	public synchronized void setSource(SDFSource source) {
+	public void setSource(SDFSource source) {
 		this.source = source;
 	}
 

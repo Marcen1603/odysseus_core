@@ -29,11 +29,11 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
 		this.count = countPartialAggregate.count;
 	}
 
-	public synchronized int getCount() {
+	public int getCount() {
 		return count;
 	}
 	
-	public synchronized void add(){
+	public void add(){
 		//System.out.println("CountPartialAggregate "+count+" --> "+(count+1));
 		count=count+1;
 	}

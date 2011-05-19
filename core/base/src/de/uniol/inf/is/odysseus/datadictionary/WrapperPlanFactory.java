@@ -33,9 +33,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
  */
 public class WrapperPlanFactory {
 	
-	protected static Logger _logger = null;
+	volatile protected static Logger _logger = null;
 
-	protected static Logger getLogger() {
+	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(WrapperPlanFactory.class);
 		}

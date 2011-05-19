@@ -37,14 +37,14 @@ public class SDFStringConstant extends SDFConstant {
      * @param value
      */
     public SDFStringConstant(String URI, String value) {
-        super(URI, value, SDFDatatypeFactory.getDatatype(SDFDatatypes.String));
+        super(URI, value, SDFDatatypeFactory.getDatatype(SDFDatatypes.string));
     }
 
     /**
      * @param constValue
      */
     public SDFStringConstant(SDFConstant constValue) {
-        super(constValue.getURI(false), constValue.getString(), SDFDatatypeFactory.getDatatype(SDFDatatypes.String));
+        super(constValue.getURI(false), constValue.getString(), SDFDatatypeFactory.getDatatype(SDFDatatypes.string));
     }
 
 	@Override

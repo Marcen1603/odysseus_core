@@ -30,9 +30,9 @@ public class AbstractTreeWalker {
 	
 	public static <R,T extends ISubscriber, H extends ISubscription<T>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {
 		visitor.nodeAction(node);
-		if (!(node instanceof ISubscriber)){
-			return null;
-		}
+//		if (!(node instanceof ISubscriber)){
+//			return null;
+//		}
 		for (H s:node.getSubscribedToSource()){
 			visitor.descendAction(s.getTarget());
 			prefixWalk(s.getTarget(), visitor);

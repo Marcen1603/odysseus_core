@@ -29,8 +29,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.Polygon;
 
 public class Activator implements BundleActivator {
 
-	private static BundleContext bundleContext;
-
 	private IFunction[] functions = new IFunction[] { new DolToEur(),
 			new Now(), new Distance(), new Polygon() };
 
@@ -44,7 +42,6 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		// Add default Functions
-		bundleContext = context;
 		for (IFunction function : functions) {
 			MEP.registerFunction(function);
 		}
@@ -52,10 +49,6 @@ public class Activator implements BundleActivator {
 				new AccessAOBuilder());
 		OperatorBuilderFactory.putOperatorBuilderType("FILE",
 				new FileAccessAOBuilder());
-	}
-
-	public static BundleContext getBundleContext() {
-		return bundleContext;
 	}
 
 	/*

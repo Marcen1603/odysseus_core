@@ -27,7 +27,7 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 
 	private static final long serialVersionUID = 3955519214402695311L;
 
-	protected SDFSource source = null;
+	private SDFSource source = null;
 	private SDFAttributeList outputSchema;
 
 	private String path;
@@ -61,11 +61,11 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 		this.outputSchema = po.outputSchema.clone();
 	}
 
-	public synchronized SDFSource getSource() {
+	public SDFSource getSource() {
 		return source;
 	}
 
-	public synchronized void setSource(SDFSource source) {
+	public void setSource(SDFSource source) {
 		this.source = source;
 	}
 

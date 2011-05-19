@@ -363,20 +363,20 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void block() {
-		synchronized (blocked) {
+//		synchronized (blocked) {
 			this.blocked.set(true);
 			getLogger().debug("Operator " + this.toString() + " blocked");
 			fire(blockedEvent);
-		}
+//		}
 	}
 
 	@Override
 	public void unblock() {
-		synchronized (blocked) {
+//		synchronized (blocked) {
 			this.blocked.set(false);
 			getLogger().debug("Operator " + this.toString() + " unblocked");
 			fire(unblockedEvent);
-		}
+//		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -445,30 +445,32 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
+	// TODO: Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite Arrays (MG)
 	@Override
 	public void atomicReplaceSink(
 			List<PhysicalSubscription<ISink<? super T>>> remove,
 			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
 			SDFAttributeList schema) {
-		synchronized (this.sinkSubscriptions) {
+//		synchronized (this.sinkSubscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sub : remove) {
 				unsubscribeSink(sub);
 			}
 			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		}
+//		}
 	}
 
+	// TODO: Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite Arrays (MG)
 	@Override
 	public void atomicReplaceSink(
 			PhysicalSubscription<ISink<? super T>> remove,
 			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
 			SDFAttributeList schema) {
-		synchronized (this.sinkSubscriptions) {
+//		synchronized (this.sinkSubscriptions) {
 			unsubscribeSink(remove);
 			for (ISink<? super T> sink : sinks) {
 				subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 			}
-		}
+//		}
 	}
 
 	@Override

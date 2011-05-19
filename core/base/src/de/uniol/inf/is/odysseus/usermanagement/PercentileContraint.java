@@ -96,4 +96,49 @@ public class PercentileContraint implements
 	public boolean highInside() {
 		return highInside;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (highInside ? 1231 : 1237);
+		long temp;
+		temp = Double.doubleToLongBits(highSlaConformanceLevel);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(lowSlaConformanceLevel);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(penalty);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(width);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PercentileContraint other = (PercentileContraint) obj;
+		if (highInside != other.highInside)
+			return false;
+		if (Double.doubleToLongBits(highSlaConformanceLevel) != Double
+				.doubleToLongBits(other.highSlaConformanceLevel))
+			return false;
+		if (Double.doubleToLongBits(lowSlaConformanceLevel) != Double
+				.doubleToLongBits(other.lowSlaConformanceLevel))
+			return false;
+		if (Double.doubleToLongBits(penalty) != Double
+				.doubleToLongBits(other.penalty))
+			return false;
+		if (Double.doubleToLongBits(width) != Double
+				.doubleToLongBits(other.width))
+			return false;
+		return true;
+	}
+	
+	
 }

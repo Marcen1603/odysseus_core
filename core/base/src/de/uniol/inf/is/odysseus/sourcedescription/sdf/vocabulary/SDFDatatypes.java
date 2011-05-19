@@ -24,19 +24,19 @@ public class SDFDatatypes extends SDF {
 
 	public static String namespaceName = "sdfDatatypes";
 
-	public static String SDFDatatype = baseURI + "SDFDatatype";
+	public static String sDFDatatype = baseURI + "SDFDatatype";
 
-	public static String SDFBaseDatatype = baseURI + "SDFBaseDatatype";
+	public static String sDFBaseDatatype = baseURI + "SDFBaseDatatype";
 
-	public static String String = baseURI + "String";
+	public static String string = baseURI + "String";
 
-	public static String Number = baseURI + "Number";
+	public static String number = baseURI + "Number";
 
-	public static String Intervall = baseURI + "Intervall";
+	public static String intervall = baseURI + "Intervall";
 
-	public static String MeasurementValue = baseURI + "MeasurementValue";
+	public static String measurementValue = baseURI + "MeasurementValue";
 
-	public static String List = baseURI + "List";
+	public static String list = baseURI + "List";
 
 	public static String hasBaseDatatype = baseURI + "hasBaseDatatype";
 

@@ -45,6 +45,11 @@ public class SDFMetaAttribute extends SDFAttribute {
 			return false;
 		}		
 	}
+	
+	@Override
+	public int hashCode() {
+		return theclass.hashCode();
+	}
 			
 
 }

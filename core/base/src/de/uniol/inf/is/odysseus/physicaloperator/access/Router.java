@@ -82,7 +82,7 @@ public class Router extends Thread {
 
 	public void stopRouting() {
 		doRouting = false;
-		instance = null;
+		//instance = null;
 		selector.wakeup();
 	}
 

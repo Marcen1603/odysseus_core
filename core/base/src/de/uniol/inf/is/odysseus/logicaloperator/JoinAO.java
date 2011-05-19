@@ -45,11 +45,9 @@ public class JoinAO extends BinaryLogicalOp {
 
 	public JoinAO(JoinAO joinPO) {
 		super(joinPO);
-		// the outputSchema is only not null
-		// if method getOuputSchema has already been
-		// called
-		if (joinPO.outputSchema != null) {
-			this.outputSchema = joinPO.outputSchema.clone();
+		SDFAttributeList schema = joinPO.getOutputSchema();
+		if (schema != null) {
+			this.outputSchema = schema.clone();
 		}
 	}
 

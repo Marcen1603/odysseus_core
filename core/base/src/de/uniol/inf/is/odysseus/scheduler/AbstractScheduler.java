@@ -161,7 +161,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#startScheduling()
 	 */
 	@Override
-	public synchronized void startScheduling() {
+	public void startScheduling() {
 		this.isRunning = true;
 		if (outputDebug) {
 			try {
@@ -185,7 +185,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#stopScheduling()
 	 */
 	@Override
-	public synchronized void stopScheduling() {
+	public void stopScheduling() {
 		this.isRunning = false;
 		if (outputDebug) {
 			try {

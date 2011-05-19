@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.metadata;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.IClone;
@@ -21,7 +22,9 @@ import de.uniol.inf.is.odysseus.IClone;
 /**
  * @author Jonas Jacobi
  */
-public class MetadataComparator<T extends IClone> implements Comparator<IMetaAttributeContainer<? extends T>> {
+public class MetadataComparator<T extends IClone> implements Comparator<IMetaAttributeContainer<? extends T>>, Serializable {
+
+	private static final long serialVersionUID = -1674438499933717924L;
 
 	@Override
 	@SuppressWarnings("unchecked")
