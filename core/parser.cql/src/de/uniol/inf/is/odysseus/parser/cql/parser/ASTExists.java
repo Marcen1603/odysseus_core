@@ -16,7 +16,6 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperator;
 
 public class ASTExists extends AbstractQuantificationPredicate {
 
@@ -40,7 +39,7 @@ public class ASTExists extends AbstractQuantificationPredicate {
 	}
 
 	@Override
-	public SDFCompareOperator getCompareOperator() {
+	public String getCompareOperator() {
 		return null;
 	}
 

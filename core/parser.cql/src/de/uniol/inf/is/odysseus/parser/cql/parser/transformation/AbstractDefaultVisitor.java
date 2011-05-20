@@ -18,67 +18,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperatorFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFPredicates;
 
 public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
-	public static SDFCompareOperator toCompareOperator(String string) {
-		if (string.equals("=")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.Equal);
-		}
+	public static String toCompareOperator(String string) {
 		if (string.equals("<>")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.Unequal);
+			return "!=";
 		}
-		if (string.equals(">=")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.GreaterOrEqualThan);
+		if (string.equals("=")) {
+			return "==";
 		}
-		if (string.equals("<=")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.LowerOrEqualThan);
-		}
-		if (string.equals(">")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.GreaterThan);
-		}
-		if (string.equals("<")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.LowerThan);
-		}
-		return null;
+		return string;
 	}
 
-	public static SDFCompareOperator toInverseCompareOperator(String string) {
+	public static String toInverseCompareOperator(String string) {
 		if (string.equals("<>")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.Equal);
+			return "==";
 		}
 		if (string.equals("=")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.Unequal);
+			return "!=";
 		}
 		if (string.equals("<")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.GreaterOrEqualThan);
+			return  ">=";
 		}
 		if (string.equals(">")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.LowerOrEqualThan);
+			return "<=";
 		}
 		if (string.equals("<=")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.GreaterThan);
+			return ">";
 		}
 		if (string.equals(">=")) {
-			return SDFCompareOperatorFactory
-					.getCompareOperator(SDFPredicates.LowerThan);
+			return "<";
 		}
 		return null;
 	}

@@ -17,7 +17,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperator;
 
 public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	public ASTAllPredicate(int id) {
@@ -50,7 +49,7 @@ public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.IExistencePredicate#getCompareOperator()
 	 */
 	@Override
-	public SDFCompareOperator getCompareOperator() {
+	public String getCompareOperator() {
 		return AbstractDefaultVisitor
 				.toInverseCompareOperator(jjtGetChild(1).toString());
 	}
