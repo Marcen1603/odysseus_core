@@ -10,6 +10,8 @@
 package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
@@ -40,6 +42,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 	
 	
 	private Triple triple;
+	private HashMap<String, String> prefixes;
 	
     /**
      * The variable to set in every sparql solution.
@@ -94,9 +97,11 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
      */
     private IPredicate selectionPredicate;
     
-    public TriplePatternMatching(Triple t){
+    public TriplePatternMatching(Triple t, HashMap<String, String> prefixes){
         super();
         this.triple = t;
+        this.prefixes = prefixes;
+        this.replacePrefixes();
     }
     
     private TriplePatternMatching(TriplePatternMatching tpm){
@@ -105,13 +110,19 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
         this.stream_name = tpm.getStream_name();
         this.outputSchema = tpm.outputSchema;
         this.selectionPredicate = tpm.selectionPredicate;
+        this.prefixes = tpm.prefixes;
+        // don't replace prefixes here
+        // this must have been done in
+        // original triple pattern matching
     }
     
-    public TriplePatternMatching(Triple t, Variable n, String stream_name){
+    public TriplePatternMatching(Triple t, Variable n, String stream_name, HashMap<String, String> prefixes){
         super();
         this.triple = t;
         this.graphVar = n;
         this.stream_name = stream_name;
+        this.prefixes = prefixes;
+        this.replacePrefixes();
     }
     
     public TriplePatternMatching clone(){
@@ -274,7 +285,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
     }
 
     public void setStream_name(String stream_name) {
-        this.stream_name = stream_name;
+        this.stream_name = stream_name;        
     }
 
 	@Override
@@ -288,4 +299,29 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		}
 		return this.outputSchema;
 	}
+	
+	private void replacePrefixes(){
+		if(!this.triple.getSubject().isVariable()){
+			int index = this.triple.getSubject().getName().indexOf(":");
+			String prefix = this.triple.getSubject().getName().substring(0, index + 1);
+			this.triple.getSubject().setName(this.triple.getSubject().getName().replace(prefix, this.prefixes.get(prefix)));
+		}
+		
+		if(!this.triple.getPredicate().isVariable()){
+			int index = this.triple.getPredicate().getName().indexOf(":");
+			String prefix = this.triple.getPredicate().getName().substring(0, index + 1);
+			try{
+				this.triple.getPredicate().setName(this.triple.getPredicate().getName().replace(prefix, this.prefixes.get(prefix)));
+			}catch(NullPointerException e){
+				e.printStackTrace();
+			}
+		}
+		
+		if(!this.triple.getObject().isVariable()){
+			int index = this.triple.getObject().getName().indexOf(":");
+			String prefix = this.triple.getObject().getName().substring(0, index + 1);
+			this.triple.getObject().setName(this.triple.getObject().getName().replace(prefix, this.prefixes.get(prefix)));
+		}
+	}
+
 }

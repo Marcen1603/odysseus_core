@@ -223,9 +223,6 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	@Override
 	public Object visit(ASTSelectQuery node, Object data) {
 		
-		// the data that can be passed to child nodes
-		LinkedList newData = new LinkedList();
-		
 		ILogicalOperator logOp = null;
 		
 		this.defaultStreams = node.getDefaultStreams();
@@ -258,7 +255,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		for(int i = 0; i<node.jjtGetNumChildren(); i++){
 			Node curChild = node.jjtGetChild(i);
 			if(curChild instanceof ASTWhereClause){
-				inputForProjection = (ILogicalOperator)((LinkedList)curChild.jjtAccept(this, newData)).get(0);
+				inputForProjection = (ILogicalOperator)((LinkedList)curChild.jjtAccept(this, new LinkedList())).get(0);
 				break;
 			}
 		}
@@ -525,10 +522,10 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	@Override
 	public Object visit(ASTGroupGraphPattern node, Object data) {
 		// the data that can be passed to the child nodes
-		LinkedList newData = new LinkedList();
+		LinkedList oldDataCopy = new LinkedList();
 		LinkedList oldData = (LinkedList)data;
 		for(int i = 0; i<oldData.size(); i++){
-			newData.add(oldData.get(i));
+			oldDataCopy.add(oldData.get(i));
 		}
 		
 		// this is the window that can be defined in a basic
@@ -586,14 +583,19 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 					// subject triples
 					List<TriplePatternMatching> tpmAOs = new ArrayList<TriplePatternMatching>();
 					for(Triple curTriple: sameSubjTriples){
-						TriplePatternMatching tpm = new TriplePatternMatching(curTriple);
+						TriplePatternMatching tpm = new TriplePatternMatching(curTriple, this.prefixes);
 						
 						// check, if there is a variable
 						LinkedList dataList = (LinkedList)data;
 						if(dataList.size() > 0){
 							// get the name of the named stream to build the plan for
 							String namedStream = null;
-							INode graphTerm = ((INode)dataList.getFirst());
+							INode graphTerm = null;
+							try{
+								graphTerm = ((INode)dataList.getFirst());
+							}catch(ClassCastException e){
+								throw e;
+							}
 							if(graphTerm.isVariable()){
 								namedStream = (String)dataList.get(1); 
 								tpm.setGraphVar((Variable)graphTerm);
@@ -624,49 +626,64 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 								}
 							}
 							
-							win.subscribeToSource(accessAO, 0, 0, accessAO.getOutputSchema());
-							tpm.subscribeToSource(win, 0, 0, win.getOutputSchema());
-							tpm.initPredicate();
+							// the window definitions can be null
+							// since we allow non continuous sparql
+							// queries
+							if(win != null){
+								win.subscribeToSource(accessAO, 0, 0, accessAO.getOutputSchema());
+								tpm.subscribeToSource(win, 0, 0, win.getOutputSchema());
+								tpm.initPredicate();
+							}
+							else{
+								tpm.subscribeToSource(accessAO, 0, 0, accessAO.getOutputSchema());
+								tpm.initPredicate();
+							}
 						}
 						// do it for all default streams
 						else if(dataList.size() == 0){
 							// for each default stream get the access ao from the data dictionary
 							// and add a window
-							List<WindowAO> windowOps = new ArrayList<WindowAO>();
+							List<ILogicalOperator> topOps = new ArrayList<ILogicalOperator>();
 							for(int di = 0; di<this.defaultStreams.size(); di++){
-								WindowAO win = null;
+								ILogicalOperator top = null;
 								ILogicalOperator accessAO = this.dd.getViewOrStream(this.defaultStreams.get(di).getStreamName(), this.user);
 								if(explicitWindow != null){
 									explicitWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
-									win = explicitWindow;
+									top = explicitWindow;
 								}
 								// there is no explicit window so use the default window
 								else{
-									WindowAO defaultWindow = this.defaultStreams.get(di).getWindowOp().clone(); 
-									defaultWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
-									win = defaultWindow;
+									if(this.defaultStreams.get(di).getWindowOp() != null){
+										WindowAO defaultWindow = this.defaultStreams.get(di).getWindowOp().clone(); 
+										defaultWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
+										top = defaultWindow;
+									}
+									else{
+										// no window means we have a non continuous query
+										top = accessAO;
+									}
 								}
 								
-								windowOps.add(win);
+								topOps.add(top);
 							}
 							
 							// now union all window aos
-							if(windowOps.size() == 1){
+							if(topOps.size() == 1){
 								// the windowOps can be connected directly to the triple pattern matchin
-								tpm.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
+								tpm.subscribeToSource(topOps.get(0), 0, 0, topOps.get(0).getOutputSchema());
 								tpm.initPredicate();
 							}
-							else if(windowOps.size() > 1){
+							else if(topOps.size() > 1){
 								// a union operator is necessary
 								UnionAO union = new UnionAO();
-								union.subscribeToSource(windowOps.get(0), 0, 0, windowOps.get(0).getOutputSchema());
-								union.subscribeToSource(windowOps.get(1), 1, 0, windowOps.get(1).getOutputSchema());
+								union.subscribeToSource(topOps.get(0), 0, 0, topOps.get(0).getOutputSchema());
+								union.subscribeToSource(topOps.get(1), 1, 0, topOps.get(1).getOutputSchema());
 								
 								// process further unions
-								for(int ui = 2; ui<windowOps.size(); ui++ ){
+								for(int ui = 2; ui<topOps.size(); ui++ ){
 									UnionAO innerUnion = new UnionAO();
 									innerUnion.subscribeToSource(union, 0, 0, union.getOutputSchema());
-									innerUnion.subscribeToSource(windowOps.get(ui), 1, 0, windowOps.get(ui).getOutputSchema());
+									innerUnion.subscribeToSource(topOps.get(ui), 1, 0, topOps.get(ui).getOutputSchema());
 									union = innerUnion;
 								}
 								
@@ -761,6 +778,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 				// get the child of this graph pattern, because
 				// this is the relevant one
 				// jjt: GraphPatternNotTriples:: (OptionalGraphPattern() | GroupOrUnionGraphPattern() | GraphGraphPattern())
+				
+				// newData has to be copied, since this code is in a loop and will therefore executed multiple times
+				LinkedList newData = new LinkedList();
+				for(Object old: oldDataCopy){
+					newData.add(old);
+				}
+				
 				ILogicalOperator topOp = (ILogicalOperator)((LinkedList)child.jjtAccept(this, newData)).getFirst();
 				
 				topsOfNestedPatterns.add(topOp);
@@ -1212,6 +1236,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		Node child = node.jjtGetChild(1);
 		
 		String streamName = node.getStreamName();
+		boolean isPersistent = node.isPersistent();
 		
 		// the schema
 		SDFAttributeList outputSchema = new SDFAttributeList();
@@ -1265,7 +1290,10 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		dd.addSourceType(streamName, accAO.getSourceType());
 		dd.addEntity(streamName, entity, user);
 		
-		ILogicalOperator op = addTimestampAO(accAO);
+		TimestampAO op = addTimestampAO(accAO);
+		if(isPersistent){
+			op.setUsingNoTime(true);
+		}
 		this.dd.setStream(node.getStreamName(), op, this.user);
 		
 		((LinkedList)data).addFirst(op);
@@ -1375,52 +1403,58 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			return new TruePredicate();
 		}
 		
-		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
+//		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
 		
 		SDFAttributeList outputSchema = SDFAttributeList.union(leftSchema, rightSchema);
 		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
 		
-		
+		// create the join predicate as an expression completely parsed in MEP
+		String exprStr = "";
 		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
 			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
 			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
-			String exprStr = curLeftAttr.getPointURI() + " == " + curRightAttr.getPointURI();
-			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
-			exprs.add(expr);
-		}
-		
-		IPredicate retval = null;
-		
-		
-		// more than one common variable
-		// so build a tree of and predicates
-		if(exprs.size() > 1){
-			TypeSafeRelationalPredicate firstRelational = new TypeSafeRelationalPredicate(exprs.get(0));
-			firstRelational.init(leftSchema, rightSchema);
-			
-			IPredicate left = firstRelational;
-			
-			for(int i = 1; i<exprs.size(); i++){
-				TypeSafeRelationalPredicate right = new TypeSafeRelationalPredicate(exprs.get(i));
-				right.init(leftSchema, rightSchema);
-				AndPredicate tempAnd = new AndPredicate(left, right);
-				left = tempAnd;
+			if(i > 0){
+				exprStr += " AND ";
 			}
-			
-			retval = left;
+			exprStr += curLeftAttr.getPointURI() + " == " + curRightAttr.getPointURI();
+//			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+//			exprs.add(expr);
 		}
-		// only one common variable, so
-		// return corresponding relational predicate
-		else if(exprs.size() == 1){
-			TypeSafeRelationalPredicate firstRelational = new TypeSafeRelationalPredicate(exprs.get(0));
-			firstRelational.init(leftSchema, rightSchema);
-			retval = firstRelational;
-		}
+		
+		SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+		
+		IPredicate retval = new TypeSafeRelationalPredicate(expr);
+		
+		
+//		// more than one common variable
+//		// so build a tree of and predicates
+//		if(exprs.size() > 1){
+//			TypeSafeRelationalPredicate firstRelational = new TypeSafeRelationalPredicate(exprs.get(0));
+//			firstRelational.init(leftSchema, rightSchema);
+//			
+//			IPredicate left = firstRelational;
+//			
+//			for(int i = 1; i<exprs.size(); i++){
+//				TypeSafeRelationalPredicate right = new TypeSafeRelationalPredicate(exprs.get(i));
+//				right.init(leftSchema, rightSchema);
+//				AndPredicate tempAnd = new AndPredicate(left, right);
+//				left = tempAnd;
+//			}
+//			
+//			retval = left;
+//		}
+//		// only one common variable, so
+//		// return corresponding relational predicate
+//		else if(exprs.size() == 1){
+//			TypeSafeRelationalPredicate firstRelational = new TypeSafeRelationalPredicate(exprs.get(0));
+//			firstRelational.init(leftSchema, rightSchema);
+//			retval = firstRelational;
+//		}
 		
 		return retval;
 	}
 
-	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
+	private TimestampAO addTimestampAO(ILogicalOperator operator) {
 		TimestampAO timestampAO = new TimestampAO();
 		for (SDFAttribute attr : operator.getOutputSchema()) {
 			if (attr.getDatatype().getURI().equals("StartTimestamp")) {

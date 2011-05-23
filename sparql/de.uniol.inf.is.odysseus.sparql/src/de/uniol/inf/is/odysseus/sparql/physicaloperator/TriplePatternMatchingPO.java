@@ -54,9 +54,11 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		this.stream_name = tpm.getStream_name();
 		this.predicate = tpm.getPredicate();
 		this.outputSchema = tpm.getOutputSchema();
+		this.setName(super.getName() + ": " + this.predicate.toString());
 	}
 	
 	public TriplePatternMatchingPO(TriplePatternMatchingPO original){
+		super(original);
 		this.queryTriple = original.queryTriple;
 		this.graphVar = original.graphVar;
 		this.stream_name = original.stream_name;
@@ -66,13 +68,51 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	
 	protected synchronized void process_next(RelationalTuple<M> object, int port) {
 		
-		// TODO: Entfernen des Tests auf selectPredicate --> Restrukturierung!!
-		if (this.predicate.evaluate(object)) {
+		// first the object has to be transformed
+		// things like "xyz"^^http://...#string must be
+		// xyz		
+		if (this.predicate.evaluate(preprocess(object))) {
 			this.transfer(this.transform(object));
+			if(this.hashCode() == 18250880){
+				String a = "null";
+			}
 		}
 
 	}
 	
+	private RelationalTuple<M> preprocess(RelationalTuple<M> element){
+		// first clone the element
+		RelationalTuple<M> newElem = element.clone();
+		
+		if(!this.queryTriple.getSubject().isVariable()){
+			newElem = preprocess(newElem, 0);
+		}
+		
+		if(!this.queryTriple.getPredicate().isVariable()){
+			newElem = preprocess(newElem, 1);
+		}
+		
+		if(!this.queryTriple.getObject().isVariable()){
+			newElem = preprocess(newElem, 2);
+		}
+		
+		return newElem;
+	}
+	
+	private RelationalTuple<M> preprocess(RelationalTuple<M> element, int attrPos){
+		// remove datatype information
+		int hatPos = ((String)element.getAttribute(attrPos)).indexOf("^^");
+		if(hatPos != -1){
+			String modified = ((String)element.getAttribute(attrPos)).substring(0, hatPos-1);
+			element.setAttribute(attrPos, modified);
+		}
+		
+		// remove quotes
+		String withoutQuotes = ((String)element.getAttribute(attrPos)).replace("\"", "");
+		element.setAttribute(attrPos, withoutQuotes);
+
+		return element;
+	}
 	
 	private RelationalTuple<M> transform(RelationalTuple<M> element){
 		
@@ -105,6 +145,11 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	
 	public void process_close(){
 	}
+	
+	public void process_done(){
+		System.out.println("TPM (" + this.hashCode() + ").processDone()");
+		super.process_done();
+	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
@@ -121,5 +166,9 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	public AbstractPipe<RelationalTuple<M>, RelationalTuple<M>> clone() {
 		// TODO Auto-generated method stub
 		return new TriplePatternMatchingPO(this);
+	}
+	
+	public String toString(){
+		return "TriplePatternMatchingPO (" + this.hashCode() + "): " + this.predicate;
 	}
 }

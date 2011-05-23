@@ -78,6 +78,7 @@ void CreateStatement() :
   
   ( Socket() | Channel() | CSVSource())
  
+  (< PERSISTENT > {jjtThis.setPersistent(true);})?
 }
 
 void Socket() :
@@ -297,14 +298,14 @@ void DatastreamClause(List<SourceInfo> sources) : {SourceInfo si;}
 SourceInfo StreamClause() : 
 { 
     INode streamName;
-    WindowAO window;
+    WindowAO window = null;
     AccessAO access;
     boolean named = false;
 }
 {
   <STREAM> [<NAMED>{named=true;}]
   streamName = SourceSelector()
-  window = Window()
+  (window = Window())?
   {
     SDFSource sdfSource = new SDFSource(streamName.getName(), SPARQLAccessSourceTypes.RDF);
 	access = new AccessAO(sdfSource);
@@ -865,7 +866,7 @@ INode Object(): {INode object;}
 INode Verb() : {INode p ; Token t;}
 {
 //   ( p = VarOrBlankNodeOrIRIref() | <KW_A> { p = nRDFtype ; } )
-  ( p = VarOrIRIref() | t=<KW_A>{ p = new Literal(t.image);}  )
+  ( p = VarOrIRIref() | t=<KW_A>{ p = new Literal("rdf:type");}  )
     { return p ; }
 }
 
@@ -1259,10 +1260,11 @@ BlankNode BlankNode() : { Token t = null ; }
 
 }
 
-IRI IRI_REF() : { Token t ; }
+IRI IRI_REF() : { Token t ; String formatted = null;}
 {
-  (t = <IRIref> | t = <PNAME_LN>)
-  { return new IRI(t.image); }
+  // we don't need leading "<" and trailing ">"
+  (t = <IRIref> {formatted = t.image.substring(1, t.image.length() - 1);} | t = <PNAME_LN> {formatted = t.image;})
+  { return new IRI(formatted); }
 }
 
 // ------------------------------------------
@@ -1335,6 +1337,7 @@ TOKEN [IGNORE_CASE] :
 | < NAMED: "named" >
 | < FROM: "from" >
 | < STREAM: "stream" >
+| < PERSISTENT: "persistent" >
 
 | < CREATE : "create" >
 | < ATTACH: "attach" >

@@ -36,7 +36,7 @@ public class TTriplePatternMatchingRule<M extends IMetaAttribute> extends Abstra
 	public void execute(TriplePatternMatching tpmAO, TransformationConfiguration transformConfig) {
 		
 		TriplePatternMatchingPO<M> tpmPO = new TriplePatternMatchingPO<M>(tpmAO);
-		
+		tpmPO.setOutputSchema(tpmAO.getOutputSchema());
 		
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(tpmAO, tpmPO);
 		for (ILogicalOperator o:toUpdate){

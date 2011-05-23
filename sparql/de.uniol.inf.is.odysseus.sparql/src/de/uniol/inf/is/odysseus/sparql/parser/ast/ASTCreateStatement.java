@@ -6,6 +6,7 @@ public
 class ASTCreateStatement extends SimpleNode {
   
 	String streamName;
+	boolean isPersistent;
 	
 	public String getStreamName() {
 		return streamName;
@@ -13,6 +14,14 @@ class ASTCreateStatement extends SimpleNode {
 
 	public void setStreamName(String streamName) {
 		this.streamName = streamName;
+	}
+	
+	public void setPersistent(boolean b){
+		this.isPersistent = b;
+	}
+	
+	public boolean isPersistent(){
+		return this.isPersistent;
 	}
 
 	public ASTCreateStatement(int id) {

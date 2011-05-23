@@ -148,7 +148,9 @@ void CreateStatement() :
   
   ( < FROM > | < WITH > )
   
-  ( Socket() | Channel() | CSVSource())/*@bgen(jjtree)*/
+  ( Socket() | Channel() | CSVSource())
+ 
+  (< PERSISTENT > {jjtn000.setPersistent(true);})?/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -169,7 +171,6 @@ void CreateStatement() :
     }
   }
 /*@egen*/
- 
 }
 
 void Socket() :
@@ -769,7 +770,7 @@ SourceInfo StreamClause() :
     jjtree.openNodeScope(jjtn000);
 /*@egen*/ 
     INode streamName;
-    WindowAO window;
+    WindowAO window = null;
     AccessAO access;
     boolean named = false;
 }
@@ -778,7 +779,7 @@ SourceInfo StreamClause() :
 /*@egen*/
   <STREAM> [<NAMED>{named=true;}]
   streamName = SourceSelector()
-  window = Window()/*@bgen(jjtree)*/
+  (window = Window())?/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -2262,7 +2263,7 @@ INode Verb() : {/*@bgen(jjtree) Verb */
   try {
 /*@egen*/
 //   ( p = VarOrBlankNodeOrIRIref() | <KW_A> { p = nRDFtype ; } )
-  ( p = VarOrIRIref() | t=<KW_A>{ p = new Literal(t.image);}  )/*@bgen(jjtree)*/
+  ( p = VarOrIRIref() | t=<KW_A>{ p = new Literal("rdf:type");}  )/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -3685,17 +3686,18 @@ IRI IRI_REF() : {/*@bgen(jjtree) IRI_REF */
                   ASTIRI_REF jjtn000 = new ASTIRI_REF(JJTIRI_REF);
                   boolean jjtc000 = true;
                   jjtree.openNodeScope(jjtn000);
-/*@egen*/ Token t ; }
+/*@egen*/ Token t ; String formatted = null;}
 {/*@bgen(jjtree) IRI_REF */
   try {
 /*@egen*/
-  (t = <IRIref> | t = <PNAME_LN>)/*@bgen(jjtree)*/
+  // we don't need leading "<" and trailing ">"
+  (t = <IRIref> {formatted = t.image.substring(1, t.image.length() - 1);} | t = <PNAME_LN> {formatted = t.image;})/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
 /*@egen*/
-  { return new IRI(t.image); }/*@bgen(jjtree)*/
+  { return new IRI(formatted); }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -3774,6 +3776,7 @@ TOKEN [IGNORE_CASE] :
 | < NAMED: "named" >
 | < FROM: "from" >
 | < STREAM: "stream" >
+| < PERSISTENT: "persistent" >
 
 | < CREATE : "create" >
 | < ATTACH: "attach" >
