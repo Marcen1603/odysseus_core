@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 
 /**
  * This sweeparea implementation provides some optimizations on extract and
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSweepArea;
  */
 public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractSweepArea<T> implements
-		Comparable<DefaultTISweepArea<T>> {
+		Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
 	// private static final Logger logger =
 	// LoggerFactory.getLogger(ITemporalSweepArea.class);
 

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
@@ -62,7 +62,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		return _logger;
 	}
 		
-	protected ITemporalSweepArea<T>[] areas;
+	protected ITimeIntervalSweepArea<T>[] areas;
 	protected IPredicate<? super T> joinPredicate;
 
 	protected IDataMergeFunction<T> dataMerge;
@@ -85,7 +85,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	public JoinTIPO(IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
-			ITransferArea<T,T> transferFunction, ITemporalSweepArea<T>[] areas) {
+			ITransferArea<T,T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
@@ -100,9 +100,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public JoinTIPO(JoinTIPO<K, T> join) {
 		super(join);
 		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
-		this.areas = (ITemporalSweepArea<T>[]) join.areas.clone();
+		this.areas = (ITimeIntervalSweepArea<T>[]) join.areas.clone();
 		int i = 0;
-		for (ITemporalSweepArea<T> ja : join.areas) {
+		for (ITimeIntervalSweepArea<T> ja : join.areas) {
 			this.areas[i] = ja.clone();
 			i++;
 		}
@@ -136,7 +136,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		this.metadataMerge = metadataMerge;
 	}
 
-	public void setAreas(ITemporalSweepArea<T>[] areas) {
+	public void setAreas(ITimeIntervalSweepArea<T>[] areas) {
 		this.areas = areas;
 		if (this.joinPredicate != null) {
 			areas[0].setQueryPredicate(this.joinPredicate);
@@ -173,6 +173,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
+		if(this.hashCode() == 28556972){
+			int i = 0;
+			i++;
+		}
+		
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
@@ -253,6 +258,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_done() {
+		System.out.println("JoinTIPO(" + this.hashCode() + ").processDone()");
 		transferFunction.done();
 		areas[0].clear();
 		areas[1].clear();
@@ -273,7 +279,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 	}
 
-	public ITemporalSweepArea<T>[] getAreas() {
+	public ITimeIntervalSweepArea<T>[] getAreas() {
 		return areas;
 	}
 
@@ -345,6 +351,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public String getName(){
+		return super.getName() + "Left SA: " + this.getAreas()[0].toString() + " Right SA: " + this.getAreas()[1].toString();
 	}
 
 }

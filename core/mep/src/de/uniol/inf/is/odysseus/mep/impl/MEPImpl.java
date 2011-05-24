@@ -67,7 +67,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       case CHAR_LITERAL:
         Constant();
         break;
-      case 16:
+      case 18:
         Negation();
         break;
       case LRND:
@@ -75,10 +75,10 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
         OrExpression();
         jj_consume_token(RRND);
         break;
-      case 15:
+      case 17:
         UnaryMinus();
         break;
-      case 30:
+      case 32:
         Matrix();
         break;
       default:
@@ -90,7 +90,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   }
 
   final public void UnaryMinus() throws ParseException {
-    jj_consume_token(15);
+    jj_consume_token(17);
     UnaryExpression();
     ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
     boolean jjtc001 = true;
@@ -107,7 +107,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   }
 
   final public void Negation() throws ParseException {
-    jj_consume_token(16);
+    jj_consume_token(18);
     UnaryExpression();
     ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
     boolean jjtc001 = true;
@@ -128,14 +128,14 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 17:
+      case 19:
         ;
         break;
       default:
         jj_la1[1] = jj_gen;
         break label_1;
       }
-      jj_consume_token(17);
+      jj_consume_token(19);
       UnaryExpression();
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;
@@ -158,9 +158,9 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 18:
-      case 19:
       case 20:
+      case 21:
+      case 22:
         ;
         break;
       default:
@@ -168,14 +168,14 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
         break label_2;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 18:
-        t = jj_consume_token(18);
-        break;
-      case 19:
-        t = jj_consume_token(19);
-        break;
       case 20:
         t = jj_consume_token(20);
+        break;
+      case 21:
+        t = jj_consume_token(21);
+        break;
+      case 22:
+        t = jj_consume_token(22);
         break;
       default:
         jj_la1[3] = jj_gen;
@@ -203,8 +203,8 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 15:
-      case 21:
+      case 17:
+      case 23:
         ;
         break;
       default:
@@ -212,8 +212,8 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
         break label_3;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 21:
-        jj_consume_token(21);
+      case 23:
+        jj_consume_token(23);
         MultiplicativeExpression();
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;
@@ -228,8 +228,8 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       }
         }
         break;
-      case 15:
-        jj_consume_token(15);
+      case 17:
+        jj_consume_token(17);
         MultiplicativeExpression();
     ASTFunction jjtn002 = new ASTFunction(JJTFUNCTION);
     boolean jjtc002 = true;
@@ -258,10 +258,10 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 22:
-      case 23:
       case 24:
       case 25:
+      case 26:
+      case 27:
         ;
         break;
       default:
@@ -269,17 +269,17 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
         break label_4;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 22:
-        t = jj_consume_token(22);
-        break;
-      case 23:
-        t = jj_consume_token(23);
-        break;
       case 24:
         t = jj_consume_token(24);
         break;
       case 25:
         t = jj_consume_token(25);
+        break;
+      case 26:
+        t = jj_consume_token(26);
+        break;
+      case 27:
+        t = jj_consume_token(27);
         break;
       default:
         jj_la1[7] = jj_gen;
@@ -307,14 +307,14 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 26:
+      case 28:
         ;
         break;
       default:
         jj_la1[8] = jj_gen;
         break label_5;
       }
-      jj_consume_token(26);
+      jj_consume_token(28);
       ComparisonExpression();
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;
@@ -336,14 +336,26 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 27:
+      case K_AND:
+      case 29:
         ;
         break;
       default:
         jj_la1[9] = jj_gen;
         break label_6;
       }
-      jj_consume_token(27);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 29:
+        jj_consume_token(29);
+        break;
+      case K_AND:
+        jj_consume_token(K_AND);
+        break;
+      default:
+        jj_la1[10] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
       EqualityComparison();
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;
@@ -365,14 +377,26 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 28:
+      case K_OR:
+      case 30:
         ;
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[11] = jj_gen;
         break label_7;
       }
-      jj_consume_token(28);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 30:
+        jj_consume_token(30);
+        break;
+      case K_OR:
+        jj_consume_token(K_OR);
+        break;
+      default:
+        jj_la1[12] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
       AndExpression();
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;
@@ -421,7 +445,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     jjtn000.setValue(Boolean.parseBoolean(t.image));
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[13] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -451,7 +475,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
         jj_consume_token(RRND);
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[14] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -501,26 +525,26 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     case CHAR_LITERAL:
     case IDENTIFIER:
     case LRND:
-    case 15:
-    case 16:
-    case 30:
+    case 17:
+    case 18:
+    case 32:
       OrExpression();
       label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 29:
+        case 31:
           ;
           break;
         default:
-          jj_la1[13] = jj_gen;
+          jj_la1[15] = jj_gen;
           break label_8;
         }
-        jj_consume_token(29);
+        jj_consume_token(31);
         OrExpression();
       }
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[16] = jj_gen;
       ;
     }
   }
@@ -531,22 +555,22 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(30);
+      jj_consume_token(32);
       MatrixLine();
       label_9:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 31:
+        case 33:
           ;
           break;
         default:
-          jj_la1[15] = jj_gen;
+          jj_la1[17] = jj_gen;
           break label_9;
         }
-        jj_consume_token(31);
+        jj_consume_token(33);
         MatrixLine();
       }
-      jj_consume_token(32);
+      jj_consume_token(34);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -578,14 +602,14 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       label_10:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 29:
+        case 31:
           ;
           break;
         default:
-          jj_la1[16] = jj_gen;
+          jj_la1[18] = jj_gen;
           break label_10;
         }
-        jj_consume_token(29);
+        jj_consume_token(31);
         OrExpression();
       }
     } catch (Throwable jjte000) {
@@ -633,7 +657,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[17];
+  final private int[] jj_la1 = new int[19];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -641,10 +665,10 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x4001c6e0,0x20000,0x1c0000,0x1c0000,0x208000,0x208000,0x3c00000,0x3c00000,0x4000000,0x8000000,0x10000000,0x2e0,0x4400,0x20000000,0x4001c6e0,0x80000000,0x20000000,};
+      jj_la1_0 = new int[] {0x71b80,0x80000,0x700000,0x700000,0x820000,0x820000,0xf000000,0xf000000,0x10000000,0x20000020,0x20000020,0x40000040,0x40000040,0xb80,0x11000,0x80000000,0x71b80,0x0,0x80000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x2,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
@@ -661,7 +685,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -677,7 +701,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -688,7 +712,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -700,7 +724,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -710,7 +734,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -721,7 +745,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -833,12 +857,12 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[33];
+    boolean[] la1tokens = new boolean[35];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 19; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -850,7 +874,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
         }
       }
     }
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < 35; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

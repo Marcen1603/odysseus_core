@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
-import de.uniol.inf.is.odysseus.objecttracking.util.ComparablePair;
+import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPair;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateInitializer;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -51,9 +51,9 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	
 	private static Logger logger = LoggerFactory.getLogger(RelationalRangePredicate.class);
 	
-	private LinkedList<ComparablePair<IPredicate, ISolution>> lastEvaluated;
+	private LinkedList<ObjectTrackingPair<IPredicate, ISolution>> lastEvaluated;
 	private int windowSize;
-	private ComparablePair<IPredicate, ISolution> truePred;
+	private ObjectTrackingPair<IPredicate, ISolution> truePred;
 	private boolean changed;
 	
 	/**
@@ -72,7 +72,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	
 	public long changeDuration;
 
-	private List<ComparablePair<IPredicate, ISolution>> solutions;
+	private List<ObjectTrackingPair<IPredicate, ISolution>> solutions;
 //	private Map<IPredicate, ISolution> solutions;
 	
 	/**
@@ -114,15 +114,15 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	 *                   has been most often been true. This conditions will then be evaluated first, the next time.
 	 */
 	public RelationalRangePredicate(Map<IPredicate, ISolution> solutions, int windowSize) {		
-		this.solutions = new ArrayList<ComparablePair<IPredicate, ISolution>>();
+		this.solutions = new ArrayList<ObjectTrackingPair<IPredicate, ISolution>>();
 		
 		for(Entry<IPredicate, ISolution> entry : solutions.entrySet()){
-			this.solutions.add(new ComparablePair<IPredicate, ISolution>(entry.getKey(), entry.getValue()));
+			this.solutions.add(new ObjectTrackingPair<IPredicate, ISolution>(entry.getKey(), entry.getValue()));
 		}
 		Collections.shuffle(this.solutions);
 
 		
-		this.lastEvaluated = new LinkedList<ComparablePair<IPredicate, ISolution>>();
+		this.lastEvaluated = new LinkedList<ObjectTrackingPair<IPredicate, ISolution>>();
 		this.windowSize = windowSize;
 		
 		
@@ -133,7 +133,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		this.attributePositions = new HashMap<IPredicate, int[]>();
 		this.fromRightChannel = new HashMap<IPredicate, boolean[]>();
 		
-		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
 			IPredicate predicate = entry.getKey();
 
 			// could be a complex predicate, that contains relational
@@ -188,9 +188,9 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 //		throw new UnsupportedOperationException();
 		this.attributePositions = new HashMap<IPredicate, int[]>(predicate.attributePositions);
 		this.fromRightChannel = new HashMap<IPredicate, boolean[]>(predicate.fromRightChannel);
-		this.solutions = new ArrayList<ComparablePair<IPredicate, ISolution>>();
+		this.solutions = new ArrayList<ObjectTrackingPair<IPredicate, ISolution>>();
 		for(int i = 0; i < predicate.solutions.size(); i++){
-			this.solutions.add((ComparablePair<IPredicate, ISolution>)predicate.solutions.get(i));
+			this.solutions.add((ObjectTrackingPair<IPredicate, ISolution>)predicate.solutions.get(i));
 		}
 	}
 	
@@ -204,7 +204,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		// first check, which solution maps for this tuple
 		// so test every predicate in this.solutions for this tuple
 		// the first predicate that is true will be taken.
-		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
 			if(entry.getKey().evaluate(input)){
 				// the solution could be empty
 				// in this case the following must not be done
@@ -259,7 +259,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		// first check, which solution maps for this tuples
 		// so test every predicate in this.solutions for this tuple
 		// the first predicate that is true will be taken.
-		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
 			if(entry.getKey().evaluate(left, right)){
 				truePred = entry;
 				// the solution can be empty
@@ -366,7 +366,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	@Override
 	public String toString() {
 		String res = "";
-		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
 			res += "if " + entry.getKey().toString() + 
 					" then " + entry.getValue().getVariable().toString() + " " +
 					entry.getValue().getCompareOperator() + " " + 
@@ -377,7 +377,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 
 	public Map<IPredicate, List<SDFAttribute>> getAttributes() {
 		Map<IPredicate, List<SDFAttribute>> attributes = new HashMap<IPredicate, List<SDFAttribute>>();
-		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
 			attributes.put(entry.getKey(), entry.getValue().getSolution().getAllAttributes());
 		}
 		
@@ -418,7 +418,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	 * 
 	 * @param lastEvaluatedPredicate The predicate that hase been true this time.
 	 */
-	private void moveEvaluationWindow(ComparablePair<IPredicate, ISolution> lastEvaluatedPredicate){		
+	private void moveEvaluationWindow(ObjectTrackingPair<IPredicate, ISolution> lastEvaluatedPredicate){		
 		// if window size is 0, then no
 		// optimization is wanted.
 		if(this.windowSize == 0){
@@ -435,7 +435,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 //			return;
 //		}
 		
-		ComparablePair<IPredicate, ISolution> removed = null;
+		ObjectTrackingPair<IPredicate, ISolution> removed = null;
 		if(this.lastEvaluated.size() == this.windowSize){
 			removed = this.lastEvaluated.removeFirst();
 			removed.decreasePriority();
@@ -455,7 +455,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	 */
 	private void changeOrder(){
 		Random r = new Random();
-		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
 			entry.setPriority(0);
 		}
 		
@@ -478,7 +478,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 //		====================================================================
 		
 //		Collections.reverse(this.solutions);
-//		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+//		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
 //			entry.setPriority(0);
 //		}
 //		
@@ -487,7 +487,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 //		for(int i = 0; i<this.solutions.size()-1; i++){
 //			for(int u = 0; u<=i; u++){
 //				if(this.lastEvaluated.size() < this.windowSize){
-//					ComparablePair<IPredicate, ISolution> curSolution = this.solutions.get(u);
+//					ObjectTrackingPair<IPredicate, ISolution> curSolution = this.solutions.get(u);
 //					this.lastEvaluated.addLast(curSolution);
 //					curSolution.increasePriority();
 //				}

@@ -67,4 +67,17 @@ public class ServiceLevelAgreement extends AbstractServiceLevelAgreement{
 		}
 		return csvReturn.toString();
 	}
+
+
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 */
+	@Override
+	public String csvToString(boolean withMetada) {
+		// TODO Auto-generated method stub
+		return this.csvToString();
+	}
+	
+	
 }

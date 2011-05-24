@@ -62,4 +62,12 @@ public class PredictionFunctionKey<T> implements IPredictionFunctionKey<T> {
 	public String getCSVHeader() {
 		return "PredFctKey";
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 */
+	@Override
+	public String csvToString(boolean withMetada) {
+		return this.csvToString();
+	}
 }

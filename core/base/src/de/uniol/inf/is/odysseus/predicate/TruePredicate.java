@@ -45,4 +45,8 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
 		return true;
 	}
 	
+	public String toString(){
+		return "true";
+	}
+	
 }

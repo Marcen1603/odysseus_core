@@ -77,6 +77,15 @@ public class SDFDatatypes extends SDF {
 	public static boolean isDate(SDFDatatype type) {
 		return type.getURI(false).equals("Date");
 	}
+	
+	public static boolean isSpatial(SDFDatatype type){
+		String uri = type.getURI(false);
+		return uri.equalsIgnoreCase("Point2D") ||
+				uri.equalsIgnoreCase("Point3D") ||
+				uri.equalsIgnoreCase("Line") ||
+				uri.equalsIgnoreCase("Polygon") ||
+				uri.equalsIgnoreCase("Cuboid");
+	}
 
 	protected SDFDatatypes() {
 		super.baseUri = SDFDatatypes.baseURI;

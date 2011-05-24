@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Aggregation;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.IRI;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
 
@@ -30,6 +31,8 @@ class ASTSelectQuery extends SimpleNode {
 	
 	private List<SourceInfo> defaultStreams;
 	private List<SourceInfo> namedStreams;
+	
+	private String fileURL;
 	
 	public void setSources(){
 		
@@ -119,6 +122,14 @@ class ASTSelectQuery extends SimpleNode {
 
 	public void setResultStar(boolean resultStar) {
 		this.resultStar = resultStar;
+	}
+	
+	public void setFileURL(IRI fileURL){
+		this.fileURL = fileURL.getIRI();
+	}
+	
+	public String getFileURL(){
+		return this.fileURL;
 	}
 }
 /* JavaCC - OriginalChecksum=51571ae8cff8f308bace52d2de247751 (do not edit this line) */

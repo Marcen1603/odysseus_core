@@ -465,5 +465,13 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return new TimeInterval(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 */
+	@Override
+	public String csvToString(boolean withMetada) {
+		return this.csvToString();
+	}
+
 
 }

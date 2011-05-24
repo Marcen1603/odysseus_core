@@ -15,7 +15,9 @@
 package de.uniol.inf.is.odysseus.mep;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.mep.functions.AbsoluteFunction;
@@ -142,6 +144,80 @@ public class MEP {
 			return functions.get(symbol).getClass().newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+//	@Override
+//	public List<IFunction<?>> getFunctions() {
+//		List<IFunction<?>> funcs = new ArrayList<IFunction<?>>();
+//		funcs.add(new AndOperator());
+//		funcs.add(new OrOperator());
+//
+//		funcs.add(new EqualsOperator());
+//		funcs.add(new NotEqualsOperator());
+//
+//		funcs.add(new GreaterThanOperator());
+//		funcs.add(new SmallerThanOperator());
+//		funcs.add(new GreaterEqualsOperator());
+//		funcs.add(new SmallerEqualsOperator());
+//
+//		funcs.add(new PlusOperator());
+//		funcs.add(new MinusOperator());
+//
+//		funcs.add(new MultiplicationOperator());
+//		funcs.add(new DivisionOperator());
+//		funcs.add(new ModuloOperator());
+//
+//		funcs.add(new PowerOperator());
+//
+//		funcs.add(new NotOperator());
+//		funcs.add(new UnaryMinusOperator());
+//
+//		funcs.add(new AbsoluteFunction());
+//		funcs.add(new CeilFunction());
+//		funcs.add(new DoubleToLongFunction());
+//		funcs.add(new FloorFunction());
+//		funcs.add(new IfFunction());
+//		funcs.add(new SinusFunction());
+//		funcs.add(new CosinusFunction());
+//		funcs.add(new ToNumberFunction());
+//		funcs.add(new ToStringFunction());
+//		funcs.add(new RandomFunction());
+//
+//		funcs.add(new MatrixInvert());
+//		funcs.add(new MatrixAdd());
+//		funcs.add(new MatrixSub());
+//		funcs.add(new MatrixMult());
+//		funcs.add(new MatrixTranspose());
+//		funcs.add(new MatrixGetEntry());
+//		funcs.add(new GetAbsoluteValue());
+//		funcs.add(new SquareValue());
+//		funcs.add(new SqrtValue());
+//		
+////		funcs.add(new DolToEur());
+////		funcs.add(new Now());
+////		funcs.add(new Distance());
+////		funcs.add(new Polygon());
+//		
+//		return funcs;
+//	}
+	
+	public void addFunctionProvider(IFunctionProvider provider){
+		for(IFunction<?> f: provider.getFunctions()){
+			String symbol = f.getSymbol();
+			if (MEP.functions.containsKey(symbol)) {
+				throw new IllegalArgumentException(
+						"multiple definition of function " + symbol);
+			}
+			functions.put(symbol, f);
+		}
+	}
+	
+	public void removeFunctionProvider(IFunctionProvider provider){
+		// It's not allowed to have multiple implementations
+		// of the same function (see addFunctionProvider).
+		for(IFunction<?> f: provider.getFunctions()){
+			MEP.functions.remove(f.getSymbol());
 		}
 	}
 

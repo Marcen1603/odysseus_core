@@ -25,15 +25,32 @@ public class FileSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -5468128562016704956L;
 	String filename;
+	
+	/**
+	 * CSV = write data in csv format to file
+	 * nothing = write data in raw format to file
+	 */
 	String sinkType;
+	
+	/**
+	 * describes how many elements
+	 * are cached before they are
+	 * written to file. Writing
+	 * each element to file will
+	 * decrease odysseus' performance
+	 * very much.
+	 */
 	long writeAfterElements = -1;
+	
+	private boolean printMetadata;
 
 	public FileSinkAO() {
 	}
 
-	public FileSinkAO(String filename, String sinkType, long writeAfterElements) {
+	public FileSinkAO(String filename, String sinkType, long writeAfterElements, boolean printMetadata) {
 		this.filename = filename;
 		this.sinkType = sinkType;
+		this.printMetadata = printMetadata;
 		this.writeAfterElements = writeAfterElements;
 	}
 
@@ -41,6 +58,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		super(fileSinkAO);
 		this.filename = fileSinkAO.filename;
 		this.sinkType = fileSinkAO.sinkType;
+		this.printMetadata = fileSinkAO.printMetadata;
 		this.writeAfterElements = fileSinkAO.writeAfterElements;
 	}
 
@@ -79,6 +97,10 @@ public class FileSinkAO extends AbstractLogicalOperator {
 
 	public long getWriteAfterElements() {
 		return writeAfterElements;
+	}
+	
+	public boolean getPrintMetadata(){
+		return this.printMetadata;
 	}
 
 }

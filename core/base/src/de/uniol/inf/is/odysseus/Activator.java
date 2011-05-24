@@ -42,9 +42,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		// Add default Functions
-		for (IFunction function : functions) {
-			MEP.registerFunction(function);
-		}
+//		for (IFunction function : functions) {
+//			MEP.registerFunction(function);
+//		}
 		OperatorBuilderFactory.putOperatorBuilderType("ACCESS",
 				new AccessAOBuilder());
 		OperatorBuilderFactory.putOperatorBuilderType("FILE",

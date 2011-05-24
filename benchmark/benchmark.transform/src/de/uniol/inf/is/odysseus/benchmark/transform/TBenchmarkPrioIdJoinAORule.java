@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityIdHashSweepArea;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityTITransferArea;
@@ -44,7 +44,7 @@ public class TBenchmarkPrioIdJoinAORule extends AbstractTransformationRule<PrioI
 		joinPO.setTransferFunction(new PriorityTITransferArea());
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setOutputSchema(operator.getOutputSchema() == null?null:operator.getOutputSchema().clone()); 
-	 	ITemporalSweepArea[] areas = new ITemporalSweepArea[2];
+	 	ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 		areas[0] = new PriorityIdHashSweepArea(operator.getRightPos(), operator.getLeftPos());
 		areas[1] = new PriorityIdHashSweepArea(operator.getLeftPos(), operator.getRightPos());
 	 	joinPO.setAreas(areas);

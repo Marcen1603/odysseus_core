@@ -23,6 +23,8 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
@@ -362,7 +364,6 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	final public boolean equals(Object obj) {
 		return super.equals(obj);
 	}
-	
 	
 	
 }

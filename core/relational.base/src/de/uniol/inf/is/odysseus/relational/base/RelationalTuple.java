@@ -270,6 +270,10 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	
 	@Override
 	public final String csvToString() {
+		return this.csvToString(true);
+	}
+	
+	public final String csvToString(boolean withMetadata){
 		StringBuffer retBuff = new StringBuffer();
 		if (attributes.length > 0) {
 			retBuff.append(this.attributes[0] == null ? "" : this.attributes[0]);
@@ -281,7 +285,9 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			retBuff.append(";");
 			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
 		}
-		retBuff.append(";").append(getMetadata().csvToString());
+		if(withMetadata){
+			retBuff.append(";").append(getMetadata().csvToString());
+		}
 		return retBuff.toString();
 	}
 	

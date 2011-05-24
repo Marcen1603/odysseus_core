@@ -483,15 +483,20 @@ void PrefixDecl() : {/*@bgen(jjtree) PrefixDecl */
 
 // ---- Query type clauses
 
-void SelectQuery() : {/*@bgen(jjtree) SelectQuery */
-                       ASTSelectQuery jjtn000 = new ASTSelectQuery(JJTSELECTQUERY);
-                       boolean jjtc000 = true;
-                       jjtree.openNodeScope(jjtn000);
-/*@egen*/ Variable v = null; Aggregation agg; List<SourceInfo> sources= new ArrayList<SourceInfo>();}
+void SelectQuery() : 
+{/*@bgen(jjtree) SelectQuery */
+  ASTSelectQuery jjtn000 = new ASTSelectQuery(JJTSELECTQUERY);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Variable v = null;
+  Aggregation agg;
+  List<SourceInfo> sources= new ArrayList<SourceInfo>();
+  IRI fileURL;
+}
 {/*@bgen(jjtree) SelectQuery */
   try {
 /*@egen*/
-  <SELECT>
+  <SELECT> (<INTO> <FILE> fileURL= IRI_REF() {jjtn000.setFileURL(fileURL);})?
     //{ getQuery().setQuerySelectType() ; }
   ( <DISTINCT> { jjtn000.setDistinct(true);}
   | <REDUCED> { jjtn000.setDistinct(true); } // reduced is used in the way of distinct
@@ -540,6 +545,7 @@ void SelectQuery() : {/*@bgen(jjtree) SelectQuery */
     }
   }
 /*@egen*/
+  
 }
 
 void ConstructQuery() : {/*@bgen(jjtree) ConstructQuery */
@@ -3750,6 +3756,8 @@ TOKEN [IGNORE_CASE] :
 
 // Result forms
 | < SELECT: "select" >
+| < INTO: "into">
+| < FILE: "file">
 | < DISTINCT: "distinct" >
 | < REDUCED: "reduced" >
 | < DESCRIBE: "describe" >

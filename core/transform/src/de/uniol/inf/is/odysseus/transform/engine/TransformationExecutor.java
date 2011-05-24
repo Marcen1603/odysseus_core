@@ -44,7 +44,6 @@ public class TransformationExecutor implements ITransformation {
 	private static final String LOGGER_NAME = "transform";	
 
 	public TransformationExecutor() {
-
 	}
 
 	@Override
@@ -64,8 +63,6 @@ public class TransformationExecutor implements ITransformation {
 		 * Singleton = global state 
 		 * concrete instance = local state for this instance
 		 */
-		
-
 		TransformationInventory concreteTransformInvent = new TransformationInventory(TransformationInventory.getInstance());
 		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent, caller, dd);
 

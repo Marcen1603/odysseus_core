@@ -11,25 +11,29 @@ public interface MEPImplConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int INTEGER = 5;
+  int K_AND = 5;
   /** RegularExpression Id. */
-  int FLOAT = 6;
+  int K_OR = 6;
   /** RegularExpression Id. */
-  int BOOLEAN = 7;
+  int INTEGER = 7;
   /** RegularExpression Id. */
-  int DIGIT = 8;
+  int FLOAT = 8;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 9;
+  int BOOLEAN = 9;
   /** RegularExpression Id. */
-  int IDENTIFIER = 10;
+  int DIGIT = 10;
   /** RegularExpression Id. */
-  int LETTER = 11;
+  int CHAR_LITERAL = 11;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 12;
+  int IDENTIFIER = 12;
   /** RegularExpression Id. */
-  int RRND = 13;
+  int LETTER = 13;
   /** RegularExpression Id. */
-  int LRND = 14;
+  int SPECIAL_CHARS = 14;
+  /** RegularExpression Id. */
+  int RRND = 15;
+  /** RegularExpression Id. */
+  int LRND = 16;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -41,6 +45,8 @@ public interface MEPImplConstants {
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
+    "\"AND\"",
+    "\"OR\"",
     "<INTEGER>",
     "<FLOAT>",
     "<BOOLEAN>",

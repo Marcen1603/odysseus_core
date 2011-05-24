@@ -531,12 +531,26 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
   final public void SelectQuery() throws ParseException {
     trace_call("SelectQuery");
     try {
-                      /*@bgen(jjtree) SelectQuery */
-                       ASTSelectQuery jjtn000 = new ASTSelectQuery(JJTSELECTQUERY);
-                       boolean jjtc000 = true;
-                       jjtree.openNodeScope(jjtn000);Variable v = null; Aggregation agg; List<SourceInfo> sources= new ArrayList<SourceInfo>();
+ /*@bgen(jjtree) SelectQuery */
+  ASTSelectQuery jjtn000 = new ASTSelectQuery(JJTSELECTQUERY);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);Variable v = null;
+  Aggregation agg;
+  List<SourceInfo> sources= new ArrayList<SourceInfo>();
+  IRI fileURL;
       try {
         jj_consume_token(SELECT);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case INTO:
+          jj_consume_token(INTO);
+          jj_consume_token(FILE);
+          fileURL = IRI_REF();
+                                              jjtn000.setFileURL(fileURL);
+          break;
+        default:
+          jj_la1[9] = jj_gen;
+          ;
+        }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case DISTINCT:
         case REDUCED:
@@ -550,13 +564,13 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
                 jjtn000.setDistinct(true);
             break;
           default:
-            jj_la1[9] = jj_gen;
+            jj_la1[10] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
           break;
         default:
-          jj_la1[10] = jj_gen;
+          jj_la1[11] = jj_gen;
           ;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -586,7 +600,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
                         jjtn000.addVarOrAgg(1);
               break;
             default:
-              jj_la1[11] = jj_gen;
+              jj_la1[12] = jj_gen;
               jj_consume_token(-1);
               throw new ParseException();
             }
@@ -601,7 +615,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
               ;
               break;
             default:
-              jj_la1[12] = jj_gen;
+              jj_la1[13] = jj_gen;
               break label_2;
             }
           }
@@ -612,7 +626,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
              jjtn000.setResultStar(true) ;
           break;
         default:
-          jj_la1[13] = jj_gen;
+          jj_la1[14] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -622,7 +636,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
                          jjtn000.setSources(sources);
           break;
         default:
-          jj_la1[14] = jj_gen;
+          jj_la1[15] = jj_gen;
           ;
         }
         WhereClause();
@@ -631,7 +645,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           GroupBy();
           break;
         default:
-          jj_la1[15] = jj_gen;
+          jj_la1[16] = jj_gen;
           ;
         }
         SolutionModifier();
@@ -674,7 +688,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           FromClause(sources);
           break;
         default:
-          jj_la1[16] = jj_gen;
+          jj_la1[17] = jj_gen;
           ;
         }
         WhereClause();
@@ -730,7 +744,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
               ;
               break;
             default:
-              jj_la1[17] = jj_gen;
+              jj_la1[18] = jj_gen;
               break label_3;
             }
           }
@@ -739,7 +753,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           jj_consume_token(STAR);
           break;
         default:
-          jj_la1[18] = jj_gen;
+          jj_la1[19] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -748,7 +762,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           FromClause(sources);
           break;
         default:
-          jj_la1[19] = jj_gen;
+          jj_la1[20] = jj_gen;
           ;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -756,7 +770,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           WhereClause();
           break;
         default:
-          jj_la1[20] = jj_gen;
+          jj_la1[21] = jj_gen;
           ;
         }
         SolutionModifier();
@@ -798,7 +812,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           FromClause(sources);
           break;
         default:
-          jj_la1[21] = jj_gen;
+          jj_la1[22] = jj_gen;
           ;
         }
         WhereClause();
@@ -894,7 +908,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
             ;
             break;
           default:
-            jj_la1[22] = jj_gen;
+            jj_la1[23] = jj_gen;
             break label_4;
           }
         }
@@ -968,7 +982,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
                     named=true;
           break;
         default:
-          jj_la1[23] = jj_gen;
+          jj_la1[24] = jj_gen;
           ;
         }
         streamName = SourceSelector();
@@ -977,7 +991,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           window = Window();
           break;
         default:
-          jj_la1[24] = jj_gen;
+          jj_la1[25] = jj_gen;
           ;
         }
     jjtree.closeNodeScope(jjtn000, true);
@@ -1059,7 +1073,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
                         agg = new Aggregation(v, AggregateFunctionName.COUNT);
           break;
         default:
-          jj_la1[25] = jj_gen;
+          jj_la1[26] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1107,7 +1121,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
             window = SlidingTupelWindow();
             break;
           default:
-            jj_la1[26] = jj_gen;
+            jj_la1[27] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -1159,7 +1173,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           delta = ValueSpecification();
           break;
         default:
-          jj_la1[27] = jj_gen;
+          jj_la1[28] = jj_gen;
           ;
         }
     jjtree.closeNodeScope(jjtn000, true);
@@ -1214,7 +1228,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           deltaToken = jj_consume_token(INTEGER);
           break;
         default:
-          jj_la1[28] = jj_gen;
+          jj_la1[29] = jj_gen;
           ;
         }
     jjtree.closeNodeScope(jjtn000, true);
@@ -1293,7 +1307,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
             window = SlidingTupelWindow();
             break;
           default:
-            jj_la1[29] = jj_gen;
+            jj_la1[30] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -1367,7 +1381,7 @@ public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SP
           factor = Timeunit();
           break;
         default:
-          jj_la1[30] = jj_gen;
+          jj_la1[31] = jj_gen;
           ;
         }
     jjtree.closeNodeScope(jjtn000, true);
@@ -1437,7 +1451,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             factor = 604800000;
           break;
         default:
-          jj_la1[31] = jj_gen;
+          jj_la1[32] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1548,7 +1562,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[32] = jj_gen;
+            jj_la1[33] = jj_gen;
             break label_5;
           }
         }
@@ -1590,7 +1604,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           OrderClause();
           break;
         default:
-          jj_la1[33] = jj_gen;
+          jj_la1[34] = jj_gen;
           ;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1599,7 +1613,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           LimitOffsetClauses();
           break;
         default:
-          jj_la1[34] = jj_gen;
+          jj_la1[35] = jj_gen;
           ;
         }
       } catch (Throwable jjte000) {
@@ -1642,7 +1656,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             OffsetClause();
             break;
           default:
-            jj_la1[35] = jj_gen;
+            jj_la1[36] = jj_gen;
             ;
           }
           break;
@@ -1653,12 +1667,12 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             LimitClause();
             break;
           default:
-            jj_la1[36] = jj_gen;
+            jj_la1[37] = jj_gen;
             ;
           }
           break;
         default:
-          jj_la1[37] = jj_gen;
+          jj_la1[38] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1720,7 +1734,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[38] = jj_gen;
+            jj_la1[39] = jj_gen;
             break label_6;
           }
         }
@@ -1767,7 +1781,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             jj_consume_token(DESC);
             break;
           default:
-            jj_la1[39] = jj_gen;
+            jj_la1[40] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -1809,13 +1823,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             v = Var();
             break;
           default:
-            jj_la1[40] = jj_gen;
+            jj_la1[41] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
           break;
         default:
-          jj_la1[41] = jj_gen;
+          jj_la1[42] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1920,7 +1934,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           TriplesBlock();
           break;
         default:
-          jj_la1[42] = jj_gen;
+          jj_la1[43] = jj_gen;
           ;
         }
         label_7:
@@ -1933,7 +1947,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[43] = jj_gen;
+            jj_la1[44] = jj_gen;
             break label_7;
           }
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1946,7 +1960,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             Filter();
             break;
           default:
-            jj_la1[44] = jj_gen;
+            jj_la1[45] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -1955,7 +1969,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             jj_consume_token(DOT);
             break;
           default:
-            jj_la1[45] = jj_gen;
+            jj_la1[46] = jj_gen;
             ;
           }
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1985,7 +1999,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             TriplesBlock();
             break;
           default:
-            jj_la1[46] = jj_gen;
+            jj_la1[47] = jj_gen;
             ;
           }
         }
@@ -1995,7 +2009,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                               jjtn000.setWindowAO(window);
           break;
         default:
-          jj_la1[47] = jj_gen;
+          jj_la1[48] = jj_gen;
           ;
         }
         jj_consume_token(RBRACE);
@@ -2041,7 +2055,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[48] = jj_gen;
+            jj_la1[49] = jj_gen;
             break label_8;
           }
           jj_consume_token(DOT);
@@ -2182,7 +2196,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           GraphGraphPattern();
           break;
         default:
-          jj_la1[49] = jj_gen;
+          jj_la1[50] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -2299,7 +2313,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[50] = jj_gen;
+            jj_la1[51] = jj_gen;
             break label_9;
           }
           jj_consume_token(UNION);
@@ -2401,7 +2415,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                      jjtn000.setString(n.toString());
           break;
         default:
-          jj_la1[51] = jj_gen;
+          jj_la1[52] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -2492,7 +2506,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
               ;
               break;
             default:
-              jj_la1[52] = jj_gen;
+              jj_la1[53] = jj_gen;
               break label_10;
             }
             jj_consume_token(COMMA);
@@ -2503,7 +2517,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
               str+= ")";
           break;
         default:
-          jj_la1[53] = jj_gen;
+          jj_la1[54] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -2573,7 +2587,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           ConstructTriples();
           break;
         default:
-          jj_la1[54] = jj_gen;
+          jj_la1[55] = jj_gen;
           ;
         }
         jj_consume_token(RBRACE);
@@ -2640,12 +2654,12 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ConstructTriples();
             break;
           default:
-            jj_la1[55] = jj_gen;
+            jj_la1[56] = jj_gen;
             ;
           }
           break;
         default:
-          jj_la1[56] = jj_gen;
+          jj_la1[57] = jj_gen;
           ;
         }
       } catch (Throwable jjte000) {
@@ -2739,7 +2753,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[57] = jj_gen;
+            jj_la1[58] = jj_gen;
             break label_11;
           }
           jj_consume_token(SEMICOLON);
@@ -2755,7 +2769,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           paos.putPropertyAndObjects(predicate, objects);
             break;
           default:
-            jj_la1[58] = jj_gen;
+            jj_la1[59] = jj_gen;
             ;
           }
         }
@@ -2806,7 +2820,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     {if (true) return paos;}
           break;
         default:
-          jj_la1[59] = jj_gen;
+          jj_la1[60] = jj_gen;
           ;
         }
       } catch (Throwable jjte000) {
@@ -2872,7 +2886,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[60] = jj_gen;
+            jj_la1[61] = jj_gen;
             break label_12;
           }
           jj_consume_token(COMMA);
@@ -2965,7 +2979,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                                   p = new Literal("rdf:type");
           break;
         default:
-          jj_la1[61] = jj_gen;
+          jj_la1[62] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3017,7 +3031,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           BlankNodePropertyList();
           break;
         default:
-          jj_la1[62] = jj_gen;
+          jj_la1[63] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3123,7 +3137,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[63] = jj_gen;
+            jj_la1[64] = jj_gen;
             break label_13;
           }
         }
@@ -3198,7 +3212,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                       {if (true) return n ;}
           break;
         default:
-          jj_la1[64] = jj_gen;
+          jj_la1[65] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3264,7 +3278,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           n = GraphTerm();
           break;
         default:
-          jj_la1[65] = jj_gen;
+          jj_la1[66] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3316,7 +3330,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           n = IRIref();
           break;
         default:
-          jj_la1[66] = jj_gen;
+          jj_la1[67] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3370,7 +3384,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           t = jj_consume_token(VAR2);
           break;
         default:
-          jj_la1[67] = jj_gen;
+          jj_la1[68] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3449,7 +3463,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
         {if (true) return BlankNode.NIL;}
           break;
         default:
-          jj_la1[68] = jj_gen;
+          jj_la1[69] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3532,7 +3546,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[69] = jj_gen;
+            jj_la1[70] = jj_gen;
             break label_14;
           }
           jj_consume_token(SC_OR);
@@ -3582,7 +3596,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[70] = jj_gen;
+            jj_la1[71] = jj_gen;
             break label_15;
           }
           jj_consume_token(SC_AND);
@@ -3695,13 +3709,13 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             NumericExpression();
             break;
           default:
-            jj_la1[71] = jj_gen;
+            jj_la1[72] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
           break;
         default:
-          jj_la1[72] = jj_gen;
+          jj_la1[73] = jj_gen;
           ;
         }
     if(t != null){
@@ -3798,7 +3812,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[73] = jj_gen;
+            jj_la1[74] = jj_gen;
             break label_16;
           }
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -3825,7 +3839,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                                  str += lit.getName();
             break;
           default:
-            jj_la1[74] = jj_gen;
+            jj_la1[75] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -3878,7 +3892,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
             ;
             break;
           default:
-            jj_la1[75] = jj_gen;
+            jj_la1[76] = jj_gen;
             break label_17;
           }
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -3893,7 +3907,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                                        str += "/" + tempExpr.toString();
             break;
           default:
-            jj_la1[76] = jj_gen;
+            jj_la1[77] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -3992,7 +4006,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
         {if (true) return jjtn000;}
           break;
         default:
-          jj_la1[77] = jj_gen;
+          jj_la1[78] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4087,7 +4101,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                jjtn000.setString(node.getName());
           break;
         default:
-          jj_la1[78] = jj_gen;
+          jj_la1[79] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4273,7 +4287,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
      {if (true) return jjtn000;}
           break;
         default:
-          jj_la1[79] = jj_gen;
+          jj_la1[80] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4321,7 +4335,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           Expression();
           break;
         default:
-          jj_la1[80] = jj_gen;
+          jj_la1[81] = jj_gen;
           ;
         }
         jj_consume_token(RPAREN);
@@ -4373,7 +4387,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                                 jjtn000.setString(function.toString());
           break;
         default:
-          jj_la1[81] = jj_gen;
+          jj_la1[82] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4426,7 +4440,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                         lit.setLanguage(lang);
           break;
         default:
-          jj_la1[82] = jj_gen;
+          jj_la1[83] = jj_gen;
           ;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -4436,7 +4450,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                            lit.setDatatype(n.getName());
           break;
         default:
-          jj_la1[83] = jj_gen;
+          jj_la1[84] = jj_gen;
           ;
         }
     jjtree.closeNodeScope(jjtn000, true);
@@ -4492,7 +4506,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
           n = NumericLiteralNegative();
           break;
         default:
-          jj_la1[84] = jj_gen;
+          jj_la1[85] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4552,7 +4566,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                  {if (true) return new Literal(t.image) ;}
           break;
         default:
-          jj_la1[85] = jj_gen;
+          jj_la1[86] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4595,7 +4609,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                           {if (true) return new Literal(t.image) ;}
           break;
         default:
-          jj_la1[86] = jj_gen;
+          jj_la1[87] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4638,7 +4652,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                           {if (true) return new Literal(t.image) ;}
           break;
         default:
-          jj_la1[87] = jj_gen;
+          jj_la1[88] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4675,7 +4689,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     {if (true) return new Literal("false");}
           break;
         default:
-          jj_la1[88] = jj_gen;
+          jj_la1[89] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4716,7 +4730,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                                  lex = stripQuotes(t.image) ;
           break;
         default:
-          jj_la1[89] = jj_gen;
+          jj_la1[90] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4758,7 +4772,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                        {if (true) return n ;}
           break;
         default:
-          jj_la1[90] = jj_gen;
+          jj_la1[91] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4809,7 +4823,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       {if (true) return new Literal(t.image);}
           break;
         default:
-          jj_la1[91] = jj_gen;
+          jj_la1[92] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4846,7 +4860,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
            {if (true) return createBlankNode() ;}
           break;
         default:
-          jj_la1[92] = jj_gen;
+          jj_la1[93] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4879,7 +4893,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                                                                                             formatted = t.image;
           break;
         default:
-          jj_la1[93] = jj_gen;
+          jj_la1[94] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -4911,49 +4925,14 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     finally { jj_save(1, xla); }
   }
 
-  private boolean jj_3R_28() {
-    if (jj_scan_token(WEEK)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_21() {
-    if (jj_3R_22()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_27() {
-    if (jj_scan_token(DAY)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_26() {
-    if (jj_scan_token(HOUR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25() {
-    if (jj_scan_token(MINUTE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24() {
-    if (jj_scan_token(S)) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_18()) return true;
+  private boolean jj_3R_20() {
+    if (jj_scan_token(ADVANCE)) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
   private boolean jj_3R_23() {
     if (jj_scan_token(MS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20() {
-    if (jj_scan_token(ADVANCE)) return true;
-    if (jj_3R_19()) return true;
     return false;
   }
 
@@ -5002,6 +4981,41 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     return false;
   }
 
+  private boolean jj_3R_28() {
+    if (jj_scan_token(WEEK)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21() {
+    if (jj_3R_22()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27() {
+    if (jj_scan_token(DAY)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26() {
+    if (jj_scan_token(HOUR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25() {
+    if (jj_scan_token(MINUTE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(S)) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public SPARQLParserTokenManager token_source;
   JavaCharStream jj_input_stream;
@@ -5013,7 +5027,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[94];
+  final private int[] jj_la1 = new int[95];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -5027,19 +5041,19 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
       jj_la1_init_4();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x3900000,0x39c0000,0x0,0x0,0x0,0x0,0x0,0x40000,0x80000,0x600000,0x600000,0x3000,0x3000,0x3000,0x0,0x40000000,0x0,0x3700,0x3700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3000,0x10000000,0xc000000,0x8000000,0x4000000,0xc000000,0x80003000,0x80000000,0x3000,0x80003000,0x3f00,0x0,0x0,0x0,0x3f00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3f00,0x3f00,0x0,0x0,0x23700,0x23700,0x0,0x23700,0x0,0x3f00,0x3f00,0x3f00,0x3700,0x3000,0xf00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3700,0x3700,0x0,0x0,0x700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x700,0x600,0x800,0x500,};
+      jj_la1_0 = new int[] {0xe100000,0xe1c0000,0x0,0x0,0x0,0x0,0x0,0x40000,0x80000,0x200000,0x1800000,0x1800000,0x3000,0x3000,0x3000,0x0,0x0,0x0,0x3700,0x3700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3000,0x40000000,0x30000000,0x20000000,0x10000000,0x30000000,0x3000,0x0,0x3000,0x3000,0x3f00,0x0,0x0,0x0,0x3f00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3f00,0x3f00,0x0,0x0,0x23700,0x23700,0x0,0x23700,0x0,0x3f00,0x3f00,0x3f00,0x3700,0x3000,0xf00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3700,0x3700,0x0,0x0,0x700,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x700,0x600,0x800,0x500,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x1c00,0x1c00,0x2080,0x4c000,0x200,0x20000,0x0,0x0,0x0,0x0,0x3e,0x3e,0x3e,0x80,0x0,0x80,0x0,0x0,0x80,0x0,0x80,0x80,0x40,0x80000,0x3e,0x80000,0x400000,0x400000,0x80000,0xf0000000,0xf0000000,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x1,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x80000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x7000,0x7000,0x8200,0x130000,0x800,0x80000,0x0,0x0,0x0,0x0,0x0,0xf8,0xf8,0xf8,0x200,0x1,0x200,0x0,0x0,0x200,0x0,0x200,0x200,0x100,0x200000,0xf8,0x200000,0x1000000,0x1000000,0x200000,0xc0000000,0xc0000000,0x0,0x0,0x0,0x0,0x0,0x0,0x6,0x6,0x0,0x6,0x0,0x0,0x0,0x0,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x3,0x0,0x0,0x0,0x0,0x0,0x0,0x1ffc00,0x0,0x1ffc00,0x1ffc00,0xff600000,0x2c0,0x2c0,0x0,0xff600000,0x0,0x0,0xc0,0x100,0x1ffc00,0x0,0x0,0xff600000,0xff600000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xff600000,0xff600000,0xff600000,0x0,0x0,0xff600000,0x0,0x0,0x0,0x0,0xf8000000,0xf8000000,0x0,0x0,0xff7ffc00,0xff7ffc00,0x1ffc00,0x0,0x0,0x0,0x0,0xff000000,0x7000000,0x38000000,0xc0000000,0x600000,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xf,0xf,0x0,0x0,0x0,0x0,0x0,0x0,0x7ff000,0x0,0x7ff000,0x7ff000,0xfd800000,0xb00,0xb00,0x0,0xfd800000,0x0,0x0,0x300,0x400,0x7ff000,0x0,0x0,0xfd800000,0xfd800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xfd800000,0xfd800000,0xfd800000,0x0,0x0,0xfd800000,0x0,0x0,0x0,0x0,0xe0000000,0xe0000000,0x0,0x0,0xfdfff000,0xfdfff000,0x7ff000,0x0,0x0,0x0,0x0,0xfc000000,0x1c000000,0xe0000000,0x0,0x1800000,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x200,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1200,0x0,0x1200,0x1200,0x841e1,0x8000,0x8000,0x400000,0x841e1,0x0,0x400000,0x8000,0x0,0x1200,0x200000,0x5000,0x841e1,0x841e1,0x400000,0x100000,0x0,0x0,0x200000,0x0,0x21000,0xa51e1,0xa51e1,0x841e1,0x0,0x0,0x841e1,0x80000000,0x0,0x1f800000,0x1f800000,0x1,0x1,0x0,0x0,0x13e1,0x13e1,0x0,0x200000,0x200,0x0,0x0,0x1,0x0,0x0,0x1,0x0,0x1e0,0x0,0x0,0x80000,0x0,};
+      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x800,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4800,0x0,0x4800,0x4800,0x210787,0x20000,0x20000,0x1000000,0x210787,0x0,0x1000000,0x20000,0x0,0x4800,0x800000,0x14000,0x210787,0x210787,0x1000000,0x400000,0x0,0x0,0x800000,0x0,0x84000,0x294787,0x294787,0x210787,0x0,0x0,0x210787,0x0,0x0,0x7e000000,0x7e000000,0x7,0x7,0x0,0x0,0x4f87,0x4f87,0x0,0x800000,0x800,0x0,0x0,0x7,0x0,0x0,0x7,0x0,0x780,0x0,0x0,0x200000,0x0,};
    }
    private static void jj_la1_init_4() {
-      jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x6,0x6,0x18,0x18,0x6,0x0,0x0,0x0,0x0,0x40,0x20,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20,0x0,0x0,0x0,0x0,0x20,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x4,0x0,0x0,0x18,0x18,0x60,0x60,0x18,0x0,0x0,0x0,0x0,0x100,0x80,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[2];
   private boolean jj_rescan = false;
@@ -5056,7 +5070,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 94; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 95; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5072,7 +5086,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 94; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 95; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5083,7 +5097,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 94; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 95; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5095,7 +5109,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 94; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 95; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5105,7 +5119,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 94; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 95; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5116,7 +5130,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 94; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 95; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5230,12 +5244,12 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[142];
+    boolean[] la1tokens = new boolean[144];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 94; i++) {
+    for (int i = 0; i < 95; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -5256,7 +5270,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
         }
       }
     }
-    for (int i = 0; i < 142; i++) {
+    for (int i = 0; i < 144; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

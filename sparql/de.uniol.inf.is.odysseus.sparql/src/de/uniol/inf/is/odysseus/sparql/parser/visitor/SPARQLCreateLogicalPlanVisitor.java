@@ -9,6 +9,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
@@ -17,7 +18,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
@@ -406,6 +406,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			ILogicalOperator duplAO = new DuplicateElimination();
 			duplAO.subscribeToSource(logOp, 0, 0, logOp.getOutputSchema());
 			logOp=duplAO;
+		}
+		
+		// if result has to be written into file
+		if(node.getFileURL() != null){
+			FileSinkAO fileSink = new FileSinkAO(node.getFileURL(), "CSV", 100, false);
+			fileSink.subscribeToSource(logOp, 0, 0, logOp.getOutputSchema());
+			logOp = fileSink;
 		}
 		
 		((LinkedList)data).addFirst(logOp);

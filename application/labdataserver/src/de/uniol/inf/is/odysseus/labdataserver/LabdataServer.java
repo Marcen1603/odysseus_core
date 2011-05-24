@@ -181,6 +181,7 @@ public class LabdataServer {
 				csvParser.changeDelimiter(delim);
 				csvParser.getLine(); // first line are the attribute names, so
 				// do not process it
+				int count = 0;
 				for (int i = 0; i < limit; i++) {
 					String[] line = csvParser.getLine();
 					// if line is null, eof is reached
@@ -222,9 +223,11 @@ public class LabdataServer {
 							}
 						}
 					}
+					count = i;
 				}
+				System.out.println("Read " + count + " csv lines.");
 			}
-			System.out.println("Caching done");
+			System.out.println("Caching of done.");
 		}
 		ServerSocket server = new ServerSocket(port);
 
@@ -558,6 +561,7 @@ class CSVHandler extends ClientHandler {
 			System.out
 					.println("Frequency: "
 							+ ((double) i * 1000000000 / (double) ((double) endDuration - (double) startDuration)));
+//			oStream.close();
 		} catch (EOFException e) {
 			System.out.println(" |->Done");
 		} catch (Exception e) {

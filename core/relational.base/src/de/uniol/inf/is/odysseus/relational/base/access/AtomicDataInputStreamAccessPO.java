@@ -190,6 +190,8 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			} catch (IOException e) {
 				// TODO wie mit diesem fehler umgehen?
 				//e.printStackTrace();
+				this.isDone = true;
+				propagateDone();
 				return false;
 			}
 			this.buffer = new RelationalTuple<M>(this.attributeData);

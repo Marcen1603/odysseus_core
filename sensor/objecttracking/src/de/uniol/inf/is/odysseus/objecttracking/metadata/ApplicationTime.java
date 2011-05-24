@@ -155,5 +155,13 @@ public class ApplicationTime implements IApplicationTime{
 		}
 		return resultRanges;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 */
+	@Override
+	public String csvToString(boolean withMetada) {
+		return this.csvToString();
+	}
 	
 }

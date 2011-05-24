@@ -23,14 +23,14 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.util.LinkedMultiHashMap;
 
 public class PriorityIdHashSweepArea<K extends ITimeInterval & IPriority, T extends RelationalTuple<K>>
-		implements ITemporalSweepArea<T> {
+		implements ITimeIntervalSweepArea<T> {
 
 	private LinkedMultiHashMap<Long, T> elements = new LinkedMultiHashMap<Long, T>();
 	final private int storedIdPosition;
@@ -204,6 +204,18 @@ public class PriorityIdHashSweepArea<K extends ITimeInterval & IPriority, T exte
 	@Override
 	public PriorityIdHashSweepArea<K, T> clone() {
 		return new PriorityIdHashSweepArea<K, T>(this);
+	}
+
+	@Override
+	public PointInTime getMaxTs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PointInTime getMinTs() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

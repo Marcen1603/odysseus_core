@@ -16,26 +16,26 @@ package de.uniol.inf.is.odysseus.objecttracking.util;
 
 import de.uniol.inf.is.odysseus.IClone;
 
-public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Comparable<ComparablePair>{
+public class ObjectTrackingPair<T1 extends IClone, T2 extends IClone> implements Comparable<ObjectTrackingPair>{
 
 	private T1 key;
 	private T2 value;
 	
 	private int priority;
 	
-	public ComparablePair(T1 key, T2 value){
+	public ObjectTrackingPair(T1 key, T2 value){
 		this.key = key;
 		this.value = value;
 		this.priority = 0;
 	}
 	
-	private ComparablePair(ComparablePair<T1, T2> original) {
+	private ObjectTrackingPair(ObjectTrackingPair<T1, T2> original) {
 		this.key = (T1)original.key.clone();
 		this.value = (T2)original.value.clone();
 	}
 
 	@Override
-	public int compareTo(ComparablePair o) {
+	public int compareTo(ObjectTrackingPair o) {
 		if(o.getPriority() < this.getPriority()){
 			return -1;
 		}else if(o.getPriority() == this.getPriority()){
@@ -47,8 +47,8 @@ public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Com
 	}
 	
 	@Override
-	public ComparablePair<T1, T2> clone() {
-		return new ComparablePair<T1, T2>(this);
+	public ObjectTrackingPair<T1, T2> clone() {
+		return new ObjectTrackingPair<T1, T2>(this);
 	}
 	
 	public T1 getKey(){

@@ -7,3 +7,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.mep.functions
 Import-Package: org.apache.commons.math.linear
+Service-Component: OSGI-INF/MEPFunctionService.xml

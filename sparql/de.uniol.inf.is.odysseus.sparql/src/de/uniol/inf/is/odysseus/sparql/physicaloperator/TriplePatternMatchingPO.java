@@ -70,9 +70,10 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		
 		// first the object has to be transformed
 		// things like "xyz"^^http://...#string must be
-		// xyz		
-		if (this.predicate.evaluate(preprocess(object))) {
-			this.transfer(this.transform(object));
+		// xyz	
+		RelationalTuple<M> preprocessed = preprocess(object);
+		if (this.predicate.evaluate(preprocessed)) {
+			this.transfer(this.transform(preprocessed));
 			if(this.hashCode() == 18250880){
 				String a = "null";
 			}
@@ -84,17 +85,17 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		// first clone the element
 		RelationalTuple<M> newElem = element.clone();
 		
-		if(!this.queryTriple.getSubject().isVariable()){
+//		if(!this.queryTriple.getSubject().isVariable()){
 			newElem = preprocess(newElem, 0);
-		}
+//		}
 		
-		if(!this.queryTriple.getPredicate().isVariable()){
+//		if(!this.queryTriple.getPredicate().isVariable()){
 			newElem = preprocess(newElem, 1);
-		}
+//		}
 		
-		if(!this.queryTriple.getObject().isVariable()){
+//		if(!this.queryTriple.getObject().isVariable()){
 			newElem = preprocess(newElem, 2);
-		}
+//		}
 		
 		return newElem;
 	}

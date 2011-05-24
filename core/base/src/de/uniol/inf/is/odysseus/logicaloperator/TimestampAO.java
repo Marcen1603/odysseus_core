@@ -23,18 +23,21 @@ public class TimestampAO extends UnaryLogicalOp {
 	private SDFAttribute startTimestamp;
 	private SDFAttribute endTimestamp;
 	private boolean isUsingSystemTime;
+	private boolean isUsingNoTime;
 
 	public TimestampAO(TimestampAO ao) {
 		super(ao);
 		this.startTimestamp = ao.startTimestamp;
 		this.endTimestamp = ao.endTimestamp;
 		this.isUsingSystemTime = ao.isUsingSystemTime;
+		this.isUsingNoTime = ao.isUsingNoTime;
 	}
 
 	public TimestampAO() {
 		startTimestamp = null;
 		endTimestamp = null;
 		isUsingSystemTime = true;
+		isUsingNoTime = false;
 	}
 
 	@Override
@@ -82,6 +85,14 @@ public class TimestampAO extends UnaryLogicalOp {
 	
 	public void setIsUsingSystemTime(boolean value) {
 		this.isUsingSystemTime = value;
+	}
+	
+	public void setUsingNoTime(boolean b){
+		this.isUsingNoTime = b;
+	}
+	
+	public boolean isUsingNoTime(){
+		return this.isUsingNoTime;
 	}
 
 }

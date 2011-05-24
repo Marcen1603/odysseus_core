@@ -81,4 +81,12 @@ public class Latency implements ILatency{
 		return "lstart;lend;latency";
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 */
+	@Override
+	public String csvToString(boolean withMetada) {
+		return this.csvToString();
+	}
+
 }

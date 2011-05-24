@@ -55,4 +55,9 @@ public class Priority implements IPriority{
 	public String getCSVHeader() {
 		return "Priority";
 	}
+	
+	@Override
+	public String csvToString(boolean withMetadata){
+		return this.csvToString();
+	}
 }

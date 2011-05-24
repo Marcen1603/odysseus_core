@@ -293,5 +293,13 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 	public List<String> getAttributMapping() {
 		return this.prob.getAttributMapping();
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 */
+	@Override
+	public String csvToString(boolean withMetada) {
+		return this.csvToString();
+	}
 	
 }

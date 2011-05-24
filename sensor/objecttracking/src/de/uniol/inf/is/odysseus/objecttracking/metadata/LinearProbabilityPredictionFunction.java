@@ -590,4 +590,9 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	public String getCSVHeader() {
 		return null;
 	}
+	
+	@Override
+	public String csvToString(boolean withMetadata){
+		return this.csvToString();
+	}
 }

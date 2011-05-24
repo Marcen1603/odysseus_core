@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -43,7 +43,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	
 	private HashMap<T, PointInTime> left_t_tilde;
 	private ILeftMergeFunction<T> dataMerge;
-	private JoinTISweepArea<T>[] joinAreas;
+//	private JoinTISweepArea<T>[] joinAreas;
 	
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
@@ -74,17 +74,21 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	
 	public LeftJoinTIPO(LeftMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<M> metadataMerge,
-			ITransferArea<T,T> transferFunction, JoinTISweepArea<T>[] areas) {
+			ITransferArea<T,T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
 		super(dataMerge, metadataMerge, transferFunction, areas);
 		this.left_t_tilde = new HashMap<T, PointInTime>();
-		this.joinAreas = areas;
+		this.areas = areas;
 		this.dataMerge = dataMerge;
 	}
 
 	@Override
 	protected void process_next(T object, int port) {
-		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum?? propagateDone gemeint?
+		if (isDone()) {
 			return;
+		}
+		
+		if(this.hashCode() == 29392698){
+			String s = "hallo";
 		}
 		
 		if(port == 0){
@@ -95,7 +99,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		}
 		
 		// man muss immer den minimalen Zeitstempel der linken SweepArea wählen
-		transferFunction.newHeartbeat(this.joinAreas[0].getMinTs(), port);
+		transferFunction.newHeartbeat(this.areas[0].getMinTs(), port);
 		
 //		transferFunction.newElement(object, port);
 		
@@ -114,14 +118,14 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		Order leftRight = Order.fromOrdinal(port);
 		
 		// purgeElemente nimmt keine Ruecksicht auf <order>
-		joinAreas[otherport].purgeElements(object, leftRight);
+		areas[otherport].purgeElements(object, leftRight);
 		
 		PointInTime t_tilde = object.getMetadata().getStart();
 		
 		Iterator<T> qualifies;
-		synchronized (this.joinAreas) {
-			synchronized (this.joinAreas[otherport]) {
-				qualifies = joinAreas[otherport].queryCopy(object, leftRight);
+		synchronized (this.areas) {
+			synchronized (this.areas[otherport]) {
+				qualifies = areas[otherport].queryCopy(object, leftRight);
 		
 				while (qualifies.hasNext()) {
 					T next = qualifies.next();
@@ -141,7 +145,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 					this.left_t_tilde.put(object, t_tilde);
 				}
 				
-				PointInTime ts_max_right = this.joinAreas[otherport].getMaxTs();
+				PointInTime ts_max_right = this.areas[otherport].getMaxTs();
 				if(ts_max_right != null && ts_max_right.after(t_tilde)){
 					@SuppressWarnings("unchecked")
 					T leftUnbound = null;
@@ -156,7 +160,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 				}
 				
 				this.left_t_tilde.put(object, t_tilde);
-				this.joinAreas[port].insert(object);
+				this.areas[port].insert(object);
 		
 		
 			}
@@ -168,10 +172,13 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		Order leftRight = Order.fromOrdinal(leftport);
 		Order rightLeft = Order.fromOrdinal(port);
 
-		Iterator<T> invalids = this.joinAreas[leftport].extractElements(object, leftRight);
+		// first process all invalid elements
+		Iterator<T> invalids = this.areas[leftport].extractElements(object, leftRight);
 		while(invalids.hasNext()){
 			T invalid = invalids.next();
 			PointInTime invalid_t_tilde = this.left_t_tilde.get(invalid);
+			// the invalid object will not be needed anymore
+			this.left_t_tilde.remove(invalid);
 			if(invalid_t_tilde.before(invalid.getMetadata().getEnd())){
 				@SuppressWarnings("unchecked")
 				T leftUnbound = null;
@@ -181,7 +188,8 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			}
 		}
 		
-		Iterator<T> qualifies = this.joinAreas[leftport].queryCopy(object, rightLeft);
+		// second, process all valid elements with join partner
+		Iterator<T> qualifies = this.areas[leftport].queryCopy(object, rightLeft);
 		while(qualifies.hasNext()){
 			T e_hat = qualifies.next(); // es werden nur kompatible Partner zurueckgeliefert, die auch nach einem Join das Join Praedikat erfuellen
 			PointInTime e_hat_t_tilde = this.left_t_tilde.get(e_hat);
@@ -198,6 +206,35 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			this.transferFunction.transfer(merged);
 			this.left_t_tilde.put(e_hat, merged.getMetadata().getEnd());
 		}
+		
+		this.areas[port].insert(object);
+		
+//		// third, process all elements, that are still in
+//		// left_t_tilde with t_tilde < object.getStart();
+//		// since left_t_tilde has been updated by the
+//		// processing before, we can simply compare
+//		// object.getStart() and each t_tilde timestamp
+//		// each time t_tilde < object.getStart() we
+//		// insert the left element with [t_tilde;objet.getStart())
+//		// into the transfer function
+//		List<Pair<T, PointInTime>> modifiedElements = new ArrayList<Pair<T, PointInTime>>();
+//		for(Entry<T, PointInTime> entry: this.left_t_tilde.entrySet()){
+//			if(entry.getValue().before(object.getMetadata().getStart())){
+//				T leftUnbound = null;
+//				leftUnbound = this.dataMerge.createLeftFilledUp((T)entry.getKey().clone());
+//				leftUnbound.getMetadata().setStart(entry.getValue());
+//				leftUnbound.getMetadata().setEnd(object.getMetadata().getStart());
+//				this.transferFunction.transfer(leftUnbound);
+//				Pair<T, PointInTime> newEntry = new Pair(entry.getKey(), entry.getValue());
+//				modifiedElements.add(newEntry);
+//			}
+//		}
+//		
+//		// insert the modified left_t_tilde entries
+//		for(Pair<T, PointInTime> newEntry: modifiedElements){
+//			this.left_t_tilde.put(newEntry.getE1(), newEntry.getE2());
+//		}
+		
 	}
 
 	@Override
@@ -224,36 +261,49 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	@Override
 	protected void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
-			this.joinAreas[i].clear();
+			this.areas[i].clear();
 		}
 		this.transferFunction.init(this);
 	}
 
 	@Override
 	protected void process_done() {
-		 transferFunction.done();
-		 joinAreas[0].clear();
-		 joinAreas[1].clear();
+		System.out.println("LeftJoinTIPO (" + this.hashCode() + ").processDone().");
+		
+		// transfer all elements from the left side
+		while(!areas[0].isEmpty()){
+			T leftUnbound = areas[0].poll();
+			// get t_tilde
+			PointInTime t_tilde = this.left_t_tilde.get(leftUnbound);
+			
+			// in the case that we have infinite windows
+			// t_tilde can be infinity. In this case
+			// we do not have put a new element into
+			// the transfer function. More general
+			// we only have to put a new element into
+			// the transfer function, if t_tilde < element.getEnd()
+			if(t_tilde == null){
+				leftUnbound = this.dataMerge.createLeftFilledUp((T) leftUnbound.clone());
+				// start timestamp is already set from the copy
+				this.transferFunction.transfer(leftUnbound);
+			}
+			else if(t_tilde.before(leftUnbound.getMetadata().getEnd())){
+				leftUnbound = this.dataMerge.createLeftFilledUp((T) leftUnbound.clone());
+				leftUnbound.getMetadata().setStart(t_tilde);
+				this.transferFunction.transfer(leftUnbound);
+			}
+		}
+		transferFunction.done();
+		areas[0].clear();
+		areas[1].clear();
 	 }
 	
 	@Override
 	protected boolean isDone() { 
 		if (getSubscribedToSource(0).isDone()) {
-			return getSubscribedToSource(1).isDone() || joinAreas[0].isEmpty();
+			return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 		} else {
-			return getSubscribedToSource(0).isDone()  && joinAreas[1].isEmpty();
-		}
-	}
-	
-	public ITemporalSweepArea<T>[] getAreas() {
-		return joinAreas;
-	}
-	
-	public void setAreas(JoinTISweepArea<T>[] areas) {
-		this.joinAreas = areas;
-		if (this.joinPredicate != null) {
-			this.joinAreas[0].setQueryPredicate(this.joinPredicate);
-			this.joinAreas[1].setQueryPredicate(this.joinPredicate);
+			return getSubscribedToSource(0).isDone()  && areas[1].isEmpty();
 		}
 	}
 	

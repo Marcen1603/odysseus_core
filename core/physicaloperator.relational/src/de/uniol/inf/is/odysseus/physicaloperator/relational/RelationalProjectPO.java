@@ -14,6 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +34,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
 	Logger logger = LoggerFactory.getLogger(RelationalProjectPO.class);
+	
 	
 	private int[] restrictList;
 
@@ -52,9 +57,8 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	@Override
 	final protected void process_next(RelationalTuple<T> object, int port) {
 		try {
-			// System.out.println("RelationalTuple "+this+" "+object);
 			RelationalTuple<T> out = object.restrict(this.restrictList, false);
-			logger.debug(this+" transferNext() "+object);
+//			logger.debug(this+" transferNext() "+object);			
 			transfer(out);
 		} catch (Exception e) {
 			e.printStackTrace();

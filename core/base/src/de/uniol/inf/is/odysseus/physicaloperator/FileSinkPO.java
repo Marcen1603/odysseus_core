@@ -28,10 +28,11 @@ public class FileSinkPO extends AbstractSink<Object> {
 	final private boolean csvSink;
 	final private long writeAfterElements;
 	private long elementsWritten;
+	private boolean printMetadata;
 	transient private StringBuffer writeCache;
 	transient BufferedWriter out;
 
-	public FileSinkPO(String filename, String sinkType, long writeAfterElements) {
+	public FileSinkPO(String filename, String sinkType, long writeAfterElements, boolean printMetadata) {
 		this.filename = filename;
 		if ("CSV".equalsIgnoreCase(sinkType)) {
 			csvSink = true;
@@ -39,11 +40,13 @@ public class FileSinkPO extends AbstractSink<Object> {
 			csvSink = false;
 		}
 		this.writeAfterElements = writeAfterElements;
+		this.printMetadata = printMetadata;
 	}
 
 	public FileSinkPO(FileSinkPO fileSink) {
 		this.filename = fileSink.filename;
 		this.csvSink = fileSink.csvSink;
+		this.printMetadata = fileSink.printMetadata;
 		this.writeAfterElements = fileSink.writeAfterElements;
 	}
 
@@ -71,7 +74,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 		try {
 			String toWrite = null;
 			if (csvSink) {
-				toWrite = ((ICSVToString) object).csvToString();
+				toWrite = ((ICSVToString) object).csvToString(printMetadata);
 			} else {
 				toWrite = "" + object;
 			}
@@ -129,6 +132,18 @@ public class FileSinkPO extends AbstractSink<Object> {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void process_done(int port){
+		System.out.println("FileSinkPO finishing...");
+		try {
+			writeToFile(writeCache.toString());
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("FileSinkPO.done");
 	}
 
 }

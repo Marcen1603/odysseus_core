@@ -171,9 +171,14 @@ void PrefixDecl() : { Token t ; INode iri ; }
 
 // ---- Query type clauses
 
-void SelectQuery() : { Variable v = null; Aggregation agg; List<SourceInfo> sources= new ArrayList<SourceInfo>();}
+void SelectQuery() : 
+{ Variable v = null;
+  Aggregation agg;
+  List<SourceInfo> sources= new ArrayList<SourceInfo>();
+  IRI fileURL;
+}
 {
-  <SELECT>
+  <SELECT> (<INTO> <FILE> fileURL= IRI_REF() {jjtThis.setFileURL(fileURL);})?
     //{ getQuery().setQuerySelectType() ; }
   ( <DISTINCT> { jjtThis.setDistinct(true);}
   | <REDUCED> { jjtThis.setDistinct(true); } // reduced is used in the way of distinct
@@ -202,6 +207,7 @@ void SelectQuery() : { Variable v = null; Aggregation agg; List<SourceInfo> sour
   [ GroupBy() ]
   /* [ Having() ] */
   SolutionModifier()
+  
 }
 
 void ConstructQuery() : { List<SourceInfo > sources = new ArrayList<SourceInfo >();}
@@ -1311,6 +1317,8 @@ TOKEN [IGNORE_CASE] :
 
 // Result forms
 | < SELECT: "select" >
+| < INTO: "into">
+| < FILE: "file">
 | < DISTINCT: "distinct" >
 | < REDUCED: "reduced" >
 | < DESCRIBE: "describe" >
