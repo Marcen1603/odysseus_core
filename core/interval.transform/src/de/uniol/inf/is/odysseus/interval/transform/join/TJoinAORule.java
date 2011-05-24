@@ -18,12 +18,13 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
@@ -40,11 +41,29 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 
 	@Override
 	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
-		LeftJoinAO lj = (LeftJoinAO)joinAO;
 		JoinTIPO joinPO = new JoinTIPO();
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
-		joinPO.setTransferFunction(new TITransferArea());
+		
+		// if in both input paths there is no window, we
+		// use a persistent sweep area
+		// check the paths
+		boolean windowFound=false;
+		for(int port = 0; port<2; port++){
+			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
+				windowFound = true;
+				break;
+			}
+		}
+		
+		if(!windowFound){
+			joinPO.setTransferFunction(new PersistentTransferArea());
+		}
+		// otherwise we use a LeftJoinTISweepArea
+		else{
+			joinPO.setTransferFunction(new LeftJoinTITransferArea());	
+		}
+		
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setOutputSchema(joinAO.getOutputSchema() == null?null:joinAO.getOutputSchema().clone());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
