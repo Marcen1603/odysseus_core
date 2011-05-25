@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.spatial.functions;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.datatypes.SpatialDataType;
 
 public class SpatialIntersection extends AbstractFunction{
 
@@ -16,12 +17,12 @@ public class SpatialIntersection extends AbstractFunction{
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > 0){
+		if(argPos > 1){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
 			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = SpatialDataType.class;
+			accTypes[0] = Geometry.class;
 			return accTypes;
 		}
 	}
@@ -33,9 +34,8 @@ public class SpatialIntersection extends AbstractFunction{
 	}
 
 	@Override
-	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean getValue() {
+		return ((Geometry)this.getInputValue(0)).intersects((Geometry)this.getInputValue(1));
 	}
 
 	@Override
