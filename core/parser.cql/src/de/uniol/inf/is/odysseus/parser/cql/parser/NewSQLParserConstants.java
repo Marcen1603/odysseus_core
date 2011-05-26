@@ -239,43 +239,45 @@ public interface NewSQLParserConstants {
   /** RegularExpression Id. */
   int S_POINT = 118;
   /** RegularExpression Id. */
-  int S_SEGMENT = 119;
+  int S_LINE = 119;
   /** RegularExpression Id. */
-  int S_LINE = 120;
+  int S_POLYGON = 120;
   /** RegularExpression Id. */
-  int S_FACET = 121;
+  int S_MULTI_POINT = 121;
   /** RegularExpression Id. */
-  int S_SOLID = 122;
+  int S_MULTI_LINE = 122;
   /** RegularExpression Id. */
-  int FLOAT = 123;
+  int S_MULTI_POLYGON = 123;
   /** RegularExpression Id. */
-  int INTEGER = 124;
+  int FLOAT = 124;
   /** RegularExpression Id. */
-  int DIGIT = 125;
+  int INTEGER = 125;
   /** RegularExpression Id. */
-  int IPADDRESS = 126;
+  int DIGIT = 126;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 127;
+  int IPADDRESS = 127;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 128;
+  int LINE_COMMENT = 128;
   /** RegularExpression Id. */
-  int IDENTIFIER = 129;
+  int MULTI_LINE_COMMENT = 129;
   /** RegularExpression Id. */
-  int LETTER = 130;
+  int IDENTIFIER = 130;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 131;
+  int LETTER = 131;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 132;
+  int SPECIAL_CHARS = 132;
   /** RegularExpression Id. */
-  int SQL_STRING = 133;
+  int CHAR_LITERAL = 133;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 134;
+  int SQL_STRING = 134;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 135;
+  int QUOTED_IDENTIFIER = 135;
   /** RegularExpression Id. */
-  int REGEXP = 136;
+  int COMPARE_OPERATOR = 136;
   /** RegularExpression Id. */
-  int JDBC_STRING = 137;
+  int REGEXP = 137;
+  /** RegularExpression Id. */
+  int JDBC_STRING = 138;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -400,11 +402,12 @@ public interface NewSQLParserConstants {
     "\"LIST\"",
     "\"SPATIAL_DISTANCE\"",
     "<S_COMPARE>",
-    "\"POINT3D\"",
-    "\"SEGMENT3D\"",
-    "\"LINE3D\"",
-    "\"FACET3D\"",
-    "\"SOLID3D\"",
+    "\"SPATIAL_POINT\"",
+    "\"SPATIAL_LINE\"",
+    "\"SPATIAL_POLYGON\"",
+    "\"SPATIAL_MULTI_POINT\"",
+    "\"SPATIAL_MULTI_LINE\"",
+    "\"SPATIAL_MULTI_POLYGON\"",
     "<FLOAT>",
     "<INTEGER>",
     "<DIGIT>",

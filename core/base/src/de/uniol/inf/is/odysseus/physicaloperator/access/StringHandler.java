@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 public class StringHandler extends AbstractAtomicDataHandler {
 
 	@Override
-	final public Object readData() throws IOException {
+	public Object readData() throws IOException {
 		return getStream().readUTF();
 	}
 

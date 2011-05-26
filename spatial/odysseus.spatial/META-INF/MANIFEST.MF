@@ -8,6 +8,7 @@ Import-Package: com.vividsolutions.jts.geom,
  com.vividsolutions.jts.geom.impl,
  com.vividsolutions.jts.geom.prep,
  com.vividsolutions.jts.geom.util,
+ com.vividsolutions.jts.io,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.mep.functions,
  org.osgi.framework;version="1.3.0"
