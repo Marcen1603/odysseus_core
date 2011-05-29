@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+<commandlistener>
+<enable>true</enable>
+<tcpport>4440</tcpport>
+</commandlistener>
+<ui>
+<usegui>false</usegui>
+<speed>1</speed>
+<gradientcache>
+<prefill>true</prefill>
+<size>1000</size>
+</gradientcache>
+</ui>
+<output>
+<type>odys</type>
+<odys>
+<startingPort>41000</startingPort>
+<host>localhost</host>
+</odys>
+</output>
+</configuration>
