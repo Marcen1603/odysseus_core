@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scheduler.slascheduler;
+package de.uniol.inf.is.odysseus.scheduler.slascheduler.old;
 
 import java.util.Dictionary;
 
@@ -23,10 +23,10 @@ import org.osgi.service.component.ComponentContext;
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy.AbstractSLAScheduler;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy.AbstractSLAScheduler.PrioCalcMethod;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy.PrioSLAScheduler;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.strategy.TimebasedSLAScheduler;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.AbstractSLAScheduler;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.PrioSLAScheduler;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.TimebasedSLAScheduler;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.AbstractSLAScheduler.PrioCalcMethod;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 
