@@ -5,9 +5,12 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.IPriorityFunction;
 public class PrioSum implements IPriorityFunction {
 
 	@Override
-	public int calcPriority() {
-		// TODO not implemented yet
-		return 0;
+	public int calcPriority(int... cost) {
+		int sum = 0;
+		for (int c : cost) {
+			sum += c;
+		}
+		return sum;
 	}
 
 }
