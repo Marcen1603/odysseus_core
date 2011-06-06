@@ -64,4 +64,8 @@ public class SpatialStringHandler extends StringHandler{
 		String wktString = this.writer.writeFormatted((Geometry)data);
 		super.writeData(buffer, wktString);
 	}
+	
+	public String getName(){
+		return "SpatialStringHandler";
+	}
 }

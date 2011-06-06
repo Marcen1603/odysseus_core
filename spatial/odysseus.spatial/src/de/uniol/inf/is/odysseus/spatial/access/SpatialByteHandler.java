@@ -116,4 +116,12 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler{
 		
 		return number;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getName()
+	 */
+	@Override
+	public String getName() {
+		return "SpatialByteHandler";
+	}
 }
