@@ -19,6 +19,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
@@ -57,30 +58,31 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			if (uri.equals("Integer")) {
-				this.dataHandler[i++] = new IntegerHandler();
+				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("IntegerHandler");
 			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
-				this.dataHandler[i++] = new LongHandler();
+				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("LongHandler");
 			} else if (uri.equals("Double")) {
-				this.dataHandler[i++] = new DoubleHandler();
+				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("DoubleHandler");
 			} else if (uri.equals("String")) {
-				this.dataHandler[i++] = new StringHandler();
+				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("StringHandler");
 			} else if (uri.equalsIgnoreCase("SpatialPoint") ||
 					uri.equalsIgnoreCase("SpatialLine") ||
 					uri.equalsIgnoreCase("SpatialPolygon") || 
 					uri.equalsIgnoreCase("SpatialMulitPoint") ||
 					uri.equalsIgnoreCase("SpatialMultiLine") ||
 					uri.equalsIgnoreCase("SpatialMultiPolygon")){
-				
-				try {
-					Class clazz = Class.forName("de.uniol.inf.is.odysseus.spatial.access.SpatialByteHandler");
-					this.dataHandler[i++] = (IAtomicDataHandler)clazz.newInstance();
-				} catch (InstantiationException e) {
-					throw new RuntimeException(e);
-				} catch (IllegalAccessException e) {
-					throw new RuntimeException(e);
-				} catch (ClassNotFoundException e) {
-					throw new RuntimeException(e);
-				}
+				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("SpatialByteHandler");
+//				
+//				try {
+//					Class clazz = Class.forName("de.uniol.inf.is.odysseus.spatial.access.SpatialByteHandler");
+//					this.dataHandler[i++] = (IAtomicDataHandler)clazz.newInstance();
+//				} catch (InstantiationException e) {
+//					throw new RuntimeException(e);
+//				} catch (IllegalAccessException e) {
+//					throw new RuntimeException(e);
+//				} catch (ClassNotFoundException e) {
+//					throw new RuntimeException(e);
+//				}
 			} else {
 				throw new RuntimeException("illegal datatype "+uri);
 			}
