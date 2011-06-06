@@ -16,9 +16,18 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DoubleHandler extends AbstractAtomicDataHandler {
 
+	/**
+	 * 
+	 */
+	protected DoubleHandler() {
+		super();
+	}
+	
 	@Override
 	final public Object readData() throws IOException {
 		return getStream().readDouble();
@@ -41,8 +50,12 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getDataTypeName()
 	 */
 	@Override
-	public String getName() {
-		return "DoubleHandler";
+	public List<String> getSupportedDataTypes() {
+		List<String> types = new ArrayList<String>();
+		types.add("Double");
+		types.add("Float");
+		types.add("MV");
+		return types;
 	}
 	
 

@@ -16,9 +16,18 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StringHandler extends AbstractAtomicDataHandler {
 
+	/**
+	 * 
+	 */
+	protected StringHandler() {
+		super();
+	}
+	
 	@Override
 	public Object readData() throws IOException {
 		return getStream().readUTF();
@@ -52,7 +61,9 @@ public class StringHandler extends AbstractAtomicDataHandler {
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getName()
 	 */
 	@Override
-	public String getName() {
-		return "StringHandler";
+	public List<String> getSupportedDataTypes(){
+		List<String> types = new ArrayList<String>();
+		types.add("String");
+		return types;
 	}
 }

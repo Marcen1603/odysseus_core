@@ -22,23 +22,32 @@ import java.util.HashMap;
  */
 public class DataHandlerRegistry {
 
+	/**
+	 * HashMap from datatype to data handler
+	 */
 	private static HashMap<String, IAtomicDataHandler> dataHandlers = new HashMap<String, IAtomicDataHandler>();
 	
-	public static void addDataHandlerProvider(IDataHandlerProvider provider){
-		for(IAtomicDataHandler curHandler: provider.getDataHandlers()){
-			if(dataHandlers.containsKey(curHandler.getName())){
-				throw new IllegalArgumentException("Data handler with name " + curHandler.getName() + " is already registered.");
+	private static void registerDataHandler(IAtomicDataHandler handler){
+		String errMsg = "";
+		for(String type: handler.getSupportedDataTypes()){
+			if(dataHandlers.containsKey(type.toLowerCase())){
+				errMsg += "Data handler for " + type + " already registered.\n";
 			}
-			
-			dataHandlers.put(curHandler.getName(), curHandler);
+			else{
+				dataHandlers.put(type.toLowerCase(), handler);
+			}
+		}
+		
+		if(errMsg != ""){
+			throw new IllegalArgumentException(errMsg);
 		}
 	}
 	
-	public static void removeDataHandler(String name){
-		dataHandlers.remove(name);
+	public static void removeDataHandler(String dataType){
+		dataHandlers.remove(dataType);
 	}
 	
-	public static IAtomicDataHandler getDataHandler(String name){
-		return dataHandlers.get(name);
+	public static IAtomicDataHandler getDataHandler(String dataType){
+		return dataHandlers.get(dataType.toLowerCase());
 	}
 }

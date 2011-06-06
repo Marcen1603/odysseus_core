@@ -16,9 +16,18 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LongHandler extends AbstractAtomicDataHandler {
 
+	/**
+	 * 
+	 */
+	protected LongHandler() {
+		super();
+	}
+	
 	@Override
 	public final Object readData() throws IOException {
 		return getStream().readLong();
@@ -41,8 +50,10 @@ public class LongHandler extends AbstractAtomicDataHandler {
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getName()
 	 */
 	@Override
-	public String getName() {
-		return "LongHandler";
+	public List<String> getSupportedDataTypes() {
+		List<String> types = new ArrayList<String>();
+		types.add("Long");
+		return types;
 	}
 	
 	

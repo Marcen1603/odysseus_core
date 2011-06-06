@@ -21,7 +21,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 
 	private ObjectInputStream stream;
-		
+	
+	protected AbstractAtomicDataHandler(){
+	}
+	
 	@Override
 	public void setStream(ObjectInputStream stream) {
 		this.stream = stream;
