@@ -96,15 +96,12 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 
 	@Override
 	public boolean evaluate(RelationalTuple<?> input) {
-		System.out.println("Eva: " + input.toString());
 		String inputString = input.getAttribute(this.attributePosition)
 				.toString();
 		if (this.matcher == null) {
 			this.matcher = this.pattern.matcher(inputString);
-			System.out.println("Eva create Matcher: " + inputString);
 			return this.matcher.find();
 		} else {
-			System.out.println("Eva reset Matcher: " + inputString);
 			return this.matcher.reset(inputString).find();
 		}
 	}
@@ -191,7 +188,6 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 		if(!(o instanceof RegExPredicate)) {
 			return false;
 		}
-		//TODO: richtig implementieren
 		return false;
 	}
 
