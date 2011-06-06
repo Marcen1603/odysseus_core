@@ -53,6 +53,9 @@ public class LongHandler extends AbstractAtomicDataHandler {
 	public List<String> getSupportedDataTypes() {
 		List<String> types = new ArrayList<String>();
 		types.add("Long");
+		types.add("Timestamp");
+		types.add("StartTimestamp");
+		types.add("EndTimestamp");
 		return types;
 	}
 	
