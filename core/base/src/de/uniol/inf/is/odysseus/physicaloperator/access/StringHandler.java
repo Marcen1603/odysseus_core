@@ -47,4 +47,12 @@ public class StringHandler extends AbstractAtomicDataHandler {
 			buffer.putChar(s.charAt(i));
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getName()
+	 */
+	@Override
+	public String getName() {
+		return "StringHandler";
+	}
 }

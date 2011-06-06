@@ -44,6 +44,14 @@ public class DateHandler extends AbstractAtomicDataHandler {
 		//System.out.println("write Long Data "+((Number)data).longValue());
 		buffer.putLong(((Number)data).longValue());
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getDataTypeName()
+	 */
+	@Override
+	public String getName() {
+		return "DateHandler";
+	}
 	
 	
 

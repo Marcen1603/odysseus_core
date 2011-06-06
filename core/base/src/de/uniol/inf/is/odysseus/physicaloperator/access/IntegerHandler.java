@@ -37,6 +37,14 @@ public class IntegerHandler extends AbstractAtomicDataHandler {
 		buffer.putInt(((Number) data).intValue());		
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getDataTypeName()
+	 */
+	@Override
+	public String getName() {
+		return "IntegerHandler";
+	}
+
 	
 
 }

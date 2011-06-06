@@ -36,6 +36,14 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 		//System.out.println("write Double Data "+(Double)data);
 		buffer.putDouble(((Number)data).doubleValue());		
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getDataTypeName()
+	 */
+	@Override
+	public String getName() {
+		return "DoubleHandler";
+	}
 	
 
 }

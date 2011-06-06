@@ -36,6 +36,14 @@ public class LongHandler extends AbstractAtomicDataHandler {
 		//System.out.println("write Long Data "+((Number)data).longValue());
 		buffer.putLong(((Number)data).longValue());
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getName()
+	 */
+	@Override
+	public String getName() {
+		return "LongHandler";
+	}
 	
 	
 
