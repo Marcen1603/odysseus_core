@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
@@ -59,17 +60,26 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			if (uri.equals("Integer")) {
-				this.dataHandler[i++] = new IntegerHandler();
-			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
-				this.dataHandler[i++] = new LongHandler();
-			} else if (uri.equals("Double") || uri.equals("MV")) {
-				this.dataHandler[i++] = new DoubleHandler();
-			} else if (uri.equals("String")) {
-				this.dataHandler[i++] = new StringHandler();
-			} else {
-				throw new RuntimeException("illegal datatype");
+			
+			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			if(handler == null){
+				throw new IllegalArgumentException("No handler for datatype "+ uri);
 			}
+			else{
+				this.dataHandler[i++] = handler;
+			}
+			
+//			if (uri.equals("Integer")) {
+//				this.dataHandler[i++] = new IntegerHandler();
+//			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
+//				this.dataHandler[i++] = new LongHandler();
+//			} else if (uri.equals("Double") || uri.equals("MV")) {
+//				this.dataHandler[i++] = new DoubleHandler();
+//			} else if (uri.equals("String")) {
+//				this.dataHandler[i++] = new StringHandler();
+//			} else {
+//				throw new RuntimeException("illegal datatype");
+//			}
 		}
 	}
 

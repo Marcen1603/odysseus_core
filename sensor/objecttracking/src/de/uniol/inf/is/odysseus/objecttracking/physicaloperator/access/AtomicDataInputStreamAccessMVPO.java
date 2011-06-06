@@ -22,6 +22,7 @@ import java.net.Socket;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DateHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
@@ -75,23 +76,32 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			if (uri.equals("Integer")) {
-				this.dataReader[i++] = new IntegerHandler();
-			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
-				this.dataReader[i++] = new LongHandler();
+			
+			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			if(handler == null){
+				throw new IllegalArgumentException("No handler for datatype " + uri);
 			}
-			// double values and measurement values can
-			// be read the same way since measurement values
-			// are also double values.
-			else if (uri.equals("Double") || uri.equals("MV")) {
-				this.dataReader[i++] = new DoubleHandler();
-			} else if (uri.equals("String")) {
-				this.dataReader[i++] = new StringHandler();
-			} else if (uri.equals("Date")) {
-				this.dataReader[i++] = new DateHandler();
-			} else {
-				throw new RuntimeException("illegal datatype "+uri);
+			else{
+				this.dataReader[i++] = handler;
 			}
+			
+//			if (uri.equals("Integer")) {
+//				this.dataReader[i++] = new IntegerHandler();
+//			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
+//				this.dataReader[i++] = new LongHandler();
+//			}
+//			// double values and measurement values can
+//			// be read the same way since measurement values
+//			// are also double values.
+//			else if (uri.equals("Double") || uri.equals("MV")) {
+//				this.dataReader[i++] = new DoubleHandler();
+//			} else if (uri.equals("String")) {
+//				this.dataReader[i++] = new StringHandler();
+//			} else if (uri.equals("Date")) {
+//				this.dataReader[i++] = new DateHandler();
+//			} else {
+//				throw new RuntimeException("illegal datatype "+uri);
+//			}
 		}
 	}
 
