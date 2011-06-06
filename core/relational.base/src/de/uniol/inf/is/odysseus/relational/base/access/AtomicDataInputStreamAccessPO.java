@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IntegerHandler;
@@ -86,18 +87,26 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			String upperCaseURI = uri.toUpperCase();
-				if (upperCaseURI.equals("DOUBLE") || uri.equals("MV")) {
-					this.dataReader[i++] = new DoubleHandler();
-				} else if (upperCaseURI.equals("STRING")) {
-					this.dataReader[i++] = new StringHandler();
-				} else if (upperCaseURI.equals("INTEGER")) {
-					this.dataReader[i++] = new IntegerHandler();	
-				} else if (upperCaseURI.equals("LONG")||upperCaseURI.endsWith("TIMESTAMP")) {
-					this.dataReader[i++] = new LongHandler();
-				} else {
-					throw new RuntimeException("illegal datatype " + upperCaseURI);
-				}
+			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			if(handler == null){
+				throw new IllegalArgumentException("No handler for datatype "+ uri);
+			}
+			else{
+				this.dataReader[i++] = handler;
+			}
+			
+//			String upperCaseURI = uri.toUpperCase();
+//				if (upperCaseURI.equals("DOUBLE") || uri.equals("MV")) {
+//					this.dataReader[i++] = new DoubleHandler();
+//				} else if (upperCaseURI.equals("STRING")) {
+//					this.dataReader[i++] = new StringHandler();
+//				} else if (upperCaseURI.equals("INTEGER")) {
+//					this.dataReader[i++] = new IntegerHandler();	
+//				} else if (upperCaseURI.equals("LONG")||upperCaseURI.endsWith("TIMESTAMP")) {
+//					this.dataReader[i++] = new LongHandler();
+//				} else {
+//					throw new RuntimeException("illegal datatype " + upperCaseURI);
+//				}
 		}
 	}
 

@@ -57,21 +57,29 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			if (uri.equals("Integer")) {
-				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("IntegerHandler");
-			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
-				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("LongHandler");
-			} else if (uri.equals("Double")) {
-				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("DoubleHandler");
-			} else if (uri.equals("String")) {
-				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("StringHandler");
-			} else if (uri.equalsIgnoreCase("SpatialPoint") ||
-					uri.equalsIgnoreCase("SpatialLine") ||
-					uri.equalsIgnoreCase("SpatialPolygon") || 
-					uri.equalsIgnoreCase("SpatialMulitPoint") ||
-					uri.equalsIgnoreCase("SpatialMultiLine") ||
-					uri.equalsIgnoreCase("SpatialMultiPolygon")){
-				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("SpatialByteHandler");
+			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			
+			if(handler == null){
+				throw new RuntimeException("illegal datatype "+uri);
+			}
+			
+			this.dataHandler[i++] = handler;
+			
+//			if (uri.equals("Integer")) {
+//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("IntegerHandler");
+//			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
+//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("LongHandler");
+//			} else if (uri.equals("Double")) {
+//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("DoubleHandler");
+//			} else if (uri.equals("String")) {
+//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("StringHandler");
+//			} else if (uri.equalsIgnoreCase("SpatialPoint") ||
+//					uri.equalsIgnoreCase("SpatialLine") ||
+//					uri.equalsIgnoreCase("SpatialPolygon") || 
+//					uri.equalsIgnoreCase("SpatialMulitPoint") ||
+//					uri.equalsIgnoreCase("SpatialMultiLine") ||
+//					uri.equalsIgnoreCase("SpatialMultiPolygon")){
+//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("SpatialByteHandler");
 //				
 //				try {
 //					Class clazz = Class.forName("de.uniol.inf.is.odysseus.spatial.access.SpatialByteHandler");
@@ -83,9 +91,9 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 //				} catch (ClassNotFoundException e) {
 //					throw new RuntimeException(e);
 //				}
-			} else {
-				throw new RuntimeException("illegal datatype "+uri);
-			}
+//			} else {
+//				throw new RuntimeException("illegal datatype "+uri);
+//			}
 		}
 	}
 
