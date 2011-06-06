@@ -21,11 +21,12 @@ import java.util.List;
 
 public class LongHandler extends AbstractAtomicDataHandler {
 
-	/**
-	 * 
-	 */
-	public LongHandler() {
-		super();
+	static List<String> types = new ArrayList<String>();		
+	static{
+		types.add("Long");
+		types.add("Timestamp");
+		types.add("StartTimestamp");
+		types.add("EndTimestamp");
 	}
 	
 	@Override
@@ -51,11 +52,6 @@ public class LongHandler extends AbstractAtomicDataHandler {
 	 */
 	@Override
 	public List<String> getSupportedDataTypes() {
-		List<String> types = new ArrayList<String>();
-		types.add("Long");
-		types.add("Timestamp");
-		types.add("StartTimestamp");
-		types.add("EndTimestamp");
 		return types;
 	}
 	

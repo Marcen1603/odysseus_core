@@ -29,11 +29,9 @@ import java.util.List;
  */
 public class DateHandler extends AbstractAtomicDataHandler {
 
-	/**
-	 * 
-	 */
-	public DateHandler() {
-		super();
+	static List<String> types = new ArrayList<String>();		
+	static{
+		types.add("Date");
 	}
 	
 	@Override
@@ -59,8 +57,6 @@ public class DateHandler extends AbstractAtomicDataHandler {
 	 */
 	@Override
 	public List<String> getSupportedDataTypes() {
-		List<String> types = new ArrayList<String>();
-		types.add("Date");
 		return types;
 	}
 	

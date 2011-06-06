@@ -21,11 +21,11 @@ import java.util.List;
 
 public class IntegerHandler extends AbstractAtomicDataHandler {
 
-	/**
-	 * 
-	 */
-	public IntegerHandler() {
-		super();
+	static List<String> types = new ArrayList<String>();		
+	static{
+		types.add("Integer");
+		types.add("Byte");
+		types.add("Short");
 	}
 	
 	@Override
@@ -51,10 +51,6 @@ public class IntegerHandler extends AbstractAtomicDataHandler {
 	 */
 	@Override
 	public List<String> getSupportedDataTypes() {
-		List<String> types = new ArrayList<String>();
-		types.add("Integer");
-		types.add("Byte");
-		types.add("Short");
 		return types;
 	}
 

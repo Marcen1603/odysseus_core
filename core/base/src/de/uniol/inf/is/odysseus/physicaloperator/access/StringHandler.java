@@ -20,12 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StringHandler extends AbstractAtomicDataHandler {
-
-	/**
-	 * 
-	 */
-	public StringHandler() {
-		super();
+	static List<String> types = new ArrayList<String>();		
+	static{
+		types.add("String");
 	}
 	
 	@Override
@@ -62,8 +59,6 @@ public class StringHandler extends AbstractAtomicDataHandler {
 	 */
 	@Override
 	public List<String> getSupportedDataTypes(){
-		List<String> types = new ArrayList<String>();
-		types.add("String");
 		return types;
 	}
 }
