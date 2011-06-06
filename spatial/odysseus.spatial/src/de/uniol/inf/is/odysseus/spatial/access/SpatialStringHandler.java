@@ -16,10 +16,11 @@ package de.uniol.inf.is.odysseus.spatial.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 
@@ -34,7 +35,7 @@ public class SpatialStringHandler extends StringHandler{
 	WKTReader reader;
 	WKTWriter writer;
 	
-	public SpatialStringHandler(){
+	protected SpatialStringHandler(){
 		this.reader = new WKTReader();
 		this.writer = new WKTWriter();
 	}
@@ -65,7 +66,16 @@ public class SpatialStringHandler extends StringHandler{
 		super.writeData(buffer, wktString);
 	}
 	
-	public String getName(){
-		return "SpatialStringHandler";
+	public List<String> getSupportedDataTypes(){
+		List<String> types = new ArrayList<String>();
+		types.add("SpatialPoint");
+		types.add("SpatialLine");
+		types.add("SpatialPolygon");
+		
+		types.add("SpatialMultiPoint");
+		types.add("SpatialMultiLine");
+		types.add("SpatialMutliPolygon");
+		
+		return types;
 	}
 }

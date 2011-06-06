@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.spatial.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.InputStreamInStream;
@@ -117,11 +119,16 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler{
 		return number;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getName()
-	 */
-	@Override
-	public String getName() {
-		return "SpatialByteHandler";
+	public List<String> getSupportedDataTypes(){
+		List<String> types = new ArrayList<String>();
+		types.add("SpatialPoint");
+		types.add("SpatialLine");
+		types.add("SpatialPolygon");
+		
+		types.add("SpatialMultiPoint");
+		types.add("SpatialMultiLine");
+		types.add("SpatialMutliPolygon");
+		
+		return types;
 	}
 }
