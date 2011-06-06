@@ -21,7 +21,7 @@ public class RuleProvider implements ITransformRuleProvider {
         final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
         rules.add(new TSourceAORule());
         rules.add(new TUnnestAORule());
-
+        rules.add(new TVisualSinkAORule());
         return rules;
     }
 }

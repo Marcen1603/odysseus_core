@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.salsa.pool.SourcePool;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class SourcePO<T extends IMetaAttribute> extends
@@ -58,7 +57,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     @Override
     protected void process_close() {
-        SourcePool.unregisterSource("test");
+        SourcePool.unregisterSource("Laser1");
     }
 
     /*
@@ -67,28 +66,21 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     @Override
     protected void process_open() throws OpenFailedException {
-        SourcePool.registerSource("test", this);
+        SourcePool.registerSource("Laser1", this);
     }
 
     /**
-     * @param data
-     *            The data as a {@link Map} containing the attribute name and the value
      * @param timestamp
      *            The timestamp of measurement
+     * @param data
+     *            The data as a {@link Map} containing the values
      */
-    public void transfer(final Map<String, Object> data, final long timestamp) {
+    public void transfer(final long timestamp, final Object[] data) {
         if (this.isOpen()) {
             final RelationalTuple<TimeInterval> event = new RelationalTuple<TimeInterval>(this
                     .getOutputSchema().size());
-            int i = 0;
-
-            for (final SDFAttribute attr : this.getOutputSchema()) {
-                if (data.containsKey(attr.getAttributeName())) {
-                    event.setAttribute(i++, data.get(attr.getAttributeName()));
-                }
-                else {
-                    event.setAttribute(i++, "");
-                }
+            for (int i = 0; i < data.length; i++) {
+                event.setAttribute(i, data[i]);
             }
             final TimeInterval metadata = new TimeInterval(new PointInTime(timestamp));
 

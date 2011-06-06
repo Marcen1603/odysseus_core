@@ -51,7 +51,16 @@ public class UnnestPO<T extends IMetaAttribute> extends
      */
     @Override
     public OutputMode getOutputMode() {
-        return OutputMode.INPUT;
+        return OutputMode.NEW_ELEMENT;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#getOutputSchema()
+     */
+    @Override
+    public SDFAttributeList getOutputSchema() {
+        return this.schema;
     }
 
     /*
@@ -68,7 +77,6 @@ public class UnnestPO<T extends IMetaAttribute> extends
             for (final Object nestedValue : unnestAttribute) {
                 final RelationalTuple<T> output = new RelationalTuple<T>(this.schema.size());
                 output.setMetadata((T) object.getMetadata().clone());
-                UnnestPO.LOG.debug("Unnest: " + object + " at pos: " + this.attributePos);
                 for (int i = 0; i < object.getAttributeCount(); i++) {
                     if (i == this.attributePos) {
                         output.setAttribute(i, nestedValue);

@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.salsa.sensor.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,56 +10,50 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.salsa.adapter.Source;
 import de.uniol.inf.is.odysseus.salsa.adapter.impl.AbstractPushingSourceAdapter;
+import de.uniol.inf.is.odysseus.salsa.sensor.MeasurementListener;
 import de.uniol.inf.is.odysseus.salsa.sensor.SickConnection;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Measurement;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Sample;
 
-public class SickPushingSourceAdapter extends AbstractPushingSourceAdapter {
+public class SickPushingSourceAdapter extends AbstractPushingSourceAdapter implements
+        MeasurementListener {
     private static final Logger LOG = LoggerFactory.getLogger(SickPushingSourceAdapter.class);
-    private final Map<Source, Thread> connectionThreads = new ConcurrentHashMap<Source, Thread>();
+    private final Map<Source, SickConnection> connections = new ConcurrentHashMap<Source, SickConnection>();
 
     @Override
     protected void doDestroy(final Source source) {
-        if (this.connectionThreads.containsKey(source)) {
-            this.connectionThreads.get(source).interrupt();
+        if (this.connections.containsKey(source)) {
+            this.connections.get(source).close();
+            this.connections.remove(source);
         }
     }
 
     @Override
     protected void doInit(final Source source) {
-        final SickConnection connection = new SickConnectionImpl();
         final String host = source.getConfiguration().get("host").toString();
         final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
+        final SickConnection connection = new SickConnectionImpl(host, port);
         SickPushingSourceAdapter.LOG.debug("Open connection to SICK sensor at {}:{}", host, port);
-        connection.open(host, port);
-        this.connectionThreads.put(source, new Thread() {
-            @Override
-            public void run() {
-                while (!Thread.currentThread().isInterrupted()) {
-                    Measurement measurement;
-                    while ((measurement = connection.getMeasurement()) != null) {
-                        final List<Coordinate> coordinates = new ArrayList<Coordinate>(measurement
-                                .getSamples().length);
-
-                        for (final Sample sample : measurement.getSamples()) {
-                            coordinates.add(sample.getDist1Vector());
-                        }
-                        final Map<String, Object> data = new HashMap<String, Object>();
-                        data.put("scan", coordinates);
-                        SickPushingSourceAdapter.this.transfer(source, data,
-                                System.currentTimeMillis());
-                    }
-                }
-                SickPushingSourceAdapter.LOG
-                        .debug("Connection handler for SICK sensor interrupted");
-                connection.close();
-            }
-        });
-        this.connectionThreads.get(source).start();
+        connection.setListener(source.getName(), this);
+        connection.open();
+        this.connections.put(source, connection);
     }
 
     @Override
     public String getName() {
         return "Sick";
+    }
+
+    @Override
+    public void onMeasurement(final String uri, final Measurement measurement) {
+        final Coordinate[] coordinates = new Coordinate[measurement.getSamples().length];
+        for (int i = 0; i < measurement.getSamples().length; i++) {
+            final Sample sample = measurement.getSamples()[i];
+            coordinates[i] = sample.getDist1Vector();
+        }
+        SickPushingSourceAdapter.this.transfer(uri, System.currentTimeMillis(), new Object[] {
+            coordinates
+        });
+
     }
 }

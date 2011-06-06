@@ -20,7 +20,7 @@ public class ExtractSegments extends AbstractFunction<Object> {
         }
         else {
             final Class<?>[] accTypes = new Class<?>[2];
-            accTypes[0] = double[][].class;
+            accTypes[0] = Coordinate[].class;
             accTypes[1] = double.class;
             return accTypes;
         }
@@ -70,7 +70,13 @@ public class ExtractSegments extends AbstractFunction<Object> {
             }
         }
         if (isSegment) {
-            final List<Coordinate> segment = new ArrayList<Coordinate>();
+            final List<Coordinate> segment;
+            if (measurements[measurements.length - 1].distance(measurements[0]) > threshold) {
+                segment = new ArrayList<Coordinate>();
+            }
+            else {
+                segment = segments.get(0);
+            }
             for (int j = start; j < measurements.length; j++) {
                 segment.add(measurements[j]);
             }

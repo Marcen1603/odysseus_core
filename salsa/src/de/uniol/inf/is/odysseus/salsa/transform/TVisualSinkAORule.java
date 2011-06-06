@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.salsa.logicaloperator.SourceAO;
-import de.uniol.inf.is.odysseus.salsa.physicaloperator.SourcePO;
+import de.uniol.inf.is.odysseus.salsa.logicaloperator.VisualSinkAO;
+import de.uniol.inf.is.odysseus.salsa.physicaloperator.VisualSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
-    private static Logger LOG = LoggerFactory.getLogger(TSourceAORule.class);
+public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> {
+    private static Logger LOG = LoggerFactory.getLogger(TVisualSinkAORule.class);
 
     /*
      * (non-Javadoc)
@@ -22,8 +22,8 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
      * java.lang.Object)
      */
     @Override
-    public void execute(final SourceAO operator, final TransformationConfiguration config) {
-        final SourcePO<?> po = new SourcePO(operator.getOutputSchema());
+    public void execute(final VisualSinkAO operator, final TransformationConfiguration config) {
+        final VisualSinkPO<?> po = new VisualSinkPO(operator.getOutputSchema());
         final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                 operator, po);
         for (final ILogicalOperator o : toUpdate) {
@@ -39,7 +39,7 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
      */
     @Override
     public String getName() {
-        return "SourceAO -> SourcePO";
+        return "VisualSinkAO -> VisualSinkPO";
     }
 
     /*
@@ -57,7 +57,7 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
      */
     @Override
     public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.ACCESS;
+        return TransformRuleFlowGroup.TRANSFORMATION;
     }
 
     /*
@@ -66,7 +66,8 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
      * java.lang.Object)
      */
     @Override
-    public boolean isExecutable(final SourceAO operator, final TransformationConfiguration config) {
+    public boolean isExecutable(final VisualSinkAO operator,
+            final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
 }

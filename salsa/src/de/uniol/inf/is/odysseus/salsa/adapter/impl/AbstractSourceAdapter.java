@@ -42,9 +42,8 @@ public abstract class AbstractSourceAdapter implements SourceAdapter {
         return "AbstractSourceAdapter [sources=" + this.sources + "]";
     }
 
-    protected void transfer(final Source source, final Map<String, Object> data,
-            final long timestamp) {
-        SourcePool.transfer(source.getName(), data, timestamp);
+    protected void transfer(final String uri, final long timestamp, final Object[] data) {
+        SourcePool.transfer(uri, timestamp, data);
     }
 
     @Override

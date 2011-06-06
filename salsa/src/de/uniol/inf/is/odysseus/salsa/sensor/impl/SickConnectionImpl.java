@@ -11,13 +11,12 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.salsa.sensor.MeasurementListener;
 import de.uniol.inf.is.odysseus.salsa.sensor.SickConnection;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Background;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Measurement;
@@ -30,13 +29,15 @@ public class SickConnectionImpl implements SickConnection {
         private final int port;
         private SocketChannel channel;
         private final Charset charset = Charset.forName("ASCII");
-        private final Queue<Measurement> measurements = new ConcurrentLinkedQueue<Measurement>();
         private Background background;
-        private final AtomicBoolean record = new AtomicBoolean();
+        private final AtomicBoolean record = new AtomicBoolean(false);
+        private final SickConnectionImpl connection;
 
-        public SickConnectionHandler(final String host, final int port) {
+        public SickConnectionHandler(final String host, final int port,
+                final SickConnectionImpl connection) {
             this.host = host;
             this.port = port;
+            this.connection = connection;
 
         }
 
@@ -56,10 +57,6 @@ public class SickConnectionImpl implements SickConnection {
 
         public Background getBackground() {
             return this.background;
-        }
-
-        public Measurement getMeasurement() {
-            return this.measurements.poll();
         }
 
         public boolean isConnected() {
@@ -192,7 +189,7 @@ public class SickConnectionImpl implements SickConnection {
                         }
                         this.background = Background.merge(this.background, measurement);
                     }
-                    this.measurements.offer(measurement);
+                    this.connection.onMeasurement(measurement);
                 }
             }
             else {
@@ -318,6 +315,12 @@ public class SickConnectionImpl implements SickConnection {
     private static final String RSSI2 = "RSSI2";
 
     private SickConnectionHandler handler = null;
+    private String uri;
+    private MeasurementListener listener;
+
+    public SickConnectionImpl(final String host, final int port) {
+        this.handler = new SickConnectionHandler(host, port, this);
+    }
 
     @Override
     public void close() {
@@ -330,19 +333,25 @@ public class SickConnectionImpl implements SickConnection {
     }
 
     @Override
-    public Measurement getMeasurement() {
-        return this.handler.getMeasurement();
-    }
-
-    @Override
     public boolean isConnected() {
         return this.handler.isConnected();
     }
 
+    public void onMeasurement(final Measurement measurement) {
+        if (this.listener != null) {
+            this.listener.onMeasurement(this.uri, measurement);
+        }
+    }
+
     @Override
-    public void open(final String host, final int port) {
-        this.handler = new SickConnectionHandler(host, port);
+    public void open() {
         this.handler.start();
+    }
+
+    @Override
+    public void setListener(final String uri, final MeasurementListener listener) {
+        this.listener = listener;
+        this.uri = uri;
     }
 
     @Override
