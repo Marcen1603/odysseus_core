@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
@@ -9,22 +10,40 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling {
 	
 	private int trainSize;
 	
-	private List<ISLAViolationEventListener> listener;
+	private List<ISLAViolationEventListener> listeners;
+	
+	private List<IScheduling> plans;
+	
+	public SLAPartialPlanScheduling() {
+		this.plans = new ArrayList<IScheduling>();
+		this.listeners = new ArrayList<ISLAViolationEventListener>();
+	}
+	
+	public SLAPartialPlanScheduling(SLAPartialPlanScheduling schedule) {
+		this.trainSize = schedule.trainSize;
+		this.listeners = new ArrayList<ISLAViolationEventListener>();
+		for (ISLAViolationEventListener listener: schedule.listeners) {
+			this.listeners.add(listener);
+		}
+		this.plans = new ArrayList<IScheduling>();
+		for (IScheduling plan : schedule.plans) {
+			this.plans.add(plan);
+		}
+	}
 
 	@Override
 	public void clear() {
-		// TODO not implemented yet
+		this.plans.clear();
 	}
 
 	@Override
 	public void addPlan(IScheduling scheduling) {
-		// TODO not implemented yetv
+		this.plans.add(scheduling);
 	}
 
 	@Override
 	public int planCount() {
-		// TODO not implemented yet
-		return 0;
+		return this.plans.size();
 	}
 
 	@Override
@@ -35,14 +54,12 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling {
 
 	@Override
 	public void removePlan(IScheduling plan) {
-		// TODO not implemented yet
-
+		this.plans.remove(plan);
 	}
 	
 	@Override
 	public IPartialPlanScheduling clone() {
-		// TODO not implemented yet
-		return null;
+		return new SLAPartialPlanScheduling(this);
 	}
 
 	public void setTrainSize(int trainSize) {
@@ -54,15 +71,17 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling {
 	}
 	
 	public void addSLAViolationEventListener(ISLAViolationEventListener listener) {
-		this.listener.add(listener);
+		this.listeners.add(listener);
 	}
 	
 	public boolean removeSLAViolationEventListener(ISLAViolationEventListener listener) {
-		return this.listener.remove(listener);
+		return this.listeners.remove(listener);
 	}
 	
-	private void fireSLAViolationEvent (ISLAViolationEventListener event) {
-		// TODO not implemented yet
+	private void fireSLAViolationEvent (SLAViolationEvent event) {
+		for (ISLAViolationEventListener listener : this.listeners) {
+			listener.slaViolated(event);
+		}
 	}
-
+	
 }
