@@ -16,11 +16,8 @@ package de.uniol.inf.is.odysseus.spatial.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.InputStreamInStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
@@ -33,6 +30,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicDataHandle
  */
 public class SpatialByteHandler extends AbstractAtomicDataHandler{
 
+	static{
+		types.add("SpatialPoint");
+		types.add("SpatialLine");
+		types.add("SpatialPolygon");
+		
+		types.add("SpatialMultiPoint");
+		types.add("SpatialMultiLine");
+		types.add("SpatialMutliPolygon");
+	}
+	
 	WKBReader reader;
 	WKBWriter writer;
 	
@@ -119,16 +126,4 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler{
 		return number;
 	}
 
-	public List<String> getSupportedDataTypes(){
-		List<String> types = new ArrayList<String>();
-		types.add("SpatialPoint");
-		types.add("SpatialLine");
-		types.add("SpatialPolygon");
-		
-		types.add("SpatialMultiPoint");
-		types.add("SpatialMultiLine");
-		types.add("SpatialMutliPolygon");
-		
-		return types;
-	}
 }
