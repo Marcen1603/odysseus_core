@@ -15,12 +15,15 @@
 package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 
 public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 
 	private ObjectInputStream stream;
+	static protected List<String> types = new ArrayList<String>();		
 	
 	protected AbstractAtomicDataHandler(){
 	}
@@ -32,5 +35,10 @@ public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 	
 	final public ObjectInputStream getStream() {
 		return stream;
+	}
+	
+	@Override
+	final public List<String> getSupportedDataTypes() {
+		return types;
 	}
 }

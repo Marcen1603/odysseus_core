@@ -16,12 +16,9 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class IntegerHandler extends AbstractAtomicDataHandler {
 
-	static List<String> types = new ArrayList<String>();		
 	static{
 		types.add("Integer");
 		types.add("Byte");
@@ -44,14 +41,6 @@ public class IntegerHandler extends AbstractAtomicDataHandler {
 	public void writeData(ByteBuffer buffer, Object data) {
 		//System.out.println("write Integer Data "+(Integer)data);
 		buffer.putInt(((Number) data).intValue());		
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getDataTypeName()
-	 */
-	@Override
-	public List<String> getSupportedDataTypes() {
-		return types;
 	}
 
 	

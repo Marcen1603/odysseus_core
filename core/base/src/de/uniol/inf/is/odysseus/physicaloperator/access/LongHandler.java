@@ -16,12 +16,9 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LongHandler extends AbstractAtomicDataHandler {
 
-	static List<String> types = new ArrayList<String>();		
 	static{
 		types.add("Long");
 		types.add("Timestamp");
@@ -45,16 +42,6 @@ public class LongHandler extends AbstractAtomicDataHandler {
 	public void writeData(ByteBuffer buffer, Object data) {
 		//System.out.println("write Long Data "+((Number)data).longValue());
 		buffer.putLong(((Number)data).longValue());
-	}
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getName()
-	 */
-	@Override
-	public List<String> getSupportedDataTypes() {
-		return types;
-	}
-	
-	
+	}	
 
 }

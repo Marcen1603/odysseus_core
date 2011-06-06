@@ -16,8 +16,6 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Used for getting DATE attributes out of a streams.
@@ -28,8 +26,7 @@ import java.util.List;
  *
  */
 public class DateHandler extends AbstractAtomicDataHandler {
-
-	static List<String> types = new ArrayList<String>();		
+	
 	static{
 		types.add("Date");
 	}
@@ -52,13 +49,6 @@ public class DateHandler extends AbstractAtomicDataHandler {
 		buffer.putLong(((Number)data).longValue());
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#getDataTypeName()
-	 */
-	@Override
-	public List<String> getSupportedDataTypes() {
-		return types;
-	}
 	
 	
 
