@@ -35,7 +35,7 @@ public class SpatialStringHandler extends StringHandler{
 	WKTReader reader;
 	WKTWriter writer;
 	
-	protected SpatialStringHandler(){
+	public SpatialStringHandler(){
 		this.reader = new WKTReader();
 		this.writer = new WKTWriter();
 	}

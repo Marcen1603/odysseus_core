@@ -67,7 +67,4 @@ public class Message {
 	public List<MessagePart> getOutputParts() {
 		return outputParts;
 	}
-	
-	
-
 }

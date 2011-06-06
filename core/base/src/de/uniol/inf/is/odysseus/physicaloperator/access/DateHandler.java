@@ -32,7 +32,7 @@ public class DateHandler extends AbstractAtomicDataHandler {
 	/**
 	 * 
 	 */
-	protected DateHandler() {
+	public DateHandler() {
 		super();
 	}
 	

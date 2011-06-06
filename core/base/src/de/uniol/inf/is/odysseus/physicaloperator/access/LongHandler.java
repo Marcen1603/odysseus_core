@@ -24,7 +24,7 @@ public class LongHandler extends AbstractAtomicDataHandler {
 	/**
 	 * 
 	 */
-	protected LongHandler() {
+	public LongHandler() {
 		super();
 	}
 	

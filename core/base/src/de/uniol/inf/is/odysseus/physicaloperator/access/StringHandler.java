@@ -24,7 +24,7 @@ public class StringHandler extends AbstractAtomicDataHandler {
 	/**
 	 * 
 	 */
-	protected StringHandler() {
+	public StringHandler() {
 		super();
 	}
 	

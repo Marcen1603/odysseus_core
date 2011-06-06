@@ -24,7 +24,7 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 	/**
 	 * 
 	 */
-	protected DoubleHandler() {
+	public DoubleHandler() {
 		super();
 	}
 	

@@ -24,7 +24,7 @@ public class IntegerHandler extends AbstractAtomicDataHandler {
 	/**
 	 * 
 	 */
-	protected IntegerHandler() {
+	public IntegerHandler() {
 		super();
 	}
 	
