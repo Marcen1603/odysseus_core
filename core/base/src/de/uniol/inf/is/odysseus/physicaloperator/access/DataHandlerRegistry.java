@@ -27,7 +27,7 @@ public class DataHandlerRegistry {
 	 */
 	private static HashMap<String, IAtomicDataHandler> dataHandlers = new HashMap<String, IAtomicDataHandler>();
 	
-	private static void registerDataHandler(IAtomicDataHandler handler){
+	public static void registerDataHandler(IAtomicDataHandler handler){
 		String errMsg = "";
 		for(String type: handler.getSupportedDataTypes()){
 			if(dataHandlers.containsKey(type.toLowerCase())){
