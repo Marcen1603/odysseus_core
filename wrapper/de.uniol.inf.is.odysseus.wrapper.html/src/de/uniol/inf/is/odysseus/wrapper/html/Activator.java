@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.twitter;
+package de.uniol.inf.is.odysseus.wrapper.html;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

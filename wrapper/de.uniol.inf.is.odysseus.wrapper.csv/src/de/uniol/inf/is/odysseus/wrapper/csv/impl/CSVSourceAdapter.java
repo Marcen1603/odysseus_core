@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
 public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements SourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(CSVSourceAdapter.class);
 
-    private Map<Source, Thread> serverThreads = new HashMap<Source, Thread>();
+    private final Map<Source, Thread> serverThreads = new HashMap<Source, Thread>();
 
     @Override
     public String getName() {
@@ -28,22 +28,22 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
     }
 
     @Override
-    protected void doInit(Source source) {
+    protected void doInit(final Source source) {
         int port = 4444;
         if (source.getConfiguration().containsKey("port")) {
             port = Integer.parseInt(source.getConfiguration().get("port").toString());
         }
-        CSVServer server = new CSVServer(source, this, port);
-        Thread serverThread = new Thread(server);
+        final CSVServer server = new CSVServer(source, this, port);
+        final Thread serverThread = new Thread(server);
         this.serverThreads.put(source, serverThread);
         serverThread.start();
 
     }
 
     @Override
-    protected void doDestroy(Source source) {
-        serverThreads.get(source).interrupt();
-        serverThreads.remove(source);
+    protected void doDestroy(final Source source) {
+        this.serverThreads.get(source).interrupt();
+        this.serverThreads.remove(source);
     }
 
     class CSVServer implements Runnable {
@@ -51,42 +51,44 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
         private Source source;
         private CSVSourceAdapter adapter;
 
-        public CSVServer(Source source, CSVSourceAdapter adapter, int port) {
+        public CSVServer(final Source source, final CSVSourceAdapter adapter, final int port) {
             try {
-                serverSocket = new ServerSocket(port);
+                this.serverSocket = new ServerSocket(port);
             }
-            catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+            catch (final IOException e) {
+                CSVSourceAdapter.LOG.error(e.getMessage(), e);
             }
         }
 
         @Override
         public void run() {
-            List<Thread> processingThreads = new ArrayList<Thread>();
+            final List<Thread> processingThreads = new ArrayList<Thread>();
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket;
                 try {
                     socket = this.serverSocket.accept();
-                    CSVProcessor processor = new CSVProcessor(this.source, socket, this.adapter);
-                    Thread processingThread = new Thread(processor);
+                    final CSVProcessor processor = new CSVProcessor(this.source, socket,
+                            this.adapter);
+                    final Thread processingThread = new Thread(processor);
                     processingThreads.add(processingThread);
                     processingThread.start();
                 }
-                catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
+                catch (final IOException e) {
+                    CSVSourceAdapter.LOG.error(e.getMessage(), e);
                 }
             }
-            for (Thread processingThread : processingThreads) {
+            for (final Thread processingThread : processingThreads) {
                 processingThread.interrupt();
             }
         }
 
         class CSVProcessor implements Runnable {
-            private Socket server;
-            private CSVSourceAdapter adapter;
+            private final Socket server;
+            private final CSVSourceAdapter adapter;
             private Source source;
 
-            public CSVProcessor(Source source, Socket server, CSVSourceAdapter adapter) {
+            public CSVProcessor(final Source source, final Socket server,
+                    final CSVSourceAdapter adapter) {
                 this.server = server;
                 this.adapter = adapter;
             }
@@ -95,19 +97,21 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
             public void run() {
                 LineNumberReader reader;
                 try {
-                    reader = new LineNumberReader(new InputStreamReader(server.getInputStream()));
+                    reader = new LineNumberReader(new InputStreamReader(
+                            this.server.getInputStream()));
 
                     String line = reader.readLine();
                     if (line != null) {
                         while (((line = reader.readLine()) != null)
                                 && (!Thread.currentThread().isInterrupted())) {
-                            String[] values = line.split(",");
-                            adapter.transfer(source.getName(), System.currentTimeMillis(), values);
+                            final String[] values = line.split(",");
+                            this.adapter.transfer(this.source.getName(),
+                                    System.currentTimeMillis(), values);
                         }
                     }
                 }
-                catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
+                catch (final IOException e) {
+                    CSVSourceAdapter.LOG.error(e.getMessage(), e);
                 }
             }
         }
