@@ -1,9 +1,8 @@
-package de.uniol.inf.is.odysseus.wrapper.base.impl;
+package de.uniol.inf.is.odysseus.wrapper.base;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.wrapper.base.PushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
 
 public abstract class AbstractPushingSourceAdapter extends AbstractSourceAdapter implements

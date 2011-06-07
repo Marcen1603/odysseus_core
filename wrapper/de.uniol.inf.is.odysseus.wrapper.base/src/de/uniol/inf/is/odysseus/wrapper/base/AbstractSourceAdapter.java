@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.base.impl;
+package de.uniol.inf.is.odysseus.wrapper.base;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 

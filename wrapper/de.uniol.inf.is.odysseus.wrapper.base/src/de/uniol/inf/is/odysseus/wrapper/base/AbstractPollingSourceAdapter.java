@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.base.impl;
+package de.uniol.inf.is.odysseus.wrapper.base;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.wrapper.base.PollingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
 
 public abstract class AbstractPollingSourceAdapter extends AbstractSourceAdapter implements
