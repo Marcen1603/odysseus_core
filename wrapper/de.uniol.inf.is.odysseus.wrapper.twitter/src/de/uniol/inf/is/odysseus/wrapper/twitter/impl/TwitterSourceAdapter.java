@@ -1,6 +1,11 @@
 package de.uniol.inf.is.odysseus.wrapper.twitter.impl;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -13,7 +18,9 @@ import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
 
 public class TwitterSourceAdapter extends AbstractPushingSourceAdapter implements SourceAdapter {
-    private TwitterStream twitterStream;
+    private static Logger LOG = LoggerFactory.getLogger(TwitterSourceAdapter.class);
+
+    private Map<Source, TwitterStream> twitterStreams = new HashMap<Source, TwitterStream>();
 
     public TwitterSourceAdapter() {
 
@@ -29,7 +36,8 @@ public class TwitterSourceAdapter extends AbstractPushingSourceAdapter implement
                 .setOAuthAccessToken(source.getConfiguration().get("OAuthAccessToken").toString())
                 .setOAuthAccessTokenSecret(
                         source.getConfiguration().get("OAuthAccessTokenSecret").toString());
-        this.twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+        TwitterStream twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+        this.twitterStreams.put(source, twitterStream);
 
         StatusListener listener = new StatusListener() {
             public void onStatus(Status status) {
@@ -53,8 +61,8 @@ public class TwitterSourceAdapter extends AbstractPushingSourceAdapter implement
 
             }
 
-            public void onException(Exception ex) {
-                ex.printStackTrace();
+            public void onException(Exception e) {
+                LOG.error(e.getMessage(), e);
             }
         };
 
@@ -64,7 +72,8 @@ public class TwitterSourceAdapter extends AbstractPushingSourceAdapter implement
 
     @Override
     protected void doDestroy(Source source) {
-        twitterStream.shutdown();
+        twitterStreams.get(source).shutdown();
+        twitterStreams.remove(source);
     }
 
     @Override
