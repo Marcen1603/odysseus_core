@@ -4,4 +4,6 @@ public interface ISLAConformance {
 
 	public int getConformance();
 	
+	public void reset();
+	
 }

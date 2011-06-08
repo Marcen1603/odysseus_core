@@ -10,4 +10,9 @@ public class LatencySingleConformance implements ISLAConformance {
 		return 0;
 	}
 
+	@Override
+	public void reset() {
+		// TODO not implemented yet
+	}
+
 }
