@@ -62,7 +62,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType"/>
+                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType"/>
                </appinfo>
             </annotation>
          </attribute>
