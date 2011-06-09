@@ -169,7 +169,7 @@
         jjtree.closeNodeScope(jjtn001,  2);
       }
     }
-/*@egen*/                )*}void EqualityComparison()       :{}{  ComparisonExpression()  (    "==" ComparisonExpression()/*@bgen(jjtree) #Function( 2) */
+/*@egen*/                )*}void EqualityComparison()       :{Token t = null;}{  ComparisonExpression()  (   ( t = "==" | t = "!=" ) ComparisonExpression()/*@bgen(jjtree) #Function( 2) */
     {
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;
@@ -181,7 +181,7 @@
       jjtree.closeNodeScope(jjtn001,  2);
       jjtc001 = false;
     }
-/*@egen*/    {      jjtn001.setSymbol("==");    }/*@bgen(jjtree)*/
+/*@egen*/    {      jjtn001.setSymbol(t.image);    }/*@bgen(jjtree)*/
     } finally {
       if (jjtc001) {
         jjtree.closeNodeScope(jjtn001,  2);
