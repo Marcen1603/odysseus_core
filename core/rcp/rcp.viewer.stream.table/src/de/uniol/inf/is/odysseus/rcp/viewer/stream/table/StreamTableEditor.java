@@ -63,11 +63,12 @@ public class StreamTableEditor implements IStreamEditorType {
 			tuples.remove(tuples.size() - 1);
 		}
 
-		if (hasTableViewer()) {
+		if (hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					getTableViewer().refresh();
+					if( !getTableViewer().getTable().isDisposed() )
+						getTableViewer().refresh();
 				}
 			});
 		}
