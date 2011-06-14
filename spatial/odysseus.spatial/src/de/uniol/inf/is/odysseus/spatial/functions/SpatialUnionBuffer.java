@@ -14,15 +14,22 @@
   */
 package de.uniol.inf.is.odysseus.spatial.functions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * @author abolles
+ * @author kpancratz
  *
  */
-public class SpatialContains extends AbstractFunction {
+public class SpatialUnionBuffer extends AbstractFunction {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
@@ -30,7 +37,7 @@ public class SpatialContains extends AbstractFunction {
 	@Override
 	public int getArity() {
 		// TODO Auto-generated method stub
-		return 2;
+		return 3;
 	}
 
 	/* (non-Javadoc)
@@ -45,8 +52,9 @@ public class SpatialContains extends AbstractFunction {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
+			Class<?>[] accTypes = new Class<?>[2];
 			accTypes[0] = Geometry.class;
+			accTypes[1] = Double.class;
 			return accTypes;
 		}
 	}
@@ -56,7 +64,7 @@ public class SpatialContains extends AbstractFunction {
 	 */
 	@Override
 	public String getSymbol() {
-		return "SpatialContains";
+		return "SpatialUnionBuffer";
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +72,18 @@ public class SpatialContains extends AbstractFunction {
 	 */
 	@Override
 	public Object getValue() {
-		return ((Geometry)this.getInputValue(0)).contains((Geometry)this.getInputValue(1));
+		
+		Geometry[] geometrys = new Geometry[2]; 
+			
+		geometrys[0] = (Geometry)this.getInputValue(0);
+		geometrys[1] = (Geometry)this.getInputValue(1);
+
+		GeometryFactory geometryFactory = new GeometryFactory();
+		
+		GeometryCollection polygonCollection = geometryFactory.createGeometryCollection(geometrys); 		
+		
+		
+		return polygonCollection.buffer((Double)this.getInputValue(2));
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +92,7 @@ public class SpatialContains extends AbstractFunction {
 	@Override
 	public Class getReturnType() {
 		// TODO Auto-generated method stub
-		return Boolean.class;
+		return Geometry.class;
 	}
 
 }

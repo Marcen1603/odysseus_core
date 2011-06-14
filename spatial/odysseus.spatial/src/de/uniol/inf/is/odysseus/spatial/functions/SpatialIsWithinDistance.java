@@ -41,7 +41,7 @@ public class SpatialIsWithinDistance extends AbstractFunction {
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > 2){
+		if(argPos > 3){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
@@ -50,8 +50,9 @@ public class SpatialIsWithinDistance extends AbstractFunction {
 			case 1: Class<?>[] accTypes = new Class<?>[1];
 					accTypes[0] = Geometry.class;
 					return accTypes;
-			case 2: accTypes = new Class<?>[1];
-					accTypes[0] = Double.class;
+			case 2: accTypes = new Class<?>[2];
+					accTypes[0] = Geometry.class;
+					accTypes[1] = Double.class;
 					return accTypes;
 			}
 		}
@@ -71,6 +72,7 @@ public class SpatialIsWithinDistance extends AbstractFunction {
 	 */
 	@Override
 	public Boolean getValue() {
+		//System.out.println("Distance: " + ((Geometry)this.getInputValue(0)).toString() + " " + ((Geometry)this.getInputValue(1)).toString() + " " +  ((Double)this.getInputValue(2)) );
 		return ((Geometry)this.getInputValue(0)).isWithinDistance((Geometry)this.getInputValue(1), (Double)this.getInputValue(2));
 	}
 

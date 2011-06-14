@@ -18,11 +18,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-/**
- * @author abolles
- *
- */
-public class SpatialContains extends AbstractFunction {
+public class SpatialIsPolygon extends AbstractFunction{
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
@@ -30,7 +26,7 @@ public class SpatialContains extends AbstractFunction {
 	@Override
 	public int getArity() {
 		// TODO Auto-generated method stub
-		return 2;
+		return 1;
 	}
 
 	/* (non-Javadoc)
@@ -41,7 +37,7 @@ public class SpatialContains extends AbstractFunction {
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > this.getArity()){
+		if(argPos > 1){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
@@ -56,15 +52,15 @@ public class SpatialContains extends AbstractFunction {
 	 */
 	@Override
 	public String getSymbol() {
-		return "SpatialContains";
+		return "SpatialIsPolygon";
 	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
-	public Object getValue() {
-		return ((Geometry)this.getInputValue(0)).contains((Geometry)this.getInputValue(1));
+	public Boolean getValue() {
+		return ((Geometry)this.getInputValue(0)).getGeometryType().equalsIgnoreCase("Polygon");
 	}
 
 	/* (non-Javadoc)

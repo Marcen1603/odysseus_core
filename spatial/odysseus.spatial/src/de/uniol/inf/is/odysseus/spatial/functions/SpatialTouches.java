@@ -42,7 +42,7 @@ public class SpatialTouches extends AbstractFunction {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
+			Class<?>[] accTypes = new Class<?>[2];
 			accTypes[0] = Geometry.class;
 			return accTypes;
 		}

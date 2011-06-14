@@ -19,10 +19,10 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * @author abolles
+ * @author kpancratz
  *
  */
-public class SpatialContains extends AbstractFunction {
+public class SpatialUnion extends AbstractFunction {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
@@ -56,7 +56,7 @@ public class SpatialContains extends AbstractFunction {
 	 */
 	@Override
 	public String getSymbol() {
-		return "SpatialContains";
+		return "SpatialUnion";
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +64,7 @@ public class SpatialContains extends AbstractFunction {
 	 */
 	@Override
 	public Object getValue() {
-		return ((Geometry)this.getInputValue(0)).contains((Geometry)this.getInputValue(1));
+		return ((Geometry)this.getInputValue(0)).union((Geometry)this.getInputValue(1));
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +73,7 @@ public class SpatialContains extends AbstractFunction {
 	@Override
 	public Class getReturnType() {
 		// TODO Auto-generated method stub
-		return Boolean.class;
+		return Geometry.class;
 	}
 
 }

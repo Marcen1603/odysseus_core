@@ -19,10 +19,10 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * @author abolles
+ * @author kpancratz
  *
  */
-public class SpatialContains extends AbstractFunction {
+public class SpatialConvexHull extends AbstractFunction {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
@@ -30,7 +30,7 @@ public class SpatialContains extends AbstractFunction {
 	@Override
 	public int getArity() {
 		// TODO Auto-generated method stub
-		return 2;
+		return 1;
 	}
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public class SpatialContains extends AbstractFunction {
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > this.getArity()){
+		if(argPos > 1){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
@@ -56,7 +56,7 @@ public class SpatialContains extends AbstractFunction {
 	 */
 	@Override
 	public String getSymbol() {
-		return "SpatialContains";
+		return "SpatialConvexHull";
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +64,7 @@ public class SpatialContains extends AbstractFunction {
 	 */
 	@Override
 	public Object getValue() {
-		return ((Geometry)this.getInputValue(0)).contains((Geometry)this.getInputValue(1));
+		return ((Geometry)this.getInputValue(0)).convexHull();
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +73,7 @@ public class SpatialContains extends AbstractFunction {
 	@Override
 	public Class getReturnType() {
 		// TODO Auto-generated method stub
-		return Boolean.class;
+		return Geometry.class;
 	}
 
 }
