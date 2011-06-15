@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
-public class LatencySingleConformance implements ISLAConformance {
+public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 
 	@Override
 	public int getConformance() {
@@ -13,6 +14,22 @@ public class LatencySingleConformance implements ISLAConformance {
 	@Override
 	public void reset() {
 		// TODO not implemented yet
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO not implemented yet
+	}
+
+	@Override
+	protected void process_next(T object, int port, boolean isReadOnly) {
+		// TODO not implemented yet
+	}
+
+	@Override
+	public AbstractSink<T> clone() {
+		// TODO not implemented yet
+		return null;
 	}
 
 }
