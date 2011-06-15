@@ -25,7 +25,7 @@ public class SLAConformanceFactory {
 			if (sla.getScope() instanceof Average) {
 				conformance = new LatencyAverageConformance();
 			} else if (sla.getScope() instanceof Number) {
-				conformance = new LatencyNumberConformance();
+				conformance = new LatencyNumberConformance((Long) sla.getMetric().getValue());
 			} else if (sla.getScope() instanceof Single) {
 				conformance = new LatencySingleConformance();
 			}

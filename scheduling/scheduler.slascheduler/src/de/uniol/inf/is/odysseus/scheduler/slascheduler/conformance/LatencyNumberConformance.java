@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
+import de.uniol.inf.is.odysseus.metadata.ILatency;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
@@ -7,8 +10,11 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	
 	private int numberOfViolations;
 	
-	public LatencyNumberConformance() {
+	private long latencyThreshold;
+	
+	public LatencyNumberConformance(long latencyThreshold) {
 		this.numberOfViolations = 0;
+		this.latencyThreshold = latencyThreshold;
 	}
 	
 	public LatencyNumberConformance(LatencyNumberConformance<T> conformance) {
@@ -28,12 +34,19 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO not implemented yet
+		// nothing to do
 	}
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
-		// TODO not implemented yet
+		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>)object;
+		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+		if (metadata instanceof ILatency) {
+			ILatency latency = (ILatency) metadata;
+			if (latency.getLatency() > latencyThreshold) {
+				this.numberOfViolations++;
+			}
+		}
 	}
 
 	@Override
