@@ -4,6 +4,14 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
 public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
+	
+	public LatencyAverageConformance() {
+		
+	}
+	
+	public LatencyAverageConformance(LatencyAverageConformance<T> conformance) {
+		super();
+	}
 
 	@Override
 	public int getConformance() {
@@ -28,8 +36,7 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 
 	@Override
 	public AbstractSink<T> clone() {
-		// TODO not implemented yet
-		return null;
+		return new LatencyAverageConformance<T>(this);
 	}
 
 }
