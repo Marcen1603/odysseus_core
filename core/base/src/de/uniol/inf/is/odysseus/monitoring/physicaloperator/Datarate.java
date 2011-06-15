@@ -33,7 +33,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 	public Datarate(IPhysicalOperator target) {
 		super(target, MonitoringDataTypes.DATARATE.name);
 		reset();
-		target.subscribe(this, POEventType.ProcessDone);
+		target.subscribe(this, POEventType.PushDone);
 	}
 
 	public Datarate(Datarate datarate) {
@@ -42,7 +42,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 		this.lastTimestamp = datarate.lastTimestamp;
 		this.value = datarate.value;
 		((IPhysicalOperator) datarate.getTarget()).subscribe(this,
-				POEventType.ProcessDone);
+				POEventType.PushDone);
 	}
 
 	@Override
