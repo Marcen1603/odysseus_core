@@ -9,4 +9,9 @@ public class Latency extends Metric<Integer, TimeUnit> {
 		super(value, unit);
 	}
 
+	@Override
+	public boolean valueIsMin() {
+		return false;
+	}
+
 }

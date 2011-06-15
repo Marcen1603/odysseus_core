@@ -9,4 +9,9 @@ public class Throughput extends Metric<Integer, ThroughputUnit> {
 		super(value, unit);
 	}
 
+	@Override
+	public boolean valueIsMin() {
+		return true;
+	}
+
 }

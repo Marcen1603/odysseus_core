@@ -9,4 +9,9 @@ public class Accuracy extends Metric<Float, RatioUnit> {
 		super(value, unit);
 	}
 
+	@Override
+	public boolean valueIsMin() {
+		return true;
+	}
+
 }

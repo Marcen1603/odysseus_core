@@ -32,5 +32,12 @@ public abstract class Metric<V, U> {
 	public U getUnit() {
 		return unit;
 	}
+	
+	/**
+	 * returns true iff the defined value is a minimum that should be reached
+	 * returns false iff the defined value is a maximzm that should be reached
+	 * @return
+	 */
+	public abstract boolean valueIsMin();
 
 }
