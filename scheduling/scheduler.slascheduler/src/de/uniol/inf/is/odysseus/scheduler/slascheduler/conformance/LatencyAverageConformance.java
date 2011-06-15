@@ -6,18 +6,27 @@ import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.ServiceLevel;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 
 public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	
 	private AvgSumPartialAggregate<T> aggregate;
 	
-	public LatencyAverageConformance() {
+	private long windowEnd;
+	
+	public LatencyAverageConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
+		super(dist, sla, plan);
 		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
+		this.windowEnd = 0;
 	}
 	
 	public LatencyAverageConformance(LatencyAverageConformance<T> conformance) {
-		super();
+		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan());
 		this.aggregate = conformance.aggregate.clone();
+		this.windowEnd = conformance.windowEnd;
 	}
 
 	@Override
@@ -42,6 +51,19 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
 			this.aggregate.addAggValue((double)latency.getLatency());
+			if (System.currentTimeMillis() >= this.windowEnd) {
+				// check for sla violation and create event in case of violation
+				if (this.getSLA().getMetric().valueIsMin()) {
+					for (ServiceLevel<?> sl : this.getSLA().getServiceLevel()) {
+						if ((Integer)sl.getThreshold() < this.getConformance()) {
+							this.violation(sl.getPenalty().getCost());
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			throw new RuntimeException("Latency missing");
 		}
 	}
 

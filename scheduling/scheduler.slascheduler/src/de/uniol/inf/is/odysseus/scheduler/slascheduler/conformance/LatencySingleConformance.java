@@ -5,17 +5,21 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 
 public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	
 	private int maxLatency;
 	
-	public LatencySingleConformance() {
+	public LatencySingleConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
+		super(dist, sla, plan);
 		this.maxLatency = 0;
 	}
 	
 	public LatencySingleConformance(LatencySingleConformance<T> conformance) {
-		super();
+		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan());
 		this.maxLatency = conformance.maxLatency;
 	}
 

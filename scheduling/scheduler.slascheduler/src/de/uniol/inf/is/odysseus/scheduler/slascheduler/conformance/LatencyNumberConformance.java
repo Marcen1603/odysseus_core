@@ -5,6 +5,9 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 
 public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	
@@ -12,13 +15,14 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	
 	private long latencyThreshold;
 	
-	public LatencyNumberConformance(long latencyThreshold) {
+	public LatencyNumberConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan, long latencyThreshold) {
+		super(dist, sla, plan);
 		this.numberOfViolations = 0;
 		this.latencyThreshold = latencyThreshold;
 	}
 	
 	public LatencyNumberConformance(LatencyNumberConformance<T> conformance) {
-		super();
+		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan());
 		this.numberOfViolations = conformance.numberOfViolations;
 	}
 

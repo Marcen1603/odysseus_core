@@ -16,6 +16,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 	
 	private String costFunctionName;
 	
+	private SLAPartialPlanScheduling scheduler;
+	
 	public SLARegistry() {
 		super();
 		this.slas = new HashMap<IPartialPlan, SLA>();
@@ -63,7 +65,7 @@ public class SLARegistry implements ISLAChangedEventListener {
 		switch (event.getType()) {
 		case add: {
 			ISLAConformance conformance = new SLAConformanceFactory().
-					createSLAConformance(event.getSla());
+					createSLAConformance(event.getSla(), this.scheduler, event.getPlan());
 			this.addConformance(event.getPlan(), conformance);
 			this.addSLA(event.getPlan(), event.getSla());
 			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.costFunctionName, event.getSla());
