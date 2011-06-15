@@ -134,6 +134,8 @@ public class SLA {
 	/**
 	 * 
 	 * @return the list of service levels defined by the sla. not null.
+	 * the list of service levels is ordered! the first list entry is the most 
+	 * valuable service level, the last entry is the less valuable service level
 	 */
 	public List<ServiceLevel<?>> getServiceLevel() {
 		return serviceLevel;
