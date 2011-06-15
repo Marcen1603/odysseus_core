@@ -5,23 +5,25 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
 public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	
+	private int numberOfViolations;
+	
 	public LatencyNumberConformance() {
-		
+		this.numberOfViolations = 0;
 	}
 	
 	public LatencyNumberConformance(LatencyNumberConformance<T> conformance) {
 		super();
+		this.numberOfViolations = conformance.numberOfViolations;
 	}
 
 	@Override
 	public int getConformance() {
-		// TODO not implemented yet
-		return 0;
+		return numberOfViolations;
 	}
 
 	@Override
 	public void reset() {
-		// TODO not implemented yet
+		this.numberOfViolations = 0;
 	}
 
 	@Override

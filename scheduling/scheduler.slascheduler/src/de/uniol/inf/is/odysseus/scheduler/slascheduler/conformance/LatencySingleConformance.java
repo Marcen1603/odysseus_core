@@ -5,23 +5,25 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
 public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	
+	private int maxLatency;
+	
 	public LatencySingleConformance() {
-		
+		this.maxLatency = 0;
 	}
 	
 	public LatencySingleConformance(LatencySingleConformance<T> conformance) {
 		super();
+		this.maxLatency = conformance.maxLatency;
 	}
 
 	@Override
 	public int getConformance() {
-		// TODO not implemented yet
-		return 0;
+		return this.maxLatency;
 	}
 
 	@Override
 	public void reset() {
-		// TODO not implemented yet
+		this.maxLatency = 0;
 	}
 
 	@Override

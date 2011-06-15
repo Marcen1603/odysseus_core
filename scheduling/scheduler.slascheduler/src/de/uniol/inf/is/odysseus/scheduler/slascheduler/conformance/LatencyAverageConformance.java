@@ -2,26 +2,29 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 
 public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	
+	private AvgSumPartialAggregate<T> aggregate;
+	
 	public LatencyAverageConformance() {
-		
+		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
 	}
 	
 	public LatencyAverageConformance(LatencyAverageConformance<T> conformance) {
 		super();
+		this.aggregate = conformance.aggregate.clone();
 	}
 
 	@Override
 	public int getConformance() {
-		// TODO not implemented yet
-		return 0;
+		return this.aggregate.getAggValue().intValue();
 	}
 
 	@Override
 	public void reset() {
-		// TODO not implemented yet
+		this.aggregate.setAggValue(0.0, 0);
 	}
 
 	@Override
