@@ -15,10 +15,11 @@
 package de.uniol.inf.is.odysseus.mep;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.mep.functions.AbsoluteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
@@ -60,6 +61,16 @@ import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
 public class MEP {
+	
+	volatile protected static Logger _logger = null;
+
+	protected synchronized static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(MEP.class);
+		}
+		return _logger;
+	}
+	
 	public static IExpression<?> parse(String expressionStr)
 			throws de.uniol.inf.is.odysseus.mep.ParseException {
 		MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
@@ -128,6 +139,7 @@ public class MEP {
 			throw new IllegalArgumentException(
 					"multiple definition of function " + symbol);
 		}
+		getLogger().debug("Register Function: " + function.getSymbol());
 		functions.put(symbol, function);
 	}
 
@@ -209,6 +221,7 @@ public class MEP {
 				throw new IllegalArgumentException(
 						"multiple definition of function " + symbol);
 			}
+			getLogger().debug("Add FunctionProvider: " + f.getSymbol());
 			functions.put(symbol, f);
 		}
 	}
@@ -217,6 +230,7 @@ public class MEP {
 		// It's not allowed to have multiple implementations
 		// of the same function (see addFunctionProvider).
 		for(IFunction<?> f: provider.getFunctions()){
+			getLogger().debug("Remove Function: " + f.getSymbol());
 			MEP.functions.remove(f.getSymbol());
 		}
 	}
