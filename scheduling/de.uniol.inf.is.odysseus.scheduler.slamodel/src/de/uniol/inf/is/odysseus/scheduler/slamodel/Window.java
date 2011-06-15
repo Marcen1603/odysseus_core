@@ -73,6 +73,30 @@ public class Window {
 		this.unit = unit;
 	}
 
-	
-	
+	/**
+	 * returns the window length in milliseconds
+	 * 
+	 * Attention: a month is statically defined as 30 days!
+	 * @return
+	 */
+	public long lengthToMilliseconds() {
+		long tempLength = this.length;
+		switch (this.unit) {
+		case months:
+			tempLength *= 30;
+		case days:
+			tempLength *= 24;
+		case hours:
+			tempLength *= 60;
+		case minutes:
+			tempLength *= 60;
+		case seconds:
+			tempLength *= 1000;
+		case milliseconds:
+		default:
+			break;
+		}
+		return tempLength;
+	}
+
 }

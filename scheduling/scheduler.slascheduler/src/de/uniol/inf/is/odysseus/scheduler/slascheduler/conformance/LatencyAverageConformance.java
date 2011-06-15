@@ -46,22 +46,26 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
+		// first check for sla violation and create event in case of violation
+		// TODO: generalize check and move it to abstract super class
+		if (System.currentTimeMillis() >= this.windowEnd) {
+			if (this.getSLA().getMetric().valueIsMin()) {
+				for (ServiceLevel<?> sl : this.getSLA().getServiceLevel()) {
+					if ((Integer)sl.getThreshold() < this.getConformance()) {
+						this.violation(sl.getPenalty().getCost());
+						break;
+					}
+				}
+			}
+			this.windowEnd += this.getSLA().getWindow().lengthToMilliseconds();
+			this.reset();
+		}
+		
 		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>)object;
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
 			this.aggregate.addAggValue((double)latency.getLatency());
-			if (System.currentTimeMillis() >= this.windowEnd) {
-				// check for sla violation and create event in case of violation
-				if (this.getSLA().getMetric().valueIsMin()) {
-					for (ServiceLevel<?> sl : this.getSLA().getServiceLevel()) {
-						if ((Integer)sl.getThreshold() < this.getConformance()) {
-							this.violation(sl.getPenalty().getCost());
-							break;
-						}
-					}
-				}
-			}
 		} else {
 			throw new RuntimeException("Latency missing");
 		}
