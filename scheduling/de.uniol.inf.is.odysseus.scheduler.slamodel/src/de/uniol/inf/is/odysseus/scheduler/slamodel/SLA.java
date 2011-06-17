@@ -42,7 +42,7 @@ public class SLA {
 		super();
 		this.serviceLevel = new ArrayList<ServiceLevel<?>>();
 	}
-	
+
 	/**
 	 * @return the name of the sla
 	 */
@@ -133,9 +133,10 @@ public class SLA {
 
 	/**
 	 * 
-	 * @return the list of service levels defined by the sla. not null.
-	 * the list of service levels is ordered! the first list entry is the most 
-	 * valuable service level, the last entry is the less valuable service level
+	 * @return the list of service levels defined by the sla. not null. the list
+	 *         of service levels is ordered! the first list entry is the most
+	 *         valuable service level, the last entry is the less valuable
+	 *         service level
 	 */
 	public List<ServiceLevel<?>> getServiceLevel() {
 		return serviceLevel;
@@ -154,5 +155,15 @@ public class SLA {
 			throw new IllegalArgumentException("null");
 		this.serviceLevel = serviceLevel;
 	}
-	
+
+	/**
+	 * returns the maximum penalty costs
+	 * 
+	 * @return
+	 */
+	public int getMaxPenalty() {
+		return this.serviceLevel.get(this.serviceLevel.size()).getPenalty()
+				.getCost();
+	}
+
 }
