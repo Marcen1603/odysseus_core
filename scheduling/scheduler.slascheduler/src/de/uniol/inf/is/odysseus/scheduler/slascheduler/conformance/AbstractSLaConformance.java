@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
@@ -64,16 +66,21 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T> implemen
 	 * of conformance are reset.
 	 */
 	protected void checkViolation() {
+		/*
+		 * most valuable service levl is first list entry! so iterate reverse
+		 * over list to finde the less valuable violated service level first
+		 */
 		if (System.currentTimeMillis() >= this.windowEnd) {
-			for (ServiceLevel<?> sl : this.getSLA().getServiceLevel()) {
+			List<ServiceLevel<?>> serviceLevels = this.getSLA().getServiceLevel();
+			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
 				if (this.getSLA().getMetric().valueIsMin()) {
-					if ((Integer) sl.getThreshold() < this.getConformance()) {
-						this.violation(sl.getPenalty().getCost());
+					if ((Integer) serviceLevels.get(i).getThreshold() < this.getConformance()) {
+						this.violation(serviceLevels.get(i).getPenalty().getCost());
 						break;
 					}
 				} else {
-					if ((Integer) sl.getThreshold() > this.getConformance()) {
-						this.violation(sl.getPenalty().getCost());
+					if ((Integer) serviceLevels.get(i).getThreshold() > this.getConformance()) {
+						this.violation(serviceLevels.get(i).getPenalty().getCost());
 						break;
 					}
 				}

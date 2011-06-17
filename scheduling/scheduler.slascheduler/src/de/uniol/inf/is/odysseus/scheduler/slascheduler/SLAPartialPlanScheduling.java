@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
@@ -70,6 +69,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 
 	@Override
 	public IScheduling nextPlan() {
+		// check for sla violation and fire events
+		while (!this.eventQueue.isEmpty()) {
+			this.fireSLAViolationEvent(this.eventQueue.pop());
+		}
+		
 		IScheduling next = null;
 		int nextPrio = 0;
 		
@@ -92,11 +96,6 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 			// - calculate prio
 			int prio = this.prioFunction.calcPriority(oc, mg, sf);
 			
-			// check for sla violation and fire event
-			while (!this.eventQueue.isEmpty()) {
-				this.fireSLAViolationEvent(this.eventQueue.pop());
-			}
-
 			// select plan with highest priority
 			/* 
 			 * TODO: Generalize plan selection: select x plans with best 
