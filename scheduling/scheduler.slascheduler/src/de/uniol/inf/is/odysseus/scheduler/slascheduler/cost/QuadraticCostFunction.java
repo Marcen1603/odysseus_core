@@ -13,91 +13,120 @@ public class QuadraticCostFunction implements ICostFunction {
 
 	@Override
 	public int oc(int conformance, SLA sla) {
-		double upperbound = 0;
-		double lowerbound = 0;
-		double delta = 0.0;
-		int oc = 0;
+		// determine index of current service level
+		int slIndex = this.getCurrentServiceLevelIndex(conformance, sla);
 		
-		// determine upper bound and lower bound of current service level
-		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
-			if (conformance > (Integer)sla.getServiceLevel().get(i).getThreshold()) {
-				if (i == sla.getServiceLevel().size() - 1) {
-					/* 
-					 * if the less valuable service level is violated, the
-					 * opportunity costs are defined as 0
-					 */
-					return 0;
-				}
-				lowerbound = (Integer)sla.getServiceLevel().get(i).getThreshold();
-				if (i != 0) {
-					upperbound = (Integer)sla.getServiceLevel().get(i-1).getThreshold();
-					// upperbound remains 0 if highest service level is held
-					// calculate delta
-					delta = sla.getServiceLevel().get(i).getPenalty().getCost() 
-						- sla.getServiceLevel().get(i).getPenalty().getCost();
-				} else {
-					/*
-					 * if best service level is held, delta is defined as the
-					 * costs for violating the held service level
-					 */
-					delta = sla.getServiceLevel().get(i).getPenalty().getCost();
-				}
-			}
+		/* 
+		 * calculate oc if current service level is not the less valuable 
+		 * service level, return 0 otherwise
+		 */
+		if (slIndex < sla.getServiceLevel().size()) {
+			// calculate lower bound
+			double lowerbound = this.calcLowerbound(slIndex, sla);
+			
+			// calculate upper bound
+			double upperbound = this.calcUpperbound(slIndex, sla);
+			
+			// calculate delta to lower service level
+			double delta = this.calcDelta(slIndex, sla);
+			
+			// calculate relative position in service level:
+			double temp = (lowerbound - conformance) / (lowerbound - upperbound);
+			// square relative position 
+			temp = temp * temp;
+			// multiply cost with relative position
+			return (int)(temp * delta);
+		} else {
+			return 0;
 		}
 		
-		// calculate costs
-		// calculate relative position in service level:
-		double temp = (lowerbound - conformance) / (lowerbound - upperbound);
-		// square relative position 
-		temp = temp * temp;
-		// multiply cost with relative position
-		oc = (int)(temp * delta);
-		
-		return oc;
 	}
 
 	@Override
 	public int mg(int conformance, SLA sla) {
-		int mg = 0;
-		double upperbound = 0.0;
-		double lowerbound = 0.0;
-		double delta = 0.0;
+		// determine index of current service level
+		int slIndex = this.getCurrentServiceLevelIndex(conformance, sla);
 		
-		// determine upper bound and lower bound of current service level
+		/* 
+		 * calculate mg if current service level is not the most valuable 
+		 * service level, return 0 otherwise
+		 */
+		if (slIndex != 0) {
+			// calculate lower bound
+			double lowerbound = this.calcLowerbound(slIndex, sla);
+			
+			// calculate upper bound
+			double upperbound = this.calcUpperbound(slIndex, sla);
+			
+			// calculate delta to higher service level
+			double delta = this.calcDelta(slIndex - 1, sla);
+			
+			// calculate relative position in service level
+			double temp = (conformance - lowerbound) / (upperbound - lowerbound);
+			// square relative position
+			temp = temp * temp;
+			// multiply with delta
+			return (int)(temp * delta);
+		} else {
+			return 0;
+		}
+	}
+	
+	/**
+	 * returns the index of the current held service level
+	 * @param conformance
+	 * @param sla
+	 * @return
+	 */
+	private int getCurrentServiceLevelIndex(int conformance, SLA sla) {
 		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
-			if (conformance > (Integer)sla.getServiceLevel().get(i).getThreshold()) {
-				upperbound = (Integer)sla.getServiceLevel().get(i).getThreshold();
-				if (i < sla.getServiceLevel().size() -1) {
-					lowerbound = (Integer)sla.getServiceLevel().get(i+1).getThreshold();
-				} else {
-					/* 
-					 * if less valuable service level is violated the lowerbound
-					 * is infinite (max possible latency)
-					 */
-					lowerbound = Double.MAX_VALUE;
-				}
-				if (i != 0) {
-					delta = sla.getServiceLevel().get(i).getPenalty().getCost() 
-					- sla.getServiceLevel().get(i).getPenalty().getCost();
-				} else {
-					delta = sla.getServiceLevel().get(i).getPenalty().getCost();
-				}
-			} else if (i == 0) {
-				/*
-				 * if best service level is held, oc is defined as 0
-				 */
-				return 0;
+			if (conformance < (Integer)sla.getServiceLevel().get(i).getThreshold()) {
+				return i;
 			}
 		}
-		
-		// calculate mg
-		// calculate relative position in service level
-		double temp = (conformance - lowerbound) / (lowerbound - upperbound);
-		// square relative position
-		temp = temp * temp;
-		mg = (int)(temp * delta);
-		
-		return mg;
+		return sla.getServiceLevel().size();
+	}
+	
+	/**
+	 * calculates delta (cost differences to next less valuable service level) 
+	 * for a given service level
+	 * @param slIndex the index of the current service level
+	 * @param sla the sla containing service level definitions
+	 * @return
+	 */
+	private double calcDelta(int slIndex, SLA sla) {
+		if (slIndex != 0) {
+			return sla.getServiceLevel().get(slIndex).getPenalty().getCost() 
+				- sla.getServiceLevel().get(slIndex - 1).getPenalty().getCost();
+		} else {
+			/*
+			 * if best service level is held, delta is defined as the
+			 * costs for violating the held service level
+			 */
+			return sla.getServiceLevel().get(slIndex).getPenalty().getCost();
+		}
+	}
+	
+	private double calcUpperbound(int slIndex, SLA sla) {
+		if (slIndex == 0) {
+			// upperbound is 0 if highest service level is held
+			return 0.0;
+		} else {
+			return (Integer)sla.getServiceLevel().get(slIndex-1).getThreshold();
+			// upperbound remains 0 if highest service level is held
+		}
+	}
+	
+	private double calcLowerbound(int slIndex, SLA sla) {
+		if (slIndex == sla.getServiceLevel().size()) {
+			/* 
+			 * if less valuable service level is held the lowerbound
+			 * is infinite (max possible latency)
+			 */
+			return Double.MAX_VALUE;
+		} else {
+			return (Integer)sla.getServiceLevel().get(slIndex).getThreshold();
+		}
 	}
 
 }
