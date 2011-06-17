@@ -8,25 +8,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.ServiceLevel;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 
 public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
-	
+
 	private AvgSumPartialAggregate<T> aggregate;
-	
-	private long windowEnd;
-	
-	public LatencyAverageConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
-		super(dist, sla, plan);
+
+	public LatencyAverageConformance(ISLAViolationEventDistributor dist,
+			SLA sla, IPartialPlan plan) {
+		super(dist, sla, plan, System.currentTimeMillis());
 		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
-		this.windowEnd = 0;
+		
 	}
-	
+
 	public LatencyAverageConformance(LatencyAverageConformance<T> conformance) {
-		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan());
+		super(conformance.getDistributor(), conformance.getSLA(), conformance
+				.getPlan(), conformance.getWindowEnd());
 		this.aggregate = conformance.aggregate.clone();
-		this.windowEnd = conformance.windowEnd;
 	}
 
 	@Override
@@ -47,25 +45,13 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		// first check for sla violation and create event in case of violation
-		// TODO: generalize check and move it to abstract super class
-		if (System.currentTimeMillis() >= this.windowEnd) {
-			if (this.getSLA().getMetric().valueIsMin()) {
-				for (ServiceLevel<?> sl : this.getSLA().getServiceLevel()) {
-					if ((Integer)sl.getThreshold() < this.getConformance()) {
-						this.violation(sl.getPenalty().getCost());
-						break;
-					}
-				}
-			}
-			this.windowEnd += this.getSLA().getWindow().lengthToMilliseconds();
-			this.reset();
-		}
-		
-		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>)object;
+		this.checkViolation();
+
+		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
-			this.aggregate.addAggValue((double)latency.getLatency());
+			this.aggregate.addAggValue((double) latency.getLatency());
 		} else {
 			throw new RuntimeException("Latency missing");
 		}

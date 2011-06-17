@@ -14,15 +14,15 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	private int numberOfViolations;
 	
 	private long latencyThreshold;
-	
+
 	public LatencyNumberConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan, long latencyThreshold) {
-		super(dist, sla, plan);
+		super(dist, sla, plan, System.currentTimeMillis());
 		this.numberOfViolations = 0;
 		this.latencyThreshold = latencyThreshold;
 	}
 	
 	public LatencyNumberConformance(LatencyNumberConformance<T> conformance) {
-		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan());
+		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan(), conformance.getWindowEnd());
 		this.numberOfViolations = conformance.numberOfViolations;
 	}
 
@@ -43,6 +43,9 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
+		// first check for sla violation and create event in case of violation
+		this.checkViolation();
+		
 		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>)object;
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {

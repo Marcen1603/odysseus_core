@@ -14,12 +14,12 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	private int maxLatency;
 	
 	public LatencySingleConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
-		super(dist, sla, plan);
+		super(dist, sla, plan, System.currentTimeMillis());
 		this.maxLatency = 0;
 	}
 	
 	public LatencySingleConformance(LatencySingleConformance<T> conformance) {
-		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan());
+		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan(), conformance.getWindowEnd());
 		this.maxLatency = conformance.maxLatency;
 	}
 
@@ -40,6 +40,9 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
+		// first check for sla violation and create event in case of violation
+		this.checkViolation();
+		
 		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>)object;
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {
