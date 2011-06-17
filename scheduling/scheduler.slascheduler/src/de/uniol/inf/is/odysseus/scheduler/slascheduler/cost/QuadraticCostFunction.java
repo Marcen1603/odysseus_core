@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.cost;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ICostFunction;
 
@@ -16,7 +18,7 @@ public class QuadraticCostFunction implements ICostFunction {
 		double upperbound = 0;
 		double lowerbound = 0;
 		double delta = 0.0;
-		int cost = 0;
+		int oc = 0;
 		
 		// determine upper bound and lower bound of current service level
 		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
@@ -51,15 +53,53 @@ public class QuadraticCostFunction implements ICostFunction {
 		// square relative position 
 		temp = temp * temp;
 		// multiply cost with relative position
-		cost = (int)(temp * delta);
+		oc = (int)(temp * delta);
 		
-		return cost;
+		return oc;
 	}
 
 	@Override
 	public int mg(int conformance, SLA sla) {
-		// TODO not implemented yet
-		return 0;
+		int mg = 0;
+		double upperbound = 0.0;
+		double lowerbound = 0.0;
+		double delta = 0.0;
+		
+		// determine upper bound and lower bound of current service level
+		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
+			if (conformance > (Integer)sla.getServiceLevel().get(i).getThreshold()) {
+				upperbound = (Integer)sla.getServiceLevel().get(i).getThreshold();
+				if (i < sla.getServiceLevel().size() -1) {
+					lowerbound = (Integer)sla.getServiceLevel().get(i+1).getThreshold();
+				} else {
+					/* 
+					 * if less valuable service level is violated the lowerbound
+					 * is infinite (max possible latency)
+					 */
+					lowerbound = Double.MAX_VALUE;
+				}
+				if (i != 0) {
+					delta = sla.getServiceLevel().get(i).getPenalty().getCost() 
+					- sla.getServiceLevel().get(i).getPenalty().getCost();
+				} else {
+					delta = sla.getServiceLevel().get(i).getPenalty().getCost();
+				}
+			} else if (i == 0) {
+				/*
+				 * if best service level is held, oc is defined as 0
+				 */
+				return 0;
+			}
+		}
+		
+		// calculate mg
+		// calculate relative position in service level
+		double temp = (conformance - lowerbound) / (lowerbound - upperbound);
+		// square relative position
+		temp = temp * temp;
+		mg = (int)(temp * delta);
+		
+		return mg;
 	}
 
 }
