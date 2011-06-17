@@ -21,6 +21,13 @@ public class QuadraticCostFunction implements ICostFunction {
 		// determine upper bound and lower bound of current service level
 		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
 			if (conformance > (Integer)sla.getServiceLevel().get(i).getThreshold()) {
+				if (i == sla.getServiceLevel().size() - 1) {
+					/* 
+					 * if the less valuable service level is violated, the
+					 * opportunity costs are defined as 0
+					 */
+					return 0;
+				}
 				lowerbound = (Integer)sla.getServiceLevel().get(i).getThreshold();
 				if (i != 0) {
 					upperbound = (Integer)sla.getServiceLevel().get(i-1).getThreshold();
