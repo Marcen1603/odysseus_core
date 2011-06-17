@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.cost;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
-
 import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ICostFunction;
 
