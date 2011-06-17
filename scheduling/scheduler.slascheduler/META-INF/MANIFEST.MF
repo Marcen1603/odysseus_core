@@ -7,9 +7,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  de.uniol.inf.is.odysseus.scheduler.slamodel,
  de.uniol.inf.is.odysseus.scheduler.slamodel.metric,
+ de.uniol.inf.is.odysseus.scheduler.slamodel.penalty,
  de.uniol.inf.is.odysseus.scheduler.slamodel.scope,
+ de.uniol.inf.is.odysseus.scheduler.slamodel.unit,
  de.uniol.inf.is.odysseus.scheduler.strategy,
  org.osgi.service.component,
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus,
+ org.junit
 Service-Component: OSGI-INF/TimeBasedSLASchedulerMAX.xml, OSGI-INF/TimeBasedSLASchedulerSUM.xml, OSGI-INF/TimeBasedSLASchedulerAVG.xml, OSGI-INF/PrioSLASchedulerMAX.xml, OSGI-INF/PrioSLASchedulerSUM.xml, OSGI-INF/PrioSLASchedulerAVG.xml

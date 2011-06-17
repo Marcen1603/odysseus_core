@@ -46,6 +46,12 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 		}
 	}
 	
+	/**
+	 * returns the border value to the next higher service level
+	 * @param slIndex
+	 * @param sla
+	 * @return
+	 */
 	protected double calcUpperbound(int slIndex, SLA sla) {
 		if (slIndex == 0) {
 			// upperbound is 0 if highest service level is held
@@ -56,6 +62,12 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 		}
 	}
 	
+	/**
+	 * returns the border value to the next lower service level
+	 * @param slIndex
+	 * @param sla
+	 * @return
+	 */
 	protected double calcLowerbound(int slIndex, SLA sla) {
 		if (slIndex == sla.getServiceLevel().size()) {
 			/* 

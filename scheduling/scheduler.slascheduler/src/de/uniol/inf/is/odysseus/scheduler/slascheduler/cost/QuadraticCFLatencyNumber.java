@@ -30,13 +30,13 @@ public class QuadraticCFLatencyNumber extends QuadraticCFLatency {
 			double delta = this.calcDelta(slIndex, sla);
 			
 			// calculate relative position in service level:
-			double temp = (lowerbound - conformance) / (lowerbound - upperbound);
+			double temp = (upperbound - conformance) / (upperbound - lowerbound);
 			// square relative position 
 			temp = temp * temp;
 			// multiply cost with relative position
 			return (int)(temp * delta);
 		} else {
-			return (int) sla.getMaxPenalty() * conformance;
+			return (int) (sla.getMaxPenalty() * (conformance - this.calcUpperbound(slIndex, sla)));
 		}
 		
 	}
