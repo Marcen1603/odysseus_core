@@ -162,7 +162,7 @@ public class SLA {
 	 * @return
 	 */
 	public int getMaxPenalty() {
-		return this.serviceLevel.get(this.serviceLevel.size()).getPenalty()
+		return this.serviceLevel.get(this.serviceLevel.size() - 1).getPenalty()
 				.getCost();
 	}
 
