@@ -16,13 +16,13 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	private long latencyThreshold;
 
 	public LatencyNumberConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan, long latencyThreshold) {
-		super(dist, sla, plan, System.currentTimeMillis());
+		super(dist, sla, plan);
 		this.numberOfViolations = 0;
 		this.latencyThreshold = latencyThreshold;
 	}
 	
 	public LatencyNumberConformance(LatencyNumberConformance<T> conformance) {
-		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan(), conformance.getWindowEnd());
+		super(conformance);
 		this.numberOfViolations = conformance.numberOfViolations;
 	}
 

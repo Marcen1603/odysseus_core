@@ -16,14 +16,13 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 
 	public LatencyAverageConformance(ISLAViolationEventDistributor dist,
 			SLA sla, IPartialPlan plan) {
-		super(dist, sla, plan, System.currentTimeMillis());
+		super(dist, sla, plan);
 		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
 		
 	}
 
 	public LatencyAverageConformance(LatencyAverageConformance<T> conformance) {
-		super(conformance.getDistributor(), conformance.getSLA(), conformance
-				.getPlan(), conformance.getWindowEnd());
+		super(conformance);
 		this.aggregate = conformance.aggregate.clone();
 	}
 

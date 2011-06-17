@@ -14,12 +14,12 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	private int maxLatency;
 	
 	public LatencySingleConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
-		super(dist, sla, plan, System.currentTimeMillis());
+		super(dist, sla, plan);
 		this.maxLatency = 0;
 	}
 	
 	public LatencySingleConformance(LatencySingleConformance<T> conformance) {
-		super(conformance.getDistributor(), conformance.getSLA(), conformance.getPlan(), conformance.getWindowEnd());
+		super(conformance);
 		this.maxLatency = conformance.maxLatency;
 	}
 

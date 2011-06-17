@@ -18,11 +18,18 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T> implemen
 
 	private long windowEnd;
 	
-	public AbstractSLaConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan, long windowEnd) {
+	public AbstractSLaConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
 		this.distributor = dist;
 		this.sla = sla;
 		this.plan = plan;
-		this.windowEnd = windowEnd;
+		this.windowEnd = System.currentTimeMillis();
+	}
+	
+	public AbstractSLaConformance(AbstractSLaConformance<T> conformance) {
+		this.distributor = conformance.distributor;
+		this.sla = conformance.sla;
+		this.plan = conformance.plan;
+		this.windowEnd = conformance.windowEnd;
 	}
 	
 	protected ISLAViolationEventDistributor getDistributor() {
