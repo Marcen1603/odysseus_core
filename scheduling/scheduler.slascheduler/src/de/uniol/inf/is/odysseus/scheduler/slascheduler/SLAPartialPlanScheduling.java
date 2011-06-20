@@ -75,26 +75,26 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 		}
 		
 		IScheduling next = null;
-		int nextPrio = 0;
+		double nextPrio = 0;
 		
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all partial plans
 			IPartialPlan plan = scheduling.getPlan();
 			SLA sla = this.registry.getSLA(plan);
-			int conformance = this.registry.getConformance(plan).getConformance();
+			double conformance = this.registry.getConformance(plan).getConformance();
 			// calculate priorities for all partial plans:
 			// - calculate oc
 			ICostFunction costFunc = this.registry.getCostFunction(plan);
-			int oc = costFunc.oc(conformance, sla);
+			double oc = costFunc.oc(conformance, sla);
 			
 			// - calculate mg
-			int mg = costFunc.oc(conformance, sla);
+			double mg = costFunc.oc(conformance, sla);
 
 			// - calculate sf
-			int sf = this.starvationFreedom.sf();
+			double sf = this.starvationFreedom.sf();
 			
 			// - calculate prio
-			int prio = this.prioFunction.calcPriority(oc, mg, sf);
+			double prio = this.prioFunction.calcPriority(oc, mg, sf);
 			
 			// select plan with highest priority
 			/* 

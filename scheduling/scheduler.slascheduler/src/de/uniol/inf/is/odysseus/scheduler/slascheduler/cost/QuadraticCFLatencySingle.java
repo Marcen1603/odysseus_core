@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 public class QuadraticCFLatencySingle extends QuadraticCFLatency {
 
 	@Override
-	public int oc(int conformance, SLA sla) {
+	public double oc(double conformance, SLA sla) {
 		// determine index of current service level
 		int slIndex = this.getCurrentServiceLevelIndex(conformance, sla);
 		
@@ -37,16 +37,16 @@ public class QuadraticCFLatencySingle extends QuadraticCFLatency {
 			 * multiply cost with relative position and add penalty for 
 			 * violation of current service level
 			 */
-			return (int)(temp * delta + delta);
+			return temp * delta + delta;
 		} else {
 			// TODO replace this by 0 and define time-dependant mg() function!
-			return (int) sla.getMaxPenalty() * conformance;
+			return sla.getMaxPenalty() * conformance;
 		}
 		
 	}
 
 	@Override
-	public int mg(int conformance, SLA sla) {
+	public double mg(double conformance, SLA sla) {
 		/* 
 		 * in scope single there is no chance to return to a better service
 		 * level

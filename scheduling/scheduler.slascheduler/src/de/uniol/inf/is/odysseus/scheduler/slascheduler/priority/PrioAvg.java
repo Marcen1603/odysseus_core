@@ -5,10 +5,10 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.IPriorityFunction;
 public class PrioAvg implements IPriorityFunction {
 
 	@Override
-	public int calcPriority(int... cost) {
+	public double calcPriority(double... cost) {
 		int count = 0;
-		int sum = 0;
-		for (int c : cost) {
+		double sum = 0;
+		for (double c : cost) {
 			sum += c;
 			count++;
 		}

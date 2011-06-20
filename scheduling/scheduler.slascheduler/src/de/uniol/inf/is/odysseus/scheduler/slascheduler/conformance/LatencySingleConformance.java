@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
 
 public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	
-	private int maxLatency;
+	private long maxLatency;
 	
 	public LatencySingleConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
 		super(dist, sla, plan);
@@ -24,7 +24,7 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	}
 
 	@Override
-	public int getConformance() {
+	public double getConformance() {
 		return this.maxLatency;
 	}
 
@@ -48,7 +48,7 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
 			if (latency.getLatency() > this.maxLatency) {
-				this.maxLatency = (int) latency.getLatency();
+				this.maxLatency = latency.getLatency();
 			}
 		}
 	}

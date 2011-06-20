@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyAv
 
 public class QuadraticCFLatencyAverageTest {
 	
+	public static final double DELTA = 0.000001;
+	
 	private SLA sla;
 	private ICostFunction function;
 
@@ -22,30 +24,30 @@ public class QuadraticCFLatencyAverageTest {
 
 	@Test
 	public void testOc() {
-		assertEquals(6, this.function.oc(50, sla));
-		assertEquals(56, this.function.oc(150, sla));
+		assertEquals(6.25, this.function.oc(50, sla), DELTA);
+		assertEquals(56.25, this.function.oc(150, sla), DELTA);
 		
-		assertEquals(6, this.function.oc(250, sla));
-		assertEquals(56, this.function.oc(350, sla));
+		assertEquals(6.25, this.function.oc(250, sla), DELTA);
+		assertEquals(56.25, this.function.oc(350, sla), DELTA);
 		
-		assertEquals(0, this.function.oc(450, sla));
-		assertEquals(0, this.function.oc(550, sla));
+		assertEquals(0, this.function.oc(450, sla), DELTA);
+		assertEquals(0, this.function.oc(550, sla), DELTA);
 	}
 
 	@Test
 	public void testMg() {
-		assertEquals(0, this.function.mg(50, sla));
-		assertEquals(0, this.function.mg(150, sla));
+		assertEquals(0, this.function.mg(50, sla), DELTA);
+		assertEquals(0, this.function.mg(150, sla), DELTA);
 		
-		assertEquals(56, this.function.mg(250, sla));
-		assertEquals(6, this.function.mg(350, sla));
+		assertEquals(56.25, this.function.mg(250, sla), DELTA);
+		assertEquals(6.25, this.function.mg(350, sla), DELTA);
 		
 		// expected value is 100 because the mg function is defined to infinty
 		// maybe this should be changed in further optimization of formulas
 		// to
-		assertEquals(100, this.function.mg(450, sla));
-		assertEquals(100, this.function.mg(550, sla));
-		assertEquals(100, this.function.mg(222666650, sla));
+		assertEquals(100, this.function.mg(450, sla), DELTA);
+		assertEquals(100, this.function.mg(550, sla), DELTA);
+		assertEquals(100, this.function.mg(222666650, sla), DELTA);
 	}
 
 }

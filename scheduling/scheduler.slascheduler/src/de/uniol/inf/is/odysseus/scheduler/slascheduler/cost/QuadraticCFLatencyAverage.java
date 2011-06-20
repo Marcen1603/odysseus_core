@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 
 	@Override
-	public int oc(int conformance, SLA sla) {
+	public double oc(double conformance, SLA sla) {
 		// determine index of current service level
 		int slIndex = this.getCurrentServiceLevelIndex(conformance, sla);
 		
@@ -34,7 +34,7 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 			// square relative position 
 			temp = temp * temp;
 			// multiply cost with relative position
-			return (int)(temp * delta);
+			return temp * delta;
 		} else {
 			return 0;
 		}
@@ -42,7 +42,7 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 	}
 
 	@Override
-	public int mg(int conformance, SLA sla) {
+	public double mg(double conformance, SLA sla) {
 		// determine index of current service level
 		int slIndex = this.getCurrentServiceLevelIndex(conformance, sla);
 		
@@ -65,7 +65,7 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 			// square relative position
 			temp = temp * temp;
 			// multiply with delta
-			return (int)(temp * delta);
+			return temp * delta;
 		} else {
 			return 0;
 		}

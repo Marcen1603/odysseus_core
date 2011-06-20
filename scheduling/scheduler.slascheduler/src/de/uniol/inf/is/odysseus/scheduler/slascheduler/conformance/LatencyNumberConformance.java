@@ -27,7 +27,7 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	}
 
 	@Override
-	public int getConformance() {
+	public double getConformance() {
 		return numberOfViolations;
 	}
 

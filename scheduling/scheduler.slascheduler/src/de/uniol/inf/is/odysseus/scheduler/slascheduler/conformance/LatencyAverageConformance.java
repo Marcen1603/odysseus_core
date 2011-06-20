@@ -27,8 +27,8 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	}
 
 	@Override
-	public int getConformance() {
-		return this.aggregate.getAggValue().intValue();
+	public double getConformance() {
+		return this.aggregate.getAggValue().doubleValue();
 	}
 
 	@Override
