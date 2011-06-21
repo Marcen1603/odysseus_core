@@ -4,13 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 
 public class SLARegistry implements ISLAChangedEventListener {
 	
 	private Map<IPartialPlan, SLARegistryInfo> schedData;
-	
-	private String costFunctionName;
 	
 	private SLAPartialPlanScheduling scheduler;
 	
@@ -19,16 +16,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 		this.schedData = new HashMap<IPartialPlan, SLARegistryInfo>();
 	}
 
-	public SLA getSLA(IPartialPlan plan) {
-		return this.schedData.get(plan).getSla();
-	}
-	
-	public ISLAConformance getConformance(IPartialPlan plan) {
-		return this.schedData.get(plan).getConformance();
-	}
-	
-	public ICostFunction getCostFunction(IPartialPlan plan) {
-		return this.schedData.get(plan).getCostFunction();
+	public SLARegistryInfo getData(IPartialPlan plan) {
+		return this.schedData.get(plan);
 	}
 	
 	private void removeSchedData(IPartialPlan plan) {
@@ -45,9 +34,9 @@ public class SLARegistry implements ISLAChangedEventListener {
 		case add: {
 			ISLAConformance conformance = new SLAConformanceFactory().
 					createSLAConformance(event.getSla(), this.scheduler, event.getPlan());
-			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.costFunctionName, event.getSla());
+			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), event.getSla());
 			
-			SLARegistryInfo data = new SLARegistryInfo(event.getSla(), conformance, costFunction, 0);
+			SLARegistryInfo data = new SLARegistryInfo(event.getSla(), conformance, costFunction, 0, new StarvationFreedomFactory().buildStarvationFreedom(this.scheduler.getStarvationFreedom()));
 			this.addSchedData(event.getPlan(), data);
 			
 //			how to get last operator that allows connecting?
@@ -65,12 +54,6 @@ public class SLARegistry implements ISLAChangedEventListener {
 		
 	}
 
-	public void setCostFunctionName(String costFunctionName) {
-		this.costFunctionName = costFunctionName;
-	}
-
-	public String getCostFunctionName() {
-		return costFunctionName;
-	}
+	
 	
 }

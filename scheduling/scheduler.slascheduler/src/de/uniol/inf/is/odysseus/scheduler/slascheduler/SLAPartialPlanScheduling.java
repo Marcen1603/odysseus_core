@@ -19,18 +19,30 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 
 	private SLARegistry registry;
 
-	private IStarvationFreedom starvationFreedom;
+	private String starvationFreedom;
+	
+	public String getStarvationFreedom() {
+		return starvationFreedom;
+	}
+
+	public void setStarvationFreedom(String starvationFreedom) {
+		this.starvationFreedom = starvationFreedom;
+	}
+
+	private String costFunctionName;
 
 	private IPriorityFunction prioFunction;
 
 	private LinkedList<SLAViolationEvent> eventQueue;
+	
+	private double decaySF;
 
-	public SLAPartialPlanScheduling(IStarvationFreedom sf,
+	public SLAPartialPlanScheduling(String starvationFreedomFuncName,
 			IPriorityFunction prio) {
 		this.plans = new ArrayList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
 		this.registry = new SLARegistry();
-		this.starvationFreedom = sf;
+		this.starvationFreedom = starvationFreedomFuncName;
 		this.prioFunction = prio;
 		this.eventQueue = new LinkedList<SLAViolationEvent>();
 	}
@@ -80,18 +92,19 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all partial plans
 			IPartialPlan plan = scheduling.getPlan();
-			SLA sla = this.registry.getSLA(plan);
-			double conformance = this.registry.getConformance(plan).getConformance();
+			SLARegistryInfo data = this.registry.getData(plan);
+			SLA sla = data.getSla();
+			double conformance = data.getConformance().getConformance();
 			// calculate priorities for all partial plans:
 			// - calculate oc
-			ICostFunction costFunc = this.registry.getCostFunction(plan);
+			ICostFunction costFunc = data.getCostFunction();
 			double oc = costFunc.oc(conformance, sla);
 			
 			// - calculate mg
 			double mg = costFunc.oc(conformance, sla);
 
 			// - calculate sf
-			double sf = this.starvationFreedom.sf();
+			double sf = data.getStarvationFreedom().sf(this.getDecaySF());
 			
 			// - calculate prio
 			double prio = this.prioFunction.calcPriority(oc, mg, sf);
@@ -149,4 +162,19 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 		this.eventQueue.add(event);
 	}
 
+	public void setDecaySF(double decaySF) {
+		this.decaySF = decaySF;
+	}
+
+	public double getDecaySF() {
+		return decaySF;
+	}
+
+	public void setCostFunctionName(String costFunctionName) {
+		this.costFunctionName = costFunctionName;
+	}
+
+	public String getCostFunctionName() {
+		return costFunctionName;
+	}
 }

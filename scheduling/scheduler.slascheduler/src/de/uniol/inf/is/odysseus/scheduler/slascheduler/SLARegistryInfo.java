@@ -11,20 +11,32 @@ import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 public class SLARegistryInfo {
 
 	private SLA sla;
-	
+
 	private ISLAConformance conformance;
-	
+
 	private ICostFunction costFunction;
-	
+
 	private long lastExecTimeStamp;
-	
+
+	private IStarvationFreedom starvationFreedom;
+
+	public IStarvationFreedom getStarvationFreedom() {
+		return starvationFreedom;
+	}
+
+	public void setStarvationFreedom(IStarvationFreedom starvationFreedom) {
+		this.starvationFreedom = starvationFreedom;
+	}
+
 	public SLARegistryInfo(SLA sla, ISLAConformance conformance,
-			ICostFunction costFunction, long lastExecTimeStamp) {
+			ICostFunction costFunction, long lastExecTimeStamp,
+			IStarvationFreedom starvationFreedom) {
 		super();
 		this.sla = sla;
 		this.conformance = conformance;
 		this.costFunction = costFunction;
 		this.lastExecTimeStamp = lastExecTimeStamp;
+		this.starvationFreedom = starvationFreedom;
 	}
 
 	public SLA getSla() {
@@ -58,6 +70,5 @@ public class SLARegistryInfo {
 	public void setLastExecTimeStamp(long lastExecTimeStamp) {
 		this.lastExecTimeStamp = lastExecTimeStamp;
 	}
-	
-	
+
 }
