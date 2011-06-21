@@ -74,6 +74,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 		if (root instanceof ISource) {
 			ISubscribable subscribable = (ISubscribable)root;
 			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
+		} else {
+			throw new RuntimeException("Cannot connect SLA conformance operator to query root");
 		}
 	}
 	
