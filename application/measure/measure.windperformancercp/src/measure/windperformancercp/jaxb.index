@@ -1,9 +1,0 @@
-model.sources.xml.MyHashMapType
-model.sources.xml.MyHashMapEntryType
-model.sources.SourceModel
-model.sources.AbstractSource
-model.sources.WindTurbine
-model.sources.MetMast
-model.query.PerformanceModel
-model.query.MeasureIEC
-model.query.MeasureLangevin
