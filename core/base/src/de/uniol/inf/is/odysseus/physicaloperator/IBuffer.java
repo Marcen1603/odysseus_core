@@ -23,4 +23,5 @@ package de.uniol.inf.is.odysseus.physicaloperator;
 public interface IBuffer<T> extends IIterableSource<T>, IPipe<T, T> {
 	public int size();
 	public void transferNextBatch(int count);
+	public T peek();
 }

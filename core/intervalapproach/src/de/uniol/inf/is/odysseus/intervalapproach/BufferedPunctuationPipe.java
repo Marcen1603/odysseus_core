@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
  * operator when the next element in the buffer is null or has a starttimestamp
  * > the starttimestamp of the punctuation.
  * 
- * @author Jonas Jacobi, André Bolles
+ * @author Jonas Jacobi, Andrï¿½ Bolles
  */
 public class BufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M extends ITimeInterval> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
@@ -204,6 +204,13 @@ public class BufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M ext
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public T peek() {
+		synchronized (this.buffer) {
+			return this.buffer.peek();
+		}
 	}
 
 }

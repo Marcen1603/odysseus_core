@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.util.LoggerHelper;
  * that punctuations will be sent after each stream element that is pushed to the following
  * operator.
  * 
- * @author Jonas Jacobi, André Bolles
+ * @author Jonas Jacobi, Andrï¿½ Bolles
  */
 public class TestBufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M extends ITimeInterval> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
@@ -208,6 +208,13 @@ public class TestBufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public T peek() {
+		synchronized (this.buffer) {
+			return this.buffer.peek();
+		}
 	}
 
 }

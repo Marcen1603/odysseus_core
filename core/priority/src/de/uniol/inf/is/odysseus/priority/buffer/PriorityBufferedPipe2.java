@@ -184,4 +184,20 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 		return false;
 	}
 
+	@Override
+	public T peek() {
+		T head = null;
+		synchronized (this.prioBuffer) {
+			head = this.prioBuffer.peek();
+		}
+		if (head == null) {
+			synchronized (this.nonPrioBuffer) {
+				head = this.nonPrioBuffer.peek();
+			}
+		}
+		return head;
+	}
+	
+	
+
 }

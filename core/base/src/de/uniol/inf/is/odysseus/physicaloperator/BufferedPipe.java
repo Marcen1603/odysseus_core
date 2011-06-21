@@ -189,4 +189,11 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		return false;
 	}
 
+	@Override
+	public T peek() {
+		synchronized (this.buffer) {
+			return this.buffer.peek();
+		}
+	}
+	
 }
