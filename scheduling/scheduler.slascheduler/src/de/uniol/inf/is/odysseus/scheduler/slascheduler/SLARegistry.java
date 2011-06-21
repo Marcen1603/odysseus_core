@@ -32,11 +32,21 @@ public class SLARegistry implements ISLAChangedEventListener {
 	public void slaChanged(SLAChangedEvent event) {
 		switch (event.getType()) {
 		case add: {
+			SLARegistryInfo data = new SLARegistryInfo();
 			ISLAConformance conformance = new SLAConformanceFactory().
 					createSLAConformance(event.getSla(), this.scheduler, event.getPlan());
-			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), event.getSla());
+			data.setConformance(conformance);
 			
-			SLARegistryInfo data = new SLARegistryInfo(event.getSla(), conformance, costFunction, 0, new StarvationFreedomFactory().buildStarvationFreedom(this.scheduler.getStarvationFreedom()));
+			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), event.getSla());
+			data.setCostFunction(costFunction);
+			
+			IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
+					buildStarvationFreedom(this.scheduler.getStarvationFreedom(),
+							data, event.getPlan());
+			data.setStarvationFreedom(starvationFreedom);
+			
+			data.setSla(event.getSla());
+			
 			this.addSchedData(event.getPlan(), data);
 			
 //			how to get last operator that allows connecting?

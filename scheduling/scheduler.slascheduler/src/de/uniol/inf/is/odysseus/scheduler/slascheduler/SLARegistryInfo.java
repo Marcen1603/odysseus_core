@@ -28,15 +28,9 @@ public class SLARegistryInfo {
 		this.starvationFreedom = starvationFreedom;
 	}
 
-	public SLARegistryInfo(SLA sla, ISLAConformance conformance,
-			ICostFunction costFunction, long lastExecTimeStamp,
-			IStarvationFreedom starvationFreedom) {
+	public SLARegistryInfo() {
 		super();
-		this.sla = sla;
-		this.conformance = conformance;
-		this.costFunction = costFunction;
-		this.lastExecTimeStamp = lastExecTimeStamp;
-		this.starvationFreedom = starvationFreedom;
+		this.lastExecTimeStamp = 0;
 	}
 
 	public SLA getSla() {
