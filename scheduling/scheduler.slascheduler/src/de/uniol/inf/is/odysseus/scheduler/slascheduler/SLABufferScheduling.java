@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractScheduling;
