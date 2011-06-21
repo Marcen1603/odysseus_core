@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.sf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
@@ -13,6 +14,7 @@ public class QueueSizeSF implements IStarvationFreedom {
 	
 	public QueueSizeSF(IPartialPlan plan) {
 		super();
+		this.buffers = new ArrayList<IBuffer<?>>();
 		for (IIterableSource<?> src : plan.getIterableSources()) {
 			if (src instanceof IBuffer<?>) {
 				IBuffer<?> buffer = (IBuffer<?>)src;

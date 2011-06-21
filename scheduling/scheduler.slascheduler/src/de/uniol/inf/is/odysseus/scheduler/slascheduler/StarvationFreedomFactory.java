@@ -16,7 +16,7 @@ public class StarvationFreedomFactory {
 			SLARegistryInfo schedData, 
 			IPartialPlan plan) {
 		if (ELEMENT_TS.equals(starvationFreedomFuncName)) {
-			return new ElementTimeStampSF();
+			return new ElementTimeStampSF(plan);
 		} else if (LAST_EXEC_TS.equals(starvationFreedomFuncName)) {
 			return new LastExecutionTimeStampSF(schedData);
 		} else if (QUEUE_SIZE.equals(starvationFreedomFuncName)) {
