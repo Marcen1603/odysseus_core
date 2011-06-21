@@ -133,7 +133,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		return isDone();
 	}
 
-	private void updateSchedulable(IIterableSource<?> nextSource) {
+	protected void updateSchedulable(IIterableSource<?> nextSource) {
 		int id = plan.getSourceId(nextSource);
 		if (id >= 0) {
 			schedulable.set(id, false);
@@ -153,7 +153,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		}
 	}
 
-	private void updateBlocked(int index) {
+	protected void updateBlocked(int index) {
 		notBlocked.set(index, false);
 		if (notBlocked.cardinality() == 0) {
 			if (blocked == false) {
