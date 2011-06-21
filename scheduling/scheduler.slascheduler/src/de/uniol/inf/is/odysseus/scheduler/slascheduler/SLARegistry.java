@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.ISubscribable;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 public class SLARegistry implements ISLAChangedEventListener {
@@ -49,9 +52,7 @@ public class SLARegistry implements ISLAChangedEventListener {
 			
 			this.addSchedData(event.getPlan(), data);
 			
-//			how to get last operator that allows connecting?
-//			TODO: encapsulating operator placement in operator placement strategies
-//			event.getPlan().getQueryRoots();
+			this.placeSLAConformance(event.getPlan(), conformance);
 			
 			break;
 		}
@@ -64,6 +65,16 @@ public class SLARegistry implements ISLAChangedEventListener {
 		
 	}
 
-	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void placeSLAConformance(IPartialPlan plan, ISLAConformance conformance) {
+//		TODO: encapsulating operator placement in operator placement strategies?
+//		event.getPlan().getQueryRoots();
+		// it is expected that there is only one query per partial plan 
+		IPhysicalOperator root = plan.getQueryRoots().get(0);
+		if (root instanceof ISource) {
+			ISubscribable subscribable = (ISubscribable)root;
+			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
+		}
+	}
 	
 }
