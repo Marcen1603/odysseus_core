@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.IStarvationFreedom;
 
 public class ElementTimeStampSF implements IStarvationFreedom {
 	
-	List<IBuffer<?>> buffers;
+	private List<IBuffer<?>> buffers;
 	
 	public ElementTimeStampSF(IPartialPlan plan) {
 		super();
