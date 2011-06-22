@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.event.IEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
  * @author Jonas Jacobi, Marco Grawunder
  */
 public abstract class AbstractScheduling implements IScheduling,
-		IPOEventListener {
+		IPOEventListener, ITrainScheduling {
 
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractScheduling.class);
@@ -126,6 +127,38 @@ public abstract class AbstractScheduling implements IScheduling,
 				nextSource.transferNext();
 			} else {
 				// logger.debug(nextSource + " nothing to process");
+				updateSchedulable(nextSource);
+			}
+			nextSource = nextSource();
+		}
+		return isDone();
+	}
+	
+	@Override
+	public boolean schedule(long maxTime, int trainSize) {
+		// if the underlying plan has changed, we need to call
+		// the update-method before starting the scheduling:
+		if (this.isPlanChanged) {
+			this.applyChangedPlan();
+			this.isPlanChanged = false;
+		}
+
+		long endTime = System.currentTimeMillis() + maxTime;
+		IIterableSource<?> nextSource = nextSource();
+		while (!this.blocked && !this.schedulingPaused && nextSource != null
+				&& System.currentTimeMillis() < endTime) {
+			if (nextSource.isDone()) {
+				sourceDone(nextSource);
+			} else if (nextSource.isBlocked()) {
+				updateBlocked(plan.getSourceId(nextSource));
+			} else if (nextSource.hasNext()) {
+				// batch processing of tuple train
+				int numScheds = 0;
+				do {
+					numScheds++;
+					nextSource.transferNext();
+				} while (nextSource.hasNext() && numScheds < trainSize);
+			} else {
 				updateSchedulable(nextSource);
 			}
 			nextSource = nextSource();
