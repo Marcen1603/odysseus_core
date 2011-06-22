@@ -4,6 +4,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractScheduling;
 
+/**
+ * This class is deprecated, because there is no way for an sla dependend buffer
+ * scheduling. instead all other buffer scheduling strategies can be used.
+ * @author Thomas Vogelgesang
+ *
+ */
+@Deprecated 
 public class SLABufferScheduling extends AbstractScheduling {
 	
 	public SLABufferScheduling(IPartialPlan plan) {
