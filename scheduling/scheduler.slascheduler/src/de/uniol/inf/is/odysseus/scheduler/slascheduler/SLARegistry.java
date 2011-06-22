@@ -52,7 +52,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 			
 			this.addSchedData(event.getPlan(), data);
 			
-			this.placeSLAConformance(event.getPlan(), conformance);
+			new SLAConformancePlacementFactory().buildSLAConformancePlacement(
+					event.getSla()).placeSLAConformance(event.getPlan(), conformance);
 			
 			break;
 		}
@@ -63,20 +64,6 @@ public class SLARegistry implements ISLAChangedEventListener {
 		default: throw new RuntimeException("Unknown event type: " +  event.getType());
 		}
 		
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void placeSLAConformance(IPartialPlan plan, ISLAConformance conformance) {
-//		TODO: encapsulating operator placement in operator placement strategies?
-		// it is expected that there is only one query per partial plan!
-		// TODO: generalization: 1 pp == n queries?
-		IPhysicalOperator root = plan.getQueryRoots().get(0);
-		if (root instanceof ISource) {
-			ISubscribable subscribable = (ISubscribable)root;
-			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-		} else {
-			throw new RuntimeException("Cannot connect SLA conformance operator to query root");
-		}
 	}
 	
 }
