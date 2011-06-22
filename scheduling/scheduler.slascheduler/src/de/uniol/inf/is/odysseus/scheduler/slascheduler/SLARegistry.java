@@ -56,6 +56,7 @@ public class SLARegistry implements ISLAChangedEventListener {
 		}
 		case remove: {
 			this.removeSchedData(event.getPlan());
+			// TODO remove sla conformance operator from plan?			
 			break;
 		}
 		default: throw new RuntimeException("Unknown event type: " +  event.getType());
