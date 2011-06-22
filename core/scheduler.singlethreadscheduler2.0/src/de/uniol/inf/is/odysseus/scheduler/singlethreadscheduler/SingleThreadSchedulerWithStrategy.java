@@ -67,7 +67,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	/**
 	 * Thread for execution the registered partial plans.
 	 */
-	private ExecutorThread execThread;
+	protected ExecutorThread execThread;
 
 	/**
 	 * Thread for execution the global sources.
@@ -141,7 +141,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 		logger.debug("setPartialPlans done");
 	}
 
-	private void initExecThread() {
+	protected void initExecThread() {
 		logger.debug("initExecThread");
 		execThread = new ExecutorThread(planScheduling, timeSlicePerStrategy,
 				this);
@@ -229,6 +229,26 @@ class ExecutorThread extends Thread {
 		this.timeSlicePerStrategy = timeSlicePerStrategy;
 		this.caller = caller;
 	}
+	
+	
+
+	protected IPartialPlanScheduling getPlanScheduling() {
+		return planScheduling;
+	}
+
+
+
+	protected long getTimeSlicePerStrategy() {
+		return timeSlicePerStrategy;
+	}
+
+
+
+	protected SingleThreadSchedulerWithStrategy getCaller() {
+		return caller;
+	}
+
+
 
 	@Override
 	public void run() {
