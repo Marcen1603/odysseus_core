@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+import de.uniol.inf.is.odysseus.ISubscribable;
 import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 
 /**
@@ -19,6 +20,8 @@ public class SLARegistryInfo {
 	private long lastExecTimeStamp;
 
 	private IStarvationFreedom starvationFreedom;
+	
+	private ISubscribable<?, ?> connectionPoint;
 
 	public IStarvationFreedom getStarvationFreedom() {
 		return starvationFreedom;
@@ -63,6 +66,14 @@ public class SLARegistryInfo {
 
 	public void setLastExecTimeStamp(long lastExecTimeStamp) {
 		this.lastExecTimeStamp = lastExecTimeStamp;
+	}
+
+	public void setConnectionPoint(ISubscribable<?, ?> connectionPoint) {
+		this.connectionPoint = connectionPoint;
+	}
+
+	public ISubscribable<?, ?> getConnectionPoint() {
+		return connectionPoint;
 	}
 
 }

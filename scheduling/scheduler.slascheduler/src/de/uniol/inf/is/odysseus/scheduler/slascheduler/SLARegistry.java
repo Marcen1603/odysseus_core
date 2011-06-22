@@ -20,8 +20,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 		return this.schedData.get(plan);
 	}
 	
-	private void removeSchedData(IPartialPlan plan) {
-		this.schedData.remove(plan);
+	private SLARegistryInfo removeSchedData(IPartialPlan plan) {
+		return this.schedData.remove(plan);
 	}
 	
 	private void addSchedData(IPartialPlan plan, SLARegistryInfo data) {
@@ -47,16 +47,19 @@ public class SLARegistry implements ISLAChangedEventListener {
 			
 			data.setSla(event.getSla());
 			
-			this.addSchedData(event.getPlan(), data);
+			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(event.getSla());
+			data.setConnectionPoint(placement.placeSLAConformance(event.getPlan(), conformance));
 			
-			new SLAConformancePlacementFactory().buildSLAConformancePlacement(
-					event.getSla()).placeSLAConformance(event.getPlan(), conformance);
+			this.addSchedData(event.getPlan(), data);
 			
 			break;
 		}
 		case remove: {
-			this.removeSchedData(event.getPlan());
-			// TODO remove sla conformance operator from plan?			
+			SLARegistryInfo data = this.removeSchedData(event.getPlan());
+			
+			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(event.getSla());
+			placement.removeSLAConformance(data.getConnectionPoint(), 
+					data.getConformance());
 			break;
 		}
 		default: throw new RuntimeException("Unknown event type: " +  event.getType());
