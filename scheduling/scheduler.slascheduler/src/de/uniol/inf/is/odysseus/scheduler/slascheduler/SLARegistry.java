@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.ISubscribable;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 public class SLARegistry implements ISLAChangedEventListener {
