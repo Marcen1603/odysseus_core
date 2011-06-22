@@ -115,10 +115,15 @@ public class OdysseusDefaults {
 		props.setProperty("debug_Scheduler_maxLines", 1048476 + "");
 		props.setProperty("scheduler_TimeSlicePerStrategy", 10 + "");
 		props.setProperty("scheduler_DebugFileName","SchedulerLog");
+		props.setProperty("scheduler_trainSize", 1 + "");
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
 		props.setProperty("sla_updatePenaltyTime", 60000+""); // Milliseconds
+		
+		// new SLA
+		props.setProperty("sla_starvationFreedomFuncName", "QueueSizeSF");
+		props.setProperty("sla_prioFuncName", "max");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {
