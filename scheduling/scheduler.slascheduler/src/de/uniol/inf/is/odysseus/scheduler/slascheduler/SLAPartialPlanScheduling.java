@@ -113,6 +113,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 			/* 
 			 * TODO: Generalize plan selection: select x plans with best 
 			 * priorities to reduce calculation overhead
+			 * 
+			 * such an optimization needs the constraint of selecting only a
+			 * certain percentage of the existing partial plans. otherwise the
+			 * this strategy would be the same as round robin with a certain
+			 * ordering of the plans!
 			 */
 			if (prio > nextPrio) {
 				next = scheduling;

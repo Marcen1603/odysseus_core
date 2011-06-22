@@ -68,8 +68,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void placeSLAConformance(IPartialPlan plan, ISLAConformance conformance) {
 //		TODO: encapsulating operator placement in operator placement strategies?
-//		event.getPlan().getQueryRoots();
-		// it is expected that there is only one query per partial plan 
+		// it is expected that there is only one query per partial plan!
+		// TODO: generalization: 1 pp == n queries?
 		IPhysicalOperator root = plan.getQueryRoots().get(0);
 		if (root instanceof ISource) {
 			ISubscribable subscribable = (ISubscribable)root;
