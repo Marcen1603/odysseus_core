@@ -59,9 +59,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	private String name = null;
-
-	@SuppressWarnings("rawtypes")
-	private IPredicate predicate = null;
+	
+	private IPredicate<?> predicate = null;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		predicate = (op.predicate == null) ? null : op.predicate.clone();
@@ -85,7 +84,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	abstract public AbstractLogicalOperator clone();
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public void updateAfterClone(
 			Map<ILogicalOperator, ILogicalOperator> replaced) {
@@ -100,9 +99,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * @see
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getPredicate ()
 	 */
-	@Override
-	@SuppressWarnings({ "rawtypes" })
-	public IPredicate getPredicate() {
+	@Override	
+	public IPredicate<?> getPredicate() {
 		return predicate;
 	}
 
@@ -113,9 +111,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#setPredicate
 	 * (de.uniol.inf.is.odysseus.predicate.IPredicate)
 	 */
-	@Override
-	@SuppressWarnings("rawtypes")
-	public void setPredicate(IPredicate predicate) {
+	@Override	
+	public void setPredicate(IPredicate<?> predicate) {
 		this.predicate = predicate;
 	}
 

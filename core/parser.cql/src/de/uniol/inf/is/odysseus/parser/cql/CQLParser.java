@@ -303,17 +303,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void initPredicate(IPredicate<RelationalTuple<?>> predicate,
+	
+	public static void initPredicate(IPredicate<?> predicate,
 			SDFAttributeList left, SDFAttributeList right) {
 		if (predicate instanceof ComplexPredicate) {
-			ComplexPredicate compPred = (ComplexPredicate) predicate;
+			ComplexPredicate<?> compPred = (ComplexPredicate<?>) predicate;
 			initPredicate(compPred.getLeft(), left, right);
 			initPredicate(compPred.getRight(), left, right);
 			return;
 		}
 		if (predicate instanceof NotPredicate) {
-			initPredicate(((NotPredicate) predicate).getChild(), left, right);
+			initPredicate(((NotPredicate<?>) predicate).getChild(), left, right);
 			return;
 		}
 		if (predicate instanceof IRelationalPredicate) {

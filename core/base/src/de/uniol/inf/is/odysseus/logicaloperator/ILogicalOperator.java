@@ -36,11 +36,9 @@ public interface ILogicalOperator extends IOwnedOperator,
 	public SDFAttributeList getOutputSchema();
 	public SDFAttributeList getOutputSchema(int pos);
 	public SDFAttributeList getInputSchema(int pos);	
-	
-	@SuppressWarnings("rawtypes")
-	public IPredicate getPredicate();
-	@SuppressWarnings("rawtypes")
-	public void setPredicate(IPredicate predicate);
+		
+	public IPredicate<?> getPredicate();	
+	public void setPredicate(IPredicate<?> predicate);
 
 	public String getName();
 	public void setName(String name);

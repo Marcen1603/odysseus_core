@@ -49,7 +49,6 @@ import de.uniol.inf.is.odysseus.util.LoggerHelper;
  * @author Marco Grawunder
  * 
  */
-@SuppressWarnings("unchecked")
 public class RelationalRestructHelper {
 	
 	static String LOGGER_NAME = RelationalRestructHelper.class.toString();
@@ -105,7 +104,7 @@ public class RelationalRestructHelper {
 	}
 
 	public static boolean subsetPredicate(
-			IPredicate<RelationalTuple<?>> predicate,
+			IPredicate<?> predicate,
 			SDFAttributeList attributes) {
 
 		final List<String> uris = new ArrayList<String>(attributes
