@@ -34,7 +34,7 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 
 	@Override
 	public void execute(FileSinkAO operator, TransformationConfiguration config) {
-		ISink fileSinkPO = new FileSinkPO(operator.getFilename(), operator.getSinkType(), operator.getWriteAfterElements(), operator.getPrintMetadata());
+		ISink<?> fileSinkPO = new FileSinkPO(operator.getFilename(), operator.getSinkType(), operator.getWriteAfterElements(), operator.getPrintMetadata());
 		
 		fileSinkPO.setOutputSchema(operator.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, fileSinkPO);
