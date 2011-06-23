@@ -11,7 +11,7 @@
 @ SuppressWarnings("all") public class SMQLParser/*@bgen(jjtree)*/implements SMQLParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected static JJTSMQLParserState jjtree = new JJTSMQLParserState();
 
-/*@egen*/}PARSER_END(SMQLParser)SKIP :{  " "| "\r"| "\n"| "\t"}TOKEN :{  < K_AND : "AND" > | < K_AVG : "AVG" >| < K_BY : "BY" >| < K_CLEAN : "CLEAN" >| < K_CORRECT : "CORRECT" >| < K_COUNT : "COUNT" >| < K_CREATE : "CREATE" >| < K_DETECT : "DETECT" >| < K_DISCARD : "DISCARD" >| < K_DISCOVERY : "DISCOVERY" >| < K_DOMAIN : "DOMAIN" >| < K_FUNCTION : "FUNCTION" >| < K_IN : "IN" >| < K_KNOWLEDGE : "KNOWLEDGE" >| < K_LAST : "LAST" >| < K_MAX : "MAX" >| < K_MIN : "MIN" >| < K_NOT : "NOT" >| < K_OF : "OF" >| < K_OUT : "OUT" >| < K_OUTLIER : "OUTLIER" >| < K_OR : "OR" >| < K_PROCESS : "PROCESS" >| < K_RANGE : "RANGE" >| < K_ROUND : "ROUND" >| < K_SIGMA : "SIGMA" >| < K_SUM : "SUM" >| < K_TIME : "TIME" >| < K_TO : "TO" >| < K_TUPLE : "TUPLE" >| < K_VALUE : "VALUE" >}TOKEN : /* Numeric Constants */{  //  <NUMBER:<FLOAT>  //  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>  //  | <#FLOAT:<INTEGER>  //  | <INTEGER>("."<INTEGER>)?  //  | "."<INTEGER>>  < FLOAT :    ("-")?    (      < INTEGER > "." < INTEGER >    | "." < INTEGER >    ) >| < INTEGER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >}SPECIAL_TOKEN :{  < LINE_COMMENT : "--" (~[ "\r", "\n" ])* >| < MULTI_LINE_COMMENT :    "/*" (~[ "*" ])* "*"    (      "*"    |      (        ~[ "*", "/" ] (~[ "*" ])* "*"      )    )*    "/" >}TOKEN :{  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    ":"  | "_"  | "."  | "*" >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )* >| < SQL_STRING :    "[[" (~[ "[", "]" ])* "]]"    (      "[[" (~[ "[", "]" ])* "]]"    )* >| < QUOTED_IDENTIFIER : "\"" (~[ "\n", "\r", "\"" ])* "\"" >| < COMPARE_OPERATOR :    "="  | "<>"  | ">"  | "<"  | "<="  | ">=" >| < REGEXP :    "/" ("^")?    (      < LETTER >    | < DIGIT >    | "\\"    | "+"    | "."    | "*"    | "?"    | "$"    )+    "/" >| < JDBC_STRING :    "jdbc:"    (      (        < DIGIT >      | < LETTER >      | < SPECIAL_CHARS >      | "?"      | ";"      | "/"      | "="      )*    )* >}SimpleNode Start() :{/*@bgen(jjtree) Start */
+/*@egen*/}PARSER_END(SMQLParser)SKIP :{  " "| "\r"| "\n"| "\t"}TOKEN :{  < K_AND : "AND" > | < K_AVG : "AVG" >| < K_BY : "BY" >| < K_CLEAN : "CLEAN" >| < K_CORRECT : "CORRECT" >| < K_COUNT : "COUNT" >| < K_CREATE : "CREATE" >| < K_DETECT : "DETECT" >| < K_DISCARD : "DISCARD" >| < K_DISCOVERY : "DISCOVERY" >| < K_DOMAIN : "DOMAIN" >| < K_FUNCTION : "FUNCTION" >| < K_IN : "IN" >| < K_KNOWLEDGE : "KNOWLEDGE" >| < K_LAST : "LAST" >| < K_MAX : "MAX" >| < K_MIN : "MIN" >| < K_NOT : "NOT" >| < K_OF : "OF" >| < K_OUT : "OUT" >| < K_OUTLIER : "OUTLIER" >| < K_OR : "OR" >| < K_PROCESS : "PROCESS" >| < K_RANGE : "RANGE" >| < K_ROUND : "ROUND" >| < K_SIGMA : "SIGMA" >| < K_SUM : "SUM" >| < K_TIME : "TIME" >| < K_TO : "TO" >| < K_TUPLE : "TUPLE" >| < K_VALUE : "VALUE" >| < K_WHERE : "WHERE" >}TOKEN : /* Numeric Constants */{  //  <NUMBER:<FLOAT>  //  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>  //  | <#FLOAT:<INTEGER>  //  | <INTEGER>("."<INTEGER>)?  //  | "."<INTEGER>>  < FLOAT :    ("-")?    (      < INTEGER > "." < INTEGER >    | "." < INTEGER >    ) >| < INTEGER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >}SPECIAL_TOKEN :{  < LINE_COMMENT : "--" (~[ "\r", "\n" ])* >| < MULTI_LINE_COMMENT :    "/*" (~[ "*" ])* "*"    (      "*"    |      (        ~[ "*", "/" ] (~[ "*" ])* "*"      )    )*    "/" >}TOKEN :{  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    ":"  | "_"  | "."  | "*" >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )* >| < SQL_STRING :    "[[" (~[ "[", "]" ])* "]]"    (      "[[" (~[ "[", "]" ])* "]]"    )* >| < QUOTED_IDENTIFIER : "\"" (~[ "\n", "\r", "\"" ])* "\"" >| < COMPARE_OPERATOR :    "="  | "<>"  | ">"  | "<"  | "<="  | ">=" >| < REGEXP :    "/" ("^")?    (      < LETTER >    | < DIGIT >    | "\\"    | "+"    | "."    | "*"    | "?"    | "$"    )+    "/" >| < JDBC_STRING :    "jdbc:"    (      (        < DIGIT >      | < LETTER >      | < SPECIAL_CHARS >      | "?"      | ";"      | "/"      | "="      )*    )* >}SimpleNode Start() :{/*@bgen(jjtree) Start */
   ASTStart jjtn000 = new ASTStart(JJTSTART);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -70,7 +70,7 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    Long value = Long.parseLong(t.image);    return value;  }/*@bgen(jjtree)*/
+/*@egen*/  {     {jjtn000.jjtSetValue(getToken(0).image);}        return Long.parseLong(t.image);  }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -87,7 +87,7 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    Float value = Float.parseFloat(t.image);    return value;  }/*@bgen(jjtree)*/
+/*@egen*/  {    {jjtn000.jjtSetValue(getToken(0).image);}     return Float.parseFloat(t.image);  }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -256,7 +256,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) DetectionMethod */
         try {
-/*@egen*/ 	(	   LOOKAHEAD(3)< K_OUT > < K_OF > <K_RANGE > Integer() (< K_TUPLE > | < K_TIME >)	| < K_VALUE > Integer()	| < K_SIGMA > Integer()	| < K_FUNCTION > Identifier()	|  LOOKAHEAD(3)< K_OUT > < K_OF > <K_DOMAIN > Number() < K_TO > Number()	)  (     ParameterList()  )?/*@bgen(jjtree)*/
+/*@egen*/ 	(	  LOOKAHEAD(3)DetectionMethodOutOfRange()	| DetectionMethodSimpleValue()	| DetectionMethodSigmaRule()	| DetectionMethodFunction()	| LOOKAHEAD(3)DetectionMethodOutOfDomain()	)  (     ParameterList()  )?/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -276,7 +276,163 @@
             jjtree.closeNodeScope(jjtn000, true);
           }
         }
-/*@egen*/}void ParameterList() :{/*@bgen(jjtree) ParameterList */
+/*@egen*/}void DetectionMethodOutOfRange():{/*@bgen(jjtree) DetectionMethodOutOfRange */
+  ASTDetectionMethodOutOfRange jjtn000 = new ASTDetectionMethodOutOfRange(JJTDETECTIONMETHODOUTOFRANGE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DetectionMethodOutOfRange */
+  try {
+/*@egen*/  < K_OUT > < K_OF > <K_RANGE > Integer() (< K_TUPLE > | < K_TIME >)/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void DetectionMethodSimpleValue():{/*@bgen(jjtree) DetectionMethodSimpleValue */
+  ASTDetectionMethodSimpleValue jjtn000 = new ASTDetectionMethodSimpleValue(JJTDETECTIONMETHODSIMPLEVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DetectionMethodSimpleValue */
+  try {
+/*@egen*/  < K_VALUE > Number()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void DetectionMethodSigmaRule():{/*@bgen(jjtree) DetectionMethodSigmaRule */
+  ASTDetectionMethodSigmaRule jjtn000 = new ASTDetectionMethodSigmaRule(JJTDETECTIONMETHODSIGMARULE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DetectionMethodSigmaRule */
+  try {
+/*@egen*/  < K_SIGMA > Integer()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void DetectionMethodSimplePredicate():{/*@bgen(jjtree) DetectionMethodSimplePredicate */
+  ASTDetectionMethodSimplePredicate jjtn000 = new ASTDetectionMethodSimplePredicate(JJTDETECTIONMETHODSIMPLEPREDICATE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DetectionMethodSimplePredicate */
+  try {
+/*@egen*/  < K_WHERE > Identifier()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void DetectionMethodFunction():{/*@bgen(jjtree) DetectionMethodFunction */
+  ASTDetectionMethodFunction jjtn000 = new ASTDetectionMethodFunction(JJTDETECTIONMETHODFUNCTION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DetectionMethodFunction */
+  try {
+/*@egen*/  < K_FUNCTION > Identifier()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void DetectionMethodOutOfDomain():{/*@bgen(jjtree) DetectionMethodOutOfDomain */
+  ASTDetectionMethodOutOfDomain jjtn000 = new ASTDetectionMethodOutOfDomain(JJTDETECTIONMETHODOUTOFDOMAIN);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DetectionMethodOutOfDomain */
+  try {
+/*@egen*/  < K_OUT > < K_OF > <K_DOMAIN > Number() < K_TO > Number()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void ParameterList() :{/*@bgen(jjtree) ParameterList */
   ASTParameterList jjtn000 = new ASTParameterList(JJTPARAMETERLIST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

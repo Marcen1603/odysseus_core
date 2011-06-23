@@ -14,11 +14,17 @@ public interface SMQLParserTreeConstants
   public int JJTOUTLIERDETECTIONS = 8;
   public int JJTOUTLIERDETECTION = 9;
   public int JJTDETECTIONMETHOD = 10;
-  public int JJTPARAMETERLIST = 11;
-  public int JJTPARAMETER = 12;
-  public int JJTCORRECTIONMETHOD = 13;
-  public int JJTCORRECTIONMETHODDISCARD = 14;
-  public int JJTCORRECTIONMETHODFUNCTION = 15;
+  public int JJTDETECTIONMETHODOUTOFRANGE = 11;
+  public int JJTDETECTIONMETHODSIMPLEVALUE = 12;
+  public int JJTDETECTIONMETHODSIGMARULE = 13;
+  public int JJTDETECTIONMETHODSIMPLEPREDICATE = 14;
+  public int JJTDETECTIONMETHODFUNCTION = 15;
+  public int JJTDETECTIONMETHODOUTOFDOMAIN = 16;
+  public int JJTPARAMETERLIST = 17;
+  public int JJTPARAMETER = 18;
+  public int JJTCORRECTIONMETHOD = 19;
+  public int JJTCORRECTIONMETHODDISCARD = 20;
+  public int JJTCORRECTIONMETHODFUNCTION = 21;
 
 
   public String[] jjtNodeName = {
@@ -33,6 +39,12 @@ public interface SMQLParserTreeConstants
     "OutlierDetections",
     "OutlierDetection",
     "DetectionMethod",
+    "DetectionMethodOutOfRange",
+    "DetectionMethodSimpleValue",
+    "DetectionMethodSigmaRule",
+    "DetectionMethodSimplePredicate",
+    "DetectionMethodFunction",
+    "DetectionMethodOutOfDomain",
     "ParameterList",
     "Parameter",
     "CorrectionMethod",
@@ -40,4 +52,4 @@ public interface SMQLParserTreeConstants
     "CorrectionMethodFunction",
   };
 }
-/* JavaCC - OriginalChecksum=5e9e71221be880931fe33911b65611a8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ab3f0eadad3a36623d86f010e52044c3 (do not edit this line) */

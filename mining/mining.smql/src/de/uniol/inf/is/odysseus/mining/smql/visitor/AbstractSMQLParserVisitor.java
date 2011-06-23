@@ -92,8 +92,17 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 
 	@Override
 	public Object visit(ASTNumber node, Object data) {
-		double value = Double.parseDouble(node.jjtGetValue().toString());
-		return value;
+		Object value = node.jjtGetChild(0).jjtAccept(this, data);
+		if(value instanceof Integer){
+			return ((Integer)value).doubleValue();
+		}else{
+			if(value instanceof Long){
+				return ((Long)value).doubleValue();
+			}else{
+				// last chance: cast to double
+				return (Double) value;
+			}
+		}
 	}
 
 	@Override

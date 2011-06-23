@@ -64,8 +64,8 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
       t = jj_consume_token(INTEGER);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-    Long value = Long.parseLong(t.image);
-    {if (true) return value;}
+     {jjtn000.jjtSetValue(getToken(0).image);}
+    {if (true) return Long.parseLong(t.image);}
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -83,8 +83,8 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
       t = jj_consume_token(FLOAT);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-    Float value = Float.parseFloat(t.image);
-    {if (true) return value;}
+    {jjtn000.jjtSetValue(getToken(0).image);}
+    {if (true) return Float.parseFloat(t.image);}
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -143,9 +143,9 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
       jj_consume_token(K_DISCOVERY);
       jj_consume_token(K_PROCESS);
       Identifier();
-      jj_consume_token(51);
-      ProcessPhases();
       jj_consume_token(52);
+      ProcessPhases();
+      jj_consume_token(53);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -214,9 +214,9 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
     try {
       jj_consume_token(K_CLEAN);
       Identifier();
-      jj_consume_token(51);
-      OutlierDetections();
       jj_consume_token(52);
+      OutlierDetections();
+      jj_consume_token(53);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -318,45 +318,22 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
   jjtree.openNodeScope(jjtn000);
     try {
       if (jj_2_1(3)) {
-        jj_consume_token(K_OUT);
-        jj_consume_token(K_OF);
-        jj_consume_token(K_RANGE);
-        Integer();
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_TUPLE:
-          jj_consume_token(K_TUPLE);
-          break;
-        case K_TIME:
-          jj_consume_token(K_TIME);
-          break;
-        default:
-          jj_la1[3] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
+        DetectionMethodOutOfRange();
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_VALUE:
-          jj_consume_token(K_VALUE);
-          Integer();
+          DetectionMethodSimpleValue();
           break;
         case K_SIGMA:
-          jj_consume_token(K_SIGMA);
-          Integer();
+          DetectionMethodSigmaRule();
           break;
         case K_FUNCTION:
-          jj_consume_token(K_FUNCTION);
-          Identifier();
+          DetectionMethodFunction();
           break;
         default:
-          jj_la1[4] = jj_gen;
+          jj_la1[3] = jj_gen;
           if (jj_2_2(3)) {
-            jj_consume_token(K_OUT);
-            jj_consume_token(K_OF);
-            jj_consume_token(K_DOMAIN);
-            Number();
-            jj_consume_token(K_TO);
-            Number();
+            DetectionMethodOutOfDomain();
           } else {
             jj_consume_token(-1);
             throw new ParseException();
@@ -364,11 +341,11 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
         }
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 53:
+      case 54:
         ParameterList();
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[4] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -392,28 +369,220 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
     }
   }
 
+  static final public void DetectionMethodOutOfRange() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodOutOfRange */
+  ASTDetectionMethodOutOfRange jjtn000 = new ASTDetectionMethodOutOfRange(JJTDETECTIONMETHODOUTOFRANGE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_OUT);
+      jj_consume_token(K_OF);
+      jj_consume_token(K_RANGE);
+      Integer();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_TUPLE:
+        jj_consume_token(K_TUPLE);
+        break;
+      case K_TIME:
+        jj_consume_token(K_TIME);
+        break;
+      default:
+        jj_la1[5] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void DetectionMethodSimpleValue() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodSimpleValue */
+  ASTDetectionMethodSimpleValue jjtn000 = new ASTDetectionMethodSimpleValue(JJTDETECTIONMETHODSIMPLEVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_VALUE);
+      Number();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void DetectionMethodSigmaRule() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodSigmaRule */
+  ASTDetectionMethodSigmaRule jjtn000 = new ASTDetectionMethodSigmaRule(JJTDETECTIONMETHODSIGMARULE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_SIGMA);
+      Integer();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void DetectionMethodSimplePredicate() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodSimplePredicate */
+  ASTDetectionMethodSimplePredicate jjtn000 = new ASTDetectionMethodSimplePredicate(JJTDETECTIONMETHODSIMPLEPREDICATE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_WHERE);
+      Identifier();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void DetectionMethodFunction() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodFunction */
+  ASTDetectionMethodFunction jjtn000 = new ASTDetectionMethodFunction(JJTDETECTIONMETHODFUNCTION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_FUNCTION);
+      Identifier();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void DetectionMethodOutOfDomain() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodOutOfDomain */
+  ASTDetectionMethodOutOfDomain jjtn000 = new ASTDetectionMethodOutOfDomain(JJTDETECTIONMETHODOUTOFDOMAIN);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_OUT);
+      jj_consume_token(K_OF);
+      jj_consume_token(K_DOMAIN);
+      Number();
+      jj_consume_token(K_TO);
+      Number();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
   static final public void ParameterList() throws ParseException {
  /*@bgen(jjtree) ParameterList */
   ASTParameterList jjtn000 = new ASTParameterList(JJTPARAMETERLIST);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(53);
+      jj_consume_token(54);
       Parameter();
       label_3:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 54:
+        case 55:
           ;
           break;
         default:
           jj_la1[6] = jj_gen;
           break label_3;
         }
-        jj_consume_token(54);
+        jj_consume_token(55);
         Parameter();
       }
-      jj_consume_token(55);
+      jj_consume_token(56);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -442,7 +611,7 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
   jjtree.openNodeScope(jjtn000);
     try {
       Identifier();
-      jj_consume_token(56);
+      jj_consume_token(57);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FLOAT:
       case INTEGER:
@@ -538,7 +707,7 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
     try {
       jj_consume_token(K_CORRECT);
       jj_consume_token(K_BY);
-      jj_consume_token(57);
+      jj_consume_token(58);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_FUNCTION:
         jj_consume_token(K_FUNCTION);
@@ -557,7 +726,7 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(58);
+      jj_consume_token(59);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -593,17 +762,27 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3_1() {
+  static private boolean jj_3R_5() {
     if (jj_scan_token(K_OUT)) return true;
     if (jj_scan_token(K_OF)) return true;
-    if (jj_scan_token(K_RANGE)) return true;
+    if (jj_scan_token(K_DOMAIN)) return true;
     return false;
   }
 
   static private boolean jj_3_2() {
+    if (jj_3R_5()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_4() {
     if (jj_scan_token(K_OUT)) return true;
     if (jj_scan_token(K_OF)) return true;
-    if (jj_scan_token(K_DOMAIN)) return true;
+    if (jj_scan_token(K_RANGE)) return true;
     return false;
   }
 
@@ -627,10 +806,10 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x100,0x1000,0x0,0x40010000,0x0,0x0,0x0,0x2200,0x90000,};
+      jj_la1_0 = new int[] {0x0,0x100,0x1000,0x40010000,0x0,0x0,0x0,0x0,0x2200,0x90000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x30,0x0,0x0,0x5,0x8,0x200000,0x400000,0x430,0x0,0x8,};
+      jj_la1_1 = new int[] {0x60,0x0,0x0,0x8,0x400000,0x5,0x800000,0x860,0x0,0x8,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[2];
   static private boolean jj_rescan = false;
@@ -840,7 +1019,7 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[59];
+    boolean[] la1tokens = new boolean[60];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -857,7 +1036,7 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
         }
       }
     }
-    for (int i = 0; i < 59; i++) {
+    for (int i = 0; i < 60; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

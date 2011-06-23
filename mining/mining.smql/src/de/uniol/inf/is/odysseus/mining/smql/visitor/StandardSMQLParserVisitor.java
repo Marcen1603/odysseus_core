@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.ILoggerFactory;
+
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.mining.model.IPhase;
 import de.uniol.inf.is.odysseus.mining.model.KnowledgeDiscoveryProcess;
 import de.uniol.inf.is.odysseus.mining.smql.ISMQLFeature;
@@ -14,6 +17,12 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodDiscard;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodFunction;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCreateKnowledgeDiscoveryProcess;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethod;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodFunction;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodOutOfDomain;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodOutOfRange;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodSigmaRule;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodSimplePredicate;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodSimpleValue;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetection;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetections;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
@@ -72,12 +81,12 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	@Override
 	public Object visit(ASTProcessPhases node, Object data) {
-		List<IPhase> phases = new ArrayList<IPhase>();
+		List<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 		for(int i=0;i<node.jjtGetNumChildren();i++){
 			SimpleNode child = (SimpleNode) node.jjtGetChild(i);
-			phases.add((IPhase) child.jjtAccept(this, null));
+			operators.add((ILogicalOperator) child.jjtAccept(this, null));
 		}
-		return phases;		
+		return operators;		
 	}
 
 	@Override
@@ -117,6 +126,36 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	public void print() {
 		this.kdp.toString();		
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodOutOfRange node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodSimpleValue node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodSigmaRule node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodSimplePredicate node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodFunction node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodOutOfDomain node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
 	}
 	
 

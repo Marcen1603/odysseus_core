@@ -15,10 +15,16 @@ public interface SMQLParserVisitor
   public Object visit(ASTOutlierDetections node, Object data);
   public Object visit(ASTOutlierDetection node, Object data);
   public Object visit(ASTDetectionMethod node, Object data);
+  public Object visit(ASTDetectionMethodOutOfRange node, Object data);
+  public Object visit(ASTDetectionMethodSimpleValue node, Object data);
+  public Object visit(ASTDetectionMethodSigmaRule node, Object data);
+  public Object visit(ASTDetectionMethodSimplePredicate node, Object data);
+  public Object visit(ASTDetectionMethodFunction node, Object data);
+  public Object visit(ASTDetectionMethodOutOfDomain node, Object data);
   public Object visit(ASTParameterList node, Object data);
   public Object visit(ASTParameter node, Object data);
   public Object visit(ASTCorrectionMethod node, Object data);
   public Object visit(ASTCorrectionMethodDiscard node, Object data);
   public Object visit(ASTCorrectionMethodFunction node, Object data);
 }
-/* JavaCC - OriginalChecksum=e997f2cfab196a2c4860d4f4e9e72fc4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3d347432108096947f4b055ef439098a (do not edit this line) */

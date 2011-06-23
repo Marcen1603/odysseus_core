@@ -73,35 +73,37 @@ public interface SMQLParserConstants {
   /** RegularExpression Id. */
   int K_VALUE = 35;
   /** RegularExpression Id. */
-  int FLOAT = 36;
+  int K_WHERE = 36;
   /** RegularExpression Id. */
-  int INTEGER = 37;
+  int FLOAT = 37;
   /** RegularExpression Id. */
-  int DIGIT = 38;
+  int INTEGER = 38;
   /** RegularExpression Id. */
-  int IPADDRESS = 39;
+  int DIGIT = 39;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 40;
+  int IPADDRESS = 40;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 41;
+  int LINE_COMMENT = 41;
   /** RegularExpression Id. */
-  int IDENTIFIER = 42;
+  int MULTI_LINE_COMMENT = 42;
   /** RegularExpression Id. */
-  int LETTER = 43;
+  int IDENTIFIER = 43;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 44;
+  int LETTER = 44;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 45;
+  int SPECIAL_CHARS = 45;
   /** RegularExpression Id. */
-  int SQL_STRING = 46;
+  int CHAR_LITERAL = 46;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 47;
+  int SQL_STRING = 47;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 48;
+  int QUOTED_IDENTIFIER = 48;
   /** RegularExpression Id. */
-  int REGEXP = 49;
+  int COMPARE_OPERATOR = 49;
   /** RegularExpression Id. */
-  int JDBC_STRING = 50;
+  int REGEXP = 50;
+  /** RegularExpression Id. */
+  int JDBC_STRING = 51;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -144,6 +146,7 @@ public interface SMQLParserConstants {
     "\"TO\"",
     "\"TUPLE\"",
     "\"VALUE\"",
+    "\"WHERE\"",
     "<FLOAT>",
     "<INTEGER>",
     "<DIGIT>",
