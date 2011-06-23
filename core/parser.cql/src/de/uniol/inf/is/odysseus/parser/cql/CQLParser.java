@@ -47,7 +47,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.NotPredicate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -287,8 +286,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTPriority node, Object data) {
 		return node.getPriority();
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	public static void initPredicates(ILogicalOperator curInputAO) {
 		if (curInputAO.getPredicate() != null) {
 			SDFAttributeList rightInputSchema = null;
