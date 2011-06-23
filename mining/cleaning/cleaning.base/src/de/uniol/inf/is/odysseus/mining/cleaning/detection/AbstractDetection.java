@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.detection;
 
 import de.uniol.inf.is.odysseus.mining.cleaning.model.IDetection;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -24,22 +23,29 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public class OutOfRangeDetection implements IDetection {
+public abstract class AbstractDetection implements IDetection {
 
-	public OutOfRangeDetection(String attributeName, int count, String type, SDFAttributeList outputSchema) {
-		// TODO Auto-generated constructor stub
+	private SDFAttributeList inputschema;
+	private String attributeName;
+
+	public AbstractDetection(String attributeName, SDFAttributeList schema){
+		this.setInputschema(schema);
+		this.setAttributeName(attributeName);
 	}
 
-	@Override
-	public IPredicate<?> getPredicate() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setAttributeName(String attributeName) {
+		this.attributeName = attributeName;
 	}
 
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-
+	public String getAttributeName() {
+		return attributeName;
 	}
 
+	public void setInputschema(SDFAttributeList inputschema) {
+		this.inputschema = inputschema;
+	}
+
+	public SDFAttributeList getInputschema() {
+		return inputschema;
+	}
 }

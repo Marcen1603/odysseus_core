@@ -15,8 +15,8 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection;
 
-import de.uniol.inf.is.odysseus.mining.cleaning.model.IDetection;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -24,22 +24,25 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public class OutOfRangeDetection implements IDetection {
+public class SimpleValueDetection extends AbstractRelationalPredicateDetection{
 
-	public OutOfRangeDetection(String attributeName, int count, String type, SDFAttributeList outputSchema) {
-		// TODO Auto-generated constructor stub
+	private double value;
+	private RelationalPredicate predicate;
+
+	public SimpleValueDetection(String attributeName, SDFAttributeList schema, double value) {
+		super(attributeName, schema);
+		this.value = value;
 	}
 
 	@Override
-	public IPredicate<?> getPredicate() {
-		// TODO Auto-generated method stub
-		return null;
+	public IPredicate<?> getPredicate() {		
+		return predicate;
 	}
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-
+		String predicateString = super.getAttributeName()+"="+value;
+		this.predicate = super.buildPredicate(predicateString);
 	}
 
 }
