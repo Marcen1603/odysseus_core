@@ -125,6 +125,7 @@ public class OdysseusDefaults {
 		// new SLA
 		props.setProperty("sla_starvationFreedomFuncName", "QueueSizeSF");
 		props.setProperty("sla_prioFuncName", "max");
+		props.setProperty("sla_stavationFreedomDecay", 0.1 + "");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {
