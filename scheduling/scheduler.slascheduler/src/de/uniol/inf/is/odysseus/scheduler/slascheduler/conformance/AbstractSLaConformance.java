@@ -10,60 +10,115 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 
-public abstract class AbstractSLaConformance<T> extends AbstractSink<T> implements ISLAConformance {
-	
+/**
+ * abstract sla conformance super class. extends {@link AbstractSink} so the sla
+ * conformance object could be added to a partial plan as a physical operator to
+ * measure data inside the physical operator plan.
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ * @param <T>
+ */
+public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
+		implements ISLAConformance {
+	/**
+	 * reference to the object, that distributes generated
+	 * {@link SLAViolationEvent} to event listeners
+	 */
 	private ISLAViolationEventDistributor distributor;
-	
+	/**
+	 * reference to the related sla
+	 */
 	private SLA sla;
-	// required for violationEvent generation
+	/**
+	 * reference to the related partial plan, required for violationEvent
+	 * generation
+	 */
 	private IPartialPlan plan;
-
+	/**
+	 * timestamp marking the end of the evaluation window of the sla conformance
+	 */
 	private long windowEnd;
-	
-	public AbstractSLaConformance(ISLAViolationEventDistributor dist, SLA sla, IPartialPlan plan) {
+
+	/**
+	 * default constructor
+	 * 
+	 * @param dist
+	 *            event distributor, that sends generated
+	 *            {@link SLAViolationEvent} to the listeners
+	 * @param sla
+	 *            the related sla
+	 * @param plan
+	 *            the related partial plan
+	 */
+	public AbstractSLaConformance(ISLAViolationEventDistributor dist, SLA sla,
+			IPartialPlan plan) {
 		this.distributor = dist;
 		this.sla = sla;
 		this.plan = plan;
 		this.windowEnd = System.currentTimeMillis();
 	}
-	
-	public AbstractSLaConformance(AbstractSLaConformance<T> conformance) {
+
+	/**
+	 * copy constructor, required for clone method
+	 * 
+	 * @param conformance
+	 */
+	protected AbstractSLaConformance(AbstractSLaConformance<T> conformance) {
 		this.distributor = conformance.distributor;
 		this.sla = conformance.sla;
 		this.plan = conformance.plan;
 		this.windowEnd = conformance.windowEnd;
 	}
-	
+
+	/**
+	 * @return the event distributor
+	 */
 	protected ISLAViolationEventDistributor getDistributor() {
 		return this.distributor;
 	}
-	
+
+	/**
+	 * @return the related sla
+	 */
 	protected SLA getSLA() {
 		return this.sla;
 	}
-	
+
+	/**
+	 * teh related partial plan
+	 * 
+	 * @return
+	 */
 	protected IPartialPlan getPlan() {
 		return this.plan;
 	}
-	
+
+	/**
+	 * @return the end timestamp of the evaluation window
+	 */
 	protected long getWindowEnd() {
 		return this.windowEnd;
 	}
-	
+
 	/**
-	 * creates a SLAViolationEvent and puts it to the event queue of the scheduler
+	 * creates a SLAViolationEvent and puts it to the event queue of the
+	 * scheduler
+	 * 
 	 * @param cost
+	 *            the cost caused by violating certain service levels
 	 */
 	private void violation(int cost) {
-		SLAViolationEvent event = new SLAViolationEvent(this.plan, this.sla, cost);
+		SLAViolationEvent event = new SLAViolationEvent(this.plan, this.sla,
+				cost);
 		this.distributor.queueSLAViolationEvent(event);
 	}
-	
+
 	/**
 	 * checks if a window has reached its end. If a violation is detected an
-	 * event will be fired and queued in the event queue of the scheduler. if
-	 * a window's end has been reached a new window will be set and all results
-	 * of conformance are reset.
+	 * event will be fired and queued in the event queue of the scheduler. if a
+	 * window's end has been reached a new window will be set and all results of
+	 * conformance are reset.
 	 */
 	protected void checkViolation() {
 		/*
@@ -71,16 +126,21 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T> implemen
 		 * over list to finde the less valuable violated service level first
 		 */
 		if (System.currentTimeMillis() >= this.windowEnd) {
-			List<ServiceLevel<?>> serviceLevels = this.getSLA().getServiceLevel();
+			List<ServiceLevel<?>> serviceLevels = this.getSLA()
+					.getServiceLevel();
 			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
 				if (this.getSLA().getMetric().valueIsMin()) {
-					if ((Integer) serviceLevels.get(i).getThreshold() < this.getConformance()) {
-						this.violation(serviceLevels.get(i).getPenalty().getCost());
+					if ((Integer) serviceLevels.get(i).getThreshold() < this
+							.getConformance()) {
+						this.violation(serviceLevels.get(i).getPenalty()
+								.getCost());
 						break;
 					}
 				} else {
-					if ((Integer) serviceLevels.get(i).getThreshold() > this.getConformance()) {
-						this.violation(serviceLevels.get(i).getPenalty().getCost());
+					if ((Integer) serviceLevels.get(i).getThreshold() > this
+							.getConformance()) {
+						this.violation(serviceLevels.get(i).getPenalty()
+								.getCost());
 						break;
 					}
 				}

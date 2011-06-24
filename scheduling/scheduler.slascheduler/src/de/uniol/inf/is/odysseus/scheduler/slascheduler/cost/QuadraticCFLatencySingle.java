@@ -10,6 +10,10 @@ import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
  */
 public class QuadraticCFLatencySingle extends QuadraticCFLatency {
 
+	/**
+	 * calculates opportunity costs for metric latency with scope single by
+	 * quadratic cost function
+	 */
 	@Override
 	public double oc(double conformance, SLA sla) {
 		// determine index of current service level
@@ -45,6 +49,10 @@ public class QuadraticCFLatencySingle extends QuadraticCFLatency {
 		
 	}
 
+	/**
+	 * calculates marginal gain for metric latency with scope single by
+	 * quadratic cost function
+	 */
 	@Override
 	public double mg(double conformance, SLA sla) {
 		/* 

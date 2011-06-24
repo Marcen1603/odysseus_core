@@ -8,28 +8,51 @@ import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.IStarvationFreedom;
 
+/**
+ * Starvation freedom function based on the size of the buffers of the related
+ * partial plan. the bigger the queue size, the higher the cost calculated by
+ * starvation freedom function.
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ */
 public class QueueSizeSF implements IStarvationFreedom {
-	
+	/**
+	 * list of buffers of the related partial plan
+	 */
 	private List<IBuffer<?>> buffers;
-	
+
+	/**
+	 * creates a new queue size-based starvation freedom function for the given
+	 * partial plan
+	 * 
+	 * @param plan
+	 *            the partial plan
+	 */
 	public QueueSizeSF(IPartialPlan plan) {
 		super();
 		this.buffers = new ArrayList<IBuffer<?>>();
 		for (IIterableSource<?> src : plan.getIterableSources()) {
 			if (src instanceof IBuffer<?>) {
-				IBuffer<?> buffer = (IBuffer<?>)src;
+				IBuffer<?> buffer = (IBuffer<?>) src;
 				this.buffers.add(buffer);
 			}
 		}
 	}
 
+	/**
+	 * quadratic function for starvation freedom
+	 */
 	@Override
 	public double sf(double decay) {
 		// use quadratic function
 		double sf = this.queueSize() * decay;
 		return sf * sf;
 	}
-	
+
+	/**
+	 * @return returns the total size of all queues in the related partial plan
+	 */
 	private int queueSize() {
 		int size = 0;
 		for (IBuffer<?> buffer : this.buffers) {

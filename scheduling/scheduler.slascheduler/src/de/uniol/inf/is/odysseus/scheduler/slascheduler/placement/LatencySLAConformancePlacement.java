@@ -8,8 +8,18 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
 
+/**
+ * Placement strategy for latency based sla conformance operators
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ */
 public class LatencySLAConformancePlacement implements ISLAConformancePlacement {
 
+	/**
+	 * places the given sla conformance operator at the root of the given
+	 * partial plan, assuming that one partial plan consists only of one query
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ISubscribable<?, ?> placeSLAConformance(IPartialPlan plan,
@@ -18,20 +28,25 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 		// TODO: generalization: 1 pp == n queries?
 		IPhysicalOperator root = plan.getQueryRoots().get(0);
 		if (root instanceof ISource) {
-			ISubscribable subscribable = (ISubscribable)root;
+			ISubscribable subscribable = (ISubscribable) root;
 			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
 			return subscribable;
 		} else {
-			throw new RuntimeException("Cannot connect SLA conformance operator to query root");
+			throw new RuntimeException(
+					"Cannot connect SLA conformance operator to query root");
 		}
 	}
 
+	/**
+	 * removes the given sla conformance operator from the related partial plan
+	 * by disconnecting from the root operator
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void removeSLAConformance(ISubscribable connectionPoint,
 			ISLAConformance conformance) {
-		connectionPoint.disconnectSink(conformance, 0, 0, 
-				((AbstractSLaConformance<?>)conformance).getOutputSchema());
+		connectionPoint.disconnectSink(conformance, 0, 0,
+				((AbstractSLaConformance<?>) conformance).getOutputSchema());
 	}
 
 }

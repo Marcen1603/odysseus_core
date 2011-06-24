@@ -11,31 +11,56 @@ import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.IStarvationFreedom;
 
+/**
+ * Starvation freedom function based on the timestamp of the oldest element
+ * buffered in a partial plan. The more the oldest element is waiting, the
+ * higher the cost calculated by starvation freedom function.
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ */
 public class ElementTimeStampSF implements IStarvationFreedom {
-	
+	/**
+	 * list of buffers from the partial plan
+	 */
 	private List<IBuffer<?>> buffers;
-	
+
+	/**
+	 * creates a new element timestamp-based starvation freedom function for the
+	 * given plan
+	 * 
+	 * @param plan
+	 *            the plan
+	 */
 	public ElementTimeStampSF(IPartialPlan plan) {
 		super();
 		this.buffers = new ArrayList<IBuffer<?>>();
 		for (IIterableSource<?> src : plan.getIterableSources()) {
 			if (src instanceof IBuffer<?>) {
-				IBuffer<?> buffer = (IBuffer<?>)src;
+				IBuffer<?> buffer = (IBuffer<?>) src;
 				this.buffers.add(buffer);
 			}
 		}
 	}
 
+	/**
+	 * quadratic function for starvation freedom
+	 */
 	@Override
 	public double sf(double decay) {
 		// use quadratic function
 		double sf = decay * this.longestTupleWaitingTime();
-		return sf *sf;
+		return sf * sf;
 	}
-	
+
+	/**
+	 * calculates the waiting time of the oldest buffered element
+	 * 
+	 * @return the waiting time of the oldest buffered element
+	 */
 	private long longestTupleWaitingTime() {
 		long oldestTS = Long.MAX_VALUE;
-		
+
 		// find element with oldest ts
 		for (IBuffer<?> buffer : this.buffers) {
 			Object head = buffer.peek();
@@ -43,7 +68,7 @@ public class ElementTimeStampSF implements IStarvationFreedom {
 				MetaAttributeContainer<?> metaContainer = (MetaAttributeContainer<?>) head;
 				IMetaAttribute metaData = metaContainer.getMetadata();
 				if (metaData instanceof ILatency) {
-					ILatency latency = (ILatency)metaData;
+					ILatency latency = (ILatency) metaData;
 					long startTS = latency.getLatencyStart();
 					if (startTS < oldestTS) {
 						oldestTS = startTS;
@@ -53,9 +78,9 @@ public class ElementTimeStampSF implements IStarvationFreedom {
 				}
 			}
 		}
-		
+
 		// avoid returning negative delta
-		long delta = System.currentTimeMillis() - oldestTS; 
+		long delta = System.currentTimeMillis() - oldestTS;
 		return (delta < 0) ? 0 : delta;
 	}
 
