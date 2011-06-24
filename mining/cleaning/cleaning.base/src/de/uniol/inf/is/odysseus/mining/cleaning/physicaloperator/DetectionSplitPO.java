@@ -47,9 +47,9 @@ public class DetectionSplitPO<T> extends AbstractPipe<T, T> {
 	@Override
 	public void process_open() throws OpenFailedException {
 		super.process_open();
-		for(IDetection<T> d : this.detections){
-			d.getPredicate().init();
-		}
+//		for(IDetection<T> d : this.detections){
+//			d.getPredicate().init();
+//		}
 	}
 
 	@Override

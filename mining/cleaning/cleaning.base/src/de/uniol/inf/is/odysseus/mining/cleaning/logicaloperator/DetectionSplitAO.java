@@ -20,6 +20,8 @@ public class DetectionSplitAO<T> extends BinaryLogicalOp implements OutputSchema
 	
 	public DetectionSplitAO(DetectionSplitAO<T> detectionAO) {
 		super(detectionAO);
+		this.outputschema = detectionAO.outputschema.clone();
+		this.detections = detectionAO.detections;
 	}
 
 	@Override
