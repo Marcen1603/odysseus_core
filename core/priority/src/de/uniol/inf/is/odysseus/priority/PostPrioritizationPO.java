@@ -15,12 +15,11 @@
 package de.uniol.inf.is.odysseus.priority;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
-public class PostPrioritizationPO<K extends IPriority & ITimeInterval, T extends IMetaAttributeContainer<? extends K>>
+public class PostPrioritizationPO<K extends IPriority, T extends IMetaAttributeContainer<? extends K>>
 		extends AbstractPipe<T, T> {
 
 	private IPostPrioritizationArea<T> prioritizedElements;
@@ -67,7 +66,7 @@ public class PostPrioritizationPO<K extends IPriority & ITimeInterval, T extends
 		if(!(ipo instanceof PostPrioritizationPO)) {
 			return false;
 		}
-		PostPrioritizationPO pppo = (PostPrioritizationPO) ipo;
+		PostPrioritizationPO<?,?> pppo = (PostPrioritizationPO<?,?>) ipo;
 		if(this.getSubscribedToSource().equals(pppo.getSubscribedToSource())) {
 			return true;
 		}

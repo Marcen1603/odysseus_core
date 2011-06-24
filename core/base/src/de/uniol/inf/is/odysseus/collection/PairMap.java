@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 
-public class PairMap<K1 extends Comparable<K1> & IClone,K2 extends IClone,V extends IClone,M extends IMetaAttribute> extends MetaAttributeContainer<M>{
+public class PairMap<K1 extends IClone,K2 extends IClone,V extends IClone,M extends IMetaAttribute> extends MetaAttributeContainer<M>{
 	/**
 	 * 
 	 */

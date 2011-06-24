@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 /**
  * @author Jonas Jacobi, Jan Steinke
  */
-public class PriorityPO<K extends IPriority & ITimeInterval, T extends IMetaAttributeContainer<K>>
+public class PriorityPO<K extends IPriority, T extends IMetaAttributeContainer<K>>
 		extends AbstractPipe<T, T> {
 
 	private final Map<Byte, IPredicate<? super T>> priorites;

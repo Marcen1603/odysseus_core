@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttributeContainer<? extends M> & IClone, W extends IClone>
+abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttributeContainer<? extends M>, W extends IClone>
         extends AbstractPipe<R, W> {
 
 	// PartialAggregate functions for different combinations of attributes and aggregations functions 

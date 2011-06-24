@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.IClone;
  * @param <E1>
  * @param <E2>
  */
-public class FESortedClonablePair<E1 extends Comparable<E1>&IClone,E2 extends IClone> extends ClonablePair<E1, E2> implements Comparable<FESortedClonablePair<E1,E2>>, IClone{
+public class FESortedClonablePair<E1 extends IClone,E2 extends IClone> extends ClonablePair<E1, E2> implements Comparable<FESortedClonablePair<E1,E2>>, IClone{
 		
 	public FESortedClonablePair(E1 e1, E2 e2) {
 		super(e1, e2);
@@ -35,7 +35,8 @@ public class FESortedClonablePair<E1 extends Comparable<E1>&IClone,E2 extends IC
 
 	@Override
 	public int compareTo(FESortedClonablePair<E1, E2> o) {
-		return this.getE1().compareTo(o.getE1());
+		Comparable<E1> comparableE1 = (Comparable<E1>) this.getE1();
+		return comparableE1.compareTo(o.getE1());
 	}
 	
 	public FESortedClonablePair<E1, E2> clone(){
