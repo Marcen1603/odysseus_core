@@ -22,7 +22,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * Enum containing all sensors available at IDEAAL-room
@@ -82,12 +82,12 @@ public enum Sensor {
 			SDFAttributeList schema = new SDFAttributeList();
 			String[] identifiers = {"timestamp", "id","weight0", "weight1", "weight2", "weight3"};
 			SDFDatatype[] types = {
-					SDFDatatypeFactory.getDatatype("Long"),
-					SDFDatatypeFactory.getDatatype("Integer"),
-					SDFDatatypeFactory.getDatatype("Double"),
-					SDFDatatypeFactory.getDatatype("Double"),
-					SDFDatatypeFactory.getDatatype("Double"),
-					SDFDatatypeFactory.getDatatype("Double")
+					GlobalState.getActiveDatadictionary().getDatatype("Long"),
+					GlobalState.getActiveDatadictionary().getDatatype("Integer"),
+					GlobalState.getActiveDatadictionary().getDatatype("Double"),
+					GlobalState.getActiveDatadictionary().getDatatype("Double"),
+					GlobalState.getActiveDatadictionary().getDatatype("Double"),
+					GlobalState.getActiveDatadictionary().getDatatype("Double")
 			};
 			
 			for (int i=0; i<identifiers.length; i++){

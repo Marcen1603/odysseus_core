@@ -523,7 +523,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void CreateSensor() :{/*@bgen(jjtree) CreateSensor */
+/*@egen*/}void CreateSensor() :{/*@bgen(jjtree) CreateSensor */
   ASTCreateSensor jjtn000 = new ASTCreateSensor(JJTCREATESENSOR);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -956,7 +956,7 @@
   ASTAttributeType jjtn000 = new ASTAttributeType(JJTATTRIBUTETYPE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/  ArrayList covList;  String format;}{/*@bgen(jjtree) AttributeType */
+/*@egen*/  ArrayList covList;  String format;  Token t = null;}{/*@bgen(jjtree) AttributeType */
   try {
 /*@egen*/  < K_INTEGER >/*@bgen(jjtree)*/
   {
@@ -1028,7 +1028,12 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.setType("SpatialMultiPolygon");  }/*@bgen(jjtree)*/
+/*@egen*/  {    jjtn000.setType("SpatialMultiPolygon");  }  /* This is for user defined types. */| t=< IDENTIFIER >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/  {	jjtn000.setType(t.image);  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

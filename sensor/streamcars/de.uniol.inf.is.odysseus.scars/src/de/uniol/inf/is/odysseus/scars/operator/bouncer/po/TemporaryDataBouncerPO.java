@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
@@ -66,7 +66,7 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IOb
 
 		SchemaHelper sh = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		// Get the list of cars
-		List<Object> carListTuple = (List<Object>) sh.getSchemaIndexPath(this.objListPath).toTupleIndexPath(object).getTupleObject();
+		List<Object> carListTuple = (List<Object>) TupleIndexPath.fromSchemaIndexPath(sh.getSchemaIndexPath(this.objListPath), object).getTupleObject();
 		// Init an arraylist for the elements that should be transfered
 		ArrayList<MVRelationalTuple<M>> transferCarListArrayList = new ArrayList<MVRelationalTuple<M>>();
 
@@ -112,7 +112,7 @@ public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IOb
 //		}
 
 		SchemaIndexPath schemaPath = sh.getSchemaIndexPath(this.objListPath);
-		TupleIndexPath tuplePath = schemaPath.toTupleIndexPath(object);
+		TupleIndexPath tuplePath = TupleIndexPath.fromSchemaIndexPath(schemaPath, object);
 		tuplePath.setTupleObject(transferCarListArrayList);
 
 		// Falls NICHTS weitergeleitet wird -> punctuation senden

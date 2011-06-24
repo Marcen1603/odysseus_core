@@ -22,13 +22,12 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * Initializes tuple (of type {@link MVRelationalTuple}) meta data used by
@@ -117,8 +116,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 	}
 
 	private void initTimeStampMetaData(MVRelationalTuple<M> tupleGiven) {
-		PointInTime p = new PointInTime((Long) timeStampSchemaIndexPath
-				.toTupleIndexPath(tupleGiven).getTupleObject());
+		PointInTime p = new PointInTime((Long) TupleIndexPath.fromSchemaIndexPath(timeStampSchemaIndexPath, tupleGiven).getTupleObject());
 		tupleGiven.getMetadata().setStart(p);
 	}
 
@@ -136,8 +134,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
 					.getSchemaIndexPath(this.objectListPath);
 		}
 
-		TupleIndexPath objectListTupleIndexPath = this.objListSchemaIndexPath
-				.toTupleIndexPath(tupleGiven);
+		TupleIndexPath objectListTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.objListSchemaIndexPath, tupleGiven);
 		if (objectListTupleIndexPath != null) {
 			@SuppressWarnings("unchecked")
 			List<Object> objList = (List<Object>) objectListTupleIndexPath

@@ -32,8 +32,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking.ObjectTrackingNestAO;
-import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking.ObjectTrackingUnnestAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoinAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
@@ -111,9 +109,8 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.predicate.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.scars.ObjectRelationalPredicate;
-import de.uniol.inf.is.odysseus.scars.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.operator.association.ao.AssociationDictionary;
 import de.uniol.inf.is.odysseus.scars.operator.association.ao.HypothesisExpressionEvaluationAO;
@@ -583,9 +580,9 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTBasicPredicate node, Object data) {
-		SDFObjectRelationalExpression expression;
+		SDFExpression expression;
 		// try {
-		expression = new SDFObjectRelationalExpression("", node.getPredicate(),
+		expression = new SDFExpression("", node.getPredicate(),
 				(IAttributeResolver) ((ArrayList) data).get(0));
 		// } catch (SDFExpressionParseException e) {
 		// throw new RuntimeException(e);
@@ -817,132 +814,132 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTRelationalNestOp node, Object data) {
-		// Class<?> visitorClass;
-		// try {
-		// visitorClass = Class
-		// .forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
-		// Object visitorInstance = visitorClass.newInstance();
-		// Method m = visitorClass.getDeclaredMethod("visit",
-		// ASTRelationalNestOp.class, Object.class);
-		// AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-		// .invoke(visitorInstance, node, data);
-		// return sourceOp;
-		// } catch (ClassNotFoundException e) {
-		// throw new
-		// RuntimeException("Objectrelational Plugin is missing in parser.",
-		// e.getCause());
-		// } catch (Exception e) {
-		// throw new
-		// RuntimeException("Error while parsing relational nest clause",
-		// e.getCause());
-		// }
-		ObjectTrackingNestAO op;
-		op = new ObjectTrackingNestAO();
-
-		AbstractLogicalOperator input;
-		AttributeResolver attrRes;
-		SDFAttributeListExtended nestingAttributes;
-		ASTIdentifier nestAttributeIdentifier;
-		String nestAttributeName;
-		ArrayList newData;
-
-		attrRes = (AttributeResolver) ((ArrayList) data).get(0);
-
-		nestingAttributes = new SDFAttributeListExtended();
-		newData = new ArrayList();
-
-		newData.add(attrRes);
-
-		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
-		input = (AbstractLogicalOperator) returnData.get(1);
-		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
-
-		op.subscribeToSource(input, 0, sourceOutPort, input.getOutputSchema());
-
-		nestAttributeIdentifier = (ASTIdentifier) node.jjtGetChild(1);
-
-		nestAttributeName = nestAttributeIdentifier.getName();
-
-		System.out.println("nestAttributeName " + nestAttributeName);
-
-		for (int i = 2; i < node.jjtGetNumChildren(); i++) {
-			ASTIdentifier attrIdentifier = (ASTIdentifier) node.jjtGetChild(i);
-			String attrString = ((ASTIdentifier) attrIdentifier).getName();
-			SDFAttribute attr = attrRes.getAttribute(attrString);
-			nestingAttributes.add(attr);
-		}
-
-		op.setNestingAttributes(nestingAttributes);
-		op.setNestAttributeName(nestAttributeName);
-
-		attrRes.addAttribute(op.getNestAttribute());
-
-		((ArrayList) data).add(op);
-		((ArrayList) data).add(new Integer(0));
+//		// Class<?> visitorClass;
+//		// try {
+//		// visitorClass = Class
+//		// .forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
+//		// Object visitorInstance = visitorClass.newInstance();
+//		// Method m = visitorClass.getDeclaredMethod("visit",
+//		// ASTRelationalNestOp.class, Object.class);
+//		// AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+//		// .invoke(visitorInstance, node, data);
+//		// return sourceOp;
+//		// } catch (ClassNotFoundException e) {
+//		// throw new
+//		// RuntimeException("Objectrelational Plugin is missing in parser.",
+//		// e.getCause());
+//		// } catch (Exception e) {
+//		// throw new
+//		// RuntimeException("Error while parsing relational nest clause",
+//		// e.getCause());
+//		// }
+//		ObjectTrackingNestAO op;
+//		op = new ObjectTrackingNestAO();
+//
+//		AbstractLogicalOperator input;
+//		AttributeResolver attrRes;
+//		SDFAttributeListExtended nestingAttributes;
+//		ASTIdentifier nestAttributeIdentifier;
+//		String nestAttributeName;
+//		ArrayList newData;
+//
+//		attrRes = (AttributeResolver) ((ArrayList) data).get(0);
+//
+//		nestingAttributes = new SDFAttributeListExtended();
+//		newData = new ArrayList();
+//
+//		newData.add(attrRes);
+//
+//		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+//		input = (AbstractLogicalOperator) returnData.get(1);
+//		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
+//
+//		op.subscribeToSource(input, 0, sourceOutPort, input.getOutputSchema());
+//
+//		nestAttributeIdentifier = (ASTIdentifier) node.jjtGetChild(1);
+//
+//		nestAttributeName = nestAttributeIdentifier.getName();
+//
+//		System.out.println("nestAttributeName " + nestAttributeName);
+//
+//		for (int i = 2; i < node.jjtGetNumChildren(); i++) {
+//			ASTIdentifier attrIdentifier = (ASTIdentifier) node.jjtGetChild(i);
+//			String attrString = ((ASTIdentifier) attrIdentifier).getName();
+//			SDFAttribute attr = attrRes.getAttribute(attrString);
+//			nestingAttributes.add(attr);
+//		}
+//
+//		op.setNestingAttributes(nestingAttributes);
+//		op.setNestAttributeName(nestAttributeName);
+//
+//		attrRes.addAttribute(op.getNestAttribute());
+//
+//		((ArrayList) data).add(op);
+//		((ArrayList) data).add(new Integer(0));
 
 		return data;
 	}
 
 	@Override
 	public Object visit(ASTRelationalUnnestOp node, Object data) {
-		// Class<?> visitorClass;
-		// try {
-		// visitorClass = Class
-		// .forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
-		// Object visitorInstance = visitorClass.newInstance();
-		// Method m = visitorClass.getDeclaredMethod("visit",
-		// ASTRelationalNestOp.class, Object.class);
-		//
-		// AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-		// .invoke(visitorInstance, node, newData);
-		//
-		// ((ArrayList)data).add(sourceOp);
-		// ((ArrayList)data).add(new Integer(0));
-		// return data;
-		// } catch (ClassNotFoundException e) {
-		// throw new
-		// RuntimeException("Objectrelational Plugin is missing in parser.",
-		// e.getCause());
-		// } catch (Exception e) {
-		// throw new
-		// RuntimeException("Error while parsing relational nest clause",
-		// e.getCause());
-		// }
-
-		ObjectTrackingUnnestAO op;
-		op = new ObjectTrackingUnnestAO();
-
-		AbstractLogicalOperator input;
-		IAttributeResolver attrRes;
-		ASTIdentifier nestAttributeIdentifier;
-		String nestAttributeName;
-		ArrayList newData;
-
-		attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
-
-		newData = new ArrayList();
-
-		newData.add(attrRes);
-
-		input = (AbstractLogicalOperator) ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
-
-		op.subscribeTo(input, input.getOutputSchema());
-
-		nestAttributeIdentifier = (ASTIdentifier) node.jjtGetChild(1);
-
-		nestAttributeName = nestAttributeIdentifier.getName();
-		try {
-			op.setNestAttribute(attrRes.getAttribute(nestAttributeName));
-		} catch (AmgigiousAttributeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAttributeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		((ArrayList) data).add(op);
-		((ArrayList) data).add(new Integer(0));
+//		// Class<?> visitorClass;
+//		// try {
+//		// visitorClass = Class
+//		// .forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
+//		// Object visitorInstance = visitorClass.newInstance();
+//		// Method m = visitorClass.getDeclaredMethod("visit",
+//		// ASTRelationalNestOp.class, Object.class);
+//		//
+//		// AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+//		// .invoke(visitorInstance, node, newData);
+//		//
+//		// ((ArrayList)data).add(sourceOp);
+//		// ((ArrayList)data).add(new Integer(0));
+//		// return data;
+//		// } catch (ClassNotFoundException e) {
+//		// throw new
+//		// RuntimeException("Objectrelational Plugin is missing in parser.",
+//		// e.getCause());
+//		// } catch (Exception e) {
+//		// throw new
+//		// RuntimeException("Error while parsing relational nest clause",
+//		// e.getCause());
+//		// }
+//
+//		ObjectTrackingUnnestAO op;
+//		op = new ObjectTrackingUnnestAO();
+//
+//		AbstractLogicalOperator input;
+//		IAttributeResolver attrRes;
+//		ASTIdentifier nestAttributeIdentifier;
+//		String nestAttributeName;
+//		ArrayList newData;
+//
+//		attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+//
+//		newData = new ArrayList();
+//
+//		newData.add(attrRes);
+//
+//		input = (AbstractLogicalOperator) ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+//
+//		op.subscribeTo(input, input.getOutputSchema());
+//
+//		nestAttributeIdentifier = (ASTIdentifier) node.jjtGetChild(1);
+//
+//		nestAttributeName = nestAttributeIdentifier.getName();
+//		try {
+//			op.setNestAttribute(attrRes.getAttribute(nestAttributeName));
+//		} catch (AmgigiousAttributeException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (NoSuchAttributeException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		((ArrayList) data).add(op);
+//		((ArrayList) data).add(new Integer(0));
 
 		return data;
 	}
@@ -1866,35 +1863,35 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		// add predicates
 		String condStr1 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) > 0.0";
-		SDFObjectRelationalExpression cond1Expr = new SDFObjectRelationalExpression("", condStr1, attrRes);
+		SDFExpression cond1Expr = new SDFExpression("", condStr1, attrRes);
 		IPredicate cond1 = new ObjectRelationalPredicate(cond1Expr);
 		String solStr1 = "(10000 - streamCarsBroker.scan:cars:car:posx) / ((cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001))";
-		SDFObjectRelationalExpression sol1 = new SDFObjectRelationalExpression("", solStr1, attrRes);
+		SDFExpression sol1 = new SDFExpression("", solStr1, attrRes);
 
 		String condStr2 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) < 0.0";
-		SDFObjectRelationalExpression cond2Expr = new SDFObjectRelationalExpression("", condStr2, attrRes);
+		SDFExpression cond2Expr = new SDFExpression("", condStr2, attrRes);
 		IPredicate cond2 = new ObjectRelationalPredicate(cond2Expr);
 		String solStr2 = solStr1;
-		SDFObjectRelationalExpression sol2 = new SDFObjectRelationalExpression("", solStr2, attrRes);
+		SDFExpression sol2 = new SDFExpression("", solStr2, attrRes);
 
 		String condStr3 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) == 0 AND streamCarsBroker.scan:cars:car:posx < 10000";
-		SDFObjectRelationalExpression cond3Expr = new SDFObjectRelationalExpression("", condStr3, attrRes);
+		SDFExpression cond3Expr = new SDFExpression("", condStr3, attrRes);
 		IPredicate cond3 = new ObjectRelationalPredicate(cond3Expr);
 		String solStr3 = "1 < 2";
-		SDFObjectRelationalExpression sol3 = new SDFObjectRelationalExpression("", solStr3, attrRes);
+		SDFExpression sol3 = new SDFExpression("", solStr3, attrRes);
 
 		String condStr4 = "(cos(streamCarsBroker.scan:cars:car:heading) * streamCarsBroker.scan:cars:car:velocity * 0.001) == 0 AND streamCarsBroker.scan:cars:car:posx > 10000";
-		SDFObjectRelationalExpression cond4Expr = new SDFObjectRelationalExpression("", condStr4, attrRes);
+		SDFExpression cond4Expr = new SDFExpression("", condStr4, attrRes);
 		IPredicate cond4 = new ObjectRelationalPredicate(cond4Expr);
 		String solStr4 = "1 > 2";
-		SDFObjectRelationalExpression sol4 = new SDFObjectRelationalExpression("", solStr4, attrRes);
+		SDFExpression sol4 = new SDFExpression("", solStr4, attrRes);
 
 		initPredicate(cond1, childOp.getOutputSchema(), null);
 		initPredicate(cond2, childOp.getOutputSchema(), null);
 		initPredicate(cond3, childOp.getOutputSchema(), null);
 		initPredicate(cond4, childOp.getOutputSchema(), null);
 
-		HashMap<IPredicate, SDFObjectRelationalExpression> solutions = new HashMap<IPredicate, SDFObjectRelationalExpression>();
+		HashMap<IPredicate, SDFExpression> solutions = new HashMap<IPredicate, SDFExpression>();
 		solutions.put(cond1, sol1);
 		solutions.put(cond2, sol2);
 		solutions.put(cond3, sol3);

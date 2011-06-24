@@ -18,8 +18,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.LoginWindow;
@@ -29,6 +32,15 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class Login {
 
+	protected static Logger _logger = null;
+
+	protected synchronized static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
+	
 	private Login() {}
 	
 	public static void loginWindow(Display parent, boolean forceShow,
@@ -74,6 +86,7 @@ public class Login {
 			}
 			return null;
 		} catch (RuntimeException ex) {
+//			getLogger().error(ex.getMessage(), ex);
 			ex.printStackTrace();
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR

@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * The SensorObject represents a concrete stream of sensor objects 
@@ -115,16 +115,16 @@ public class SensorObject implements IStreamType{
 	public SDFAttributeList getSchema() {
 		SDFAttributeList schema = new SDFAttributeList();
 		SDFAttribute a = new SDFAttribute("timestamp");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		a.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
 		schema.add(a);
 		a = new SDFAttribute("id");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+		a.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 		schema.add(a);
 		a = new SDFAttribute("interval");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
+		a.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("StartTimestamp"));
 		schema.add(a);
 		a = new SDFAttribute("type");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		a.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 		schema.add(a);
 //		a = new SDFAttribute("position_x");
 //		a.setDatatype(SDFDatatypeFactory.getDatatype("Double"));

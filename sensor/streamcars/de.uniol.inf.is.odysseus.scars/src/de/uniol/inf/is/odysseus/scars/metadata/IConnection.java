@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.scars.metadata;
 
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 
 /**
  * This class represents an interface for an rated connection between two objects. It could be used to define the

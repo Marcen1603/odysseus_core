@@ -25,14 +25,14 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * <p>
@@ -209,8 +209,8 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setMetadata((M)object.getMetadata().clone());
 		Object[] objArray = new Object[2];
-		objArray[0] = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName()).toTupleIndexPath(object).getTupleObject();
-		objArray[1] = getDifferenceSet(object, this.scannedObjectListPath.toTupleIndexPath(object), matchedObjects);
+		objArray[0] = TupleIndexPath.fromSchemaIndexPath(schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName()), object).getTupleObject();
+		objArray[1] = getDifferenceSet(object, TupleIndexPath.fromSchemaIndexPath(this.scannedObjectListPath, object), matchedObjects);
 		base.setAttribute(0, new MVRelationalTuple<M>(objArray));
 
 		base.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
@@ -218,14 +218,14 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 		transfer(base.clone(), 0);
 
 		// PORT: 2, get predicted not matching objects
-		List<Object> predictedNotMatchedObjects = getDifferenceSet(object, this.predictedObjectListPath.toTupleIndexPath(object), matchedObjects);
+		List<Object> predictedNotMatchedObjects = getDifferenceSet(object, TupleIndexPath.fromSchemaIndexPath(this.predictedObjectListPath, object), matchedObjects);
 		if (predictedNotMatchedObjects.size() > 0) {
 //			MVRelationalTuple<M> predictedTuple = new MVRelationalTuple<M>(predictedNotMatchedObjects.size());
 //			for (int i = 0; i < predictedNotMatchedObjects.size(); i++) {
 //				predictedTuple.setAttribute(i, predictedNotMatchedObjects.get(i));
 //			}
 			MVRelationalTuple<M> predictedNotMatchedTuple = object.clone();
-			TupleIndexPath predictedObjectList = this.predictedObjectListPath.toTupleIndexPath(predictedNotMatchedTuple);
+			TupleIndexPath predictedObjectList = TupleIndexPath.fromSchemaIndexPath(this.predictedObjectListPath, predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedNotMatchedObjects);
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd();

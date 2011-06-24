@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
@@ -42,7 +42,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 @SuppressWarnings("unchecked")
 public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
@@ -407,7 +406,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		SDFAttributeList rightSchema = this.getSubscribedToSource(1).getSchema();
 		// first add the positions of the left schema
 		for(int i = 0; i<leftSchema.getAttributeCount(); i++){
-			if(SDFDatatypes.isMeasurementValue(leftSchema.getAttribute(i).getDatatype())){
+			if(leftSchema.getAttribute(i).getDatatype().isMeasurementValue()){
 				tempList.add(i);
 				fromRightChannelTmp.add(false);
 			}
@@ -415,7 +414,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		
 		// then add the positions of the right schema
 		for(int i = 0; i<rightSchema.getAttributeCount(); i++){
-			if(SDFDatatypes.isMeasurementValue(rightSchema.getAttribute(i).getDatatype())){
+			if(rightSchema.getAttribute(i).getDatatype().isMeasurementValue()){
 				tempList.add(i);
 				fromRightChannelTmp.add(true);
 			}

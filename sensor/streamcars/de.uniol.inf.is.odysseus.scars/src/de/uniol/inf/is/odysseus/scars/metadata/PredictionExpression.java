@@ -26,11 +26,11 @@ import java.util.regex.Pattern;
 import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.Variable;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 /**
  * 
  * @author Benjamin G
@@ -210,17 +210,37 @@ public class PredictionExpression {
 		boolean isListBefore = false;
 		SDFAttributeList current = schema;
 		for(int index=0; index<indices.length; index++) {
-			SDFAttribute attr = current.get(indices[index]);
+			// maybe current is null, since the last attribute
+			// was of type set with primitive type. In this case
+			// this must be the last run of this loop.
+			SDFAttribute attr = null;
+			if(current != null){
+				attr = current.get(indices[index]);
+			}
 
 			if(isListBefore) {
 				indices[index] = -1;
 				isListBefore = false;
 			}
-			if(attr.getDatatype().getURI(false).equals("List")) {
+			
+			// in the case that attr == null this is 
+			// last run of this loop
+			if(attr != null && attr.getDatatype().isSet()) {
 				isListBefore = true;
 			}
 
-			current = attr.getSubattributes();
+			// if there is still an index left, the list attribute
+			// must be of complex type. Otherwise no more indices
+			// are left. 
+			// example: if we search for a.b:c:d and c is a list attribute
+			// than this attribute must be of complex type. Otherwise the
+			// we would have searched for a.b:c In this case the subschema
+			// of c is null however this loop will not be processed any more
+			// since we also reached the last index of our path. This means
+			// that in the following line we can set current to null without
+			// the danger of a NullpointerException, this this must be the 
+			// last run of the loop.
+			current = attr.getDatatype().getSubSchema();
 		}
 	}
 	
@@ -403,59 +423,59 @@ public class PredictionExpression {
 		return s.toString();
 	}
 	
-	public static void main(String[] args) {
-		SDFAttributeList scan = new SDFAttributeList();
-		
-		SDFAttribute list = new SDFAttribute("a.list");
-		list.setDatatype(SDFDatatypeFactory.getDatatype("List"));
-		
-		SDFAttribute obj = new SDFAttribute("obj");
-		obj.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-		
-		SDFAttribute pos = new SDFAttribute("pos");
-		pos.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-		
-		SDFAttribute x = new SDFAttribute("x");
-		x.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		SDFAttribute y = new SDFAttribute("y");
-		y.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		SDFAttribute z = new SDFAttribute("z");
-		z.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		
-		SDFAttributeList time = new SDFAttributeList();
-		
-		SDFAttribute currentTime = new SDFAttribute("b.currentTime");
-		currentTime.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		
-		scan.add(list);
-		list.addSubattribute(obj);
-		obj.addSubattribute(pos);
-		pos.addSubattribute(x);
-		pos.addSubattribute(y);
-		pos.addSubattribute(z);
-		
-		time.add(currentTime);
-		
-		
-		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime";
-//		expression = "1.5";
-		PredictionExpression p = new PredictionExpression(null, expression);
-		p.initAttributePaths(scan);
-		p.initAttributePaths(time);
-		System.out.println("TEST: BEFORE INDEX REPLACE:");
-		System.out.println(p);
-		p.replaceVaryingAttributeIndex(scan, 0);
-		System.out.println("TEST: AFTER INDEX REPLACE:");
-		System.out.println(p);
-		
-		p.bindVariable("a.list:obj:pos:x", 10);
-		p.bindVariable("a.list:obj:pos:y", 10);
-		p.bindVariable("a.list:obj:pos:z", 10);
-		p.bindVariable("b.currentTime", 3);
-		
-		p.evaluate();
-		System.out.println("TEST: AFTER PREDICTION:");
-		System.out.println("##########value: " + p.getTargetValue());
-		System.out.println(p);
-	}
+//	public static void main(String[] args) {
+//		SDFAttributeList scan = new SDFAttributeList();
+//		
+//		SDFAttribute list = new SDFAttribute("a.list");
+//		list.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("List"));
+//		
+//		SDFAttribute obj = new SDFAttribute("obj");
+//		obj.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Record"));
+//		
+//		SDFAttribute pos = new SDFAttribute("pos");
+//		pos.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Record"));
+//		
+//		SDFAttribute x = new SDFAttribute("x");
+//		x.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		SDFAttribute y = new SDFAttribute("y");
+//		y.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		SDFAttribute z = new SDFAttribute("z");
+//		z.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		
+//		SDFAttributeList time = new SDFAttributeList();
+//		
+//		SDFAttribute currentTime = new SDFAttribute("b.currentTime");
+//		currentTime.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		
+//		scan.add(list);
+//		list.addSubattribute(obj);
+//		obj.addSubattribute(pos);
+//		pos.addSubattribute(x);
+//		pos.addSubattribute(y);
+//		pos.addSubattribute(z);
+//		
+//		time.add(currentTime);
+//		
+//		
+//		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime";
+////		expression = "1.5";
+//		PredictionExpression p = new PredictionExpression(null, expression);
+//		p.initAttributePaths(scan);
+//		p.initAttributePaths(time);
+//		System.out.println("TEST: BEFORE INDEX REPLACE:");
+//		System.out.println(p);
+//		p.replaceVaryingAttributeIndex(scan, 0);
+//		System.out.println("TEST: AFTER INDEX REPLACE:");
+//		System.out.println(p);
+//		
+//		p.bindVariable("a.list:obj:pos:x", 10);
+//		p.bindVariable("a.list:obj:pos:y", 10);
+//		p.bindVariable("a.list:obj:pos:z", 10);
+//		p.bindVariable("b.currentTime", 3);
+//		
+//		p.evaluate();
+//		System.out.println("TEST: AFTER PREDICTION:");
+//		System.out.println("##########value: " + p.getTargetValue());
+//		System.out.println(p);
+//	}
 }

@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * @author Jonas Jacobi
@@ -59,7 +59,7 @@ public class MapAO extends UnaryLogicalOp {
 					attr = new SDFAttribute(expr.getExpression());
 					// FIXME stimmt natuerlich nicht im allgemeinen, aber atm
 					// ist datatype unbekannt
-					attr.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+					attr.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
 				}
 				outputSchema.add(attr);
 

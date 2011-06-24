@@ -18,7 +18,9 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class Example {
 
@@ -41,36 +43,50 @@ public class Example {
 		// - d LONG
 		// - e MV FLOAT
 		SDFAttribute base = new SDFAttribute(sourceName, "base");
-		base.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
+		
+		
+		SDFAttributeList subschema_base = new SDFAttributeList();
+		
 		SDFAttribute a = new SDFAttribute(sourceName, "a");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-		SDFAttribute b = new SDFAttribute(sourceName, "b");
-		b.setDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
-		SDFAttribute c = new SDFAttribute(sourceName, "c");
-		c.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
-		SDFAttribute d = new SDFAttribute(sourceName, "d");
-		d.setDatatype(SDFDatatypeFactory.getDatatype("EndTimestamp"));
-		SDFAttribute e = new SDFAttribute(sourceName, "e");
-		e.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
-		base.addSubattribute(a);
-		base.addSubattribute(b);
-		base.addSubattribute(c);
-		base.addSubattribute(d);
-		base.addSubattribute(e);
-		
+		SDFAttributeList subschema_a = new SDFAttributeList();
 		SDFAttribute aa = new SDFAttribute(sourceName, "a"); // a.a
-		aa.setDatatype(SDFDatatypeFactory.getDatatype("String"));
-		SDFAttribute ab = new SDFAttribute(sourceName, "b"); // a.b
-		ab.setDatatype(SDFDatatypeFactory.getDatatype("List"));
-		SDFAttribute ac = new SDFAttribute(sourceName, "c"); // a.c
-		ac.setDatatype(SDFDatatypeFactory.getDatatype("String"));
-		a.addSubattribute(aa);
-		a.addSubattribute(ab);
-		a.addSubattribute(ac);
+		aa.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 		
-		SDFAttribute aba = new SDFAttribute(sourceName, "a"); // a.b.a
-		aba.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
-		ab.addSubattribute(aba);
+		SDFAttribute ab = new SDFAttribute(sourceName, "b"); // a.b
+		SDFAttributeList subschema_ab = new SDFAttributeList();
+		SDFAttribute aba = new SDFAttribute(sourceName, "a");
+		aba.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
+		subschema_ab.add(aba);
+		ab.setDatatype(new SDFDatatype(null, SDFDatatype.KindOfDatatype.SET, subschema_ab));
+		
+		
+		
+		SDFAttribute ac = new SDFAttribute(sourceName, "c"); // a.c
+		ac.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+		subschema_a.add(aa);
+		subschema_a.add(ab);
+		subschema_a.add(ac);
+		SDFDatatype anonymous_a = new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, subschema_a);
+		a.setDatatype(anonymous_a);
+		
+		SDFAttribute b = new SDFAttribute(sourceName, "b");
+		b.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("StartTimestamp"));		
+		SDFAttribute c = new SDFAttribute(sourceName, "c");
+		c.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
+		SDFAttribute d = new SDFAttribute(sourceName, "d");
+		d.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("EndTimestamp"));
+		SDFAttribute e = new SDFAttribute(sourceName, "e");
+		e.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("MV Float"));
+		
+		subschema_base.add(a);
+		subschema_base.add(b);
+		subschema_base.add(c);
+		subschema_base.add(d);
+		subschema_base.add(e);
+		
+		SDFDatatype anonymous_base = new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, subschema_base);
+		
+		base.setDatatype(anonymous_base);
 		
 		schema = new SDFAttributeList( new SDFAttribute[] {base} );
 		

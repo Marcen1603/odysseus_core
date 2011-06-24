@@ -41,6 +41,10 @@ public class Application implements IApplication {
 				return IApplication.EXIT_RESTART;
 			}
 			return IApplication.EXIT_OK;
+		} catch(Throwable t){
+			t.printStackTrace();
+			int i = 0;
+			return null;
 		} finally {
 			display.dispose();
 		}

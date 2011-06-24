@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.metadata.IGain;
@@ -34,7 +35,6 @@ import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpression;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.TypeCaster;
 
 
@@ -90,8 +90,8 @@ public class FilterExpressionEstimateUpdatePO<M extends IGain & IProbability & I
 		object.getMetadata().setObjectTrackingLatencyStart("Filter Est Update");
 		
 		
-		scannedTupleIndexPath = this.getScannedObjectListSIPath().toTupleIndexPath(object);
-		predictedTupleIndexPath = this.getPredictedObjectListSIPath().toTupleIndexPath(object);
+		scannedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getScannedObjectListSIPath(), object);
+		predictedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getPredictedObjectListSIPath(), object);
 		// list of connections
 		ArrayList<IConnection> objConList = object.getMetadata().getConnectionList();
 

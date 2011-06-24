@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 @SuppressWarnings("all")
 public class ASTAttributeType extends SimpleNode {
-	private SDFDatatype type;
+	private String type;
 	
 	/**
 	 * Will be used for measurement values.
@@ -45,12 +45,12 @@ public class ASTAttributeType extends SimpleNode {
 		return this.dateFormatConstr;
 	}
 
-	public SDFDatatype getType() {
+	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
-		this.type = SDFDatatypeFactory.getDatatype(type);
+		this.type = type;
 	}
 	
 	public void setRow(ArrayList row){

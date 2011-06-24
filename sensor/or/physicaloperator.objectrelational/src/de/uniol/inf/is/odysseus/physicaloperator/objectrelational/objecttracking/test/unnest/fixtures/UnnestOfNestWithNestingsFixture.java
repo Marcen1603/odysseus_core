@@ -34,12 +34,12 @@ public class UnnestOfNestWithNestingsFixture
         inputAttributes = new SDFAttribute[2];
         
         SDFAttribute a2sub1 = new SDFAttribute("input", "a2sub1");
-        a2sub1.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        a2sub1.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         
         inputAttributes[0] = a2sub1;
         
         SDFAttribute a2sub2 = new SDFAttribute("input", "a2sub2");
-        a2sub2.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
+        a2sub2.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Set"));
         a2sub2.setSubattributes(this.getInputNestInNestSchema());
         
         inputAttributes[1] = a2sub2;
@@ -53,12 +53,12 @@ public class UnnestOfNestWithNestingsFixture
         inputAttributes = new SDFAttribute[2];
         
         SDFAttribute a2suba1 = new SDFAttribute("input", "a2suba1");
-        a2suba1.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        a2suba1.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         
         inputAttributes[0] = a2suba1;
         
         SDFAttribute a2suba2 = new SDFAttribute("input", "a2suba2");
-        a2suba2.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        a2suba2.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         
         inputAttributes[1] = a2suba2;
         
@@ -74,7 +74,7 @@ public class UnnestOfNestWithNestingsFixture
         
         inputAttributes[0] = new SDFAttribute("input","a1");
         inputAttributes[0].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );       
         
         inputAttributes[1] = this.getNestingAttribute();
@@ -83,12 +83,12 @@ public class UnnestOfNestWithNestingsFixture
         
         inputAttributes[2] = new SDFAttribute("input","a3");
         inputAttributes[2].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         inputAttributes[3] = new SDFAttribute("input","a4");
         inputAttributes[3].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         inputSchema = new SDFAttributeList(inputAttributes);
@@ -187,7 +187,7 @@ public class UnnestOfNestWithNestingsFixture
     public SDFAttribute getNestingAttribute() {
         SDFAttribute nestAttr = new SDFAttribute("input", "n1");
         nestAttr.setDatatype(
-            SDFDatatypeFactory.getDatatype("Set")
+            SDFDatatypeFactory.createAndReturnDatatype("Set")
         );
         nestAttr.setSubattributes(this.getInputNestSchema());
         return nestAttr;
@@ -202,27 +202,27 @@ public class UnnestOfNestWithNestingsFixture
         
         outputAttributes[0] = new SDFAttribute("output","a1");
         outputAttributes[0].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         outputAttributes[1] = new SDFAttribute("output","a3");
         outputAttributes[1].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
 
         outputAttributes[2] = new SDFAttribute("output","a4");
         outputAttributes[2].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         outputAttributes[3] = new SDFAttribute("output", "a2s1");
         outputAttributes[3].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         outputAttributes[4] = new SDFAttribute("output", "a2s2");
         outputAttributes[4].setDatatype(
-                SDFDatatypeFactory.getDatatype("Set")
+                SDFDatatypeFactory.createAndReturnDatatype("Set")
         );
                 
         outputSchema = new SDFAttributeList(outputAttributes);

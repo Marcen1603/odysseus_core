@@ -28,16 +28,17 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIterator;
 import de.uniol.inf.is.odysseus.scars.util.server.DatagramServer;
 import de.uniol.inf.is.odysseus.scars.util.server.IServer;
 import de.uniol.inf.is.odysseus.scars.util.server.NIOServer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval & ILatency>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -167,13 +168,13 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 	public SDFAttributeList getOutputSchema() {
 		SDFAttributeList schema = new SDFAttributeList();
 		SDFAttribute attr0 = new SDFAttribute("Odysseus latency median");
-		attr0.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		attr0.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
 		SDFAttribute attr1 = new SDFAttribute("Objecttracking latency median");
-		attr1.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		attr1.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
 		SDFAttribute attr2 = new SDFAttribute("Odysseus latency");
-		attr2.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		attr2.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
 		SDFAttribute attr3 = new SDFAttribute("Objecttracking latency");
-		attr3.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		attr3.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
 		schema.add(attr0);
 		schema.add(attr1);
 		schema.add(attr2);

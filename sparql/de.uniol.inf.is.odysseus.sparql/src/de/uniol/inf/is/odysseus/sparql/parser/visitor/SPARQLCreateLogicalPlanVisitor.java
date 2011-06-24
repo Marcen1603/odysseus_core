@@ -128,6 +128,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 
 /**
@@ -1249,15 +1250,15 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		
 		SDFAttribute subject = new SDFAttribute(streamName + ".subject");
-		subject.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		subject.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 		outputSchema.add(subject);
 		
 		SDFAttribute predicate = new SDFAttribute(streamName + ".predicate");
-		predicate.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		predicate.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 		outputSchema.add(predicate);
 		
 		SDFAttribute object = new SDFAttribute(streamName + ".object");
-		object.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		object.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 		outputSchema.add(object);
 		
 		AccessAO accAO = null;
@@ -1345,7 +1346,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		SDFAttribute attribute = new SDFAttribute(null, funcName);
 		
 		// in each case the output datatype is string
-		attribute.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+		attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 		
 		
 //		SDFAttribute attribute = this.attributeResolver.getAttribute(funcName);

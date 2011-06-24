@@ -15,15 +15,16 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 
 public class LongDatatypeProvider extends AbstractViewableDatatype<Double> {	
 	
 	public LongDatatypeProvider() {
-		super.addProvidedSDFDatatype(SDFDatatypeFactory.getDatatype("Long"));
-		super.addProvidedSDFDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
-		super.addProvidedSDFDatatype(SDFDatatypeFactory.getDatatype("EndTimestamp"));
-		super.addProvidedSDFDatatype(SDFDatatypeFactory.getDatatype("Timestamp"));		
+		super.addProvidedSDFDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
+		super.addProvidedSDFDatatype(GlobalState.getActiveDatadictionary().getDatatype("StartTimestamp"));
+		super.addProvidedSDFDatatype(GlobalState.getActiveDatadictionary().getDatatype("EndTimestamp"));
+		super.addProvidedSDFDatatype(GlobalState.getActiveDatadictionary().getDatatype("Timestamp"));		
 		super.addProvidedClass(Long.class);
 		super.addProvidedClass(long.class);
 	}

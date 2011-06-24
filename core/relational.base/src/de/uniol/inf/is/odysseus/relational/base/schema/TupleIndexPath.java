@@ -12,15 +12,17 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.util.helper;
+package de.uniol.inf.is.odysseus.relational.base.schema;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndex;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * Repräsentiert einen Pfad innerhalb eines Tupels. Dieser wurde so
@@ -203,15 +205,15 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	 * 
 	 * @param Tuple
 	 */
-	public void updateValues( MVRelationalTuple<?> tuple ) {
+	public void updateValues( RelationalTuple<?> tuple ) {
 		List<TupleIndex> list = new ArrayList<TupleIndex>();
 		Object parent = tuple;
 		for (int i = 0; i < indices.size(); i++) {
 			TupleIndex idx = new TupleIndex(parent, indices.get(i).toInt(), indices.get(i).getAttribute());
 			list.add(idx);
 
-			if (parent instanceof MVRelationalTuple)
-				parent = ((MVRelationalTuple<?>) parent).getAttribute(indices.get(i).toInt());
+			if (parent instanceof RelationalTuple)
+				parent = ((RelationalTuple<?>) parent).getAttribute(indices.get(i).toInt());
 			else if( parent instanceof List ) 
 				parent = ((List<?>)parent).get(indices.get(i).toInt());
 				
@@ -275,8 +277,8 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 //		MVRelationalTuple<?> obj = (MVRelationalTuple<?>) indices.get(listIndex).getValue();
 		int index = indices.get(listIndex + 1).getValueIndex();
 		int maxIndex = 0;
-		if( obj instanceof MVRelationalTuple )
-			maxIndex = ((MVRelationalTuple)obj).getAttributeCount();
+		if( obj instanceof RelationalTuple )
+			maxIndex = ((RelationalTuple)obj).getAttributeCount();
 		else
 			maxIndex = ((List)obj).size();
 		index++;
@@ -302,14 +304,15 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		int lastListIndex = listIndices.get(listIndices.size() - 1);
 
 		Object obj = indices.get(lastListIndex).getValue();
-		if( obj instanceof MVRelationalTuple) {
-			MVRelationalTuple tuple = (MVRelationalTuple)obj;
+		if( obj instanceof RelationalTuple) {
+			RelationalTuple tuple = (RelationalTuple)obj;
 			
 			if( tuple.getAttributeCount() == 0) {
 				return false;
 			}
 			if (lastListIndex == indices.size() - 1) {
-				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getSubattribute(0);
+				// seems that there must be subattributes
+				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getDatatype().getSubSchema().getAttribute(0);
 				indices.add(new TupleIndex(tuple, 0, lastAttribute));
 				List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
 				List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();
@@ -330,7 +333,8 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 				return false;
 			}
 			if (lastListIndex == indices.size() - 1) {
-				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getSubattribute(0);
+				// seems that there must be subattributes
+				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getDatatype().getSubSchema().getAttribute(0);
 				indices.add(new TupleIndex(obj, 0, lastAttribute));
 				List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
 				List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();
@@ -357,7 +361,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		info.schemaIndexPath = schemaIndexPath;
 	    info.tupleIndexPath = this.clone();
 		info.tupleObject = getTupleObject();
-		info.isTuple = (info.tupleObject != null ? (info.tupleObject instanceof MVRelationalTuple) : false);
+		info.isTuple = (info.tupleObject != null ? (info.tupleObject instanceof RelationalTuple) : false);
 		nextStep();
 		return info;
 	}
@@ -369,5 +373,29 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 	@Override
 	public Iterator<TupleInfo> iterator() {
 		return new TupleIndexPath(this);
+	}
+	
+	/**
+	 * Liefert den korrespondierenden TupelIndexPfad zurück. Listen erhalten den
+	 * Index 0.
+	 * 
+	 * @param tuple
+	 *            Tupel, worauf sich der TupleIndexPfad beziehen soll. Darf
+	 *            nicht <code>null</code> sein.
+	 * @return TupelIndexPfad
+	 */
+	public static TupleIndexPath fromSchemaIndexPath(SchemaIndexPath sip, RelationalTuple<?> tuple) {
+		List<TupleIndex> list = new ArrayList<TupleIndex>();
+		Object parent = tuple;
+		for (int i = 0; i < sip.indices.size(); i++) {
+			TupleIndex idx = new TupleIndex(parent, sip.indices.get(i).toInt(), sip.indices.get(i).getAttribute());
+			list.add(idx);
+
+			if (parent instanceof RelationalTuple)
+				parent = ((RelationalTuple<?>) parent).getAttribute(sip.indices.get(i).toInt());
+			else if (parent instanceof List)
+				parent = ((List<?>) parent).get(sip.indices.get(i).toInt());
+		}
+		return new TupleIndexPath(list, sip);
 	}
 }

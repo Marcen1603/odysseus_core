@@ -18,10 +18,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 
 /**
  * The Hypothesis Generation has two inputstreams: 1 - predicted objects from
@@ -101,13 +102,15 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 		// create new record
 		SDFAttribute association = new SDFAttribute(ASSOCIATION_RECORD_NAME);
-		association.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-		// add timestamp
-		association.addSubattribute(timestamp);
-		// add scanned objects to record
-		association.addSubattribute(scannedObjects);
-		// add predicted objects to record
-		association.addSubattribute(predictedObjects);
+		
+		SDFAttributeList subschema = new SDFAttributeList();
+		subschema.add(timestamp);
+		subschema.add(scannedObjects);
+		subschema.add(predictedObjects);
+		
+		SDFDatatype recordType = new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, subschema);
+		association.setDatatype(recordType);
+		
 
 		// set source name
 		helper = new SchemaHelper(this.getSubscribedToSource(LEFT).getSchema().clone());
@@ -126,8 +129,11 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 	private SDFAttribute setSourceName(SDFAttribute attribute, String sourceName) {
 		attribute.setSourceName(sourceName);
-		for (SDFAttribute attSdfAttribute : attribute.getSubattributes()) {
-			setSourceName(attSdfAttribute, sourceName);
+		
+		if(attribute.getDatatype().getSubSchema() != null){
+			for (SDFAttribute attSdfAttribute : attribute.getDatatype().getSubSchema()) {
+				setSourceName(attSdfAttribute, sourceName);
+			}
 		}
 		return attribute;
 	}

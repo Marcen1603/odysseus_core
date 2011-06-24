@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CreateSDFAttributeParameter extends
 		AbstractParameter<SDFAttribute> {
@@ -35,7 +36,7 @@ public class CreateSDFAttributeParameter extends
 					"Wrong number of inputs for SDFAttribute. Expecting id and datatype.");
 		}
 		SDFAttribute attribute = new SDFAttribute(list.get(0));
-		attribute.setDatatype(SDFDatatypeFactory.getDatatype(list.get(1)));
+		attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(list.get(1)));
 
 		setValue(attribute);
 	}

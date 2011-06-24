@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * <p>
@@ -147,10 +147,10 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		Object[] association = new Object[3];
 
 		// get timestamp path from scanned data
-		association[0] = timePathFromScannedData.toTupleIndexPath(scannedObject).getTupleObject();
+		association[0] = TupleIndexPath.fromSchemaIndexPath(timePathFromScannedData, scannedObject).getTupleObject();
 
 		// get scanned objects
-		TupleIndexPath path = carsFromscannedData.toTupleIndexPath((MVRelationalTuple<M>) scannedObject);
+		TupleIndexPath path = TupleIndexPath.fromSchemaIndexPath(carsFromscannedData, (MVRelationalTuple<M>) scannedObject);
 		association[1] = replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputScannedObjListPath);
 		
 
@@ -158,7 +158,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		if(predictedObject == null) {
 			association[2] = new ArrayList<Object>();
 		} else {
-			path = carsFromPredictedData.toTupleIndexPath(predictedObject);
+			path = TupleIndexPath.fromSchemaIndexPath(carsFromPredictedData, predictedObject);
 			association[2] = replaceMetaDataNames(path, this.outputScannedObjListPath, this.outputPredictedObjListPath);
 		}
 

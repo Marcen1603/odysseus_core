@@ -251,12 +251,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(
 					statement, null);
 
-			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
+			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor(caller, dataDictionary);
 			aggregationVisitor.init(top, attributeResolver);
 			aggregationVisitor.visit(statement, null);
 			top = aggregationVisitor.getResult();
 
-			top = new CreateProjectionVisitor().createProjection(statement,
+			top = new CreateProjectionVisitor(caller, dataDictionary).createProjection(statement,
 					top, attributeResolver);
 			CreatePriorityAOVisitor prioVisitor = new CreatePriorityAOVisitor();
 			prioVisitor.setTopOperator(top);

@@ -12,11 +12,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.util.helper;
+package de.uniol.inf.is.odysseus.relational.base.schema;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * Temporäre Klasse. Unterstützt die Auswertung von Tupel
@@ -27,14 +28,14 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
  */
 public class TupleHelper {
 
-	private MVRelationalTuple<?> tuple;
+	private RelationalTuple<?> tuple;
 	
 	/**
 	 * Erstellt eine neue TupleHelper-Instanz mit dem angegebenen Tupel.
 	 * 
 	 * @param tuple Tupel
 	 */
-	public TupleHelper(MVRelationalTuple<?> tuple) {
+	public TupleHelper(RelationalTuple<?> tuple) {
 		this.tuple = tuple;
 	}
 	
@@ -45,7 +46,7 @@ public class TupleHelper {
 	 * @return Das Objekt, welches sich an der angegebenen Stelle im Tupel befindet
 	 */
 	public Object getObject( SchemaIndexPath path ) {
-		return path.toTupleIndexPath(tuple).getTupleObject();
+		return TupleIndexPath.fromSchemaIndexPath(path, tuple).getTupleObject();
 	}
 	
 	/**
@@ -73,8 +74,8 @@ public class TupleHelper {
 		Object[] actualList = tuple.getAttributes();
 		for( int i = 0; i < path.length; i++ ) {
 			actualAttribute = actualList[path[i]];
-			if( actualAttribute instanceof MVRelationalTuple<?>) {
-				actualList = ((MVRelationalTuple<?>)actualAttribute).getAttributes();
+			if( actualAttribute instanceof RelationalTuple<?>) {
+				actualList = ((RelationalTuple<?>)actualAttribute).getAttributes();
 			} else if( actualAttribute instanceof List ) {
 				actualList = ((List<Object>)actualAttribute).toArray();
 			}
@@ -88,7 +89,7 @@ public class TupleHelper {
 	 * 
 	 * @return Das verwendete Tuple
 	 */
-	public MVRelationalTuple<?> getTuple() {
+	public RelationalTuple<?> getTuple() {
 		return tuple;
 	}
 	

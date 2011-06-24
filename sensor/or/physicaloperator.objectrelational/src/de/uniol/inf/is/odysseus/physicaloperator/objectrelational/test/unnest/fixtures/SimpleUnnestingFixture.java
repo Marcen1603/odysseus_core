@@ -34,12 +34,12 @@ public class SimpleUnnestingFixture
         inputAttributes = new SDFAttribute[2];
         
         SDFAttribute a2sub1 = new SDFAttribute("input", "a2sub1");
-        a2sub1.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        a2sub1.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         
         inputAttributes[0] = a2sub1;
         
         SDFAttribute a2sub2 = new SDFAttribute("input", "a2sub2");
-        a2sub2.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        a2sub2.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
     
         inputAttributes[1] = a2sub2;
         
@@ -55,7 +55,7 @@ public class SimpleUnnestingFixture
         
         inputAttributes[0] = new SDFAttribute("input","a1");
         inputAttributes[0].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );       
         
         inputAttributes[1] = this.getNestingAttribute();
@@ -64,12 +64,12 @@ public class SimpleUnnestingFixture
         
         inputAttributes[2] = new SDFAttribute("input","a3");
         inputAttributes[2].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         inputAttributes[3] = new SDFAttribute("input","a4");
         inputAttributes[3].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         inputSchema = new SDFAttributeList(inputAttributes);
@@ -144,7 +144,7 @@ public class SimpleUnnestingFixture
     public SDFAttribute getNestingAttribute() {
         SDFAttribute nestAttr = new SDFAttribute("input", "n1");
         nestAttr.setDatatype(
-            SDFDatatypeFactory.getDatatype("Set")
+            SDFDatatypeFactory.createAndReturnDatatype("Set")
         );
         nestAttr.setSubattributes(this.getInputNestSchema());
         return nestAttr;
@@ -159,27 +159,27 @@ public class SimpleUnnestingFixture
         
         outputAttributes[0] = new SDFAttribute("output","a1");
         outputAttributes[0].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         outputAttributes[1] = new SDFAttribute("output","a3");
         outputAttributes[1].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
 
         outputAttributes[2] = new SDFAttribute("output","a4");
         outputAttributes[2].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         outputAttributes[3] = new SDFAttribute("output", "a2s1");
         outputAttributes[3].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         outputAttributes[4] = new SDFAttribute("output", "a2s2");
         outputAttributes[4].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+                SDFDatatypeFactory.createAndReturnDatatype("String")
         );
                 
         outputSchema = new SDFAttributeList(outputAttributes);

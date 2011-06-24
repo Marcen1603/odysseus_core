@@ -12,11 +12,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.util.helper;
+package de.uniol.inf.is.odysseus.relational.base.schema;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 /**
@@ -46,8 +46,8 @@ public class TupleIndex {
 		this.parent = parent;
 		this.valueIndex = valueIndex;
 		this.attribute = attribute;
-		if( parent instanceof MVRelationalTuple)
-			this.value = ((MVRelationalTuple)this.parent).getAttribute(this.valueIndex);
+		if( parent instanceof RelationalTuple)
+			this.value = ((RelationalTuple)this.parent).getAttribute(this.valueIndex);
 		else if( parent instanceof List)
 			this.value = ((List<Object>)this.parent).get(this.valueIndex);
 	}
@@ -100,8 +100,8 @@ public class TupleIndex {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setValue(Object obj) {
-		if( parent instanceof MVRelationalTuple)
-			((MVRelationalTuple)parent).setAttribute(valueIndex, obj);
+		if( parent instanceof RelationalTuple)
+			((RelationalTuple)parent).setAttribute(valueIndex, obj);
 		else if( parent instanceof List ) 
 			((List<Object>)parent).set(valueIndex, obj);
 	}

@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttribute;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ViewableMetaAttribute implements IViewableAttribute {
 
@@ -45,16 +46,16 @@ public class ViewableMetaAttribute implements IViewableAttribute {
 
 	private SDFDatatype getAccordingSDFDataType(Class<?> returnType) {
 		if (returnType.equals(Integer.class) || returnType.equals(int.class)) {
-			return SDFDatatypeFactory.getDatatype("Integer");
+			return GlobalState.getActiveDatadictionary().getDatatype("Integer");
 		}
 		if (returnType.equals(Double.class) || returnType.equals(double.class)) {
-			return SDFDatatypeFactory.getDatatype("Double");
+			return GlobalState.getActiveDatadictionary().getDatatype("Double");
 		}
 		if (returnType.equals(Long.class) || returnType.equals(long.class)) {
-			return SDFDatatypeFactory.getDatatype("Long");
+			return GlobalState.getActiveDatadictionary().getDatatype("Long");
 		}
 		if (returnType.equals(PointInTime.class)) {
-			return SDFDatatypeFactory.getDatatype("PointInTime");
+			return GlobalState.getActiveDatadictionary().getDatatype("PointInTime");
 		}
 		return new SDFDatatype(getName());
 	}

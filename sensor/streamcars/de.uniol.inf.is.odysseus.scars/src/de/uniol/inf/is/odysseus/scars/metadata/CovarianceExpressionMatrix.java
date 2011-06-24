@@ -22,12 +22,11 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaInfo;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIterator;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaInfo;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIterator;
 
 public class CovarianceExpressionMatrix {
 
@@ -51,8 +50,7 @@ public class CovarianceExpressionMatrix {
 		for (SchemaInfo info : new SchemaIterator(this.schema)) {
 			// if current attribute is measurement attribute
 			if (info.attribute.getDatatype() != null
-					&& SDFDatatypes.isMeasurementValue(info.attribute
-							.getDatatype())) {
+					&& info.attribute.getDatatype().isMeasurementValue()) {
 				// save attribute for later use
 				measurementAttributes.add(info.attribute);
 			}

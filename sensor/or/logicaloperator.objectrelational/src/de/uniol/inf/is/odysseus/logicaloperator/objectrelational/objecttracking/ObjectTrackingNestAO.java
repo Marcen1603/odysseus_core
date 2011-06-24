@@ -95,7 +95,7 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 	    }
 	    
 	    nestAttribute = new SDFAttribute(this.nestAttributeName);	    
-	    nestAttribute.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
+	    nestAttribute.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Set"));
 	    nestAttribute.setSubattributes(this.nestingAttributes);
 	    
 	    outputSchema = new SDFAttributeListExtended();

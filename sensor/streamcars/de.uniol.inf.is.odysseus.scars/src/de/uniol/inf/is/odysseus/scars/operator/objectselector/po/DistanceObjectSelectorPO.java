@@ -24,12 +24,12 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIterator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 public class DistanceObjectSelectorPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval> extends
 		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -75,7 +75,7 @@ public class DistanceObjectSelectorPO<M extends IProbability & IPredictionFuncti
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		TupleIndexPath trackedObjectListTupleIndexPath = this.trackedObjectListSchemaIndexPath.toTupleIndexPath(object);
+		TupleIndexPath trackedObjectListTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.trackedObjectListSchemaIndexPath, object);
 		ArrayList<MVRelationalTuple<M>> newList = new ArrayList<MVRelationalTuple<M>>();
 
 		for (TupleInfo tupleInfo : trackedObjectListTupleIndexPath) {
@@ -93,7 +93,7 @@ public class DistanceObjectSelectorPO<M extends IProbability & IPredictionFuncti
 		Object[] result = new Object[2];
 		// get timestamp path from scanned data
 		SchemaIndexPath path = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName());
-		result[0] = path.toTupleIndexPath(object).getTupleObject();
+		result[0] = TupleIndexPath.fromSchemaIndexPath(path, object).getTupleObject();
 
 		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(newList.size());
 		int counter = 0;

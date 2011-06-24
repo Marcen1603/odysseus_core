@@ -495,26 +495,26 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		return tempVars;
 	}
 	
-	/**
-	 * This method uses the fact, that the variable positions
-	 * can be determined in advance of query processing.
-	 * 
-	 * TODO Andre: Diese Methode wird noch im ObjectTrackingProjectPO benutzt.
-	 * Sollte aber eigentlich nicht mehr benutzt werden, da sich auch die Prädiktions-
-	 * funktion, die nach einer Projektion noch verwendet werden kann, auf der logischen
-	 * Ebene vorberechnet werden kann. (Ist aber jetzt zuviel Aufwand, um das einzubauen).
-	 * 
-	 * @return
-	 */
+//	/**
+//	 * This method uses the fact, that the variable positions
+//	 * can be determined in advance of query processing.
+//	 * 
+//	 * TODO Andre: Diese Methode wird noch im ObjectTrackingProjectPO benutzt.
+//	 * Sollte aber eigentlich nicht mehr benutzt werden, da sich auch die Prädiktions-
+//	 * funktion, die nach einer Projektion noch verwendet werden kann, auf der logischen
+//	 * Ebene vorberechnet werden kann. (Ist aber jetzt zuviel Aufwand, um das einzubauen).
+//	 * 
+//	 * @return
+//	 */
 	@Override
 	@Deprecated
 	public void initVariables(){
-		this.variables = new int[this.expressions.length][];
-		for(int u = 0; u<expressions.length; u++){
-			SDFExpression expression = expressions[u];
-			if(expression != null)
-				this.variables[u] = expression.getAttributePositions();
-		}
+//		this.variables = new int[this.expressions.length][];
+//		for(int u = 0; u<expressions.length; u++){
+//			SDFExpression expression = expressions[u];
+//			if(expression != null)
+//				this.variables[u] = expression.getAttributePositions();
+//		}
 	}
 	
 	/**

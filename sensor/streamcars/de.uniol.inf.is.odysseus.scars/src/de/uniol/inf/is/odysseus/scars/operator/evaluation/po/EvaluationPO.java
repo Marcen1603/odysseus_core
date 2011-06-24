@@ -26,14 +26,15 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
@@ -120,9 +121,8 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		if (obj0 instanceof MVRelationalTuple) {
 			MVRelationalTuple<M> associationMainObject = (MVRelationalTuple<M>) obj0;
 			resultTuple = new MVRelationalTuple<M>(associationMainObject);
-			List<Object> associationListObject = (List<Object>) shAssociationInput
-					.getSchemaIndexPath(this.associationObjListPath)
-					.toTupleIndexPath(associationMainObject).getTupleObject();
+			List<Object> associationListObject = (List<Object>) TupleIndexPath.fromSchemaIndexPath(shAssociationInput
+					.getSchemaIndexPath(this.associationObjListPath), associationMainObject).getTupleObject();
 			for (Object obj : associationListObject) {
 				associationObjList.add((MVRelationalTuple<M>) obj);
 			}
@@ -144,9 +144,8 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 		if (obj2 instanceof MVRelationalTuple) {
 			MVRelationalTuple<M> brokerMainObject = (MVRelationalTuple<M>) obj2;
 			resultTuple = new MVRelationalTuple<M>(brokerMainObject);
-			List<Object> brokerListObject = (List<Object>) shSecondBrokerInput
-					.getSchemaIndexPath(this.brokerObjListPath)
-					.toTupleIndexPath(brokerMainObject).getTupleObject();
+			List<Object> brokerListObject = (List<Object>) TupleIndexPath.fromSchemaIndexPath(shSecondBrokerInput
+					.getSchemaIndexPath(this.brokerObjListPath), brokerMainObject).getTupleObject();
 			for (Object obj : brokerListObject) {
 				brokerObjList.add((MVRelationalTuple<M>) obj);
 			}
@@ -211,7 +210,7 @@ public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLat
 			// get timestamp path from scanned data
 			SchemaIndexPath path = helper.getSchemaIndexPath(helper
 					.getStartTimestampFullAttributeName());
-			association[0] = path.toTupleIndexPath(resultTuple)
+			association[0] = TupleIndexPath.fromSchemaIndexPath(path, resultTuple)
 					.getTupleObject();
 
 			// get scanned objects

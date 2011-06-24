@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.MapAO;
@@ -43,6 +44,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
  * @author Jonas Jacobi
@@ -60,10 +62,15 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	double[][] projectionMatrix = null;
 
 	double[] projectionVector = null;
+	
+	private User user;
+	private IDataDictionary dd;
 
-	public CreateProjectionVisitor() {
+	public CreateProjectionVisitor(User user, IDataDictionary dd){
+		this.user = user;
+		this.dd = dd;
 	}
-
+	
 	// TODO kompletten visitor draus machen, ohne diese methode
 	public AbstractLogicalOperator createProjection(
 			ASTSelectStatement statement, ILogicalOperator top,
@@ -181,7 +188,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 					this.attributeResolver));
 			SDFAttribute attribute = new SDFAttribute(null, aliasExpression
 					.getAlias());
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+			attribute.setDatatype(this.dd.getDatatype("Double"));
 			outputSchema.add(attribute);
 			aliasSchema.add(attribute);
 		} else {

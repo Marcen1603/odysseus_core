@@ -96,7 +96,7 @@ public class SimpleNesting extends TestCase {
         nOut = this.outputSchema.get(1);
      
         assertEquals(axOut, this.fixture.getAx());
-        assertEquals(nOut.getDatatype(), SDFDatatypeFactory.getDatatype("Set"));
+        assertEquals(nOut.getDatatype(), SDFDatatypeFactory.createAndReturnDatatype("Set"));
         
         nestingAttributesIn[0] = fixture.getA1();
         nestingAttributesIn[1] = fixture.getA2();

@@ -94,7 +94,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		}
 		
 		if( parentElement instanceof SDFAttribute ) {
-			return ((SDFAttribute)parentElement).getSubattributes().toArray();
+			if(((SDFAttribute)parentElement).getDatatype().hasSchema()){
+				return ((SDFAttribute)parentElement).getDatatype().getSubSchema().toArray();
+			}
 		}
 			
 		return null;
@@ -129,7 +131,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		if( element instanceof Collection<?>) return true;
 		
 		if( element instanceof SDFAttribute) {
-			return ((SDFAttribute)element).getSubattributeCount() > 0;
+			return ((SDFAttribute)element).getDatatype().getSubattributeCount() > 0;
 		}
 		return false;
 	}

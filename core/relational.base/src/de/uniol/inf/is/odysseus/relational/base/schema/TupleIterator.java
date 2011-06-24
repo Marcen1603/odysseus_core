@@ -12,16 +12,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.util.helper;
+package de.uniol.inf.is.odysseus.relational.base.schema;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndex;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * Iteratorklasse, um über ein oder mehrere Tuple zu iterieren. Die Tuple können
@@ -52,7 +55,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 		}
 	}
 
-	private MVRelationalTuple<?> tuple;
+	private RelationalTuple<?> tuple;
 	private Stack<IteratorEntry> pointer = new Stack<IteratorEntry>();
 	private Stack<SchemaIndex> schemaIndices = new Stack<SchemaIndex>();
 	private Stack<Boolean> insideList = new Stack<Boolean>();
@@ -79,7 +82,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            SchemaIndexPath zu einer Stelle im Tuple, wo mit der Iteration
 	 *            begonnen werden soll. Darf nicht <code>null</code> sein.
 	 */
-	public TupleIterator(MVRelationalTuple<?> tuple, SchemaIndexPath start) {
+	public TupleIterator(RelationalTuple<?> tuple, SchemaIndexPath start) {
 		this(tuple, start, Integer.MAX_VALUE);
 	}
 
@@ -97,7 +100,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            Zum Tupel zugehöriges Schema. Muss vollständig sein, darf
 	 *            nicht <code>null</code> sein.
 	 */
-	public TupleIterator(MVRelationalTuple<?> tuple, SDFAttributeList completeSchema) {
+	public TupleIterator(RelationalTuple<?> tuple, SDFAttributeList completeSchema) {
 		this(tuple, completeSchema, Integer.MAX_VALUE);
 	}
 
@@ -123,7 +126,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            Anzahl Ebenen in die Tiefe, durch die maximal iteriert werden
 	 *            soll.
 	 */
-	public TupleIterator(MVRelationalTuple<?> tuple, SDFAttributeList completeSchema, int maxLevels) {
+	public TupleIterator(RelationalTuple<?> tuple, SDFAttributeList completeSchema, int maxLevels) {
 		this.tuple = tuple;
 		this.maxLevels = maxLevels;
 
@@ -153,7 +156,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            SchemaIndexPath zu einer Stelle im Tuple, wo mit der Iteration
 	 *            begonnen werden soll. Darf nicht <code>null</code> sein.
 	 */
-	public TupleIterator(MVRelationalTuple<?> tuple, TupleIndexPath start) {
+	public TupleIterator(RelationalTuple<?> tuple, TupleIndexPath start) {
 		this(tuple, start, Integer.MAX_VALUE);
 	}
 
@@ -182,7 +185,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            Anzahl Ebenen in die Tiefe, durch die maximal iteriert werden
 	 *            soll. Muss 0 oder positiv sein.
 	 */
-	public TupleIterator(MVRelationalTuple<?> tuple, TupleIndexPath start, int maxLevels) {
+	public TupleIterator(RelationalTuple<?> tuple, TupleIndexPath start, int maxLevels) {
 		this.tuple = tuple;
 		this.maxLevels = maxLevels;
 		reset(start);
@@ -213,7 +216,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            Anzahl Ebenen in die Tiefe, durch die maximal iteriert werden
 	 *            soll. Muss 0 oder positiv sein.
 	 */
-	public TupleIterator(MVRelationalTuple<?> tuple, SchemaIndexPath start, int maxLevels) {
+	public TupleIterator(RelationalTuple<?> tuple, SchemaIndexPath start, int maxLevels) {
 		this.tuple = tuple;
 		this.maxLevels = maxLevels;
 		reset(start);
@@ -288,9 +291,9 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 			for (int i = 0; i < start.getSchemaIndices().size(); i++) {
 				schemaIndices.push(start.getSchemaIndex(i));
 
-				tupleIndices.push(new TupleIndex((MVRelationalTuple<?>) parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
-				if (parent instanceof MVRelationalTuple)
-					parent = ((MVRelationalTuple<?>) parent).getAttribute(schemaIndices.peek().toInt());
+				tupleIndices.push(new TupleIndex((RelationalTuple<?>) parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
+				if (parent instanceof RelationalTuple)
+					parent = ((RelationalTuple<?>) parent).getAttribute(schemaIndices.peek().toInt());
 				else
 					throw new RuntimeException("Corrupted SchemaIndexPath: " + start);
 
@@ -319,10 +322,10 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 		info.tupleIndexPath = getTupleIndexPath();
 		info.isInList = insideList.peek();
 		info.level = tupleIndices.size() - 1;
-		info.isTuple = (info.tupleObject != null ? (info.tupleObject instanceof MVRelationalTuple) : false);
+		info.isTuple = (info.tupleObject != null ? (info.tupleObject instanceof RelationalTuple) : false);
 
-		if (entry.obj instanceof MVRelationalTuple && pointer.size() <= maxLevels) {
-			MVRelationalTuple<?> t = (MVRelationalTuple<?>) entry.obj;
+		if (entry.obj instanceof RelationalTuple && pointer.size() <= maxLevels) {
+			RelationalTuple<?> t = (RelationalTuple<?>) entry.obj;
 			int size = t.getAttributeCount();
 
 			if (entry.index == size) {
@@ -336,11 +339,17 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 				pointer.push(new IteratorEntry(t.getAttribute(entry.index)));
 				// tupleIndices.push(entry.index);
 
-				if (index.getAttribute().getDatatype().getQualName().equals("List")) {
-					schemaIndices.push(new SchemaIndex(0, index.getAttribute().getSubattribute(0)));
+				if (index.getAttribute().getDatatype().isSet()) {
+					if(index.getAttribute().getDatatype().hasSchema()){
+						schemaIndices.push(new SchemaIndex(0, index.getAttribute().getDatatype().getSubSchema().getAttribute(0)));
+					}
+					else{
+						schemaIndices.push(new SchemaIndex(0, index.getAttribute())); // FIXME: Ich hoffe, dass das stimmt.
+					}
 					insideList.push(true);
 				} else {
-					schemaIndices.push(new SchemaIndex(entry.index, index.getAttribute().getSubattribute(entry.index)));
+					// seems that there must be subattributes
+					schemaIndices.push(new SchemaIndex(entry.index, index.getAttribute().getDatatype().getSubSchema().getAttribute(entry.index)));
 					insideList.push(insideList.peek());
 				}
 
@@ -350,8 +359,8 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 				else
 					parent = tuple;
 
-				if (parent instanceof MVRelationalTuple) {
-					tupleIndices.push(new TupleIndex((MVRelationalTuple<?>) parent, entry.index, schemaIndices.peek().getAttribute()));
+				if (parent instanceof RelationalTuple) {
+					tupleIndices.push(new TupleIndex((RelationalTuple<?>) parent, entry.index, schemaIndices.peek().getAttribute()));
 				} else {
 					// something wrong
 					throw new RuntimeException("Programming error");

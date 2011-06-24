@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars;
+package de.uniol.inf.is.odysseus.relational.base.predicate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,15 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
-public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTuple<?>> implements IRelationalPredicate {
+public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple<?>> implements IRelationalPredicate {
 
 	private static final long serialVersionUID = 1222104352250883947L;
 
@@ -45,7 +44,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 
 	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
-	public ObjectRelationalPredicate(SDFObjectRelationalExpression expression) {
+	public ObjectRelationalPredicate(SDFExpression expression) {
 		this.expression = expression;
 	}
 
@@ -98,7 +97,10 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 				return true;
 			}
 			else{
-				boolean found = findAttribute(a.getSubattributes(), attr, path);
+				boolean found = false;
+				if(a.getDatatype().hasSchema()){
+					found = findAttribute(a.getDatatype().getSubSchema(), attr, path);
+				}
 				if(!found){
 					path.remove(path.size() - 1); // remove the last entry, because it is wrong
 				}
@@ -106,16 +108,6 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 					return true;
 				}
 			}
-			// FIXME: Diese Methode muss rekursiv funktionieren.
-			// Dazu ist jedoch die Kenntnis der OR-Umsetzung der PG
-			// notwendig.
-//			boolean found = findAttribute(a.getSubattributes(), attr, path);
-//			if( found == true ) 
-//				return true;
-//			else {
-//				path.remove((Integer)i);
-//			}
-
 		}
 		return false;
 	}
@@ -137,7 +129,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 	}
 
 	@Override
-	public boolean evaluate(MVRelationalTuple<?> input) {
+	public boolean evaluate(RelationalTuple<?> input) {
 		Object[] values = new Object[this.attributePaths.length];
 		TupleHelper th = new TupleHelper(input);
 		for (int i = 0; i < values.length; ++i) {
@@ -149,10 +141,10 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 	}
 
 	@Override
-	public boolean evaluate(MVRelationalTuple<?> left, MVRelationalTuple<?> right) {
+	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
 		Object[] values = new Object[this.attributePaths.length];
 		for (int i = 0; i < values.length; ++i) {
-			MVRelationalTuple<?> r = fromRightChannel[i] ? right : left;
+			RelationalTuple<?> r = fromRightChannel[i] ? right : left;
 			TupleHelper th = new TupleHelper(r);
 //			values[i] = r.getORAttribute(this.attributePaths[i]);
 			values[i] = th.getObject(this.attributePaths[i]);

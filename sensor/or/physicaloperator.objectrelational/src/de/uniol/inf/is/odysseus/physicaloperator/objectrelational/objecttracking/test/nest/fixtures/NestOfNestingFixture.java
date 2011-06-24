@@ -70,24 +70,24 @@ public class NestOfNestingFixture
 
 		inputAttributes[0] = new SDFAttribute("input","a1");
 		inputAttributes[0].setDatatype(
-			SDFDatatypeFactory.getDatatype("String")
+			SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 
 		inputAttributes[1] = new SDFAttribute("input","a2");
 		inputAttributes[1].setDatatype(
-			SDFDatatypeFactory.getDatatype("Set")
+			SDFDatatypeFactory.createAndReturnDatatype("Set")
 		);
 		
 		inputAttributes[1].setSubattributes(this.getInputNestSchema());
 
 		inputAttributes[2] = new SDFAttribute("input","a3");
 		inputAttributes[2].setDatatype(
-			SDFDatatypeFactory.getDatatype("String")
+			SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 
 		inputAttributes[3] = new SDFAttribute("input","a4");
 		inputAttributes[3].setDatatype(
-			SDFDatatypeFactory.getDatatype("String")
+			SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 	
 		return new SDFAttributeList(inputAttributes);
@@ -99,19 +99,19 @@ public class NestOfNestingFixture
 	    
         inputAttributes[0] = new SDFAttribute("input","a2");
         inputAttributes[0].setDatatype(
-            SDFDatatypeFactory.getDatatype("Set")
+            SDFDatatypeFactory.createAndReturnDatatype("Set")
         );
         
         inputAttributes[0].setSubattributes(this.getInputNestSchema());
 
         inputAttributes[1] = new SDFAttribute("input","a3");
         inputAttributes[1].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );
 
         inputAttributes[2] = new SDFAttribute("input","a4");
         inputAttributes[2].setDatatype(
-            SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.createAndReturnDatatype("String")
         );
         
         return new SDFAttributeList(inputAttributes);
@@ -122,17 +122,17 @@ public class NestOfNestingFixture
 
 		inputAttributes[0] = new SDFAttribute("input","a1");
 		inputAttributes[0].setDatatype(
-			SDFDatatypeFactory.getDatatype("String")
+			SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 
 		inputAttributes[1] = new SDFAttribute("input","a2");
 		inputAttributes[1].setDatatype(
-			SDFDatatypeFactory.getDatatype("String")
+			SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 
 		inputAttributes[2] = new SDFAttribute("input","a3");
 		inputAttributes[2].setDatatype(
-			SDFDatatypeFactory.getDatatype("String")
+			SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 		return new SDFAttributeList(inputAttributes);		
 	}
@@ -152,18 +152,18 @@ public class NestOfNestingFixture
 
 		SDFAttribute outA2S1 = new SDFAttribute("output", "a2");
 		outA2S1.setDatatype(
-				SDFDatatypeFactory.getDatatype("Set")
+				SDFDatatypeFactory.createAndReturnDatatype("Set")
 		);
 		outA2S1.setSubattributes(this.getOutputNestSchema());
 
 		SDFAttribute outA2S2 = new SDFAttribute("output", "a3");
 		outA2S2.setDatatype(
-				SDFDatatypeFactory.getDatatype("String")
+				SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 
 		SDFAttribute outA2S3 = new SDFAttribute("output", "a4");
 		outA2S3.setDatatype(
-				SDFDatatypeFactory.getDatatype("String")
+				SDFDatatypeFactory.createAndReturnDatatype("String")
 		);
 
 		outA2.addSubattribute(outA2S1);

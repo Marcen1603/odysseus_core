@@ -18,9 +18,9 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.scars.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 @SuppressWarnings("rawtypes")
 public class DistanceObjectSelectorAOAndre extends UnaryLogicalOp {
@@ -29,7 +29,7 @@ public class DistanceObjectSelectorAOAndre extends UnaryLogicalOp {
 
 	private IAttributeResolver attrRes;
 	private String trackedObjectList;
-	private HashMap<IPredicate, SDFObjectRelationalExpression> solutions;
+	private HashMap<IPredicate, SDFExpression> solutions;
 
 	public DistanceObjectSelectorAOAndre(IAttributeResolver attrRes) {
 		this.attrRes = attrRes;
@@ -60,11 +60,11 @@ public class DistanceObjectSelectorAOAndre extends UnaryLogicalOp {
 		this.trackedObjectList = trackedObjectList;
 	}
 	
-	public void setSolutions(HashMap<IPredicate, SDFObjectRelationalExpression> sols){
+	public void setSolutions(HashMap<IPredicate, SDFExpression> sols){
 		this.solutions = sols;
 	}
 	
-	public HashMap<IPredicate, SDFObjectRelationalExpression> getSolutions(){
+	public HashMap<IPredicate, SDFExpression> getSolutions(){
 		return this.solutions;
 	}
 

@@ -18,11 +18,11 @@ import java.util.Arrays;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaInfo;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIterator;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIterator;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaInfo;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIterator;
 
 // some test utils
 // author: sven

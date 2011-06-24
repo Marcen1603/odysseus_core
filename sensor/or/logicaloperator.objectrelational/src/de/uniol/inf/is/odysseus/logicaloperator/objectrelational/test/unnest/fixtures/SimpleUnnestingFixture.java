@@ -38,7 +38,7 @@ public class SimpleUnnestingFixture {
     
     public SDFAttribute getN() {        
         SDFAttribute n = new SDFAttribute("input", "n");
-        n.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
+        n.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Set"));
         
         SDFAttribute[] subAttrs = 
             {this.getA1(), this.getA2()};
@@ -49,19 +49,19 @@ public class SimpleUnnestingFixture {
     
     public SDFAttribute getA1() {
         SDFAttribute A1 = new SDFAttribute("input", "a1");
-        A1.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        A1.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         return A1;
     }
     
     public SDFAttribute getA2() {
         SDFAttribute A2 = new SDFAttribute("input", "a2");
-        A2.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        A2.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         return A2;
     }
     
     public SDFAttribute getAx() {
         SDFAttribute ax = new SDFAttribute("input", "ax");
-        ax.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        ax.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         return ax;
     }
 }

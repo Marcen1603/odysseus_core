@@ -25,14 +25,14 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.scars.SDFObjectRelationalExpression;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * THIS CLASS IS ONLY A HACK FOR EVALUATION PURPOSES.
@@ -49,7 +49,7 @@ public class DistanceObjectSelectionPO_Andre<M extends IProbability & IPredictio
 	private SchemaHelper schemaHelper;
 	private SchemaIndexPath trackedObjectListSchemaIndexPath;
 	
-	private HashMap<IPredicate, SDFObjectRelationalExpression> solutions = new HashMap<IPredicate, SDFObjectRelationalExpression>();
+	private HashMap<IPredicate, SDFExpression> solutions = new HashMap<IPredicate, SDFExpression>();
 
 	public DistanceObjectSelectionPO_Andre() {
 	}
@@ -129,10 +129,10 @@ public class DistanceObjectSelectionPO_Andre<M extends IProbability & IPredictio
 	@Override
 	protected void process_next(MVRelationalTuple<M> scanTuple, int port) {
 		
-		for(Entry<IPredicate, SDFObjectRelationalExpression> entry : this.solutions.entrySet()){
+		for(Entry<IPredicate, SDFExpression> entry : this.solutions.entrySet()){
 			if(entry.getKey().evaluate(scanTuple)){
-				SDFObjectRelationalExpression expr = entry.getValue();
-				TupleIndexPath trackedObjectListTupleIndexPath = this.trackedObjectListSchemaIndexPath.toTupleIndexPath(scanTuple);
+				SDFExpression expr = entry.getValue();
+				TupleIndexPath trackedObjectListTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.trackedObjectListSchemaIndexPath, scanTuple);
 				
 				for (TupleInfo tupleInfo : trackedObjectListTupleIndexPath) {
 					
@@ -181,7 +181,7 @@ public class DistanceObjectSelectionPO_Andre<M extends IProbability & IPredictio
 		return trackedObjectList;
 	}
 	
-	public void setSolutions(HashMap<IPredicate, SDFObjectRelationalExpression> solutions){
+	public void setSolutions(HashMap<IPredicate, SDFExpression> solutions){
 		this.solutions = solutions;
 	}
 

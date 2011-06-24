@@ -24,15 +24,15 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTrackingLatency &  IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
@@ -146,11 +146,11 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 				}
 
 			}
-			TupleIndexPath scanTimeTPath = currentTimeSchemaPath.toTupleIndexPath(currentTimeTuple);
+			TupleIndexPath scanTimeTPath = TupleIndexPath.fromSchemaIndexPath(currentTimeSchemaPath, currentTimeTuple);
 			Long currentTimeValue = (Long) scanTimeTPath.getTupleObject();
 
 			currentScanTuple.getMetadata().getStart().setMainPoint(currentTimeValue);
-			TupleIndexPath currentScanTimeTPath = currentScanTimeSchemaPath.toTupleIndexPath(currentScanTuple);
+			TupleIndexPath currentScanTimeTPath = TupleIndexPath.fromSchemaIndexPath(currentScanTimeSchemaPath, currentScanTuple);
 			currentScanTimeTPath.setTupleObject(currentTimeValue);
 		} else {
 			System.err.println("Prediction: currentScanTuple was null!!");

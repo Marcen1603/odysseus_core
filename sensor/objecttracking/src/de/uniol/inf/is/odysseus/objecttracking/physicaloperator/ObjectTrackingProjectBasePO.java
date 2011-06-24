@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * This is the superclass of the our project PO.
@@ -55,7 +54,7 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for(int i = 0; i<this.inputSchema.size(); i++){
 			SDFAttribute attr = this.inputSchema.get(i);
-			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+			if(attr.getDatatype().isMeasurementValue()){
 				list.add(new Integer(i));	
 			}
 		}
@@ -137,7 +136,7 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 			int inAttrCount = 0;
 			for(int i = 0; i<this.inputSchema.size(); i++){
 				SDFAttribute attr = this.inputSchema.get(i);
-				if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+				if(attr.getDatatype().isMeasurementValue()){
 					inAttrCount++;	
 				}
 			}
@@ -147,7 +146,7 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 			// be in the output schema;
 			int outAttrCount = 0;
 			for(int i =0; i<this.restrictList.length; i++){
-				if(SDFDatatypes.isMeasurementValue(this.inputSchema.get(this.restrictList[i]).getDatatype())){
+				if(this.inputSchema.get(this.restrictList[i]).getDatatype().isMeasurementValue()){
 					outAttrCount++;
 				}
 			}
@@ -173,14 +172,14 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 			// attribute in the input schema. (see the example in the JavaDoc of this method)
 			int count = 0;
 			for(int i = 0; i<this.restrictList.length; i++){
-				if(SDFDatatypes.isMeasurementValue(this.inputSchema.get(this.restrictList[i]).getDatatype())){
+				if(this.inputSchema.get(this.restrictList[i]).getDatatype().isMeasurementValue()){
 					// It the measurement attribute is at position
 					// x in the input schema I have to find out
 					// how many measurement attributes are at
 					// positions 0 ... x - 1
 					int measurementInputPos = 0;
 					for(int v = 0; v<this.restrictList[i]; v++){
-						if(SDFDatatypes.isMeasurementValue(this.inputSchema.get(v).getDatatype())){
+						if(this.inputSchema.get(v).getDatatype().isMeasurementValue()){
 							measurementInputPos++;
 						}
 					}

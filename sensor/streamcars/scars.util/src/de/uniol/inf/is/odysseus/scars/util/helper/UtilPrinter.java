@@ -15,7 +15,13 @@
 package de.uniol.inf.is.odysseus.scars.util.helper;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaInfo;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIterator;
 
 /**
  * Hilfsklasse. Damit lassen sich die verschiedenen Informationen zu Tupel und

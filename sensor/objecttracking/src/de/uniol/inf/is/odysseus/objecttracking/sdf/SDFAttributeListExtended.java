@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * In this SDFAttributeList metadata about the schema can be carried.
@@ -71,12 +70,9 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 	
 	private SDFAttribute copyDeep(SDFAttribute attribute) {
 		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName());
-		copy.setDatatype(attribute.getDatatype());
+		copy.setDatatype(attribute.getDatatype().clone()); // copies subschema too
 		copy.setCovariance(attribute.getCovariance());
 		copy.setUnit(attribute.getUnit());
-		for(int i=0; i<attribute.getAmountOfSubattributes(); i++) {
-			copy.addSubattribute(copyDeep(attribute.getSubattribute(i)));
-		}
 		return copy;
 	}
 	
@@ -93,8 +89,10 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 	
 	private void redAttrSourceName(SDFAttribute attr, String newSourceName){
 		attr.setSourceName(newSourceName);
-		for(SDFAttribute subAttr: attr.getSubattributes()){
-			this.redAttrSourceName(subAttr, newSourceName);
+		if(attr.getDatatype().hasSchema()){
+			for(SDFAttribute subAttr: attr.getDatatype().getSubSchema()){
+				this.redAttrSourceName(subAttr, newSourceName);
+			}
 		}
 	}
 	
@@ -131,7 +129,7 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		List<Integer> pos = new ArrayList<Integer>();
 		for(int i = 0; i<this.elements.size(); i++){
 			SDFAttribute curAttr = this.elements.get(i);
-			if(SDFDatatypes.isMeasurementValue(curAttr.getDatatype())){
+			if(curAttr.getDatatype().isMeasurementValue()){
 				pos.add(i);
 			}
 		}

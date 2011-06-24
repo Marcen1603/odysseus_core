@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 @SuppressWarnings("unchecked")
 /**
  * This class generates a new IntervalProbabilityLatencyPrediction object.
@@ -47,7 +46,7 @@ public class ObjectTrackingMetadataFactory extends AbstractMetadataUpdater<Objec
 		double[][] cov = null;
 		int counter = 0;
 		for(SDFAttribute attr: this.schema){
-			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+			if(attr.getDatatype().isMeasurementValue()){
 				List covariance = ((SDFAttribute)attr).getCovariance();
 				if(cov == null){
 					cov = new double[covariance.size()][covariance.size()];

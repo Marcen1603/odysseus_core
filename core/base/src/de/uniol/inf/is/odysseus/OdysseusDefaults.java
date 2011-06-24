@@ -107,6 +107,7 @@ public class OdysseusDefaults {
 				+ "sourceFromUser.store");
 		props.setProperty("schedulingConfigFile", odysseusHome
 				+ "scheduling.conf");
+		props.setProperty("datatypesFromDatatypesFilename", odysseusHome + "datatypes.store");
 
 		props.setProperty("sessionTimeout", (240 * 60000) + ""); // Milliseconds
 

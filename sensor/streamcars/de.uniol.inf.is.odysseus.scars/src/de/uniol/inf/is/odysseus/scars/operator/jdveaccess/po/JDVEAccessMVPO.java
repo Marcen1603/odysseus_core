@@ -215,17 +215,20 @@ class JDVEData<M extends IProbability> {
 		return base;
 	}
 
-	public MVRelationalTuple<M> parseRecord(SDFAttribute schema, ByteBuffer bb) {
-		int count = schema.getSubattributeCount();
-		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
-		for (int i = 0; i < count; i++) {
-			Object obj = parseNext(schema.getSubattribute(i), bb);
-			recordTuple.setAttribute(i, obj);
+	public MVRelationalTuple<M> parseRecord(SDFAttribute attribute, ByteBuffer bb) {
+		if(attribute.getDatatype().hasSchema()){
+			int count = attribute.getDatatype().getSubSchema().size();
+			MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
+			for (int i = 0; i < count; i++) {
+				Object obj = parseNext(attribute.getDatatype().getSubSchema().getAttribute(i), bb);
+				recordTuple.setAttribute(i, obj);
+			}
+			return recordTuple;
 		}
-		return recordTuple;
+		return null;
 	}
 
-	public List<Object> parseList(SDFAttribute schema, ByteBuffer bb) {
+	public List<Object> parseList(SDFAttribute attribute, ByteBuffer bb) {
 		// int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
 		// System.out.println(count);
 		long count = bb.getLong();
@@ -233,7 +236,7 @@ class JDVEData<M extends IProbability> {
 
 		List<Object> objects = new ArrayList<Object>((int)count);
 		for (int i = 0; i < count; i++) {
-			Object obj = parseNext(schema.getSubattribute(0), bb);
+			Object obj = parseNext(attribute.getDatatype().getSubSchema().getAttribute(0), bb); // FIXME: getAttribute(0) richtig?
 			objects.add(obj);
 //			recordTuple.setAttribute(i, obj);
 		}

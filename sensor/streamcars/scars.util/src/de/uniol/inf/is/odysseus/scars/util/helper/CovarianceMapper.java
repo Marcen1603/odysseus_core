@@ -19,7 +19,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class CovarianceMapper {
 
@@ -43,10 +42,13 @@ public class CovarianceMapper {
 			else
 				lastName = fullAttributeName + ":" + attribute.getAttributeName();
 			
-			if( SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
+			if( attribute.getDatatype().isMeasurementValue()) {
 				indices.add(lastName);
 			}
-			find(attribute.getSubattributes(), lastName);
+			
+			if(attribute.getDatatype().isComplex() && attribute.getDatatype().hasSchema()){
+				find(attribute.getDatatype().getSubSchema(), lastName);
+			}
 		}
 	}
 	

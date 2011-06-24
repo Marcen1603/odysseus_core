@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * This predicate calculates the mahalanobis distance between two vectors.
@@ -78,7 +77,7 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for(int i = 0; i<leftSchema.size(); i++){
 			SDFAttribute attr = leftSchema.get(i);
-			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+			if(attr.getDatatype().isMeasurementValue()){
 				list.add(new Integer(i));	
 			}
 		}
@@ -92,7 +91,7 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		list.clear();
 		for(int i = 0; i<rightSchema.size(); i++){
 			SDFAttribute attr = rightSchema.get(i);
-			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+			if(attr.getDatatype().isMeasurementValue()){
 				list.add(new Integer(i));	
 			}
 		}

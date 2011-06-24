@@ -185,7 +185,7 @@ public class ScarsXMLProfiler {
 			
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				
-				SDFAttributeList schema = attr.getSubattributes();
+				SDFAttributeList schema = attr.getDatatype().getSubSchema();
 				for(int i=0; i<schema.getAttributeCount(); i++) {
 					SDFAttribute childAttr = schema.getAttribute(i);
 					try {
@@ -197,10 +197,12 @@ public class ScarsXMLProfiler {
 				}
 			} else if (attr.getDatatype().getQualName().equals("List")) {
 				
-				SDFAttributeList schema = attr.getSubattributes();
-				SDFAttribute childAttr = schema.getAttribute(0);
-				for(int i=0; i<tuple.getAttributeCount(); i++) {
-					addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
+				if(attr.getDatatype().hasSchema()){
+					SDFAttributeList schema = attr.getDatatype().getSubSchema();
+					SDFAttribute childAttr = schema.getAttribute(0);
+					for(int i=0; i<tuple.getAttributeCount(); i++) {
+						addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
+					}
 				}
 			}
 		} else {
@@ -369,70 +371,70 @@ public class ScarsXMLProfiler {
 	}
 
 
-	public static void main(String[] args) {
-		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance("D:/test.xml", 0, 2);
-
-		SDFAttributeList scan = createScanSchema();
-		MVRelationalTuple<IProbability> scanTuple = createScanTuple(scan);
-		p.profile("OPERATOR", scan, scanTuple);
-		p.profile("OPERATOR", scan, scanTuple);
-		Element root = p.getRoot();
-		XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
-		try {
-			op.output(root, System.out);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-
-
-	private static SDFAttributeList createScanSchema() {
-		SDFAttributeList scan = new SDFAttributeList();
-
-		SDFAttribute list = new SDFAttribute("a.list");
-
-		list.setDatatype(SDFDatatypeFactory.getDatatype("List"));
-
-		SDFAttribute obj = new SDFAttribute("obj");
-		obj.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-
-		SDFAttribute pos = new SDFAttribute("pos");
-		pos.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-
-		List<List<?>> cov = createObjectCovarianz();
-
-		SDFAttribute x = new SDFAttribute("x");
-		x.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		x.setCovariance((ArrayList<?>)cov.get(0));
-
-		SDFAttribute y = new SDFAttribute("y");
-		y.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		y.setCovariance((ArrayList<?>)cov.get(1));
-
-		SDFAttribute z = new SDFAttribute("z");
-		z.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		z.setCovariance((ArrayList<?>)cov.get(2));
-
-		SDFAttribute speed = new SDFAttribute("speed");
-		speed.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		speed.setCovariance((ArrayList<?>)cov.get(3));
-
-		SDFAttribute time = new SDFAttribute("a.scanTime");
-		time.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-
-		scan.add(list);
-		scan.add(time);
-		list.addSubattribute(obj);
-		obj.addSubattribute(pos);
-		pos.addSubattribute(x);
-		pos.addSubattribute(y);
-		pos.addSubattribute(z);
-		obj.addSubattribute(speed);
-
-//		System.out.println(obj.getAttributeName());
-		return scan;
-	}
+//	public static void main(String[] args) {
+//		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance("D:/test.xml", 0, 2);
+//
+//		SDFAttributeList scan = createScanSchema();
+//		MVRelationalTuple<IProbability> scanTuple = createScanTuple(scan);
+//		p.profile("OPERATOR", scan, scanTuple);
+//		p.profile("OPERATOR", scan, scanTuple);
+//		Element root = p.getRoot();
+//		XMLOutputter op = new XMLOutputter(Format.getPrettyFormat());
+//		try {
+//			op.output(root, System.out);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//
+//
+//	private static SDFAttributeList createScanSchema() {
+//		SDFAttributeList scan = new SDFAttributeList();
+//
+//		SDFAttribute list = new SDFAttribute("a.list");
+//
+//		list.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("List"));
+//
+//		SDFAttribute obj = new SDFAttribute("obj");
+//		obj.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Record"));
+//
+//		SDFAttribute pos = new SDFAttribute("pos");
+//		pos.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Record"));
+//
+//		List<List<?>> cov = createObjectCovarianz();
+//
+//		SDFAttribute x = new SDFAttribute("x");
+//		x.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		x.setCovariance((ArrayList<?>)cov.get(0));
+//
+//		SDFAttribute y = new SDFAttribute("y");
+//		y.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		y.setCovariance((ArrayList<?>)cov.get(1));
+//
+//		SDFAttribute z = new SDFAttribute("z");
+//		z.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		z.setCovariance((ArrayList<?>)cov.get(2));
+//
+//		SDFAttribute speed = new SDFAttribute("speed");
+//		speed.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		speed.setCovariance((ArrayList<?>)cov.get(3));
+//
+//		SDFAttribute time = new SDFAttribute("a.scanTime");
+//		time.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Long"));
+//
+//		scan.add(list);
+//		scan.add(time);
+//		list.addSubattribute(obj);
+//		obj.addSubattribute(pos);
+//		pos.addSubattribute(x);
+//		pos.addSubattribute(y);
+//		pos.addSubattribute(z);
+//		obj.addSubattribute(speed);
+//
+////		System.out.println(obj.getAttributeName());
+//		return scan;
+//	}
 
 
 

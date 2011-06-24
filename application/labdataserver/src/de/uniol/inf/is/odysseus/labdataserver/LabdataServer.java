@@ -35,7 +35,6 @@ import java.util.Properties;
 
 import com.Ostermiller.util.CSVParser;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -44,7 +43,6 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
@@ -195,18 +193,17 @@ public class LabdataServer {
 						if (attr.getDatatype().getURI(false)
 								.endsWith("Timestamp")) {
 							cachedValues[i][u] = Long.parseLong(line[u]);
-						} else if (SDFDatatypes.isMeasurementValue(attr
-								.getDatatype())) {
+						} else if (attr.getDatatype().isMeasurementValue()) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
-						} else if (SDFDatatypes.isDouble(attr.getDatatype())) {
+						} else if (attr.getDatatype().isDouble()) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
-						} else if (SDFDatatypes.isInteger(attr.getDatatype())) {
+						} else if (attr.getDatatype().isInteger()) {
 							cachedValues[i][u] = Integer.parseInt(line[u]);
-						} else if (SDFDatatypes.isLong(attr.getDatatype())) {
+						} else if (attr.getDatatype().isLong()) {
 							cachedValues[i][u] = Long.parseLong(line[u]);
-						} else if (SDFDatatypes.isString(attr.getDatatype())) {
+						} else if (attr.getDatatype().isString()) {
 							cachedValues[i][u] = line[u];
-						} else if (SDFDatatypes.isDate(attr.getDatatype())) {
+						} else if (attr.getDatatype().isDate()) {
 							SimpleDateFormat df = new SimpleDateFormat(attr
 									.getDtConstraint("format").getCType());
 							try {
@@ -472,17 +469,16 @@ class CSVHandler extends ClientHandler {
 						if (attr.getDatatype().getURI(false)
 								.endsWith("Timestamp")) {
 							oStream.writeLong((Long) cachedValues[i][u]);
-						} else if (SDFDatatypes.isMeasurementValue(attr
-								.getDatatype())
-								|| SDFDatatypes.isDouble(attr.getDatatype())) {
+						} else if (attr.getDatatype().isMeasurementValue()
+								|| attr.getDatatype().isDouble()) {
 							oStream.writeDouble((Double) cachedValues[i][u]);
-						} else if (SDFDatatypes.isInteger(attr.getDatatype())) {
+						} else if (attr.getDatatype().isInteger()) {
 							oStream.writeInt((Integer) cachedValues[i][u]);
-						} else if (SDFDatatypes.isLong(attr.getDatatype())) {
+						} else if (attr.getDatatype().isLong()) {
 							oStream.writeLong((Long) cachedValues[i][u]);
-						} else if (SDFDatatypes.isString(attr.getDatatype())) {
+						} else if (attr.getDatatype().isString()) {
 							oStream.writeUTF((String) cachedValues[i][u]);
-						} else if (SDFDatatypes.isDate(attr.getDatatype())) {
+						} else if (attr.getDatatype().isDate()) {
 							oStream.writeLong(((Calendar) cachedValues[i][u])
 									.getTimeInMillis());
 						}
@@ -514,20 +510,16 @@ class CSVHandler extends ClientHandler {
 						System.out.println();
 						for (int u = 0; u < line.length; u++) {
 							SDFAttribute attr = this.schema.get(i);
-							if (SDFDatatypes.isMeasurementValue(attr
-									.getDatatype())
-									|| SDFDatatypes
-											.isDouble(attr.getDatatype())) {
+							if (attr.getDatatype().isMeasurementValue()
+									|| attr.getDatatype().isDouble()) {
 								oStream.writeDouble(Double.parseDouble(line[u]));
-							} else if (SDFDatatypes.isInteger(attr
-									.getDatatype())) {
+							} else if (attr.getDatatype().isInteger()) {
 								oStream.writeInt(Integer.parseInt(line[u]));
-							} else if (SDFDatatypes.isLong(attr.getDatatype())) {
+							} else if (attr.getDatatype().isLong()) {
 								oStream.writeLong(Long.parseLong(line[u]));
-							} else if (SDFDatatypes
-									.isString(attr.getDatatype())) {
+							} else if (attr.getDatatype().isString()) {
 								oStream.writeUTF(line[u]);
-							} else if (SDFDatatypes.isDate(attr.getDatatype())) {
+							} else if (attr.getDatatype().isDate()) {
 								SimpleDateFormat df = new SimpleDateFormat(attr
 										.getDtConstraint("format").getCType());
 								try {

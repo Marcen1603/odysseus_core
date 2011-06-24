@@ -21,6 +21,8 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
@@ -30,10 +32,8 @@ import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpressionVariable;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * <p>
@@ -107,10 +107,8 @@ public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionCo
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		TupleIndexPath scannedTupleIndexPath = this
-				.getScannedObjectListSIPath().toTupleIndexPath(object);
-		TupleIndexPath predictedTupleIndexPath = this
-				.getPredictedObjectListSIPath().toTupleIndexPath(object);
+		TupleIndexPath scannedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getScannedObjectListSIPath(), object);
+		TupleIndexPath predictedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getPredictedObjectListSIPath(), object);
 		TupleHelper tupleHelper = new TupleHelper(object);
 		ConnectionList newObjConList = new ConnectionList();
 

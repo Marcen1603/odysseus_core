@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
@@ -34,10 +33,11 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefault
 import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.ao.JDVEAccessMVAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CreateSensorVisitor extends AbstractDefaultVisitor {
 
@@ -101,15 +101,19 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTRecordDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-
-		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName);
-		recordAttribute.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
+		
+		SDFAttributeList complexAttrSchema = new SDFAttributeList();
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
-			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(
-					this, data);
-			recordAttribute.addSubattribute(attr);
+			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(this, data);
+			complexAttrSchema.add(attr);
 		}
 
+		SDFDatatype recordType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
+		GlobalState.getActiveDatadictionary().addDatatype(this.name + "." + attrName, recordType);
+		
+		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName);
+		recordAttribute.setDatatype(recordType);
+		
 		return recordAttribute;
 	}
 
@@ -122,15 +126,20 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTListDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 
-		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
-		attribute.setDatatype(SDFDatatypeFactory.getDatatype("List"));
-
+		
+		SDFAttributeList complexAttrSchema = new SDFAttributeList();
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 			SDFAttribute listedAttribute = (SDFAttribute) node.jjtGetChild(i)
 					.jjtAccept(this, data);
-			attribute.addSubattribute(listedAttribute);
+			complexAttrSchema.add(listedAttribute);
 		}
 
+		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.SET, complexAttrSchema);
+		GlobalState.getActiveDatadictionary().addDatatype(this.name + "." + attrName, listType);
+		
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
+		attribute.setDatatype(listType);
+		
 		return attribute;
 	}
 
@@ -140,17 +149,20 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
 
 		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
-		attribute.setDatatype(astAttrType.getType());
-
-		if (SDFDatatypes.isMeasurementValue(attribute.getDatatype())
-				&& astAttrType.jjtGetNumChildren() > 0) {
-			attribute
-					.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
-
+		
+		if(GlobalState.getActiveDatadictionary().existsDatatype(astAttrType.getType())){
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(astAttrType.getType()));
+	
+			if (attribute.getDatatype().isMeasurementValue()
+					&& astAttrType.jjtGetNumChildren() > 0) {
+				attribute
+						.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+	
+			}
+	
+			if (attribute.getDatatype().isDate())
+				attribute.addDtConstraint("format", astAttrType.getDateFormat());
 		}
-
-		if (SDFDatatypes.isDate(attribute.getDatatype()))
-			attribute.addDtConstraint("format", astAttrType.getDateFormat());
 
 		return attribute;
 	}

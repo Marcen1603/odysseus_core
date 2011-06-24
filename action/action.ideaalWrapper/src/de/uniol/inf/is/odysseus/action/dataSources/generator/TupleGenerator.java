@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class TupleGenerator {
 	private SDFAttributeList schema;
@@ -44,85 +45,85 @@ public class TupleGenerator {
 		
 		//timestamp attribute for all types
 		SDFAttribute attribute = new SDFAttribute("timestamp");
-		attribute.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
 		this.schema.add(attribute);
 		
 		switch(type){
 		case Factory:
 			attribute = new SDFAttribute("id");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("name");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 			this.schema.add(attribute);
 			
 			break;
 			
 		case Machine:
 			attribute = new SDFAttribute("id");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("factoryId");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("name");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 			this.schema.add(attribute);
 			
 			break;
 			
 		case Install_Pure:
 			attribute = new SDFAttribute("id");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("machineId");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("limit1");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("limit2");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			break;
 			
 		case Install_DB:
 			attribute = new SDFAttribute("id");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("machineId");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("limit1");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("limit2");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("pastUsageTime");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			break;
 			
 		case Usage:
 			attribute = new SDFAttribute("machineId");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 			this.schema.add(attribute);
 			
 			attribute = new SDFAttribute("rate");
-			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			break;

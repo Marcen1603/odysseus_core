@@ -369,6 +369,14 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	public RelationalTuple(int attributeCount) {
 		this.attributes = new Object[attributeCount];
 	}
+	
+	public static void main(String[] args){
+		String s = "hello";
+		String s2 = "hello";
+		s2 += "h";
+		
+		System.out.println(s == s2);
+	}
 
 	public RelationalTuple(RelationalTuple<T> copy) {
 		super(copy);

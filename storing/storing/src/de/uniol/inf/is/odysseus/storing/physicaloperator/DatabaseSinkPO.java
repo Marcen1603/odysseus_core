@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T> {
 
@@ -225,19 +224,19 @@ public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T
 	}
 
 	private String getSQLType(SDFDatatype type) {
-		if (SDFDatatypes.isDouble(type)) {
+		if (type.getURI().equals(SDFDatatype.DOUBLE)) {
 			return "DOUBLE";
 		}
-		if (SDFDatatypes.isDate(type)) {
+		if (type.isDate()) {
 			return "DATE";
 		}
-		if (SDFDatatypes.isInteger(type)) {
+		if (type.getURI().equals(SDFDatatype.INTEGER)) {
 			return "INTEGER";
 		}
-		if (SDFDatatypes.isString(type)) {
+		if (type.getURI().equals(SDFDatatype.STRING)) {
 			return "VARCHAR(255)";
 		}
-		if (SDFDatatypes.isLong(type)) {
+		if (type.getURI().equals(SDFDatatype.LONG)) {
 			return "BIGINT";
 		}
 		if (type.getURI(false).toUpperCase().endsWith("TIMESTAMP")){

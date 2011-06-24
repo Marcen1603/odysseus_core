@@ -91,7 +91,7 @@ public class NestOfNesting extends TestCase  {
         nOut = this.outputSchema.get(1);       
         
         assertEquals(axOut, this.fixture.getAx());
-        assertEquals(nOut.getDatatype(), SDFDatatypeFactory.getDatatype("Set"));
+        assertEquals(nOut.getDatatype(), SDFDatatypeFactory.createAndReturnDatatype("Set"));
         
         firstSubAttrIn[0] = this.fixture.getA1();
         firstSubAttrIn[1] = this.fixture.getA2();

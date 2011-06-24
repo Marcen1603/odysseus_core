@@ -16,23 +16,17 @@ package de.uniol.inf.is.odysseus.objecttracking;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-import de.uniol.inf.is.odysseus.objectrelational.base.SDFORDatatypes;
-import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypeConstraints;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * A class for multivariate stream processing.
@@ -222,50 +216,50 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	// return actualAttribute;
 	// }
 
-	private boolean checkDataType(Object object, SDFAttribute attribute) {
-
-		if (object instanceof SetEntry[]) {
-			return SDFORDatatypes.isSet(attribute.getDatatype());
-		}
-
-		if (object instanceof String) {
-			return SDFDatatypes.isString(attribute.getDatatype());
-		}
-
-		if (object instanceof Integer) {
-			if (attribute.getDatatype().equals("Integer")) {
-				return true;
-			}
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
-
-			while (i.hasNext()) {
-				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isInteger(constraint)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		if (object instanceof Long) {
-			if (attribute.getDatatype().equals("Long") || attribute.getDatatype().equals("Date")) {
-				return true;
-			}
-		}
-		if (object instanceof Double) {
-			if (attribute.getDatatype().equals("Double") || SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
-				return true;
-			}
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
-			while (i.hasNext()) {
-				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isRational(constraint) || SDFDatatypeConstraints.isMeasurementValue(constraint)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		return false;
-	}
+//	private boolean checkDataType(Object object, SDFAttribute attribute) {
+//
+//		if (object instanceof SetEntry[]) {
+//			return SDFORDatatypes.isSet(attribute.getDatatype());
+//		}
+//
+//		if (object instanceof String) {
+//			return SDFDatatypes.isString(attribute.getDatatype());
+//		}
+//
+//		if (object instanceof Integer) {
+//			if (attribute.getDatatype().equals("Integer")) {
+//				return true;
+//			}
+//			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
+//
+//			while (i.hasNext()) {
+//				SDFDatatypeConstraint constraint = i.next();
+//				if (SDFDatatypeConstraints.isInteger(constraint)) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
+//		if (object instanceof Long) {
+//			if (attribute.getDatatype().equals("Long") || attribute.getDatatype().equals("Date")) {
+//				return true;
+//			}
+//		}
+//		if (object instanceof Double) {
+//			if (attribute.getDatatype().equals("Double") || SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
+//				return true;
+//			}
+//			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
+//			while (i.hasNext()) {
+//				SDFDatatypeConstraint constraint = i.next();
+//				if (SDFDatatypeConstraints.isRational(constraint) || SDFDatatypeConstraints.isMeasurementValue(constraint)) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
+//		return false;
+//	}
 
 	/**
 	 * This method should be called by an operator after creating a new tuple.
@@ -281,7 +275,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for (int i = 0; i < schema.size(); i++) {
 			SDFAttribute attr = schema.get(i);
-			if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
+			if (attr.getDatatype().isMeasurementValue()) {
 				list.add(new Integer(i));
 			}
 		}
@@ -308,104 +302,104 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		return mvs;
 	}
 
-	/**
-	 * erzeugen eines neuen Objektes, in dem nur die Attribute betrachtet
-	 * werden, die in der attrList uebergeben werden, die Reihenfolge des neuen
-	 * Objektes wird durch die Reihenfolge der Attribute im Array festgelegt
-	 * Beispiel: attrList[1]=14,attrList[2]=12 erzeugt ein neues Objekt, welches
-	 * die Attribute 14 und 12 enthaelt.
-	 * 
-	 * It is important to pass the original schema. Otherwise it is impossible
-	 * to find out whether an attribute to put into the output is a measurement
-	 * value or not.
-	 * 
-	 * The matrix matrix and vector b must agree to the number of measurement
-	 * values and to the number of measurement attributes in attrList. If not
-	 * matrix is passed a normal relational projection will be done. If no
-	 * vector b is passed but a matrix the vector b will be handled as zero
-	 * vector.
-	 * 
-	 * @param attrList
-	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
-	 *            attrList enth�lt
-	 * @param matrix
-	 *            projection matrix for the measurement values
-	 * @param b
-	 *            a vector for moving the projected measurement values matrix *
-	 *            mv + b
-	 * @param originalSchema
-	 *            will be used to determine wether an attribute is a measurement
-	 *            value or not.
-	 * @deprecated I don't a real application for this method. I think, simply
-	 *             reducing to the values in the restrict list should be
-	 *             adequate.
-	 */
-	@Deprecated
-	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix, RealMatrix b, SDFAttributeList overwriteSchema, SDFAttributeList originalSchema) {
-
-		MVRelationalTuple newAttrList = null;
-
-		// SDFAttributeList newSchema = overwriteSchema;
-		// if (overwriteSchema == null){
-		// // Schema anpassen
-		// if (schema != null){
-		// newSchema = new SDFAttributeList();
-		// for (int i: attrList) {
-		// newSchema.add(getSchema().get(i));
-		// }
-		// }
-		// }
-
-		// first, project the measurment values
-		RealMatrix result = null;
-		// only process matrix projection if a matrix is given
-		if (matrix != null) {
-			double[] mv = new double[this.measurementValuePositions.length];
-			for (int i = 0; i < this.measurementValuePositions.length; i++) {
-				mv[i] = (Double) this.getAttribute(this.measurementValuePositions[i]);
-			}
-			RealMatrix m = new RealMatrixImpl(mv);
-
-			result = matrix.multiply(m);
-			// if no vector be is given, do not process
-			// an addition operation.
-			if (b != null) {
-				result = result.add(b);
-			}
-		}
-
-		newAttrList = new MVRelationalTuple(attrList.length);
-
-		int mvCounter = 0;
-		ArrayList<Integer> mvPos = new ArrayList<Integer>();
-		for (int i = 0; i < attrList.length; i++) {
-			boolean isMV = false;
-			SDFAttribute attr = originalSchema.get(i);
-			isMV = SDFDatatypes.isMeasurementValue(attr.getDatatype());
-
-			Object curAttribute = null;
-			// if no matrix is given the original
-			// measurement value can be taken from
-			// the schema.
-			if (!isMV || matrix == null) {
-				curAttribute = this.attributes[attrList[i]];
-			} else {
-				// select the current measurementValue from
-				// the result matrix and increment the counter
-				// So the next time the next MV will be selected.
-				curAttribute = result.getColumn(0)[mvCounter++];
-				mvPos.add(i);
-			}
-			newAttrList.setAttribute(i, curAttribute);
-		}
-
-		newAttrList.measurementValuePositions = new int[mvPos.size()];
-		for (int i = 0; i < mvPos.size(); i++) {
-			newAttrList.measurementValuePositions[i] = mvPos.get(i);
-		}
-
-		return newAttrList;
-	}
+//	/**
+//	 * erzeugen eines neuen Objektes, in dem nur die Attribute betrachtet
+//	 * werden, die in der attrList uebergeben werden, die Reihenfolge des neuen
+//	 * Objektes wird durch die Reihenfolge der Attribute im Array festgelegt
+//	 * Beispiel: attrList[1]=14,attrList[2]=12 erzeugt ein neues Objekt, welches
+//	 * die Attribute 14 und 12 enthaelt.
+//	 * 
+//	 * It is important to pass the original schema. Otherwise it is impossible
+//	 * to find out whether an attribute to put into the output is a measurement
+//	 * value or not.
+//	 * 
+//	 * The matrix matrix and vector b must agree to the number of measurement
+//	 * values and to the number of measurement attributes in attrList. If not
+//	 * matrix is passed a normal relational projection will be done. If no
+//	 * vector b is passed but a matrix the vector b will be handled as zero
+//	 * vector.
+//	 * 
+//	 * @param attrList
+//	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
+//	 *            attrList enth�lt
+//	 * @param matrix
+//	 *            projection matrix for the measurement values
+//	 * @param b
+//	 *            a vector for moving the projected measurement values matrix *
+//	 *            mv + b
+//	 * @param originalSchema
+//	 *            will be used to determine wether an attribute is a measurement
+//	 *            value or not.
+//	 * @deprecated I don't a real application for this method. I think, simply
+//	 *             reducing to the values in the restrict list should be
+//	 *             adequate.
+//	 */
+//	@Deprecated
+//	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix, RealMatrix b, SDFAttributeList overwriteSchema, SDFAttributeList originalSchema) {
+//
+//		MVRelationalTuple newAttrList = null;
+//
+//		// SDFAttributeList newSchema = overwriteSchema;
+//		// if (overwriteSchema == null){
+//		// // Schema anpassen
+//		// if (schema != null){
+//		// newSchema = new SDFAttributeList();
+//		// for (int i: attrList) {
+//		// newSchema.add(getSchema().get(i));
+//		// }
+//		// }
+//		// }
+//
+//		// first, project the measurment values
+//		RealMatrix result = null;
+//		// only process matrix projection if a matrix is given
+//		if (matrix != null) {
+//			double[] mv = new double[this.measurementValuePositions.length];
+//			for (int i = 0; i < this.measurementValuePositions.length; i++) {
+//				mv[i] = (Double) this.getAttribute(this.measurementValuePositions[i]);
+//			}
+//			RealMatrix m = new RealMatrixImpl(mv);
+//
+//			result = matrix.multiply(m);
+//			// if no vector be is given, do not process
+//			// an addition operation.
+//			if (b != null) {
+//				result = result.add(b);
+//			}
+//		}
+//
+//		newAttrList = new MVRelationalTuple(attrList.length);
+//
+//		int mvCounter = 0;
+//		ArrayList<Integer> mvPos = new ArrayList<Integer>();
+//		for (int i = 0; i < attrList.length; i++) {
+//			boolean isMV = false;
+//			SDFAttribute attr = originalSchema.get(i);
+//			isMV = SDFDatatypes.isMeasurementValue(attr.getDatatype());
+//
+//			Object curAttribute = null;
+//			// if no matrix is given the original
+//			// measurement value can be taken from
+//			// the schema.
+//			if (!isMV || matrix == null) {
+//				curAttribute = this.attributes[attrList[i]];
+//			} else {
+//				// select the current measurementValue from
+//				// the result matrix and increment the counter
+//				// So the next time the next MV will be selected.
+//				curAttribute = result.getColumn(0)[mvCounter++];
+//				mvPos.add(i);
+//			}
+//			newAttrList.setAttribute(i, curAttribute);
+//		}
+//
+//		newAttrList.measurementValuePositions = new int[mvPos.size()];
+//		for (int i = 0; i < mvPos.size(); i++) {
+//			newAttrList.measurementValuePositions[i] = mvPos.get(i);
+//		}
+//
+//		return newAttrList;
+//	}
 
 	/**
 	 * 
@@ -476,12 +470,12 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		int i = 0;
 		for (i = 0; i < min && compare == 0; i++) {
 			try {
-				Object objectB = tuple.getAttribute(i);
-				if (objectB instanceof SetEntry[]) {
+				Object objectB = tuple.getAttribute(i);				
+				if (objectB instanceof Collection) {
 					int containedInA = 0;
 
-					List setA = Arrays.asList((SetEntry[]) this.attributes[i]);
-					List setB = Arrays.asList((SetEntry[]) objectB);
+					Collection setA = (Collection) this.attributes[i];
+					Collection setB = (Collection) objectB;
 
 					for (Object b : setB) {
 						if (setA.contains(b)) {
@@ -542,7 +536,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	}
 
 	private final static Object convertAttribute(String stringValue, SDFAttribute attribute) {
-		if (SDFDatatypes.isString(attribute.getDatatype())) {
+		if (attribute.getDatatype().isString()) {
 			return stringValue;
 		}
 
@@ -553,19 +547,11 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 			return Double.parseDouble(stringValue);
 		}
 		// TODO richtig machen mit den datentypen
-		if (SDFDatatypes.isNumerical(attribute.getDatatype())) {
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints().iterator();
-			while (i.hasNext()) {
-				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isInteger(constraint)) {
-					return Integer.parseInt(stringValue);
-				}
-				if (SDFDatatypeConstraints.isRational(constraint)) {
-					return Double.parseDouble(stringValue);
-				}
-			}
-
-			throw new IllegalArgumentException("missing datatype constraint for numerical attribute (integer/rational)");
+		if (attribute.getDatatype().isInteger()) {
+			return Integer.parseInt(stringValue);
+		}
+		else if(attribute.getDatatype().isDouble() || attribute.getDatatype().isFloat()){
+			return Double.parseDouble(stringValue);
 		}
 
 		throw new IllegalArgumentException("attributes of type " + attribute.getDatatype() + " can't be used with " + RelationalTuple.class);

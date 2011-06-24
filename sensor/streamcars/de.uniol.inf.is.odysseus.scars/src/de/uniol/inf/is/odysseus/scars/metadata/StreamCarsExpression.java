@@ -199,60 +199,60 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 		}
 	}
 
-	public static void main(String[] args) {
-		SDFAttributeList scan = new SDFAttributeList();
-
-		SDFAttribute list = new SDFAttribute("a.list");
-		list.setDatatype(SDFDatatypeFactory.getDatatype("List"));
-
-		SDFAttribute obj = new SDFAttribute("obj");
-		obj.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-
-		SDFAttribute pos = new SDFAttribute("pos");
-		pos.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
-
-		SDFAttribute x = new SDFAttribute("x");
-		x.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		SDFAttribute y = new SDFAttribute("y");
-		y.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-		SDFAttribute z = new SDFAttribute("z");
-		z.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-
-		SDFAttributeList time = new SDFAttributeList();
-
-		SDFAttribute currentTime = new SDFAttribute("b.currentTime");
-		currentTime.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
-
-		scan.add(list);
-		list.addSubattribute(obj);
-		obj.addSubattribute(pos);
-		pos.addSubattribute(x);
-		pos.addSubattribute(y);
-		pos.addSubattribute(z);
-
-		time.add(currentTime);
-
-		String expression = "[1;2] + [2;4] * a.list:obj#covariance + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime + GAIN";
-		StreamCarsExpression e = new StreamCarsExpression(expression);
-		e.init(scan, time);
-		System.out.println("TEST: BEFORE INDEX REPLACE:");
-		System.out.println(e);
-		e.replaceVaryingIndex(scan, 5);
-		System.out.println("TEST: AFTER INDEX REPLACE:");
-		System.out.println(e);
-
-		e.bind("a.list:obj#covariance", 10);
-		e.bind("a.list:obj:pos:y", 10);
-		e.bind("a.list:obj:pos:z", 10);
-		e.bind("b.currentTime", 3);
-		e.bind("someVaryingValue", 1000);
-
-		e.evaluate();
-
-		System.out.println("TEST: AFTER PREDICTION:");
-		System.out.println("##########value: " + e.getValue());
-		System.out.println(e);
-	}
+//	public static void main(String[] args) {
+//		SDFAttributeList scan = new SDFAttributeList();
+//
+//		SDFAttribute list = new SDFAttribute("a.list");
+//		list.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("List"));
+//
+//		SDFAttribute obj = new SDFAttribute("obj");
+//		obj.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Record"));
+//
+//		SDFAttribute pos = new SDFAttribute("pos");
+//		pos.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Record"));
+//
+//		SDFAttribute x = new SDFAttribute("x");
+//		x.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		SDFAttribute y = new SDFAttribute("y");
+//		y.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//		SDFAttribute z = new SDFAttribute("z");
+//		z.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//
+//		SDFAttributeList time = new SDFAttributeList();
+//
+//		SDFAttribute currentTime = new SDFAttribute("b.currentTime");
+//		currentTime.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
+//
+//		scan.add(list);
+//		list.addSubattribute(obj);
+//		obj.addSubattribute(pos);
+//		pos.addSubattribute(x);
+//		pos.addSubattribute(y);
+//		pos.addSubattribute(z);
+//
+//		time.add(currentTime);
+//
+//		String expression = "[1;2] + [2;4] * a.list:obj#covariance + a.list:obj:pos:y + a.list:obj:pos:z * 10 * b.currentTime + GAIN";
+//		StreamCarsExpression e = new StreamCarsExpression(expression);
+//		e.init(scan, time);
+//		System.out.println("TEST: BEFORE INDEX REPLACE:");
+//		System.out.println(e);
+//		e.replaceVaryingIndex(scan, 5);
+//		System.out.println("TEST: AFTER INDEX REPLACE:");
+//		System.out.println(e);
+//
+//		e.bind("a.list:obj#covariance", 10);
+//		e.bind("a.list:obj:pos:y", 10);
+//		e.bind("a.list:obj:pos:z", 10);
+//		e.bind("b.currentTime", 3);
+//		e.bind("someVaryingValue", 1000);
+//
+//		e.evaluate();
+//
+//		System.out.println("TEST: AFTER PREDICTION:");
+//		System.out.println("##########value: " + e.getValue());
+//		System.out.println(e);
+//	}
 
 	@Override
 	public void reset() {

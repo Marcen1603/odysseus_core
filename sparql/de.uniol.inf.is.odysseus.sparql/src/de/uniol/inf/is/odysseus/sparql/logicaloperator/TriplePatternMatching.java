@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * This operator repesents a triple pattern matching operator. This logical
@@ -142,17 +143,17 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		if (triple.getSubject().isVariable()){
 			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName());
-			subject.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+			subject.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 			outputSchema.add(subject);
 		}
 		if (triple.getPredicate().isVariable()){
 			SDFAttribute predicate = new SDFAttribute(this.sourceName, triple.getPredicate().getName());
-			predicate.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+			predicate.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 			outputSchema.add(predicate);
 		}
 		if (triple.getObject().isVariable()){
 			SDFAttribute object  = new SDFAttribute(this.sourceName, triple.getObject().getName());
-			object.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+			object.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 			outputSchema.add(object);
 		}
 // Wozu braucht man das?
@@ -164,7 +165,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		if(this.graphVar != null && this.stream_name != null){
 			boolean alreadyAdded = false;
 			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName, this.graphVar.getName());
-			graphVarAtt.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+			graphVarAtt.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 			for(SDFAttribute a : outputSchema){
 				if(a.getQualName().equals(graphVarAtt.getQualName())){
 					alreadyAdded = true;

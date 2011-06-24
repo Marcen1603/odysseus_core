@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
@@ -48,7 +50,15 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	private ILogicalOperator top;
 
 	private boolean hasGrouping;
+	
+	private User user;
+	private IDataDictionary dd;
 
+	public CreateAggregationVisitor(User user, IDataDictionary dd){
+		this.user = user;
+		this.dd = dd;
+	}
+	
 	public void init(ILogicalOperator top, AttributeResolver attributeResolver) {
 		ao = new AggregateAO();
 		this.top = top;
@@ -125,10 +135,10 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 			}
 			attribute = new SDFAttribute(null, funcName);
 			if (function.getName().equalsIgnoreCase("AVG")) {
-				attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+				attribute.setDatatype(this.dd.getDatatype("Double"));
 			} else if (function.getName().equalsIgnoreCase("COUNT")) {
 				attribute
-						.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+						.setDatatype(this.dd.getDatatype("Integer"));
 			} else {
 				// datatype equals datatype of input attribute
 				// for other functions
@@ -142,9 +152,9 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
 	private boolean isNumerical(SDFDatatype datatype) {
 		// TODO oder sollte der check ueber die dtconstraints laufen?
-		return datatype == SDFDatatypeFactory.getDatatype("Double")
-				|| datatype == SDFDatatypeFactory.getDatatype("Integer")
-				|| datatype == SDFDatatypeFactory.getDatatype("Long");
+		return datatype == this.dd.getDatatype("Double")
+				|| datatype == this.dd.getDatatype("Integer")
+				|| datatype == this.dd.getDatatype("Long");
 	}
 
 	@Override

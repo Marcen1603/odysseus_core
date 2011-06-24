@@ -29,12 +29,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.rcp.StreamCarsRCPPlugIn;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.helper.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.helper.TupleInfo;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 public class StreamCarsHeadUp implements IStreamEditorType {
 
@@ -50,7 +50,7 @@ public class StreamCarsHeadUp implements IStreamEditorType {
 	public void streamElementRecieved(final Object element, int port) {
 		MVRelationalTuple<?> tuple = (MVRelationalTuple<?>) element;
 
-		TupleIndexPath tuplePath = carPath.toTupleIndexPath(tuple);
+		TupleIndexPath tuplePath = TupleIndexPath.fromSchemaIndexPath(carPath, tuple);
 		
 		if (tuplePath.getLength() <= 0) {
 			if (warning) {

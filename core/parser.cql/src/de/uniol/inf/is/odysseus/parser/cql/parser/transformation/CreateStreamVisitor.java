@@ -47,7 +47,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -187,15 +186,21 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
-		attribute.setDatatype(astAttrType.getType());
-		if (SDFDatatypes.isDate(attribute.getDatatype())) {
-			attribute.addDtConstraint("format", astAttrType.getDateFormat());
-		}
-		if (SDFDatatypes.isMeasurementValue(attribute.getDatatype())
-				&& astAttrType.jjtGetNumChildren() > 0) {
-			attribute
-					.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
-
+		
+		// we allow user defined types, so check
+		// whether the defined type exists or not
+		if(this.dd.existsDatatype(astAttrType.getType())){
+		
+			attribute.setDatatype(this.dd.getDatatype(astAttrType.getType()));
+			if (attribute.getDatatype().isDate()) {
+				attribute.addDtConstraint("format", astAttrType.getDateFormat());
+			}
+			if (attribute.getDatatype().isMeasurementValue()
+					&& astAttrType.jjtGetNumChildren() > 0) {
+				attribute
+						.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+	
+			}
 		}
 		this.attributes.add(attribute);
 		return data;

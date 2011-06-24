@@ -12,9 +12,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.scars.util.helper;
+package de.uniol.inf.is.odysseus.relational.base.schema;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
+
 
 /**
  * Einfache Klasse, welche alle Informationen während einer Iteration durch

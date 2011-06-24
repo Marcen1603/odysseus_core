@@ -49,7 +49,9 @@ public class SourcesViewContentProvider implements ITreeContentProvider {
 			return entry.getValue().getOutputSchema().toArray();
 		}
 		if( parentElement instanceof SDFAttribute ) {
-			return ((SDFAttribute)parentElement).getSubattributes().toArray();
+			if(((SDFAttribute)parentElement).getDatatype().hasSchema()){
+				return ((SDFAttribute)parentElement).getDatatype().getSubSchema().toArray();
+			}
 		}
 		return null;
 	}
@@ -64,7 +66,7 @@ public class SourcesViewContentProvider implements ITreeContentProvider {
 		if( element instanceof Entry ) 
 			return true;
 		if( element instanceof SDFAttribute )
-			return ((SDFAttribute)element).getSubattributeCount() > 0;
+			return ((SDFAttribute)element).getDatatype().getSubattributeCount() > 0;
 		return false;
 	}
 

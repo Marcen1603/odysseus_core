@@ -129,10 +129,11 @@ public class AttributeResolver implements IAttributeResolver {
 		String toFind = path[index];
 		for( SDFAttribute attr : list ) {
 			if( attr.getAttributeName().equals(toFind)) {
-				if( index == path.length - 1 ) 
+				if( index == path.length - 1 ){ 
 					return attr;
-				else 
-					return findORAttribute(attr.getSubattributes(), path, index + 1 );
+				}else if(attr.getDatatype().hasSchema()){ 
+					return findORAttribute(attr.getDatatype().getSubSchema(), path, index + 1 );
+				}
 			}
 		}
 		return null;

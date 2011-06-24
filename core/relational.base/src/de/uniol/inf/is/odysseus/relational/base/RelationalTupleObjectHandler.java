@@ -185,32 +185,32 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 	public RelationalTupleObjectHandler<M> clone() {
 		return new RelationalTupleObjectHandler<M>(this);
 	}
-	@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		SDFAttributeList schema = new SDFAttributeList();
-		SDFAttribute a = new SDFAttribute("a_int");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
-		schema.add(a);
-		a = new SDFAttribute("a_long");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
-		schema.add(a);
-		a = new SDFAttribute("a_double");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
-		schema.add(a);
-		a = new SDFAttribute("a_String");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("String"));
-		schema.add(a);
-		RelationalTupleObjectHandler h = new RelationalTupleObjectHandler(schema);
-		h.put(0,10);
-		h.put(1,100l);
-		h.put(2,100.0d);
-		h.put(3,"Hallo Folks");
-			
-		h.getByteBuffer();
-		RelationalTuple<IMetaAttribute> r = h.create();
-		System.out.println(r);
-		
-	}
+//	@SuppressWarnings("unchecked")
+//	public static void main(String[] args) throws IOException, ClassNotFoundException {
+//		SDFAttributeList schema = new SDFAttributeList();
+//		SDFAttribute a = new SDFAttribute("a_int");
+//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Integer"));
+//		schema.add(a);
+//		a = new SDFAttribute("a_long");
+//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Long"));
+//		schema.add(a);
+//		a = new SDFAttribute("a_double");
+//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Double"));
+//		schema.add(a);
+//		a = new SDFAttribute("a_String");
+//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
+//		schema.add(a);
+//		RelationalTupleObjectHandler h = new RelationalTupleObjectHandler(schema);
+//		h.put(0,10);
+//		h.put(1,100l);
+//		h.put(2,100.0d);
+//		h.put(3,"Hallo Folks");
+//			
+//		h.getByteBuffer();
+//		RelationalTuple<IMetaAttribute> r = h.create();
+//		System.out.println(r);
+//		
+//	}
 
 
 }

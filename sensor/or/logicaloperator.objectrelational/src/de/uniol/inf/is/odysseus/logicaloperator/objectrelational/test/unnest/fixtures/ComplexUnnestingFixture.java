@@ -31,19 +31,19 @@ public class ComplexUnnestingFixture extends SimpleUnnestingFixture {
     
     public SDFAttribute getA2() {
         SDFAttribute A2 = new SDFAttribute("input", "a2");
-        A2.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
+        A2.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Set"));
         return A2;
     }
     
     public SDFAttribute getA2A1() {
         SDFAttribute A2A1 = new SDFAttribute("input", "a2a1");
-        A2A1.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        A2A1.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         return A2A1;
     }
     
     public SDFAttribute getA2A2() {
         SDFAttribute A2A2 = new SDFAttribute("input", "a2a2");
-        A2A2.setDatatype(SDFDatatypeFactory.getDatatype("String"));
+        A2A2.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
         return A2A2;
     }
 }

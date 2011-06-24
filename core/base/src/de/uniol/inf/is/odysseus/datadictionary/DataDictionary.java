@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.datadictionary;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +29,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.store.FileStore;
 import de.uniol.inf.is.odysseus.store.IStore;
@@ -61,6 +61,7 @@ public class DataDictionary implements IDataDictionary {
 	final private IStore<String, SDFEntity> entityMap;
 	final private IStore<String, User> entityFromUser;
 	final private IStore<String, String> sourceTypeMap;
+	final private IStore<String, SDFDatatype> datatypes;
 
 	DataDictionary() {
 		try {
@@ -78,6 +79,8 @@ public class DataDictionary implements IDataDictionary {
 						OdysseusDefaults.get("sourceTypeMapFilename"));
 				entityFromUser = new FileStore<String, User>(
 						OdysseusDefaults.get("entityFromUserFilename"));
+				datatypes = new FileStore<String, SDFDatatype>(
+						OdysseusDefaults.get("datatypesFromDatatypesFilename"));
 			} else {
 				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewOrStreamFromUser = new MemoryStore<String, User>();
@@ -85,7 +88,27 @@ public class DataDictionary implements IDataDictionary {
 				entityMap = new MemoryStore<String, SDFEntity>();
 				entityFromUser = new MemoryStore<String, User>();
 				sourceTypeMap = new MemoryStore<String, String>();
+				datatypes = new MemoryStore<String, SDFDatatype>();
 			}
+			
+			/**
+			 * fill in the built-in datatypes
+			 */
+			datatypes.put(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
+			datatypes.put(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
+			datatypes.put(SDFDatatype.END_TIMESTAMP.getURI(), SDFDatatype.END_TIMESTAMP);
+			datatypes.put(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
+			datatypes.put(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
+			datatypes.put(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
+			datatypes.put(SDFDatatype.SPATIAL_LINE.getURI(), SDFDatatype.SPATIAL_LINE);
+			datatypes.put(SDFDatatype.SPATIAL_MULTI_LINE.getURI(), SDFDatatype.SPATIAL_MULTI_LINE);
+			datatypes.put(SDFDatatype.SPATIAL_MULTI_POINT.getURI(), SDFDatatype.SPATIAL_MULTI_POINT);
+			datatypes.put(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(), SDFDatatype.SPATIAL_MULTI_POLYGON);
+			datatypes.put(SDFDatatype.SPATIAL_POINT.getURI(), SDFDatatype.SPATIAL_POINT);
+			datatypes.put(SDFDatatype.SPATIAL_POLYGON.getURI(), SDFDatatype.SPATIAL_POLYGON);
+			datatypes.put(SDFDatatype.START_TIMESTAMP.getURI(), SDFDatatype.START_TIMESTAMP);
+			datatypes.put(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
+			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -534,5 +557,26 @@ public class DataDictionary implements IDataDictionary {
 			}
 		}
 	}
+	
+	public void addDatatype(String name, SDFDatatype dt){
+		if(!this.datatypes.containsKey(name)){
+			this.datatypes.put(name.toLowerCase(), dt);
+		}
+		else{
+			throw new IllegalArgumentException("Type '" + name + "' already exists.");
+		}
+	}
 
+	public SDFDatatype getDatatype(String dtName){
+		if(this.datatypes.containsKey(dtName)){
+			return this.datatypes.get(dtName);
+		}
+		else{
+			throw new IllegalArgumentException("No such datatype: " + dtName);
+		}
+	}
+	
+	public boolean existsDatatype(String dtName){
+		return this.datatypes.containsKey(dtName);
+	}
 }
