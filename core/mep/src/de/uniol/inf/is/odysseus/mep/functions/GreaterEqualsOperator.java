@@ -71,9 +71,9 @@ public class GreaterEqualsOperator extends AbstractBinaryOperator<Boolean> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[2];
+			Class<?>[] accTypes = new Class<?>[1];
 			accTypes[0] = Number.class; // number comparison
-			accTypes[1] = String.class; // alphabetical order
+		//	accTypes[1] = String.class; // alphabetical order
 			return accTypes;
 		}
 	}
