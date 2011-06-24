@@ -1,31 +1,30 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.mining.cleaning.model.IDetection;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class DetectionSplitAO extends BinaryLogicalOp implements OutputSchemaSettable {
+public class DetectionSplitAO<T> extends BinaryLogicalOp implements OutputSchemaSettable {
 
 	private static final long serialVersionUID = -2193273482190920976L;
 	private SDFAttributeList outputschema;		
+	private List<IDetection<T>> detections = new ArrayList<IDetection<T>>();
 
 	public DetectionSplitAO(){
 		
 	}
 	
-	public DetectionSplitAO(IPredicate<?> predicate) {
-		super.setPredicate(predicate);
-	}
-	
-	public DetectionSplitAO(DetectionSplitAO detectionAO) {
+	public DetectionSplitAO(DetectionSplitAO<T> detectionAO) {
 		super(detectionAO);
 	}
 
 	@Override
-	public DetectionSplitAO clone() {
-		return new DetectionSplitAO(this);
+	public DetectionSplitAO<T> clone() {
+		return new DetectionSplitAO<T>(this);
 	}
 
 	@Override
@@ -33,15 +32,13 @@ public class DetectionSplitAO extends BinaryLogicalOp implements OutputSchemaSet
 		return this.outputschema;
 	}
 
-	public void addDetection(IDetection detection) {
-		// TODO Auto-generated method stub
-		
+	public void addDetection(IDetection<T> detection) {
+		this.detections.add(detection);		
 	}
 
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputschema = outputSchema;
-		
+		this.outputschema = outputSchema;		
 	}
 
 	@Override
@@ -49,8 +46,11 @@ public class DetectionSplitAO extends BinaryLogicalOp implements OutputSchemaSet
 		if(port>0){
 			throw new UnsupportedOperationException("no ports greater than 0 supported");
 		}
-		setOutputSchema(outputSchema);
-		
+		setOutputSchema(outputSchema);		
+	}
+	
+	public List<IDetection<T>> getDetections(){
+		return this.detections;
 	}
 	
 	

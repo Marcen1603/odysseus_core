@@ -53,11 +53,10 @@ public class SMQLParserService implements IQueryParser {
 				query.setParserId(getLanguage());		
 				query.setLogicalPlan(op, true);
 				queries.add(query);
-			}
-			
+			}			
 			return queries;
 		} catch (NoClassDefFoundError e) {
-			throw new QueryParseException("parse error: missing plugin for language feature", e.getCause());
+			throw new QueryParseException("Parser error: missing plugin for language feature", e.getCause());
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}

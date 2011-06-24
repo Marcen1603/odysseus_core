@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
  * @author Dennis Geesen
  * Created at: 21.06.2011
  */
-public interface IDetection {
-	public IPredicate<?> getPredicate();
+public interface IDetection<T> {
+	public IPredicate<T> getPredicate();
 	public void init();
 }

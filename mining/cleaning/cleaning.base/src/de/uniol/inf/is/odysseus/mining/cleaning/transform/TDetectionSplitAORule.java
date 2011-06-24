@@ -15,14 +15,16 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.transform;
 
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.DetectionSplitAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.DetectionSplitPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionSplitAO> {
+public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionSplitAO<RelationalTuple<IMetaAttribute>>> {
 
 	@Override
 	public int getPriority() {	
@@ -30,9 +32,8 @@ public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionS
 	}
 
 	@Override
-	public void execute(DetectionSplitAO detectAO, TransformationConfiguration config) {
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		DetectionSplitPO<?> detectPO = new DetectionSplitPO(detectAO.getPredicate());
+	public void execute(DetectionSplitAO<RelationalTuple<IMetaAttribute>> detectAO, TransformationConfiguration config) {
+		DetectionSplitPO<?> detectPO = new DetectionSplitPO<RelationalTuple<IMetaAttribute>>(detectAO.getDetections());
 		detectPO.setOutputSchema(detectPO.getOutputSchema());
 		replace(detectAO, detectPO, config);		
 		retract(detectAO);
@@ -40,7 +41,7 @@ public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionS
 	}
 
 	@Override
-	public boolean isExecutable(DetectionSplitAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(DetectionSplitAO<RelationalTuple<IMetaAttribute>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
