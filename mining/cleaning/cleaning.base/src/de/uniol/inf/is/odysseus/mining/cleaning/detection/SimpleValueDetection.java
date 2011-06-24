@@ -41,7 +41,7 @@ public class SimpleValueDetection extends AbstractRelationalPredicateDetection{
 
 	@Override
 	public void init() {
-		String predicateString = super.getAttributeName()+"="+value;
+		String predicateString = super.getAttributeName()+"=="+value;
 		this.predicate = super.buildPredicate(predicateString);
 	}
 

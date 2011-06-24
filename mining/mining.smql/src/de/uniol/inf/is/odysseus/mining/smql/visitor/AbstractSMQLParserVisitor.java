@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.mining.AbstractParameter;
 import de.uniol.inf.is.odysseus.mining.IParameter;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
@@ -24,14 +25,13 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStart;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 
 	private IDataDictionary dataDictionary;
 	private User user;
-	private List<IQuery> plans = new ArrayList<IQuery>();
+	private List<ILogicalOperator> topOperators = new ArrayList<ILogicalOperator>();
 	private SMQLParserVisitor currentMainVisitor;
 
 	public void setUser(User user) {
@@ -59,8 +59,12 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 	}
 	
 
-	public List<IQuery> getPlans() {
-		return plans;
+	public List<ILogicalOperator> getTopOperators() {
+		return this.topOperators;
+	}
+	
+	public void addTopOperator(ILogicalOperator op){
+		this.topOperators.add(op);
 	}
 
 	@Override

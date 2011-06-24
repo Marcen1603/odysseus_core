@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.ILoggerFactory;
-
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.mining.model.IPhase;
 import de.uniol.inf.is.odysseus.mining.model.KnowledgeDiscoveryProcess;
 import de.uniol.inf.is.odysseus.mining.smql.ISMQLFeature;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
@@ -29,14 +26,14 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	private static final String CLEANING_CLASS = "SMQLCleaning";
 	private IDataDictionary dataDictionary;
-	private User user;
-	private List<IQuery> plans = new ArrayList<IQuery>();
+	private User user;	
 	
 	private KnowledgeDiscoveryProcess kdp;
 	private Map<String, ISMQLFeature> languageFeatures;
@@ -45,11 +42,7 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 		this.languageFeatures = languageFeatures;
 		this.user = user;
 		this.dataDictionary = dataDictionary;
-	}
-
-	public List<IQuery> getPlans() {
-		return plans;
-	}
+	}	
 
 	private SMQLParserVisitor loadExternalVisitor(String className) {
 		try {
@@ -71,12 +64,11 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 	@Override
 	public Object visit(ASTCreateKnowledgeDiscoveryProcess node, Object data) {
 		String name = (String)node.jjtGetChild(0).jjtAccept(this, null);
-		KnowledgeDiscoveryProcess kdp = new KnowledgeDiscoveryProcess(name);
-		@SuppressWarnings("unchecked")
-		List<IPhase> phases = (List<IPhase>) node.jjtGetChild(1).jjtAccept(this, null);
-		kdp.setPhases(phases);
-		this.kdp = kdp;
-		return kdp;
+		List<?> ops = (List<?>) node.jjtGetChild(1).jjtAccept(this, null);
+		for(Object o: ops){
+			super.addTopOperator((ILogicalOperator) o);
+		}
+		return ops;
 	}
 
 	@Override
@@ -125,7 +117,7 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 	}
 
 	public void print() {
-		this.kdp.toString();		
+		//this.kdp.toString();		
 	}
 
 	@Override
