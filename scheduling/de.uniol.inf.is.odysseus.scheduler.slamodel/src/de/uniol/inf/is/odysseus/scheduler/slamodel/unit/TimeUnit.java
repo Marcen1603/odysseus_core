@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slamodel.unit;
 
 /**
- * possible time units for defining evaluation windows.
+ * possible time units for defining evaluation windows and time-based metrics.
  * 
  * @author Thomas Vogelgesang
  * 
