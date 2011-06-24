@@ -5,29 +5,65 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
+/**
+ * central management of scheduling data
+ * 
+ * @author Thomas Vogelgesang
+ *
+ */
 public class SLARegistry implements ISLAChangedEventListener {
-	
+	/**
+	 * mapping partial plans to their relevant data
+	 */
 	private Map<IPartialPlan, SLARegistryInfo> schedData;
-	
+	/**
+	 * reference to the scheduler owning this registry
+	 */
 	private SLAPartialPlanScheduling scheduler;
 	
+	/**
+	 * creates a new {@link SLARegistry} object
+	 */
 	public SLARegistry() {
 		super();
 		this.schedData = new HashMap<IPartialPlan, SLARegistryInfo>();
 	}
 
+	/**
+	 * looks up the scheduling data for a given partial plan
+	 * 
+	 * @param plan the partial plan
+	 * 
+	 * @return the scheduling data relevant for the given partial plan or null 
+	 * if no data is stored for the given partial plan
+	 */
 	public SLARegistryInfo getData(IPartialPlan plan) {
 		return this.schedData.get(plan);
 	}
 	
+	/**
+	 * removes the scheduling data for the given partial plan
+	 * @param plan the partial plan, whichs data should be removed from registry
+	 * @return the removed scheduling data or null if no scheduling data could 
+	 * be found for the given partial plan.
+	 */
 	private SLARegistryInfo removeSchedData(IPartialPlan plan) {
 		return this.schedData.remove(plan);
 	}
 	
+	/**
+	 * adds the given scheduling data for the given partial plan to the registry
+	 * @param plan the partial plan
+	 * @param data the scheduling data
+	 */
 	private void addSchedData(IPartialPlan plan, SLARegistryInfo data) {
 		this.schedData.put(plan, data);
 	}
-	
+
+	/**
+	 * handles a {@link SLAChangedEvent} objects
+	 * @param event the event to handle
+	 */
 	@Override
 	public void slaChanged(SLAChangedEvent event) {
 		switch (event.getType()) {

@@ -9,18 +9,33 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyAv
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyNumber;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencySingle;
 
+/**
+ * Factory for building cost functions
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ */
 public class CostFunctionFactory {
-	
+	/**
+	 * id of quadratic cost function
+	 */
 	public static final String QUADRATIC_COST_FUNCTION = "quadratic";
-	
-	public CostFunctionFactory() {
-		
-	}
-	
+
+	/**
+	 * builds a new cost function according to the given function name and the
+	 * given sla
+	 * 
+	 * @param functionName
+	 *            the name of the cost function
+	 * @param sla
+	 *            the sla
+	 * @return the new cost function object or null if no matching object could
+	 *         be created
+	 */
 	public ICostFunction createCostFunction(String functionName, SLA sla) {
 		/*
-		 * cost functions (e.g. QuadraticCostFunction) can be different for
-		 * each metric and each scope
+		 * cost functions (e.g. QuadraticCostFunction) can be different for each
+		 * metric and each scope
 		 */
 		ICostFunction function = null;
 		if (QUADRATIC_COST_FUNCTION.equals(functionName)) {

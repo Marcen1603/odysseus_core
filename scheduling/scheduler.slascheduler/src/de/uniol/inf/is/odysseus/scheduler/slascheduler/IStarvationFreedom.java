@@ -1,9 +1,15 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+/**
+ * Interface for starvation freedom functions
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ */
 public interface IStarvationFreedom {
 
 	/**
-	 * returns a cost value avoid starvation freedom
+	 * returns a cost value to avoid starvation freedom
 	 * 
 	 * @param decay
 	 *            the decay factor of the starvation-freedom-function. This
