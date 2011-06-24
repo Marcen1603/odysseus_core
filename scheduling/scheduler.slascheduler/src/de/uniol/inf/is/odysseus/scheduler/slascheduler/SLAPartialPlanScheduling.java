@@ -9,9 +9,19 @@ import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanSche
 import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
-public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAViolationEventDistributor {
-
-	private int trainSize;
+/**
+ * sla-based partial plan scheduler. it chooses the next partial plan to
+ * schedule by comparing the opportunity cost and marginal gain. The scheduler
+ * provides starvation freedom to avoid buffer overflows.
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ */
+public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
+		ISLAViolationEventDistributor {
+	/**
+	 * size of tuble trains
+	 */
 
 	private List<ISLAViolationEventListener> listeners;
 
@@ -20,7 +30,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 	private SLARegistry registry;
 
 	private String starvationFreedom;
-	
+
 	public String getStarvationFreedom() {
 		return starvationFreedom;
 	}
@@ -34,7 +44,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 	private IPriorityFunction prioFunction;
 
 	private LinkedList<SLAViolationEvent> eventQueue;
-	
+
 	private double decaySF;
 
 	public SLAPartialPlanScheduling(String starvationFreedomFuncName,
@@ -49,7 +59,6 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 
 	@SuppressWarnings("unchecked")
 	public SLAPartialPlanScheduling(SLAPartialPlanScheduling schedule) {
-		this.trainSize = schedule.trainSize;
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
 		for (ISLAViolationEventListener listener : schedule.listeners) {
 			this.listeners.add(listener);
@@ -85,10 +94,10 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 		while (!this.eventQueue.isEmpty()) {
 			this.fireSLAViolationEvent(this.eventQueue.pop());
 		}
-		
+
 		IScheduling next = null;
 		double nextPrio = 0;
-		
+
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all partial plans
 			IPartialPlan plan = scheduling.getPlan();
@@ -99,19 +108,19 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 			// - calculate oc
 			ICostFunction costFunc = data.getCostFunction();
 			double oc = costFunc.oc(conformance, sla);
-			
+
 			// - calculate mg
 			double mg = costFunc.oc(conformance, sla);
 
 			// - calculate sf
 			double sf = data.getStarvationFreedom().sf(this.getDecaySF());
-			
+
 			// - calculate prio
 			double prio = this.prioFunction.calcPriority(oc, mg, sf);
-			
+
 			// select plan with highest priority
-			/* 
-			 * TODO: Generalize plan selection: select x plans with best 
+			/*
+			 * TODO: Generalize plan selection: select x plans with best
 			 * priorities to reduce calculation overhead
 			 * 
 			 * such an optimization needs the constraint of selecting only a
@@ -124,7 +133,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 				nextPrio = prio;
 			}
 		}
-		
+
 		// return selected plan(s)
 		return next;
 	}
@@ -137,14 +146,6 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling, ISLAVio
 	@Override
 	public IPartialPlanScheduling clone() {
 		return new SLAPartialPlanScheduling(this);
-	}
-
-	public void setTrainSize(int trainSize) {
-		this.trainSize = trainSize;
-	}
-
-	public int getTrainSize() {
-		return trainSize;
 	}
 
 	public void addSLAViolationEventListener(ISLAViolationEventListener listener) {
