@@ -39,28 +39,67 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
     @Override
 	public SDFAttribute getAttribute(String name)
             throws AmgigiousAttributeException, NoSuchAttributeException {
-        String[] parts = name.split("\\.", 2);
-        SDFAttribute found = null;
-        for (SDFAttribute attr : schema) {
-            if (parts.length == 1) {
-                if ((attr).getAttributeName().equals(name)) {
-                    if (found != null) {
-                        throw new AmgigiousAttributeException(name);
-                    }
-                    found = attr;
-                }
-            }
-            else {
-                if (attr.getPointURI().equals(name)) {
-                    return attr;
-                }
-            }
+        String[] parts = name.split("\\.", 2); // the attribute can have the form a.b:c:d
+        
+        // source name available
+        String path[] = null;
+        if(parts.length == 2){
+        	path = parts[1].split("\\:"); // split b:c:d into {b, c, d}
         }
-        if (found == null) {
-            throw new NoSuchAttributeException(name);
+        // no source name available
+        else{
+        	path = parts[0].split("\\:"); // split b:c:d into {b, c, d}
         }
-        return found;
+        
+        SDFAttribute attribute = findORAttribute(this.schema, path, 0);
+    	if(attribute != null) return attribute;
+    	throw new IllegalArgumentException("no such attribute: " + name);
+        
+//        SDFAttribute found = null;
+//        for (SDFAttribute attr : schema) {
+//            if (parts.length == 1) {
+//                if ((attr).getAttributeName().equals(name)) {
+//                    if (found != null) {
+//                        throw new AmgigiousAttributeException(name);
+//                    }
+//                    found = attr;
+//                }
+//            }
+//            else {
+//                if (attr.getPointURI().equals(name)) {
+//                    return attr;
+//                }
+//            }
+//        }
+//        if (found == null) {
+//            throw new NoSuchAttributeException(name);
+//        }
+//        return found;
     }
+    
+    private SDFAttribute findORAttribute( SDFAttributeList list, String[] path, int index ) throws AmgigiousAttributeException{
+		String toFind = path[index];
+		SDFAttribute curRoot = null;
+		for( SDFAttribute attr : list ) {
+			
+			if( attr.getAttributeName().equals(toFind)) {
+				if(curRoot == null){
+					curRoot = attr;
+				}
+				else{
+					throw new AmgigiousAttributeException(attr.getAttributeName());
+				}
+			}
+		}
+		
+		if( index == path.length - 1 ){ 
+			return curRoot;
+		}else if(curRoot.getDatatype().hasSchema()){ 
+			return findORAttribute(curRoot.getDatatype().getSubSchema(), path, index + 1 );
+		}
+		
+		return null;
+	}
 
     @Override
     public DirectAttributeResolver clone() {

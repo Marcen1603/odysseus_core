@@ -40,10 +40,10 @@ public class SDFAttribute extends SDFSchemaElement implements
 	// private String sourceName;
 	// private String attributeName;
 
-	/**
-	 * For NF2 we need subattributes
-	 */
-	private SDFAttributeList subattributes = new SDFAttributeList();
+//	/**
+//	 * For NF2 we need subattributes
+//	 */
+//	private SDFAttributeList subattributes = new SDFAttributeList();
 
 	/**
 	 * used for measurement values
@@ -63,6 +63,16 @@ public class SDFAttribute extends SDFSchemaElement implements
 		super();
 		initAttribute(sourceAndAttributeName);
 	}
+	
+	/**
+	 * Creates a new SDFAttribute with name <code>attrName</code> and 
+	 * datatype <code>dt</code>
+	 */
+	public SDFAttribute(String attrName, SDFDatatype dt){
+		super();
+		initAttribute(attrName);
+		this.setDatatype(dt);
+	}
 
 	/**
 	 * Creates a new SDFAttribute from a String "SourceName.AttributeName" where
@@ -77,7 +87,7 @@ public class SDFAttribute extends SDFSchemaElement implements
 			SDFAttributeList subattributes) {
 		super();
 		initAttribute(sourceAndAttributeName);
-		this.subattributes = subattributes;
+//		this.subattributes = subattributes;
 	}
 
 	/**
@@ -99,8 +109,8 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 */
 	public SDFAttribute(SDFAttribute attribute) {
 		super(attribute);
-		this.subattributes = attribute.subattributes == null ? null
-				: attribute.subattributes.clone();
+//		this.subattributes = attribute.subattributes == null ? null
+//				: attribute.subattributes.clone();
 	}
 
 	/**
@@ -119,18 +129,18 @@ public class SDFAttribute extends SDFSchemaElement implements
 		}
 	}
 
-	/**
-	 * Adds a new Subattribute to the end of the current subattribute list
-	 * 
-	 * @param subAttr
-	 */
-	public void addSubattribute(SDFAttribute subAttr) {
-		if (this.subattributes == null) {
-			this.subattributes = new SDFAttributeList();
-		}
-
-		this.subattributes.add(subAttr);
-	}
+//	/**
+//	 * Adds a new Subattribute to the end of the current subattribute list
+//	 * 
+//	 * @param subAttr
+//	 */
+//	public void addSubattribute(SDFAttribute subAttr) {
+//		if (this.subattributes == null) {
+//			this.subattributes = new SDFAttributeList();
+//		}
+//
+//		this.subattributes.add(subAttr);
+//	}
 
 	// Diese Methode macht so keinen Sinn!
 	// /**
@@ -153,69 +163,69 @@ public class SDFAttribute extends SDFSchemaElement implements
 	// this.subattributes.add(pos, subAttr);
 	// }
 
-	/**
-	 * Removes subattribute
-	 */
-	public boolean removeSubattribute(SDFAttribute subAttr) {
-		if (this.subattributes == null) {
-			return false;
-		}
+//	/**
+//	 * Removes subattribute
+//	 */
+//	public boolean removeSubattribute(SDFAttribute subAttr) {
+//		if (this.subattributes == null) {
+//			return false;
+//		}
+//
+//		return this.subattributes.remove(subAttr);
+//	}
 
-		return this.subattributes.remove(subAttr);
-	}
+//	/**
+//	 * removes Subattribute at position pos
+//	 * 
+//	 * @param pos
+//	 * @return
+//	 */
+//	public boolean removeSubattribute(int pos) {
+//		if (this.subattributes == null) {
+//			return false;
+//		}
+//
+//		return this.subattributes.remove(pos) != null;
+//	}
 
-	/**
-	 * removes Subattribute at position pos
-	 * 
-	 * @param pos
-	 * @return
-	 */
-	public boolean removeSubattribute(int pos) {
-		if (this.subattributes == null) {
-			return false;
-		}
+//	/**
+//	 * Use a list von Attributes as subattributes
+//	 * 
+//	 * @param subAttrs
+//	 */
+//	public void setSubattributes(SDFAttributeList subAttrs) {
+//		this.subattributes = subAttrs;
+//	}
 
-		return this.subattributes.remove(pos) != null;
-	}
+//	/**
+//	 * Return amount of subattributes
+//	 */
+//
+//	public int getAmountOfSubattributes() {
+//		if (this.subattributes == null)
+//			return 0;
+//
+//		return this.subattributes.size();
+//	}
 
-	/**
-	 * Use a list von Attributes as subattributes
-	 * 
-	 * @param subAttrs
-	 */
-	public void setSubattributes(SDFAttributeList subAttrs) {
-		this.subattributes = subAttrs;
-	}
+//	/**
+//	 * Remove all subattributes
+//	 */
+//	public void clearSubattributes() {
+//		this.subattributes = new SDFAttributeList();
+//	}
 
-	/**
-	 * Return amount of subattributes
-	 */
+//	public int getSubattributeCount() {
+//		return this.subattributes.size();
+//	}
 
-	public int getAmountOfSubattributes() {
-		if (this.subattributes == null)
-			return 0;
+//	public SDFAttribute getSubattribute(int index) {
+//		return this.subattributes.get(index);
+//	}
 
-		return this.subattributes.size();
-	}
-
-	/**
-	 * Remove all subattributes
-	 */
-	public void clearSubattributes() {
-		this.subattributes = new SDFAttributeList();
-	}
-
-	public int getSubattributeCount() {
-		return this.subattributes.size();
-	}
-
-	public SDFAttribute getSubattribute(int index) {
-		return this.subattributes.get(index);
-	}
-
-	public SDFAttributeList getSubattributes() {
-		return this.subattributes;
-	}
+//	public SDFAttributeList getSubattributes() {
+//		return this.subattributes;
+//	}
 
 	/**
 	 * Get Sourcename-Part of the Attribute

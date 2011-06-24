@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf;
 import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDF;
 
 /**
  * @author Marco Grawunder
@@ -89,15 +88,17 @@ public abstract class SDFElement implements Serializable, IClone {
 		StringBuffer ret = new StringBuffer();
 
 		if (uRIWithoutQualName != null && uRIWithoutQualName.length() > 0) {
-			if (substSDFNamespace) {
-				String namespaceName = SDF
-						.getNamespaceForUri(uRIWithoutQualName);
-				if (namespaceName != null) {
-					ret.append(namespaceName); 
-				}
-			} else {
+			// in each call substSDFNamespace is false, so we don't need this
+			// code any more.
+//			if (substSDFNamespace) {
+//				String namespaceName = SDF
+//						.getNamespaceForUri(uRIWithoutQualName);
+//				if (namespaceName != null) {
+//					ret.append(namespaceName); 
+//				}
+//			} else {
 				ret.append(uRIWithoutQualName);
-			}
+//			}
 		} 
 		if (qualName != null){
 			if (uRIWithoutQualName != null && uRIWithoutQualName.length() > 0){

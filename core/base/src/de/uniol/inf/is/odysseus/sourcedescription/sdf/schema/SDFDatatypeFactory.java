@@ -19,18 +19,27 @@ import java.util.HashMap;
 public class SDFDatatypeFactory {
 	// Eine Cache-Struktur, dass Datentypen-Objekte nicht mehrfach
 	// erzeugt werden
-	static HashMap<String, SDFDatatype> createdTypes = new HashMap<String, SDFDatatype>();
+	static HashMap<String, SDFDatatype> createdTypes;
 
+
+	
 	private SDFDatatypeFactory() {
 	}
 
-	static public SDFDatatype getDatatype(String URI) {
+	static public SDFDatatype createAndReturnDatatype(String URI, SDFAttributeList schema) {
 		// Erst mal testen, ob es das Objekt schon gibt
-		if (createdTypes.containsKey(URI)) {
-			return (SDFDatatype) createdTypes.get(URI);
-		}
+		
 		SDFDatatype dt = new SDFDatatype(URI);
 		createdTypes.put(URI, dt);
 		return dt;
+	}
+	
+	static public SDFDatatype getDatatype(String URI){
+		if (createdTypes.containsKey(URI)) {
+			return (SDFDatatype) createdTypes.get(URI);
+		}
+		else{
+			throw new IllegalArgumentException("No datatype found for : " + URI);
+		}
 	}
 }
