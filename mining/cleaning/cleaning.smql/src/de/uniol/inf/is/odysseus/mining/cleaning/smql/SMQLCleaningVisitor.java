@@ -29,11 +29,12 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetections;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.visitor.AbstractSMQLParserVisitor;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements ISMQLFeature{
+public class SMQLCleaningVisitor<T> extends AbstractSMQLParserVisitor implements ISMQLFeature{
 
 	
-	private Map<String, DetectionSplitAO> streamsToClean = new HashMap<String, DetectionSplitAO>();
+	private Map<String, DetectionSplitAO<?>> streamsToClean = new HashMap<String, DetectionSplitAO<?>>();
 	
 	@Override
 	public Object visit(ASTCreateKnowledgeDiscoveryProcess node, Object data) {
@@ -48,12 +49,12 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	@Override
 	public Object visit(ASTCleanPhase node, Object data) {
 		String streamName = (String)node.jjtGetChild(0).jjtAccept(this, null);
-		DetectionSplitAO detectionAO;
+		DetectionSplitAO<?> detectionAO;
 		if(this.streamsToClean.containsKey(streamName)){
 			 detectionAO = streamsToClean.get(streamName);
 		}else{
 			ILogicalOperator topOperator = super.getDataDictionary().getViewOrStream(streamName, super.getUser());
-			detectionAO = new DetectionSplitAO();
+			detectionAO = new DetectionSplitAO<RelationalTuple<?>>();
 			topOperator.subscribeSink(detectionAO, 0, 0, topOperator.getOutputSchema());	
 			detectionAO.setOutputSchema(topOperator.getOutputSchema());
 			this.streamsToClean.put(streamName, detectionAO);
@@ -71,10 +72,12 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 
 	@Override
 	public Object visit(ASTOutlierDetection node, Object data) {
-		DetectionSplitAO detectionAO = (DetectionSplitAO) data;	
+		@SuppressWarnings("unchecked")
+		DetectionSplitAO<T> detectionAO = (DetectionSplitAO<T>) data;	
 		String attributeName = (String) node.jjtGetChild(1).jjtAccept(this, null);
 		AttributeOperator ao = new AttributeOperator(detectionAO, attributeName);
-		IDetection detection = (IDetection) node.jjtGetChild(0).jjtAccept(this, ao);
+		@SuppressWarnings("unchecked")
+		IDetection<T> detection = (IDetection<T>) node.jjtGetChild(0).jjtAccept(this, ao);
 		detectionAO.addDetection(detection); 		
 		return detectionAO;
 	}	
@@ -82,13 +85,16 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 
 	@Override
 	public Object visit(ASTDetectionMethod node, Object data) {
-		IDetection detection = (IDetection) node.jjtGetChild(0).jjtAccept(this, data);		
+		IDetection<?> detection = (IDetection<?>) node.jjtGetChild(0).jjtAccept(this, data);		
 		return detection;
 	}
 
 	@Override
 	public Object visit(ASTDetectionMethodOutOfRange node, Object data) {
+		
+		@SuppressWarnings("unchecked")
 		AttributeOperator ao = (AttributeOperator) data;
+		
 		int count = (Integer) node.jjtGetChild(0).jjtAccept(this, data);
 		// TODO: Fenstersemantik!
 		String type = "AVG";
@@ -100,6 +106,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	@Override
 	public Object visit(ASTDetectionMethodSimpleValue node, Object data) {
 		double value = (Double) node.jjtGetChild(0).jjtAccept(this, data);
+		@SuppressWarnings("unchecked")
 		AttributeOperator ao = (AttributeOperator) data;
 		return new SimpleValueDetection(ao.getAttribute(), ao.operator.getOutputSchema(), value);
 	}
@@ -107,6 +114,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	@Override
 	public Object visit(ASTDetectionMethodSigmaRule node, Object data) {
 		int value = (Integer) node.jjtGetChild(0).jjtAccept(this, data);
+		@SuppressWarnings("unchecked")
 		AttributeOperator ao = (AttributeOperator) data;
 		return new SigmaRuleDetection(ao.getAttribute(), ao.operator.getOutputSchema(), value);
 	}
@@ -114,6 +122,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	@Override
 	public Object visit(ASTDetectionMethodSimplePredicate node, Object data) {
 		String value = (String) node.jjtGetChild(0).jjtAccept(this, data);
+		@SuppressWarnings("unchecked")
 		AttributeOperator ao = (AttributeOperator) data;
 		return new SimplePredicateDetection(ao.getAttribute(), ao.operator.getOutputSchema(), value);
 	}
