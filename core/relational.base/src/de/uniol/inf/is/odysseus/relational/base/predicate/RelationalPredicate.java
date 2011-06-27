@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -187,11 +186,11 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	}
 	
 	@Override
-	public boolean equals(IPredicate pred) {
+	public boolean equals(IPredicate<RelationalTuple<?>> pred) {
 		// Falls die Expressions nicht identisch sind, ist dennoch eine inhaltliche Äquivalenz möglich
 		if(!this.equals((Object)pred)) {
-			boolean isContainedIn1 = this.isContainedIn(pred);
-			boolean isContainedIn2 = pred.isContainedIn(this);
+//			boolean isContainedIn1 = this.isContainedIn(pred);
+//			boolean isContainedIn2 = pred.isContainedIn(this);
 			return this.isContainedIn(pred) && pred.isContainedIn(this);
 		} else {
 			return true;
