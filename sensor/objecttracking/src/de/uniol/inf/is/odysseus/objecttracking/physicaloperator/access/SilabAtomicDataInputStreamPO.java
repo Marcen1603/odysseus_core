@@ -70,7 +70,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			if (uri.equals("Integer")) {
-				this.dataReader[i++] = new IntegerByteHandler();
+				this.dataReader[i++] = new SILABIntegerHandler();
 			}/* else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
 				this.dataReader[i++] = new LongHandler();
 			}*/
@@ -78,9 +78,9 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			// be read the same way since measurement values
 			// are also double values.
 			else if (uri.equals("Double") || uri.equals("MV")) {
-				this.dataReader[i++] = new DoubleByteHandler();
+				this.dataReader[i++] = new SILABDoubleHandler();
 			} else if (uri.equals("String")) {
-				this.dataReader[i++] = new StringByteHandler();
+				this.dataReader[i++] = new SILABStringHandler();
 			} else {
 				throw new RuntimeException("illegal datatype "+uri);
 			}

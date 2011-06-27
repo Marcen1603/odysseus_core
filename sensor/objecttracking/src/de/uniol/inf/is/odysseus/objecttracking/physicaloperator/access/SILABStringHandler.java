@@ -17,11 +17,10 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class DoubleByteHandler extends AbstractSILABDataHandler {
+public class SILABStringHandler extends AbstractSILABDataHandler {
 
 	@Override
 	final public Object readData() throws IOException {
-
 		char c;
 		StringBuffer out;
 
@@ -32,7 +31,10 @@ public class DoubleByteHandler extends AbstractSILABDataHandler {
 
 		while ((c = (char) this.getStream().read()) != '\n')
 			out.append(String.valueOf(c));
+		// TODO: Was soll das??
 		c = (char) this.getStream().read();
-		return Double.parseDouble(out.toString());
+
+		return out.toString();
 	}
+
 }
