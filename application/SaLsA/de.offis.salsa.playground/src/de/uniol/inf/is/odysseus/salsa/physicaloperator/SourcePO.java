@@ -18,12 +18,14 @@ public class SourcePO<T extends IMetaAttribute> extends
         AbstractSource<RelationalTuple<TimeInterval>> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePO.class);
     private final SDFAttributeList schema;
+    private final String adapterName;
 
     /**
      * @param schema
      */
-    public SourcePO(final SDFAttributeList schema) {
+    public SourcePO(final SDFAttributeList schema, final String adapterName) {
         this.schema = schema;
+        this.adapterName = adapterName;
     }
 
     /**
@@ -31,6 +33,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     public SourcePO(final SourcePO<T> po) {
         this.schema = po.schema;
+        this.adapterName = po.adapterName;
     }
 
     /*
@@ -57,7 +60,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     @Override
     protected void process_close() {
-        SourcePool.unregisterSource("Laser1");
+        SourcePool.unregisterSource(this.adapterName);
     }
 
     /*
@@ -66,7 +69,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     @Override
     protected void process_open() throws OpenFailedException {
-        SourcePool.registerSource("Laser1", this);
+        SourcePool.registerSource(this.adapterName, this);
     }
 
     /**

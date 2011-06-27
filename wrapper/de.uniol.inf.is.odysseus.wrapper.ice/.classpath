@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="generated"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="lib/Ice.jar"/>
+	<classpathentry kind="lib" path="lib/easymock-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.slf4j.api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/com.springsource.slf4j.log4j-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-2.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/asm-all-4.0_RC1.jar"/>
+	<classpathentry kind="con" path="com.zeroc.Slice2JavaPlugin.ICE_FRAMEWORK"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

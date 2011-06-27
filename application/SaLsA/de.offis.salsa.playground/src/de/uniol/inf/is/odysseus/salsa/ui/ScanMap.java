@@ -39,13 +39,20 @@ public class ScanMap extends JPanel {
             synchronized (this.segments) {
                 final Color color = new Color(254, 0, 0);
                 for (final List<Coordinate> segment : this.segments) {
+                    int[] xPoints = new int[segment.size()];
+                    int[] yPoints = new int[segment.size()];
+                    int index = 0;
                     final Polygon segmentPolygon = new Polygon();
                     for (final Coordinate coordinate : segment) {
-                        segmentPolygon.addPoint(500 + (int) (coordinate.x / ScanMap.SCALE),
-                                500 + (int) (coordinate.y / ScanMap.SCALE));
+                        xPoints[index] = 500 + (int) (coordinate.x / ScanMap.SCALE);
+                        yPoints[index] = 500 + (int) (coordinate.y / ScanMap.SCALE);
+//                        segmentPolygon.addPoint(500 + (int) (coordinate.x / ScanMap.SCALE),
+//                                500 + (int) (coordinate.y / ScanMap.SCALE));
+                        index++;
                     }
                     graphics.setColor(color);
-                    graphics.drawPolygon(segmentPolygon);
+                //    graphics.drawPolygon(segmentPolygon);
+                    graphics.drawPolyline(xPoints, yPoints, segment.size());
                 }
                 this.segments.clear();
             }

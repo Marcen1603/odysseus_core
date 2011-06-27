@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
+import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
+import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
 
 public class Activator implements BundleActivator {
     private static Logger LOG = LoggerFactory.getLogger(BundleActivator.class);
@@ -28,6 +30,8 @@ public class Activator implements BundleActivator {
         Activator.context = bundleContext;
         try {
             MEP.registerFunction(new ExtractSegments());
+            MEP.registerFunction(new MoveViewPoint());
+            MEP.registerFunction(new RotateViewPoint());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -43,6 +47,8 @@ public class Activator implements BundleActivator {
         Activator.context = null;
         try {
             MEP.unregisterFunction("ExtractSegments");
+            MEP.unregisterFunction("MoveViewPoint");
+            MEP.unregisterFunction("RotateViewPoint");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);

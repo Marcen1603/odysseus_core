@@ -23,7 +23,7 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
      */
     @Override
     public void execute(final SourceAO operator, final TransformationConfiguration config) {
-        final SourcePO<?> po = new SourcePO(operator.getOutputSchema());
+        final SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getAdapterName());
         final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                 operator, po);
         for (final ILogicalOperator o : toUpdate) {

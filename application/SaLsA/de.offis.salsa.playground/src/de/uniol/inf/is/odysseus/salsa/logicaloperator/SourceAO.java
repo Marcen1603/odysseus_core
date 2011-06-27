@@ -27,6 +27,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
     private static final long serialVersionUID = 4463347403946884857L;
     private static Logger LOG = LoggerFactory.getLogger(SourceAO.class);
     private final Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
+    private String adapterName;
 
     /**
      * 
@@ -43,6 +44,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
         for (final Entry<Integer, SDFAttributeList> entry : ao.outputSchema.entrySet()) {
             this.outputSchema.put(entry.getKey(), entry.getValue().clone());
         }
+        this.adapterName = ao.adapterName;
     }
 
     /*
@@ -114,4 +116,12 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
         this.setOutputSchema(schema, 0);
     }
 
+    @Parameter(name = "NAME", type = StringParameter.class)
+    public void setAdapterName(final String adapterName) {
+        this.adapterName = adapterName;
+    }
+
+    public String getAdapterName() {
+        return this.adapterName;
+    }
 }

@@ -47,13 +47,15 @@ public class SickPushingSourceAdapter extends AbstractPushingSourceAdapter imple
     @Override
     public void onMeasurement(final String uri, final Measurement measurement) {
         final Coordinate[] coordinates = new Coordinate[measurement.getSamples().length];
-        for (int i = 0; i < measurement.getSamples().length; i++) {
-            final Sample sample = measurement.getSamples()[i];
-            coordinates[i] = sample.getDist1Vector();
+        if ((measurement != null) && (measurement.getSamples() != null)) {
+            for (int i = 0; i < measurement.getSamples().length; i++) {
+                final Sample sample = measurement.getSamples()[i];
+                coordinates[i] = sample.getDist1Vector();
+            }
+            SickPushingSourceAdapter.this.transfer(uri, System.currentTimeMillis(), new Object[] {
+                coordinates
+            });
         }
-        SickPushingSourceAdapter.this.transfer(uri, System.currentTimeMillis(), new Object[] {
-            coordinates
-        });
 
     }
 }

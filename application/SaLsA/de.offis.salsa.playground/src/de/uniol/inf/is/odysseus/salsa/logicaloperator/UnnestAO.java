@@ -68,7 +68,7 @@ public class UnnestAO extends UnaryLogicalOp {
      */
     @Parameter(name = "ATTRIBUTE", type = ResolvedSDFAttributeParameter.class)
     public void setAttribute(final SDFAttribute attribute) {
-        UnnestAO.LOG.debug("Set unnest attribute to", attribute);
+        UnnestAO.LOG.debug("Set unnest attribute to {}", attribute.getAttributeName());
         this.attribute = attribute;
     }
 

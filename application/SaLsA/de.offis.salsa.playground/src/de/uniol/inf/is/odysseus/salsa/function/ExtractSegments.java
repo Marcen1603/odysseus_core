@@ -14,7 +14,7 @@ public class ExtractSegments extends AbstractFunction<Object> {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos > 1) {
+        if (argPos >= this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
                     + " argument(s): A matrix and a threashold.");
         }
