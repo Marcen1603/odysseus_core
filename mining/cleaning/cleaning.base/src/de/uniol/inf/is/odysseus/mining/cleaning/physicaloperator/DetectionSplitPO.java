@@ -54,17 +54,18 @@ public class DetectionSplitPO<T> extends AbstractPipe<T, T> {
 
 	@Override
 	protected void process_next(T object, int port) {
+		
 		for (IDetection<T> d : this.detections) {			
-			if (!d.getPredicate().evaluate(object)) {
-				// value is ok -> transfer normally
-				transfer(object, 0);
-			} else {
+			if (d.getPredicate().evaluate(object)) {				
 				// value is not ok -> mark for correction and transfer to other
-				// output
+				// output		
 				object = markAsFailure(object);
 				transfer(object, 1);
+				return;
 			}
 		}
+		// here the element must be ok...
+		transfer(object, 0);
 	}
 
 	private T markAsFailure(T object) {
