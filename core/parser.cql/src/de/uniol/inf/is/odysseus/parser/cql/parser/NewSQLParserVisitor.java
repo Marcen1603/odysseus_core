@@ -14,6 +14,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTPriorizedStatement node, Object data);
   public Object visit(ASTComplexSelectStatement node, Object data);
   public Object visit(ASTSelectStatement node, Object data);
+  public Object visit(ASTCreateType node, Object data);
   public Object visit(ASTCreateStatement node, Object data);
   public Object visit(ASTCreateFromDatabase node, Object data);
   public Object visit(ASTDatabaseTimeSensitiv node, Object data);
@@ -122,4 +123,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data);
   public Object visit(ASTRevokeStatement node, Object data);
 }
-/* JavaCC - OriginalChecksum=0527e5ba338086daf4418f9b6e1e52bc (do not edit this line) */
+/* JavaCC - OriginalChecksum=e1109663b414eab7e1c8963b89b72315 (do not edit this line) */

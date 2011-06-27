@@ -35,7 +35,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	private BufferedInputStream channel;
 	private boolean isOpen;
 	private RelationalTuple<M> buffer;
-	private AbstractAtomicByteDataHandler[] dataReader;
+	private AbstractSILABDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
 	private SDFAttributeList outputSchema;
@@ -65,7 +65,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	}
 	
 	private void createDataReader(SDFAttributeList schema) {
-		this.dataReader = new AbstractAtomicByteDataHandler[schema.size()];
+		this.dataReader = new AbstractSILABDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
@@ -105,7 +105,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			} catch (IOException e) {
 				throw new OpenFailedException(e.getMessage());
 			}
-			for (AbstractAtomicByteDataHandler reader : this.dataReader) {
+			for (AbstractSILABDataHandler reader : this.dataReader) {
 				reader.setStream(this.channel);
 			}
 			this.isOpen = true;

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class IntegerByteHandler extends AbstractAtomicByteDataHandler {
+public class IntegerByteHandler extends AbstractSILABDataHandler {
 
 	@Override
 	final public Object readData() throws IOException {
@@ -35,18 +35,5 @@ public class IntegerByteHandler extends AbstractAtomicByteDataHandler {
 
 		c = (char) this.getStream().read();
 		return Integer.parseInt(out.toString());
-	}
-
-	@Override
-	public Object readData(ByteBuffer buffer) {
-		double d = buffer.getInt();
-		// System.out.println("read Double Data: "+d);
-		return d;
-	}
-
-	@Override
-	public void writeData(ByteBuffer buffer, Object data) {
-		// System.out.println("write Double Data "+(Double)data);
-		buffer.putInt(((Number) data).intValue());
 	}
 }

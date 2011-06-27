@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TMetadataInit_Lat
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TMetadataObjectRelationalCreationPORule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TObjectTrackingPredictionAssignAORule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.TObjectTrackingPunctuationAORule;
-import de.uniol.inf.is.odysseus.objecttracking.transform.rules.access.TAccessAOSILABRule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.access.TAccessMVPORule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.join.TObjectTrackingJoinAODataMergeRule;
 import de.uniol.inf.is.odysseus.objecttracking.transform.rules.join.TObjectTrackingJoinAOMetadataMergeRule;
@@ -40,7 +39,7 @@ public class ObjectTrackingTransformationRuleProvider implements ITransformRuleP
 	public List<IRule<?, ?>> getRules() {
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TAccessMVPORule());
-		rules.add(new TAccessAOSILABRule());
+//		rules.add(new TAccessAOSILABRule());
 		rules.add(new TObjectTrackingJoinAORule());
 		rules.add(new TObjectTrackingJoinAOSweepAreasRule());
 		rules.add(new TObjectTrackingJoinAODataMergeRule());

@@ -661,6 +661,14 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTMVCovarianceRow node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return pvisit(node);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType, java.lang.Object)
+	 */
+	@Override
+	public Object visit(ASTCreateType node, Object data) {
+		return pvisit(node);
 	}
 }

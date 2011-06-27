@@ -15,12 +15,17 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 
-public interface IAtomicByteDataHandler {
-	public Object readData() throws IOException;
-	public Object readData(ByteBuffer buffer);
-	public void writeData(ByteBuffer buffer, Object data);
-	public void setStream(BufferedInputStream stream);
+public abstract class AbstractSILABDataHandler implements ISILABDataHandler {
+
+	private BufferedInputStream stream;
+		
+	@Override
+	public void setStream(BufferedInputStream stream) {
+		this.stream = stream;
+	}
+	
+	final public BufferedInputStream getStream() {
+		return stream;
+	}
 }

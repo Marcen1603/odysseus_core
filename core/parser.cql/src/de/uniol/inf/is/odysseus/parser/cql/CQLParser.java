@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateJoinAOVis
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePriorityAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateTypeVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateViewVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.IDatabaseAOVisitor;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
@@ -1151,6 +1152,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTMVCovarianceRow node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType, java.lang.Object)
+	 */
+	@Override
+	public Object visit(ASTCreateType node, Object data) {
+		CreateTypeVisitor v = new CreateTypeVisitor(this.caller, this.dataDictionary);
+		return v.visit(node, data);
 	}
 
 }

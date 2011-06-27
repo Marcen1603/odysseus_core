@@ -732,4 +732,13 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		}
 		return list;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType, java.lang.Object)
+	 */
+	@Override
+	public Object visit(ASTCreateType node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
