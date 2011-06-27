@@ -19,7 +19,8 @@ Import-Package: com.vividsolutions.jts,
  org.osgi.service.component,
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus,
+ org.junit
 Service-Component: OSGI-INF/TransformationRuleService.xml, OSGI-INF/SourceControlService.xml, OSGI-INF/SickSensorAdapter.xml
 Bundle-ClassPath: .,
  lib/json-20090211.jar
