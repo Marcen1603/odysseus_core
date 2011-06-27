@@ -16,10 +16,24 @@
 package de.uniol.inf.is.odysseus.generator.outliersanddirty;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.BurstErrorModel;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.ContinuousErrorModel;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.NoError;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.RandomErrorModel;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.ConstantValueGenerator;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.distribution.GaussianRandomGenerator;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.distribution.UniformDistributionGenerator;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve.AlternatingGenerator;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve.IncreaseGenerator;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.DuplicateNoise;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.JitterNoise;
 
 /**
  * 
@@ -29,6 +43,15 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 public class WeatherStationGenerator extends StreamClientHandler {
 
 	//CREATE STREAM weatherstation (timestamp STARTTIMESTAMP, temperature DOUBLE, humidity INTEGER, rain DOUBLE, pressure DOUBLE, location INTEGER) CHANNEL localhost : 54322;
+	enum Attribute{
+		Time, 
+		Temperature,
+		Humidity,
+		Rain,
+		Pressure,
+		Location
+	}
+	
 	
 	long time = 0;
 	double temp = 21.0;
@@ -37,24 +60,24 @@ public class WeatherStationGenerator extends StreamClientHandler {
 	double pressure = 1020.0;
 	int location = 0;
 	
-	
+	private Map<Attribute, IValueGenerator> generators = new HashMap<Attribute, IValueGenerator>();
 	
 	
 	@Override
 	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
-		// number / time
-		tuple.addAttribute(new Long(time));
-		// temp
-		tuple.addAttribute(new Double(temp));
-		// humidity
-		tuple.addAttribute(new Integer(humidity));
-		//rain
-		tuple.addAttribute(new Double(rain));
-		//pressure
-		tuple.addAttribute(new Double(pressure));
-		//location
-		tuple.addAttribute(new Integer(location));
+		// number / time (long)
+		tuple.addLong(this.generators.get(Attribute.Time).nextValue());
+		// temp (double)
+		tuple.addDouble(this.generators.get(Attribute.Temperature).nextValue());
+		// humidity (integer)
+		tuple.addInteger(this.generators.get(Attribute.Humidity).nextValue());
+		//rain (double)
+		tuple.addDouble(this.generators.get(Attribute.Rain).nextValue());
+		//pressure (double)
+		tuple.addDouble(this.generators.get(Attribute.Pressure).nextValue());
+		//location (integer)
+		tuple.addInteger(this.generators.get(Attribute.Location).nextValue());
 		
 		//increase values
 		time++;
@@ -68,11 +91,36 @@ public class WeatherStationGenerator extends StreamClientHandler {
 		list.add(tuple);
 		return list;
 	}
+	
+	
 
 	
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
+		//Time
+		IValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
+		timeGenerator.init();
+		this.generators.put(Attribute.Time, timeGenerator);		
+		//Temperature
+		IValueGenerator tempGenerator = new UniformDistributionGenerator(new ContinuousErrorModel(new DuplicateNoise(), 3), 18, 25);
+		tempGenerator.init();
+		this.generators.put(Attribute.Temperature, tempGenerator);
+		//Humidity
+		IValueGenerator humGenerator = new ConstantValueGenerator(new RandomErrorModel(new JitterNoise(5)), 1020);
+		humGenerator.init();
+		this.generators.put(Attribute.Humidity, humGenerator);
+		//Rain
+		IValueGenerator rainGenerator = new GaussianRandomGenerator(new BurstErrorModel(new JitterNoise(50), 10, 4), 50, 2);
+		rainGenerator.init();
+		this.generators.put(Attribute.Rain, rainGenerator);
+		//Pressure
+		IValueGenerator pressGenerator = new ConstantValueGenerator(new NoError(), 100);
+		pressGenerator.init();
+		this.generators.put(Attribute.Pressure, pressGenerator);
+		//Location
+		IValueGenerator locationGenerator = new AlternatingGenerator(new NoError(), 0, 2, 0, 20);
+		locationGenerator.init();
+		this.generators.put(Attribute.Location, locationGenerator);
 
 	}
 

@@ -55,6 +55,42 @@ public class DataTuple{
 		this.attributes.add(value);
 	}
 	
+	public void addInteger(Integer value){
+		this.attributes.add(value);
+	}
+	
+	public void addDouble(Double value){
+		this.attributes.add(value);
+	}
+	
+	public void addLong(Long value){
+		this.attributes.add(value);
+	}
+	
+	public void addString(String value){
+		this.attributes.add(value);
+	}
+	
+	public void addInteger(double value){
+		Integer val = new Integer((int)value);
+		this.attributes.add(val);
+	}
+	
+	public void addDouble(double value){
+		this.attributes.add(new Double(value));
+	}
+	
+	public void addLong(double value){
+		Double d = value;
+		Long val = new Long(d.longValue());
+		this.attributes.add(val);
+	}
+	
+	public void addString(Object value){
+		String s = (String) value;
+		this.attributes.add(s);
+	}
+	
 
 	public int memSize(boolean calcNew) {
 		if (memSize == -1 || calcNew) {
