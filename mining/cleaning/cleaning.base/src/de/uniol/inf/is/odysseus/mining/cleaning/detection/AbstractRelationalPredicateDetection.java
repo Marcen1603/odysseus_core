@@ -15,6 +15,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection;
 
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -29,6 +30,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  */
 public abstract class AbstractRelationalPredicateDetection extends AbstractDetection {
 
+	private RelationalPredicate predicate;
+	
 	public AbstractRelationalPredicateDetection(String attributeName, SDFAttributeList schema) {
 		super(attributeName, schema);		
 	}
@@ -38,11 +41,25 @@ public abstract class AbstractRelationalPredicateDetection extends AbstractDetec
 			IAttributeResolver attributeResolver = new DirectAttributeResolver(super.getInputschema());			
 			// build the predicate			
 			SDFExpression expression = new SDFExpression("", predicateString, attributeResolver);
-			return new RelationalPredicate(expression);
+			predicate = new RelationalPredicate(expression);
+			return predicate;
 		} catch (NoSuchAttributeException ex) {
 			System.err.println("Could not found the attribute \"" + ex.getAttribute() + "\" in schema ");
 			throw ex;
 		}
 	}	
+	
+	public void init(){		
+		String predicateString = createPredicate();
+		buildPredicate(predicateString);
+		this.predicate.init(getInputschema(), null);
+	}
+	
+	public abstract String createPredicate();
+	
+	@Override
+	public IPredicate<?> getPredicate() {		
+		return predicate;
+	}
 
 }

@@ -15,8 +15,6 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection;
 
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -26,8 +24,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class SimplePredicateDetection extends AbstractRelationalPredicateDetection{
 
-	private String predicateString;
-	private RelationalPredicate predicate;
+	private String predicateString;	
 
 	public SimplePredicateDetection(String attributeName, SDFAttributeList schema, String predicateString) {
 		super(attributeName, schema);
@@ -35,13 +32,9 @@ public class SimplePredicateDetection extends AbstractRelationalPredicateDetecti
 	}
 
 	@Override
-	public IPredicate<?> getPredicate() {		
-		return predicate;
+	public String createPredicate() {
+		return this.predicateString;
 	}
 
-	@Override
-	public void init() {		
-		this.predicate = super.buildPredicate(predicateString);
-	}
 
 }

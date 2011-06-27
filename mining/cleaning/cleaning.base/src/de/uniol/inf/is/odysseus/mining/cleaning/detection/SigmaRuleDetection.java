@@ -15,7 +15,6 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection;
 
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -32,18 +31,11 @@ public class SigmaRuleDetection extends AbstractRelationalPredicateDetection {
 	public SigmaRuleDetection(String attributeName, SDFAttributeList schema, int sigmaabweichung) {
 		super(attributeName, schema);
 		this.setSigma(sigmaabweichung);
-	}
+	}	
 
 	@Override
-	public IPredicate<?> getPredicate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-
+	public String createPredicate() {
+		return "";
 	}
 
 	public void setSigma(int sigma) {
@@ -53,5 +45,7 @@ public class SigmaRuleDetection extends AbstractRelationalPredicateDetection {
 	public int getSigma() {
 		return sigma;
 	}
+
+	
 
 }

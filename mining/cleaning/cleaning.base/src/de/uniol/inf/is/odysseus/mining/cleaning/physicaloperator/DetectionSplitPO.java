@@ -47,9 +47,9 @@ public class DetectionSplitPO<T> extends AbstractPipe<T, T> {
 	@Override
 	public void process_open() throws OpenFailedException {
 		super.process_open();
-//		for(IDetection<T> d : this.detections){
-//			d.getPredicate().init();
-//		}
+		for(IDetection<T> d : this.detections){
+			d.init();
+		}
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class DetectionSplitPO<T> extends AbstractPipe<T, T> {
 	}
 
 	private T markAsFailure(T object) {
-		// TODO: marker in metadaten setzen
+		System.out.println("FEHLER gefunden: "+object);
 		return object;
 	}
 

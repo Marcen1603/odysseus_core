@@ -34,7 +34,7 @@ public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionS
 	@Override
 	public void execute(DetectionSplitAO<RelationalTuple<IMetaAttribute>> detectAO, TransformationConfiguration config) {
 		DetectionSplitPO<?> detectPO = new DetectionSplitPO<RelationalTuple<IMetaAttribute>>(detectAO.getDetections());
-		detectPO.setOutputSchema(detectPO.getOutputSchema());
+		detectPO.setOutputSchema(detectAO.getOutputSchema());
 		replace(detectAO, detectPO, config);		
 		retract(detectAO);
 		

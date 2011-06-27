@@ -82,8 +82,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 
 	@Override
 	public Object visit(ASTDetectionMethod node, Object data) {
-		IDetection detection = (IDetection) node.jjtGetChild(0).jjtAccept(this, data);
-		detection.init();
+		IDetection detection = (IDetection) node.jjtGetChild(0).jjtAccept(this, data);		
 		return detection;
 	}
 
