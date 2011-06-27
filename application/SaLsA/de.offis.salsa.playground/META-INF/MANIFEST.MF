@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: SALSA :: Operator
-Bundle-SymbolicName: de.offis.salsa.operator
+Bundle-Name: SALSA :: Playground
+Bundle-SymbolicName: de.offis.salsa.playground
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.salsa.Activator
 Import-Package: com.vividsolutions.jts,
