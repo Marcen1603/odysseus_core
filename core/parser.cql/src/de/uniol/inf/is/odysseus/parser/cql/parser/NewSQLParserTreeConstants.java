@@ -109,19 +109,24 @@ public interface NewSQLParserTreeConstants
   public int JJTALTERUSERSTATEMENT = 103;
   public int JJTDROPUSERSTATEMENT = 104;
   public int JJTCREATESLASTATEMENT = 105;
-  public int JJTPERCENTILECONSTRAINT = 106;
-  public int JJTCREATETENANTSTATEMENT = 107;
-  public int JJTADDUSERTOTENANTSTATEMENT = 108;
-  public int JJTREMOVEUSERFROMTENANTSTATEMENT = 109;
-  public int JJTDROPSTREAMSTATEMENT = 110;
-  public int JJTDROPVIEWSTATEMENT = 111;
-  public int JJTCREATEROLESTATEMENT = 112;
-  public int JJTDROPROLESTATEMENT = 113;
-  public int JJTGRANTROLESTATEMENT = 114;
-  public int JJTREVOKEROLESTATEMENT = 115;
-  public int JJTGRANTSTATEMENT = 116;
-  public int JJTIDENTIFIERLIST = 117;
-  public int JJTREVOKESTATEMENT = 118;
+  public int JJTSLAMETRICDEF = 106;
+  public int JJTSLASCOPEDEF = 107;
+  public int JJTSLAWINDOWDEF = 108;
+  public int JJTSLASERVICELEVELDEF = 109;
+  public int JJTSLAPENALTYDEF = 110;
+  public int JJTPERCENTILECONSTRAINT = 111;
+  public int JJTCREATETENANTSTATEMENT = 112;
+  public int JJTADDUSERTOTENANTSTATEMENT = 113;
+  public int JJTREMOVEUSERFROMTENANTSTATEMENT = 114;
+  public int JJTDROPSTREAMSTATEMENT = 115;
+  public int JJTDROPVIEWSTATEMENT = 116;
+  public int JJTCREATEROLESTATEMENT = 117;
+  public int JJTDROPROLESTATEMENT = 118;
+  public int JJTGRANTROLESTATEMENT = 119;
+  public int JJTREVOKEROLESTATEMENT = 120;
+  public int JJTGRANTSTATEMENT = 121;
+  public int JJTIDENTIFIERLIST = 122;
+  public int JJTREVOKESTATEMENT = 123;
 
 
   public String[] jjtNodeName = {
@@ -231,6 +236,11 @@ public interface NewSQLParserTreeConstants
     "AlterUserStatement",
     "DropUserStatement",
     "CreateSLAStatement",
+    "SlaMetricDef",
+    "SlaScopeDef",
+    "SlaWindowDef",
+    "SlaServiceLevelDef",
+    "SlaPenaltyDef",
     "PercentileConstraint",
     "CreateTenantStatement",
     "AddUserToTenantStatement",
@@ -246,4 +256,4 @@ public interface NewSQLParserTreeConstants
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=960e202716b8002ffcbb363995d9da6d (do not edit this line) */
+/* JavaCC - OriginalChecksum=d1a3a6ca6924e659ac13502adea8bfec (do not edit this line) */

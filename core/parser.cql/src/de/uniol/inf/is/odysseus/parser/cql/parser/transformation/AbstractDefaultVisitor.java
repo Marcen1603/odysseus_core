@@ -741,4 +741,34 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTSlaMetricDef node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSlaScopeDef node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSlaWindowDef node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSlaServiceLevelDef node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSlaPenaltyDef node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

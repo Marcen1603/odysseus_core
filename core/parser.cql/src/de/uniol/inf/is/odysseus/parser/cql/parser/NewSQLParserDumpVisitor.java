@@ -671,4 +671,29 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTCreateType node, Object data) {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTSlaMetricDef node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSlaScopeDef node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSlaWindowDef node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSlaServiceLevelDef node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSlaPenaltyDef node, Object data) {
+		return pvisit(node);
+	}
 }
