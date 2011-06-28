@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributePara
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * This class is a super class for logical clustering operators. It specifies
@@ -170,7 +169,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 		Iterator<SDFAttribute> iter = attributes.iterator();
 		while (iter.hasNext()) {
 			SDFAttribute attribute = iter.next();
-			if (!SDFDatatypes.isNumerical(attribute.getDatatype())) {
+			if (!attribute.getDatatype().isNumeric()) {
 				addError(new NonNumericAttributeException(attribute));
 				return false;
 			}
