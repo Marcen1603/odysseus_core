@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql;
 
 import java.io.Reader;
@@ -50,6 +50,18 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.Metric;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.Penalty;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.SLADictionary;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.Scope;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.ServiceLevel;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.Window;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.factories.MetricFactory;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.factories.PenaltyFactory;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.factories.ScopeFactory;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.factories.UnitFactory;
+import de.uniol.inf.is.odysseus.scheduler.slamodel.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
@@ -85,16 +97,16 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query, User user, IDataDictionary dd)
-			throws QueryParseException {
+	public synchronized List<IQuery> parse(String query, User user,
+			IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
 		return parse(new StringReader(query), user, dd);
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(Reader reader, User user, IDataDictionary dd)
-			throws QueryParseException {
+	public synchronized List<IQuery> parse(Reader reader, User user,
+			IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
 		try {
@@ -121,11 +133,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public void setUser(User user) {
 		this.caller = user;
 	}
-	
+
 	public void setDataDictionary(IDataDictionary dataDictionary) {
 		this.dataDictionary = dataDictionary;
 	}
-
 
 	@Override
 	public Object visit(ASTStatement node, Object data) {
@@ -229,7 +240,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTSelectStatement statement, Object data) {
 		try {
-			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller, dataDictionary);
+			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller,
+					dataDictionary);
 			access.visit(statement, null);
 			AttributeResolver attributeResolver = access.getAttributeResolver();
 
@@ -247,18 +259,20 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			checkHaving.init(attributeResolver);
 			checkHaving.visit(statement, null);
 
-			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller, dataDictionary);
+			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller,
+					dataDictionary);
 			joinVisitor.init(attributeResolver);
 			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(
 					statement, null);
 
-			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor(caller, dataDictionary);
+			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor(
+					caller, dataDictionary);
 			aggregationVisitor.init(top, attributeResolver);
 			aggregationVisitor.visit(statement, null);
 			top = aggregationVisitor.getResult();
 
-			top = new CreateProjectionVisitor(caller, dataDictionary).createProjection(statement,
-					top, attributeResolver);
+			top = new CreateProjectionVisitor(caller, dataDictionary)
+					.createProjection(statement, top, attributeResolver);
 			CreatePriorityAOVisitor prioVisitor = new CreatePriorityAOVisitor();
 			prioVisitor.setTopOperator(top);
 			prioVisitor.setAttributeResolver(attributeResolver);
@@ -287,7 +301,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTPriority node, Object data) {
 		return node.getPriority();
 	}
-	
+
 	public static void initPredicates(ILogicalOperator curInputAO) {
 		if (curInputAO.getPredicate() != null) {
 			SDFAttributeList rightInputSchema = null;
@@ -302,7 +316,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
-	
 	public static void initPredicate(IPredicate<?> predicate,
 			SDFAttributeList left, SDFAttributeList right) {
 		if (predicate instanceof ComplexPredicate) {
@@ -698,7 +711,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					User.class);
 			m.invoke(bsv, caller);
 
-			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			Method m2 = brokerSourceVisitor.getDeclaredMethod(
+					"setDataDictionary", IDataDictionary.class);
 			m2.invoke(bsv, dataDictionary);
 
 			m = brokerSourceVisitor.getDeclaredMethod("visit",
@@ -740,9 +754,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
 					User.class);
 			m.invoke(bsv, caller);
-			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			Method m2 = brokerSourceVisitor.getDeclaredMethod(
+					"setDataDictionary", IDataDictionary.class);
 			m2.invoke(bsv, dataDictionary);
-			
+
 			m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTBrokerSelectInto.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
@@ -781,13 +796,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			Method m2 = brokerSourceVisitor.getDeclaredMethod(
+					"setDataDictionary", IDataDictionary.class);
 			m2.invoke(bsv, dataDictionary);
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
 					User.class);
 			m.invoke(bsv, caller);
-			m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTMetric.class, Object.class);
+			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTMetric.class,
+					Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);
 			return sourceOp;
@@ -808,9 +824,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Object sv = sensorVisitor.newInstance();
 			Method m = sensorVisitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(sv, caller);
-			Method m2 = sensorVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			Method m2 = sensorVisitor.getDeclaredMethod("setDataDictionary",
+					IDataDictionary.class);
 			m2.invoke(sv, dataDictionary);
-			
+
 			m = sensorVisitor.getDeclaredMethod("visit", ASTCreateSensor.class,
 					Object.class);
 			return m.invoke(sv, node, data);
@@ -926,27 +943,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		} catch (TenantNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTCreateSLAStatement node, Object data) {
-		String slaName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		PercentileContraint pc = null;
-		IServiceLevelAgreement sla = null;
-		if (node.getLimit() > 0) {
-			sla = new TimeBasedServiceLevelAgreement(slaName, node.getLimit());
-		} else {
-			sla = new ServiceLevelAgreement(slaName);
-		}
-		for (int i = 2; i < node.jjtGetNumChildren(); i++) {
-			pc = (PercentileContraint) node.jjtGetChild(i)
-					.jjtAccept(this, data);
-			sla.addPercentilConstraint(pc);
-		}
-		sla.init();
-		sla.preCalc(100);
-		TenantManagement.getInstance().addSLA(slaName, sla);
 		return null;
 	}
 
@@ -1091,12 +1087,18 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			if (UserActionFactory.needsNoObject(action)) {
 				String object = UserActionFactory.getAliasObject(action);
-				UserManagement.getInstance().grantPermission(caller, user, dataDictionary.isCreatorOfObject(caller.getName(), object),
-						action, object);
+				UserManagement.getInstance().grantPermission(
+						caller,
+						user,
+						dataDictionary.isCreatorOfObject(caller.getName(),
+								object), action, object);
 			} else {
 				for (String entityname : objects) {
-					UserManagement.getInstance().grantPermission(caller, user, dataDictionary.isCreatorOfObject(caller.getName(), entityname),
-							action, entityname);
+					UserManagement.getInstance().grantPermission(
+							caller,
+							user,
+							dataDictionary.isCreatorOfObject(caller.getName(),
+									entityname), action, entityname);
 				}
 			}
 
@@ -1154,43 +1156,135 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor#visit(
+	 * de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType,
+	 * java.lang.Object)
 	 */
 	@Override
 	public Object visit(ASTCreateType node, Object data) {
-		CreateTypeVisitor v = new CreateTypeVisitor(this.caller, this.dataDictionary);
+		CreateTypeVisitor v = new CreateTypeVisitor(this.caller,
+				this.dataDictionary);
 		return v.visit(node, data);
 	}
 
 	@Override
-	public Object visit(ASTSlaMetricDef node, Object data) {
-		// TODO Auto-generated method stub
+	public Object visit(ASTCreateSLAStatement node, Object data) {
+		// String slaName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		// PercentileContraint pc = null;
+		// IServiceLevelAgreement sla = null;
+		// if (node.getLimit() > 0) {
+		// sla = new TimeBasedServiceLevelAgreement(slaName, node.getLimit());
+		// } else {
+		// sla = new ServiceLevelAgreement(slaName);
+		// }
+		// for (int i = 2; i < node.jjtGetNumChildren(); i++) {
+		// pc = (PercentileContraint) node.jjtGetChild(i)
+		// .jjtAccept(this, data);
+		// sla.addPercentilConstraint(pc);
+		// }
+		// sla.init();
+		// sla.preCalc(100);
+		// TenantManagement.getInstance().addSLA(slaName, sla);
+		
+		SLA sla = new SLA();
+
+		// get name
+		String slaName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		sla.setName(slaName);
+
+		// get metric
+		Metric<?> metric = (Metric<?>) node.jjtGetChild(1).jjtAccept(this, 
+				null);
+		sla.setMetric(metric);
+
+		// get scope
+		Scope scope = (Scope) node.jjtGetChild(2).jjtAccept(this, null);
+		sla.setScope(scope);
+
+		// get window
+		Window window = (Window) node.jjtGetChild(3).jjtAccept(this, null);
+		sla.setWindow(window);
+
+		// get service level(s)
+		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
+		for (int i = 4; i < node.jjtGetNumChildren(); i++) {
+			ServiceLevel sl = (ServiceLevel)node.jjtGetChild(i).jjtAccept(this, 
+					null);
+			sl.setSla(sla);
+			serviceLevels.add(sl);
+		}
+		sla.setServiceLevel(serviceLevels);
+
+		// save sla
+		SLADictionary.getInstance().addSLA(slaName, sla);
+		System.out.println("Added new Service Level Agreement: " +sla);
+
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTSlaMetricDef node, Object data) {
+		String metricID = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+		double value = Double.parseDouble(((ASTNumber)node.jjtGetChild(1)).
+				getValue());
+		String unitID = ((ASTIdentifier)node.jjtGetChild(2)).getName();
+		
+		// create metric by factory and return it
+		MetricFactory metricFactory = new MetricFactory();
+		UnitFactory unitFactory = new UnitFactory();
+		Metric<?> metric = metricFactory.buildMetric(metricID, value, 
+				unitFactory.buildUnit(unitID));
+		
+		return metric;
 	}
 
 	@Override
 	public Object visit(ASTSlaScopeDef node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		String scopeID = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+		ScopeFactory factory = new ScopeFactory();
+		return factory.buildScope(scopeID);
 	}
 
 	@Override
 	public Object visit(ASTSlaWindowDef node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		int windowSize = Integer.parseInt(((ASTNumber)node.jjtGetChild(0)).
+				getValue());
+		String unitID = ((ASTIdentifier)node.jjtGetChild(1)).getName();
+		
+		UnitFactory unitFactory = new UnitFactory();
+		TimeUnit unit = (TimeUnit) unitFactory.buildUnit(unitID);
+		Window window = new Window(windowSize, unit);
+		
+		return window;
 	}
 
 	@Override
 	public Object visit(ASTSlaServiceLevelDef node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		double threshold = Double.parseDouble(((ASTNumber)node.jjtGetChild(0)).
+				getValue());
+		
+		Penalty penalty = (Penalty)node.jjtGetChild(1).jjtAccept(this, null);
+		//TODO set service level in penalty
+		
+		ServiceLevel sl = new ServiceLevel();
+		sl.setThreshold(threshold);
+		sl.setPenalty(penalty);
+		
+		return sl;
 	}
 
 	@Override
 	public Object visit(ASTSlaPenaltyDef node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		String penaltyID = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+		double value = Double.parseDouble(((ASTNumber)node.jjtGetChild(1)).
+				getValue());
+		
+		PenaltyFactory factory = new PenaltyFactory();
+		return factory.buildPenalty(penaltyID, value);
 	}
 
 }
