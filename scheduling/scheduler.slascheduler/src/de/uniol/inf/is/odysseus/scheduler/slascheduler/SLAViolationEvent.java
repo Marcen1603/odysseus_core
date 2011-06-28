@@ -17,7 +17,7 @@ public class SLAViolationEvent {
 	/**
 	 * the costs caused by the violation due to predefined penalties
 	 */
-	private int cost;
+	private double cost;
 	/**
 	 * the service level agreement that has been violated
 	 */
@@ -29,7 +29,7 @@ public class SLAViolationEvent {
 	 * @param sla the violated sla
 	 * @param cost the costs caused by the violation
 	 */
-	public SLAViolationEvent(IPartialPlan plan, SLA sla, int cost) {
+	public SLAViolationEvent(IPartialPlan plan, SLA sla, double cost) {
 		this.plan = plan;
 		this.sla = sla;
 		this.cost = cost;
@@ -45,7 +45,7 @@ public class SLAViolationEvent {
 	/**
 	 * @return the costs caused by the sla violation
 	 */
-	public int getCost() {
+	public double getCost() {
 		return cost;
 	}
 

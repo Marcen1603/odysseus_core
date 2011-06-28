@@ -35,7 +35,7 @@ public class SLAConformanceFactory {
 						plan);
 			} else if (sla.getScope() instanceof Number) {
 				conformance = new LatencyNumberConformance(distributor, sla, 
-						plan, (Long) sla.getMetric().getValue());
+						plan, sla.getMetric().getValue());
 			} else if (sla.getScope() instanceof Single) {
 				conformance = new LatencySingleConformance(distributor, sla, 
 						plan);

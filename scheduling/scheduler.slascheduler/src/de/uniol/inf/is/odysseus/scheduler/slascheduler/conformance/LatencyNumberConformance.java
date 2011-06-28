@@ -24,7 +24,7 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	/**
 	 * threshold of the latency that should not be exceeded
 	 */
-	private long latencyThreshold;
+	private double latencyThreshold;
 
 	/**
 	 * creates a new sla conformance for metric latency and scope number
@@ -39,7 +39,7 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 	 *            latency threshold that should not be exceeded
 	 */
 	public LatencyNumberConformance(ISLAViolationEventDistributor dist,
-			SLA sla, IPartialPlan plan, long latencyThreshold) {
+			SLA sla, IPartialPlan plan, double latencyThreshold) {
 		super(dist, sla, plan);
 		this.numberOfViolations = 0;
 		this.latencyThreshold = latencyThreshold;

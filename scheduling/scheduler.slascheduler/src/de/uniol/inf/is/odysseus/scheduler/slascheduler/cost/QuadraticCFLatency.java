@@ -23,7 +23,7 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 	 */
 	protected int getCurrentServiceLevelIndex(double conformance, SLA sla) {
 		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
-			if (conformance < (Integer) sla.getServiceLevel().get(i)
+			if (conformance < sla.getServiceLevel().get(i)
 					.getThreshold()) {
 				return i;
 			}
@@ -59,7 +59,7 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 	/**
 	 * returns the border value to the next higher service level
 	 * 
-	 * @param slIndex
+	 * @param slIndex) 
 	 *            the index of the service level whichs upper bound should be
 	 *            calculated
 	 * @param sla
@@ -71,7 +71,7 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 			// upperbound is 0 if highest service level is held
 			return 0.0;
 		} else {
-			return (Integer) sla.getServiceLevel().get(slIndex - 1)
+			return sla.getServiceLevel().get(slIndex - 1)
 					.getThreshold();
 			// upperbound remains 0 if highest service level is held
 		}
@@ -95,7 +95,7 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 			 */
 			return Double.MAX_VALUE;
 		} else {
-			return (Integer) sla.getServiceLevel().get(slIndex).getThreshold();
+			return sla.getServiceLevel().get(slIndex).getThreshold();
 		}
 	}
 

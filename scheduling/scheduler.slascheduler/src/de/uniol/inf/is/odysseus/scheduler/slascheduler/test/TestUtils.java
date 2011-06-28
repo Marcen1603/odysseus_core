@@ -19,7 +19,7 @@ public class TestUtils {
 		SLA sla = new SLA();
 		sla.setName("Test SLA Latency Average");
 		
-		Latency latency = new Latency(new Integer(0), TimeUnit.milliseconds);
+		Latency latency = new Latency(new Integer(0), TimeUnit.ms);
 		sla.setMetric(latency);
 		
 		sla.setPrice(1000);
@@ -27,7 +27,7 @@ public class TestUtils {
 		Scope scope = new Average();
 		sla.setScope(scope);
 		
-		List<ServiceLevel<?>> serviceLevels = new ArrayList<ServiceLevel<?>>();
+		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
 		
 		serviceLevels.add(buildServiceLevel(sla, 100, 200));
 		serviceLevels.add(buildServiceLevel(sla, 200, 400));
@@ -40,7 +40,7 @@ public class TestUtils {
 		SLA sla = new SLA();
 		sla.setName("Test SLA Latency Number");
 		
-		Latency latency = new Latency(new Integer(500), TimeUnit.milliseconds);
+		Latency latency = new Latency(new Integer(500), TimeUnit.ms);
 		sla.setMetric(latency);
 		
 		sla.setPrice(1000);
@@ -48,7 +48,7 @@ public class TestUtils {
 		Scope scope = new Number();
 		sla.setScope(scope);
 		
-		List<ServiceLevel<?>> serviceLevels = new ArrayList<ServiceLevel<?>>();
+		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
 		
 		serviceLevels.add(buildServiceLevel(sla, 75, 10));
 		serviceLevels.add(buildServiceLevel(sla, 150, 20));
@@ -61,7 +61,7 @@ public class TestUtils {
 		SLA sla = new SLA();
 		sla.setName("Test SLA Latency Single");
 		
-		Latency latency = new Latency(new Integer(0), TimeUnit.milliseconds);
+		Latency latency = new Latency(new Integer(0), TimeUnit.ms);
 		sla.setMetric(latency);
 		
 		sla.setPrice(1000);
@@ -69,7 +69,7 @@ public class TestUtils {
 		Scope scope = new Average();
 		sla.setScope(scope);
 		
-		List<ServiceLevel<?>> serviceLevels = new ArrayList<ServiceLevel<?>>();
+		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
 		
 		serviceLevels.add(buildServiceLevel(sla, 100, 200));
 		serviceLevels.add(buildServiceLevel(sla, 225, 400));
@@ -78,8 +78,8 @@ public class TestUtils {
 		return sla;
 	}
 	
-	private static ServiceLevel<?> buildServiceLevel(SLA sla, int penaltyCost, int threshold) {
-		ServiceLevel<Integer> sl = new ServiceLevel<Integer>();
+	private static ServiceLevel buildServiceLevel(SLA sla, int penaltyCost, int threshold) {
+		ServiceLevel sl = new ServiceLevel();
 		Penalty penalty = new AbsolutePenalty(penaltyCost);
 		sl.setPenalty(penalty);
 		sl.setSla(sla);

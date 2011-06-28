@@ -108,7 +108,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 * @param cost
 	 *            the cost caused by violating certain service levels
 	 */
-	private void violation(int cost) {
+	private void violation(double cost) {
 		SLAViolationEvent event = new SLAViolationEvent(this.plan, this.sla,
 				cost);
 		this.distributor.queueSLAViolationEvent(event);
@@ -126,18 +126,18 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		 * over list to finde the less valuable violated service level first
 		 */
 		if (System.currentTimeMillis() >= this.windowEnd) {
-			List<ServiceLevel<?>> serviceLevels = this.getSLA()
+			List<ServiceLevel> serviceLevels = this.getSLA()
 					.getServiceLevel();
 			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
 				if (this.getSLA().getMetric().valueIsMin()) {
-					if ((Integer) serviceLevels.get(i).getThreshold() < this
+					if (serviceLevels.get(i).getThreshold() < this
 							.getConformance()) {
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost());
 						break;
 					}
 				} else {
-					if ((Integer) serviceLevels.get(i).getThreshold() > this
+					if (serviceLevels.get(i).getThreshold() > this
 							.getConformance()) {
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost());
