@@ -114,7 +114,7 @@ public class ExpressionOptimizer {
 				function.setArgument(0, c);
 				while (i.hasNext()) {
 					function.setArgument(1, i.next());
-					c = new Constant<Object>(function.getValue());
+					c = new Constant<Object>(function.getValue(), "Object");
 					function.setArgument(0, c);
 				}
 				return c;
@@ -185,16 +185,16 @@ public class ExpressionOptimizer {
 			}
 
 			if (isAllInputsConstant && !function.isContextDependent()) {
-				return new Constant<Object>(function.getValue());
+				return new Constant<Object>(function.getValue(), "Object");
 			}
 
 			if (function.getClass() == AndOperator.class) {
 				return isConstantPredicate(function.getArguments(), false) ? new Constant<Boolean>(
-						false) : function;
+						false, "Boolean") : function;
 			} else {
 				if (function.getClass() == OrOperator.class) {
 					return isConstantPredicate(function.getArguments(), true) ? new Constant<Boolean>(
-							true) : function;
+							true, "Boolean") : function;
 				} else {
 					return function;
 				}

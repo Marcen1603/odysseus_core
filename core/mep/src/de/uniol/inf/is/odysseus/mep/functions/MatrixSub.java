@@ -58,11 +58,11 @@ public class MatrixSub extends AbstractFunction<Object> {
 	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
 	 */
 	@Override
-	public Class<? extends Object> getReturnType() {
-		return Object.class;
+	public String getReturnType() {
+		return "Matrix";
 	}
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -70,8 +70,8 @@ public class MatrixSub extends AbstractFunction<Object> {
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = double[][].class;
+			String[] accTypes = new String[1];
+			accTypes[0] = "Matrix";
 			return accTypes;
 		}
 	}

@@ -100,11 +100,11 @@ public class Polygon extends AbstractFunction<Double> {
 	}
 
 	@Override
-	public Class<? extends Double> getReturnType() {
-		return Double.class;
+	public String getReturnType() {
+		return "Double";
 	}
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -112,13 +112,13 @@ public class Polygon extends AbstractFunction<Double> {
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
+			String[] accTypes = new String[1];
 			
 			switch(argPos){
-			case 0: accTypes[0] = Vector.class;
+			case 0: accTypes[0] = "Vector";
 					break;
 			case 1: 
-			case 2: accTypes[0] = Double.class;
+			case 2: accTypes[0] = "Vector";
 					break;
 			}
 			

@@ -52,11 +52,11 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
 	}
 
 	@Override
-	public Class<? extends double[][]> getReturnType() {
-		return double[][].class;
+	public String getReturnType() {
+		return "Matrix";
 	}
 
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -64,8 +64,8 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = double[].class;
+			String[] accTypes = new String[1];
+			accTypes[0] = "Vector";
 			return accTypes;
 		}
 	}

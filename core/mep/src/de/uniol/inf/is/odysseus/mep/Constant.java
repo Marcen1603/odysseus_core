@@ -20,9 +20,11 @@ import java.util.Set;
 public class Constant<T> implements IExpression<T> {
 
 	private final T value;
+	private String type;
 
-	public Constant(T value) {
+	public Constant(T value, String type) {
 		this.value = value;
+		this.type = type;
 	}
 	
 	@Override
@@ -48,8 +50,8 @@ public class Constant<T> implements IExpression<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends T> getReturnType() {
-		return (Class<? extends T>) value.getClass();
+	public String getReturnType() {
+		return type;
 	}
 
 	@Override

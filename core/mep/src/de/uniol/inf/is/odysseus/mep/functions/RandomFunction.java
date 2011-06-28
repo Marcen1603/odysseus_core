@@ -34,11 +34,11 @@ public class RandomFunction extends AbstractFunction<Double> {
 	}
 
 	@Override
-	public Class<? extends Double> getReturnType() {
-		return Double.class;
+	public String getReturnType() {
+		return "Double";
 	}
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		throw new IllegalArgumentException("rnd has no arguments");
 	}
 

@@ -35,8 +35,8 @@ public class ModuloOperator extends AbstractBinaryOperator<Double> {
 	}
 
 	@Override
-	public Class<Double> getReturnType() {
-		return Double.class;
+	public String getReturnType() {
+		return "Double";
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class ModuloOperator extends AbstractBinaryOperator<Double> {
 		return false;
 	}
 
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -72,8 +72,8 @@ public class ModuloOperator extends AbstractBinaryOperator<Double> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = Integer.class;
+			String[] accTypes = new String[1];
+			accTypes[0] = "Integer";
 			return accTypes;
 		}
 	}

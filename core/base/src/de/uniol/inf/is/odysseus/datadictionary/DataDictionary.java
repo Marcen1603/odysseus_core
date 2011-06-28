@@ -106,6 +106,7 @@ public class DataDictionary implements IDataDictionary {
 			datatypes.put(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(), SDFDatatype.SPATIAL_MULTI_POLYGON);
 			datatypes.put(SDFDatatype.SPATIAL_POINT.getURI(), SDFDatatype.SPATIAL_POINT);
 			datatypes.put(SDFDatatype.SPATIAL_POLYGON.getURI(), SDFDatatype.SPATIAL_POLYGON);
+			datatypes.put(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
 			datatypes.put(SDFDatatype.START_TIMESTAMP.getURI(), SDFDatatype.START_TIMESTAMP);
 			datatypes.put(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
 			

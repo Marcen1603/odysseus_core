@@ -118,7 +118,7 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 		}
 		return r;
 	}
-
+	
 	private void checkOverflow(ByteBuffer buffer, int size) {
 		if (size+byteBuffer.position()>=byteBuffer.capacity()){
 			// TODO: Effizientere �berlaufbehandlung?

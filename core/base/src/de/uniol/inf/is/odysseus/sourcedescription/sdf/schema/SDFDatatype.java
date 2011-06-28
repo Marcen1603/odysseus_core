@@ -58,6 +58,12 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public static final SDFDatatype SPATIAL_MULTI_POLYGON = new SDFDatatype("SpatialMultiPolygon", SDFDatatype.KindOfDatatype.SET, SDFDatatype.SPATIAL_POLYGON);
 	
+	/**
+	 * abstract type for spatial objects. Access to subschema is not
+	 * possible so we treat this type as base type.
+	 */
+	public static final SDFDatatype SPATIAL = new SDFDatatype("Spatial");
+	
 	
 	
 	public static final SDFDatatype START_TIMESTAMP = new SDFDatatype("StartTimestamp");

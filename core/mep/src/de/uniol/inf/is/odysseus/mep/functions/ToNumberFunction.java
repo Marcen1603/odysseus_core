@@ -34,11 +34,11 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 	}
 
 	@Override
-	public Class<Double> getReturnType() {
-		return Double.class;
+	public String getReturnType() {
+		return "Double";
 	}
 
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -46,8 +46,8 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = String.class;
+			String[] accTypes = new String[1];
+			accTypes[0] = "String";
 			return accTypes;
 		}
 	}

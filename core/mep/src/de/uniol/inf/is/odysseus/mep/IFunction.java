@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mep;
 
+
 public interface IFunction<T> extends IExpression<T> {
 	public int getArity();
 
@@ -23,7 +24,7 @@ public interface IFunction<T> extends IExpression<T> {
 
 	public IExpression<?>[] getArguments();
 	
-	public Class<?>[] getAcceptedTypes(int argPos);
+	public String[] getAcceptedTypes(int argPos);
 	
 	public IExpression<?> getArgument(int argumentPosition);
 	

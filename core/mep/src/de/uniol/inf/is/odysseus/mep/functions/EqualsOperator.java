@@ -35,8 +35,8 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 	}
 
 	@Override
-	public Class<Boolean> getReturnType() {
-		return Boolean.class;
+	public String getReturnType() {
+		return "Boolean";
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 		return false;
 	}
 
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -72,8 +72,11 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = Number.class;
+			String[] accTypes = new String[4];
+			accTypes[0] = "Integer";
+			accTypes[1] = "Float";
+			accTypes[2] = "Double";
+			accTypes[3] = "Long";
 			return accTypes;
 		}
 	}

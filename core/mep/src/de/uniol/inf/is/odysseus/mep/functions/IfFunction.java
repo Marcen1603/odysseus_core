@@ -34,17 +34,17 @@ public class IfFunction extends AbstractFunction<Object> {
 	}
 
 	@Override
-	public Class<?> getReturnType() {
+	public String getReturnType() {
 		// if then and else arguments have the same type, we are sure to return
 		// a value of that type
 		if (getArguments()[1].getReturnType() == getArguments()[2].getReturnType()) {
 			return getArguments()[1].getReturnType();
 		}
 		// otherwise we make no guarantees
-		return Object.class;
+		return "Object";
 	}
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -52,13 +52,13 @@ public class IfFunction extends AbstractFunction<Object> {
 			throw new IllegalArgumentException("abs has only 1 argument.");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
+			String[] accTypes = new String[1];
 			switch (argPos){
-			case 0: accTypes[0] = Boolean.class;
+			case 0: accTypes[0] = "Boolean";
 					break;
-			case 1:	accTypes[0] = Object.class;
+			case 1:	accTypes[0] = "Object";
 					break;
-			case 2: accTypes[0] = Object.class;
+			case 2: accTypes[0] = "Object";
 					break;
 			}
 			

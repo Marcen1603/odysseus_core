@@ -34,11 +34,11 @@ public class Now extends AbstractFunction<Long> {
 	}
 
 	@Override
-	public Class<? extends Long> getReturnType() {
-		return Long.class;
+	public String getReturnType() {
+		return "Long";
 	}
 
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		throw new IllegalArgumentException("Now has no arguments.");
 	}
 }

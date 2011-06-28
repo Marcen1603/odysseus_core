@@ -57,9 +57,7 @@ public class MapAO extends UnaryLogicalOp {
 					attr = new SDFAttribute(expr.getSingleAttribute());
 				} else {
 					attr = new SDFAttribute(expr.getExpression());
-					// FIXME stimmt natuerlich nicht im allgemeinen, aber atm
-					// ist datatype unbekannt
-					attr.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));
+					attr.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(expr.getMEPExpression().getReturnType()));
 				}
 				outputSchema.add(attr);
 

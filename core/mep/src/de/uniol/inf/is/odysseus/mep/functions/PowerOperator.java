@@ -35,8 +35,8 @@ public class PowerOperator extends AbstractBinaryOperator<Double> {
 	}
 
 	@Override
-	public Class<Double> getReturnType() {
-		return Double.class;
+	public String getReturnType() {
+		return "Double";
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class PowerOperator extends AbstractBinaryOperator<Double> {
 		return null;
 	}
 
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -72,12 +72,19 @@ public class PowerOperator extends AbstractBinaryOperator<Double> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
+			String[] accTypes = null;
 			switch(argPos){
-			case 0: accTypes[0] = Number.class;
-					break;
-			case 1:	accTypes[0] = Integer.class;
-					break;
+			case 0: 
+				accTypes = new String[4];
+				accTypes[0] = "Integer";
+				accTypes[1] = "Long";
+				accTypes[2] = "Float";
+				accTypes[3] = "Double";
+				break;
+			case 1:
+				accTypes = new String[1];
+				accTypes[0] = "Integer";
+				break;
 			}
 			return accTypes;
 		}

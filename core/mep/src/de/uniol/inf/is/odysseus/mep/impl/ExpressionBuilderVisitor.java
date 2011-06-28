@@ -55,7 +55,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
 	@Override
 	public Object visit(ASTConstant node, Object data) {
-		return new Constant<Object>(node.getValue());
+		return new Constant<Object>(node.getValue(), "Object");
 	}
 
 	@Override

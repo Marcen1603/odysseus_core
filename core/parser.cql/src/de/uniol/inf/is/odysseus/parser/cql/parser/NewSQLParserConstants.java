@@ -257,35 +257,37 @@ public interface NewSQLParserConstants {
   /** RegularExpression Id. */
   int S_MULTI_POLYGON = 127;
   /** RegularExpression Id. */
-  int FLOAT = 128;
+  int SPATIAL = 128;
   /** RegularExpression Id. */
-  int INTEGER = 129;
+  int FLOAT = 129;
   /** RegularExpression Id. */
-  int DIGIT = 130;
+  int INTEGER = 130;
   /** RegularExpression Id. */
-  int IPADDRESS = 131;
+  int DIGIT = 131;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 132;
+  int IPADDRESS = 132;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 133;
+  int LINE_COMMENT = 133;
   /** RegularExpression Id. */
-  int IDENTIFIER = 134;
+  int MULTI_LINE_COMMENT = 134;
   /** RegularExpression Id. */
-  int LETTER = 135;
+  int IDENTIFIER = 135;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 136;
+  int LETTER = 136;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 137;
+  int SPECIAL_CHARS = 137;
   /** RegularExpression Id. */
-  int SQL_STRING = 138;
+  int CHAR_LITERAL = 138;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 139;
+  int SQL_STRING = 139;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 140;
+  int QUOTED_IDENTIFIER = 140;
   /** RegularExpression Id. */
-  int REGEXP = 141;
+  int COMPARE_OPERATOR = 141;
   /** RegularExpression Id. */
-  int JDBC_STRING = 142;
+  int REGEXP = 142;
+  /** RegularExpression Id. */
+  int JDBC_STRING = 143;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -420,6 +422,7 @@ public interface NewSQLParserConstants {
     "\"SPATIAL_MULTI_POINT\"",
     "\"SPATIAL_MULTI_LINE\"",
     "\"SPATIAL_MULTI_POLYGON\"",
+    "\"SPATIAL\"",
     "<FLOAT>",
     "<INTEGER>",
     "<DIGIT>",

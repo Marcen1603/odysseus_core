@@ -21,15 +21,15 @@ import java.util.Set;
 public class Variable implements IExpression<Object> {
 	private Object value;
 	private final String identifier;
-	private final Class<?> type;
+	private final String type;
 	private Class<?>[] acceptedTypes;
 
 	public Variable(String id) {
 		this.identifier = id;
-		this.type = Object.class;
+		this.type = "Object";
 	}
 
-	public Variable(String id, Class<?> type) {
+	public Variable(String id, String type) {
 		this.identifier = id;
 		this.type = type;
 	}
@@ -81,7 +81,7 @@ public class Variable implements IExpression<Object> {
 	}
 
 	@Override
-	public Class<?> getReturnType() {
+	public String getReturnType() {
 		return type;
 	}
 

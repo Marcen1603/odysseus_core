@@ -54,11 +54,11 @@ public class GetAbsoluteValue extends AbstractFunction<Object>{
 	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
 	 */
 	@Override
-	public Class<? extends Object> getReturnType() {
-		return double.class;
+	public String getReturnType() {
+		return "Double";
 	}
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -66,8 +66,11 @@ public class GetAbsoluteValue extends AbstractFunction<Object>{
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = Number.class;
+			String[] accTypes = new String[4];
+			accTypes[0] = "Integer";
+			accTypes[1] = "Long";
+			accTypes[2] = "Float";
+			accTypes[3] = "Double";
 			return accTypes;
 		}
 	}

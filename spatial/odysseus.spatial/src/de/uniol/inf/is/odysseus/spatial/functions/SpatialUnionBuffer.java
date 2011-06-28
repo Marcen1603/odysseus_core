@@ -44,17 +44,22 @@ public class SpatialUnionBuffer extends AbstractFunction {
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
 	 */
 	@Override
-	public Class[] getAcceptedTypes(int argPos) {
+	public String[] getAcceptedTypes(int argPos) {
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > this.getArity()){
+		if(argPos >= this.getArity()){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[2];
-			accTypes[0] = Geometry.class;
-			accTypes[1] = Double.class;
+			String[] accTypes = new String[7];
+			accTypes[0] = "SpatialPoint";
+			accTypes[1] = "SpatialMultiPoint";
+			accTypes[2] = "SpatialLine";
+			accTypes[3] = "SpatialMultiLine";
+			accTypes[4] = "SpatialPolygon";
+			accTypes[5] = "SpatialMultiPolygon";
+			accTypes[6] = "Spatial";
 			return accTypes;
 		}
 	}
@@ -90,9 +95,8 @@ public class SpatialUnionBuffer extends AbstractFunction {
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
 	 */
 	@Override
-	public Class getReturnType() {
-		// TODO Auto-generated method stub
-		return Geometry.class;
+	public String getReturnType() {
+		return "Spatial";
 	}
 
 }

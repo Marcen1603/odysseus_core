@@ -34,8 +34,8 @@ public class SmallerEqualsOperator extends AbstractBinaryOperator<Boolean> {
 	}
 
 	@Override
-	public Class<Boolean> getReturnType() {
-		return Boolean.class;
+	public String getReturnType() {
+		return "String";
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class SmallerEqualsOperator extends AbstractBinaryOperator<Boolean> {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -71,8 +71,11 @@ public class SmallerEqualsOperator extends AbstractBinaryOperator<Boolean> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = Number.class; // number comparison
+			String[] accTypes = new String[4];
+			accTypes[0] = "Integer";
+			accTypes[1] = "Long";
+			accTypes[2] = "Float";
+			accTypes[3] = "Double";
 		//	accTypes[1] = String.class; // alphabetical order
 			return accTypes;
 		}

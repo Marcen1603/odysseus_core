@@ -44,7 +44,7 @@ public class ApplicationTime implements IApplicationTime{
 	public ApplicationTime(ApplicationTime original) {
 		this.intervals = new ArrayList<ITimeInterval>();
 		for(ITimeInterval interval : original.intervals){
-			this.intervals.add(interval.clone());
+			this.intervals.add((ITimeInterval)interval.clone());
 		}
 	}
 	

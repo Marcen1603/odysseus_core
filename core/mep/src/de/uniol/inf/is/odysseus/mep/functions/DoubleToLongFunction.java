@@ -34,12 +34,12 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 	}
 
 	@Override
-	public Class<Long> getReturnType() {
-		return Long.class;
+	public String getReturnType() {
+		return "Long";
 	}
 
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -47,8 +47,8 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 			throw new IllegalArgumentException("doubleToLong has only 1 argument.");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = Double.class;
+			String[] accTypes = new String[1];
+			accTypes[0] = "Double";
 			return accTypes;
 		}
 	}

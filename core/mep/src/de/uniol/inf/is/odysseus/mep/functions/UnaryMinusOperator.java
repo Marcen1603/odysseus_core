@@ -34,8 +34,8 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 	}
 
 	@Override
-	public Class<Double> getReturnType() {
-		return Double.class;
+	public String getReturnType() {
+		return "Double";
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 		return ASSOCIATIVITY.RIGHT_TO_LEFT;
 	}
 	
-	public Class<?>[] getAcceptedTypes(int argPos){
+	public String[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -51,8 +51,11 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			Class<?>[] accTypes = new Class<?>[1];
-			accTypes[0] = Number.class;
+			String[] accTypes = new String[4];
+			accTypes[0] = "Integer";
+			accTypes[1] = "Long";
+			accTypes[2] = "Float";
+			accTypes[3] = "Double";
 			return accTypes;
 		}
 	}
