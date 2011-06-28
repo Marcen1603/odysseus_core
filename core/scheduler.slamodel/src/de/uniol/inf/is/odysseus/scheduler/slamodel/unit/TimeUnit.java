@@ -5,8 +5,9 @@ package de.uniol.inf.is.odysseus.scheduler.slamodel.unit;
  * 
  * @author Thomas Vogelgesang
  * 
- * 
+ * abbreviations of units are used because some of them are already defined as
+ * parser tokens, so they can't be read as identifier
  */
 public enum TimeUnit {
-	milliseconds, seconds, minutes, hours, days, months;
+	ms, s, m, h, d, months;
 }

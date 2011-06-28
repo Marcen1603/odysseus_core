@@ -8,14 +8,14 @@ import de.uniol.inf.is.odysseus.scheduler.slamodel.unit.RatioUnit;
  * @author Thomas Vogelgesang
  *
  */
-public class Accuracy extends Metric<Float, RatioUnit> {
+public class Accuracy extends Metric<RatioUnit> {
 
 	/**
 	 * Creates a new {@link Accuracy} metric
 	 * @param value the value of the metric
 	 * @param unit the unit of the metric
 	 */
-	public Accuracy(Float value, RatioUnit unit) {
+	public Accuracy(double value, RatioUnit unit) {
 		super(value, unit);
 	}
 

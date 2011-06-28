@@ -12,7 +12,7 @@ public class PercentagePenalty extends AbstractPenalty {
 	/**
 	 * the percentage that must be payed if the service level is violated
 	 */
-	private float percentage;
+	private double percentage;
 
 	/**
 	 * creates a new percentage penalty
@@ -20,7 +20,7 @@ public class PercentagePenalty extends AbstractPenalty {
 	 * @param percentage
 	 *            the percentage
 	 */
-	public PercentagePenalty(float percentage) {
+	public PercentagePenalty(double percentage) {
 		this.setPercentage(percentage);
 	}
 
@@ -29,14 +29,14 @@ public class PercentagePenalty extends AbstractPenalty {
 	 * the service
 	 */
 	@Override
-	public int getCost() {
-		return (int) (this.getServiceLevel().getSla().getPrice() * percentage);
+	public double getCost() {
+		return this.getServiceLevel().getSla().getPrice() * percentage;
 	}
 
 	/**
 	 * @return the percentage
 	 */
-	public float getPercentage() {
+	public double getPercentage() {
 		return percentage;
 	}
 
@@ -44,10 +44,19 @@ public class PercentagePenalty extends AbstractPenalty {
 	 * sets a new percentage
 	 * @param percentage the new percentage
 	 */
-	public void setPercentage(float percentage) {
+	public void setPercentage(double percentage) {
 		if (percentage < 0.0f)
 			throw new IllegalArgumentException("negative percentage");
 		this.percentage = percentage;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Percentage Penalty (").append(this.percentage).append(")");
+		
+		return sb.toString();
+	}
+	
 }

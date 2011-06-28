@@ -1,0 +1,10 @@
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+CREATE SLA testSLA WITH
+	METRIC (latency, 2.0, ms), 
+	SCOPE (number), 
+	IN (10, d), 
+	SERVICELEVEL (5, PENALTY (absolute, 500)), 
+	SERVICELEVEL (10, PENALTY (absolute, 1000))

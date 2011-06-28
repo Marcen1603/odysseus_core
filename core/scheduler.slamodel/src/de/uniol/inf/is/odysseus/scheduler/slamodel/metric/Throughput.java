@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.scheduler.slamodel.unit.ThroughputUnit;
  * @author Thomas Vogelgesang
  * 
  */
-public class Throughput extends Metric<Integer, ThroughputUnit> {
+public class Throughput extends Metric<ThroughputUnit> {
 
 	/**
 	 * creates a new throughput metric
@@ -19,7 +19,7 @@ public class Throughput extends Metric<Integer, ThroughputUnit> {
 	 * @param unit
 	 *            the metric's unit
 	 */
-	public Throughput(Integer value, ThroughputUnit unit) {
+	public Throughput(double value, ThroughputUnit unit) {
 		super(value, unit);
 	}
 

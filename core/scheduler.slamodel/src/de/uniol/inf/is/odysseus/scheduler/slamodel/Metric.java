@@ -6,7 +6,7 @@ package de.uniol.inf.is.odysseus.scheduler.slamodel;
  * @author Thomas Vogelgesang
  * 
  */
-public abstract class Metric<V, U> {
+public abstract class Metric<U> {
 	/**
 	 * the value of the Metric that should be met. it must only be set, if the
 	 * scope of the sla is of type
@@ -14,7 +14,7 @@ public abstract class Metric<V, U> {
 	 * otherwise the values that must be met are defined by the threshold of the
 	 * service levels
 	 */
-	private V value;
+	private double value;
 	/**
 	 * the unit of this value.
 	 */
@@ -30,7 +30,7 @@ public abstract class Metric<V, U> {
 	 * @param unit
 	 *            the unit of the value
 	 */
-	public Metric(V value, U unit) {
+	public Metric(double value, U unit) {
 		super();
 		this.value = value;
 		this.unit = unit;
@@ -42,7 +42,7 @@ public abstract class Metric<V, U> {
 	 * @param value
 	 *            the new value
 	 */
-	public void setValue(V value) {
+	public void setValue(double value) {
 		this.value = value;
 	}
 
@@ -51,7 +51,7 @@ public abstract class Metric<V, U> {
 	 *         not of type
 	 *         {@link de.uniol.inf.is.odysseus.scheduler.slamodel.scope.Number}.
 	 */
-	public V getValue() {
+	public double getValue() {
 		return value;
 	}
 
@@ -64,7 +64,7 @@ public abstract class Metric<V, U> {
 	public void setUnit(U unit) {
 		this.unit = unit;
 	}
-
+	
 	/**
 	 * @return the unit of the metric
 	 */
@@ -81,4 +81,15 @@ public abstract class Metric<V, U> {
 	 */
 	public abstract boolean valueIsMin();
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("METRIC ").append(this.getClass().getSimpleName()).append(
+				" (").append(this.value).append(", ").append(this.unit).append(
+						")");
+		
+		return sb.toString();
+	}
+	
 }

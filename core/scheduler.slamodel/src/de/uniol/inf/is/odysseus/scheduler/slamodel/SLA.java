@@ -29,18 +29,18 @@ public class SLA {
 	/**
 	 * the metric used in this sla.
 	 */
-	private Metric<?, ?> metric;
+	private Metric<?> metric;
 	/**
 	 * the list of service levels defined by the sla.
 	 */
-	private List<ServiceLevel<?>> serviceLevel;
+	private List<ServiceLevel> serviceLevel;
 
 	/**
 	 * creates a new sla.
 	 */
 	public SLA() {
 		super();
-		this.serviceLevel = new ArrayList<ServiceLevel<?>>();
+		this.serviceLevel = new ArrayList<ServiceLevel>();
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class SLA {
 	 * 
 	 * @return the metric used for the sla
 	 */
-	public Metric<?, ?> getMetric() {
+	public Metric<?> getMetric() {
 		return metric;
 	}
 
@@ -127,7 +127,7 @@ public class SLA {
 	 * @param metric
 	 *            the new metric
 	 */
-	public void setMetric(Metric<?, ?> metric) {
+	public void setMetric(Metric<?> metric) {
 		this.metric = metric;
 	}
 
@@ -138,7 +138,7 @@ public class SLA {
 	 *         valuable service level, the last entry is the less valuable
 	 *         service level
 	 */
-	public List<ServiceLevel<?>> getServiceLevel() {
+	public List<ServiceLevel> getServiceLevel() {
 		return serviceLevel;
 	}
 
@@ -150,7 +150,7 @@ public class SLA {
 	 * @throws IllegalArgumentException
 	 *             iff {@link serviceLevel} is null
 	 */
-	public void setServiceLevel(List<ServiceLevel<?>> serviceLevel) {
+	public void setServiceLevel(List<ServiceLevel> serviceLevel) {
 		if (serviceLevel == null)
 			throw new IllegalArgumentException("null");
 		this.serviceLevel = serviceLevel;
@@ -161,9 +161,23 @@ public class SLA {
 	 * 
 	 * @return
 	 */
-	public int getMaxPenalty() {
+	public double getMaxPenalty() {
 		return this.serviceLevel.get(this.serviceLevel.size() - 1).getPenalty()
 				.getCost();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SLA (").append(this.name).append(", ");
+		sb.append(this.metric).append(", ").append(this.scope);
+		sb.append(", ").append(this.window);
+		
+		for (ServiceLevel sl : this.serviceLevel) {
+			sb.append(", ").append(sl);
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+	
 }

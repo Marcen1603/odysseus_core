@@ -9,14 +9,14 @@ import de.uniol.inf.is.odysseus.scheduler.slamodel.unit.TimeUnit;
  * @author Thomas Vogelgesang
  * 
  */
-public class Latency extends Metric<Integer, TimeUnit> {
+public class Latency extends Metric<TimeUnit> {
 
 	/**
 	 * creates a new metric for latency
 	 * @param value the metric's value
 	 * @param unit the metric's unit
 	 */
-	public Latency(Integer value, TimeUnit unit) {
+	public Latency(double value, TimeUnit unit) {
 		super(value, unit);
 	}
 

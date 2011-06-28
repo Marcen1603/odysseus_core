@@ -77,6 +77,7 @@ public class Window {
 	 * returns the window length in milliseconds
 	 * 
 	 * Attention: a month is statically defined as 30 days!
+	 * 
 	 * @return
 	 */
 	public long lengthToMilliseconds() {
@@ -84,19 +85,29 @@ public class Window {
 		switch (this.unit) {
 		case months:
 			tempLength *= 30;
-		case days:
+		case d:
 			tempLength *= 24;
-		case hours:
+		case h:
 			tempLength *= 60;
-		case minutes:
+		case m:
 			tempLength *= 60;
-		case seconds:
+		case s:
 			tempLength *= 1000;
-		case milliseconds:
+		case ms:
 		default:
 			break;
 		}
 		return tempLength;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(" Window (").append(this.length).append(", ")
+				.append(this.unit).append(")");
+
+		return sb.toString();
 	}
 
 }

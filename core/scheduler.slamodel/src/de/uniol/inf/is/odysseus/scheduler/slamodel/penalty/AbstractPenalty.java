@@ -13,7 +13,7 @@ public abstract class AbstractPenalty implements Penalty {
 	/**
 	 * reference to the service level that contains the penalty
 	 */
-	private ServiceLevel<?> serviceLevel;
+	private ServiceLevel serviceLevel;
 
 	/**
 	 * creates a new Penalty object
@@ -28,7 +28,7 @@ public abstract class AbstractPenalty implements Penalty {
 	 * @param serviceLevel
 	 *            the containing service level
 	 */
-	public void setServiceLevel(ServiceLevel<?> serviceLevel) {
+	public void setServiceLevel(ServiceLevel serviceLevel) {
 		this.serviceLevel = serviceLevel;
 	}
 
@@ -36,7 +36,7 @@ public abstract class AbstractPenalty implements Penalty {
 	 * 
 	 * @return the containing service level of the penalty
 	 */
-	public ServiceLevel<?> getServiceLevel() {
+	public ServiceLevel getServiceLevel() {
 		return serviceLevel;
 	}
 

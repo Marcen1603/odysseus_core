@@ -7,13 +7,13 @@ package de.uniol.inf.is.odysseus.scheduler.slamodel;
  *
  * @param <T> the data type of the threshold value
  */
-public class ServiceLevel<T> {
+public class ServiceLevel {
 	/**
 	 * the threshold value of the service level. this value must be reached by 
 	 * the sla conformance. if the threshold is violated the given penalty is 
 	 * payable
 	 */
-	private T threshold;
+	private double threshold;
 	/**
 	 * the penalty that is payable if this service level is violated
 	 */
@@ -34,14 +34,14 @@ public class ServiceLevel<T> {
 	 * sets the threshold of the sla
 	 * @param threshold the new threshold
 	 */
-	public void setThreshold(T threshold) {
+	public void setThreshold(double threshold) {
 		this.threshold = threshold;
 	}
 
 	/**
 	 * @return the trheshold of this sla
 	 */
-	public T getThreshold() {
+	public double getThreshold() {
 		return threshold;
 	}
 
@@ -75,6 +75,14 @@ public class ServiceLevel<T> {
 	 */
 	public Penalty getPenalty() {
 		return penalty;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Service Level (").append(this.threshold).append(", ").
+		append(this.penalty).append(")");
+		return sb.toString();
 	}
 	
 }
