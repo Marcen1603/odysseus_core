@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="MEP">
-   <implementation class="de.uniol.inf.is.odysseus.mep.MEP"/>
-   <reference bind="addFunctionProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.mep.IFunctionProvider" policy="dynamic" unbind="removeFunctionProvider"/>
-</scr:component>
