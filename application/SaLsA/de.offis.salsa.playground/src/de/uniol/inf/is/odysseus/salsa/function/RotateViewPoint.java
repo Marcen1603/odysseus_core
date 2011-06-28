@@ -14,7 +14,7 @@ public class RotateViewPoint extends AbstractFunction<Object> {
     }
 
     @Override
-    public Class<?>[] getAcceptedTypes(int argPos) {
+    public String[] getAcceptedTypes(int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -23,9 +23,10 @@ public class RotateViewPoint extends AbstractFunction<Object> {
                     + " argument(s): A geometry and an angle.");
         }
         else {
-            final Class<?>[] accTypes = new Class<?>[2];
-            accTypes[0] = List.class;
-            accTypes[1] = double.class;
+        	// @Kai: richtig so?
+            final String[] accTypes = new String[2];
+            accTypes[0] = "List";
+            accTypes[1] = "Double";
             return accTypes;
         }
     }
@@ -50,8 +51,8 @@ public class RotateViewPoint extends AbstractFunction<Object> {
     }
 
     @Override
-    public Class<? extends Object> getReturnType() {
-        return List.class;
+    public String getReturnType() {
+        return "List";
     }
 
 }

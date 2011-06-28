@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class ExtractSegments extends AbstractFunction<Object> {
 
     @Override
-    public Class<?>[] getAcceptedTypes(final int argPos) {
+    public String[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -19,9 +19,9 @@ public class ExtractSegments extends AbstractFunction<Object> {
                     + " argument(s): A matrix and a threashold.");
         }
         else {
-            final Class<?>[] accTypes = new Class<?>[2];
-            accTypes[0] = Coordinate[].class;
-            accTypes[1] = double.class;
+            final String[] accTypes = new String[2];
+            accTypes[0] = "Coordinate"; // Coordinate[].class;
+            accTypes[1] = "Double";
             return accTypes;
         }
     }
@@ -32,8 +32,8 @@ public class ExtractSegments extends AbstractFunction<Object> {
     }
 
     @Override
-    public Class<? extends Object> getReturnType() {
-        return List.class;
+    public String getReturnType() {
+        return "List";
     }
 
     @Override
