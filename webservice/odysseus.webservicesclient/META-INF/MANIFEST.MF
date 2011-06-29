@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Webservicesclient
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.webservicesclient
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.webservicesclient.Activator
+Import-Package: org.apache.cxf.binding,
+ org.apache.cxf.endpoint,
+ org.apache.cxf.endpoint.dynamic,
+ org.apache.cxf.jaxws.endpoint.dynamic,
+ org.apache.cxf.service,
+ org.apache.cxf.service.model,
+ org.osgi.framework;version="1.3.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.uniol.inf.is.odysseus.webservicesclient
