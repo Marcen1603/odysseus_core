@@ -290,6 +290,18 @@
          <keyword
                name="LIST">
          </keyword>
+         <keyword
+               name="SLA">
+         </keyword>
+         <keyword
+               name="SCOPE">
+         </keyword>
+         <keyword
+               name="SERVICELEVEL">
+         </keyword>
+         <keyword
+               name="PENALTY">
+         </keyword>
       </group>
    </extension>
 
