@@ -5,9 +5,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ICostFunction;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyAverage;
+import de.uniol.inf.is.odysseus.slamodel.SLA;
 
 public class QuadraticCFLatencyAverageTest {
 	

@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.test;
 
-import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ICostFunction;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyAverage;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyNumber;
+import de.uniol.inf.is.odysseus.slamodel.SLA;
 
 public class TestCostFunctions {
 

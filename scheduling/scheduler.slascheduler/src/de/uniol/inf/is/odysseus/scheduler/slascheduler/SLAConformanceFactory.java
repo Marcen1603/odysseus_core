@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.metric.Latency;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.scope.Average;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.scope.Number;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.scope.Single;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyAverageConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyNumberConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencySingleConformance;
+import de.uniol.inf.is.odysseus.slamodel.SLA;
+import de.uniol.inf.is.odysseus.slamodel.metric.Latency;
+import de.uniol.inf.is.odysseus.slamodel.scope.Average;
+import de.uniol.inf.is.odysseus.slamodel.scope.Number;
+import de.uniol.inf.is.odysseus.slamodel.scope.Single;
 
 /**
  * Factory for building sla conformance objects

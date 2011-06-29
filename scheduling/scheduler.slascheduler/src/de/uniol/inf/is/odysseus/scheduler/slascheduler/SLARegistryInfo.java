@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import de.uniol.inf.is.odysseus.ISubscribable;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
+import de.uniol.inf.is.odysseus.slamodel.SLA;
 
 /**
  * container for all data items managed by the maps of the SLARegistry

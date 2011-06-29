@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.metric.Latency;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.placement.LatencySLAConformancePlacement;
+import de.uniol.inf.is.odysseus.slamodel.SLA;
+import de.uniol.inf.is.odysseus.slamodel.metric.Latency;
 
 /**
  * Factory for building strategies to place sla conformance operators in
