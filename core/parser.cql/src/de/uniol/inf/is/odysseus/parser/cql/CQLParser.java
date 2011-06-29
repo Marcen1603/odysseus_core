@@ -1220,8 +1220,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sla.setServiceLevel(serviceLevels);
 
 		// save sla
-		SLADictionary.getInstance().addSLA(slaName, sla);
-		System.out.println("Added new Service Level Agreement: " +sla);
+		if (!SLADictionary.getInstance().exists(slaName)) {
+			SLADictionary.getInstance().addSLA(slaName, sla);
+			System.out.println("Added new Service Level Agreement: " +sla);
+		} else {
+			throw new RuntimeException("A Serivce Level Agreement with the " + 
+					"given name already exists: " + slaName);
+		}
+		
+		
 
 		return null;
 	}
