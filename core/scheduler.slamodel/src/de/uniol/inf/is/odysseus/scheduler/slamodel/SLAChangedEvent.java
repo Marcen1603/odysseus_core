@@ -1,7 +1,6 @@
-package de.uniol.inf.is.odysseus.scheduler.slascheduler;
+package de.uniol.inf.is.odysseus.scheduler.slamodel;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.slamodel.SLA;
 
 /**
  * Event marking the change of a sla and related data. currently only adding and

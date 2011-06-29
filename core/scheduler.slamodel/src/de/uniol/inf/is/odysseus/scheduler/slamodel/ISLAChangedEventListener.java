@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scheduler.slascheduler;
+package de.uniol.inf.is.odysseus.scheduler.slamodel;
 
 /**
  * Interface for event listeners of {@link SLAChangedEvent}

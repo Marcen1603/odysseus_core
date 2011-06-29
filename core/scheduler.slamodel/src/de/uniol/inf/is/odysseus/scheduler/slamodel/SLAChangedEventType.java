@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scheduler.slascheduler;
+package de.uniol.inf.is.odysseus.scheduler.slamodel;
 
 /**
  * Enumeration representing different event types for {@link SLAChangedEvent}.

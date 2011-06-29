@@ -13,3 +13,4 @@ Export-Package: de.uniol.inf.is.odysseus.scheduler.slamodel,
  de.uniol.inf.is.odysseus.scheduler.slamodel.penalty,
  de.uniol.inf.is.odysseus.scheduler.slamodel.scope,
  de.uniol.inf.is.odysseus.scheduler.slamodel.unit
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
