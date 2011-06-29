@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.mep.matrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /*
  * Diese Klasse dient dazu, zwei Matrizen zu subtrahieren.
@@ -58,11 +59,11 @@ public class MatrixSub extends AbstractFunction<Object> {
 	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
 	 */
 	@Override
-	public String getReturnType() {
-		return "Matrix";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.MATRIX_DOUBLE;
 	}
 	
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -70,8 +71,8 @@ public class MatrixSub extends AbstractFunction<Object> {
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			String[] accTypes = new String[1];
-			accTypes[0] = "Matrix";
+			SDFDatatype[] accTypes = new SDFDatatype[1];
+			accTypes[0] = SDFDatatype.MATRIX_DOUBLE;
 			return accTypes;
 		}
 	}

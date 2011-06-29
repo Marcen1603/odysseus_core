@@ -21,6 +21,7 @@ import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.OrOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Jonas Jacobi
@@ -114,7 +115,7 @@ public class ExpressionOptimizer {
 				function.setArgument(0, c);
 				while (i.hasNext()) {
 					function.setArgument(1, i.next());
-					c = new Constant<Object>(function.getValue(), "Object");
+					c = new Constant<Object>(function.getValue(), SDFDatatype.OBJECT);
 					function.setArgument(0, c);
 				}
 				return c;
@@ -185,16 +186,16 @@ public class ExpressionOptimizer {
 			}
 
 			if (isAllInputsConstant && !function.isContextDependent()) {
-				return new Constant<Object>(function.getValue(), "Object");
+				return new Constant<Object>(function.getValue(), SDFDatatype.OBJECT);
 			}
 
 			if (function.getClass() == AndOperator.class) {
 				return isConstantPredicate(function.getArguments(), false) ? new Constant<Boolean>(
-						false, "Boolean") : function;
+						false, SDFDatatype.BOOLEAN) : function;
 			} else {
 				if (function.getClass() == OrOperator.class) {
 					return isConstantPredicate(function.getArguments(), true) ? new Constant<Boolean>(
-							true, "Boolean") : function;
+							true, SDFDatatype.BOOLEAN) : function;
 				} else {
 					return function;
 				}

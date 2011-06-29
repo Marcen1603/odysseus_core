@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class Now extends AbstractFunction<Long> {
 
@@ -34,11 +35,11 @@ public class Now extends AbstractFunction<Long> {
 	}
 
 	@Override
-	public String getReturnType() {
-		return "Long";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.LONG;
 	}
 
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		throw new IllegalArgumentException("Now has no arguments.");
 	}
 }

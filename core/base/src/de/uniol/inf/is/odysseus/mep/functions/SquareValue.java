@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /*
  * Diese Klasse dient dazu, einen �bergebenen Double-Wert zu quadrieren.
@@ -51,11 +52,11 @@ public class SquareValue extends AbstractFunction<Object>{
 	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
 	 */
 	@Override
-	public String getReturnType() {
-		return "Double";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.DOUBLE;
 	}
 	
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -63,11 +64,11 @@ public class SquareValue extends AbstractFunction<Object>{
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			String[] accTypes = new String[4];
-			accTypes[0] = "Integer";
-			accTypes[1] = "Long";
-			accTypes[2] = "Float";
-			accTypes[3] = "Double";
+			SDFDatatype[] accTypes = new SDFDatatype[4];
+			accTypes[0] = SDFDatatype.INTEGER;
+			accTypes[1] = SDFDatatype.LONG;
+			accTypes[2] = SDFDatatype.FLOAT;
+			accTypes[3] = SDFDatatype.DOUBLE;
 			return accTypes;
 		}
 	}

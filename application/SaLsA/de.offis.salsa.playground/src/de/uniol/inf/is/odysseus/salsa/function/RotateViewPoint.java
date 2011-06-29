@@ -5,6 +5,7 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class RotateViewPoint extends AbstractFunction<Object> {
 
@@ -14,7 +15,7 @@ public class RotateViewPoint extends AbstractFunction<Object> {
     }
 
     @Override
-    public String[] getAcceptedTypes(int argPos) {
+    public SDFDatatype[] getAcceptedTypes(int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -24,9 +25,9 @@ public class RotateViewPoint extends AbstractFunction<Object> {
         }
         else {
         	// @Kai: richtig so?
-            final String[] accTypes = new String[2];
-            accTypes[0] = "List";
-            accTypes[1] = "Double";
+            final SDFDatatype[] accTypes = new SDFDatatype[2];
+//            accTypes[0] = "List";
+//            accTypes[1] = "Double";
             return accTypes;
         }
     }
@@ -51,8 +52,9 @@ public class RotateViewPoint extends AbstractFunction<Object> {
     }
 
     @Override
-    public String getReturnType() {
-        return "List";
+    public SDFDatatype getReturnType() {
+//        return "List";
+    	return null;
     }
 
 }

@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class DoubleToLongFunction extends AbstractFunction<Long> {
 
@@ -34,12 +35,12 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 	}
 
 	@Override
-	public String getReturnType() {
-		return "Long";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.LONG;
 	}
 
 	
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -47,8 +48,8 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 			throw new IllegalArgumentException("doubleToLong has only 1 argument.");
 		}
 		else{
-			String[] accTypes = new String[1];
-			accTypes[0] = "Double";
+			SDFDatatype[] accTypes = new SDFDatatype[1];
+			accTypes[0] = SDFDatatype.DOUBLE;
 			return accTypes;
 		}
 	}

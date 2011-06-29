@@ -17,12 +17,14 @@ package de.uniol.inf.is.odysseus.mep;
 import java.util.Collections;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+
 public class Constant<T> implements IExpression<T> {
 
 	private final T value;
-	private String type;
+	private SDFDatatype type;
 
-	public Constant(T value, String type) {
+	public Constant(T value, SDFDatatype type) {
 		this.value = value;
 		this.type = type;
 	}
@@ -50,7 +52,7 @@ public class Constant<T> implements IExpression<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String getReturnType() {
+	public SDFDatatype getReturnType() {
 		return type;
 	}
 

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.spatial.functions;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author abolles
@@ -36,7 +37,7 @@ public class SpatialEquals extends AbstractFunction {
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
 	 */
 	@Override
-	public String[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(int argPos) {
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -44,14 +45,14 @@ public class SpatialEquals extends AbstractFunction {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
-			String[] accTypes = new String[7];
-			accTypes[0] = "SpatialPoint";
-			accTypes[1] = "SpatialMultiPoint";
-			accTypes[2] = "SpatialLine";
-			accTypes[3] = "SpatialMultiLine";
-			accTypes[4] = "SpatialPolygon";
-			accTypes[5] = "SpatialMultiPolygon";
-			accTypes[6] = "Spatial";
+			SDFDatatype[] accTypes = new SDFDatatype[7];
+			accTypes[0] = SDFDatatype.SPATIAL_POINT;
+			accTypes[1] = SDFDatatype.SPATIAL_MULTI_POINT;
+			accTypes[2] = SDFDatatype.SPATIAL_LINE;
+			accTypes[3] = SDFDatatype.SPATIAL_MULTI_LINE;
+			accTypes[4] = SDFDatatype.SPATIAL_POLYGON;
+			accTypes[5] = SDFDatatype.SPATIAL_MULTI_POLYGON;
+			accTypes[6] = SDFDatatype.SPATIAL;
 			return accTypes;
 		}
 	}
@@ -76,8 +77,8 @@ public class SpatialEquals extends AbstractFunction {
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
 	 */
 	@Override
-	public String getReturnType() {
-		return "Boolean";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.BOOLEAN;
 	}
 
 }

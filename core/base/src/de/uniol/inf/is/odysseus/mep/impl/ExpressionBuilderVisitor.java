@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
@@ -55,7 +56,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
 	@Override
 	public Object visit(ASTConstant node, Object data) {
-		return new Constant<Object>(node.getValue(), "Object");
+		return new Constant<Object>(node.getValue(), SDFDatatype.OBJECT);
 	}
 
 	@Override

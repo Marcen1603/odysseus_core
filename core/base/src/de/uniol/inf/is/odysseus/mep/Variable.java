@@ -14,22 +14,23 @@
   */
 package de.uniol.inf.is.odysseus.mep;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
+
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class Variable implements IExpression<Object> {
 	private Object value;
 	private final String identifier;
-	private final String type;
+	private final SDFDatatype type;
 	private Class<?>[] acceptedTypes;
 
 	public Variable(String id) {
 		this.identifier = id;
-		this.type = "Object";
+		this.type = SDFDatatype.OBJECT;
 	}
 
-	public Variable(String id, String type) {
+	public Variable(String id, SDFDatatype type) {
 		this.identifier = id;
 		this.type = type;
 	}
@@ -81,7 +82,7 @@ public class Variable implements IExpression<Object> {
 	}
 
 	@Override
-	public String getReturnType() {
+	public SDFDatatype getReturnType() {
 		return type;
 	}
 

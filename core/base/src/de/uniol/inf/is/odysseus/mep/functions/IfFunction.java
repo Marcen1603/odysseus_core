@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class IfFunction extends AbstractFunction<Object> {
 
@@ -34,17 +35,17 @@ public class IfFunction extends AbstractFunction<Object> {
 	}
 
 	@Override
-	public String getReturnType() {
+	public SDFDatatype getReturnType() {
 		// if then and else arguments have the same type, we are sure to return
 		// a value of that type
 		if (getArguments()[1].getReturnType() == getArguments()[2].getReturnType()) {
 			return getArguments()[1].getReturnType();
 		}
 		// otherwise we make no guarantees
-		return "Object";
+		return SDFDatatype.OBJECT;
 	}
 	
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -52,13 +53,13 @@ public class IfFunction extends AbstractFunction<Object> {
 			throw new IllegalArgumentException("abs has only 1 argument.");
 		}
 		else{
-			String[] accTypes = new String[1];
+			SDFDatatype[] accTypes = new SDFDatatype[1];
 			switch (argPos){
-			case 0: accTypes[0] = "Boolean";
+			case 0: accTypes[0] = SDFDatatype.BOOLEAN;
 					break;
-			case 1:	accTypes[0] = "Object";
+			case 1:	accTypes[0] = SDFDatatype.OBJECT;
 					break;
-			case 2: accTypes[0] = "Object";
+			case 2: accTypes[0] = SDFDatatype.OBJECT;
 					break;
 			}
 			

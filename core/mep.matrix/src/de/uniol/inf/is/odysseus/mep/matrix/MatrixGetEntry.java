@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.mep.matrix;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 
 /*
@@ -51,11 +52,11 @@ public class MatrixGetEntry extends AbstractFunction<Object>{
 	 * Liefert den Klassentyp des Wertes der durch getValue() berechnet wird.
 	 */
 	@Override
-	public String getReturnType() {
-		return "Double";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.DOUBLE;
 	}
 
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -63,8 +64,8 @@ public class MatrixGetEntry extends AbstractFunction<Object>{
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			String[] accTypes = new String[1];
-			accTypes[0] = "Integer";
+			SDFDatatype[] accTypes = new SDFDatatype[1];
+			accTypes[0] = SDFDatatype.INTEGER;
 			return accTypes;
 		}
 	}

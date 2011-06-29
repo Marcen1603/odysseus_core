@@ -214,7 +214,7 @@ public class SDFExpression implements Serializable, IClone {
 
 
 	
-	public String getType() {
+	public SDFDatatype getType() {
 		return this.expression.getReturnType();
 	}
 

@@ -6,11 +6,12 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class ExtractSegments extends AbstractFunction<Object> {
 
     @Override
-    public String[] getAcceptedTypes(final int argPos) {
+    public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -19,9 +20,15 @@ public class ExtractSegments extends AbstractFunction<Object> {
                     + " argument(s): A matrix and a threashold.");
         }
         else {
-            final String[] accTypes = new String[2];
-            accTypes[0] = "Coordinate"; // Coordinate[].class;
-            accTypes[1] = "Double";
+        	final SDFDatatype[] accTypes = new SDFDatatype[1];
+        	switch(argPos){
+            case 0:
+            	accTypes[0] = SDFDatatype.SPATIAL_MULTI_POINT; // Coordinate[].class;	
+            	break;
+            case 1:
+            	accTypes[1] = SDFDatatype.DOUBLE;
+            	break;
+        	}
             return accTypes;
         }
     }
@@ -32,8 +39,8 @@ public class ExtractSegments extends AbstractFunction<Object> {
     }
 
     @Override
-    public String getReturnType() {
-        return "List";
+    public SDFDatatype getReturnType() {
+    	return SDFDatatype.SPATIAL_MULTI_LINE; // 
     }
 
     @Override

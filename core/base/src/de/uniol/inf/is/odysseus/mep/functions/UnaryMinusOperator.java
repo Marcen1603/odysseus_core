@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 
@@ -34,8 +35,8 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 	}
 
 	@Override
-	public String getReturnType() {
-		return "Double";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.DOUBLE;
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 		return ASSOCIATIVITY.RIGHT_TO_LEFT;
 	}
 	
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -51,11 +52,11 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			String[] accTypes = new String[4];
-			accTypes[0] = "Integer";
-			accTypes[1] = "Long";
-			accTypes[2] = "Float";
-			accTypes[3] = "Double";
+			SDFDatatype[] accTypes = new SDFDatatype[1];
+			accTypes[0] = SDFDatatype.INTEGER;
+			accTypes[1] = SDFDatatype.LONG;
+			accTypes[2] = SDFDatatype.DOUBLE;
+			accTypes[3] = SDFDatatype.FLOAT;
 			return accTypes;
 		}
 	}
