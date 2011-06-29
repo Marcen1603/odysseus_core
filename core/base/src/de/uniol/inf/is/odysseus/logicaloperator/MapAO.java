@@ -57,7 +57,7 @@ public class MapAO extends UnaryLogicalOp {
 					attr = new SDFAttribute(expr.getSingleAttribute());
 				} else {
 					attr = new SDFAttribute(expr.getExpression());
-					attr.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(expr.getMEPExpression().getReturnType()));
+					attr.setDatatype(expr.getMEPExpression().getReturnType());
 				}
 				outputSchema.add(attr);
 

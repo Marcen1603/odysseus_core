@@ -12,39 +12,36 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
+package de.uniol.inf.is.odysseus.mep.functions;
 
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class DolToEur extends AbstractFunction<Double> {
+public class NotOperator extends AbstractUnaryOperator<Boolean> {
 
-	private static double EXCHANGERATE = 1d / 1.55d;
+	@Override
+	public int getPrecedence() {
+		return 3;
+	}
 
 	@Override
 	public String getSymbol() {
-		return "DolToEur";
-	}
-
-	public static void setExchangeRate(double value) {
-		EXCHANGERATE = value;
+		return "!";
 	}
 
 	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public Double getValue() {
-		double value = ((Number) getInputValue(0)).doubleValue();
-		value *= EXCHANGERATE;
-		return value;
+	public Boolean getValue() {
+		return !((Boolean) getInputValue(0));
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
+		return SDFDatatype.BOOLEAN;
+	}
+
+	@Override
+	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+		return ASSOCIATIVITY.RIGHT_TO_LEFT;
 	}
 	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
@@ -52,11 +49,11 @@ public class DolToEur extends AbstractFunction<Double> {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if(argPos > 0){
-			throw new IllegalArgumentException("dolToEur has only 1 argument.");
+			throw new IllegalArgumentException("! has only 1 argument.");
 		}
 		else{
 			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.DOUBLE;
+			accTypes[0] = SDFDatatype.BOOLEAN;
 			return accTypes;
 		}
 	}

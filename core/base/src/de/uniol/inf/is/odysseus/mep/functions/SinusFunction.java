@@ -12,23 +12,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
+package de.uniol.inf.is.odysseus.mep.functions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class DolToEur extends AbstractFunction<Double> {
-
-	private static double EXCHANGERATE = 1d / 1.55d;
-
-	@Override
-	public String getSymbol() {
-		return "DolToEur";
-	}
-
-	public static void setExchangeRate(double value) {
-		EXCHANGERATE = value;
-	}
+public class SinusFunction extends AbstractFunction<Double> {
 
 	@Override
 	public int getArity() {
@@ -36,30 +25,34 @@ public class DolToEur extends AbstractFunction<Double> {
 	}
 
 	@Override
+	public String getSymbol() {
+		return "sin";
+	}
+
+	@Override
 	public Double getValue() {
-		double value = ((Number) getInputValue(0)).doubleValue();
-		value *= EXCHANGERATE;
-		return value;
+		return Math.sin(getNumericalInputValue(0));
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
 		return SDFDatatype.DOUBLE;
 	}
-	
+
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if(argPos > 0){
-			throw new IllegalArgumentException("dolToEur has only 1 argument.");
+			throw new IllegalArgumentException("MatrixTrans has only 1 argument.");
 		}
 		else{
 			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.DOUBLE;
+			accTypes[0] = SDFDatatype.INTEGER;
+			accTypes[1] = SDFDatatype.LONG;
+			accTypes[2] = SDFDatatype.DOUBLE;
+			accTypes[3] = SDFDatatype.FLOAT;
 			return accTypes;
 		}
 	}
-
-
 }

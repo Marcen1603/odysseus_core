@@ -20,6 +20,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
 import java.util.Vector;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka [christian@kuka.cc]
@@ -100,11 +101,11 @@ public class Polygon extends AbstractFunction<Double> {
 	}
 
 	@Override
-	public String getReturnType() {
-		return "Double";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.DOUBLE;
 	}
 	
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -112,16 +113,8 @@ public class Polygon extends AbstractFunction<Double> {
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			String[] accTypes = new String[1];
-			
-			switch(argPos){
-			case 0: accTypes[0] = "Vector";
-					break;
-			case 1: 
-			case 2: accTypes[0] = "Vector";
-					break;
-			}
-			
+			SDFDatatype[] accTypes = new SDFDatatype[1];
+			accTypes[0] = SDFDatatype.VECTOR_DOUBLE;			
 			return accTypes;
 		}
 	}

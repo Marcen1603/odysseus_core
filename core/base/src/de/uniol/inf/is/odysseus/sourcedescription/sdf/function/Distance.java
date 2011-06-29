@@ -18,6 +18,7 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -61,12 +62,12 @@ public class Distance extends AbstractFunction<Double> {
 	}
 
 	@Override
-	public String getReturnType() {
-		return "Double";
+	public SDFDatatype getReturnType() {
+		return SDFDatatype.DOUBLE;
 	}
 
 	
-	public String[] getAcceptedTypes(int argPos){
+	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
@@ -74,8 +75,8 @@ public class Distance extends AbstractFunction<Double> {
 			throw new IllegalArgumentException("abs has only 4 arguments.");
 		}
 		else{
-			String[] accTypes = new String[1];
-			accTypes[0] = "Double";
+			SDFDatatype[] accTypes = new SDFDatatype[1];
+			accTypes[0] = SDFDatatype.DOUBLE;
 			return accTypes;
 		}
 	}

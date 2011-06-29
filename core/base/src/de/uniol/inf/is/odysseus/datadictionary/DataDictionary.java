@@ -94,12 +94,14 @@ public class DataDictionary implements IDataDictionary {
 			/**
 			 * fill in the built-in datatypes
 			 */
+			datatypes.put(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
 			datatypes.put(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
 			datatypes.put(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
 			datatypes.put(SDFDatatype.END_TIMESTAMP.getURI(), SDFDatatype.END_TIMESTAMP);
 			datatypes.put(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
 			datatypes.put(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
 			datatypes.put(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
+			datatypes.put(SDFDatatype.SPATIAL_LINE.getURI(), SDFDatatype.SPATIAL);
 			datatypes.put(SDFDatatype.SPATIAL_LINE.getURI(), SDFDatatype.SPATIAL_LINE);
 			datatypes.put(SDFDatatype.SPATIAL_MULTI_LINE.getURI(), SDFDatatype.SPATIAL_MULTI_LINE);
 			datatypes.put(SDFDatatype.SPATIAL_MULTI_POINT.getURI(), SDFDatatype.SPATIAL_MULTI_POINT);
@@ -109,6 +111,9 @@ public class DataDictionary implements IDataDictionary {
 			datatypes.put(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
 			datatypes.put(SDFDatatype.START_TIMESTAMP.getURI(), SDFDatatype.START_TIMESTAMP);
 			datatypes.put(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
+			datatypes.put(SDFDatatype.MV.getURI(), SDFDatatype.MV);
+			datatypes.put(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
+			datatypes.put(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
 			
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -12,47 +12,52 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.sourcedescription.sdf.function;
+package de.uniol.inf.is.odysseus.mep.impl;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class DolToEur extends AbstractFunction<Double> {
+public class MatrixLine extends AbstractFunction<double[]> {
 
-	private static double EXCHANGERATE = 1d / 1.55d;
-
-	@Override
-	public String getSymbol() {
-		return "DolToEur";
-	}
-
-	public static void setExchangeRate(double value) {
-		EXCHANGERATE = value;
+	private int arity;
+	
+	public MatrixLine(IExpression<?>[] values) {
+		this.arity = values.length;
+		setArguments(values);
 	}
 
 	@Override
 	public int getArity() {
-		return 1;
+		return arity;
 	}
 
 	@Override
-	public Double getValue() {
-		double value = ((Number) getInputValue(0)).doubleValue();
-		value *= EXCHANGERATE;
+	public String getSymbol() {
+		return "__matrixline";
+	}
+
+	@Override
+	public double[] getValue() {
+		int arity = getArity();
+		double[] value = new double[arity];
+		for (int i = 0; i < arity; ++i) {
+			value[i] = (Double) getArgument(i).getValue();
+		}
 		return value;
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
+		return SDFDatatype.VECTOR_DOUBLE;
 	}
-	
+
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("dolToEur has only 1 argument.");
+		if(argPos > arity){
+			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
 			SDFDatatype[] accTypes = new SDFDatatype[1];
@@ -60,6 +65,4 @@ public class DolToEur extends AbstractFunction<Double> {
 			return accTypes;
 		}
 	}
-
-
 }

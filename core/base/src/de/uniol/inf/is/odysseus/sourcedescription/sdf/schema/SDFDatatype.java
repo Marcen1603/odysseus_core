@@ -26,6 +26,11 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	}
 
 	/**
+	 * abstract type describing that each value is allowed
+	 */
+	public static final SDFDatatype OBJECT = new SDFDatatype("Object");
+	
+	/**
 	 * predefined datatypes
 	 */
 	public static final SDFDatatype STRING = new SDFDatatype("String");
@@ -34,6 +39,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype FLOAT = new SDFDatatype("Float");
 	public static final SDFDatatype DOUBLE = new SDFDatatype("Double");
 	public static final SDFDatatype DATE = new SDFDatatype("Date");
+	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 	
 	public static final SDFDatatype SPATIAL_POINT = new SDFDatatype("SpatialPoint", SDFDatatype.KindOfDatatype.BEAN, 
 			new SDFAttributeList(
@@ -73,6 +79,10 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype POINT_IN_TIME = new SDFDatatype("PointInTime");
 	
 	public static final SDFDatatype MV = new SDFDatatype("MV");
+	
+	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
+	
+	public static final SDFDatatype VECTOR_DOUBLE = new SDFDatatype("Vector", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
 	
 	private static final long serialVersionUID = 8585322290347489841L;
 	
@@ -114,9 +124,11 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type, SDFDatatype subType){
 		super(datatypeName);
-		if(type != SDFDatatype.KindOfDatatype.SET){
-			throw new IllegalArgumentException("This constructor is only for SET datatypes.");
-		}
+		
+		// do not check for set. A matrix can also have a subtype
+//		if(type != SDFDatatype.KindOfDatatype.SET){
+//			throw new IllegalArgumentException("This constructor is only for SET datatypes.");
+//		}
 		this.type = type;
 		this.subType = subType;
 		
@@ -167,6 +179,10 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public SDFDatatype getSubType(){
 		return this.subType;
+	}
+	
+	public void setSubType(SDFDatatype sType){
+		this.subType = sType;
 	}
 	
 	public boolean isComplex(){
