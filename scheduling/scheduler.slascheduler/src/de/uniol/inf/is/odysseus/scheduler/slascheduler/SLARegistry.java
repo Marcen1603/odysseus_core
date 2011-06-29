@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.slamodel.ISLAChangedEventListener;
 import de.uniol.inf.is.odysseus.slamodel.SLAChangedEvent;
+import de.uniol.inf.is.odysseus.slamodel.SLADictionary;
 
 /**
  * central management of scheduling data
@@ -29,6 +30,12 @@ public class SLARegistry implements ISLAChangedEventListener {
 	public SLARegistry() {
 		super();
 		this.schedData = new HashMap<IPartialPlan, SLARegistryInfo>();
+		/*
+		 *  register add central sla dictionary to get notification about
+		 *  changes of sla
+		 */
+		
+		SLADictionary.getInstance().addSLAChangedEventListener(this);
 	}
 
 	/**

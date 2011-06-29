@@ -7,7 +7,10 @@ import java.util.Map;
 
 /**
  * Singleton class for saving all created service level agreements and looking
- * them up when used in queries.
+ * them up when used in queries. Further this class provides the global
+ * interface for changes of sla related stuff (like adding a query with a 
+ * certain sla) and notifying other objects, that are interested in these 
+ * changes (e.g. the sla scheduler)  
  * 
  * @author Thomas Vogelgesang
  * 
