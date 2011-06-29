@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.scheduler.slamodel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,9 +17,12 @@ public class SLADictionary {
 	private static SLADictionary instance;
 
 	private Map<String, SLA> sla;
+	
+	private List<ISLAChangedEventListener> listeners;
 
 	private SLADictionary() {
 		this.sla = new HashMap<String, SLA>();
+		this.listeners = new ArrayList<ISLAChangedEventListener>();
 	}
 
 	/**
@@ -67,6 +72,24 @@ public class SLADictionary {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * broadcasts {@link SLAChangedEvent} to all registered listeners
+	 * @param event the event to broadcast
+	 */
+	private void fireEvents(SLAChangedEvent event) {
+		for (ISLAChangedEventListener listener : this.listeners) {
+			listener.slaChanged(event);
+		}
+	}
+	
+	public void addSLAChangedEventListener(ISLAChangedEventListener listener) {
+		this.listeners.add(listener);
+	}
+	
+	public void removeSLAChangedEventListener(ISLAChangedEventListener listener) {
+		this.listeners.remove(listener);
 	}
 
 }
