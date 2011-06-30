@@ -34,10 +34,9 @@ import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
-import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -179,14 +178,14 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	 * @return
 	 */
 	private IRangePredicate generateRangePredicate(IPredicate selectionPredicate, SDFExpression[] predictionFunction, IAttributeResolver attributeResolver){
-		if(selectionPredicate instanceof AndPredicate<?>){
+		if(ComplexPredicateHelper.isAndPredicate(selectionPredicate)){
 			return new AndRangePredicate(
-					generateRangePredicate(((AndPredicate)selectionPredicate).getLeft(), predictionFunction, attributeResolver), 
-					generateRangePredicate(((AndPredicate)selectionPredicate).getRight(), predictionFunction, attributeResolver));
-		}else if(selectionPredicate instanceof OrPredicate){
+					generateRangePredicate(((ComplexPredicate)selectionPredicate).getLeft(), predictionFunction, attributeResolver), 
+					generateRangePredicate(((ComplexPredicate)selectionPredicate).getRight(), predictionFunction, attributeResolver));
+		}else if(ComplexPredicateHelper.isOrPredicate(selectionPredicate)){
 			return new OrRangePredicate(
-					generateRangePredicate(((OrPredicate)selectionPredicate).getLeft(), predictionFunction, attributeResolver), 
-					generateRangePredicate(((OrPredicate)selectionPredicate).getRight(), predictionFunction, attributeResolver));
+					generateRangePredicate(((ComplexPredicate)selectionPredicate).getLeft(), predictionFunction, attributeResolver), 
+					generateRangePredicate(((ComplexPredicate)selectionPredicate).getRight(), predictionFunction, attributeResolver));
 		}else if(selectionPredicate instanceof RelationalPredicate){
 			List<SDFAttribute> neededAttributes = ((RelationalPredicate)selectionPredicate).getAttributes();
 			String predicateString = selectionPredicate.toString();
@@ -295,7 +294,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	 			
 			
 			
-		}else if(selectionPredicate instanceof NotPredicate){
+		}else if(ComplexPredicateHelper.isNotPredicate(selectionPredicate)){
 			// exchange the compare operator
 			// < to >=
 			// <= to >

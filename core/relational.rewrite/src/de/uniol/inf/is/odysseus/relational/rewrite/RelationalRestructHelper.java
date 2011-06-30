@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
@@ -34,9 +33,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.predicate.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -66,8 +65,8 @@ public class RelationalRestructHelper {
 
 	public static Set<?> sourcesOfPredicate(IPredicate<?> predicate) {
 		final HashSet<String> sources = new HashSet<String>();
-		visitPredicates((IPredicate<?>) predicate,
-				new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
+		ComplexPredicateHelper.visitPredicates((IPredicate<?>) predicate,
+				new IUnaryFunctor<IPredicate<?>>() {
 					@Override
 					public void call(IPredicate<?> pred) {
 						List<SDFAttribute> attributes = ((IRelationalPredicate) pred)
@@ -113,8 +112,8 @@ public class RelationalRestructHelper {
 			uris.add(curAttr.getPointURI());
 		}
 		final boolean[] retValue = new boolean[] { true };
-		RelationalRestructHelper.visitPredicates(predicate,
-				new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
+		ComplexPredicateHelper.visitPredicates(predicate,
+				new IUnaryFunctor<IPredicate<?>>() {
 					@Override
 					public void call(IPredicate<?> predicate) {
 						if (predicate instanceof IRelationalPredicate) {
@@ -134,29 +133,7 @@ public class RelationalRestructHelper {
 				});
 		return retValue[0];
 	}
-
-	public static interface IUnaryFunctor<T> {
-		public void call(T parameter);
-	}
-
-	public static void visitPredicates(IPredicate<?> p,
-			IUnaryFunctor<IPredicate<?>> functor) {
-		Stack<IPredicate<?>> predicates = new Stack<IPredicate<?>>();
-		predicates.push(p);
-		while (!predicates.isEmpty()) {
-			IPredicate<?> curPred = predicates.pop();
-			if (curPred instanceof ComplexPredicate<?>) {
-				predicates.push(((ComplexPredicate<?>) curPred).getLeft());
-				predicates.push(((ComplexPredicate<?>) curPred).getRight());
-			} else if(curPred instanceof NotPredicate){
-				predicates.push(((NotPredicate<?>) curPred).getChild());
-			}
-			else {
-				functor.call(curPred);
-			}
-		}
-	}
-
+	
 	public static Collection<ILogicalOperator> switchOperator(SelectAO father,
 			WindowAO son) {
 		return RestructHelper.simpleOperatorSwitch(father, son);
@@ -288,7 +265,7 @@ public class RelationalRestructHelper {
 		final RenameAO ren = son;
 		final SelectAO select = father;
 		Collection<ILogicalOperator> ret = RestructHelper.simpleOperatorSwitch(father, son);
-		visitPredicates(select.getPredicate(),
+		ComplexPredicateHelper.visitPredicates(select.getPredicate(),
 				new IUnaryFunctor<IPredicate<?>>() {
 					@Override
 					public void call(IPredicate<?> curPred) {

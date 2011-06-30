@@ -33,11 +33,9 @@ import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
-import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -170,7 +168,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			
 				for(Entry<IPredicate, IPredictionFunction> leftEntry: leftFcts.entrySet()){
 					for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
-						IPredicate newPredicate = ComplexPredicateBuilder.createAndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
+						IPredicate newPredicate = ComplexPredicateHelper.createAndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
 						IPredictionFunction newFunction = new LinearProbabilityPredictionFunction();
 						
 						IPredictionFunction leftFct = leftEntry.getValue();
@@ -246,7 +244,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
 			for(Entry<IPredicate, IPredictionFunction> leftEntry : leftFcts.entrySet()){
 				for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
-					IPredicate newPredicate = ComplexPredicateBuilder.createAndPredicate(leftEntry.getKey(), rightEntry.getKey());
+					IPredicate newPredicate = ComplexPredicateHelper.createAndPredicate(leftEntry.getKey(), rightEntry.getKey());
 					
 					IRangePredicate rangePredicate = this.generateRangePredicate(
 							this.getPredicate(),
@@ -260,14 +258,14 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	}
 	
 	private IRangePredicate generateRangePredicate(IPredicate joinPredicate, SDFExpression[] leftPredFct, SDFExpression[] rightPredFct, IAttributeResolver attributeResolver){
-		if(joinPredicate instanceof AndPredicate){
+		if(ComplexPredicateHelper.isAndPredicate(joinPredicate)){
 			return new AndRangePredicate(
-					generateRangePredicate(((AndPredicate)joinPredicate).getLeft(), leftPredFct, rightPredFct, attributeResolver), 
-					generateRangePredicate(((AndPredicate)joinPredicate).getRight(), leftPredFct, rightPredFct, attributeResolver));
-		}else if(joinPredicate instanceof OrPredicate){
+					generateRangePredicate(((ComplexPredicate)joinPredicate).getLeft(), leftPredFct, rightPredFct, attributeResolver), 
+					generateRangePredicate(((ComplexPredicate)joinPredicate).getRight(), leftPredFct, rightPredFct, attributeResolver));
+		}else if(ComplexPredicateHelper.isOrPredicate(joinPredicate)){
 			return new OrRangePredicate(
-					generateRangePredicate(((OrPredicate)joinPredicate).getLeft(), leftPredFct, rightPredFct, attributeResolver), 
-					generateRangePredicate(((OrPredicate)joinPredicate).getRight(), leftPredFct, rightPredFct, attributeResolver));
+					generateRangePredicate(((ComplexPredicate)joinPredicate).getLeft(), leftPredFct, rightPredFct, attributeResolver), 
+					generateRangePredicate(((ComplexPredicate)joinPredicate).getRight(), leftPredFct, rightPredFct, attributeResolver));
 		}else if(joinPredicate instanceof RelationalPredicate){
 			SDFAttributeListExtended leftSchema = (SDFAttributeListExtended)getSubscribedToSource(0).getSchema();
 			SDFAttributeListExtended rightSchema = (SDFAttributeListExtended)getSubscribedToSource(1).getSchema();
@@ -383,7 +381,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
  			
  			return rangePredicate;	
 			
-		}else if(joinPredicate instanceof NotPredicate){
+		}else if(ComplexPredicateHelper.isNotPredicate(joinPredicate)){
 			// exchange the compare operator
 			// < to >=
 			// <= to >

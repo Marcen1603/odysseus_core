@@ -16,8 +16,7 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.merge;
 
 import de.uniol.inf.is.odysseus.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
@@ -51,7 +50,7 @@ public class PredictionKeyMetadataMergeFunction<M extends IPredictionFunctionKey
 	 */
 	@Override
 	public void mergeInto(M res, M left, M right) {
-		IPredicate newPred = ComplexPredicateBuilder.createAndPredicate(
+		IPredicate newPred = ComplexPredicateHelper.createAndPredicate(
 				left.getPredictionFunctionKey(),
 				right.getPredictionFunctionKey());
 

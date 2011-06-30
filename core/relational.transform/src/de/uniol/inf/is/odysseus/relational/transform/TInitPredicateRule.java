@@ -14,13 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import java.util.Stack;
-
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -36,7 +32,7 @@ public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOpera
 	public void execute(ILogicalOperator operator,
 			TransformationConfiguration config) {
 		operator.getPredicate().init();
-		visitPredicates(operator.getPredicate(), new InitPredicateFunctor(operator));
+		ComplexPredicateHelper.visitPredicates(operator.getPredicate(), new InitPredicateFunctor(operator));
 	}
 
 	@Override
@@ -54,29 +50,6 @@ public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOpera
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.INIT;
 	}
-	
-	public static interface IUnaryFunctor<T> {
-		public void call(T parameter);
-	}
-	
-	public static void visitPredicates(IPredicate<?> p,
-			IUnaryFunctor<IPredicate<?>> functor) {
-		Stack<IPredicate<?>> predicates = new Stack<IPredicate<?>>();
-		predicates.push(p);
-		while (!predicates.isEmpty()) {
-			IPredicate<?> curPred = predicates.pop();
-			if (curPred instanceof ComplexPredicate<?>) {
-				predicates.push(((ComplexPredicate<?>) curPred).getLeft());
-				predicates.push(((ComplexPredicate<?>) curPred).getRight());
-			} else if(curPred instanceof NotPredicate){
-				predicates.push(((NotPredicate<?>) curPred).getChild());
-			}
-			else {
-				functor.call(curPred);
-			}
-		}
-	}
-
 
 
 }

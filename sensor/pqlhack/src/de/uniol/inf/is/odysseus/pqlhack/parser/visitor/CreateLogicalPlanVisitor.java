@@ -103,12 +103,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.Node;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
-import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -610,7 +607,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
 				.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data).add(ComplexPredicateBuilder.createAndPredicate(left, right));
+		((ArrayList) data).add(ComplexPredicateHelper.createAndPredicate(left, right));
 		return data;
 	}
 
@@ -630,7 +627,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
 				.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data).add(ComplexPredicateBuilder.createOrPredicate(left, right));
+		((ArrayList) data).add(ComplexPredicateHelper.createOrPredicate(left, right));
 		return data;
 	}
 
@@ -643,7 +640,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		IPredicate<RelationalTuple<?>> predicate = (IPredicate<RelationalTuple<?>>) ((ArrayList) node.jjtGetChild(0)
 				.jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data).add(ComplexPredicateBuilder.createNotPredicate(predicate));
+		((ArrayList) data).add(ComplexPredicateHelper.createNotPredicate(predicate));
 		return data;
 	}
 
@@ -717,8 +714,8 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			initPredicate(compPred.getRight(), left, right);
 			return;
 		}
-		if (predicate instanceof NotPredicate) {
-			initPredicate(((NotPredicate) predicate).getChild(), left, right);
+		if (ComplexPredicateHelper.isNotPredicate(predicate)) {
+			initPredicate(ComplexPredicateHelper.getChild(predicate), left, right);
 			return;
 		}
 		if (predicate instanceof RelationalPredicate) {

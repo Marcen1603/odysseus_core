@@ -24,8 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.Solution;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -108,7 +107,7 @@ public class MapleHack {
 		
 		SDFExpression rightExpr = new SDFExpression(null, enumeratorPredicate, attributeResolver);
 		RelationalPredicate right = new RelationalPredicate(rightExpr);
-		IPredicate andPred = ComplexPredicateBuilder.createAndPredicate(left, right);
+		IPredicate andPred = ComplexPredicateHelper.createAndPredicate(left, right);
 		
 		ISolution full = new Solution(new SDFExpression(null, "(t)", attributeResolver), null, null);
 		missingSolutions.put(andPred, full);
@@ -131,7 +130,7 @@ public class MapleHack {
 		
 		SDFExpression rightExprEmpty = new SDFExpression(null, enumeratorPredicateEmpty, attributeResolver);
 		RelationalPredicate rightEmpty = new RelationalPredicate(rightExprEmpty);
-		IPredicate andPredEmpty = ComplexPredicateBuilder.createAndPredicate(left, rightEmpty);
+		IPredicate andPredEmpty = ComplexPredicateHelper.createAndPredicate(left, rightEmpty);
 		
 		ISolution empty = new Solution(null, null, null);
 		missingSolutions.put(andPredEmpty, empty);
@@ -167,7 +166,7 @@ public class MapleHack {
 				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") > sqrt(" + attributes.get(u).toPointString() + ")", attrRes);
 				IPredicate left = new RelationalPredicate(leftExpr);
 				IPredicate right = new RelationalPredicate(rightExpr);
-				IPredicate andPred = ComplexPredicateBuilder.createAndPredicate(left, right);
+				IPredicate andPred = ComplexPredicateHelper.createAndPredicate(left, right);
 				
 				ISolution empty = new Solution(null, null, null);
 				falseSolutions.put(andPred, empty);
@@ -204,7 +203,7 @@ public class MapleHack {
 				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") > sqrt(" + attributes.get(u).toPointString() + ")", attrRes);
 				IPredicate left = new RelationalPredicate(leftExpr);
 				IPredicate right = new RelationalPredicate(rightExpr);
-				IPredicate andPred = ComplexPredicateBuilder.createAndPredicate(left, right);
+				IPredicate andPred = ComplexPredicateHelper.createAndPredicate(left, right);
 				
 				falsePredictes.put(andPred, null);
 				logger.debug("Additional false predicate: " + andPred);
@@ -228,7 +227,7 @@ public class MapleHack {
 		
 		SDFExpression rightExpr = new SDFExpression(null, "a.pos - b.pos + b.speed * b.timestamp - a.speed * a.timestamp > -0.1", attributeResolver);
 		RelationalPredicate right = new RelationalPredicate(rightExpr);
-		IPredicate andPred = ComplexPredicateBuilder.createAndPredicate(left, right);
+		IPredicate andPred = ComplexPredicateHelper.createAndPredicate(left, right);
 		
 		ISolution solution = new Solution(new SDFExpression(null, "(t)", attributeResolver), null, null);
 		missingSolutions.put(andPred, solution);
@@ -240,7 +239,7 @@ public class MapleHack {
 		
 		SDFExpression rightExprEmpty = new SDFExpression(null, "a.pos - b.pos + b.speed * b.timestamp - a.speed * a.timestamp <= -0.1", attributeResolver);
 		RelationalPredicate rightEmpty = new RelationalPredicate(rightExprEmpty);
-		IPredicate andPredEmpty = ComplexPredicateBuilder.createAndPredicate(leftEmpty, rightEmpty);
+		IPredicate andPredEmpty = ComplexPredicateHelper.createAndPredicate(leftEmpty, rightEmpty);
 		
 		ISolution solutionEmpty = new Solution(null, null, null);
 		missingSolutions.put(andPredEmpty, solutionEmpty);
@@ -257,7 +256,7 @@ public class MapleHack {
 		
 		SDFExpression rightExpr = new SDFExpression(null, "a.pos - b.pos + b.speed * b.timestamp - a.speed * a.timestamp < 0.1", attributeResolver);
 		RelationalPredicate right = new RelationalPredicate(rightExpr);
-		IPredicate andPred = ComplexPredicateBuilder.createAndPredicate(left, right);
+		IPredicate andPred = ComplexPredicateHelper.createAndPredicate(left, right);
 		
 		ISolution solution = new Solution(new SDFExpression(null, "(t)", attributeResolver), null, null);
 		
@@ -270,7 +269,7 @@ public class MapleHack {
 		
 		SDFExpression rightExprEmpty = new SDFExpression(null, "a.pos - b.pos + b.speed * b.timestamp - a.speed * a.timestamp >= 0.1", attributeResolver);
 		RelationalPredicate rightEmpty = new RelationalPredicate(rightExpr);
-		IPredicate andPredEmpty = ComplexPredicateBuilder.createAndPredicate(left, right);
+		IPredicate andPredEmpty = ComplexPredicateHelper.createAndPredicate(left, right);
 		
 		ISolution solutionEmpty = new Solution(null, null, null);
 		

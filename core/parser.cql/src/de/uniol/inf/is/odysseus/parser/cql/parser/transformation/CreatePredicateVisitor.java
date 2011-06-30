@@ -27,11 +27,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSpatialPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
-import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -63,7 +60,7 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 				.jjtGetChild(0).jjtAccept(this, data);
 		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) node
 				.jjtGetChild(1).jjtAccept(this, data);
-		return ComplexPredicateBuilder.createAndPredicate(left, right);
+		return ComplexPredicateHelper.createAndPredicate(left, right);
 	}
 
 	@Override
@@ -72,14 +69,14 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 				.jjtGetChild(0).jjtAccept(this, data);
 		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) node
 				.jjtGetChild(1).jjtAccept(this, data);
-		return ComplexPredicateBuilder.createOrPredicate(left, right);
+		return ComplexPredicateHelper.createOrPredicate(left, right);
 	}
 
 	@Override
 	public Object visit(ASTNotPredicate node, Object data) {
 		IPredicate<RelationalTuple<?>> predicate = (IPredicate<RelationalTuple<?>>) node
 				.jjtGetChild(0).jjtAccept(this, data);
-		return ComplexPredicateBuilder.createNotPredicate(predicate);
+		return ComplexPredicateHelper.createNotPredicate(predicate);
 	}
 
 	@Override

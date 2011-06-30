@@ -43,11 +43,8 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTS
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTString;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.MapleResultParserVisitor;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.SimpleNode;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
-import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -116,18 +113,18 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 				if (solutions.entrySet().size() == 1) {
 					for (Entry<IPredicate<RelationalTuple<?>>, ISolution> entry : solutions
 							.entrySet()) {
-						IPredicate notPred = ComplexPredicateBuilder
+						IPredicate notPred = ComplexPredicateHelper
 								.createNotPredicate(entry.getKey());
 						solutions.put(notPred, solution);
 					}
 				} else if (solutions.entrySet().size() == 2) {
 					Iterator<Entry<IPredicate<RelationalTuple<?>>, ISolution>> iter = solutions
 							.entrySet().iterator();
-					IPredicate orPred = ComplexPredicateBuilder
+					IPredicate orPred = ComplexPredicateHelper
 							.createOrPredicate(iter.next().getKey(), iter
 									.next().getKey());
 
-					IPredicate notPred = ComplexPredicateBuilder
+					IPredicate notPred = ComplexPredicateHelper
 							.createNotPredicate(orPred);
 					solutions.put(notPred, solution);
 				} else if (solutions.entrySet().size() > 2) {
@@ -140,17 +137,17 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 						listOfPreds.add(entry.getKey());
 					}
 
-					IPredicate orPred = ComplexPredicateBuilder
+					IPredicate orPred = ComplexPredicateHelper
 							.createOrPredicate(listOfPreds.get(0),
 									listOfPreds.get(1));
 
 					for (int u = 2; u < listOfPreds.size(); u++) {
-						IPredicate subOr = ComplexPredicateBuilder
+						IPredicate subOr = ComplexPredicateHelper
 								.createOrPredicate(listOfPreds.get(u), orPred);
 						orPred = subOr;
 					}
 
-					IPredicate notPred = ComplexPredicateBuilder
+					IPredicate notPred = ComplexPredicateHelper
 							.createNotPredicate(orPred);
 					solutions.put(notPred, solution);
 				}
@@ -207,7 +204,7 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 	private IPredicate buildAndPredicate(ArrayList<IPredicate> predicates) {
 		IPredicate pred;
 		if (predicates.size() > 1) {
-			pred = ComplexPredicateBuilder.createAndPredicate(
+			pred = ComplexPredicateHelper.createAndPredicate(
 					predicates.remove(0), buildAndPredicate(predicates));
 		} else {
 			pred = predicates.get(0);

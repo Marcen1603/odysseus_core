@@ -11,7 +11,7 @@ import java.util.Stack;
  *
  */
 
-public class ComplexPredicateBuilder {
+public class ComplexPredicateHelper {
 
 	public static IPredicate createAndPredicate(IPredicate leftPredicate, IPredicate rightPredicate){
 		return new AndPredicate(leftPredicate, rightPredicate);
@@ -74,4 +74,49 @@ public class ComplexPredicateBuilder {
 		return result;
 	}
 	
+	public static void visitPredicates(IPredicate<?> p,
+			IUnaryFunctor<IPredicate<?>> functor) {
+		Stack<IPredicate<?>> predicates = new Stack<IPredicate<?>>();
+		predicates.push(p);
+		while (!predicates.isEmpty()) {
+			IPredicate<?> curPred = predicates.pop();
+			if (curPred instanceof ComplexPredicate<?>) {
+				predicates.push(((ComplexPredicate<?>) curPred).getLeft());
+				predicates.push(((ComplexPredicate<?>) curPred).getRight());
+			} else if(curPred instanceof NotPredicate){
+				predicates.push(((NotPredicate<?>) curPred).getChild());
+			}
+			else {
+				functor.call(curPred);
+			}
+		}
+	}
+	
+	public static boolean isAndPredicate(IPredicate pred){
+		return pred instanceof AndPredicate;
+	}
+	
+	public static boolean isOrPredicate(IPredicate pred){
+		return pred instanceof OrPredicate;
+	}
+	
+	public static boolean isNotPredicate(IPredicate pred){
+		return pred instanceof NotPredicate;
+	}
+	
+	public static boolean contains(IPredicate oPred, IPredicate pred){
+		if (oPred instanceof OrPredicate){
+			return ((OrPredicate)oPred).contains(pred);
+		}else{
+			return false;
+		}
+	}
+
+	public static IPredicate getChild(IPredicate notPred) {
+		if (notPred instanceof NotPredicate){
+		return ((NotPredicate) notPred).getChild();
+		}else{
+			throw new IllegalArgumentException("Argument is not a NotPredicate");
+		}
+	}
 }

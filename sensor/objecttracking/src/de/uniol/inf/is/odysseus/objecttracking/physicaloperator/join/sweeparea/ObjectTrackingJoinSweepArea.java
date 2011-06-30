@@ -28,8 +28,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -113,7 +112,7 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITim
 				// get the correct rangePredicate
 				// evaluate the rangePredicate and
 				// add the SA element to result
-				IPredicate newPredFctKey = ComplexPredicateBuilder.createAndPredicate((IPredicate)left.getMetadata().getPredictionFunctionKey(), (IPredicate)right.getMetadata().getPredictionFunctionKey());
+				IPredicate newPredFctKey = ComplexPredicateHelper.createAndPredicate((IPredicate)left.getMetadata().getPredictionFunctionKey(), (IPredicate)right.getMetadata().getPredictionFunctionKey());
 				
 				IRangePredicate rangePredicate = this.rangePredicates.get(newPredFctKey);
 				List<ITimeInterval> intervals = rangePredicate.evaluate(left, right);

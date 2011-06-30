@@ -19,8 +19,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -39,7 +38,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 			if (sel.getInputAO()== operator) {
 				if (sel.getPredicate() != null) {
 					if (operator.getPredicate() != null) {
-						operator.setPredicate(ComplexPredicateBuilder.createAndPredicate(operator.getPredicate(), sel.getPredicate()));
+						operator.setPredicate(ComplexPredicateHelper.createAndPredicate(operator.getPredicate(), sel.getPredicate()));
 					} else {
 						operator.setPredicate(sel.getPredicate());
 					}

@@ -23,8 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -43,10 +42,10 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 		ISweepArea rightSA = new DefaultTISweepArea();
 		IPredicate predicate = existenceAO.getPredicate();
 		if (existenceAO.getType() == ExistenceAO.Type.NOT_EXISTS) {
-			predicate = ComplexPredicateBuilder.createNotPredicate(predicate);
+			predicate = ComplexPredicateHelper.createNotPredicate(predicate);
 		}
-		leftSA.setQueryPredicate(ComplexPredicateBuilder.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
-		rightSA.setQueryPredicate(ComplexPredicateBuilder.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
+		leftSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
+		rightSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
 		AntiJoinTIPO po = new AntiJoinTIPO(existenceAO, leftSA, rightSA);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(existenceAO, po);
 		for (ILogicalOperator o:toUpdate){

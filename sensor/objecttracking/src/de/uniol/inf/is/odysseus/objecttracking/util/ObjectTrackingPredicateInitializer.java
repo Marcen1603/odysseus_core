@@ -21,8 +21,8 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -47,8 +47,8 @@ public class ObjectTrackingPredicateInitializer {
 			if (curPred instanceof ComplexPredicate<?>) {
 				predicateStack.push(((ComplexPredicate) curPred).getLeft());
 				predicateStack.push(((ComplexPredicate) curPred).getRight());
-			} else if(curPred instanceof NotPredicate){
-				predicateStack.push(((NotPredicate) curPred).getChild());
+			} else if(ComplexPredicateHelper.isNotPredicate(curPred)){
+				predicateStack.push(ComplexPredicateHelper.getChild(curPred));
 			}
 			else {
 				init(curPred, leftSchema, rightSchema);

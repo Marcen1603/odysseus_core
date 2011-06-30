@@ -18,8 +18,9 @@ import java.util.ArrayList;
 
 /**
  * @author Jonas Jacobi
- */
-public class OrPredicate<T> extends ComplexPredicate<T> {
+ */ 
+
+class OrPredicate<T> extends ComplexPredicate<T> {
 	private static final long serialVersionUID = -5476180354530944122L;
 
 	protected OrPredicate() {

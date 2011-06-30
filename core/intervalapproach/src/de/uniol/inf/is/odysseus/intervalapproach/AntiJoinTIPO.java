@@ -29,8 +29,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
@@ -68,7 +67,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 		super();
 		ISweepArea<T> leftSA = new DefaultTISweepArea<T>();
 		ISweepArea<T> rightSA = new DefaultTISweepArea<T>();
-		IPredicate<? super T> predicate = ComplexPredicateBuilder.createAndPredicate(OverlapsPredicate
+		IPredicate<? super T> predicate = ComplexPredicateHelper.createAndPredicate(OverlapsPredicate
 				.getInstance(), EqualsPredicate.getInstance());
 		leftSA.setQueryPredicate(predicate);
 		rightSA.setQueryPredicate(predicate);

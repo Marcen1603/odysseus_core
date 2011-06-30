@@ -6,8 +6,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
@@ -102,7 +101,7 @@ public class SparqlParserHelper {
 			for(int i = 1; i<exprs.size(); i++){
 				RelationalPredicate right = new RelationalPredicate(exprs.get(i));
 				right.init(leftSchema, rightSchema);
-				IPredicate tempAnd = ComplexPredicateBuilder.createAndPredicate(left, right);
+				IPredicate tempAnd = ComplexPredicateHelper.createAndPredicate(left, right);
 				left = tempAnd;
 			}
 			

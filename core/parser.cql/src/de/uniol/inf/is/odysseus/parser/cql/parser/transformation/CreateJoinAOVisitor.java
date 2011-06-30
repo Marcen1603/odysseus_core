@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
@@ -48,12 +47,9 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
-import de.uniol.inf.is.odysseus.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -142,8 +138,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		IPredicate<RelationalTuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate(wherePredicate,
 				this.attributeResolver);
-		predicate = ComplexPredicateBuilder.pushDownNegation(predicate, false);
-		List<IPredicate> conjunctivePredicates = ComplexPredicateBuilder.splitPredicate(predicate);
+		predicate = ComplexPredicateHelper.pushDownNegation(predicate, false);
+		List<IPredicate> conjunctivePredicates = ComplexPredicateHelper.splitPredicate(predicate);
 
 		AbstractLogicalOperator curInputAO = inputOp;
 		Iterator<?> it = conjunctivePredicates
@@ -157,7 +153,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 				if (selectPredicate == null) {
 					selectPredicate = next;
 				} else {
-					selectPredicate = ComplexPredicateBuilder.createAndPredicate(selectPredicate, next);
+					selectPredicate = ComplexPredicateHelper.createAndPredicate(selectPredicate, next);
 				}
 			}
 		}
@@ -171,6 +167,22 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		return curInputAO;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean containsQuantification(IPredicate pred) {
+		if (pred instanceof QuantificationPredicate) {
+			return true;
+		}
+		if (pred instanceof ComplexPredicate) {
+			return containsQuantification(((ComplexPredicate) pred).getLeft())
+					|| containsQuantification(((ComplexPredicate) pred)
+							.getRight());
+		}
+		if (ComplexPredicateHelper.isNotPredicate(pred)) {
+			return containsQuantification(ComplexPredicateHelper.getChild(pred));
+		}
+		return false;
+	}
 
 	@SuppressWarnings("unchecked")
 	private AbstractLogicalOperator createQuantificationPlan(
@@ -182,10 +194,10 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			AbstractLogicalOperator right = createQuantificationPlan(
 					curInputAO, ((ComplexPredicate) pred).getRight());
 
-			if (pred instanceof AndPredicate) {
+			if (ComplexPredicateHelper.isAndPredicate(pred)) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(ComplexPredicateBuilder.createAndPredicate(left
+						((SelectAO) left).setPredicate(ComplexPredicateHelper.createAndPredicate(left
 								.getPredicate(), right.getPredicate()));
 						return left;
 					} else {
@@ -197,10 +209,10 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 					return left;
 				}
 			}
-			if (pred instanceof OrPredicate) {
+			if (ComplexPredicateHelper.isOrPredicate(pred)) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(ComplexPredicateBuilder.createOrPredicate(left
+						((SelectAO) left).setPredicate(ComplexPredicateHelper.createOrPredicate(left
 								.getPredicate(), right.getPredicate()));
 						return left;
 					}
@@ -214,8 +226,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		}
 		boolean negatived = false;
 		IPredicate tmpPred = pred;
-		if (pred instanceof NotPredicate) {
-			tmpPred = ((NotPredicate) pred).getChild();
+		if (ComplexPredicateHelper.isNotPredicate(pred)) {
+			tmpPred = ComplexPredicateHelper.getChild(pred);
 			negatived = true;
 		}
 		if (tmpPred instanceof QuantificationPredicate) {
@@ -257,22 +269,6 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 				getBottomOperators(curInput, bottom, ops);
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private boolean containsQuantification(IPredicate<RelationalTuple<?>> pred) {
-		if (pred instanceof QuantificationPredicate) {
-			return true;
-		}
-		if (pred instanceof ComplexPredicate) {
-			return containsQuantification(((ComplexPredicate) pred).getLeft())
-					|| containsQuantification(((ComplexPredicate) pred)
-							.getRight());
-		}
-		if (pred instanceof NotPredicate) {
-			return containsQuantification(((NotPredicate) pred).getChild());
-		}
-		return false;
 	}
 
 	@Override

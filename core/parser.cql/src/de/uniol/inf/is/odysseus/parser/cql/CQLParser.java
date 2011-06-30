@@ -46,8 +46,8 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.slamodel.Metric;
@@ -324,8 +324,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			initPredicate(compPred.getRight(), left, right);
 			return;
 		}
-		if (predicate instanceof NotPredicate) {
-			initPredicate(((NotPredicate<?>) predicate).getChild(), left, right);
+		if (ComplexPredicateHelper.isNotPredicate(predicate)) {
+			initPredicate(ComplexPredicateHelper.getChild(predicate), left, right);
 			return;
 		}
 		if (predicate instanceof IRelationalPredicate) {

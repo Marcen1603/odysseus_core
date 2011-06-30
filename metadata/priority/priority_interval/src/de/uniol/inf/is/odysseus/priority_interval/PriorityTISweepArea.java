@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyAfterPredicate
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 //should be K extends IPriority & ITimeInterval, but suns compiler (1.6) is buggy and doens't accept it:(
