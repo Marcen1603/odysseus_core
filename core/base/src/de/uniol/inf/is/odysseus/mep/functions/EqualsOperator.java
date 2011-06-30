@@ -73,11 +73,8 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.INTEGER;
-			accTypes[1] = SDFDatatype.LONG;
-			accTypes[2] = SDFDatatype.DOUBLE;
-			accTypes[3] = SDFDatatype.FLOAT;
+			SDFDatatype[] accTypes = new SDFDatatype[]{
+			SDFDatatype.INTEGER,SDFDatatype.LONG,  SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
 			return accTypes;
 		}
 	}
