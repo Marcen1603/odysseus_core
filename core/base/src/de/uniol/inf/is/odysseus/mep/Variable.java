@@ -23,7 +23,7 @@ public class Variable implements IExpression<Object> {
 	private Object value;
 	private final String identifier;
 	private final SDFDatatype type;
-	private Class<?>[] acceptedTypes;
+	private SDFDatatype[] acceptedTypes;
 
 	public Variable(String id) {
 		this.identifier = id;
@@ -116,21 +116,21 @@ public class Variable implements IExpression<Object> {
 		throw new RuntimeException("cannot convert Variable to Constant");
 	}
 	
-	public Class<?>[] getAcceptedTypes() {
+	public SDFDatatype[] getAcceptedTypes() {
 		return acceptedTypes;
 	}
 
-	public void setAcceptedTypes(Class<?>[] acceptedTypes) {
+	public void setAcceptedTypes(SDFDatatype[] acceptedTypes) {
 		this.acceptedTypes = acceptedTypes;
 	}
 
-	public void restrictAcceptedTypes(Class<?>[] restrictTypes){
+	public void restrictAcceptedTypes(SDFDatatype[] restrictTypes){
 		int countOfRemovedTypes = 0;
 		for(int i = 0; i<this.acceptedTypes.length; i++){			
 			boolean foundCompatible = false;
 			for(int u = 0; u<restrictTypes.length; u++){
-				if(DataTypeUtils.compatible(this.acceptedTypes[i], restrictTypes[u])){
-					this.acceptedTypes[i] = DataTypeUtils.min(this.acceptedTypes[i], restrictTypes[u]);
+				if(this.acceptedTypes[i].compatibleTo(restrictTypes[u])){
+					this.acceptedTypes[i] = SDFDatatype.min(this.acceptedTypes[i], restrictTypes[u]);
 					foundCompatible = true;
 				}
 			}
@@ -141,7 +141,7 @@ public class Variable implements IExpression<Object> {
 		}
 		
 		// remove all null values from the array;
-		Class<?>[] acceptedTypesNew = new Class<?>[this.acceptedTypes.length-countOfRemovedTypes];
+		SDFDatatype[] acceptedTypesNew = new SDFDatatype[this.acceptedTypes.length-countOfRemovedTypes];
 		int newIndex = 0;
 		for(int i = 0; i<this.acceptedTypes.length; i++){
 			if(this.acceptedTypes[i]!= null){
