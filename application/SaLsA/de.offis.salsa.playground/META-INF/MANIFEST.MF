@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: SALSA :: Playground
 Bundle-SymbolicName: de.offis.salsa.playground
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.salsa.Activator
 Import-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.intervalapproach,
@@ -21,6 +20,7 @@ Import-Package: com.vividsolutions.jts,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus,
  org.junit
-Service-Component: OSGI-INF/TransformationRuleService.xml, OSGI-INF/SourceControlService.xml, OSGI-INF/SickSensorAdapter.xml
+Service-Component: OSGI-INF/TransformationRuleService.xml, OSGI-INF/SourceControlService.xml, OSGI-INF/SickSensorAdapter.xml, OSGI-INF/FunctionProvider.xml
 Bundle-ClassPath: .,
  lib/json-20090211.jar
+Bundle-Activator: de.uniol.inf.is.odysseus.salsa.Activator

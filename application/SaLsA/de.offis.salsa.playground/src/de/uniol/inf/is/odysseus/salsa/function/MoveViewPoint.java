@@ -28,7 +28,7 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
         else {
             SDFDatatype[] accTypes = null;
             switch (argPos) {
-                case 1:
+                case 0:
                     accTypes = new SDFDatatype[7];
                     accTypes[0] = SDFDatatype.SPATIAL_POINT;
                     accTypes[1] = SDFDatatype.SPATIAL_MULTI_POINT;
@@ -38,11 +38,11 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
                     accTypes[5] = SDFDatatype.SPATIAL_POLYGON;
                     accTypes[6] = SDFDatatype.SPATIAL;
                     break;
-                case 2:
+                case 1:
                     accTypes = new SDFDatatype[1];
                     accTypes[0] = SDFDatatype.DOUBLE;
                     break;
-                case 3:
+                case 2:
                     accTypes = new SDFDatatype[1];
                     accTypes[0] = SDFDatatype.DOUBLE;
                     break;
