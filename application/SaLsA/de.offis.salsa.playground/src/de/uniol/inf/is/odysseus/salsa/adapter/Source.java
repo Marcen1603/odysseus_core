@@ -2,7 +2,11 @@ package de.uniol.inf.is.odysseus.salsa.adapter;
 
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public interface Source {
 
     void addAttribute(String name, AttributeConfiguration configuration);

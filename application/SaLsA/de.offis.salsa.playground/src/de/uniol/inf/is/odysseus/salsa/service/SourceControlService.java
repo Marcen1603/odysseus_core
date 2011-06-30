@@ -2,7 +2,11 @@ package de.uniol.inf.is.odysseus.salsa.service;
 
 import java.util.Map;
 import java.util.Set;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public interface SourceControlService {
 
     Set<String> getSourceAdapters();

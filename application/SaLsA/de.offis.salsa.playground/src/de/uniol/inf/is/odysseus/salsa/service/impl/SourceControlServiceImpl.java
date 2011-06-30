@@ -29,7 +29,11 @@ import de.uniol.inf.is.odysseus.salsa.adapter.impl.AttributeConfigurationImpl;
 import de.uniol.inf.is.odysseus.salsa.adapter.impl.SourceConfigurationImpl;
 import de.uniol.inf.is.odysseus.salsa.adapter.impl.SourceImpl;
 import de.uniol.inf.is.odysseus.salsa.service.SourceControlService;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class SourceControlServiceImpl implements SourceControlService {
     private static Logger LOG = LoggerFactory.getLogger(SourceControlService.class);
     private static final String SETTINGS_FILE = "settings.json";

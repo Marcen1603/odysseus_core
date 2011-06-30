@@ -12,7 +12,11 @@ import de.uniol.inf.is.odysseus.salsa.logicaloperator.UnnestAO;
 import de.uniol.inf.is.odysseus.salsa.physicaloperator.UnnestPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class TUnnestAORule extends AbstractTransformationRule<UnnestAO> {
     private static Logger LOG = LoggerFactory.getLogger(TUnnestAORule.class);
 

@@ -13,7 +13,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.salsa.pool.SourcePool;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class SourcePO<T extends IMetaAttribute> extends
         AbstractSource<RelationalTuple<TimeInterval>> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePO.class);

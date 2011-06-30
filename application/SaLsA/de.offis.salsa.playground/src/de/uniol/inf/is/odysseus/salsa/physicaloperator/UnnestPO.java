@@ -11,7 +11,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class UnnestPO<T extends IMetaAttribute> extends
         AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
     private static Logger LOG = LoggerFactory.getLogger(UnnestPO.class);

@@ -8,7 +8,11 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.salsa.adapter.AttributeConfiguration;
 import de.uniol.inf.is.odysseus.salsa.adapter.Source;
 import de.uniol.inf.is.odysseus.salsa.adapter.SourceConfiguration;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class SourceImpl implements Source {
 
     private final String name;

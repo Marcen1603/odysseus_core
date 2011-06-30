@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.salsa.sensor;
 
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Background;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public interface SickConnection {
     void close();
 

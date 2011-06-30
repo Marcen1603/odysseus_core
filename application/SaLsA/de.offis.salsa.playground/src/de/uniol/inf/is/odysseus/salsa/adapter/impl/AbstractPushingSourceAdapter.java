@@ -5,7 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.salsa.adapter.PushingSourceAdapter;
 import de.uniol.inf.is.odysseus.salsa.adapter.Source;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public abstract class AbstractPushingSourceAdapter extends AbstractSourceAdapter implements
         PushingSourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(AbstractPushingSourceAdapter.class);

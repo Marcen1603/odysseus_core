@@ -9,7 +9,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class ScanMap extends JPanel {
 
     /**

@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.salsa.sensor.model;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class Background {
 
     public static Background merge(final Background base, final Measurement diff) {

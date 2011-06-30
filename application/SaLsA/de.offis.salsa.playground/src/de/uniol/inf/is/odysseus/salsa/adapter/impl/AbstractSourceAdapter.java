@@ -11,7 +11,11 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.salsa.adapter.Source;
 import de.uniol.inf.is.odysseus.salsa.adapter.SourceAdapter;
 import de.uniol.inf.is.odysseus.salsa.pool.SourcePool;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public abstract class AbstractSourceAdapter implements SourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(AbstractSourceAdapter.class);
 

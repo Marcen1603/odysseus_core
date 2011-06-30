@@ -6,7 +6,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.uniol.inf.is.odysseus.salsa.adapter.AttributeConfiguration;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class AttributeConfigurationImpl implements AttributeConfiguration {
     private final Map<String, Object> configurations = new ConcurrentHashMap<String, Object>();
 

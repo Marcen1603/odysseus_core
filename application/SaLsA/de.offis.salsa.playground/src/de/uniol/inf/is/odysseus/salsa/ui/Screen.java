@@ -8,7 +8,11 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class Screen extends JFrame {
 
     /**

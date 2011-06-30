@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.salsa.sensor.model;
 
 import java.util.Arrays;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class Measurement {
     public enum Error {
         DEVICE_OK, DEVICE_ERROR, CONTAMINATION_WARNING, CONTAMINATION_ERROR

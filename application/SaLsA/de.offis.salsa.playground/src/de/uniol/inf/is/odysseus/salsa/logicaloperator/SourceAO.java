@@ -17,7 +17,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
-
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "SOURCE")
 public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSettable {
 
@@ -110,7 +115,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
         for (final String item : schemaAttributes) {
             final String[] schemaInformation = item.split(":");
             final SDFAttribute attribute = new SDFAttribute(null, schemaInformation[0]);
-            attribute.setDatatype(SDFDatatypeFactory.getDatatype(schemaInformation[1]));
+            attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(schemaInformation[1]));
             schema.add(attribute);
         }
         this.setOutputSchema(schema, 0);

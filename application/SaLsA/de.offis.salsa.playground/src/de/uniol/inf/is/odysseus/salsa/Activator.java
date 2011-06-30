@@ -10,6 +10,11 @@ import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
 
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class Activator implements BundleActivator {
     private static Logger LOG = LoggerFactory.getLogger(BundleActivator.class);
     private static BundleContext context;

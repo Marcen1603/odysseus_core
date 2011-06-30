@@ -12,7 +12,11 @@ import de.uniol.inf.is.odysseus.salsa.logicaloperator.VisualSinkAO;
 import de.uniol.inf.is.odysseus.salsa.physicaloperator.VisualSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> {
     private static Logger LOG = LoggerFactory.getLogger(TVisualSinkAORule.class);
 

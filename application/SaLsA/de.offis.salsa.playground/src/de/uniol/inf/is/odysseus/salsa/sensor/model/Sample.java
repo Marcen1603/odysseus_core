@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.salsa.sensor.model;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class Sample {
 
     private int index;

@@ -12,7 +12,11 @@ import de.uniol.inf.is.odysseus.salsa.logicaloperator.SourceAO;
 import de.uniol.inf.is.odysseus.salsa.physicaloperator.SourcePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
     private static Logger LOG = LoggerFactory.getLogger(TSourceAORule.class);
 

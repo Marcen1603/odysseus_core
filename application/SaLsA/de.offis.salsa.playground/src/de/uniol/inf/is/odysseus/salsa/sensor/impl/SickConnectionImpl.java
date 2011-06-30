@@ -21,7 +21,11 @@ import de.uniol.inf.is.odysseus.salsa.sensor.SickConnection;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Background;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Measurement;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Sample;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class SickConnectionImpl implements SickConnection {
     class SickConnectionHandler extends Thread {
 

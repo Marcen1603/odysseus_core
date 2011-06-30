@@ -6,7 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.salsa.adapter.Source;
 import de.uniol.inf.is.odysseus.salsa.adapter.impl.AbstractPushingSourceAdapter;
@@ -15,9 +16,13 @@ import de.uniol.inf.is.odysseus.salsa.sensor.SickConnection;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Measurement;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Sample;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class SickPushingSourceAdapter extends AbstractPushingSourceAdapter implements
         MeasurementListener {
     private static final Logger LOG = LoggerFactory.getLogger(SickPushingSourceAdapter.class);
+    private final GeometryFactory geometryFactory = new GeometryFactory();
     private final Map<Source, SickConnection> connections = new ConcurrentHashMap<Source, SickConnection>();
 
     @Override
@@ -46,14 +51,14 @@ public class SickPushingSourceAdapter extends AbstractPushingSourceAdapter imple
 
     @Override
     public void onMeasurement(final String uri, final Measurement measurement) {
-        final Coordinate[] coordinates = new Coordinate[measurement.getSamples().length];
         if ((measurement != null) && (measurement.getSamples() != null)) {
+            final Point[] coordinates = new Point[measurement.getSamples().length];
             for (int i = 0; i < measurement.getSamples().length; i++) {
                 final Sample sample = measurement.getSamples()[i];
-                coordinates[i] = sample.getDist1Vector();
+                coordinates[i] = geometryFactory.createPoint(sample.getDist1Vector());
             }
             SickPushingSourceAdapter.this.transfer(uri, System.currentTimeMillis(), new Object[] {
-                coordinates
+                geometryFactory.createMultiPoint(coordinates)
             });
         }
 

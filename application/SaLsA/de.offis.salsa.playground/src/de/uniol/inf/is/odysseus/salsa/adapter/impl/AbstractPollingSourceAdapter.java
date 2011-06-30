@@ -12,7 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.salsa.adapter.PollingSourceAdapter;
 import de.uniol.inf.is.odysseus.salsa.adapter.Source;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public abstract class AbstractPollingSourceAdapter extends AbstractSourceAdapter implements
         PollingSourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(AbstractPollingSourceAdapter.class);

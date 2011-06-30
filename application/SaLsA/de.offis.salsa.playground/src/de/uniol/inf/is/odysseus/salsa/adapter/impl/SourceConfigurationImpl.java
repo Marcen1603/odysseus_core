@@ -6,7 +6,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.uniol.inf.is.odysseus.salsa.adapter.SourceConfiguration;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class SourceConfigurationImpl implements SourceConfiguration {
     private final Map<String, Object> configurations = new ConcurrentHashMap<String, Object>();;
 

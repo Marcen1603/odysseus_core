@@ -13,7 +13,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.salsa.ui.Screen;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public class VisualSinkPO<T extends IMetaAttribute> extends
         AbstractSink<RelationalTuple<TimeInterval>> {
     private final Queue<List<Coordinate>> segments = new ConcurrentLinkedQueue<List<Coordinate>>();

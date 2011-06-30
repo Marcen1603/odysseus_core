@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.salsa.adapter;
 
 import java.util.Collection;
-
+/**
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ *
+ */
 public interface SourceAdapter {
     String getName();
 
