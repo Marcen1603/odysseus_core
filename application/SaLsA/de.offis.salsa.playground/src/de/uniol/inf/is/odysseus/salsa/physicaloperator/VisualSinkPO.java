@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class VisualSinkPO<T extends IMetaAttribute> extends
         AbstractSink<RelationalTuple<TimeInterval>> {
-    private final Queue<List<Coordinate>> segments = new ConcurrentLinkedQueue<List<Coordinate>>();
+    private final Queue<Geometry> segments = new ConcurrentLinkedQueue<Geometry>();
     Screen screen = new Screen();
     private final SDFAttributeList schema;
 
@@ -29,7 +30,7 @@ public class VisualSinkPO<T extends IMetaAttribute> extends
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                List<Coordinate> segment;
+                Geometry segment;
                 while ((segment = VisualSinkPO.this.segments.poll()) != null) {
                     VisualSinkPO.this.screen.onFeature(segment);
                 }
@@ -58,7 +59,7 @@ public class VisualSinkPO<T extends IMetaAttribute> extends
     @Override
     protected void process_next(final RelationalTuple<TimeInterval> object, final int port,
             final boolean isReadOnly) {
-        this.segments.offer((List<Coordinate>) object.getAttribute(0));
+        this.segments.offer((Geometry) object.getAttribute(0));
     }
 
     @Override

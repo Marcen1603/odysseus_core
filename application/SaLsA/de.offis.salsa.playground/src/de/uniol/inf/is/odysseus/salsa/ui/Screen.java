@@ -3,15 +3,13 @@ package de.uniol.inf.is.odysseus.salsa.ui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.util.List;
 
 import javax.swing.JFrame;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
 public class Screen extends JFrame {
 
@@ -40,7 +38,7 @@ public class Screen extends JFrame {
         this.setVisible(true);
     }
 
-    public void onFeature(final List<Coordinate> segment) {
+    public void onFeature(final Geometry segment) {
         this.map.onFeature(segment);
     }
 

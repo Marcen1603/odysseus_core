@@ -1,0 +1,26 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG Standard
+#QUERY
+///Your first query here
+
+
+source1 = source({schema = ['scan:SpatialMultiPoint'], name = 'Laser1'})   
+extractedFeature1 = map({expressions = ['ExtractSegments(scan,300.0)']}, source1)
+renamed1 = rename({aliases = ['feature']}, extractedFeature1)       
+unnested1 = unnest({attribute = 'feature'}, renamed1) 
+move1 = map({expressions = ['MoveViewPoint(feature, 3900.0, -4700.0)']}, unnested1)
+renamedMove1 = rename({aliases = ['feature']}, move1)
+rotate1 = map({expressions = ['RotateViewPoint(feature, 160.1)']}, renamedMove1)
+renamedRotate1 = rename({aliases = ['feature']}, rotate1)
+size1 = map({expressions = ['feature']}, renamedRotate1)
+
+
+source2 = source({schema = ['scan:SpatialMultiPoint'], name = 'Laser2'})
+extractedFeature2 = map({expressions = ['ExtractSegments(scan,300)']}, source2)
+renamed2 = rename({aliases = ['feature']}, extractedFeature2) 
+unnested2 = unnest({attribute = 'feature'}, renamed2)
+size2 = map({expressions = ['feature']}, unnested2)
+
+union12 = union(size1,size2)
+sink = mapsink(union12)

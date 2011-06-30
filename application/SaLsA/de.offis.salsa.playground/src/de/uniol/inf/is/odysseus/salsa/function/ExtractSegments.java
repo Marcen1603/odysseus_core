@@ -17,9 +17,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 public class ExtractSegments extends AbstractFunction<List<Geometry>> {
     private final GeometryFactory geometryFactory = new GeometryFactory();
 
-	public static final SDFDatatype[] accTypes0 = new SDFDatatype[] { SDFDatatype.SPATIAL_MULTI_POINT };
-	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFDatatype.DOUBLE };
-	
+    public static final SDFDatatype[] accTypes0 = new SDFDatatype[] {
+        SDFDatatype.SPATIAL_MULTI_POINT
+    };
+    public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
+        SDFDatatype.DOUBLE
+    };
+
     @Override
     public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
@@ -30,13 +34,13 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                     + " argument(s): A matrix and a threashold.");
         }
         else {
-        	switch(argPos){
-            case 0:
-            	return accTypes0; // Coordinate[].class;	
-            case 1:
-            default:
-            	return accTypes1;
-        	}
+            switch (argPos) {
+                case 0:
+                    return accTypes0; // Coordinate[].class;
+                case 1:
+                default:
+                    return accTypes1;
+            }
         }
     }
 
@@ -75,7 +79,14 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                     for (int j = start; j < i; j++) {
                         segment.add(coordinates[j]);
                     }
-                    segments.add(geometryFactory.buildGeometry(segment));
+                    if (segment.size() > 1) {
+                        segments.add(geometryFactory.createLineString(segment
+                                .toArray(new Coordinate[] {})));
+                    }
+                    else {
+                        segments.add(geometryFactory.createPoint(segment.get(0)));
+
+                    }
                     isSegment = (tmp.x < Double.MAX_VALUE) && (tmp.y < Double.MAX_VALUE);
                 }
                 else {
@@ -96,7 +107,13 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
             for (int j = start; j < coordinates.length; j++) {
                 segment.add(coordinates[j]);
             }
-            segments.add(geometryFactory.buildGeometry(segment));
+            if (segment.size() > 1) {
+                segments.add(geometryFactory.createLineString(segment.toArray(new Coordinate[] {})));
+            }
+            else {
+                segments.add(geometryFactory.createPoint(segment.get(0)));
+
+            }
         }
         return segments;
     }

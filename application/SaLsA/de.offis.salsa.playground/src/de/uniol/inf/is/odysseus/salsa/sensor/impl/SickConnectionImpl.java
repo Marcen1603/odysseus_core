@@ -21,10 +21,9 @@ import de.uniol.inf.is.odysseus.salsa.sensor.SickConnection;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Background;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Measurement;
 import de.uniol.inf.is.odysseus.salsa.sensor.model.Sample;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
 public class SickConnectionImpl implements SickConnection {
     class SickConnectionHandler extends Thread {
@@ -183,30 +182,27 @@ public class SickConnectionImpl implements SickConnection {
                                             }
                                         }
                                         catch (final Exception e) {
-//                                            SickConnectionImpl.LOG.error("Error in sample: {} {}",
-//                                                    data[index + 6 + j], message);
-//                                            SickConnectionImpl.LOG.error("Channel: {} Samples: {}",
-//                                                    data[index], data[index + 5]+" "+samples+" "+j);
-//                                            SickConnectionImpl.LOG.error(e.getMessage(), e);
-//                                            this.dumpPackage(this.charset.encode(message));
-                                            j=samples;
-                                            index--;
+                                            // Split Error, jump back one position for next channel
+//                                            j = samples;
+//                                            index--;
+//                                            SickConnectionImpl.LOG.error("Missing sample in package: {}",
+//                                                    message);
                                         }
                                     }
 
                                     index += samples + 6;
                                 }
                                 else {
-//                                    SickConnectionImpl.LOG.warn("Missing channel in package: {}",
+//                                    SickConnectionImpl.LOG.error("Missing channel in package: {}",
 //                                            message);
 //                                    this.dumpPackage(this.charset.encode(message));
                                 }
                             }
                         }
                         catch (Exception e) {
-//                            SickConnectionImpl.LOG.error("Error in package: {}", message);
-//                            SickConnectionImpl.LOG.error(e.getMessage(), e);
-//                            this.dumpPackage(this.charset.encode(message));
+                            SickConnectionImpl.LOG.error("Error in package: {}", message);
+                            SickConnectionImpl.LOG.error(e.getMessage(), e);
+                            this.dumpPackage(this.charset.encode(message));
                         }
                         if (this.record.get()) {
                             if (this.background == null) {
@@ -214,9 +210,6 @@ public class SickConnectionImpl implements SickConnection {
                             }
                             this.background = Background.merge(this.background, measurement);
                         }
-                        // if (SickConnectionImpl.LOG.isDebugEnabled()) {
-                        // SickConnectionImpl.LOG.debug("Measurement: {}", measurement);
-                        // }
                         this.connection.onMeasurement(measurement);
                     }
                 }
@@ -240,10 +233,9 @@ public class SickConnectionImpl implements SickConnection {
                 this.channel.configureBlocking(false);
                 final CharsetDecoder decoder = this.charset.newDecoder();
                 this.onOpen();
-                final ByteBuffer buffer = ByteBuffer.allocateDirect(64 * 1024);
+                final ByteBuffer buffer = ByteBuffer.allocateDirect(65 * 1024);
                 int nbytes = 0;
                 int pos = 0;
-                int startIndex = -1;
                 int endIndex = -1;
                 while (!Thread.currentThread().isInterrupted()) {
 
@@ -253,27 +245,11 @@ public class SickConnectionImpl implements SickConnection {
                                 endIndex = pos + i;
                                 break;
                             }
-                            if (buffer.get(pos + i) == SickConnectionImpl.START) {
-                                startIndex = pos + i;
-                            }
                         }
-                        pos += (nbytes - 1);
-                        // if (startIndex > endIndex) {
-                        // buffer.position(startIndex);
-                        // buffer.flip();
-                        // buffer.compact();
-                        // pos -= startIndex;
-                        // }
-                        // else {
-                        if ((endIndex >= 0) && (startIndex >= 0) && (startIndex < endIndex)) {
-                            buffer.position(startIndex);
+                        pos = buffer.position();;
+                        if (endIndex >= 0) {
+                            buffer.flip();
                             buffer.limit(endIndex);
-                            // System.out.println("1. Index: " + endIndex + " Bytes: " +
-                            // totalBytes
-                            // + " Position: " + buffer.position() + " Limit: "
-                            // + buffer.limit());
-
-                            // buffer.limit(endIndex);
                             final CharBuffer charBuffer = decoder.decode(buffer);
                             try {
 
@@ -281,39 +257,14 @@ public class SickConnectionImpl implements SickConnection {
                                         .toString());
                             }
                             catch (final Exception e) {
-                            //    SickConnectionImpl.LOG.error(e.getMessage(), e);
-                            //    this.dumpPackage(buffer);
+                                SickConnectionImpl.LOG.error(e.getMessage(), e);
+                                this.dumpPackage(buffer);
                             }
-                            // System.out.println("2. Index: "+startIndex+" " + endIndex +
-                            // " Bytes: " +
-                            // pos
-                            // + " Position: " + buffer.position() + " Limit: "
-                            // + buffer.limit());
-
-                            buffer.position(endIndex);
-                            // System.out.println("3. Index: "+startIndex+" " + endIndex +
-                            // " Bytes: " +
-                            // pos
-                            // + " Position: " + buffer.position() + " Limit: "
-                            // + buffer.limit());
-                            buffer.flip();
                             buffer.compact();
-                            // System.out.println("4. Index: "+startIndex+" " + endIndex +
-                            // " Bytes: " +
-                            // pos
-                            // + " Position: " + buffer.position() + " Limit: "
-                            // + buffer.limit());
                             pos -= endIndex;
                             endIndex = -1;
-                            // System.out.println("5. Index: "+startIndex+" " + endIndex +
-                            // " Bytes: " +
-                            // pos
-                            // + " Position: " + buffer.position() + " Limit: "
-                            // + buffer.limit());
-
                         }
-                        // }
-                        buffer.position(pos);
+                        buffer.position(pos-1);
                     }
                 }
                 this.onClose();
