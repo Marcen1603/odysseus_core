@@ -64,11 +64,11 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		String identifier = node.getIdentifier();
 		if (symbolTable.containsKey(identifier)) {
 			Variable var = symbolTable.get(identifier);
-			var.restrictAcceptedTypes((Class<?>[])data);
+			var.restrictAcceptedTypes((SDFDatatype[])data);
 			return var;
 		} else {
 			Variable variable = new Variable(identifier);
-			variable.setAcceptedTypes((Class<?>[])data);
+			variable.setAcceptedTypes((SDFDatatype[])data);
 			symbolTable.put(identifier, variable);
 			return variable;
 		}	
