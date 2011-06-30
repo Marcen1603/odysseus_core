@@ -10,10 +10,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "UNNEST")
 public class UnnestAO extends UnaryLogicalOp {
@@ -25,6 +24,7 @@ public class UnnestAO extends UnaryLogicalOp {
     private static Logger LOG = LoggerFactory.getLogger(UnnestAO.class);
 
     SDFAttribute attribute;
+    SDFAttributeList schema;
 
     /**
      * 
@@ -39,6 +39,7 @@ public class UnnestAO extends UnaryLogicalOp {
     public UnnestAO(final UnnestAO ao) {
         super(ao);
         this.attribute = ao.getAttribute();
+        this.schema = ao.getOutputSchema();
     }
 
     /*
@@ -63,7 +64,7 @@ public class UnnestAO extends UnaryLogicalOp {
      */
     @Override
     public SDFAttributeList getOutputSchema() {
-        return this.getInputSchema();
+        return this.schema;
     }
 
     /**
@@ -74,6 +75,10 @@ public class UnnestAO extends UnaryLogicalOp {
     public void setAttribute(final SDFAttribute attribute) {
         UnnestAO.LOG.debug("Set unnest attribute to {}", attribute.getAttributeName());
         this.attribute = attribute;
+        SDFAttributeList schema = this.getInputSchema().clone();
+        schema.getAttribute(schema.indexOf(attribute)).setDatatype(
+                attribute.getDatatype().getSubType());
+        this.schema = schema;
     }
 
 }
