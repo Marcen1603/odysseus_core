@@ -105,6 +105,8 @@ public class Polygon extends AbstractFunction<Double> {
 		return SDFDatatype.DOUBLE;
 	}
 	
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_DOUBLE};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -112,9 +114,7 @@ public class Polygon extends AbstractFunction<Double> {
 		if(argPos > 2){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.VECTOR_DOUBLE;			
+		else{	
 			return accTypes;
 		}
 	}

@@ -16,9 +16,11 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DoubleHandler extends AbstractAtomicDataHandler {
-	
+	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("Double");
 		types.add("Float");
@@ -47,4 +49,8 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 		buffer.putDouble(((Number)data).doubleValue());		
 	}
 
+	@Override
+	final public List<String> getSupportedDataTypes() {
+		return types;
+	}
 }

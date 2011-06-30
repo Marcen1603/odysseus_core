@@ -16,8 +16,11 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StringHandler extends AbstractAtomicDataHandler {
+	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("String");
 	}
@@ -51,4 +54,8 @@ public class StringHandler extends AbstractAtomicDataHandler {
 		}
 	}
 
+	@Override
+	public List<String> getSupportedDataTypes() {
+		return types;
+	}
 }

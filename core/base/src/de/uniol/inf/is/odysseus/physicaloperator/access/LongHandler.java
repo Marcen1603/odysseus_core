@@ -16,9 +16,11 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LongHandler extends AbstractAtomicDataHandler {
-
+	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("Long");
 		types.add("Timestamp");
@@ -44,4 +46,8 @@ public class LongHandler extends AbstractAtomicDataHandler {
 		buffer.putLong(((Number)data).longValue());
 	}	
 
+	@Override
+	final public List<String> getSupportedDataTypes() {
+		return types;
+	}
 }

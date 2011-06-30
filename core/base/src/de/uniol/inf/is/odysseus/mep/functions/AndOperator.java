@@ -65,6 +65,8 @@ public class AndOperator extends AbstractBinaryOperator<Boolean> {
 		return SDFDatatype.BOOLEAN;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{ SDFDatatype.BOOLEAN };
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -73,8 +75,6 @@ public class AndOperator extends AbstractBinaryOperator<Boolean> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.BOOLEAN;
 			return accTypes;
 		}
 	}

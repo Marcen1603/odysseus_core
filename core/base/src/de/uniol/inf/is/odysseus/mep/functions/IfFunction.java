@@ -45,6 +45,11 @@ public class IfFunction extends AbstractFunction<Object> {
 		return SDFDatatype.OBJECT;
 	}
 	
+	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
+															{SDFDatatype.BOOLEAN},
+															{SDFDatatype.OBJECT},
+															{SDFDatatype.OBJECT}};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -52,18 +57,8 @@ public class IfFunction extends AbstractFunction<Object> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("abs has only 1 argument.");
 		}
-		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			switch (argPos){
-			case 0: accTypes[0] = SDFDatatype.BOOLEAN;
-					break;
-			case 1:	accTypes[0] = SDFDatatype.OBJECT;
-					break;
-			case 2: accTypes[0] = SDFDatatype.OBJECT;
-					break;
-			}
-			
-			return accTypes;
+		else{			
+			return accTypes[argPos];
 		}
 	}
 

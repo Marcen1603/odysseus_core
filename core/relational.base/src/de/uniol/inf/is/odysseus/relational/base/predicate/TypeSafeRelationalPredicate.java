@@ -32,16 +32,12 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 			}
 			if(this.expression.getAllAttributes().get(i).getDatatype().getURI().equalsIgnoreCase("String") &&
 					vars.get(i).getAcceptedTypes().length == 1 ){ 
-				if(vars.get(i).getAcceptedTypes()[0] == Number.class ||
-						vars.get(i).getAcceptedTypes()[0] == Float.class ||
-						vars.get(i).getAcceptedTypes()[0] == Double.class ||
-						vars.get(i).getAcceptedTypes()[0] == Integer.class){
+				if(vars.get(i).getAcceptedTypes()[0].isNumeric()){
 					values[i]=(Double)Double.parseDouble((String)input.getAttribute(this.attributePositions[i]));
 				}
 				else{
 					values[i] = input.getAttribute(this.attributePositions[i]);
 				}
-				
 			}
 			else{
 				values[i] = input.getAttribute(this.attributePositions[i]);

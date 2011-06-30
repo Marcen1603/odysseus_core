@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.spatial.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
@@ -26,12 +28,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.StringHandler;
 
 /**
  * @author André Bolles
- *
+ * @deprecated Use SpatialByteHandler instead if this class shall be
+ * used decomment OSGI-INF/SpatialStringHandler.xml and comment
+ * OSGI-INF/SpatialByteHandler.xml
  */
 public class SpatialStringHandler extends StringHandler{
 
 	WKTReader reader;
 	WKTWriter writer;
+	
+	static protected List<String> types = new ArrayList<String>();
 	
 	static{
 		types.add("SpatialPoint");
@@ -72,6 +78,11 @@ public class SpatialStringHandler extends StringHandler{
 	public void writeData(ByteBuffer buffer, Object data) {
 		String wktString = this.writer.writeFormatted((Geometry)data);
 		super.writeData(buffer, wktString);
+	}
+	
+	@Override
+	public List<String> getSupportedDataTypes() {
+		return types;
 	}
 
 }

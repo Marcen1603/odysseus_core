@@ -56,6 +56,8 @@ public class SqrtValue extends AbstractFunction<Object>{
 		return SDFDatatype.DOUBLE;
 	}
 	
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -64,11 +66,6 @@ public class SqrtValue extends AbstractFunction<Object>{
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[4];
-			accTypes[0] = SDFDatatype.INTEGER;
-			accTypes[1] = SDFDatatype.LONG;
-			accTypes[2] = SDFDatatype.FLOAT;
-			accTypes[3] = SDFDatatype.DOUBLE;
 			return accTypes;
 		}
 	}

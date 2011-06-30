@@ -65,6 +65,8 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 		return false;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -73,8 +75,6 @@ public class EqualsOperator extends AbstractBinaryOperator<Boolean> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[]{
-			SDFDatatype.INTEGER,SDFDatatype.LONG,  SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
 			return accTypes;
 		}
 	}

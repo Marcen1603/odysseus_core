@@ -66,6 +66,7 @@ public class Distance extends AbstractFunction<Double> {
 		return SDFDatatype.DOUBLE;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE };
 	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
@@ -75,8 +76,6 @@ public class Distance extends AbstractFunction<Double> {
 			throw new IllegalArgumentException("abs has only 4 arguments.");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.DOUBLE;
 			return accTypes;
 		}
 	}

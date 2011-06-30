@@ -58,6 +58,8 @@ public class MatrixTranspose extends AbstractFunction<Object> {
 		return SDFDatatype.MATRIX_DOUBLE;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.MATRIX_DOUBLE};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -66,8 +68,6 @@ public class MatrixTranspose extends AbstractFunction<Object> {
 			throw new IllegalArgumentException("MatrixTrans has only 1 argument.");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.MATRIX_DOUBLE;
 			return accTypes;
 		}
 	}

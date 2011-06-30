@@ -16,6 +16,14 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
         return 3;
     }
 
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{
+    	{SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE, SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
+    		SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON},
+    	{SDFDatatype.DOUBLE},
+    	{SDFDatatype.DOUBLE}
+    };
+    
+    
     @Override
     public SDFDatatype[] getAcceptedTypes(int argPos) {
         if (argPos < 0) {
@@ -26,28 +34,7 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
                     + " argument(s): A geometry and a x and y value.");
         }
         else {
-            SDFDatatype[] accTypes = null;
-            switch (argPos) {
-                case 0:
-                    accTypes = new SDFDatatype[7];
-                    accTypes[0] = SDFDatatype.SPATIAL_POINT;
-                    accTypes[1] = SDFDatatype.SPATIAL_MULTI_POINT;
-                    accTypes[2] = SDFDatatype.SPATIAL_LINE;
-                    accTypes[3] = SDFDatatype.SPATIAL_MULTI_LINE;
-                    accTypes[4] = SDFDatatype.SPATIAL_MULTI_POLYGON;
-                    accTypes[5] = SDFDatatype.SPATIAL_POLYGON;
-                    accTypes[6] = SDFDatatype.SPATIAL;
-                    break;
-                case 1:
-                    accTypes = new SDFDatatype[1];
-                    accTypes[0] = SDFDatatype.DOUBLE;
-                    break;
-                case 2:
-                    accTypes = new SDFDatatype[1];
-                    accTypes[0] = SDFDatatype.DOUBLE;
-                    break;
-            }
-            return accTypes;
+            return accTypes[argPos];
         }
     }
 

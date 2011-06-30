@@ -17,6 +17,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 public class ExtractSegments extends AbstractFunction<List<Geometry>> {
     private final GeometryFactory geometryFactory = new GeometryFactory();
 
+	public static final SDFDatatype[] accTypes0 = new SDFDatatype[] { SDFDatatype.SPATIAL_MULTI_POINT };
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFDatatype.DOUBLE };
+	
     @Override
     public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
@@ -27,24 +30,13 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                     + " argument(s): A matrix and a threashold.");
         }
         else {
-            SDFDatatype[] accTypes = null;
-            switch (argPos) {
-                case 0:
-                    accTypes = new SDFDatatype[7];
-                    accTypes[0] = SDFDatatype.SPATIAL_POINT;
-                    accTypes[1] = SDFDatatype.SPATIAL_MULTI_POINT;
-                    accTypes[2] = SDFDatatype.SPATIAL_LINE;
-                    accTypes[3] = SDFDatatype.SPATIAL_MULTI_LINE;
-                    accTypes[4] = SDFDatatype.SPATIAL_MULTI_POLYGON;
-                    accTypes[5] = SDFDatatype.SPATIAL_POLYGON;
-                    accTypes[6] = SDFDatatype.SPATIAL;
-                    break;
-                case 1:
-                    accTypes = new SDFDatatype[1];
-                    accTypes[0] = SDFDatatype.DOUBLE;
-                    break;
-            }
-            return accTypes;
+        	switch(argPos){
+            case 0:
+            	return accTypes0; // Coordinate[].class;	
+            case 1:
+            default:
+            	return accTypes1;
+        	}
         }
     }
 

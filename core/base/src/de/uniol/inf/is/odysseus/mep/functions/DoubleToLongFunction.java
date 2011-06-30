@@ -39,6 +39,7 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 		return SDFDatatype.LONG;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE};
 	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
@@ -48,8 +49,6 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 			throw new IllegalArgumentException("doubleToLong has only 1 argument.");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.DOUBLE;
 			return accTypes;
 		}
 	}

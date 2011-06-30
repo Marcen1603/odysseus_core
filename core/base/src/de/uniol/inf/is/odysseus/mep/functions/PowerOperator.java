@@ -65,6 +65,9 @@ public class PowerOperator extends AbstractBinaryOperator<Double> {
 		return null;
 	}
 
+	public static final SDFDatatype[] accTypes0 = new SDFDatatype[] { SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFDatatype.INTEGER };
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -76,16 +79,9 @@ public class PowerOperator extends AbstractBinaryOperator<Double> {
 			SDFDatatype[] accTypes = null;
 			switch(argPos){
 			case 0: 
-				accTypes = new SDFDatatype[1];
-				accTypes[0] = SDFDatatype.INTEGER;
-				accTypes[1] = SDFDatatype.LONG;
-				accTypes[2] = SDFDatatype.DOUBLE;
-				accTypes[3] = SDFDatatype.FLOAT;
-				break;
+				return accTypes0;
 			case 1:
-				accTypes = new SDFDatatype[1];
-				accTypes[0] = SDFDatatype.INTEGER;
-				break;
+				return accTypes1;
 			}
 			return accTypes;
 		}

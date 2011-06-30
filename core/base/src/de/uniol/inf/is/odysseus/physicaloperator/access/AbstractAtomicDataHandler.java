@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 
 	private ObjectInputStream stream;
-	static protected List<String> types = new ArrayList<String>();		
+		
 	
 	protected AbstractAtomicDataHandler(){
 	}
@@ -38,7 +38,5 @@ public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 	}
 	
 	@Override
-	final public List<String> getSupportedDataTypes() {
-		return types;
-	}
+	abstract public List<String> getSupportedDataTypes();
 }

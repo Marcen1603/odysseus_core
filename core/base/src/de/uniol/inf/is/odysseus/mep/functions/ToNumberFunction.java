@@ -39,6 +39,8 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 		return SDFDatatype.DOUBLE;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.DOUBLE};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");

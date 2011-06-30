@@ -44,6 +44,8 @@ public class NotOperator extends AbstractUnaryOperator<Boolean> {
 		return ASSOCIATIVITY.RIGHT_TO_LEFT;
 	}
 	
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.BOOLEAN};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");

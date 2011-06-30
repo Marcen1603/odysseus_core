@@ -253,6 +253,46 @@ public class SDFDatatype extends SDFElement implements Serializable{
 		return this.getURI().equals(END_TIMESTAMP.getURI());
 	}
 	
+	public boolean isTimestamp(){
+		return this.getURI().equals(TIMESTAMP.getURI()) ||
+				this.isStartTimestamp() ||
+				this.isEndTimestamp();
+	}
+	
+	public boolean isSpatial(){
+		return this.getURI().equals(SPATIAL.getURI()) ||
+				this.isPoint() ||
+				this.isLine() ||
+				this.isPolygon() ||
+				this.isMultiPoint() ||
+				this.isMultiLine() ||
+				this.isMultiPolygon();
+	}
+	
+	public boolean isPoint(){
+		return this.getURI().equals(SPATIAL_POINT.getURI());
+	}
+	
+	public boolean isLine(){
+		return this.getURI().equals(SPATIAL_LINE.getURI());
+	}
+	
+	public boolean isPolygon(){
+		return this.getURI().equals(SPATIAL_POLYGON.getURI());
+	}
+	
+	public boolean isMultiPoint(){
+		return this.getURI().equals(SPATIAL_MULTI_POINT.getURI());
+	}
+	
+	public boolean isMultiLine(){
+		return this.getURI().equals(SPATIAL_MULTI_LINE.getURI());
+	}
+	
+	public boolean isMultiPolygon(){
+		return this.getURI().equals(SPATIAL_MULTI_POLYGON.getURI());
+	}
+	
 	public int getSubattributeCount(){
 		if(this.schema == null){
 			return 0;
@@ -261,4 +301,95 @@ public class SDFDatatype extends SDFElement implements Serializable{
 			return this.schema.size();
 		}
 	}
+	
+	
+	public static SDFDatatype min(SDFDatatype left, SDFDatatype right){
+		
+		if(left.compatibleTo(right) && !right.compatibleTo(left)){
+			return right;
+		}
+		
+		if(!left.compatibleTo(right) && !right.compatibleTo(left)){
+			throw new IllegalArgumentException("left and right are not compatible.");
+		}
+		
+		return left; // left->right ok -> left ||| right->left ok -> left
+	}
+	
+	/**
+	 * Checks whether this datatype is semantically equal to <code>other</code>
+	 * @param other
+	 * @return
+	 */
+	public boolean equals(SDFDatatype other){
+		if(other == null){
+			return false;
+		}
+		if(this.getURI() == null && other.getURI() == null){
+			if(this.type == other.type){
+				if(this.subType != null && this.subType.equals(other.subType)){
+					return true;
+				}
+				if(this.schema != null && other.schema != null &&
+						this.schema.equals(other.schema)){
+					return true;
+				}
+			}
+		}
+		
+		else if(this.getURI() != null && other.getURI() != null &&
+				this.getURI().equals(other.getURI())){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * This method checks whether this type can be casted into <code>other</code>.
+	 * @param other
+	 * @return True, if this type can be casted into <code>other</code>
+	 */
+	public boolean compatibleTo(SDFDatatype other){
+		if(this.equals(other)){
+			return true;
+		}
+		// String and Object are only compatible to themselfes
+//		else if(left.equals(SDFDatatype.STRING) || left.equals(SDFDatatype.OBJECT)){
+//			return false;
+//		}
+		else if(this.isInteger() && other.isNumeric()){
+			return true;
+		}
+		else if(this.isLong() && (other.isLong() || other.isFloat() || other.isDouble())){
+			return true;
+		}
+		else if(this.isFloat() && (other.isFloat() || other.isDouble())){
+			return true;
+		}
+		else if(this.isDouble() && other.isDouble()){
+			return true;
+		}
+		else if(this.isEndTimestamp() && (other.isEndTimestamp() || other.isLong()) ){
+			return true;
+		}
+		else if(this.isStartTimestamp() && (other.isStartTimestamp() || other.isLong())){
+			return true;
+		}
+		else if(this.isTimestamp() && (other.isTimestamp() || other.isLong())){
+			return true;
+		}
+		else if(this.isSpatial() && (other.isSpatial()) ||
+				this.isPoint() && (other.isPoint()) ||
+				this.isLine() && (other.isLine()) ||
+				this.isPolygon() && other.isPolygon() ||
+				this.isMultiPoint() && other.isMultiPoint() ||
+				this.isMultiLine() && other.isMultiLine() ||
+				this.isMultiPolygon() && other.isMultiPolygon()){
+			return true;
+		}
+		
+		return false;
+	}
+	
 }

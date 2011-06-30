@@ -34,6 +34,12 @@ public class SpatialIsWithinDistance extends AbstractFunction {
 		return 3;
 	}
 
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{
+    	{SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE, SDFDatatype.SPATIAL_MULTI_POINT,
+    		SDFDatatype.SPATIAL_MULTI_POLYGON, SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON},
+    	{SDFDatatype.DOUBLE}
+    };
+	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
 	 */
@@ -46,20 +52,11 @@ public class SpatialIsWithinDistance extends AbstractFunction {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
+			// 0 and 1 are equal
 			switch(argPos){
 			case 0:
-			case 1: SDFDatatype[] accTypes = new SDFDatatype[7];
-					accTypes[0] = SDFDatatype.SPATIAL_POINT;
-					accTypes[1] = SDFDatatype.SPATIAL_MULTI_POINT;
-					accTypes[2] = SDFDatatype.SPATIAL_LINE;
-					accTypes[3] = SDFDatatype.SPATIAL_MULTI_LINE;
-					accTypes[4] = SDFDatatype.SPATIAL_POLYGON;
-					accTypes[5] = SDFDatatype.SPATIAL_MULTI_POLYGON;
-					accTypes[6] = SDFDatatype.SPATIAL;
-					return accTypes;
-			case 2: accTypes = new SDFDatatype[1];
-					accTypes[1] = SDFDatatype.DOUBLE;
-					return accTypes;
+			case 1:	return accTypes[0];
+			case 2:	return accTypes[1];
 			}
 		}
 		return null; // never reached

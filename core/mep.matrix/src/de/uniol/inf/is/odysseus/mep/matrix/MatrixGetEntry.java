@@ -56,6 +56,8 @@ public class MatrixGetEntry extends AbstractFunction<Object>{
 		return SDFDatatype.DOUBLE;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.INTEGER};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -64,8 +66,6 @@ public class MatrixGetEntry extends AbstractFunction<Object>{
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.INTEGER;
 			return accTypes;
 		}
 	}

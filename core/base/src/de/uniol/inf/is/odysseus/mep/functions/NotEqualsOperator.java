@@ -65,6 +65,8 @@ public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
 		return false;
 	}
 	
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.OBJECT};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -73,8 +75,6 @@ public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.OBJECT;
 			return accTypes;
 		}
 	}

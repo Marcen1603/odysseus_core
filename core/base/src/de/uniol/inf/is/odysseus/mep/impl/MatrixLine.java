@@ -52,6 +52,8 @@ public class MatrixLine extends AbstractFunction<double[]> {
 		return SDFDatatype.VECTOR_DOUBLE;
 	}
 
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE};
+	
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
@@ -60,8 +62,6 @@ public class MatrixLine extends AbstractFunction<double[]> {
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
 		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.DOUBLE;
 			return accTypes;
 		}
 	}
