@@ -26,12 +26,12 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 		super();
 	}
 
-	public OrPredicate(IPredicate<? super T> leftPredicate,
+	protected OrPredicate(IPredicate<? super T> leftPredicate,
 			IPredicate<? super T> rightPredicate) {
 		super(leftPredicate, rightPredicate);
 	}
 
-	public OrPredicate(OrPredicate<T> pred) {
+	protected OrPredicate(OrPredicate<T> pred) {
 		super(pred);
 	}
 

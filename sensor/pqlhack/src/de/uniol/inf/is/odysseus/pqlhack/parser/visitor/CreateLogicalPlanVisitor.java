@@ -105,6 +105,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.predicate.OrPredicate;
@@ -609,7 +610,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
 				.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data).add(new AndPredicate<RelationalTuple<?>>(left, right));
+		((ArrayList) data).add(ComplexPredicateBuilder.createAndPredicate(left, right));
 		return data;
 	}
 
@@ -629,7 +630,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
 				.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data).add(new OrPredicate<RelationalTuple<?>>(left, right));
+		((ArrayList) data).add(ComplexPredicateBuilder.createOrPredicate(left, right));
 		return data;
 	}
 
@@ -642,7 +643,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		IPredicate<RelationalTuple<?>> predicate = (IPredicate<RelationalTuple<?>>) ((ArrayList) node.jjtGetChild(0)
 				.jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data).add(new NotPredicate<RelationalTuple<?>>(predicate));
+		((ArrayList) data).add(ComplexPredicateBuilder.createNotPredicate(predicate));
 		return data;
 	}
 

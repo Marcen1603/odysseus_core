@@ -28,12 +28,12 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 		super();
 	}
 
-	public AndPredicate(IPredicate<? super T> leftPredicate,
+	protected AndPredicate(IPredicate<? super T> leftPredicate,
 			IPredicate<? super T> rightPredicate) {
 		super(leftPredicate, rightPredicate);
 	}
 
-	public AndPredicate(AndPredicate<T> pred) {
+	protected AndPredicate(AndPredicate<T> pred) {
 		super(pred);
 	}
 

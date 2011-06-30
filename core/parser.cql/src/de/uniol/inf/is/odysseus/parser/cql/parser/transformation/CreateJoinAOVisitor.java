@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.predicate.OrPredicate;
@@ -154,7 +155,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			return compPred;
 		}
 		if (negatived) {
-			return new NotPredicate<RelationalTuple<?>>(pred);
+			return ComplexPredicateBuilder.createNotPredicate(pred);
 		} else {
 			return pred;
 		}
@@ -182,6 +183,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTWhereClause node, Object data) {
 		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) data;
@@ -204,8 +206,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 				if (selectPredicate == null) {
 					selectPredicate = next;
 				} else {
-					selectPredicate = new AndPredicate<RelationalTuple<?>>(
-							selectPredicate, next);
+//					selectPredicate = new AndPredicate<RelationalTuple<?>>(
+//							selectPredicate, next);
+					selectPredicate = ComplexPredicateBuilder.createAndPredicate(selectPredicate, next);
 				}
 			}
 		}
@@ -233,7 +236,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (pred instanceof AndPredicate) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(new AndPredicate(left
+						((SelectAO) left).setPredicate(ComplexPredicateBuilder.createAndPredicate(left
 								.getPredicate(), right.getPredicate()));
 						return left;
 					} else {
@@ -248,7 +251,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (pred instanceof OrPredicate) {
 				if (left instanceof SelectAO) {
 					if (right instanceof SelectAO) {
-						((SelectAO) left).setPredicate(new OrPredicate(left
+						((SelectAO) left).setPredicate(ComplexPredicateBuilder.createOrPredicate(left
 								.getPredicate(), right.getPredicate()));
 						return left;
 					}

@@ -24,11 +24,11 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
 	public NotPredicate() {
 	}
 	
-	public NotPredicate(NotPredicate<T> predicate) {
+	protected NotPredicate(NotPredicate<T> predicate) {
 		this.predicate = predicate.predicate;
 	}
 
-	public NotPredicate(IPredicate<? super T> predicate) {
+	protected NotPredicate(IPredicate<? super T> predicate) {
 		this.predicate = predicate;
 	}
 	

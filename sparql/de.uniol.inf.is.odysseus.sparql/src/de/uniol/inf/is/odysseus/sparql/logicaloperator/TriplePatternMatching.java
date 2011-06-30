@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -234,7 +235,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 			for(int i = 1; i<exprs.size(); i++){
 				RelationalPredicate right = new RelationalPredicate(exprs.get(i));
 				right.init(inputSchema, null);
-				AndPredicate tempAnd = new AndPredicate(left, right);
+				IPredicate tempAnd = ComplexPredicateBuilder.createAndPredicate(left, right);
 				left = tempAnd;
 			}
 			

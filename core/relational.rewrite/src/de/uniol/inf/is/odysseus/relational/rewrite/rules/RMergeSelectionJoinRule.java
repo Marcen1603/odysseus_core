@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -40,7 +41,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 			if (isValidSelectAO(sel, join)) {
 				if (sel.getPredicate() != null) {
 					if (join.getPredicate() != null) {
-						join.setPredicate(new AndPredicate(join.getPredicate(), sel.getPredicate()));
+						join.setPredicate(ComplexPredicateBuilder.createAndPredicate(join.getPredicate(), sel.getPredicate()));
 					} else {
 						join.setPredicate(sel.getPredicate());
 					}

@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 import de.uniol.inf.is.odysseus.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.predicate.ComplexPredicateBuilder;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.predicate.OrPredicate;
@@ -169,8 +170,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			
 				for(Entry<IPredicate, IPredictionFunction> leftEntry: leftFcts.entrySet()){
 					for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
-						AndPredicate newPredicate;
-						newPredicate = new AndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
+						IPredicate newPredicate = ComplexPredicateBuilder.createAndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
 						IPredictionFunction newFunction = new LinearProbabilityPredictionFunction();
 						
 						IPredictionFunction leftFct = leftEntry.getValue();
@@ -246,7 +246,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
 			for(Entry<IPredicate, IPredictionFunction> leftEntry : leftFcts.entrySet()){
 				for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
-					AndPredicate newPredicate = new AndPredicate(leftEntry.getKey(), rightEntry.getKey());
+					IPredicate newPredicate = ComplexPredicateBuilder.createAndPredicate(leftEntry.getKey(), rightEntry.getKey());
 					
 					IRangePredicate rangePredicate = this.generateRangePredicate(
 							this.getPredicate(),
