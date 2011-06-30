@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public static enum KindOfDatatype{
-		BASE, TUPLE, SET, BEAN;
+		BASE, TUPLE, SET, LIST, BEAN;
 	}
 
 	/**
@@ -69,8 +69,6 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	 * possible so we treat this type as base type.
 	 */
 	public static final SDFDatatype SPATIAL = new SDFDatatype("Spatial");
-	
-	
 	
 	public static final SDFDatatype START_TIMESTAMP = new SDFDatatype("StartTimestamp");
 	public static final SDFDatatype END_TIMESTAMP = new SDFDatatype("EndTimestamp");
@@ -151,7 +149,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	}
 
 	@Override
-	// TODO: später wieder entfernen!!
+	// TODO: spï¿½ter wieder entfernen!!
 	public String getQualName() {
 		if (super.getQualName() != null && super.getQualName().length() > 0){
 			return super.getQualName();
@@ -187,6 +185,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public boolean isComplex(){
 		return this.type == SDFDatatype.KindOfDatatype.SET ||
+		        this.type == SDFDatatype.KindOfDatatype.LIST ||
 				this.type == SDFDatatype.KindOfDatatype.TUPLE ||
 				this.type == SDFDatatype.KindOfDatatype.BEAN;
 	}
@@ -195,6 +194,10 @@ public class SDFDatatype extends SDFElement implements Serializable{
 		return this.type == SDFDatatype.KindOfDatatype.SET;
 	}
 	
+	public boolean isList(){
+	    return this.type == SDFDatatype.KindOfDatatype.LIST;
+	}
+	   
 	public boolean isTuple(){
 		return this.type == SDFDatatype.KindOfDatatype.TUPLE;
 	}
