@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class OrPredicate<T> extends ComplexPredicate<T> {
 	private static final long serialVersionUID = -5476180354530944122L;
 
-	public OrPredicate() {
+	protected OrPredicate() {
 		super();
 	}
 

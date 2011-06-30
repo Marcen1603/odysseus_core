@@ -21,7 +21,7 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
 	private static final long serialVersionUID = -3214605315259491423L;
 	IPredicate<? super T> predicate;
 
-	public NotPredicate() {
+	protected NotPredicate() {
 	}
 	
 	protected NotPredicate(NotPredicate<T> predicate) {

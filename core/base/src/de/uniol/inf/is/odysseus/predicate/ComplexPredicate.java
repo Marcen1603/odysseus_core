@@ -43,7 +43,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		return left;
 	}
 
-	public void setLeft(IPredicate<? super T> left) {
+	protected void setLeft(IPredicate<? super T> left) {
 		this.left = left;
 	}
 
@@ -51,7 +51,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		return right;
 	}
 
-	public void setRight(IPredicate<? super T> right) {
+	protected void setRight(IPredicate<? super T> right) {
 		this.right = right;
 	}
 

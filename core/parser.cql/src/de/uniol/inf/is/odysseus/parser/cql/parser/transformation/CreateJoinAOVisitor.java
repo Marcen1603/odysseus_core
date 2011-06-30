@@ -135,55 +135,6 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IPredicate<? super RelationalTuple<?>> pushDownNegation(
-			IPredicate<? super RelationalTuple<?>> pred, boolean negatived) {
-		if (pred instanceof NotPredicate) {
-			return pushDownNegation(((NotPredicate<RelationalTuple>) pred)
-					.getChild(), !negatived);
-		}
-		if (pred instanceof ComplexPredicate) {
-			ComplexPredicate<RelationalTuple<?>> compPred = (ComplexPredicate<RelationalTuple<?>>) pred;
-			if (negatived) {
-				if (pred instanceof OrPredicate) {
-					compPred = new AndPredicate<RelationalTuple<?>>();
-				} else {
-					compPred = new OrPredicate<RelationalTuple<?>>();
-				}
-			}
-			compPred.setLeft(pushDownNegation(compPred.getLeft(), negatived));
-			compPred.setRight(pushDownNegation(compPred.getRight(), negatived));
-			return compPred;
-		}
-		if (negatived) {
-			return ComplexPredicateBuilder.createNotPredicate(pred);
-		} else {
-			return pred;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<IPredicate<RelationalTuple<?>>> splitPredicate(
-			IPredicate<RelationalTuple<?>> predicate) {
-		LinkedList<IPredicate<RelationalTuple<?>>> result = new LinkedList<IPredicate<RelationalTuple<?>>>();
-		Stack<IPredicate<RelationalTuple<?>>> predicateStack = new Stack<IPredicate<RelationalTuple<?>>>();
-		predicateStack.push(predicate);
-		while (!predicateStack.isEmpty()) {
-			IPredicate<RelationalTuple<?>> curPredicate = predicateStack.pop();
-			if (curPredicate instanceof AndPredicate) {
-				predicateStack
-						.push((IPredicate<RelationalTuple<?>>) ((AndPredicate) curPredicate)
-								.getLeft());
-				predicateStack
-						.push((IPredicate<RelationalTuple<?>>) ((AndPredicate) curPredicate)
-								.getRight());
-			} else {
-				result.add(curPredicate);
-			}
-		}
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTWhereClause node, Object data) {
 		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) data;
@@ -191,23 +142,21 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		IPredicate<RelationalTuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate(wherePredicate,
 				this.attributeResolver);
-		pushDownNegation(predicate, false);
-		List<IPredicate<RelationalTuple<?>>> conjunctivePredicates = splitPredicate(predicate);
+		predicate = ComplexPredicateBuilder.pushDownNegation(predicate, false);
+		List<IPredicate> conjunctivePredicates = ComplexPredicateBuilder.splitPredicate(predicate);
 
 		AbstractLogicalOperator curInputAO = inputOp;
-		Iterator<IPredicate<RelationalTuple<?>>> it = conjunctivePredicates
+		Iterator<?> it = conjunctivePredicates
 				.iterator();
-		IPredicate<RelationalTuple<?>> selectPredicate = null;
+		IPredicate<?> selectPredicate = null;
 		while (it.hasNext()) {
-			IPredicate<RelationalTuple<?>> next = it.next();
+			IPredicate<RelationalTuple<?>> next = (IPredicate<RelationalTuple<?>>) it.next();
 			if (containsQuantification(next)) {
 				curInputAO = createQuantificationPlan(curInputAO, next);
 			} else {
 				if (selectPredicate == null) {
 					selectPredicate = next;
 				} else {
-//					selectPredicate = new AndPredicate<RelationalTuple<?>>(
-//							selectPredicate, next);
 					selectPredicate = ComplexPredicateBuilder.createAndPredicate(selectPredicate, next);
 				}
 			}
