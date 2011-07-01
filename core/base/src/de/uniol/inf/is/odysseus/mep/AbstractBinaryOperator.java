@@ -36,4 +36,11 @@ public abstract class AbstractBinaryOperator<T> extends AbstractFunction<T>
 		return isLeftDistributiveWith(operator)
 				&& isRightDistributiveWith(operator);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer(""+getArgument(0));
+		buffer.append(" ").append(getSymbol()).append(" "+getArgument(1));
+		return buffer.toString();
+	}
 }

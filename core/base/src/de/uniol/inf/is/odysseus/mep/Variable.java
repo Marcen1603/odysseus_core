@@ -58,7 +58,7 @@ public class Variable implements IExpression<Object> {
 
 	@Override
 	public String toString() {
-		return identifier + "[ " + value + " ]";
+		return value==null?identifier: identifier + "[ " + value + " ]";
 	}
 
 	@Override
