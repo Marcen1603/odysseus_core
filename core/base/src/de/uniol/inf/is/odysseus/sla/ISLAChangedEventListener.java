@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.slamodel;
+package de.uniol.inf.is.odysseus.sla;
 
 /**
  * Interface for event listeners of {@link SLAChangedEvent}

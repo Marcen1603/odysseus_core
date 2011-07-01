@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyAverage;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyNumber;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencySingle;
-import de.uniol.inf.is.odysseus.slamodel.SLA;
-import de.uniol.inf.is.odysseus.slamodel.metric.Latency;
-import de.uniol.inf.is.odysseus.slamodel.scope.Average;
-import de.uniol.inf.is.odysseus.slamodel.scope.Number;
-import de.uniol.inf.is.odysseus.slamodel.scope.Single;
+import de.uniol.inf.is.odysseus.sla.SLA;
+import de.uniol.inf.is.odysseus.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.sla.scope.Average;
+import de.uniol.inf.is.odysseus.sla.scope.Number;
+import de.uniol.inf.is.odysseus.sla.scope.Single;
 
 /**
  * Factory for building cost functions

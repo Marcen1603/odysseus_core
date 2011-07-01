@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.slamodel.scope;
+package de.uniol.inf.is.odysseus.sla.scope;
 
-import de.uniol.inf.is.odysseus.slamodel.Scope;
+import de.uniol.inf.is.odysseus.sla.Scope;
 
 /**
  * A Scope for sla. This scope means that a given metric value (saved in the @link

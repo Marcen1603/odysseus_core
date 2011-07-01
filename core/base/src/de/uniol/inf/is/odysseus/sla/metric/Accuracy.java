@@ -1,7 +1,7 @@
-package de.uniol.inf.is.odysseus.slamodel.metric;
+package de.uniol.inf.is.odysseus.sla.metric;
 
-import de.uniol.inf.is.odysseus.slamodel.Metric;
-import de.uniol.inf.is.odysseus.slamodel.unit.RatioUnit;
+import de.uniol.inf.is.odysseus.sla.Metric;
+import de.uniol.inf.is.odysseus.sla.unit.RatioUnit;
 
 /**
  * This Metric is a measure for the Quality of Answers (QoA)

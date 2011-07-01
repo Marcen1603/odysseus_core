@@ -3,15 +3,15 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.slamodel.Penalty;
-import de.uniol.inf.is.odysseus.slamodel.SLA;
-import de.uniol.inf.is.odysseus.slamodel.Scope;
-import de.uniol.inf.is.odysseus.slamodel.ServiceLevel;
-import de.uniol.inf.is.odysseus.slamodel.metric.Latency;
-import de.uniol.inf.is.odysseus.slamodel.penalty.AbsolutePenalty;
-import de.uniol.inf.is.odysseus.slamodel.scope.Average;
-import de.uniol.inf.is.odysseus.slamodel.scope.Number;
-import de.uniol.inf.is.odysseus.slamodel.unit.TimeUnit;
+import de.uniol.inf.is.odysseus.sla.Penalty;
+import de.uniol.inf.is.odysseus.sla.SLA;
+import de.uniol.inf.is.odysseus.sla.Scope;
+import de.uniol.inf.is.odysseus.sla.ServiceLevel;
+import de.uniol.inf.is.odysseus.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.sla.penalty.AbsolutePenalty;
+import de.uniol.inf.is.odysseus.sla.scope.Average;
+import de.uniol.inf.is.odysseus.sla.scope.Number;
+import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 
 public class TestUtils {
 	

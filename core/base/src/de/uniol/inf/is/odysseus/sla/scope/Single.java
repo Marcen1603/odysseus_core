@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.slamodel.scope;
+package de.uniol.inf.is.odysseus.sla.scope;
 
-import de.uniol.inf.is.odysseus.slamodel.Scope;
+import de.uniol.inf.is.odysseus.sla.Scope;
 
 /**
  * A scope for sla. This scope means that the service level gets violated if the

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.slamodel;
+package de.uniol.inf.is.odysseus.sla;
 
 /**
  * Definition of a sla metric

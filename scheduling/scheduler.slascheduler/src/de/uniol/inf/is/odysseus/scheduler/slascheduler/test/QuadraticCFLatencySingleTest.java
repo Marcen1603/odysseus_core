@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ICostFunction;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencySingle;
-import de.uniol.inf.is.odysseus.slamodel.SLA;
+import de.uniol.inf.is.odysseus.sla.SLA;
 
 public class QuadraticCFLatencySingleTest {
 	

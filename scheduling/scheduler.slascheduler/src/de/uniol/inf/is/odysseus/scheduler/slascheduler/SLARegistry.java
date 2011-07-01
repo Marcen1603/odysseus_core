@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.slamodel.ISLAChangedEventListener;
-import de.uniol.inf.is.odysseus.slamodel.SLAChangedEvent;
-import de.uniol.inf.is.odysseus.slamodel.SLADictionary;
+import de.uniol.inf.is.odysseus.sla.ISLAChangedEventListener;
+import de.uniol.inf.is.odysseus.sla.SLAChangedEvent;
+import de.uniol.inf.is.odysseus.sla.SLADictionary;
 
 /**
  * central management of scheduling data

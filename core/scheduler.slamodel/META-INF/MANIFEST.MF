@@ -7,10 +7,4 @@ Bundle-Activator: de.uniol.inf.is.odysseus.slamodel.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework;version="1.3.0"
-Export-Package: de.uniol.inf.is.odysseus.slamodel,
- de.uniol.inf.is.odysseus.slamodel.factories,
- de.uniol.inf.is.odysseus.slamodel.metric,
- de.uniol.inf.is.odysseus.slamodel.penalty,
- de.uniol.inf.is.odysseus.slamodel.scope,
- de.uniol.inf.is.odysseus.slamodel.unit
 Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"

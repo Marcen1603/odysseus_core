@@ -1,7 +1,7 @@
-package de.uniol.inf.is.odysseus.slamodel.metric;
+package de.uniol.inf.is.odysseus.sla.metric;
 
-import de.uniol.inf.is.odysseus.slamodel.Metric;
-import de.uniol.inf.is.odysseus.slamodel.unit.ThroughputUnit;
+import de.uniol.inf.is.odysseus.sla.Metric;
+import de.uniol.inf.is.odysseus.sla.unit.ThroughputUnit;
 
 /**
  * This metric is a measure for throughput

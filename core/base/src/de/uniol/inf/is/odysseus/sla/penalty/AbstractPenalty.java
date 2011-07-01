@@ -1,7 +1,7 @@
-package de.uniol.inf.is.odysseus.slamodel.penalty;
+package de.uniol.inf.is.odysseus.sla.penalty;
 
-import de.uniol.inf.is.odysseus.slamodel.Penalty;
-import de.uniol.inf.is.odysseus.slamodel.ServiceLevel;
+import de.uniol.inf.is.odysseus.sla.Penalty;
+import de.uniol.inf.is.odysseus.sla.ServiceLevel;
 
 /**
  * abstract super class for all penalties.

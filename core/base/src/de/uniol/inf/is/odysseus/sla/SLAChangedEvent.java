@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.slamodel;
+package de.uniol.inf.is.odysseus.sla;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 

@@ -6,11 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy,
- de.uniol.inf.is.odysseus.slamodel,
- de.uniol.inf.is.odysseus.slamodel.metric,
- de.uniol.inf.is.odysseus.slamodel.penalty,
- de.uniol.inf.is.odysseus.slamodel.scope,
- de.uniol.inf.is.odysseus.slamodel.unit,
  org.osgi.service.component,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus,

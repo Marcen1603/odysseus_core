@@ -1,9 +1,9 @@
-package de.uniol.inf.is.odysseus.slamodel.factories;
+package de.uniol.inf.is.odysseus.sla.factories;
 
-import de.uniol.inf.is.odysseus.slamodel.Scope;
-import de.uniol.inf.is.odysseus.slamodel.scope.Average;
-import de.uniol.inf.is.odysseus.slamodel.scope.Number;
-import de.uniol.inf.is.odysseus.slamodel.scope.Single;
+import de.uniol.inf.is.odysseus.sla.Scope;
+import de.uniol.inf.is.odysseus.sla.scope.Average;
+import de.uniol.inf.is.odysseus.sla.scope.Number;
+import de.uniol.inf.is.odysseus.sla.scope.Single;
 
 public class ScopeFactory {
 	

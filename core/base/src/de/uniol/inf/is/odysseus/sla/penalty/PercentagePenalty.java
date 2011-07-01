@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.slamodel.penalty;
+package de.uniol.inf.is.odysseus.sla.penalty;
 
 /**
  * This kind of penalty is defined by a certain percentage of the price payed

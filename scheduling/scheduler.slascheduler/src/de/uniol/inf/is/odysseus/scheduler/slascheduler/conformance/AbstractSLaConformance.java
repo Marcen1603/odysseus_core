@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
-import de.uniol.inf.is.odysseus.slamodel.SLA;
-import de.uniol.inf.is.odysseus.slamodel.ServiceLevel;
+import de.uniol.inf.is.odysseus.sla.SLA;
+import de.uniol.inf.is.odysseus.sla.ServiceLevel;
 
 /**
  * abstract sla conformance super class. extends {@link AbstractSink} so the sla

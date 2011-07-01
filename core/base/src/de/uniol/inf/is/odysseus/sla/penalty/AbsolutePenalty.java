@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.slamodel.penalty;
+package de.uniol.inf.is.odysseus.sla.penalty;
 
 /**
  * This kind of penalty is defined by an absolute amount payable on violation of

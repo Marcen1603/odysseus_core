@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.slamodel.factories;
+package de.uniol.inf.is.odysseus.sla.factories;
 
-import de.uniol.inf.is.odysseus.slamodel.unit.RatioUnit;
-import de.uniol.inf.is.odysseus.slamodel.unit.ThroughputUnit;
-import de.uniol.inf.is.odysseus.slamodel.unit.TimeUnit;
+import de.uniol.inf.is.odysseus.sla.unit.RatioUnit;
+import de.uniol.inf.is.odysseus.sla.unit.ThroughputUnit;
+import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 
 public class UnitFactory {
 	

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.cost;
 
-import de.uniol.inf.is.odysseus.slamodel.SLA;
+import de.uniol.inf.is.odysseus.sla.SLA;
 
 /**
  * this is a quadratic cost function for metric latency and scope number
