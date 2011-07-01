@@ -25,9 +25,13 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.OrOperator;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -209,8 +213,9 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 			return false;
 		}
 		try {
-			IExpression<?> ex1 = MEP.parse(this.expression.getExpression());
-			IExpression<?> ex2 = MEP.parse(rp2.getExpression().getExpression());
+			// Noch mal zu parsen scheint mir wenig sinnvoll zu sein ...
+			IExpression<?> ex1 = this.expression.getMEPExpression();// MEP.parse(this.expression.getExpression());
+			IExpression<?> ex2 = rp2.expression.getMEPExpression();// MEP.parse(rp2.getExpression().getExpression());
 			if(ex1.getReturnType().equals(ex2.getReturnType()) && ex1.isFunction()) {
 				IFunction<?> if1 = (IFunction<?>) ex1;
 				IFunction<?> if2 = (IFunction<?>) ex2;
@@ -396,4 +401,22 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		}
 		return false;
 	}
+	
+	// Helpermethods
+	public boolean isAndPredicate(){
+		return expression.getMEPExpression().isFunction() &&
+				expression.getMEPExpression().toFunction() instanceof AndOperator;
+	}
+	
+	public boolean isOrPredicate(){
+		return expression.getMEPExpression().isFunction() &&
+		expression.getMEPExpression().toFunction() instanceof OrOperator;		
+	}
+	
+	public boolean isNotPredicate(){
+		return expression.getMEPExpression().isFunction() &&
+		expression.getMEPExpression().toFunction() instanceof NotOperator;		
+	}
+
+	
 }
