@@ -61,7 +61,6 @@ public interface NewSQLParserVisitor
   public Object visit(ASTPredicate node, Object data);
   public Object visit(ASTSimplePredicate node, Object data);
   public Object visit(ASTBasicPredicate node, Object data);
-  public Object visit(ASTSpatialPredicate node, Object data);
   public Object visit(ASTProbabilityPredicate node, Object data);
   public Object visit(ASTPriority node, Object data);
   public Object visit(ASTOrPredicate node, Object data);
@@ -128,4 +127,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data);
   public Object visit(ASTRevokeStatement node, Object data);
 }
-/* JavaCC - OriginalChecksum=e0079dd52852741296a141409ef9ba3e (do not edit this line) */
+/* JavaCC - OriginalChecksum=c14f599b9db820c084be10108e24de0c (do not edit this line) */

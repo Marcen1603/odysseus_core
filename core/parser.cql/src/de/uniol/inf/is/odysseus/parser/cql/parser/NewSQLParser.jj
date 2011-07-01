@@ -1473,7 +1473,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) SimplePredicate */
   try {
-/*@egen*/  LOOKAHEAD("(" Predicate())  "(" Predicate() ")"| LOOKAHEAD(QuantificationPredicate())  QuantificationPredicate()| LOOKAHEAD(BasicPredicate())  BasicPredicate()| LOOKAHEAD(SpatialPredicate())  SpatialPredicate()| ProbabilityPredicate()/*@bgen(jjtree)*/
+/*@egen*/  LOOKAHEAD("(" Predicate())  "(" Predicate() ")"| LOOKAHEAD(QuantificationPredicate())  QuantificationPredicate()| LOOKAHEAD(BasicPredicate())  BasicPredicate()| ProbabilityPredicate()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1500,32 +1500,6 @@
 /*@egen*/}{/*@bgen(jjtree) BasicPredicate */
   try {
 /*@egen*/  Expression() CompareOperator() Expression()/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
-/*@egen*/}void SpatialPredicate() :{/*@bgen(jjtree) SpatialPredicate */
-  ASTSpatialPredicate jjtn000 = new ASTSpatialPredicate(JJTSPATIALPREDICATE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) SpatialPredicate */
-  try {
-/*@egen*/  Identifier() SpatialCompareOperator() Identifier()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
