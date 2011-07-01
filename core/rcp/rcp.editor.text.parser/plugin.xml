@@ -52,5 +52,9 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.OdysseusDefaultsPreParserKeyword"
             name="ODYSSEUS_PARAM">
       </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.SLAPreParserKeyword"
+            name="SLA">
+      </PreParserKeyword>
    </extension>
 </plugin>
