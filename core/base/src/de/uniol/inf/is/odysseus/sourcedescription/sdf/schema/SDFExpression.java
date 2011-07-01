@@ -97,7 +97,7 @@ public class SDFExpression implements Serializable, IClone {
 	public SDFExpression(SDFExpression expression)
 			throws SDFExpressionParseException {
 		if (expression.attribute == null) {
-			init(expression.expressionString, expression.attributeResolver);
+			init(expression.expression, expression.attributeResolver);
 		} else {
 			init(expression.attribute);
 		}
@@ -107,6 +107,35 @@ public class SDFExpression implements Serializable, IClone {
 				this.attributePositions[i] = expression.attributePositions[i];
 			}
 		}
+	}
+
+	public SDFExpression(String string, IExpression<?> expression,
+			IAttributeResolver attributeResolver) {
+		init(expression, attributeResolver);
+	}
+
+	private void init(IExpression<?> expression,
+			IAttributeResolver attributeResolver) {
+		// TODO: Unschoen: Doppelter Code ... (in zwei init-Methoden)
+		this.expressionString = expression.toString();
+		this.varCounter = 0;
+		this.variableArrayList = new ArrayList<Variable>();
+		this.attributes = new ArrayList<SDFAttribute>();
+		this.attribute = null;
+		this.attributeResolver = attributeResolver.clone();
+		this.expression = expression;
+	
+		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
+		String result = substituteAggregations(this.expressionString,
+				aliasToAggregationAttributeMapping);
+		
+		initVariables(expression.getVariables(),
+				aliasToAggregationAttributeMapping);
+
+		if (expression instanceof Constant) {
+			setValue(expression.getValue());
+		}
+		
 	}
 
 	private void init(SDFAttribute attribute) {
@@ -145,6 +174,8 @@ public class SDFExpression implements Serializable, IClone {
 		}
 	}
 
+
+	
 	private String substituteAggregations(String value,
 			Map<String, String> inverseAliasMappings) {
 		String result = "";
@@ -241,10 +272,6 @@ public class SDFExpression implements Serializable, IClone {
 		return this.expressionString;
 	}
 
-	public String getExpression() {
-		return expressionString;
-	}
-
 	public void bindVariables(Object... values) {
 		if (expression instanceof Constant) {
 			return;
@@ -318,5 +345,9 @@ public class SDFExpression implements Serializable, IClone {
 	 */
 	public IExpression<?> getMEPExpression(){
 		return this.expression;
+	}
+
+	public IAttributeResolver getAttributeResolver() {
+		return attributeResolver;
 	}
 }

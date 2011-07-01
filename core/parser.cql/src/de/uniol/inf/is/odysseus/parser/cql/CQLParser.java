@@ -610,11 +610,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTSpatialPredicate node, Object data) {
-		return null;
-	}
-
-	@Override
 	public Object visit(ASTSimpleSource node, Object data) {
 		return null;
 	}

@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimplePredicate;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSpatialPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
@@ -100,26 +99,11 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 		return (ILogicalOperator) v.visit(probPred, null, null);
 	}
 
-	@Override
-	public Object visit(ASTSpatialPredicate node, Object data) {
-		try {
-			// IPredicateBuilder builder = (IPredicateBuilder) Class
-			// .forName(
-			// "de.uniol.inf.is.querytranslation.parser.transformation.SpatialPredicateBuilder")
-			// .newInstance();
-			// return builder.createPredicate(node, (IAttributeResolver) data);
-			throw new RuntimeException(
-					"ohne predicate builder machen, wenn das paket da ist das nehmen und als optionalen import markieren");
-		} catch (Exception e) {
-			throw new RuntimeException(
-					"invalid use of spatial predicates - missing plugin");
-		}
-	}
-
 	public static IPredicate<RelationalTuple<?>> toPredicate(
 			ASTPredicate predicate, IAttributeResolver resolver) {
-		return (IPredicate<RelationalTuple<?>>) new CreatePredicateVisitor()
+		IPredicate<RelationalTuple<?>> retVal = (IPredicate<RelationalTuple<?>>) new CreatePredicateVisitor()
 				.visit(predicate, resolver);
+		return retVal;
 	}
 
 }

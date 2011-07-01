@@ -93,7 +93,7 @@ public class ComplexPredicateHelper {
 	}
 	
 	public static boolean isAndPredicate(IPredicate pred){
-		return pred instanceof AndPredicate;
+		return (pred instanceof AndPredicate);
 	}
 	
 	public static boolean isOrPredicate(IPredicate pred){
