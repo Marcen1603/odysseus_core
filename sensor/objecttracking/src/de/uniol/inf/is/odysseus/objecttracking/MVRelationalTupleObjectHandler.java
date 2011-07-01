@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.IntegerHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.LongHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.StringHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
+import de.uniol.inf.is.odysseus.relational.base.ObjectHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		IObjectHandler<RelationalTuple<M>> {
 
-	//private static final Logger logger = LoggerFactory.getLogger( RelationalTupleObjectHandler.class );
+	//private static final Logger logger = LoggerFactory.getLogger( ObjectHandler.class );
 	ByteBuffer byteBuffer = null;
 	private IAtomicDataHandler[] dataHandler;
 		
@@ -113,7 +113,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	private void checkOverflow(ByteBuffer buffer, int size) {
 		if (size+byteBuffer.position()>=byteBuffer.capacity()){
 			// TODO: Effizientere �berlaufbehandlung?
-			//logger.warn("RelationalTupleObjectHandler OVERFLOW");
+			//logger.warn("ObjectHandler OVERFLOW");
 			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit()+size+byteBuffer.position())*2);
 			newBB.put(byteBuffer);
 			byteBuffer = newBB;
@@ -191,7 +191,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 //		a = new SDFAttribute("a_String");
 //		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
 //		schema.add(a);
-//		RelationalTupleObjectHandler h = new RelationalTupleObjectHandler(schema);
+//		ObjectHandler h = new ObjectHandler(schema);
 //		h.put(0,10);
 //		h.put(1,100l);
 //		h.put(2,100.0d);

@@ -22,11 +22,9 @@ import de.uniol.inf.is.odysseus.broker.sensors.generator.IStreamType;
 import de.uniol.inf.is.odysseus.broker.sensors.generator.StreamType;
 import de.uniol.inf.is.odysseus.broker.sensors.generator.StreamTypeFactory;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.relational.base.ObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 
 /**
  * Handles a client connection for a stream to allow to distinguish between
@@ -37,7 +35,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 public class StreamClientHandler extends Thread {
 
 	/** The relational tuple handler. */
-	private RelationalTupleObjectHandler<ITimeInterval> relationalTupleHandler;
+	private ObjectHandler<RelationalTuple<ITimeInterval>, ITimeInterval> relationalTupleHandler;
 
 	/** The channel. */
 	private SocketChannel channel;
@@ -62,7 +60,7 @@ public class StreamClientHandler extends Thread {
 	public StreamClientHandler(SocketChannel channel, StreamType type) {
 		this.channel = channel;
 		this.streamType = StreamTypeFactory.createNewRun(type);
-		this.relationalTupleHandler = new RelationalTupleObjectHandler<ITimeInterval>(this.streamType.getSchema());
+		this.relationalTupleHandler = new ObjectHandler<RelationalTuple<ITimeInterval>, ITimeInterval>(new RelationalTupleDataHandler(this.streamType.getSchema()));
 	}
 
 	private static long start = -1;

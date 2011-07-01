@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.access.ByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
+import de.uniol.inf.is.odysseus.relational.base.ObjectHandler;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -41,7 +42,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 		String accessPOName = accessAO.getSource().getURI(false);
 		ISource accessPO = null;
 		try {
-			accessPO = new ByteBufferReceiverPO(new RelationalTupleObjectHandler(accessAO.getOutputSchema()), accessAO.getHost(), accessAO.getPort());
+			accessPO = new ByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), accessAO.getHost(), accessAO.getPort());
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}

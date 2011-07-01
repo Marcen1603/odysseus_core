@@ -19,52 +19,41 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleHandler;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IntegerHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.LongHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.StringHandler;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
-public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
-		IObjectHandler<RelationalTuple<M>> {
+public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMetaAttribute> implements
+		IObjectHandler<T> {
 
-	//private static final Logger logger = LoggerFactory.getLogger( RelationalTupleObjectHandler.class );
+	//private static final Logger logger = LoggerFactory.getLogger( ObjectHandler.class );
 	ByteBuffer byteBuffer = null;
-	private IAtomicDataHandler[] dataHandler;
+	private IAtomicDataHandler dataHandler;
 		
-	public RelationalTupleObjectHandler(SDFAttributeList schema) {
+	public ObjectHandler(IAtomicDataHandler dataHandler) {
 		byteBuffer = ByteBuffer.allocate(1024);
-		createDataReader(schema);		
+		this.dataHandler = dataHandler;		
 	}
 	
-	public RelationalTupleObjectHandler(
-			RelationalTupleObjectHandler<M> relationalTupleObjectHandler) {
+	public ObjectHandler(
+			ObjectHandler<T, M> objectHandler) {
 		super();
-		if (relationalTupleObjectHandler.dataHandler != null){
-			int l = relationalTupleObjectHandler.dataHandler.length;
-			dataHandler = new IAtomicDataHandler[l];
-			System.arraycopy(relationalTupleObjectHandler.dataHandler, 0, dataHandler, 0, l);
-		}
+		this.dataHandler = objectHandler.dataHandler;
 	}
 
-	private void createDataReader(SDFAttributeList schema) {
-		this.dataHandler = new IAtomicDataHandler[schema.size()];
-		int i = 0;
-		for (SDFAttribute attribute : schema) {
-			String uri = attribute.getDatatype().getURI(false);
-			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
-			
-			if(handler == null){
-				throw new RuntimeException("illegal datatype "+uri);
-			}
-			
-			this.dataHandler[i++] = handler;
-			
+//	private void createDataReader(SDFAttributeList schema) {
+//		this.dataHandler = new IAtomicDataHandler[schema.size()];
+//		int i = 0;
+//		for (SDFAttribute attribute : schema) {
+//			String uri = attribute.getDatatype().getURI(false);
+//			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+//			
+//			if(handler == null){
+//				throw new RuntimeException("illegal datatype "+uri);
+//			}
+//			
+//			this.dataHandler[i++] = handler;
+//			
 //			if (uri.equals("Integer")) {
 //				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("IntegerHandler");
 //			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
@@ -94,8 +83,8 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 //			} else {
 //				throw new RuntimeException("illegal datatype "+uri);
 //			}
-		}
-	}
+//		}
+//	}
 
 
 	@Override
@@ -104,25 +93,20 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 	}
 	
 	@Override
-	public synchronized RelationalTuple<M> create() throws IOException, ClassNotFoundException, BufferUnderflowException {
-		RelationalTuple<M> r = null;
+	public synchronized T create() throws IOException, ClassNotFoundException, BufferUnderflowException {
+		T retval = null;
 		synchronized(byteBuffer){		
 			byteBuffer.flip();
-			//logger.debug("create "+byteBuffer);
-			Object[] attributes = new Object[dataHandler.length];
-			for (int i=0;i<dataHandler.length;i++){
-				attributes[i] = dataHandler[i].readData(byteBuffer);
-			}
-			r = new RelationalTuple<M>(attributes);
+			retval = (T)this.dataHandler.readData(byteBuffer);
 			byteBuffer.clear();
 		}
-		return r;
+		return retval;
 	}
 	
 	private void checkOverflow(ByteBuffer buffer, int size) {
 		if (size+byteBuffer.position()>=byteBuffer.capacity()){
 			// TODO: Effizientere �berlaufbehandlung?
-			//logger.warn("RelationalTupleObjectHandler OVERFLOW");
+			//logger.warn("ObjectHandler OVERFLOW");
 			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit()+size+byteBuffer.position())*2);
 			newBB.put(byteBuffer);
 			byteBuffer = newBB;
@@ -156,34 +140,31 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 		
 	}
 	
-	public void put(int pos, Object val){
-		synchronized(byteBuffer){
-			dataHandler[pos].writeData(byteBuffer, val);
-		}
-	}
+//	public void put(int pos, Object val){
+//		synchronized(byteBuffer){
+//			dataHandler[pos].writeData(byteBuffer, val);
+//		}
+//	}
 	
 	@Override
-	public void put(RelationalTuple<M> relationalTuple) {
-		if (relationalTuple.getAttributeCount() != dataHandler.length){
-			throw new IllegalArgumentException("Incompatible Relational Tuple");
-		}
+	public void put(T value) {
+
 		synchronized(byteBuffer){
 			
-			if (relationalTuple.memSize(true) > byteBuffer.capacity()){
-				byteBuffer = ByteBuffer.allocate(relationalTuple.memSize(false)*2);	
-			}
 			byteBuffer.clear();
 			
-			for (int i=0;i<dataHandler.length;i++){
-				dataHandler[i].writeData(byteBuffer, relationalTuple.getAttribute(i));
-			}
+			this.dataHandler.writeData(byteBuffer, value);
+			
+//			for (int i=0;i<dataHandler.length;i++){
+//				dataHandler[i].writeData(byteBuffer, relationalTuple.getAttribute(i));
+//			}
 			byteBuffer.flip();
 		}
 	}
 	
 	@Override
-	public RelationalTupleObjectHandler<M> clone() {
-		return new RelationalTupleObjectHandler<M>(this);
+	public ObjectHandler<T,M> clone() {
+		return new ObjectHandler<T,M>(this);
 	}
 //	@SuppressWarnings("unchecked")
 //	public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -200,7 +181,7 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 //		a = new SDFAttribute("a_String");
 //		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
 //		schema.add(a);
-//		RelationalTupleObjectHandler h = new RelationalTupleObjectHandler(schema);
+//		ObjectHandler h = new ObjectHandler(schema);
 //		h.put(0,10);
 //		h.put(1,100l);
 //		h.put(2,100.0d);
