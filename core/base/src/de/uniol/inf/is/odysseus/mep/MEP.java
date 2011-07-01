@@ -82,6 +82,8 @@ public class MEP {
 
 	private static Map<String, IFunction<?>> functions = new HashMap<String, IFunction<?>>();
 	static {
+		getLogger().debug("Register Base Function");
+		
 		registerFunction(new AndOperator());
 		registerFunction(new OrOperator());
 
@@ -210,7 +212,7 @@ public class MEP {
 						"multiple definition of function " + symbol);
 			}
 			System.out.println("################# FUNCTION ADDED: " + f.getSymbol());
-			getLogger().debug("Add FunctionProvider: " + f.getSymbol());
+			getLogger().debug("Add Function Provider: " + f.getSymbol());
 			functions.put(symbol, f);
 		}
 	}
@@ -219,7 +221,7 @@ public class MEP {
 		// It's not allowed to have multiple implementations
 		// of the same function (see addFunctionProvider).
 		for(IFunction<?> f: provider.getFunctions()){
-			getLogger().debug("Remove Function: " + f.getSymbol());
+			getLogger().debug("Remove Function Provider: " + f.getSymbol());
 			MEP.functions.remove(f.getSymbol());
 		}
 	}
