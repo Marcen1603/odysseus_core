@@ -155,7 +155,7 @@ public class SchemaIterator implements Iterable<SchemaInfo>, Iterator<SchemaInfo
 				next(); // nächstes ausprobieren
 			} else {
 
-				if (index.getAttribute().getDatatype().isSet()) {
+				if (index.getAttribute().getDatatype().isMultiValue()) {
 					SDFAttribute tempAttr = null;
 					if(index.getAttribute().getDatatype().hasSchema()){
 						tempAttr = index.getAttribute().getDatatype().getSubSchema().getAttribute(0);

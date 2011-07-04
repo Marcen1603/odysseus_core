@@ -382,7 +382,7 @@ public interface NewSQLParserConstants {
     "<K_SECOND>",
     "\"SELECT\"",
     "\"SERVICELEVEL\"",
-    "\"SET\"",
+    "\"MULTI_VALUE\"",
     "\"SILAB\"",
     "\"SIZE\"",
     "\"SLA\"",

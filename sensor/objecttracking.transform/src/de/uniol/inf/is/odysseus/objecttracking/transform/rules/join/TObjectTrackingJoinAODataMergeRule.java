@@ -35,13 +35,13 @@ public class TObjectTrackingJoinAODataMergeRule extends AbstractTransformationRu
 	@Override
 	public void execute(ObjectTrackingJoinPO operator,
 			TransformationConfiguration config) {
-		System.out.println("SET ObjectTrackingJoinPO DataMergeFunction");
+		System.out.println("MULTI_VALUE ObjectTrackingJoinPO DataMergeFunction");
 		operator.setDataMerge(new MVRelationalMergeFunction(operator.getOutputSchema().size()));
 		update(operator);
 		
 		// no update or retract
 		//see JoinAO.drl in relational plug-in for explanation 
-		System.out.println("SET ObjectTrackingJoinPO DataMergeFunction finished.");
+		System.out.println("MULTI_VALUE ObjectTrackingJoinPO DataMergeFunction finished.");
 	}
 
 	@Override

@@ -413,7 +413,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			complexAttrSchema.add(listedAttribute);
 		}
 		
-		SDFDatatype listType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.SET, complexAttrSchema);
+		SDFDatatype listType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
 		GlobalState.getActiveDatadictionary().addDatatype(listType.getURI(), listType);
 		
 		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName);

@@ -225,7 +225,7 @@ public class PredictionExpression {
 			
 			// in the case that attr == null this is 
 			// last run of this loop
-			if(attr != null && attr.getDatatype().isSet()) {
+			if(attr != null && attr.getDatatype().isMultiValue()) {
 				isListBefore = true;
 			}
 

@@ -147,7 +147,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         AbstractTreeWalker walker = new AbstractTreeWalker();
         SetOwnerVisitor visitor = new SetOwnerVisitor(query);
         walker.prefixWalk(topOperator, visitor);
-        //		System.err.println("SET OWNER");
+        //		System.err.println("MULTI_VALUE OWNER");
         //
         //		AbstractTreeWalker walker2 = new AbstractTreeWalker();
         //		System.err.println(walker2.prefixWalk(topOperator, new AlgebraPlanToStringVisitor()));

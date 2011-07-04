@@ -51,7 +51,7 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return new SDFDatatype(null, SDFDatatype.KindOfDatatype.SET, SDFDatatype.SPATIAL);
+        return new SDFDatatype(null, SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL);
     }
 
     @Override

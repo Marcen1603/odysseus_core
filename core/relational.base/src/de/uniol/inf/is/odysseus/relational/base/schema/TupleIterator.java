@@ -339,7 +339,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 				pointer.push(new IteratorEntry(t.getAttribute(entry.index)));
 				// tupleIndices.push(entry.index);
 
-				if (index.getAttribute().getDatatype().isSet()) {
+				if (index.getAttribute().getDatatype().isMultiValue()) {
 					if(index.getAttribute().getDatatype().hasSchema()){
 						schemaIndices.push(new SchemaIndex(0, index.getAttribute().getDatatype().getSubSchema().getAttribute(0)));
 					}

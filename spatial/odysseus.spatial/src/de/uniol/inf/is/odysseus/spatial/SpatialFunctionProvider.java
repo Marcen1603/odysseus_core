@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
 public class SpatialFunctionProvider implements IFunctionProvider{
 
 	public SpatialFunctionProvider(){
-		System.out.println("+++++++++++++++++++++ adding spatial functions. ++++++++++++++++++++++");
 	}
 	
 	@Override

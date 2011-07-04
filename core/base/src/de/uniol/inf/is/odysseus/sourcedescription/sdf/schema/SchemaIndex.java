@@ -26,7 +26,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
  * @author Timo Michelsen
  * 
  */
-public class SchemaIndex {
+public final class SchemaIndex {
 
 	private int index;
 	private SDFAttribute attribute;
@@ -35,8 +35,8 @@ public class SchemaIndex {
 	public SchemaIndex(int index, SDFAttribute attribute) {
 		this.index = index;
 		this.attribute = attribute;
-		String dataType = attribute.getDatatype().getQualName();
-		this.isList = dataType.equals("List") ? true : false;
+		SDFDatatype dataType = attribute.getDatatype();
+		this.isList = dataType.isMultiValue();
 	}
 
 	SchemaIndex(SchemaIndex index) {

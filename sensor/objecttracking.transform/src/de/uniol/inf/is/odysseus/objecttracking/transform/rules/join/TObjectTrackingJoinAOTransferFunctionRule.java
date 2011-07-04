@@ -35,12 +35,12 @@ public class TObjectTrackingJoinAOTransferFunctionRule extends AbstractTransform
 	@Override
 	public void execute(ObjectTrackingJoinPO operator,
 			TransformationConfiguration config) {
-		System.out.println("SET ObjectTrackingJoinPO TransferFunction."); 
+		System.out.println("MULTI_VALUE ObjectTrackingJoinPO TransferFunction."); 
 		operator.setTransferFunction(new TITransferArea());
 		
 		// no update or retract
 		// see JoinAO.drl in relational plug-in for explanation
-		System.out.println("SET ObjectTrackingJoinPO TransferFunction finished."); 
+		System.out.println("MULTI_VALUE ObjectTrackingJoinPO TransferFunction finished."); 
 	}
 
 	@Override

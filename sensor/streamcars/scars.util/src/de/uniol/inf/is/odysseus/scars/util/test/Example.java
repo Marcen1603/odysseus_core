@@ -57,7 +57,7 @@ public class Example {
 		SDFAttribute aba = new SDFAttribute(sourceName, "a");
 		aba.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
 		subschema_ab.add(aba);
-		ab.setDatatype(new SDFDatatype(null, SDFDatatype.KindOfDatatype.SET, subschema_ab));
+		ab.setDatatype(new SDFDatatype(null, SDFDatatype.KindOfDatatype.MULTI_VALUE, subschema_ab));
 		
 		
 		

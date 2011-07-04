@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public static enum KindOfDatatype{
-		BASE, TUPLE, SET, LIST, BEAN;
+		BASE, TUPLE, MULTI_VALUE, BEAN;
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 					new SDFAttribute("y", SDFDatatype.DOUBLE),
 					new SDFAttribute("z", SDFDatatype.DOUBLE)));
 	
-	public static final SDFDatatype SPATIAL_MULTI_POINT = new SDFDatatype("SpatialMultiPoint", SDFDatatype.KindOfDatatype.SET, SDFDatatype.SPATIAL_POINT);
+	public static final SDFDatatype SPATIAL_MULTI_POINT = new SDFDatatype("SpatialMultiPoint", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL_POINT);
 	
 	
 	public static final SDFDatatype SPATIAL_LINE = new SDFDatatype("SpatialLine", SDFDatatype.KindOfDatatype.BEAN,
@@ -55,14 +55,14 @@ public class SDFDatatype extends SDFElement implements Serializable{
 					new SDFAttribute("start", SDFDatatype.SPATIAL_POINT),
 					new SDFAttribute("end", SDFDatatype.SPATIAL_POINT)));
 	
-	public static final SDFDatatype SPATIAL_MULTI_LINE = new SDFDatatype("SpatialMultiLine", SDFDatatype.KindOfDatatype.SET, SDFDatatype.SPATIAL_LINE);
+	public static final SDFDatatype SPATIAL_MULTI_LINE = new SDFDatatype("SpatialMultiLine", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL_LINE);
 	
 	
 	public static final SDFDatatype SPATIAL_POLYGON = new SDFDatatype("SpatialPolygon", SDFDatatype.KindOfDatatype.BEAN,
 			new SDFAttributeList(
 					new SDFAttribute("points", SDFDatatype.SPATIAL_MULTI_POINT)));
 	
-	public static final SDFDatatype SPATIAL_MULTI_POLYGON = new SDFDatatype("SpatialMultiPolygon", SDFDatatype.KindOfDatatype.SET, SDFDatatype.SPATIAL_POLYGON);
+	public static final SDFDatatype SPATIAL_MULTI_POLYGON = new SDFDatatype("SpatialMultiPolygon", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL_POLYGON);
 	
 	/**
 	 * abstract type for spatial objects. Access to subschema is not
@@ -124,8 +124,8 @@ public class SDFDatatype extends SDFElement implements Serializable{
 		super(datatypeName);
 		
 		// do not check for set. A matrix can also have a subtype
-//		if(type != SDFDatatype.KindOfDatatype.SET){
-//			throw new IllegalArgumentException("This constructor is only for SET datatypes.");
+//		if(type != SDFDatatype.KindOfDatatype.MULTI_VALUE){
+//			throw new IllegalArgumentException("This constructor is only for MULTI_VALUE datatypes.");
 //		}
 		this.type = type;
 		this.subType = subType;
@@ -184,18 +184,13 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	}
 	
 	public boolean isComplex(){
-		return this.type == SDFDatatype.KindOfDatatype.SET ||
-		        this.type == SDFDatatype.KindOfDatatype.LIST ||
+		return this.type == SDFDatatype.KindOfDatatype.MULTI_VALUE ||
 				this.type == SDFDatatype.KindOfDatatype.TUPLE ||
 				this.type == SDFDatatype.KindOfDatatype.BEAN;
 	}
 	
-	public boolean isSet(){
-		return this.type == SDFDatatype.KindOfDatatype.SET;
-	}
-	
-	public boolean isList(){
-	    return this.type == SDFDatatype.KindOfDatatype.LIST;
+	public boolean isMultiValue(){
+		return this.type == SDFDatatype.KindOfDatatype.MULTI_VALUE;
 	}
 	   
 	public boolean isTuple(){

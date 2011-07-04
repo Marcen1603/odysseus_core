@@ -40,7 +40,7 @@ public class TObjectTrackingJoinAOMetadataMergeRule extends AbstractTransformati
 	@Override
 	public void execute(ObjectTrackingJoinPO operator,
 			TransformationConfiguration config) {
-		System.out.println("SET ObjectTrackingJoinPO MetadataMergeFunction.");
+		System.out.println("MULTI_VALUE ObjectTrackingJoinPO MetadataMergeFunction.");
 		((CombinedMergeFunction)operator.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 		((CombinedMergeFunction)operator.getMetadataMerge()).add(new LatencyMergeFunction());
 		
@@ -51,7 +51,7 @@ public class TObjectTrackingJoinAOMetadataMergeRule extends AbstractTransformati
 		
 		// no update or retract
 		// see JoinAO.drl in relational plug-in for explanation
-		System.out.println("SET ObjectTrackingJoinPO MetadataMergeFunction finished."); 
+		System.out.println("MULTI_VALUE ObjectTrackingJoinPO MetadataMergeFunction finished."); 
 	}
 
 	@Override

@@ -49,12 +49,14 @@ public class SchemaIndexPath {
 			this.indicesArray[i] = indices.get(i).toInt();
 		}
 		
-		for(int i : this.indicesArray){
-			if(i == -1){
-				@SuppressWarnings("unused")
-				int v = 0;
-			}
-		}
+		
+		// Was soll das?
+//		for(int i : this.indicesArray){
+//			if(i == -1){
+//				@SuppressWarnings("unused")
+//				int v = 0;
+//			}
+//		}
 	}
 
 	SchemaIndexPath(SchemaIndexPath other) {
@@ -97,7 +99,7 @@ public class SchemaIndexPath {
 	public SchemaIndexPath appendClone( int index ) {
 		List<SchemaIndex> i = new ArrayList<SchemaIndex>(indices);
 		SDFAttribute att = to;
-		if( att.getDatatype().isSet()) {// eine Liste?
+		if( att.getDatatype().isMultiValue()) {// eine Liste?
 			SDFAttribute tempAttr = null;
 			
 			if(att.getDatatype().hasSchema()){

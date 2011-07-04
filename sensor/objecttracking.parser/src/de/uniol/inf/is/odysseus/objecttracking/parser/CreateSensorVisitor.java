@@ -134,7 +134,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 			complexAttrSchema.add(listedAttribute);
 		}
 
-		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.SET, complexAttrSchema);
+		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
 		GlobalState.getActiveDatadictionary().addDatatype(this.name + "." + attrName, listType);
 		
 		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
