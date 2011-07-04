@@ -25,11 +25,8 @@ public class SLADictionary {
 	
 	private Map<User, String> currentSLA;
 	
-	private List<ISLAChangedEventListener> listeners;
-
 	private SLADictionary() {
 		this.sla = new HashMap<String, SLA>();
-		this.listeners = new ArrayList<ISLAChangedEventListener>();
 		this.currentSLA = new HashMap<User, String>();
 	}
 
@@ -82,23 +79,6 @@ public class SLADictionary {
 		}
 	}
 	
-	/**
-	 * broadcasts {@link SLAChangedEvent} to all registered listeners
-	 * @param event the event to broadcast
-	 */
-	private void fireEvents(SLAChangedEvent event) {
-		for (ISLAChangedEventListener listener : this.listeners) {
-			listener.slaChanged(event);
-		}
-	}
-	
-	public void addSLAChangedEventListener(ISLAChangedEventListener listener) {
-		this.listeners.add(listener);
-	}
-	
-	public void removeSLAChangedEventListener(ISLAChangedEventListener listener) {
-		this.listeners.remove(listener);
-	}
 	
 	public void setCurrentSLA(User user, String slaName) {
 		this.currentSLA.put(user, slaName);
