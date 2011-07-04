@@ -1,15 +1,20 @@
 package de.uniol.inf.is.odysseus.salsa.sensor.model;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
 public class Background {
 
     public static Background merge(final Background base, final Measurement diff) {
         final Background result = new Background(base.size());
         for (int i = 0; i < base.size(); i++) {
-            result.setDistance(i, Math.min(base.getDistance(i), diff.getSamples()[i].getDist1()));
+            if (Math.abs(base.getDistance(i) - diff.getSamples()[i].getDist1()) <= 10) {
+                result.setDistance(i,
+                        Math.min(base.getDistance(i), diff.getSamples()[i].getDist1()));
+            }
+            else {
+                result.setDistance(i, base.getDistance(i));
+            }
         }
         return result;
     }

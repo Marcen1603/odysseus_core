@@ -11,7 +11,7 @@ renamed1 = rename({aliases = ['feature']}, extractedFeature1)
 unnested1 = unnest({attribute = 'feature'}, renamed1) 
 move1 = map({expressions = ['MoveViewPoint(feature, 3750.0, -4600.0)']}, unnested1)
 renamedMove1 = rename({aliases = ['feature']}, move1)
-rotate1 = map({expressions = ['RotateViewPoint(feature, 160.125)']}, renamedMove1)
+rotate1 = map({expressions = ['RotateViewPoint(feature, 174.49)']}, renamedMove1)
 renamedRotate1 = rename({aliases = ['feature']}, rotate1)
 size1 = map({expressions = ['feature']}, renamedRotate1)
 

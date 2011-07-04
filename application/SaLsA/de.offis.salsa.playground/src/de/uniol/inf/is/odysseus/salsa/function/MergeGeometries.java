@@ -1,22 +1,22 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-/**
- * @author Christian Kuka <christian.kuka@offis.de>
- */
-public class RotateViewPoint extends AbstractFunction<Geometry> {
+public class MergeGeometries extends AbstractFunction<Geometry> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
                     SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
                     SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
-            }, {
-                SDFDatatype.DOUBLE
+            },
+            {
+                    SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
+                    SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
+                    SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
             }
     };
 
@@ -32,7 +32,7 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
         }
         if (argPos > this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
-                    + " argument(s): A geometry and an angle in degree.");
+                    + " argument(s): Two geometries.");
         }
         else {
             return accTypes[argPos];
@@ -41,26 +41,23 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
 
     @Override
     public String getSymbol() {
-        return "RotateViewPoint";
+        return "MergeGeometries";
     }
 
     @Override
     public Geometry getValue() {
-        final Geometry geometry = (Geometry) this.getInputValue(0);
-        Double angle = (Double) this.getInputValue(1);
-        angle = Math.toRadians(angle);
-        for (Coordinate coordinate : geometry.getCoordinates()) {
-            double x = coordinate.x;
-            double y = coordinate.y;
-            coordinate.x = x * Math.cos(angle) - y * Math.sin(angle);
-            coordinate.y = x * Math.sin(angle) + y * Math.cos(angle);
-        }
-        return geometry;
+        Geometry[] geometrys = new Geometry[2];
+
+        geometrys[0] = (Geometry) this.getInputValue(0);
+        geometrys[1] = (Geometry) this.getInputValue(1);
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+
+        return geometryFactory.createGeometryCollection(geometrys);
     }
 
     @Override
     public SDFDatatype getReturnType() {
         return SDFDatatype.SPATIAL;
     }
-
 }

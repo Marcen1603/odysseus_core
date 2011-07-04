@@ -1,13 +1,10 @@
 package de.uniol.inf.is.odysseus.salsa.sensor.impl;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -41,22 +38,23 @@ public class SickConnectionImpl implements SickConnection {
             this.host = host;
             this.port = port;
             this.connection = connection;
+            this.record.set(true);
 
         }
 
         private void dumpPackage(final ByteBuffer buffer) throws FileNotFoundException {
-            final File debug = new File("debug.out");
-            final FileOutputStream out = new FileOutputStream(debug, true);
-            final FileChannel debugChannel = out.getChannel();
-            if ((debugChannel != null) && (debugChannel.isOpen())) {
-                try {
-                    buffer.flip();
-                    debugChannel.write(buffer);
-                }
-                catch (final IOException e) {
-                    SickConnectionImpl.LOG.error(e.getMessage(), e);
-                }
-            }
+            // final File debug = new File("debug.out");
+            // final FileOutputStream out = new FileOutputStream(debug, true);
+            // final FileChannel debugChannel = out.getChannel();
+            // if ((debugChannel != null) && (debugChannel.isOpen())) {
+            // try {
+            // buffer.flip();
+            // debugChannel.write(buffer);
+            // }
+            // catch (final IOException e) {
+            // SickConnectionImpl.LOG.error(e.getMessage(), e);
+            // }
+            // }
         }
 
         public Background getBackground() {

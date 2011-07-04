@@ -73,7 +73,7 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
 
             final Double distance = tmp.distance(coordinate);
             tmp = coordinate;
-            if (distance > threshold) {
+            if (distance >= threshold) {
                 if (isSegment) {
                     final List<Coordinate> segment = new ArrayList<Coordinate>();
                     for (int j = start; j < i; j++) {

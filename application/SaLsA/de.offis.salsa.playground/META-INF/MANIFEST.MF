@@ -14,6 +14,8 @@ Import-Package: com.vividsolutions.jts,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
+ org.apache.commons.math,
+ org.apache.commons.math.linear,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component,
  org.slf4j;version="1.5.6"
