@@ -63,6 +63,8 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.sla.SLA;
+import de.uniol.inf.is.odysseus.sla.SLADictionary;
 import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -209,12 +211,15 @@ public class StandardExecutor extends AbstractExecutor {
 		List<IQuery> queries = getCompiler().translateQuery(queryStr,
 				parameters.getParserID(), user, dd);
 		getLogger().trace("Number of queries: " + queries.size());
+		String slaName = SLADictionary.getInstance().getCurrentSLA(user);
+		SLA sla = SLADictionary.getInstance().getSLA(slaName);
 		// create for each logical plan an intern query
 		for (IQuery query : queries) {
 			query.setBuildParameter(parameters);
 			query.setQueryText(queryStr);
 			query.setUser(user);
 			query.setDataDictionary(dd);
+			query.setSLA(sla);
 			// this executor processes reoptimize requests
 			query.addReoptimizeListener(this);
 		}
