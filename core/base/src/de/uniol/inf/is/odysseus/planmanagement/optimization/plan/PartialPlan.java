@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,7 @@ public class PartialPlan implements IPartialPlan {
 	 * Cache Ids for Sources to speed up getSourceID
 	 */
 	final private Map<IIterableSource<?>, Integer> sourceIds;
+	private Set<IQuery> particpatingQueries;
 
 	/**
 	 * Creates a new PartialPlan.
@@ -233,6 +235,14 @@ public class PartialPlan implements IPartialPlan {
 				result.append(source.toString()).append(", Owner: ").append(source.getOwnerIDs());
 		}
 		return result.toString();
+	}
+
+	public void setParticipatingQueries(Set<IQuery> q) {
+		this.particpatingQueries = q;
+	}
+	
+	public Set<IQuery> getParticpatingQueries() {
+		return Collections.unmodifiableSet(particpatingQueries);
 	}
 
 }
