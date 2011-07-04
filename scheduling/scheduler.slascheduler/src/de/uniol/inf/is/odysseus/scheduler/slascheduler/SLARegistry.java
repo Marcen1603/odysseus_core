@@ -6,9 +6,10 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.sla.SLAChangedEvent;
 
 /**
  * central management of scheduling data
@@ -76,52 +77,47 @@ public class SLARegistry implements IPlanModificationListener {
 		this.schedData.put(query, data);
 	}
 
-	/**
-	 * handles a {@link SLAChangedEvent} objects
-	 * @param event the event to handle
-	 */
-	public void slaChanged(SLAChangedEvent event) {
-		switch (event.getType()) {
-		case add: {
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		PlanModificationEventType eventType = (PlanModificationEventType)eventArgs.getEventType(); 
+		switch (eventType) {
+		case QUERY_ADDED: {
+			IQuery query = ((QueryPlanModificationEvent)eventArgs).getValue();
+			
 			SLARegistryInfo data = new SLARegistryInfo();
 			ISLAConformance conformance = new SLAConformanceFactory().
-					createSLAConformance(event.getSla(), this.scheduler, event.getQuery());
+					createSLAConformance(query.getSLA(), this.scheduler, query);
 			data.setConformance(conformance);
 			
-			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), event.getSla());
+			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), query.getSLA());
 			data.setCostFunction(costFunction);
 			
 			// starvation freedom and conformance placment need still partial plan
-			IPartialPlan plan = this.scheduler.getPartialPlan(event.getQuery());
+			IPartialPlan plan = this.scheduler.getPartialPlan(query);
 			
 			IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
 					buildStarvationFreedom(this.scheduler.getStarvationFreedom(),
 							data, plan);
 			data.setStarvationFreedom(starvationFreedom);
 			
-			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(event.getSla());
+			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(query.getSLA());
 			data.setConnectionPoint(placement.placeSLAConformance(plan, conformance));
 			
-			this.addSchedData(event.getQuery(), data);
+			this.addSchedData(query, data);
 			
 			break;
 		}
-		case remove: {
-			SLARegistryInfo data = this.removeSchedData(event.getQuery());
+		case QUERY_REMOVE: {
+			IQuery query = ((QueryPlanModificationEvent)eventArgs).getValue();
 			
-			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(event.getSla());
+			SLARegistryInfo data = this.removeSchedData(query);
+			
+			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(query.getSLA());
 			placement.removeSLAConformance(data.getConnectionPoint(), 
 					data.getConformance());
 			break;
 		}
-		default: throw new RuntimeException("Unknown event type: " +  event.getType());
 		}
-		
-	}
-
-	@Override
-	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		// TODO implement me!
 	}
 	
 }
