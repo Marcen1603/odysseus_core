@@ -135,7 +135,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			// Attention: it is expected that 1 partial plan contains 1 query
 			IQuery query = scheduling.getPlan().getQueries().get(0);
 			SLARegistryInfo data = this.registry.getData(query);
-			SLA sla = data.getSla();
+			SLA sla = query.getSLA();
 			double conformance = data.getConformance().getConformance();
 			// calculate priorities for all partial plans:
 			// - calculate oc

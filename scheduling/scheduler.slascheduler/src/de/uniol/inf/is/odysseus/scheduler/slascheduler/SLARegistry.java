@@ -95,8 +95,6 @@ public class SLARegistry implements ISLAChangedEventListener {
 							data, plan);
 			data.setStarvationFreedom(starvationFreedom);
 			
-			data.setSla(event.getSla());
-			
 			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(event.getSla());
 			data.setConnectionPoint(placement.placeSLAConformance(plan, conformance));
 			

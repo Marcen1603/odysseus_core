@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.sla.SLA;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.SetOwnerGraphVisitor;
@@ -134,6 +135,11 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * SLA based penalty
 	 */
 	private double penalty;
+	
+	/**
+	 * Service level agreement of the query 
+	 */
+	private SLA sla;
 	
 	/**
 	 * Parameter for building this query.
@@ -796,6 +802,16 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	@Override
 	public void addPenalty(double penalty) {
 		this.penalty += penalty;
+	}
+
+	@Override
+	public SLA getSLA() {
+		return this.sla;
+	}
+
+	@Override
+	public void setSLA(SLA sla) {
+		this.sla = sla;
 	}
 	
 	

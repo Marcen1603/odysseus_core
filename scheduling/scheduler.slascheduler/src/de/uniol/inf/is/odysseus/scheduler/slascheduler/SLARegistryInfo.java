@@ -11,10 +11,6 @@ import de.uniol.inf.is.odysseus.sla.SLA;
  */
 public class SLARegistryInfo {
 	/**
-	 * the sla of a partial plan
-	 */
-	private SLA sla;
-	/**
 	 * the sla costfunction of a partial plan
 	 */
 	private ISLAConformance conformance;
@@ -57,21 +53,6 @@ public class SLARegistryInfo {
 	public SLARegistryInfo() {
 		super();
 		this.lastExecTimeStamp = 0;
-	}
-
-	/**
-	 * @return the sla of a partial plan
-	 */
-	public SLA getSla() {
-		return sla;
-	}
-
-	/**
-	 * sets the sla of a partial plan
-	 * @param sla the new sla
-	 */
-	public void setSla(SLA sla) {
-		this.sla = sla;
 	}
 
 	/**

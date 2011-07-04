@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.usermanagement.User;
+
 /**
  * Singleton class for saving all created service level agreements and looking
  * them up when used in queries. Further this class provides the global
@@ -21,11 +23,14 @@ public class SLADictionary {
 
 	private Map<String, SLA> sla;
 	
+	private Map<User, String> currentSLA;
+	
 	private List<ISLAChangedEventListener> listeners;
 
 	private SLADictionary() {
 		this.sla = new HashMap<String, SLA>();
 		this.listeners = new ArrayList<ISLAChangedEventListener>();
+		this.currentSLA = new HashMap<User, String>();
 	}
 
 	/**
@@ -94,5 +99,16 @@ public class SLADictionary {
 	public void removeSLAChangedEventListener(ISLAChangedEventListener listener) {
 		this.listeners.remove(listener);
 	}
+	
+	public void setCurrentSLA(User user, String slaName) {
+		this.currentSLA.put(user, slaName);
+	}
 
+	public String getCurrentSLA(User user) {
+		return this.currentSLA.get(user);
+	}
+	
+	public SLA getSLA(String slaName) {
+		return this.sla.get(slaName);
+	}
 }

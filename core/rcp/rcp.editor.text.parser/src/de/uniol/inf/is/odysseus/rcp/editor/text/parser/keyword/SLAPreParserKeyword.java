@@ -25,8 +25,11 @@ public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 	public Object execute(Map<String, Object> variables, String parameter)
 			throws QueryTextParseException {
 		/*
-		 * TODO buffer sla name for the usage for following queries of the user 
+		 * buffer sla name for the usage for following queries of the user
 		 */
+		SLADictionary.getInstance().setCurrentSLA(getCurrentUser(variables),
+				parameter);
+
 		return null;
 	}
 

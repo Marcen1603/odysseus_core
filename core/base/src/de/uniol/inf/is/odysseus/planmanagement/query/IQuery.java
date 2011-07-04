@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.sla.SLA;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -220,4 +221,17 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 
 	public IDataDictionary getDataDictionary();
 	public void setDataDictionary(IDataDictionary dd);
+	
+	/**
+	 * returns the query's service level agreement
+	 * @return
+	 */
+	public SLA getSLA();
+	
+	/**
+	 * sets the service level agreement that is defined for the query
+	 * @param sla the serivce level agreement to set for the query
+	 */
+	public void setSLA(SLA sla);
+	
 }
