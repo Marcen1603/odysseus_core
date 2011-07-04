@@ -3,7 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: SALSA UNIVERSITAET :: Playground
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.salsa.playground
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus.relational.base,
+Import-Package: com.vividsolutions.jts,
+ com.vividsolutions.jts.geom,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.transform.flow,
  org.slf4j;version="1.5.6"

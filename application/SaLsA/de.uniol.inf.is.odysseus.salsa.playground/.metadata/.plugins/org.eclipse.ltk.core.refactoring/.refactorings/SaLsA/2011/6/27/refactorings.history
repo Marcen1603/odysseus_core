@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;SaLsA/GeoQuery_TwoJoins.qry&apos; to &apos;GeoQuery_2906_work.qry&apos;" description="Rename resource &apos;GeoQuery_TwoJoins.qry&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="GeoQuery_TwoJoins.qry" name="GeoQuery_2906_work.qry" stamp="1309355396988" updateReferences="true"/>
+</session>
