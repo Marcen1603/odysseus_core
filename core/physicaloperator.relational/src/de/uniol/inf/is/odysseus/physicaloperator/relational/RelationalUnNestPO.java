@@ -1,4 +1,18 @@
-package de.uniol.inf.is.odysseus.salsa.physicaloperator;
+/** Copyright [2011] [The Odysseus Team]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.util.List;
 
@@ -11,14 +25,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
-public class UnnestPO<T extends IMetaAttribute> extends
+public class RelationalUnNestPO<T extends IMetaAttribute> extends
         AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
-    private static Logger LOG = LoggerFactory.getLogger(UnnestPO.class);
+    private static Logger LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
     private final SDFAttributeList schema;
     private final int attributePos;
@@ -27,7 +40,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
      * @param schema
      * @param attribute
      */
-    public UnnestPO(final SDFAttributeList schema, final SDFAttribute attribute) {
+    public RelationalUnNestPO(final SDFAttributeList schema, final SDFAttribute attribute) {
         this.schema = schema;
         this.attributePos = schema.indexOf(attribute);
     }
@@ -35,7 +48,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
     /**
      * @param po
      */
-    public UnnestPO(final UnnestPO<T> po) {
+    public RelationalUnNestPO(final RelationalUnNestPO<T> po) {
         this.schema = po.schema;
         this.attributePos = po.attributePos;
     }
@@ -45,8 +58,8 @@ public class UnnestPO<T extends IMetaAttribute> extends
      * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#clone()
      */
     @Override
-    public UnnestPO<T> clone() {
-        return new UnnestPO<T>(this);
+    public RelationalUnNestPO<T> clone() {
+        return new RelationalUnNestPO<T>(this);
     }
 
     /*
@@ -93,7 +106,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
             }
         }
         catch (final Exception e) {
-            UnnestPO.LOG.error(e.getMessage(), e);
+            RelationalUnNestPO.LOG.error(e.getMessage(), e);
         }
     }
 

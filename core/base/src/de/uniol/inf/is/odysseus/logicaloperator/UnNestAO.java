@@ -1,10 +1,22 @@
-package de.uniol.inf.is.odysseus.salsa.logicaloperator;
+/** Copyright [2011] [The Odysseus Team]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.logicaloperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -15,13 +27,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "UNNEST")
-public class UnnestAO extends UnaryLogicalOp {
+public class UnNestAO extends UnaryLogicalOp {
 
     /**
      * 
      */
     private static final long serialVersionUID = -5918972476973244744L;
-    private static Logger LOG = LoggerFactory.getLogger(UnnestAO.class);
+    private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
 
     SDFAttribute attribute;
     SDFAttributeList schema;
@@ -29,14 +41,14 @@ public class UnnestAO extends UnaryLogicalOp {
     /**
      * 
      */
-    public UnnestAO() {
+    public UnNestAO() {
         super();
     }
 
     /**
      * @param ao
      */
-    public UnnestAO(final UnnestAO ao) {
+    public UnNestAO(final UnNestAO ao) {
         super(ao);
         this.attribute = ao.getAttribute();
         this.schema = ao.getOutputSchema();
@@ -48,7 +60,7 @@ public class UnnestAO extends UnaryLogicalOp {
      */
     @Override
     public AbstractLogicalOperator clone() {
-        return new UnnestAO(this);
+        return new UnNestAO(this);
     }
 
     /**
@@ -73,7 +85,7 @@ public class UnnestAO extends UnaryLogicalOp {
      */
     @Parameter(name = "ATTRIBUTE", type = ResolvedSDFAttributeParameter.class)
     public void setAttribute(final SDFAttribute attribute) {
-        UnnestAO.LOG.debug("Set unnest attribute to {}", attribute.getAttributeName());
+        UnNestAO.LOG.debug("Set UnNest attribute to {}", attribute.getAttributeName());
         this.attribute = attribute;
         SDFAttributeList schema = this.getInputSchema().clone();
         schema.getAttribute(schema.indexOf(attribute)).setDatatype(

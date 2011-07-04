@@ -1,4 +1,18 @@
-package de.uniol.inf.is.odysseus.salsa.transform;
+/** Copyright [2011] [The Odysseus Team]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
@@ -6,18 +20,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.UnNestAO;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.salsa.logicaloperator.UnnestAO;
-import de.uniol.inf.is.odysseus.salsa.physicaloperator.UnnestPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
-public class TUnnestAORule extends AbstractTransformationRule<UnnestAO> {
+public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
     private static Logger LOG = LoggerFactory.getLogger(TUnnestAORule.class);
 
     /*
@@ -26,8 +39,9 @@ public class TUnnestAORule extends AbstractTransformationRule<UnnestAO> {
      * java.lang.Object)
      */
     @Override
-    public void execute(final UnnestAO operator, final TransformationConfiguration config) {
-        final UnnestPO<?> po = new UnnestPO(operator.getOutputSchema(), operator.getAttribute());
+    public void execute(final UnNestAO operator, final TransformationConfiguration config) {
+        final RelationalUnNestPO<?> po = new RelationalUnNestPO(operator.getOutputSchema(),
+                operator.getAttribute());
         final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                 operator, po);
         for (final ILogicalOperator o : toUpdate) {
@@ -43,7 +57,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnnestAO> {
      */
     @Override
     public String getName() {
-        return "UnnestAO -> UnnestPO";
+        return "UnNestAO -> RelationalUnNestPO";
     }
 
     /*
@@ -52,7 +66,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnnestAO> {
      */
     @Override
     public int getPriority() {
-        return 10;
+        return 0;
     }
 
     /*
@@ -70,7 +84,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnnestAO> {
      * java.lang.Object)
      */
     @Override
-    public boolean isExecutable(final UnnestAO operator, final TransformationConfiguration config) {
+    public boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
 
