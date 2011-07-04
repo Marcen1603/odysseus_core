@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
@@ -130,9 +131,10 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		double nextPrio = 0;
 
 		for (IScheduling scheduling : this.plans) {
-			// calculate sla conformance for all partial plans
-			IPartialPlan plan = scheduling.getPlan();
-			SLARegistryInfo data = this.registry.getData(plan);
+			// calculate sla conformance for all queries
+			// Attention: it is expected that 1 partial plan contains 1 query
+			IQuery query = scheduling.getPlan().getQueries().get(0);
+			SLARegistryInfo data = this.registry.getData(query);
 			SLA sla = data.getSla();
 			double conformance = data.getConformance().getConformance();
 			// calculate priorities for all partial plans:
@@ -150,15 +152,6 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			double prio = this.prioFunction.calcPriority(oc, mg, sf);
 
 			// select plan with highest priority
-			/*
-			 * TODO: Generalize plan selection: select x plans with best
-			 * priorities to reduce calculation overhead
-			 * 
-			 * such an optimization needs the constraint of selecting only a
-			 * certain percentage of the existing partial plans. otherwise the
-			 * this strategy would be the same as round robin with a certain
-			 * ordering of the plans!
-			 */
 			if (prio > nextPrio) {
 				next = scheduling;
 				nextPrio = prio;
@@ -266,5 +259,22 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	public void setStarvationFreedom(String starvationFreedom) {
 		this.starvationFreedom = starvationFreedom;
+	}
+	
+	/**
+	 * returns the partial plan that represents the given query in scheduling.
+	 * it is expected that each partial plan contains only one query. this 
+	 * method is required because some objects still need the partial plan (e.g. 
+	 * for finding buffers)
+	 * @param query the given query
+	 * @return the partial plan that represents the given query in scheduling or
+	 * null if no partial plan was found for the given query
+	 */
+	public IPartialPlan getPartialPlan(IQuery query) {
+		for (IScheduling sched : this.plans) {
+			if (sched.getPlan().getQueries().equals(query))
+				return sched.getPlan();
+		}
+		return null;
 	}
 }

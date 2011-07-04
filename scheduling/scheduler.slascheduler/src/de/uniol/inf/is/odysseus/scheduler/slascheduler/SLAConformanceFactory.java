@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyAverageConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyNumberConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencySingleConformance;
@@ -26,19 +26,19 @@ public class SLAConformanceFactory {
 	 *         SLAConformance object for the given sla exists
 	 */
 	public ISLAConformance createSLAConformance(SLA sla, 
-			ISLAViolationEventDistributor distributor, IPartialPlan plan) {
+			ISLAViolationEventDistributor distributor, IQuery query) {
 		ISLAConformance conformance = null;
 
 		if (sla.getMetric() instanceof Latency) {
 			if (sla.getScope() instanceof Average) {
 				conformance = new LatencyAverageConformance(distributor, sla, 
-						plan);
+						query);
 			} else if (sla.getScope() instanceof Number) {
 				conformance = new LatencyNumberConformance(distributor, sla, 
-						plan, sla.getMetric().getValue());
+						query, sla.getMetric().getValue());
 			} else if (sla.getScope() instanceof Single) {
 				conformance = new LatencySingleConformance(distributor, sla, 
-						plan);
+						query);
 			}
 		}
 

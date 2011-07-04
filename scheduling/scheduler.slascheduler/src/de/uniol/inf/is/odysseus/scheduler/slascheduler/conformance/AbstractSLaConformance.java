@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.sla.ServiceLevel;
 
 /**
  * abstract sla conformance super class. extends {@link AbstractSink} so the sla
- * conformance object could be added to a partial plan as a physical operator to
+ * conformance object could be added to a plan as a physical operator to
  * measure data inside the physical operator plan.
  * 
  * @author Thomas Vogelgesang
@@ -31,10 +31,10 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 */
 	private SLA sla;
 	/**
-	 * reference to the related partial plan, required for violationEvent
+	 * reference to the related query, required for violationEvent
 	 * generation
 	 */
-	private IPartialPlan plan;
+	private IQuery query;
 	/**
 	 * timestamp marking the end of the evaluation window of the sla conformance
 	 */
@@ -48,14 +48,14 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 *            {@link SLAViolationEvent} to the listeners
 	 * @param sla
 	 *            the related sla
-	 * @param plan
-	 *            the related partial plan
+	 * @param query
+	 *            the related query
 	 */
 	public AbstractSLaConformance(ISLAViolationEventDistributor dist, SLA sla,
-			IPartialPlan plan) {
+			IQuery query) {
 		this.distributor = dist;
 		this.sla = sla;
-		this.plan = plan;
+		this.query = query;
 		this.windowEnd = System.currentTimeMillis();
 	}
 
@@ -67,7 +67,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	protected AbstractSLaConformance(AbstractSLaConformance<T> conformance) {
 		this.distributor = conformance.distributor;
 		this.sla = conformance.sla;
-		this.plan = conformance.plan;
+		this.query = conformance.query;
 		this.windowEnd = conformance.windowEnd;
 	}
 
@@ -85,13 +85,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		return this.sla;
 	}
 
-	/**
-	 * teh related partial plan
-	 * 
-	 * @return
-	 */
-	protected IPartialPlan getPlan() {
-		return this.plan;
+	protected IQuery getQuery() {
+		return query;
 	}
 
 	/**
@@ -109,7 +104,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 *            the cost caused by violating certain service levels
 	 */
 	private void violation(double cost) {
-		SLAViolationEvent event = new SLAViolationEvent(this.plan, this.sla,
+		SLAViolationEvent event = new SLAViolationEvent(this.query, this.sla,
 				cost);
 		this.distributor.queueSLAViolationEvent(event);
 	}
@@ -122,7 +117,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 */
 	protected void checkViolation() {
 		/*
-		 * most valuable service levl is first list entry! so iterate reverse
+		 * most valuable service level is first list entry! so iterate reverse
 		 * over list to finde the less valuable violated service level first
 		 */
 		if (System.currentTimeMillis() >= this.windowEnd) {

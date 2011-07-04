@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
@@ -29,12 +29,12 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	 *            distributor to send events to event listeners
 	 * @param sla
 	 *            the related sla
-	 * @param plan
-	 *            the related partial plan
+	 * @param query
+	 *            the related query
 	 */
 	public LatencySingleConformance(ISLAViolationEventDistributor dist,
-			SLA sla, IPartialPlan plan) {
-		super(dist, sla, plan);
+			SLA sla, IQuery query) {
+		super(dist, sla, query);
 		this.maxLatency = 0;
 	}
 

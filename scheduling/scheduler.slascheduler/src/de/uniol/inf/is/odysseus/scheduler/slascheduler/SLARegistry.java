@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sla.ISLAChangedEventListener;
 import de.uniol.inf.is.odysseus.sla.SLAChangedEvent;
 import de.uniol.inf.is.odysseus.sla.SLADictionary;
@@ -17,8 +18,9 @@ import de.uniol.inf.is.odysseus.sla.SLADictionary;
 public class SLARegistry implements ISLAChangedEventListener {
 	/**
 	 * mapping partial plans to their relevant data
+	 * TODO change mapping from pp to query
 	 */
-	private Map<IPartialPlan, SLARegistryInfo> schedData;
+	private Map<IQuery, SLARegistryInfo> schedData;
 	/**
 	 * reference to the scheduler owning this registry
 	 */
@@ -29,7 +31,7 @@ public class SLARegistry implements ISLAChangedEventListener {
 	 */
 	public SLARegistry() {
 		super();
-		this.schedData = new HashMap<IPartialPlan, SLARegistryInfo>();
+		this.schedData = new HashMap<IQuery, SLARegistryInfo>();
 		/*
 		 *  register add central sla dictionary to get notification about
 		 *  changes of sla
@@ -46,8 +48,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 	 * @return the scheduling data relevant for the given partial plan or null 
 	 * if no data is stored for the given partial plan
 	 */
-	public SLARegistryInfo getData(IPartialPlan plan) {
-		return this.schedData.get(plan);
+	public SLARegistryInfo getData(IQuery query) {
+		return this.schedData.get(query);
 	}
 	
 	/**
@@ -56,8 +58,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 	 * @return the removed scheduling data or null if no scheduling data could 
 	 * be found for the given partial plan.
 	 */
-	private SLARegistryInfo removeSchedData(IPartialPlan plan) {
-		return this.schedData.remove(plan);
+	private SLARegistryInfo removeSchedData(IQuery query) {
+		return this.schedData.remove(query);
 	}
 	
 	/**
@@ -65,8 +67,8 @@ public class SLARegistry implements ISLAChangedEventListener {
 	 * @param plan the partial plan
 	 * @param data the scheduling data
 	 */
-	private void addSchedData(IPartialPlan plan, SLARegistryInfo data) {
-		this.schedData.put(plan, data);
+	private void addSchedData(IQuery query, SLARegistryInfo data) {
+		this.schedData.put(query, data);
 	}
 
 	/**
@@ -79,28 +81,31 @@ public class SLARegistry implements ISLAChangedEventListener {
 		case add: {
 			SLARegistryInfo data = new SLARegistryInfo();
 			ISLAConformance conformance = new SLAConformanceFactory().
-					createSLAConformance(event.getSla(), this.scheduler, event.getPlan());
+					createSLAConformance(event.getSla(), this.scheduler, event.getQuery());
 			data.setConformance(conformance);
 			
 			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), event.getSla());
 			data.setCostFunction(costFunction);
 			
+			// starvation freedom and conformance placment need still partial plan
+			IPartialPlan plan = this.scheduler.getPartialPlan(event.getQuery());
+			
 			IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
 					buildStarvationFreedom(this.scheduler.getStarvationFreedom(),
-							data, event.getPlan());
+							data, plan);
 			data.setStarvationFreedom(starvationFreedom);
 			
 			data.setSla(event.getSla());
 			
 			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(event.getSla());
-			data.setConnectionPoint(placement.placeSLAConformance(event.getPlan(), conformance));
+			data.setConnectionPoint(placement.placeSLAConformance(plan, conformance));
 			
-			this.addSchedData(event.getPlan(), data);
+			this.addSchedData(event.getQuery(), data);
 			
 			break;
 		}
 		case remove: {
-			SLARegistryInfo data = this.removeSchedData(event.getPlan());
+			SLARegistryInfo data = this.removeSchedData(event.getQuery());
 			
 			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(event.getSla());
 			placement.removeSLAConformance(data.getConnectionPoint(), 

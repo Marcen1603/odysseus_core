@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
 /**
@@ -11,9 +11,9 @@ import de.uniol.inf.is.odysseus.sla.SLA;
  */
 public class SLAViolationEvent {
 	/**
-	 * the plan, the violated sla was defined for
+	 * the query, the violated sla was defined for
 	 */
-	private IPartialPlan plan;
+	private IQuery query;
 	/**
 	 * the costs caused by the violation due to predefined penalties
 	 */
@@ -25,23 +25,23 @@ public class SLAViolationEvent {
 
 	/**
 	 * creates a new sla violation event
-	 * @param plan the plan, the violated sla was defined for
+	 * @param query the query, the violated sla was defined for
 	 * @param sla the violated sla
 	 * @param cost the costs caused by the violation
 	 */
-	public SLAViolationEvent(IPartialPlan plan, SLA sla, double cost) {
-		this.plan = plan;
+	public SLAViolationEvent(IQuery query, SLA sla, double cost) {
+		this.query = query;
 		this.sla = sla;
 		this.cost = cost;
 	}
 
 	/**
-	 * @return the plan, the violated sla was defined for
+	 * @return the query, the violated sla was defined for
 	 */
-	public IPartialPlan getPlan() {
-		return plan;
+	public IQuery getQuery() {
+		return query;
 	}
-
+	
 	/**
 	 * @return the costs caused by the sla violation
 	 */
