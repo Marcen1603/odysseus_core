@@ -15,12 +15,14 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
@@ -128,8 +130,10 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 			List<IPhysicalOperator> queryOps = new ArrayList<IPhysicalOperator>(
 					query.getPhysicalChilds());
 			queryOps.addAll(query.getRoots());
-
+			Set<IOperatorOwner> owners = new HashSet<IOperatorOwner>();
+			
 			for (IPhysicalOperator operator : queryOps) {
+				owners.addAll(operator.getOwner());
 				IIterableSource<?> iterableSource = null;
 				if (operator instanceof IIterableSource) {
 					iterableSource = (IIterableSource<?>) operator;
@@ -147,8 +151,14 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 			}
 
 			// create a PartialPlan for this query
-			partialPlans.add(new PartialPlan(partialPlanSources, query
-					.getRoots(), query.getPriority(), query));
+			PartialPlan pp = new PartialPlan(partialPlanSources, query
+					.getRoots(), query.getPriority(), query);
+			Set<IQuery> q = new HashSet<IQuery>();
+			for (IOperatorOwner owner: owners){
+				q.add((IQuery) owner);
+			}
+			pp.setParticipatingQueries(q);
+			partialPlans.add(pp);
 
 		} // for (IQuery query : allQueries)
 
