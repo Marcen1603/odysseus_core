@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.sla;
 
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * Event marking the change of a sla and related data. currently only adding and
@@ -19,21 +19,21 @@ public class SLAChangedEvent {
 	 */
 	private SLA sla;
 	/**
-	 * the partial plan effected by the event
+	 * the query effected by the event
 	 */
-	private IPartialPlan plan;
+	private IQuery query;
 
 	/**
 	 * creates a new event
 	 * @param type the vent type
 	 * @param sla the sla effected by this event
-	 * @param plan the partial plan effected by the event
+	 * @param query the query effected by the event
 	 */
-	public SLAChangedEvent(SLAChangedEventType type, SLA sla, IPartialPlan plan) {
+	public SLAChangedEvent(SLAChangedEventType type, SLA sla, IQuery query) {
 		super();
 		this.type = type;
 		this.sla = sla;
-		this.plan = plan;
+		this.query = query;
 	}
 
 	/**
@@ -51,10 +51,10 @@ public class SLAChangedEvent {
 	}
 
 	/**
-	 * @return the plan effected by the event 
+	 * @return the query effected by the event
 	 */
-	public IPartialPlan getPlan() {
-		return plan;
+	public IQuery getQuery() {
+		return query;
 	}
 
 }
