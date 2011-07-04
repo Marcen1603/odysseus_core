@@ -46,10 +46,11 @@ public class SickConnectionImpl implements SickConnection {
 
         private void dumpPackage(final ByteBuffer buffer) throws FileNotFoundException {
             final File debug = new File("debug.out");
-            final FileOutputStream out = new FileOutputStream(debug);
+            final FileOutputStream out = new FileOutputStream(debug, true);
             final FileChannel debugChannel = out.getChannel();
             if ((debugChannel != null) && (debugChannel.isOpen())) {
                 try {
+                    buffer.flip();
                     debugChannel.write(buffer);
                 }
                 catch (final IOException e) {
@@ -75,7 +76,7 @@ public class SickConnectionImpl implements SickConnection {
             this.sendMessage(SickConnectionImpl.STOP_SCAN);
         }
 
-        private void onMessage(final String message) throws Exception {
+        private void onMessage(final String message) throws SickReadErrorException {
             final String[] data = message.split(" ");
 
             if (message.startsWith(SickConnectionImpl.SRA)) {
@@ -182,27 +183,19 @@ public class SickConnectionImpl implements SickConnection {
                                             }
                                         }
                                         catch (final Exception e) {
-                                            // Split Error, jump back one position for next channel
-//                                            j = samples;
-//                                            index--;
-//                                            SickConnectionImpl.LOG.error("Missing sample in package: {}",
-//                                                    message);
+                                            throw new SickReadErrorException(message);
                                         }
                                     }
 
                                     index += samples + 6;
                                 }
                                 else {
-//                                    SickConnectionImpl.LOG.error("Missing channel in package: {}",
-//                                            message);
-//                                    this.dumpPackage(this.charset.encode(message));
+                                    throw new SickReadErrorException(message);
                                 }
                             }
                         }
                         catch (Exception e) {
-                            SickConnectionImpl.LOG.error("Error in package: {}", message);
-                            SickConnectionImpl.LOG.error(e.getMessage(), e);
-                            this.dumpPackage(this.charset.encode(message));
+                            throw new SickReadErrorException(message);
                         }
                         if (this.record.get()) {
                             if (this.background == null) {
@@ -232,6 +225,7 @@ public class SickConnectionImpl implements SickConnection {
                 this.channel.connect(address);
                 this.channel.configureBlocking(false);
                 final CharsetDecoder decoder = this.charset.newDecoder();
+                this.onClose();
                 this.onOpen();
                 final ByteBuffer buffer = ByteBuffer.allocateDirect(65 * 1024);
                 int nbytes = 0;
@@ -246,10 +240,10 @@ public class SickConnectionImpl implements SickConnection {
                                 break;
                             }
                         }
-                        pos = buffer.position();;
+                        pos = buffer.position();
                         if (endIndex >= 0) {
                             buffer.flip();
-                            buffer.limit(endIndex);
+                            buffer.limit(endIndex + 1);
                             final CharBuffer charBuffer = decoder.decode(buffer);
                             try {
 
@@ -257,14 +251,16 @@ public class SickConnectionImpl implements SickConnection {
                                         .toString());
                             }
                             catch (final Exception e) {
-                                SickConnectionImpl.LOG.error(e.getMessage(), e);
-                                this.dumpPackage(buffer);
+                                if (SickConnectionImpl.LOG.isDebugEnabled()) {
+                                    SickConnectionImpl.LOG.debug(e.getMessage(), e);
+                                    this.dumpPackage(buffer);
+                                }
                             }
                             buffer.compact();
-                            pos -= endIndex;
+                            pos -= charBuffer.length();
                             endIndex = -1;
+                            buffer.position(pos);
                         }
-                        buffer.position(pos-1);
                     }
                 }
                 this.onClose();
