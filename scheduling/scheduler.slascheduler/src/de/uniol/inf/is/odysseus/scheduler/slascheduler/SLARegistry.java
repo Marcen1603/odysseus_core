@@ -3,11 +3,12 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.sla.ISLAChangedEventListener;
 import de.uniol.inf.is.odysseus.sla.SLAChangedEvent;
-import de.uniol.inf.is.odysseus.sla.SLADictionary;
 
 /**
  * central management of scheduling data
@@ -15,7 +16,7 @@ import de.uniol.inf.is.odysseus.sla.SLADictionary;
  * @author Thomas Vogelgesang
  *
  */
-public class SLARegistry implements ISLAChangedEventListener {
+public class SLARegistry implements IPlanModificationListener {
 	/**
 	 * mapping partial plans to their relevant data
 	 * TODO change mapping from pp to query
@@ -33,11 +34,15 @@ public class SLARegistry implements ISLAChangedEventListener {
 		super();
 		this.schedData = new HashMap<IQuery, SLARegistryInfo>();
 		/*
-		 *  register add central sla dictionary to get notification about
-		 *  changes of sla
+		 * register to executor as IPlanModificationListener
 		 */
-		
-		SLADictionary.getInstance().addSLAChangedEventListener(this);
+		IExecutor executor = ExecutorHandler.getExecutor();
+		if (executor != null) {
+			executor.addPlanModificationListener(this);
+		} else {
+			throw new RuntimeException(
+					"Cannot register plan modification listener: executor not found");
+		}
 	}
 
 	/**
@@ -75,7 +80,6 @@ public class SLARegistry implements ISLAChangedEventListener {
 	 * handles a {@link SLAChangedEvent} objects
 	 * @param event the event to handle
 	 */
-	@Override
 	public void slaChanged(SLAChangedEvent event) {
 		switch (event.getType()) {
 		case add: {
@@ -113,6 +117,11 @@ public class SLARegistry implements ISLAChangedEventListener {
 		default: throw new RuntimeException("Unknown event type: " +  event.getType());
 		}
 		
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		// TODO implement me!
 	}
 	
 }
