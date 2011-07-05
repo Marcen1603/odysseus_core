@@ -15,14 +15,30 @@
 
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class RelationalAggregateFunctionBuilder {
+public class RelationalAggregateFunctionBuilder implements
+		IAggregateFunctionBuilder {
 
+	private static Collection<String> names = new LinkedList<String>();
+	{
+		names.add("AVG");
+		names.add("SUM");
+		names.add("COUNT");
+		names.add("MIN");
+		names.add("MAX");
+		names.add("NEST");
+		names.add("BEAN");
+		names.add("SCRIPT");
+	}
 	
-	public static IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
+	public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
 			AggregateFunction key, int[] pos) {
 		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
 		if ((key.getName().equalsIgnoreCase("AVG"))
@@ -42,9 +58,19 @@ public class RelationalAggregateFunctionBuilder {
 		} else if (key.getName().equalsIgnoreCase("SCRIPT")) {
 			aggFunc = new AggregationJSR223(pos, key.getProperty("resource"));
 		} else {
-			throw new IllegalArgumentException("No such Aggregationfunction");
+			throw new IllegalArgumentException("No such Aggregatefunction");
 		}
 		return aggFunc;
+	}
+
+	@Override
+	public String getDatamodel() {
+		return "relational";
+	}
+
+	@Override
+	public Collection<String> getFunctionNames() {
+		return names;
 	}
 	
 }

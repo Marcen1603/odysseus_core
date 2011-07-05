@@ -123,12 +123,13 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
 	private SDFAttribute outAttribute(String attributeName,
 			AggregateFunction function, ASTAggregateExpression node) {
+		// TODO: Anpassen ... Warum haben die AggregateFunctions nicht den Typen?
 		String funcName = function.toString() + "(" + attributeName + ")";
 		SDFAttribute attribute = this.attributeResolver.getAttribute(funcName);
 		if (attribute == null) {
 			SDFDatatype datatype = this.attributeResolver.getAttribute(
 					attributeName).getDatatype();
-			if (!isNumerical(datatype) && !function.getName().equalsIgnoreCase("COUNT")) {
+			if (!datatype.isNumeric() && !function.getName().equalsIgnoreCase("COUNT")) {
 				throw new IllegalArgumentException("function '"
 						+ function.toString()
 						+ "' can't be used on non scalar types");
@@ -150,12 +151,12 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		return attribute;
 	}
 
-	private boolean isNumerical(SDFDatatype datatype) {
-		// TODO oder sollte der check ueber die dtconstraints laufen?
-		return datatype == this.dd.getDatatype("Double")
-				|| datatype == this.dd.getDatatype("Integer")
-				|| datatype == this.dd.getDatatype("Long");
-	}
+//	private boolean isNumerical(SDFDatatype datatype) {
+//		// TODO oder sollte der check ueber die dtconstraints laufen?
+//		return datatype == this.dd.getDatatype("Double")
+//				|| datatype == this.dd.getDatatype("Integer")
+//				|| datatype == this.dd.getDatatype("Long");
+//	}
 
 	@Override
 	public Object visit(ASTGroupByClause node, Object data) {

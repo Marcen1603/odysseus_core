@@ -79,4 +79,9 @@ public class Pair<E1, E2> implements IPair<E1, E2>{
 		this.e2 = e2;
 	}
 	
+	@Override
+	public String toString() {
+		return "["+e1+";"+e2+"]";
+	}
+	
 }

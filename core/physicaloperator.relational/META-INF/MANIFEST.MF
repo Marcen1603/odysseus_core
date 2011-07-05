@@ -24,3 +24,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.physicaloperator.relational
 Bundle-ClassPath: .
+Service-Component: OSGI-INF/RelationalAggregateFunctionBuilder.xml

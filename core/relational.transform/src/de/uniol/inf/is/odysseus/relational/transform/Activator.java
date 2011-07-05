@@ -17,9 +17,16 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
+
+	public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
+		return aggregateFunctionBuilderRegistry;
+	}
 
 	static BundleContext getContext() {
 		return context;
@@ -43,4 +50,14 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
+	public void bindAggregateFunctionBuilderRegistry(IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry){
+		System.out.println(aggregateFunctionBuilderRegistry +" bound");
+		Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
+	}
+	
+	public void unbindAggregateFunctionBuilderRegistry(IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry){
+		Activator.aggregateFunctionBuilderRegistry = null;
+	}
+		
+	
 }
