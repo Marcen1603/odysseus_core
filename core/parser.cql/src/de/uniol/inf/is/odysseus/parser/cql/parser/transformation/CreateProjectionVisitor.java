@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -215,7 +216,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAggregateExpression node, Object data) {
-		return this.attributeResolver.getAggregateAttribute(node);
+		String name = node.jjtGetChild(1).toString();		
+		String aggregateName = node.jjtGetChild(0).toString();		
+		return this.attributeResolver.getAggregateAttribute(name, aggregateName);
 	}
 
 	@Override
