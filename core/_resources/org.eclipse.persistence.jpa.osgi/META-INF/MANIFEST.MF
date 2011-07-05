@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EclipseLink OSGi Deployment Fragment (deprectated
+Bundle-SymbolicName: org.eclipse.persistence.jpa.osgi
+Bundle-Version: 2.1.2.v20101206-r8635
+Bundle-ClassPath: org.eclipse.persistence.jpa.osgi_2.1.2.v20101206-r8635.jar
+Bundle-Vendor: Eclipse.org - EclipseLink Project
+Fragment-Host: org.eclipse.persistence.jpa;bundle-version="2.1.2.v20101206-r8635"
+Private-Package: org.eclipse.persistence.jpa.osgi.eclipselink,.
+Implementation-Vendor: Eclipse.org - EclipseLink Project
+TODAY: December 6 2010
+TSTAMP: 1359
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
+Implementation-Version: 2.1.2.v20101206-r8635
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+HK2-Bundle-Name: org.eclipse.persistence:org.eclipse.persistence.jpa.osgi
+Specification-Version: 2.1.2
+Import-Package: org.eclipse.persistence.internal.jpa.deployment.osgi,
+ org.eclipse.persistence.internal.localization,
+ org.eclipse.persistence.jpa.osgi,
+ org.eclipse.persistence.logging,
+ org.osgi.framework,
+ org.osgi.service.packageadmin
+DSTAMP: 20101206
+Specification-Vendor: Eclipse.org - EclipseLink Project
+Bnd-LastModified: 1291662560855
+Include-Resource: ../../about.html,../../readme.html,../../license.html
+Tool: Bnd-0.0.366
