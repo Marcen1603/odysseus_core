@@ -7,6 +7,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
@@ -54,7 +56,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * the decay that should be used in starvation freedom function
 	 */
 	private double decaySF;
-
+	
+	private IQuerySharing querySharing;
+	
 	/**
 	 * creates a new sla-based partial plan scheduler
 	 * @param starvationFreedomFuncName name of the starvation freedom function
@@ -62,7 +66,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * @param decaySF decay for starvation freedom function
 	 */
 	public SLAPartialPlanScheduling(String starvationFreedomFuncName,
-			IPriorityFunction prio, double decaySF) {
+			IPriorityFunction prio, double decaySF, boolean querySharing, 
+			String querySharingCostModelName) {
 		this.plans = new ArrayList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
 		this.registry = new SLARegistry();
@@ -70,6 +75,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		this.prioFunction = prio;
 		this.eventQueue = new LinkedList<SLAViolationEvent>();
 		this.decaySF = decaySF;
+		if (querySharing) {
+			this.querySharing = new QuerySharing(querySharingCostModelName);
+		} else {
+			this.querySharing = null;
+		}
 	}
 
 	/**
@@ -90,6 +100,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		this.starvationFreedom = schedule.starvationFreedom;
 		this.eventQueue = (LinkedList<SLAViolationEvent>) schedule.eventQueue
 				.clone();
+		this.querySharing = schedule.querySharing;
 	}
 
 	/**
@@ -106,6 +117,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	@Override
 	public void addPlan(IScheduling scheduling) {
 		this.plans.add(scheduling);
+		this.refreshQuerySharing();
 	}
 
 	/**
@@ -156,9 +168,17 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				next = scheduling;
 				nextPrio = prio;
 			}
+			
+			if (this.querySharing != null) {
+				this.querySharing.setPriority(scheduling, prio);
+			}
+		}
+		
+		if (this.querySharing != null) {
+			// optional: consider effort of query sharing
+			next = this.querySharing.getNextPlan();
 		}
 
-		// return selected plan(s)
 		return next;
 	}
 
@@ -168,6 +188,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	@Override
 	public void removePlan(IScheduling plan) {
 		this.plans.remove(plan);
+		this.refreshQuerySharing();
 	}
 
 	/**
@@ -276,5 +297,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				return sched.getPlan();
 		}
 		return null;
+	}
+	
+	private void refreshQuerySharing() {
+		if (this.querySharing != null) {
+			this.querySharing.refreshEffortTable(this.plans);
+		}
 	}
 }

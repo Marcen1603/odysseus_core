@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.planmanagement.query;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -233,5 +234,9 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	 * @param sla the serivce level agreement to set for the query
 	 */
 	public void setSLA(SLA sla);
+	
+	public Set<IPhysicalOperator> getSharedOperators(IQuery otherQuery);
+	
+	public Set<IPhysicalOperator> getAllOperators();
 	
 }

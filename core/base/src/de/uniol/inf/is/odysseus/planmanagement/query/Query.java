@@ -670,7 +670,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.IOperatorControl#îsRunning()
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IOperatorControl#ï¿½sRunning()
 	 */
 	@Override
 	public boolean isActive() {
@@ -814,6 +814,37 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 		this.sla = sla;
 	}
 	
+	/**
+	 * returns a set of physical operators, that a query shares with the given 
+	 * query. in fact this is the intersection of the physical operators of this
+	 * query with the given query
+	 * @param otherQuery
+	 * @return
+	 */
+	@Override
+	public Set<IPhysicalOperator> getSharedOperators(IQuery otherQuery) {
+		Set<IPhysicalOperator> ops1 = this.getAllOperators();
+		Set<IPhysicalOperator> ops2 = this.getAllOperators();
+		
+		ops1.retainAll(ops2);
+		
+		return ops1;
+	}
 	
+	/**
+	 * returns a set of all operators used by the query
+	 * @return
+	 */
+	@Override
+	public Set<IPhysicalOperator> getAllOperators() {
+		Set<IPhysicalOperator> ops = new HashSet<IPhysicalOperator>();
+		for (IPhysicalOperator root : this.roots) {
+			List<IPhysicalOperator> children = this.getChildren(root);
+			ops.addAll(children);
+			ops.add(root);
+		}
+		
+		return ops;
+	}
 	
 }

@@ -30,6 +30,15 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 * decay of starvation freedom function
 	 */
 	private double decaySF;
+	/**
+	 * true iff query sharing should be considered in scheduling
+	 */
+	private boolean querySharing;
+	/**
+	 * name of the cost model that should be used, if query sharing should be 
+	 * considered in scheduling
+	 */
+	private String querySharingCostModelName;
 
 	/**
 	 * initializes and configures the schedulerfactory. will be called by osgi.
@@ -46,6 +55,8 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 				.buildPriorityFunction((String) properties
 						.get("sla_prioFuncName"));
 		this.decaySF = Float.parseFloat((String)properties.get("sla_stavationFreedomDecay"));
+		this.querySharing = Boolean.parseBoolean((String)properties.get("sla_querySharing"));
+		this.querySharingCostModelName = (String)properties.get("sla_querySharingCostModel");
 		super.setName(properties);
 	}
 
@@ -56,7 +67,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
 		return new SingleThreadTrainSchedulerWithStrategy(schedulingFactoring,
 				new SLAPartialPlanScheduling(starvationFreedomFuncName, prio,
-						decaySF));
+						decaySF, querySharing, querySharingCostModelName));
 	}
 
 }
