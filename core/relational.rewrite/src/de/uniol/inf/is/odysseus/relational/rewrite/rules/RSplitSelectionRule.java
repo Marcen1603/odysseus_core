@@ -46,7 +46,6 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 		} else { // RelationalPredicate with and
 			preds = ((RelationalPredicate)sel.getPredicate()).splitPredicate();
 		}
-		System.out.println(" PRÄDIKATE "+preds);
 		for (int i = 0; i < preds.size() - 1; i++) {
 			// Neuen SelectAO erstellen
 			SelectAO newSel = new SelectAO();
@@ -67,12 +66,10 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
 		IPredicate pred = operator.getPredicate();
-		System.out.println("SPLIT TEST FÜR pred "+pred);
 		if (pred != null) {
 			if (ComplexPredicateHelper.isAndPredicate(pred)
 					|| (pred instanceof RelationalPredicate && ((RelationalPredicate) pred)
 							.isAndPredicate())) {
-				System.out.println("SPLITT IST TRUE");
 				return true;
 			}
 		}
