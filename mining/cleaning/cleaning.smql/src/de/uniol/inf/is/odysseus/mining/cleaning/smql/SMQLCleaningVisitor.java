@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.OutOfDomainDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.OutOfRangeDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.SigmaRuleDetection;
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodSimpleValue
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetection;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetections;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStreamSQLWindow;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.visitor.AbstractSMQLParserVisitor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -94,8 +96,13 @@ public class SMQLCleaningVisitor<T> extends AbstractSMQLParserVisitor implements
 		
 		@SuppressWarnings("unchecked")
 		AttributeOperator ao = (AttributeOperator) data;
-		
-		int count = (Integer) node.jjtGetChild(0).jjtAccept(this, data);
+		if(node.jjtGetChild(0) instanceof ASTStreamSQLWindow){
+			WindowAO window = (WindowAO) node.jjtGetChild(0).jjtAccept(this, ao.getOperator());
+			
+			
+			
+		}
+		int count = 0;
 		// TODO: Fenstersemantik!
 		String type = "AVG";
 		// TODO: korrektes schema? oder beide zusammen?!

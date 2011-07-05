@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public class OutOfRangeDetection implements IDetection {
+public class OutOfRangeDetection implements IDetection{
 
 	public OutOfRangeDetection(String attributeName, int count, String type, SDFAttributeList outputSchema) {
 		// TODO Auto-generated constructor stub
