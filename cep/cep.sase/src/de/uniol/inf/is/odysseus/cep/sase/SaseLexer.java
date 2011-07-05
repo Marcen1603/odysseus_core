@@ -1,4 +1,3 @@
-// $ANTLR 3.3 Nov 30, 2010 12:50:56 E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2011-07-01 11:16:59
  
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -22,6 +21,7 @@ import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
+@SuppressWarnings("all")
 public class SaseLexer extends Lexer {
     public static final int EOF=-1;
     public static final int CREATE=4;
@@ -91,7 +91,7 @@ public class SaseLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "E:\\Dev\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g"; }
+    public String getGrammarFileName() { return null; }
 
     // $ANTLR start "CREATE"
     public final void mCREATE() throws RecognitionException {
