@@ -19,12 +19,19 @@ import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 import de.uniol.inf.is.odysseus.usermanagement.domain.Privilege;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
+@Entity
+@Table(name = "Privilege")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements Privilege {
 
     private static final long serialVersionUID = 4054608803558374338L;

@@ -35,8 +35,8 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.User;
 @Entity
 @Table(name = "Account")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries(value = {@NamedQuery(name = UserImpl.NQ_FIND_ALL, query = "select o from Account as o"),
-                       @NamedQuery(name = UserImpl.NQ_FIND_BY_NAME, query = "select o from Account as o where o.name = :name"),})
+@NamedQueries(value = {@NamedQuery(name = UserImpl.NQ_FIND_ALL, query = "select o from UserImpl as o"),
+                       @NamedQuery(name = UserImpl.NQ_FIND_BY_NAME, query = "select o from UserImpl as o where o.name = :name"),})
 public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.User.findAll";

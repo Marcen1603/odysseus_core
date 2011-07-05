@@ -14,8 +14,14 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+
+import de.uniol.inf.is.odysseus.usermanagement.domain.impl.UserImpl;
+import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.UserDAO;
+import de.uniol.inf.is.odysseus.usermanagement.service.UsermanagementService;
+import de.uniol.inf.is.odysseus.usermanagement.service.impl.UsermanagementServiceImpl;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -41,7 +47,14 @@ public class Activator implements BundleActivator {
     public void start(BundleContext bundleContext) throws Exception {
         Activator.context = bundleContext;
 
+        // FIXME Test Code---------
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("odysseusPU");
+        UserDAO userDAO = new UserDAO();
+        EntityManager em = emf.createEntityManager();
+        userDAO.setEntityManager(emf.createEntityManager());
+        UserImpl user = new UserImpl();
+        userDAO.create(user);
+        // ------------------
     }
 
     /*

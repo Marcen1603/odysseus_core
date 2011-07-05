@@ -260,8 +260,7 @@ public class UsermanagementServiceImpl implements UsermanagementService {
      */
     @Override
     public void revokePermission(Role role, Privilege privilege, User caller) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException();
+
     }
 
 }

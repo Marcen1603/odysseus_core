@@ -21,7 +21,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.Privilege;
 import de.uniol.inf.is.odysseus.usermanagement.domain.Role;
 
 /**
