@@ -5,8 +5,17 @@ import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
+/**
+ * Simple standard cost model
+ * @author Thomas Vogelgesang
+ *
+ */
 public class StaticQuerySharingCostModel implements IQuerySharingCostModel {
 
+	/**
+	 * the returned costs are statically defined for the type of the given
+	 * operator
+	 */
 	@Override
 	public double getOperatorCost(IPhysicalOperator op) {
 		if (op instanceof JoinTIPO<?, ?> || op instanceof LeftJoinTIPO<?, ?>) {

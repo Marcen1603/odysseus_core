@@ -56,17 +56,27 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * the decay that should be used in starvation freedom function
 	 */
 	private double decaySF;
-	
+
 	private IQuerySharing querySharing;
-	
+
 	/**
 	 * creates a new sla-based partial plan scheduler
-	 * @param starvationFreedomFuncName name of the starvation freedom function
-	 * @param prio Priority function
-	 * @param decaySF decay for starvation freedom function
+	 * 
+	 * @param starvationFreedomFuncName
+	 *            name of the starvation freedom function
+	 * @param prio
+	 *            Priority function
+	 * @param decaySF
+	 *            decay for starvation freedom function
+	 * @param querySharing
+	 *            true iff the scheduling algorithm should consider the effort
+	 *            of query sharing
+	 * @param querySharingCostModelName
+	 *            the name of the cost model that should be used to consider the
+	 *            effort of query sharing
 	 */
 	public SLAPartialPlanScheduling(String starvationFreedomFuncName,
-			IPriorityFunction prio, double decaySF, boolean querySharing, 
+			IPriorityFunction prio, double decaySF, boolean querySharing,
 			String querySharingCostModelName) {
 		this.plans = new ArrayList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
@@ -84,7 +94,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	/**
 	 * compy constructor for clone method
-	 * @param schedule the object to clone
+	 * 
+	 * @param schedule
+	 *            the object to clone
 	 */
 	@SuppressWarnings("unchecked")
 	private SLAPartialPlanScheduling(SLAPartialPlanScheduling schedule) {
@@ -168,12 +180,12 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				next = scheduling;
 				nextPrio = prio;
 			}
-			
+
 			if (this.querySharing != null) {
 				this.querySharing.setPriority(scheduling, prio);
 			}
 		}
-		
+
 		if (this.querySharing != null) {
 			// optional: consider effort of query sharing
 			next = this.querySharing.getNextPlan();
@@ -201,7 +213,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	/**
 	 * adds an event listener for {@link SLAViolationEvent}
-	 * @param listener the event listener to add
+	 * 
+	 * @param listener
+	 *            the event listener to add
 	 */
 	public void addSLAViolationEventListener(ISLAViolationEventListener listener) {
 		this.listeners.add(listener);
@@ -209,7 +223,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	/**
 	 * removes an event listener for {@link SLAViolationEvent}
-	 * @param listener the event listener to remove
+	 * 
+	 * @param listener
+	 *            the event listener to remove
 	 * @return
 	 */
 	public boolean removeSLAViolationEventListener(
@@ -220,7 +236,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	/**
 	 * broadcasts the given {@link SLAViolationEvent} to all registered event
 	 * listeners
-	 * @param event teh event to boradcast to the listeners
+	 * 
+	 * @param event
+	 *            teh event to boradcast to the listeners
 	 */
 	private void fireSLAViolationEvent(SLAViolationEvent event) {
 		for (ISLAViolationEventListener listener : this.listeners) {
@@ -230,7 +248,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	/**
 	 * adds the given event to the event buffer
-	 * @param event the event to buffer
+	 * 
+	 * @param event
+	 *            the event to buffer
 	 */
 	@Override
 	public void queueSLAViolationEvent(SLAViolationEvent event) {
@@ -239,7 +259,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	/**
 	 * sets the decay for starvatio freedom
-	 * @param decaySF the decay
+	 * 
+	 * @param decaySF
+	 *            the decay
 	 */
 	public void setDecaySF(double decaySF) {
 		this.decaySF = decaySF;
@@ -254,7 +276,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	/**
 	 * sets the name of the cost function
-	 * @param costFunctionName the new cost function name
+	 * 
+	 * @param costFunctionName
+	 *            the new cost function name
 	 */
 	public void setCostFunctionName(String costFunctionName) {
 		this.costFunctionName = costFunctionName;
@@ -266,7 +290,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	public String getCostFunctionName() {
 		return costFunctionName;
 	}
-	
+
 	/**
 	 * @return the name of the starvation freedom function to use
 	 */
@@ -276,20 +300,24 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	/**
 	 * sets the name of the starvation freedom function
-	 * @param starvationFreedom the name of the starvation freedom function
+	 * 
+	 * @param starvationFreedom
+	 *            the name of the starvation freedom function
 	 */
 	public void setStarvationFreedom(String starvationFreedom) {
 		this.starvationFreedom = starvationFreedom;
 	}
-	
+
 	/**
 	 * returns the partial plan that represents the given query in scheduling.
-	 * it is expected that each partial plan contains only one query. this 
-	 * method is required because some objects still need the partial plan (e.g. 
+	 * it is expected that each partial plan contains only one query. this
+	 * method is required because some objects still need the partial plan (e.g.
 	 * for finding buffers)
-	 * @param query the given query
+	 * 
+	 * @param query
+	 *            the given query
 	 * @return the partial plan that represents the given query in scheduling or
-	 * null if no partial plan was found for the given query
+	 *         null if no partial plan was found for the given query
 	 */
 	public IPartialPlan getPartialPlan(IQuery query) {
 		for (IScheduling sched : this.plans) {
@@ -298,7 +326,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		}
 		return null;
 	}
-	
+
+	/**
+	 * updates the underlying data structures if the effort of query sharing
+	 * should be considered
+	 */
 	private void refreshQuerySharing() {
 		if (this.querySharing != null) {
 			this.querySharing.refreshEffortTable(this.plans);
