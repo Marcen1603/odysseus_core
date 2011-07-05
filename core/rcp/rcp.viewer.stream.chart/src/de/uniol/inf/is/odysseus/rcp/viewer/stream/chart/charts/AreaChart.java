@@ -18,7 +18,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractCategoryTimeSeriesChart;
 
 public class AreaChart extends AbstractCategoryTimeSeriesChart{
