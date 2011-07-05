@@ -25,8 +25,6 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetections;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
@@ -148,7 +146,7 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 	@Override
 	public Object visit(ASTDetectionMethodOutOfDomain node, Object data) {
 		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
-	}
+	}	
 	
 
 }

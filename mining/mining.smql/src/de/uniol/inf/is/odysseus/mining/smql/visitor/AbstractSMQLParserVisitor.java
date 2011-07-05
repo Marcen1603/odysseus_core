@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.mining.AbstractParameter;
 import de.uniol.inf.is.odysseus.mining.IParameter;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
@@ -23,6 +24,7 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTParameter;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTParameterList;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStart;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStreamSQLWindow;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -65,7 +67,7 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 	
 	public void addTopOperator(ILogicalOperator op){
 		this.topOperators.add(op);
-	}
+	}		
 
 	@Override
 	public Object visit(SimpleNode node, Object data) {
@@ -137,6 +139,26 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 		}
 		return parameters;		
 	}
+	
+	
+	@Override
+	public Object visit(ASTStreamSQLWindow windowNode, Object data) {
+		ILogicalOperator inputOp = (ILogicalOperator)data;
+		WindowAO window = new WindowAO();
+		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
+		
+		window.setWindowType(windowNode.getType());
+		
+		if (!windowNode.isUnbounded()) {
+			window.setWindowSize(windowNode.getSize());
+			Long advance = windowNode.getAdvance();
+			window.setWindowAdvance(advance != null ? advance : 1);
+			if (windowNode.getSlide() != null) {
+				window.setWindowSlide(windowNode.getSlide());
+			}
+		}
+		return window;
+	}		
 	
 	@Override
 	public abstract Object visit(ASTCreateKnowledgeDiscoveryProcess node, Object data);
