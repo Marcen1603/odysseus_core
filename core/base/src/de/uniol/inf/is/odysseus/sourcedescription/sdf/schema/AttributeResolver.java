@@ -63,6 +63,12 @@ public class AttributeResolver implements IAttributeResolver {
 		this.attributes.add(attribute);
 	}
 
+	public void addAttributes(SDFAttributeList list){
+		for(SDFAttribute attribute : list){
+			addAttribute(attribute);
+		}
+	}
+	
 	public void addAttributes(Collection<SDFAttribute> attributes) {
 		for (SDFAttribute attribute : attributes) {
 			addAttribute(attribute);
