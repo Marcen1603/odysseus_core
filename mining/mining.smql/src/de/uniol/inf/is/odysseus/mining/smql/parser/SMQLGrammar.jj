@@ -7,11 +7,11 @@
                                                                
   DEBUG_PARSER = false;
   //DEBUG_TOKEN_MANAGER = false;}PARSER_BEGIN(SMQLParser)package de.uniol.inf.is.odysseus.mining.smql.parser;
-
+import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 @ SuppressWarnings("all") public class SMQLParser/*@bgen(jjtree)*/implements SMQLParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected static JJTSMQLParserState jjtree = new JJTSMQLParserState();
 
-/*@egen*/}PARSER_END(SMQLParser)SKIP :{  " "| "\r"| "\n"| "\t"}TOKEN :{  < K_AND : "AND" > | < K_AVG : "AVG" >| < K_BY : "BY" >| < K_CLEAN : "CLEAN" >| < K_CORRECT : "CORRECT" >| < K_COUNT : "COUNT" >| < K_CREATE : "CREATE" >| < K_DETECT : "DETECT" >| < K_DISCARD : "DISCARD" >| < K_DISCOVERY : "DISCOVERY" >| < K_DOMAIN : "DOMAIN" >| < K_FUNCTION : "FUNCTION" >| < K_IN : "IN" >| < K_KNOWLEDGE : "KNOWLEDGE" >| < K_LAST : "LAST" >| < K_MAX : "MAX" >| < K_MIN : "MIN" >| < K_NOT : "NOT" >| < K_OF : "OF" >| < K_OUT : "OUT" >| < K_OUTLIER : "OUTLIER" >| < K_OR : "OR" >| < K_PROCESS : "PROCESS" >| < K_RANGE : "RANGE" >| < K_ROUND : "ROUND" >| < K_SIGMA : "SIGMA" >| < K_SUM : "SUM" >| < K_TIME : "TIME" >| < K_TO : "TO" >| < K_TUPLE : "TUPLE" >| < K_VALUE : "VALUE" >| < K_WHERE : "WHERE" >}TOKEN : /* Numeric Constants */{  //  <NUMBER:<FLOAT>  //  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>  //  | <#FLOAT:<INTEGER>  //  | <INTEGER>("."<INTEGER>)?  //  | "."<INTEGER>>  < FLOAT :    ("-")?    (      < INTEGER > "." < INTEGER >    | "." < INTEGER >    ) >| < INTEGER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >}SPECIAL_TOKEN :{  < LINE_COMMENT : "--" (~[ "\r", "\n" ])* >| < MULTI_LINE_COMMENT :    "/*" (~[ "*" ])* "*"    (      "*"    |      (        ~[ "*", "/" ] (~[ "*" ])* "*"      )    )*    "/" >}TOKEN :{  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    ":"  | "_"  | "."  | "*" >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )* >| < SQL_STRING :    "[[" (~[ "[", "]" ])* "]]"    (      "[[" (~[ "[", "]" ])* "]]"    )* >| < QUOTED_IDENTIFIER : "\"" (~[ "\n", "\r", "\"" ])* "\"" >| < COMPARE_OPERATOR :    "="  | "<>"  | ">"  | "<"  | "<="  | ">=" >| < REGEXP :    "/" ("^")?    (      < LETTER >    | < DIGIT >    | "\\"    | "+"    | "."    | "*"    | "?"    | "$"    )+    "/" >| < JDBC_STRING :    "jdbc:"    (      (        < DIGIT >      | < LETTER >      | < SPECIAL_CHARS >      | "?"      | ";"      | "/"      | "="      )*    )* >}SimpleNode Start() :{/*@bgen(jjtree) Start */
+/*@egen*/}PARSER_END(SMQLParser)SKIP :{  " "| "\r"| "\n"| "\t"}TOKEN :{< K_ADVANCE : "ADVANCE" >| < K_AND : "AND" > | < K_AVG : "AVG" >| < K_ALWAYS : "ALWAYS" > | < K_BY : "BY" >| < K_CLEAN : "CLEAN" >| < K_CORRECT : "CORRECT" >| < K_COUNT : "COUNT" >| < K_CREATE : "CREATE" >| < K_DAY : "DAY" >| < K_HOUR : "HOUR" >| < K_DETECT : "DETECT" >| < K_DISCARD : "DISCARD" >| < K_DISCOVERY : "DISCOVERY" >| < K_DOMAIN : "DOMAIN" >| < K_FUNCTION : "FUNCTION" >| < K_IN : "IN" >| < K_KNOWLEDGE : "KNOWLEDGE" >| < K_LAST : "LAST" >| < K_MAX : "MAX" >| < K_MIN : "MIN" >| < K_MINUTE : "MINUTE" >| < K_NOT : "NOT" >| < K_OF : "OF" >| < K_OUT : "OUT" >| < K_OUTLIER : "OUTLIER" >| < K_OR : "OR" >| < K_PARTITION : "PARTITION" >| < K_PROCESS : "PROCESS" >| < K_RANGE : "RANGE" >| < K_ROUND : "ROUND" >| < K_SECOND : "SECOND" >| < K_SIGMA : "SIGMA" >| < K_SIZE : "SIZE" >| < K_SLIDE : "SLIDE" >| < K_SUM : "SUM" >| < K_TIME : "TIME" >| < K_TO : "TO" >| < K_TUPLE : "TUPLE" >| < K_UNBOUNDED : "UNBOUNDED" >| < K_VALID : "VALID" >| < K_VALUE : "VALUE" >| < K_WEEK : "WEEK" >| < K_WHERE : "WHERE" >}TOKEN : /* Numeric Constants */{  //  <NUMBER:<FLOAT>  //  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>  //  | <#FLOAT:<INTEGER>  //  | <INTEGER>("."<INTEGER>)?  //  | "."<INTEGER>>  < FLOAT :    ("-")?    (      < INTEGER > "." < INTEGER >    | "." < INTEGER >    ) >| < INTEGER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >}SPECIAL_TOKEN :{  < LINE_COMMENT : "--" (~[ "\r", "\n" ])* >| < MULTI_LINE_COMMENT :    "/*" (~[ "*" ])* "*"    (      "*"    |      (        ~[ "*", "/" ] (~[ "*" ])* "*"      )    )*    "/" >}TOKEN :{  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    ":"  | "_"  | "."  | "*" >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )* >| < SQL_STRING :    "[[" (~[ "[", "]" ])* "]]"    (      "[[" (~[ "[", "]" ])* "]]"    )* >| < QUOTED_IDENTIFIER : "\"" (~[ "\n", "\r", "\"" ])* "\"" >| < COMPARE_OPERATOR :    "="  | "<>"  | ">"  | "<"  | "<="  | ">=" >| < REGEXP :    "/" ("^")?    (      < LETTER >    | < DIGIT >    | "\\"    | "+"    | "."    | "*"    | "?"    | "$"    )+    "/" >| < JDBC_STRING :    "jdbc:"    (      (        < DIGIT >      | < LETTER >      | < SPECIAL_CHARS >      | "?"      | ";"      | "/"      | "="      )*    )* >}SimpleNode Start() :{/*@bgen(jjtree) Start */
   ASTStart jjtn000 = new ASTStart(JJTSTART);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -282,7 +282,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) DetectionMethodOutOfRange */
   try {
-/*@egen*/  < K_OUT > < K_OF > <K_RANGE > Integer() (< K_TUPLE > | < K_TIME >)/*@bgen(jjtree)*/
+/*@egen*/  < K_OUT > < K_OF > <K_RANGE > Window()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -548,4 +548,35 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/  }
+/*@egen*/  }void Window()      :{}{  "[" StreamSQLWindow() "]"}void StreamSQLWindow() :{/*@bgen(jjtree) StreamSQLWindow */
+  ASTStreamSQLWindow jjtn000 = new ASTStreamSQLWindow(JJTSTREAMSQLWINDOW);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/  Long size;  Long advance;  Long value;  }{/*@bgen(jjtree) StreamSQLWindow */
+  try {
+/*@egen*/  (    < K_SIZE > size = Time()    {      jjtn000.setType(WindowType.TIME);      jjtn000.setSize(size);    }    [      < K_ADVANCE > advance = Time()      {        jjtn000.setAdvance(advance);      }    ]    (      < K_TIME >    | < K_TUPLE >      {        jjtn000.setType(WindowType.TUPLE);      }    )    [      value = Slide()      {        jjtn000.setSlide(value);      }    ]      )| < K_UNBOUNDED >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/  {    jjtn000.setUnbounded(true);  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}Long Slide()       :{  Long value;}{  < K_SLIDE > value = Time()  {    return value;  }}Long Time()       :{  Long value;}{  value = Integer()  [    < K_SECOND >    {      value *= 1000;    }  | < K_MINUTE >    {      value *= (60 * 1000);    }  | < K_HOUR >    {      value *= (60 * 60 * 1000);    }  | < K_DAY >    {      value *= (24 * 60 * 60 * 1000);    }  | < K_WEEK >    {      value *= (7 * 24 * 60 * 60 * 1000);    }  ]  {    return value;  }}

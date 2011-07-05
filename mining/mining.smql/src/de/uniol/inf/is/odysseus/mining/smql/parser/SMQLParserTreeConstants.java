@@ -25,6 +25,8 @@ public interface SMQLParserTreeConstants
   public int JJTCORRECTIONMETHOD = 19;
   public int JJTCORRECTIONMETHODDISCARD = 20;
   public int JJTCORRECTIONMETHODFUNCTION = 21;
+  public int JJTVOID = 22;
+  public int JJTSTREAMSQLWINDOW = 23;
 
 
   public String[] jjtNodeName = {
@@ -50,6 +52,8 @@ public interface SMQLParserTreeConstants
     "CorrectionMethod",
     "CorrectionMethodDiscard",
     "CorrectionMethodFunction",
+    "void",
+    "StreamSQLWindow",
   };
 }
-/* JavaCC - OriginalChecksum=ab3f0eadad3a36623d86f010e52044c3 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7a46402bf6143be11f5bdfedb6ca9154 (do not edit this line) */

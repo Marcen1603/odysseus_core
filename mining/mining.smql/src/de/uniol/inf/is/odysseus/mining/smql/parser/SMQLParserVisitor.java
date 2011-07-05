@@ -26,5 +26,6 @@ public interface SMQLParserVisitor
   public Object visit(ASTCorrectionMethod node, Object data);
   public Object visit(ASTCorrectionMethodDiscard node, Object data);
   public Object visit(ASTCorrectionMethodFunction node, Object data);
+  public Object visit(ASTStreamSQLWindow node, Object data);
 }
-/* JavaCC - OriginalChecksum=3d347432108096947f4b055ef439098a (do not edit this line) */
+/* JavaCC - OriginalChecksum=78e423d2edf6c1df74b3338c00824bac (do not edit this line) */

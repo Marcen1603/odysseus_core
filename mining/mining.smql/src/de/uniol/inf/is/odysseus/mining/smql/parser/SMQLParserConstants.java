@@ -11,99 +11,123 @@ public interface SMQLParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int K_AND = 5;
+  int K_ADVANCE = 5;
   /** RegularExpression Id. */
-  int K_AVG = 6;
+  int K_AND = 6;
   /** RegularExpression Id. */
-  int K_BY = 7;
+  int K_AVG = 7;
   /** RegularExpression Id. */
-  int K_CLEAN = 8;
+  int K_ALWAYS = 8;
   /** RegularExpression Id. */
-  int K_CORRECT = 9;
+  int K_BY = 9;
   /** RegularExpression Id. */
-  int K_COUNT = 10;
+  int K_CLEAN = 10;
   /** RegularExpression Id. */
-  int K_CREATE = 11;
+  int K_CORRECT = 11;
   /** RegularExpression Id. */
-  int K_DETECT = 12;
+  int K_COUNT = 12;
   /** RegularExpression Id. */
-  int K_DISCARD = 13;
+  int K_CREATE = 13;
   /** RegularExpression Id. */
-  int K_DISCOVERY = 14;
+  int K_DAY = 14;
   /** RegularExpression Id. */
-  int K_DOMAIN = 15;
+  int K_HOUR = 15;
   /** RegularExpression Id. */
-  int K_FUNCTION = 16;
+  int K_DETECT = 16;
   /** RegularExpression Id. */
-  int K_IN = 17;
+  int K_DISCARD = 17;
   /** RegularExpression Id. */
-  int K_KNOWLEDGE = 18;
+  int K_DISCOVERY = 18;
   /** RegularExpression Id. */
-  int K_LAST = 19;
+  int K_DOMAIN = 19;
   /** RegularExpression Id. */
-  int K_MAX = 20;
+  int K_FUNCTION = 20;
   /** RegularExpression Id. */
-  int K_MIN = 21;
+  int K_IN = 21;
   /** RegularExpression Id. */
-  int K_NOT = 22;
+  int K_KNOWLEDGE = 22;
   /** RegularExpression Id. */
-  int K_OF = 23;
+  int K_LAST = 23;
   /** RegularExpression Id. */
-  int K_OUT = 24;
+  int K_MAX = 24;
   /** RegularExpression Id. */
-  int K_OUTLIER = 25;
+  int K_MIN = 25;
   /** RegularExpression Id. */
-  int K_OR = 26;
+  int K_MINUTE = 26;
   /** RegularExpression Id. */
-  int K_PROCESS = 27;
+  int K_NOT = 27;
   /** RegularExpression Id. */
-  int K_RANGE = 28;
+  int K_OF = 28;
   /** RegularExpression Id. */
-  int K_ROUND = 29;
+  int K_OUT = 29;
   /** RegularExpression Id. */
-  int K_SIGMA = 30;
+  int K_OUTLIER = 30;
   /** RegularExpression Id. */
-  int K_SUM = 31;
+  int K_OR = 31;
   /** RegularExpression Id. */
-  int K_TIME = 32;
+  int K_PARTITION = 32;
   /** RegularExpression Id. */
-  int K_TO = 33;
+  int K_PROCESS = 33;
   /** RegularExpression Id. */
-  int K_TUPLE = 34;
+  int K_RANGE = 34;
   /** RegularExpression Id. */
-  int K_VALUE = 35;
+  int K_ROUND = 35;
   /** RegularExpression Id. */
-  int K_WHERE = 36;
+  int K_SECOND = 36;
   /** RegularExpression Id. */
-  int FLOAT = 37;
+  int K_SIGMA = 37;
   /** RegularExpression Id. */
-  int INTEGER = 38;
+  int K_SIZE = 38;
   /** RegularExpression Id. */
-  int DIGIT = 39;
+  int K_SLIDE = 39;
   /** RegularExpression Id. */
-  int IPADDRESS = 40;
+  int K_SUM = 40;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 41;
+  int K_TIME = 41;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 42;
+  int K_TO = 42;
   /** RegularExpression Id. */
-  int IDENTIFIER = 43;
+  int K_TUPLE = 43;
   /** RegularExpression Id. */
-  int LETTER = 44;
+  int K_UNBOUNDED = 44;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 45;
+  int K_VALID = 45;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 46;
+  int K_VALUE = 46;
   /** RegularExpression Id. */
-  int SQL_STRING = 47;
+  int K_WEEK = 47;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 48;
+  int K_WHERE = 48;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 49;
+  int FLOAT = 49;
   /** RegularExpression Id. */
-  int REGEXP = 50;
+  int INTEGER = 50;
   /** RegularExpression Id. */
-  int JDBC_STRING = 51;
+  int DIGIT = 51;
+  /** RegularExpression Id. */
+  int IPADDRESS = 52;
+  /** RegularExpression Id. */
+  int LINE_COMMENT = 53;
+  /** RegularExpression Id. */
+  int MULTI_LINE_COMMENT = 54;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 55;
+  /** RegularExpression Id. */
+  int LETTER = 56;
+  /** RegularExpression Id. */
+  int SPECIAL_CHARS = 57;
+  /** RegularExpression Id. */
+  int CHAR_LITERAL = 58;
+  /** RegularExpression Id. */
+  int SQL_STRING = 59;
+  /** RegularExpression Id. */
+  int QUOTED_IDENTIFIER = 60;
+  /** RegularExpression Id. */
+  int COMPARE_OPERATOR = 61;
+  /** RegularExpression Id. */
+  int REGEXP = 62;
+  /** RegularExpression Id. */
+  int JDBC_STRING = 63;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -115,13 +139,17 @@ public interface SMQLParserConstants {
     "\"\\r\"",
     "\"\\n\"",
     "\"\\t\"",
+    "\"ADVANCE\"",
     "\"AND\"",
     "\"AVG\"",
+    "\"ALWAYS\"",
     "\"BY\"",
     "\"CLEAN\"",
     "\"CORRECT\"",
     "\"COUNT\"",
     "\"CREATE\"",
+    "\"DAY\"",
+    "\"HOUR\"",
     "\"DETECT\"",
     "\"DISCARD\"",
     "\"DISCOVERY\"",
@@ -132,20 +160,28 @@ public interface SMQLParserConstants {
     "\"LAST\"",
     "\"MAX\"",
     "\"MIN\"",
+    "\"MINUTE\"",
     "\"NOT\"",
     "\"OF\"",
     "\"OUT\"",
     "\"OUTLIER\"",
     "\"OR\"",
+    "\"PARTITION\"",
     "\"PROCESS\"",
     "\"RANGE\"",
     "\"ROUND\"",
+    "\"SECOND\"",
     "\"SIGMA\"",
+    "\"SIZE\"",
+    "\"SLIDE\"",
     "\"SUM\"",
     "\"TIME\"",
     "\"TO\"",
     "\"TUPLE\"",
+    "\"UNBOUNDED\"",
+    "\"VALID\"",
     "\"VALUE\"",
+    "\"WEEK\"",
     "\"WHERE\"",
     "<FLOAT>",
     "<INTEGER>",
