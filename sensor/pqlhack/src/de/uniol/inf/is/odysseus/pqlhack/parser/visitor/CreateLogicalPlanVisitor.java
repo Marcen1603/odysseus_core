@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingSel
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.PunctuationAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.SchemaConvertAO;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
@@ -129,6 +128,7 @@ import de.uniol.inf.is.odysseus.scars.operator.sink.ao.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.ao.XMLProfilerAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
