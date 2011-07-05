@@ -56,7 +56,7 @@ public class TransformationException extends Exception {
 	
 	@Override
 	public String getMessage() {
-		StringBuilder builder = new StringBuilder("transformation failed");
+		StringBuilder builder = new StringBuilder("transformation failed ");
 		if (untranslatedOperators != null) {
 			builder.append("; unable to transform: ");
 			for(ILogicalOperator op : this.untranslatedOperators) {
@@ -65,6 +65,9 @@ public class TransformationException extends Exception {
 		}
 		if (this.config != null) {
 			builder.append("; configuration used " + config.toString());
+		}
+		if (super.getMessage() != null){
+			builder.append("; ").append(super.getMessage());
 		}
 		return builder.toString(); 
 	}
