@@ -25,7 +25,6 @@ import java.util.Stack;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.NotOperator;
@@ -33,13 +32,12 @@ import de.uniol.inf.is.odysseus.mep.functions.OrOperator;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 		implements IRelationalPredicate {
@@ -217,6 +215,73 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 		}
 		RelationalPredicate rp2 = (RelationalPredicate) o;
 
+		// Komplexe Prädikate
+		// AND
+		if (this.isAndPredicate()) {
+			// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist
+			// (Zusätzliche Verschärfung bestehender Prädikate)
+			if (!rp2.isAndPredicate()) {
+				List<IPredicate> spred = splitPredicate();
+
+				for (IPredicate p : spred) {
+					if (p.isContainedIn(o)) {
+						return true;
+					}
+				}
+				return false;
+			}
+			// TODO: Noch mal überprüfen
+			// // Falls es sich beim anderen Prädikat ebenfalls um ein
+			// AndPredicate handelt, müssen beide Prädikate verglichen werden
+			// (inklusiver aller "Unterprädikate")
+			// if(o instanceof AndPredicate) {
+			// AndPredicate<T> ap = (AndPredicate<T>) o;
+			//
+			//
+			//
+			// ArrayList<IPredicate<?>> a = extractAllPredicates(this);
+			// ArrayList<IPredicate<?>> b = extractAllPredicates(ap);
+			//
+			// // Für JEDES Prädikat aus dem anderen AndPredicate muss ein
+			// enthaltenes Prädikat in diesem AndPredicate gefunden werden
+			// // (Nur weitere Verschärfungen sind zulässig, deshalb darf keine
+			// Bedingung des anderen Prädikats stärker sein)
+			// for(IPredicate<?> predb : b) {
+			// // if(predb instanceof OrPredicate) {
+			// // return false;
+			// // }
+			// boolean foundmatch = false;
+			// for(IPredicate<?> preda : a) {
+			// // if(preda instanceof OrPredicate) {
+			// // return false;
+			// // }
+			// if(preda.isContainedIn(predb)) {
+			// foundmatch = true;
+			// }
+			// }
+			// if(!foundmatch) {
+			// return false;
+			// }
+			// }
+			// return true;
+			// }
+			//
+			return false;
+		}
+		// OR
+		// TODO: Aus dem alten OR-Predicate extrahieren
+		if (this.isOrPredicate()){
+			return false;
+		}
+		// NOT 
+		// TODO: Geht das besser?
+		if (this.isNotPredicate()){
+			if (rp2.isNotPredicate()){
+				return false;
+			}
+			return false;
+		}
+		// BASIS-Prädikat
 		// Unterschiedliche Anzahl Attribute
 		if (this.getAttributes().size() != rp2.getAttributes().size()) {
 			return false;
@@ -509,12 +574,13 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 			while (!expressionStack.isEmpty()) {
 				IExpression<?> curExpression = expressionStack.pop();
 				if (isAndPredicate(curExpression)) {
-					expressionStack
-							.push(curExpression.toFunction().getArgument(0) );
-					expressionStack
-							.push(curExpression.toFunction().getArgument(1));
+					expressionStack.push(curExpression.toFunction()
+							.getArgument(0));
+					expressionStack.push(curExpression.toFunction()
+							.getArgument(1));
 				} else {
-					SDFExpression expr = new SDFExpression("",curExpression,expression.getAttributeResolver());
+					SDFExpression expr = new SDFExpression("", curExpression,
+							expression.getAttributeResolver());
 					result.add(new RelationalPredicate(expr));
 				}
 			}
