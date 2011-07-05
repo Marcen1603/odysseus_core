@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.AggregationBean;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.AggregationJSR223;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAvgSum;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalCount;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
@@ -72,7 +73,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 						SDFAttribute attr = p.getE1().get(i);
 						posArray[i] = inputSchema.indexOf(attr);
 					}
-					IAggregateFunction aggFunction = createAggFunction(p.getE2(), posArray);
+					IAggregateFunction aggFunction = RelationalAggregateFunctionBuilder.createAggFunction(p.getE2(), posArray);
 					aggregatePO.setInitFunction(p, aggFunction);
 					aggregatePO.setMergeFunction(p, aggFunction);
 					aggregatePO.setEvalFunction(p, aggFunction);
@@ -101,31 +102,6 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
-	}
-
-	protected IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
-			AggregateFunction key, int[] pos) {
-		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
-		if ((key.getName().equalsIgnoreCase("AVG"))
-				|| (key.getName().equalsIgnoreCase("SUM"))) {
-			aggFunc = RelationalAvgSum.getInstance(pos[0],
-					(key.getName().equalsIgnoreCase("AVG")) ? true : false);
-		} else if (key.getName().equalsIgnoreCase("COUNT")) {
-			aggFunc = RelationalCount.getInstance();
-		} else if ((key.getName().equalsIgnoreCase("MIN"))
-				|| (key.getName().equalsIgnoreCase("MAX"))) {
-			aggFunc = RelationalMinMax.getInstance(pos[0],
-					(key.getName().equalsIgnoreCase("MAX")) ? true : false);
-		} else if ((key.getName().equalsIgnoreCase("NEST"))) {
-			aggFunc = new RelationalNest(pos);
-		} else if (key.getName().equalsIgnoreCase("BEAN")) {
-			aggFunc = new AggregationBean(pos, key.getProperty("resource"));
-		} else if (key.getName().equalsIgnoreCase("SCRIPT")) {
-			aggFunc = new AggregationJSR223(pos, key.getProperty("resource"));
-		} else {
-			throw new IllegalArgumentException("No such Aggregationfunction");
-		}
-		return aggFunc;
 	}
 
 }
