@@ -199,6 +199,7 @@ public class BufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M ext
 		if(!(ipo instanceof BufferedPunctuationPipe)) {
 			return false;
 		}
+		@SuppressWarnings("rawtypes")
 		BufferedPunctuationPipe bpp = (BufferedPunctuationPipe) ipo;
 		if(this.hasSameSources(bpp)) {
 			return true;

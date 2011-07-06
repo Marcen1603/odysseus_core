@@ -87,9 +87,10 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			return;
 		}
 		
-		if(this.hashCode() == 29392698){
-			String s = "hallo";
-		}
+// Was soll denn der Unfung?
+		//		if(this.hashCode() == 29392698){
+//			String s = "hallo";
+//		}
 		
 		if(port == 0){
 			this.doLeft(object, port);
@@ -113,6 +114,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void doLeft(T object, int port){
 		int otherport = port ^ 1;
 		Order leftRight = Order.fromOrdinal(port);
@@ -132,7 +134,6 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 					T merged = merge(object, next, leftRight);
 					
 					if(merged.getMetadata().getStart().after(t_tilde)){
-						@SuppressWarnings("unchecked")
 						T leftUnbound = null;
 						leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
 						
@@ -147,7 +148,6 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 				
 				PointInTime ts_max_right = this.areas[otherport].getMaxTs();
 				if(ts_max_right != null && ts_max_right.after(t_tilde)){
-					@SuppressWarnings("unchecked")
 					T leftUnbound = null;
 					leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
 					leftUnbound.getMetadata().setStart(t_tilde);
@@ -167,6 +167,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void doRight(T object, int port){
 		int leftport = port ^ 1;
 		Order leftRight = Order.fromOrdinal(leftport);
@@ -180,7 +181,6 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			// the invalid object will not be needed anymore
 			this.left_t_tilde.remove(invalid);
 			if(invalid_t_tilde.before(invalid.getMetadata().getEnd())){
-				@SuppressWarnings("unchecked")
 				T leftUnbound = null;
 				leftUnbound = this.dataMerge.createLeftFilledUp((T)invalid.clone());
 				leftUnbound.getMetadata().setStart(invalid_t_tilde);
@@ -195,7 +195,6 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			PointInTime e_hat_t_tilde = this.left_t_tilde.get(e_hat);
 			T merged = this.merge(e_hat, object, leftRight);
 			if(merged.getMetadata().getStart().after(e_hat_t_tilde)){
-				@SuppressWarnings("unchecked")
 				T leftUnbound = null;
 				leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat.clone());
 				leftUnbound.getMetadata().setStart(e_hat_t_tilde);
@@ -266,6 +265,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		this.transferFunction.init(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_done() {
 		System.out.println("LeftJoinTIPO (" + this.hashCode() + ").processDone().");

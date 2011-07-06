@@ -66,6 +66,7 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 		sendPunctuation(timestamp);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof AbstractWindowTIPO)

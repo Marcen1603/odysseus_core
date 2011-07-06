@@ -203,6 +203,7 @@ public class TestBufferedPunctuationPipe<T extends IMetaAttributeContainer<M>, M
 		if(!(ipo instanceof TestBufferedPunctuationPipe)) {
 			return false;
 		}
+		@SuppressWarnings("rawtypes")
 		TestBufferedPunctuationPipe bpp2 = (TestBufferedPunctuationPipe) ipo;
 		if(this.hasSameSources(bpp2)) {
 			return true;

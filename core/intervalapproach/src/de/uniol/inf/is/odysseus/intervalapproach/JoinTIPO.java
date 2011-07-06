@@ -148,6 +148,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		return joinPredicate;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public IPredicate getPredicate() {
 		return getJoinPredicate();
@@ -308,6 +309,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		fire(this.processPunctuationDoneEvent);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof JoinTIPO)) {
@@ -331,6 +333,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isContainedIn(IPipe<T,T> ip) {
 		if(!(ip instanceof JoinTIPO)) {

@@ -85,6 +85,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 		this.outputSchema = outputSchema;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ExistencePO(ITemporalSweepArea<T> leftArea, ITemporalSweepArea<T> rightArea) {
 		this.areas = new ITemporalSweepArea[2];
 		this.areas[0] = leftArea;
