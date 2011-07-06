@@ -24,9 +24,8 @@ import de.uniol.inf.is.odysseus.mep.Variable;
 
 public class MepHelper {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static IExpression initMEPExpressionFromLabel(String label, Map<CepVariable, Variable> symbolTable /*INOUT*/) throws ParseException {
-		@SuppressWarnings("rawtypes")
 		IExpression expression = MEP.parse(transformToMepVar(label));
 		Set<Variable> v = expression.getVariables();
 		for (Variable s : v) {

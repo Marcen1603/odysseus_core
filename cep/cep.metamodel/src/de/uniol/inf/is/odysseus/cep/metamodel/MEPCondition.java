@@ -48,6 +48,7 @@ public abstract class MEPCondition extends AbstractCondition{
 		setLabel(mepExpression);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setLabel(String label) {
 		super.setLabel((label == null || label.length() == 0) ? "true" : label);
