@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.mep.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

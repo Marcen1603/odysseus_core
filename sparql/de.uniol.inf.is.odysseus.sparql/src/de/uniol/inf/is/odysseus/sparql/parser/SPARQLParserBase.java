@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.sparql.parser;
 
-import java.util.HashMap;
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ParseException;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.BlankNode;
 

@@ -16,14 +16,11 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.old;
 
 import java.util.Dictionary;
 
-import javax.management.RuntimeErrorException;
-
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.AbstractSLAScheduler;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.PrioSLAScheduler;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.TimebasedSLAScheduler;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy.AbstractSLAScheduler.PrioCalcMethod;

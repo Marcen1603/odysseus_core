@@ -16,34 +16,20 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimiz
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.ISubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Plan;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.mep.functions.*;
 
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	

@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public class SILABDoubleHandler extends AbstractSILABDataHandler {
 

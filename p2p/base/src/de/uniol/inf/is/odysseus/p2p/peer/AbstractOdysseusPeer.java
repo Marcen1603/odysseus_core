@@ -25,11 +25,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.security.krb5.internal.crypto.Nonce;
-
 import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
-import de.uniol.inf.is.odysseus.collection.ClonablePair;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;

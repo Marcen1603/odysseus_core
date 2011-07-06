@@ -21,7 +21,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
@@ -36,10 +35,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Rewrit
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.util.LoggerHelper;
-import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 /**
  * The StandardCompiler is a standard implementation for {@link ICompiler}. It

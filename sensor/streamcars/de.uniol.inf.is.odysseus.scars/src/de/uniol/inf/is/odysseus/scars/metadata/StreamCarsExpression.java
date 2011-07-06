@@ -22,9 +22,7 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 /**
  * 

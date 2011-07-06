@@ -15,13 +15,11 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
-import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;

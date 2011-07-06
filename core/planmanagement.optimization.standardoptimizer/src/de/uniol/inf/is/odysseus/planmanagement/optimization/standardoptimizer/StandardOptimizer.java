@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;

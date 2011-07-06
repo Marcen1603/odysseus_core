@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
-import de.uniol.inf.is.odysseus.collection.ClonablePair;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.IEvent;

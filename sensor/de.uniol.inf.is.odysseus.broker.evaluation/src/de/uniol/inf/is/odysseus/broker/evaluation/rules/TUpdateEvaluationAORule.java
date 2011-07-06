@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TUpdateEvaluationAORule extends AbstractTransformationRule<UpdateEvaluationAO> {
 

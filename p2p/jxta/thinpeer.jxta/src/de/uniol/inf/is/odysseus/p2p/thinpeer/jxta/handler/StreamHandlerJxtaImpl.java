@@ -24,7 +24,6 @@ import net.jxta.socket.JxtaSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IStreamHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;

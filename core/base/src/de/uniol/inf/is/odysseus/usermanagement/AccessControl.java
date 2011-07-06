@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 
 /**
  * The Access Control manages the access to specified methods. All restricted

@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
 
 public class UpdateEvaluationPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractPipe<T, T> {
 

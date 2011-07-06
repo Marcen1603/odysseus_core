@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class MarkovQLVisitor extends AbstractMarkovQLVisitor{

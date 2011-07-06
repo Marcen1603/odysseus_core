@@ -21,7 +21,6 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 

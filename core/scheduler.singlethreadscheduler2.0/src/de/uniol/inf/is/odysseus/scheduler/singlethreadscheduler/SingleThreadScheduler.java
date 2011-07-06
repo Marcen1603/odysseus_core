@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;

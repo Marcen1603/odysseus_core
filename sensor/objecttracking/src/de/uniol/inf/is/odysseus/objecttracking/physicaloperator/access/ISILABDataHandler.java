@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public interface ISILABDataHandler {
 	public Object readData() throws IOException;

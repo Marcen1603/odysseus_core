@@ -20,7 +20,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public enum NEXMarkStreamType {
 	PERSON("person"), AUCTION("auction"), BID("bid"), CATEGORY("category");

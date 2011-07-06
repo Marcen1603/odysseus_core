@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ByteParameter;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;

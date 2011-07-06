@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import de.uniol.inf.is.odysseus.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;

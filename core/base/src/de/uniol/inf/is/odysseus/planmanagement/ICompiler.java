@@ -14,14 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 

@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.collection.IPair;
-import de.uniol.inf.is.odysseus.collection.ClonablePair;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;

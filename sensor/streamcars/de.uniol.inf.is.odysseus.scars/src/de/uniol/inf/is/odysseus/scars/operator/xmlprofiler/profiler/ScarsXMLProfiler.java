@@ -48,7 +48,6 @@ import de.uniol.inf.is.odysseus.scars.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public class ScarsXMLProfiler {
 

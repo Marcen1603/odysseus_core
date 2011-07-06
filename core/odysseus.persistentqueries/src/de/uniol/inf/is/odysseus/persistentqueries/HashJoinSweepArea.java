@@ -23,7 +23,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.util.LinkedMultiHashMap;

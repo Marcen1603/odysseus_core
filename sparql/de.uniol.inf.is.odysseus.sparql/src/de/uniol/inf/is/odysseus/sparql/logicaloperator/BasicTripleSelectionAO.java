@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
 import com.hp.hpl.jena.graph.Triple;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;

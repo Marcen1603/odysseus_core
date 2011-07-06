@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.old.strategy;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;

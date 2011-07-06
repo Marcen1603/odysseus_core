@@ -15,8 +15,6 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
-import java.util.HashMap;
-
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
 public class SDFDatatype extends SDFElement implements Serializable{

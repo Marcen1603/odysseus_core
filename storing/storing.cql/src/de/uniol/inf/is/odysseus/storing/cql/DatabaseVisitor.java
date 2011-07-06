@@ -18,11 +18,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
-import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseCreateOption;

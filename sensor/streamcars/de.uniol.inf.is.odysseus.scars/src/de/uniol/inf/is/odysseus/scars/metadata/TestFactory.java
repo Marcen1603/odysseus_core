@@ -14,16 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scars.metadata;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 // creates objects for test purposes
 // author: sven

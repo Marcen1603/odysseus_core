@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CreateSDFAttributeParameter extends

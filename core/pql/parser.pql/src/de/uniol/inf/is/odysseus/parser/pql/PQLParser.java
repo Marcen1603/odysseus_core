@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;

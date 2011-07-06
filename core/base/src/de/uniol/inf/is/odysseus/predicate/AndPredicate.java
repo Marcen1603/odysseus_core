@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.predicate;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jonas Jacobi

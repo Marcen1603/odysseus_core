@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;

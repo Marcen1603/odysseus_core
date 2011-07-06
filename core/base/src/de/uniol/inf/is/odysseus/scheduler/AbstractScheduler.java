@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.ProcessCallsMonitor;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;

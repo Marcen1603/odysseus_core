@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

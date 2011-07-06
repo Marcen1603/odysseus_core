@@ -22,14 +22,7 @@ import de.uniol.inf.is.odysseus.broker.evaluation.pql.BrokerAOBuilder;
 import de.uniol.inf.is.odysseus.broker.evaluation.pql.CycleBuilder;
 import de.uniol.inf.is.odysseus.broker.evaluation.pql.FreqCycleBuilder;
 import de.uniol.inf.is.odysseus.broker.evaluation.pql.UpdateEvaluationAOBuilder;
-import de.uniol.inf.is.odysseus.broker.evaluation.rules.TBenchmarkAORule;
-import de.uniol.inf.is.odysseus.broker.evaluation.rules.TBrokerAORule;
-import de.uniol.inf.is.odysseus.broker.evaluation.rules.TBrokerCycleDetectionRule;
-import de.uniol.inf.is.odysseus.broker.evaluation.rules.TBufferAORule;
-import de.uniol.inf.is.odysseus.broker.evaluation.rules.TUpdateEvaluationAORule;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class Activator implements BundleActivator {
 

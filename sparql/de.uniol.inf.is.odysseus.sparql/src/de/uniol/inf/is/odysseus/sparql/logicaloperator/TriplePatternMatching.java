@@ -11,8 +11,6 @@ package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
-
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
@@ -21,7 +19,6 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;

@@ -18,20 +18,13 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.physicaloperator.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IntegerHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.LongHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.StringHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.ObjectHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		IObjectHandler<RelationalTuple<M>> {

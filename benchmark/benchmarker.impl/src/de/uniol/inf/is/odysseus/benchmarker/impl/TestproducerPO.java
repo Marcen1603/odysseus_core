@@ -20,9 +20,6 @@ import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriorit
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 

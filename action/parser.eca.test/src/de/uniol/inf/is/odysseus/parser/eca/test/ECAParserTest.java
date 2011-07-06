@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.action.output.StaticParameter;
 import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.console.ExecutorConsole;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;

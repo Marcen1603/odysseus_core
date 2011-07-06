@@ -14,14 +14,11 @@
  */
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
-import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;

@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.aalso.model.Agent;
 import de.uniol.inf.is.odysseus.aalso.model.Overlay;
 import de.uniol.inf.is.odysseus.aalso.model.Place;
 import de.uniol.inf.is.odysseus.aalso.model.World;
-import de.uniol.inf.is.odysseus.aalso.types.BooleanType;
 import de.uniol.inf.is.odysseus.aalso.types.Publishable;
 import de.uniol.inf.is.odysseus.aalso.types.Text;
 

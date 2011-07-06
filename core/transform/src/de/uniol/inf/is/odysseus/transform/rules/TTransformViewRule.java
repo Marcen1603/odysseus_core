@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;

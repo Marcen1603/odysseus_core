@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.p2p.jxta.utils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import org.slf4j.Logger;

@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.parser.pql.priority;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;

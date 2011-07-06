@@ -10,7 +10,6 @@
 package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

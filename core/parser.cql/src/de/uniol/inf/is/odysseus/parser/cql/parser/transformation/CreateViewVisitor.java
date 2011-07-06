@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;

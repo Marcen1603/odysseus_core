@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.broker.evaluation.benchmark;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
 
 public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<R, R> {
 
