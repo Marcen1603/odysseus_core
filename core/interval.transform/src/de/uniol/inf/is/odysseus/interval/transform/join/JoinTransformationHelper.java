@@ -38,6 +38,7 @@ public class JoinTransformationHelper {
 	 * @return false, if there is a window in the path.
 	 * 		   true, if there is no window in the path.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static boolean checkPhysicalPath(Object operator){
 		if(operator instanceof AbstractWindowTIPO){
 			return false;

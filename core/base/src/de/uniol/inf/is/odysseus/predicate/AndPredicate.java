@@ -59,7 +59,7 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean equals(Object other) {
 		if (!(other instanceof AndPredicate)) {
 			return false;
@@ -89,6 +89,7 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isContainedIn(Object o) {
 		// Falls o ein Oder-Prädikat, überhaupt kein Prädikat oder eines der beiden Argumente des And-Prädikats ein Oder-Prädikat ist, wird false zurück gegeben

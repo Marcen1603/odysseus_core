@@ -153,6 +153,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		@SuppressWarnings("rawtypes")
 		AbstractParameter other = (AbstractParameter) obj;
 		if (name == null) {
 			if (other.name != null)

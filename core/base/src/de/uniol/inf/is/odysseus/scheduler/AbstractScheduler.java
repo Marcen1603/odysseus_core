@@ -90,6 +90,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 		this.schedulingFactory = schedulingFactory;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public int print(IScheduling s) {
 		List<IQuery> queries = s.getPlan().getQueries();
 		int linesPrinted = queries.size();

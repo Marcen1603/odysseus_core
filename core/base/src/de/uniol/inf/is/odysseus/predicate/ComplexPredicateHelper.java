@@ -10,9 +10,10 @@ import java.util.Stack;
  * @author Marco Grawunder
  *
  */
-
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ComplexPredicateHelper {
 
+	
 	public static IPredicate createAndPredicate(IPredicate leftPredicate, IPredicate rightPredicate){
 		return new AndPredicate(leftPredicate, rightPredicate);
 	}

@@ -285,6 +285,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 						ITimeInterval nextMetadata = next.getMetadata();
 						if (TimeInterval
 								.startsBefore(curMetadata, nextMetadata)) {
+							@SuppressWarnings("unchecked")
 							T newElement = (T) curInput.clone();
 							newElement.getMetadata().setEnd(
 									nextMetadata.getStart());
@@ -320,6 +321,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 				it.remove();
 				ITimeInterval nextMetadata = next.getMetadata();
 				if (TimeInterval.startsBefore(nextMetadata, curMetadata)) {
+					@SuppressWarnings("unchecked")
 					T newElement = (T) next.clone();
 					newElement.getMetadata().setStart(nextMetadata.getStart());
 					newElement.getMetadata().setEnd(curStart);

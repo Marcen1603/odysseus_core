@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationF
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
- * Cep-Varible mit Moeglichkeiten zur Konvertierung in einem String.
+ * Cep-Varible mit Moeglichkeiten zur Konvertierung in einen String.
  * 
  * 
  * Die internen Variablennamen sind nach folgendem Muster aufgebaut:
@@ -73,6 +73,7 @@ public class CepVariable {
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
 	 */
+	@SuppressWarnings("rawtypes")
 	private IAggregateFunction operation;
 
 	/**
@@ -88,7 +89,7 @@ public class CepVariable {
 	 *            Operation, die bei der Aktualisierung des Eintrags ausgeführt
 	 *            werden soll
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public CepVariable(String stateIdentifier, Integer index, String attribute, IAggregateFunction operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
@@ -146,7 +147,7 @@ public class CepVariable {
 	 *            Eine konkrete Implementierung der Symboltabellenoperation,
 	 *            nicht null.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setOperation(IAggregateFunction operation) {
 		this.operation = operation;
 	}
@@ -156,7 +157,7 @@ public class CepVariable {
 	 * 
 	 * @return Die Symboltabellenoperation des Eintrags.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public IAggregateFunction getOperation() {
 		return operation;
 	}

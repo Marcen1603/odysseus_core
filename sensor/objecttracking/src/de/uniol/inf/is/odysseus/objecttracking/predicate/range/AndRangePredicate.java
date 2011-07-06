@@ -104,6 +104,7 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 		return resultRanges;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof AndRangePredicate)){

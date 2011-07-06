@@ -50,6 +50,7 @@ public abstract class AbstractMonitoringDataProvider implements
 		return this.metaDataItem.get(type);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T> IPeriodicalMonitoringData<T> getMonitoringData(
 			IPeriodicalMonitoringData item, long period) {

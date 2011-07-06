@@ -232,6 +232,7 @@ public class AggregationBean extends
 	 * #evaluate(de.uniol.inf.is.odysseus.physicaloperator.aggregate
 	 * .basefunctions.IPartialAggregate)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public RelationalTuple<?> evaluate(
 			IPartialAggregate<RelationalTuple<?>> partial) {

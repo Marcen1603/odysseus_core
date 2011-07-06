@@ -352,6 +352,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public IExecutionPlan optimize(IOptimizable sender,
 			List<IQuery> newQueries,

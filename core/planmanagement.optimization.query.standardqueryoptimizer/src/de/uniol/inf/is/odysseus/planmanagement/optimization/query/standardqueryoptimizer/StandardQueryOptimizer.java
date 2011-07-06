@@ -68,6 +68,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.OptimizationConfiguration, Set<String>)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
 			OptimizationConfiguration parameters) throws QueryOptimizationException {
@@ -86,6 +87,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 				.getLogicalPlan();
 		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
+		@SuppressWarnings("rawtypes")
 		AbstractGraphWalker walker = new AbstractGraphWalker();
 		walker.prefixWalk(originalPlan, copyVisitor);
 		ILogicalOperator copiedPlan = copyVisitor.getResult();

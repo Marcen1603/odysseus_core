@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.util.CopyPhysicalGraphVisitor;
 
 public class CloneDefaultRootStrategy implements IDefaultRootStrategy{
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public IPhysicalOperator connectDefaultRootToSource(ISink<?> defaultRoot,
 			IPhysicalOperator source) {

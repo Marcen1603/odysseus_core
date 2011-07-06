@@ -45,8 +45,8 @@ public abstract class AbstractBufferPlacementStrategy implements
 		return _logger;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan instanceof IBuffer) {
 			return;
@@ -62,7 +62,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
 			PhysicalSubscription<? extends ISource<?>> s) {
 		getLogger().debug("Place Buffer "+buffer+" sink "+sink );
@@ -74,10 +74,11 @@ public abstract class AbstractBufferPlacementStrategy implements
 		initBuffer(buffer);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes" })
 	protected abstract void initBuffer(IBuffer buffer);
 
-	@SuppressWarnings("unchecked")
+	
+	@SuppressWarnings("rawtypes")
 	public void addBuffers(ISource<?> myplan) {
 		if (myplan instanceof IBuffer){
 			return;

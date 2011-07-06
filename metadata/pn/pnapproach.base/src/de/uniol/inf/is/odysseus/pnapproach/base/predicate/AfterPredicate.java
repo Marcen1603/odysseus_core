@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 public class AfterPredicate<M extends IPosNeg> extends AbstractPredicate<IMetaAttributeContainer<M>>{
 
 	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("rawtypes")
 	public static AfterPredicate theInstance = new AfterPredicate();
 	
 	@Override
@@ -41,10 +42,11 @@ public class AfterPredicate<M extends IPosNeg> extends AbstractPredicate<IMetaAt
 	}
 	
 	@Override
-	public AfterPredicate clone(){
+	public AfterPredicate<M>clone(){
 		return theInstance;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static AfterPredicate getInstance(){
 		return theInstance;
 	}

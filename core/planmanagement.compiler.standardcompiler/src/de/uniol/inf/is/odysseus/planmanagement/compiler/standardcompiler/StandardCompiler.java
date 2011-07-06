@@ -216,6 +216,7 @@ public class StandardCompiler implements ICompiler {
 //		return this.transformation.transform(copyPlan, transformationConfiguration, caller);
 //	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void transform(IQuery query,
 			TransformationConfiguration transformationConfiguration, User caller, IDataDictionary dd) throws TransformationException {
