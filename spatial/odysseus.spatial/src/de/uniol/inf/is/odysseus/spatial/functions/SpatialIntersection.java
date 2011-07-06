@@ -5,7 +5,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class SpatialIntersection extends AbstractFunction{
+public class SpatialIntersection extends AbstractFunction<Boolean>{
 
 	@Override
 	public int getArity() {

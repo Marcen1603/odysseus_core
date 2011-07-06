@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author kpancratz
  *
  */
-public class SpatialUnionBuffer extends AbstractFunction {
+public class SpatialUnionBuffer extends AbstractFunction<Geometry> {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
@@ -67,7 +67,7 @@ public class SpatialUnionBuffer extends AbstractFunction {
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
-	public Object getValue() {
+	public Geometry getValue() {
 		
 		Geometry[] geometrys = new Geometry[2]; 
 			

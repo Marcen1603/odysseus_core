@@ -19,7 +19,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class SpatialIsLine extends AbstractFunction{
+public class SpatialIsLine extends AbstractFunction<Boolean>{
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author kpancratz
  *
  */
-public class SpatialConvexHull extends AbstractFunction {
+public class SpatialConvexHull extends AbstractFunction<Geometry> {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
@@ -67,7 +67,7 @@ public class SpatialConvexHull extends AbstractFunction {
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
-	public Object getValue() {
+	public Geometry getValue() {
 		return ((Geometry)this.getInputValue(0)).convexHull();
 	}
 

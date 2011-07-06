@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author abolles
  *
  */
-public class SpatialContains extends AbstractFunction {
+public class SpatialContains extends AbstractFunction<Boolean> {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
@@ -66,7 +66,7 @@ public class SpatialContains extends AbstractFunction {
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
-	public Object getValue() {
+	public Boolean getValue() {
 		return ((Geometry)this.getInputValue(0)).contains((Geometry)this.getInputValue(1));
 	}
 

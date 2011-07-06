@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author abolles
  *
  */
-public class SpatialEquals extends AbstractFunction {
+public class SpatialEquals extends AbstractFunction<Boolean> {
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
