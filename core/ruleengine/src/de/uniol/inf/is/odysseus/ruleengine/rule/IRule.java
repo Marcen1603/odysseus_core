@@ -24,4 +24,5 @@ public interface IRule<T,U> extends Comparable<IRule<T,U>>{
 	public String getName();
 	public void setCurrentWorkingMemory(WorkingMemory wm);
 	public IRuleFlowGroup getRuleFlowGroup();
+	public Class<?> getConditionClass();
 }

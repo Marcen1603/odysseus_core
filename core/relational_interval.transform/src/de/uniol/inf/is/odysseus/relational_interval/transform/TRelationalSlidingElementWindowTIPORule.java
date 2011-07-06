@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -73,6 +74,11 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return TimestampAO.class;
 	}
 
 }

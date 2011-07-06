@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
@@ -68,6 +69,11 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return ExistenceAO.class;
 	}
 
 }

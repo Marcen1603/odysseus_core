@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.Subscription;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
@@ -94,6 +95,11 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.CREATE_METADATA;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return ISource.class;
 	}
 
 }

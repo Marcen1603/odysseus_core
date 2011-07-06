@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
@@ -87,5 +88,10 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
     public boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
+    
+    @Override
+	public Class<?> getConditionClass() {	
+		return UnNestAO.class;
+	}
 
 }

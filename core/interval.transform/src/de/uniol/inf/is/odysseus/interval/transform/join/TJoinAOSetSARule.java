@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
+import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
@@ -121,6 +122,11 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return JoinTIPO.class;
 	}
 
 }

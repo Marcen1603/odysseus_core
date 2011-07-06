@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.interval.transform;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorTIPO;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimeStampOrderValidatorAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -40,6 +41,11 @@ public class TTimeStampOrderValdiatorRule extends
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return TimeStampOrderValidatorAO.class;
 	}
 
 }

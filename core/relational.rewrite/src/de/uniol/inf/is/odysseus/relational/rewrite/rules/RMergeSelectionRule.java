@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
@@ -72,6 +73,11 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.CLEANUP;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return SelectAO.class;
 	}
 
 }

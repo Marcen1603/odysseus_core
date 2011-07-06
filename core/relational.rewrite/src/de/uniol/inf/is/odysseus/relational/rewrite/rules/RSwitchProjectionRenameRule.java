@@ -66,5 +66,10 @@ public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SWITCH;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return RenameAO.class;
+	}
 
 }

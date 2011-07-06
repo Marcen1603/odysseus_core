@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -52,6 +53,11 @@ public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return LeftJoinTIPO.class;
 	}
 
 }

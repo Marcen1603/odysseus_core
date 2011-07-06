@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -95,6 +96,11 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return LeftJoinAO.class;
 	}
 
 }

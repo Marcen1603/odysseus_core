@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.FileSinkPO;
@@ -60,6 +61,11 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return FileSinkAO.class;
 	}
 
 }

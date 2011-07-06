@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.ruleengine.system;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironment<T> {
@@ -35,8 +36,11 @@ public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironme
 		return this.configuration;
 	}
 
-	public void processEnvironment() {
+	public void processEnvironment() {		
+		long currentmillis = System.currentTimeMillis();
 		this.workingMemory.process();		
+		long diffMillis = System.currentTimeMillis() - currentmillis;
+		LoggerSystem.printlog(Accuracy.DEBUG, "Ruleengine needed " + diffMillis + "!");
 	}
 
 	@Override

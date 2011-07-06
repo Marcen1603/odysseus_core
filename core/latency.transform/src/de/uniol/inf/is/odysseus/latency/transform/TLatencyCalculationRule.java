@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.latency.transform;
 
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.LatencyCalculationAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -53,6 +54,11 @@ public class TLatencyCalculationRule extends
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return LatencyCalculationAO.class;
 	}
 
 }

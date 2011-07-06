@@ -82,5 +82,10 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SPLIT;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return SelectAO.class;
+	}
 
 }

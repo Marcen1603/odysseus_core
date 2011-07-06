@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
@@ -61,6 +62,11 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return MapAO.class;
 	}
 
 }

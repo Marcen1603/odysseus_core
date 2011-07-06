@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
@@ -72,6 +73,11 @@ public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SWITCH;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return RenameAO.class;
 	}
 
 }

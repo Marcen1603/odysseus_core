@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.SplitAO;
 import de.uniol.inf.is.odysseus.physicaloperator.SplitPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -52,6 +53,11 @@ public class TSplitAORule extends AbstractTransformationRule<SplitAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return SplitAO.class;
 	}
 
 }

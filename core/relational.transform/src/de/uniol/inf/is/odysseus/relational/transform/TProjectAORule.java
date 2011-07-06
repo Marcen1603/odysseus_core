@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
@@ -60,5 +61,10 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return ProjectAO.class;
 	}
 }

@@ -71,4 +71,9 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.ACCESS;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return AccessAO.class;
+	}
 }

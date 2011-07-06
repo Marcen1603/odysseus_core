@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.ruleengine.rule;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
 	private WorkingMemory currentWorkingMemory;
+	private Class<?> condtionClass = null;
 
 	public AbstractRule() {
 
@@ -112,5 +114,19 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
+	}
+	
+	public Class<?> getConditionClass(){	
+		if(this.condtionClass == null){
+			for (Method method : getClass().getMethods()) {
+				if(method.getName().equals("execute")){
+					Class<?> pt = method.getParameterTypes()[0];
+					if (!pt.equals(Object.class)) {
+						this.condtionClass = pt;
+					}
+				}
+			}
+		}
+		return this.condtionClass;
 	}
 }

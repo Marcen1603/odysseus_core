@@ -70,5 +70,9 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 		return TransformRuleFlowGroup.ACCESS;		
 	}
 
+	@Override
+	public Class<?> getConditionClass() {	
+		return AccessAO.class;
+	}
 
 }

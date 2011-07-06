@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -77,6 +78,11 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.ACCESS;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return FileAccessAO.class;
 	}
 
 }

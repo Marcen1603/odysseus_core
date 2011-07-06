@@ -68,5 +68,10 @@ public class TSameTimestampRule extends AbstractTransformationRule<TimestampAO> 
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return TimestampAO.class;
+	}
 
 }

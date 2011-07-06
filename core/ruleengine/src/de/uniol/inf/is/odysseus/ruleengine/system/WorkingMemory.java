@@ -1,20 +1,19 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.ruleengine.system;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,10 +28,9 @@ import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class WorkingMemory {
-	
-	
-	private Map<IRule<?,?>, Object> notexecuted = new HashMap<IRule<?,?>, Object>();
-	
+
+	private Map<IRule<?, ?>, Object> notexecuted = new HashMap<IRule<?, ?>, Object>();
+
 	private IWorkingEnvironment<?> env;
 	private List<Object> objects = new ArrayList<Object>();
 	private volatile boolean hasChanged = false;
@@ -67,7 +65,7 @@ public class WorkingMemory {
 			LoggerSystem.printlog(Accuracy.TRACE, "Removed from memory: \t" + o);
 		}
 		boolean removed = this.objects.remove(o);
-		if(!removed){
+		if (!removed) {
 			throw new RuntimeException("Could not remove object " + o + " from working memory");
 		}
 		this.hasChanged = true;
@@ -75,26 +73,27 @@ public class WorkingMemory {
 
 	public void updateObject(Object o) {
 		LoggerSystem.printlog(Accuracy.TRACE, "Update memory: \t" + o);
-//		removeObject(o, true);
-//		insertObject(o, true);
+		// removeObject(o, true);
+		// insertObject(o, true);
 	}
 
 	public void process() {
 		LoggerSystem.printlog(Accuracy.TRACE, "Rule engine started and now looking for matches...");
-		for(IRuleFlowGroup group : this.env.getRuleFlow()){
+		for (IRuleFlowGroup group : this.env.getRuleFlow()) {
 			LoggerSystem.printlog(Accuracy.TRACE, "Running group: " + group + "...");
 			runGroup(group);
 			LoggerSystem.printlog(Accuracy.TRACE, "Group finished: " + group);
 		}
-		
-		
-//		Iterator<IRuleFlowGroup> iterator = this.env.getRuleFlow().iterator();
-//		while (iterator.hasNext()) {
-//			IRuleFlowGroup group = iterator.next();
-//			LoggerSystem.printlog(Accuracy.TRACE, "Running group: " + group + "...");
-//			runGroup(group);
-//			LoggerSystem.printlog(Accuracy.TRACE, "Group finished: " + group);
-//		}
+
+		// Iterator<IRuleFlowGroup> iterator =
+		// this.env.getRuleFlow().iterator();
+		// while (iterator.hasNext()) {
+		// IRuleFlowGroup group = iterator.next();
+		// LoggerSystem.printlog(Accuracy.TRACE, "Running group: " + group +
+		// "...");
+		// runGroup(group);
+		// LoggerSystem.printlog(Accuracy.TRACE, "Group finished: " + group);
+		// }
 	}
 
 	private void runGroup(IRuleFlowGroup group) {
@@ -116,14 +115,14 @@ public class WorkingMemory {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void runRule(IRule rule) {
 		LoggerSystem.printlog(Accuracy.TRACE, "Checking rule: " + rule);
-		for (Object o : this.objects) {			
+		for (Object o : this.objects) {
 			if (ruleMatches(o, rule)) {
 				LoggerSystem.printlog(Accuracy.TRACE, "\t\tType is ok, rule matches...");
 				synchronized (rule) {
-					rule.setCurrentWorkingMemory(this);					
+					rule.setCurrentWorkingMemory(this);
 					if (rule.isExecutable(o, this.env.getConfiguration())) {
 						LoggerSystem.printlog(Accuracy.TRACE, "\t\t... and is executable at the moment. Executing rule...");
-						try {						
+						try {
 							rule.execute(o, this.env.getConfiguration());
 							LoggerSystem.printlog(Accuracy.TRACE, "\t\t... rule was executed!");
 							if (this.hasChanged) {
@@ -133,7 +132,7 @@ public class WorkingMemory {
 						} catch (Exception e) {
 							e.printStackTrace();
 							LoggerSystem.printlog(Accuracy.ERROR, e.getLocalizedMessage());
-							throw new RuntimeException("Transformation Failed in rule "+rule+" "+ e.getLocalizedMessage(), e);
+							throw new RuntimeException("Transformation Failed in rule " + rule + " " + e.getLocalizedMessage(), e);
 						}
 					} else {
 						this.wasnotexecuted(rule, o);
@@ -152,34 +151,46 @@ public class WorkingMemory {
 	}
 
 	private boolean ruleMatches(Object o, IRule<?, ?> rule) {
-		for (Method method : rule.getClass().getMethods()) {
-			if (method.getName().equals("execute")) {
-				Class<?> pt = method.getParameterTypes()[0];
-				// Object is not allowed...
-				if (!pt.equals(Object.class)) {
-					LoggerSystem.printlog(Accuracy.TRACE, "\tChecking object (\"" + o + "\") if its type is an instance of the rule type: " + pt.getCanonicalName() + "...");
-					if (pt.isInstance(o)) {
-						return true;
-					}
-				}
-			}
+		Class<?> pt = rule.getConditionClass();
+		LoggerSystem.printlog(Accuracy.TRACE, "\tChecking object (\"" + o + "\") if its type is an instance of the rule type: " + pt.getCanonicalName() + "...");
+		if (pt.isInstance(o)) {
+			return true;
+
 		}
 		return false;
 	}
-	
-	
-	private void wasnotexecuted(IRule<?,?> rule, Object ob){
-		//TODO: als list, weil so werden alte überschrieben...
+
+//	private boolean ruleMatches(Object o, IRule<?, ?> rule) {
+//		for (Method method : rule.getClass().getMethods()) {
+//			if (method.getName().equals("execute")) {
+//				Class<?> pt = method.getParameterTypes()[0];
+//				// Object is not allowed...
+//				if (!pt.equals(Object.class)) {
+//					if (pt.getCanonicalName().equals("de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessDetectionSplitAO")) {
+//						System.out.println("HERE!");
+//					}
+//					LoggerSystem.printlog(Accuracy.TRACE, "\tChecking object (\"" + o + "\") if its type is an instance of the rule type: " + pt.getCanonicalName() + "...");
+//					if (pt.isInstance(o)) {
+//						return true;
+//					}
+//				}
+//			}
+//		}
+//		return false;
+//	}
+
+	private void wasnotexecuted(IRule<?, ?> rule, Object ob) {
+		// TODO: als list, weil so werden alte überschrieben...
 		this.notexecuted.put(rule, ob);
 	}
-	
-	public String getDebugTrace(){
+
+	public String getDebugTrace() {
 		String out = "Following rules were not executed although there was a successful matching to an object:\n";
-		for(Entry<IRule<?,?>, Object> entry : this.notexecuted.entrySet()){
-			out = out+"Rule: "+entry.getKey();
-			out = out+"\n";
+		for (Entry<IRule<?, ?>, Object> entry : this.notexecuted.entrySet()) {
+			out = out + "Rule: " + entry.getKey();
+			out = out + "\n";
 		}
-		
+
 		return out;
 	}
 
@@ -187,8 +198,8 @@ public class WorkingMemory {
 		return caller;
 	}
 
-	public IDataDictionary getDataDictionary(){
+	public IDataDictionary getDataDictionary() {
 		return dd;
 	}
-	
+
 }

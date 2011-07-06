@@ -76,5 +76,10 @@ public class RSwitchSelectionProjectionRule extends AbstractRewriteRule<ProjectA
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SWITCH;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return ProjectAO.class;
+	}
 
 }

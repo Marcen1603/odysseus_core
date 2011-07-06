@@ -74,5 +74,10 @@ public class TSlidingTimeWindowTIPORule extends
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return WindowAO.class;
+	}
 
 }

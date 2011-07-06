@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.interval.transform.join;
 
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -68,6 +69,11 @@ public class TLeftJoinTIPOAddMetadataMergeRule extends AbstractTransformationRul
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return LeftJoinTIPO.class;
 	}
 
 }

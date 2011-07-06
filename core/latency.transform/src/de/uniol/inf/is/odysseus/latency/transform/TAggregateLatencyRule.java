@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.latency.transform;
 
 import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
+import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -44,6 +45,11 @@ public class TAggregateLatencyRule extends
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return AggregateTIPO.class;
 	}
 
 }

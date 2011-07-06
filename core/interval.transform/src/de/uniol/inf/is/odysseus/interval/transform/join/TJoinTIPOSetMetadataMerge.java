@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.interval.transform.join;
 
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TIMergeFunction;
+import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -71,6 +72,11 @@ public class TJoinTIPOSetMetadataMerge extends AbstractTransformationRule<JoinTI
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return JoinTIPO.class;
 	}
 
 }

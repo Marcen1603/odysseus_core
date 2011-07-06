@@ -19,6 +19,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -72,6 +73,11 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return AggregateAO.class;
 	}
 
 }

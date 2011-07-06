@@ -66,5 +66,10 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SWITCH;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return WindowAO.class;
+	}
 
 }

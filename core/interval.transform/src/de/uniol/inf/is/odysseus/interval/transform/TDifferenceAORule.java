@@ -19,6 +19,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.intervalapproach.AntiJoinTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -55,5 +56,10 @@ public class TDifferenceAORule extends AbstractTransformationRule<DifferenceAO> 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return DifferenceAO.class;
 	}
 }

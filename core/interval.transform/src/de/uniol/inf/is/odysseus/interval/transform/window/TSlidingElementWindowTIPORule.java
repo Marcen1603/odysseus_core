@@ -69,5 +69,10 @@ public class TSlidingElementWindowTIPORule extends AbstractTransformationRule<Wi
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return WindowAO.class;
+	}
 
 }

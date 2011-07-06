@@ -18,6 +18,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -73,6 +74,11 @@ public class TSlidingAdvanceTimeWindowTIPORule extends
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return WindowAO.class;
 	}
 
 }

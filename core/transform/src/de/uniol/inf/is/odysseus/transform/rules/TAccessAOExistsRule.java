@@ -57,4 +57,9 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.ACCESS;
 	}
+	
+	@Override
+	public Class<?> getConditionClass() {	
+		return AccessAO.class;
+	}
 }

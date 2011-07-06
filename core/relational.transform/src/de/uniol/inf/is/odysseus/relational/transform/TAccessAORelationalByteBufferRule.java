@@ -76,4 +76,9 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 		return TransformRuleFlowGroup.ACCESS;
 	}
 
+	@Override
+	public Class<?> getConditionClass() {	
+		return AccessAO.class;
+	}
+	
 }
