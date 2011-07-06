@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.window.SameTimeFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -37,8 +38,8 @@ public class TSameTimestampRule extends AbstractTransformationRule<TimestampAO> 
 
 	@Override
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
-		SameTimeFactory mUpdater = new SameTimeFactory();		
-		MetadataUpdatePO po = new MetadataUpdatePO(mUpdater);
+		SameTimeFactory<ITimeInterval, MetaAttributeContainer<ITimeInterval>> mUpdater = new SameTimeFactory<ITimeInterval, MetaAttributeContainer<ITimeInterval>>();		
+		MetadataUpdatePO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(mUpdater);
 		po.setOutputSchema(timestampAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(timestampAO, po);
 		for (ILogicalOperator o:toUpdate){

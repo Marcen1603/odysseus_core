@@ -19,9 +19,9 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -33,15 +33,14 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 	public int getPriority() {
 		return 0;
 	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	@Override
 	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
-		StreamGroupingWithAggregationPO po = new StreamGroupingWithAggregationPO(aggregateAO.getInputSchema(), aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(),
+		StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>> po = new StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
 		po.setOutputSchema(aggregateAO.getOutputSchema()); 
 		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
-		po.setMetadataMerge(new CombinedMergeFunction());
+		po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
 		// ACHTUNG: Die Zeit-Metadaten werden manuell in der Aggregation gesetzt!!
 		//((CombinedMergeFunction) po.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 

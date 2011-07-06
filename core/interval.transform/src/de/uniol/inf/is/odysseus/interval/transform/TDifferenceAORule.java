@@ -19,7 +19,8 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.intervalapproach.AntiJoinTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -34,7 +35,7 @@ public class TDifferenceAORule extends AbstractTransformationRule<DifferenceAO> 
 
 	@Override
 	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) {
-		AntiJoinTIPO po = new AntiJoinTIPO(differenceAO);
+		AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(differenceAO);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(differenceAO, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);

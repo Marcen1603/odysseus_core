@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.SplitAO;
 import de.uniol.inf.is.odysseus.physicaloperator.SplitPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -31,9 +30,8 @@ public class TSplitAORule extends AbstractTransformationRule<SplitAO> {
 
 	
 	@Override
-	public void execute(SplitAO splitAO, TransformationConfiguration transformConfig) {
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		SplitPO splitPO = new SplitPO(splitAO.getPredicates());
+	public void execute(SplitAO splitAO, TransformationConfiguration transformConfig) {		
+		SplitPO<?> splitPO = new SplitPO(splitAO.getPredicates());
 		splitPO.setOutputSchema(splitAO.getOutputSchema());
 		replace(splitAO, splitPO, transformConfig);
 		retract(splitAO);

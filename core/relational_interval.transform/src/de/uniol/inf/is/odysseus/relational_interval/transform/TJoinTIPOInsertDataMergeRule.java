@@ -15,14 +15,15 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<JoinTIPO<?,?>> {
+public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<JoinTIPO<ITimeInterval, RelationalTuple<ITimeInterval>>> {
 
 	@Override
 	public int getPriority() {	
@@ -30,13 +31,13 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 	}
 
 	@Override
-	public void execute(JoinTIPO<?,?> joinPO, TransformationConfiguration transformConfig) {
-		joinPO.setDataMerge(new RelationalMergeFunction(joinPO.getOutputSchema().size()));
+	public void execute(JoinTIPO<ITimeInterval, RelationalTuple<ITimeInterval>> joinPO, TransformationConfiguration transformConfig) {
+		joinPO.setDataMerge(new RelationalMergeFunction<ITimeInterval>(joinPO.getOutputSchema().size()));
 		update(joinPO);		
 	}
 
 	@Override
-	public boolean isExecutable(JoinTIPO<?,?> operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(JoinTIPO<ITimeInterval, RelationalTuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
 		if(transformConfig.getDataType().equals("relational")){
 			if(operator.getDataMerge()==null){
 				return true;

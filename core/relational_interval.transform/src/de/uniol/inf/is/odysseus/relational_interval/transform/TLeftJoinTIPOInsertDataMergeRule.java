@@ -15,14 +15,15 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<LeftJoinTIPO<?,?>> {
+public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<LeftJoinTIPO<ITimeInterval, RelationalTuple<ITimeInterval>>> {
 
 	@Override
 	public int getPriority() {	
@@ -30,13 +31,13 @@ public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule
 	}
 
 	@Override
-	public void execute(LeftJoinTIPO<?,?> joinPO, TransformationConfiguration transformConfig) {
-		joinPO.setDataMerge(new RelationalLeftMergeFunction(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
+	public void execute(LeftJoinTIPO<ITimeInterval, RelationalTuple<ITimeInterval>> joinPO, TransformationConfiguration transformConfig) {
+		joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
 		update(joinPO);		
 	}
 
 	@Override
-	public boolean isExecutable(LeftJoinTIPO<?,?> operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(LeftJoinTIPO<ITimeInterval, RelationalTuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
 		if(transformConfig.getDataType().equals("relational")){
 			if(operator.getDataMerge()==null){
 				return true;

@@ -17,12 +17,12 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.FileAccessPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -33,12 +33,11 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	public int getPriority() {		
 		return 1;
 	}
-
-	@SuppressWarnings({ "rawtypes"})
+	
 	@Override
 	public void execute(FileAccessAO fileAccessAO, TransformationConfiguration transformConfig) {
 		String fileAccessPOName = fileAccessAO.getSource().getURI(false);
-		ISource fileAccessPO = new FileAccessPO(fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getDelay());
+		ISource<?> fileAccessPO = new FileAccessPO<RelationalTuple<?>>(fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getDelay());
 		
 		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());
 		WrapperPlanFactory.putAccessPlan(fileAccessPOName, fileAccessPO);

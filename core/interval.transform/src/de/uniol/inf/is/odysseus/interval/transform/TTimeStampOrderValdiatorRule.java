@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.interval.transform;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorTIPO;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimeStampOrderValidatorAO;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -19,9 +20,8 @@ public class TTimeStampOrderValdiatorRule extends
 
 	@Override
 	public void execute(TimeStampOrderValidatorAO operator,
-			TransformationConfiguration config) {
-		@SuppressWarnings("rawtypes")
-		TimeStampOrderValidatorTIPO po = new TimeStampOrderValidatorTIPO();
+			TransformationConfiguration config) {		
+		TimeStampOrderValidatorTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new TimeStampOrderValidatorTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>();
 		po.setOutputSchema(po.getOutputSchema());
 		replace(operator,po,config);
 		retract(operator);

@@ -16,9 +16,9 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -35,7 +35,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) {
-		RelationalMapPO mapPO = new RelationalMapPO(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]));
+		RelationalMapPO<?> mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]));
 		mapPO.setOutputSchema(mapAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(mapAO,mapPO);
 		for (ILogicalOperator o:toUpdate){

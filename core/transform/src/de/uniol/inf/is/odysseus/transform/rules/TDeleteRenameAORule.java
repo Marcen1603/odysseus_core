@@ -17,7 +17,6 @@ import java.util.Collection;
 
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.RestructHelper;

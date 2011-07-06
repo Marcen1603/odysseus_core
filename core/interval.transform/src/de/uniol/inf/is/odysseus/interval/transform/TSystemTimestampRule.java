@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.window.SystemTimeIntervalFactor
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -35,8 +36,8 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 
 	@Override
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
-		SystemTimeIntervalFactory mUpdater = new SystemTimeIntervalFactory();		
-		MetadataUpdatePO po = new MetadataUpdatePO(mUpdater);
+		SystemTimeIntervalFactory<ITimeInterval, MetaAttributeContainer<ITimeInterval>> mUpdater = new SystemTimeIntervalFactory<ITimeInterval, MetaAttributeContainer<ITimeInterval>>();		
+		MetadataUpdatePO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(mUpdater);
 		po.setOutputSchema(timestampAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(timestampAO, po);
 		for (ILogicalOperator o:toUpdate){

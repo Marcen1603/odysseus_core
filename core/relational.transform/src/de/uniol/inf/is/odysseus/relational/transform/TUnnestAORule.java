@@ -16,12 +16,9 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnNestAO;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -32,7 +29,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
-    private static Logger LOG = LoggerFactory.getLogger(TUnnestAORule.class);
+    
 
     /*
      * (non-Javadoc)
@@ -41,7 +38,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
      */
     @Override
     public void execute(final UnNestAO operator, final TransformationConfiguration config) {
-        final RelationalUnNestPO<?> po = new RelationalUnNestPO(operator.getOutputSchema(),
+        final RelationalUnNestPO<?> po = new RelationalUnNestPO<IMetaAttribute>(operator.getOutputSchema(),
                 operator.getAttribute());
         final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                 operator, po);

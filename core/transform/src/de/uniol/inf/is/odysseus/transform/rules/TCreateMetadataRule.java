@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.Subscription;
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TCreateMetadataRule extends AbstractTransformationRule<ISource> {
+public class TCreateMetadataRule extends AbstractTransformationRule<ISource<?>> {
 
 	@Override
 	public int getPriority() {		
@@ -78,7 +77,7 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource> {
 	}
 
 	@Override
-	public boolean isExecutable(ISource source, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(ISource<?> source, TransformationConfiguration transformConfig) {
 		if(!source.isSink()){
 			if(!transformConfig.hasOption("NO_METADATA")){
 				return true;

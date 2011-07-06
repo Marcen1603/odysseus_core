@@ -18,8 +18,8 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.UnionPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -36,7 +36,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 
 	@Override
 	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) {
-		UnionPO unionPO = new UnionPO(new TITransferArea(unionAO.getNumberOfInputs()));
+		UnionPO<IMetaAttributeContainer<ITimeInterval>> unionPO = new UnionPO<IMetaAttributeContainer<ITimeInterval>>(new TITransferArea<IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>>(unionAO.getNumberOfInputs()));
 		unionPO.setOutputSchema(unionAO.getOutputSchema());
 		
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(unionAO, unionPO);

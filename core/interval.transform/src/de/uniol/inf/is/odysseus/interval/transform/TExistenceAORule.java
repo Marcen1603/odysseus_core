@@ -21,7 +21,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
@@ -39,15 +40,15 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 
 	@Override
 	public void execute(ExistenceAO existenceAO, TransformationConfiguration transformConfig) {
-		ISweepArea leftSA = new DefaultTISweepArea();
-		ISweepArea rightSA = new DefaultTISweepArea();
-		IPredicate predicate = existenceAO.getPredicate();
+		ISweepArea<MetaAttributeContainer<ITimeInterval>> leftSA = new DefaultTISweepArea<MetaAttributeContainer<ITimeInterval>>();
+		ISweepArea<MetaAttributeContainer<ITimeInterval>> rightSA = new DefaultTISweepArea<MetaAttributeContainer<ITimeInterval>>();
+		IPredicate<?> predicate = existenceAO.getPredicate();
 		if (existenceAO.getType() == ExistenceAO.Type.NOT_EXISTS) {
 			predicate = ComplexPredicateHelper.createNotPredicate(predicate);
 		}
 		leftSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
 		rightSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
-		AntiJoinTIPO po = new AntiJoinTIPO(existenceAO, leftSA, rightSA);
+		AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(existenceAO, leftSA, rightSA);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(existenceAO, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);

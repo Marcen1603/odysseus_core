@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
