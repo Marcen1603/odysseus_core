@@ -62,6 +62,7 @@ public class TotallyAfterPredicate extends AbstractPredicate<IMetaAttributeConta
 
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(IPredicate pred) {
 		return (pred instanceof TotallyAfterPredicate);

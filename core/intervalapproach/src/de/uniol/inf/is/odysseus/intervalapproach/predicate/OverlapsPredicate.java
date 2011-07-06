@@ -57,6 +57,7 @@ public class OverlapsPredicate extends
 	private OverlapsPredicate() {
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof OverlapsPredicate)) {

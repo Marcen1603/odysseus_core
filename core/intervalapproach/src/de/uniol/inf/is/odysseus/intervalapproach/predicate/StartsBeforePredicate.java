@@ -46,6 +46,7 @@ public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeConta
 		return instance;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(IPredicate pred) {
 		return (pred instanceof StartsBeforePredicate);

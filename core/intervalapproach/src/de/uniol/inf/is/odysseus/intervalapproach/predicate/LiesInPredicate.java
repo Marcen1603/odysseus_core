@@ -53,6 +53,7 @@ public class LiesInPredicate extends AbstractPredicate<IMetaAttributeContainer<?
 		return instance;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(IPredicate pred) {
 		if(!(pred instanceof LiesInPredicate)) {
