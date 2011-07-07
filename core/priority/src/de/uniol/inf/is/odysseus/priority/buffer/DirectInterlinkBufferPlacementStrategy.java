@@ -14,21 +14,22 @@
   */
 package de.uniol.inf.is.odysseus.priority.buffer;
 
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy.StandardBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class DirectInterlinkBufferPlacementStrategy extends
 		StandardBufferPlacementStrategy {
-	@SuppressWarnings("unchecked")
+
 	@Override
 	protected IBuffer<?> createNewBuffer() {
-		return new DirectInterlinkBufferedPipe();
+		return new DirectInterlinkBufferedPipe<IMetaAttributeContainer<IPriority>>();
 	}
 	
-	@Override
-	@SuppressWarnings("unchecked")
+	@Override	
 	protected IBuffer<?> createNewSourceBuffer() {
-		return new DirectInterlinkBufferedPipe();
+		return new DirectInterlinkBufferedPipe<IMetaAttributeContainer<IPriority>>();
 	}
 	
 	@Override

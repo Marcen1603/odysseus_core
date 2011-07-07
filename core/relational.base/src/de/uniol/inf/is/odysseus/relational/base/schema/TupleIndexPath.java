@@ -278,9 +278,9 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		int index = indices.get(listIndex + 1).getValueIndex();
 		int maxIndex = 0;
 		if( obj instanceof RelationalTuple )
-			maxIndex = ((RelationalTuple)obj).getAttributeCount();
+			maxIndex = ((RelationalTuple<?>)obj).getAttributeCount();
 		else
-			maxIndex = ((List)obj).size();
+			maxIndex = ((List<?>)obj).size();
 		index++;
 
 		if (index >= maxIndex)
@@ -305,7 +305,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 
 		Object obj = indices.get(lastListIndex).getValue();
 		if( obj instanceof RelationalTuple) {
-			RelationalTuple tuple = (RelationalTuple)obj;
+			RelationalTuple<?> tuple = (RelationalTuple<?>)obj;
 			
 			if( tuple.getAttributeCount() == 0) {
 				return false;
@@ -327,7 +327,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 			return actIndex < maxIndex;
 			
 		} else if( obj instanceof List ) {
-			List<Object> tuple = (List<Object>)obj;
+			List<?> tuple = (List<?>)obj;
 			
 			if( tuple.size() == 0) {
 				return false;

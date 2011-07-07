@@ -45,7 +45,7 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 	}
 
 	public RoundRobinPlanScheduling(RoundRobinPlanScheduling other) {
-		this.planList = new ArrayList(other.planList);
+		this.planList = new ArrayList<IScheduling>(other.planList);
 		this.pausedPlans = new HashSet<IScheduling>(other.pausedPlans);
 	}
 

@@ -28,8 +28,7 @@ package de.uniol.inf.is.odysseus.relational.base;
  */
 
 import java.util.Comparator;
-@SuppressWarnings("unchecked")
-public class RelationalTupleComparator implements Comparator {
+public class RelationalTupleComparator implements Comparator<Object> {
 
 	@Override
 	public int compare(Object p0, Object p1) {

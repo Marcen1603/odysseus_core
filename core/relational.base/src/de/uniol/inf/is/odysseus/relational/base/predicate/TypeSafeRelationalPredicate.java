@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class TypeSafeRelationalPredicate extends RelationalPredicate{
+	
+	private static final long serialVersionUID = 3481710292889478059L;
 
 	public TypeSafeRelationalPredicate(SDFExpression expression){
 		super(expression);
@@ -22,7 +23,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 		Object[] values = new Object[this.attributePositions.length];
 		ArrayList<Variable> vars = this.expression.getVariables();
 		for (int i = 0; i < values.length; ++i) {
-			SDFAttributeList curSchema = this.fromRightChannel[i] ? this.rightSchema : this.leftSchema;
+			//SDFAttributeList curSchema = this.fromRightChannel[i] ? this.rightSchema : this.leftSchema;
 			// a variable can have only one accepted type, since
 			// the user should have be explicit in defining the
 			// expression, e. g. by using toLong(?x)

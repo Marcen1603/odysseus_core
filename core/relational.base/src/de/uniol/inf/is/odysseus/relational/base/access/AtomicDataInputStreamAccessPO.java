@@ -246,7 +246,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		if(!(ipo instanceof AtomicDataInputStreamAccessPO)) {
 			return false;
 		}
-		AtomicDataInputStreamAccessPO adisapo = (AtomicDataInputStreamAccessPO) ipo;
+		AtomicDataInputStreamAccessPO<?> adisapo = (AtomicDataInputStreamAccessPO<?>) ipo;
 		if(this.hostName.equals(adisapo.hostName) && this.port == adisapo.port && this.schema.equals(adisapo.schema)) {
 			return true;
 		}

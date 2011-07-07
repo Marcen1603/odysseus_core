@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
@@ -57,7 +58,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 			attributes[i] = dataHandlers[i].readData();
 		}
 		
-		return new RelationalTuple(attributes);		
+		return new RelationalTuple<IMetaAttribute>(attributes);		
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +66,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 	 */
 	@Override
 	public Object readData(ByteBuffer buffer) {
-		RelationalTuple r = null;
+		RelationalTuple<?> r = null;
 		synchronized(buffer){		
 //			buffer.flip(); // DO NOT FLIP THIS BUFFER, OTHER READERS MIGHT STILL USE IT
 			//logger.debug("create "+byteBuffer);
@@ -73,7 +74,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 			for (int i=0;i<dataHandlers.length;i++){
 				attributes[i] = dataHandlers[i].readData(buffer);
 			}
-			r = new RelationalTuple(attributes);
+			r = new RelationalTuple<IMetaAttribute>(attributes);
 //			buffer.clear(); // DO NOT CLEAR THIS BUFFER, OTHER READERS MIGHT STILL USE IT
 		}
 		return r;
@@ -84,7 +85,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 	 */
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		RelationalTuple r = (RelationalTuple) data;
+		RelationalTuple<?> r = (RelationalTuple<?>) data;
 		 
 		if (r.memSize(true) > buffer.capacity()){
 			buffer = ByteBuffer.allocate(r.memSize(false)*2);	

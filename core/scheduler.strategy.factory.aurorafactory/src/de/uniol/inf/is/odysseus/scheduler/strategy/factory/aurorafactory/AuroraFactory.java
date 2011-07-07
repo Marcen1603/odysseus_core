@@ -53,11 +53,10 @@ public class AuroraFactory extends AbstractSchedulingFactory {
 		this.useIter = true;
 	}
 	
-	@Override
-	@SuppressWarnings("unchecked")
+	@Override	
 	protected void activate(ComponentContext context){
 		super.activate(context);
-		Dictionary properties = context.getProperties();
+		Dictionary<?,?> properties = context.getProperties();
 		this.strategy = AuroraStrategy.valueOf((String)properties.get("aurora.strategy"));
 		this.useIter = (Boolean)properties.get("execlist.useIter");
 	}
