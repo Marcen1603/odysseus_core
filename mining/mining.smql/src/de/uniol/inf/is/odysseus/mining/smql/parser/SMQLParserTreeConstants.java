@@ -14,19 +14,22 @@ public interface SMQLParserTreeConstants
   public int JJTOUTLIERDETECTIONS = 8;
   public int JJTOUTLIERDETECTION = 9;
   public int JJTDETECTIONMETHOD = 10;
-  public int JJTDETECTIONMETHODOUTOFRANGE = 11;
-  public int JJTDETECTIONMETHODSIMPLEVALUE = 12;
-  public int JJTDETECTIONMETHODSIGMARULE = 13;
-  public int JJTDETECTIONMETHODSIMPLEPREDICATE = 14;
-  public int JJTDETECTIONMETHODFUNCTION = 15;
-  public int JJTDETECTIONMETHODOUTOFDOMAIN = 16;
-  public int JJTPARAMETERLIST = 17;
-  public int JJTPARAMETER = 18;
-  public int JJTCORRECTIONMETHOD = 19;
-  public int JJTCORRECTIONMETHODDISCARD = 20;
-  public int JJTCORRECTIONMETHODFUNCTION = 21;
-  public int JJTVOID = 22;
-  public int JJTSTREAMSQLWINDOW = 23;
+  public int JJTDETECTIONMETHODSTATELESS = 11;
+  public int JJTDETECTIONMETHODSTATEFUL = 12;
+  public int JJTDETECTIONMETHODOUTOFRANGE = 13;
+  public int JJTDETECTIONMETHODSIMPLEVALUE = 14;
+  public int JJTDETECTIONMETHODSIGMARULE = 15;
+  public int JJTDETECTIONMETHODSIMPLEPREDICATE = 16;
+  public int JJTDETECTIONMETHODFUNCTION = 17;
+  public int JJTDETECTIONMETHODOUTOFDOMAIN = 18;
+  public int JJTPARAMETERLIST = 19;
+  public int JJTPARAMETER = 20;
+  public int JJTCORRECTIONMETHOD = 21;
+  public int JJTCORRECTIONMETHODDISCARD = 22;
+  public int JJTCORRECTIONMETHODFUNCTION = 23;
+  public int JJTVOID = 24;
+  public int JJTSTREAMSQLWINDOW = 25;
+  public int JJTPERCENT = 26;
 
 
   public String[] jjtNodeName = {
@@ -41,6 +44,8 @@ public interface SMQLParserTreeConstants
     "OutlierDetections",
     "OutlierDetection",
     "DetectionMethod",
+    "DetectionMethodStateless",
+    "DetectionMethodStateful",
     "DetectionMethodOutOfRange",
     "DetectionMethodSimpleValue",
     "DetectionMethodSigmaRule",
@@ -54,6 +59,7 @@ public interface SMQLParserTreeConstants
     "CorrectionMethodFunction",
     "void",
     "StreamSQLWindow",
+    "Percent",
   };
 }
-/* JavaCC - OriginalChecksum=7a46402bf6143be11f5bdfedb6ca9154 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9dedec77da54ff4ee1d4e6dc115b332c (do not edit this line) */

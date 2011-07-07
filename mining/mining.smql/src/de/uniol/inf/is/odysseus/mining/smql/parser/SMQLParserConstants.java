@@ -67,67 +67,69 @@ public interface SMQLParserConstants {
   /** RegularExpression Id. */
   int K_PARTITION = 32;
   /** RegularExpression Id. */
-  int K_PROCESS = 33;
+  int K_PERCENT = 33;
   /** RegularExpression Id. */
-  int K_RANGE = 34;
+  int K_PROCESS = 34;
   /** RegularExpression Id. */
-  int K_ROUND = 35;
+  int K_RANGE = 35;
   /** RegularExpression Id. */
-  int K_SECOND = 36;
+  int K_ROUND = 36;
   /** RegularExpression Id. */
-  int K_SIGMA = 37;
+  int K_SECOND = 37;
   /** RegularExpression Id. */
-  int K_SIZE = 38;
+  int K_SIGMA = 38;
   /** RegularExpression Id. */
-  int K_SLIDE = 39;
+  int K_SIZE = 39;
   /** RegularExpression Id. */
-  int K_SUM = 40;
+  int K_SLIDE = 40;
   /** RegularExpression Id. */
-  int K_TIME = 41;
+  int K_SUM = 41;
   /** RegularExpression Id. */
-  int K_TO = 42;
+  int K_TIME = 42;
   /** RegularExpression Id. */
-  int K_TUPLE = 43;
+  int K_TO = 43;
   /** RegularExpression Id. */
-  int K_UNBOUNDED = 44;
+  int K_TUPLE = 44;
   /** RegularExpression Id. */
-  int K_VALID = 45;
+  int K_UNBOUNDED = 45;
   /** RegularExpression Id. */
-  int K_VALUE = 46;
+  int K_VALID = 46;
   /** RegularExpression Id. */
-  int K_WEEK = 47;
+  int K_VALUE = 47;
   /** RegularExpression Id. */
-  int K_WHERE = 48;
+  int K_WEEK = 48;
   /** RegularExpression Id. */
-  int FLOAT = 49;
+  int K_WHERE = 49;
   /** RegularExpression Id. */
-  int INTEGER = 50;
+  int FLOAT = 50;
   /** RegularExpression Id. */
-  int DIGIT = 51;
+  int INTEGER = 51;
   /** RegularExpression Id. */
-  int IPADDRESS = 52;
+  int DIGIT = 52;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 53;
+  int IPADDRESS = 53;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 54;
+  int LINE_COMMENT = 54;
   /** RegularExpression Id. */
-  int IDENTIFIER = 55;
+  int MULTI_LINE_COMMENT = 55;
   /** RegularExpression Id. */
-  int LETTER = 56;
+  int IDENTIFIER = 56;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 57;
+  int LETTER = 57;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 58;
+  int SPECIAL_CHARS = 58;
   /** RegularExpression Id. */
-  int SQL_STRING = 59;
+  int CHAR_LITERAL = 59;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 60;
+  int SQL_STRING = 60;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 61;
+  int QUOTED_IDENTIFIER = 61;
   /** RegularExpression Id. */
-  int REGEXP = 62;
+  int COMPARE_OPERATOR = 62;
   /** RegularExpression Id. */
-  int JDBC_STRING = 63;
+  int REGEXP = 63;
+  /** RegularExpression Id. */
+  int JDBC_STRING = 64;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -167,6 +169,7 @@ public interface SMQLParserConstants {
     "\"OUTLIER\"",
     "\"OR\"",
     "\"PARTITION\"",
+    "\"PERCENT\"",
     "\"PROCESS\"",
     "\"RANGE\"",
     "\"ROUND\"",

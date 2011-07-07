@@ -145,9 +145,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       jj_consume_token(K_DISCOVERY);
       jj_consume_token(K_PROCESS);
       Identifier();
-      jj_consume_token(64);
-      ProcessPhases();
       jj_consume_token(65);
+      ProcessPhases();
+      jj_consume_token(66);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -216,9 +216,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     try {
       jj_consume_token(K_CLEAN);
       Identifier();
-      jj_consume_token(64);
-      OutlierDetections();
       jj_consume_token(65);
+      OutlierDetections();
+      jj_consume_token(66);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -320,30 +320,21 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   jjtree.openNodeScope(jjtn000);
     try {
       if (jj_2_1(3)) {
-        DetectionMethodOutOfRange();
+        DetectionMethodStateful();
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_OUT:
         case K_VALUE:
-          DetectionMethodSimpleValue();
-          break;
-        case K_SIGMA:
-          DetectionMethodSigmaRule();
-          break;
-        case K_FUNCTION:
-          DetectionMethodFunction();
+          DetectionMethodStateless();
           break;
         default:
           jj_la1[3] = jj_gen;
-          if (jj_2_2(3)) {
-            DetectionMethodOutOfDomain();
-          } else {
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
+          jj_consume_token(-1);
+          throw new ParseException();
         }
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 66:
+      case 67:
         ParameterList();
         break;
       default:
@@ -371,6 +362,88 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
+  static final public void DetectionMethodStateless() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodStateless */
+  ASTDetectionMethodStateless jjtn000 = new ASTDetectionMethodStateless(JJTDETECTIONMETHODSTATELESS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_VALUE:
+        DetectionMethodSimpleValue();
+        break;
+      case K_OUT:
+        DetectionMethodOutOfDomain();
+        break;
+      default:
+        jj_la1[5] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            {if (true) throw (RuntimeException)jjte000;}
+          }
+          if (jjte000 instanceof ParseException) {
+            {if (true) throw (ParseException)jjte000;}
+          }
+          {if (true) throw (Error)jjte000;}
+    } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+    }
+  }
+
+  static final public void DetectionMethodStateful() throws ParseException {
+ /*@bgen(jjtree) DetectionMethodStateful */
+  ASTDetectionMethodStateful jjtn000 = new ASTDetectionMethodStateful(JJTDETECTIONMETHODSTATEFUL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_OUT:
+        DetectionMethodOutOfRange();
+        break;
+      case K_SIGMA:
+        DetectionMethodSigmaRule();
+        break;
+      case K_FUNCTION:
+        DetectionMethodFunction();
+        break;
+      default:
+        jj_la1[6] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      Window();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
   static final public void DetectionMethodOutOfRange() throws ParseException {
  /*@bgen(jjtree) DetectionMethodOutOfRange */
   ASTDetectionMethodOutOfRange jjtn000 = new ASTDetectionMethodOutOfRange(JJTDETECTIONMETHODOUTOFRANGE);
@@ -380,7 +453,15 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       jj_consume_token(K_OUT);
       jj_consume_token(K_OF);
       jj_consume_token(K_RANGE);
-      Window();
+      Number();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_PERCENT:
+        Percent();
+        break;
+      default:
+        jj_la1[7] = jj_gen;
+        ;
+      }
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -557,22 +638,22 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(66);
+      jj_consume_token(67);
       Parameter();
       label_3:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 67:
+        case 68:
           ;
           break;
         default:
-          jj_la1[5] = jj_gen;
+          jj_la1[8] = jj_gen;
           break label_3;
         }
-        jj_consume_token(67);
+        jj_consume_token(68);
         Parameter();
       }
-      jj_consume_token(68);
+      jj_consume_token(69);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -601,7 +682,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   jjtree.openNodeScope(jjtn000);
     try {
       Identifier();
-      jj_consume_token(69);
+      jj_consume_token(70);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FLOAT:
       case INTEGER:
@@ -611,7 +692,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         Identifier();
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[9] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -650,7 +731,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         CorrectionMethodFunction();
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[10] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -697,7 +778,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     try {
       jj_consume_token(K_CORRECT);
       jj_consume_token(K_BY);
-      jj_consume_token(70);
+      jj_consume_token(71);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_FUNCTION:
         jj_consume_token(K_FUNCTION);
@@ -712,11 +793,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         jj_consume_token(K_VALUE);
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(71);
+      jj_consume_token(72);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -739,9 +820,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
 
   static final public void Window() throws ParseException {
-    jj_consume_token(70);
-    StreamSQLWindow();
     jj_consume_token(71);
+    StreamSQLWindow();
+    jj_consume_token(72);
   }
 
   static final public void StreamSQLWindow() throws ParseException {
@@ -765,7 +846,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         jjtn000.setAdvance(advance);
           break;
         default:
-          jj_la1[9] = jj_gen;
+          jj_la1[12] = jj_gen;
           ;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -777,7 +858,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         jjtn000.setType(WindowType.TUPLE);
           break;
         default:
-          jj_la1[10] = jj_gen;
+          jj_la1[13] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -787,7 +868,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         jjtn000.setSlide(value);
           break;
         default:
-          jj_la1[11] = jj_gen;
+          jj_la1[14] = jj_gen;
           ;
         }
         break;
@@ -798,7 +879,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jjtn000.setUnbounded(true);
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[15] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -862,17 +943,31 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       value *= (7 * 24 * 60 * 60 * 1000);
         break;
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[16] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[17] = jj_gen;
       ;
     }
     {if (true) return value;}
     throw new Error("Missing return statement in function");
+  }
+
+  static final public void Percent() throws ParseException {
+ /*@bgen(jjtree) Percent */
+  ASTPercent jjtn000 = new ASTPercent(JJTPERCENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_PERCENT);
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
   }
 
   static private boolean jj_2_1(int xla) {
@@ -882,11 +977,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     finally { jj_save(0, xla); }
   }
 
-  static private boolean jj_2_2(int xla) {
-    jj_la = xla; jj_lastpos = jj_scanpos = token;
-    try { return !jj_3_2(); }
-    catch(LookaheadSuccess ls) { return true; }
-    finally { jj_save(1, xla); }
+  static private boolean jj_3R_6() {
+    if (jj_3R_10()) return true;
+    return false;
   }
 
   static private boolean jj_3_1() {
@@ -894,22 +987,61 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     return false;
   }
 
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_5() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    if (jj_scan_token(K_SIGMA)) return true;
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    if (jj_scan_token(71)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_4() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_5()) {
+    jj_scanpos = xsp;
+    if (jj_3R_6()) {
+    jj_scanpos = xsp;
+    if (jj_3R_7()) return true;
+    }
+    }
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(K_FUNCTION)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
     if (jj_scan_token(K_OUT)) return true;
     if (jj_scan_token(K_OF)) return true;
     if (jj_scan_token(K_RANGE)) return true;
     return false;
   }
 
-  static private boolean jj_3R_5() {
-    if (jj_scan_token(K_OUT)) return true;
-    if (jj_scan_token(K_OF)) return true;
-    if (jj_scan_token(K_DOMAIN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_5()) return true;
+  static private boolean jj_3R_7() {
+    if (jj_3R_11()) return true;
     return false;
   }
 
@@ -925,7 +1057,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[15];
+  static final private int[] jj_la1 = new int[18];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -935,15 +1067,15 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x400,0x10000,0x100000,0x0,0x0,0x0,0x20800,0x900000,0x20,0x0,0x0,0x0,0x400c000,0x400c000,};
+      jj_la1_0 = new int[] {0x0,0x400,0x10000,0x20000000,0x0,0x20000000,0x20100000,0x0,0x0,0x0,0x20800,0x900000,0x20,0x0,0x0,0x0,0x400c000,0x400c000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x60000,0x0,0x0,0x4020,0x0,0x0,0x860000,0x0,0x4000,0x0,0xa00,0x80,0x1040,0x8010,0x8010,};
+      jj_la1_1 = new int[] {0xc0000,0x0,0x0,0x8000,0x0,0x8000,0x40,0x2,0x0,0x10c0000,0x0,0x8000,0x0,0x1400,0x100,0x2080,0x10020,0x10020,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x4,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x10,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[2];
+  static final private JJCalls[] jj_2_rtns = new JJCalls[1];
   static private boolean jj_rescan = false;
   static private int jj_gc = 0;
 
@@ -965,7 +1097,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -981,7 +1113,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -999,7 +1131,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1011,7 +1143,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1028,7 +1160,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1039,7 +1171,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1151,12 +1283,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[72];
+    boolean[] la1tokens = new boolean[73];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 18; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -1171,7 +1303,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         }
       }
     }
-    for (int i = 0; i < 72; i++) {
+    for (int i = 0; i < 73; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -1198,7 +1330,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
   static private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 1; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -1206,7 +1338,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
           jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
           switch (i) {
             case 0: jj_3_1(); break;
-            case 1: jj_3_2(); break;
           }
         }
         p = p.next;
