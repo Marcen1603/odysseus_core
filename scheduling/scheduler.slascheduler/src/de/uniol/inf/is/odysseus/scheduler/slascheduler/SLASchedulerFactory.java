@@ -46,7 +46,6 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 */
 	@Override
 	protected void activate(ComponentContext context) {
-		System.err.println("ACTIVATING SLA SCHEDULER");
 		try {
 			super.activate(context);
 			@SuppressWarnings("rawtypes")
@@ -64,7 +63,6 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.err.println("SLA SCHEDULER ACTIVATED");
 	}
 
 	/**
