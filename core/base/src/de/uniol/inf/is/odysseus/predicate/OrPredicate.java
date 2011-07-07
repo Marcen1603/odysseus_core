@@ -58,14 +58,13 @@ class OrPredicate<T> extends ComplexPredicate<T> {
 				+ ")";
 	}
 	
-	@Override
-	@SuppressWarnings("unchecked")
+	@Override	
 	public boolean equals(Object other){
 		if(!(other instanceof OrPredicate)){
 			return false;
 		}
 		else{
-			return this.getLeft().equals(((OrPredicate)other).getLeft()) && this.getRight().equals(((OrPredicate)other).getRight());
+			return this.getLeft().equals(((OrPredicate<?>)other).getLeft()) && this.getRight().equals(((OrPredicate<?>)other).getRight());
 		}
 	}
 	
@@ -99,7 +98,7 @@ class OrPredicate<T> extends ComplexPredicate<T> {
 		} else {
 		// Falls es sich beim anderen Prädikat ebenfalls um ein OrPredicate handelt, müssen beide Prädikate verglichen werden (inklusiver aller "Unterprädikate")
 
-			OrPredicate<T> op = (OrPredicate<T>) o;
+			OrPredicate<?> op = (OrPredicate<?>) o;
 
 
 			

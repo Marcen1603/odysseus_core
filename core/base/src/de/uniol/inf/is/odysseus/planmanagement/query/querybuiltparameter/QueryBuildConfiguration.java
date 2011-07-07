@@ -36,6 +36,9 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Parame
 public class QueryBuildConfiguration extends
 		Configuration<IQueryBuildSetting<?>> {
 
+	
+	private static final long serialVersionUID = -5018054053257854891L;
+
 	/**
 	 * Creates a new set of parameters. If some standard values are not set in
 	 * <code>parameters</code> default values are used.
@@ -43,7 +46,7 @@ public class QueryBuildConfiguration extends
 	 * @param parameters
 	 *            New parameter for this set.
 	 */
-	public QueryBuildConfiguration(IQueryBuildSetting[] parameters) {
+	public QueryBuildConfiguration(IQueryBuildSetting<?>[] parameters) {
 		super(parameters);
 
 		if (!contains(ParameterTransformationConfiguration.class)) {

@@ -126,9 +126,6 @@ public class SDFExpression implements Serializable, IClone {
 		this.expression = expression;
 	
 		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
-		String result = substituteAggregations(this.expressionString,
-				aliasToAggregationAttributeMapping);
-		
 		initVariables(expression.getVariables(),
 				aliasToAggregationAttributeMapping);
 

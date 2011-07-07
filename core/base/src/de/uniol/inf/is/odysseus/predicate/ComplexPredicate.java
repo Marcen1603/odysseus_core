@@ -69,16 +69,15 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.left.init();
 		this.right.init();
 	}
-	
-	@SuppressWarnings("unchecked")
+		
 	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof ComplexPredicate)){
 			return false;
 		}
 		else{
-			return this.left.equals(((ComplexPredicate)other).left) &&
-				this.right.equals(((ComplexPredicate)other).right);
+			return this.left.equals(((ComplexPredicate<?>)other).left) &&
+				this.right.equals(((ComplexPredicate<?>)other).right);
 		}
 	}
 	

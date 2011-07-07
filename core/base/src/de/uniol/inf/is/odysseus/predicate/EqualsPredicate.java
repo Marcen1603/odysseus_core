@@ -42,7 +42,7 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 	}
 	
 	@Override
-	public boolean equals(IPredicate pred) {
+	public boolean equals(IPredicate<T> pred) {
 		if(!(pred instanceof EqualsPredicate)) {
 			return false;
 		}

@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
-
 public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaElement implements List<T>{ 
 
     /**
@@ -44,9 +42,8 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 
 	/**
      * @param attributes1
-     */
-    @SuppressWarnings("unchecked")
-	public SDFSchemaElementSet(SDFSchemaElementSet newElements) {
+     */    
+	public SDFSchemaElementSet(SDFSchemaElementSet<T> newElements) {
         super("TemporaryElement" + System.currentTimeMillis());
         elements.addAll(newElements);
     }
@@ -213,8 +210,8 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	}
 	
 	@Override
-	public SDFElement clone() {
-		return new SDFSchemaElementSet<SDFSchemaElement>(this);
+	public SDFSchemaElementSet<T> clone() {
+		return new SDFSchemaElementSet<T>(this);
 	}
 	
 }

@@ -49,8 +49,7 @@ public class Constant<T> implements IExpression<T> {
 	public Set<Variable> getVariables() {
 		return Collections.EMPTY_SET;
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public SDFDatatype getReturnType() {
 		return type;
