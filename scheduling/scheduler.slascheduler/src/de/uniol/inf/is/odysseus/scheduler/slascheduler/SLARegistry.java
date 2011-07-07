@@ -37,13 +37,27 @@ public class SLARegistry implements IPlanModificationListener {
 		/*
 		 * register to executor as IPlanModificationListener
 		 */
-		IExecutor executor = ExecutorHandler.getExecutor();
-		if (executor != null) {
-			executor.addPlanModificationListener(this);
-		} else {
-			throw new RuntimeException(
-					"Cannot register plan modification listener: executor not found");
-		}
+//		IExecutor executor = ExecutorHandler.getExecutor();
+//		if (executor != null) {
+//			executor.addPlanModificationListener(this);
+//		} else {
+//			throw new RuntimeException(
+//					"Cannot register plan modification listener: executor not found");
+//		}
+		
+		final SLARegistry reg = this; 
+		
+		Thread t = new Thread(new Runnable() {
+			IExecutor executor;
+			@Override
+			public void run() {
+				while((executor = ExecutorHandler.getExecutor()) == null) {
+				}
+				System.err.println("GOT EXECUTOR");
+				executor.addPlanModificationListener(reg);
+			}
+		});
+		t.start();
 	}
 
 	/**
