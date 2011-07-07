@@ -51,15 +51,7 @@ public class WeatherStationGenerator extends StreamClientHandler {
 		Pressure,
 		Location
 	}
-	
-	
-	long time = 0;
-	double temp = 21.0;
-	int humidity = 76;
-	double rain = 0.1;
-	double pressure = 1020.0;
-	int location = 0;
-	
+		
 	private Map<Attribute, IValueGenerator> generators = new HashMap<Attribute, IValueGenerator>();
 	
 	
@@ -78,9 +70,7 @@ public class WeatherStationGenerator extends StreamClientHandler {
 		tuple.addDouble(this.generators.get(Attribute.Pressure).nextValue());
 		//location (integer)
 		tuple.addInteger(this.generators.get(Attribute.Location).nextValue());
-		
-		//increase values
-		time++;
+			
 		
 		try {
 			Thread.sleep(1000);
@@ -125,8 +115,7 @@ public class WeatherStationGenerator extends StreamClientHandler {
 	}
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
+	public void close() {		
 
 	}
 
