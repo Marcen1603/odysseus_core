@@ -39,8 +39,8 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	private Object[] attributeData;
 	private boolean isDone;
 	private SDFAttributeList outputSchema;
-	private int typeAttribute;
-	private int timestampAttribute;
+//	private int typeAttribute;
+//	private int timestampAttribute;
 
 	private boolean p2p = false;
 	public boolean connectToPipe = false;

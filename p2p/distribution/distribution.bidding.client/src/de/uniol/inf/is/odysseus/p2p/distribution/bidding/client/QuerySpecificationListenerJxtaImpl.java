@@ -69,6 +69,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	@Override
 	// This method is called if a query specification is found
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public synchronized void discoveryEvent(DiscoveryEvent ev) {
 
 		DiscoveryResponseMsg res = ev.getResponse();

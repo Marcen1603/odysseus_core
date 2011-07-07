@@ -76,6 +76,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		if(!(ipo instanceof RelationalProjectPO)) {
 			return false;
 		}
+		@SuppressWarnings("unchecked")
 		RelationalProjectPO<T> rppo = (RelationalProjectPO<T>) ipo;
 		if(this.hasSameSources(ipo) &&
 				this.restrictList.length == rppo.restrictList.length) {

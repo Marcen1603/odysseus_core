@@ -122,6 +122,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 		if(!(ipo instanceof SelectPO<?>)) {
 			return false;
 		}
+		@SuppressWarnings("unchecked")
 		SelectPO<T> spo = (SelectPO<T>) ipo;
 		// Different sources
 		if(!this.hasSameSources(spo)) return false;

@@ -33,9 +33,9 @@ public class PQLParser implements IQueryParser {
 
 	private PQLParserImpl parser;
 
-	private User user;
-
-	private IDataDictionary dataDictionary;
+//	private User user;
+//
+//	private IDataDictionary dataDictionary;
 
 	private static Map<String, IParameter<?>> queryParameters = new HashMap<String, IParameter<?>>();
 
@@ -47,8 +47,8 @@ public class PQLParser implements IQueryParser {
 	@Override
 	public synchronized List<IQuery> parse(String query, User user, IDataDictionary dd)
 			throws QueryParseException {
-		this.user = user;
-		this.dataDictionary = dd;
+//		this.user = user;
+//		this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
 		return parse(new StringReader(query),user, dd);
@@ -57,8 +57,8 @@ public class PQLParser implements IQueryParser {
 	@Override
 	public synchronized List<IQuery> parse(Reader reader, User user, IDataDictionary dd)
 			throws QueryParseException {
-		this.user = user;
-		this.dataDictionary = dd;
+//		this.user = user;
+//		this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
 		try {

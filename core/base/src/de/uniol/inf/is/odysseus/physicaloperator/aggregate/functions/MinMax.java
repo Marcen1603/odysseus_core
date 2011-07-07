@@ -54,6 +54,7 @@ abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggrega
 
 	@Override
 	public W evaluate(IPartialAggregate<R> p) {
+		@SuppressWarnings("unchecked")
 		ElementPartialAggregate<W> pa = (ElementPartialAggregate<W>) p;
 		return pa.getElem();
 	}

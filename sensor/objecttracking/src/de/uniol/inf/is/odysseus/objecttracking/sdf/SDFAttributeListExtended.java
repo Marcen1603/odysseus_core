@@ -112,6 +112,7 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		return new SDFAttributeListExtended(this);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <M> M getMetadata(SDFAttributeListMetadataTypes metadataName){
 		return (M)this.metadata.get(metadataName);
 	}
@@ -121,6 +122,7 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		this.metadata.put(metadataName, metadata);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <M> M removeMetadata(SDFAttributeListMetadataTypes metadataName){
 		return (M)this.metadata.remove(metadataName);
 	}

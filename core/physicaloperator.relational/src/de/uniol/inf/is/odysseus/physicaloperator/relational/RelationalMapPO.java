@@ -67,6 +67,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	final protected void process_next(RelationalTuple<T> object, int port) {
 		RelationalTuple<T> outputVal = new RelationalTuple<T>(
