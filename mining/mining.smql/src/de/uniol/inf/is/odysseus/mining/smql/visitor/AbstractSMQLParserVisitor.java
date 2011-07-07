@@ -22,9 +22,11 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetection;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetections;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTParameter;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTParameterList;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTPercent;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStart;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStreamSQLWindow;
+import de.uniol.inf.is.odysseus.mining.smql.parser.Node;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -68,6 +70,19 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 	public void addTopOperator(ILogicalOperator op){
 		this.topOperators.add(op);
 	}		
+	
+	public boolean hasWindow(SimpleNode node, int childPosition){
+		if(node.jjtGetChild(childPosition) instanceof ASTStreamSQLWindow){
+			return true;
+		}
+		return false;
+	}
+	
+	public WindowAO createWindowAOFromChildNode(SimpleNode node, int childPosition){
+		Node child = node.jjtGetChild(childPosition);
+		WindowAO window = (WindowAO) child.jjtAccept(this, null);
+		return window;
+	}
 
 	@Override
 	public Object visit(SimpleNode node, Object data) {
@@ -142,13 +157,9 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 	
 	
 	@Override
-	public Object visit(ASTStreamSQLWindow windowNode, Object data) {
-		ILogicalOperator inputOp = (ILogicalOperator)data;
-		WindowAO window = new WindowAO();
-		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
-		
-		window.setWindowType(windowNode.getType());
-		
+	public Object visit(ASTStreamSQLWindow windowNode, Object data) {		
+		WindowAO window = new WindowAO();				
+		window.setWindowType(windowNode.getType());		
 		if (!windowNode.isUnbounded()) {
 			window.setWindowSize(windowNode.getSize());
 			Long advance = windowNode.getAdvance();
@@ -159,6 +170,11 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 		}
 		return window;
 	}		
+	
+	@Override
+	public Object visit(ASTPercent node, Object data) {		
+		return data;
+	}
 	
 	@Override
 	public abstract Object visit(ASTCreateKnowledgeDiscoveryProcess node, Object data);

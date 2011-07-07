@@ -13,9 +13,10 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection;
+package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
 
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -28,17 +29,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public abstract class AbstractRelationalPredicateDetection extends AbstractDetection {
+public abstract class AbstractRelationalPredicateDetection implements IUnaryDetection<RelationalTuple<?>> {
 
 	private RelationalPredicate predicate;
 	
-	public AbstractRelationalPredicateDetection(String attributeName, SDFAttributeList schema) {
-		super(attributeName, schema);		
-	}
-	
-	protected RelationalPredicate buildPredicate(String predicateString) {
+	protected RelationalPredicate buildPredicate(String predicateString, SDFAttributeList schema) {
 		try {
-			IAttributeResolver attributeResolver = new DirectAttributeResolver(super.getInputschema());			
+			IAttributeResolver attributeResolver = new DirectAttributeResolver(schema);			
 			// build the predicate			
 			SDFExpression expression = new SDFExpression("", predicateString, attributeResolver);
 			predicate = new RelationalPredicate(expression);
@@ -49,16 +46,16 @@ public abstract class AbstractRelationalPredicateDetection extends AbstractDetec
 		}
 	}	
 	
-	public void init(){		
+	public void init(SDFAttributeList schema){		
 		String predicateString = createPredicate();
-		buildPredicate(predicateString);
-		this.predicate.init(getInputschema(), null);
+		buildPredicate(predicateString, schema);
+		this.predicate.init(schema, null);
 	}
 	
 	public abstract String createPredicate();
 	
 	@Override
-	public IPredicate<?> getPredicate() {		
+	public IPredicate<RelationalTuple<?>> getPredicate() {		
 		return predicate;
 	}
 

@@ -13,16 +13,31 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.model;
+package de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator;
 
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
+
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 21.06.2011
+ * Created at: 07.07.2011
  */
-public interface IDetection<T> {
-	public IPredicate<T> getPredicate();
-	public void init();
+public class StatefulDetectionSplitAO<T> extends AbstractDetectionSplitAO<T, IBinaryDetection<T>> {
+
+	private static final long serialVersionUID = -4219272869146519334L;
+
+	public StatefulDetectionSplitAO() {
+		super();
+	}
+	
+	public StatefulDetectionSplitAO(StatefulDetectionSplitAO<T> statefulDetectionSplitAO) {
+		super(statefulDetectionSplitAO);
+	}
+
+	@Override
+	public StatefulDetectionSplitAO<T> clone() {
+		return new StatefulDetectionSplitAO<T>(this);
+	}
+
 }

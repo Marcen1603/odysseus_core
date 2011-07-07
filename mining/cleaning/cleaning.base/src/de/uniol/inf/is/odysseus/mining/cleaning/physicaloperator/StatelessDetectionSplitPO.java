@@ -17,41 +17,37 @@ package de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.mining.cleaning.model.IDetection;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.mining.cleaning.detection.IDetection;
+import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.IUnaryDetection;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
-public class DetectionSplitPO<T> extends AbstractPipe<T, T> {
+public class StatelessDetectionSplitPO<T> extends AbstractDetectionSplitPO<T, IUnaryDetection<T>> {	
 
-	private List<IDetection<T>> detections;
-
-	public DetectionSplitPO(List<IDetection<T>> detections) {
-		this.detections = detections;
+	public StatelessDetectionSplitPO(List<IUnaryDetection<T>> detections) {
+		super(detections);
 	}
 
-	public DetectionSplitPO(DetectionSplitPO<T> detectionSplitPO) {
-		this.detections = detectionSplitPO.detections;
-	}
-
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp, port);
+	public StatelessDetectionSplitPO(StatelessDetectionSplitPO<T> detectionSplitPO) {
+		super(detectionSplitPO.detections);
 	}
 
 	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
-
-	@Override
-	public void process_open() throws OpenFailedException {
+	public void process_open() throws OpenFailedException {	
 		super.process_open();
-		for(IDetection<T> d : this.detections){
-			d.init();
+		for(IUnaryDetection<T> d : this.detections){
+			d.init(this.getOutputSchema());
 		}
 	}
-
+	
+	
+	protected void process_next_failed(T object, int port, IUnaryDetection<T> detection){
+		
+	}
+	
+	protected void process_next_passed(T object, int port){
+		
+	}
+	
 	@Override
 	protected void process_next(T object, int port) {
 		
@@ -67,15 +63,11 @@ public class DetectionSplitPO<T> extends AbstractPipe<T, T> {
 		// here the element must be ok...
 		transfer(object, 0);
 	}
-
-	private T markAsFailure(T object) {
-		System.out.println("FEHLER gefunden: "+object);
-		return object;
-	}
+	
 
 	@Override
-	public DetectionSplitPO<T> clone() {
-		return new DetectionSplitPO<T>(this);
+	public StatelessDetectionSplitPO<T> clone() {
+		return new StatelessDetectionSplitPO<T>(this);
 	}
 
 }

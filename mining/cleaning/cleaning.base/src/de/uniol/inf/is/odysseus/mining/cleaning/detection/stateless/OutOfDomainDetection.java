@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection;
+package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
 
-import de.uniol.inf.is.odysseus.mining.cleaning.model.IDetection;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * 
  * @author Dennis Geesen Created at: 21.06.2011
  */
-public class OutOfDomainDetection implements IDetection {
+public class OutOfDomainDetection implements IUnaryDetection<RelationalTuple<?>> {
 
 	private double min;
 	private double max;
@@ -37,11 +37,10 @@ public class OutOfDomainDetection implements IDetection {
 	private SDFAttributeList inputschema;
 	private String attributeName;
 
-	public OutOfDomainDetection(String attributeName, double min, double max, SDFAttributeList inputschema) {
+	public OutOfDomainDetection(String attributeName, double min, double max) {
 		this.min = min;
 		this.max = max;
 		this.attributeName = attributeName;
-		this.inputschema = inputschema;
 	}
 
 	private void internalInit() {
@@ -60,7 +59,7 @@ public class OutOfDomainDetection implements IDetection {
 	}
 
 	@Override
-	public IPredicate<?> getPredicate() {
+	public IPredicate<RelationalTuple<?>> getPredicate() {
 		return this.predicate;
 	}
 
@@ -81,9 +80,9 @@ public class OutOfDomainDetection implements IDetection {
 	}
 
 	@Override
-	public void init() {
+	public void init(SDFAttributeList inputschema) {
+		this.inputschema = inputschema;
 		this.internalInit();
 		this.predicate.init(this.inputschema, null);
-	}
-
+	}	
 }

@@ -29,7 +29,8 @@ public class RuleProvider implements ITransformRuleProvider {
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
-		rules.add(new TDetectionSplitAORule());
+		rules.add(new TStatelessDetectionSplitAORule());
+		rules.add(new TStatefulDetectionSplitAORule());
 		return rules;
 	}
 

@@ -13,9 +13,8 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection;
+package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
 
-import de.uniol.inf.is.odysseus.mining.cleaning.model.IDetection;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -23,29 +22,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public abstract class AbstractDetection implements IDetection {
+public class SimplePredicateDetection extends AbstractRelationalPredicateDetection{
 
-	private SDFAttributeList inputschema;
-	private String attributeName;
+	private String predicateString;	
 
-	public AbstractDetection(String attributeName, SDFAttributeList schema){
-		this.setInputschema(schema);
-		this.setAttributeName(attributeName);
+	public SimplePredicateDetection(String attributeName, SDFAttributeList schema, String predicateString) {		
+		this.predicateString = predicateString;
 	}
 
-	public void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
+	@Override
+	public String createPredicate() {
+		return this.predicateString;
 	}
 
-	public String getAttributeName() {
-		return attributeName;
-	}
 
-	public void setInputschema(SDFAttributeList inputschema) {
-		this.inputschema = inputschema;
-	}
-
-	public SDFAttributeList getInputschema() {
-		return inputschema;
-	}
 }

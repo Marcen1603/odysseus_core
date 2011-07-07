@@ -6,7 +6,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.mining.model.KnowledgeDiscoveryProcess;
 import de.uniol.inf.is.odysseus.mining.smql.ISMQLFeature;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethod;
@@ -20,6 +19,8 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodOutOfRange;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodSigmaRule;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodSimplePredicate;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodSimpleValue;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodStateful;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodStateless;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetection;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetections;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
@@ -31,9 +32,7 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	private static final String CLEANING_CLASS = "SMQLCleaning";
 	private IDataDictionary dataDictionary;
-	private User user;	
-	
-	private KnowledgeDiscoveryProcess kdp;
+	private User user;		
 	private Map<String, ISMQLFeature> languageFeatures;
 
 	public StandardSMQLParserVisitor(User user, IDataDictionary dataDictionary, Map<String, ISMQLFeature> languageFeatures) {
@@ -74,7 +73,9 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 		List<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 		for(int i=0;i<node.jjtGetNumChildren();i++){
 			SimpleNode child = (SimpleNode) node.jjtGetChild(i);
-			operators.add((ILogicalOperator) child.jjtAccept(this, null));
+			@SuppressWarnings("unchecked")
+			List<ILogicalOperator> phaseOperators = (List<ILogicalOperator>) child.jjtAccept(this, null);
+			operators.addAll(phaseOperators);
 		}
 		return operators;		
 	}
@@ -145,6 +146,16 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	@Override
 	public Object visit(ASTDetectionMethodOutOfDomain node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodStateless node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTDetectionMethodStateful node, Object data) {
 		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
 	}	
 	

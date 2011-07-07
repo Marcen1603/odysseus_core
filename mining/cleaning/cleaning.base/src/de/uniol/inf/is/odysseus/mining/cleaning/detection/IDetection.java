@@ -15,25 +15,13 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 23.06.2011
+ * Created at: 21.06.2011
  */
-public class SimpleValueDetection extends AbstractRelationalPredicateDetection{
-
-	private double value;	
-
-	public SimpleValueDetection(String attributeName, SDFAttributeList schema, double value) {
-		super(attributeName, schema);
-		this.value = value;
-	}	
-
-	@Override
-	public String createPredicate() {		
-		return super.getAttributeName()+"=="+value;		
-	}
-
+public interface IDetection<T> {
+	public IPredicate<T> getPredicate();	
 }

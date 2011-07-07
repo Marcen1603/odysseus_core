@@ -16,15 +16,15 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.transform;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.DetectionSplitAO;
-import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.DetectionSplitPO;
+import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessDetectionSplitAO;
+import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatelessDetectionSplitPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionSplitAO<RelationalTuple<IMetaAttribute>>> {
+public class TStatelessDetectionSplitAORule extends AbstractTransformationRule<StatelessDetectionSplitAO<RelationalTuple<IMetaAttribute>>> {
 
 	@Override
 	public int getPriority() {	
@@ -32,8 +32,8 @@ public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionS
 	}
 
 	@Override
-	public void execute(DetectionSplitAO<RelationalTuple<IMetaAttribute>> detectAO, TransformationConfiguration config) {
-		DetectionSplitPO<?> detectPO = new DetectionSplitPO<RelationalTuple<IMetaAttribute>>(detectAO.getDetections());
+	public void execute(StatelessDetectionSplitAO<RelationalTuple<IMetaAttribute>> detectAO, TransformationConfiguration config) {
+		StatelessDetectionSplitPO<?> detectPO = new StatelessDetectionSplitPO<RelationalTuple<IMetaAttribute>>(detectAO.getDetections());
 		detectPO.setOutputSchema(detectAO.getOutputSchema());
 		replace(detectAO, detectPO, config);		
 		retract(detectAO);
@@ -41,13 +41,13 @@ public class TDetectionSplitAORule extends AbstractTransformationRule<DetectionS
 	}
 
 	@Override
-	public boolean isExecutable(DetectionSplitAO<RelationalTuple<IMetaAttribute>> operator, TransformationConfiguration config) {
+	public boolean isExecutable(StatelessDetectionSplitAO<RelationalTuple<IMetaAttribute>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "DetectionSplitAO -> DetectionSplitPO";
+		return "StatelessDetectionSplitAO -> StatelessDetectionSplitPO";
 	}
 
 	@Override

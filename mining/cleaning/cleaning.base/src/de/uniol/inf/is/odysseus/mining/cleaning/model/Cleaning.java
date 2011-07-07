@@ -14,6 +14,9 @@
   */
 
 package de.uniol.inf.is.odysseus.mining.cleaning.model;
+
+import de.uniol.inf.is.odysseus.mining.cleaning.detection.IDetection;
+
 /**
  * 
  * @author Dennis Geesen

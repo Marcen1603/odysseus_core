@@ -13,10 +13,9 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection;
+package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful;
 
-import de.uniol.inf.is.odysseus.mining.cleaning.model.IDetection;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.AbstractRelationalPredicateDetection;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -24,22 +23,29 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public class OutOfRangeDetection implements IDetection{
+public class SigmaRuleDetection extends AbstractRelationalPredicateDetection {
 
-	public OutOfRangeDetection(String attributeName, int count, String type, SDFAttributeList outputSchema) {
-		// TODO Auto-generated constructor stub
-	}
+	
+	
+	private int sigma;
 
-	@Override
-	public IPredicate<?> getPredicate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public SigmaRuleDetection(String attributeName, SDFAttributeList schema, int sigmaabweichung) {		
+		this.setSigma(sigmaabweichung);
+	}	
 
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-
+	public String createPredicate() {
+		return "";
 	}
+
+	public void setSigma(int sigma) {
+		this.sigma = sigma;
+	}
+
+	public int getSigma() {
+		return sigma;
+	}
+
+	
 
 }

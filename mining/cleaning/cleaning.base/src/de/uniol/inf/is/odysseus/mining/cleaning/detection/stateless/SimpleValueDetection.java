@@ -13,39 +13,27 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection;
+package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public class SigmaRuleDetection extends AbstractRelationalPredicateDetection {
+public class SimpleValueDetection extends AbstractRelationalPredicateDetection{
 
-	
-	
-	private int sigma;
+	private double value;	
+	private String attribute;
 
-	public SigmaRuleDetection(String attributeName, SDFAttributeList schema, int sigmaabweichung) {
-		super(attributeName, schema);
-		this.setSigma(sigmaabweichung);
+	public SimpleValueDetection(String attributeName, double value) {
+		this.attribute = attributeName;
+		this.value = value;
 	}	
 
 	@Override
-	public String createPredicate() {
-		return "";
+	public String createPredicate() {		
+		return this.attribute+"=="+value;		
 	}
-
-	public void setSigma(int sigma) {
-		this.sigma = sigma;
-	}
-
-	public int getSigma() {
-		return sigma;
-	}
-
-	
 
 }
