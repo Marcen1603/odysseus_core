@@ -13,3 +13,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Export-Package: de.uniol.inf.is.odysseus.relational_interval
 Bundle-ClassPath: .
 Require-Bundle: de.uniol.inf.is.odysseus
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

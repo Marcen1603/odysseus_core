@@ -15,6 +15,8 @@
 package de.uniol.inf.is.odysseus.priority;
 
 public class Priority implements IPriority{
+	
+	private static final long serialVersionUID = 1837720176871400611L;
 
 	byte prio;
 	

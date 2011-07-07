@@ -177,7 +177,7 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 		if(!(ipo instanceof PriorityBufferedPipe2)) {
 			return false;
 		}
-		PriorityBufferedPipe2 pbp2 = (PriorityBufferedPipe2) ipo;
+		PriorityBufferedPipe2<?> pbp2 = (PriorityBufferedPipe2<?>) ipo;
 		if(this.getSubscribedToSource().equals(pbp2.getSubscribedToSource())) {
 			return true;
 		}

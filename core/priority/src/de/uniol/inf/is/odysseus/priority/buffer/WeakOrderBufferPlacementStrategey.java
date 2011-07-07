@@ -14,8 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.priority.buffer;
 
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy.StandardBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class WeakOrderBufferPlacementStrategey extends
 		StandardBufferPlacementStrategy {
@@ -23,11 +25,10 @@ public class WeakOrderBufferPlacementStrategey extends
 	public String getName() {
 		return "Weak Order Buffer Placement";
 	}
-	
-	@SuppressWarnings("unchecked")
+		
 	@Override
 	protected IBuffer<?> createNewBuffer() {
-		return new OutOfOrderBufferedPipe();
+		return new OutOfOrderBufferedPipe<IMetaAttributeContainer<IPriority>>();
 	}
 
 }

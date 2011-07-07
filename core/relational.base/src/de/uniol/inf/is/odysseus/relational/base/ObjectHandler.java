@@ -92,6 +92,7 @@ public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMeta
 		return byteBuffer;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized T create() throws IOException, ClassNotFoundException, BufferUnderflowException {
 		T retval = null;
