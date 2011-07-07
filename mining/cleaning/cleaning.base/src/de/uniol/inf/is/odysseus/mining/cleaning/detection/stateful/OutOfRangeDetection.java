@@ -85,12 +85,12 @@ public class OutOfRangeDetection implements IBinaryDetection<RelationalTuple<?>>
 		String aggAttribute = getAggregationAttribute();
 		if(this.inPercent){
 			double percent = this.abweichung/100.0;
-			String p = attributeName+" * (1.0-"+percent+") < "+aggAttribute;
-			p = p+" || "+attributeName+" * (1.0+"+percent+") > "+aggAttribute;		
+			String p = attributeName+" < ( (1.0-"+percent+") * "+aggAttribute+")";
+			p = p+" || "+attributeName+" > ( (1.0+"+percent+") * "+aggAttribute+")";		
 			return p;
 		}else{
 			String p = attributeName+"+"+this.abweichung+"<"+aggAttribute;
-			p = p+" || "+attributeName+"+"+this.abweichung+">"+aggAttribute;		
+			p = p+" || "+attributeName+"-"+this.abweichung+">"+aggAttribute;		
 			return p;
 		}
 	}	
