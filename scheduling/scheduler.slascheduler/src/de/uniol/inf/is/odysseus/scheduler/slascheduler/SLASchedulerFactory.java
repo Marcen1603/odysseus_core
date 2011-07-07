@@ -59,7 +59,6 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 			this.querySharing = Boolean.parseBoolean(OdysseusDefaults.get("sla_querySharing"));
 			this.querySharingCostModelName = OdysseusDefaults.get("sla_querySharingCostModel");
 			super.setName(properties);
-			System.err.println(this.starvationFreedomFuncName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
