@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.osgi.service.component.ComponentContext;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadTrainSchedulerWithStrategy;
@@ -45,20 +46,25 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 */
 	@Override
 	protected void activate(ComponentContext context) {
-		super.activate(context);
-		@SuppressWarnings("rawtypes")
-		Dictionary properties = context.getProperties();
-		// get settings from properties
-		this.starvationFreedomFuncName = (String) properties
-				.get("sla_starvationFreedomFuncName");
-		this.prio = new PriorityFunctionFactory()
-				.buildPriorityFunction((String) properties
-						.get("sla_prioFuncName"));
-		this.decaySF = Float.parseFloat((String)properties.get("sla_stavationFreedomDecay"));
-		this.querySharing = Boolean.parseBoolean((String)properties.get("sla_querySharing"));
-		this.querySharingCostModelName = (String)properties.get("sla_querySharingCostModel");
-		super.setName(properties);
-		System.err.println("SLA Scheduler Factory activated!!!");
+		System.err.println("ACTIVATING SLA SCHEDULER");
+		try {
+			super.activate(context);
+			@SuppressWarnings("rawtypes")
+			Dictionary properties = context.getProperties();
+			// get settings
+			this.starvationFreedomFuncName = OdysseusDefaults.get("sla_starvationFreedomFuncName");
+			this.prio = new PriorityFunctionFactory()
+					.buildPriorityFunction(OdysseusDefaults
+							.get("sla_prioFuncName"));
+			this.decaySF = Float.parseFloat(OdysseusDefaults.get("sla_stavationFreedomDecay"));
+			this.querySharing = Boolean.parseBoolean(OdysseusDefaults.get("sla_querySharing"));
+			this.querySharingCostModelName = OdysseusDefaults.get("sla_querySharingCostModel");
+			super.setName(properties);
+			System.err.println(this.starvationFreedomFuncName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.err.println("SLA SCHEDULER ACTIVATED");
 	}
 
 	/**
