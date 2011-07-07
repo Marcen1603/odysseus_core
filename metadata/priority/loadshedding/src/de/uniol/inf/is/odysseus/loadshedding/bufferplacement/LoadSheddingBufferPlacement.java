@@ -26,12 +26,12 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.Abst
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class LoadSheddingBufferPlacement extends
 		AbstractBufferPlacementStrategy {
 
 	boolean placeLoadShedder = false;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,

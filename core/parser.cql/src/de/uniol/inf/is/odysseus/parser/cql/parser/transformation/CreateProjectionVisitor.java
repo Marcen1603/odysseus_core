@@ -63,11 +63,11 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	double[] projectionVector = null;
 	
-	private User user;
+	//private User user;
 	private IDataDictionary dd;
 
 	public CreateProjectionVisitor(User user, IDataDictionary dd){
-		this.user = user;
+//		this.user = user;
 		this.dd = dd;
 	}
 	

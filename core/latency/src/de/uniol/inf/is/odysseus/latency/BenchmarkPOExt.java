@@ -98,7 +98,7 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<? extends ILatency
 
 	@Override
 	public BenchmarkPOExt<R> clone() {
-		return new BenchmarkPOExt(this);
+		return new BenchmarkPOExt<R>(this);
 	}
 
 	private void processData(long endTime){

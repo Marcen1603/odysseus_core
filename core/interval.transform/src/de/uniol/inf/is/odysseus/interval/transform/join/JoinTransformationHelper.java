@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-
+@SuppressWarnings({"unchecked","rawtypes"})
 public class JoinTransformationHelper {
 
 	
@@ -38,7 +38,6 @@ public class JoinTransformationHelper {
 	 * @return false, if there is a window in the path.
 	 * 		   true, if there is no window in the path.
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static boolean checkPhysicalPath(Object operator){
 		if(operator instanceof AbstractWindowTIPO){
 			return false;

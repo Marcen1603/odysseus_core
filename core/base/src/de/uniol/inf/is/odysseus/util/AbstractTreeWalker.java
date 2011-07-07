@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
  * Should only be used on graphs
  *  
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class AbstractTreeWalker {
 	
 	public static <R,T extends ISubscriber, H extends ISubscription<T>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {

@@ -22,6 +22,10 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
  */
 public class PredictionFunctionKey<T> implements IPredictionFunctionKey<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1485873166469185595L;
 	T key;
 
 	public PredictionFunctionKey(){

@@ -460,7 +460,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		return this.compareTo((MVRelationalTuple<T>) o) == 0;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public int compareTo(MVRelationalTuple<T> tuple) {
 		int min = tuple.getAttributeCount();
 		if (min > this.attributes.length) {

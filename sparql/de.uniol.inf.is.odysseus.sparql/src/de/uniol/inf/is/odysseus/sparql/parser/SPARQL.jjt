@@ -46,8 +46,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.*;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
 import de.uniol.inf.is.odysseus.sparql.*;
-
-public class SPARQLParser extends SPARQLParserBase
+@ SuppressWarnings("all") public class SPARQLParser extends SPARQLParserBase
 {
 }
 PARSER_END(SPARQLParser)

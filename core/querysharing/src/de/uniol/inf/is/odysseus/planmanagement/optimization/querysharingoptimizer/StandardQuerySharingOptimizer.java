@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	
 	public void applyQuerySharing(List<IQuery> plan, List<IQuery> newQueries, OptimizationConfiguration conf) {

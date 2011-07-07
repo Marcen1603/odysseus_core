@@ -18,6 +18,7 @@ public abstract class AbstractRangePredicate<T> implements IRangePredicate<T>{
 
 	private static final long serialVersionUID = 4375668057843231705L;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IRangePredicate<T> clone(){
 		try{

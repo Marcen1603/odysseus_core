@@ -137,6 +137,7 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
  * Andre Bolles <andre.bolles@uni-oldenburg.de>
  *
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
 	private User user;

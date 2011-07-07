@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.scars.operator.association.po.HypothesisGenerati
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class THypothesisGenarationAORule extends AbstractTransformationRule<HypothesisGenerationAO> {
 
 	@Override

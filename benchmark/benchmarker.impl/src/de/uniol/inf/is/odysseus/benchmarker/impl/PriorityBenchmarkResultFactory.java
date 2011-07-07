@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 import de.uniol.inf.is.odysseus.benchmarker.AbstractBenchmarkResult;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"rawtypes","unchecked"})
 public class PriorityBenchmarkResultFactory implements IBenchmarkResultFactory {
 
 	@Override

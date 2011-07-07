@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.StandardTransformationHelper;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class BrokerTransformationHelper extends StandardTransformationHelper{
 	
 	@Override

@@ -19,6 +19,10 @@ import java.util.List;
 
 public class Probability implements IProbability{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1722880482644626903L;
 	private double[][] cov;
 	private ArrayList<int[]> attributePaths;
 	private int[] attrIndices;

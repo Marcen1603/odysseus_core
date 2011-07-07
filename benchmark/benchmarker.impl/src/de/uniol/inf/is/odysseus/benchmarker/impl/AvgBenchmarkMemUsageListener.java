@@ -112,7 +112,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 	}
 
 	@Override
-	public void eventOccured(IEvent poEvent) {
+	public void eventOccured(IEvent<?,?> poEvent) {
 		if (poEvent.getEventType()!= POEventType.ProcessInit && poEvent.getEventType() != POEventType.PushDone && poEvent.getEventType() != POEventType.ProcessPunctuationDone ){
 			return;
 		}

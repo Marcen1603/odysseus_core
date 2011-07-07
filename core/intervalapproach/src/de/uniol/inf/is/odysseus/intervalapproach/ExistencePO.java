@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +24,10 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -144,6 +143,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	protected void process_next(T object, int port) {
 
 		if (isDone()) {
@@ -225,7 +225,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 		}
 		else if(port == RIGHT){
 			Iterator<T> qualifies = areas[otherport].queryCopy(object, order);
-			LinkedList<T> modifiedElemsOnLeft = new LinkedList<T>();
+			//LinkedList<T> modifiedElemsOnLeft = new LinkedList<T>();
 			while(qualifies.hasNext()){
 				T next = qualifies.next();
 				K curMetadata = next.getMetadata();
@@ -314,6 +314,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 	}
 	
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof ExistencePO)) {
 			return false;

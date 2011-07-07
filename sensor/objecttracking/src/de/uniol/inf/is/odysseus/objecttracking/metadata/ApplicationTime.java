@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public class ApplicationTime implements IApplicationTime{
 
+	private static final long serialVersionUID = -9089269401446854493L;
+
 	List<ITimeInterval> intervals;
 	
 	public static int additionalPredicates = 4;

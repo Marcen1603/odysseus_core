@@ -48,6 +48,11 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 			implements IProbabilityPredictionFunction<MVRelationalTuple<M>, M>{
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8478568152189029002L;
+
+	/**
 	 * This matrix contains all variables, that are used for
 	 * the different expressions. 
 	 * 

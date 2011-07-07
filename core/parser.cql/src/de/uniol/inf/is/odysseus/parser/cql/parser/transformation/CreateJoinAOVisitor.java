@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 /**
  * @author Jonas Jacobi
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;

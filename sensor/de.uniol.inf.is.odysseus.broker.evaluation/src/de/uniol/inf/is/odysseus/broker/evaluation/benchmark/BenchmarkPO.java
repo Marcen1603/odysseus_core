@@ -102,7 +102,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractP
 
 	@Override
 	public BenchmarkPO<R> clone() {
-		return new BenchmarkPO(this);
+		return new BenchmarkPO<R>(this);
 	}
 
 	@Override

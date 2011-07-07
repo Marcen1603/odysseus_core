@@ -35,7 +35,7 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	/**
 	 * Instantiates a new SweepArea.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public BrokerSweepArea() {
 		super(new AttributeTimeIntervalComparator());
 	}

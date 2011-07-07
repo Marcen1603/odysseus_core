@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class TObjectTrackingJoinAOTransferFunctionRule extends AbstractTransformationRule<ObjectTrackingJoinPO>{
 
 	@Override

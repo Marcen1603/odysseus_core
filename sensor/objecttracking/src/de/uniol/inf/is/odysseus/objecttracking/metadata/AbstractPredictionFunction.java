@@ -22,6 +22,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AbstractPredictionFunction<T extends MetaAttributeContainer<M>, M extends IMetaAttribute> implements IPredictionFunction<T, M>{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7643329010512865920L;
+
 	@Override
 	public T predictAll(SDFAttributeList schema, T object, PointInTime t){
 		T predictedData = this.predictData(schema, object, t);

@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BasicTripleSelectionAO extends SelectAO {
 
+	private static final long serialVersionUID = -8187061597335204197L;
 	protected Triple triple;
 	
 	public BasicTripleSelectionAO(Triple t) {

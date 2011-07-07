@@ -343,7 +343,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			}
 			if (logger.isDebugEnabled()) {
 				logger.debug("After Taking Transitions " + instance);
-				for (StateMachineInstance s : branchedInstances) {
+				for (StateMachineInstance<R> s : branchedInstances) {
 					logger.debug("Branched Instances " + s);
 				}
 			}
@@ -611,7 +611,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	@Override
 	public CepOperator<R, W> clone() {
-		return new CepOperator(this);
+		return new CepOperator<R,W>(this);
 	}
 
 	@Override

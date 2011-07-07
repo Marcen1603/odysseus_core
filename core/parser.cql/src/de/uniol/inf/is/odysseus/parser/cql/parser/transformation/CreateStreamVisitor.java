@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 /**
  * @author Jonas Jacobi
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
 	private User caller;

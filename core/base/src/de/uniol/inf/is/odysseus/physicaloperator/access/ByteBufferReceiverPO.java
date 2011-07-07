@@ -173,6 +173,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		if(!(ipo instanceof ByteBufferReceiverPO)) {
 			return false;
 		}
+		@SuppressWarnings("rawtypes")
 		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
 		if(this.handler.equals(bbrpo.handler) && this.port == bbrpo.port && this.host.equals(bbrpo.host)) {
 			return true;

@@ -19,7 +19,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class DuplicateElimination extends UnaryLogicalOp{
     
-    /** Creates a new instance of DuplicateElimination */
+	private static final long serialVersionUID = 8103342490843231167L;
+
+	/** Creates a new instance of DuplicateElimination */
     public DuplicateElimination() {
     }
     

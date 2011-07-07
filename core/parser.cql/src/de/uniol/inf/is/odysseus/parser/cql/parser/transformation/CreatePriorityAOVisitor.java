@@ -75,7 +75,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 		return data;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public Object visit(ASTDefaultPriority node, Object data) {
 		((PriorityAO<RelationalTuple>) data).setDefaultPriority(node

@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.predicate.TruePredicate;
  * 
  * @author Andre Bolles
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"rawtypes","unchecked"})
 public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey<IPredicate>> extends AbstractPipe<T, T>{
 
 	private final Map<IPredicate<? super T>, IPredictionFunction> predictionFunctions;

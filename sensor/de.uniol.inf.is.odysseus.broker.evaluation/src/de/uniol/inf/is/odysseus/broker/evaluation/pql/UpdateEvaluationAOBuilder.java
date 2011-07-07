@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 
 public class UpdateEvaluationAOBuilder extends AbstractOperatorBuilder {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7627315949734776502L;
+
 	public UpdateEvaluationAOBuilder() {
 		super(2, 2);
 	}

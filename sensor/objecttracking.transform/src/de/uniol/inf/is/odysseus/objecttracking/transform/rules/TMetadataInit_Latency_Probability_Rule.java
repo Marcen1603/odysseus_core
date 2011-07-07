@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TMetadataInit_Latency_Probability_Rule extends AbstractTransformationRule<MetadataCreationPO>{
 
 	@Override

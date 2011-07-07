@@ -86,6 +86,7 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ExecutorConsole implements CommandProvider,
 		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener,
 		ICompilerListener {
@@ -1230,7 +1231,7 @@ public class ExecutorConsole implements CommandProvider,
 						latency.getOutputSchema());
 				params.add(new ParameterDefaultRoot(latency));
 			} else if (args[i].equalsIgnoreCase("-m")) {
-				boolean withMeta = Boolean.getBoolean(args[i + 1]);
+				//boolean withMeta = Boolean.getBoolean(args[i + 1]);
 				i++;
 			}
 		}

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class TMarkovAORule extends AbstractTransformationRule<MarkovAO> {
 
 	@Override

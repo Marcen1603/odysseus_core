@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"rawtypes","unchecked"})
 /**
  * This is a metadata item, that implements TimeInterval, IProbability and IPredictionFunction.
  * It works only for relational tuples.

@@ -241,6 +241,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof AtomicDataInputStreamAccessPO)) {

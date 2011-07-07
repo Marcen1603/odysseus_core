@@ -34,8 +34,15 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
  * has been taken.
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class TriplePatternMatching extends AbstractLogicalOperator{
     
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3371043653340988294L;
+
+
 	private static int sourceNameCounter = 0;
 	
 	

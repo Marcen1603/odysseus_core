@@ -149,7 +149,7 @@ public class ECAParserTest implements CommandProvider {
 				"	testeca - runs eca test cases\n";
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	private void runTestSuite(String query, List<IActionParameter> parameters, CommandInterpreter ci) throws Exception {	
 		List<IQuery> queries = this.compiler.translateQuery(query , "ECA", user, dd);
 		ILogicalOperator logicalPlan = queries.get(0).getLogicalPlan();

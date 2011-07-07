@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
 import de.uniol.inf.is.odysseus.sparql.*;
 
-public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SPARQLParserTreeConstants, SPARQLParserConstants {/*@bgen(jjtree)*/
+@ SuppressWarnings("all") public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SPARQLParserTreeConstants, SPARQLParserConstants {/*@bgen(jjtree)*/
   protected JJTSPARQLParserState jjtree = new JJTSPARQLParserState();
 
   final public ASTQuery CompilationUnit() throws ParseException {

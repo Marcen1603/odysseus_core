@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredicates{
 
 

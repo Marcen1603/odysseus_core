@@ -35,6 +35,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FreqCycleBuilder extends AbstractOperatorBuilder {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3275461733597525578L;
 	private final IntegerParameter numbers = new IntegerParameter("NUM",
 			REQUIREMENT.MANDATORY);
 

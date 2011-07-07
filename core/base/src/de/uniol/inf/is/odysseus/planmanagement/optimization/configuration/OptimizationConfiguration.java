@@ -24,8 +24,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
  * @author Tobias Witt
  *
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class OptimizationConfiguration extends Configuration<IOptimizationSetting<?>> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2407355981276802762L;
+
 	public OptimizationConfiguration(IOptimizationSetting<?>... entries) {
 		super(entries);
 	}

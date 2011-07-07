@@ -31,10 +31,10 @@ public class SPARQL implements IQueryParser{
 	 * have been detected during the last call
 	 * of parse(String).
 	 */
-	private ArrayList<String> brokerNames;
-
-	private User user;
-	private IDataDictionary dd;
+//	private ArrayList<String> brokerNames;
+//
+//	private User user;
+//	private IDataDictionary dd;
 
 	public static synchronized IQueryParser getInstance() {
 		if (instance == null) {
@@ -51,8 +51,8 @@ public class SPARQL implements IQueryParser{
 	@Override
 	public synchronized List<IQuery> parse(String query, User user, IDataDictionary dd)
 			throws QueryParseException {
-		this.user= user;
-		this.dd = dd;
+//		this.user= user;
+//		this.dd = dd;
 		try{
 			return parse(new StringReader(query), user, dd);
 		}catch(QueryParseException e){
@@ -61,13 +61,14 @@ public class SPARQL implements IQueryParser{
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public synchronized List<IQuery> parse(Reader reader, User user, IDataDictionary dd)
 			throws QueryParseException {
 		TestClient.main(null);
 		
-		this.user = user;
-		this.dd = dd;
+//		this.user = user;
+//		this.dd = dd;
 		try {
 			if (parser == null) {
 				parser = new SPARQLParser(reader);

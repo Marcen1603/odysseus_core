@@ -109,7 +109,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 
 	@Override
 	public BenchmarkPO<R> clone() {
-		return new BenchmarkPO(this);
+		return new BenchmarkPO<R>(this);
 	}
 
 	@Override

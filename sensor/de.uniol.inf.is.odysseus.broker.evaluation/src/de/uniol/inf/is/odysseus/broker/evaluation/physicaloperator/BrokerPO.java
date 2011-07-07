@@ -124,7 +124,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		this.initTSMin();
 	}
 	
-	private boolean firstElem = true;
+//	private boolean firstElem = true;
 	private void initTSMin(){
 //		List<PhysicalSubscription<ISource<? extends T>>> sources = this.getSubscribedToSource();
 //		int writePortCounter = 0;

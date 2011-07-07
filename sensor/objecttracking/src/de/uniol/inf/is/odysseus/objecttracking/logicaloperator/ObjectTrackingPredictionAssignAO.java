@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-@SuppressWarnings({"unchecked","unused"})
+@SuppressWarnings({"rawtypes","unchecked","unused"})
 public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
 
 	/**

@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Frequent
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.frequent
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.kdds.frequent.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,

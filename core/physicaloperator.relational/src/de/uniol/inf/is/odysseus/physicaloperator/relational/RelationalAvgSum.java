@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSum;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class RelationalAvgSum extends AvgSum<RelationalTuple<?>, RelationalTuple<?>>{
 
 	private int pos;

@@ -27,6 +27,11 @@ public class ExecutionConfiguration extends Configuration<IExecutionSetting<?>> 
 
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -381716411535330966L;
+
+	/**
 	 * Creates a new ExecutionConfiguration based on {@link IExecutionSetting} entries.
 	 * 
 	 * @param entries

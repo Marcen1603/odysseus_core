@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TMetadataObjectRelationalCreationPORule extends AbstractTransformationRule<ISource>{
 
 	@Override

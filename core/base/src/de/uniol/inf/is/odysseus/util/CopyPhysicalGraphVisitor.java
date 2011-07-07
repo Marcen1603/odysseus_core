@@ -63,6 +63,7 @@ public class CopyPhysicalGraphVisitor<T extends IPhysicalOperator> implements IG
 		
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public T getResult() {
 		// copy the logical plan

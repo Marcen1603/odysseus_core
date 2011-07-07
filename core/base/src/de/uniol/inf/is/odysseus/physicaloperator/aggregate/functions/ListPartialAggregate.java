@@ -47,8 +47,8 @@ public class ListPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 	
 	@Override
-	public ElementPartialAggregate clone(){
-		return new ElementPartialAggregate(this);
+	public ElementPartialAggregate<T> clone(){
+		return new ElementPartialAggregate<T>(this);
 	}
 	
 }

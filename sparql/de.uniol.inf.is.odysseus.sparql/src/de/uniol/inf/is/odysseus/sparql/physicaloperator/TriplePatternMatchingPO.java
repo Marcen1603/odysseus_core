@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
  * @author André Bolles <andre.bolles@uni-oldenburg.de>
  * 
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractPipe<RelationalTuple<M>, RelationalTuple<M>>{
 
 	private Triple queryTriple;

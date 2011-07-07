@@ -51,11 +51,11 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
 	private boolean hasGrouping;
 	
-	private User user;
+//	private User user;
 	private IDataDictionary dd;
 
 	public CreateAggregationVisitor(User user, IDataDictionary dd){
-		this.user = user;
+//		this.user = user;
 		this.dd = dd;
 	}
 	

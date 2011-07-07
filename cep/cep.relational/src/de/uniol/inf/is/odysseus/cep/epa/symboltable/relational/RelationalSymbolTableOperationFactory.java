@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.cep.epa.symboltable.relational;
 
 import java.util.HashMap;
+
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggreg
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAvgSum;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalCount;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMinMax;
-
+@SuppressWarnings({"rawtypes","unchecked"})
 public class RelationalSymbolTableOperationFactory implements
 		ISymbolTableOperationFactory {
 	Map<String, IAggregateFunction> cache = new HashMap<String, IAggregateFunction>();

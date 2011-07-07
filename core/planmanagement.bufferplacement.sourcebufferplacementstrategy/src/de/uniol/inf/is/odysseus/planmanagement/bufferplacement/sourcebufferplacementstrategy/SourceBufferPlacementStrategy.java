@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplac
 
 import java.util.Collection;
 
+
 /**
  * Places buffers before metadata creation po
  */
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SourceBufferPlacementStrategy extends AbstractBufferPlacementStrategy{
 	         
 	

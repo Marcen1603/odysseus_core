@@ -56,7 +56,7 @@ public class CopyPhysicalPlanVisitor implements
 		this.root = null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void ascendAction(IPhysicalOperator to) {
 		ISource<?> source = (ISource<?>) this.last.pop();

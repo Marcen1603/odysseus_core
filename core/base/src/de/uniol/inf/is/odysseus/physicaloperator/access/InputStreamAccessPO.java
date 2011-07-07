@@ -100,6 +100,7 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 	}
 	
 	@Override
+	@SuppressWarnings({"rawtypes","unchecked"})
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof InputStreamAccessPO)) {
 			return false;

@@ -33,6 +33,7 @@ import java.util.HashMap;
 public class Configuration<T extends ISetting<?>> extends
 		ValueChangeHandler<T> {
 
+	private static final long serialVersionUID = -5351315888852198597L;
 	/**
 	 * Map of entries which are stored.
 	 */

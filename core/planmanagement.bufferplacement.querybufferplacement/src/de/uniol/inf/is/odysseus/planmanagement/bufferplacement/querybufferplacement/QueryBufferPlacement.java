@@ -45,7 +45,7 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 		return "Query Buffer Placement";
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes","unchecked"})
 	protected void placeBuffer(IBuffer buffer, ISource<?> source) {
 		
 		getLogger().debug("Place Buffer "+buffer+" sink "+source );

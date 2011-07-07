@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
  * @param <T>
  * @param <M>
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class PunctuationPO<T extends IMetaAttributeContainer<M>, M extends ILatency & IProbability & ITimeInterval> extends AbstractPipe<T, T>{
 
 	private int punctuationElemCount;

@@ -320,6 +320,7 @@ public class CSVPrinter implements SimulatorOutputPrinter {
 	 *            the agent whose information we want to add
 	 * @return the line we generate
 	 */
+	@SuppressWarnings("unused")
 	private String addInfoFields(final Agent agent) {
 		String line = new String();
 
@@ -341,6 +342,7 @@ public class CSVPrinter implements SimulatorOutputPrinter {
 	 *            the agent whose information we want to add
 	 * @return the line we generate
 	 */
+	@SuppressWarnings("unused")
 	private String addOverlayInfo(final Agent agent) {
 		String line = new String();
 		for (Overlay overlay : world.getOverlays().values()) {

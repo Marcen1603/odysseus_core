@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.Query;
  * @author Jonas Jacobi, Marco Grawunder
  *
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class StandardBufferPlacementStrategy 
 	   extends	AbstractBufferPlacementStrategy {
  

@@ -33,6 +33,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class CycleBuilder extends AbstractOperatorBuilder{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 314346721819581320L;
 	private final IntegerParameter numbers = new IntegerParameter("NUM",
 			REQUIREMENT.MANDATORY);
 	

@@ -35,12 +35,12 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class CreateTypeVisitor extends AbstractDefaultVisitor {
 
 	String name;
-	private User caller;
+//	private User caller;
 	private IDataDictionary dd;
 	SDFAttributeList attributes;
 
 	public CreateTypeVisitor(User user, IDataDictionary dd) {
-		this.caller = user;
+//		this.caller = user;
 		this.dd = dd;
 	}
 	

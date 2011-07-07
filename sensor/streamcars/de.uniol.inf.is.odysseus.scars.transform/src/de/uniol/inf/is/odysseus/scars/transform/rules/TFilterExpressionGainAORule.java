@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.scars.operator.filter.po.FilterExpressionGainPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class TFilterExpressionGainAORule extends AbstractTransformationRule<FilterExpressionGainAO> {
 
 	@Override

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.Polygon;
 
 public class Activator implements BundleActivator {
 
-	private IFunction[] functions = new IFunction[] { new DolToEur(),
+	private IFunction<?>[] functions = new IFunction[] { new DolToEur(),
 			new Now(), new Distance(), new Polygon() };
 
 	/*
@@ -59,7 +59,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		for (IFunction function : functions) {
+		for (IFunction<?> function : functions) {
 			MEP.unregisterFunction(function.getSymbol());
 		}
 	}

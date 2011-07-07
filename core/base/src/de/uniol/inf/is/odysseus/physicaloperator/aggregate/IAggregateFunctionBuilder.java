@@ -2,9 +2,10 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate;
 
 import java.util.Collection;
 
+
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-
+@SuppressWarnings({"rawtypes","unchecked"})
 public interface IAggregateFunctionBuilder {
 
 	String getDatamodel();

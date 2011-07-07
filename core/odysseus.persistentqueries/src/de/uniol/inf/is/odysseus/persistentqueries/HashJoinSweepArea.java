@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
  * @author Andre Bolles
  *
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple<? extends ITimeInterval>> {
 
 	private LinkedMultiHashMap<RelationalTuple<? extends ITimeInterval>, Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>> elements;

@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 
 	@Override

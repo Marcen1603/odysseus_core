@@ -112,6 +112,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
  * @author Andr� Bolles
  *
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	private ArrayList<String> brokerNames;

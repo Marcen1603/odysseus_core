@@ -73,6 +73,7 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public void writeData(ByteBuffer buffer, Object data) {
 		ArrayList values = (ArrayList)data;
 		buffer.putInt(values.size());

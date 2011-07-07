@@ -59,6 +59,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @author André Bolles
  * 
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 
 	@Override
@@ -128,8 +129,8 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 							.createNotPredicate(orPred);
 					solutions.put(notPred, solution);
 				} else if (solutions.entrySet().size() > 2) {
-					Iterator<Entry<IPredicate<RelationalTuple<?>>, ISolution>> iter = solutions
-							.entrySet().iterator();
+//					Iterator<Entry<IPredicate<RelationalTuple<?>>, ISolution>> iter = solutions
+//							.entrySet().iterator();
 
 					ArrayList<IPredicate<RelationalTuple<?>>> listOfPreds = new ArrayList<IPredicate<RelationalTuple<?>>>();
 					for (Entry<IPredicate<RelationalTuple<?>>, ISolution> entry : solutions

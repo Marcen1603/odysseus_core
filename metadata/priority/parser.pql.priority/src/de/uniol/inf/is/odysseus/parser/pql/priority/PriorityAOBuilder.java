@@ -24,6 +24,10 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class PriorityAOBuilder extends AbstractOperatorBuilder {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 419422892661388845L;
 	// DirectParameter<Long> defaultPriority = new
 	// DirectParameter<Long>("DEFAULT", REQUIREMENT.OPTIONAL);
 	private PredicateParameter prioritize = new PredicateParameter(

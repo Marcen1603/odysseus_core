@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.scars.operator.prediction.po.PredictionAssignPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class TPredictionAssignPORule extends AbstractTransformationRule<PredictionAssignAO>{
 
 	@Override

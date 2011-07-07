@@ -21,8 +21,6 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CreateSDFAttributeParameter extends
 		AbstractParameter<SDFAttribute> {
-
-
 	private static final long serialVersionUID = -544787040358885000L;
 
 	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement) {

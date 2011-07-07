@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement.domain.impl;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;

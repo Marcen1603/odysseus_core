@@ -18,6 +18,10 @@ import de.uniol.inf.is.odysseus.metadata.ILatency;
 
 public class Latency implements ILatency{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3355802503979937479L;
 	private long lstart;
 	private long lend;
 	

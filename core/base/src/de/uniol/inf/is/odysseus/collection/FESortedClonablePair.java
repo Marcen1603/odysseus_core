@@ -33,6 +33,7 @@ public class FESortedClonablePair<E1 extends IClone,E2 extends IClone> extends C
 		super(feSortedPair,deepClone);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public int compareTo(FESortedClonablePair<E1, E2> o) {
 		Comparable<E1> comparableE1 = (Comparable<E1>) this.getE1();

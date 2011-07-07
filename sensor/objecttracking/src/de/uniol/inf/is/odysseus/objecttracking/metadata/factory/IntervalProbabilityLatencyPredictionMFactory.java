@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"rawtypes","unchecked"})
 /**
  * This class generates a new IntervalProbabilityLatencyPrediction object.
  * It fills latencyStart and the covariance. The start timestamp must be

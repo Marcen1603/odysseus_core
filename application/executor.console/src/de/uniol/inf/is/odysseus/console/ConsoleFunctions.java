@@ -79,7 +79,7 @@ public class ConsoleFunctions {
 		}		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void printPlanMetadata(ISink sink) {
 		System.out.println("Metadata for Operator: " + sink);
 		for (String type : sink.getProvidedMonitoringData()) {

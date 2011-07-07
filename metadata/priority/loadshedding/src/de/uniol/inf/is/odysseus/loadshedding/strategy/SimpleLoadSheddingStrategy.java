@@ -41,7 +41,7 @@ public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
 		return 1/result;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes","unchecked"})
 	@Override
 	public void activateLoadShedding(double percentToRemove, List<DirectLoadSheddingBuffer<?>> shedders) {
 		// Moeglichst einfach: ignoriere prozentuale Anzahl+Gewichtung und aktiviere einfach erst einmal

@@ -35,6 +35,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BrokerAOBuilder extends AbstractOperatorBuilder {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7883674211458228844L;
 	IParameter<String> nameAttribute = new StringParameter("NAME",
 			REQUIREMENT.MANDATORY);
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(

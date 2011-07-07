@@ -80,6 +80,7 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 	}
 	
 	@Override
+	@SuppressWarnings({"rawtypes","unchecked"})
 	public boolean equals(Object other){
 		if(!(other instanceof OrRangePredicate)){
 			return false;

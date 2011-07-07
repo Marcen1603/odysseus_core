@@ -145,7 +145,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  * @author Andre Bolles
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor {
 
 	private User user;
@@ -1190,7 +1190,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
-		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data).get(0);
+		//AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data).get(0);
 
 		// get name and lookup operator
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
@@ -1214,6 +1214,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return data;
 	}
 
+	@SuppressWarnings("unused")
 	private HashMap<String, String> buildKeyMap(ASTKeyValueList list) {
 		HashMap<String, String> params = new HashMap<String, String>();
 		if (list != null) {

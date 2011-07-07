@@ -56,6 +56,7 @@ import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
  * @author Tobias Witt
  * 
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 	private Logger logger;

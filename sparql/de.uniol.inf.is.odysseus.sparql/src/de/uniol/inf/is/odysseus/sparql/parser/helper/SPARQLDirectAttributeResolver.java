@@ -19,7 +19,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{
 
-    public SPARQLDirectAttributeResolver(SDFAttributeList schema) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3220948295115144771L;
+
+	public SPARQLDirectAttributeResolver(SDFAttributeList schema) {
         super(schema);
     }
 

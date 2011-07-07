@@ -24,7 +24,7 @@ import java.util.List;
  * @author Tobias Witt
  * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"rawtypes","unchecked"})
 public class PhysicalRestructHelper {
 	
 	public static void appendBinaryOperator(IPhysicalOperator binaryOp, IPhysicalOperator child1, IPhysicalOperator child2) {
