@@ -11,4 +11,4 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus,
  org.junit
-Service-Component: OSGI-INF/executor.xml
+Service-Component: OSGI-INF/executor.xml, OSGI-INF/SLAScheduler.xml

@@ -58,6 +58,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 		this.querySharing = Boolean.parseBoolean((String)properties.get("sla_querySharing"));
 		this.querySharingCostModelName = (String)properties.get("sla_querySharingCostModel");
 		super.setName(properties);
+		System.err.println("SLA Scheduler Factory activated!!!");
 	}
 
 	/**
