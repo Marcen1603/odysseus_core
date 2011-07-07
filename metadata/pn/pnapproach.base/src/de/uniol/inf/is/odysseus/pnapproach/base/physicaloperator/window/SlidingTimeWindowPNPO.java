@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
  * 
  * @author Andre Bolles
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SlidingTimeWindowPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> extends
 	AbstractNonBlockingWindowPNPO<M, T> {
 

@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.MapleResul
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class MapleFacade {
 
 	private static Logger logger = LoggerFactory.getLogger(MapleFacade.class);

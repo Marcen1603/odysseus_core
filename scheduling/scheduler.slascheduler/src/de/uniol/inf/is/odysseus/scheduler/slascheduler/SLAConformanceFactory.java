@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.sla.scope.Single;
  * @author Thomas Vogelgesang
  *
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SLAConformanceFactory {
 
 	/**

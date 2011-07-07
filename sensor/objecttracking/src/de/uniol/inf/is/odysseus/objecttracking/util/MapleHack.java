@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @author André Bolles
  *
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class MapleHack {
 
 	private static Logger logger = LoggerFactory.getLogger(MapleHack.class);

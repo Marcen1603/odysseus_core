@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 /**
  * @author Marco Grawunder
  */
-
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SplitPO<T> extends AbstractPipe<T, T> {
 
 	private List<IPredicate<? super T>> predicates;

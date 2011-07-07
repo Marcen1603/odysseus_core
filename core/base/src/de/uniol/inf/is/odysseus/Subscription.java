@@ -92,6 +92,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

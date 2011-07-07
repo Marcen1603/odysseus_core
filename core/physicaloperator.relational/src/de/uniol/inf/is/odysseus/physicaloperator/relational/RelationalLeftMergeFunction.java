@@ -79,7 +79,7 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
 	public void init(){
 	}
 	
-	public RelationalLeftMergeFunction clone(){
-		return new RelationalLeftMergeFunction(this);
+	public RelationalLeftMergeFunction<M> clone(){
+		return new RelationalLeftMergeFunction<M>(this);
 	}
 }

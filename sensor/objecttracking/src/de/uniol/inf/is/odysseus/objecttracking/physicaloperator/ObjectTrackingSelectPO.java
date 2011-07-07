@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey & IApplicationTime> extends AbstractPipe<T, T> {
 
 	private Map<IPredicate<? super T>, IRangePredicate> rangePredicates;

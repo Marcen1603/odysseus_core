@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  *
  */
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class LinearProbabilityPredictionFunction<M extends IProbability>
 			extends AbstractPredictionFunction<MVRelationalTuple<M>, M>
 			implements IProbabilityPredictionFunction<MVRelationalTuple<M>, M>{

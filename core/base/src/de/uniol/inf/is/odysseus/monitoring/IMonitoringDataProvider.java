@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.monitoring;
 
 import java.util.Collection;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public interface IMonitoringDataProvider {
 	public Collection<String> getProvidedMonitoringData();
 

@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.sparql.transform.rules.TTriplePatternMatchingRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SPARQLRuleProvider implements ITransformRuleProvider {
 
 	@Override

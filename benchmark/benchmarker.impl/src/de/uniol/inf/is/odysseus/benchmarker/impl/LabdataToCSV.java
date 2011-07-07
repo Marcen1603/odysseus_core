@@ -24,7 +24,7 @@ import java.io.ObjectInputStream;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class LabdataToCSV {
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
 		if (args.length != 2) {
 			System.out

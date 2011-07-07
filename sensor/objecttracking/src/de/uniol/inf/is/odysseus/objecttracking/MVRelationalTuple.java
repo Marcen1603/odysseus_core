@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Andre Bolles
  * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T> implements Serializable {
 
 	/**

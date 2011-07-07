@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.scars.operator.bouncer.po.TemporaryDataBouncerPO
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TTemporaryDataBouncerAORule extends AbstractTransformationRule<TemporaryDataBouncerAO>{
 
 	@Override

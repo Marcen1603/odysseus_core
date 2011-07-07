@@ -87,7 +87,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 	@Override
 	public RelationalMapPO<T> clone() {
-		return new RelationalMapPO(this);
+		return new RelationalMapPO<T>(this);
 	}
 	
 	@Override
@@ -96,6 +96,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	}
 	
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof RelationalMapPO)) {
 			return false;

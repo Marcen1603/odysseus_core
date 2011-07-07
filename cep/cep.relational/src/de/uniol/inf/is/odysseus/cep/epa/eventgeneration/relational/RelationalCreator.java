@@ -34,6 +34,7 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public RelationalTuple<? extends ITimeInterval> createComplexEvent(OutputScheme outputscheme,
 			MatchingTrace<R> matchingTrace, SymbolTable symTab, PointInTime timestamp) {
 //		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();

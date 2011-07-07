@@ -281,7 +281,7 @@ class TupleHandler extends ClientHandler {
 		super(s, stream, limit, inputFile, cachedValues, accelerationFactor);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public void run() {
 		System.out.println("|->Connection from " + s.getRemoteSocketAddress());
@@ -349,7 +349,7 @@ class RawHandler extends ClientHandler {
 		// TODO Auto-generated constructor stub
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public void run() {
 		System.out.println("|->Connection from " + s.getRemoteSocketAddress());
@@ -543,6 +543,7 @@ class CSVHandler extends ClientHandler {
 				// wait for the next element for this.periodLength nanoseconds
 				long expectedTime = lastTime + this.periodLength;
 				while (expectedTime > System.nanoTime()) {
+					@SuppressWarnings("unused")
 					int m = 0;
 					m = 1;
 				}

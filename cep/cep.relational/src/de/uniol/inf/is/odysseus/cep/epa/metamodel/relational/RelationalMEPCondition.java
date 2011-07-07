@@ -25,6 +25,7 @@ public class RelationalMEPCondition extends MEPCondition {
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public void setValue(CepVariable varName, Object newValue) {
 		super.setValue(varName,((RelationalTuple)newValue).getAttribute(0));
 	}

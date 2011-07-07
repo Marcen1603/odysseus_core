@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TUpdateEvaluationAORule extends AbstractTransformationRule<UpdateEvaluationAO> {
 
 	@Override

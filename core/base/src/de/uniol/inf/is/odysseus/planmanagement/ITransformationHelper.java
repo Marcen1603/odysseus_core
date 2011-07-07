@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public interface ITransformationHelper {
 	
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, IPipe physical);

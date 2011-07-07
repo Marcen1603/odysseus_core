@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * 
  * @author Jonas Jacobi
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class QuantificationPredicate extends
 		AbstractPredicate<RelationalTuple<?>> {
 

@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Andre Bolles
  * @deprecated Not used any more
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 		AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>> {
 

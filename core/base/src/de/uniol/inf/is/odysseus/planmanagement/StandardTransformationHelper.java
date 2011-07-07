@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.ITransformationHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class StandardTransformationHelper implements ITransformationHelper{
 	@Override
 	public Collection<ILogicalOperator> replace(

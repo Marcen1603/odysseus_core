@@ -35,6 +35,7 @@ public class TSlidingPeriodicWindowTIPORule extends
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public void execute(WindowAO windowAO,
 			TransformationConfiguration transformConfig) {
 		SlidingPeriodicWindowTIPO windowPO = new SlidingPeriodicWindowTIPO(

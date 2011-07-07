@@ -63,7 +63,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 //	}
 
 	private JProgressBar adminPeerProgress;
-	private JButton close;
+//	private JButton close;
 	private JButton doQuery;
 	private JLabel header;
 	private JPanel jPanel1;
@@ -73,7 +73,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	private JLabel makeQuery;
 	private JTextArea query;
 	private JPanel queryPanel;
-	private JLabel querysLabel;
+//	private JLabel querysLabel;
 	private JLabel sourcesLabel;
 	AbstractThinPeer thinPeer;
 

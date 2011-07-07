@@ -34,6 +34,7 @@ public class TMetricAORule extends AbstractTransformationRule<MetricMeasureAO> {
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public void execute(MetricMeasureAO metricMeasureAO, TransformationConfiguration transformConfig) {
 		LoggerSystem.printlog(Accuracy.DEBUG, "Transform MetricMeasureAO"); 
 		MetricMeasurePO<?> metricMeasurePO = new MetricMeasurePO(metricMeasureAO.getOnAttribute());

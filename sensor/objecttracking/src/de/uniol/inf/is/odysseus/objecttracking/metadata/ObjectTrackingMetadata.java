@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IProbability, ILatency, IApplicationTime, ITimeInterval{
     
     private static final long serialVersionUID = 1L;

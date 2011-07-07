@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  * @author abolles
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterval & IProbability & IApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
 //
 //	SDFAttributeList leftSchema;

@@ -209,6 +209,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public boolean isContainedIn(Object o) {
 		if (!(o instanceof RelationalPredicate)) {
 			return false;

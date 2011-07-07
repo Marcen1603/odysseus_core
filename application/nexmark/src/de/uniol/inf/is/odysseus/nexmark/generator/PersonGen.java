@@ -49,7 +49,7 @@ package de.uniol.inf.is.odysseus.nexmark.generator;
 import java.nio.CharBuffer;
 import java.util.Random;
 import java.util.Vector;
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 class PersonGen {
 	
 	

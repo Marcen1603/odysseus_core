@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ListPartial
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.Nest;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class RelationalNest extends Nest<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
 	private int[] restrictList;

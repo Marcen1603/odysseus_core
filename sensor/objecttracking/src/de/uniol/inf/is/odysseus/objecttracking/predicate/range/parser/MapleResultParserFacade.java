@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.visi
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class MapleResultParserFacade {
 
 	public MapleResultParser parser;

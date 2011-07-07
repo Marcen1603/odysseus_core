@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.interval.transform.window;
 
 import java.util.Collection;
 
+
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingTimeWindowTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TSlidingTimeWindowTIPORule extends
 		AbstractTransformationRule<WindowAO> {
 

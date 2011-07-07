@@ -52,7 +52,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @param <T>
  *            Datentyp
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPredictionFunctionKey & IApplicationTime, T extends MVRelationalTuple<K>>
 		extends AbstractPipe<T, T> {
 

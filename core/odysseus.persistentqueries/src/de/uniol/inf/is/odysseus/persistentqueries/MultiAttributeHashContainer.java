@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.persistentqueries;
 
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class MultiAttributeHashContainer {
 
 	/**

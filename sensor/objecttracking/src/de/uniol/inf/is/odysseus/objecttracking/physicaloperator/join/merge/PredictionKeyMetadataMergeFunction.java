@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
  * @author Andre Bolles
  * 
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class PredictionKeyMetadataMergeFunction<M extends IPredictionFunctionKey<IPredicate>>
 		implements IInlineMetadataMergeFunction<M> {
 

@@ -219,6 +219,7 @@ public class StateMachineInstance<R> {
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

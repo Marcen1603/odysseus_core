@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SymbolTable<T> {
 
 	/**

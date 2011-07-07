@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
  * @param <T>
  *            Datentyp
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredictionFunction, T extends MVRelationalTuple<K>>
 		extends AbstractPipe<T, T> {
 

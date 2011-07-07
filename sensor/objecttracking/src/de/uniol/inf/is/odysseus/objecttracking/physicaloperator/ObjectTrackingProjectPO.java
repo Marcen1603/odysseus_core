@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  * @param <T>
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey & ILatency> extends AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>>{
 
 	private final String LOGGER_NAME = "ObjectTrackingProjectPO";

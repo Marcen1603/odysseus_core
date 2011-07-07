@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author André Bolles
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class RelationalRangePredicate<M extends IApplicationTime> extends AbstractRangePredicate<RelationalTuple<M>>{
 
 	private static final long serialVersionUID = 1222104352250883947L;

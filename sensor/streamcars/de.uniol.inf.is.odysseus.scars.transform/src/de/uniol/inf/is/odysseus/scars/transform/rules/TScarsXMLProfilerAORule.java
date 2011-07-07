@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TScarsXMLProfilerAORule extends AbstractTransformationRule<XMLProfilerAO>{
 
 	@Override

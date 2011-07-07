@@ -51,7 +51,7 @@ public class StaticValueMonitoringData<T> implements IMonitoringData<T> {
 
 	@Override
 	public StaticValueMonitoringData<T> clone() {
-		return new StaticValueMonitoringData(this);
+		return new StaticValueMonitoringData<T>(this);
 	}
 	
 	@Override

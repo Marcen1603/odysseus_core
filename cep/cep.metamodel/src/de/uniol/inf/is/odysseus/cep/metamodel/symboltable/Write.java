@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.Abstrac
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ElementPartialAggregate;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class Write<R> extends AbstractAggregateFunction<R, R> {
 	
 	private static Write instance;

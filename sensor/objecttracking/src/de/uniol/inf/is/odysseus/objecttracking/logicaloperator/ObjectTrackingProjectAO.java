@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 /**
  * @author Andre Bolles
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingProjectAO extends ProjectAO {
 	private static final long serialVersionUID = 5487345119018834806L;
 

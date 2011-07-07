@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 
 public class SameDefaultRootStrategy implements IDefaultRootStrategy {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public IPhysicalOperator connectDefaultRootToSource(
 			ISink<?> defaultRoot, IPhysicalOperator source) {

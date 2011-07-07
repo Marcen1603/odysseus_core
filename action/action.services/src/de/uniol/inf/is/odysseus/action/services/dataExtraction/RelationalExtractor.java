@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class RelationalExtractor implements IAttributeExtractor {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public Object extractAttribute(Object identifier, Object datastreamElement) throws DataextractionException {
 		Object value = null;
@@ -46,7 +46,7 @@ public class RelationalExtractor implements IAttributeExtractor {
 		return "relational";
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public Object extractAttribute(Object attributeIdentifier, Object element,
 			SDFAttributeList schema) throws DataextractionException {
