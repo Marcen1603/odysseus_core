@@ -52,8 +52,6 @@ public class ComplexPredicateHelper {
 		}
 	}
 
-	
-	@SuppressWarnings("unchecked")
 	public static List<IPredicate> splitPredicate(
 			IPredicate predicate) {
 		LinkedList<IPredicate> result = new LinkedList<IPredicate>();
