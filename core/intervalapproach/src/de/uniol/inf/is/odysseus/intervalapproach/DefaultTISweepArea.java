@@ -157,6 +157,25 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		}
 		return retval.iterator();
 	}
+	
+	public Iterator<T> extractElementsStartingEquals(PointInTime validity) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (elements) {
+			Iterator<T> li = elements.iterator();
+			while (li.hasNext()) {
+				T s_hat = li.next();
+				// Alle Elemente entfernen, die nicht mehr verschnitten werden
+				// k�nnen (also davor liegen)
+				if (s_hat.getMetadata().getStart().equals(validity)) {
+					retval.add(s_hat);
+					li.remove();
+				} else {
+					break;
+				}
+			}
+		}
+		return retval.iterator();
+	}
 
 	/**
 	 * @return the min start timestamp of all elements currently in the sweep
