@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.collection.FESortedClonablePair;
-import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IAggregateFunctionBuilder;
@@ -103,7 +102,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 	
 	@Override
 	public Class<?> getConditionClass() {	
-		return AggregateAO.class;
+		return AggregatePO.class;
 	}
 
 }
