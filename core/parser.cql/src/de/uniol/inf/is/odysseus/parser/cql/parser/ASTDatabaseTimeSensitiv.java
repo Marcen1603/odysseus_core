@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTDatabaseTimeSensitiv extends SimpleNode {
   public ASTDatabaseTimeSensitiv(int id) {
     super(id);

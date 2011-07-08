@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTInsertIntoStatement extends SimpleNode {
   public ASTInsertIntoStatement(int id) {
     super(id);

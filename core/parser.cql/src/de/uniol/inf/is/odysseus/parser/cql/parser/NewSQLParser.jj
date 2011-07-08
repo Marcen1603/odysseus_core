@@ -2208,7 +2208,7 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.setUnbounded(true);  }/*@bgen(jjtree)*/
+/*@egen*/  {    jjtn000.setUnbounded(true);    jjtn000.setType(WindowType.UNBOUNDED);  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

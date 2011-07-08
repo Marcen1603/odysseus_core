@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTIdentifierList extends SimpleNode {
   public ASTIdentifierList(int id) {
     super(id);

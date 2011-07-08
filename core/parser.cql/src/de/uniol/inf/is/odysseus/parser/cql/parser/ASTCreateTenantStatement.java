@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTCreateTenantStatement extends SimpleNode {
   public ASTCreateTenantStatement(int id) {
     super(id);

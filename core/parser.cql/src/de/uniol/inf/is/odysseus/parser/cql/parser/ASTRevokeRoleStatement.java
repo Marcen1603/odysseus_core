@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTRevokeRoleStatement extends SimpleNode {
   public ASTRevokeRoleStatement(int id) {
     super(id);

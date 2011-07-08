@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTDropViewStatement extends SimpleNode {
   public ASTDropViewStatement(int id) {
     super(id);

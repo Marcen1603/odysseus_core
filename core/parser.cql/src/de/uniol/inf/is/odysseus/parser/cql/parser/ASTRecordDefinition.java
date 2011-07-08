@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTRecordDefinition extends SimpleNode {
   public ASTRecordDefinition(int id) {
     super(id);

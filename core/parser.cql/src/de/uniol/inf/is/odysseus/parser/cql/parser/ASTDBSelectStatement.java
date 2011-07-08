@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTDBSelectStatement extends SimpleNode {
   public ASTDBSelectStatement(int id) {
     super(id);

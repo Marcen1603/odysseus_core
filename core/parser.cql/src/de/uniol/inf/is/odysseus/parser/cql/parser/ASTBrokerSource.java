@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTBrokerSource extends SimpleNode {
   public ASTBrokerSource(int id) {
     super(id);

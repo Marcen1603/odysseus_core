@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTCreateRoleStatement extends SimpleNode {
   public ASTCreateRoleStatement(int id) {
     super(id);

@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTDatabaseOptions extends SimpleNode {
   public ASTDatabaseOptions(int id) {
     super(id);

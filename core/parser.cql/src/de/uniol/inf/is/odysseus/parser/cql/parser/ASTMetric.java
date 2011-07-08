@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTMetric extends SimpleNode {
   public ASTMetric(int id) {
     super(id);

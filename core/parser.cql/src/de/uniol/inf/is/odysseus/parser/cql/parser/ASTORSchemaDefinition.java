@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTORSchemaDefinition extends SimpleNode {
   public ASTORSchemaDefinition(int id) {
     super(id);

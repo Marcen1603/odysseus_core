@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTPercentileConstraint extends SimpleNode {
   public ASTPercentileConstraint(int id) {
     super(id);

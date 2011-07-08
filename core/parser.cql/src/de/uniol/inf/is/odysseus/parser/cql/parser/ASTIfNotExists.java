@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTIfNotExists extends SimpleNode {
   public ASTIfNotExists(int id) {
     super(id);

@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTListDefinition extends SimpleNode {
   public ASTListDefinition(int id) {
     super(id);

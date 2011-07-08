@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
 /** Token Manager. */
+@SuppressWarnings("all")
 public class NewSQLParserTokenManager implements NewSQLParserConstants
 {
 

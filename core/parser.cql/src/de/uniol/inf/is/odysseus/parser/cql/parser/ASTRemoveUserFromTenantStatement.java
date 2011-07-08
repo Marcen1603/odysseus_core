@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTRemoveUserFromTenantStatement extends SimpleNode {
   public ASTRemoveUserFromTenantStatement(int id) {
     super(id);

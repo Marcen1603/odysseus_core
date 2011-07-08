@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTCreateType extends SimpleNode {
   public ASTCreateType(int id) {
     super(id);
