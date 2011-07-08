@@ -34,6 +34,7 @@ public class RelationalAggregateFunctionBuilder implements
 		names.add("MIN");
 		names.add("MAX");
 		names.add("NEST");
+		names.add("STDDEV");
 		names.add("BEAN");
 		names.add("SCRIPT");
 	}
