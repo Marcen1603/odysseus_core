@@ -117,9 +117,6 @@ public class SLARegistry implements IPlanModificationListener {
 			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), query.getSLA());
 			data.setCostFunction(costFunction);
 			
-			// starvation freedom and conformance placment need still partial plan
-			IPartialPlan plan = this.scheduler.getPartialPlan(query);
-			
 			IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
 					buildStarvationFreedom(this.scheduler.getStarvationFreedom(),
 							data, query);
