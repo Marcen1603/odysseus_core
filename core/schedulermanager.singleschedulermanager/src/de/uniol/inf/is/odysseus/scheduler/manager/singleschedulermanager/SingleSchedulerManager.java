@@ -146,6 +146,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		Set<String> schedulers = getScheduler();
 		Set<String> strats = getSchedulingStrategy();
 
+		IScheduler lastScheduler = activeScheduler;
+		
 		// Test if this scheduler is loaded
 		if (!schedulers.contains(schedulerToSet)) {
 			logger.debug(schedulerToSet + " not loaded (now)");
@@ -182,6 +184,11 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 			e.printStackTrace();
 		}
 
+		if (lastScheduler.isRunning()){
+			lastScheduler.stopScheduling();
+			activeScheduler.startScheduling();
+		}
+		
 		// refresh the scheduling
 		if (scheduleInfos != null) {
 			try {
