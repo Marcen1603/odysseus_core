@@ -154,7 +154,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	public Object visit(ASTDetectionMethodSigmaRule node, Object data) {
 		int value = (Integer) node.jjtGetChild(0).jjtAccept(this, data);		
 		AttributeOperator ao = (AttributeOperator) data;
-		return new SigmaRuleDetection(ao.getAttribute(), ao.operator.getOutputSchema(), value);
+		return new SigmaRuleDetection(ao.getAttribute(), value);
 	}
 
 	@Override

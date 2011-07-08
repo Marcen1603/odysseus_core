@@ -20,21 +20,20 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 /**
  * 
  * @author Dennis Geesen
- * Created at: 23.06.2011
+ * Created at: 08.07.2011
  */
-public class OutOfRangeDetection extends AbstractSimpleAggregateDetection{
-	
+public class SimpleDeviationDetection extends AbstractSimpleAggregateDetection{
+
+	private boolean inPercent;
 	private double abweichung;
-	private boolean inPercent;	
-	
-	
-	
-	public OutOfRangeDetection(String attributeName, double abweichung, boolean inPercent) {		
-		super(attributeName, new AggregateFunction("AVG"));
-		this.abweichung = abweichung;			
-		this.inPercent = inPercent;		
-	}	
-	
+
+	public SimpleDeviationDetection(String attributeName, double abweichung, boolean inPercent, AggregateFunction aggFunction) {
+		super(attributeName, aggFunction);
+		this.inPercent = inPercent;
+		this.abweichung = abweichung;
+	}
+
+	@Override
 	protected String buildPredicateStirng(){		
 		if(this.inPercent){
 			double percent = this.abweichung/100.0;
@@ -46,6 +45,5 @@ public class OutOfRangeDetection extends AbstractSimpleAggregateDetection{
 			p = p+" || "+getAttributeName()+"-"+this.abweichung+">"+getAggregationAttribute();		
 			return p;
 		}
-	}	
-
+	}
 }

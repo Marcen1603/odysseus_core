@@ -20,23 +20,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 /**
  * 
  * @author Dennis Geesen
- * Created at: 23.06.2011
+ * Created at: 08.07.2011
  */
-public class SigmaRuleDetection extends AbstractAggregateDetection{
+public class SampleStandardDeviation extends SimpleDeviationDetection{
 
-	private int sigma;
-	
-	public SigmaRuleDetection(String attributeName, int sigma) {
-		super(attributeName);
-		super.addAggregateFunction(new AggregateFunction("STDEV"));
-		super.addAggregateFunction(new AggregateFunction("AVG"));
-		this.sigma = sigma;
-	}
-
-	@Override
-	protected String buildPredicateStirng() {		
-		String p = "abs( ("+getAttributeName()+"- "+getAggregationAttribute(1)+")/"+getAggregationAttribute(0)+") > "+this.sigma;
-		return p;
+	public SampleStandardDeviation(String attributeName, double abweichung, boolean inPercent) {
+		super(attributeName, abweichung, inPercent, new AggregateFunction("STDEV"));		
 	}
 
 	
