@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
@@ -21,7 +23,7 @@ import de.uniol.inf.is.odysseus.sla.SLA;
  * 
  */
 public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
-		ISLAViolationEventDistributor {
+		ISLAViolationEventDistributor, IPlanModificationListener {
 	/**
 	 * listeners connected to the scheduler for broadcasting
 	 * {@link SLAViolationEvent}
@@ -335,5 +337,10 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		if (this.querySharing != null) {
 			this.querySharing.refreshEffortTable(this.plans);
 		}
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		this.registry.planModificationEvent(eventArgs);
 	}
 }

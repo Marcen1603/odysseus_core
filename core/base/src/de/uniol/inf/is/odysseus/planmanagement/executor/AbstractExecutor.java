@@ -59,7 +59,7 @@ import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
 /**
  * AbstractExecutor bietet eine abstrakte Implementierung der
- * Ausführungumgebung. Sie übernimmt die Aufgabe zum einbinden von OSGi-Services
+ * Ausfï¿½hrungumgebung. Sie ï¿½bernimmt die Aufgabe zum einbinden von OSGi-Services
  * innerhalb des Odysseus-Frameworks.
  * 
  * @author wolf
@@ -84,7 +84,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	protected IPlan plan;
 
 	/**
-	 * Der aktuell ausgeführte physische Plan
+	 * Der aktuell ausgefï¿½hrte physische Plan
 	 */
 	protected IExecutionPlan executionPlan;
 
@@ -104,7 +104,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	private ICompiler compiler;
 
 	/**
-	 * Konfiguration der Ausführungsumgebung
+	 * Konfiguration der Ausfï¿½hrungsumgebung
 	 */
 	protected ExecutionConfiguration configuration = new ExecutionConfiguration();
 	
@@ -114,19 +114,19 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting<?>>>();
 
 	/**
-	 * Alle Listener für Anfragebearbeitungs-Nachrichten
+	 * Alle Listener fï¿½r Anfragebearbeitungs-Nachrichten
 	 */
 	private List<IPlanModificationListener> planModificationListener = Collections
 			.synchronizedList(new ArrayList<IPlanModificationListener>());
 
 	/**
-	 * Alle Listener für Ausführungs-Nachrichten
+	 * Alle Listener fï¿½r Ausfï¿½hrungs-Nachrichten
 	 */
 	private List<IPlanExecutionListener> planExecutionListener = Collections
 			.synchronizedList(new ArrayList<IPlanExecutionListener>());
 
 	/**
-	 * Alle Listener für Fehler-Nachrichten
+	 * Alle Listener fï¿½r Fehler-Nachrichten
 	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
@@ -156,7 +156,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	// --------------------------------------------------------------------------------------
 
 	/**
-	 * Standard-Construktor. Initialisiert die Ausführungsumgebung.
+	 * Standard-Construktor. Initialisiert die Ausfï¿½hrungsumgebung.
 	 */
 	public AbstractExecutor() {
 		getLogger().trace("Create Executor.");
@@ -171,11 +171,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	/**
 	 * initializeIntern Innerhalb dieser Funktion kÃ¶nnen spezifische
 	 * Initialisierungen vorgenommen werden. Dies wird von initialize
-	 * aufgerufen. Hier müssen ein Plan und Ausführungsplan-Objekt erstellt
+	 * aufgerufen. Hier mï¿½ssen ein Plan und Ausfï¿½hrungsplan-Objekt erstellt
 	 * werden.
 	 * 
 	 * @param configuration
-	 *            Konfiguration der Ausführungsumgebung.
+	 *            Konfiguration der Ausfï¿½hrungsumgebung.
 	 */
 	protected abstract void initializeIntern(
 			ExecutionConfiguration configuration);
@@ -258,6 +258,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	public void bindSchedulerManager(ISchedulerManager schedulerManager) {
 		this.schedulerManager = schedulerManager;
 		this.schedulerManager.addErrorEventListener(this);
+		if (this.schedulerManager instanceof IPlanModificationListener) {
+			this.addPlanModificationListener(
+					(IPlanModificationListener)this.schedulerManager);
+		}
+		
 		getLogger().debug("Schedulermanager bound " + schedulerManager);
 	}
 
@@ -327,7 +332,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	// Getter/Setter
 	// ----------------------------------------------------------------------------------------
 	/**
-	 * optimizer liefert der aktuelle Optimierer zurück. Sollte keiner vorhanden
+	 * optimizer liefert der aktuelle Optimierer zurï¿½ck. Sollte keiner vorhanden
 	 * sein, wird eine Exception geworfen.
 	 * 
 	 * @return aktueller Optimierer
@@ -372,11 +377,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	// ----------------------------------------------------------------------------------------
 
 	/**
-	 * setExecutionPlan setzt den aktuellen Ausführungsplan und aktualisiert das
+	 * setExecutionPlan setzt den aktuellen Ausfï¿½hrungsplan und aktualisiert das
 	 * Scheduling.
 	 * 
 	 * @param newExecutionPlan
-	 *            neuer Ausführungsplan
+	 *            neuer Ausfï¿½hrungsplan
 	 */
 	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
 

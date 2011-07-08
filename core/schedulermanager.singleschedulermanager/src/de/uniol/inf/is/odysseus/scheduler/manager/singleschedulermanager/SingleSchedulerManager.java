@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
@@ -44,7 +46,7 @@ import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
  * 
  */
 public class SingleSchedulerManager extends AbstractSchedulerManager implements
-		IInfoProvider {
+		IInfoProvider, IPlanModificationListener {
 
 	static Logger _logger = null;
 
@@ -365,6 +367,13 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 				logger.debug("Set Scheduler "+defaultScheduler+" "+defaultStrat);
 				setActiveScheduler(defaultScheduler, defaultStrat, null);
 			}
+		}
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		if (this.activeScheduler instanceof IPlanModificationListener) {
+			((IPlanModificationListener)this.activeScheduler).planModificationEvent(eventArgs);
 		}
 	}
 

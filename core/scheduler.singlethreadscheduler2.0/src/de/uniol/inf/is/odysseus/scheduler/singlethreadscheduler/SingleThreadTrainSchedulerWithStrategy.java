@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
@@ -8,7 +10,8 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author tommy
  *
  */
-public class SingleThreadTrainSchedulerWithStrategy extends SingleThreadSchedulerWithStrategy {
+public class SingleThreadTrainSchedulerWithStrategy extends SingleThreadSchedulerWithStrategy 
+		implements IPlanModificationListener {
 	
 	private volatile int trainSize = (int)OdysseusDefaults.getLong("scheduler_trainSize", 1);
 
@@ -35,6 +38,13 @@ public class SingleThreadTrainSchedulerWithStrategy extends SingleThreadSchedule
 
 	public int getTrainSize() {
 		return trainSize;
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		if (this.planScheduling instanceof IPlanModificationListener) {
+			((IPlanModificationListener)this.planScheduling).planModificationEvent(eventArgs);
+		}
 	}
 
 }

@@ -35,7 +35,18 @@ public class SLARegistry implements IPlanModificationListener {
 		super();
 		this.schedData = new HashMap<IQuery, SLARegistryInfo>();
 		/*
-		 * register to executor as IPlanModificationListener
+		 * the SLARegistry won't be registered as eventlistener to the executor
+		 * because the executor is now available here. instead the 
+		 * schedulermanager implements the listener interface and registers add
+		 * the abstract executor as listener. if the schedulermanager receives
+		 * an event and the scheduler implmenetes the listener interface it will
+		 * pass the event. all other classes between schedulermanager and 
+		 * slaregistry pass the event in the same way if they are listeners.
+		 * before passing the event it must be checked if teh receiver is a 
+		 * listener because only certain classes implement this interface. Due
+		 * to this only certain combination of schedulermanager/scheduler/
+		 * partialplanscheduling etc. could be used! otherwise the sla regsitry
+		 * won't be able to react on changing plans.
 		 */
 //		IExecutor executor = ExecutorHandler.getExecutor();
 //		if (executor != null) {
@@ -45,19 +56,19 @@ public class SLARegistry implements IPlanModificationListener {
 //					"Cannot register plan modification listener: executor not found");
 //		}
 		
-		final SLARegistry reg = this; 
-		
-		Thread t = new Thread(new Runnable() {
-			IExecutor executor;
-			@Override
-			public void run() {
-				while((executor = ExecutorHandler.getExecutor()) == null) {
-				}
-				System.err.println("GOT EXECUTOR");
-				executor.addPlanModificationListener(reg);
-			}
-		});
-		t.start();
+//		final SLARegistry reg = this; 
+//		
+//		Thread t = new Thread(new Runnable() {
+//			IExecutor executor;
+//			@Override
+//			public void run() {
+//				while((executor = ExecutorHandler.getExecutor()) == null) {
+//				}
+//				System.err.println("GOT EXECUTOR");
+//				executor.addPlanModificationListener(reg);
+//			}
+//		});
+//		t.start();
 	}
 
 	/**
