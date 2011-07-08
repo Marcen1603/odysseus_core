@@ -47,6 +47,11 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 			System.arraycopy(relationalTupleObjectHandler.dataHandler, 0, dataHandler, 0, l);
 		}
 	}
+	
+	@Override
+	public void clear() {
+		byteBuffer.clear();
+	}
 
 	private void createDataReader(SDFAttributeList schema) {
 		this.dataHandler = new IAtomicDataHandler[schema.size()];
