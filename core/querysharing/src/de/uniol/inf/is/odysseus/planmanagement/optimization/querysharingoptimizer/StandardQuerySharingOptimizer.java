@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimiz
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.ISubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
@@ -46,8 +47,8 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			return;
 		}
 
-		List<IPhysicalOperator> newOps = new ArrayList<IPhysicalOperator>();
-		List<IPhysicalOperator> ipos =  new ArrayList<IPhysicalOperator>();
+		List<IPhysicalOperator> newOps = new CopyOnWriteArrayList<IPhysicalOperator>();
+		List<IPhysicalOperator> ipos =  new CopyOnWriteArrayList<IPhysicalOperator>();
 
 		// Sammeln aller im alten Plan enthaltenen physischen Operatoren
 
