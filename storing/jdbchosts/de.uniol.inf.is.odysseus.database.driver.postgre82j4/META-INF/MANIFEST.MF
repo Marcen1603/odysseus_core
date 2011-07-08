@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Postgre Database Connection
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.driver.postgre82j4
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.host.postgre82j4;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.storing,
+Import-Package: de.uniol.inf.is.odysseus.storing;bundle-version="1.1.0",
  org.osgi.framework;version="1.3.0"
 Bundle-ClassPath: .,
  postgresql-8.2-511.jdbc4.jar
