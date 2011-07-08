@@ -75,6 +75,8 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 			try {
 				router.connectToServer(this, host, port);
 				opened = true;
+				sizeBuffer.clear();
+				handler.clear();
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
 			}
@@ -87,6 +89,8 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		if (opened){
 			try {
 				router.disconnectFromServer(this);
+				sizeBuffer.clear();
+				handler.clear();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
