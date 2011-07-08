@@ -23,6 +23,7 @@ public interface IObjectHandler<T> extends IClone {
 	public void put(ByteBuffer buffer) throws IOException;
 	public void put(ByteBuffer buffer, int size) throws IOException;
 	public void put(T object);
+	public void clear();
 	public ByteBuffer getByteBuffer();
 	public T create() throws IOException, ClassNotFoundException;
 }
