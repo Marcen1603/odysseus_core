@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
@@ -31,8 +30,9 @@ public class SLARegistry implements IPlanModificationListener {
 	/**
 	 * creates a new {@link SLARegistry} object
 	 */
-	public SLARegistry() {
+	public SLARegistry(SLAPartialPlanScheduling scheduler) {
 		super();
+		this.scheduler = scheduler;
 		this.schedData = new HashMap<IQuery, SLARegistryInfo>();
 		/*
 		 * the SLARegistry won't be registered as eventlistener to the executor

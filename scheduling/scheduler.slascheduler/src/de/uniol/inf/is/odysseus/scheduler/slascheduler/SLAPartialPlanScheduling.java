@@ -82,7 +82,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			String querySharingCostModelName) {
 		this.plans = new ArrayList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
-		this.registry = new SLARegistry();
+		this.registry = new SLARegistry(this);
 		this.starvationFreedom = starvationFreedomFuncName;
 		this.prioFunction = prio;
 		this.eventQueue = new LinkedList<SLAViolationEvent>();
