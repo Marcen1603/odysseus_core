@@ -55,6 +55,11 @@
             id="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
             name="Run Query">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.commands.CommentTextCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.CommentCommand"
+            name="Comment Text">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -95,6 +100,15 @@
             colorR="255"
             name="TransCfgs">
       </group>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="de.uniol.inf.is.odysseus.rcp.editor.text.CommentCommand"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+SHIFT+C">
+      </key>
    </extension>
 
 </plugin>
