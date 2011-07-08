@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Dennis Geesen Created at: 07.07.2011
  */
-public class StatefulDetectionSplitPO<Meta extends IMiningMetadata & ITimeInterval, Data  extends IMetaAttributeContainer<Meta>> extends AbstractDetectionSplitPO<Data, IBinaryDetection<Data>> {
+public class StatefulDetectionPO<Meta extends IMiningMetadata & ITimeInterval, Data  extends IMetaAttributeContainer<Meta>> extends AbstractDetectionPO<Data, IBinaryDetection<Data>> {
 	
 	//LEFT is data-port and RIGHT is aggregate-port
 	private static final int LEFT = 0;
@@ -44,11 +44,11 @@ public class StatefulDetectionSplitPO<Meta extends IMiningMetadata & ITimeInterv
 	private DefaultTISweepArea<Data> sweepAreaCheck = new DefaultTISweepArea<Data>();
 	private PointInTime totalMin = PointInTime.getZeroTime();
 
-	public StatefulDetectionSplitPO(List<IBinaryDetection<Data>> detections) {
+	public StatefulDetectionPO(List<IBinaryDetection<Data>> detections) {
 		super(detections);
 	}
 
-	public StatefulDetectionSplitPO(StatefulDetectionSplitPO<Meta, Data> detectionSplitPO) {
+	public StatefulDetectionPO(StatefulDetectionPO<Meta, Data> detectionSplitPO) {
 		super(detectionSplitPO.detections);
 	}
 
@@ -126,8 +126,8 @@ public class StatefulDetectionSplitPO<Meta extends IMiningMetadata & ITimeInterv
 	}
 	
 	@Override
-	public StatefulDetectionSplitPO<Meta, Data> clone() {
-		return new StatefulDetectionSplitPO<Meta, Data>(this);
+	public StatefulDetectionPO<Meta, Data> clone() {
+		return new StatefulDetectionPO<Meta, Data>(this);
 	}
 
 	@Override

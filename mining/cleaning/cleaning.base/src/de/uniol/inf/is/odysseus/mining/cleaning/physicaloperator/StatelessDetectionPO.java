@@ -22,13 +22,13 @@ import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.IUnaryDetect
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
-public class StatelessDetectionSplitPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>> extends AbstractDetectionSplitPO<T, IUnaryDetection<T>> {	
+public class StatelessDetectionPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>> extends AbstractDetectionPO<T, IUnaryDetection<T>> {	
 
-	public StatelessDetectionSplitPO(List<IUnaryDetection<T>> detections) {
+	public StatelessDetectionPO(List<IUnaryDetection<T>> detections) {
 		super(detections);
 	}
 
-	public StatelessDetectionSplitPO(StatelessDetectionSplitPO<T> detectionSplitPO) {
+	public StatelessDetectionPO(StatelessDetectionPO<T> detectionSplitPO) {
 		super(detectionSplitPO.detections);
 	}
 
@@ -50,8 +50,8 @@ public class StatelessDetectionSplitPO<T extends IMetaAttributeContainer<? exten
 	}	
 
 	@Override
-	public StatelessDetectionSplitPO<T> clone() {
-		return new StatelessDetectionSplitPO<T>(this);
+	public StatelessDetectionPO<T> clone() {
+		return new StatelessDetectionPO<T>(this);
 	}
 
 }

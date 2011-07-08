@@ -27,17 +27,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Dennis Geesen Created at: 06.07.2011
  */
-public abstract class AbstractDetectionSplitAO<T, D extends IDetection<T>> extends BinaryLogicalOp implements OutputSchemaSettable {
+public abstract class AbstractDetectionAO<T, D extends IDetection<T>> extends BinaryLogicalOp implements OutputSchemaSettable {
 
 	private static final long serialVersionUID = -2193273482190920976L;
 	private SDFAttributeList outputschema;
 	private List<D> detections = new ArrayList<D>();
 
-	public AbstractDetectionSplitAO() {
+	public AbstractDetectionAO() {
 
 	}
 
-	public AbstractDetectionSplitAO(AbstractDetectionSplitAO<T,D> detectionAO) {
+	public AbstractDetectionAO(AbstractDetectionAO<T,D> detectionAO) {
 		super(detectionAO);
 		this.outputschema = detectionAO.outputschema.clone();
 		this.detections = detectionAO.detections;

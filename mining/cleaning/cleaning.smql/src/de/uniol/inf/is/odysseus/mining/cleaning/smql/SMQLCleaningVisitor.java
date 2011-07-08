@@ -13,8 +13,8 @@ import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.IUnaryDetect
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.OutOfDomainDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.SimplePredicateDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.SimpleValueDetection;
-import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulDetectionSplitAO;
-import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessDetectionSplitAO;
+import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulDetectionAO;
+import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessDetectionAO;
 import de.uniol.inf.is.odysseus.mining.smql.ISMQLFeature;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethod;
@@ -90,7 +90,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	public Object visit(ASTDetectionMethodStateless node, Object data) {
 		AttributeOperator ao = (AttributeOperator) data;
 		ILogicalOperator topOp = ao.getOperator();		
-		StatelessDetectionSplitAO<RelationalTuple<?>> detectionAO = new StatelessDetectionSplitAO<RelationalTuple<?>>();
+		StatelessDetectionAO<RelationalTuple<?>> detectionAO = new StatelessDetectionAO<RelationalTuple<?>>();
 		detectionAO.setOutputSchema(topOp.getOutputSchema());
 		@SuppressWarnings("unchecked")
 		IUnaryDetection<RelationalTuple<?>> detection = (IUnaryDetection<RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
@@ -120,7 +120,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 		SDFAttribute aggAttribute = new SDFAttribute(aggFunction.getName()+"("+attributeName+")", SDFDatatype.DOUBLE);
 		aggregate.addAggregation(attribute, aggFunction, aggAttribute);		
 		//erstelle daten-seite				
-		StatefulDetectionSplitAO<RelationalTuple<?>> detectionAO = new StatefulDetectionSplitAO<RelationalTuple<?>>();
+		StatefulDetectionAO<RelationalTuple<?>> detectionAO = new StatefulDetectionAO<RelationalTuple<?>>();
 		detectionAO.setOutputSchema(topOp.getOutputSchema());
 		detectionAO.addDetection(detection);
 		

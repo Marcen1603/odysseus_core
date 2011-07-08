@@ -23,21 +23,21 @@ import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetect
  * @author Dennis Geesen
  * Created at: 07.07.2011
  */
-public class StatefulDetectionSplitAO<T> extends AbstractDetectionSplitAO<T, IBinaryDetection<T>> {
+public class StatefulDetectionAO<T> extends AbstractDetectionAO<T, IBinaryDetection<T>> {
 
 	private static final long serialVersionUID = -4219272869146519334L;
 
-	public StatefulDetectionSplitAO() {
+	public StatefulDetectionAO() {
 		super();
 	}
 	
-	public StatefulDetectionSplitAO(StatefulDetectionSplitAO<T> statefulDetectionSplitAO) {
+	public StatefulDetectionAO(StatefulDetectionAO<T> statefulDetectionSplitAO) {
 		super(statefulDetectionSplitAO);
 	}
 
 	@Override
-	public StatefulDetectionSplitAO<T> clone() {
-		return new StatefulDetectionSplitAO<T>(this);
+	public StatefulDetectionAO<T> clone() {
+		return new StatefulDetectionAO<T>(this);
 	}
 
 }

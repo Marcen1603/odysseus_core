@@ -29,11 +29,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
  * @author Dennis Geesen
  * Created at: 07.07.2011
  */
-public abstract class AbstractDetectionSplitPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>, D extends IDetection<T>> extends AbstractPipe<T, T> {
+public abstract class AbstractDetectionPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>, D extends IDetection<T>> extends AbstractPipe<T, T> {
 
 	protected List<D> detections;
 
-	public AbstractDetectionSplitPO(List<D> detections) {
+	public AbstractDetectionPO(List<D> detections) {
 		this.detections = detections;
 	}	
 
