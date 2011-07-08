@@ -14,12 +14,13 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-public class ListPartialAggregate<T> implements IPartialAggregate<T> {
+public class ListPartialAggregate<T> implements IPartialAggregate<T>, Iterable<T>{
 	
 	final List<T> elems;
 	
@@ -49,6 +50,15 @@ public class ListPartialAggregate<T> implements IPartialAggregate<T> {
 	@Override
 	public ElementPartialAggregate<T> clone(){
 		return new ElementPartialAggregate<T>(this);
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return elems.iterator();
+	}
+
+	public int size() {
+		return elems.size();
 	}
 	
 }

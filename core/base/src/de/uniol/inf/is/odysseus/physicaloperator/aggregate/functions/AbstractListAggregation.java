@@ -17,16 +17,25 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class Nest<R,W> extends AbstractAggregateFunction<R,W> {
+abstract public class AbstractListAggregation<R,W> extends AbstractAggregateFunction<R,W> {
 
-	protected Nest() {
-		super("NEST");
+	protected AbstractListAggregation(String name) {
+		super(name);
 	}
 		
 	@Override
 	public IPartialAggregate<R> init(R in) {
 		return new ListPartialAggregate<R>(in);
 	}
+	
+	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
+		ListPartialAggregate<R> list = (ListPartialAggregate<R>) p;
+		if (createNew){
+			list = new ListPartialAggregate<R>((ListPartialAggregate<R>)p);
+		}
+		list.addElem(toMerge);
+		return list;
+	};
 
 
 }

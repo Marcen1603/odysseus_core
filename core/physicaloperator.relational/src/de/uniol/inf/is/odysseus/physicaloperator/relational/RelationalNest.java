@@ -19,15 +19,16 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ListPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.Nest;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AbstractListAggregation;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class RelationalNest extends Nest<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
+public class RelationalNest extends AbstractListAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
 	private int[] restrictList;
 
 	public RelationalNest(int[] restrictList){
+		super("NEST");
 		this.restrictList = restrictList;
 	}
 	
