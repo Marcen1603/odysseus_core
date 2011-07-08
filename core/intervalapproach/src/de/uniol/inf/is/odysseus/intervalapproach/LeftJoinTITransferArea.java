@@ -19,7 +19,7 @@ public class LeftJoinTITransferArea <R extends IMetaAttributeContainer<? extends
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
 				W elem = this.outputQueue.peek();
-				while (elem != null
+				while (elem != null && elem.getMetadata() != null
 						&& elem.getMetadata().getStart()
 								.beforeOrEquals(minimum)) {
 					this.outputQueue.poll();

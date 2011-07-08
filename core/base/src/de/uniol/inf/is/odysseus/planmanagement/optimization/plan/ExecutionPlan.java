@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.ArrayList;
@@ -71,22 +71,24 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	private Set<IPhysicalOperator> roots = null;
 
-	public ExecutionPlan(){ 
+	public ExecutionPlan() {
 		partialPlans = new ArrayList<IPartialPlan>();
 		partialPlansNotToSchedule = new ArrayList<IPartialPlan>();
 		leafSources = new ArrayList<IIterableSource<?>>();
 	}
-	
-	public ExecutionPlan(ExecutionPlan otherPlan){
+
+	public ExecutionPlan(ExecutionPlan otherPlan) {
 		this.open = otherPlan.open;
-		this.leafSources = new ArrayList<IIterableSource<?>>(otherPlan.leafSources);
+		this.leafSources = new ArrayList<IIterableSource<?>>(
+				otherPlan.leafSources);
 		this.partialPlans = new ArrayList<IPartialPlan>(otherPlan.partialPlans);
-		this.partialPlansNotToSchedule = new ArrayList<IPartialPlan>(otherPlan.partialPlans);
-		if (otherPlan.roots != null){
+		this.partialPlansNotToSchedule = new ArrayList<IPartialPlan>(
+				otherPlan.partialPlans);
+		if (otherPlan.roots != null) {
 			this.roots = new HashSet<IPhysicalOperator>(otherPlan.roots);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -145,33 +147,34 @@ public class ExecutionPlan implements IExecutionPlan {
 		this.leafSources.addAll(leafSources);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
-	 * #open()
-	 */
-	@Override
-	public void open() throws OpenFailedException {
-		getLogger().debug("Calling Open on "+this);
-		if (!open) {
-			Set<IPhysicalOperator> roots = getRoots();
-			getLogger().debug("Calling Open for " + roots);
-			for (IPhysicalOperator root : roots) {
-				if (root.isSink()) {
-					((ISink<?>) root).open();
-				} else {
-					throw new IllegalArgumentException(
-							"Open() cannot be called on a source -->" + root);
-				}
-
-			}
-			open = true;
-		}else{
-			getLogger().warn("Open called on open plan "+this);
-		}
-
-	}
+	// Do not open the execution plan. Open each query on its own
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
+	// * #open()
+	// */
+	// @Override
+	// public void open() throws OpenFailedException {
+	// getLogger().debug("Calling Open on "+this);
+	// if (!open) {
+	// Set<IPhysicalOperator> roots = getRoots();
+	// getLogger().debug("Calling Open for " + roots);
+	// for (IPhysicalOperator root : roots) {
+	// if (root.isSink()) {
+	// ((ISink<?>) root).open();
+	// } else {
+	// throw new IllegalArgumentException(
+	// "Open() cannot be called on a source -->" + root);
+	// }
+	//
+	// }
+	// open = true;
+	// }else{
+	// getLogger().warn("Open called on open plan "+this);
+	// }
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -214,11 +217,11 @@ public class ExecutionPlan implements IExecutionPlan {
 		}
 		for (IPartialPlan partialPlan : this.partialPlansNotToSchedule) {
 			roots.addAll(partialPlan.getQueryRoots());
-		}		
+		}
 	}
-	
+
 	@Override
-	public IExecutionPlan clone(){
+	public IExecutionPlan clone() {
 		return new ExecutionPlan(this);
 	}
 

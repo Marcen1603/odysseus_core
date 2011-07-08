@@ -391,15 +391,8 @@ public class QueryView extends ViewPart implements
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
 				.getEventType())) {
 			addQuery((IQuery) eventArgs.getValue());
-		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs
-				.getEventType())) {
-			// tableViewer.refresh((IQuery) eventArgs.getValue());
-			refreshTable();
-		} else if (PlanModificationEventType.QUERY_START.equals(eventArgs
-				.getEventType())) {
-			// tableViewer.refresh((IQuery) eventArgs.getValue());
-			refreshTable();
 		}
+		refreshTable();
 	}
 
 	public void refreshTable() {
@@ -430,11 +423,8 @@ public class QueryView extends ViewPart implements
 	}
 
 	private String getQueryStatus(IQuery q) {
-		if (q.isActive())
-			if (q.isOpened())
-				return "Opened";
-			else
-				return "Active";
+		if (q.isOpened())
+			return "Running";
 		else
 			return "Inactive";
 	}

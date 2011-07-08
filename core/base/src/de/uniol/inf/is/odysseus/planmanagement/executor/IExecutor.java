@@ -157,6 +157,14 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 			IQueryBuildSetting... parameters)
 			throws PlanManagementException;
 	
+
+	/**
+	 * Start all queries that are currently not running
+	 * @param user
+	 * @return List of queries that could be started
+	 */
+	public List<IQuery> startAllClosedQueries(User user);
+	
 	public void addCompilerListener(ICompilerListener compilerListener);
 	
 	/**

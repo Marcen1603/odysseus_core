@@ -115,6 +115,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 			StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID,executor.getCurrentSchedulerID()+" ("+executor.getCurrentSchedulingStrategyID()+ ") "+(executor.isRunning()?" running ":" stopped "));
 			executor.getSchedulerManager().subscribeToAll(this);
 			executor.getSchedulerManager().getActiveScheduler().subscribeToAll(this);
+			// New: Start Scheduler at Query Start
+			executor.startExecution();
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}

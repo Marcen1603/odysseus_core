@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.planmanagement.query;
 
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
@@ -81,7 +82,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * The user who created this query
 	 */
 	private User user = null;
-	
+
 	/**
 	 * The Data Dictionary belonging to this query
 	 */
@@ -109,11 +110,6 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 */
 	private ILogicalOperator logicalPlan;
 
-	/**
-	 * Indicates if this query is active.
-	 */
-	private boolean active;
-
 	private boolean containsCycles = false;
 
 	/**
@@ -135,12 +131,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * SLA based penalty
 	 */
 	private double penalty;
-	
+
 	/**
-	 * Service level agreement of the query 
+	 * Service level agreement of the query
 	 */
 	private SLA sla;
-	
+
 	/**
 	 * Parameter for building this query.
 	 */
@@ -154,6 +150,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 
 	@SuppressWarnings("rawtypes")
 	public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();
+
+	private boolean opened = false;
 
 	public Query() {
 		this("", null, null, null);
@@ -216,7 +214,6 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			List<IPhysicalOperator> physicalPlan,
 			QueryBuildConfiguration parameters) {
 		this.id = idCounter++;
-		this.active = true;
 		this.parameters = parameters;
 		this.parserID = parserID;
 		this.logicalPlan = logicalPlan;
@@ -242,7 +239,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	public String getDebugInfo() {
 		String info = "";
 		info += "ID:" + this.id;
-		info += "Started:" + this.active;
+		info += "Started:" + this.isOpened();
 		info += "CompileLanguage:" + this.parserID;
 		info += "LogicalAlgebra:" + AppEnv.LINE_SEPARATOR + this.logicalPlan;
 		info += "PhysicalAlgebra:" + AppEnv.LINE_SEPARATOR + this.roots;
@@ -266,9 +263,10 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			@SuppressWarnings("rawtypes")
 			AbstractGraphWalker walker = new AbstractGraphWalker();
 			walker.prefixWalk(logicalPlan, visitor);
-		}else{
-			if (!logicalPlan.hasOwner()){
-				throw new IllegalArgumentException("LogicalPlan must have an owner "+logicalPlan);
+		} else {
+			if (!logicalPlan.hasOwner()) {
+				throw new IllegalArgumentException(
+						"LogicalPlan must have an owner " + logicalPlan);
 			}
 		}
 	}
@@ -461,66 +459,44 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 			getLogger().debug("Remove Ownership for " + physicalOperator);
 			physicalOperator.removeOwner(this);
-			// if (!physicalOperator.hasOwner()) {
-			// getLogger()
-			// .debug("No more owners. Closing " + physicalOperator);
-			// // physicalOperator.close();
-			// getLogger().error("ATTENTION: CLOSING CURRENT NOT IMPLEMENTED");
-			// if (physicalOperator.isSink()) {
-			// getLogger().debug(
-			// "Sink unsubscribe from all sources "
-			// + physicalOperator);
-			// ISink<?> sink = (ISink<?>) physicalOperator;
-			// sink.unsubscribeFromAllSources();
-			// }
-			// }
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.query.IQuery#start()
-	 */
 	@Override
-	public void start() {
-		// synchronized (this.physicalChilds) {
-		// for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-		// if (physicalOperator instanceof IIterableSource<?>) {
-		// ((IIterableSource<?>) physicalOperator)
-		// .activateRequest(this);
-		// }
-		// }
-		// }
-		this.active = true;
+	public void open() throws OpenFailedException {
+		for (IPhysicalOperator curRoot : getRoots()) {
+			// this also works for cyclic plans,
+			// since if an operator is already open, the
+			// following sources will not be called any more.
+			if (curRoot.isSink()) {
+				((ISink<?>) curRoot).open();
+			} else {
+				throw new IllegalArgumentException(
+						"Open cannot be called on a a source");
+			}
+		}
+		opened = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.query.IQuery#stop()
-	 */
 	@Override
-	public void stop() {
-		// synchronized (this.physicalChilds) {
-		// for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-		// if (physicalOperator instanceof IIterableSource<?>) {
-		// ((IIterableSource<?>) physicalOperator)
-		// .deactivateRequest(this);
-		// }
-		// }
-		// }
-		this.active = false;
+	public void close() {
+		for (IPhysicalOperator curRoot : getRoots()) {
+			// this also works for cyclic plans,
+			// since if an operator is already closed, the
+			// following sources will not be called any more.
+			if (curRoot.isSink()) {
+				((ISink<?>) curRoot).close();
+			} else {
+				throw new IllegalArgumentException(
+						"Close cannot be called on a a source");
+			}
+		}
+		opened = false;
 	}
 
 	@Override
 	public boolean isOpened() {
-		for (IPhysicalOperator o : getRoots()) {
-			if (!o.isOpen()) {
-				return false;
-			}
-		}
-		return true;
+		return opened;
 	}
 
 	/*
@@ -667,16 +643,6 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 		return this.id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.IOperatorControl#�sRunning()
-	 */
-	@Override
-	public boolean isActive() {
-		return this.active;
-	}
-
 	@Override
 	public String getParserId() {
 		return parserID;
@@ -701,12 +667,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	public User getUser() {
 		return user;
 	}
-	
+
 	@Override
 	public IDataDictionary getDataDictionary() {
 		return datadictionary;
 	}
-	
+
 	@Override
 	public void setDataDictionary(IDataDictionary dd) {
 		this.datadictionary = dd;
@@ -798,7 +764,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	public double getPenalty() {
 		return penalty;
 	}
-	
+
 	@Override
 	public void addPenalty(double penalty) {
 		this.penalty += penalty;
@@ -813,11 +779,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	public void setSLA(SLA sla) {
 		this.sla = sla;
 	}
-	
+
 	/**
-	 * returns a set of physical operators, that a query shares with the given 
+	 * returns a set of physical operators, that a query shares with the given
 	 * query. in fact this is the intersection of the physical operators of this
 	 * query with the given query
+	 * 
 	 * @param otherQuery
 	 * @return
 	 */
@@ -825,14 +792,15 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	public Set<IPhysicalOperator> getSharedOperators(IQuery otherQuery) {
 		Set<IPhysicalOperator> ops1 = this.getAllOperators();
 		Set<IPhysicalOperator> ops2 = this.getAllOperators();
-		
+
 		ops1.retainAll(ops2);
-		
+
 		return ops1;
 	}
-	
+
 	/**
 	 * returns a set of all operators used by the query
+	 * 
 	 * @return
 	 */
 	@Override
@@ -843,8 +811,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			ops.addAll(children);
 			ops.add(root);
 		}
-		
+
 		return ops;
 	}
-	
+
 }

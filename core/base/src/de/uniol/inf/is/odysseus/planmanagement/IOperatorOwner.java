@@ -26,20 +26,5 @@ public interface IOperatorOwner {
 	 * @return ID which identifies an owner. This ID should be unique.
 	 */
 	public int getID();
-	/**
-	 * Start scheduling of child operators.
-	 */
-	public void start();
 	
-	/**
-	 * Stop scheduling of child operators.
-	 */
-	public void stop();
-	
-	/**
-	 * Indicates if the child operators are scheduled.
-	 * 
-	 * @return TRUE: The child operators are scheduled. FALSE: else
-	 */
-	public boolean isActive();
 }

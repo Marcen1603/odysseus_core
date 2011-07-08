@@ -17,6 +17,14 @@
             name="QUERY">
       </PreParserKeyword>
       <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.AddQueryPreParserKeyword"
+            name="ADDQUERY">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ExecuteQueryPreParserKeyword"
+            name="RUNQUERY">
+      </PreParserKeyword>
+      <PreParserKeyword
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.CyclicQueryPreParserKeyword"
             name="CYCLICQUERY">
       </PreParserKeyword>
@@ -33,8 +41,8 @@
             name="BUFFERPLACEMENT">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.StartSchedulerPreParserKeyword"
-            name="STARTSCHEDULER">
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.StartAllClosedQueriesPreParserKeyword"
+            name="STARTQUERIES">
       </PreParserKeyword>
       <PreParserKeyword
             class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.SchedulerPreParserKeyword"

@@ -388,8 +388,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				// Init current execution plan with newExecutionPlan
 				this.executionPlan = newExecutionPlan.clone();
 				if (isRunning()) {
-					getLogger().info("Set execution plan. Open");
-					this.executionPlan.open();
+					getLogger().info("Set execution plan");
+					// Do not start query automatically anymore. Start each query on its own!
+					//this.executionPlan.open();
 				}
 				getLogger().info("Set execution plan. Refresh Scheduling");
 				getSchedulerManager().refreshScheduling(this);
@@ -469,10 +470,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		getLogger().debug(
 				"#PartialPlans: " + this.executionPlan.getPartialPlans().size());
 		try {
-			this.executionPlan.open();
-
-			firePlanExecutionEvent(new PlanExecutionEvent(this,
-					PlanExecutionEventType.EXECUTION_PREPARED));
+			// Dont start any query at scheduler start! Start each query on its own
+//			this.executionPlan.open();
+//
+//			firePlanExecutionEvent(new PlanExecutionEvent(this,
+//					PlanExecutionEventType.EXECUTION_PREPARED));
 
 			getSchedulerManager().startScheduling();
 		} catch (Exception e) {

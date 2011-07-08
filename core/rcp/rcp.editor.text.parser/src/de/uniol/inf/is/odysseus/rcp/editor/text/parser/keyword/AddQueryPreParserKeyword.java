@@ -14,17 +14,15 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
-public class ExecuteQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
+public class AddQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
 
 	// Query selbst ausführen...
 	@Override
@@ -34,11 +32,7 @@ public class ExecuteQueryPreParserKeyword extends AbstractQueryPreParserKeyword 
 		queryText = queryText.trim();
 
 		final List<IQueryBuildSetting<?>> cfg = ExecutorHandler.getExecutor().getQueryBuildConfiguration(transCfg);
-		Collection<IQuery> queries = ExecutorHandler.getExecutor().addQuery(queryText, parserID, caller, dd, cfg.toArray(new IQueryBuildSetting[0]) );
-		for (IQuery q:queries){
-			ExecutorHandler.getExecutor().startQuery(q.getID(), caller);
-		}
-		return queries;
+		return ExecutorHandler.getExecutor().addQuery(queryText, parserID, caller, dd, cfg.toArray(new IQueryBuildSetting[0]) );
 	}
 
 }

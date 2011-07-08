@@ -153,7 +153,7 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
             name="Collapse Sources View">
       </command>
-      <command
+<!--      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
             name="Start Scheduler">
@@ -163,6 +163,7 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.StopSchedulerCommand"
             name="Stop Scheduler">
       </command>
+-->
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"

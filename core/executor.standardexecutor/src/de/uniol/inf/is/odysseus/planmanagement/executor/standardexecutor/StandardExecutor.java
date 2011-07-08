@@ -1,23 +1,24 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.mep.functions.GetAbsoluteValue;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
@@ -202,8 +204,8 @@ public class StandardExecutor extends AbstractExecutor {
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private List<IQuery> createQueries(String queryStr, User user, IDataDictionary dd,
-			QueryBuildConfiguration parameters)
+	private List<IQuery> createQueries(String queryStr, User user,
+			IDataDictionary dd, QueryBuildConfiguration parameters)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
 		getLogger().debug("Translate Queries.");
@@ -251,13 +253,10 @@ public class StandardExecutor extends AbstractExecutor {
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			IExecutionPlan exep = getOptimizer().optimize(this,
-					newQueries, conf);
+			IExecutionPlan exep = getOptimizer().optimize(this, newQueries,
+					conf);
 
 			setExecutionPlan(exep);
-
-
-			
 
 			// store optimized queries
 
@@ -266,8 +265,8 @@ public class StandardExecutor extends AbstractExecutor {
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 			}
-			
-		}catch (Exception e){
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new QueryOptimizationException(e);
 		} finally {
@@ -278,22 +277,22 @@ public class StandardExecutor extends AbstractExecutor {
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
 	}
 
-//	/**
-//	 * Returns a ID list of the given queries.
-//	 * 
-//	 * @param newQueries
-//	 *            Queries for search.
-//	 * @return ID list of the given queries.
-//	 */
-//	private List<Integer> getQuerieIDs(List<IQuery> newQueries) {
-//		ArrayList<Integer> newIDs = new ArrayList<Integer>();
-//
-//		for (IQuery query : newQueries) {
-//			newIDs.add(query.getID());
-//		}
-//
-//		return newIDs;
-//	}
+	// /**
+	// * Returns a ID list of the given queries.
+	// *
+	// * @param newQueries
+	// * Queries for search.
+	// * @return ID list of the given queries.
+	// */
+	// private List<Integer> getQuerieIDs(List<IQuery> newQueries) {
+	// ArrayList<Integer> newIDs = new ArrayList<Integer>();
+	//
+	// for (IQuery query : newQueries) {
+	// newIDs.add(query.getID());
+	// }
+	//
+	// return newIDs;
+	// }
 
 	/**
 	 * Creates {@link QueryBuildConfiguration} of given
@@ -310,7 +309,7 @@ public class StandardExecutor extends AbstractExecutor {
 			IQueryBuildSetting... parameters) {
 		return validateBuildParameters(new QueryBuildConfiguration(parameters));
 	}
-	
+
 	private QueryBuildConfiguration validateBuildParameters(
 			QueryBuildConfiguration params) {
 		if (params.getTransformationConfiguration() == null) {
@@ -326,8 +325,9 @@ public class StandardExecutor extends AbstractExecutor {
 					getBufferPlacementStrategy(bufferPlacement.getName()));
 			params.set(bufferPlacement);
 		}
-		return params;		
+		return params;
 	}
+
 	/**
 	 * Get a {@link IBufferPlacementStrategy} by an ID.
 	 * {@link IBufferPlacementStrategy} services are managed by the optimization
@@ -361,9 +361,12 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .lang.String, java.lang.String, de.uniol.inf.is.odysseus.planmanagement
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
-	private Collection<IQuery> addQuery(String query, User user, IDataDictionary dd,
-			QueryBuildConfiguration parameters) throws PlanManagementException {
-		getLogger().info("Start adding Queries. " + query+ "for user "+user.getUsername());
+	private Collection<IQuery> addQuery(String query, User user,
+			IDataDictionary dd, QueryBuildConfiguration parameters)
+			throws PlanManagementException {
+		getLogger().info(
+				"Start adding Queries. " + query + "for user "
+						+ user.getUsername());
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
 		validateBuildParameters(parameters);
 		try {
@@ -376,8 +379,10 @@ public class StandardExecutor extends AbstractExecutor {
 					"Error adding Queries. Details: " + e.getMessage());
 			e.printStackTrace();
 			throw new QueryAddException(e);
-		}finally{
-			getLogger().info("Adding Queries. " + query+ "for user "+user.getUsername()+" done.");
+		} finally {
+			getLogger().info(
+					"Adding Queries. " + query + "for user "
+							+ user.getUsername() + " done.");
 		}
 	}
 
@@ -390,15 +395,18 @@ public class StandardExecutor extends AbstractExecutor {
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<IQuery> addQuery(String query, User user, IDataDictionary dd,
-			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
+	public Collection<IQuery> addQuery(String query, User user,
+			IDataDictionary dd,
+			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
+			throws PlanManagementException {
 		return addQuery(query, user, dd, validateBuildParameters(parameters));
 	}
 
 	// TODO: REMOVE SYNCHRONIZED!
 	@Override
-	public synchronized Collection<IQuery> addQuery(String query, String parserID,
-			User user, IDataDictionary dd, @SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
+	public synchronized Collection<IQuery> addQuery(String query,
+			String parserID, User user, IDataDictionary dd,
+			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
 			throws PlanManagementException {
 		QueryBuildConfiguration conf = new QueryBuildConfiguration(parameters);
 		conf.set(new ParameterParserID(parserID));
@@ -415,19 +423,21 @@ public class StandardExecutor extends AbstractExecutor {
 	 * <?>[])
 	 */
 	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, User user, IDataDictionary dd,
-			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
+	public IQuery addQuery(ILogicalOperator logicalPlan, User user,
+			IDataDictionary dd,
+			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
+			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
 		try {
 			QueryBuildConfiguration params = validateBuildParameters(parameters);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
-			Query query = new Query(logicalPlan, params);
+			IQuery query = new Query(logicalPlan, params);
 			query.setUser(user);
 			query.setDataDictionary(dd);
 			query.addReoptimizeListener(this);
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
-	        AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
+			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
 			newQueries.add(query);
 			addQueries(newQueries, new OptimizationConfiguration(parameters));
 			return query;
@@ -449,13 +459,14 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	@Override
 	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, User user,
-			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters) throws PlanManagementException {
+			@SuppressWarnings("rawtypes") IQueryBuildSetting... parameters)
+			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorAction.ADD_QUERY);
 		try {
 			QueryBuildConfiguration params = validateBuildParameters(parameters);
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
-			Query query = new Query(physicalPlan, params);
+			IQuery query = new Query(physicalPlan, params);
 			query.setUser(user);
 			// TODO: Korrekt so oder braucht man immer ein DD?
 			query.setDataDictionary(null);
@@ -485,11 +496,12 @@ public class StandardExecutor extends AbstractExecutor {
 	 * (int)
 	 */
 	@Override
-	public void removeQuery(int queryID, User caller) throws PlanManagementException {
+	public void removeQuery(int queryID, User caller)
+			throws PlanManagementException {
 		getLogger().info("Start remove a query (ID: " + queryID + ").");
 
-		Query queryToRemove = (Query) this.plan.getQuery(queryID);
-		validateUserRight(queryToRemove, caller, ExecutorAction.REMOVE_QUERY);		
+		IQuery queryToRemove = this.plan.getQuery(queryID);
+		validateUserRight(queryToRemove, caller, ExecutorAction.REMOVE_QUERY);
 		if (queryToRemove != null && getOptimizer() != null) {
 			try {
 				getLogger().info(
@@ -499,13 +511,12 @@ public class StandardExecutor extends AbstractExecutor {
 				getLogger().info(
 						"Try to aquire executionPlanLock (Currently "
 								+ executionPlanLock.getHoldCount() + "). done");
-				setExecutionPlan(getOptimizer().beforeQueryRemove(
-						this, queryToRemove, this.executionPlan));
+				setExecutionPlan(getOptimizer().beforeQueryRemove(this,
+						queryToRemove, this.executionPlan));
 				stopQuery(queryToRemove.getID(), caller);
 				getLogger().info("Removing Query " + queryToRemove.getID());
 				this.plan.removeQuery(queryToRemove.getID());
 				getLogger().info("Removing Ownership " + queryToRemove.getID());
-				queryToRemove.stop();
 				queryToRemove.removeOwnerschip();
 				WrapperPlanFactory.removeClosedSources();
 				getLogger().debug(
@@ -522,7 +533,7 @@ public class StandardExecutor extends AbstractExecutor {
 			}
 		}
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -532,9 +543,9 @@ public class StandardExecutor extends AbstractExecutor {
 	 */
 	@Override
 	public void startQuery(int queryID, User caller) {
-		Query queryToStart = (Query) this.plan.getQuery(queryID);
-		validateUserRight(queryToStart,caller, ExecutorAction.START_QUERY);
-		if (queryToStart.isActive()) {
+		IQuery queryToStart = this.plan.getQuery(queryID);
+		validateUserRight(queryToStart, caller, ExecutorAction.START_QUERY);
+		if (queryToStart.isOpened()) {
 			getLogger().info("Query (ID: " + queryID + ") is already started.");
 			return;
 		}
@@ -544,58 +555,74 @@ public class StandardExecutor extends AbstractExecutor {
 			this.executionPlanLock.lock();
 			setExecutionPlan(getOptimizer().beforeQueryStart(queryToStart,
 					this.executionPlan));
-			queryToStart.start();
 			if (isRunning()) {
-				for (IPhysicalOperator curRoot : queryToStart.getRoots()) {
-					// this also works for cyclic plans,
-					// since if an operator is already open, the
-					// following sources will not be called any more.
-					if (curRoot.isSink()) {
-						((ISink<?>) curRoot).open();
-					} else {
-						throw new IllegalArgumentException(
-								"Open cannot be called on a a source");
-					}
-				}
+				queryToStart.open();
+				getLogger().debug("Query " + queryID + " started.");
+				firePlanModificationEvent(new QueryPlanModificationEvent(this,
+						PlanModificationEventType.QUERY_START, queryToStart));
+			} else {
+				throw new RuntimeException(
+						"Scheduler not running. Query cannot be started");
 			}
-			getLogger().debug("Query " + queryID + " started.");
-			firePlanModificationEvent(new QueryPlanModificationEvent(this,
-					PlanModificationEventType.QUERY_START, queryToStart));
 		} catch (Exception e) {
 			getLogger().warn(
 					"Query not started. An Error during optimizing occurd (ID: "
 							+ queryID + ").");
-			return;
+			throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: "
+				+ queryID + ").",e);
 		} finally {
 			this.executionPlanLock.unlock();
 		}
 	}
 
-	private void validateUserRight(Query query, User caller,
+	@Override
+	public List<IQuery> startAllClosedQueries(User user) {
+		List<IQuery> started = new LinkedList<IQuery>();
+		for (IQuery q:plan.getQueries()){
+			if (!q.isOpened()){
+				try{
+					startQuery(q.getID(), user);
+					started.add(q);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+		return started;
+	}
+	
+	private void validateUserRight(IQuery query, User caller,
 			ExecutorAction executorAction) {
 		if (!(
-		// User has right 
-		AccessControl.hasPermission(executorAction,  "Query "+query.getID(), caller)||
+		// User has right
+		AccessControl.hasPermission(executorAction, "Query " + query.getID(),
+				caller) ||
 		// User is owner
-		query.getUser().equals(caller)||
+				query.getUser().equals(caller) ||
 		// User has higher right
 		AccessControl.hasPermission(
-				ExecutorAction.hasSuperAction(executorAction), ExecutorAction.alias, caller))){
-			throw new HasNoPermissionException("No Right to execute "+executorAction+" on Query "+query.getID()+" for "+caller.getUsername());
+				ExecutorAction.hasSuperAction(executorAction),
+				ExecutorAction.alias, caller))) {
+			throw new HasNoPermissionException("No Right to execute "
+					+ executorAction + " on Query " + query.getID() + " for "
+					+ caller.getUsername());
 		}
-		
+
 	}
 
-	private void validateUserRight(User caller,	ExecutorAction executorAction) {
+	private void validateUserRight(User caller, ExecutorAction executorAction) {
 		if (!(
-		// User has right 
-		AccessControl.hasPermission(executorAction,  ExecutorAction.alias, caller)||
+		// User has right
+		AccessControl.hasPermission(executorAction, ExecutorAction.alias,
+				caller) ||
 		// User has higher right
 		AccessControl.hasPermission(
-				ExecutorAction.hasSuperAction(executorAction), ExecutorAction.alias, caller))){
-			throw new HasNoPermissionException("No Right to execute "+executorAction+" for "+caller.getUsername());
+				ExecutorAction.hasSuperAction(executorAction),
+				ExecutorAction.alias, caller))) {
+			throw new HasNoPermissionException("No Right to execute "
+					+ executorAction + " for " + caller.getUsername());
 		}
-		
+
 	}
 
 	/*
@@ -610,29 +637,21 @@ public class StandardExecutor extends AbstractExecutor {
 
 		getLogger().info("Stop a query (ID: " + queryID + ").");
 
-		Query queryToStop = (Query) this.plan.getQuery(queryID);
-		validateUserRight(queryToStop,caller, ExecutorAction.STOP_QUERY);
+		IQuery queryToStop = this.plan.getQuery(queryID);
+		validateUserRight(queryToStop, caller, ExecutorAction.STOP_QUERY);
 		try {
 			this.executionPlanLock.lock();
 			setExecutionPlan(getOptimizer().beforeQueryStop(queryToStop,
 					this.executionPlan));
-			queryToStop.stop();
 			if (isRunning()) {
-				for (IPhysicalOperator curRoot : queryToStop.getRoots()) {
-					// this also works for cyclic plans,
-					// since if an operator is already open, the
-					// following sources will not be called any more.
-					if (curRoot.isSink()) {
-						((ISink<?>) curRoot).close();
-					} else {
-						throw new IllegalArgumentException(
-								"Close cannot be called on a a source");
-					}
-				}
+				queryToStop.close();
+				getLogger().debug("Query " + queryID + " stopped.");
+				firePlanModificationEvent(new QueryPlanModificationEvent(this,
+						PlanModificationEventType.QUERY_STOP, queryToStop));
+			}else{
+				throw new RuntimeException(
+				"Scheduler not running. Query cannot be stopped");
 			}
-			getLogger().debug("Query " + queryID + " stopped.");
-			firePlanModificationEvent(new QueryPlanModificationEvent(this,
-					PlanModificationEventType.QUERY_STOP, queryToStop));
 		} catch (Exception e) {
 			getLogger().warn(
 					"Query not stopped. An Error while optimizing occurd (ID: "
@@ -657,7 +676,7 @@ public class StandardExecutor extends AbstractExecutor {
 				"Reoptimize request by query (ID: " + sender.getID() + ").");
 
 		try {
-			if (sender instanceof Query) {
+			if (sender instanceof IQuery) {
 				this.executionPlanLock.lock();
 				setExecutionPlan(getOptimizer().reoptimize(this,
 						(IQuery) sender, this.executionPlan));
@@ -881,8 +900,7 @@ public class StandardExecutor extends AbstractExecutor {
 		// synchronize the process
 		this.executionPlanLock.lock();
 		try {
-			setExecutionPlan(this.getOptimizer().beforeQueryMigration(
-					this,
+			setExecutionPlan(this.getOptimizer().beforeQueryMigration(this,
 					new OptimizationConfiguration(ParameterDoRewrite.FALSE)));
 		} finally {
 			// end synchronize of the process
@@ -898,11 +916,11 @@ public class StandardExecutor extends AbstractExecutor {
 
 	@Override
 	public Collection<String> getQueryBuildConfigurationNames() {
-		return queryBuildConfigs.keySet();	
+		return queryBuildConfigs.keySet();
 	}
 
 	@Override
 	public List<IQueryBuildSetting<?>> getQueryBuildConfiguration(String name) {
-		return queryBuildConfigs.get(name);	
+		return queryBuildConfigs.get(name);
 	}
 }

@@ -191,7 +191,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			return;
 		}
 		if (!isOpen()) {
-			getLogger().error("process next called on non open operator "+this);
+			getLogger().error("process next called on non opened operator "+this+" with "+object+" from "+port);
 			return;
 		}
 		otherport = port ^ 1;
@@ -257,6 +257,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		this.transferFunction.init(this);
 	}
 
+	@Override
+	protected void process_close() {
+		areas[0].clear();
+		areas[1].clear();
+	}
+	
 	@Override
 	protected void process_done() {
 		System.out.println("JoinTIPO(" + this.hashCode() + ").processDone()");

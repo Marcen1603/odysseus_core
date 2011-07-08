@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester;
@@ -115,14 +116,6 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	public void setBuildParameter(QueryBuildConfiguration parameter);
 
 	/**
-	 * Indicates if this query will be scheduled or not.
-	 * 
-	 * @return TRUE: This query will be scheduled. FALSE: else
-	 */
-	@Override
-	public boolean isActive();
-
-	/**
 	 * The method must be called for each of the physical roots of a query.
 	 * Usually there is only one, but sometimes like in object tracking, there
 	 * maybe more than one root in a query.
@@ -169,22 +162,6 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	 *         execution of this query.
 	 */
 	public List<IPhysicalOperator> getPhysicalChilds();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.IOperatorControl#stop()
-	 */
-	@Override
-	public void stop();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.IOperatorControl#start()
-	 */
-	@Override
-	public void start();
 
 	public boolean isOpened();
 
@@ -238,5 +215,9 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	public Set<IPhysicalOperator> getSharedOperators(IQuery otherQuery);
 	
 	public Set<IPhysicalOperator> getAllOperators();
+
+	void open() throws OpenFailedException;
+
+	void close();
 	
 }
