@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	
-	public void applyQuerySharing(List<IQuery> plan, List<IQuery> newQueries, OptimizationConfiguration conf) {
+	public synchronized void applyQuerySharing(List<IQuery> plan, List<IQuery> newQueries, OptimizationConfiguration conf) {
 		boolean restructuringAllowed;
 		if(conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
 			restructuringAllowed = conf.getParameterAllowRestructuringOfCurrentPlan().getValue();
