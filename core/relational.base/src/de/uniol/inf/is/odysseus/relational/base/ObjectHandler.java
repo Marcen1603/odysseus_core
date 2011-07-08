@@ -40,6 +40,11 @@ public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMeta
 		super();
 		this.dataHandler = objectHandler.dataHandler;
 	}
+	
+	@Override
+	public void clear() {
+		byteBuffer.clear();
+	}
 
 //	private void createDataReader(SDFAttributeList schema) {
 //		this.dataHandler = new IAtomicDataHandler[schema.size()];
