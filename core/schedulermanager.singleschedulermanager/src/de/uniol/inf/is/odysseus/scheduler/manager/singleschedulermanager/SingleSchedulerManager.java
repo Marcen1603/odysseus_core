@@ -184,7 +184,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 			e.printStackTrace();
 		}
 
-		if (lastScheduler.isRunning()){
+		if (lastScheduler != null && lastScheduler.isRunning()){
 			lastScheduler.stopScheduling();
 			activeScheduler.startScheduling();
 		}
