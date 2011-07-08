@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.ISubscribable;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
@@ -22,11 +23,11 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public ISubscribable<?, ?> placeSLAConformance(IPartialPlan plan,
+	public ISubscribable<?, ?> placeSLAConformance(IQuery query,
 			ISLAConformance conformance) {
 		// it is expected that there is only one query per partial plan!
 		// TODO: generalization: 1 pp == n queries?
-		IPhysicalOperator root = plan.getQueryRoots().get(0);
+		IPhysicalOperator root = query.getRoots().get(0);
 		if (root instanceof ISource) {
 			ISubscribable subscribable = (ISubscribable) root;
 			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());

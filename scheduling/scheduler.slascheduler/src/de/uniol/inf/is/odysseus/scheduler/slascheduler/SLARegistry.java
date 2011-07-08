@@ -122,11 +122,11 @@ public class SLARegistry implements IPlanModificationListener {
 			
 			IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
 					buildStarvationFreedom(this.scheduler.getStarvationFreedom(),
-							data, plan);
+							data, query);
 			data.setStarvationFreedom(starvationFreedom);
 			
 			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(query.getSLA());
-			data.setConnectionPoint(placement.placeSLAConformance(plan, conformance));
+			data.setConnectionPoint(placement.placeSLAConformance(query, conformance));
 			
 			this.addSchedData(query, data);
 			

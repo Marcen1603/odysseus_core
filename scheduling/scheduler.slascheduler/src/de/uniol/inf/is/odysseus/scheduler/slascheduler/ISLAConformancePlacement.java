@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import de.uniol.inf.is.odysseus.ISubscribable;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 /**
  * Interface for placing/removing sla conformance operators in/from partial
@@ -22,7 +23,7 @@ public interface ISLAConformancePlacement {
 	 * @return the operator from the given plan, where the sla conformance
 	 *         operator is appended to
 	 */
-	public ISubscribable<?, ?> placeSLAConformance(IPartialPlan plan,
+	public ISubscribable<?, ?> placeSLAConformance(IQuery query,
 			ISLAConformance conformance);
 
 	/**
