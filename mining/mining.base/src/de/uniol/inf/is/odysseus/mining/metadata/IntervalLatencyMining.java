@@ -69,7 +69,16 @@ public class IntervalLatencyMining extends TimeInterval implements ILatency, IMi
 	
 	@Override
 	public String toString() {
-		return "( i= " + super.toString() + " ; " + " l=" + this.latency + ""
-				+ " ; p=" + this.mining + ")";
+		return "\t( INTERVALL= " + super.toString() + ";\t LATENCY=" + this.latency + ";\t MINING=" + this.mining + ")";
+	}
+
+	@Override
+	public boolean isDetected() {
+		return this.mining.isDetected();
+	}
+
+	@Override
+	public void setDetected(boolean detected) {
+		this.mining.setDetected(detected);		
 	}
 }

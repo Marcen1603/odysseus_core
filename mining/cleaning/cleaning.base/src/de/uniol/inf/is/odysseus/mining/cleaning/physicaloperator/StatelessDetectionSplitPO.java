@@ -17,11 +17,12 @@ package de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.mining.cleaning.detection.IDetection;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.IUnaryDetection;
+import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
-public class StatelessDetectionSplitPO<T> extends AbstractDetectionSplitPO<T, IUnaryDetection<T>> {	
+public class StatelessDetectionSplitPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>> extends AbstractDetectionSplitPO<T, IUnaryDetection<T>> {	
 
 	public StatelessDetectionSplitPO(List<IUnaryDetection<T>> detections) {
 		super(detections);
@@ -41,29 +42,12 @@ public class StatelessDetectionSplitPO<T> extends AbstractDetectionSplitPO<T, IU
 	
 	
 	protected void process_next_failed(T object, int port, IUnaryDetection<T> detection){
-		
-	}
-	
-	protected void process_next_passed(T object, int port){
-		
-	}
-	
-	@Override
-	protected void process_next(T object, int port) {
-		
-		for (IDetection<T> d : this.detections) {			
-			if (d.getPredicate().evaluate(object)) {				
-				// value is not ok -> mark for correction and transfer to other
-				// output		
-				object = markAsFailure(object);
-				transfer(object, 1);
-				return;
-			}
-		}
-		// here the element must be ok...
 		transfer(object, 0);
 	}
 	
+	protected void process_next_passed(T object, int port){
+		transfer(object, 0);
+	}	
 
 	@Override
 	public StatelessDetectionSplitPO<T> clone() {

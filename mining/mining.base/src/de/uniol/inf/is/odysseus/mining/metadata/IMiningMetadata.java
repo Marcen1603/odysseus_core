@@ -6,5 +6,7 @@ public interface IMiningMetadata extends IMetaAttribute{
 
 	public boolean isCorrected();
 	public void setCorrected(boolean corrected);
+	public boolean isDetected();
+	public void setDetected(boolean detected);
 		
 }

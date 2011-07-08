@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.transform;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulDetectionSplitAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatefulDetectionSplitPO;
+import de.uniol.inf.is.odysseus.mining.metadata.IMiningTimeIntervall;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Dennis Geesen
  * Created at: 07.07.2011
  */
-public class TStatefulDetectionSplitAORule extends AbstractTransformationRule<StatefulDetectionSplitAO<IMetaAttributeContainer<ITimeInterval>>> {
+public class TStatefulDetectionSplitAORule extends AbstractTransformationRule<StatefulDetectionSplitAO<IMetaAttributeContainer<IMiningTimeIntervall>>> {
 
 	@Override
 	public int getPriority() {	
@@ -37,8 +37,8 @@ public class TStatefulDetectionSplitAORule extends AbstractTransformationRule<St
 	}
 
 	@Override
-	public void execute(StatefulDetectionSplitAO<IMetaAttributeContainer<ITimeInterval>> detectAO, TransformationConfiguration config) {
-		StatefulDetectionSplitPO<IMetaAttributeContainer<ITimeInterval>> detectPO = new StatefulDetectionSplitPO<IMetaAttributeContainer<ITimeInterval>>(detectAO.getDetections());
+	public void execute(StatefulDetectionSplitAO<IMetaAttributeContainer<IMiningTimeIntervall>> detectAO, TransformationConfiguration config) {
+		StatefulDetectionSplitPO<IMiningTimeIntervall, IMetaAttributeContainer<IMiningTimeIntervall>> detectPO = new StatefulDetectionSplitPO<IMiningTimeIntervall,IMetaAttributeContainer<IMiningTimeIntervall>>(detectAO.getDetections());
 		detectPO.setOutputSchema(detectAO.getOutputSchema());
 		detectPO.setInputSchemas(detectAO.getInputSchema(0), detectAO.getInputSchema(1));
 		replace(detectAO, detectPO, config);		
@@ -46,7 +46,7 @@ public class TStatefulDetectionSplitAORule extends AbstractTransformationRule<St
 	}
 
 	@Override
-	public boolean isExecutable(StatefulDetectionSplitAO<IMetaAttributeContainer<ITimeInterval>> operator, TransformationConfiguration config) {
+	public boolean isExecutable(StatefulDetectionSplitAO<IMetaAttributeContainer<IMiningTimeIntervall>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

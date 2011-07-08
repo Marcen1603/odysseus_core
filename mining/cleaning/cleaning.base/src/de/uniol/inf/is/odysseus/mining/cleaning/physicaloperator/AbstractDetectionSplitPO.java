@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.IDetection;
+import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
@@ -27,7 +29,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
  * @author Dennis Geesen
  * Created at: 07.07.2011
  */
-public abstract class AbstractDetectionSplitPO<T, D extends IDetection<T>> extends AbstractPipe<T, T> {
+public abstract class AbstractDetectionSplitPO<T extends IMetaAttributeContainer<? extends IMiningMetadata>, D extends IDetection<T>> extends AbstractPipe<T, T> {
 
 	protected List<D> detections;
 
@@ -54,7 +56,7 @@ public abstract class AbstractDetectionSplitPO<T, D extends IDetection<T>> exten
 	protected void process_next(T object, int port){
 		for (D d : this.detections) {			
 			if (d.getPredicate().evaluate(object)) {				
-				// value is not ok!	
+				markAsFailure(object);
 				process_next_failed(object, port, d);
 				return;
 			}
@@ -65,7 +67,7 @@ public abstract class AbstractDetectionSplitPO<T, D extends IDetection<T>> exten
 	protected void process_next(T object, T testObject, int port){
 		for (D d : this.detections) {			
 			if (d.getPredicate().evaluate(object, testObject)) {				
-				// value is not ok!	
+				markAsFailure(object);
 				process_next_failed(object, port, d);
 				return;
 			}
@@ -77,8 +79,8 @@ public abstract class AbstractDetectionSplitPO<T, D extends IDetection<T>> exten
 	
 	protected abstract void process_next_passed(T object, int port);
 
-	protected T markAsFailure(T object) {
-		System.out.println("FEHLER gefunden: "+object);
+	protected T markAsFailure(T object) {		
+		object.getMetadata().setDetected(true);
 		return object;
 	}	
 }

@@ -4,10 +4,11 @@ public class MiningMetadata implements IMiningMetadata {
 	
 	private static final long serialVersionUID = 2490005020065173048L;
 	private boolean corrected = false;
+	private boolean detected = false;
 
 	@Override
 	public String toString() {
-		return ""+corrected;
+		return "detected: "+detected+" | corrected: "+corrected;
 	}
 	
 	@Override
@@ -39,6 +40,16 @@ public class MiningMetadata implements IMiningMetadata {
 	@Override
 	public String csvToString(boolean withMetadata){
 		return this.csvToString();
+	}
+
+	@Override
+	public boolean isDetected() {
+		return this.detected;
+	}
+
+	@Override
+	public void setDetected(boolean detected) {
+		this.detected = detected;		
 	}
 
 }

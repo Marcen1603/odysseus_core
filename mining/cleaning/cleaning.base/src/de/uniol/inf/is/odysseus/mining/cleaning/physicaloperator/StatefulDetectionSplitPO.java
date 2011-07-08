@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
+import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Dennis Geesen Created at: 07.07.2011
  */
-public class StatefulDetectionSplitPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractDetectionSplitPO<T, IBinaryDetection<T>> {
+public class StatefulDetectionSplitPO<Meta extends IMiningMetadata & ITimeInterval, Data  extends IMetaAttributeContainer<Meta>> extends AbstractDetectionSplitPO<Data, IBinaryDetection<Data>> {
 	
 	//LEFT is data-port and RIGHT is aggregate-port
 	private static final int LEFT = 0;
@@ -39,19 +40,19 @@ public class StatefulDetectionSplitPO<T extends IMetaAttributeContainer<ITimeInt
 	private PointInTime leftMin = PointInTime.getZeroTime();
 	private PointInTime rightMin = PointInTime.getZeroTime();
 
-	private DefaultTISweepArea<T> sweepAreaDetect = new DefaultTISweepArea<T>();
-	private DefaultTISweepArea<T> sweepAreaCheck = new DefaultTISweepArea<T>();
+	private DefaultTISweepArea<Data> sweepAreaDetect = new DefaultTISweepArea<Data>();
+	private DefaultTISweepArea<Data> sweepAreaCheck = new DefaultTISweepArea<Data>();
 	private PointInTime totalMin = PointInTime.getZeroTime();
 
-	public StatefulDetectionSplitPO(List<IBinaryDetection<T>> detections) {
+	public StatefulDetectionSplitPO(List<IBinaryDetection<Data>> detections) {
 		super(detections);
 	}
 
-	public StatefulDetectionSplitPO(StatefulDetectionSplitPO<T> detectionSplitPO) {
+	public StatefulDetectionSplitPO(StatefulDetectionSplitPO<Meta, Data> detectionSplitPO) {
 		super(detectionSplitPO.detections);
 	}
 
-	private DefaultTISweepArea<T> getSA(int port){
+	private DefaultTISweepArea<Data> getSA(int port){
 		if(port==LEFT){
 			return sweepAreaDetect;
 		}else{
@@ -80,7 +81,7 @@ public class StatefulDetectionSplitPO<T extends IMetaAttributeContainer<ITimeInt
 	@Override
 	public void process_open() throws OpenFailedException {
 		super.process_open();
-		for (IBinaryDetection<T> d : this.detections) {
+		for (IBinaryDetection<Data> d : this.detections) {
 			d.init(getInputSchema(LEFT), getInputSchema(RIGHT));
 		}
 	}
@@ -99,20 +100,20 @@ public class StatefulDetectionSplitPO<T extends IMetaAttributeContainer<ITimeInt
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(Data object, int port) {
 		setMin(port, object.getMetadata().getStart());
 		getSA(port).insert(object);		
 		findAndEvaluate(object, port);
 	}
 
-	private void findAndEvaluate(T object, int currentInput){
+	private void findAndEvaluate(Data object, int currentInput){
 		int otherInput = (currentInput+1)%2;
 		
 		getSA(currentInput).extractElementsBefore(totalMin);
 		
-		Iterator<T> iter = getSA(otherInput).extractElementsStartingEquals(object.getMetadata().getStart());
+		Iterator<Data> iter = getSA(otherInput).extractElementsStartingEquals(object.getMetadata().getStart());
 		while(iter.hasNext()){
-			T o = iter.next();
+			Data o = iter.next();
 			System.out.println("vergleiche: ");
 			System.out.println("- "+object);
 			System.out.println("- "+o);
@@ -125,19 +126,19 @@ public class StatefulDetectionSplitPO<T extends IMetaAttributeContainer<ITimeInt
 	}
 	
 	@Override
-	public StatefulDetectionSplitPO<T> clone() {
-		return new StatefulDetectionSplitPO<T>(this);
+	public StatefulDetectionSplitPO<Meta, Data> clone() {
+		return new StatefulDetectionSplitPO<Meta, Data>(this);
 	}
 
 	@Override
-	protected void process_next_failed(T object, int port, IBinaryDetection<T> detection) {
+	protected void process_next_failed(Data object, int port, IBinaryDetection<Data> detection) {
 		System.out.println("FEHLER GEFUNDEN!");
 		System.out.println("--> " + object);
 
 	}
 
 	@Override
-	protected void process_next_passed(T object, int port) {
+	protected void process_next_passed(Data object, int port) {
 		System.out.println("KEIN FEHLER GEFUNDEN!");
 		System.out.println("--> " + object);
 
