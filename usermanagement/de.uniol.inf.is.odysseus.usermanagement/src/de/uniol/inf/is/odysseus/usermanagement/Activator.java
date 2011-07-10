@@ -14,10 +14,18 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import de.uniol.inf.is.odysseus.usermanagement.domain.Permission;
+import de.uniol.inf.is.odysseus.usermanagement.domain.impl.PrivilegeImpl;
+import de.uniol.inf.is.odysseus.usermanagement.domain.impl.UserImpl;
+import de.uniol.inf.is.odysseus.usermanagement.domain.impl.UsermanagementPermission;
+import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.PrivilegeDAO;
+import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.UserDAO;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -32,7 +40,7 @@ public class Activator implements BundleActivator {
     private static BundleContext context;
 
     static BundleContext getContext() {
-        return context;
+        return Activator.context;
     }
 
     /*
@@ -42,17 +50,31 @@ public class Activator implements BundleActivator {
      * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
      * )
      */
-    public void start(BundleContext bundleContext) throws Exception {
+    @Override
+    public void start(final BundleContext bundleContext) throws Exception {
         Activator.context = bundleContext;
 
         // FIXME Test Code---------
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("odysseusPU");
-        UserDAO userDAO = new UserDAO();
-        @SuppressWarnings("unused")
-		EntityManager em = emf.createEntityManager();
-        userDAO.setEntityManager(emf.createEntityManager());
-        UserImpl user = new UserImpl();
-        userDAO.create(user);
+        // final EntityManagerFactory emf =
+        // Persistence.createEntityManagerFactory("odysseusPU");
+        // final UserDAO userDAO = new UserDAO();
+        // final EntityManager em = emf.createEntityManager();
+        // userDAO.setEntityManager(emf.createEntityManager());
+        // final UserImpl user = new UserImpl();
+        // userDAO.create(user);
+        //
+        // final PrivilegeDAO privilegeDAO = new PrivilegeDAO();
+        // privilegeDAO.setEntityManager(em);
+        // final PrivilegeImpl privilege = new PrivilegeImpl();
+        // privilege.addPermission(UsermanagementPermission.ALTER_USER);
+        // privilegeDAO.create(privilege);
+        // userDAO.findAll();
+        // final List<PrivilegeImpl> privileges = privilegeDAO.findAll();
+        // for (final PrivilegeImpl priv : privileges) {
+        // for (final Permission per : priv.getPermissions()) {
+        // System.out.println(per.toString());
+        // }
+        // }
         // ------------------
     }
 
@@ -62,7 +84,8 @@ public class Activator implements BundleActivator {
      * @see
      * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(BundleContext bundleContext) throws Exception {
+    @Override
+    public void stop(final BundleContext bundleContext) throws Exception {
         Activator.context = null;
     }
 

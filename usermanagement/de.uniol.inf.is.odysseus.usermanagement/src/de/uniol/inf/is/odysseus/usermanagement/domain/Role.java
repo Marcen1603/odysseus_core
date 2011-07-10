@@ -18,12 +18,10 @@ import java.util.List;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * TODO Move to base bundle
+ *         TODO Move to base bundle
  */
 public interface Role extends AbstractEntity {
     String getName();
-
-    boolean isGroup();
 
     /**
      * @return The privileges of the role

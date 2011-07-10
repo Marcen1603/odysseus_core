@@ -26,17 +26,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import de.uniol.inf.is.odysseus.usermanagement.domain.User;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-@Entity
-@Table(name = "Account")
+@Entity(name = "User")
+@Table(name = "Account", uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME"})})
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries(value = {@NamedQuery(name = UserImpl.NQ_FIND_ALL, query = "select o from UserImpl as o"),
-                       @NamedQuery(name = UserImpl.NQ_FIND_BY_NAME, query = "select o from UserImpl as o where o.name = :name"),})
+@NamedQueries(value = {@NamedQuery(name = UserImpl.NQ_FIND_ALL, query = "select o from User as o"),
+                       @NamedQuery(name = UserImpl.NQ_FIND_BY_NAME, query = "select o from User as o where o.name = :name"),})
 public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.User.findAll";
@@ -54,17 +55,17 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
-    public int compareTo(User other) {
+    public int compareTo(final User other) {
         return this.getName().compareTo(other.getName());
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getName()
      */
     @Override
@@ -75,18 +76,12 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
     /**
      * @param name The name to set.
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getAlgorithm()
-     */
-    @Override
     public String getAlgorithm() {
-        if ((this.algorithm == null) || ("".equals(this.algorithm))) {
+        if (this.algorithm == null || "".equals(this.algorithm)) {
             return "SHA-256";
         } else {
             return this.algorithm;
@@ -96,17 +91,17 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
     /**
      * @param algorithm The algorithm to set.
      */
-    public void setAlgorithm(String algorithm) {
+    public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
     }
 
     /**
      * @param password
      */
-    public void setPassword(byte[] password) {
+    public void setPassword(final byte[] password) {
         try {
-            this.password = getPasswordDigest(getAlgorithm(), password).toString();
-        } catch (NoSuchAlgorithmException e) {
+            this.password = this.getPasswordDigest(this.getAlgorithm(), password).toString();
+        } catch (final NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -114,7 +109,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#isActive()
      */
     @Override
@@ -125,38 +120,38 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
     /**
      * @param active The active to set.
      */
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getRoles()
      */
     @Override
     public List<RoleImpl> getRoles() {
-        return roles;
+        return this.roles;
     }
 
     /**
      * @param roles The roles to set.
      */
-    public void setRoles(List<RoleImpl> roles) {
+    public void setRoles(final List<RoleImpl> roles) {
         this.roles = roles;
     }
 
-    public void addRole(RoleImpl role) {
+    public void addRole(final RoleImpl role) {
         this.roles.add(role);
     }
 
-    public void removeRole(RoleImpl role) {
+    public void removeRole(final RoleImpl role) {
         this.roles.remove(role);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getPrivileges()
      */
     @Override
@@ -167,30 +162,30 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
     /**
      * @param privileges The privileges to set.
      */
-    public void setPrivileges(List<PrivilegeImpl> privileges) {
+    public void setPrivileges(final List<PrivilegeImpl> privileges) {
         this.privileges = privileges;
     }
 
-    public void addPrivilege(PrivilegeImpl privilege) {
+    public void addPrivilege(final PrivilegeImpl privilege) {
         this.privileges.add(privilege);
     }
 
-    public void removePrivilege(PrivilegeImpl privilege) {
+    public void removePrivilege(final PrivilegeImpl privilege) {
         this.privileges.remove(privilege);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.User#validatePassword(
      * byte[])
      */
     @Override
-    public boolean validatePassword(byte[] password) {
+    public boolean validatePassword(final byte[] password) {
         try {
-            return Arrays.equals(this.password.getBytes(), getPasswordDigest(getAlgorithm(), password));
-        } catch (NoSuchAlgorithmException e) {
+            return Arrays.equals(this.password.getBytes(), this.getPasswordDigest(this.getAlgorithm(), password));
+        } catch (final NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -199,39 +194,39 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (this.name == null ? 0 : this.name.hashCode());
         return result;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
-        UserImpl other = (UserImpl)obj;
-        if (name == null) {
+        final UserImpl other = (UserImpl)obj;
+        if (this.name == null) {
             if (other.name != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!this.name.equals(other.name)) {
             return false;
         }
         return true;
@@ -243,15 +238,15 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
      * @return The digist using the given algorithm.
      * @throws NoSuchAlgorithmException
      */
-    private byte[] getPasswordDigest(String algorithmName, byte[] password) throws NoSuchAlgorithmException {
-        MessageDigest algorithm = MessageDigest.getInstance(algorithmName);
+    private byte[] getPasswordDigest(final String algorithmName, final byte[] password) throws NoSuchAlgorithmException {
+        final MessageDigest algorithm = MessageDigest.getInstance(algorithmName);
         algorithm.reset();
         algorithm.update(password);
-        byte messageDigest[] = algorithm.digest();
+        final byte messageDigest[] = algorithm.digest();
 
-        StringBuffer hexString = new StringBuffer();
-        for (int i = 0; i < messageDigest.length; i++) {
-            hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+        final StringBuffer hexString = new StringBuffer();
+        for (final byte element : messageDigest) {
+            hexString.append(Integer.toHexString(0xFF & element));
         }
         return messageDigest;
     }

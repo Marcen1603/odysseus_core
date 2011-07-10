@@ -41,6 +41,6 @@ public class UserDAO extends GenericDAOImpl<UserImpl, String> {
 
     @PersistenceUnit(unitName = "odysseusPU")
     public void setEntityManager(final EntityManager em) {
-        entityManager = em;
+        this.entityManager = em;
     }
 }

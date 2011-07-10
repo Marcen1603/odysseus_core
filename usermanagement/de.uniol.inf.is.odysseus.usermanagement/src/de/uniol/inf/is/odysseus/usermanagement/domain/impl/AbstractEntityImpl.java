@@ -41,7 +41,7 @@ public class AbstractEntityImpl<T> implements Serializable, AbstractEntity {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity#getId()
      */
@@ -56,7 +56,7 @@ public class AbstractEntityImpl<T> implements Serializable, AbstractEntity {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity#getVersion
      * ()

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.User;
  */
 public class ChangePasswordPolicy {
 
-    public static boolean allow(User user, User caller) {
-        return (user.equals(caller));
+    public static boolean allow(final User user, final User caller) {
+        return user.equals(caller);
     }
 }

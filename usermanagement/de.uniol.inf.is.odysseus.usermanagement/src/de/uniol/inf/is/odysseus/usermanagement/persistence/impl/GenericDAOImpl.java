@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -43,46 +44,66 @@ public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends Serializ
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#create
      * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
      */
     @Override
-    public T create(T entity) {
-        this.entityManager.persist(entity);
-        this.entityManager.flush();
+    public T create(final T entity) {
+        final EntityTransaction transaction = this.entityManager.getTransaction();
+        transaction.begin();
+        try {
+            this.entityManager.persist(entity);
+            this.entityManager.flush();
+        } catch (final Exception e) {
+            transaction.rollback();
+        } finally {
+            if (transaction.isActive()) {
+                transaction.commit();
+            }
+        }
         return entity;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#delete
      * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
      */
     @Override
-    public void delete(T entity) {
-        this.entityManager.remove(this.entityManager.merge(entity));
-        this.entityManager.flush();
+    public void delete(final T entity) {
+        final EntityTransaction transaction = this.entityManager.getTransaction();
+        transaction.begin();
+        try {
+            this.entityManager.remove(this.entityManager.merge(entity));
+            this.entityManager.flush();
+        } catch (final Exception e) {
+            transaction.rollback();
+        } finally {
+            if (transaction.isActive()) {
+                transaction.commit();
+            }
+        }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#find(java
      * .io.Serializable)
      */
     @Override
-    public T find(PK id) {
+    public T find(final PK id) {
         return this.entityManager.find(this.type, id);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#findAll()
      */
@@ -102,14 +123,14 @@ public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends Serializ
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#findAll
      * (java.lang.Integer, java.lang.Integer)
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<T> findAll(Integer position, Integer max) {
+    public List<T> findAll(final Integer position, final Integer max) {
         String entity = this.getEntityClass().getSimpleName();
         entity = entity.substring(0, entity.length() - 4);
         final Query query = this.entityManager.createQuery(String.format("select o from %s o", entity));
@@ -124,26 +145,46 @@ public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends Serializ
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#refresh
      * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
      */
     @Override
-    public void refresh(T entity) {
-        this.entityManager.refresh(entity);
+    public void refresh(final T entity) {
+        final EntityTransaction transaction = this.entityManager.getTransaction();
+        transaction.begin();
+        try {
+            this.entityManager.refresh(entity);
+        } catch (final Exception e) {
+            transaction.rollback();
+        } finally {
+            if (transaction.isActive()) {
+                transaction.commit();
+            }
+        }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#update
      * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
      */
     @Override
     public void update(T entity) {
-        entity = this.entityManager.merge(entity);
+        final EntityTransaction transaction = this.entityManager.getTransaction();
+        transaction.begin();
+        try {
+            entity = this.entityManager.merge(entity);
+        } catch (final Exception e) {
+            transaction.rollback();
+        } finally {
+            if (transaction.isActive()) {
+                transaction.commit();
+            }
+        }
     }
 
     protected ParameterMap startNamedQuery(final String query) {

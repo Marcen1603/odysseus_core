@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.usermanagement.persistence.impl;
 import java.util.HashMap;
 
 /**
- *@author Christian Kuka <christian@kuka.cc>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ParameterMap extends HashMap<String, Object> {
 
@@ -53,15 +53,15 @@ public class ParameterMap extends HashMap<String, Object> {
     }
 
     public String getQuery() {
-        return query;
+        return this.query;
     }
 
     public int getResultLimit() {
-        return resultLimit;
+        return this.resultLimit;
     }
 
     public boolean isNamedQuery() {
-        return namedQuery;
+        return this.namedQuery;
     }
 
     public void setResultLimit(final int resultLimit) {

@@ -1,4 +1,5 @@
-/** Copyright [2011] [The Odysseus Team]
+/**
+ * Copyright 2010 Melsa Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +19,6 @@ package de.uniol.inf.is.odysseus.usermanagement.domain;
  * @author Christian Kuka <christian@kuka.cc>
  *         TODO Move to base bundle
  */
-public interface AbstractEntity {
-    /**
-     * @return The id of this entity
-     */
-    String getId();
+public interface Permission {
 
-    /**
-     * @return The version of this entity
-     */
-    Long getVersion();
 }

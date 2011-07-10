@@ -31,12 +31,16 @@ public class RoleDAO extends GenericDAOImpl<RoleImpl, String> {
     /**
      * @param type
      */
-    public RoleDAO(Class<RoleImpl> type) {
+    public RoleDAO(final Class<RoleImpl> type) {
         super(type);
+    }
+
+    public RoleImpl findByName(final String name) {
+        return this.getSingleResult(this.startNamedQuery(RoleImpl.NQ_FIND_BY_NAME).add("name", name));
     }
 
     @PersistenceUnit(unitName = "odysseusPU")
     public void setEntityManager(final EntityManager em) {
-        entityManager = em;
+        this.entityManager = em;
     }
 }

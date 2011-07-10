@@ -19,23 +19,19 @@ import java.util.List;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * TODO Move to base bundle
+ *         TODO Move to base bundle
  */
 public interface User extends AbstractEntity, Principal, Comparable<User> {
     /**
      * @return The name of this user.
      */
+    @Override
     String getName();
 
     /**
      * @return Whether the user account is active or not
      */
     boolean isActive();
-
-    /**
-     * @return The digist algorithm used for the password;
-     */
-    String getAlgorithm();
 
     /**
      * @return The roles of the user
@@ -49,9 +45,10 @@ public interface User extends AbstractEntity, Principal, Comparable<User> {
 
     /**
      * Validates if the given password is correct for this user.
-     *
+     * 
      * @param password
      * @return
      */
     boolean validatePassword(byte[] password);
+
 }

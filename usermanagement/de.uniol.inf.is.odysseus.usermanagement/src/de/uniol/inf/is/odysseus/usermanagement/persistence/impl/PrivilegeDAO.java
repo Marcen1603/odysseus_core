@@ -14,6 +14,8 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement.persistence.impl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceUnit;
 
@@ -30,12 +32,16 @@ public class PrivilegeDAO extends GenericDAOImpl<PrivilegeImpl, String> {
     /**
      * @param type
      */
-    public PrivilegeDAO(Class<PrivilegeImpl> type) {
+    public PrivilegeDAO(final Class<PrivilegeImpl> type) {
         super(type);
+    }
+
+    public List<PrivilegeImpl> findByObjectURI(final String objectURI) {
+        return this.getResultList(this.startNamedQuery(PrivilegeImpl.NQ_FIND_BY_OBJECTURI).add("objectURI", objectURI));
     }
 
     @PersistenceUnit(unitName = "odysseusPU")
     public void setEntityManager(final EntityManager em) {
-        entityManager = em;
+        this.entityManager = em;
     }
 }

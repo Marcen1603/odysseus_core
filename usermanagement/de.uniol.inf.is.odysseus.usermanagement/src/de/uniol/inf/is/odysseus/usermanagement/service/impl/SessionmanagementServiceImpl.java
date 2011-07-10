@@ -14,8 +14,11 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement.service.impl;
 
+import de.uniol.inf.is.odysseus.usermanagement.domain.Session;
 import de.uniol.inf.is.odysseus.usermanagement.domain.User;
+import de.uniol.inf.is.odysseus.usermanagement.domain.impl.SessionImpl;
 import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.UserDAO;
+import de.uniol.inf.is.odysseus.usermanagement.policy.LogoutPolicy;
 import de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService;
 
 /**
@@ -24,32 +27,63 @@ import de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService;
 public class SessionmanagementServiceImpl implements SessionmanagementService {
 
     private final UserDAO userDAO = new UserDAO();
+    private final SessionStore sessionStore = SessionStore.getInstance();
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService
      * #login(java.lang.String, byte[])
      */
     @Override
-    public void login(String username, byte[] password) {
-        User user = userDAO.findByName(username);
-        if (user.validatePassword(password)) {
+    public Session login(final String username, final byte[] password) {
+        final User user = this.userDAO.findByName(username);
+        if (user.isActive() && user.validatePassword(password)) {
+            if (this.sessionStore.containsKey(user.getId())) {
+                this.sessionStore.remove(user.getId());
+            }
+            final SessionImpl session = new SessionImpl(user);
+            this.sessionStore.put(session.getId(), session);
+            return session;
+        }
+        return null;
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService
+     * #logout(de.uniol.inf.is.odysseus.usermanagement.domain.Session)
+     */
+    @Override
+    public void logout(final Session caller) {
+        final SessionStore sessionStore = SessionStore.getInstance();
+        final Session session = sessionStore.get(caller.getId());
+        if (LogoutPolicy.allow(session.getUser(), caller.getUser())) {
+            sessionStore.remove(session.getId());
         }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService
-     * #logout(de.uniol.inf.is.odysseus.usermanagement.domain.User)
+     * #isValid(de.uniol.inf.is.odysseus.usermanagement.domain.Session,
+     * de.uniol.inf.is.odysseus.usermanagement.domain.Session)
      */
     @Override
-    public void logout(User caller) {
-
+    public boolean isValid(final Session session, final Session caller) {
+        if (session.getUser() != null) {
+            final Session realSession = this.sessionStore.get(session.getId());
+            this.sessionStore.get(caller.getId());
+            if (realSession.isValid()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

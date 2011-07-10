@@ -14,15 +14,17 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement.service;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.User;
+import de.uniol.inf.is.odysseus.usermanagement.domain.Session;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * TODO Move to base bundle
+ *         TODO Move to base bundle
  */
 public interface SessionmanagementService {
 
-    void login(String username, byte[] password);
+    Session login(String username, byte[] password);
 
-    void logout(User caller);
+    void logout(Session caller);
+
+    boolean isValid(Session session, Session caller);
 }

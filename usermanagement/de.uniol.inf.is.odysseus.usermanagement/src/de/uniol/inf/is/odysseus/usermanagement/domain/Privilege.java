@@ -18,14 +18,11 @@ import java.util.Set;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * TODO Move to base bundle
+ *         TODO Move to base bundle
  */
 public interface Privilege extends AbstractEntity {
-    enum Operation {
 
-    }
-
-    Set<Operation> getOperations();
+    Set<Permission> getPermissions();
 
     String getObjectURI();
 
