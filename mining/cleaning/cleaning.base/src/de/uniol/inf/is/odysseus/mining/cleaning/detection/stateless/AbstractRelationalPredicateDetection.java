@@ -32,6 +32,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public abstract class AbstractRelationalPredicateDetection implements IUnaryDetection<RelationalTuple<?>> {
 
 	private RelationalPredicate predicate;
+	private String attributeName;
+	
+	public AbstractRelationalPredicateDetection(String attributeName){
+		this.attributeName = attributeName;
+	}
 	
 	protected RelationalPredicate buildPredicate(String predicateString, SDFAttributeList schema) {
 		try {
@@ -57,6 +62,11 @@ public abstract class AbstractRelationalPredicateDetection implements IUnaryDete
 	@Override
 	public IPredicate<RelationalTuple<?>> getPredicate() {		
 		return predicate;
+	}
+	
+	@Override
+	public String getAttribute() {		
+		return this.attributeName;
 	}
 
 }

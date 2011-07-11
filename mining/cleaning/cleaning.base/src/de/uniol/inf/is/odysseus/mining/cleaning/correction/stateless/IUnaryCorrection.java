@@ -13,12 +13,16 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.model;
+package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless;
+
+import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 /**
  * 
  * @author Dennis Geesen
- * Created at: 21.06.2011
+ * Created at: 11.07.2011
  */
-public interface ICorrection {
-
+public interface IUnaryCorrection<T> extends ICorrection<T>{
+	public void init(SDFAttributeList schema);	
 }

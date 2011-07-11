@@ -97,6 +97,11 @@ public abstract class AbstractAggregateDetection implements IBinaryDetection<Rel
 		return attributeName;
 	}
 	
+	@Override
+	public String getAttribute() {
+		return attributeName;
+	}
+	
 	public String getAggregationAttribute(int i){
 		return getAggregateFunction(i).getName().toUpperCase()+"("+getAttributeName()+")";
 	}

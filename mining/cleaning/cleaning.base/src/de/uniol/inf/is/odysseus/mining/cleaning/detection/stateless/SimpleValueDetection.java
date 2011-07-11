@@ -24,16 +24,16 @@ package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
 public class SimpleValueDetection extends AbstractRelationalPredicateDetection{
 
 	private double value;	
-	private String attribute;
+
 
 	public SimpleValueDetection(String attributeName, double value) {
-		this.attribute = attributeName;
+		super(attributeName);		
 		this.value = value;
 	}	
 
 	@Override
 	public String createPredicate() {		
-		return this.attribute+"=="+value;		
+		return getAttribute()+"=="+value;		
 	}
 
 }

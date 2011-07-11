@@ -13,29 +13,13 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
-
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-
+package de.uniol.inf.is.odysseus.mining.cleaning.correction;
 /**
  * 
  * @author Dennis Geesen
- * Created at: 23.06.2011
+ * Created at: 11.07.2011
  */
-public class SimplePredicateDetection extends AbstractRelationalPredicateDetection{
-
-	private String predicateString;	
-
-	public SimplePredicateDetection(String attributeName, SDFAttributeList schema, String predicateString) {		
-		super(attributeName);
-		this.predicateString = predicateString;
-	}
-
-	@Override
-	public String createPredicate() {
-		return this.predicateString;
-	}
-
-
-
+public interface ICorrection<T> {
+	public T correctedValue(T toCorrect);
+	public String getAttribute();
 }

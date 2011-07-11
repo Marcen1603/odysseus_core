@@ -84,5 +84,10 @@ public class OutOfDomainDetection implements IUnaryDetection<RelationalTuple<?>>
 		this.inputschema = inputschema;
 		this.internalInit();
 		this.predicate.init(this.inputschema, null);
+	}
+
+	@Override
+	public String getAttribute() {
+		return this.attributeName;
 	}	
 }

@@ -47,7 +47,7 @@ public class TStatelessDetectionAORule extends AbstractTransformationRule<Statel
 
 	@Override
 	public String getName() {
-		return "StatelessDetectionSplitAO -> StatelessDetectionSplitPO";
+		return "StatelessDetectionAO -> StatelessDetectionPO";
 	}
 
 	@Override

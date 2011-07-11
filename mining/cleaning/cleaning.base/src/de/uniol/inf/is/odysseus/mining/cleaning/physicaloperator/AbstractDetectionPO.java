@@ -56,7 +56,7 @@ public abstract class AbstractDetectionPO<T extends IMetaAttributeContainer<? ex
 	protected void process_next(T object, int port){
 		for (D d : this.detections) {			
 			if (d.getPredicate().evaluate(object)) {				
-				markAsFailure(object);
+				markAsFailure(object,d);
 				process_next_failed(object, port, d);
 				return;
 			}
@@ -67,7 +67,7 @@ public abstract class AbstractDetectionPO<T extends IMetaAttributeContainer<? ex
 	protected void process_next(T object, T testObject, int port){
 		for (D d : this.detections) {			
 			if (d.getPredicate().evaluate(object, testObject)) {				
-				markAsFailure(object);
+				markAsFailure(object,d);
 				process_next_failed(object, port, d);
 				return;
 			}
@@ -79,8 +79,9 @@ public abstract class AbstractDetectionPO<T extends IMetaAttributeContainer<? ex
 	
 	protected abstract void process_next_passed(T object, int port);
 
-	protected T markAsFailure(T object) {		
-		object.getMetadata().setDetected(true);
+	protected T markAsFailure(T object, D detection) {	
+		String attribute = detection.getAttribute();
+		object.getMetadata().setDetectedAttribute(attribute, true);
 		return object;
 	}	
 }

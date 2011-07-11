@@ -13,29 +13,30 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
+package de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful.IBinaryCorrection;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 23.06.2011
+ * Created at: 11.07.2011
  */
-public class SimplePredicateDetection extends AbstractRelationalPredicateDetection{
+public class StatefulCorrectionAO<T> extends AbstractCorrectionAO<T, IBinaryCorrection<T>>{
+	
+	private static final long serialVersionUID = -6079095656526441387L;
 
-	private String predicateString;	
-
-	public SimplePredicateDetection(String attributeName, SDFAttributeList schema, String predicateString) {		
-		super(attributeName);
-		this.predicateString = predicateString;
+	public StatefulCorrectionAO() {
+		super();
+	}
+	
+	public StatefulCorrectionAO(StatefulCorrectionAO<T> statefulCorrectionAO) {
+		super(statefulCorrectionAO);
 	}
 
 	@Override
-	public String createPredicate() {
-		return this.predicateString;
+	public StatefulCorrectionAO<T> clone() {
+		return new StatefulCorrectionAO<T>(this);
 	}
-
-
 
 }

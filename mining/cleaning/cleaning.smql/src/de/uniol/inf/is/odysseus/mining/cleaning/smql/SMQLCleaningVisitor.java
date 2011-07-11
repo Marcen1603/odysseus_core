@@ -3,11 +3,17 @@ package de.uniol.inf.is.odysseus.mining.cleaning.smql;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.directory.InitialDirContext;
+import javax.swing.text.html.MinimalHTMLWriter;
+
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
+import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.DiscardCorrection;
+import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.IUnaryCorrection;
+import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.SimpleValueCorrection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.AbstractAggregateDetection;
-import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.OutOfRangeDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.SigmaRuleDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.IUnaryDetection;
@@ -15,12 +21,18 @@ import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.OutOfDomainD
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.SimplePredicateDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless.SimpleValueDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulDetectionAO;
+import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessCorrectionAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessDetectionAO;
 import de.uniol.inf.is.odysseus.mining.smql.ISMQLFeature;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethod;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodDiscard;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodFunction;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodFunctionStateful;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodFunctionStateless;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodMaxValue;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodMinValue;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodSimpleValue;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCreateKnowledgeDiscoveryProcess;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethod;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodFunction;
@@ -37,7 +49,6 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTPercent;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.visitor.AbstractSMQLParserVisitor;
-import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -73,13 +84,16 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 
 	@Override
 	public Object visit(ASTOutlierDetection node, Object data) {
-		// TODO: ab hier bestehen die probleme...		
+		// get the name of the attribute that has to be detected and corrected
 		String attributeName = (String) node.jjtGetChild(1).jjtAccept(this, null);
 		// add source (current top-operator) and the attribute that has to be checked
 		AttributeOperator ao = new AttributeOperator((ILogicalOperator)data, attributeName);
-		// accept detection method
-		// TODO:... danach kommt dann noch die correctionMethod!
-		return node.jjtGetChild(0).jjtAccept(this, ao);
+		// accept detection method		
+		ILogicalOperator topOp = (ILogicalOperator) node.jjtGetChild(0).jjtAccept(this, ao);
+		ao.setOperator(topOp);
+		//accept correction method
+		ILogicalOperator lastOp = (ILogicalOperator) node.jjtGetChild(2).jjtAccept(this, ao);		
+		return lastOp;
 	}
 
 	@Override
@@ -182,21 +196,64 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	}
 
 	@Override
-	public Object visit(ASTCorrectionMethod node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(ASTCorrectionMethod node, Object data) {		
+		return node.jjtGetChild(0).jjtAccept(this, data);
 	}
 
 	@Override
-	public Object visit(ASTCorrectionMethodDiscard node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visit(ASTCorrectionMethodDiscard node, Object data) {		
+		AttributeOperator ao = (AttributeOperator) data;
+		ILogicalOperator topOp = ao.getOperator();		
+		StatelessCorrectionAO<RelationalTuple<?>> scao = new StatelessCorrectionAO<RelationalTuple<?>>();
+		scao.setOutputSchema(topOp.getOutputSchema());		
+		DiscardCorrection dc = new DiscardCorrection(ao.getAttribute());
+		scao.addCorrection(dc);
+		topOp.subscribeSink(scao, 0, 0, topOp.getOutputSchema());
+		return scao;
 	}
 
 	@Override
 	public Object visit(ASTCorrectionMethodFunction node, Object data) {
+		return node.jjtGetChild(0).jjtAccept(this, data);
+	}
+	
+	
+	@Override
+	public Object visit(ASTCorrectionMethodFunctionStateless node, Object data) {
+		AttributeOperator ao = (AttributeOperator) data;
+		ILogicalOperator topOp = ao.getOperator();		
+		StatelessCorrectionAO<RelationalTuple<?>> scao = new StatelessCorrectionAO<RelationalTuple<?>>();
+		scao.setOutputSchema(topOp.getOutputSchema());		
+		@SuppressWarnings("unchecked")
+		IUnaryCorrection<RelationalTuple<?>> dc = (IUnaryCorrection<RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
+		scao.addCorrection(dc);
+		topOp.subscribeSink(scao, 0, 0, topOp.getOutputSchema());
+		return scao;
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodFunctionStateful node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodMaxValue node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodMinValue node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodSimpleValue node, Object data) {
+		double value = (Double) node.jjtGetChild(0).jjtAccept(this, data);		
+		AttributeOperator ao = (AttributeOperator) data;
+		return new SimpleValueCorrection(ao.getAttribute(), value);
 	}
 
 	// **********************************
@@ -248,5 +305,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 		}
 
 	}
+
+	
 
 }

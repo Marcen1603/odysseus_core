@@ -15,21 +15,16 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.transform;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulDetectionAO;
-import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatefulDetectionPO;
-import de.uniol.inf.is.odysseus.mining.metadata.IMiningTimeIntervall;
+import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessCorrectionAO;
+import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatelessCorrctionPO;
+import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-/**
- * 
- * @author Dennis Geesen
- * Created at: 07.07.2011
- */
-public class TStatefulDetectionAORule extends AbstractTransformationRule<StatefulDetectionAO<IMetaAttributeContainer<IMiningTimeIntervall>>> {
+public class TStatelessCorrectionAORule extends AbstractTransformationRule<StatelessCorrectionAO<RelationalTuple<IMiningMetadata>>> {
 
 	@Override
 	public int getPriority() {	
@@ -37,22 +32,22 @@ public class TStatefulDetectionAORule extends AbstractTransformationRule<Statefu
 	}
 
 	@Override
-	public void execute(StatefulDetectionAO<IMetaAttributeContainer<IMiningTimeIntervall>> detectAO, TransformationConfiguration config) {
-		StatefulDetectionPO<IMiningTimeIntervall, IMetaAttributeContainer<IMiningTimeIntervall>> detectPO = new StatefulDetectionPO<IMiningTimeIntervall,IMetaAttributeContainer<IMiningTimeIntervall>>(detectAO.getDetections());
-		detectPO.setOutputSchema(detectAO.getOutputSchema());
-		detectPO.setInputSchemas(detectAO.getInputSchema(0), detectAO.getInputSchema(1));
-		replace(detectAO, detectPO, config);		
-		retract(detectAO);		
+	public void execute(StatelessCorrectionAO<RelationalTuple<IMiningMetadata>> correctAO, TransformationConfiguration config) {		
+		StatelessCorrctionPO<?> correctPO = new StatelessCorrctionPO<RelationalTuple<IMiningMetadata>>(correctAO.getCorrections());
+		correctPO.setOutputSchema(correctAO.getOutputSchema());
+		replace(correctAO, correctPO, config);		
+		retract(correctAO);
+		
 	}
 
 	@Override
-	public boolean isExecutable(StatefulDetectionAO<IMetaAttributeContainer<IMiningTimeIntervall>> operator, TransformationConfiguration config) {
+	public boolean isExecutable(StatelessCorrectionAO<RelationalTuple<IMiningMetadata>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "StatefulDetectionAO -> StatefulDetectionPO";
+		return "StatelessCorrectionAO -> StatelessCorrectionPO";
 	}
 
 	@Override

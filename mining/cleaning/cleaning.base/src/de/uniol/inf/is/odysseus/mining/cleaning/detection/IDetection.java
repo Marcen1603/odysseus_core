@@ -24,4 +24,5 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
  */
 public interface IDetection<T> {
 	public IPredicate<T> getPredicate();	
+	public String getAttribute();
 }

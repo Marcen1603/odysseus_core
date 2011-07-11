@@ -13,29 +13,28 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
+package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 23.06.2011
+ * Created at: 11.07.2011
  */
-public class SimplePredicateDetection extends AbstractRelationalPredicateDetection{
+public class SimpleValueCorrection extends AbstractSimpleRelationalCorrection{
 
-	private String predicateString;	
+	
+	private double value;
 
-	public SimplePredicateDetection(String attributeName, SDFAttributeList schema, String predicateString) {		
+	public SimpleValueCorrection(String attributeName, double value) {
 		super(attributeName);
-		this.predicateString = predicateString;
+		this.value = value;
 	}
 
 	@Override
-	public String createPredicate() {
-		return this.predicateString;
-	}
-
-
+	public RelationalTuple<?> correctedValue(RelationalTuple<?> toCorrect) {
+		return super.replaceAttribute(toCorrect, this.value);		
+	}	
 
 }

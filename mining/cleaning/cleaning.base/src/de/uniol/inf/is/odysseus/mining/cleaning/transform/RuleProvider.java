@@ -31,6 +31,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		List<IRule<?,?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TStatelessDetectionAORule());
 		rules.add(new TStatefulDetectionAORule());
+		rules.add(new TStatelessCorrectionAORule());
+		rules.add(new TStatefulCorrectionAORule());
 		return rules;
 	}
 

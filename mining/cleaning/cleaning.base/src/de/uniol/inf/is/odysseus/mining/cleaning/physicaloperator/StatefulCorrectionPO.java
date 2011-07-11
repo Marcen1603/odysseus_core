@@ -22,66 +22,73 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
+import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful.IBinaryCorrection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * 
- * @author Dennis Geesen Created at: 07.07.2011
+ * @author Dennis Geesen Created at: 11.07.2011
  */
-public class StatefulDetectionPO<Meta extends IMiningMetadata & ITimeInterval, Data  extends IMetaAttributeContainer<Meta>> extends AbstractDetectionPO<Data, IBinaryDetection<Data>> {
-	
-	//LEFT is data-port and RIGHT is aggregate-port
+public class StatefulCorrectionPO<Meta extends IMiningMetadata & ITimeInterval, Data extends IMetaAttributeContainer<Meta>> extends
+		AbstractCorrectionPO<Data, IBinaryCorrection<Data>> {
+
 	private static final int LEFT = 0;
 	private static final int RIGHT = 1;
-	private SDFAttributeList[] inputSchemas = new SDFAttributeList[2];
+
 	private PointInTime leftMin = PointInTime.getZeroTime();
 	private PointInTime rightMin = PointInTime.getZeroTime();
 
-	private DefaultTISweepArea<Data> sweepAreaDetect = new DefaultTISweepArea<Data>();
-	private DefaultTISweepArea<Data> sweepAreaCheck = new DefaultTISweepArea<Data>();
+	private DefaultTISweepArea<Data> sweepAreaData = new DefaultTISweepArea<Data>();
+	private DefaultTISweepArea<Data> sweepAreaForCorrection = new DefaultTISweepArea<Data>();
 	private PointInTime totalMin = PointInTime.getZeroTime();
 
-	public StatefulDetectionPO(List<IBinaryDetection<Data>> detections) {
-		super(detections);
+	private SDFAttributeList[] inputSchemas;
+	private Data currentValueForCorrection;
+
+	public StatefulCorrectionPO(List<IBinaryCorrection<Data>> corrections) {
+		super(corrections);
 	}
 
-	public StatefulDetectionPO(StatefulDetectionPO<Meta, Data> detectionSplitPO) {
-		super(detectionSplitPO.detections);
+	public StatefulCorrectionPO(StatefulCorrectionPO<Meta, Data> statefulCorrectionPO) {
+		super(statefulCorrectionPO.corrections);
 	}
 
-	private DefaultTISweepArea<Data> getSA(int port){
-		if(port==LEFT){
-			return sweepAreaDetect;
-		}else{
-			return sweepAreaCheck;
+	@Override
+	protected Data getValueForCorrection(Data original, IBinaryCorrection<Data> c) {
+		return currentValueForCorrection;
+	}
+
+	private DefaultTISweepArea<Data> getSA(int port) {
+		if (port == LEFT) {
+			return sweepAreaData;
+		} else {
+			return sweepAreaForCorrection;
 		}
 	}
-	
-	private void setMin(int port, PointInTime time){
-		if(port==LEFT){
-			if(leftMin.before(time)){
-				leftMin=time.clone();
+
+	private void setMin(int port, PointInTime time) {
+		if (port == LEFT) {
+			if (leftMin.before(time)) {
+				leftMin = time.clone();
 			}
-		}else{
-			if(rightMin.before(time)){
+		} else {
+			if (rightMin.before(time)) {
 				rightMin = time.clone();
 			}
 		}
-		if(this.rightMin.before(leftMin)){
-			this.totalMin = rightMin.clone(); 
-		}else{
+		if (this.rightMin.before(leftMin)) {
+			this.totalMin = rightMin.clone();
+		} else {
 			this.totalMin = leftMin.clone();
-		}		
+		}
 	}
-
 
 	@Override
 	public void process_open() throws OpenFailedException {
 		super.process_open();
-		for (IBinaryDetection<Data> d : this.detections) {
+		for (IBinaryCorrection<Data> d : this.corrections) {
 			d.init(getInputSchema(LEFT), getInputSchema(RIGHT));
 		}
 	}
@@ -94,53 +101,39 @@ public class StatefulDetectionPO<Meta extends IMiningMetadata & ITimeInterval, D
 		return this.inputSchemas[port];
 	}
 
-	public void setInputSchemas(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
-		this.inputSchemas[LEFT] = leftSchema;
-		this.inputSchemas[RIGHT] = rightSchema;
-	}
-
 	@Override
 	protected void process_next(Data object, int port) {
 		setMin(port, object.getMetadata().getStart());
-		getSA(port).insert(object);		
+		getSA(port).insert(object);
 		findAndEvaluate(object, port);
 	}
 
-	private void findAndEvaluate(Data object, int currentInput){
-		int otherInput = (currentInput+1)%2;
-		
+	private void findAndEvaluate(Data object, int currentInput) {
+		int otherInput = (currentInput + 1) % 2;
+
 		getSA(currentInput).extractElementsBefore(totalMin);
-		
+
 		Iterator<Data> iter = getSA(otherInput).extractElementsStartingEquals(object.getMetadata().getStart());
-		while(iter.hasNext()){
-			Data o = iter.next();
-			System.out.println("vergleiche: ");
-			System.out.println("- "+object);
-			System.out.println("- "+o);
-			if(currentInput==RIGHT){
-				super.process_next(o, object, currentInput);
-			}else{
+		while (iter.hasNext()) {
+			Data o = iter.next();			
+			if (currentInput == RIGHT) {
+				super.process_next(o, object, currentInput);				
+			} else {				
 				super.process_next(object, o, currentInput);
 			}
 		}
-	}
-	
-	@Override
-	public StatefulDetectionPO<Meta, Data> clone() {
-		return new StatefulDetectionPO<Meta, Data>(this);
-	}
-
-	@Override
-	protected void process_next_failed(Data object, int port, IBinaryDetection<Data> detection) {
-		System.out.println("FEHLER GEFUNDEN!");
-		System.out.println("--> " + object);
-		transfer(object, 0);
 
 	}
 
 	@Override
-	protected void process_next_passed(Data object, int port) {
-		transfer(object, 0);
+	public StatefulCorrectionPO<Meta, Data> clone() {
+		return new StatefulCorrectionPO<Meta, Data>(this);
+	}
+
+	public void setInputSchemas(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+		this.inputSchemas[LEFT] = leftSchema;
+		this.inputSchemas[RIGHT] = rightSchema;
+
 	}
 
 }

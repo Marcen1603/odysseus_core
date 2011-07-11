@@ -25,5 +25,5 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public interface IUnaryDetection<T> extends IDetection<T>{
 
-	public void init(SDFAttributeList schema);
+	public void init(SDFAttributeList schema);	
 }
