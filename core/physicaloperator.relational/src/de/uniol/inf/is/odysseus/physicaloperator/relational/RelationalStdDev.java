@@ -32,12 +32,13 @@ public class RelationalStdDev
 			}
 			double avg = sum / n;
 			// Calc Sum
-			double stddev = 0;
+			double stddev = 0.0;
 			for (RelationalTuple<? extends IMetaAttribute> tuple : list) {
 				stddev += Math.pow((((Number) (tuple.getAttribute(attribPos)))
 						.doubleValue() - avg), 2);
 			}
-			stddev = 1 / n * stddev;
+			stddev = (1.0 / (n-1.0)) * stddev;
+			stddev = Math.sqrt(stddev);
 			RelationalTuple<IMetaAttribute> returnVal = new RelationalTuple<IMetaAttribute>(
 					1);
 			returnVal.setAttribute(0, stddev);
