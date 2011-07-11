@@ -9,17 +9,24 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 4250341797170265988L;
 
 	final int sinkPort;
+	final String sinkType;
 	
-	public SocketSinkAO(int sinkPort){
+	public SocketSinkAO(int sinkPort, String sinkType){
 		this.sinkPort = sinkPort;
+		this.sinkType = sinkType;
 	}
 	
 	public SocketSinkAO(SocketSinkAO socketSinkAO) {
 		this.sinkPort = socketSinkAO.sinkPort;
+		this.sinkType = socketSinkAO.sinkType;
 	}
 
 	public int getSinkPort() {
 		return sinkPort;
+	}
+	
+	public String getSinkType(){
+		return sinkType;
 	}
 	
 	@Override
