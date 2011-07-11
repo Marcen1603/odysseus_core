@@ -57,7 +57,6 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 	
 	@Override
 	public void process_open() throws OpenFailedException{
-		super.process_open();
 		this.predicate.init();
 	}
 	
