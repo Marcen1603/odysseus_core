@@ -22,7 +22,8 @@ import de.uniol.inf.is.odysseus.broker.sensors.generator.IStreamType;
 import de.uniol.inf.is.odysseus.broker.sensors.generator.StreamType;
 import de.uniol.inf.is.odysseus.broker.sensors.generator.StreamTypeFactory;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.ObjectHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.ObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 
@@ -35,7 +36,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 public class StreamClientHandler extends Thread {
 
 	/** The relational tuple handler. */
-	private ObjectHandler<RelationalTuple<ITimeInterval>, ITimeInterval> relationalTupleHandler;
+	private IObjectHandler<RelationalTuple<ITimeInterval>> relationalTupleHandler;
 
 	/** The channel. */
 	private SocketChannel channel;

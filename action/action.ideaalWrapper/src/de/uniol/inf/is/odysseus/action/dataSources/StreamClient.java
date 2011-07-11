@@ -20,8 +20,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.ObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.ObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class StreamClient {
 
-	private ObjectHandler<RelationalTuple<IMetaAttribute>, IMetaAttribute> objectHandler;
+	private IObjectHandler<RelationalTuple<IMetaAttribute>> objectHandler;
 	private Socket connection;
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 

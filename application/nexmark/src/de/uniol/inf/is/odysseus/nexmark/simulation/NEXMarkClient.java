@@ -26,7 +26,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
-import de.uniol.inf.is.odysseus.relational.base.ObjectHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.ObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 
@@ -39,7 +40,7 @@ public class NEXMarkClient {
 	// Socket connection;
 	private ObjectOutputStream objectOutputStream;
 	public NEXMarkStreamType streamType;
-	public ObjectHandler<RelationalTuple<ITimeInterval>, ITimeInterval> objectHandler;
+	public IObjectHandler<RelationalTuple<ITimeInterval>> objectHandler;
 	boolean useNIO = false;
 	private Socket connection;
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
