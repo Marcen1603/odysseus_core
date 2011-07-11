@@ -18,6 +18,8 @@ public class TrainExecutorThread extends ExecutorThread {
 	public TrainExecutorThread(IPartialPlanScheduling planScheduling,
 			long timeSlicePerStrategy, SingleThreadSchedulerWithStrategy caller, int trainSize) {
 		super(planScheduling, timeSlicePerStrategy, caller);
+		System.err.println("Train-Executor Thread created"+this);
+
 		this.trainSize = trainSize;
 	}
 	

@@ -226,6 +226,8 @@ class ExecutorThread extends Thread {
 	public ExecutorThread(IPartialPlanScheduling planScheduling,
 			long timeSlicePerStrategy, SingleThreadSchedulerWithStrategy caller) {
 		this.planScheduling = planScheduling.clone();
+		System.err.println("Executor Thread created"+this);
+		//this.planScheduling = planScheduling;
 		this.timeSlicePerStrategy = timeSlicePerStrategy;
 		this.caller = caller;
 	}

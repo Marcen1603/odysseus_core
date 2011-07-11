@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
@@ -24,6 +27,33 @@ import de.uniol.inf.is.odysseus.sla.SLA;
  */
 public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		ISLAViolationEventDistributor, IPlanModificationListener {
+	// ----------------------------------------------------------------------------------------
+	// Logging
+	// ----------------------------------------------------------------------------------------
+
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(SLAPartialPlanScheduling.class);
+		}
+		return _logger;
+	}
+	
+	private static long lastLog = 0;
+	
+	protected static void debugSlow(int waitTime, String message) {
+		long ts = System.currentTimeMillis();
+		if (ts - lastLog > waitTime) {
+			lastLog = ts;
+			getLogger().debug(message);
+		}
+	}
+	
+	// ----------------------------------------------------------------------------------------
+	// Members
+	// ----------------------------------------------------------------------------------------
+	
 	/**
 	 * listeners connected to the scheduler for broadcasting
 	 * {@link SLAViolationEvent}
@@ -102,14 +132,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	@SuppressWarnings("unchecked")
 	private SLAPartialPlanScheduling(SLAPartialPlanScheduling schedule) {
-		this.listeners = new ArrayList<ISLAViolationEventListener>();
-		for (ISLAViolationEventListener listener : schedule.listeners) {
-			this.listeners.add(listener);
-		}
+		this.listeners = new ArrayList<ISLAViolationEventListener>(schedule.listeners);
 		this.plans = new ArrayList<IScheduling>();
-		for (IScheduling plan : schedule.plans) {
-			this.plans.add(plan);
-		}
+		this.plans.addAll(schedule.plans);
 		this.registry = schedule.registry;
 		this.starvationFreedom = schedule.starvationFreedom;
 		this.eventQueue = (LinkedList<SLAViolationEvent>) schedule.eventQueue
@@ -130,7 +155,10 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	@Override
 	public void addPlan(IScheduling scheduling) {
+		getLogger().debug("Plan added to SLAPartialPlanScheduling: " + scheduling);
 		this.plans.add(scheduling);
+		getLogger().debug(this.plans.toString());
+		getLogger().debug(this.toString());
 		this.refreshQuerySharing();
 	}
 
@@ -155,6 +183,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 		IScheduling next = null;
 		double nextPrio = 0;
+		
+		debugSlow(1000, this.plans.toString());
+		debugSlow(1000, this.toString());
 
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all queries
@@ -193,6 +224,10 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			next = this.querySharing.getNextPlan();
 		}
 
+//		getLogger().debug("Selected partial plan with prio " + nextPrio + ": " 
+//				+ next);
+//		getLogger().debug(this.plans.toString());
+		
 		return next;
 	}
 
