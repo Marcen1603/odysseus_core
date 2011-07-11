@@ -28,6 +28,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		//loading default rules		
 		rules.add(new TAccessAOExistsRule());
 		rules.add(new TFileSinkAORule());
+		rules.add(new TSocketSinkAORule());
 		rules.add(new TCreateMetadataRule());
 		rules.add(new TDeleteRenameAORule());
 		rules.add(new TSelectAORule());

@@ -14,7 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.sink;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -31,26 +33,28 @@ public class SocketSinkPO<T> extends AbstractSink<T> {
 	public List<IStreamHandler> subscribe = new ArrayList<IStreamHandler>();
 	private ConnectionListener listener;
 
-	public SocketSinkPO(int serverPort, IStreamHandlerFactory streamHandlerFactory) {
-		listener = new ConnectionListener(serverPort, streamHandlerFactory, subscribe);
+	public SocketSinkPO(int serverPort, IStreamHandlerBuilder streamHandlerBuilder) {
+		listener = new ConnectionListener(serverPort, streamHandlerBuilder, subscribe);
+		listener.start();
 	}
 	
 	public SocketSinkPO(SocketSinkPO<T> socketSinkPO) {
 		throw new RuntimeException("Clone not supported");
 	}
 
-	public void startListener(int port) {
-		listener.start();
-	}
-
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		synchronized (subscribe) {
-			for (IStreamHandler<T> sh : subscribe) {
-				sh.transfer(object);
-			}
-			if (subscribe.size() == 0) {
-				logger.warn("No recever for object");
+			Iterator<IStreamHandler> iter = subscribe.iterator();
+			while (iter.hasNext()){
+				IStreamHandler<T> sh = iter.next();
+				try {
+					sh.transfer(object);
+				} catch (IOException e) {
+					e.getMessage();
+					iter.remove();
+				}
 			}
 		}
 
@@ -58,8 +62,15 @@ public class SocketSinkPO<T> extends AbstractSink<T> {
 
 	protected void process_done() {
 		synchronized (subscribe) {
-			for (IStreamHandler<T> sh : subscribe) {
-				sh.done();
+			Iterator<IStreamHandler> iter = subscribe.iterator();
+			while (iter.hasNext()){
+				IStreamHandler<T> sh = iter.next();
+				try {
+					sh.done();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				iter.remove();
 			}
 		}
 	}

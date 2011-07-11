@@ -13,13 +13,13 @@ class ConnectionListener extends Thread {
 	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
 
 	final int port;
-	final private IStreamHandlerFactory streamHandlerFactory;
+	final private IStreamHandlerBuilder streamHandlerBuilder;
 	final List<IStreamHandler> subscribe;
 
 	public ConnectionListener(int port,
-			IStreamHandlerFactory streamHandlerFactory, /*OUT!!*/List<IStreamHandler> subscribe2) {
+			IStreamHandlerBuilder streamHandlerBuilder, /*OUT!!*/List<IStreamHandler> subscribe2) {
 		this.port = port;
-		this.streamHandlerFactory = streamHandlerFactory;
+		this.streamHandlerBuilder = streamHandlerBuilder;
 		this.subscribe = subscribe2;
 	}
 
@@ -35,14 +35,13 @@ class ConnectionListener extends Thread {
 		while (true) {
 			Socket socket = null;
 			try {
-				logger.debug("Waiting for Server to connect");
+				logger.debug("Waiting for Server to connect on "+port);
 				socket = server.accept();
 				logger.debug("Connection from "
 						+ socket.getRemoteSocketAddress());
 				if (socket != null) {
 					logger.debug("Adding Handler");
-					IStreamHandler temp = streamHandlerFactory.newInstance(socket);
-					temp.start();
+					IStreamHandler temp = streamHandlerBuilder.newInstance(socket);
 					synchronized (subscribe) {
 						subscribe.add(temp);
 					}

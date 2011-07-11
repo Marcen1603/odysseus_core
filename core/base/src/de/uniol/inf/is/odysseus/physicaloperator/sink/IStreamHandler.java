@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.physicaloperator.sink;
 
-public interface IStreamHandler<T> {
+import java.io.IOException;
 
-	void start();
-	void transfer(T object);
-	void done();
+public interface IStreamHandler<T>{
+
+	void transfer(T object) throws IOException;
+	void done()throws IOException;;
 
 }
