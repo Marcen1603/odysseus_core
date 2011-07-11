@@ -15,12 +15,12 @@ public class AggregateFunctionBuilderRegistry implements
 	private Map<Pair<String, String>, IAggregateFunctionBuilder> builders = new HashMap<Pair<String, String>, IAggregateFunctionBuilder>();
 	private List<String> aggregateFunctionNames = new LinkedList<String>();
 	static private Pattern aggregatePattern;
-	
+
 	public synchronized void registerAggregateFunctionBuilder(
 			IAggregateFunctionBuilder builder) {
 		String datamodel = builder.getDatamodel();
 		Collection<String> functionNames = builder.getFunctionNames();
-		System.out.println("Found new AggregateBuilder "+builder);
+		System.out.println("Found new AggregateBuilder " + builder);
 		for (String functionName : functionNames) {
 			Pair<String, String> key = new Pair<String, String>(datamodel,
 					functionName);
@@ -28,9 +28,10 @@ public class AggregateFunctionBuilderRegistry implements
 				builders.put(key, builder);
 				aggregateFunctionNames.add(functionName);
 				buildAggregatePattern();
-				System.out.println("Binding "+key);
-			}else{
-				throw new RuntimeException(datamodel+" and "+functionName+" already registered!");
+				System.out.println("Binding " + key);
+			} else {
+				throw new RuntimeException(datamodel + " and " + functionName
+						+ " already registered!");
 			}
 		}
 	}
@@ -41,13 +42,12 @@ public class AggregateFunctionBuilderRegistry implements
 	private void buildAggregatePattern() {
 
 		StringBuffer aggregateRegexp = new StringBuffer("\\b((");
-		for (String funcName: aggregateFunctionNames){
+		for (String funcName : aggregateFunctionNames) {
 			aggregateRegexp.append(funcName).append("|");
 		}
-		aggregateRegexp.deleteCharAt(aggregateRegexp.length()-1);
+		aggregateRegexp.deleteCharAt(aggregateRegexp.length() - 1);
 		aggregateRegexp.append(")\\([^\\)]*\\))");
-		aggregatePattern = Pattern
-				.compile(aggregateRegexp.toString());
+		aggregatePattern = Pattern.compile(aggregateRegexp.toString());
 	}
 
 	public static Pattern getAggregatePattern() {
@@ -65,14 +65,16 @@ public class AggregateFunctionBuilderRegistry implements
 				builders.remove(key);
 				aggregateFunctionNames.remove(functionName);
 				buildAggregatePattern();
-			}else{
-				throw new RuntimeException(datamodel+" and "+functionName+" not registered!");
+			} else {
+				throw new RuntimeException(datamodel + " and " + functionName
+						+ " not registered!");
 			}
 		}
 	}
-	
+
 	@Override
-	public IAggregateFunctionBuilder getBuilder(String datamodel, String functionName){
+	public IAggregateFunctionBuilder getBuilder(String datamodel,
+			String functionName) {
 		Pair<String, String> key = new Pair<String, String>(datamodel,
 				functionName);
 		return builders.get(key);
