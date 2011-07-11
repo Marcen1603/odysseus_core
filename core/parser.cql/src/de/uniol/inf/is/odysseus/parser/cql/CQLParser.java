@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sun.org.apache.bcel.internal.generic.ILOAD;
+
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
@@ -1295,6 +1297,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
  		ILogicalOperator sink = new SocketSinkAO(port, sinkType);
  		dataDictionary.addSink(sinkName, sink);
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTStreamToStatement node, Object data) {
+		String sinkName = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+		ASTSelectStatement statement = (ASTSelectStatement)node.jjtGetChild(1);
+		// Rueckgabe?
+		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
+		// Senke oben drüber 
+		ILogicalOperator sink = dataDictionary.getSink(sinkName);
+		sink.subscribeToSource(top, 0, 0, top.getOutputSchema());
+		
+		Query query = new Query();
+		query.setParserId(getLanguage());
+		query.setLogicalPlan(sink, true);
+
+		plans.add(query);
+		return plans;
 	}
 
 }

@@ -701,4 +701,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTCreateSinkStatement node, Object data) {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTStreamToStatement node, Object data) {
+		return pvisit(node);
+	}
 }
