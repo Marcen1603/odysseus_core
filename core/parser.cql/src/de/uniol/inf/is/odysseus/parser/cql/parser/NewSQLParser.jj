@@ -8,7 +8,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) Statement */
   try {
-/*@egen*/  (    (      LOOKAHEAD(PriorizedStatement())      PriorizedStatement()    | LOOKAHEAD(2)      CreateStatement()    | LOOKAHEAD(2)      CreateSinkStatement()    | LOOKAHEAD(2)      CreateType()    | LOOKAHEAD(2)      DropStreamStatement()    | LOOKAHEAD(2)      DropViewStatement()    | LOOKAHEAD(2)      CreateViewStatement()    | LOOKAHEAD(2)      InsertIntoStatement()    | LOOKAHEAD(2)      CreateUserStatement()    | LOOKAHEAD(2)      CreateSLAStatement()    | LOOKAHEAD(2)      CreateTenantStatement()    | LOOKAHEAD(2)      CreateRoleStatement()    | LOOKAHEAD(2)      DropRoleStatement()    | LOOKAHEAD(2)      AddUserToTenantStatement()    | LOOKAHEAD(2)      RemoveUserFromTenantStatement()    | LOOKAHEAD(2)      AlterUserStatement()    | LOOKAHEAD(2)      DropUserStatement()    | LOOKAHEAD(2)      CreateSensor()    | LOOKAHEAD(2)      CreateBroker()    | LOOKAHEAD(BrokerSelectInto())      BrokerSelectInto()    | LOOKAHEAD(2)      GrantRoleStatement()    | LOOKAHEAD(2)      GrantStatement()    | RevokeStatement()    )    [ ";" ]  )+  < EOF >/*@bgen(jjtree)*/
+/*@egen*/  (    (      LOOKAHEAD(PriorizedStatement())      PriorizedStatement()    | LOOKAHEAD(2)      CreateStatement()    | LOOKAHEAD(2)      CreateSinkStatement()    | LOOKAHEAD(2)      CreateType()    | LOOKAHEAD(2)      DropStreamStatement()    | LOOKAHEAD(2)      DropViewStatement()    | LOOKAHEAD(2)      CreateViewStatement()    | LOOKAHEAD(2)      InsertIntoStatement()    | LOOKAHEAD(2)      StreamToStatement()    | LOOKAHEAD(2)      CreateUserStatement()    | LOOKAHEAD(2)      CreateSLAStatement()    | LOOKAHEAD(2)      CreateTenantStatement()    | LOOKAHEAD(2)      CreateRoleStatement()    | LOOKAHEAD(2)      DropRoleStatement()    | LOOKAHEAD(2)      AddUserToTenantStatement()    | LOOKAHEAD(2)      RemoveUserFromTenantStatement()    | LOOKAHEAD(2)      AlterUserStatement()    | LOOKAHEAD(2)      DropUserStatement()    | LOOKAHEAD(2)      CreateSensor()    | LOOKAHEAD(2)      CreateBroker()    | LOOKAHEAD(BrokerSelectInto())      BrokerSelectInto()    | LOOKAHEAD(2)      GrantRoleStatement()    | LOOKAHEAD(2)      GrantStatement()    | RevokeStatement()    )    [ ";" ]  )+  < EOF >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -217,6 +217,32 @@
 /*@egen*/}{/*@bgen(jjtree) PriorizedStatement */
   try {
 /*@egen*/  [ DBExecuteStatement() ] ComplexSelectStatement() [ Priority() ] [ Metric() ]/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void StreamToStatement() :{/*@bgen(jjtree) StreamToStatement */
+  ASTStreamToStatement jjtn000 = new ASTStreamToStatement(JJTSTREAMTOSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) StreamToStatement */
+  try {
+/*@egen*/ < K_STREAM > < K_TO > Identifier() SelectStatement()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
