@@ -160,7 +160,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	
 	@Override
 	public boolean isOpen(){
-		return this.isOpen() || this.delegateSink.isOpen();
+		return super.isOpen() || this.delegateSink.isOpen();
 	}
 
 	// ------------------------------------------------------------------------
