@@ -62,7 +62,7 @@ public class SDFExpression implements Serializable, IClone {
 
 	private IAttributeResolver attributeResolver;
 
-	private static final String aggregateRegexp = "\\b((SUM|COUNT|AVG|MIN|MAX|BEAN|SCRIPT)\\([^\\)]*\\))";
+	private static final String aggregateRegexp = "\\b((SUM|COUNT|AVG|MIN|MAX|STDDEV|BEAN|SCRIPT)\\([^\\)]*\\))";
 
 	private static final Pattern aggregatePattern = Pattern
 			.compile(aggregateRegexp);
