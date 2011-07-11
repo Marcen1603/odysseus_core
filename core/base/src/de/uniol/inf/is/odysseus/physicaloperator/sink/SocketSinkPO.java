@@ -30,11 +30,11 @@ public class SocketSinkPO<T> extends AbstractSink<T> {
 
 	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
 	@SuppressWarnings("rawtypes")
-	public List<IStreamHandler> subscribe = new ArrayList<IStreamHandler>();
-	private ConnectionListener listener;
+	public List<ISinkStreamHandler> subscribe = new ArrayList<ISinkStreamHandler>();
+	private SinkConnectionListener listener;
 
-	public SocketSinkPO(int serverPort, IStreamHandlerBuilder streamHandlerBuilder) {
-		listener = new ConnectionListener(serverPort, streamHandlerBuilder, subscribe);
+	public SocketSinkPO(int serverPort, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder) {
+		listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe);
 		listener.start();
 	}
 	
@@ -46,9 +46,9 @@ public class SocketSinkPO<T> extends AbstractSink<T> {
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		synchronized (subscribe) {
-			Iterator<IStreamHandler> iter = subscribe.iterator();
+			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
 			while (iter.hasNext()){
-				IStreamHandler<T> sh = iter.next();
+				ISinkStreamHandler<T> sh = iter.next();
 				try {
 					sh.transfer(object);
 				} catch (IOException e) {
@@ -62,9 +62,9 @@ public class SocketSinkPO<T> extends AbstractSink<T> {
 
 	protected void process_done() {
 		synchronized (subscribe) {
-			Iterator<IStreamHandler> iter = subscribe.iterator();
+			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
 			while (iter.hasNext()){
-				IStreamHandler<T> sh = iter.next();
+				ISinkStreamHandler<T> sh = iter.next();
 				try {
 					sh.done();
 				} catch (IOException e) {

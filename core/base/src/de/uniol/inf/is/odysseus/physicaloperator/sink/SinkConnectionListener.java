@@ -8,18 +8,18 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ConnectionListener extends Thread {
+class SinkConnectionListener extends Thread {
 
 	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
 
 	final int port;
-	final private IStreamHandlerBuilder streamHandlerBuilder;
-	final List<IStreamHandler> subscribe;
+	final private ISinkStreamHandlerBuilder sinkStreamHandlerBuilder;
+	final List<ISinkStreamHandler> subscribe;
 
-	public ConnectionListener(int port,
-			IStreamHandlerBuilder streamHandlerBuilder, /*OUT!!*/List<IStreamHandler> subscribe2) {
+	public SinkConnectionListener(int port,
+			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, /*OUT!!*/List<ISinkStreamHandler> subscribe2) {
 		this.port = port;
-		this.streamHandlerBuilder = streamHandlerBuilder;
+		this.sinkStreamHandlerBuilder = sinkStreamHandlerBuilder;
 		this.subscribe = subscribe2;
 	}
 
@@ -41,7 +41,7 @@ class ConnectionListener extends Thread {
 						+ socket.getRemoteSocketAddress());
 				if (socket != null) {
 					logger.debug("Adding Handler");
-					IStreamHandler temp = streamHandlerBuilder.newInstance(socket);
+					ISinkStreamHandler temp = sinkStreamHandlerBuilder.newInstance(socket);
 					synchronized (subscribe) {
 						subscribe.add(temp);
 					}

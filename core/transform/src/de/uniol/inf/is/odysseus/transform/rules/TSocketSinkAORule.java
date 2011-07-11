@@ -5,8 +5,8 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.sink.IStreamHandlerBuilder;
-import de.uniol.inf.is.odysseus.physicaloperator.sink.ObjectStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.physicaloperator.sink.ISinkStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.physicaloperator.sink.ObjectSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -23,12 +23,8 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 	@Override
 	public void execute(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		// TODO: Generischer machen. Zunaechst einfach nur object
-		IStreamHandlerBuilder streamHandlerFac = null;
-		if (operator.getSinkType().equalsIgnoreCase("object")){
-			streamHandlerFac = new ObjectStreamHandlerBuilder();
-		}
-		ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),streamHandlerFac);
+		ISinkStreamHandlerBuilder streamHandlerFac = null;
+		ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),getStreamHandler(operator.getSinkType()));
 		
 		socketSinkPO.setOutputSchema(operator.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, socketSinkPO);
@@ -38,6 +34,13 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 		
 		retract(operator);
 		insert(socketSinkPO);		
+	}
+	
+	public ISinkStreamHandlerBuilder getStreamHandler(String type){
+		if (type.equalsIgnoreCase("object")){
+			return new ObjectSinkStreamHandlerBuilder();
+		}
+		return null;
 	}
 
 	@Override

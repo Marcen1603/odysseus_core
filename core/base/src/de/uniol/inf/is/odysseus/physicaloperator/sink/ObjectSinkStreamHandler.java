@@ -5,12 +5,12 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-class ObjectStreamHandler implements IStreamHandler<Object> {
+class ObjectSinkStreamHandler implements ISinkStreamHandler<Object> {
 	OutputStream outS;
 	ObjectOutputStream dout;
 	Socket socket;
 
-	public ObjectStreamHandler(Socket socket) {
+	public ObjectSinkStreamHandler(Socket socket) {
 		this.socket = socket;
 		try {
 			outS = socket.getOutputStream();
