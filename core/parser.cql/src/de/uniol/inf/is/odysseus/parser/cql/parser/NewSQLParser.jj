@@ -346,7 +346,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CreateSinkStatement */
   try {
-/*@egen*/  (    < K_CREATE >  )  < K_SINK > Identifier() < K_AT > Integer()/*@bgen(jjtree)*/
+/*@egen*/  (    < K_CREATE >  )  < K_SINK > Identifier() < K_AT > Integer() < K_AS > Identifier()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

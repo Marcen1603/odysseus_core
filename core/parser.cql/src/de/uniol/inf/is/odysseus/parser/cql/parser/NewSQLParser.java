@@ -667,6 +667,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       Identifier();
       jj_consume_token(K_AT);
       Integer();
+      jj_consume_token(K_AS);
+      Identifier();
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
