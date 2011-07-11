@@ -153,17 +153,6 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
             name="Collapse Sources View">
       </command>
-<!--      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
-            name="Start Scheduler">
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StopSchedulerCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.StopSchedulerCommand"
-            name="Stop Scheduler">
-      </command>
--->
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
@@ -290,16 +279,6 @@
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand"
                   label="Fast Query..."
-                  style="push">
-            </command>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.StartSchedulerCommand"
-                  label="Start Scheduler"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.StopSchedulerCommand"
-                  label="Stop Scheduler"
                   style="push">
             </command>
             <separator
