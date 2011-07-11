@@ -20,7 +20,7 @@ public class AggregateFunctionBuilderRegistry implements
 			IAggregateFunctionBuilder builder) {
 		String datamodel = builder.getDatamodel();
 		Collection<String> functionNames = builder.getFunctionNames();
-		System.out.println("Found new AggregateBuilder " + builder);
+		//System.out.println("Found new AggregateBuilder " + builder);
 		for (String functionName : functionNames) {
 			Pair<String, String> key = new Pair<String, String>(datamodel,
 					functionName);
@@ -28,7 +28,7 @@ public class AggregateFunctionBuilderRegistry implements
 				builders.put(key, builder);
 				aggregateFunctionNames.add(functionName);
 				buildAggregatePattern();
-				System.out.println("Binding " + key);
+				//System.out.println("Binding " + key);
 			} else {
 				throw new RuntimeException(datamodel + " and " + functionName
 						+ " already registered!");
