@@ -18,15 +18,9 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
-
-public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMetaAttribute> implements
+public class ObjectHandler<T> implements
 		IObjectHandler<T> {
 
-	//private static final Logger logger = LoggerFactory.getLogger( ObjectHandler.class );
 	ByteBuffer byteBuffer = null;
 	private IAtomicDataHandler dataHandler;
 		
@@ -36,7 +30,7 @@ public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMeta
 	}
 	
 	public ObjectHandler(
-			ObjectHandler<T, M> objectHandler) {
+			ObjectHandler<T> objectHandler) {
 		super();
 		this.dataHandler = objectHandler.dataHandler;
 	}
@@ -45,52 +39,6 @@ public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMeta
 	public void clear() {
 		byteBuffer.clear();
 	}
-
-//	private void createDataReader(SDFAttributeList schema) {
-//		this.dataHandler = new IAtomicDataHandler[schema.size()];
-//		int i = 0;
-//		for (SDFAttribute attribute : schema) {
-//			String uri = attribute.getDatatype().getURI(false);
-//			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
-//			
-//			if(handler == null){
-//				throw new RuntimeException("illegal datatype "+uri);
-//			}
-//			
-//			this.dataHandler[i++] = handler;
-//			
-//			if (uri.equals("Integer")) {
-//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("IntegerHandler");
-//			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
-//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("LongHandler");
-//			} else if (uri.equals("Double")) {
-//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("DoubleHandler");
-//			} else if (uri.equals("String")) {
-//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("StringHandler");
-//			} else if (uri.equalsIgnoreCase("SpatialPoint") ||
-//					uri.equalsIgnoreCase("SpatialLine") ||
-//					uri.equalsIgnoreCase("SpatialPolygon") || 
-//					uri.equalsIgnoreCase("SpatialMulitPoint") ||
-//					uri.equalsIgnoreCase("SpatialMultiLine") ||
-//					uri.equalsIgnoreCase("SpatialMultiPolygon")){
-//				this.dataHandler[i++] = DataHandlerRegistry.getDataHandler("SpatialByteHandler");
-//				
-//				try {
-//					Class clazz = Class.forName("de.uniol.inf.is.odysseus.spatial.access.SpatialByteHandler");
-//					this.dataHandler[i++] = (IAtomicDataHandler)clazz.newInstance();
-//				} catch (InstantiationException e) {
-//					throw new RuntimeException(e);
-//				} catch (IllegalAccessException e) {
-//					throw new RuntimeException(e);
-//				} catch (ClassNotFoundException e) {
-//					throw new RuntimeException(e);
-//				}
-//			} else {
-//				throw new RuntimeException("illegal datatype "+uri);
-//			}
-//		}
-//	}
-
 
 	@Override
 	public ByteBuffer getByteBuffer(){
@@ -145,13 +93,7 @@ public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMeta
 		}
 		
 	}
-	
-//	public void put(int pos, Object val){
-//		synchronized(byteBuffer){
-//			dataHandler[pos].writeData(byteBuffer, val);
-//		}
-//	}
-	
+
 	@Override
 	public void put(T value) {
 
@@ -161,43 +103,15 @@ public class ObjectHandler<T extends IMetaAttributeContainer<M>, M extends IMeta
 			
 			this.dataHandler.writeData(byteBuffer, value);
 			
-//			for (int i=0;i<dataHandler.length;i++){
-//				dataHandler[i].writeData(byteBuffer, relationalTuple.getAttribute(i));
-//			}
+
 			byteBuffer.flip();
 		}
 	}
 	
 	@Override
-	public ObjectHandler<T,M> clone() {
-		return new ObjectHandler<T,M>(this);
+	public ObjectHandler<T> clone() {
+		return new ObjectHandler<T>(this);
 	}
-//	@SuppressWarnings("unchecked")
-//	public static void main(String[] args) throws IOException, ClassNotFoundException {
-//		SDFAttributeList schema = new SDFAttributeList();
-//		SDFAttribute a = new SDFAttribute("a_int");
-//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Integer"));
-//		schema.add(a);
-//		a = new SDFAttribute("a_long");
-//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Long"));
-//		schema.add(a);
-//		a = new SDFAttribute("a_double");
-//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Double"));
-//		schema.add(a);
-//		a = new SDFAttribute("a_String");
-//		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("String"));
-//		schema.add(a);
-//		ObjectHandler h = new ObjectHandler(schema);
-//		h.put(0,10);
-//		h.put(1,100l);
-//		h.put(2,100.0d);
-//		h.put(3,"Hallo Folks");
-//			
-//		h.getByteBuffer();
-//		RelationalTuple<IMetaAttribute> r = h.create();
-//		System.out.println(r);
-//		
-//	}
 
 
 }

@@ -83,7 +83,7 @@ public class NEXMarkClient {
 			this.objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
 		}
 		IAtomicDataHandler handler = new RelationalTupleDataHandler(NEXMarkStreamType.getSchema(streamType));
-		objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>, ITimeInterval>(handler);
+		objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(handler);
 	}
 
 	@Override

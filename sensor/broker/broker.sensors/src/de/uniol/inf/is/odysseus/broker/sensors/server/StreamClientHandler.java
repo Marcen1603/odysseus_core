@@ -61,7 +61,7 @@ public class StreamClientHandler extends Thread {
 	public StreamClientHandler(SocketChannel channel, StreamType type) {
 		this.channel = channel;
 		this.streamType = StreamTypeFactory.createNewRun(type);
-		this.relationalTupleHandler = new ObjectHandler<RelationalTuple<ITimeInterval>, ITimeInterval>(new RelationalTupleDataHandler(this.streamType.getSchema()));
+		this.relationalTupleHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(new RelationalTupleDataHandler(this.streamType.getSchema()));
 	}
 
 	private static long start = -1;

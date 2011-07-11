@@ -41,7 +41,7 @@ public class StreamClient {
 	public StreamClient(Socket connection, SDFAttributeList schema) throws IOException{
 		this.connection = connection;
 		
-		this.objectHandler = new ObjectHandler<RelationalTuple<IMetaAttribute>, IMetaAttribute>(new RelationalTupleDataHandler(schema));
+		this.objectHandler = new ObjectHandler<RelationalTuple<IMetaAttribute>>(new RelationalTupleDataHandler(schema));
 	}
 	
 	public void writeObject(RelationalTuple<IMetaAttribute> tuple) throws IOException {
