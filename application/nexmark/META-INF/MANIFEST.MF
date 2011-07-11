@@ -15,3 +15,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Bundle-ClassPath: xalan.jar,
  .
 Export-Package: de.uniol.inf.is.odysseus.nexmark.generator
+Require-Bundle: de.uniol.inf.is.odysseus
