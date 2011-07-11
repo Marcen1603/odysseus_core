@@ -4,6 +4,7 @@ import java.net.Socket;
 
 public interface ISinkStreamHandlerBuilder {
 
+	@SuppressWarnings("rawtypes")
 	ISinkStreamHandler newInstance(Socket socket);
 
 }
