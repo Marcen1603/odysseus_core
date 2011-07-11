@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
 import de.uniol.inf.is.odysseus.ISubscribable;
+import de.uniol.inf.is.odysseus.latency.Latency;
+import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -26,15 +29,18 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 	public ISubscribable<?, ?> placeSLAConformance(IQuery query,
 			ISLAConformance conformance) {
 		// it is expected that there is only one query per partial plan!
-		// TODO: generalization: 1 pp == n queries?
 		IPhysicalOperator root = query.getRoots().get(0);
 		if (root instanceof ISource) {
-			ISubscribable subscribable = (ISubscribable) root;
+			LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
+			ISubscribable subscribable = (ISubscribable)latencyCalc;
 			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
+			
+			subscribable = (ISubscribable) root;
+			subscribable.connectSink(latencyCalc, 0, 0, root.getOutputSchema());
 			return subscribable;
 		} else {
 			throw new RuntimeException(
-					"Cannot connect SLA conformance operator to query root");
+					"Cannot connect SLA conformance operator to query root: " + root);
 		}
 	}
 
@@ -49,5 +55,5 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 		connectionPoint.disconnectSink(conformance, 0, 0,
 				((AbstractSLaConformance<?>) conformance).getOutputSchema());
 	}
-
+	
 }
