@@ -89,4 +89,18 @@ public class SLADictionary {
 	public SLA getSLA(String slaName) {
 		return this.sla.get(slaName);
 	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Registered SLAs:\n");
+		for (String s : this.sla.keySet()) {
+			sb.append("\t").append(s).append("\n");
+		}
+		sb.append("Currently set SLAs for users:\n");
+		for (User user : this.currentSLA.keySet()) {
+			sb.append("\t").append(user.getName()).append(": ").append(
+					this.currentSLA.get(user)).append("\n");
+		}
+		return sb.toString();
+	}
 }
