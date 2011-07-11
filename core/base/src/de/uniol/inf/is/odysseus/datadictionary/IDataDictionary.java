@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.datadictionary;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -107,6 +108,16 @@ public interface IDataDictionary {
 	public SDFDatatype getDatatype(String name);
 	
 	public boolean existsDatatype(String dtName);
+
+	void addSink(String sinkname, ILogicalOperator sink);
+
+	ILogicalOperator getSink(String sinkname);
+
+	boolean existsSink(String sinkname);
+
+	ILogicalOperator getView(String viewname, User caller);
+
+	AccessAO getStream(String viewname, User caller);
 
 
 }

@@ -247,6 +247,7 @@ public class DataDictionary implements IDataDictionary {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public ILogicalOperator getView(String viewname, User caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
 			checkViewAccess(viewname, caller, DataDictionaryAction.READ);
@@ -315,7 +316,8 @@ public class DataDictionary implements IDataDictionary {
 					+ " has no permission to set a new view.");
 		}
 	}
-
+	
+	@Override
 	public AccessAO getStream(String viewname, User caller) {
 		checkViewAccess(viewname, caller, DataDictionaryAction.READ);
 
@@ -422,6 +424,7 @@ public class DataDictionary implements IDataDictionary {
 	// Datatype Management
 	// ----------------------------------------------------------------------------
 	
+	@Override
 	public void addDatatype(String name, SDFDatatype dt){
 		if(!this.datatypes.containsKey(name)){
 			this.datatypes.put(name.toLowerCase(), dt);
@@ -430,7 +433,8 @@ public class DataDictionary implements IDataDictionary {
 			throw new IllegalArgumentException("Type '" + name + "' already exists.");
 		}
 	}
-
+	
+	@Override
 	public SDFDatatype getDatatype(String dtName){
 		if(this.datatypes.containsKey(dtName)){
 			return this.datatypes.get(dtName);
@@ -440,6 +444,7 @@ public class DataDictionary implements IDataDictionary {
 		}
 	}
 	
+	@Override
 	public boolean existsDatatype(String dtName){
 		return this.datatypes.containsKey(dtName);
 	}
@@ -448,6 +453,7 @@ public class DataDictionary implements IDataDictionary {
 	// Sink Management
 	// ----------------------------------------------------------------------------
 	
+	@Override
 	public void addSink(String sinkname, ILogicalOperator sink){
 		if (!this.sinkDefinitions.containsKey(sinkname)){
 			this.sinkDefinitions.put(sinkname, sink);
@@ -456,6 +462,7 @@ public class DataDictionary implements IDataDictionary {
 		}
 	}
 	
+	@Override
 	public ILogicalOperator getSink(String sinkname){
 		if (this.sinkDefinitions.containsKey(sinkname)){
 			return sinkDefinitions.get(sinkname);
@@ -464,6 +471,7 @@ public class DataDictionary implements IDataDictionary {
 		}
 	}
 	
+	@Override
 	public boolean existsSink(String sinkname){
 		return this.sinkDefinitions.containsKey(sinkname);
 	}
