@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -30,6 +29,7 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.ParseException;
 import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 
 /**
  * @author Jonas Jacobi
@@ -61,11 +61,6 @@ public class SDFExpression implements Serializable, IClone {
 	private boolean isOnlyAttribute = false;
 
 	private IAttributeResolver attributeResolver;
-
-	private static final String aggregateRegexp = "\\b((SUM|COUNT|AVG|MIN|MAX|STDDEV|BEAN|SCRIPT)\\([^\\)]*\\))";
-
-	private static final Pattern aggregatePattern = Pattern
-			.compile(aggregateRegexp);
 
 	// TODO alles schon im parser aufloesen und variable/attribut bindings
 	// erstellen
@@ -177,7 +172,7 @@ public class SDFExpression implements Serializable, IClone {
 			Map<String, String> inverseAliasMappings) {
 		String result = "";
 		{
-			Matcher m2 = aggregatePattern.matcher(value);
+			Matcher m2 = AggregateFunctionBuilderRegistry.getAggregatePattern().matcher(value);
 			Map<String, String> aliasMappings = new HashMap<String, String>();
 			int start = 0;
 			while (m2.find()) {
