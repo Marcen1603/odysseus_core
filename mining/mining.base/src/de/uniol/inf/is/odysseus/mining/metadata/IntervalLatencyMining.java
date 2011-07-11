@@ -32,12 +32,6 @@ public class IntervalLatencyMining extends TimeInterval implements ILatency, IMi
 	}
 
 	@Override
-	public void setCorrected(boolean corrected) {
-		this.mining.setCorrected(corrected);
-		
-	}
-
-	@Override
 	public void setLatencyStart(long timestamp) {
 		this.latency.setLatencyStart(timestamp);
 		
@@ -78,7 +72,23 @@ public class IntervalLatencyMining extends TimeInterval implements ILatency, IMi
 	}
 
 	@Override
-	public void setDetected(boolean detected) {
-		this.mining.setDetected(detected);		
+	public boolean isCorrectedAttribute(String attribute) {
+		return this.mining.isCorrectedAttribute(attribute);
 	}
+
+	@Override
+	public void setCorrectedAttribute(String attribute, boolean corrected) {
+		this.mining.setCorrectedAttribute(attribute, corrected);	
+	}
+
+	@Override
+	public boolean isDetectedAttribute(String attribute) {
+		return this.mining.isDetectedAttribute(attribute);
+	}
+
+	@Override
+	public void setDetectedAttribute(String attribute, boolean detected) {
+		this.mining.setDetectedAttribute(attribute, detected);
+	}	
+
 }

@@ -27,9 +27,14 @@ public interface SMQLParserTreeConstants
   public int JJTCORRECTIONMETHOD = 21;
   public int JJTCORRECTIONMETHODDISCARD = 22;
   public int JJTCORRECTIONMETHODFUNCTION = 23;
-  public int JJTVOID = 24;
-  public int JJTSTREAMSQLWINDOW = 25;
-  public int JJTPERCENT = 26;
+  public int JJTCORRECTIONMETHODFUNCTIONSTATELESS = 24;
+  public int JJTCORRECTIONMETHODFUNCTIONSTATEFUL = 25;
+  public int JJTCORRECTIONMETHODMAXVALUE = 26;
+  public int JJTCORRECTIONMETHODMINVALUE = 27;
+  public int JJTCORRECTIONMETHODSIMPLEVALUE = 28;
+  public int JJTVOID = 29;
+  public int JJTSTREAMSQLWINDOW = 30;
+  public int JJTPERCENT = 31;
 
 
   public String[] jjtNodeName = {
@@ -57,9 +62,14 @@ public interface SMQLParserTreeConstants
     "CorrectionMethod",
     "CorrectionMethodDiscard",
     "CorrectionMethodFunction",
+    "CorrectionMethodFunctionStateless",
+    "CorrectionMethodFunctionStateful",
+    "CorrectionMethodMaxValue",
+    "CorrectionMethodMinValue",
+    "CorrectionMethodSimpleValue",
     "void",
     "StreamSQLWindow",
     "Percent",
   };
 }
-/* JavaCC - OriginalChecksum=9dedec77da54ff4ee1d4e6dc115b332c (do not edit this line) */
+/* JavaCC - OriginalChecksum=0aa304ca296c9f8e60253f28cb662846 (do not edit this line) */

@@ -728,6 +728,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         CorrectionMethodDiscard();
         break;
       case K_CORRECT:
+      case K_MAX:
+      case K_MIN:
         CorrectionMethodFunction();
         break;
       default:
@@ -776,28 +778,148 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(K_CORRECT);
-      jj_consume_token(K_BY);
-      jj_consume_token(71);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_FUNCTION:
-        jj_consume_token(K_FUNCTION);
-        Identifier();
+      case K_CORRECT:
+        jj_consume_token(K_CORRECT);
+        jj_consume_token(K_BY);
+        CorrectionMethodFunctionStateless();
         break;
-      case K_VALUE:
-        jj_consume_token(K_VALUE);
-        Number();
-        break;
-      case K_LAST:
-        jj_consume_token(K_LAST);
-        jj_consume_token(K_VALUE);
+      case K_MAX:
+      case K_MIN:
+        CorrectionMethodFunctionStateful();
         break;
       default:
         jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(72);
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void CorrectionMethodFunctionStateless() throws ParseException {
+ /*@bgen(jjtree) CorrectionMethodFunctionStateless */
+  ASTCorrectionMethodFunctionStateless jjtn000 = new ASTCorrectionMethodFunctionStateless(JJTCORRECTIONMETHODFUNCTIONSTATELESS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      CorrectionMethodSimpleValue();
+    } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            {if (true) throw (RuntimeException)jjte000;}
+          }
+          if (jjte000 instanceof ParseException) {
+            {if (true) throw (ParseException)jjte000;}
+          }
+          {if (true) throw (Error)jjte000;}
+    } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+    }
+  }
+
+  static final public void CorrectionMethodFunctionStateful() throws ParseException {
+ /*@bgen(jjtree) CorrectionMethodFunctionStateful */
+  ASTCorrectionMethodFunctionStateful jjtn000 = new ASTCorrectionMethodFunctionStateful(JJTCORRECTIONMETHODFUNCTIONSTATEFUL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_MAX:
+        CorrectionMethodMaxValue();
+        break;
+      case K_MIN:
+        CorrectionMethodMinValue();
+        break;
+      default:
+        jj_la1[12] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      Window();
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void CorrectionMethodMaxValue() throws ParseException {
+ /*@bgen(jjtree) CorrectionMethodMaxValue */
+  ASTCorrectionMethodMaxValue jjtn000 = new ASTCorrectionMethodMaxValue(JJTCORRECTIONMETHODMAXVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_MAX);
+      jj_consume_token(K_VALUE);
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void CorrectionMethodMinValue() throws ParseException {
+ /*@bgen(jjtree) CorrectionMethodMinValue */
+  ASTCorrectionMethodMinValue jjtn000 = new ASTCorrectionMethodMinValue(JJTCORRECTIONMETHODMINVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_MIN);
+      jj_consume_token(K_VALUE);
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
+  }
+
+  static final public void CorrectionMethodSimpleValue() throws ParseException {
+ /*@bgen(jjtree) CorrectionMethodSimpleValue */
+  ASTCorrectionMethodSimpleValue jjtn000 = new ASTCorrectionMethodSimpleValue(JJTCORRECTIONMETHODSIMPLEVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(K_VALUE);
+      Number();
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -846,7 +968,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         jjtn000.setAdvance(advance);
           break;
         default:
-          jj_la1[12] = jj_gen;
+          jj_la1[13] = jj_gen;
           ;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -858,7 +980,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         jjtn000.setType(WindowType.TUPLE);
           break;
         default:
-          jj_la1[13] = jj_gen;
+          jj_la1[14] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -868,7 +990,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
         jjtn000.setSlide(value);
           break;
         default:
-          jj_la1[14] = jj_gen;
+          jj_la1[15] = jj_gen;
           ;
         }
         break;
@@ -879,7 +1001,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jjtn000.setUnbounded(true);
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[16] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -943,13 +1065,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       value *= (7 * 24 * 60 * 60 * 1000);
         break;
       default:
-        jj_la1[16] = jj_gen;
+        jj_la1[17] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[18] = jj_gen;
       ;
     }
     {if (true) return value;}
@@ -1003,11 +1125,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     return false;
   }
 
-  static private boolean jj_3R_8() {
-    if (jj_scan_token(71)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_4() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1019,6 +1136,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
     }
     if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    if (jj_scan_token(71)) return true;
     return false;
   }
 
@@ -1057,7 +1179,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[18];
+  static final private int[] jj_la1 = new int[19];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -1067,13 +1189,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x400,0x10000,0x20000000,0x0,0x20000000,0x20100000,0x0,0x0,0x0,0x20800,0x900000,0x20,0x0,0x0,0x0,0x400c000,0x400c000,};
+      jj_la1_0 = new int[] {0x0,0x400,0x10000,0x20000000,0x0,0x20000000,0x20100000,0x0,0x0,0x0,0x3020800,0x3000800,0x3000000,0x20,0x0,0x0,0x0,0x400c000,0x400c000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0xc0000,0x0,0x0,0x8000,0x0,0x8000,0x40,0x2,0x0,0x10c0000,0x0,0x8000,0x0,0x1400,0x100,0x2080,0x10020,0x10020,};
+      jj_la1_1 = new int[] {0xc0000,0x0,0x0,0x8000,0x0,0x8000,0x40,0x2,0x0,0x10c0000,0x0,0x0,0x0,0x0,0x1400,0x100,0x2080,0x10020,0x10020,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x10,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x10,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[1];
   static private boolean jj_rescan = false;
@@ -1097,7 +1219,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1113,7 +1235,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1131,7 +1253,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1143,7 +1265,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1160,7 +1282,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1171,7 +1293,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1288,7 +1410,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < 19; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

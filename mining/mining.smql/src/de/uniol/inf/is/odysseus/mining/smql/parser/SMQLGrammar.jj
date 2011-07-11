@@ -580,7 +580,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;import de.un
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CorrectionMethodFunction */
   try {
-/*@egen*/  < K_CORRECT > < K_BY >  "["	(	  < K_FUNCTION > Identifier()	| < K_VALUE > Number()	| < K_LAST > < K_VALUE >		)  "]"/*@bgen(jjtree)*/
+/*@egen*/  < K_CORRECT > < K_BY >  CorrectionMethodFunctionStateless()| CorrectionMethodFunctionStateful()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -600,7 +600,109 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;import de.un
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/  }void Window()      :{}{  "[" StreamSQLWindow() "]"}void StreamSQLWindow() :{/*@bgen(jjtree) StreamSQLWindow */
+/*@egen*/   }void CorrectionMethodFunctionStateless():{/*@bgen(jjtree) CorrectionMethodFunctionStateless */
+  ASTCorrectionMethodFunctionStateless jjtn000 = new ASTCorrectionMethodFunctionStateless(JJTCORRECTIONMETHODFUNCTIONSTATELESS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) CorrectionMethodFunctionStateless */
+        try {
+/*@egen*/ 	(	  CorrectionMethodSimpleValue()	)/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/ }void CorrectionMethodFunctionStateful():{/*@bgen(jjtree) CorrectionMethodFunctionStateful */
+  ASTCorrectionMethodFunctionStateful jjtn000 = new ASTCorrectionMethodFunctionStateful(JJTCORRECTIONMETHODFUNCTIONSTATEFUL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) CorrectionMethodFunctionStateful */
+  try {
+/*@egen*/  (      CorrectionMethodMaxValue()    | CorrectionMethodMinValue()  )  Window()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void CorrectionMethodMaxValue():{/*@bgen(jjtree) CorrectionMethodMaxValue */
+  ASTCorrectionMethodMaxValue jjtn000 = new ASTCorrectionMethodMaxValue(JJTCORRECTIONMETHODMAXVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) CorrectionMethodMaxValue */
+  try {
+/*@egen*/  < K_MAX > < K_VALUE >/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void CorrectionMethodMinValue():{/*@bgen(jjtree) CorrectionMethodMinValue */
+  ASTCorrectionMethodMinValue jjtn000 = new ASTCorrectionMethodMinValue(JJTCORRECTIONMETHODMINVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) CorrectionMethodMinValue */
+  try {
+/*@egen*/  < K_MIN > < K_VALUE >/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void CorrectionMethodSimpleValue():{/*@bgen(jjtree) CorrectionMethodSimpleValue */
+  ASTCorrectionMethodSimpleValue jjtn000 = new ASTCorrectionMethodSimpleValue(JJTCORRECTIONMETHODSIMPLEVALUE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) CorrectionMethodSimpleValue */
+  try {
+/*@egen*/  < K_VALUE > Number()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void Window()      :{}{  "[" StreamSQLWindow() "]"}void StreamSQLWindow() :{/*@bgen(jjtree) StreamSQLWindow */
   ASTStreamSQLWindow jjtn000 = new ASTStreamSQLWindow(JJTSTREAMSQLWINDOW);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

@@ -11,6 +11,11 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethod;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodDiscard;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodFunction;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodFunctionStateful;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodFunctionStateless;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodMaxValue;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodMinValue;
+import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCorrectionMethodSimpleValue;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCreateKnowledgeDiscoveryProcess;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethod;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTDetectionMethodFunction;
@@ -156,6 +161,31 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	@Override
 	public Object visit(ASTDetectionMethodStateful node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodFunctionStateless node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodFunctionStateful node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodMaxValue node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodMinValue node, Object data) {
+		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
+	}
+
+	@Override
+	public Object visit(ASTCorrectionMethodSimpleValue node, Object data) {
 		return delegateToExternalVisitor(node, data, CLEANING_CLASS);
 	}	
 	
