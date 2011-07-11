@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.BurstErrorModel;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.ContinuousErrorModel;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.NoError;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.RandomErrorModel;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.ConstantValueGenerator;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.PredifinedValueGenerator;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.distribution.UniformDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve.AlternatingGenerator;
 import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve.IncreaseGenerator;
@@ -90,13 +90,14 @@ public class WindGenerator extends StreamClientHandler{
 		bftGenerator.init();
 		this.generators.put(Attribute.Beaufort, bftGenerator);
 		//speed
-		IValueGenerator speedGenerator = new ConstantValueGenerator(new RandomErrorModel(new JitterNoise(5)), 18);
+		//IValueGenerator speedGenerator = new ConstantValueGenerator(new RandomErrorModel(new JitterNoise(5)), 18);
+		IValueGenerator speedGenerator = new PredifinedValueGenerator(101,164,454,324,145,123,241,232,322);
 		speedGenerator.init();
 		this.generators.put(Attribute.Speed, speedGenerator);
 		//Direction
-		IValueGenerator rainGenerator = new ConstantValueGenerator(new BurstErrorModel(new JitterNoise(50), 10, 4), 182);
-		rainGenerator.init();
-		this.generators.put(Attribute.Direction, rainGenerator);		
+		IValueGenerator directionGenerator = new ConstantValueGenerator(new BurstErrorModel(new JitterNoise(50), 10, 4), 182);
+		directionGenerator.init();
+		this.generators.put(Attribute.Direction, directionGenerator);		
 		//Location
 		IValueGenerator locationGenerator = new AlternatingGenerator(new NoError(), 0, 2, 0, 20);
 		locationGenerator.init();
