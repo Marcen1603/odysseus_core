@@ -1291,8 +1291,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTCreateSinkStatement node, Object data) {
 		// TODO: Generischer machen
 		String sinkName = ((ASTIdentifier)node.jjtGetChild(0)).getName();
-		int port = Integer.parseInt(((ASTNumber)node.jjtGetChild(1)).
-				getValue());
+		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
  		ILogicalOperator sink = new SocketSinkAO(port);
  		dataDictionary.addSink(sinkName, sink);
 		return null;
