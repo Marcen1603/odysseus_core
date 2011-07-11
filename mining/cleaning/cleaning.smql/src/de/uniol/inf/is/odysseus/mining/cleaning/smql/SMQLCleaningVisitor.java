@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.AbstractAggregateDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.OutOfRangeDetection;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.SigmaRuleDetection;
@@ -104,9 +105,8 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 		AttributeOperator ao = (AttributeOperator) data;
 		ILogicalOperator topOp = ao.getOperator();	
 		String attributeName = ao.getAttribute();
-		// baue zuerst die Detection-Methode
-		@SuppressWarnings("unchecked")
-		IBinaryDetection<RelationalTuple<?>> detection = (IBinaryDetection<RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
+		// baue zuerst die Detection-Methode		
+		AbstractAggregateDetection detection = (AbstractAggregateDetection) node.jjtGetChild(0).jjtAccept(this, data);
 		
 		// teilplan 1: baue window
 		WindowAO window = (WindowAO) node.jjtGetChild(1).jjtAccept(this, null);
@@ -116,9 +116,12 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 		window.subscribeSink(aggregate, 0, 0, window.getInputSchema());
 		DirectAttributeResolver dar = new DirectAttributeResolver(window.getOutputSchema());
 		SDFAttribute attribute = dar.getAttribute(attributeName);
-		AggregateFunction aggFunction = new AggregateFunction("AVG");
-		SDFAttribute aggAttribute = new SDFAttribute(aggFunction.getName()+"("+attributeName+")", SDFDatatype.DOUBLE);
-		aggregate.addAggregation(attribute, aggFunction, aggAttribute);		
+		
+		for(int i=0;i<detection.getAggregateAttributes().size();i++){
+			SDFAttribute aggAttribute = new SDFAttribute(detection.getAggregationAttribute(i), SDFDatatype.DOUBLE);
+			aggregate.addAggregation(attribute, detection.getAggregateFunctions().get(i), aggAttribute);
+		}
+				
 		//erstelle daten-seite				
 		StatefulDetectionAO<RelationalTuple<?>> detectionAO = new StatefulDetectionAO<RelationalTuple<?>>();
 		detectionAO.setOutputSchema(topOp.getOutputSchema());

@@ -28,7 +28,7 @@ public class SigmaRuleDetection extends AbstractAggregateDetection{
 	
 	public SigmaRuleDetection(String attributeName, int sigma) {
 		super(attributeName);
-		super.addAggregateFunction(new AggregateFunction("STDEV"));
+		super.addAggregateFunction(new AggregateFunction("STDDEV"));
 		super.addAggregateFunction(new AggregateFunction("AVG"));
 		this.sigma = sigma;
 	}

@@ -109,5 +109,17 @@ public abstract class AbstractAggregateDetection implements IBinaryDetection<Rel
 		}
 		return attributeNames;
 	}
+	
+	public List<AggregateFunction> getAggregateFunctions(){
+		return this.aggregateFunctions;
+	}
+	
+	public List<String> getAggregateAttributes(){
+		List<String> names = new ArrayList<String>();
+		for(int i=0;i<this.aggregateFunctions.size();i++){
+			names.add(getAggregationAttribute(i));
+		}
+		return names;
+	}	
 
 }
