@@ -62,6 +62,8 @@ public class DataDictionary implements IDataDictionary {
 	final private IStore<String, User> entityFromUser;
 	final private IStore<String, String> sourceTypeMap;
 	final private IStore<String, SDFDatatype> datatypes;
+	
+	final private IStore<String, ILogicalOperator> sinkDefinitions;
 
 	DataDictionary() {
 		try {
@@ -81,6 +83,8 @@ public class DataDictionary implements IDataDictionary {
 						OdysseusDefaults.get("entityFromUserFilename"));
 				datatypes = new FileStore<String, SDFDatatype>(
 						OdysseusDefaults.get("datatypesFromDatatypesFilename"));
+				sinkDefinitions = new FileStore<String, ILogicalOperator>(
+						OdysseusDefaults.get("sinkDefinitionsFilename"));
 			} else {
 				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewOrStreamFromUser = new MemoryStore<String, User>();
@@ -89,6 +93,7 @@ public class DataDictionary implements IDataDictionary {
 				entityFromUser = new MemoryStore<String, User>();
 				sourceTypeMap = new MemoryStore<String, String>();
 				datatypes = new MemoryStore<String, SDFDatatype>();
+				sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
 			}
 			
 			/**
@@ -414,6 +419,56 @@ public class DataDictionary implements IDataDictionary {
 	}
 
 	// ----------------------------------------------------------------------------
+	// Datatype Management
+	// ----------------------------------------------------------------------------
+	
+	public void addDatatype(String name, SDFDatatype dt){
+		if(!this.datatypes.containsKey(name)){
+			this.datatypes.put(name.toLowerCase(), dt);
+		}
+		else{
+			throw new IllegalArgumentException("Type '" + name + "' already exists.");
+		}
+	}
+
+	public SDFDatatype getDatatype(String dtName){
+		if(this.datatypes.containsKey(dtName)){
+			return this.datatypes.get(dtName);
+		}
+		else{
+			throw new IllegalArgumentException("No such datatype: " + dtName);
+		}
+	}
+	
+	public boolean existsDatatype(String dtName){
+		return this.datatypes.containsKey(dtName);
+	}
+
+	// ----------------------------------------------------------------------------
+	// Sink Management
+	// ----------------------------------------------------------------------------
+	
+	public void addSink(String sinkname, ILogicalOperator sink){
+		if (!this.sinkDefinitions.containsKey(sinkname)){
+			this.sinkDefinitions.put(sinkname, sink);
+		}else{
+			throw new IllegalArgumentException("Sink name already used");
+		}
+	}
+	
+	public ILogicalOperator getSink(String sinkname){
+		if (this.sinkDefinitions.containsKey(sinkname)){
+			return sinkDefinitions.get(sinkname);
+		}else{
+			throw new IllegalArgumentException("No such sink defined");
+		}
+	}
+	
+	public boolean existsSink(String sinkname){
+		return this.sinkDefinitions.containsKey(sinkname);
+	}
+	
+	// ----------------------------------------------------------------------------
 	// Rights Management
 	// ----------------------------------------------------------------------------
 
@@ -564,25 +619,6 @@ public class DataDictionary implements IDataDictionary {
 		}
 	}
 	
-	public void addDatatype(String name, SDFDatatype dt){
-		if(!this.datatypes.containsKey(name)){
-			this.datatypes.put(name.toLowerCase(), dt);
-		}
-		else{
-			throw new IllegalArgumentException("Type '" + name + "' already exists.");
-		}
-	}
-
-	public SDFDatatype getDatatype(String dtName){
-		if(this.datatypes.containsKey(dtName)){
-			return this.datatypes.get(dtName);
-		}
-		else{
-			throw new IllegalArgumentException("No such datatype: " + dtName);
-		}
-	}
 	
-	public boolean existsDatatype(String dtName){
-		return this.datatypes.containsKey(dtName);
-	}
+
 }
