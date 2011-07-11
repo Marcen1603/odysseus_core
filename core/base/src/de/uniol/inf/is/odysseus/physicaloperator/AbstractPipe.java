@@ -157,6 +157,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public void delegatedProcessOpen() throws OpenFailedException {
 		process_open();
 	}
+	
+	@Override
+	public boolean isOpen(){
+		return this.isOpen() || this.delegateSink.isOpen();
+	}
 
 	// ------------------------------------------------------------------------
 	// PROCESS

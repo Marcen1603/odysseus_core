@@ -104,7 +104,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final private POEvent openInitEvent;
 	final private POEvent openDoneEvent;
 
-	final private AtomicBoolean isOpen = new AtomicBoolean(false);
+	final private AtomicBoolean isSinkOpen = new AtomicBoolean(false);
 
 	protected POEvent[] processInitEvent = null;
 	protected POEvent[] processDoneEvent = null;
@@ -183,8 +183,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
-			this.isOpen.set(true);
 		}
+		this.isSinkOpen.set(true);
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 			// Check if callPath contains this call to avoid cycles
 			if (!containsSubscription(callPath, getInstance(),
@@ -219,7 +219,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public boolean isOpen() {
-		return this.isOpen.get();
+		return this.isSinkOpen.get();
 	}
 
 	// ------------------------------------------------------------------------
@@ -253,7 +253,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
-		this.isOpen.set(false);
+		this.isSinkOpen.set(false);
 		process_close();
 		stopMonitoring();
 		callCloseOnChildren(callPath);
