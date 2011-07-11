@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IntersectionAO;
+import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckAttributes;
@@ -1284,6 +1285,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		
 		PenaltyFactory factory = new PenaltyFactory();
 		return factory.buildPenalty(penaltyID, value);
+	}
+
+	@Override
+	public Object visit(ASTCreateSinkStatement node, Object data) {
+		// TODO: Generischer machen
+		String sinkName = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+		int port = Integer.parseInt(((ASTNumber)node.jjtGetChild(1)).
+				getValue());
+ 		ILogicalOperator sink = new SocketSinkAO(port);
+ 		dataDictionary.addSink(sinkName, sink);
+		return null;
 	}
 
 }
