@@ -1,6 +1,7 @@
 ///OdysseusScript
 #PARSER CQL
-#TRANSCFG Standard
+#TRANSCFG Standard Latency
+#BUFFERPLACEMENT Query Buffer Placement
 #QUERY
 CREATE SLA testSLA WITH
 	METRIC (latency, 2.0, ms), 
