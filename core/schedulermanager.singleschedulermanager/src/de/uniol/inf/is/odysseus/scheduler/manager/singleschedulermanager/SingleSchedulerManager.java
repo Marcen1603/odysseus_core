@@ -148,8 +148,10 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	@Override
 	public void setActiveScheduler(String schedulerToSet,
 			String schedulingStrategyToSet, IExecutionPlan executionPlan) {
+		List<IIterableSource<?>> leafSources = executionPlan!=null? executionPlan.getLeafSources():null;
+		List<IPartialPlan> partialPlans = executionPlan!=null?executionPlan.getPartialPlans():null;
 		setActiveScheduler(schedulerToSet, schedulingStrategyToSet,
-				executionPlan.getLeafSources(), executionPlan.getPartialPlans());
+				leafSources,partialPlans);
 	}
 
 	private void setActiveScheduler(String schedulerToSet,
