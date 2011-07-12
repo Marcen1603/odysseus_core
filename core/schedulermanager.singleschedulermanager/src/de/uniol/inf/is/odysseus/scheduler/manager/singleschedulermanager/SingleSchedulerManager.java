@@ -1,22 +1,23 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -24,17 +25,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.scheduler.manager.AbstractSchedulerManager;
-import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
 /**
@@ -94,7 +97,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		if (schedulers != null && strats != null) {
 
 			try {
-				File f = OdysseusDefaults.openOrCreateFile(OdysseusDefaults.get("schedulingConfigFile"));
+				File f = OdysseusDefaults.openOrCreateFile(OdysseusDefaults
+						.get("schedulingConfigFile"));
 				FileInputStream in;
 				in = new FileInputStream(f);
 				props.load(in);
@@ -109,7 +113,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 							.hasNext() ? strats.iterator().next() : null);
 					FileOutputStream out;
 					try {
-						out = new FileOutputStream(OdysseusDefaults.get("schedulingConfigFile"));
+						out = new FileOutputStream(
+								OdysseusDefaults.get("schedulingConfigFile"));
 						props.store(out,
 								"--- Scheduling Property File edit only if you know what you are doing ---");
 						out.close();
@@ -142,17 +147,25 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 */
 	@Override
 	public void setActiveScheduler(String schedulerToSet,
-			String schedulingStrategyToSet, IScheduleable scheduleInfos) {
+			String schedulingStrategyToSet, IExecutionPlan executionPlan) {
+		setActiveScheduler(schedulerToSet, schedulingStrategyToSet,
+				executionPlan.getLeafSources(), executionPlan.getPartialPlans());
+	}
+
+	private void setActiveScheduler(String schedulerToSet,
+			String schedulingStrategyToSet,
+			List<IIterableSource<?>> leafSources,
+			List<IPartialPlan> partialPlans) {
 		Set<String> schedulers = getScheduler();
 		Set<String> strats = getSchedulingStrategy();
 
 		boolean wasRunning = false;
-		
-		if (activeScheduler !=null && activeScheduler.isRunning()){
+
+		if (activeScheduler != null && activeScheduler.isRunning()) {
 			activeScheduler.stopScheduling();
 			wasRunning = true;
 		}
-				
+
 		// Test if this scheduler is loaded
 		if (!schedulers.contains(schedulerToSet)) {
 			logger.debug(schedulerToSet + " not loaded (now)");
@@ -175,7 +188,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 						SchedulerManagerEventType.SCHEDULER_REMOVED,
 						this.activeScheduler));
 			}
-			logger.debug("Set active Scheduler "+schedulerToSet+" ("+schedulingStrategyToSet+")");
+			logger.debug("Set active Scheduler " + schedulerToSet + " ("
+					+ schedulingStrategyToSet + ")");
 			// create a new scheduler an set the error listener
 			this.activeScheduler = createScheduler(schedulerToSet,
 					schedulingStrategyToSet);
@@ -185,18 +199,17 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 					this.activeScheduler));
 			this.activeSchedulingStrategy = schedulingStrategyToSet;
 			this.activeSchedulerString = schedulerToSet;
-			if (wasRunning){
+			if (wasRunning) {
 				activeScheduler.startScheduling();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		// refresh the scheduling
-		if (scheduleInfos != null) {
+		if (leafSources != null || partialPlans != null) {
 			try {
-				logger.debug("Refresh Scheduling with "+scheduleInfos);
-				refreshScheduling(scheduleInfos);
+				refreshScheduling(leafSources, partialPlans);
 			} catch (NoSchedulerLoadedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -289,14 +302,17 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * (de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable)
 	 */
 	@Override
-	public void refreshScheduling(IScheduleable scheduleInfos)
+	public void refreshScheduling(IExecutionPlan execPlan)
 			throws NoSchedulerLoadedException {
+		refreshScheduling(execPlan.getLeafSources(), execPlan.getPartialPlans());
+	}
+
+	public void refreshScheduling(List<IIterableSource<?>> leafSources,
+			List<IPartialPlan> partialPlans) throws NoSchedulerLoadedException{
 		this.logger.debug("Refresh Scheduling. Set Sources");
-		this.activeScheduler.setLeafSources(scheduleInfos.getExecutionPlan()
-				.getLeafSources());
+		this.activeScheduler.setLeafSources(leafSources);
 		this.logger.debug("Refresh Scheduling. Set Partial Plans");
-		this.activeScheduler.setPartialPlans(scheduleInfos.getExecutionPlan()
-				.getPartialPlans());
+		this.activeScheduler.setPartialPlans(partialPlans);
 		this.logger.debug("Refresh Scheduling. Done");
 	}
 
@@ -375,8 +391,12 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 			}
 
 			if (!configSchedulerDirty && !configSchedulingDirty) {
-				logger.debug("Set Scheduler "+defaultScheduler+" "+defaultStrat);
-				setActiveScheduler(defaultScheduler, defaultStrat, null);
+				logger.debug("Set Scheduler " + defaultScheduler + " "
+						+ defaultStrat);
+
+				setActiveScheduler(defaultScheduler, defaultStrat,
+						activeScheduler.getLeafSources(),
+						activeScheduler.getPartialPlans());
 			}
 		}
 	}
@@ -384,7 +404,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		if (this.activeScheduler instanceof IPlanModificationListener) {
-			((IPlanModificationListener)this.activeScheduler).planModificationEvent(eventArgs);
+			((IPlanModificationListener) this.activeScheduler)
+					.planModificationEvent(eventArgs);
 		}
 	}
 

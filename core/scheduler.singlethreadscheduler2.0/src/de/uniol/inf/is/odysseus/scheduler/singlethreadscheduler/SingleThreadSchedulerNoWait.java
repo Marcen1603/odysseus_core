@@ -179,7 +179,8 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 	 * .List)
 	 */
 	@Override
-	public synchronized void setPartialPlans(List<IPartialPlan> partialPlans) {
+	protected
+	 synchronized void process_setPartialPlans(List<IPartialPlan> partialPlans) {
 		logger.debug("setPartialPlans");
 		if (partialPlans != null) {
 			logger.debug("setPartialPlans clear");
@@ -228,7 +229,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
-	public synchronized void setLeafSources(
+	protected synchronized void process_setLeafSources(
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
 			for (SingleSourceExecutor source : sourceThreads) {

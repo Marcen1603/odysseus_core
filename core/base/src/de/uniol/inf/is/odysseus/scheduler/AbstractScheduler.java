@@ -1,22 +1,23 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.scheduler;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
@@ -25,7 +26,9 @@ import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.ProcessCallsMonitor;
+import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
@@ -49,7 +52,8 @@ public abstract class AbstractScheduler extends EventHandler implements
 	/**
 	 * Maximum time each strategy can use (no garantee if strategy)
 	 */
-	protected volatile long timeSlicePerStrategy = OdysseusDefaults.getLong("scheduler_TimeSlicePerStrategy",10);
+	protected volatile long timeSlicePerStrategy = OdysseusDefaults.getLong(
+			"scheduler_TimeSlicePerStrategy", 10);
 
 	/**
 	 * The {@link ISchedulingFactory} which will be used for scheduling. Each
@@ -74,9 +78,14 @@ public abstract class AbstractScheduler extends EventHandler implements
 			.get("debug_Scheduler"));
 
 	FileWriter file;
-	final long limitDebug = OdysseusDefaults.getLong("debug_Scheduler_maxLines",1048476);
+	final long limitDebug = OdysseusDefaults.getLong(
+			"debug_Scheduler_maxLines", 1048476);
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
+
+	private List<IIterableSource<?>> sources;
+
+	private List<IPartialPlan> partialPlans;
 
 	/**
 	 * Creates a new scheduler.
@@ -96,36 +105,41 @@ public abstract class AbstractScheduler extends EventHandler implements
 		int linesPrinted = queries.size();
 		for (IQuery q : queries) {
 			toPrint.append(System.currentTimeMillis()).append(";");
-			toPrint.append(s.getPlan().getId()).append(";").append(q.getID()+1) // sieht besser aus :-)
+			toPrint.append(s.getPlan().getId())
+					.append(";")
+					.append(q.getID() + 1)
+					// sieht besser aus :-)
 					.append(";").append(s.getPlan().getCurrentPriority())
-					.append(";").append((""+q.getPenalty()).replace('.', ','))
+					.append(";")
+					.append(("" + q.getPenalty()).replace('.', ','))
 					.append(";");
 			// Written Objects
 			IPlanMonitor mon = q.getPlanMonitor("Root Monitor");
-			if (mon != null){
-				toPrint.append(((ProcessCallsMonitor)mon).getOverallProcessCallCount());
-			}else{
+			if (mon != null) {
+				toPrint.append(((ProcessCallsMonitor) mon)
+						.getOverallProcessCallCount());
+			} else {
 				toPrint.append("-1");
 			}
 			toPrint.append(";");
 			ScheduleMeta h = s.getPlan().getScheduleMeta();
-			if (h!=null){
+			if (h != null) {
 				h.csvPrint(toPrint);
 			}
 			toPrint.append("\n");
 		}
 		return linesPrinted;
 	}
-	
-	public void savePrint(){
+
+	public void savePrint() {
 		try {
 			file.write(toPrint.toString());
 			file.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
-	
+
 	public boolean isOutputDebug() {
 		return outputDebug;
 	}
@@ -139,7 +153,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 	}
 
 	public void incLinesWritten(int value) {
-		linesWritten+=value;
+		linesWritten += value;
 	}
 
 	/**
@@ -166,7 +180,8 @@ public abstract class AbstractScheduler extends EventHandler implements
 		if (outputDebug) {
 			try {
 				file = new FileWriter(OdysseusDefaults.getHomeDir()
-						+ OdysseusDefaults.get("scheduler_DebugFileName")+"_" + System.currentTimeMillis() + ".csv");
+						+ OdysseusDefaults.get("scheduler_DebugFileName") + "_"
+						+ System.currentTimeMillis() + ".csv");
 				file.write("Timestamp;PartialPlan;Query;Priority;Penalty;ObjectsWritten;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
 				linesWritten = 1; // Header!
 			} catch (Exception e) {
@@ -246,4 +261,31 @@ public abstract class AbstractScheduler extends EventHandler implements
 		this.errorEventListener.remove(errorEventListener);
 	}
 
+	@Override
+	final public void setLeafSources(List<IIterableSource<?>> sources) {
+		this.sources = sources;
+		process_setLeafSources(sources);
+	}
+
+	@Override
+	final public List<IIterableSource<?>> getLeafSources() {
+		return Collections.unmodifiableList(sources);
+	}
+
+	abstract protected void process_setLeafSources(
+			List<IIterableSource<?>> sources);
+
+	@Override
+	final public void setPartialPlans(List<IPartialPlan> partialPlans) {
+		this.partialPlans = partialPlans;
+		process_setPartialPlans(partialPlans);
+	}
+
+	abstract protected void process_setPartialPlans(
+			List<IPartialPlan> partialPlans);
+
+	@Override
+	final public List<IPartialPlan> getPartialPlans() {
+		return Collections.unmodifiableList(partialPlans);
+	}
 }

@@ -63,6 +63,9 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	 */
 	public void setLeafSources(List<IIterableSource<?>> sources);
 
+
+	public List<IIterableSource<?>> getLeafSources();
+
 	/**
 	 * Set the partial plans for scheduling (pipes and roots).
 	 * 
@@ -70,6 +73,8 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	 *            Partial plans for scheduling (pipes and roots).
 	 */
 	public void setPartialPlans(List<IPartialPlan> partialPlans);
+
+	public List<IPartialPlan> getPartialPlans();
 
 	
 }

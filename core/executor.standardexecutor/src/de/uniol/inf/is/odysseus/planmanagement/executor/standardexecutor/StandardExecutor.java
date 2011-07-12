@@ -811,7 +811,7 @@ public class StandardExecutor extends AbstractExecutor {
 	public void setScheduler(String scheduler, String schedulerStrategy) {
 		try {
 			getSchedulerManager().setActiveScheduler(scheduler,
-					schedulerStrategy, this);
+					schedulerStrategy, this.getExecutionPlan());
 		} catch (SchedulerException e) {
 			getLogger().error(
 					"Error while using schedulerManager. Setting Scheduler. "

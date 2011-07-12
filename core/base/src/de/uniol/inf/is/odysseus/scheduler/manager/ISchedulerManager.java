@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 
@@ -85,7 +86,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	 * @throws NoSchedulerLoadedException
 	 *             An {@link Exception} occurs because no scheduler is loaded.
 	 */
-	public void refreshScheduling(IScheduleable executivePlan)
+	public void refreshScheduling(IExecutionPlan executivePlan)
 			throws NoSchedulerLoadedException;
 
 	/**
@@ -136,7 +137,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	 *            Object with informations about the scheduling.
 	 */
 	public void setActiveScheduler(String activeScheduler,
-			String activeSchedulingStrategy, IScheduleable scheduleInfos);
+			String activeSchedulingStrategy, IExecutionPlan execPlan);
 
 	/**
 	 * Returns the active scheduler as an ID.

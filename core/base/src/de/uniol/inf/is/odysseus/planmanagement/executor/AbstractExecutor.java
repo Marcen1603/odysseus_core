@@ -398,7 +398,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 					//this.executionPlan.open();
 				}
 				getLogger().info("Set execution plan. Refresh Scheduling");
-				getSchedulerManager().refreshScheduling(this);
+				getSchedulerManager().refreshScheduling(this.getExecutionPlan());
 				getLogger().info("New execution plan set.");
 			} catch (Exception e) {
 				e.printStackTrace();

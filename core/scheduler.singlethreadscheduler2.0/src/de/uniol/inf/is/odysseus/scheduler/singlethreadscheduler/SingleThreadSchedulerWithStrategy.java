@@ -116,7 +116,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * .List)
 	 */
 	@Override
-	public synchronized void setPartialPlans(List<IPartialPlan> partialPlans) {
+	protected synchronized void process_setPartialPlans(List<IPartialPlan> partialPlans) {
 		logger.debug("Setting new Plans to schedule :" + partialPlans);
 		this.planScheduling.clear();
 
@@ -158,7 +158,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
-	public synchronized void setLeafSources(
+	protected synchronized void process_setLeafSources(
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
 			for (SingleSourceExecutor source : sourceThreads) {

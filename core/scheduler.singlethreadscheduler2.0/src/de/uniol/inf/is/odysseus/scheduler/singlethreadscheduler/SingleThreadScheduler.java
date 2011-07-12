@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -238,7 +239,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * .List)
 	 */
 	@Override
-	public synchronized void setPartialPlans(List<IPartialPlan> partialPlans) {
+	protected synchronized void process_setPartialPlans(List<IPartialPlan> partialPlans) {
 		logger.debug("setPartialPlans");
 		if (partialPlans != null) {
 //			synchronized (this.parts) {
@@ -265,7 +266,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		}
 		logger.debug("setPartialPlans done");
 	}
-
+	
 	private void initExecThread() {
 		logger.debug("initExecThread");
 		execThread = new ExecutorThread();
@@ -285,7 +286,8 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
-	public synchronized void setLeafSources(
+	protected
+	synchronized void process_setLeafSources(
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
 			for (SingleSourceExecutor source : sourceThreads) {
