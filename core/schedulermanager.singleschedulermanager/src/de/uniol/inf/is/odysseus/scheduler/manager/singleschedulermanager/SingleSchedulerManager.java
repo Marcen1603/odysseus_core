@@ -246,7 +246,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 */
 	@Override
 	public boolean isRunning() throws NoSchedulerLoadedException {
-		return this.activeScheduler.isRunning();
+		return activeScheduler != null && this.activeScheduler.isRunning();
 	}
 
 	/*
