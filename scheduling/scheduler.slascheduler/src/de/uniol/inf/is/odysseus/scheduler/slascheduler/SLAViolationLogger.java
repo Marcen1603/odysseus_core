@@ -12,7 +12,16 @@ import java.io.IOException;
  * 
  */
 public class SLAViolationLogger implements ISLAViolationEventListener {
-
+	/**
+	 * name of log file
+	 */
+	public static final String FILE_NAME = "sla_violations_"
+			+ System.currentTimeMillis() + ".csv";
+	/**
+	 * path of log file
+	 */
+	public static final String PATH = System.getProperty("user.home")
+			+ File.separator + "odysseus" + File.separator;
 	/**
 	 * filewriter used for logging
 	 */
@@ -22,9 +31,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 * creates a new event listener instance and initializes logger.
 	 */
 	public SLAViolationLogger() {
-		String fileName = "sla_violations_" + System.currentTimeMillis()
-				+ ".csv";
-		File file = new File(fileName);
+		File file = new File(PATH, FILE_NAME);
 		try {
 			this.writer = new FileWriter(file);
 			this.writer.write(this.header());
