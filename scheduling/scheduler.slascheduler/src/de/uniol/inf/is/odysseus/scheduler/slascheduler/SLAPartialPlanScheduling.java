@@ -122,6 +122,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		} else {
 			this.querySharing = null;
 		}
+		// listener for logging sla violations in evaluation
+		this.addSLAViolationEventListener(new SLAViolationLogger());
 	}
 
 	/**

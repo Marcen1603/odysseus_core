@@ -18,10 +18,6 @@ public class SLAViolationEvent {
 	 * the costs caused by the violation due to predefined penalties
 	 */
 	private double cost;
-	/**
-	 * the service level agreement that has been violated
-	 */
-	private SLA sla;
 
 	/**
 	 * creates a new sla violation event
@@ -29,9 +25,8 @@ public class SLAViolationEvent {
 	 * @param sla the violated sla
 	 * @param cost the costs caused by the violation
 	 */
-	public SLAViolationEvent(IQuery query, SLA sla, double cost) {
+	public SLAViolationEvent(IQuery query, double cost) {
 		this.query = query;
-		this.sla = sla;
 		this.cost = cost;
 	}
 
@@ -47,13 +42,6 @@ public class SLAViolationEvent {
 	 */
 	public double getCost() {
 		return cost;
-	}
-
-	/**
-	 * @return the violated sla
-	 */
-	public SLA getSla() {
-		return sla;
 	}
 
 }

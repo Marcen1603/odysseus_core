@@ -104,8 +104,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 *            the cost caused by violating certain service levels
 	 */
 	private void violation(double cost) {
-		SLAViolationEvent event = new SLAViolationEvent(this.query, this.sla,
-				cost);
+		SLAViolationEvent event = new SLAViolationEvent(this.query, cost);
 		this.distributor.queueSLAViolationEvent(event);
 	}
 
