@@ -24,6 +24,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("rawtypes")
 class SinkConnectionListener extends Thread {
 
 	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);

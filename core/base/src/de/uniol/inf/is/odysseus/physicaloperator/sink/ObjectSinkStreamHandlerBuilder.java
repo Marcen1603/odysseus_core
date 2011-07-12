@@ -18,6 +18,7 @@ import java.net.Socket;
 
 public class ObjectSinkStreamHandlerBuilder implements ISinkStreamHandlerBuilder {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ISinkStreamHandler newInstance(Socket socket) {
 		ObjectSinkStreamHandler val = new ObjectSinkStreamHandler(socket);
