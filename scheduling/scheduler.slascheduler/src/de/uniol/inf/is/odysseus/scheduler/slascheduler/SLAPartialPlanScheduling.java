@@ -127,7 +127,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	}
 
 	/**
-	 * compy constructor for clone method
+	 * copy constructor for clone method
 	 * 
 	 * @param schedule
 	 *            the object to clone

@@ -4,10 +4,23 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Simple implementation of {@link ISLAViolationEventListener} interface for
+ * logging violations of sla in evaluation.
+ * 
+ * @author Thomas Vogelgesang
+ * 
+ */
 public class SLAViolationLogger implements ISLAViolationEventListener {
 
+	/**
+	 * filewriter used for logging
+	 */
 	private FileWriter writer;
 
+	/**
+	 * creates a new event listener instance and initializes logger.
+	 */
 	public SLAViolationLogger() {
 		String fileName = "sla_violations_" + System.currentTimeMillis()
 				+ ".csv";
@@ -20,6 +33,9 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		}
 	}
 
+	/**
+	 * writes the given event to log file
+	 */
 	@Override
 	public void slaViolated(SLAViolationEvent event) {
 		try {
@@ -29,6 +45,13 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		}
 	}
 
+	/**
+	 * returns an csv-compliant string representation of the given event
+	 * 
+	 * @param event
+	 *            the event that should be transformed to String
+	 * @return
+	 */
 	private String eventToString(SLAViolationEvent event) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(event.getQuery().getSLA().getName())
@@ -38,10 +61,17 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		return sb.toString();
 	}
 
+	/**
+	 * @return csv header
+	 */
 	private String header() {
-		return "SLA Name, Query ID, Violation Cost\n";
+		return "SLA Name" + this.getSeperator() + "Query ID"
+				+ this.getSeperator() + "Violation Cost\n";
 	}
 
+	/**
+	 * @return csv seperator
+	 */
 	private String getSeperator() {
 		return ", ";
 	}
