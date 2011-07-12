@@ -33,7 +33,7 @@ public class RuleProvider implements ITransformRuleProvider{
 		rules.add(new TAggregatePORule());
 		rules.add(new TMapAORule());
 		rules.add(new TProjectAORule());	
-		
+		rules.add(new TSocketSinkAORule());
 		rules.add(new TFileAccessAORule());
 		
 		rules.add(new TUnnestAORule());

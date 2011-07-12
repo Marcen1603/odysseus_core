@@ -45,6 +45,7 @@ public class NEXMarkClient {
 	private Socket connection;
 	// private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 	private ByteBufferStreamHandler nioStreamHandler;
+	private ObjectHandler<RelationalTuple<ITimeInterval>> objectHandler;
 
 	// /**
 	// * Filtert aus der sourceURI die Relation herraus, die simuliert werden
@@ -90,10 +91,9 @@ public class NEXMarkClient {
 		}
 		IAtomicDataHandler handler = new RelationalTupleDataHandler(
 				NEXMarkStreamType.getSchema(streamType));
-		ObjectHandler<RelationalTuple<ITimeInterval>> objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(
+		objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(
 				handler);
-		nioStreamHandler = new ByteBufferStreamHandler(connection,
-				objectHandler);
+		nioStreamHandler = new ByteBufferStreamHandler(connection);
 	}
 
 	@Override
@@ -105,7 +105,8 @@ public class NEXMarkClient {
 			throws IOException {
 
 		if (useNIO) {
-			nioStreamHandler.transfer(tuple);
+			objectHandler.put(tuple);
+			nioStreamHandler.transfer(objectHandler.getByteBuffer());
 		} else {
 			objectOutputStream.writeObject(tuple);
 			if (flush) {

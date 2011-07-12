@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.sink;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,33 +25,41 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
 
-
-public class SocketSinkPO<T> extends AbstractSink<T> {
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class SocketSinkPO extends AbstractSink<Object> {
 
 	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
-	@SuppressWarnings("rawtypes")
+	
 	public List<ISinkStreamHandler> subscribe = new ArrayList<ISinkStreamHandler>();
 	private SinkConnectionListener listener;
+	private IObjectHandler objectHandler = null;
 
-	public SocketSinkPO(int serverPort, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder) {
-		listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe);
+	public SocketSinkPO(int serverPort, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, IObjectHandler objectHandler) {
+		listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe, useNIO);
+		this.objectHandler = objectHandler;
 		listener.start();
 	}
 	
-	public SocketSinkPO(SocketSinkPO<T> socketSinkPO) {
+	public SocketSinkPO(SocketSinkPO socketSinkPO) {
 		throw new RuntimeException("Clone not supported");
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(Object object, int port, boolean isReadOnly) {
 		synchronized (subscribe) {
 			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
+			Object toTransfer = object;
+			if (objectHandler != null){
+				objectHandler.put(object);
+				toTransfer = objectHandler.getByteBuffer();
+			}
 			while (iter.hasNext()){
-				ISinkStreamHandler<T> sh = iter.next();
+				ISinkStreamHandler sh = iter.next();
 				try {
-					sh.transfer(object);
+					sh.transfer(toTransfer);
 				} catch (IOException e) {
 					e.getMessage();
 					iter.remove();
@@ -64,7 +73,7 @@ public class SocketSinkPO<T> extends AbstractSink<T> {
 		synchronized (subscribe) {
 			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
 			while (iter.hasNext()){
-				ISinkStreamHandler<T> sh = iter.next();
+				ISinkStreamHandler sh = iter.next();
 				try {
 					sh.done();
 				} catch (IOException e) {
@@ -76,8 +85,8 @@ public class SocketSinkPO<T> extends AbstractSink<T> {
 	}
 
 	@Override
-	public SocketSinkPO<T> clone() {
-		return new SocketSinkPO<T>(this);
+	public SocketSinkPO clone() {
+		return new SocketSinkPO(this);
 	}
 
 	@Override
