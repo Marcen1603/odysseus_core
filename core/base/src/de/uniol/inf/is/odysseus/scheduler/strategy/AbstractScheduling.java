@@ -121,7 +121,7 @@ public abstract class AbstractScheduling implements IScheduling,
 			} else if (nextSource.isBlocked()) {
 				logger.debug(nextSource + " blocked");
 				updateBlocked(plan.getSourceId(nextSource));
-			}else if (nextSource.hasNext()) {
+			}else if (nextSource.isOpen() && nextSource.hasNext()) {
 				// logger.debug(nextSource + " process");
 				nextSource.transferNext();
 			} else {
@@ -150,7 +150,7 @@ public abstract class AbstractScheduling implements IScheduling,
 				sourceDone(nextSource);
 			} else if (nextSource.isBlocked()) {
 				updateBlocked(plan.getSourceId(nextSource));
-			} else if (nextSource.hasNext()) {
+			} else if (nextSource.isOpen() && nextSource.hasNext()) {
 				// batch processing of tuple train
 				int numScheds = 0;
 				do {

@@ -60,7 +60,7 @@ public class SLABufferScheduling extends AbstractScheduling {
 				sourceDone(nextSource);
 			} else if (nextSource.isBlocked()) {
 				updateBlocked(getPlan().getSourceId(nextSource));
-			}else if (nextSource.hasNext()) {
+			}else if (nextSource.isOpen() && nextSource.hasNext()) {
 				nextSource.transferNext();
 			} else {
 				updateSchedulable(nextSource);
