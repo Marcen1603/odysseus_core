@@ -23,6 +23,7 @@ public class TRelationalTimestampToPayloadRule extends AbstractTransformationRul
 	public void execute(TimestampToPayloadAO operator,
 			TransformationConfiguration config) {
 		RelationalTimestampToPayloadPO po = new RelationalTimestampToPayloadPO();
+		po.setOutputSchema(operator.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
