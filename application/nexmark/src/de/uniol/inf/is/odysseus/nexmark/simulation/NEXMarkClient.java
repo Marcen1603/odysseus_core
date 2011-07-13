@@ -103,17 +103,17 @@ public class NEXMarkClient {
 
 	public void writeObject(RelationalTuple<ITimeInterval> tuple, boolean flush)
 			throws IOException {
-
-		if (useNIO) {
-			objectHandler.put(tuple);
-			nioStreamHandler.transfer(objectHandler.getByteBuffer());
-		} else {
-			objectOutputStream.writeObject(tuple);
-			if (flush) {
-				objectOutputStream.flush();
+		if (tuple != null) {
+			if (useNIO) {
+				objectHandler.put(tuple);
+				nioStreamHandler.transfer(objectHandler.getByteBuffer());
+			} else {
+				objectOutputStream.writeObject(tuple);
+				if (flush) {
+					objectOutputStream.flush();
+				}
 			}
 		}
-
 	}
 
 	public void close() throws IOException {
