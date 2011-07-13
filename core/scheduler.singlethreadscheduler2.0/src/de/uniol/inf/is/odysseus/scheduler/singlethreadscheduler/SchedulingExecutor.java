@@ -66,7 +66,7 @@ class SchedulingExecutor extends Thread {
 					}
 				}else{
 					synchronized (this) {
-						logger.debug("Waiting for plans to execute ");
+						//logger.debug("Waiting for plans to execute ");
 						wait(1000);						
 					}
 				}
