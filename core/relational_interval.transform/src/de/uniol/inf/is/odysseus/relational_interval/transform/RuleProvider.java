@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampToPayloadPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
@@ -29,6 +30,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TJoinTIPOInsertDataMergeRule());
 		rules.add(new TRelationalSlidingElementWindowTIPORule());
 		rules.add(new TLeftJoinTIPOInsertDataMergeRule());
+		rules.add(new TRelationalTimestampToPayloadRule());
 		return rules;
 	}
 
