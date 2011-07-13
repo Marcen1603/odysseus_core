@@ -84,9 +84,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 
 	@Override
 	public void setEnd(PointInTime end) {
-		if (end.getMainPoint() == -1){
-			end.setInfinite();
-		}
 		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
 					"start point is not before end point in time interval ["
