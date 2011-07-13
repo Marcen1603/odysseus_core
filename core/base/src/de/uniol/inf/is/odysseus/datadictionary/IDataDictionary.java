@@ -111,7 +111,8 @@ public interface IDataDictionary {
 
 	void addSink(String sinkname, ILogicalOperator sink);
 
-	ILogicalOperator getSink(String sinkname);
+	ILogicalOperator getSinkTop(String sinkname);
+	ILogicalOperator getSinkInput(String sinkname);
 
 	boolean existsSink(String sinkname);
 

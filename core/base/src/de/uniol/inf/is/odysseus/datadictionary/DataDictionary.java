@@ -463,12 +463,22 @@ public class DataDictionary implements IDataDictionary {
 	}
 	
 	@Override
-	public ILogicalOperator getSink(String sinkname){
+	public ILogicalOperator getSinkTop(String sinkname){
 		if (this.sinkDefinitions.containsKey(sinkname)){
 			return sinkDefinitions.get(sinkname);
 		}else{
 			throw new IllegalArgumentException("No such sink defined");
 		}
+	}
+	
+	@Override
+	public ILogicalOperator getSinkInput(String sinkname) {
+		ILogicalOperator sinkTop = getSinkTop(sinkname);
+		ILogicalOperator ret = sinkTop;
+		while (ret.getSubscribedToSource().size() > 0){
+			ret = ret.getSubscribedToSource(0).getTarget();
+		}
+		return ret;
 	}
 	
 	@Override
