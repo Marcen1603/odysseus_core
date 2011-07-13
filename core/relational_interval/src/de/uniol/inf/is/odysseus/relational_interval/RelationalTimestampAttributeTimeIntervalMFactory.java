@@ -51,6 +51,9 @@ public class RelationalTimestampAttributeTimeIntervalMFactory
 			RelationalTuple<? extends ITimeInterval> inElem, int attrPos) {
 		Number timeN = (Number) inElem.getAttribute(attrPos);
 		PointInTime time = new PointInTime(timeN);
+		if (timeN.longValue() == -1){
+			time.setInfinite();
+		}
 		return time;
 	}
 
