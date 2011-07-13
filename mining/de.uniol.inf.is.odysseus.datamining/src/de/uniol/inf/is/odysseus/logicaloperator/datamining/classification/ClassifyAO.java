@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * This class represents a logical classify operator used to classify tuples of
@@ -74,7 +74,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 			SDFAttributeList outputSchema = new SDFAttributeList();
 			outputSchema.addAll(getInputSchema(1).clone());
 			SDFAttribute classLabel = new SDFAttribute("class_label");
-			classLabel.setDatatype(SDFDatatypeFactory.getDatatype("Object"));
+			classLabel.setDatatype(SDFDatatype.OBJECT);
 			outputSchema.add(classLabel);
 			return outputSchema;
 		}

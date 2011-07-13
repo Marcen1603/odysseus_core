@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * This class is a super class for logical clustering operators. It specifies
@@ -134,7 +134,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		SDFAttribute id = new SDFAttribute("cluster_id");
-		id.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+		id.setDatatype(SDFDatatype.INTEGER);
 		outputSchema.add(id);
 		outputSchema.addAll(getInputSchema().clone());
 		return outputSchema;
@@ -154,10 +154,10 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 		} else {
 			SDFAttributeList clusterSchema = new SDFAttributeList();
 			SDFAttribute idA = new SDFAttribute("cluster_id");
-			idA.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+			idA.setDatatype(SDFDatatype.INTEGER);
 			clusterSchema.add(idA);
 			SDFAttribute idCount = new SDFAttribute("cluster_count");
-			idCount.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+			idCount.setDatatype(SDFDatatype.LONG);
 			clusterSchema.add(idCount);
 			clusterSchema.addAll(attributes);
 			return clusterSchema;

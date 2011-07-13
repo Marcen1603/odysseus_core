@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 @LogicalOperator(name = "RECALL", minInputPorts = 1, maxInputPorts = 1)
 public class RecallAO extends UnaryLogicalOp {
@@ -30,11 +30,11 @@ public class RecallAO extends UnaryLogicalOp {
 	public SDFAttributeList getOutputSchema() {
 		SDFAttributeList schema = getInputSchema().clone();
 		SDFAttribute a = new SDFAttribute("hits");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+		a.setDatatype(SDFDatatype.INTEGER);
 		schema.add(a);
 
 		SDFAttribute b = new SDFAttribute("misses");
-		b.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+		b.setDatatype(SDFDatatype.INTEGER);
 		schema.add(b);
 		return schema;
 	}

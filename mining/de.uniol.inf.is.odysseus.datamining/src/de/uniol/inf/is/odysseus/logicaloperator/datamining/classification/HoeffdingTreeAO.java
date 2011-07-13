@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributePara
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * This class represents a logical hoeffding tree operator used to learn a
@@ -81,7 +81,7 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 		// define the schema as one attribute for the classifier
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		SDFAttribute classifier = new SDFAttribute("classifier");
-		classifier.setDatatype(SDFDatatypeFactory.getDatatype("IClassifier"));
+		classifier.setDatatype(SDFDatatype.OBJECT);
 		outputSchema.add(classifier);
 		return outputSchema;
 	}

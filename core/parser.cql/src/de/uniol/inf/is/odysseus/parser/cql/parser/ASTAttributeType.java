@@ -17,9 +17,8 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 @SuppressWarnings("all")
 public class ASTAttributeType extends SimpleNode {

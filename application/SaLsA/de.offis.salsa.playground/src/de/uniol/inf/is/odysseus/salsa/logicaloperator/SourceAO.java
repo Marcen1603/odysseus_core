@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.CreateSDFAttributeParame
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 /**
  * 

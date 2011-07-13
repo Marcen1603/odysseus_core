@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 
@@ -45,7 +45,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 				attributeStr);
 		String outputName = value.get(2);
 		SDFAttribute outAttr = new SDFAttribute(outputName);
-		outAttr.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
+		outAttr.setDatatype(SDFDatatype.DOUBLE);
 
 		setValue(new AggregateItem(funcStr, attribute, outAttr));
 	}
