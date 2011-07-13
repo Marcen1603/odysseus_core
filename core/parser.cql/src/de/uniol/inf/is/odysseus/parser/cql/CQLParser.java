@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.sun.org.apache.bcel.internal.generic.ILOAD;
-
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IntersectionAO;
+import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckAttributes;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckGroupBy;
@@ -1295,6 +1295,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
 		String sinkType = ((ASTIdentifier)node.jjtGetChild(2)).getName();
  		ILogicalOperator sink = new SocketSinkAO(port, sinkType);
+ 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
+ 		// TODO: Schema haengt von den Quellen ab ...
+ 		sink.subscribeToSource(transformMeta, 0, 0, null);
  		dataDictionary.addSink(sinkName, sink);
 		return null;
 	}
@@ -1311,6 +1314,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		
 		sinkInput.subscribeToSource(top, 0, 0, top.getOutputSchema());
 		
+		// TODO: Propagate Schemainfos
+		updateSchemaInfos(sink);
+		
 		Query query = new Query();
 		query.setParserId(getLanguage());
 		query.setLogicalPlan(sink, true);
@@ -1319,4 +1325,25 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return plans;
 	}
 
+	private void updateSchemaInfos(ILogicalOperator sink) {
+		for (int i=0; i< sink.getNumberOfInputs();i++){
+			LogicalSubscription sub = sink.getSubscribedToSource(i);
+			ILogicalOperator source = sub.getTarget();
+			if (sub.getSchema() == null){
+				if (source.getOutputSchema() == null){
+					updateSchemaInfos(source);
+				}else{
+					sub.setSchema(source.getOutputSchema());
+					for (LogicalSubscription sourceSub: source.getSubscriptions()){
+						if (sourceSub.getTarget() == sink){
+							sourceSub.setSchema(source.getOutputSchema());
+						}
+					}
+				}
+			}			
+		}
+	}
+
+
+	
 }

@@ -68,7 +68,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	
 	@Override
 	public String toString() {
-		return target+" "+sinkInPort+" "+sourceOutPort;
+		return target+" "+sinkInPort+" "+sourceOutPort+" "+schema;
 	}
 
 	// ACHTUNG: BEI DER GENERIERUNG VON HASHCODE UND EQUALS

@@ -23,21 +23,28 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 	@Override
 	public void execute(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		ISinkStreamHandlerBuilder streamHandlerFac = null;
-		ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),getStreamHandler(operator.getSinkType()), false, null);
-		
-		socketSinkPO.setOutputSchema(operator.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, socketSinkPO);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
+		try {
+			ISinkStreamHandlerBuilder streamHandlerFac = null;
+			ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
+					getStreamHandler(operator.getSinkType()), false, null);
+
+			socketSinkPO.setOutputSchema(operator.getOutputSchema());
+			Collection<ILogicalOperator> toUpdate = config
+					.getTransformationHelper().replace(operator, socketSinkPO);
+			for (ILogicalOperator o : toUpdate) {
+				update(o);
+			}
+
+			retract(operator);
+			insert(socketSinkPO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		
-		retract(operator);
-		insert(socketSinkPO);		
 	}
-	
-	public ISinkStreamHandlerBuilder getStreamHandler(String type){
-		if (type.equalsIgnoreCase("object")){
+
+	public ISinkStreamHandlerBuilder getStreamHandler(String type) {
+		if (type.equalsIgnoreCase("object")) {
 			return new ObjectSinkStreamHandlerBuilder();
 		}
 		return null;
@@ -46,7 +53,8 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 	@Override
 	public boolean isExecutable(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet() && operator.getSinkType().equalsIgnoreCase("object");
+		return operator.isAllPhysicalInputSet()
+				&& operator.getSinkType().equalsIgnoreCase("object");
 	}
 
 	@Override
@@ -58,7 +66,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
 	public Class<?> getConditionClass() {
 		return SocketSinkAO.class;
