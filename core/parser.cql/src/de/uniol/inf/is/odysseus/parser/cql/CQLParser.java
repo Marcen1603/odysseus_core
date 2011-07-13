@@ -1306,14 +1306,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTStreamToStatement node, Object data) {
 		String sinkName = ((ASTIdentifier)node.jjtGetChild(0)).getName();
 		ASTSelectStatement statement = (ASTSelectStatement)node.jjtGetChild(1);
-		// Rueckgabe?
 		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
-		// Senke oben drüber 
 		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName);
+		// Append plan to input and update subscriptions
 		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName);
-		
 		sinkInput.subscribeToSource(top, 0, 0, top.getOutputSchema());
-		
 		updateSchemaInfos(sink);
 		
 		Query query = new Query();
@@ -1332,6 +1329,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				if (source.getOutputSchema() == null){
 					updateSchemaInfos(source);
 				}else{
+					// Set Schema for both directions (sink to source and source to sink)!
 					sub.setSchema(source.getOutputSchema());
 					for (LogicalSubscription sourceSub: source.getSubscriptions()){
 						if (sourceSub.getTarget() == sink){
