@@ -32,6 +32,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	// ----------------------------------------------------------------------------------------
 
 	protected static Logger _logger = null;
+	
+	boolean loggedNull = false;
 
 	protected static Logger getLogger() {
 		if (_logger == null) {
@@ -123,6 +125,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		} else {
 			this.querySharing = null;
 		}
+		this.addSLAViolationEventListener(new SLAViolationLogger());
 	}
 
 	/**
@@ -184,6 +187,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		IScheduling next = null;
 		double nextPrio = 0;
 		
+		SLATestLogger.log("Calculating priorities");
+		
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all queries
 			// Attention: it is expected that 1 partial plan contains 1 query
@@ -205,6 +210,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 				// - calculate prio
 				double prio = this.prioFunction.calcPriority(oc, mg, sf);
+				
+//				SLATestLogger.log("query " + query.getID() + " oc=" + oc 
+//						+ " mg=" + mg + " sf=" + sf + " prio=" + prio);
 
 				// select plan with highest priority
 				if (prio > nextPrio) {
@@ -224,9 +232,21 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			next = this.querySharing.getNextPlan();
 		}
 
-		debugSlow(1000 ,"Selected partial plan with prio " + nextPrio + ": " 
-				+ next);
+//		debugSlow(1000 ,"Selected partial plan with prio " + nextPrio + ": " 
+//				+ next);
 //		getLogger().debug(this.plans.toString());
+//		if (next != null) {
+//			SLATestLogger.log("Selected partial plan with prio " + nextPrio + ": " 
+//					+ next);
+//			loggedNull = false;
+//		} else {
+//			if (!loggedNull) {
+//				SLATestLogger.log("Selected partial plan with prio " + nextPrio + ": " 
+//						+ next);
+//				loggedNull = true;
+//			}
+//		}
+		
 		
 		return next;
 	}

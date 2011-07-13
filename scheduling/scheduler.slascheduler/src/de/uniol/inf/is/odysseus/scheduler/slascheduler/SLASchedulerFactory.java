@@ -67,6 +67,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		SLATestLogger.init();
 	}
 
 	/**

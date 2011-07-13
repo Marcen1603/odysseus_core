@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.cost;
 
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLATestLogger;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
 /**
@@ -18,6 +19,9 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 	public double oc(double conformance, SLA sla) {
 		// determine index of current service level
 		int slIndex = this.getCurrentServiceLevelIndex(conformance, sla);
+		
+		if (conformance > 0)
+		SLATestLogger.log("Conformance: " + conformance);
 
 		/*
 		 * calculate oc if current service level is not the less valuable
