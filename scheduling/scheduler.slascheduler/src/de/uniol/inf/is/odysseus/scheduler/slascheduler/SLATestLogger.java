@@ -31,6 +31,8 @@ public class SLATestLogger {
 				writeToFile();
 			}
 			maxMessages--;
+		} else {
+			tearDown();
 		}
 	}
 	
