@@ -1314,7 +1314,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		
 		sinkInput.subscribeToSource(top, 0, 0, top.getOutputSchema());
 		
-		// TODO: Propagate Schemainfos
 		updateSchemaInfos(sink);
 		
 		Query query = new Query();
