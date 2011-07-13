@@ -1306,8 +1306,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		// Rueckgabe?
 		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
 		// Senke oben drüber 
-		ILogicalOperator sink = dataDictionary.getSink(sinkName);
-		sink.subscribeToSource(top, 0, 0, top.getOutputSchema());
+		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName);
+		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName);
+		
+		sinkInput.subscribeToSource(top, 0, 0, top.getOutputSchema());
 		
 		Query query = new Query();
 		query.setParserId(getLanguage());
