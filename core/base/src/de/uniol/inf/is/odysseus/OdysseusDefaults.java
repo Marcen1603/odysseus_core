@@ -130,6 +130,7 @@ public class OdysseusDefaults {
 		props.setProperty("sla_stavationFreedomDecay", 0.1 + "");
 		props.setProperty("sla_querySharingCostModel", "none");
 		props.setProperty("sla_querySharing", Boolean.FALSE.toString());
+		props.setProperty("sla_costFunctionName", "quadratic");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {

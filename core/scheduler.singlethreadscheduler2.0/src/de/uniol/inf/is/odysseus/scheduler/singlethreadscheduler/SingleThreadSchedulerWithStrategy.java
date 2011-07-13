@@ -26,6 +26,8 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.AbstractScheduler;
 import de.uniol.inf.is.odysseus.scheduler.exception.SchedulingException;
@@ -44,7 +46,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * 
  */
 public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
-		implements UncaughtExceptionHandler {
+		implements UncaughtExceptionHandler, IPlanModificationListener {
 
 	private volatile int trainSize = (int) OdysseusDefaults.getLong(
 			"scheduler_trainSize", 1);
@@ -210,6 +212,13 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
 				new Exception(schedulingException)));
 
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		if (this.planScheduling instanceof IPlanModificationListener) {
+			((IPlanModificationListener) this.planScheduling).planModificationEvent(eventArgs);
+		}
 	}
 
 }

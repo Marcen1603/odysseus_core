@@ -40,6 +40,10 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 * considered in scheduling
 	 */
 	private String querySharingCostModelName;
+	/**
+	 * name of cost function
+	 */
+	private String costFunctionName;
 
 	/**
 	 * initializes and configures the schedulerfactory. will be called by osgi.
@@ -58,6 +62,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 			this.decaySF = Float.parseFloat(OdysseusDefaults.get("sla_stavationFreedomDecay"));
 			this.querySharing = Boolean.parseBoolean(OdysseusDefaults.get("sla_querySharing"));
 			this.querySharingCostModelName = OdysseusDefaults.get("sla_querySharingCostModel");
+			this.costFunctionName = OdysseusDefaults.get("sla_costFunctionName");
 			super.setName(properties);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,7 +76,8 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
 		return new SingleThreadSchedulerWithStrategy(schedulingFactoring,
 				new SLAPartialPlanScheduling(starvationFreedomFuncName, prio,
-						decaySF, querySharing, querySharingCostModelName));
+						decaySF, querySharing, querySharingCostModelName, 
+						costFunctionName));
 	}
 
 }

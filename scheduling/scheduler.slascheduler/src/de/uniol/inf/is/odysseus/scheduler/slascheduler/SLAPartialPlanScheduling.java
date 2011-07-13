@@ -109,7 +109,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	public SLAPartialPlanScheduling(String starvationFreedomFuncName,
 			IPriorityFunction prio, double decaySF, boolean querySharing,
-			String querySharingCostModelName) {
+			String querySharingCostModelName, String costFunctionName) {
 		this.plans = new ArrayList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
 		this.registry = new SLARegistry(this);
@@ -117,6 +117,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		this.prioFunction = prio;
 		this.eventQueue = new LinkedList<SLAViolationEvent>();
 		this.decaySF = decaySF;
+		this.costFunctionName = costFunctionName;
 		if (querySharing) {
 			this.querySharing = new QuerySharing(querySharingCostModelName);
 		} else {
@@ -146,7 +147,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * clears all plans
 	 */
 	@Override
-	public void clear() {
+	public synchronized void clear() {
 		this.plans.clear();
 	}
 
@@ -154,7 +155,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * adds a plan to the scheduler
 	 */
 	@Override
-	public void addPlan(IScheduling scheduling) {
+	public synchronized void addPlan(IScheduling scheduling) {
 		getLogger().debug("Plan added to SLAPartialPlanScheduling: " + scheduling);
 		this.plans.add(scheduling);
 		getLogger().debug(this.plans.toString());
@@ -174,7 +175,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * {@link IScheduling}
 	 */
 	@Override
-	public IScheduling nextPlan() {
+	public synchronized IScheduling nextPlan() {
 		// check for sla violation and fire events
 		while (!this.eventQueue.isEmpty()) {
 			this.fireSLAViolationEvent(this.eventQueue.pop());
@@ -183,39 +184,39 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		IScheduling next = null;
 		double nextPrio = 0;
 		
-		debugSlow(1000, this.plans.toString());
-		debugSlow(1000, this.toString());
-
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all queries
 			// Attention: it is expected that 1 partial plan contains 1 query
 			IQuery query = scheduling.getPlan().getQueries().get(0);
 			SLARegistryInfo data = this.registry.getData(query);
-			SLA sla = query.getSLA();
-			double conformance = data.getConformance().getConformance();
-			// calculate priorities for all partial plans:
-			// - calculate oc
-			ICostFunction costFunc = data.getCostFunction();
-			double oc = costFunc.oc(conformance, sla);
+			if (data != null) {
+				SLA sla = query.getSLA();
+				double conformance = data.getConformance().getConformance();
+				// calculate priorities for all partial plans:
+				// - calculate oc
+				ICostFunction costFunc = data.getCostFunction();
+				double oc = costFunc.oc(conformance, sla);
 
-			// - calculate mg
-			double mg = costFunc.oc(conformance, sla);
+				// - calculate mg
+				double mg = costFunc.oc(conformance, sla);
 
-			// - calculate sf
-			double sf = data.getStarvationFreedom().sf(this.getDecaySF());
+				// - calculate sf
+				double sf = data.getStarvationFreedom().sf(this.getDecaySF());
 
-			// - calculate prio
-			double prio = this.prioFunction.calcPriority(oc, mg, sf);
+				// - calculate prio
+				double prio = this.prioFunction.calcPriority(oc, mg, sf);
 
-			// select plan with highest priority
-			if (prio > nextPrio) {
-				next = scheduling;
-				nextPrio = prio;
+				// select plan with highest priority
+				if (prio > nextPrio) {
+					next = scheduling;
+					nextPrio = prio;
+				}
+
+				if (this.querySharing != null) {
+					this.querySharing.setPriority(scheduling, prio);
+				}
 			}
-
-			if (this.querySharing != null) {
-				this.querySharing.setPriority(scheduling, prio);
-			}
+			
 		}
 
 		if (this.querySharing != null) {
@@ -223,8 +224,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			next = this.querySharing.getNextPlan();
 		}
 
-//		getLogger().debug("Selected partial plan with prio " + nextPrio + ": " 
-//				+ next);
+		debugSlow(1000 ,"Selected partial plan with prio " + nextPrio + ": " 
+				+ next);
 //		getLogger().debug(this.plans.toString());
 		
 		return next;
@@ -234,7 +235,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * removes a plan from the scheduler
 	 */
 	@Override
-	public void removePlan(IScheduling plan) {
+	public synchronized void removePlan(IScheduling plan) {
 		this.plans.remove(plan);
 		this.refreshQuerySharing();
 	}
@@ -375,6 +376,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		getLogger().debug("plan modified event");
 		this.registry.planModificationEvent(eventArgs);
 	}
 }
