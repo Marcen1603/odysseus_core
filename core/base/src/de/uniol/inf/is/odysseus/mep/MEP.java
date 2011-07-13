@@ -129,7 +129,7 @@ public class MEP {
 			throw new IllegalArgumentException(
 					"multiple definition of function " + symbol);
 		}
-		getLogger().debug("Register Function: " + function.getSymbol());
+		//getLogger().debug("Register Function: " + function.getSymbol());
 		functions.put(symbol, function);
 	}
 
@@ -211,8 +211,8 @@ public class MEP {
 				throw new IllegalArgumentException(
 						"multiple definition of function " + symbol);
 			}
-			System.out.println("################# FUNCTION ADDED: " + f.getSymbol());
-			getLogger().debug("Add Function Provider: " + f.getSymbol());
+			//System.out.println("################# FUNCTION ADDED: " + f.getSymbol());
+//			getLogger().debug("Add Function Provider: " + f.getSymbol());
 			functions.put(symbol, f);
 		}
 	}

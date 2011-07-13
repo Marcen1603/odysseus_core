@@ -248,8 +248,8 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 	 */
 	@Override
 	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
-		this.logger.error("Error while scheduling.");
-
+		this.logger.error("Error while scheduling. "+eventArgs);
+		
 		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
 				"Schedulermanager exception (with inner error). ",
 						eventArgs.getValue()));

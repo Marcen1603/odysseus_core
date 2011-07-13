@@ -43,10 +43,10 @@ public class RestructHelper {
 		if (!ret.contains(child.getTarget())) {
 			ret.add(child.getTarget());
 		}
-		for (LogicalSubscription a : child.getTarget().getSubscriptions()) {
-			LoggerFactory.getLogger(RestructHelper.class).debug(
-					"New subplan after remove: " + a.getTarget());
-		}
+//		for (LogicalSubscription a : child.getTarget().getSubscriptions()) {
+//			LoggerFactory.getLogger(RestructHelper.class).debug(
+//					"New subplan after remove: " + a.getTarget());
+//		}
 		return ret;
 	}
 

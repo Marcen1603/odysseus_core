@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 
 public interface IScheduling {
 	public boolean schedule(long maxTime);
+	public boolean schedule(long maxTime, int trainSize);
 	public IPartialPlan getPlan();
 	boolean isSchedulingPaused();
 	boolean isSchedulingBlocked();

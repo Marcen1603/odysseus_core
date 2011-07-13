@@ -322,7 +322,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 				// this.roots = newRoots;
 			}
 		}
-		getLogger().debug("setRoots " + roots);
+		//getLogger().debug("setRoots " + roots);
 		return this.roots;
 	}
 

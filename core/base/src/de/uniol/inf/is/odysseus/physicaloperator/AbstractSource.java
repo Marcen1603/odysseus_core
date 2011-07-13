@@ -400,9 +400,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		if (!this.sinkSubscriptions.contains(sub)) {
-			getLogger().debug(
-					this + " Subscribe Sink " + sink + " to " + sinkInPort
-							+ " from " + sourceOutPort);
+//			getLogger().debug(
+//					this + " Subscribe Sink " + sink + " to " + sinkInPort
+//							+ " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
 		}

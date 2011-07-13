@@ -410,9 +410,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 				throw new IllegalArgumentException("SinkInPort " + sinkInPort
 						+ " already bound ");
 			}
-			getLogger().debug(
-					this.getInstance() + " Subscribe To Source " + source
-							+ " to " + sinkInPort + " from " + sourceOutPort);
+//			getLogger().debug(
+//					this.getInstance() + " Subscribe To Source " + source
+//							+ " to " + sinkInPort + " from " + sourceOutPort);
 			this.subscribedToSource.add(sub);
 			source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 					schema);

@@ -186,8 +186,8 @@ public class Activator implements BundleActivator, BundleListener {
 					parameters.put(parameterAnnotation, writeMethod);
 				}
 			}
-			logger.debug("Create GenericOperatorBuilder Builder for " + curOp
-					+ " with parameters " + parameters);
+//			logger.debug("Create GenericOperatorBuilder Builder for " + curOp
+//					+ " with parameters " + parameters);
 			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp,
 					parameters, logicalOperatorAnnotation.minInputPorts(),
 					logicalOperatorAnnotation.maxInputPorts());

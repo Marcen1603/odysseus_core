@@ -158,7 +158,6 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		getLogger().debug("Plan added to SLAPartialPlanScheduling: " + scheduling);
 		this.plans.add(scheduling);
 		getLogger().debug(this.plans.toString());
-		getLogger().debug(this.toString());
 		this.refreshQuerySharing();
 	}
 

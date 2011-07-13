@@ -7,7 +7,7 @@ import org.osgi.service.component.ComponentContext;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadTrainSchedulerWithStrategy;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
@@ -69,7 +69,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 */
 	@Override
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
-		return new SingleThreadTrainSchedulerWithStrategy(schedulingFactoring,
+		return new SingleThreadSchedulerWithStrategy(schedulingFactoring,
 				new SLAPartialPlanScheduling(starvationFreedomFuncName, prio,
 						decaySF, querySharing, querySharingCostModelName));
 	}

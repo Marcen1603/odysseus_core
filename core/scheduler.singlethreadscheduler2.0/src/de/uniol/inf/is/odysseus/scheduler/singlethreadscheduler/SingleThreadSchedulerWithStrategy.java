@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.io.IOException;
@@ -22,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
@@ -39,11 +40,14 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * 
  * The Selection which plans to schedule is based on a selection strategy
  * 
- * @author Wolf Bauer, Marco Grawunder
+ * @author Wolf Bauer, Marco Grawunder, Thomas Vogelgesang
  * 
  */
 public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 		implements UncaughtExceptionHandler {
+
+	private volatile int trainSize = (int) OdysseusDefaults.getLong(
+			"scheduler_trainSize", 1);
 
 	Logger logger = LoggerFactory
 			.getLogger(SingleThreadSchedulerWithStrategy.class);
@@ -62,12 +66,16 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 			IPartialPlanScheduling planScheduling) {
 		super(schedulingStrategieFactory);
 		this.planScheduling = planScheduling;
+		schedulingExecutor = new SchedulingExecutor(planScheduling, timeSlicePerStrategy, this,
+				trainSize);
+		schedulingExecutor.setUncaughtExceptionHandler(this);
+		schedulingExecutor.setPriority(Thread.NORM_PRIORITY);
 	}
 
 	/**
 	 * Thread for execution the registered partial plans.
 	 */
-	protected ExecutorThread execThread;
+	protected SchedulingExecutor schedulingExecutor;
 
 	/**
 	 * Thread for execution the global sources.
@@ -82,11 +90,12 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 
 		super.startScheduling();
 		// Start Source Threads
+		// TODO: Wenn die Threads vorher beendet wurden, kann man die nicht einfach neu starten
 		for (SingleSourceExecutor source : sourceThreads) {
 			source.start();
 		}
 		// Start Executor Thread to execute plans
-		initExecThread();
+		schedulingExecutor.start();
 	}
 
 	/*
@@ -104,7 +113,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 		for (Thread sourceThread : sourceThreads) {
 			sourceThread.interrupt();
 		}
-		execThread.interrupt();
+		schedulingExecutor.interrupt();
 		super.stopScheduling();
 	}
 
@@ -116,8 +125,12 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * .List)
 	 */
 	@Override
-	protected synchronized void process_setPartialPlans(List<IPartialPlan> partialPlans) {
+	protected synchronized void process_setPartialPlans(
+			List<IPartialPlan> partialPlans) {
 		logger.debug("Setting new Plans to schedule :" + partialPlans);
+		
+		schedulingExecutor.pause();
+		
 		this.planScheduling.clear();
 
 		if (partialPlans != null) {
@@ -132,23 +145,9 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 			}
 		}
 
-		// restart ExecutorThread, if terminated before
-		if (isRunning() && (this.planScheduling.planCount() > 0)
-				&& (execThread == null || !execThread.isAlive())) {
-			execThread.interrupt();
-			initExecThread();
-		}
-		logger.debug("setPartialPlans done");
-	}
+		schedulingExecutor.endPause();
 
-	protected void initExecThread() {
-		logger.debug("initExecThread");
-		execThread = new ExecutorThread(planScheduling, timeSlicePerStrategy,
-				this);
-		execThread.setUncaughtExceptionHandler(this);
-		execThread.setPriority(Thread.NORM_PRIORITY);
-		execThread.start();
-		logger.debug("initExecThread done");
+		logger.debug("setPartialPlans done");
 	}
 
 	/*
@@ -193,8 +192,8 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		if (!this.execThread.equals(t)) {
-			this.execThread.interrupt();
+		if (!this.schedulingExecutor.equals(t)) {
+			this.schedulingExecutor.interrupt();
 		}
 		if (!this.sourceThreads.contains(t)) {
 			super.stopScheduling();
@@ -207,114 +206,10 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 				new Exception(e)));
 	}
 
-}
+	public void exception(SchedulingException schedulingException) {
+		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
+				new Exception(schedulingException)));
 
-/**
- * Thread for execution of the registered partial plans. Based on scheduling
- * strategies.
- * 
- * @author Wolf Bauer, Marco Grawunder
- * 
- */
-
-class ExecutorThread extends Thread {
-
-	private IPartialPlanScheduling planScheduling;
-	private long timeSlicePerStrategy;
-	private SingleThreadSchedulerWithStrategy caller;
-
-	public ExecutorThread(IPartialPlanScheduling planScheduling,
-			long timeSlicePerStrategy, SingleThreadSchedulerWithStrategy caller) {
-		this.planScheduling = planScheduling.clone();
-		System.err.println("Executor Thread created"+this);
-		//this.planScheduling = planScheduling;
-		this.timeSlicePerStrategy = timeSlicePerStrategy;
-		this.caller = caller;
-	}
-	
-	
-
-	protected IPartialPlanScheduling getPlanScheduling() {
-		return planScheduling;
-	}
-
-
-
-	protected long getTimeSlicePerStrategy() {
-		return timeSlicePerStrategy;
-	}
-
-
-
-	protected SingleThreadSchedulerWithStrategy getCaller() {
-		return caller;
-	}
-
-
-
-	@Override
-	public void run() {
-		try {
-			while (!isInterrupted()) {
-				boolean writingDone = false;
-				IScheduling plan = planScheduling.nextPlan();
-				while (plan != null && !isInterrupted()) {
-					if (caller.isOutputDebug()
-							&& ((caller.getLimitDebug() > 0 && caller.getLinesWritten() < caller.getLimitDebug()) || caller.getLimitDebug() < 0)) {
-						int lineswritten = caller.print(plan);
-						caller.incLinesWritten(lineswritten);
-						if (!writingDone && caller.getLinesWritten() % 100000 == 0){
-							caller.logger.debug("Written "+caller.getLinesWritten());
-						}
-						if (!writingDone && caller.getLinesWritten()>= caller.getLimitDebug()) {
-							caller.logger.debug("Max No of lines written");
-							caller.savePrint();
-							caller.logger.debug("Dumped to Disk");
-							writingDone = true;
-							caller.stopScheduling();
-						}
-					}
-
-					if (plan.schedule(timeSlicePerStrategy)) {
-						// plan is done
-						planScheduling.removePlan(plan);
-					}
-					plan = planScheduling.nextPlan();
-				}
-			}
-		} catch (Throwable t) {
-			// TODO: Message to Caller
-			t.printStackTrace();
-			throw new SchedulingException(t);
-		}
-	}
-}
-
-class SingleSourceExecutor extends Thread {
-
-	Logger logger = LoggerFactory.getLogger(SingleSourceExecutor.class);
-
-	private IIterableSource<?> s;
-
-	private SingleThreadSchedulerWithStrategy caller;
-
-	public SingleSourceExecutor(IIterableSource<?> s,
-			SingleThreadSchedulerWithStrategy singleThreadScheduler) {
-		this.s = s;
-		this.caller = singleThreadScheduler;
-	}
-
-	@Override
-	public void run() {
-		logger.debug("Added Source " + s);
-		while (!isInterrupted() && s.isOpen() && !s.isDone()) {
-			while (s.hasNext()) {
-				s.transferNext();
-			}
-			Thread.yield();
-		}
-		logger.debug("Remove Source " + s);
-		caller.removeSourceThread(this);
 	}
 
 }
