@@ -12,9 +12,6 @@ public class GenQueries {
 	private static final String TAB = "\t";
 	private static final double SF_DECAY = 0.1;
 
-	private static int[] slThresholdsAvg = { 500, 1000 };
-	private static int[] penaltyCosts = { 500, 1000, 1500 };
-
 	private static final String PRIO_FUNC_NAME = PriorityFunctionFactory.MAX;
 	private static final boolean SLA_QUERY_SHARING_ENABLED = false;
 	private static final String SF_FUNC_NAME = StarvationFreedomFactory.QUEUE_SIZE;
