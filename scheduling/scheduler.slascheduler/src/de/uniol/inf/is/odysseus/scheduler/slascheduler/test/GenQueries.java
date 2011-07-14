@@ -13,7 +13,7 @@ public class GenQueries {
 	private static final double SF_DECAY = 0.1;
 
 	private static int[] slThresholdsAvg = { 500, 1000 };
-	private static int[] penaltyCosts = { 500, 1000 };
+	private static int[] penaltyCosts = { 500, 1000, 1500 };
 
 	private static final String PRIO_FUNC_NAME = PriorityFunctionFactory.MAX;
 	private static final boolean SLA_QUERY_SHARING_ENABLED = false;
@@ -25,8 +25,9 @@ public class GenQueries {
 	private static final double OP_SELECTIVITY = 1.0;
 	private static final int OP_PROCESSING_TIME = 1000;
 	private static final int NUMBER_OF_USERS = 3;
-	private static final int NUMBER_OF_SLAS = 1;
+	private static final int NUMBER_OF_SLAS = 3;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
+	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 
 	static String[] testinput = new String[] {
 			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
@@ -43,8 +44,9 @@ public class GenQueries {
 		}
 
 		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-			sb.append(createSLA(i, 2.0, ScopeFactory.SCOPE_AVERAGE, 10, "d",
-					slThresholdsAvg, penaltyCosts, PENALTY_NAME));
+			sb.append(createSLA(i, (i + 1) * 200, ScopeFactory.SCOPE_AVERAGE,
+					10, "d", calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+					calcPenaltyCosts(i), PENALTY_NAME));
 		}
 		sb.append(NEWLINE);
 
@@ -158,6 +160,29 @@ public class GenQueries {
 		sb.append("#QUERY").append(NEWLINE);
 		sb.append("GRANT READ ON testinput TO Public;").append(NEWLINE);
 		return sb.toString();
+	}
+
+	private static int[] calcThresholds(String scope, int slNumber) {
+		int[] thresholds = new int[NUMBER_OF_SERVICE_LEVELS];
+		if (scope.equals(ScopeFactory.SCOPE_AVERAGE)) {
+			for (int i = 0; i < NUMBER_OF_SERVICE_LEVELS; i++) {
+				thresholds[i] = 100 * (i + 1) + slNumber * 200;
+			}
+		} else if (scope.equals(ScopeFactory.SCOPE_NUMBER)) {
+			throw new RuntimeException("not implemented");
+		} else if (scope.equals(ScopeFactory.SCOPE_SINGLE)) {
+			throw new RuntimeException("not implemented");
+		}
+		return thresholds;
+	}
+
+	private static int[] calcPenaltyCosts(int slNumber) {
+		int penaltyCost[] = new int[NUMBER_OF_SERVICE_LEVELS];
+		for (int i = 0; i < penaltyCost.length; i++) {
+			penaltyCost[i] = 500 * (i + 1) + 1000
+					* (NUMBER_OF_SERVICE_LEVELS - slNumber);
+		}
+		return penaltyCost;
 	}
 
 }
