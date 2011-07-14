@@ -57,8 +57,12 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	 */
 	@Override
 	public double getConformance() {
-		return this.aggregate.getAggValue().doubleValue()
+		double avg = this.aggregate.getAggValue().doubleValue()
 				/ this.aggregate.getCount();
+		if (Double.isNaN(avg))
+			return 0.0;
+		else
+			return avg;
 	}
 
 	/**
