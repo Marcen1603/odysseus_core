@@ -23,7 +23,7 @@ public class GenQueries {
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final int TEST_INPUT_NUMBER = 0;
 	private static final double OP_SELECTIVITY = 1.0;
-	private static final int OP_PROCESSING_TIME = 1000;
+	private static final int OP_PROCESSING_TIME = 100;
 	private static final int NUMBER_OF_USERS = 3;
 	private static final int NUMBER_OF_SLAS = 3;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
