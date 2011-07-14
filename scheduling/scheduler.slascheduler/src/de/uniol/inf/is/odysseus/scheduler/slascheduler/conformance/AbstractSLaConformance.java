@@ -22,6 +22,10 @@ import de.uniol.inf.is.odysseus.sla.ServiceLevel;
 public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		implements ISLAConformance {
 	/**
+	 * factor between nanoseconds and milliseconds
+	 */
+	private static final double NANO_TO_MILLI = 1000000.0;
+	/**
 	 * reference to the object, that distributes generated
 	 * {@link SLAViolationEvent} to event listeners
 	 */
@@ -142,5 +146,9 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 			this.windowEnd += this.getSLA().getWindow().lengthToMilliseconds();
 			this.reset();
 		}
+	}
+	
+	protected double nanoToMilli(double value) {
+		return value / NANO_TO_MILLI;
 	}
 }

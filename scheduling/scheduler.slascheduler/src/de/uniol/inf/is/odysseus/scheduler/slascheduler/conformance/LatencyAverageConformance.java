@@ -57,7 +57,8 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	 */
 	@Override
 	public double getConformance() {
-		return this.aggregate.getAggValue().doubleValue() / this.aggregate.getCount();
+		return this.aggregate.getAggValue().doubleValue()
+				/ this.aggregate.getCount();
 	}
 
 	/**
@@ -85,7 +86,8 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
-			this.aggregate.addAggValue((double) latency.getLatency());
+			this.aggregate.addAggValue(this.nanoToMilli((double) latency
+					.getLatency()));
 		} else {
 			throw new RuntimeException("Latency missing");
 		}

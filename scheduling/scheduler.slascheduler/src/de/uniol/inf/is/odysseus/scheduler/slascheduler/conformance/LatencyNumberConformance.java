@@ -89,7 +89,7 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
-			if (latency.getLatency() > latencyThreshold) {
+			if (this.nanoToMilli(latency.getLatency()) > latencyThreshold) {
 				this.numberOfViolations++;
 			}
 		}

@@ -20,7 +20,7 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	/**
 	 * the highest measured latency
 	 */
-	private long maxLatency;
+	private double maxLatency;
 
 	/**
 	 * creates a new sla conformance for metric latency and scope single
@@ -81,7 +81,7 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
 			if (latency.getLatency() > this.maxLatency) {
-				this.maxLatency = latency.getLatency();
+				this.maxLatency = nanoToMilli(latency.getLatency());
 			}
 		}
 	}
