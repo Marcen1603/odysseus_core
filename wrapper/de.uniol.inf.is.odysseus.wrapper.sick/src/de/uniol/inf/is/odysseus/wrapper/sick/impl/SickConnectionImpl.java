@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.salsa.sensor.impl;
+package de.uniol.inf.is.odysseus.wrapper.sick.impl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,11 +13,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.salsa.sensor.MeasurementListener;
-import de.uniol.inf.is.odysseus.salsa.sensor.SickConnection;
-import de.uniol.inf.is.odysseus.salsa.sensor.model.Background;
-import de.uniol.inf.is.odysseus.salsa.sensor.model.Measurement;
-import de.uniol.inf.is.odysseus.salsa.sensor.model.Sample;
+import de.uniol.inf.is.odysseus.wrapper.sick.MeasurementListener;
+import de.uniol.inf.is.odysseus.wrapper.sick.SickConnection;
+import de.uniol.inf.is.odysseus.wrapper.sick.model.Background;
+import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
+import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -223,45 +223,82 @@ public class SickConnectionImpl implements SickConnection {
                 this.channel.connect(address);
                 this.channel.configureBlocking(false);
                 final CharsetDecoder decoder = this.charset.newDecoder();
-                this.onClose();
+                // this.onClose();
                 this.onOpen();
                 final ByteBuffer buffer = ByteBuffer.allocateDirect(65 * 1024);
                 int nbytes = 0;
                 int pos = 0;
                 int endIndex = -1;
+                int size = 0;
                 while (!Thread.currentThread().isInterrupted()) {
-
                     while ((nbytes = this.channel.read(buffer)) > 0) {
-                        for (int i = 0; i < nbytes; i++) {
-                            if (buffer.get(pos + i) == SickConnectionImpl.END) {
-                                endIndex = pos + i;
-                                break;
-                            }
-                        }
-                        pos = buffer.position();
-                        if (endIndex >= 0) {
-                            buffer.flip();
-                            buffer.limit(endIndex + 1);
-                            final CharBuffer charBuffer = decoder.decode(buffer);
-                            try {
+                        size += nbytes;
+                        for (int i = 0; i < size; i++) {
+                            if (buffer.get(i) == SickConnectionImpl.END) {
+                                buffer.position(i + 1);
+                                // LOG.info("1. Position: " + i + " " + buffer.position()
+                                // + " Limit: " + buffer.limit() + " Remain: "
+                                // + buffer.remaining()+" Size: "+size);
+                                buffer.flip();
+                                // LOG.info("2. Position: " + i + " " + buffer.position()
+                                // + " Limit: " + buffer.limit() + " Remain: "
+                                // + buffer.remaining() + " Size: " + size);
 
-                                this.onMessage(charBuffer.subSequence(1, charBuffer.length() - 1)
-                                        .toString());
-                            }
-                            catch (final Exception e) {
-                                if (SickConnectionImpl.LOG.isDebugEnabled()) {
-                                    SickConnectionImpl.LOG.debug(e.getMessage(), e);
-                                    this.dumpPackage(buffer);
+                                final CharBuffer charBuffer = decoder.decode(buffer);
+                                try {
+
+                                    this.onMessage(charBuffer.subSequence(1,
+                                            charBuffer.length() - 1).toString());
                                 }
+                                catch (final Exception e) {
+                                    if (SickConnectionImpl.LOG.isDebugEnabled()) {
+                                        SickConnectionImpl.LOG.debug(e.getMessage(), e);
+                                        this.dumpPackage(buffer);
+                                    }
+                                }
+                                // LOG.info("3. Position: " + i + " " + buffer.position()
+                                // + " Limit: " + buffer.limit() + " Remain: "
+                                // + buffer.remaining()+" Size: "+size);
+                                buffer.limit(size);
+                                // LOG.info("3.5 Position: " + i + " " + buffer.position()
+                                // + " Limit: " + buffer.limit() + " Remain: "
+                                // + buffer.remaining() + " Size: " + size);
+
+                                buffer.compact();
+                                size -= (i + 1);
+                                i = 0;
+                                // LOG.info("4. Position: " + i + " " + buffer.position() +
+                                // " Limit: "
+                                // + buffer.limit() + " Remain: " + buffer.remaining()
+                                // + " Size: " + size);
                             }
-                            buffer.compact();
-                            pos -= charBuffer.length();
-                            endIndex = -1;
-                            buffer.position(pos);
                         }
+                        // pos = buffer.position();
+                        // if (endIndex >= 0) {
+                        // buffer.flip();
+                        // buffer.limit(endIndex + 1);
+                        // final CharBuffer charBuffer = decoder.decode(buffer);
+                        // try {
+                        //
+                        // this.onMessage(charBuffer.subSequence(1, charBuffer.length() - 1)
+                        // .toString());
+                        // }
+                        // catch (final Exception e) {
+                        // if (SickConnectionImpl.LOG.isDebugEnabled()) {
+                        // SickConnectionImpl.LOG.debug(e.getMessage(), e);
+                        // this.dumpPackage(buffer);
+                        // }
+                        // }
+                        // buffer.compact();
+                        // pos -= charBuffer.length();
+                        // endIndex = -1;
+                        // buffer.position(pos);
+                        // }
                     }
+
                 }
                 this.onClose();
+                LOG.info("SICK connection interrupted");
             }
             catch (final Exception e) {
                 SickConnectionImpl.LOG.error(e.getMessage(), e);

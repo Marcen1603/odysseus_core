@@ -14,13 +14,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.salsa.ui.Screen;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
-public class VisualSinkPO<T extends IMetaAttribute> extends
-        AbstractSink<RelationalTuple<TimeInterval>> {
+public class VisualSinkPO extends AbstractSink<Object> {
     private final Queue<Geometry> segments = new ConcurrentLinkedQueue<Geometry>();
     Screen screen = new Screen();
     private final SDFAttributeList schema;
@@ -44,22 +42,21 @@ public class VisualSinkPO<T extends IMetaAttribute> extends
         this.painter.start();
     }
 
-    public VisualSinkPO(final VisualSinkPO<T> po) {
+    public VisualSinkPO(final VisualSinkPO po) {
         this.schema = po.schema;
         this.screen.repaint();
         this.painter.start();
     }
 
     @Override
-    public VisualSinkPO<T> clone() {
-        return new VisualSinkPO<T>(this);
+    public VisualSinkPO clone() {
+        return new VisualSinkPO(this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void process_next(final RelationalTuple<TimeInterval> object, final int port,
-            final boolean isReadOnly) {
-        this.segments.offer((Geometry) object.getAttribute(0));
+    protected void process_next(final Object object, final int port, final boolean isReadOnly) {
+        this.segments.offer((Geometry) ((RelationalTuple<TimeInterval>) object).getAttribute(0));
     }
 
     @Override

@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.salsa.sensor;
+package de.uniol.inf.is.odysseus.wrapper.sick;
 
-import de.uniol.inf.is.odysseus.salsa.sensor.model.Background;
+import de.uniol.inf.is.odysseus.wrapper.sick.model.Background;
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>

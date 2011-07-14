@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.salsa.physicaloperator;
+package de.uniol.inf.is.odysseus.wrapper.base.physicaloperator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -11,25 +12,24 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.salsa.pool.SourcePool;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-/**
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
- *
- */
+import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
+
 public class SourcePO<T extends IMetaAttribute> extends
         AbstractSource<RelationalTuple<TimeInterval>> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePO.class);
     private final SDFAttributeList schema;
     private final String adapterName;
+    private final Map<String, String> options = new HashMap<String, String>();
 
     /**
      * @param schema
      */
-    public SourcePO(final SDFAttributeList schema, final String adapterName) {
+    public SourcePO(final SDFAttributeList schema, final String adapterName,
+            final Map<String, String> options) {
         this.schema = schema;
         this.adapterName = adapterName;
+        this.options.putAll(options);
     }
 
     /**
@@ -38,15 +38,26 @@ public class SourcePO<T extends IMetaAttribute> extends
     public SourcePO(final SourcePO<T> po) {
         this.schema = po.schema;
         this.adapterName = po.adapterName;
+        this.options.putAll(po.options);
     }
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#clone()
+     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#process_open()
      */
     @Override
-    public SourcePO<T> clone() {
-        return new SourcePO<T>(this);
+    protected void process_open() throws OpenFailedException {
+        SourcePool.registerSource(this.adapterName, this, this.options);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#process_close()
+     */
+    @Override
+    protected void process_close() {
+        super.process_close();
+        SourcePool.unregisterSource(this);
     }
 
     /*
@@ -56,24 +67,6 @@ public class SourcePO<T extends IMetaAttribute> extends
     @Override
     public SDFAttributeList getOutputSchema() {
         return this.schema;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#process_close()
-     */
-    @Override
-    protected void process_close() {
-        SourcePool.unregisterSource(this.adapterName);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#process_open()
-     */
-    @Override
-    protected void process_open() throws OpenFailedException {
-        SourcePool.registerSource(this.adapterName, this);
     }
 
     /**
@@ -102,5 +95,14 @@ public class SourcePO<T extends IMetaAttribute> extends
         else {
             SourcePO.LOG.warn("Source not open");
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#clone()
+     */
+    @Override
+    public SourcePO<T> clone() {
+        return new SourcePO<T>(this);
     }
 }

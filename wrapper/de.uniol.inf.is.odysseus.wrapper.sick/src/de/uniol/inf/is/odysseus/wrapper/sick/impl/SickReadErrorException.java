@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.salsa.sensor.impl;
+package de.uniol.inf.is.odysseus.wrapper.sick.impl;
 
 /**
  * @author ckuka

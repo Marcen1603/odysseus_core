@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.salsa.sensor.model;
+package de.uniol.inf.is.odysseus.wrapper.sick.model;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

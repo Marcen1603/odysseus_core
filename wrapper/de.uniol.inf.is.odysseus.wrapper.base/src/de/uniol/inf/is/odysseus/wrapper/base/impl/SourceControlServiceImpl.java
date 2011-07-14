@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.AttributeConfigurationImpl;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceConfigurationImpl;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceImpl;
+import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
 public class SourceControlServiceImpl implements SourceControlService {
     private static Logger LOG = LoggerFactory.getLogger(SourceControlService.class);
@@ -31,6 +32,7 @@ public class SourceControlServiceImpl implements SourceControlService {
         return Collections.unmodifiableSet(this.sourceAdapters.keySet());
     }
 
+    @Deprecated
     @Override
     public void registerSource(final String adapterType, final String name,
             final Map<String, String> sourceConfiguration,
@@ -58,6 +60,7 @@ public class SourceControlServiceImpl implements SourceControlService {
         }
     }
 
+    @Deprecated
     @Override
     public void unregisterSource(final String name) {
         final Source source = this.sources.get(name);
@@ -71,18 +74,20 @@ public class SourceControlServiceImpl implements SourceControlService {
     }
 
     protected void bindSourceAdapter(final SourceAdapter adapter) {
-        if (!this.sourceAdapters.containsKey(adapter.getName())) {
-            this.sourceAdapters.put(adapter.getName(), new ArrayList<SourceAdapter>());
-        }
-        this.sourceAdapters.get(adapter.getName()).add(adapter);
+        // if (!this.sourceAdapters.containsKey(adapter.getName())) {
+        // this.sourceAdapters.put(adapter.getName(), new ArrayList<SourceAdapter>());
+        // }
+        // this.sourceAdapters.get(adapter.getName()).add(adapter);
+        SourcePool.registerAdapter(adapter);
         SourceControlServiceImpl.LOG.info("Bind source adapter {}", adapter.getName());
     }
 
     protected void unbindSourceAdapter(final SourceAdapter adapter) {
-        if (this.sourceAdapters.containsKey(adapter.getName())) {
-            this.sourceAdapters.get(adapter.getName()).remove(adapter);
-            SourceControlServiceImpl.LOG.info("Unbind source adapter {}", adapter.getName());
-        }
+        // if (this.sourceAdapters.containsKey(adapter.getName())) {
+        // this.sourceAdapters.get(adapter.getName()).remove(adapter);
+        // SourceControlServiceImpl.LOG.info("Unbind source adapter {}", adapter.getName());
+        // }
+        SourcePool.unregisterAdapter(adapter);
     }
 
 }

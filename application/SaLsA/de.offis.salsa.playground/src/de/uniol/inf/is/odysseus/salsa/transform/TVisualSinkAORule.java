@@ -12,10 +12,9 @@ import de.uniol.inf.is.odysseus.salsa.logicaloperator.VisualSinkAO;
 import de.uniol.inf.is.odysseus.salsa.physicaloperator.VisualSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
 public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> {
     private static Logger LOG = LoggerFactory.getLogger(TVisualSinkAORule.class);
@@ -27,14 +26,21 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
      */
     @Override
     public void execute(final VisualSinkAO operator, final TransformationConfiguration config) {
-        final VisualSinkPO<?> po = new VisualSinkPO(operator.getOutputSchema());
-        final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
-                operator, po);
-        for (final ILogicalOperator o : toUpdate) {
-            this.update(o);
+        try {
+            final VisualSinkPO po = new VisualSinkPO(operator.getOutputSchema());
+            po.setOutputSchema(operator.getOutputSchema());
+            final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
+                    operator, po);
+            for (final ILogicalOperator o : toUpdate) {
+                this.update(o);
+            }
+            replace(operator,po,config);
+            retract(operator);
+           
         }
-        this.retract(operator);
-
+        catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
     }
 
     /*
@@ -52,7 +58,7 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
      */
     @Override
     public int getPriority() {
-        return 10;
+        return 0;
     }
 
     /*
@@ -73,5 +79,10 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
     public boolean isExecutable(final VisualSinkAO operator,
             final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
+    }
+
+    @Override
+    public Class<?> getConditionClass() {
+        return VisualSinkAO.class;
     }
 }

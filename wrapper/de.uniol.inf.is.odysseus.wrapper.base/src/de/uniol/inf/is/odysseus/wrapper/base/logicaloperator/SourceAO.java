@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.salsa.logicaloperator;
+package de.uniol.inf.is.odysseus.wrapper.base.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,21 +18,21 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
-/**
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
- *
- */
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "SOURCE")
-public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSettable {
 
+/**
+ * @author ckuka
+ */
+
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ADAPTER")
+public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSettable {
+    private static Logger LOG = LoggerFactory.getLogger(SourceAO.class);
     /**
      * 
      */
-    private static final long serialVersionUID = 4463347403946884857L;
-    private static Logger LOG = LoggerFactory.getLogger(SourceAO.class);
+    private static final long serialVersionUID = 2514000374871326771L;
     private final Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
-    private String adapterName;
+    private final Map<String, String> options = new HashMap<String, String>();
+    private String adapter;
 
     /**
      * 
@@ -48,16 +49,8 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
         for (final Entry<Integer, SDFAttributeList> entry : ao.outputSchema.entrySet()) {
             this.outputSchema.put(entry.getKey(), entry.getValue().clone());
         }
-        this.adapterName = ao.adapterName;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#clone()
-     */
-    @Override
-    public SourceAO clone() {
-        return new SourceAO(this);
+        this.adapter = ao.adapter;
+        this.options.putAll(ao.options);
     }
 
     /*
@@ -85,7 +78,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
      * .is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
      */
     @Override
-    public void setOutputSchema(final SDFAttributeList outputSchema) {
+    public void setOutputSchema(SDFAttributeList outputSchema) {
         this.setOutputSchema(outputSchema, 0);
     }
 
@@ -96,8 +89,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
      * .is.odysseus.sourcedescription.sdf.schema.SDFAttributeList, int)
      */
     @Override
-    public void setOutputSchema(final SDFAttributeList outputSchema, final int port) {
-        SourceAO.LOG.debug("Set output schema on port {} to {}", port, outputSchema);
+    public void setOutputSchema(SDFAttributeList outputSchema, int port) {
         this.outputSchema.put(port, outputSchema);
     }
 
@@ -114,18 +106,54 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
         for (final String item : schemaAttributes) {
             final String[] schemaInformation = item.split(":");
             final SDFAttribute attribute = new SDFAttribute(null, schemaInformation[0]);
-            attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(schemaInformation[1]));
+            attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(
+                    schemaInformation[1]));
             schema.add(attribute);
         }
         this.setOutputSchema(schema, 0);
     }
 
-    @Parameter(name = "NAME", type = StringParameter.class)
-    public void setAdapterName(final String adapterName) {
-        this.adapterName = adapterName;
+    @Parameter(name = "OPTIONS", optional = true, type = StringParameter.class, isList = true)
+    public void setOptions(final List<String> optionsList) {
+        for (final String item : optionsList) {
+            final String[] option = item.split(":");
+            if (option.length == 2) {
+                this.options.put(option[0], option[1]);
+            }
+            else {
+                this.options.put(option[0], "");
+            }
+        }
     }
 
-    public String getAdapterName() {
-        return this.adapterName;
+    @Parameter(name = "ADAPTER", type = StringParameter.class, isList = false)
+    public void setAdapter(final String adapterName) {
+        this.adapter = adapterName;
     }
+
+    public String getAdapter() {
+        return this.adapter;
+    }
+
+    public List<String> getOptions() {
+        List<String> optionList = new ArrayList<String>();
+        for (String key : options.keySet()) {
+            optionList.add(key + ":" + options.get(key));
+        }
+        return optionList;
+    }
+
+    public Map<String, String> getOptionsMap() {
+        return options;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#clone()
+     */
+    @Override
+    public SourceAO clone() {
+        return new SourceAO(this);
+    }
+
 }
