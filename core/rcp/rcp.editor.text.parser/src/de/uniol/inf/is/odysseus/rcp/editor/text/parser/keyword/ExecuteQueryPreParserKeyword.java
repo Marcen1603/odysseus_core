@@ -15,7 +15,9 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -34,7 +36,19 @@ public class ExecuteQueryPreParserKeyword extends AbstractQueryPreParserKeyword 
 		queryText = queryText.trim();
 
 		final List<IQueryBuildSetting<?>> cfg = ExecutorHandler.getExecutor().getQueryBuildConfiguration(transCfg);
-		Collection<IQuery> queries = ExecutorHandler.getExecutor().addQuery(queryText, parserID, caller, dd, cfg.toArray(new IQueryBuildSetting[0]) );
+		
+		// Query aufsplitten ";"
+		StringTokenizer queriesTokenizer = new StringTokenizer(queryText, ";");
+		Collection<IQuery> queries = new LinkedList<IQuery>();
+		while (queriesTokenizer.hasMoreElements()) {
+			String q = queriesTokenizer.nextToken();
+			if (q.length() > 0) {
+				queries.addAll(ExecutorHandler.getExecutor().addQuery(q,
+						parserID, caller, dd,
+						cfg.toArray(new IQueryBuildSetting[0])));
+			}
+		}	
+		
 		for (IQuery q:queries){
 			ExecutorHandler.getExecutor().startQuery(q.getID(), caller);
 		}
