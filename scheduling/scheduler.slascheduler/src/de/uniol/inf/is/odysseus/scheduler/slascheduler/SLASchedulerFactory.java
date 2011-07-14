@@ -59,7 +59,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 			this.prio = new PriorityFunctionFactory()
 					.buildPriorityFunction(OdysseusDefaults
 							.get("sla_prioFuncName"));
-			this.decaySF = Float.parseFloat(OdysseusDefaults.get("sla_stavationFreedomDecay"));
+			this.decaySF = Float.parseFloat(OdysseusDefaults.get("sla_starvationFreedomDecay"));
 			this.querySharing = Boolean.parseBoolean(OdysseusDefaults.get("sla_querySharing"));
 			this.querySharingCostModelName = OdysseusDefaults.get("sla_querySharingCostModel");
 			this.costFunctionName = OdysseusDefaults.get("sla_costFunctionName");

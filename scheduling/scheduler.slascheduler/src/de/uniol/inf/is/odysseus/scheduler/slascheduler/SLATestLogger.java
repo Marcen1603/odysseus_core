@@ -32,7 +32,7 @@ public class SLATestLogger {
 			}
 			maxMessages--;
 		} else {
-			tearDown();
+//			tearDown();
 		}
 	}
 	

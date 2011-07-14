@@ -127,7 +127,7 @@ public class OdysseusDefaults {
 		// new SLA
 		props.setProperty("sla_starvationFreedomFuncName", "QueueSizeSF");
 		props.setProperty("sla_prioFuncName", "max");
-		props.setProperty("sla_stavationFreedomDecay", 0.1 + "");
+		props.setProperty("sla_starvationFreedomDecay", 0.1 + "");
 		props.setProperty("sla_querySharingCostModel", "none");
 		props.setProperty("sla_querySharing", Boolean.FALSE.toString());
 		props.setProperty("sla_costFunctionName", "quadratic");
