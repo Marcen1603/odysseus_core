@@ -16,19 +16,27 @@ public class SLATestLogger {
 	
 	public static int maxMessages = 1000000;
 	
-	public static int skip = 10000000;
+	public static int skip = 0;
 	
 	public static List<String> messageBuffer = new ArrayList<String>();
 	
 	public static FileWriter writer;
 
 	public static void log(String message) {
+		log(message, true);
+	}
+	
+	public static void log(String message, boolean toFile) {
 		if (skip > 0) {
 			skip--;
 		} else if (maxMessages > 0) {
-			messageBuffer.add(message);
-			if (messageBuffer.size() == bufferSize) {
-				writeToFile();
+			if (toFile) {
+				messageBuffer.add(message);
+				if (messageBuffer.size() == bufferSize) {
+					writeToFile();
+				}
+			} else {
+				System.err.println(message);
 			}
 			maxMessages--;
 		} else {

@@ -203,7 +203,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				double oc = costFunc.oc(conformance, sla);
 
 				// - calculate mg
-				double mg = costFunc.oc(conformance, sla);
+				double mg = costFunc.mg(conformance, sla);
 
 				// - calculate sf
 				double sf = data.getStarvationFreedom().sf(this.getDecaySF());
@@ -211,8 +211,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				// - calculate prio
 				double prio = this.prioFunction.calcPriority(oc, mg, sf);
 				
-//				SLATestLogger.log("query " + query.getID() + " oc=" + oc 
-//						+ " mg=" + mg + " sf=" + sf + " prio=" + prio);
+				SLATestLogger.log("query " + query.getID() + " oc=" + oc 
+						+ " mg=" + mg + " sf=" + sf + " prio=" + prio);
 
 				// select plan with highest priority
 				if (prio > nextPrio) {

@@ -20,8 +20,8 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 		// determine index of current service level
 		int slIndex = this.getCurrentServiceLevelIndex(conformance, sla);
 		
-		if (conformance > 0)
-		SLATestLogger.log("Conformance: " + conformance);
+//		if (conformance > 0)
+//		SLATestLogger.log("Conformance: " + conformance);
 
 		/*
 		 * calculate oc if current service level is not the less valuable
