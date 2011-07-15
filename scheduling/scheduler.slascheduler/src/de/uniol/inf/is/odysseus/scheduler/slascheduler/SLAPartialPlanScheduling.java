@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatency;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
@@ -32,7 +33,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	// ----------------------------------------------------------------------------------------
 
 	protected static Logger _logger = null;
-	
+
 	boolean loggedNull = false;
 
 	protected static Logger getLogger() {
@@ -41,9 +42,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		}
 		return _logger;
 	}
-	
+
 	private static long lastLog = 0;
-	
+
 	protected static void debugSlow(int waitTime, String message) {
 		long ts = System.currentTimeMillis();
 		if (ts - lastLog > waitTime) {
@@ -51,11 +52,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			getLogger().debug(message);
 		}
 	}
-	
+
 	// ----------------------------------------------------------------------------------------
 	// Members
 	// ----------------------------------------------------------------------------------------
-	
+
 	/**
 	 * listeners connected to the scheduler for broadcasting
 	 * {@link SLAViolationEvent}
@@ -126,6 +127,13 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			this.querySharing = null;
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
+		// init csv logger
+		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
+				"mg", "sf", "prio", "conformance", "service level");
+		SLATestLogger.initCSVLogger("scheduler1", 1000000, 0, "Query", "oc",
+				"mg", "sf", "prio", "conformance", "service level");
+		SLATestLogger.initCSVLogger("scheduler2", 1000000, 0, "Query", "oc",
+				"mg", "sf", "prio", "conformance", "service level");
 	}
 
 	/**
@@ -136,7 +144,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	@SuppressWarnings("unchecked")
 	private SLAPartialPlanScheduling(SLAPartialPlanScheduling schedule) {
-		this.listeners = new ArrayList<ISLAViolationEventListener>(schedule.listeners);
+		this.listeners = new ArrayList<ISLAViolationEventListener>(
+				schedule.listeners);
 		this.plans = new ArrayList<IScheduling>();
 		this.plans.addAll(schedule.plans);
 		this.registry = schedule.registry;
@@ -159,7 +168,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	@Override
 	public synchronized void addPlan(IScheduling scheduling) {
-		getLogger().debug("Plan added to SLAPartialPlanScheduling: " + scheduling);
+		getLogger().debug(
+				"Plan added to SLAPartialPlanScheduling: " + scheduling);
 		this.plans.add(scheduling);
 		getLogger().debug(this.plans.toString());
 		this.refreshQuerySharing();
@@ -186,9 +196,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 		IScheduling next = null;
 		double nextPrio = 0;
-		
+
 		SLATestLogger.log("Calculating priorities");
-		
+
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all queries
 			// Attention: it is expected that 1 partial plan contains 1 query
@@ -210,9 +220,25 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 				// - calculate prio
 				double prio = this.prioFunction.calcPriority(oc, mg, sf);
-				
-				SLATestLogger.log("query " + query.getID() + " oc=" + oc 
-						+ " mg=" + mg + " sf=" + sf + " prio=" + prio);
+
+				// SLATestLogger.log("query "
+				// + query.getID()
+				// + " oc="
+				// + oc
+				// + " mg="
+				// + mg
+				// + " sf="
+				// + sf
+				// + " prio="
+				// + prio
+				// + " conformance="
+				// + conformance
+				// + " servicelevel="
+				// + ((QuadraticCFLatency) costFunc)
+				// .getCurrentServiceLevelIndex(conformance, sla));
+				SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
+						prio, conformance, ((QuadraticCFLatency) costFunc)
+								.getCurrentServiceLevelIndex(conformance, sla));
 
 				// select plan with highest priority
 				if (prio > nextPrio) {
@@ -224,7 +250,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 					this.querySharing.setPriority(scheduling, prio);
 				}
 			}
-			
+
 		}
 
 		if (this.querySharing != null) {
@@ -232,22 +258,12 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			next = this.querySharing.getNextPlan();
 		}
 
-//		debugSlow(1000 ,"Selected partial plan with prio " + nextPrio + ": " 
-//				+ next);
-//		getLogger().debug(this.plans.toString());
-//		if (next != null) {
-//			SLATestLogger.log("Selected partial plan with prio " + nextPrio + ": " 
-//					+ next);
-//			loggedNull = false;
-//		} else {
-//			if (!loggedNull) {
-//				SLATestLogger.log("Selected partial plan with prio " + nextPrio + ": " 
-//						+ next);
-//				loggedNull = true;
-//			}
-//		}
-		
-		
+		if (next != null)
+			SLATestLogger.log("["
+					+ SLATestLogger.formatNanoTime(System.nanoTime())
+					+ "] Scheduling query "
+					+ next.getPlan().getQueries().get(0).getID());
+
 		return next;
 	}
 

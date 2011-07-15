@@ -12,6 +12,7 @@ import java.io.IOException;
  * 
  */
 public class SLAViolationLogger implements ISLAViolationEventListener {
+	private static final String SEPERATOR = ",";
 	/**
 	 * name of log file
 	 */
@@ -35,6 +36,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		try {
 			this.writer = new FileWriter(file);
 			this.writer.write(this.header());
+			this.writer.flush();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -47,6 +49,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	public void slaViolated(SLAViolationEvent event) {
 		try {
 			this.writer.write(this.eventToString(event));
+			this.writer.flush();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -61,10 +64,10 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 */
 	private String eventToString(SLAViolationEvent event) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(event.getQuery().getSLA().getName())
-				.append(this.getSeperator()).append(event.getQuery().getID())
-				.append(this.getSeperator()).append(event.getCost())
-				.append("\n");
+		sb.append(System.currentTimeMillis()).append(SEPERATOR)
+				.append(event.getQuery().getSLA().getName()).append(SEPERATOR)
+				.append(event.getQuery().getID()).append(SEPERATOR)
+				.append(event.getCost()).append("\n");
 		return sb.toString();
 	}
 
@@ -72,15 +75,11 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 * @return csv header
 	 */
 	private String header() {
-		return "SLA Name" + this.getSeperator() + "Query ID"
-				+ this.getSeperator() + "Violation Cost\n";
-	}
-
-	/**
-	 * @return csv seperator
-	 */
-	private String getSeperator() {
-		return ", ";
+		StringBuilder sb = new StringBuilder();
+		sb.append("Timestamp").append(SEPERATOR).append("SLA Name")
+				.append(SEPERATOR).append("Query ID").append(SEPERATOR)
+				.append("Violation Cost\n");
+		return sb.toString();
 	}
 
 }
