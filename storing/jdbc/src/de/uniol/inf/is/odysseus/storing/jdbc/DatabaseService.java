@@ -36,18 +36,9 @@ public class DatabaseService implements IDatabaseService{
 		return "The JDBC DatabaseService is able to handle every database which use JDBC and the current JDBC host is registered as a fragment-Bundle in the Odysseus JDBC Bundle";
 	}
 	
-	@Override
-	public Object testDriver(String URL) throws ClassNotFoundException{
-		 try {
-			return Class.forName(URL).newInstance();
-			
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}	
+	public String testDriver(String driverName) throws ClassNotFoundException{
+			return String.format("Load Driver %s.",Class.forName(driverName).getName());
+	}
 	
 	public Connection getConnection(String url, String user, String password) throws SQLException{
 		return DriverManager.getConnection(url, user, password);

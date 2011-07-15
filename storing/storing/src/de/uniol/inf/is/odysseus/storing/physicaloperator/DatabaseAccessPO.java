@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.storing.DatabaseIterator;
 
 public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
@@ -33,6 +34,10 @@ public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 	private String tableName;
 	private Connection connection;
 	private boolean timesenstiv;
+	
+	private int starttimestamp;
+	
+	private Thread thread;
 	
 	public DatabaseAccessPO(String tableName, Connection connection, boolean timeSensitiv){
 		this.tableName = tableName;
@@ -44,18 +49,31 @@ public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 		this.tableName = original.tableName;
 		this.connection = original.connection;
 	}
-
+	
+	@Override
+	protected void process_close() {
+		thread.interrupt();
+	}
+	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		DatabaseIterator di = new DatabaseIterator(this.tableName, this.getOutputSchema(), this.connection);
 		if(this.timesenstiv){
-			LOGGER.info("running in time sensitive mode");
-			timesenstivTransfer(di);
+			for(int i = 0; i < getOutputSchema().size(); i++){
+				if(getOutputSchema().get(i).getDatatype().getQualName() == "STARTTIMESTAMP"){
+					this.starttimestamp = i;
+					LOGGER.info(String.format("Found STARTTIMESTAMP(%i) for sensitive mode.",i));
+				}
+				if(getOutputSchema().get(i).getDatatype().getQualName() == "STARTTIMESTAMP"){
+					//this.endtimestamp = i;
+					LOGGER.info(String.format("Found ENDTIMESTAMP(%i) for sensitive mode.",i));
+				}
+			}
+			thread = new TransferThread(di, timesenstiv);
 		}else{
-			LOGGER.info("running not in time sensitive mode");
-			normalTransfer(di);
+			thread = new TransferThread(di,timesenstiv);
 		}
-		LOGGER.error("No more elements in database for table "+this.tableName);
+		thread.start();
 	}
 
 	@Override
@@ -64,37 +82,78 @@ public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 	}
 	
 	
-	private void normalTransfer(DatabaseIterator di){
-		while(di.hasNext()){
-			for(RelationalTuple<?> t : di.next()){
-				transfer(t);			
-			}
+	/*
+	 * Private Transfer Thread 
+	 */
+	private class TransferThread extends Thread {
+		DatabaseIterator di;
+		boolean timesenstiv;
+		
+		public TransferThread(DatabaseIterator di, boolean timesenstiv) {
+			this.di = di;
+			this.timesenstiv = timesenstiv;
 		}
-	}
-	
-	private void timesenstivTransfer(DatabaseIterator di){
-		while(di.hasNext()){
-			List<RelationalTuple<?>> list = di.next();
-			for(int i=0;i<list.size();i++){
-				RelationalTuple<?> current = list.get(i);
-				transfer(list.get(i));
-				if(i==(list.size()-1)){
+		
+		@Override
+		public void run() {
+			super.run();
+			while(!interrupted()){
+				if(timesenstiv){
+					LOGGER.info("Start Database Transfer Thread: running in time sensitive mode.");
+					timesenstivTransfer(di);
+				}
+				else{
+					LOGGER.info("Start Database Transfer Thread: running NOT in time sensitive mode.");
+					normalTransfer(di);
+				}
+			}	
+		}
+		
+		private void normalTransfer(DatabaseIterator di){
+			while(di.hasNext()){
+				if(interrupted()){
+					LOGGER.error("Interruped database transfer for table "+ tableName);
 					break;
 				}
-				RelationalTuple<?> next = list.get(i+1);				
-				long currentStart = ((ITimeInterval)current.getMetadata()).getStart().getMainPoint();
-				long nextStart = ((ITimeInterval)next.getMetadata()).getStart().getMainPoint();
-				long timeout = nextStart - currentStart;
-				try {
-					wait(timeout);
-				} catch (InterruptedException e) {					
-					e.printStackTrace();
+				for(RelationalTuple<?> t : di.next()){
+					transfer(t);			
 				}
-			}						
-			for(RelationalTuple<?> t : di.next()){
-				LOGGER.debug("transfer:" + t);
-				transfer(t);			
 			}
+			LOGGER.error("No more elements in database for table "+ tableName);
+		}
+		
+		private void timesenstivTransfer(DatabaseIterator di){
+			while(di.hasNext()){
+				if(interrupted()){
+					LOGGER.error("Interruped database transfer for table "+ tableName);
+					break;
+				}
+				
+				List<RelationalTuple<?>> list = di.next();
+				for(int i=0;i<list.size();i++){
+					RelationalTuple<?> current = list.get(i);
+					transfer(list.get(i));
+					if(i==(list.size()-1)){
+						break;
+					}
+
+					RelationalTuple<?> next = list.get(i+1);
+					
+					long currentStart = current.getAttribute(starttimestamp);
+					long nextStart = next.getAttribute(starttimestamp);
+					
+					long timeout = nextStart - currentStart;
+					try {
+						sleep(timeout);
+					} catch (InterruptedException e) {					
+						e.printStackTrace();
+					}
+				}						
+				for(RelationalTuple<?> t : di.next()){
+					transfer(t);			
+				}
+			}
+			LOGGER.error("No more elements in database for table "+ tableName);
 		}
 	}
 

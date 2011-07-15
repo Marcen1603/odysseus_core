@@ -104,18 +104,25 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 			for(int i=0;i<this.attributeSize;i++){
 				values[i] = rs.getObject(i+1);            			
 			}
+			
+			
 			RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(values);
-			PointInTime startTimePT = PointInTime.getZeroTime();
-			PointInTime endTimePT = PointInTime.getInfinityTime();
-			if(this.startTimeIndex>-1){
-				long time = rs.getLong(this.startTimeIndex+1);
-				startTimePT = new PointInTime(time);
-			}
-			if(this.endTimeIndex>-1){
-				long time = rs.getLong(this.endTimeIndex+1);
-				endTimePT = new PointInTime(time);
-			}
-			tuple.setMetadata(new TimeInterval(startTimePT, endTimePT));
+
+// Is not needed
+//			PointInTime startTimePT = PointInTime.getZeroTime();
+//			PointInTime endTimePT = PointInTime.getInfinityTime();
+//			
+//			if(this.startTimeIndex>-1){
+//				long time = rs.getLong(this.startTimeIndex+1);
+//				startTimePT = new PointInTime(time);
+//			}
+//			if(this.endTimeIndex>-1){
+//				long time = rs.getLong(this.endTimeIndex+1);
+//				endTimePT = new PointInTime(time);
+//			}
+//			
+//			tuple.setMetadata(new TimeInterval(startTimePT, endTimePT));
+//			
 			liste.add(tuple);
 		}
 		return liste;		
@@ -123,7 +130,6 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 
 	@Override
 	public boolean hasNext() {		
-		LOGGER.debug("HAS NEXT");
 		return selectPointer < totalSize;
 	}
 

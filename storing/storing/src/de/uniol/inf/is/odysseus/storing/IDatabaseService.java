@@ -25,7 +25,7 @@ public interface IDatabaseService {
 	
 	public Connection getConnection(String url, String user, String password) throws SQLException;
 
-	public Object testDriver(String URL) throws ClassNotFoundException;
+	public String testDriver(String driverName) throws ClassNotFoundException; 
 	
 	public String getDefaultURL();
 

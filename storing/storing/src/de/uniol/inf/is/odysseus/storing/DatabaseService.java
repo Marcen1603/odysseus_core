@@ -56,6 +56,16 @@ public class DatabaseService {
 		DatabaseService.defaultPassword = defaultPassword;
 	}
 	
+	public static boolean testDriver(String driverName){
+		try {
+			LOGGER.info(String.format("Driver found! %s.", DatabaseService.databaseService.testDriver(driverName)));
+			return true;
+		} catch (ClassNotFoundException e) {
+			LOGGER.error("Driver not found.",e.getStackTrace());
+			return false;
+		}
+	}
+
 	public static Connection getConnection(String url,String  user,String  password) throws SQLException{
 		LOGGER.info(String.format("Return connection: %s with user %s",defaultURL,defaultUser));
 		return DatabaseService.databaseService.getConnection(url, user, password);
@@ -68,6 +78,15 @@ public class DatabaseService {
 	
 	public static void bindDatabaseService(IDatabaseService service){
 		DatabaseService.databaseService = service;
+		
+		/**
+		 * @TODO 
+		 *  Bevor ein Treiber aus dem Fragment genutzt werden kann - muss er getestet werden.
+		 * 
+		 */
+		DatabaseService.testDriver("org.postgresql.Driver");
+		DatabaseService.testDriver("org.apache.derby.jdbc.ClientDriver");
+		
 		if((DatabaseService.databaseService.getDefaultUser() != null) &&
 		   (DatabaseService.databaseService.getDefaultPassword() != null) &&
 		   (DatabaseService.databaseService.getDefaultURL() != null)){
@@ -86,6 +105,4 @@ public class DatabaseService {
 		LOGGER.info(String.format("Unregistered Database Service: %s " ,service.getName()));
 		DatabaseService.databaseService = null;
 	}
-
 }
-
