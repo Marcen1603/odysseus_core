@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scheduler.slascheduler;
+package de.uniol.inf.is.odysseus.scheduler.slascheduler.test;
 
 import java.io.File;
 import java.io.FileWriter;

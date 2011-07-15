@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanSche
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatency;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.SLATestLogger;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
 

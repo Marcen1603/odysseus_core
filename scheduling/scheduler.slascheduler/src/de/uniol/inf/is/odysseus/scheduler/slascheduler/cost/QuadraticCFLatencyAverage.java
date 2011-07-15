@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.cost;
 
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLATestLogger;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.SLATestLogger;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
 /**
