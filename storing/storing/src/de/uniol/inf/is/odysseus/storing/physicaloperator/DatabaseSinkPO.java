@@ -21,6 +21,9 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -28,42 +31,56 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T> {
+/**
+ * 
+ * @author Kai Pancratz
+ *
+ */
+public class DatabaseSinkPO extends AbstractSink<Object> {
 
-	private static final int SELECT_BASH_SIZE = 10;
-	private Queue<RelationalTuple<?>> values = new LinkedList<RelationalTuple<?>>();
-	private PreparedStatement preparedStatement;
 	private Connection connection;
 	private String table;
-	private boolean savemetadata = false;
-	private boolean create = false;
-	private boolean ifnotexists = false;
-	private boolean truncate = false;
-	private boolean opened = false;
+	
+	private boolean savemetadata;
+	private boolean create;
+	private boolean ifnotexists;
+	private boolean truncate;
+	private boolean opened;
+	
+	//Make the BATCH SIZE CONFIGERABLE 
+	private static final int SELECT_BASH_SIZE = 10;
+	
+	private Queue<RelationalTuple<?>> values = new LinkedList<RelationalTuple<?>>();
+	private PreparedStatement preparedStatement;
+
+	private volatile static Logger LOGGER = LoggerFactory.getLogger(DatabaseSinkPO.class);;
 
 	
-	public DatabaseSinkPO(Connection connection, String table){
-		this(connection, table, true, true, false, true);
+	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
+		super();
+		this.connection = databaseSinkPO.connection;
+		this.table = databaseSinkPO.table;
+		this.savemetadata = databaseSinkPO.savemetadata;
+		this.create = databaseSinkPO.create;
+		this.ifnotexists = databaseSinkPO.ifnotexists;
+		this.truncate = databaseSinkPO.truncate;
+		this.opened = databaseSinkPO.opened;
+		LOGGER.debug("Instance of DatabaseSinkPO: " + " Connection:" + this.connection + " Table:" + this.table + " SaveMetaData:" + this.savemetadata + " Create:" + this.create + " Ifnotexists:" + this.ifnotexists);
 	}
 	
-	
-	public DatabaseSinkPO(Connection connection, String table, boolean savemetadata, boolean create, boolean truncate, boolean ifnotexists) {
+	public DatabaseSinkPO(Connection connection, String table,
+			boolean savemetadata, boolean create, boolean ifnotexists,
+			boolean truncate) {
+		super();
 		this.connection = connection;
 		this.table = table;
+		this.savemetadata = savemetadata;
 		this.create = create;
 		this.ifnotexists = ifnotexists;
 		this.truncate = truncate;
-		this.savemetadata = savemetadata;
+		LOGGER.debug("Instance of DatabaseSinkPO: " + " Connection:" + this.connection + " Table:" + this.table + " SaveMetaData:" + this.savemetadata + " Create:" + this.create     );
 	}
 
-	public DatabaseSinkPO(DatabaseSinkPO<T> o) {
-		this.connection = o.connection;
-		this.table = o.table;
-		this.create = o.create;
-		this.ifnotexists = o.ifnotexists;
-		this.truncate = o.truncate;
-		this.savemetadata = o.savemetadata;
-	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
@@ -136,22 +153,26 @@ public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-
+		LOGGER.error("Method processPunctuation is not implemented.");
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(Object object, int port, boolean isReadOnly) {
 		if(!opened){
-			System.out.println("Not opened!!");
+			LOGGER.warn("Not opened.");
 			try {
 				process_open();
+				LOGGER.debug("open.");
 			} catch (OpenFailedException e) {				
-				e.printStackTrace();
+				LOGGER.error("OpenFailedException",e.getStackTrace());
 			}
 		}
+		
 		synchronized (values) {
-			values.offer(object);
+			values.offer((RelationalTuple)object);
 			if (values.size() >= SELECT_BASH_SIZE) {
+				//LOGGER.debug("Values " + values);
 				writeToDatabase(values);
 			}
 		}
@@ -164,6 +185,10 @@ public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T
 				for (int i = 1; i <= tuple.getAttributeCount(); i++) {
 					preparedStatement.setObject(i, tuple.getAttribute(i - 1));
 				}
+				if(savemetadata){
+					tuple.getMetadata();
+					
+				}
 				preparedStatement.addBatch();
 			}
 			preparedStatement.executeBatch();
@@ -173,33 +198,33 @@ public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T
 	}
 
 	@Override
-	public DatabaseSinkPO<T> clone() {
-		return new DatabaseSinkPO<T>(this);
+	public DatabaseSinkPO clone() {
+		return new DatabaseSinkPO(this);
 	}
 
 	private void createTable() {
-		Statement s;
+		Statement statememt;
 		try {
-			s = this.connection.createStatement();
+			statememt = this.connection.createStatement();
 		} catch (SQLException e) {
-			// exists...
 			e.printStackTrace();
 			return;
 		}
-
+		
 		String query = "CREATE TABLE " + this.table + "(";
 		String delimiter = "";
 		for (SDFAttribute attribute : getOutputSchema()) {
 			String name = attribute.getAttributeName();
 			SDFDatatype type = attribute.getDatatype();
 			String typeString = getSQLType(type);
-			query = query + delimiter + name + " " + typeString;
+			query += delimiter + name + " " + typeString;
 			delimiter = ", ";
 		}
 		query = query + ")";
-		System.out.println("CREATING TABLE: " + query);
+		LOGGER.debug("Create Database: " + query);
+		
 		try {
-			s.execute(query);
+			statememt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace(System.err);
 		}
@@ -244,5 +269,4 @@ public class DatabaseSinkPO<T extends RelationalTuple<?>> extends AbstractSink<T
 		}
 		return "VARCHAR(255)";
 	}
-
 }

@@ -1,3 +1,5 @@
+package de.uniol.inf.is.odysseus.derby;
+
 /** Copyright [2011] [The Odysseus Team]
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,40 +14,29 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.storing;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Activator implements BundleActivator {
 
-	private static BundleContext context;	
+/**
+ * This is only the Derby database loader. 
+ * The connection is managed in the odysseus storing bundle.
+ */
+public class DerbyDatabase implements BundleActivator {
+
+	volatile protected static Logger LOGGER = LoggerFactory.getLogger(DerbyDatabase.class);
 	
-	static BundleContext getContext() {
-		return context;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;		
+		LOGGER.info("Start Derby Database.");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;				
+		LOGGER.info("Stop Derby Database.");
 	}
 
 }

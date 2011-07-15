@@ -14,9 +14,11 @@
   */
 package de.uniol.inf.is.odysseus.storing.transform;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampToPayloadPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.storing.physicaloperator.DatabaseSinkPO;
@@ -25,27 +27,38 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TDatabaseSinkAORule extends AbstractTransformationRule<DatabaseSinkAO>{
 
+	private volatile static Logger LOGGER = LoggerFactory.getLogger(TDatabaseSinkAORule.class);;
+	
+	private boolean saveMetadata = false;
+	
 	@Override
 	public int getPriority() {		
 		return 0;
 	}
 
 	@Override
-	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {		
-		DatabaseSinkPO<?> dbSinkPO = new DatabaseSinkPO<RelationalTuple<ITimeInterval>>(operator.getConnection(), operator.getTable(), operator.isSaveMetaData(), operator.isCreate(),operator.isTruncate(), operator.isIfnotexists());
-		dbSinkPO.setOutputSchema(operator.getOutputSchema());
-		replace(operator, dbSinkPO, config);		
-		retract(operator);
+	public void execute(DatabaseSinkAO databaseSinkAO, TransformationConfiguration tConfig) {		
+		DatabaseSinkPO databaseSinkPO = new DatabaseSinkPO(databaseSinkAO.getConnection(), databaseSinkAO.getTable(), databaseSinkAO.isSavemetadata(), databaseSinkAO.isCreate(), databaseSinkAO.isIfnotexists(), databaseSinkAO.isTruncate());
+		databaseSinkPO.setOutputSchema(databaseSinkAO.getOutputSchema());
+		
+
+		replace(databaseSinkAO,databaseSinkPO,tConfig);
+		retract(databaseSinkAO);
+		
+		
 		
 	}
 
 	@Override
-	public boolean isExecutable(DatabaseSinkAO operator, TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
+	public boolean isExecutable(DatabaseSinkAO databaseSinkAO, TransformationConfiguration tConfig) {
+		return databaseSinkAO.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
+		if(saveMetadata){
+			return "DatabaseSinkAO -> RelationalTimestampToPayloadPO + DatabaseSinkPO";
+		}
 		return "DatabaseSinkAO -> DatabaseSinkPO";
 	}
 

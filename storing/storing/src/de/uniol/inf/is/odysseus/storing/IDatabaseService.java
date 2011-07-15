@@ -15,25 +15,21 @@
 package de.uniol.inf.is.odysseus.storing;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
-import de.uniol.inf.is.odysseus.derby.IDatabaseService;
+public interface IDatabaseService {
 
+	public String getInfo();
+	
+	public String getName();
+	
+	public Connection getConnection(String url, String user, String password) throws SQLException;
 
-public class DatabaseServiceLoader {
+	public Object testDriver(String URL) throws ClassNotFoundException;
+	
+	public String getDefaultURL();
 
-	private static IDatabaseService service = null;	
-	
-	public static Connection getConnection(){
-		return DatabaseServiceLoader.service.getDatabaseConnection();
-	}
-	
-	public void bindDatabaseService(IDatabaseService service){
-		DatabaseServiceLoader.service = service;	
-	//	DatabaseFill.fillDB();
-	}
-	
-	public void unbindDatabaseService(IDatabaseService service){
-		DatabaseServiceLoader.service = null;
-	}
-	
+	public String getDefaultUser();
+		
+	public String getDefaultPassword();
 }

@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="derby.jar"/>
-	<classpathentry kind="lib" path="derbyclient.jar"/>
 	<classpathentry kind="lib" path="derbyLocale_de_DE.jar"/>
 	<classpathentry kind="lib" path="derbynet.jar"/>
 	<classpathentry kind="lib" path="derbytools.jar"/>

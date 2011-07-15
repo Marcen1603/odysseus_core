@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
@@ -30,6 +33,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
+	
+	protected volatile static Logger LOGGER = LoggerFactory.getLogger(DatabaseIterator.class);
 	
 	private static final int SELECT_BASH_SIZE = 10;
 
@@ -118,6 +123,7 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 
 	@Override
 	public boolean hasNext() {		
+		LOGGER.debug("HAS NEXT");
 		return selectPointer < totalSize;
 	}
 
@@ -140,10 +146,12 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	
 	private int getCount(){
 		try {
-			Statement s = DatabaseServiceLoader.getConnection().createStatement();
-			ResultSet rs = s.executeQuery("SELECT count(*) FROM "+this.tableName);
+			Statement s = this.connection.createStatement();
+			ResultSet rs = s.executeQuery("SELECT count(*) FROM " + this.tableName);
 			rs.next();
-			return rs.getInt(1);
+			int count = rs.getInt(1);
+			LOGGER.debug("Database Count: " + count);
+			return count;
 		} catch (SQLException e) {			
 			e.printStackTrace();
 		}

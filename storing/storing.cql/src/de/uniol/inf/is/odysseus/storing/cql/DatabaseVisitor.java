@@ -15,11 +15,14 @@
 package de.uniol.inf.is.odysseus.storing.cql;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
@@ -31,16 +34,20 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInsertIntoStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTJdbcIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSaveMetaData;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.storing.DatabaseServiceLoader;
+import de.uniol.inf.is.odysseus.storing.DatabaseService;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseAccessAO;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class DatabaseVisitor{
 
 	private User caller;
 	private String name;
-	private IDataDictionary dd;
+	
+	private IDataDictionary dd = null;
+	
+	protected volatile static Logger LOGGER = LoggerFactory.getLogger(DatabaseVisitor.class);
 
 	public void setName(String name) {
 		this.name = name;
@@ -56,6 +63,7 @@ public class DatabaseVisitor{
 
 	public Object visit(ASTCreateFromDatabase node, Object data) {
 		DatabaseAccessAO access = null;
+		
 		if (node.jjtGetNumChildren() > 1) {
 			if (node.jjtGetChild(0) instanceof ASTJdbcIdentifier) {
 				String jdbc = ((ASTJdbcIdentifier) node.jjtGetChild(0)).getConnection();
@@ -73,23 +81,32 @@ public class DatabaseVisitor{
 			String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 			access = getAccessAOForDefault(name, false);
 		}
-
-		// ***************
 		dd.setStream(name, access, caller);
 		return access;
 	}
 
 	private DatabaseAccessAO getAccessAOForDefault(String tableName, boolean isTimeSensitiv) {
-		DatabaseAccessAO dba = new DatabaseAccessAO(getSource(name), DatabaseServiceLoader.getConnection(), tableName, isTimeSensitiv);
+		DatabaseAccessAO dba = null;
+		try {
+			dba = new DatabaseAccessAO(getSource(name), DatabaseService.getDefaultConnection(), tableName, isTimeSensitiv);
+		} catch (SQLException e) {
+			LOGGER.error("No Default Database Connection",e.getStackTrace());
+		}
 		return dba;
 	}
 
 	private DatabaseAccessAO getAccessAOForJDBC(String jdbcString, String tableName, boolean isTimeSensitiv) {
+		Connection con;
 		try {
-			System.err.println("Currently only Derby DB is allowed, because there are no other drivers...");
-			Connection con = DriverManager.getConnection(jdbcString);
-			DatabaseAccessAO dba = new DatabaseAccessAO(getSource(name), con, tableName, isTimeSensitiv);
-			return dba;
+			
+			/** @TODO 
+			 *  
+			 *  read configuration file for password and user name.
+			 *  
+			 */
+			con = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
+			DatabaseAccessAO databaseAccessAO = new DatabaseAccessAO(new SDFSource(tableName, "databaseReading"),con,tableName,isTimeSensitiv);
+			return databaseAccessAO;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -101,64 +118,74 @@ public class DatabaseVisitor{
 	}
 
 	public Object visit(ASTInsertIntoStatement node, Object data) {		
-		boolean create = false;
-		boolean truncate = false;
-		boolean ifnotexists = false;
+		boolean create 			= false;
+		boolean truncate		= false;	
+		boolean ifnotexists		= false;
+		boolean savemetadata	= false;
+		
+		ASTComplexSelectStatement complexSelectStatement 	= null;
+		String jdbcString 									= null;
+		Connection connection 								= null;
+		
 		ASTDatabaseTableOptions tableOps = (ASTDatabaseTableOptions) node.jjtGetChild(0);
+		
 		if(tableOps.jjtGetChild(0) instanceof ASTDatabaseCreateOption){
 			create = true;
 			name = ((ASTIdentifier)tableOps.jjtGetChild(0).jjtGetChild(0)).getName();
 			if(tableOps.jjtGetChild(0).jjtGetNumChildren()>1){
 				ifnotexists = true;
-			}
-		}else if(tableOps.jjtGetChild(0) instanceof ASTDatabaseTruncateOption){
+			}	
+		}
+		else if(tableOps.jjtGetChild(0) instanceof ASTDatabaseTruncateOption){
 			truncate = true;
 			name = ((ASTIdentifier)tableOps.jjtGetChild(0).jjtGetChild(0)).getName();
-		}else if(tableOps.jjtGetChild(0) instanceof ASTIdentifier){
+		}
+		else if(tableOps.jjtGetChild(0) instanceof ASTIdentifier){
 			name = ((ASTIdentifier)tableOps.jjtGetChild(0)).getName();
 		}
 		
-		
-		
-		
-		ASTComplexSelectStatement selectStatement;
-		Connection conn = DatabaseServiceLoader.getConnection();
-		boolean savemetadata = false;
+		if (node.jjtGetChild(1) instanceof ASTJdbcIdentifier) {
+			jdbcString = ((ASTJdbcIdentifier) node.jjtGetChild(1)).getConnection();
+		} 
 
-		if (node.jjtGetNumChildren() == 3) {
-			if (node.jjtGetChild(1) instanceof ASTJdbcIdentifier) {
-				String jdbcString = ((ASTJdbcIdentifier) node.jjtGetChild(0)).getConnection();
-				try {
-					conn = DriverManager.getConnection(jdbcString);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			} else if (node.jjtGetChild(1) instanceof ASTSaveMetaData) {
-				savemetadata = true;
-			}
-		} else {
-			if (node.jjtGetNumChildren() == 4) {
-				String jdbcString = ((ASTJdbcIdentifier) node.jjtGetChild(0)).getConnection();
-				try {
-					conn = DriverManager.getConnection(jdbcString);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				savemetadata = true;
-			}
+		if (node.jjtGetChild(2) instanceof ASTSaveMetaData) {
+			savemetadata = true;
 		}
+	
+		
+		/**
+		 * @TODO Read configuration file for password and user name.
+		 * @autor kpancratz
+		 */
+		try {
+			connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
+		} catch (SQLException e) {
+			LOGGER.error("SQLException: ",e.getStackTrace());
+		}
+		
+		int last = node.jjtGetNumChildren()-1;
+		complexSelectStatement = (ASTComplexSelectStatement)node.jjtGetChild(last);
+		
+		CQLParser cqlparser = (CQLParser) CQLParser.getInstance();
 
-		// evaluate nested select
-		int last = node.jjtGetNumChildren() - 1;
-		selectStatement = (ASTComplexSelectStatement) node.jjtGetChild(last);
-		CQLParser v = new CQLParser();
-		v.setUser(caller);
-		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(selectStatement, null);
-		DatabaseSinkAO dbSink = new DatabaseSinkAO(conn, name, savemetadata, create, truncate, ifnotexists);
-		result.subscribeSink(dbSink, 0, 0, result.getOutputSchema());
-
-		return dbSink;
-
+		//GET GLOBAL USER STATE FOR: User and Data Dictionary
+		cqlparser.setUser(GlobalState.getActiveUser());
+		cqlparser.setDataDictionary(GlobalState.getActiveDatadictionary());
+		
+		AbstractLogicalOperator result = (AbstractLogicalOperator)cqlparser.visit(complexSelectStatement, null);		
+		
+		DatabaseSinkAO databaseSink = new DatabaseSinkAO(connection, name, savemetadata, create, truncate, ifnotexists);
+		
+		if(savemetadata){
+			TimestampToPayloadAO timestampToPayloadAO = new TimestampToPayloadAO();
+			result.subscribeSink(timestampToPayloadAO, 0, 0, result.getOutputSchema());
+			timestampToPayloadAO.subscribeSink(databaseSink, 0, 0, timestampToPayloadAO.getOutputSchema());
+		}
+		else{
+			result.subscribeSink(databaseSink, 0, 0, result.getOutputSchema());
+		}
+	
+		return databaseSink;
 	}
 
 }

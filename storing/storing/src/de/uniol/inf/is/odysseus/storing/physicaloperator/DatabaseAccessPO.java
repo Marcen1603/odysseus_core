@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.storing.physicaloperator;
 import java.sql.Connection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -25,6 +28,8 @@ import de.uniol.inf.is.odysseus.storing.DatabaseIterator;
 
 public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 
+	protected volatile static Logger LOGGER = LoggerFactory.getLogger(DatabaseAccessPO.class);
+	
 	private String tableName;
 	private Connection connection;
 	private boolean timesenstiv;
@@ -44,14 +49,13 @@ public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 	protected void process_open() throws OpenFailedException {
 		DatabaseIterator di = new DatabaseIterator(this.tableName, this.getOutputSchema(), this.connection);
 		if(this.timesenstiv){
-			System.out.println("running in time sensitive mode");
+			LOGGER.info("running in time sensitive mode");
 			timesenstivTransfer(di);
 		}else{
-			System.out.println("running not in time sensitive mode");
+			LOGGER.info("running not in time sensitive mode");
 			normalTransfer(di);
 		}
-		System.err.println("No more elements in database for table "+this.tableName);
-		
+		LOGGER.error("No more elements in database for table "+this.tableName);
 	}
 
 	@Override
@@ -88,6 +92,7 @@ public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 				}
 			}						
 			for(RelationalTuple<?> t : di.next()){
+				LOGGER.debug("transfer:" + t);
 				transfer(t);			
 			}
 		}

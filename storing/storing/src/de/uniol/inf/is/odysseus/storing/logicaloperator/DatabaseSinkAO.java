@@ -16,19 +16,29 @@ package de.uniol.inf.is.odysseus.storing.logicaloperator;
 
 import java.sql.Connection;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class DatabaseSinkAO extends AbstractDatabaseAO {
 
-	private static final long serialVersionUID = -7905452360184301303L;
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DATABASE")
+public class DatabaseSinkAO extends UnaryLogicalOp {
+
+	private static final long serialVersionUID = -6734727544384678902L;
+	
+	private Connection connection;
+	private String table;
+	
 	private boolean savemetadata;
 	private boolean create;
 	private boolean ifnotexists;
 	private boolean truncate;
 	
-	public DatabaseSinkAO(Connection connection, String tableName, boolean savemetadata, boolean create, boolean truncate, boolean ifnotexists) {
-		super(connection, tableName);		
+	public DatabaseSinkAO(Connection connection, String table, boolean savemetadata, boolean create, boolean truncate, boolean ifnotexists) {	
+		super();
+		this.table = table;
+		this.connection = connection;
+		
 		this.savemetadata = savemetadata;
 		this.create = create;
 		this.ifnotexists = ifnotexists;
@@ -36,21 +46,14 @@ public class DatabaseSinkAO extends AbstractDatabaseAO {
 	}
 
 	public DatabaseSinkAO(DatabaseSinkAO databaseSinkAO) {
-		super(databaseSinkAO.getConnection(), databaseSinkAO.getTable());
+		super(databaseSinkAO);
+		this.table = databaseSinkAO.getTable();
+		this.connection = databaseSinkAO.getConnection();
+		
 		this.savemetadata = databaseSinkAO.savemetadata;
 		this.create = databaseSinkAO.create;
 		this.ifnotexists = databaseSinkAO.ifnotexists;
 		this.truncate = databaseSinkAO.truncate;
-	}
-
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return super.getInputSchema(0);
-	}
-
-	@Override
-	public AbstractLogicalOperator clone() {		
-		return new DatabaseSinkAO(this);
 	}
 
 	public boolean isSaveMetaData() {		
@@ -68,7 +71,52 @@ public class DatabaseSinkAO extends AbstractDatabaseAO {
 	public boolean isTruncate() {
 		return truncate;
 	}
-	
-	
 
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema();
+	}
+
+	@Override
+	public DatabaseSinkAO clone() {
+		return new DatabaseSinkAO(this);
+	}
+
+	public Connection getConnection() {
+		return connection;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
+	public String getTable() {
+		return table;
+	}
+
+	public void setTable(String table) {
+		this.table = table;
+	}
+
+	public boolean isSavemetadata() {
+		return savemetadata;
+	}
+
+	public void setSavemetadata(boolean savemetadata) {
+		this.savemetadata = savemetadata;
+	}
+
+	public void setCreate(boolean create) {
+		this.create = create;
+	}
+
+	public void setIfnotexists(boolean ifnotexists) {
+		this.ifnotexists = ifnotexists;
+	}
+
+	public void setTruncate(boolean truncate) {
+		this.truncate = truncate;
+	}
+	
+	
 }

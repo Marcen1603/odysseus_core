@@ -24,33 +24,48 @@ import de.uniol.inf.is.odysseus.storing.IDatabaseService;
 
 public class DatabaseService implements IDatabaseService{
 
-	private static final String DRIVER = "org.postgresql.Driver";
-	private static final String DRIVERNAME = "postgresql";
-	private static final String JDBC_VERSION = "JDBC4";
-	private static final String DB_VERSION = "8.2";
+	private static final String DRIVER = "JDBC";
 	
 	@Override
 	public String getName(){
-		return DRIVERNAME;
-	}
-	
-	@Override
-	public String getInfo(){
-		return DRIVER + " "+ JDBC_VERSION + " " + DB_VERSION;
-	}
-	
-	@Override
-	public String getDriver(){
 		return DRIVER;
 	}
 	
 	@Override
-	public boolean testDriver() throws ClassNotFoundException{
-		 Class.forName(DRIVER);
-		 return true;
+	public String getInfo(){
+		return "The JDBC DatabaseService is able to handle every database which use JDBC and the current JDBC host is registered as a fragment-Bundle in the Odysseus JDBC Bundle";
+	}
+	
+	@Override
+	public Object testDriver(String URL) throws ClassNotFoundException{
+		 try {
+			return Class.forName(URL).newInstance();
+			
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}	
 	
 	public Connection getConnection(String url, String user, String password) throws SQLException{
 		return DriverManager.getConnection(url, user, password);
 	}
+
+	@Override
+	public String getDefaultURL() {
+		return null;
+	}
+
+	@Override
+	public String getDefaultUser() {
+		return null;
+	}
+
+	@Override
+	public String getDefaultPassword() {
+		return null;
+	}
+
 }
