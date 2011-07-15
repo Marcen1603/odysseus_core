@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.sla.ServiceLevel;
 
 /**
  * abstract sla conformance super class. extends {@link AbstractSink} so the sla
- * conformance object could be added to a plan as a physical operator to
- * measure data inside the physical operator plan.
+ * conformance object could be added to a plan as a physical operator to measure
+ * data inside the physical operator plan.
  * 
  * @author Thomas Vogelgesang
  * 
@@ -35,8 +35,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 */
 	private SLA sla;
 	/**
-	 * reference to the related query, required for violationEvent
-	 * generation
+	 * reference to the related query, required for violationEvent generation
 	 */
 	private IQuery query;
 	/**
@@ -60,7 +59,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		this.distributor = dist;
 		this.sla = sla;
 		this.query = query;
-		this.windowEnd = System.currentTimeMillis();
+		this.windowEnd = System.currentTimeMillis()
+				+ this.getSLA().getWindow().lengthToMilliseconds();
 	}
 
 	/**
@@ -124,8 +124,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		 * over list to finde the less valuable violated service level first
 		 */
 		if (System.currentTimeMillis() >= this.windowEnd) {
-			List<ServiceLevel> serviceLevels = this.getSLA()
-					.getServiceLevel();
+			List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
 			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
 				if (this.getSLA().getMetric().valueIsMin()) {
 					if (serviceLevels.get(i).getThreshold() < this
@@ -147,7 +146,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 			this.reset();
 		}
 	}
-	
+
 	protected double nanoToMilli(double value) {
 		return value / NANO_TO_MILLI;
 	}
