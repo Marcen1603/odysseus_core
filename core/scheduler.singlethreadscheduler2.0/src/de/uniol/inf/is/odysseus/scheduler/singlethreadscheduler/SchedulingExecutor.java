@@ -50,7 +50,7 @@ class SchedulingExecutor extends Thread {
 				if (!pause && planScheduling.planCount() > 0) {
 					IScheduling plan = planScheduling.nextPlan();
 					while (plan != null && !isInterrupted() && !pause) {
-						logger.debug("Process Plan "+plan);
+//						logger.debug("Process Plan "+plan);
 						boolean planDone = false;
 						if (trainsize > 1) {
 							planDone = plan.schedule(timeSlicePerStrategy,
