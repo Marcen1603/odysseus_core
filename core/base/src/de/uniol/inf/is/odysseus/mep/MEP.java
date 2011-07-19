@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.CeilFunction;
 import de.uniol.inf.is.odysseus.mep.functions.CosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.DivisionOperator;
+import de.uniol.inf.is.odysseus.mep.functions.DoubleToFloatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.DoubleToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.EqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.FloorFunction;
@@ -110,6 +111,7 @@ public class MEP {
 		registerFunction(new AbsoluteFunction());
 		registerFunction(new CeilFunction());
 		registerFunction(new DoubleToLongFunction());
+		registerFunction(new DoubleToFloatFunction());
 		registerFunction(new FloorFunction());
 		registerFunction(new IfFunction());
 		registerFunction(new SinusFunction());
