@@ -15,19 +15,19 @@ import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public class TwitterSourceAdapter extends AbstractPushingSourceAdapter implements SourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(TwitterSourceAdapter.class);
 
-    private final Map<Source, TwitterStream> twitterStreams = new HashMap<Source, TwitterStream>();
+    private final Map<SourceSpec, TwitterStream> twitterStreams = new HashMap<SourceSpec, TwitterStream>();
 
     public TwitterSourceAdapter() {
 
     }
 
     @Override
-    protected void doInit(final Source source) {
+    protected void doInit(final SourceSpec source) {
         final ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(source.getConfiguration().get("OAuthConsumerKey").toString())
@@ -77,7 +77,7 @@ public class TwitterSourceAdapter extends AbstractPushingSourceAdapter implement
     }
 
     @Override
-    protected void doDestroy(final Source source) {
+    protected void doDestroy(final SourceSpec source) {
         this.twitterStreams.get(source).shutdown();
         this.twitterStreams.remove(source);
     }

@@ -15,12 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements SourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(CSVSourceAdapter.class);
 
-    private final Map<Source, Thread> serverThreads = new HashMap<Source, Thread>();
+    private final Map<SourceSpec, Thread> serverThreads = new HashMap<SourceSpec, Thread>();
 
     @Override
     public String getName() {
@@ -28,7 +28,7 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
     }
 
     @Override
-    protected void doInit(final Source source) {
+    protected void doInit(final SourceSpec source) {
         int port = 4444;
         if (source.getConfiguration().containsKey("port")) {
             port = Integer.parseInt(source.getConfiguration().get("port").toString());
@@ -41,17 +41,17 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
     }
 
     @Override
-    protected void doDestroy(final Source source) {
+    protected void doDestroy(final SourceSpec source) {
         this.serverThreads.get(source).interrupt();
         this.serverThreads.remove(source);
     }
 
     class CSVServer implements Runnable {
         private ServerSocket serverSocket = null;
-        private Source source;
+        private SourceSpec source;
         private CSVSourceAdapter adapter;
 
-        public CSVServer(final Source source, final CSVSourceAdapter adapter, final int port) {
+        public CSVServer(final SourceSpec source, final CSVSourceAdapter adapter, final int port) {
             try {
                 this.serverSocket = new ServerSocket(port);
             }
@@ -85,9 +85,9 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
         class CSVProcessor implements Runnable {
             private final Socket server;
             private final CSVSourceAdapter adapter;
-            private Source source;
+            private SourceSpec source;
 
-            public CSVProcessor(final Source source, final Socket server,
+            public CSVProcessor(final SourceSpec source, final Socket server,
                     final CSVSourceAdapter adapter) {
                 this.server = server;
                 this.adapter = adapter;

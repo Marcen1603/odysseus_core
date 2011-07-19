@@ -38,7 +38,7 @@ public class SickConnectionImpl implements SickConnection {
             this.host = host;
             this.port = port;
             this.connection = connection;
-            this.record.set(true);
+            this.record.set(false);
 
         }
 
@@ -233,7 +233,7 @@ public class SickConnectionImpl implements SickConnection {
                 while (!Thread.currentThread().isInterrupted()) {
                     while ((nbytes = this.channel.read(buffer)) > 0) {
                         size += nbytes;
-                        for (int i = 0; i < size; i++) {
+                        for (int i = pos; i < size; i++) {
                             if (buffer.get(i) == SickConnectionImpl.END) {
                                 buffer.position(i + 1);
                                 // LOG.info("1. Position: " + i + " " + buffer.position()
@@ -266,6 +266,7 @@ public class SickConnectionImpl implements SickConnection {
 
                                 buffer.compact();
                                 size -= (i + 1);
+                                pos = 0;
                                 i = 0;
                                 // LOG.info("4. Position: " + i + " " + buffer.position() +
                                 // " Limit: "
@@ -273,27 +274,7 @@ public class SickConnectionImpl implements SickConnection {
                                 // + " Size: " + size);
                             }
                         }
-                        // pos = buffer.position();
-                        // if (endIndex >= 0) {
-                        // buffer.flip();
-                        // buffer.limit(endIndex + 1);
-                        // final CharBuffer charBuffer = decoder.decode(buffer);
-                        // try {
-                        //
-                        // this.onMessage(charBuffer.subSequence(1, charBuffer.length() - 1)
-                        // .toString());
-                        // }
-                        // catch (final Exception e) {
-                        // if (SickConnectionImpl.LOG.isDebugEnabled()) {
-                        // SickConnectionImpl.LOG.debug(e.getMessage(), e);
-                        // this.dumpPackage(buffer);
-                        // }
-                        // }
-                        // buffer.compact();
-                        // pos -= charBuffer.length();
-                        // endIndex = -1;
-                        // buffer.position(pos);
-                        // }
+                        pos++;
                     }
 
                 }

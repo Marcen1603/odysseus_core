@@ -10,7 +10,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.sick.MeasurementListener;
 import de.uniol.inf.is.odysseus.wrapper.sick.SickConnection;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
@@ -19,10 +19,10 @@ import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
 public class SickSourceAdapter extends AbstractPushingSourceAdapter implements MeasurementListener {
     private static final Logger LOG = LoggerFactory.getLogger(SickSourceAdapter.class);
     private final GeometryFactory geometryFactory = new GeometryFactory();
-    private final Map<Source, SickConnection> connections = new ConcurrentHashMap<Source, SickConnection>();
+    private final Map<SourceSpec, SickConnection> connections = new ConcurrentHashMap<SourceSpec, SickConnection>();
 
     @Override
-    protected void doDestroy(final Source source) {
+    protected void doDestroy(final SourceSpec source) {
         if (this.connections.containsKey(source)) {
             this.connections.get(source).close();
             this.connections.remove(source);
@@ -30,7 +30,7 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
     }
 
     @Override
-    protected void doInit(final Source source) {
+    protected void doInit(final SourceSpec source) {
         final String host = source.getConfiguration().get("host").toString();
         final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
         final SickConnection connection = new SickConnectionImpl(host, port);

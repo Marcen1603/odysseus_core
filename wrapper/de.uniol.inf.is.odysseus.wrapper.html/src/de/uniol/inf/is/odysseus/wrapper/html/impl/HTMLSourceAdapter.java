@@ -28,7 +28,7 @@ import org.xml.sax.SAXNotSupportedException;
 
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPollingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public class HTMLSourceAdapter extends AbstractPollingSourceAdapter implements SourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(HTMLSourceAdapter.class);
@@ -77,7 +77,7 @@ public class HTMLSourceAdapter extends AbstractPollingSourceAdapter implements S
     }
 
     @Override
-    public void poll(final Source source) {
+    public void poll(final SourceSpec source) {
         final GetMethod get = new GetMethod(source.getConfiguration().get("url").toString());
         try {
             this.client.executeMethod(get);
@@ -102,13 +102,13 @@ public class HTMLSourceAdapter extends AbstractPollingSourceAdapter implements S
     }
 
     @Override
-    protected void doInit(final Source source) {
+    protected void doInit(final SourceSpec source) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    protected void doDestroy(final Source source) {
+    protected void doDestroy(final SourceSpec source) {
         // TODO Auto-generated method stub
 
     }
@@ -123,7 +123,7 @@ public class HTMLSourceAdapter extends AbstractPollingSourceAdapter implements S
         return 0;
     }
 
-    private void parse(final Source source, final InputSource inputSource)
+    private void parse(final SourceSpec source, final InputSource inputSource)
             throws XPathExpressionException {
         final HTMLDocument document = new HTMLDocumentImpl();
         DocumentFragment fragment = null;
