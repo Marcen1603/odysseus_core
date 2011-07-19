@@ -10,16 +10,16 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public abstract class AbstractPollingSourceAdapter extends AbstractSourceAdapter implements
         PollingSourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(AbstractPollingSourceAdapter.class);
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
-    private final Map<Source, ScheduledFuture<?>> handler = new HashMap<Source, ScheduledFuture<?>>();
+    private final Map<SourceSpec, ScheduledFuture<?>> handler = new HashMap<SourceSpec, ScheduledFuture<?>>();
 
     @Override
-    protected void destroy(final Source source) {
+    protected void destroy(final SourceSpec source) {
         this.handler.get(source).cancel(true);
         try {
             this.doDestroy(source);
@@ -29,16 +29,16 @@ public abstract class AbstractPollingSourceAdapter extends AbstractSourceAdapter
         }
     }
 
-    abstract protected void doDestroy(Source source);
+    abstract protected void doDestroy(SourceSpec source);
 
-    abstract protected void doInit(Source source);
+    abstract protected void doInit(SourceSpec source);
 
     abstract protected int getDelay();
 
     abstract protected int getInterval();
 
     @Override
-    protected void init(final Source source) {
+    protected void init(final SourceSpec source) {
         final Runnable sourceThread = new Runnable() {
             @Override
             public void run() {

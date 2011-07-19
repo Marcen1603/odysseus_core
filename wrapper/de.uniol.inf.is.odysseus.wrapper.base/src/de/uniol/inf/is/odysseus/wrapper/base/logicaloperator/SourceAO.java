@@ -25,11 +25,12 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ADAPTER")
 public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSettable {
-    private static Logger LOG = LoggerFactory.getLogger(SourceAO.class);
     /**
      * 
      */
     private static final long serialVersionUID = 2514000374871326771L;
+    private static Logger LOG = LoggerFactory.getLogger(SourceAO.class);
+    
     private final Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
     private final Map<String, String> options = new HashMap<String, String>();
     private String adapter;

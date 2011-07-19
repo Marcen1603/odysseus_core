@@ -5,4 +5,5 @@
       <provide interface="de.uniol.inf.is.odysseus.wrapper.base.SourceControlService"/>
    </service>
    <reference bind="bindSourceAdapter" cardinality="0..n" interface="de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter" name="SourceAdapter" policy="dynamic" unbind="unbindSourceAdapter"/>
+   <reference bind="bindSinkAdapter" cardinality="0..n" interface="de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter" name="SinkAdapter" policy="dynamic" unbind="unbindSinkAdapter"/>
 </scr:component>

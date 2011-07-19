@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.base;
 
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public interface PollingSourceAdapter extends SourceAdapter {
-    void poll(Source source);
+    void poll(SourceSpec source);
 }

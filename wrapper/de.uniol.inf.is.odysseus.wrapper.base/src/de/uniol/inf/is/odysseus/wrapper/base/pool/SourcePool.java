@@ -14,17 +14,17 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceConfigurationImpl;
-import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceImpl;
+import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceSpecImpl;
 
 public class SourcePool<T extends IMetaAttribute> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePool.class);
     private final Map<String, AbstractSource<RelationalTuple<TimeInterval>>> sources = new ConcurrentHashMap<String, AbstractSource<RelationalTuple<TimeInterval>>>();
     private final Map<String, SourceAdapter> adapters = new ConcurrentHashMap<String, SourceAdapter>();
     private final Map<String, String> sourceAdapterMapping = new ConcurrentHashMap<String, String>();
-    private final Map<String, Source> sourceSpecs = new ConcurrentHashMap<String, Source>();
+    private final Map<String, SourceSpec> sourceSpecs = new ConcurrentHashMap<String, SourceSpec>();
 
     private static SourcePool<?> instance;
 
@@ -58,7 +58,7 @@ public class SourcePool<T extends IMetaAttribute> {
 
     private void _registerSource(final String adapterName,
             final AbstractSource<RelationalTuple<TimeInterval>> source, Map<String, String> options) {
-        final Source sourceSpec = new SourceImpl(source.getName());
+        final SourceSpec sourceSpec = new SourceSpecImpl(source.getName());
 
         final SourceConfiguration configuration = new SourceConfigurationImpl();
         if (options != null) {

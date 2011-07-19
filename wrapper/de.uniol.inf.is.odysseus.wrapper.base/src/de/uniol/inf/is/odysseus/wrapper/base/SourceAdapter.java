@@ -2,14 +2,14 @@ package de.uniol.inf.is.odysseus.wrapper.base;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public interface SourceAdapter {
     String getName();
 
-    Collection<Source> getSources();
+    Collection<SourceSpec> getSources();
 
-    void registerSource(Source source);
+    void registerSource(SourceSpec source);
 
-    void unregisterSource(Source source);
+    void unregisterSource(SourceSpec source);
 }

@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.wrapper.base.model.AttributeConfiguration;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
 
-public class SourceImpl implements Source {
+public class SourceSpecImpl implements SourceSpec {
 
     private final String name;
     private final List<String> schema = new ArrayList<String>();
     private SourceConfiguration configuration;
     private final Map<String, AttributeConfiguration> attributeConfigurations = new HashMap<String, AttributeConfiguration>();
 
-    public SourceImpl(final String name) {
+    public SourceSpecImpl(final String name) {
         this.name = name;
 
     }

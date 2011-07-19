@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.base.model;
 import java.util.List;
 import java.util.Map;
 
-public interface Source {
+public interface SourceSpec {
 
     void addAttribute(String name, AttributeConfiguration configuration);
 
