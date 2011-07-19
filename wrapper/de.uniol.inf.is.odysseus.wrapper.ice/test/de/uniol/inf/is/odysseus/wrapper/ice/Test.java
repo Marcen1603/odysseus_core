@@ -10,17 +10,17 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceConfigurationImpl;
 import de.uniol.inf.is.odysseus.wrapper.ice.impl.ICESourceAdapter;
 
 public class Test {
-    Source source;
+    SourceSpec source;
 
     @Before
     public void setUp() throws Exception {
-        source = createMock(Source.class);
+        source = createMock(SourceSpec.class);
     }
 
     @After

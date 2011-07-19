@@ -17,12 +17,12 @@ import ReACT.ClientCommunicatorPrxHelper;
 import ReACT.ScooterPos;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.Source;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public class ICESourceAdapter extends AbstractPushingSourceAdapter implements SourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(ICESourceAdapter.class);
 
-    private final Map<Source, Thread> iceThreads = new HashMap<Source, Thread>();
+    private final Map<SourceSpec, Thread> iceThreads = new HashMap<SourceSpec, Thread>();
 
     @Override
     public String getName() {
@@ -30,14 +30,14 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
     }
 
     @Override
-    protected void doDestroy(final Source source) {
+    protected void doDestroy(final SourceSpec source) {
         this.iceThreads.get(source).interrupt();
         this.iceThreads.remove(source);
 
     }
 
     @Override
-    protected void doInit(final Source source) {
+    protected void doInit(final SourceSpec source) {
         final String service = source.getConfiguration().get("service").toString();
         final String host = source.getConfiguration().get("host").toString();
         final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
@@ -60,30 +60,36 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
     }
 
     private class ICEConnection implements Runnable {
-        private final Source source;
+        private final SourceSpec source;
         private final ICESourceAdapter adapter;
-        private final Communicator communicator;
-        private final ObjectAdapter objectAdapter;
+        private Communicator communicator;
+        private ObjectAdapter objectAdapter;
         private ClientCommunicatorPrx connectionObject;
         private final int maxMessageSize = 10240;
         private final int id = 0;
         private final String proxy;
 
-        public ICEConnection(final Source source, final String service, final String host,
+        public ICEConnection(final SourceSpec source, final String service, final String host,
                 final int port, final String protocol, final String username,
                 final String password, final String ownService, final int ownPort,
                 final ICESourceAdapter adapter) {
             this.source = source;
             this.adapter = adapter;
-            final InitializationData initializationData = new InitializationData();
-            final Properties props = Util.createProperties();
-            props.setProperty("Ice.MessageSizeMax", Integer.toString(this.maxMessageSize));
-            initializationData.properties = props;
-            this.communicator = Util.initialize(initializationData);
             this.proxy = service + ":" + protocol + " -h " + host + " -p " + port;
-            ICESourceAdapter.LOG.info("Try proxy: {}", this.proxy);
-            this.objectAdapter = this.communicator.createObjectAdapterWithEndpoints(ownService,
-                    protocol + " -h 127.0.0.1 -p " + ownPort);
+            try {
+                ICESourceAdapter.LOG.info("Try proxy: {}", this.proxy);
+                final Properties props = Util.createProperties();
+                props.setProperty("Ice.MessageSizeMax", Integer.toString(this.maxMessageSize));
+                final InitializationData initializationData = new InitializationData();
+                initializationData.properties = props;
+                this.communicator = Util.initialize(initializationData);
+
+                this.objectAdapter = this.communicator.createObjectAdapterWithEndpoints(ownService,
+                        protocol + " -h 127.0.0.1 -p " + ownPort);
+            }
+            catch (Exception e) {
+                ICESourceAdapter.LOG.error(e.getMessage(), e);
+            }
 
         }
 

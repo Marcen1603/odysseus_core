@@ -10,6 +10,8 @@ Import-Package: de.uniol.inf.is.odysseus.wrapper.base,
  de.uniol.inf.is.odysseus.wrapper.base.model,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Service-Component: OSGI-INF/ICESourceAdapter.xml
+Service-Component: OSGI-INF/ICESourceAdapter.xml, OSGI-INF/ICESinkAdapter.xml
 Require-Bundle: org.junit,
  de.uniol.inf.is.odysseus.wrapper.base
+Bundle-ClassPath: lib/Ice.jar,
+ .
