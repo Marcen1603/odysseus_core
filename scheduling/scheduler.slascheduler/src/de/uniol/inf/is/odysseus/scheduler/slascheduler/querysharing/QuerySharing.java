@@ -75,7 +75,7 @@ public class QuerySharing implements IQuerySharing {
 				// check if plan and otherPlan share operators. iff true
 				// calculate effort rate of the sharing between these queries
 				// and add result to map
-				Set<IQuery> participating = ((PartialPlan) plan)
+				Set<IQuery> participating = ((PartialPlan) plan.getPlan())
 						.getParticpatingQueries();
 
 				if (plan != otherPlan && participating.contains(otherPlan)) {
@@ -122,8 +122,9 @@ public class QuerySharing implements IQuerySharing {
 
 		for (IScheduling plan : this.plans) {
 			PartialPlan pp = (PartialPlan) plan.getPlan();
-			double tempPrio = this.calcPriority(pp.getQueries().get(0),
-					pp.getParticpatingQueries(), this.priorities.get(pp));
+			Double tmpPrio = this.priorities.get(pp);
+			double tempPrio = this.calcPriority(pp.getQueries().get(0), pp
+					.getParticpatingQueries(), tmpPrio == null ? 0.0 : tmpPrio);
 			if (tempPrio > nextPrio) {
 				nextPrio = tempPrio;
 				nextPlan = plan;
@@ -155,8 +156,10 @@ public class QuerySharing implements IQuerySharing {
 			if (!query.equals(otherQuery)) {
 				Pair<IQuery, IQuery> key = new Pair<IQuery, IQuery>(query,
 						otherQuery);
-				newPrio += this.effortMap.get(key)
-						* this.priorities.get(otherQuery);
+				Double effort = this.effortMap.get(key);
+				Double otherPrio = this.priorities.get(otherQuery);
+				newPrio += (effort == null ? 0.0 : effort)
+						* (otherPrio == null ? 0.0 : otherPrio);
 			}
 		}
 

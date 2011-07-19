@@ -256,7 +256,10 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 		if (this.querySharing != null) {
 			// optional: consider effort of query sharing
-			next = this.querySharing.getNextPlan();
+			IScheduling tmpNext = this.querySharing.getNextPlan();
+			if (tmpNext != null) {
+				next = tmpNext;
+			}
 		}
 
 		if (next != null)
