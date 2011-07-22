@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.wrapper.sick.impl;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -43,18 +46,18 @@ public class SickConnectionImpl implements SickConnection {
         }
 
         private void dumpPackage(final ByteBuffer buffer) throws FileNotFoundException {
-            // final File debug = new File("debug.out");
-            // final FileOutputStream out = new FileOutputStream(debug, true);
-            // final FileChannel debugChannel = out.getChannel();
-            // if ((debugChannel != null) && (debugChannel.isOpen())) {
-            // try {
-            // buffer.flip();
-            // debugChannel.write(buffer);
-            // }
-            // catch (final IOException e) {
-            // SickConnectionImpl.LOG.error(e.getMessage(), e);
-            // }
-            // }
+            final File debug = new File("debug.out");
+            final FileOutputStream out = new FileOutputStream(debug, true);
+            final FileChannel debugChannel = out.getChannel();
+            if ((debugChannel != null) && (debugChannel.isOpen())) {
+                try {
+                    buffer.flip();
+                    debugChannel.write(buffer);
+                }
+                catch (final IOException e) {
+                    SickConnectionImpl.LOG.error(e.getMessage(), e);
+                }
+            }
         }
 
         public Background getBackground() {
@@ -232,7 +235,8 @@ public class SickConnectionImpl implements SickConnection {
                 while (!Thread.currentThread().isInterrupted()) {
                     while ((nbytes = this.channel.read(buffer)) > 0) {
                         size += nbytes;
-                        for (int i = pos; i < size; i++) {
+                        // for (int i = pos; i < size; i++) {
+                        for (int i = 0; i < size; i++) {
                             if (buffer.get(i) == SickConnectionImpl.END) {
                                 buffer.position(i + 1);
                                 buffer.flip();

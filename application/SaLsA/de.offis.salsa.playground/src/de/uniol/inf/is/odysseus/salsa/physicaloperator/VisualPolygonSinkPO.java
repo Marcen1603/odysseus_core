@@ -9,15 +9,15 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.salsa.ui.Screen;
+import de.uniol.inf.is.odysseus.salsa.ui.PolygonScreen;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class VisualSinkPO extends AbstractSink<Object> {
+public class VisualPolygonSinkPO extends AbstractSink<Object> {
     private final Queue<Geometry> segments = new ConcurrentLinkedQueue<Geometry>();
-    Screen screen = new Screen();
+   private PolygonScreen screen = new PolygonScreen();
     private final SDFAttributeList schema;
 
     private final Thread painter = new Thread() {
@@ -26,28 +26,28 @@ public class VisualSinkPO extends AbstractSink<Object> {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 Geometry segment;
-                while ((segment = VisualSinkPO.this.segments.poll()) != null) {
-                    VisualSinkPO.this.screen.onFeature(segment);
+                while ((segment = VisualPolygonSinkPO.this.segments.poll()) != null) {
+                    VisualPolygonSinkPO.this.screen.onFeature(segment);
                 }
             }
         }
     };
 
-    public VisualSinkPO(final SDFAttributeList schema) {
+    public VisualPolygonSinkPO(final SDFAttributeList schema) {
         this.schema = schema;
         this.screen.repaint();
         this.painter.start();
     }
 
-    public VisualSinkPO(final VisualSinkPO po) {
+    public VisualPolygonSinkPO(final VisualPolygonSinkPO po) {
         this.schema = po.schema;
         this.screen.repaint();
         this.painter.start();
     }
 
     @Override
-    public VisualSinkPO clone() {
-        return new VisualSinkPO(this);
+    public VisualPolygonSinkPO clone() {
+        return new VisualPolygonSinkPO(this);
     }
 
     @SuppressWarnings("unchecked")
