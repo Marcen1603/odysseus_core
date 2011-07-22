@@ -4,7 +4,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class BoundingBox extends AbstractFunction<Geometry> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
@@ -12,14 +14,15 @@ public class BoundingBox extends AbstractFunction<Geometry> {
                 SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
                 SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
         }
-};
+    };
+
     @Override
     public int getArity() {
         return 1;
     }
 
     @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
+    public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -28,7 +31,7 @@ public class BoundingBox extends AbstractFunction<Geometry> {
                     + " argument(s): Two geometries.");
         }
         else {
-            return accTypes[argPos];
+            return BoundingBox.accTypes[argPos];
         }
     }
 

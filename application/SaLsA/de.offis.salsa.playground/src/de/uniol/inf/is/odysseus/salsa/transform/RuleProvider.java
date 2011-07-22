@@ -8,10 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
 public class RuleProvider implements ITransformRuleProvider {
     private static Logger LOG = LoggerFactory.getLogger(RuleProvider.class);

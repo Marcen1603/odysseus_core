@@ -26,7 +26,7 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
     }
 
     @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
+    public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -35,7 +35,7 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
                     + " argument(s): A geometry and an angle in degree.");
         }
         else {
-            return accTypes[argPos];
+            return RotateViewPoint.accTypes[argPos];
         }
     }
 
@@ -49,9 +49,9 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         Double angle = (Double) this.getInputValue(1);
         angle = Math.toRadians(angle);
-        for (Coordinate coordinate : geometry.getCoordinates()) {
-            double x = coordinate.x;
-            double y = coordinate.y;
+        for (final Coordinate coordinate : geometry.getCoordinates()) {
+            final double x = coordinate.x;
+            final double y = coordinate.y;
             coordinate.x = x * Math.cos(angle) - y * Math.sin(angle);
             coordinate.y = x * Math.sin(angle) + y * Math.cos(angle);
         }

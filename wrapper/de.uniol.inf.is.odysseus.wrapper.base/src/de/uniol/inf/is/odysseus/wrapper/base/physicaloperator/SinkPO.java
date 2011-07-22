@@ -52,16 +52,18 @@ public class SinkPO<T extends IMetaAttribute> extends AbstractSink<RelationalTup
     }
 
     @Override
-    public void processPunctuation(PointInTime timestamp, int port) {
+    public void processPunctuation(final PointInTime timestamp, final int port) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    protected void process_next(RelationalTuple<TimeInterval> event, int port, boolean isReadOnly) {
+    protected void process_next(final RelationalTuple<TimeInterval> event, final int port,
+            final boolean isReadOnly) {
         if (this.isOpen()) {
             try {
-                SinkPool.transfer(this.getName(), event.getMetadata().getStart().getMainPoint(), event.getAttributes());
+                SinkPool.transfer(this.getName(), event.getMetadata().getStart().getMainPoint(),
+                        event.getAttributes());
             }
             catch (final Exception e) {
                 SinkPO.LOG.error(e.getMessage(), e);

@@ -17,7 +17,7 @@ public class SinkSpecImpl implements SinkSpec {
 
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override

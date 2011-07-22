@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -94,6 +95,17 @@ public class SourcePO<T extends IMetaAttribute> extends
         }
         else {
             SourcePO.LOG.warn("Source not open");
+        }
+    }
+
+    @Override
+    public boolean isSemanticallyEqual(final IPhysicalOperator po) {
+        if (po instanceof SourcePO<?>) {
+            return (((SourcePO<?>) po).adapterName.equals(this.adapterName))
+                    && (((SourcePO<?>) po).options.equals(this.options));
+        }
+        else {
+            return super.isSemanticallyEqual(po);
         }
     }
 

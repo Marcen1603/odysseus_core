@@ -6,6 +6,9 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class FunctionProvider implements IFunctionProvider {
     public FunctionProvider() {
         System.out.println("+++++++++++++++++++++ adding SaLsA functions. ++++++++++++++++++++++");
@@ -14,11 +17,12 @@ public class FunctionProvider implements IFunctionProvider {
     @Override
     public List<IFunction<?>> getFunctions() {
 
-        List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
         functions.add(new ExtractSegments());
         functions.add(new MoveViewPoint());
         functions.add(new RotateViewPoint());
-
+        functions.add(new ToGrid());
+        functions.add(new MergeGrid());
         return functions;
     }
 }

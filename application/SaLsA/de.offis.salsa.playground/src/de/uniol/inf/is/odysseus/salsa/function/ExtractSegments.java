@@ -36,10 +36,10 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
         else {
             switch (argPos) {
                 case 0:
-                    return accTypes0; // Coordinate[].class;
+                    return ExtractSegments.accTypes0; // Coordinate[].class;
                 case 1:
                 default:
-                    return accTypes1;
+                    return ExtractSegments.accTypes1;
             }
         }
     }
@@ -77,14 +77,17 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                 if (isSegment) {
                     final List<Coordinate> segment = new ArrayList<Coordinate>();
                     for (int j = start; j < i; j++) {
-                        segment.add(coordinates[j]);
+                        if ((coordinates[j].x < Float.MAX_VALUE)
+                                && (coordinates[j].y < Float.MAX_VALUE)) {
+                            segment.add(coordinates[j]);
+                        }
                     }
                     if (segment.size() > 1) {
-                        segments.add(geometryFactory.createLineString(segment
+                        segments.add(this.geometryFactory.createLineString(segment
                                 .toArray(new Coordinate[] {})));
                     }
-                    else {
-                        segments.add(geometryFactory.createPoint(segment.get(0)));
+                    else if (segment.size() == 1) {
+                        segments.add(this.geometryFactory.createPoint(segment.get(0)));
 
                     }
                     isSegment = (tmp.x < Double.MAX_VALUE) && (tmp.y < Double.MAX_VALUE);
@@ -105,13 +108,16 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                 segments.remove(0);
             }
             for (int j = start; j < coordinates.length; j++) {
-                segment.add(coordinates[j]);
+                if ((coordinates[j].x < Float.MAX_VALUE) && (coordinates[j].y < Float.MAX_VALUE)) {
+                    segment.add(coordinates[j]);
+                }
             }
             if (segment.size() > 1) {
-                segments.add(geometryFactory.createLineString(segment.toArray(new Coordinate[] {})));
+                segments.add(this.geometryFactory.createLineString(segment
+                        .toArray(new Coordinate[] {})));
             }
-            else {
-                segments.add(geometryFactory.createPoint(segment.get(0)));
+            else if (segment.size() == 1) {
+                segments.add(this.geometryFactory.createPoint(segment.get(0)));
 
             }
         }

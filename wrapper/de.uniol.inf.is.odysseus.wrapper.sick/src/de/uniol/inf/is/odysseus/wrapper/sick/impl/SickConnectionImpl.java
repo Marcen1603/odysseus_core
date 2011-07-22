@@ -33,12 +33,12 @@ public class SickConnectionImpl implements SickConnection {
         private final AtomicBoolean record = new AtomicBoolean(false);
         private final SickConnectionImpl connection;
 
-        public SickConnectionHandler(final String host, final int port,
+        public SickConnectionHandler(final String host, final int port, final boolean record,
                 final SickConnectionImpl connection) {
             this.host = host;
             this.port = port;
             this.connection = connection;
-            this.record.set(false);
+            this.record.set(record);
 
         }
 
@@ -192,7 +192,7 @@ public class SickConnectionImpl implements SickConnection {
                                 }
                             }
                         }
-                        catch (Exception e) {
+                        catch (final Exception e) {
                             throw new SickReadErrorException(message);
                         }
                         if (this.record.get()) {
@@ -223,12 +223,11 @@ public class SickConnectionImpl implements SickConnection {
                 this.channel.connect(address);
                 this.channel.configureBlocking(false);
                 final CharsetDecoder decoder = this.charset.newDecoder();
-                // this.onClose();
+                this.onClose();
                 this.onOpen();
-                final ByteBuffer buffer = ByteBuffer.allocateDirect(65 * 1024);
+                final ByteBuffer buffer = ByteBuffer.allocateDirect(64 * 1024);
                 int nbytes = 0;
                 int pos = 0;
-                int endIndex = -1;
                 int size = 0;
                 while (!Thread.currentThread().isInterrupted()) {
                     while ((nbytes = this.channel.read(buffer)) > 0) {
@@ -236,13 +235,7 @@ public class SickConnectionImpl implements SickConnection {
                         for (int i = pos; i < size; i++) {
                             if (buffer.get(i) == SickConnectionImpl.END) {
                                 buffer.position(i + 1);
-                                // LOG.info("1. Position: " + i + " " + buffer.position()
-                                // + " Limit: " + buffer.limit() + " Remain: "
-                                // + buffer.remaining()+" Size: "+size);
                                 buffer.flip();
-                                // LOG.info("2. Position: " + i + " " + buffer.position()
-                                // + " Limit: " + buffer.limit() + " Remain: "
-                                // + buffer.remaining() + " Size: " + size);
 
                                 final CharBuffer charBuffer = decoder.decode(buffer);
                                 try {
@@ -256,22 +249,12 @@ public class SickConnectionImpl implements SickConnection {
                                         this.dumpPackage(buffer);
                                     }
                                 }
-                                // LOG.info("3. Position: " + i + " " + buffer.position()
-                                // + " Limit: " + buffer.limit() + " Remain: "
-                                // + buffer.remaining()+" Size: "+size);
                                 buffer.limit(size);
-                                // LOG.info("3.5 Position: " + i + " " + buffer.position()
-                                // + " Limit: " + buffer.limit() + " Remain: "
-                                // + buffer.remaining() + " Size: " + size);
 
                                 buffer.compact();
                                 size -= (i + 1);
                                 pos = 0;
                                 i = 0;
-                                // LOG.info("4. Position: " + i + " " + buffer.position() +
-                                // " Limit: "
-                                // + buffer.limit() + " Remain: " + buffer.remaining()
-                                // + " Size: " + size);
                             }
                         }
                         pos++;
@@ -279,7 +262,7 @@ public class SickConnectionImpl implements SickConnection {
 
                 }
                 this.onClose();
-                LOG.info("SICK connection interrupted");
+                SickConnectionImpl.LOG.info("SICK connection interrupted");
             }
             catch (final Exception e) {
                 SickConnectionImpl.LOG.error(e.getMessage(), e);
@@ -352,8 +335,8 @@ public class SickConnectionImpl implements SickConnection {
     private String uri;
     private MeasurementListener listener;
 
-    public SickConnectionImpl(final String host, final int port) {
-        this.handler = new SickConnectionHandler(host, port, this);
+    public SickConnectionImpl(final String host, final int port, final boolean record) {
+        this.handler = new SickConnectionHandler(host, port, record, this);
     }
 
     @Override

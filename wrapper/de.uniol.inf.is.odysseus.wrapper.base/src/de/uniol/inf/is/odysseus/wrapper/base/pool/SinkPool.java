@@ -33,11 +33,12 @@ public class SinkPool<T extends IMetaAttribute> {
     }
 
     public static void registerSink(final String adapterName,
-            final AbstractSink<RelationalTuple<TimeInterval>> sink, Map<String, String> options) {
+            final AbstractSink<RelationalTuple<TimeInterval>> sink,
+            final Map<String, String> options) {
         SinkPool.getInstance()._registerSink(adapterName, sink, options);
     }
 
-    public static void registerAdapter(SinkAdapter adapter) {
+    public static void registerAdapter(final SinkAdapter adapter) {
         SinkPool.getInstance()._registerAdapter(adapter);
     }
 
@@ -54,7 +55,8 @@ public class SinkPool<T extends IMetaAttribute> {
     }
 
     private void _registerSink(final String adapterName,
-            final AbstractSink<RelationalTuple<TimeInterval>> sink, Map<String, String> options) {
+            final AbstractSink<RelationalTuple<TimeInterval>> sink,
+            final Map<String, String> options) {
         final SinkSpec sinkSpec = new SinkSpecImpl(sink.getName());
         final SinkConfiguration configuration = new SinkConfigurationImpl();
         if (options != null) {
@@ -64,11 +66,11 @@ public class SinkPool<T extends IMetaAttribute> {
         this.sinks.put(sink.getName(), sink);
         this.sinkSpecs.put(sink.getName(), sinkSpec);
 
-        SinkAdapter adapter = this.adapters.get(adapterName);
+        final SinkAdapter adapter = this.adapters.get(adapterName);
         if (adapter != null) {
             adapter.registerSink(sinkSpec);
 
-            sinkAdapterMapping.put(sink.getName(), adapter.getName());
+            this.sinkAdapterMapping.put(sink.getName(), adapter.getName());
             SinkPool.LOG.info("Physical Sink {} registered for adapter {}", sink, adapterName);
         }
         else {
@@ -84,9 +86,10 @@ public class SinkPool<T extends IMetaAttribute> {
 
     private void _transfer(final String sinkName, final long timestamp, final Object[] data) {
         if ((this.sinks.containsKey(sinkName)) && this.sinks.get(sinkName).isOpen()) {
-            String adapterName = sinkAdapterMapping.get(sinkName);
+            final String adapterName = this.sinkAdapterMapping.get(sinkName);
             try {
-                this.adapters.get(adapterName).transfer(sinkSpecs.get(sinkName), timestamp, data);
+                this.adapters.get(adapterName).transfer(this.sinkSpecs.get(sinkName), timestamp,
+                        data);
             }
             catch (final Exception e) {
                 SinkPool.LOG.error(e.getMessage(), e);
@@ -95,12 +98,13 @@ public class SinkPool<T extends IMetaAttribute> {
     }
 
     private void _unregisterSink(final AbstractSink<RelationalTuple<TimeInterval>> sink) {
-        if (sinkAdapterMapping.containsKey(sink.getName())) {
-            SinkAdapter adapter = adapters.get(sinkAdapterMapping.get(sink.getName()));
-            adapter.unregisterSink(sinkSpecs.get(sink.getName()));
+        if (this.sinkAdapterMapping.containsKey(sink.getName())) {
+            final SinkAdapter adapter = this.adapters.get(this.sinkAdapterMapping.get(sink
+                    .getName()));
+            adapter.unregisterSink(this.sinkSpecs.get(sink.getName()));
             this.sinks.remove(sink.getName());
             this.sinkSpecs.remove(sink.getName());
-            sinkAdapterMapping.remove(sink.getName());
+            this.sinkAdapterMapping.remove(sink.getName());
             SinkPool.LOG.info("Physical Sink {} unregistered", sink);
         }
     }

@@ -33,7 +33,8 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
     protected void doInit(final SourceSpec source) {
         final String host = source.getConfiguration().get("host").toString();
         final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
-        final SickConnection connection = new SickConnectionImpl(host, port);
+        final boolean record = source.getConfiguration().get("record") != null ? true : false;
+        final SickConnection connection = new SickConnectionImpl(host, port, record);
         SickSourceAdapter.LOG.debug("Open connection to SICK sensor at {}:{}", host, port);
         connection.setListener(source.getName(), this);
         connection.open();
@@ -51,10 +52,10 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
             final Point[] coordinates = new Point[measurement.getSamples().length];
             for (int i = 0; i < measurement.getSamples().length; i++) {
                 final Sample sample = measurement.getSamples()[i];
-                coordinates[i] = geometryFactory.createPoint(sample.getDist1Vector());
+                coordinates[i] = this.geometryFactory.createPoint(sample.getDist1Vector());
             }
             SickSourceAdapter.this.transfer(uri, System.currentTimeMillis(), new Object[] {
-                geometryFactory.createMultiPoint(coordinates)
+                this.geometryFactory.createMultiPoint(coordinates)
             });
         }
 

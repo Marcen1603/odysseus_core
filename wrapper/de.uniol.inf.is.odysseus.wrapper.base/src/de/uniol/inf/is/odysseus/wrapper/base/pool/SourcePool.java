@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.base.pool;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +12,8 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
-import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceConfigurationImpl;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceSpecImpl;
 
@@ -36,11 +34,12 @@ public class SourcePool<T extends IMetaAttribute> {
     }
 
     public static void registerSource(final String adapterName,
-            final AbstractSource<RelationalTuple<TimeInterval>> source, Map<String, String> options) {
+            final AbstractSource<RelationalTuple<TimeInterval>> source,
+            final Map<String, String> options) {
         SourcePool.getInstance()._registerSource(adapterName, source, options);
     }
 
-    public static void registerAdapter(SourceAdapter adapter) {
+    public static void registerAdapter(final SourceAdapter adapter) {
         SourcePool.getInstance()._registerAdapter(adapter);
     }
 
@@ -57,7 +56,8 @@ public class SourcePool<T extends IMetaAttribute> {
     }
 
     private void _registerSource(final String adapterName,
-            final AbstractSource<RelationalTuple<TimeInterval>> source, Map<String, String> options) {
+            final AbstractSource<RelationalTuple<TimeInterval>> source,
+            final Map<String, String> options) {
         final SourceSpec sourceSpec = new SourceSpecImpl(source.getName());
 
         final SourceConfiguration configuration = new SourceConfigurationImpl();
@@ -74,11 +74,11 @@ public class SourcePool<T extends IMetaAttribute> {
         this.sources.put(source.getName(), source);
         this.sourceSpecs.put(source.getName(), sourceSpec);
 
-        SourceAdapter adapter = this.adapters.get(adapterName);
+        final SourceAdapter adapter = this.adapters.get(adapterName);
         if (adapter != null) {
             adapter.registerSource(sourceSpec);
 
-            sourceAdapterMapping.put(source.getName(), adapter.getName());
+            this.sourceAdapterMapping.put(source.getName(), adapter.getName());
             SourcePool.LOG
                     .info("Physical Source {} registered for adapter {}", source, adapterName);
         }
@@ -113,12 +113,13 @@ public class SourcePool<T extends IMetaAttribute> {
     }
 
     private void _unregisterSource(final AbstractSource<RelationalTuple<TimeInterval>> source) {
-        if (sourceAdapterMapping.containsKey(source.getName())) {
-            SourceAdapter adapter = adapters.get(sourceAdapterMapping.get(source.getName()));
-            adapter.unregisterSource(sourceSpecs.get(source.getName()));
+        if (this.sourceAdapterMapping.containsKey(source.getName())) {
+            final SourceAdapter adapter = this.adapters.get(this.sourceAdapterMapping.get(source
+                    .getName()));
+            adapter.unregisterSource(this.sourceSpecs.get(source.getName()));
             this.sources.remove(source.getName());
             this.sourceSpecs.remove(source.getName());
-            sourceAdapterMapping.remove(source.getName());
+            this.sourceAdapterMapping.remove(source.getName());
             SourcePool.LOG.info("Physical Source {} unregistered", source);
         }
     }

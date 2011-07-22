@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.salsa.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -43,20 +42,16 @@ public class ScanMap extends JPanel {
             synchronized (this.segments) {
                 final Color color = new Color(254, 0, 0);
                 for (final Geometry segment : this.segments) {
-                    Coordinate[] coordinates = segment.getCoordinates();
-                    int[] xPoints = new int[coordinates.length];
-                    int[] yPoints = new int[coordinates.length];
+                    final Coordinate[] coordinates = segment.getCoordinates();
+                    final int[] xPoints = new int[coordinates.length];
+                    final int[] yPoints = new int[coordinates.length];
                     int index = 0;
-                    final Polygon segmentPolygon = new Polygon();
                     for (final Coordinate coordinate : coordinates) {
                         xPoints[index] = 500 + (int) (coordinate.x / ScanMap.SCALE);
                         yPoints[index] = 500 + (int) (coordinate.y / ScanMap.SCALE);
-                        // segmentPolygon.addPoint(500 + (int) (coordinate.x / ScanMap.SCALE),
-                        // 500 + (int) (coordinate.y / ScanMap.SCALE));
                         index++;
                     }
                     graphics.setColor(color);
-                    // graphics.drawPolygon(segmentPolygon);
                     graphics.drawPolyline(xPoints, yPoints, coordinates.length);
                 }
                 this.segments.clear();

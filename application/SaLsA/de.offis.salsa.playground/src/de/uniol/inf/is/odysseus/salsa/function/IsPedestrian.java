@@ -3,12 +3,11 @@ package de.uniol.inf.is.odysseus.salsa.function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class IsPedestrian extends AbstractFunction<Boolean> {
     private static Logger LOG = LoggerFactory.getLogger(IsPedestrian.class);
 
@@ -25,7 +24,7 @@ public class IsPedestrian extends AbstractFunction<Boolean> {
     }
 
     @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
+    public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -36,10 +35,10 @@ public class IsPedestrian extends AbstractFunction<Boolean> {
         else {
             switch (argPos) {
                 case 0:
-                    return accTypes0;
+                    return IsPedestrian.accTypes0;
                 case 1:
                 default:
-                    return accTypes1;
+                    return IsPedestrian.accTypes1;
             }
         }
     }
@@ -51,11 +50,11 @@ public class IsPedestrian extends AbstractFunction<Boolean> {
 
     @Override
     public Boolean getValue() {
-        final Geometry geometry = (Geometry) this.getInputValue(0);
+        this.getInputValue(0);
         final Double threshold = (Double) this.getInputValue(1);
 
-        double theta = 0.0;
-        double alpha = 0.0;
+        final double theta = 0.0;
+        final double alpha = 0.0;
 
         double similarityTheta;
         double similarityAlpha;
@@ -79,11 +78,5 @@ public class IsPedestrian extends AbstractFunction<Boolean> {
     @Override
     public SDFDatatype getReturnType() {
         return SDFDatatype.BOOLEAN;
-    }
-
-    private double getAngle(Coordinate start, Coordinate center, Coordinate end) {
-        double m1 = (center.y - start.y) / (center.x - start.x);
-        double m2 = (end.y - center.y) / (end.x - center.x);
-        return Math.atan((m1 - m2) / (1 + m1 * m2));
     }
 }

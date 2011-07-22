@@ -16,16 +16,20 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
         return 3;
     }
 
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{
-    	{SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE, SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
-    		SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON},
-    	{SDFDatatype.DOUBLE},
-    	{SDFDatatype.DOUBLE}
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+            {
+                    SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
+                    SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
+                    SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
+            }, {
+                SDFDatatype.DOUBLE
+            }, {
+                SDFDatatype.DOUBLE
+            }
     };
-    
-    
+
     @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
+    public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -34,7 +38,7 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
                     + " argument(s): A geometry and a x and y value.");
         }
         else {
-            return accTypes[argPos];
+            return MoveViewPoint.accTypes[argPos];
         }
     }
 
@@ -48,7 +52,7 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double x = (Double) this.getInputValue(1);
         final Double y = (Double) this.getInputValue(2);
-        for (Coordinate coordinate : geometry.getCoordinates()) {
+        for (final Coordinate coordinate : geometry.getCoordinates()) {
             coordinate.x = coordinate.x - x;
             coordinate.y = coordinate.y - y;
         }

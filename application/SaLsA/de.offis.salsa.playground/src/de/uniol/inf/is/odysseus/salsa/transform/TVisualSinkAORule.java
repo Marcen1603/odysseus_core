@@ -34,12 +34,12 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
             for (final ILogicalOperator o : toUpdate) {
                 this.update(o);
             }
-            replace(operator,po,config);
-            retract(operator);
-           
+            this.replace(operator, po, config);
+            this.retract(operator);
+
         }
-        catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+        catch (final Exception e) {
+            TVisualSinkAORule.LOG.error(e.getMessage(), e);
         }
     }
 

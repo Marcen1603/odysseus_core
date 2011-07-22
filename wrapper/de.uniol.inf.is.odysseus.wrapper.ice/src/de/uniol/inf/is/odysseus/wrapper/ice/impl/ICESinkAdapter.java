@@ -32,19 +32,19 @@ public class ICESinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
     }
 
     @Override
-    public void transfer(SinkSpec sink, long timestamp, Object[] data) {
+    public void transfer(final SinkSpec sink, final long timestamp, final Object[] data) {
         // Und bist du nicht willig so brauch ich Gewalt.
-        messageQueue.offer((Float) data[0]);
+        this.messageQueue.offer((Float) data[0]);
     }
 
     @Override
-    protected void destroy(SinkSpec sink) {
+    protected void destroy(final SinkSpec sink) {
         this.iceThreads.get(sink).interrupt();
         this.iceThreads.remove(sink);
     }
 
     @Override
-    protected void init(SinkSpec sink) {
+    protected void init(final SinkSpec sink) {
         final String service = sink.getConfiguration().get("service").toString();
         final String host = sink.getConfiguration().get("host").toString();
         final int port = Integer.parseInt(sink.getConfiguration().get("port").toString());
@@ -65,9 +65,7 @@ public class ICESinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
     }
 
     private class ICEConnection implements Runnable {
-        private final SinkSpec sink;
-        private final ICESinkAdapter adapter;
-        private  Communicator communicator;
+        private Communicator communicator;
         private ObjectAdapter objectAdapter;
         private ClientCommunicatorPrx connectionObject;
         private final int maxMessageSize = 10240;
@@ -78,8 +76,6 @@ public class ICESinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
                 final int port, final String protocol, final String username,
                 final String password, final String ownService, final int ownPort,
                 final ICESinkAdapter adapter) {
-            this.sink = sink;
-            this.adapter = adapter;
             this.proxy = service + ":" + protocol + " -h " + host + " -p " + port;
             try {
                 ICESinkAdapter.LOG.info("Try proxy: {}", this.proxy);
@@ -89,11 +85,11 @@ public class ICESinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 
                 initializationData.properties = props;
                 this.communicator = Util.initialize(initializationData);
-                
+
                 this.objectAdapter = this.communicator.createObjectAdapterWithEndpoints(ownService,
                         protocol + " -h 127.0.0.1 -p " + ownPort);
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 ICESinkAdapter.LOG.info(e.getMessage(), e);
                 ICESinkAdapter.LOG.error(e.getMessage(), e);
             }
@@ -110,7 +106,7 @@ public class ICESinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
                     System.out.println("Create proxy ");
                     this.connectionObject.ice_ping();
                     while (!Thread.currentThread().isInterrupted()) {
-                        Float speed = messageQueue.take();
+                        final Float speed = ICESinkAdapter.this.messageQueue.take();
                         this.connectionObject.setMaxSpeed(this.id, speed);
                     }
                 }

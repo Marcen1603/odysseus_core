@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
-import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public abstract class AbstractSinkAdapter implements SinkAdapter {
     private static Logger LOG = LoggerFactory.getLogger(AbstractSinkAdapter.class);

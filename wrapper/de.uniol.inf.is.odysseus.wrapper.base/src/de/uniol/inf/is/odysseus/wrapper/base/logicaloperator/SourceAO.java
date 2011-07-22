@@ -30,7 +30,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
      */
     private static final long serialVersionUID = 2514000374871326771L;
     private static Logger LOG = LoggerFactory.getLogger(SourceAO.class);
-    
+
     private final Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
     private final Map<String, String> options = new HashMap<String, String>();
     private String adapter;
@@ -79,7 +79,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
      * .is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
      */
     @Override
-    public void setOutputSchema(SDFAttributeList outputSchema) {
+    public void setOutputSchema(final SDFAttributeList outputSchema) {
         this.setOutputSchema(outputSchema, 0);
     }
 
@@ -90,7 +90,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
      * .is.odysseus.sourcedescription.sdf.schema.SDFAttributeList, int)
      */
     @Override
-    public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+    public void setOutputSchema(final SDFAttributeList outputSchema, final int port) {
         this.outputSchema.put(port, outputSchema);
     }
 
@@ -137,15 +137,15 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
     }
 
     public List<String> getOptions() {
-        List<String> optionList = new ArrayList<String>();
-        for (String key : options.keySet()) {
-            optionList.add(key + ":" + options.get(key));
+        final List<String> optionList = new ArrayList<String>();
+        for (final String key : this.options.keySet()) {
+            optionList.add(key + ":" + this.options.get(key));
         }
         return optionList;
     }
 
     public Map<String, String> getOptionsMap() {
-        return options;
+        return this.options;
     }
 
     /*

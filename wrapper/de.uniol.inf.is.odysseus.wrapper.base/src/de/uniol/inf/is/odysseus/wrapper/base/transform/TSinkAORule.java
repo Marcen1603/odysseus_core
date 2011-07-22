@@ -22,7 +22,7 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
     }
 
     @Override
-    public void execute(SinkAO operator, TransformationConfiguration config) {
+    public void execute(final SinkAO operator, final TransformationConfiguration config) {
         try {
             final SinkPO po = new SinkPO(operator.getOutputSchema(), operator.getAdapter(),
                     operator.getOptionsMap());
@@ -31,16 +31,16 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
             for (final ILogicalOperator o : toUpdate) {
                 this.update(o);
             }
-            replace(operator, po, config);
+            this.replace(operator, po, config);
             this.retract(operator);
         }
-        catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+        catch (final Exception e) {
+            TSinkAORule.LOG.error(e.getMessage(), e);
         }
     }
 
     @Override
-    public boolean isExecutable(SinkAO operator, TransformationConfiguration config) {
+    public boolean isExecutable(final SinkAO operator, final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
 

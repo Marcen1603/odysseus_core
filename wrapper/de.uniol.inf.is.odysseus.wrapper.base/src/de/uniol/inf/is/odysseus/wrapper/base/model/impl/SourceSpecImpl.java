@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.wrapper.base.model.AttributeConfiguration;
-import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public class SourceSpecImpl implements SourceSpec {
 

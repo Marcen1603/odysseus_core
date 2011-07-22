@@ -4,7 +4,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class ObjectSize extends AbstractFunction<Double> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
@@ -20,7 +22,7 @@ public class ObjectSize extends AbstractFunction<Double> {
     }
 
     @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
+    public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -29,7 +31,7 @@ public class ObjectSize extends AbstractFunction<Double> {
                     + " argument(s): A geometry.");
         }
         else {
-            return accTypes[argPos];
+            return ObjectSize.accTypes[argPos];
         }
     }
 
@@ -45,7 +47,6 @@ public class ObjectSize extends AbstractFunction<Double> {
 
     @Override
     public SDFDatatype getReturnType() {
-        // TODO Auto-generated method stub
         return SDFDatatype.DOUBLE;
     }
 }

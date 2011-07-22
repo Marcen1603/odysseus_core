@@ -5,7 +5,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class MergeGeometries extends AbstractFunction<Geometry> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
@@ -26,7 +28,7 @@ public class MergeGeometries extends AbstractFunction<Geometry> {
     }
 
     @Override
-    public SDFDatatype[] getAcceptedTypes(int argPos) {
+    public SDFDatatype[] getAcceptedTypes(final int argPos) {
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
@@ -35,7 +37,7 @@ public class MergeGeometries extends AbstractFunction<Geometry> {
                     + " argument(s): Two geometries.");
         }
         else {
-            return accTypes[argPos];
+            return MergeGeometries.accTypes[argPos];
         }
     }
 
@@ -46,12 +48,12 @@ public class MergeGeometries extends AbstractFunction<Geometry> {
 
     @Override
     public Geometry getValue() {
-        Geometry[] geometrys = new Geometry[2];
+        final Geometry[] geometrys = new Geometry[2];
 
         geometrys[0] = (Geometry) this.getInputValue(0);
         geometrys[1] = (Geometry) this.getInputValue(1);
 
-        GeometryFactory geometryFactory = new GeometryFactory();
+        final GeometryFactory geometryFactory = new GeometryFactory();
 
         return geometryFactory.createGeometryCollection(geometrys);
     }

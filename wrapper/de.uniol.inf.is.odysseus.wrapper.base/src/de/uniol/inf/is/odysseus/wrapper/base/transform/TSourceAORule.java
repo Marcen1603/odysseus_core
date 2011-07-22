@@ -22,7 +22,7 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
     }
 
     @Override
-    public void execute(SourceAO operator, TransformationConfiguration config) {
+    public void execute(final SourceAO operator, final TransformationConfiguration config) {
         try {
             final SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getAdapter(),
                     operator.getOptionsMap());
@@ -33,13 +33,13 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
             }
             this.retract(operator);
         }
-        catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+        catch (final Exception e) {
+            TSourceAORule.LOG.error(e.getMessage(), e);
         }
     }
 
     @Override
-    public boolean isExecutable(SourceAO operator, TransformationConfiguration config) {
+    public boolean isExecutable(final SourceAO operator, final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
 

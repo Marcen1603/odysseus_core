@@ -1,10 +1,9 @@
 package de.uniol.inf.is.odysseus.wrapper.sick.model;
 
 import java.util.Arrays;
+
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  */
 public class Measurement {
     public enum Error {

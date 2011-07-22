@@ -78,15 +78,15 @@ public class SinkAO extends AbstractLogicalOperator {
     }
 
     public List<String> getOptions() {
-        List<String> optionList = new ArrayList<String>();
-        for (String key : options.keySet()) {
-            optionList.add(key + ":" + options.get(key));
+        final List<String> optionList = new ArrayList<String>();
+        for (final String key : this.options.keySet()) {
+            optionList.add(key + ":" + this.options.get(key));
         }
         return optionList;
     }
 
     public Map<String, String> getOptionsMap() {
-        return options;
+        return this.options;
     }
 
     @Override

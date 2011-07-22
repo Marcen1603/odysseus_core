@@ -15,13 +15,17 @@ import Ice.Util;
 import ReACT.ClientCommunicatorPrx;
 import ReACT.ClientCommunicatorPrxHelper;
 import ReACT.ScooterPos;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public class ICESourceAdapter extends AbstractPushingSourceAdapter implements SourceAdapter {
     private static Logger LOG = LoggerFactory.getLogger(ICESourceAdapter.class);
-
+    private static final Double METER_PER_PIXEL = 0.044;
     private final Map<SourceSpec, Thread> iceThreads = new HashMap<SourceSpec, Thread>();
 
     @Override
@@ -38,24 +42,27 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
 
     @Override
     protected void doInit(final SourceSpec source) {
-        final String service = source.getConfiguration().get("service").toString();
-        final String host = source.getConfiguration().get("host").toString();
-        final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
-        final String protocol = source.getConfiguration().get("protocol").toString();
-        final String ownService = source.getConfiguration().get("ownService").toString();
-        final int ownPort = Integer.parseInt(source.getConfiguration().get("ownPort").toString());
-        try {
-            // ICEConnection connection = new ICEConnection(source, "ClientConnector",
-            // "192.168.1.99",
-            // 10000, "", "", "tcp", "ServiceConnector", 20000, this);
-            final ICEConnection connection = new ICEConnection(source, service, host, port,
-                    protocol, "", "", ownService, ownPort, this);
-            final Thread iceThread = new Thread(connection);
-            this.iceThreads.put(source, iceThread);
-            iceThread.start();
-        }
-        catch (final Exception e) {
-            ICESourceAdapter.LOG.error(e.getMessage(), e);
+        if (this.iceThreads.size() == 0) {
+            final String service = source.getConfiguration().get("service").toString();
+            final String host = source.getConfiguration().get("host").toString();
+            final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
+            final String protocol = source.getConfiguration().get("protocol").toString();
+            final String ownService = source.getConfiguration().get("ownService").toString();
+            final int ownPort = Integer.parseInt(source.getConfiguration().get("ownPort")
+                    .toString());
+            try {
+                // ICEConnection connection = new ICEConnection(source, "ClientConnector",
+                // "192.168.1.99",
+                // 10000, "", "", "tcp", "ServiceConnector", 20000, this);
+                final ICEConnection connection = new ICEConnection(source, service, host, port,
+                        protocol, "", "", ownService, ownPort, this);
+                final Thread iceThread = new Thread(connection);
+                this.iceThreads.put(source, iceThread);
+                iceThread.start();
+            }
+            catch (final Exception e) {
+                ICESourceAdapter.LOG.error(e.getMessage(), e);
+            }
         }
     }
 
@@ -68,6 +75,7 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
         private final int maxMessageSize = 10240;
         private final int id = 0;
         private final String proxy;
+        private final GeometryFactory geometryFactory = new GeometryFactory();
 
         public ICEConnection(final SourceSpec source, final String service, final String host,
                 final int port, final String protocol, final String username,
@@ -87,7 +95,7 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
                 this.objectAdapter = this.communicator.createObjectAdapterWithEndpoints(ownService,
                         protocol + " -h 127.0.0.1 -p " + ownPort);
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 ICESourceAdapter.LOG.error(e.getMessage(), e);
             }
 
@@ -121,11 +129,15 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
                     // }
                     while (!Thread.currentThread().isInterrupted()) {
                         final ScooterPos position = this.connectionObject.getScooterPos(this.id);
-                        final Double[] values = new Double[] {
-                                position.x * 44.0, position.y * 44.0
-                        };
+                        final Coordinate coordinate = new Coordinate();
+                        coordinate.x = position.x * ICESourceAdapter.METER_PER_PIXEL * 1000;
+                        coordinate.y = position.y * ICESourceAdapter.METER_PER_PIXEL * 1000;
+                        // position.heading + Math.PI / 2;
                         this.adapter.transfer(this.source.getName(), System.currentTimeMillis(),
-                                values);
+                                new Object[] {
+                                    this.geometryFactory.createPoint(coordinate)
+                                });
+                        Thread.sleep((long) 20.0);
                     }
                 }
             }
