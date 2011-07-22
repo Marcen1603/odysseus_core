@@ -97,6 +97,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
             if ((coordinate.x > x) && (coordinate.x < x + width - cellsize) && (coordinate.y > y)
                     && (coordinate.y < y + height - cellsize)) {
                 if (coordinate.distance(tmp) > cellsize / 2) {
+                    polygonCoordinates.add(coordinate);
                     int minX = (int) Math.min(tmp.x, coordinate.x);
                     int maxX = (int) Math.max(tmp.x, coordinate.x);
                     int minY = (int) Math.min(tmp.y, coordinate.y);
@@ -121,6 +122,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
                                 gridMaxY = Math.max(gridMaxY, gridY);
                                 grid[gridX][gridY] = 1.0;
                                 intersect = true;
+
                             }
                             else if ((!foundEnd) && (isInGridCell(j, k, cellsize, coordinate))) {
                                 foundEnd = true;
@@ -151,7 +153,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
                                 + " " + maxY + " " + tmp + " " + coordinate);
                     }
                     tmp = coordinate;
-                    polygonCoordinates.add(coordinate);
+
                 }
             }
         }
@@ -180,8 +182,9 @@ public class ToGrid extends AbstractFunction<Double[][]> {
                 + cellsize));
     }
 
-    private double getDenominator(double cellsize, Coordinate from, Coordinate to) {
-        return ((to.y - from.y) * cellsize) - ((to.x - from.x) * cellsize);
+    private double getDenominator(double x1, double y1, double x2, double y2, Coordinate from,
+            Coordinate to) {
+        return ((to.y - from.y) * (x2 - x1)) - ((to.x - from.x) * (y2 - y1));
     }
 
     private double getNumeratorA(double x1, double y1, double x2, double y2, double x3, double y3,
@@ -194,25 +197,30 @@ public class ToGrid extends AbstractFunction<Double[][]> {
     }
 
     private boolean intersects(double x, double y, double cellsize, Coordinate from, Coordinate to) {
-        double denominator = getDenominator(cellsize, from, to);
-        if (denominator != 0.0) {
-            double numeratorA = getNumeratorA(x, y, x, y + cellsize, from.x, from.y, to.x, to.y);
-            double numeratorB = getNumeratorB(x, y, x, y + cellsize, from.x, from.y);
-            if (isIntersection(denominator, numeratorA, numeratorB)) {
-                return true;
-            }
-            numeratorA = getNumeratorA(x, y + cellsize, x + cellsize, y + cellsize, from.x, from.y,
-                    to.x, to.y);
-            numeratorB = getNumeratorB(x, y + cellsize, x + cellsize, y + cellsize, from.x, from.y);
-            if (isIntersection(denominator, numeratorA, numeratorB)) {
-                return true;
-            }
-            numeratorA = getNumeratorA(x + cellsize, y + cellsize, x + cellsize, y, from.x, from.y,
-                    to.x, to.y);
-            numeratorB = getNumeratorB(x + cellsize, y + cellsize, x + cellsize, y, from.x, from.y);
-            if (isIntersection(denominator, numeratorA, numeratorB)) {
-                return true;
-            }
+        // Check bottom left to top left segment for intersection
+        double denominator = getDenominator(x, y, x, y + cellsize, from, to);
+        double numeratorA = getNumeratorA(x, y, x, y + cellsize, from.x, from.y, to.x, to.y);
+        double numeratorB = getNumeratorB(x, y, x, y + cellsize, from.x, from.y);
+        if ((denominator != 0.0) && (isIntersection(denominator, numeratorA, numeratorB))) {
+            return true;
+        }
+
+        // Check top left to top right segment for intersection
+        denominator = getDenominator(x, y + cellsize, x + cellsize, y + cellsize, from, to);
+        numeratorA = getNumeratorA(x, y + cellsize, x + cellsize, y + cellsize, from.x, from.y,
+                to.x, to.y);
+        numeratorB = getNumeratorB(x, y + cellsize, x + cellsize, y + cellsize, from.x, from.y);
+        if (isIntersection(denominator, numeratorA, numeratorB)) {
+            return true;
+        }
+
+        // Check top right to bottom right segment for intersection
+        denominator = getDenominator(x + cellsize, y + cellsize, x + cellsize, y, from, to);
+        numeratorA = getNumeratorA(x + cellsize, y + cellsize, x + cellsize, y, from.x, from.y,
+                to.x, to.y);
+        numeratorB = getNumeratorB(x + cellsize, y + cellsize, x + cellsize, y, from.x, from.y);
+        if (isIntersection(denominator, numeratorA, numeratorB)) {
+            return true;
         }
         return false;
     }

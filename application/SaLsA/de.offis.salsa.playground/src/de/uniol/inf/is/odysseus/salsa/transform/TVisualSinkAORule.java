@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.salsa.logicaloperator.VisualSinkAO;
 import de.uniol.inf.is.odysseus.salsa.physicaloperator.VisualGridSinkPO;
+import de.uniol.inf.is.odysseus.salsa.physicaloperator.VisualPolygonSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -27,8 +28,8 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
     @Override
     public void execute(final VisualSinkAO operator, final TransformationConfiguration config) {
         try {
-            // final VisualPolygonSinkPO po = new VisualPolygonSinkPO(operator.getOutputSchema());
-            final VisualGridSinkPO po = new VisualGridSinkPO(operator.getOutputSchema());
+        //    final VisualPolygonSinkPO po = new VisualPolygonSinkPO(operator.getOutputSchema());
+           final VisualGridSinkPO po = new VisualGridSinkPO(operator.getOutputSchema());
             po.setOutputSchema(operator.getOutputSchema());
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);
