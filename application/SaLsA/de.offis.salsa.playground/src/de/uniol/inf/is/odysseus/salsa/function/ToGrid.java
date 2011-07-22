@@ -69,8 +69,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
         final Double height = (Double) this.getInputValue(4);
         final Double cellsize = this.getInputValue(5);
 
-        Double[][] grid = new Double[(int) Math.ceil(width / cellsize)][(int) Math.ceil(height
-                / cellsize)];
+        Double[][] grid = new Double[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
         for (Double[] cells : grid) {
             Arrays.fill(cells, -1.0);
         }
@@ -82,13 +81,22 @@ public class ToGrid extends AbstractFunction<Double[][]> {
         Coordinate[] coordinates = geometry.getCoordinates();
 
         List<Coordinate> polygonCoordinates = new ArrayList<Coordinate>();
-        polygonCoordinates.add(coordinates[0]);
-        Coordinate tmp = coordinates[0];
+        Coordinate tmp = null;
+        for (int i = 0; i < coordinates.length; i++) {
+            Coordinate coordinate = coordinates[i];
+            if ((coordinate.x > x) && (coordinate.x < x + width - cellsize) && (coordinate.y > y)
+                    && (coordinate.y < y + height - cellsize)) {
+                tmp = coordinate;
+                polygonCoordinates.add(coordinates[i]);
+                break;
+            }
+
+        }
         for (int i = 1; i < coordinates.length; i++) {
             Coordinate coordinate = coordinates[i];
-            if ((coordinate.x >= x) && (coordinate.x <= x + width - cellsize)
-                    && (coordinate.y >= y) && (coordinate.y <= y + height - cellsize)) {
-                if (coordinate.distance(tmp) >= cellsize/2) {
+            if ((coordinate.x > x) && (coordinate.x < x + width - cellsize) && (coordinate.y > y)
+                    && (coordinate.y < y + height - cellsize)) {
+                if (coordinate.distance(tmp) > cellsize / 2) {
                     int minX = (int) Math.min(tmp.x, coordinate.x);
                     int maxX = (int) Math.max(tmp.x, coordinate.x);
                     int minY = (int) Math.min(tmp.y, coordinate.y);
@@ -133,9 +141,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
                                 gridMaxX = Math.max(gridMaxX, gridX);
                                 gridMinY = Math.min(gridMinY, gridY);
                                 gridMaxY = Math.max(gridMaxY, gridY);
-
                                 grid[gridX][gridY] = 1.0;
-
                                 intersect = true;
                             }
                         }

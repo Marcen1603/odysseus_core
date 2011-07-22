@@ -35,9 +35,7 @@ public class GridMap extends JPanel {
                 for (int j = 0; j < grid[i].length; j++) {
                     int colorIndex = (int) (grid[i][j] + 1);
                     graphics.setColor(colors[colorIndex]);
-                    // graphics.fillRect((int) (i * 50 / SCALE), (int) (1000 - (j * 50 / SCALE)),
-                    // (int) (50 / SCALE), (int) (50 / SCALE));
-                    graphics.fillRect(250 + 2 * i, 250 + 2 * j, 2, 2);
+                    graphics.fillRect(250 + 10 * i, 250 + 10 * j, 10, 10);
                 }
             }
             break;
