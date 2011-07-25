@@ -40,19 +40,29 @@ public class PolygonMap extends JPanel {
         graphics.setColor(Color.WHITE);
         graphics.drawLine(500, 0, 500, 1000);
         graphics.drawLine(0, 500, 1000, 500);
-        final Color color = new Color(254, 0, 0);
         for (final Geometry segment : this.segments) {
             final Coordinate[] coordinates = segment.getCoordinates();
-            final int[] xPoints = new int[coordinates.length];
-            final int[] yPoints = new int[coordinates.length];
+            int[] xPoints = new int[coordinates.length];
+            int[] yPoints = new int[coordinates.length];
             int index = 0;
             for (final Coordinate coordinate : coordinates) {
                 xPoints[index] = 500 + (int) (coordinate.x / PolygonMap.SCALE);
                 yPoints[index] = 500 + (int) (coordinate.y / PolygonMap.SCALE);
                 index++;
             }
-            graphics.setColor(color);
+            graphics.setColor(Color.WHITE);
             graphics.drawPolyline(xPoints, yPoints, coordinates.length);
+            final Coordinate[] enverlopCoordinates = segment.getEnvelope().getCoordinates();
+            xPoints = new int[enverlopCoordinates.length];
+            yPoints = new int[enverlopCoordinates.length];
+            index = 0;
+            for (final Coordinate coordinate : enverlopCoordinates) {
+                xPoints[index] = 500 + (int) (coordinate.x / PolygonMap.SCALE);
+                yPoints[index] = 500 + (int) (coordinate.y / PolygonMap.SCALE);
+                index++;
+            }
+            graphics.setColor(Color.RED);
+            graphics.drawPolyline(xPoints, yPoints, enverlopCoordinates.length);
         }
         this.segments.clear();
     }
