@@ -87,22 +87,11 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected void process_next(final RelationalTuple<T> object, final int port) {
+    protected void process_next(final RelationalTuple<T> listRelatinalTuple, final int port) {
         try {
-            final List<Object> unnestAttribute = (List<Object>) object
-                    .getAttribute(this.attributePos);
-            for (final Object nestedValue : unnestAttribute) {
-                final RelationalTuple<T> output = new RelationalTuple<T>(this.schema.size());
-                output.setMetadata((T) object.getMetadata().clone());
-                for (int i = 0; i < object.getAttributeCount(); i++) {
-                    if (i == this.attributePos) {
-                        output.setAttribute(i, nestedValue);
-                    }
-                    else {
-                        output.setAttribute(i, object.getAttribute(i));
-                    }
-                }
-                this.transfer(output);
+            final List<T> relatinalTuples = (List<T>) listRelatinalTuple;
+            for (final T relatinalTuple : relatinalTuples) {
+                this.transfer((RelationalTuple)relatinalTuple);
             }
         }
         catch (final Exception e) {
