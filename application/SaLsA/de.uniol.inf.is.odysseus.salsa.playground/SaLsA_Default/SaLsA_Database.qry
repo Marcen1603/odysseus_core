@@ -1,8 +1,6 @@
 ///OdysseusScript
-#PARSER CQL
+#PARSER PQL
 #TRANSCFG Standard
 #QUERY
 ///Your first query here
 
-CREATE STREAM database:laser_9c193a(serial STRING, scancount INTEGER, stimestamp STARTTIMESTAMP, data LONG, dindex INTEGER, angle DOUBLE, dist1 FLOAT, rssi1 FLOAT) DATABASE[jdbc:postgresql://localhost:5432/salsa] USE TABLE laser_join_9c193a_part TIMESENSITIV;
-SELECT * FROM database:laser_9c193a;

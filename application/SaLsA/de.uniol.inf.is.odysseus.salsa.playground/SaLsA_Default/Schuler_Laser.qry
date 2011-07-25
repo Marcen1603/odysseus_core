@@ -5,15 +5,26 @@
 ///Your first query here
 
 
-source1 = source({schema = ['scan:SpatialMultiPoint'], name = 'Laser1'})  
-move1 = map({expressions = ['MoveViewPoint(scan, 3750.0, -4600.0)']}, source1)
-renamedMove1 = rename({aliases = ['scan1']}, move1)
-rotate1 = map({expressions = ['RotateViewPoint(scan1, 174.49)']}, renamedMove1)
-renamedRotate1 = rename({aliases = ['scan1']}, rotate1)
+lms1 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111'], adapter = 'Sick'})  
+
+move1 = map({expressions = ['MoveViewPoint(scan, 3750.0, -4600.0)']}, lms1)
+renamedMove1 = rename({aliases = ['scan']}, move1)
+rotate1 = map({expressions = ['RotateViewPoint(scan, 174.49)']}, renamedMove1)
+renamedRotate1 = rename({aliases = ['scan']}, rotate1)
+///window1 = window({type = 'time', size = 20, advance = 1}, renamedRotate1)
+
+lms2 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.20', 'port:2111'], adapter = 'Sick'})  
+renamed2 = rename({aliases = ['scan']}, lms2)
+///window2 = window({type = 'time', size = 20, advance = 1}, renamed2)
+
+united = UNION(renamedRotate1, renamed2)
+
+extractedFeature = map({expressions = ['ExtractSegments(scan,300.0)']}, united)
+
+renamedExtractedFeature = rename({aliases = ['feature']}, extractedFeature)
+
+unested = unnest({attribute = 'feature'}, renamedExtractedFeature)
+
 window1 = window({type = 'time', size = 20, advance = 1}, renamedRotate1)
 
-source2 = source({schema = ['scan:SpatialMultiPoint'], name = 'Laser2'})
-renamed2 = rename({aliases = ['scan2']}, source2)
-window2 = window({type = 'time', size = 20, advance = 1}, renamed2)
-
-united = union(window1, window2)
+sink = mapsink(window1)
