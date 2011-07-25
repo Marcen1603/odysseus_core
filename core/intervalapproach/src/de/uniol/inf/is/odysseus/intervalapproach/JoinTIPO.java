@@ -323,7 +323,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ipo;
 				
-		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
+		// Falls die Operatoren verschiedene Quellen haben, wird false zurï¿½ck gegeben
 		if(!this.hasSameSources(jtipo)
 				|| !dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
@@ -331,7 +331,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			return false;
 		}
 		
-		// Vergleichen des Join-Prädikats und des Output-Schemas
+		// Vergleichen des Join-Prï¿½dikats und des Output-Schemas
 		if(this.getJoinPredicate().equals(jtipo.getJoinPredicate()) &&
 				this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
 			return true;
@@ -347,7 +347,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ip;
 		
-		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
+		// Falls die Operatoren verschiedene Quellen haben, wird false zurï¿½ck gegeben
 		if(!this.hasSameSources(jtipo)
 				|| !dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
@@ -355,7 +355,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			return false;
 		}
 		
-		// Vergleichen des Join-Prädikats
+		// Vergleichen des Join-Prï¿½dikats
 		if(this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate())) {
 			return true;
 		}
@@ -364,7 +364,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	
 	@Override
 	public String getName(){
-		return super.getName() + "Left SA: " + this.getAreas()[0].toString() + " Right SA: " + this.getAreas()[1].toString();
+		return super.getName();
+//		return super.getName() + "Left SA: " + this.getAreas()[0].toString() + " Right SA: " + this.getAreas()[1].toString();
 	}
 
 }
