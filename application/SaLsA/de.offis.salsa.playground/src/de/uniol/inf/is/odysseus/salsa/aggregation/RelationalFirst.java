@@ -9,6 +9,19 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 public class RelationalFirst extends First<RelationalTuple<?>, RelationalTuple<?>> {
 
+    private static RelationalFirst instance;
+
+    private RelationalFirst() {
+        super();
+    }
+
+    public static RelationalFirst getInstance() {
+        if (instance == null) {
+            instance = new RelationalFirst();
+        }
+        return instance;
+    }
+
     @Override
     public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
         ElementPartialAggregate<RelationalTuple<?>> pa = (ElementPartialAggregate<RelationalTuple<?>>) p;
