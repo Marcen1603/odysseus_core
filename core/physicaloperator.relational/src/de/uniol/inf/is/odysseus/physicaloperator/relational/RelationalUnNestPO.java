@@ -87,10 +87,10 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected void process_next(final RelationalTuple<T> listRelatinalTuple, final int port) {
+    protected void process_next(final RelationalTuple listRelatinalTuple, final int port) {
         try {
-            final List<T> relatinalTuples = (List<T>) listRelatinalTuple;
-            for (final T relatinalTuple : relatinalTuples) {
+        	final List<RelationalTuple> relatinalTuples = (List<RelationalTuple>) listRelatinalTuple.getAttribute(0);
+            for (final RelationalTuple relatinalTuple : relatinalTuples) {
                 this.transfer((RelationalTuple)relatinalTuple);
             }
         }
