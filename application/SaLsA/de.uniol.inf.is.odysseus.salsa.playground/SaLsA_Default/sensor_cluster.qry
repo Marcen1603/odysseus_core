@@ -1,0 +1,15 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG Standard
+#QUERY
+///Your first query here
+
+
+
+
+access01 = access({SOURCE = 'SCL1_1', HOST= '10.53.1.98', PORT = 10010, TYPE = 'NIOServerSocketSource', SCHEMA = [['type', 'String'],['instance', 'String'],['observation', 'Integer'],['polygon', 'Spatial'],['quali', 'Double'],['timestamp', 'Long']] })
+
+map01 = map({expressions =  ['type','instance','observation','polygon','quali','timestamp']}, access01)
+
+rename00 = rename({aliases = ['type','instance','observation','polygon','quali','timestamp']}, map01);
+

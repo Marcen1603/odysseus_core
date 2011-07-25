@@ -1,0 +1,67 @@
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+///Your first query here
+
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+///Your first query here
+///DB commands: see http://134.106.56.70/wiki/index.php/Datenbank-Anbindung
+
+
+CREATE STREAM database:person2(timestamp LONG, id INTEGER, name STRING, email STRING, creditcard STRING ,city STRING ,state STRING, meta_valid_start STARTTIMESTAMP, meta_valid_end ENDTIMESTAMP) 
+DATABASE[jdbc:postgresql://localhost:5432/salsa] USE TABLE person2 TIMESENSITIV;
+SELECT * FROM database:person2;
+
+///INSERT INTO CREATE person3 DATABASE [jdbc:postgresql://localhost:5432/dbit_db_0] SELECT * FROM database:person2;
+
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+///Your first query here
+
+
+///SELECT * FROM person2;
+///INSERT INTO CREATE exampletable DATABASE [jdbc:postgresql://localhost:5432/dbit_db_0;dbit_admin;dbit12ok] WITH METADATA SELECT * FROM nexmark:person2
+///INSERT INTO CREATE exampletable DATABASE [jdbc:postgresql://localhost:5432/dbit_db_0] WITH METADATA SELECT * FROM person2;
+///CREATE STREAM database:person2(timestamp LONG, id INTEGER, name STRING, email STRING, creditcard STRING ,city STRING ,state STRING, meta_valid_start STARTTIMESTAMP, meta_valid_end ENDTIMESTAMP) DATABASE[jdbc:postgresql://localhost:5432/dbit_db_0] USE TABLE exampletable;
+
+/// Works
+///CREATE STREAM database:person2(timestamp LONG, id INTEGER, name STRING, email STRING, creditcard STRING ,city STRING ,state STRING, meta_valid_start STARTTIMESTAMP, meta_valid_end ENDTIMESTAMP) DATABASE[jdbc:postgresql://localhost:5432/dbit_db_0] USE TABLE person2 TIMESENSITIV;
+///SELECT * FROM database:person2;
+
+///INSERT INTO CREATE exampletable DATABASE [jdbc:postgresql://localhost:5432/dbit_db_0] WITH METADATA 
+
+/// IExpression macht probleme bei CQL Querys
+SELECT * FROM nexmark:auction2 AS p WHERE p.id>10000;
+
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY 
+
+///installs a nexmark source
+///to configure nexmark: run configuration -> environment -> gcf
+/// /config/NEXMarkGeneratorConfiguration_SLOW.properties (or others)
+CREATE STREAM nexmark:person2(timestamp STARTTIMESTAMP, id INTEGER, name STRING, email STRING, creditcard STRING ,city STRING ,state STRING) CHANNEL localhost : 65440; 
+
+
+///DB commands: see http://134.106.56.70/wiki/index.php/Datenbank-Anbindung
+
+///Doesnt work with select
+///INSERT INTO CREATE nexmark_person2_select DATABASE [jdbc:postgresql://localhost:5432/dbit_db_0] 
+///WITH METADATA SELECT id, name, email, creditcard, city, state FROM nexmark:person2 AS p WHERE p.state='Oregon';
+
+INSERT INTO CREATE nexmark_person2_noselect DATABASE [jdbc:postgresql://localhost:5432/dbit_db_0] 
+WITH METADATA SELECT id, name, email, creditcard, city, state FROM nexmark:person2;
+
+
+///CREATE STREAM database:person2(timestamp LONG, id INTEGER, name STRING, email STRING, creditcard STRING ,city STRING ,state STRING, 
+///meta_valid_start STARTTIMESTAMP, meta_valid_end ENDTIMESTAMP) DATABASE[jdbc:postgresql://localhost:5432/dbit_db_0] USE TABLE person2 TIMESENSITIV;
+
+
+

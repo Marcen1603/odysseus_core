@@ -1,0 +1,19 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG Standard
+#QUERY
+///Your first query here
+
+
+source1 = source({schema = ['scan:SpatialMultiPoint'], name = 'Laser1'})  
+move1 = map({expressions = ['MoveViewPoint(scan, 3750.0, -4600.0)']}, source1)
+renamedMove1 = rename({aliases = ['scan1']}, move1)
+rotate1 = map({expressions = ['RotateViewPoint(scan1, 174.49)']}, renamedMove1)
+renamedRotate1 = rename({aliases = ['scan1']}, rotate1)
+window1 = window({type = 'time', size = 20, advance = 1}, renamedRotate1)
+
+source2 = source({schema = ['scan:SpatialMultiPoint'], name = 'Laser2'})
+renamed2 = rename({aliases = ['scan2']}, source2)
+window2 = window({type = 'time', size = 20, advance = 1}, renamed2)
+
+united = union(window1, window2)
