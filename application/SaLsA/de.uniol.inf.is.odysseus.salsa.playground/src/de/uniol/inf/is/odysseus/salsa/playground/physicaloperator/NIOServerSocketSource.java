@@ -63,7 +63,6 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 		return socketAddress;
 	}
 
-	@Override
 	protected void process_open() throws OpenFailedException {
 		getLogger().debug("Process Open");
 		getLogger().debug(	"Socket Listen: " + this.socketAddress.getHostName() + " "+ this.socketAddress.getPort());

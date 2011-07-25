@@ -36,35 +36,47 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	
 	protected volatile static Logger LOGGER = LoggerFactory.getLogger(DatabaseIterator.class);
 	
-	private static final int SELECT_BASH_SIZE = 10;
+	private int SELECT_BASH_SIZE = 30;
 
 	private String tableName;
-	private SDFAttributeList schema; 
-
+	private SDFAttributeList schema;
 	private int selectPointer = 0;
-
 	private int attributeSize = 0;
 	private String preparedSelect = "";
 	
-	private int totalSize = 0;
+	private int totalCount = 0;
 
 	private Connection connection;
 
+	private Statement statement;
+	private ResultSet resultSet;
+	
 	private int startTimeIndex = -1;
 	private int endTimeIndex = -1;
-
 
 	public DatabaseIterator(String name, SDFAttributeList schema, Connection connection) {
 		this.schema = schema;
 		this.tableName = name;
 		this.connection = connection;
-		init();
-	}
-
-	public void init() {
 		this.preparedSelect = createSelectStatement();
-		// this produces an unsynchronized view, because the size could be changed during further execution...
-		this.totalSize = getCount();
+		
+		
+		//First preSelect for init without a pointer move and any order for a fast installation 
+		//String query = "SELECT serial, scancount, stimestamp, data FROM laser_join_9c193a OFFSET 0 ROWS FETCH NEXT 1 ROW ONLY";
+		
+		totalCount = getCount();
+		
+		String query = this.preparedSelect + " offset "+selectPointer+" rows fetch next "+totalCount+" rows only";
+		try {
+			long startStatement = System.currentTimeMillis();
+			this.statement = this.connection.createStatement();
+			this.resultSet = this.statement.executeQuery(query);
+			LOGGER.debug("Init Statement: " + (System.currentTimeMillis() - startStatement) + "ms");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public String createSelectStatement() {				
@@ -78,10 +90,10 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 			this.attributeSize++;
 			if(attribute.getDatatype().getQualName().toUpperCase().equals("STARTTIMESTAMP")){
 				suffix = " ORDER BY "+attribute.getAttributeName()+ " ASC";
-				this.startTimeIndex  = index;
+				this.setStartTimeIndex(index);
 			}
 			if(attribute.getDatatype().getQualName().toUpperCase().equals("ENDTIMESTAMP")){
-				this.endTimeIndex = index;
+				this.setEndTimeIndex(index);
 			}
 			index++;
 		}
@@ -95,42 +107,43 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 
 	public List<RelationalTuple<?>> selectGetNext() throws SQLException{
 		String query = this.preparedSelect + " offset "+selectPointer+" rows fetch next "+SELECT_BASH_SIZE+" rows only";
-		this.selectPointer=this.selectPointer+SELECT_BASH_SIZE;
-		Statement s = this.connection.createStatement();
-		ResultSet rs = s.executeQuery(query);
+		
+		long startStatement = System.currentTimeMillis();
+		
+		//this.selectPointer = this.selectPointer+SELECT_BASH_SIZE;
+		//this.resultSet = this.statement.executeQuery(query);
+		
+		LOGGER.debug("selectGetNext() Statement: " + (System.currentTimeMillis() - startStatement) + "ms");
+		
 		List<RelationalTuple<?>> liste = new ArrayList<RelationalTuple<?>>();
-		while(rs.next()) {
+		
+		startStatement = System.currentTimeMillis();
+		while(this.resultSet.next()) {
 			Object[] values = new Object[this.attributeSize];
 			for(int i=0;i<this.attributeSize;i++){
-				values[i] = rs.getObject(i+1);            			
+				values[i] = this.resultSet.getObject(i+1);            			
 			}
 			
-			
 			RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(values);
-
-// Is not needed
-//			PointInTime startTimePT = PointInTime.getZeroTime();
-//			PointInTime endTimePT = PointInTime.getInfinityTime();
-//			
-//			if(this.startTimeIndex>-1){
-//				long time = rs.getLong(this.startTimeIndex+1);
-//				startTimePT = new PointInTime(time);
-//			}
-//			if(this.endTimeIndex>-1){
-//				long time = rs.getLong(this.endTimeIndex+1);
-//				endTimePT = new PointInTime(time);
-//			}
-//			
-//			tuple.setMetadata(new TimeInterval(startTimePT, endTimePT));
-//			
 			liste.add(tuple);
 		}
+		LOGGER.debug("Fetch Result: " + (System.currentTimeMillis() - startStatement) + "ms");
 		return liste;		
 	}
 
 	@Override
 	public boolean hasNext() {		
-		return selectPointer < totalSize;
+			try {
+				if(this.resultSet.isLast()){
+					return false;
+				}
+				else{
+					return true;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
 	}
 
 	@Override
@@ -150,6 +163,7 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 	}
 	
 	
+
 	private int getCount(){
 		try {
 			Statement s = this.connection.createStatement();
@@ -163,6 +177,22 @@ public class DatabaseIterator implements Iterator<List<RelationalTuple<?>>> {
 		}
 		
 		return -1;
+	}
+
+	public void setStartTimeIndex(int startTimeIndex) {
+		this.startTimeIndex = startTimeIndex;
+	}
+
+	public int getStartTimeIndex() {
+		return startTimeIndex;
+	}
+
+	public void setEndTimeIndex(int endTimeIndex) {
+		this.endTimeIndex = endTimeIndex;
+	}
+
+	public int getEndTimeIndex() {
+		return endTimeIndex;
 	}
 
 }

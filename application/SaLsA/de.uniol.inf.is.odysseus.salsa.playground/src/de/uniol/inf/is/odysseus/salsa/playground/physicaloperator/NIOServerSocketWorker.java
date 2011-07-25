@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 public class NIOServerSocketWorker<RelationalTuple> extends Thread {
 
 	private NIOServerSocketSource nioServer;
-	private ByteBuffer buffer = ByteBuffer.allocate(1024);
+	private ByteBuffer buffer = ByteBuffer.allocate(12 * 1024);
 
 	private Charset charset = Charset.defaultCharset();
 	private CharsetDecoder decoder = charset.newDecoder();
@@ -59,6 +59,7 @@ public class NIOServerSocketWorker<RelationalTuple> extends Thread {
 
 					if (key == this.nioServer.getKey()) {
 						if (key.isAcceptable()) {
+							getLogger().debug("Accept Connection");
 							SocketChannel client = this.nioServer.getServerSocketChannel().accept();
 							client.configureBlocking(false);
 							SelectionKey clientkey = client.register(selector, SelectionKey.OP_READ);
@@ -79,6 +80,7 @@ public class NIOServerSocketWorker<RelationalTuple> extends Thread {
 						
 						buffer.flip();
 						request += decoder.decode(buffer).toString();	
+						getLogger().debug(request);
 						
 						if (request.contains("\n")) {
 							String[] splited = request.split("\n");

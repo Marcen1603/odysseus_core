@@ -472,7 +472,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 				((ISink<?>) curRoot).open();
 			} else {
 				throw new IllegalArgumentException(
-						"Open cannot be called on a a source");
+						"Open cannot be called on a source");
 			}
 		}
 		opened = true;

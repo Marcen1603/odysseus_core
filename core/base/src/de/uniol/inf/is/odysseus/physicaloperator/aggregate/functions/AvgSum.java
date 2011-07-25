@@ -27,7 +27,5 @@ abstract public class AvgSum<R, W> extends AbstractAggregateFunction<R, W>{
 
 	public boolean isAvg(){
 		return isAvg;
-	}
-		
-	
+	}		
 }

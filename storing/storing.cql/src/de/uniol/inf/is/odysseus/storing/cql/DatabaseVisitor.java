@@ -96,7 +96,7 @@ public class DatabaseVisitor{
 	}
 
 	private DatabaseAccessAO getAccessAOForJDBC(String jdbcString, String tableName, boolean isTimeSensitiv) {
-		Connection con;
+		Connection connection;
 		try {
 			
 			/** @TODO 
@@ -104,8 +104,9 @@ public class DatabaseVisitor{
 			 *  read configuration file for password and user name.
 			 *  
 			 */
-			con = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
-			DatabaseAccessAO databaseAccessAO = new DatabaseAccessAO(new SDFSource(tableName, "databaseReading"),con,tableName,isTimeSensitiv);
+			connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
+			//connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
+			DatabaseAccessAO databaseAccessAO = new DatabaseAccessAO(new SDFSource(tableName, "databaseReading"),connection,tableName,isTimeSensitiv);
 			return databaseAccessAO;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -158,7 +159,8 @@ public class DatabaseVisitor{
 		 * @autor kpancratz
 		 */
 		try {
-			connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
+			connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
+			///connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
 		} catch (SQLException e) {
 			LOGGER.error("SQLException: ",e.getStackTrace());
 		}

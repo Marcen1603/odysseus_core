@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Import-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.transform.flow,

@@ -34,8 +34,16 @@ public class RelationalNest extends AbstractListAggregation<RelationalTuple<? ex
 	
 	@Override
 	public RelationalTuple evaluate(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
+		
+		
+		
+		
+		
 		List<RelationalTuple<?>> elems = ((ListPartialAggregate<RelationalTuple<? extends IMetaAttribute>>)p).getElems();
 		RelationalTuple ret = new RelationalTuple<IMetaAttribute>(0);
+		
+		
+		
 		ret.setAttribute(0, elems);
 		return ret;
 	}

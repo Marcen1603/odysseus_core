@@ -10,5 +10,10 @@
 		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
 	</section>
 	<section name="NewWizardAction">
+		<item value="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
+		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
+			<item value="org.eclipse.ui.Basic"/>
+			<item value="org.eclipse.ui.Other"/>
+		</list>
 	</section>
 </section>

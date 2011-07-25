@@ -60,14 +60,14 @@ public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 		DatabaseIterator di = new DatabaseIterator(this.tableName, this.getOutputSchema(), this.connection);
 		if(this.timesenstiv){
 			for(int i = 0; i < getOutputSchema().size(); i++){
-				if(getOutputSchema().get(i).getDatatype().getQualName() == "STARTTIMESTAMP"){
+				if(getOutputSchema().get(i).getDatatype().getQualName().equalsIgnoreCase("STARTTIMESTAMP")){
 					this.starttimestamp = i;
-					LOGGER.info(String.format("Found STARTTIMESTAMP(%i) for sensitive mode.",i));
+					//LOGGER.info(String.format("Found STARTTIMESTAMP(%i) for sensitive mode.",i));
 				}
-				if(getOutputSchema().get(i).getDatatype().getQualName() == "STARTTIMESTAMP"){
-					//this.endtimestamp = i;
-					LOGGER.info(String.format("Found ENDTIMESTAMP(%i) for sensitive mode.",i));
-				}
+//				if(getOutputSchema().get(i).getDatatype().getQualName() == "STARTTIMESTAMP"){
+//					//this.endtimestamp = i;
+//					LOGGER.info(String.format("Found ENDTIMESTAMP(%i) for sensitive mode.",i));
+//				}
 			}
 			thread = new TransferThread(di, timesenstiv);
 		}else{
@@ -138,7 +138,7 @@ public class DatabaseAccessPO extends AbstractSource<RelationalTuple<?>> {
 					}
 
 					RelationalTuple<?> next = list.get(i+1);
-					
+										
 					long currentStart = current.getAttribute(starttimestamp);
 					long nextStart = next.getAttribute(starttimestamp);
 					
