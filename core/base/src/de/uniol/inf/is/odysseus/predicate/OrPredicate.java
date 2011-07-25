@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * @author Jonas Jacobi
  */ 
 
-class OrPredicate<T> extends ComplexPredicate<T> {
+public class OrPredicate<T> extends ComplexPredicate<T> {
 	private static final long serialVersionUID = -5476180354530944122L;
 
 	protected OrPredicate() {
@@ -89,14 +89,14 @@ class OrPredicate<T> extends ComplexPredicate<T> {
 		if(!(o instanceof IPredicate)) {
 			return false;
 		}
-		// Falls o kein OrPredicate ist, wird false zurück gegeben, es sei denn, beide Prädikate dieses Oders sind in o enthalten
+		// Falls o kein OrPredicate ist, wird false zurï¿½ck gegeben, es sei denn, beide Prï¿½dikate dieses Oders sind in o enthalten
 		if(!(o instanceof OrPredicate)) {
 			if(this.getLeft().isContainedIn(((IPredicate<?>)o)) && this.getRight().isContainedIn(((IPredicate<?>)o))) {
 				return true;
 			}
 			return false;
 		} else {
-		// Falls es sich beim anderen Prädikat ebenfalls um ein OrPredicate handelt, müssen beide Prädikate verglichen werden (inklusiver aller "Unterprädikate")
+		// Falls es sich beim anderen Prï¿½dikat ebenfalls um ein OrPredicate handelt, mï¿½ssen beide Prï¿½dikate verglichen werden (inklusiver aller "Unterprï¿½dikate")
 
 			OrPredicate<?> op = (OrPredicate<?>) o;
 
@@ -105,8 +105,8 @@ class OrPredicate<T> extends ComplexPredicate<T> {
 			ArrayList<IPredicate<?>> a = extractAllPredicates(this);
 			ArrayList<IPredicate<?>> b = extractAllPredicates(op);
 
-			// Für JEDES Prädikat aus diesem OrPredicate muss ein enthaltenes Prädikat in dem anderen OrPredicate gefunden werden
-			// (Das andere Oder-Prädikat darf noch weitere Prädikate haben)
+			// Fï¿½r JEDES Prï¿½dikat aus diesem OrPredicate muss ein enthaltenes Prï¿½dikat in dem anderen OrPredicate gefunden werden
+			// (Das andere Oder-Prï¿½dikat darf noch weitere Prï¿½dikate haben)
 			for(IPredicate<?> preda : a) {
 				boolean foundmatch = false;
 				for(IPredicate<?> predb : b) {
@@ -137,7 +137,7 @@ class OrPredicate<T> extends ComplexPredicate<T> {
 		return a;
 	}
 	
-	// Liefert true, falls ein Prädikat o in dieser Oder-Verknüpfung enthalten ist
+	// Liefert true, falls ein Prï¿½dikat o in dieser Oder-Verknï¿½pfung enthalten ist
 	public boolean contains(Object o) {
 		if(!(o instanceof IPredicate)) {
 			return false;

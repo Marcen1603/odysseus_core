@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * @author Jonas Jacobi
  */
-class AndPredicate<T> extends ComplexPredicate<T> {
+public class AndPredicate<T> extends ComplexPredicate<T> {
 
 	private static final long serialVersionUID = -3438130138466305862L;
 
@@ -92,7 +92,7 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isContainedIn(Object o) {
-		// Falls o ein Oder-Prädikat, überhaupt kein Prädikat oder eines der beiden Argumente des And-Prädikats ein Oder-Prädikat ist, wird false zurück gegeben
+		// Falls o ein Oder-Prï¿½dikat, ï¿½berhaupt kein Prï¿½dikat oder eines der beiden Argumente des And-Prï¿½dikats ein Oder-Prï¿½dikat ist, wird false zurï¿½ck gegeben
 //		if(o instanceof OrPredicate || !(o instanceof IPredicate) || this.getLeft() instanceof OrPredicate || this.getRight() instanceof OrPredicate) {
 //			return false;
 //		}
@@ -100,12 +100,12 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 			return false;
 		}
 		
-		// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist (Zusätzliche Verschärfung bestehender Prädikate)
+		// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist (Zusï¿½tzliche Verschï¿½rfung bestehender Prï¿½dikate)
 		if(!(o instanceof AndPredicate) && (this.getLeft().isContainedIn(o)
 			|| this.getRight().isContainedIn(o))) {
 			return true;
 		}
-		// Falls es sich beim anderen Prädikat ebenfalls um ein AndPredicate handelt, müssen beide Prädikate verglichen werden (inklusiver aller "Unterprädikate")
+		// Falls es sich beim anderen Prï¿½dikat ebenfalls um ein AndPredicate handelt, mï¿½ssen beide Prï¿½dikate verglichen werden (inklusiver aller "Unterprï¿½dikate")
 		if(o instanceof AndPredicate) {
 			AndPredicate<T> ap = (AndPredicate<T>) o;
 
@@ -114,8 +114,8 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 			ArrayList<IPredicate<?>> a = extractAllPredicates(this);
 			ArrayList<IPredicate<?>> b = extractAllPredicates(ap);
 
-			// Für JEDES Prädikat aus dem anderen AndPredicate muss ein enthaltenes Prädikat in diesem AndPredicate gefunden werden
-			// (Nur weitere Verschärfungen sind zulässig, deshalb darf keine Bedingung des anderen Prädikats stärker sein)
+			// Fï¿½r JEDES Prï¿½dikat aus dem anderen AndPredicate muss ein enthaltenes Prï¿½dikat in diesem AndPredicate gefunden werden
+			// (Nur weitere Verschï¿½rfungen sind zulï¿½ssig, deshalb darf keine Bedingung des anderen Prï¿½dikats stï¿½rker sein)
 			for(IPredicate<?> predb : b) {
 //				if(predb instanceof OrPredicate) {
 //					return false;
