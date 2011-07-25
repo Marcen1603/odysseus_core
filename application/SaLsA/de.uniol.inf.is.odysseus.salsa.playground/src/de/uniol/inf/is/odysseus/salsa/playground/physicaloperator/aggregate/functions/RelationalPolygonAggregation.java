@@ -22,7 +22,7 @@ public class RelationalPolygonAggregation
 	@Override
 	public RelationalTuple evaluate(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
 		List<RelationalTuple<?>> elems = ((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>)p).getElems();
-		RelationalTuple ret = new RelationalTuple<IMetaAttribute>(0);
+		RelationalTuple ret = new RelationalTuple<IMetaAttribute>(1);
 		ret.setAttribute(0, elems);
 		return ret;
 	}

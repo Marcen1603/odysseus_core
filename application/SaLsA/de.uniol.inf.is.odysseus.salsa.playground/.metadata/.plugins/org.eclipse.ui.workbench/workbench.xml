@@ -29,7 +29,6 @@
 <part id="2"/>
 <part id="3"/>
 <part id="4"/>
-<part id="5"/>
 </presentation>
 </folder>
 </info>
@@ -38,21 +37,21 @@
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/SaLsA_Database.qry"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="82" selectionTopPixel="0"/>
 </editor>
-<editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="Schuler_Laser.qry" partName="Schuler_Laser.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/Schuler_Laser.qry" title="Schuler_Laser.qry" tooltip="SaLsA_Default/Schuler_Laser.qry" workbook="DefaultEditorWorkbook">
+<editor activePart="true" focus="true" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="Schuler_Laser.qry" partName="Schuler_Laser.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/Schuler_Laser.qry" title="Schuler_Laser.qry" tooltip="SaLsA_Default/Schuler_Laser.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/Schuler_Laser.qry"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="703" selectionTopPixel="55"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1216" selectionTopPixel="0"/>
 </editor>
 <editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="database_example.qry" partName="database_example.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/database_example.qry" title="database_example.qry" tooltip="SaLsA_Default/database_example.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/database_example.qry"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="525" selectionTopPixel="351"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="525" selectionTopPixel="330"/>
 </editor>
 <editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="sensor_cluster.qry" partName="sensor_cluster.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/sensor_cluster.qry" title="sensor_cluster.qry" tooltip="SaLsA_Default/sensor_cluster.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/sensor_cluster.qry"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="547" selectionTopPixel="0"/>
 </editor>
-<editor activePart="true" focus="true" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="database.qry" partName="database.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/database.qry" title="database.qry" tooltip="SaLsA_Default/database.qry" workbook="DefaultEditorWorkbook">
+<editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="database.qry" partName="database.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/database.qry" title="database.qry" tooltip="SaLsA_Default/database.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/database.qry"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="0"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="81" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -180,31 +179,12 @@
 <editors>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA_Default/SaLsA_Database.qry"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA_Default/Schuler_Laser.qry"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA_Default/SaLsA_Database.qry"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA_Default/database_example.qry"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA_Default/sensor_cluster.qry"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA_Default/database.qry"/>
 </editors>
 <item historyLabel="SaLsA_Database.qry" index="0">
 <position info="not_deleted" x="82" y="0"/>
 </item>
-<item historyLabel="Schuler_Laser.qry" index="1">
-<position info="not_deleted" x="1101" y="0"/>
-</item>
-<item historyLabel="SaLsA_Database.qry" index="2">
-<position info="not_deleted" x="82" y="0"/>
-</item>
-<item historyLabel="Schuler_Laser.qry" index="1">
-<position info="not_deleted" x="703" y="0"/>
-</item>
-<item historyLabel="database_example.qry" index="3">
-<position info="not_deleted" x="525" y="0"/>
-</item>
-<item historyLabel="sensor_cluster.qry" index="4">
-<position info="not_deleted" x="547" y="0"/>
-</item>
-<item active="true" historyLabel="database.qry" index="5">
-<position info="not_deleted" x="0" y="0"/>
+<item active="true" historyLabel="Schuler_Laser.qry" index="1">
+<position info="not_deleted" x="1175" y="0"/>
 </item>
 </navigationHistory>
 </page>

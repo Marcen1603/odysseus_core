@@ -19,18 +19,23 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterable<T> {
 
+	final List<T> notMElems;
 	final List<T> elems;
 	protected volatile static Logger LOGGER = LoggerFactory.getLogger(GeometryPartialAggregate.class);
 	
 	public GeometryPartialAggregate(T elem) {
-		elems = new LinkedList<T>();
+		this.elems = new LinkedList<T>();
 		this.elems.add(elem);
+		
+		this.notMElems = new LinkedList<T>();
+		this.notMElems.add(elem);
 		//LOGGER.debug("Add first Element");
 	}
 	
 	public GeometryPartialAggregate(GeometryPartialAggregate<T> p) {
 		//LOGGER.debug("Add first ElementLIST");
 		this.elems = new LinkedList<T>(p.elems);
+		this.notMElems =  new LinkedList<T>(p.elems);
 	}
 
 	public List<T> getElems() {
@@ -40,17 +45,19 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
 	public GeometryPartialAggregate<T> addElem(T elem) {
 		boolean merged = false;
 		 Geometry geometry = (Geometry)((RelationalTuple)elem).getAttribute(0);
-		
+		 Geometry geometry_buffer = geometry.buffer(300);
+		 
 		for(int i = 0; i< elems.size(); i++){
 			
 			RelationalTuple tuple2 = (RelationalTuple)elems.get(i);
 			Geometry geometry_element = (Geometry)tuple2.getAttribute(0);
+	
 			
-//			if(geometry_element.crosses(geometry)){
-//				merged = true;
-//				tuple2.setAttribute(0,geometry_element.union(geometry).convexHull());
-//				elems.set(i, (T)tuple2);
-//			}	
+			if(geometry_element.crosses(geometry_buffer)){
+				merged = true;
+				tuple2.setAttribute(0,geometry_element.union(geometry).convexHull());
+				elems.add((T)tuple2);
+			}	
 		}
 		if(!merged){
 			this.elems.add(elem);
@@ -59,6 +66,39 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
 		return this;
 	}
 
+	//Testing
+//	public GeometryPartialAggregate<T> addElem(T elem) {
+//		boolean merged = false;
+//		 Geometry geometry = (Geometry)((RelationalTuple)elem).getAttribute(0);
+//		// Geometry geometry_buffer = geometry.buffer(100);
+//		 
+//		for(int i = 0; i< notMElems.size(); i++){
+//			
+//			RelationalTuple tuple2 = (RelationalTuple)notMElems.get(i);
+//			Geometry geometry_element = (Geometry)tuple2.getAttribute(0);
+//		
+//			if(geometry_element.distance(geometry) < 200){
+//				merged = true;
+//				tuple2.setAttribute(0,geometry_element.union(geometry).convexHull());
+//				notMElems.set(i, (T)tuple2);
+//				elems.add((T)tuple2);
+//			}
+//			
+//			if(geometry_element.crosses(geometry)){
+//				merged = true;
+//				tuple2.setAttribute(0,geometry_element.union(geometry).convexHull());
+//				notMElems.set(i, (T)tuple2);
+//				elems.add((T)tuple2);
+//			}	
+//		}
+//		if(!merged){
+//			this.notMElems.add(elem);
+//		}
+//		
+//		return this;
+//	}
+
+	
 	@Override
 	public String toString() {
 		return ""+elems;
