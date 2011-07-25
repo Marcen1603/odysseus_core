@@ -8,13 +8,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ExtractSegments extends AbstractFunction<List<Geometry>> {
+public class ExtractSegments extends AbstractFunction<List<RelationalTuple<?>>> {
     private final GeometryFactory geometryFactory = new GeometryFactory();
 
     public static final SDFDatatype[] accTypes0 = new SDFDatatype[] {
@@ -51,7 +53,7 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return new SDFDatatype(null, SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL);
+        return new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.SPATIAL);
     }
 
     @Override
@@ -59,12 +61,13 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
         return "ExtractSegments";
     }
 
+    //FIXME need metadata to set timestamp
     @Override
-    public List<Geometry> getValue() {
+    public List<RelationalTuple<?>> getValue() {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double threshold = (Double) this.getInputValue(1);
         final Coordinate[] coordinates = geometry.getCoordinates();
-        final List<Geometry> segments = new ArrayList<Geometry>();
+        final List<RelationalTuple<?>> segments = new ArrayList<RelationalTuple<?>>();
         Coordinate tmp = new Coordinate(Double.MAX_VALUE, Double.MAX_VALUE);
         boolean isSegment = false;
         int start = 0;
@@ -83,11 +86,15 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                         }
                     }
                     if (segment.size() > 1) {
-                        segments.add(this.geometryFactory.createLineString(segment
+                        RelationalTuple<?> tuple = new RelationalTuple<TimeInterval>(1);
+                        tuple.addAttributeValue(0, this.geometryFactory.createLineString(segment
                                 .toArray(new Coordinate[] {})));
+                        segments.add(tuple);
                     }
                     else if (segment.size() == 1) {
-                        segments.add(this.geometryFactory.createPoint(segment.get(0)));
+                        RelationalTuple<?> tuple = new RelationalTuple<TimeInterval>(1);
+                        tuple.addAttributeValue(0, this.geometryFactory.createPoint(segment.get(0)));
+                        segments.add(tuple);
 
                     }
                     isSegment = (tmp.x < Double.MAX_VALUE) && (tmp.y < Double.MAX_VALUE);
@@ -104,7 +111,8 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                 segment = new ArrayList<Coordinate>();
             }
             else {
-                segment = Arrays.asList(segments.get(0).getCoordinates());
+                segment = Arrays.asList(((Geometry) (segments.get(0).getAttribute(0)))
+                        .getCoordinates());
                 segments.remove(0);
             }
             for (int j = start; j < coordinates.length; j++) {
@@ -113,11 +121,15 @@ public class ExtractSegments extends AbstractFunction<List<Geometry>> {
                 }
             }
             if (segment.size() > 1) {
-                segments.add(this.geometryFactory.createLineString(segment
-                        .toArray(new Coordinate[] {})));
+                RelationalTuple<?> tuple = new RelationalTuple<TimeInterval>(1);
+                tuple.addAttributeValue(0,
+                        this.geometryFactory.createLineString(segment.toArray(new Coordinate[] {})));
+                segments.add(tuple);
             }
             else if (segment.size() == 1) {
-                segments.add(this.geometryFactory.createPoint(segment.get(0)));
+                RelationalTuple<?> tuple = new RelationalTuple<TimeInterval>(1);
+                tuple.addAttributeValue(0, this.geometryFactory.createPoint(segment.get(0)));
+                segments.add(tuple);
 
             }
         }
