@@ -7,7 +7,6 @@
 ///lms1 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10','record:true', 'port:2111'], adapter = 'Sick'})  
 lms1 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111'], adapter = 'Sick'})  
 
-
 move1 = map({expressions = ['MoveViewPoint(scan, 3750.0, -4600.0)']}, lms1)
 renamedMove1 = rename({aliases = ['scan']}, move1)
 rotate1 = map({expressions = ['RotateViewPoint(scan, 174.49)']}, renamedMove1)

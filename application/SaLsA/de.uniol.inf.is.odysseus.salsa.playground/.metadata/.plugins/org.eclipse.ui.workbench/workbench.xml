@@ -29,6 +29,7 @@
 <part id="2"/>
 <part id="3"/>
 <part id="4"/>
+<part id="5"/>
 </presentation>
 </folder>
 </info>
@@ -39,7 +40,7 @@
 </editor>
 <editor activePart="true" focus="true" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="Schuler_Laser.qry" partName="Schuler_Laser.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/Schuler_Laser.qry" title="Schuler_Laser.qry" tooltip="SaLsA_Default/Schuler_Laser.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/Schuler_Laser.qry"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1216" selectionTopPixel="0"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1406" selectionTopPixel="0"/>
 </editor>
 <editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="database_example.qry" partName="database_example.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/database_example.qry" title="database_example.qry" tooltip="SaLsA_Default/database_example.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/database_example.qry"/>
@@ -183,8 +184,11 @@
 <item historyLabel="SaLsA_Database.qry" index="0">
 <position info="not_deleted" x="82" y="0"/>
 </item>
-<item active="true" historyLabel="Schuler_Laser.qry" index="1">
+<item historyLabel="Schuler_Laser.qry" index="1">
 <position info="not_deleted" x="1175" y="0"/>
+</item>
+<item active="true" historyLabel="Schuler_Laser.qry" index="1">
+<position info="not_deleted" x="1406" y="0"/>
 </item>
 </navigationHistory>
 </page>
