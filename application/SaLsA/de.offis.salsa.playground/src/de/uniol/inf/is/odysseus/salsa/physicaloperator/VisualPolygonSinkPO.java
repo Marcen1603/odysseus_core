@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class VisualPolygonSinkPO extends AbstractSink<Object> {
     private final Queue<Geometry> segments = new ConcurrentLinkedQueue<Geometry>();
-   private PolygonScreen screen = new PolygonScreen();
+    private PolygonScreen screen = new PolygonScreen();
     private final SDFAttributeList schema;
 
     private final Thread painter = new Thread() {

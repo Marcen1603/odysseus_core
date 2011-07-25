@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -98,9 +96,8 @@ public class ToGrid extends AbstractFunction<Double[][]> {
         }
         for (int i = 1; i < coordinates.length; i++) {
             Coordinate coordinate = coordinates[i];
-            // Check for vaid coordinate in the grid area
-            if ((coordinate.x > x) && (coordinate.x < x + width - cellsize) && (coordinate.y > y)
-                    && (coordinate.y < y + height - cellsize)) {
+            // Check for valid coordinate in the grid area
+            if ((isInGrid(x, y, width, height, coordinate)) && (isInGrid(x, y, width, height, tmp))) {
                 if (coordinate.distance(tmp) > cellsize / 2) {
                     polygonCoordinates.add(coordinate);
                     int minX = (int) Math.min(tmp.x, coordinate.x);
@@ -153,6 +150,9 @@ public class ToGrid extends AbstractFunction<Double[][]> {
 
                 }
             }
+            else {
+                tmp = coordinate;
+            }
         }
         // Mark all cells inside the polygon that are not marked as an obstacle as free
         Coordinate[] convexHull = polygonCoordinates.toArray(new Coordinate[] {});
@@ -173,6 +173,26 @@ public class ToGrid extends AbstractFunction<Double[][]> {
     @Override
     public SDFDatatype getReturnType() {
         return SDFDatatype.MATRIX_DOUBLE;
+    }
+
+    /**
+     * Checks weather the given {@link Coordinate} is in the given grid
+     * 
+     * @param x
+     *            The x-coordinate of the grid
+     * @param y
+     *            The y-coordinate of the grid
+     * @param height
+     *            The height of the grid
+     * @param width
+     *            The width of the grid
+     * @param coordinate
+     *            The coordinate to check
+     * @return true if the coordinate is in the grid else false
+     */
+    private boolean isInGrid(double x, double y, double height, double width, Coordinate coordinate) {
+        return ((coordinate.x >= x) && (coordinate.x <= x + width) && (coordinate.y >= y) && (coordinate.y <= y
+                + height));
     }
 
     /**
@@ -360,8 +380,11 @@ public class ToGrid extends AbstractFunction<Double[][]> {
 
     /**
      * Checks weather the given coordinate is in the given polygon
-     * @param coordinate The {@link Coordinate} to check
-     * @param polygon The polygon as an array of {@link Coordinate}
+     * 
+     * @param coordinate
+     *            The {@link Coordinate} to check
+     * @param polygon
+     *            The polygon as an array of {@link Coordinate}
      * @return true if the coordinate is in the polygon else false
      */
     private boolean isInPolygon(Coordinate coordinate, Coordinate[] polygon) {

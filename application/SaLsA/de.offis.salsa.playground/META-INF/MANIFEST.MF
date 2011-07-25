@@ -23,7 +23,7 @@ Export-Package: de.uniol.inf.is.odysseus.salsa.logicaloperator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus,
  org.junit
-Service-Component: OSGI-INF/TransformationRuleService.xml, OSGI-INF/SourceControlService.xml, OSGI-INF/SickSensorAdapter.xml
+Service-Component: OSGI-INF/TransformationRuleService.xml, OSGI-INF/SourceControlService.xml, OSGI-INF/SickSensorAdapter.xml, OSGI-INF/AggregationFunctionBuilder.xml
 Bundle-ClassPath: .,
  lib/json-20090211.jar
 Bundle-Activator: de.uniol.inf.is.odysseus.salsa.Activator

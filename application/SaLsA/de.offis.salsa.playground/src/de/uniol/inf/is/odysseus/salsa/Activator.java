@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.salsa.function.BoundingBox;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
-import de.uniol.inf.is.odysseus.salsa.function.MergeGrid;
 import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
 import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
@@ -46,7 +45,6 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new BoundingBox());
             MEP.registerFunction(new ObjectSize());
             MEP.registerFunction(new ToGrid());
-            MEP.registerFunction(new MergeGrid());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -69,7 +67,6 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("BoundingBox");
             MEP.unregisterFunction("ObjectSize");
             MEP.unregisterFunction("ToGrid");
-            MEP.unregisterFunction("MergeGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);

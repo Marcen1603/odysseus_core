@@ -7,13 +7,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JPanel;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class GridMap extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 8285127861043019769L;
-    private static final int SCALE = 20;
+    private static final int SCALE = 5;
     private final List<Double[][]> grids = new CopyOnWriteArrayList<Double[][]>();
 
     public void onGrid(Double[][] grid) {
@@ -35,7 +38,7 @@ public class GridMap extends JPanel {
                 for (int j = 0; j < grid[i].length; j++) {
                     int colorIndex = (int) (grid[i][j] + 1);
                     graphics.setColor(colors[colorIndex]);
-                    graphics.fillRect(250 + 10 * i, 250 + 10 * j, 10, 10);
+                    graphics.fillRect(SCALE * i, SCALE * j, SCALE, SCALE);
                 }
             }
             break;
