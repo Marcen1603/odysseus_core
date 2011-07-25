@@ -12,10 +12,16 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
-    private final static String NAME = "MERGEGRID";
+    private final static String MERGEGRID = "MERGEGRID";
+    private final static String LAST = "LAST";
+    private final static String FIRST = "FIRST";
+    private final static String NTH = "NTH";
     private static Collection<String> names = new LinkedList<String>();
     {
-        names.add(NAME);
+        names.add(MERGEGRID);
+        names.add(LAST);
+        names.add(FIRST);
+        names.add(NTH);
     }
 
     @Override
@@ -31,8 +37,17 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     @Override
     public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, int[] pos) {
         IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
-        if (key.getName().equalsIgnoreCase(NAME)) {
+        if (key.getName().equalsIgnoreCase(MERGEGRID)) {
             aggFunc = new MergeGrid(pos);
+        }
+        else if (key.getName().equalsIgnoreCase(LAST)) {
+            aggFunc = RelationalLast.getInstance();
+        }
+        else if (key.getName().equalsIgnoreCase(FIRST)) {
+            aggFunc = RelationalFirst.getInstance();
+        }
+        else if (key.getName().equalsIgnoreCase(NTH)) {
+            aggFunc = RelationalNth.getInstance(Integer.parseInt(key.getProperty("nth")));
         }
         else {
             throw new IllegalArgumentException("No such Aggregatefunction");
