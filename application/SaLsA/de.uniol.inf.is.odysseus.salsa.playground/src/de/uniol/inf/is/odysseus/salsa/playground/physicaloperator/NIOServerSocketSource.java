@@ -114,12 +114,15 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 	}
 	
 	public void request(String request){
-		if (this.isOpen()) {
+		if (this.isOpen() && !request.contains("$") && request.startsWith("S")) {
 			RelationalTuple tuple = new RelationalTuple<ITimeInterval>(this.getOutputSchema().getAttributeCount());
 			ITimeInterval metadata = null;
 			
 			String[] values = request.split(";");
 			boolean transferTuple = true;
+			
+			//getLogger().debug(request);
+			
 			
 			if(values.length == this.getOutputSchema().getAttributeCount()){
 				for(int i = 0; i < this.getOutputSchema().getAttributeCount(); i++){
@@ -176,6 +179,7 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 					metadata = new TimeInterval(new PointInTime(System.currentTimeMillis()));	
 				}
 				
+				//transferTuple = false;
 				if(transferTuple){
 					tuple.setMetadata(metadata);
 					transfer((RelationalTuple<ITimeInterval>)tuple);

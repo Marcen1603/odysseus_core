@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workbench version="2.0">
 <workbenchAdvisor/>
-<window height="978" width="1702" x="21" y="56">
+<window height="952" width="1360" x="50" y="44">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -26,9 +26,9 @@
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="GeoQuery_2906_work.qry" partName="GeoQuery_2906_work.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_rcp/GeoQuery_2906_work.qry" title="GeoQuery_2906_work.qry" tooltip="SaLsA/GeoQuery_2906_work.qry" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA/GeoQuery_2906_work.qry"/>
-<editorState selectionHorizontalPixel="0" selectionLength="2773" selectionOffset="0" selectionTopPixel="0"/>
+<editor activePart="true" focus="true" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="queries_2906.qry" partName="queries_2906.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_runtime/queries_2906.qry" title="queries_2906.qry" tooltip="SaLsA/queries_2906.qry" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA/queries_2906.qry"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="540" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -57,20 +57,13 @@
 <view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="de.uniol.inf.is.odysseus.rcp.views.QueryView"/>
 <fastViewBars/>
-<layout>
-<mainWindow>
-<info part="org.eclipse.ui.editorss"/>
-<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="444" ratioRight="148" relationship="2" relative="org.eclipse.ui.editorss">
-<folder appearance="2" expanded="2">
-<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<layout>&#x0A;<mainWindow>&#x0A;<info part="org.eclipse.ui.editorss"/>
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="444" ratioRight="148" relationship="2" relative="org.eclipse.ui.editorss">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@7f1f91ac" ratio="0.69959676" ratioLeft="347" ratioRight="149" relationship="4" relative="org.eclipse.ui.editorss">
-<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
-<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@53601a4f" ratio="0.69959676" ratioLeft="347" ratioRight="149" relationship="4" relative="org.eclipse.ui.editorss">&#x0A;<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="de.uniol.inf.is.odysseus.rcp.views.QueryView" label="Queries"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 <part id="1"/>
 </presentation>
 </folder>
@@ -97,7 +90,7 @@
 <viewLayoutRec closeable="false" id="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView" moveable="false"/>
 <layout>
 <mainWindow>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@682f8c99">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@67ce08c7">
 <folder activePageID="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView" appearance="2" expanded="2">
 <page content="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView" label="Odysseus Project Navigator"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
@@ -105,12 +98,12 @@
 </presentation>
 </folder>
 </info>
-<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="444" ratioRight="148" relationship="2" relative="org.eclipse.ui.internal.ViewStack@682f8c99">
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="444" ratioRight="148" relationship="2" relative="org.eclipse.ui.internal.ViewStack@67ce08c7">
 <folder appearance="2" expanded="2">
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@36a3bb2e" ratio="0.6989899" ratioLeft="346" ratioRight="149" relationship="4" relative="org.eclipse.ui.internal.ViewStack@682f8c99">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@1a4eb98b" ratio="0.6989899" ratioLeft="346" ratioRight="149" relationship="4" relative="org.eclipse.ui.internal.ViewStack@67ce08c7">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
@@ -118,7 +111,7 @@
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@3755e508" ratio="0.6993243" ratioLeft="414" ratioRight="178" relationship="2" relative="org.eclipse.ui.internal.ViewStack@682f8c99">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@2677622b" ratio="0.6993243" ratioLeft="414" ratioRight="178" relationship="2" relative="org.eclipse.ui.internal.ViewStack@67ce08c7">
 <folder activePageID="de.uniol.inf.is.odysseus.rcp.views.TenantView" appearance="2" expanded="2">
 <page content="de.uniol.inf.is.odysseus.rcp.views.TenantView" label="Tenants and Users"/>
 <page content="de.uniol.inf.is.odysseus.rcp.editor.ParameterView" label="Parameters"/>
@@ -128,7 +121,7 @@
 </presentation>
 </folder>
 </info>
-<info part="org.eclipse.ui.editorss" ratio="0.32388663" ratioLeft="320" ratioRight="668" relationship="2" relative="org.eclipse.ui.internal.ViewStack@682f8c99"/>
+<info part="org.eclipse.ui.editorss" ratio="0.29951692" ratioLeft="124" ratioRight="290" relationship="2" relative="org.eclipse.ui.internal.ViewStack@67ce08c7"/>
 </mainWindow>
 </layout>
 </perspective>
@@ -136,9 +129,9 @@
 <workingSets/>
 <navigationHistory>
 <editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA/GeoQuery_2906_work.qry"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" path="/SaLsA/queries_2906.qry"/>
 </editors>
-<item active="true" historyLabel="GeoQuery_2906_work.qry" index="0">
+<item active="true" historyLabel="queries_2906.qry" index="0">
 <position info="not_deleted" x="0" y="0"/>
 </item>
 </navigationHistory>
@@ -156,8 +149,8 @@
 </trimLayout>
 </window>
 <mruList>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="GeoQuery_2906_work.qry" tooltip="SaLsA/GeoQuery_2906_work.qry">
-<persistable path="/SaLsA/GeoQuery_2906_work.qry"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="queries_2906.qry" tooltip="SaLsA/queries_2906.qry">
+<persistable path="/SaLsA/queries_2906.qry"/>
 </file>
 </mruList>
 </workbench>
