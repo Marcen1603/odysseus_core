@@ -51,17 +51,17 @@ public class UnionAO extends BinaryLogicalOp {
 		return getInputSchema(LEFT);
 	}
 
-	@Override
-	public boolean isValid() {
-		SDFAttributeList firstSchema = this.getInputSchema(0);
-		for (int i = 1; i < getNumberOfInputs(); ++i) {
-			if (!firstSchema.compatibleTo(getInputSchema(i))) {
-				addError(new IllegalArgumentException(
-						"incompatible schemas for union"));
-				return false;
-			}
-		}
-		return true;
-	}
+//	@Override
+//	public boolean isValid() {
+//		SDFAttributeList firstSchema = this.getInputSchema(0);
+//		for (int i = 1; i < getNumberOfInputs(); ++i) {
+//			if (!firstSchema.compatibleTo(getInputSchema(i))) {
+//				addError(new IllegalArgumentException(
+//						"incompatible schemas for union"));
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
 }
