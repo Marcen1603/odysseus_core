@@ -3,19 +3,15 @@
 #TRANSCFG Standard
 #QUERY
 ///Your first query here
-
-
 lms1 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111'], adapter = 'Sick'})  
 
 move1 = map({expressions = ['MoveViewPoint(scan, 3750.0, -4600.0)']}, lms1)
 renamedMove1 = rename({aliases = ['scan']}, move1)
 rotate1 = map({expressions = ['RotateViewPoint(scan, 174.49)']}, renamedMove1)
 renamedRotate1 = rename({aliases = ['scan']}, rotate1)
-///window1 = window({type = 'time', size = 20, advance = 1}, renamedRotate1)
 
 lms2 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.20', 'port:2111'], adapter = 'Sick'})  
 renamed2 = rename({aliases = ['scan']}, lms2)
-///window2 = window({type = 'time', size = 20, advance = 1}, renamed2)
 
 united = UNION(renamedRotate1, renamed2)
 
@@ -25,6 +21,10 @@ renamedExtractedFeature = rename({aliases = ['feature']}, extractedFeature)
 
 unested = unnest({attribute = 'feature'}, renamedExtractedFeature)
 
-window1 = window({type = 'time', size = 20, advance = 1}, renamedRotate1)
+window = window({type = 'time', size = 20, advance = 1}, unested)
 
-sink = mapsink(window1)
+aggregate = AGGREGATE({aggregations = [['PMERGE','feature','feature']] }, window)
+
+unested2 = unnest({attribute = 'feature'}, aggregate)
+
+sink = mapsink(unested2)
