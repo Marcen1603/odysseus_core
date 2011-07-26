@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
-    
 
     /*
      * (non-Javadoc)
@@ -38,8 +37,8 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
      */
     @Override
     public void execute(final UnNestAO operator, final TransformationConfiguration config) {
-        final RelationalUnNestPO<?> po = new RelationalUnNestPO<IMetaAttribute>(operator.getOutputSchema(),
-                operator.getAttribute());
+        final RelationalUnNestPO<?> po = new RelationalUnNestPO<IMetaAttribute>(
+                operator.getInputSchema(), operator.getOutputSchema());
         final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                 operator, po);
         for (final ILogicalOperator o : toUpdate) {
@@ -85,10 +84,10 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
     public boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
-    
+
     @Override
-	public Class<?> getConditionClass() {	
-		return UnNestAO.class;
-	}
+    public Class<?> getConditionClass() {
+        return UnNestAO.class;
+    }
 
 }

@@ -18,9 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -35,8 +32,7 @@ public class UnNestAO extends UnaryLogicalOp {
     private static final long serialVersionUID = -5918972476973244744L;
     private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
 
-    SDFAttribute attribute;
-    SDFAttributeList schema;
+    private SDFAttributeList outputSchema = new SDFAttributeList();
 
     /**
      * 
@@ -50,8 +46,7 @@ public class UnNestAO extends UnaryLogicalOp {
      */
     public UnNestAO(final UnNestAO ao) {
         super(ao);
-        this.attribute = ao.getAttribute();
-        this.schema = ao.getOutputSchema();
+        this.outputSchema = ao.getOutputSchema();
     }
 
     /*
@@ -63,34 +58,30 @@ public class UnNestAO extends UnaryLogicalOp {
         return new UnNestAO(this);
     }
 
-    /**
-     * @return The attribute for unnest
-     */
-    public SDFAttribute getAttribute() {
-        return this.attribute;
-    }
-
     /*
      * (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getOutputSchema()
      */
     @Override
     public SDFAttributeList getOutputSchema() {
-        return this.schema;
-    }
-
-    /**
-     * @param attribute
-     *            The attribute for unnest
-     */
-    @Parameter(name = "ATTRIBUTE", type = ResolvedSDFAttributeParameter.class)
-    public void setAttribute(final SDFAttribute attribute) {
-        UnNestAO.LOG.debug("Set UnNest attribute to {}", attribute.getAttributeName());
-        this.attribute = attribute;
-        SDFAttributeList schema = this.getInputSchema().clone();
-        schema.getAttribute(schema.indexOf(attribute)).setDatatype(
-                attribute.getDatatype().getSubType());
-        this.schema = schema;
+        if (outputSchema == null || recalcOutputSchemata) {
+            outputSchema = new SDFAttributeList();
+            for (int i = 0; i < getInputSchema().getAttributeCount(); i++) {
+                if (getInputSchema().getAttribute(i).getDatatype().hasSchema()) {
+                    SDFAttributeList subschema = getInputSchema().getAttribute(i).getDatatype()
+                            .getSubSchema();
+                    for (int j = 0; j < subschema.getAttributeCount(); j++) {
+                        this.outputSchema.add(subschema.get(j));
+                    }
+                }
+                else {
+                    this.outputSchema.add(getInputSchema().get(i));
+                }
+            }
+            recalcOutputSchemata = false;
+            LOG.debug("Set output schema to: {}", outputSchema);
+        }
+        return outputSchema;
     }
 
 }

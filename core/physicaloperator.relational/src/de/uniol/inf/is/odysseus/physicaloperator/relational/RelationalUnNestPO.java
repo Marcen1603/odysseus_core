@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -33,24 +32,25 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
         AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
     private static Logger LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
-    private final SDFAttributeList schema;
-    private final int attributePos;
+    private final SDFAttributeList inputSchema;
+    private final SDFAttributeList outputSchema;
 
     /**
      * @param schema
      * @param attribute
      */
-    public RelationalUnNestPO(final SDFAttributeList schema, final SDFAttribute attribute) {
-        this.schema = schema;
-        this.attributePos = schema.indexOf(attribute);
+    public RelationalUnNestPO(final SDFAttributeList inputSchema,
+            final SDFAttributeList outputSchema) {
+        this.inputSchema = inputSchema;
+        this.outputSchema = outputSchema;
     }
 
     /**
      * @param po
      */
     public RelationalUnNestPO(final RelationalUnNestPO<T> po) {
-        this.schema = po.schema;
-        this.attributePos = po.attributePos;
+        this.inputSchema = po.inputSchema;
+        this.outputSchema = po.outputSchema;
     }
 
     /*
@@ -77,7 +77,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
      */
     @Override
     public SDFAttributeList getOutputSchema() {
-        return this.schema;
+        return this.outputSchema;
     }
 
     /*
@@ -87,15 +87,47 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected void process_next(final RelationalTuple listRelatinalTuple, final int port) {
-        try {
-        	final List<RelationalTuple> relatinalTuples = (List<RelationalTuple>) listRelatinalTuple.getAttribute(0);
-            for (final RelationalTuple relatinalTuple : relatinalTuples) {
-                this.transfer((RelationalTuple)relatinalTuple);
+    protected void process_next(final RelationalTuple<T> tuple, final int port) {
+        int maxDepth = 0;
+        for (int i = 0; i < tuple.getAttributeCount(); i++) {
+            if (this.inputSchema.getAttribute(i).getDatatype().isTuple()) {
+                maxDepth = Math.max(maxDepth,
+                        ((List<RelationalTuple<?>>) tuple.getAttribute(i)).size());
             }
         }
-        catch (final Exception e) {
-            RelationalUnNestPO.LOG.error(e.getMessage(), e);
+        for (int d = 0; d < maxDepth; d++) {
+            try {
+                final RelationalTuple<T> outputTuple = new RelationalTuple<T>(
+                        this.outputSchema.size());
+                int pos = 0;
+                for (int i = 0; i < this.inputSchema.getAttributeCount(); i++) {
+                    if (this.inputSchema.getAttribute(i).getDatatype().isTuple()) {
+                        final List<RelationalTuple<?>> nestedTuple = (List<RelationalTuple<?>>) tuple
+                                .getAttribute(i);
+                        if (d < nestedTuple.size()) {
+                            for (int j = 0; j < nestedTuple.get(d).getAttributeCount(); j++) {
+                                outputTuple.setAttribute(pos, nestedTuple.get(d).getAttribute(j));
+                                pos++;
+                            }
+                        }
+                        else {
+                            for (int j = 0; j < nestedTuple.get(nestedTuple.size() - 1)
+                                    .getAttributeCount(); j++) {
+                                outputTuple.setAttribute(pos, null);
+                                pos++;
+                            }
+                        }
+                    }
+                    else {
+                        outputTuple.setAttribute(pos, tuple.getAttribute(i));
+                        pos++;
+                    }
+                }
+                transfer(outputTuple);
+            }
+            catch (final Exception e) {
+                RelationalUnNestPO.LOG.error(e.getMessage(), e);
+            }
         }
     }
 
