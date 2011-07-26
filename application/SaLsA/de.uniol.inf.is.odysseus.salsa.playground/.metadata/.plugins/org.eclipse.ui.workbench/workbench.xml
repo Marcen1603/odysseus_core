@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workbench version="2.0">
 <workbenchAdvisor/>
-<window height="648" maximized="true" width="1243" x="37" y="99">
+<window height="1005" width="1920" x="81" y="22">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -40,7 +40,7 @@
 </editor>
 <editor activePart="true" focus="true" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="Schuler_Laser.qry" partName="Schuler_Laser.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/Schuler_Laser.qry" title="Schuler_Laser.qry" tooltip="SaLsA_Default/Schuler_Laser.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/Schuler_Laser.qry"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1406" selectionTopPixel="0"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1145" selectionTopPixel="0"/>
 </editor>
 <editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="database_example.qry" partName="database_example.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/database_example.qry" title="database_example.qry" tooltip="SaLsA_Default/database_example.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/database_example.qry"/>
@@ -53,6 +53,10 @@
 <editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="database.qry" partName="database.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/database.qry" title="database.qry" tooltip="SaLsA_Default/database.qry" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/database.qry"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="81" selectionTopPixel="0"/>
+</editor>
+<editor id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="test_scanner.qry" partName="test_scanner.qry" path="/Users/cai/Desktop/Diplom/practice/odysseus_git/odysseus/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/test_scanner.qry" title="test_scanner.qry" tooltip="SaLsA_Default/test_scanner.qry" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SaLsA_Default/test_scanner.qry"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="360" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -184,11 +188,8 @@
 <item historyLabel="SaLsA_Database.qry" index="0">
 <position info="not_deleted" x="82" y="0"/>
 </item>
-<item historyLabel="Schuler_Laser.qry" index="1">
-<position info="not_deleted" x="1175" y="0"/>
-</item>
 <item active="true" historyLabel="Schuler_Laser.qry" index="1">
-<position info="not_deleted" x="1406" y="0"/>
+<position info="not_deleted" x="1358" y="1"/>
 </item>
 </navigationHistory>
 </page>
@@ -205,6 +206,9 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="test_scanner.qry" tooltip="SaLsA_Default/test_scanner.qry">
+<persistable path="/SaLsA_Default/test_scanner.qry"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor" name="database.qry" tooltip="SaLsA_Default/database.qry">
 <persistable path="/SaLsA_Default/database.qry"/>
 </file>

@@ -49,14 +49,13 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
 		 
 		for(int i = 0; i< elems.size(); i++){
 			
-			RelationalTuple tuple2 = (RelationalTuple)elems.get(i);
-			Geometry geometry_element = (Geometry)tuple2.getAttribute(0);
-	
-			
+			RelationalTuple tuple = (RelationalTuple)elems.get(i);
+			Geometry geometry_element = (Geometry)tuple.getAttribute(0);
+
 			if(geometry_element.crosses(geometry_buffer)){
 				merged = true;
-				tuple2.setAttribute(0,geometry_element.union(geometry).convexHull());
-				elems.add((T)tuple2);
+				tuple.setAttribute(0,geometry_element.union(geometry).convexHull());
+				elems.add((T)tuple);
 			}	
 		}
 		if(!merged){
@@ -66,7 +65,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
 		return this;
 	}
 
-	//Testing
+//	Testing
 //	public GeometryPartialAggregate<T> addElem(T elem) {
 //		boolean merged = false;
 //		 Geometry geometry = (Geometry)((RelationalTuple)elem).getAttribute(0);
