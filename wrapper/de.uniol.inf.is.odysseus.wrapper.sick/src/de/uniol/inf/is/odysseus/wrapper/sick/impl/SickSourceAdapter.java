@@ -32,10 +32,23 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
     @Override
     protected void doInit(final SourceSpec source) {
         final String host = source.getConfiguration().get("host").toString();
-        final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
-        final boolean record = source.getConfiguration().get("record") != null ? true : false;
-        final SickConnection connection = new SickConnectionImpl(host, port, record);
-        SickSourceAdapter.LOG.debug("Open connection to SICK sensor at {}:{}", host, port);
+        final int port = Integer.parseInt(source.getConfiguration().get("port").toString());      
+        final SickConnection connection;
+        String record = "false";
+        if(source.getConfiguration().get("record") != null){
+        	record = source.getConfiguration().get("record").toString();
+        }
+        	if(record.equalsIgnoreCase("true")){
+        		connection = new SickConnectionImpl(host, port, true); 
+        	}
+        	else if(record.equalsIgnoreCase("false")){
+        		connection = new SickConnectionImpl(host, port, false); 
+        	}
+        	else{
+        		connection = new SickConnectionImpl(host, port,Integer.parseInt(record));
+        	}
+
+        SickSourceAdapter.LOG.debug(String.format("Open connection to SICK sensor at %s:%s BackroundRecord:%s ", host, port, record));
         connection.setListener(source.getName(), this);
         connection.open();
         this.connections.put(source, connection);
