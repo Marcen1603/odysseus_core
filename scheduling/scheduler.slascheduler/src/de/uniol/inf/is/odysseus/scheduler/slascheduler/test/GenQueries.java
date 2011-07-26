@@ -33,6 +33,7 @@ public class GenQueries {
 
 	public static void main(String[] args) {
 		StringBuilder sb = new StringBuilder();
+		sb.append(createSettingComment());
 		sb.append("#PARSER CQL").append(NEWLINE);
 		sb.append(createGlobalSettings());
 		sb.append("#QUERY").append(NEWLINE);
@@ -49,6 +50,7 @@ public class GenQueries {
 
 		sb.append("/// Move the following code into a new script file!")
 				.append(NEWLINE);
+		sb.append(createSettingComment());
 		sb.append(createGlobalSettings());
 		sb.append(createTestInput());
 		sb.append("#PARSER PQL").append(NEWLINE);
@@ -180,6 +182,30 @@ public class GenQueries {
 					* (NUMBER_OF_SERVICE_LEVELS - slNumber);
 		}
 		return penaltyCost;
+	}
+
+	private static String createSettingComment() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/// Settings of generated query:").append(NEWLINE)
+				.append("///\t PRIO_FUNC_NAME=").append(PRIO_FUNC_NAME)
+				.append(NEWLINE).append("///\t SLA_QUERY_SHARING_ENABLED=")
+				.append(SLA_QUERY_SHARING_ENABLED).append(NEWLINE)
+				.append("///\t SF_FUNC_NAME=").append(SF_FUNC_NAME)
+				.append(NEWLINE).append("///\t QUERY_SHARING_COST_MODEL=")
+				.append(QUERY_SHARING_COST_MODEL).append(NEWLINE)
+				.append("///\t COST_FUNC_NAME=").append(COST_FUNC_NAME)
+				.append(NEWLINE).append("///\t TEST_INPUT_NUMBER=")
+				.append(TEST_INPUT_NUMBER).append(NEWLINE)
+				.append("///\t OP_SELECTIVITY=").append(OP_SELECTIVITY)
+				.append(NEWLINE).append("///\t OP_PROCESSING_TIME=")
+				.append(OP_PROCESSING_TIME).append(NEWLINE)
+				.append("///\t NUMBER_OF_USERS=").append(NUMBER_OF_USERS)
+				.append(NEWLINE).append("///\t NUMBER_OF_SLAS=")
+				.append(NUMBER_OF_SLAS).append(NEWLINE)
+				.append("///\t PENALTY_NAME=").append(PENALTY_NAME)
+				.append(NEWLINE).append("///\t NUMBER_OF_SERVICE_LEVELS=")
+				.append(NUMBER_OF_SERVICE_LEVELS).append(NEWLINE);
+		return sb.toString();
 	}
 
 }
