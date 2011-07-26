@@ -99,7 +99,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
             try {
                 final RelationalTuple<T> outputTuple = new RelationalTuple<T>(
                         this.outputSchema.size());
-                outputTuple.setMetadata(tuple.getMetadata());
+                outputTuple.setMetadata((T) tuple.getMetadata().clone());
                 int pos = 0;
                 for (int i = 0; i < this.inputSchema.getAttributeCount(); i++) {
                     if (this.inputSchema.getAttribute(i).getDatatype().isTuple()) {
