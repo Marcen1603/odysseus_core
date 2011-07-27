@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * @author Jonas Jacobi
  */
-public class AndPredicate<T> extends ComplexPredicate<T> {
+class AndPredicate<T> extends ComplexPredicate<T> {
 
 	private static final long serialVersionUID = -3438130138466305862L;
 
