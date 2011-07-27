@@ -17,7 +17,7 @@ public class SLA {
 	/**
 	 * the price to pay for a query with a QoS defined by the SLA.
 	 */
-	private int price;
+	private double price;
 	/**
 	 * the scope of the SLA.
 	 */
@@ -63,7 +63,7 @@ public class SLA {
 	/**
 	 * @return the price payable for a query with a QoS defined by this sla
 	 */
-	public int getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
@@ -73,7 +73,7 @@ public class SLA {
 	 * @param price
 	 *            the new price
 	 */
-	public void setPrice(int price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 
