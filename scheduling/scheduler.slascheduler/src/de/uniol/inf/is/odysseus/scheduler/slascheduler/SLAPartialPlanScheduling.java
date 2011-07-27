@@ -396,6 +396,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * @return the partial plan that represents the given query in scheduling or
 	 *         null if no partial plan was found for the given query
 	 */
+	@Deprecated
 	public IPartialPlan getPartialPlan(IQuery query) {
 		for (IScheduling sched : this.plans) {
 			if (sched.getPlan().getQueries().equals(query))

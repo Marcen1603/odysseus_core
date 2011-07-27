@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.sla.SLA;
 
 /**
  * Event, marking the violation of an sla
