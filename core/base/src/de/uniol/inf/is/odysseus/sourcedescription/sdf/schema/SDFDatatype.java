@@ -29,6 +29,11 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype OBJECT = new SDFDatatype("Object");
 	
 	/**
+	 * Datatype for nested tuple (ckuka) 07/27/2011
+	 */
+	public static final SDFDatatype TUPLE = new SDFDatatype("Tuple", SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.OBJECT);
+
+	/**
 	 * predefined datatypes
 	 */
 	public static final SDFDatatype STRING = new SDFDatatype("String");
