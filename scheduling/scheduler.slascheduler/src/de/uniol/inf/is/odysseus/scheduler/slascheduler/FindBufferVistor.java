@@ -7,6 +7,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
 
+/**
+ * this class is not used any more and will be deleted soon
+ * @author Thomas Vogelgesang
+ *
+ */
 public class FindBufferVistor implements IGraphNodeVisitor<IPhysicalOperator, IPhysicalOperator> {
 	
 	private List<IBuffer<?>> buffers;
