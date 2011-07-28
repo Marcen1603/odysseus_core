@@ -13,8 +13,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToGrid extends AbstractFunction<Double[][]> {
-
+public class ToBinaryGrid extends AbstractFunction<Double[][]> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
@@ -33,7 +32,6 @@ public class ToGrid extends AbstractFunction<Double[][]> {
             }
     };
     private final static double FREE = 0.0;
-    private final static double UNKNOWN = -1.0;
     private final static double OBSTACLE = 1.0;
 
     @Override
@@ -60,7 +58,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public String getSymbol() {
-        return "ToGrid";
+        return "ToBinaryGrid";
     }
 
     @Override
@@ -75,7 +73,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
         // FIXME check for real size of grid
         Double[][] grid = new Double[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
         for (Double[] cells : grid) {
-            Arrays.fill(cells, UNKNOWN);
+            Arrays.fill(cells, FREE);
         }
 
         int gridMinX = (int) Math.ceil(width / cellsize);
@@ -157,15 +155,15 @@ public class ToGrid extends AbstractFunction<Double[][]> {
                 tmp = coordinate;
             }
         }
-        // Mark all cells inside the polygon that are not marked as an obstacle as free
+        // Mark all cells inside the polygon that are not marked as free as an obstacle
         Coordinate[] convexHull = polygonCoordinates.toArray(new Coordinate[] {});
         for (int i = gridMinX; i < gridMaxX; i++) {
             for (int j = gridMinY; j < gridMaxY; j++) {
-                if (grid[i][j] < 0.0) {
+                if (grid[i][j] == 0.0) {
                     Coordinate cell = new Coordinate(x + i * cellsize + cellsize / 2, y + j
                             * cellsize + cellsize / 2);
                     if (isInPolygon(cell, convexHull)) {
-                        grid[i][j] = FREE;
+                        grid[i][j] = OBSTACLE;
                     }
                 }
             }

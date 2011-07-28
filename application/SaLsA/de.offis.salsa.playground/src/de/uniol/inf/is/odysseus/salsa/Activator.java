@@ -9,11 +9,13 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.salsa.function.BoundingBox;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.IEPF;
+import de.uniol.inf.is.odysseus.salsa.function.InverseGrid;
 import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
 import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
 import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
+import de.uniol.inf.is.odysseus.salsa.function.ToBinaryGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ToGrid;
 
 /**
@@ -46,6 +48,8 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new BoundingBox());
             MEP.registerFunction(new ObjectSize());
             MEP.registerFunction(new ToGrid());
+            MEP.registerFunction(new ToBinaryGrid());
+            MEP.registerFunction(new InverseGrid());
             MEP.registerFunction(new IEPF());
         }
         catch (final Exception e) {
@@ -69,6 +73,8 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("BoundingBox");
             MEP.unregisterFunction("ObjectSize");
             MEP.unregisterFunction("ToGrid");
+            MEP.unregisterFunction("ToBinaryGrid");
+            MEP.unregisterFunction("InverseGrid");
             MEP.unregisterFunction("IEPF");
         }
         catch (final Exception e) {

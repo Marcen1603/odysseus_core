@@ -32,7 +32,7 @@ public class GridMap extends JPanel {
             graphics.setColor(Color.BLACK);
             graphics.fillRect(0, 0, 1000, 1000);
             final Color[] colors = new Color[] {
-                    new Color(254, 0, 0), new Color(0, 254, 0), new Color(0, 0, 254)
+                    new Color(51, 128, 204), new Color(51, 204, 51), new Color(204, 51, 51)
             };
             for (final Double[][] grid : this.grids) {
                 for (int i = 0; i < grid.length; i++) {

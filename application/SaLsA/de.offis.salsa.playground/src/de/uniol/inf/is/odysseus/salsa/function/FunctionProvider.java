@@ -22,6 +22,8 @@ public class FunctionProvider implements IFunctionProvider {
         functions.add(new MoveViewPoint());
         functions.add(new RotateViewPoint());
         functions.add(new ToGrid());
+        functions.add(new ToBinaryGrid());
+        functions.add(new InverseGrid());
         functions.add(new IEPF());
         return functions;
     }
