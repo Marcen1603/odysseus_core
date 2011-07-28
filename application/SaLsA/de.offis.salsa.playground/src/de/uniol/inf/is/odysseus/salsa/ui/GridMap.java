@@ -28,21 +28,23 @@ public class GridMap extends JPanel {
 
     @Override
     public void paint(Graphics graphics) {
-        graphics.setColor(Color.BLACK);
-        graphics.fillRect(0, 0, 1000, 1000);
-        final Color[] colors = new Color[] {
-                new Color(254, 0, 0), new Color(0, 254, 0), new Color(0, 0, 254)
-        };
-        for (final Double[][] grid : this.grids) {
-            for (int i = 0; i < grid.length; i++) {
-                for (int j = 0; j < grid[i].length; j++) {
-                    int colorIndex = (int) (grid[i][j] + 1);
-                    graphics.setColor(colors[colorIndex]);
-                    graphics.fillRect(SCALE * i, SCALE * j, SCALE, SCALE);
+        if (grids.size() > 0) {
+            graphics.setColor(Color.BLACK);
+            graphics.fillRect(0, 0, 1000, 1000);
+            final Color[] colors = new Color[] {
+                    new Color(254, 0, 0), new Color(0, 254, 0), new Color(0, 0, 254)
+            };
+            for (final Double[][] grid : this.grids) {
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[i].length; j++) {
+                        int colorIndex = (int) (grid[i][j] + 1);
+                        graphics.setColor(colors[colorIndex]);
+                        graphics.fillRect(SCALE * i, SCALE * j, SCALE, SCALE);
+                    }
                 }
+                break;
             }
-            break;
+            this.grids.clear();
         }
-        this.grids.clear();
     }
 }
