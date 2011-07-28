@@ -18,10 +18,12 @@ import java.sql.Connection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DATABASESOURCE")
 public class DatabaseAccessAO extends AbstractDatabaseAO implements OutputSchemaSettable {
 	
 

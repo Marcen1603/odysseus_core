@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DATABASE")
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DATABASESINK")
 public class DatabaseSinkAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -6734727544384678902L;

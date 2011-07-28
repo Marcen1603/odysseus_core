@@ -48,7 +48,7 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 	private boolean opened;
 	
 	//Make the BATCH SIZE CONFIGERABLE 
-	private static final int SELECT_BASH_SIZE = 10;
+	private static final int SELECT_BATCH_SIZE = 10;
 	
 	private Queue<RelationalTuple<?>> values = new LinkedList<RelationalTuple<?>>();
 	private PreparedStatement preparedStatement;
@@ -171,7 +171,7 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 		
 		synchronized (values) {
 			values.offer((RelationalTuple)object);
-			if (values.size() >= SELECT_BASH_SIZE) {
+			if (values.size() >= SELECT_BATCH_SIZE) {
 				//LOGGER.debug("Values " + values);
 				writeToDatabase(values);
 			}
