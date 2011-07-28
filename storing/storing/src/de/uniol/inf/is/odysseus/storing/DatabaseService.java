@@ -37,7 +37,7 @@ public class DatabaseService {
 	private static String defaultUser;
 	private static String defaultPassword;
 
-	volatile protected static Logger LOGGER = LoggerFactory.getLogger(IDatabaseService.class);;
+	volatile protected static Logger LOGGER = LoggerFactory.getLogger(IDatabaseService.class);
 
 	/**
 	 * Register a default connection for User without Database URL, User and Password. 
@@ -52,6 +52,12 @@ public class DatabaseService {
 	public static void registerDefault(String defaultURL, String defaultUser, String defaultPassword){
 		LOGGER.info(String.format("Set new default connection: %s with user %s",defaultURL,defaultUser));
 		DatabaseService.defaultURL = defaultURL;
+		DatabaseService.defaultUser = defaultUser;
+		DatabaseService.defaultPassword = defaultPassword;
+	}
+	
+	public static void registerDefaultUser(String defaultUser, String defaultPassword){
+		LOGGER.info(String.format("Set new default user %s",defaultUser));
 		DatabaseService.defaultUser = defaultUser;
 		DatabaseService.defaultPassword = defaultPassword;
 	}
@@ -74,6 +80,11 @@ public class DatabaseService {
 	public static Connection getDefaultConnection() throws SQLException{
 		LOGGER.info(String.format("Return current default connection: %s with user %s",defaultURL,defaultUser));
 		return DatabaseService.databaseService.getConnection(defaultURL, defaultUser, defaultPassword);
+	}
+	
+	public static Connection getbyDefaultUser(String url) throws SQLException{
+		LOGGER.info(String.format("Return current connection: %s with default user %s",url,defaultUser));
+		return DatabaseService.databaseService.getConnection(url, defaultUser, defaultPassword);
 	}
 	
 	public static void bindDatabaseService(IDatabaseService service){

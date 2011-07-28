@@ -104,7 +104,8 @@ public class DatabaseVisitor{
 			 *  read configuration file for password and user name.
 			 *  
 			 */
-			connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
+			connection = DatabaseService.getbyDefaultUser(jdbcString);
+			//connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
 			//connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
 			DatabaseAccessAO databaseAccessAO = new DatabaseAccessAO(new SDFSource(tableName, "databaseReading"),connection,tableName,isTimeSensitiv);
 			return databaseAccessAO;
@@ -159,7 +160,8 @@ public class DatabaseVisitor{
 		 * @autor kpancratz
 		 */
 		try {
-			connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
+			connection = DatabaseService.getbyDefaultUser(jdbcString);
+			//connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
 			///connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
 		} catch (SQLException e) {
 			LOGGER.error("SQLException: ",e.getStackTrace());
