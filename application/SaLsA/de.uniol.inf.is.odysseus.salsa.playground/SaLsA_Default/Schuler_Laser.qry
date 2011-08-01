@@ -4,7 +4,7 @@
 #QUERY
 ///Your first query here
 
-///lms1 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10','record:500', 'port:2111'], adapter = 'Sick'})  
+///lms1 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10','record:50', 'port:2111'], adapter = 'Sick'})  
 lms1 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111'], adapter = 'Sick'})  
 
 move1 = map({expressions = ['MoveViewPoint(scan, 3750.0, -4600.0)']}, lms1)
@@ -12,7 +12,7 @@ renamedMove1 = rename({aliases = ['scan']}, move1)
 rotate1 = map({expressions = ['RotateViewPoint(scan, 174.49)']}, renamedMove1)
 renamedRotate1 = rename({aliases = ['scan']}, rotate1)
 
-///lms2 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.20','record:500', 'port:2111'], adapter = 'Sick'})  
+///lms2 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.20','record:50', 'port:2111'], adapter = 'Sick'})  
 lms2 = adapter({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.20', 'port:2111'], adapter = 'Sick'})  
 
 renamed2 = rename({aliases = ['scan']}, lms2)
@@ -23,14 +23,16 @@ extractedFeature = map({expressions = ['ExtractSegments(scan,300.0)']}, united)
 
 renamedExtractedFeature = rename({aliases = ['feature']}, extractedFeature)
 
-unested = unnest({attribute = 'feature'}, renamedExtractedFeature)
+unested = unnest(renamedExtractedFeature)
+
+SelectLines = SELECT({ predicate=RelationalPredicate('SpatialIsLine(feature)') }, unested)
 
 ///window = window({type = 'tuple', size = 200, advance = 20}, unested)
-window = window({type = 'time', size = 100, advance = 50}, unested)
+window = window({type = 'time', size = 40, advance = 20}, SelectLines)
 
-aggregate = AGGREGATE({aggregations = [['PMERGE','feature','feature']] }, window)
+aggregate = AGGREGATE({aggregations = [['PMERGE','feature','feature','tuple']] }, window)
 
-unested2 = unnest({attribute = 'feature'}, aggregate)
+unested2 = unnest(aggregate)
 
 ///sink = mapsink(window)
 sink2 = mapsink(unested2)
