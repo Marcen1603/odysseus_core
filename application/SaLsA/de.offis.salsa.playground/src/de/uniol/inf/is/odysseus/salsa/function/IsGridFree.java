@@ -3,21 +3,26 @@ package de.uniol.inf.is.odysseus.salsa.function;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-/**
- * @author Christian Kuka <christian.kuka@offis.de>
- */
-public class InverseGrid extends AbstractFunction<Double[][]> {
+public class IsGridFree extends AbstractFunction<Boolean> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-        {
-            SDFDatatype.MATRIX_DOUBLE
-        }
+            {
+                SDFDatatype.MATRIX_DOUBLE
+            }, {
+                SDFDatatype.INTEGER
+            }, {
+                SDFDatatype.INTEGER
+            }, {
+                SDFDatatype.INTEGER
+            }, {
+                SDFDatatype.INTEGER
+            }
     };
     private final static double FREE = 0.0;
     private final static double UNKNOWN = -1.0;
     private final static double OBSTACLE = 1.0;
     @Override
     public int getArity() {
-        return 1;
+        return 5;
     }
 
     @Override
@@ -27,7 +32,7 @@ public class InverseGrid extends AbstractFunction<Double[][]> {
         }
         if (argPos > this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
-                    + " argument: A grid.");
+                    + " argument(s): A grid, the x and y coordinates, the width and height.");
         }
         else {
             return accTypes[argPos];
@@ -36,24 +41,30 @@ public class InverseGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public String getSymbol() {
-        return "InverseGrid";
+        return "IsGridFree";
     }
 
     @Override
-    public Double[][] getValue() {
+    public Boolean getValue() {
         final Double[][] grid = this.getInputValue(0);
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] >= FREE) {
-                    grid[i][j] = Math.abs(grid[i][j] - 1);
+        final Integer x = (Integer) this.getInputValue(1);
+        final Integer y = (Integer) this.getInputValue(2);
+        final Integer width = (Integer) this.getInputValue(3);
+        final Integer height = (Integer) this.getInputValue(4);
+        boolean free = true;
+        for (int i = x; i < width && i < grid.length; i++) {
+            for (int j = y; j < height && j < grid[i].length; j++) {
+                if (grid[i][j] != FREE) {
+                    free = false;
                 }
             }
         }
-        return grid;
+        return free;
     }
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_DOUBLE;
+        return SDFDatatype.BOOLEAN;
     }
+
 }

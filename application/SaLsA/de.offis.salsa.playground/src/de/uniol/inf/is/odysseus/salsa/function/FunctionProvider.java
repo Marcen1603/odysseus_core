@@ -25,6 +25,8 @@ public class FunctionProvider implements IFunctionProvider {
         functions.add(new ToBinaryGrid());
         functions.add(new InverseGrid());
         functions.add(new IEPF());
+        functions.add(new IsGridFree());
+        functions.add(new ClearGrid());
         return functions;
     }
 }

@@ -36,17 +36,17 @@ scooter = RENAME({aliases = ['scan']}, movedScooter)
 unionLms = UNION(windowLms1, windowLms2)
 segmentsLms = MAP({expressions = ['IEPF(scan, 200)']}, unionLms)
 renamedSegmentsLms = RENAME({aliases = ['feature']}, segmentsLms)
-unestedLms = UNNEST({attribute = 'feature'}, renamedSegmentsLms)
+unestedLms = UNNEST(renamedSegmentsLms)
 
 /// LMS Grid
-aggregateGridLms = AGGREGATE({ aggregations=[ ['MERGEGRID', 'scan', 'scan','tuple'] ]}, unionLms) 
+aggregateGridLms = AGGREGATE({ aggregations=[['MERGEGRID', 'scan', 'scan','tuple']]}, unionLms) 
 
 /// LMS Feature
-aggregatePolygonLms = AGGREGATE({aggregations = [['PMERGE','feature','feature']] }, unestedLms)
-
+aggregatePolygonLms = AGGREGATE({aggregations = [['PMERGE','feature','feature','tuple']] }, unestedLms)
+unestedLMSFeature = UNNEST(aggregatePolygonLms)
 
 /// Scooter Polygon
-joinScooter = JOIN({predicate = RelationalPredicate('SpatialContains(feature,scan)')},aggregatePolygonLms, scooter)
+joinScooter = JOIN({predicate=RelationalPredicate('SpatialContains(feature,scan)')},unestedLMSFeature, scooter)
 
 
 /// Scooter Anti-Grid
@@ -55,13 +55,13 @@ renamedGridScooter = RENAME({aliases = ['scooter']}, gridScooter)
 windowScooter = WINDOW({type = 'time', size = 100, advance = 50}, renamedGridScooter)
 
 /// Combine Grids
-combinedGrid = JOIN({predicate = RelationalPredicate('1=1')},aggregateGridLms, windowScooter)
+combinedGrid = JOIN({predicate = RelationalPredicate('true')},aggregateGridLms, windowScooter)
 realGrid =  MAP({expressions = ['ClearGrid(scan, scooter)']}, combinedGrid)
 renamedRealGrid = RENAME({aliases = ['scan']}, realGrid)
 
 ///------------------------------------------------------------------------
 /// Free Area Filter
-speedFilter =  SELECT({predicate = RelationalPredicate('IsGridFree(scan, -1000.0, -1000.0, 2000.0, 2000.0)') = true}, renamedRealGrid)
+speedFilter =  SELECT({predicate = RelationalPredicate('IsGridFree(scan, -1000.0, -1000.0, 2000.0, 2000.0)')}, renamedRealGrid)
 speed = MAP({expressions = ['doubleToFloat(1)']}, speedFilter)
 
 /// Set Max Speed

@@ -7,9 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.salsa.function.BoundingBox;
+import de.uniol.inf.is.odysseus.salsa.function.ClearGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.IEPF;
 import de.uniol.inf.is.odysseus.salsa.function.InverseGrid;
+import de.uniol.inf.is.odysseus.salsa.function.IsGridFree;
 import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
 import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
@@ -51,6 +53,8 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new ToBinaryGrid());
             MEP.registerFunction(new InverseGrid());
             MEP.registerFunction(new IEPF());
+            MEP.registerFunction(new IsGridFree());
+            MEP.registerFunction(new ClearGrid());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -76,6 +80,8 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("ToBinaryGrid");
             MEP.unregisterFunction("InverseGrid");
             MEP.unregisterFunction("IEPF");
+            MEP.unregisterFunction("IsGridFree");
+            MEP.unregisterFunction("ClearGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);

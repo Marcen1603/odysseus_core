@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> {
     private final GeometryFactory geometryFactory = new GeometryFactory();
-    private static Logger LOG = LoggerFactory.getLogger(ExtractSegments.class);
+    private static Logger LOG = LoggerFactory.getLogger(IEPF.class);
 
     public static final SDFDatatype[] accTypes0 = new SDFDatatype[] {
         SDFDatatype.SPATIAL_MULTI_POINT
