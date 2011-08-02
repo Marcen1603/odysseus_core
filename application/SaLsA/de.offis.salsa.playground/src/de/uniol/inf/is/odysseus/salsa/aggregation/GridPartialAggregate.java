@@ -31,8 +31,17 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
                     if (this.grid[i][j] == UNKNOWN) {
                         this.grid[i][j] = grid[i][j];
                     }
-                    else if (grid[i][j] > FREE) {
-                        this.grid[i][j] = grid[i][j];
+                    else if ((this.grid[i][j] == OBSTACLE) && (grid[i][j] == OBSTACLE)) {
+                        this.grid[i][j] = OBSTACLE;
+                    }
+                    else if ((this.grid[i][j] == FREE) && (grid[i][j] == OBSTACLE)) {
+                        this.grid[i][j] = 0.5;
+                    }
+                    else if ((this.grid[i][j] == OBSTACLE) && (grid[i][j] == FREE)) {
+                        this.grid[i][j] = 0.5;
+                    }
+                    else if ((this.grid[i][j] == FREE) && (grid[i][j] == FREE)) {
+                        this.grid[i][j] = FREE;
                     }
                 }
             }

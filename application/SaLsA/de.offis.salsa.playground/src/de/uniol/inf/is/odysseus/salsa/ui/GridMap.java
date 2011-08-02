@@ -16,7 +16,7 @@ public class GridMap extends JPanel {
      * 
      */
     private static final long serialVersionUID = 8285127861043019769L;
-    private static final int SCALE = 5;
+    private static final int SCALE = 10;
     private final List<Double[][]> grids = new CopyOnWriteArrayList<Double[][]>();
 
     public void onGrid(Double[][] grid) {
@@ -38,7 +38,13 @@ public class GridMap extends JPanel {
                 for (int i = 0; i < grid.length; i++) {
                     for (int j = 0; j < grid[i].length; j++) {
                         int colorIndex = (int) (grid[i][j] + 1);
-                        graphics.setColor(colors[colorIndex]);
+                        // graphics.setColor(colors[colorIndex]);
+                        if (grid[i][j] < 0.0) {
+                            graphics.setColor(new Color(204, 51, 51));
+                        }
+                        else {
+                            graphics.setColor(new Color(51, (int) (254 * grid[i][j]), 204));
+                        }
                         graphics.fillRect(SCALE * i, SCALE * j, SCALE, SCALE);
                     }
                 }

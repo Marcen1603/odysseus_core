@@ -85,7 +85,7 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
     	for (IExpression<?> expr : getArguments()) {
     		
     		if(expr.getReturnType().isStartTimestamp()){
-    			LOG.debug("Foundtime");
+    			//LOG.debug("Foundtime");
     			startTimestamp = (PointInTime)expr.getValue();
     		}
     		else{
