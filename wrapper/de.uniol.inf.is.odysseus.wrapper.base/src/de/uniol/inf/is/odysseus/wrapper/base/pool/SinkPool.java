@@ -25,7 +25,7 @@ public class SinkPool<T extends IMetaAttribute> {
 
     private static SinkPool<?> instance;
 
-    public static SinkPool<?> getInstance() {
+    public synchronized static SinkPool<?> getInstance() {
         if (SinkPool.instance == null) {
             SinkPool.instance = new SinkPool<TimeInterval>();
         }
@@ -80,7 +80,7 @@ public class SinkPool<T extends IMetaAttribute> {
     }
 
     private void _registerAdapter(final SinkAdapter adapter) {
-        this.adapters.put(adapter.getName(), adapter);
+        ((ConcurrentHashMap<String, SinkAdapter>)this.adapters).putIfAbsent(adapter.getName(), adapter);
         SinkPool.LOG.info("Adapter {} registered", adapter.getName());
     }
 

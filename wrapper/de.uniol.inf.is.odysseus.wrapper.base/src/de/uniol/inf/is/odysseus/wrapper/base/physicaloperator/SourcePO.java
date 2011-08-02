@@ -99,14 +99,12 @@ public class SourcePO<T extends IMetaAttribute> extends
     }
 
     @Override
-    public boolean isSemanticallyEqual(final IPhysicalOperator po) {
-        if (po instanceof SourcePO<?>) {
-            return (((SourcePO<?>) po).adapterName.equals(this.adapterName))
-                    && (((SourcePO<?>) po).options.equals(this.options));
+    public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+        if (!(ipo instanceof SourcePO<?>)) {
+            return false;
         }
-        else {
-            return super.isSemanticallyEqual(po);
-        }
+        return (((SourcePO<?>) ipo).adapterName.equals(this.adapterName))
+                && (((SourcePO<?>) ipo).options.equals(this.options));
     }
 
     /*

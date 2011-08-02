@@ -31,27 +31,31 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
 
     @Override
     protected void doInit(final SourceSpec source) {
-        final String host = source.getConfiguration().get("host").toString();
-        final int port = Integer.parseInt(source.getConfiguration().get("port").toString());      
-        final SickConnection connection;
-        String record = "false";
-        if(source.getConfiguration().get("record") != null){
-        	record = source.getConfiguration().get("record").toString();
-        }
-        	if(record.equalsIgnoreCase("true")){
-        		connection = new SickConnectionImpl(host, port, true); 
-        	}
-        	else if(record.equalsIgnoreCase("false")){
-        		connection = new SickConnectionImpl(host, port, false); 
-        	}
-        	else{
-        		connection = new SickConnectionImpl(host, port,Integer.parseInt(record));
-        	}
+        if (!connections.containsKey(source)) {
+            final String host = source.getConfiguration().get("host").toString();
+            final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
+            final SickConnection connection;
+            String record = "false";
+            if (source.getConfiguration().get("record") != null) {
+                record = source.getConfiguration().get("record").toString();
+            }
+            if (record.equalsIgnoreCase("true")) {
+                connection = new SickConnectionImpl(host, port, true);
+            }
+            else if (record.equalsIgnoreCase("false")) {
+                connection = new SickConnectionImpl(host, port, false);
+            }
+            else {
+                connection = new SickConnectionImpl(host, port, Integer.parseInt(record));
+            }
 
-        SickSourceAdapter.LOG.debug(String.format("Open connection to SICK sensor at %s:%s BackroundRecord:%s ", host, port, record));
-        connection.setListener(source.getName(), this);
-        connection.open();
-        this.connections.put(source, connection);
+            SickSourceAdapter.LOG.debug(String.format(
+                    "Open connection to SICK sensor at %s:%s BackroundRecord:%s ", host, port,
+                    record));
+            connection.setListener(source.getName(), this);
+            connection.open();
+            this.connections.put(source, connection);
+        }
     }
 
     @Override
@@ -60,14 +64,14 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
     }
 
     @Override
-    public void onMeasurement(final String uri, final Measurement measurement) {
+    public void onMeasurement(final String uri, final Measurement measurement, final long timestamp) {
         if ((measurement != null) && (measurement.getSamples() != null)) {
             final Point[] coordinates = new Point[measurement.getSamples().length];
             for (int i = 0; i < measurement.getSamples().length; i++) {
                 final Sample sample = measurement.getSamples()[i];
                 coordinates[i] = this.geometryFactory.createPoint(sample.getDist1Vector());
             }
-            SickSourceAdapter.this.transfer(uri, System.currentTimeMillis(), new Object[] {
+            SickSourceAdapter.this.transfer(uri, timestamp, new Object[] {
                 this.geometryFactory.createMultiPoint(coordinates)
             });
         }

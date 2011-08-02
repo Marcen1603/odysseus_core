@@ -31,7 +31,8 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
             for (final ILogicalOperator o : toUpdate) {
                 this.update(o);
             }
-            this.retract(operator);
+            retract(operator);
+            insert(po);
         }
         catch (final Exception e) {
             TSourceAORule.LOG.error(e.getMessage(), e);
@@ -40,7 +41,7 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
 
     @Override
     public boolean isExecutable(final SourceAO operator, final TransformationConfiguration config) {
-        return operator.isAllPhysicalInputSet();
+        return true;
     }
 
     @Override

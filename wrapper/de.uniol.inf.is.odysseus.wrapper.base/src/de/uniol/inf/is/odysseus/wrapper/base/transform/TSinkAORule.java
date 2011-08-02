@@ -24,15 +24,15 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
     @Override
     public void execute(final SinkAO operator, final TransformationConfiguration config) {
         try {
-            final SinkPO po = new SinkPO(operator.getOutputSchema(), operator.getAdapter(),
+            final SinkPO<?> po = new SinkPO(operator.getOutputSchema(), operator.getAdapter(),
                     operator.getOptionsMap());
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);
             for (final ILogicalOperator o : toUpdate) {
                 this.update(o);
             }
-            this.replace(operator, po, config);
-            this.retract(operator);
+            retract(operator);
+            insert(po);
         }
         catch (final Exception e) {
             TSinkAORule.LOG.error(e.getMessage(), e);

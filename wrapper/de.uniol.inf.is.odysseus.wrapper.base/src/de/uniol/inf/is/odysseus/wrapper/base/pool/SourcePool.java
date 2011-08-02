@@ -26,7 +26,7 @@ public class SourcePool<T extends IMetaAttribute> {
 
     private static SourcePool<?> instance;
 
-    public static SourcePool<?> getInstance() {
+    public synchronized static SourcePool<?> getInstance() {
         if (SourcePool.instance == null) {
             SourcePool.instance = new SourcePool<TimeInterval>();
         }
@@ -71,6 +71,7 @@ public class SourcePool<T extends IMetaAttribute> {
         // sourceSpec.addAttribute(attribute, attributeConfiguration);
         // }
         // }
+
         this.sources.put(source.getName(), source);
         this.sourceSpecs.put(source.getName(), sourceSpec);
 
@@ -89,7 +90,8 @@ public class SourcePool<T extends IMetaAttribute> {
     }
 
     private void _registerAdapter(final SourceAdapter adapter) {
-        this.adapters.put(adapter.getName(), adapter);
+        ((ConcurrentHashMap<String, SourceAdapter>) this.adapters).putIfAbsent(adapter.getName(),
+                adapter);
         SourcePool.LOG.info("Adapter {} registered", adapter.getName());
     }
 
@@ -101,7 +103,6 @@ public class SourcePool<T extends IMetaAttribute> {
                 event.setAttribute(i, data[i]);
             }
             final TimeInterval metadata = new TimeInterval(new PointInTime(timestamp));
-
             event.setMetadata(metadata);
             try {
                 this.sources.get(sourceName).transfer(event);
