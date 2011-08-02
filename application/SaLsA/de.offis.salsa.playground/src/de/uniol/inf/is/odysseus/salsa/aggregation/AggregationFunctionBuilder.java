@@ -16,12 +16,14 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     private final static String LAST = "LAST";
     private final static String FIRST = "FIRST";
     private final static String NTH = "NTH";
+    private final static String PMERGE = "PMERGE";
     private static Collection<String> names = new LinkedList<String>();
     {
         names.add(MERGEGRID);
         names.add(LAST);
         names.add(FIRST);
         names.add(NTH);
+        names.add(PMERGE);
     }
 
     @Override
@@ -49,6 +51,9 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
         else if (key.getName().equalsIgnoreCase(NTH)) {
             aggFunc = RelationalNth.getInstance(Integer.parseInt(key.getProperty("nth")));
         }
+        else if(key.getName().equalsIgnoreCase(PMERGE)) {
+            aggFunc = new RelationalPolygonAggregation(pos);
+        } 
         else {
             throw new IllegalArgumentException("No such Aggregatefunction");
         }
