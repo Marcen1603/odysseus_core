@@ -1,0 +1,75 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG Standard
+#QUERY
+///Your first query here
+
+///------------------------------------------------------------------------
+/// LMS1 Scanner
+lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+windowLms1 = WINDOW({type = 'time', size = 100, advance = 50}, lms1)
+
+/// LMS1 Grid
+gridLms1 = MAP({expressions = ['ToGrid(scan, -10000.0, -10000.0, 20000.0, 20000.0, 1000.0)']}, lms1)
+renamedGridLms1 = RENAME({aliases = ['scan']}, gridLms1)
+
+///------------------------------------------------------------------------
+/// LMS2 Scanner
+rawLms2 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111'], adapter = 'Sick'})  
+movedLms2 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan, 3750.0, -4600.0), 174.49)']}, rawLms2)
+lms2 = RENAME({aliases = ['scan']}, movedLms2)
+windowLms2 = WINDOW({type = 'time', size = 100, advance = 50}, lms2)
+
+/// LMS2 Grid
+gridLms2 = MAP({expressions = ['ToGrid(scan, -10000.0, -10000.0, 20000.0, 20000.0, 1000.0)']}, lms2)
+renamedGridLms2 = RENAME({aliases = ['scan']}, gridLms2)
+
+///------------------------------------------------------------------------
+/// Scooter Position
+rawScooter = ADAPTER({schema = ['scan:SpatialPoint'], options = ['host:192.168.1.99', 'port:10000', 'service:ClientConnector', 'protocol:default', 'ownService:SaLsA.Simulation.Gui', 'ownPort:10200'], adapter = 'ICE'})  
+movedScooter = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan, 17330, 0.0),-45.0)']}, rawScooter)
+scooter = RENAME({aliases = ['scan']}, movedScooter)
+
+
+///------------------------------------------------------------------------
+/// LMS Segments
+unionLms = UNION(windowLms1, windowLms2)
+segmentsLms = MAP({expressions = ['IEPF(scan, 200)']}, unionLms)
+renamedSegmentsLms = RENAME({aliases = ['feature']}, segmentsLms)
+unestedLms = UNNEST({attribute = 'feature'}, renamedSegmentsLms)
+
+/// LMS Grid
+aggregateGridLms = AGGREGATE({ aggregations=[ ['MERGEGRID', 'scan', 'scan','tuple'] ]}, unionLms) 
+
+/// LMS Feature
+aggregatePolygonLms = AGGREGATE({aggregations = [['PMERGE','feature','feature']] }, unestedLms)
+
+
+/// Scooter Polygon
+joinScooter = JOIN({predicate = RelationalPredicate('SpatialContains(feature,scan)')},aggregatePolygonLms, scooter)
+
+
+/// Scooter Anti-Grid
+gridScooter = MAP({expressions = ['ToGrid(feature, -10000.0, -10000.0, 20000.0, 20000.0, 1000.0)']}, joinScooter)
+renamedGridScooter = RENAME({aliases = ['scooter']}, gridScooter)
+windowScooter = WINDOW({type = 'time', size = 100, advance = 50}, renamedGridScooter)
+
+/// Combine Grids
+combinedGrid = JOIN({predicate = RelationalPredicate('1=1')},aggregateGridLms, windowScooter)
+realGrid =  MAP({expressions = ['ClearGrid(scan, scooter)']}, combinedGrid)
+renamedRealGrid = RENAME({aliases = ['scan']}, realGrid)
+
+///------------------------------------------------------------------------
+/// Free Area Filter
+speedFilter =  SELECT({predicate = RelationalPredicate('IsGridFree(scan, -1000.0, -1000.0, 2000.0, 2000.0)') = true}, renamedRealGrid)
+speed = MAP({expressions = ['doubleToFloat(1)']}, speedFilter)
+
+/// Set Max Speed
+setSpeed = BINDING({options = ['host:192.168.1.99', 'port:10000', 'service:ClientConnector', 'protocol:default', 'ownService:SaLsA.Simulation.Gui', 'ownPort:10200' ], adapter = 'ICE'}, speed)
+
+///------------------------------------------------------------------------
+/// Visualization
+visualization = MAPSINK(renamedRealGrid)
+
+
+
