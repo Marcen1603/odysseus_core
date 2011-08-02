@@ -32,17 +32,16 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
         AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
     private static Logger LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
+    private int nestedAttribute;
     private final SDFAttributeList inputSchema;
-    private final SDFAttributeList outputSchema;
 
     /**
      * @param schema
      * @param attribute
      */
-    public RelationalUnNestPO(final SDFAttributeList inputSchema,
-            final SDFAttributeList outputSchema) {
+    public RelationalUnNestPO(final SDFAttributeList inputSchema, final int nestedAttribute) {
         this.inputSchema = inputSchema;
-        this.outputSchema = outputSchema;
+        this.nestedAttribute = nestedAttribute;
     }
 
     /**
@@ -50,7 +49,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
      */
     public RelationalUnNestPO(final RelationalUnNestPO<T> po) {
         this.inputSchema = po.inputSchema;
-        this.outputSchema = po.outputSchema;
+        this.nestedAttribute = po.nestedAttribute;
     }
 
     /*
@@ -73,51 +72,28 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#getOutputSchema()
-     */
-    @Override
-    public SDFAttributeList getOutputSchema() {
-        return this.outputSchema;
-    }
-
-    /*
-     * (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#process_next(java.lang.Object,
      * int)
      */
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final RelationalTuple<T> tuple, final int port) {
-        int maxDepth = 0;
-        for (int i = 0; i < tuple.getAttributeCount(); i++) {
-            if (this.inputSchema.getAttribute(i).getDatatype().isTuple()) {
-                maxDepth = Math.max(maxDepth,
-                        ((List<RelationalTuple<?>>) tuple.getAttribute(i)).size());
-            }
-        }
-        for (int d = 0; d < maxDepth; d++) {
+        int depth = ((List<RelationalTuple<?>>) tuple.getAttribute(nestedAttribute)).size();
+        for (int d = 0; d < depth; d++) {
             try {
-                final RelationalTuple<T> outputTuple = new RelationalTuple<T>(
-                        this.outputSchema.size());
+                final RelationalTuple<T> outputTuple = new RelationalTuple<T>(this
+                        .getOutputSchema().size());
                 outputTuple.setMetadata((T) tuple.getMetadata().clone());
                 int pos = 0;
                 for (int i = 0; i < this.inputSchema.getAttributeCount(); i++) {
-                    if (this.inputSchema.getAttribute(i).getDatatype().isTuple()) {
+                    if (i == this.nestedAttribute) {
                         final List<RelationalTuple<?>> nestedTuple = (List<RelationalTuple<?>>) tuple
                                 .getAttribute(i);
-                        if (d < nestedTuple.size()) {
-                            for (int j = 0; j < nestedTuple.get(d).getAttributeCount(); j++) {
-                                outputTuple.setAttribute(pos, nestedTuple.get(d).getAttribute(j));
-                                pos++;
-                            }
+                        for (int j = 0; j < nestedTuple.get(d).getAttributeCount(); j++) {
+                            outputTuple.setAttribute(pos, nestedTuple.get(d).getAttribute(j));
+                            pos++;
                         }
-                        else {
-                            for (int j = 0; j < nestedTuple.get(nestedTuple.size() - 1)
-                                    .getAttributeCount(); j++) {
-                                outputTuple.setAttribute(pos, null);
-                                pos++;
-                            }
-                        }
+
                     }
                     else {
                         outputTuple.setAttribute(pos, tuple.getAttribute(i));

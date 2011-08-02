@@ -18,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -31,7 +34,7 @@ public class UnNestAO extends UnaryLogicalOp {
      */
     private static final long serialVersionUID = -5918972476973244744L;
     private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
-
+    private SDFAttribute attribute;
     private SDFAttributeList outputSchema = new SDFAttributeList();
 
     /**
@@ -46,6 +49,7 @@ public class UnNestAO extends UnaryLogicalOp {
      */
     public UnNestAO(final UnNestAO ao) {
         super(ao);
+        this.attribute = ao.getAttribute();
         this.outputSchema = ao.getOutputSchema();
     }
 
@@ -67,7 +71,8 @@ public class UnNestAO extends UnaryLogicalOp {
         if (outputSchema == null || recalcOutputSchemata) {
             outputSchema = new SDFAttributeList();
             for (int i = 0; i < getInputSchema().getAttributeCount(); i++) {
-                if (getInputSchema().getAttribute(i).getDatatype().hasSchema()) {
+                if ((getInputSchema().getAttribute(i).equals(attribute))
+                        && (getInputSchema().getAttribute(i).getDatatype().hasSchema())) {
                     SDFAttributeList subschema = getInputSchema().getAttribute(i).getDatatype()
                             .getSubSchema();
                     for (int j = 0; j < subschema.getAttributeCount(); j++) {
@@ -84,4 +89,24 @@ public class UnNestAO extends UnaryLogicalOp {
         return outputSchema;
     }
 
+    /**
+     * @param attribute
+     *            The attribute for unnest
+     */
+    @Parameter(name = "ATTRIBUTE", type = ResolvedSDFAttributeParameter.class)
+    public void setAttribute(final SDFAttribute attribute) {
+        UnNestAO.LOG.debug("Set UnNest attribute to {}", attribute.getAttributeName());
+        this.attribute = attribute;
+    }
+
+    /**
+     * @return The attribute for unnest
+     */
+    public SDFAttribute getAttribute() {
+        return this.attribute;
+    }
+    
+    public int getAttributePosition() {
+        return this.getInputSchema().indexOf(getAttribute());
+    }
 }
