@@ -6,6 +6,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class GridPartialAggregate<T> implements IPartialAggregate<T> {
+    private final static double FREE = 0.0;
+    private final static double UNKNOWN = -1.0;
+    private final static double OBSTACLE = 1.0;
+
     private Double[][] grid;
 
     public GridPartialAggregate(Double[][] grid) {
@@ -24,11 +28,11 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
         for (int i = 0; i < this.grid.length; i++) {
             for (int j = 0; j < this.grid[i].length; j++) {
                 if ((i < grid.length) && (j < grid[i].length)) {
-                    if (this.grid[i][j] < 0.0) {
+                    if (this.grid[i][j] == UNKNOWN) {
                         this.grid[i][j] = grid[i][j];
                     }
-                    else if (grid[i][j] >= 0.0) {
-                        this.grid[i][j] *= grid[i][j];
+                    else if (grid[i][j] > FREE) {
+                        this.grid[i][j] = grid[i][j];
                     }
                 }
             }
