@@ -15,15 +15,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

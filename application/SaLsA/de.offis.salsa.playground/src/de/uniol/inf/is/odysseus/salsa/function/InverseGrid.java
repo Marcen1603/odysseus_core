@@ -15,6 +15,7 @@ public class InverseGrid extends AbstractFunction<Double[][]> {
     private final static double FREE = 0.0;
     private final static double UNKNOWN = -1.0;
     private final static double OBSTACLE = 1.0;
+
     @Override
     public int getArity() {
         return 1;

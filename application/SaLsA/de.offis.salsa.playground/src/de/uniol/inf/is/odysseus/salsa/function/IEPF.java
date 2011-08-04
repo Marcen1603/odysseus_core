@@ -101,12 +101,7 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
 
     private List<Geometry> segmentize(final Coordinate[] coordinates, final double threshold) {
         final List<Geometry> segments = new ArrayList<Geometry>();
-        if (coordinates.length < 2) {
-            if (coordinates.length > 0) {
-                segments.add(this.geometryFactory.createPoint(coordinates[0]));
-            }
-        }
-        else {
+        if (coordinates.length >= 2) {
             final Coordinate start = coordinates[0];
             final Coordinate end = coordinates[coordinates.length - 1];
             double maxDistance = 0;
@@ -120,19 +115,13 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
             }
             if ((splitIndex > 0) && (splitIndex < coordinates.length - 1)
                     && (maxDistance > threshold)) {
-                segments.addAll(this.segmentize(Arrays.copyOfRange(coordinates, 0, splitIndex),
+                segments.addAll(this.segmentize(Arrays.copyOfRange(coordinates, 0, splitIndex + 1),
                         threshold));
                 segments.addAll(this.segmentize(
                         Arrays.copyOfRange(coordinates, splitIndex, coordinates.length), threshold));
             }
             else {
-                if (coordinates.length == 2) {
-                    if (start.distance(end) > threshold) {
-                        segments.add(this.geometryFactory.createPoint(start));
-                        segments.add(this.geometryFactory.createPoint(end));
-                    }
-                }
-                else {
+                if ((start.distance(end) <= threshold) || (coordinates.length > 2)) {
                     segments.add(this.geometryFactory.createLineString(coordinates));
                 }
             }

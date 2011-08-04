@@ -4,8 +4,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AbstractListAggregation;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ListPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalPolygonAggregation
@@ -20,11 +18,11 @@ public class RelationalPolygonAggregation
     }
 
     @Override
-    public RelationalTuple evaluate(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
+    public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
         ((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>) p).compress();
         List<RelationalTuple<?>> elems = ((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>) p)
                 .getElems();
-        RelationalTuple ret = new RelationalTuple<IMetaAttribute>(1);
+        RelationalTuple<?> ret = new RelationalTuple<IMetaAttribute>(1);
         ret.setAttribute(0, elems);
         return ret;
     }
