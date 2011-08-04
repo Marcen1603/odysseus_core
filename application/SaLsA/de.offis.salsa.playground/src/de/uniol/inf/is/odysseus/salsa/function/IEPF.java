@@ -120,13 +120,21 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
             }
             if ((splitIndex > 0) && (splitIndex < coordinates.length - 1)
                     && (maxDistance > threshold)) {
-                segments.addAll(this.segmentize(Arrays.copyOfRange(coordinates, 0, splitIndex + 1),
+                segments.addAll(this.segmentize(Arrays.copyOfRange(coordinates, 0, splitIndex),
                         threshold));
                 segments.addAll(this.segmentize(
                         Arrays.copyOfRange(coordinates, splitIndex, coordinates.length), threshold));
             }
             else {
-                segments.add(this.geometryFactory.createLineString(coordinates));
+                if (coordinates.length == 2) {
+                    if (start.distance(end) > threshold) {
+                        segments.add(this.geometryFactory.createPoint(start));
+                        segments.add(this.geometryFactory.createPoint(end));
+                    }
+                }
+                else {
+                    segments.add(this.geometryFactory.createLineString(coordinates));
+                }
             }
         }
         return segments;

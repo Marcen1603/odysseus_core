@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
+import java.util.Arrays;
+
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
@@ -14,6 +16,7 @@ public class ClearGrid extends AbstractFunction<Double[][]> {
     private final static double FREE = 0.0;
     private final static double UNKNOWN = -1.0;
     private final static double OBSTACLE = 1.0;
+
     @Override
     public int getArity() {
         return 2;
@@ -40,13 +43,15 @@ public class ClearGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public Double[][] getValue() {
-        final Double[][] base = this.getInputValue(0);
+//        final Double[][] base = Arrays.copyOf((Double[][]) this.getInputValue(0),
+//                ((Double[][]) this.getInputValue(0)).length);
+         final Double[][] base = this.getInputValue(0);
         final Double[][] grid = this.getInputValue(1);
 
         for (int i = 0; i < base.length; i++) {
             for (int j = 0; j < base[i].length; j++) {
                 if (grid[i][j] >= FREE) {
-                    base[i][j] = FREE;
+                 //   base[i][j] = FREE;
                 }
             }
         }

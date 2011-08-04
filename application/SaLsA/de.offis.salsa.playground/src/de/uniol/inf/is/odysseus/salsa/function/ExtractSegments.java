@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeInterval>>> {
     private final GeometryFactory geometryFactory = new GeometryFactory();
     private static Logger LOG = LoggerFactory.getLogger(ExtractSegments.class);
-    
+
     public static final SDFDatatype[] accTypes0 = new SDFDatatype[] {
         SDFDatatype.SPATIAL_MULTI_POINT
     };
@@ -76,24 +76,24 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
         return "ExtractSegments";
     }
 
-    //FIXME need metadata to set timestamp
+    // FIXME need metadata to set timestamp
     @Override
     public List<RelationalTuple<TimeInterval>> getValue() {
 
-    	PointInTime startTimestamp = new PointInTime();
-    	
-    	for (IExpression<?> expr : getArguments()) {
-    		
-    		if(expr.getReturnType().isStartTimestamp()){
-    			//LOG.debug("Foundtime");
-    			startTimestamp = (PointInTime)expr.getValue();
-    		}
-    		else{
-    			//LOG.debug("Found no time");
-    			startTimestamp = new PointInTime(System.currentTimeMillis());
-    		}
-    	}
-    	
+        PointInTime startTimestamp = new PointInTime();
+
+        for (IExpression<?> expr : getArguments()) {
+
+            if (expr.getReturnType().isStartTimestamp()) {
+                // LOG.debug("Foundtime");
+                startTimestamp = (PointInTime) expr.getValue();
+            }
+            else {
+                // LOG.debug("Found no time");
+                startTimestamp = new PointInTime(System.currentTimeMillis());
+            }
+        }
+
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double threshold = (Double) this.getInputValue(1);
         final Coordinate[] coordinates = geometry.getCoordinates();
@@ -101,9 +101,9 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
         Coordinate tmp = new Coordinate(Double.MAX_VALUE, Double.MAX_VALUE);
         boolean isSegment = false;
         int start = 0;
-        
+
         TimeInterval time = new TimeInterval(startTimestamp);
-        
+
         for (int i = 0; i < coordinates.length; i++) {
             final Coordinate coordinate = coordinates[i];
 
@@ -111,8 +111,8 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
             tmp = coordinate;
             if (distance >= threshold) {
                 if (isSegment) {
-                	
-                	final List<Coordinate> segment = new ArrayList<Coordinate>();
+
+                    final List<Coordinate> segment = new ArrayList<Coordinate>();
                     for (int j = start; j < i; j++) {
                         if ((coordinates[j].x < Float.MAX_VALUE)
                                 && (coordinates[j].y < Float.MAX_VALUE)) {
@@ -122,7 +122,8 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
                     RelationalTuple<TimeInterval> tuple = new RelationalTuple<TimeInterval>(1);
                     tuple.setMetadata(time);
                     if (segment.size() > 1) {
-                        tuple.setAttribute(0, this.geometryFactory.createLineString(segment.toArray(new Coordinate[] {})));
+                        tuple.setAttribute(0, this.geometryFactory.createLineString(segment
+                                .toArray(new Coordinate[] {})));
                         segments.add(tuple);
                     }
                     else if (segment.size() == 1) {
@@ -138,14 +139,14 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
                 start = i;
             }
         }
-        if (isSegment) {
+        if ((isSegment) && (segments.size() > 0)) {
             final List<Coordinate> segment;
             if (coordinates[coordinates.length - 1].distance(coordinates[0]) > threshold) {
                 segment = new ArrayList<Coordinate>();
             }
             else {
-                segment = Arrays.asList(((Geometry) (segments.get(0).getAttribute(0)))
-                        .getCoordinates());
+                segment = new ArrayList<Coordinate>(Arrays.asList(((Geometry) (segments.get(0)
+                        .getAttribute(0))).getCoordinates()));
                 segments.remove(0);
             }
             for (int j = start; j < coordinates.length; j++) {
@@ -153,11 +154,12 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
                     segment.add(coordinates[j]);
                 }
             }
-            
+
             RelationalTuple<TimeInterval> tuple = new RelationalTuple<TimeInterval>(1);
             if (segment.size() > 1) {
                 tuple.setMetadata(time);
-                tuple.setAttribute(0, this.geometryFactory.createLineString(segment.toArray(new Coordinate[] {})));
+                tuple.setAttribute(0,
+                        this.geometryFactory.createLineString(segment.toArray(new Coordinate[] {})));
                 segments.add(tuple);
             }
             else if (segment.size() == 1) {

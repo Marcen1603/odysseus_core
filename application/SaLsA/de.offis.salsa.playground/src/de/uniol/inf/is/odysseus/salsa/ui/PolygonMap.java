@@ -28,7 +28,7 @@ public class PolygonMap extends JPanel {
 
     public void onFeature(final Geometry segment) {
         this.segments.add(segment);
-        if (this.segments.size() > 100) {
+        if (this.segments.size() > 10) {
             this.repaint();
         }
     }
@@ -52,17 +52,18 @@ public class PolygonMap extends JPanel {
             }
             graphics.setColor(Color.WHITE);
             graphics.drawPolyline(xPoints, yPoints, coordinates.length);
-            final Coordinate[] enverlopeCoordinates = segment.getEnvelope().getCoordinates();
-            xPoints = new int[enverlopeCoordinates.length];
-            yPoints = new int[enverlopeCoordinates.length];
-            index = 0;
-            for (final Coordinate coordinate : enverlopeCoordinates) {
-                xPoints[index] = 500 + (int) (coordinate.x / PolygonMap.SCALE);
-                yPoints[index] = 500 + (int) (coordinate.y / PolygonMap.SCALE);
-                index++;
-            }
-            graphics.setColor(Color.RED);
-            graphics.drawPolyline(xPoints, yPoints, enverlopeCoordinates.length);
+//            final Coordinate[] enverlopeCoordinates = segment.getEnvelope().getCoordinates();
+//            xPoints = new int[enverlopeCoordinates.length];
+//            yPoints = new int[enverlopeCoordinates.length];
+//            index = 0;
+//            for (final Coordinate coordinate : enverlopeCoordinates) {
+//                xPoints[index] = 500 + (int) (coordinate.x / PolygonMap.SCALE);
+//                yPoints[index] = 500 + (int) (coordinate.y / PolygonMap.SCALE);
+//                index++;
+//            }
+//            graphics.setColor(Color.RED);
+//            graphics.drawPolyline(xPoints, yPoints, enverlopeCoordinates.length);
+
         }
         this.segments.clear();
     }

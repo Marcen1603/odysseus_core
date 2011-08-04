@@ -20,6 +20,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
     private final static double FREE = 0.0;
     private final static double UNKNOWN = -1.0;
     private final static double OBSTACLE = 1.0;
+
     @Override
     public int getArity() {
         return 5;
@@ -47,10 +48,10 @@ public class IsGridFree extends AbstractFunction<Boolean> {
     @Override
     public Boolean getValue() {
         final Double[][] grid = this.getInputValue(0);
-        final Integer x = (Integer) this.getInputValue(1);
-        final Integer y = (Integer) this.getInputValue(2);
-        final Integer width = (Integer) this.getInputValue(3);
-        final Integer height = (Integer) this.getInputValue(4);
+        final Integer x = ((Double) this.getInputValue(1)).intValue();
+        final Integer y = ((Double) this.getInputValue(2)).intValue();
+        final Integer width = ((Double) this.getInputValue(3)).intValue();
+        final Integer height = ((Double) this.getInputValue(4)).intValue();
         boolean free = true;
         for (int i = x; i < width && i < grid.length; i++) {
             for (int j = y; j < height && j < grid[i].length; j++) {

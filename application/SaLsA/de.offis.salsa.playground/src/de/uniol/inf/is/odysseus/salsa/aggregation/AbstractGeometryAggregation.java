@@ -12,7 +12,9 @@ abstract class AbstractGeometryAggregation<R, W> extends AbstractListAggregation
 		
 	@Override
 	public IPartialAggregate<R> init(R in) {
-		return new GeometryPartialAggregate<R>(in);
+	    GeometryPartialAggregate<R> aggregate = new GeometryPartialAggregate<R>();
+	    aggregate.addElem(in);
+		return aggregate;
 	}
 	
 	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
