@@ -77,6 +77,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 				new MetadataComparator<ITimeInterval>());
 		PointInTime startTime = PointInTime.getZeroTime();
 		this.highestStart = new PointInTime[] { startTime, startTime };
+		setOutputSchema(ao.getOutputSchema());
 	}
 
 	public AntiJoinTIPO(AntiJoinTIPO<K, T> antiJoinTIPO) {
