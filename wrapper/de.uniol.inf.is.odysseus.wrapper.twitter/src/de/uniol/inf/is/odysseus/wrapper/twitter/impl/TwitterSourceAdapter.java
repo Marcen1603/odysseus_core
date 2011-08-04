@@ -49,7 +49,7 @@ public class TwitterSourceAdapter extends AbstractPushingSourceAdapter implement
                         status.getText(), status.getInReplyToUserId(), status.getInReplyToUserId(),
                         status.getUser().getLocation()
                 };
-                TwitterSourceAdapter.this.transfer(source.getName(), System.currentTimeMillis(),
+                TwitterSourceAdapter.this.transfer(source, System.currentTimeMillis(),
                         result);
             }
 

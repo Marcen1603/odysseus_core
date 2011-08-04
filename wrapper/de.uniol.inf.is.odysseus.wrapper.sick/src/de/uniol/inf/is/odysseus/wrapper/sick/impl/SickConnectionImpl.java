@@ -11,11 +11,11 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.sick.MeasurementListener;
 import de.uniol.inf.is.odysseus.wrapper.sick.SickConnection;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Background;
@@ -34,26 +34,23 @@ public class SickConnectionImpl implements SickConnection {
         private final Charset charset = Charset.forName("ASCII");
         private Background background;
         private boolean record = false;
-        private final int recordInterval;
+        private long recordInterval;
         private long recordEnd;
         private final SickConnectionImpl connection;
 
-        public SickConnectionHandler(final String host, final int port, final boolean record,
-                final SickConnectionImpl connection) {
-            this.host = host;
-            this.port = port;
-            this.connection = connection;
-            this.record = record;
-            this.recordInterval = Integer.MAX_VALUE;
-        }
-
-        public SickConnectionHandler(final String host, final int port, final int recordInterval,
+        public SickConnectionHandler(final String host, final int port, final long recordInterval,
                 final SickConnectionImpl connection) {
             this.host = host;
             this.port = port;
             this.connection = connection;
             this.recordInterval = recordInterval;
-            this.record = true;
+            this.recordEnd = System.currentTimeMillis() + Long.MAX_VALUE;
+            if (recordInterval > 0l) {
+                this.record = true;
+            }
+            else {
+                this.record = false;
+            }
         }
 
         public void setRecordBackground(boolean record) {
@@ -215,7 +212,7 @@ public class SickConnectionImpl implements SickConnection {
                             throw new SickReadErrorException(message);
                         }
                         if (this.record) {
-                            if (System.currentTimeMillis() <= recordEnd) {
+                            if (System.currentTimeMillis() > recordEnd) {
                                 this.record = false;
                             }
                             if (this.background == null) {
@@ -350,14 +347,10 @@ public class SickConnectionImpl implements SickConnection {
     private static final String RSSI2 = "RSSI2";
 
     private SickConnectionHandler handler = null;
-    private String uri;
     private MeasurementListener listener;
+    private SourceSpec source;
 
-    public SickConnectionImpl(final String host, final int port, final boolean record) {
-        this.handler = new SickConnectionHandler(host, port, record, this);
-    }
-
-    public SickConnectionImpl(final String host, final int port, final int record) {
+    public SickConnectionImpl(final String host, final int port, final long record) {
         this.handler = new SickConnectionHandler(host, port, record, this);
     }
 
@@ -386,9 +379,7 @@ public class SickConnectionImpl implements SickConnection {
     }
 
     public void onMeasurement(final Measurement measurement, final long timestamp) {
-        if (this.listener != null) {
-            this.listener.onMeasurement(this.uri, measurement, timestamp);
-        }
+        this.listener.onMeasurement(source, measurement, timestamp);
     }
 
     @Override
@@ -397,8 +388,8 @@ public class SickConnectionImpl implements SickConnection {
     }
 
     @Override
-    public void setListener(final String uri, final MeasurementListener listener) {
+    public void setListener(final SourceSpec source, final MeasurementListener listener) {
         this.listener = listener;
-        this.uri = uri;
+        this.source = source;
     }
 }

@@ -157,7 +157,7 @@ public class HTMLSourceAdapter extends AbstractPollingSourceAdapter implements S
             }
             i++;
         }
-        this.transfer(source.getName(), System.currentTimeMillis(), result);
+        this.transfer(source, System.currentTimeMillis(), result);
     }
 
 }

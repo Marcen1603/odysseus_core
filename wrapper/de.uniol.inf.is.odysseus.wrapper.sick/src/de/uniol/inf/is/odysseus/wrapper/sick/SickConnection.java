@@ -1,12 +1,13 @@
 package de.uniol.inf.is.odysseus.wrapper.sick;
 
+import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Background;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public interface SickConnection {
-	void close();
+    void close();
 
     Background getBackground();
 
@@ -14,9 +15,9 @@ public interface SickConnection {
 
     void open();
 
-    void setListener(String uri, MeasurementListener listener);
-//
-//    void startRecordBackground();
-//
-//    void stopRecordBackground();
+    void setListener(SourceSpec source, MeasurementListener listener);
+    //
+    // void startRecordBackground();
+    //
+    // void stopRecordBackground();
 }

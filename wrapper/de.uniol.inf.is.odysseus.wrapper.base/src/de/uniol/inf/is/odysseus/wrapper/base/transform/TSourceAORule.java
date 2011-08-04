@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wrapper.base.logicaloperator.SourceAO;
 import de.uniol.inf.is.odysseus.wrapper.base.physicaloperator.SourcePO;
+import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
 public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
     private static Logger LOG = LoggerFactory.getLogger(TSourceAORule.class);
@@ -24,8 +25,13 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
     @Override
     public void execute(final SourceAO operator, final TransformationConfiguration config) {
         try {
-            final SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getAdapter(),
+            SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getAdapter(),
                     operator.getOptionsMap());
+            if (SourcePool.hasSemanticallyEqualSource(po)) {
+                po = SourcePool.getSemanticallyEqualSource(po);
+            }else {
+                SourcePool.registerSource(operator.getAdapter(), po, operator.getOptionsMap());
+            }
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);
             for (final ILogicalOperator o : toUpdate) {

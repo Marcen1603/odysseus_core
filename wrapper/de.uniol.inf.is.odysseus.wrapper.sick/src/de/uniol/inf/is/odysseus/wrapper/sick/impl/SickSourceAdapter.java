@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.sick.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,23 +41,22 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
             if (source.getConfiguration().get("record") != null) {
                 record = source.getConfiguration().get("record").toString();
             }
-            if (record.equalsIgnoreCase("true")) {
-                connection = new SickConnectionImpl(host, port, true);
-            }
-            else if (record.equalsIgnoreCase("false")) {
-                connection = new SickConnectionImpl(host, port, false);
+            if (record.equalsIgnoreCase("false")) {
+                connection = new SickConnectionImpl(host, port, 0l);
             }
             else {
-                connection = new SickConnectionImpl(host, port, Integer.parseInt(record));
+                connection = new SickConnectionImpl(host, port, Long.parseLong(record));
             }
 
             SickSourceAdapter.LOG.debug(String.format(
                     "Open connection to SICK sensor at %s:%s BackroundRecord:%s ", host, port,
                     record));
-            connection.setListener(source.getName(), this);
+
             connection.open();
             this.connections.put(source, connection);
+            connection.setListener(source, this);
         }
+
     }
 
     @Override
@@ -64,15 +65,18 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements M
     }
 
     @Override
-    public void onMeasurement(final String uri, final Measurement measurement, final long timestamp) {
+    public void onMeasurement(final SourceSpec source, final Measurement measurement,
+            final long timestamp) {
         if ((measurement != null) && (measurement.getSamples() != null)) {
-            final Point[] coordinates = new Point[measurement.getSamples().length];
+            final List<Point> coordinates = new ArrayList<Point>(measurement.getSamples().length);
             for (int i = 0; i < measurement.getSamples().length; i++) {
                 final Sample sample = measurement.getSamples()[i];
-                coordinates[i] = this.geometryFactory.createPoint(sample.getDist1Vector());
+                if (sample.getDist1()<Float.MAX_VALUE) {
+                coordinates.add(this.geometryFactory.createPoint(sample.getDist1Vector()));
+                }
             }
-            SickSourceAdapter.this.transfer(uri, timestamp, new Object[] {
-                this.geometryFactory.createMultiPoint(coordinates)
+            SickSourceAdapter.this.transfer(source, timestamp, new Object[] {
+                this.geometryFactory.createMultiPoint(coordinates.toArray(new Point[]{}))
             });
         }
 

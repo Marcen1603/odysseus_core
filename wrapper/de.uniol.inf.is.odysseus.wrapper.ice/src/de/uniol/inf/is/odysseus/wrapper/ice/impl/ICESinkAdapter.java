@@ -45,23 +45,24 @@ public class ICESinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 
     @Override
     protected void init(final SinkSpec sink) {
-        final String service = sink.getConfiguration().get("service").toString();
-        final String host = sink.getConfiguration().get("host").toString();
-        final int port = Integer.parseInt(sink.getConfiguration().get("port").toString());
-        final String protocol = sink.getConfiguration().get("protocol").toString();
-        final String ownService = sink.getConfiguration().get("ownService").toString();
-        final int ownPort = Integer.parseInt(sink.getConfiguration().get("ownPort").toString());
-        try {
-            final ICEConnection connection = new ICEConnection(sink, service, host, port, protocol,
-                    "", "", ownService, ownPort, this);
-            final Thread iceThread = new Thread(connection);
-            this.iceThreads.put(sink, iceThread);
-            iceThread.start();
+        if (!iceThreads.containsKey(sink)) {
+            final String service = sink.getConfiguration().get("service").toString();
+            final String host = sink.getConfiguration().get("host").toString();
+            final int port = Integer.parseInt(sink.getConfiguration().get("port").toString());
+            final String protocol = sink.getConfiguration().get("protocol").toString();
+            final String ownService = sink.getConfiguration().get("ownService").toString();
+            final int ownPort = Integer.parseInt(sink.getConfiguration().get("ownPort").toString());
+            try {
+                final ICEConnection connection = new ICEConnection(sink, service, host, port,
+                        protocol, "", "", ownService, ownPort, this);
+                final Thread iceThread = new Thread(connection);
+                this.iceThreads.put(sink, iceThread);
+                iceThread.start();
+            }
+            catch (final Exception e) {
+                ICESinkAdapter.LOG.error(e.getMessage(), e);
+            }
         }
-        catch (final Exception e) {
-            ICESinkAdapter.LOG.error(e.getMessage(), e);
-        }
-
     }
 
     private class ICEConnection implements Runnable {
@@ -103,7 +104,6 @@ public class ICESinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
                 final ObjectPrx base = this.communicator.stringToProxy(this.proxy);
                 if (base != null) {
                     this.connectionObject = ClientCommunicatorPrxHelper.checkedCast(base);
-                    System.out.println("Create proxy ");
                     this.connectionObject.ice_ping();
                     while (!Thread.currentThread().isInterrupted()) {
                         final Float speed = ICESinkAdapter.this.messageQueue.take();

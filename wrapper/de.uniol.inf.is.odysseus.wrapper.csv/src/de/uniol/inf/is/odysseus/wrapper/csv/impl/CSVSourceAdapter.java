@@ -105,7 +105,7 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
                         while (((line = reader.readLine()) != null)
                                 && (!Thread.currentThread().isInterrupted())) {
                             final String[] values = line.split(",");
-                            this.adapter.transfer(this.source.getName(),
+                            this.adapter.transfer(this.source,
                                     System.currentTimeMillis(), values);
                         }
                     }

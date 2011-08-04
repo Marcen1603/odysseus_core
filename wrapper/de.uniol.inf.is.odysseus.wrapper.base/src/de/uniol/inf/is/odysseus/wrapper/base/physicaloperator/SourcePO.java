@@ -48,7 +48,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     @Override
     protected void process_open() throws OpenFailedException {
-        SourcePool.registerSource(this.adapterName, this, this.options);
+        SourcePool.enableSource(this);
     }
 
     /*
@@ -58,7 +58,7 @@ public class SourcePO<T extends IMetaAttribute> extends
     @Override
     protected void process_close() {
         super.process_close();
-        SourcePool.unregisterSource(this);
+        SourcePool.disableSource(this);
     }
 
     /*
@@ -107,6 +107,15 @@ public class SourcePO<T extends IMetaAttribute> extends
                 && (((SourcePO<?>) ipo).options.equals(this.options));
     }
 
+    @Override
+    public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+        if (!(ipo instanceof SourcePO<?>)) {
+            return false;
+        }
+        return (((SourcePO<?>) ipo).adapterName.equals(this.adapterName))
+                && (((SourcePO<?>) ipo).options.equals(this.options));
+    }
+
     /*
      * (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#clone()
@@ -115,4 +124,5 @@ public class SourcePO<T extends IMetaAttribute> extends
     public SourcePO<T> clone() {
         return new SourcePO<T>(this);
     }
+
 }

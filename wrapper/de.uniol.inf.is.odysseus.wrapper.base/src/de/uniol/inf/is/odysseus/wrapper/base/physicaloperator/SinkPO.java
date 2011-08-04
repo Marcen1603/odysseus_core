@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -62,7 +63,7 @@ public class SinkPO<T extends IMetaAttribute> extends AbstractSink<RelationalTup
             final boolean isReadOnly) {
         if (this.isOpen()) {
             try {
-                SinkPool.transfer(this.getName(), event.getMetadata().getStart().getMainPoint(),
+                SinkPool.transfer(this, event.getMetadata().getStart().getMainPoint(),
                         event.getAttributes());
             }
             catch (final Exception e) {
@@ -80,4 +81,21 @@ public class SinkPO<T extends IMetaAttribute> extends AbstractSink<RelationalTup
         return new SinkPO<T>(this);
     }
 
+    @Override
+    public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+        if (!(ipo instanceof SinkPO<?>)) {
+            return false;
+        }
+        return (((SinkPO<?>) ipo).adapterName.equals(this.adapterName))
+                && (((SinkPO<?>) ipo).options.equals(this.options));
+    }
+
+    @Override
+    public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+        if (!(ipo instanceof SinkPO<?>)) {
+            return false;
+        }
+        return (((SinkPO<?>) ipo).adapterName.equals(this.adapterName))
+                && (((SinkPO<?>) ipo).options.equals(this.options));
+    }
 }

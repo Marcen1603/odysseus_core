@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.base.pool;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -9,21 +11,20 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceConfigurationImpl;
 import de.uniol.inf.is.odysseus.wrapper.base.model.impl.SourceSpecImpl;
+import de.uniol.inf.is.odysseus.wrapper.base.physicaloperator.SourcePO;
 
 public class SourcePool<T extends IMetaAttribute> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePool.class);
-    private final Map<String, AbstractSource<RelationalTuple<TimeInterval>>> sources = new ConcurrentHashMap<String, AbstractSource<RelationalTuple<TimeInterval>>>();
+    private final Map<SourceSpec, SourcePO<?>> sources = new ConcurrentHashMap<SourceSpec, SourcePO<?>>();
     private final Map<String, SourceAdapter> adapters = new ConcurrentHashMap<String, SourceAdapter>();
     private final Map<String, String> sourceAdapterMapping = new ConcurrentHashMap<String, String>();
-    private final Map<String, SourceSpec> sourceSpecs = new ConcurrentHashMap<String, SourceSpec>();
-
+    private final Set<SourcePO<?>> enableSources = new HashSet<SourcePO<?>>();
     private static SourcePool<?> instance;
 
     public synchronized static SourcePool<?> getInstance() {
@@ -33,8 +34,23 @@ public class SourcePool<T extends IMetaAttribute> {
         return SourcePool.instance;
     }
 
-    public static void registerSource(final String adapterName,
-            final AbstractSource<RelationalTuple<TimeInterval>> source,
+    public static boolean hasSemanticallyEqualSource(SourcePO<?> other) {
+        return SourcePool.getInstance()._hasSemanticallyEqualSource(other);
+    }
+
+    public static SourcePO<?> getSemanticallyEqualSource(SourcePO<?> other) {
+        return SourcePool.getInstance()._getSemanticallyEqualSource(other);
+    }
+
+    public static void enableSource(final SourcePO<?> source) {
+        SourcePool.getInstance()._enableSource(source);
+    }
+
+    public static void disableSource(final SourcePO<?> source) {
+        SourcePool.getInstance()._disableSource(source);
+    }
+
+    public static void registerSource(final String adapterName, final SourcePO<?> source,
             final Map<String, String> options) {
         SourcePool.getInstance()._registerSource(adapterName, source, options);
     }
@@ -43,11 +59,12 @@ public class SourcePool<T extends IMetaAttribute> {
         SourcePool.getInstance()._registerAdapter(adapter);
     }
 
-    public static void transfer(final String uri, final long timestamp, final Object[] data) {
-        SourcePool.getInstance()._transfer(uri, timestamp, data);
+    public static void transfer(final SourceSpec sourceSpec, final long timestamp,
+            final Object[] data) {
+        SourcePool.getInstance()._transfer(sourceSpec, timestamp, data);
     }
 
-    public static void unregisterSource(final AbstractSource<RelationalTuple<TimeInterval>> source) {
+    public static void unregisterSource(final SourcePO<?> source) {
         SourcePool.getInstance()._unregisterSource(source);
     }
 
@@ -55,8 +72,33 @@ public class SourcePool<T extends IMetaAttribute> {
         SourcePool.getInstance()._unregisterAdapter(adapter);
     }
 
-    private void _registerSource(final String adapterName,
-            final AbstractSource<RelationalTuple<TimeInterval>> source,
+    private boolean _hasSemanticallyEqualSource(SourcePO<?> other) {
+        for (SourcePO<?> source : sources.values()) {
+            if (source.isSemanticallyEqual(other)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private SourcePO<?> _getSemanticallyEqualSource(SourcePO<?> other) {
+        for (SourcePO<?> source : sources.values()) {
+            if (source.isSemanticallyEqual(other)) {
+                return source;
+            }
+        }
+        return null;
+    }
+
+    private void _enableSource(final SourcePO<?> source) {
+        this.enableSources.add(source);
+    }
+
+    private void _disableSource(final SourcePO<?> source) {
+        this.enableSources.remove(source);
+    }
+
+    private void _registerSource(final String adapterName, final SourcePO<?> source,
             final Map<String, String> options) {
         final SourceSpec sourceSpec = new SourceSpecImpl(source.getName());
 
@@ -71,21 +113,21 @@ public class SourcePool<T extends IMetaAttribute> {
         // sourceSpec.addAttribute(attribute, attributeConfiguration);
         // }
         // }
-
-        this.sources.put(source.getName(), source);
-        this.sourceSpecs.put(source.getName(), sourceSpec);
-
-        final SourceAdapter adapter = this.adapters.get(adapterName);
-        if (adapter != null) {
-            adapter.registerSource(sourceSpec);
-
-            this.sourceAdapterMapping.put(source.getName(), adapter.getName());
-            SourcePool.LOG
-                    .info("Physical Source {} registered for adapter {}", source, adapterName);
+        if (!this.sources.containsKey(sourceSpec)) {
+            this.sources.put(sourceSpec, source);
+            final SourceAdapter adapter = this.adapters.get(adapterName);
+            if (adapter != null) {
+                adapter.registerSource(sourceSpec);
+                this.sourceAdapterMapping.put(source.getName(), adapter.getName());
+                SourcePool.LOG.info("Physical Source {} registered for adapter {}", source,
+                        adapterName);
+            }
+            else {
+                SourcePool.LOG.info("Adapter {} not found", adapterName);
+            }
         }
         else {
-            SourcePool.LOG.info("Adapter {} not found", adapterName);
-
+            SourcePool.LOG.info("SourceSpec  {} already registered", sourceSpec);
         }
     }
 
@@ -95,8 +137,8 @@ public class SourcePool<T extends IMetaAttribute> {
         SourcePool.LOG.info("Adapter {} registered", adapter.getName());
     }
 
-    private void _transfer(final String sourceName, final long timestamp, final Object[] data) {
-        if ((this.sources.containsKey(sourceName)) && this.sources.get(sourceName).isOpen()) {
+    private void _transfer(final SourceSpec sourceSpec, final long timestamp, final Object[] data) {
+        if (this.sources.containsKey(sourceSpec)) {
             final RelationalTuple<TimeInterval> event = new RelationalTuple<TimeInterval>(
                     data.length);
             for (int i = 0; i < data.length; i++) {
@@ -105,7 +147,10 @@ public class SourcePool<T extends IMetaAttribute> {
             final TimeInterval metadata = new TimeInterval(new PointInTime(timestamp));
             event.setMetadata(metadata);
             try {
-                this.sources.get(sourceName).transfer(event);
+                SourcePO<?> source = this.sources.get(sourceSpec);
+                if (enableSources.contains(source)) {
+                    this.sources.get(sourceSpec).transfer(event);
+                }
             }
             catch (final Exception e) {
                 SourcePool.LOG.error(e.getMessage(), e);
@@ -113,13 +158,20 @@ public class SourcePool<T extends IMetaAttribute> {
         }
     }
 
-    private void _unregisterSource(final AbstractSource<RelationalTuple<TimeInterval>> source) {
+    private void _unregisterSource(final SourcePO<?> source) {
         if (this.sourceAdapterMapping.containsKey(source.getName())) {
             final SourceAdapter adapter = this.adapters.get(this.sourceAdapterMapping.get(source
                     .getName()));
-            adapter.unregisterSource(this.sourceSpecs.get(source.getName()));
-            this.sources.remove(source.getName());
-            this.sourceSpecs.remove(source.getName());
+            SourceSpec sourceSpec = null;
+            for (SourceSpec spec : this.sources.keySet()) {
+                if (this.sources.get(spec).equals(source)) {
+                    sourceSpec = spec;
+                }
+            }
+            if (sourceSpec != null) {
+                adapter.unregisterSource(sourceSpec);
+                this.sources.remove(sourceSpec);
+            }
             this.sourceAdapterMapping.remove(source.getName());
             SourcePool.LOG.info("Physical Source {} unregistered", source);
         }

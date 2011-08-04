@@ -42,7 +42,7 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
 
     @Override
     protected void doInit(final SourceSpec source) {
-        if (this.iceThreads.size() == 0) {
+        if (!iceThreads.containsKey(source)) {
             final String service = source.getConfiguration().get("service").toString();
             final String host = source.getConfiguration().get("host").toString();
             final int port = Integer.parseInt(source.getConfiguration().get("port").toString());
@@ -109,7 +109,6 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
                 final ObjectPrx base = this.communicator.stringToProxy(this.proxy);
                 if (base != null) {
                     this.connectionObject = ClientCommunicatorPrxHelper.checkedCast(base);
-                    System.out.println("Create proxy ");
                     this.connectionObject.ice_ping();
 
                     // SimulationFacadePrx simulation = SimulationFacadePrxHelper
@@ -133,7 +132,7 @@ public class ICESourceAdapter extends AbstractPushingSourceAdapter implements So
                         coordinate.x = position.x * ICESourceAdapter.METER_PER_PIXEL * 1000;
                         coordinate.y = position.y * ICESourceAdapter.METER_PER_PIXEL * 1000;
                         // position.heading + Math.PI / 2;
-                        this.adapter.transfer(this.source.getName(), System.currentTimeMillis(),
+                        this.adapter.transfer(this.source, System.currentTimeMillis(),
                                 new Object[] {
                                     this.geometryFactory.createPoint(coordinate)
                                 });
