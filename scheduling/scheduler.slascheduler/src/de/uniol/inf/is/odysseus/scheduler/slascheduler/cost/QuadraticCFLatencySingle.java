@@ -38,12 +38,12 @@ public class QuadraticCFLatencySingle extends QuadraticCFLatency {
 			// square relative position 
 			temp = temp * temp;
 			/* 
-			 * multiply cost with relative position and add penalty for 
+			 * multiply cost with relative position and add half of penalty for 
 			 * violation of current service level
 			 */
-			return temp * delta + delta;
+			return temp * delta + 0.5 * delta;
 		} else {
-			// TODO replace this by 0 and define time-dependant mg() function!
+			// TODO replace this by 0 and define time-dependant mg() function?
 			return sla.getMaxPenalty() * conformance;
 		}
 		
