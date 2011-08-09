@@ -44,7 +44,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.MANDATORY, new CreateSDFAttributeParameter(
-					"ATTRIBUTE", REQUIREMENT.MANDATORY));
+					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
 
 	private final LongParameter delay = new LongParameter("DELAY",
 			REQUIREMENT.OPTIONAL);

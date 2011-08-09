@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 import java.lang.reflect.Method;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> {
 
@@ -65,16 +64,16 @@ public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> 
 
 	private SDFDatatype getAccordingSDFDataType(Class<?> returnType) {
 		if (returnType.equals(Integer.class) || returnType.equals(int.class)) {
-			return GlobalState.getActiveDatadictionary().getDatatype("Integer");
+			return SDFDatatype.INTEGER;			
 		}
 		if (returnType.equals(Double.class) || returnType.equals(double.class)) {
-			return GlobalState.getActiveDatadictionary().getDatatype("Double");
+			return SDFDatatype.DOUBLE;
 		}
 		if (returnType.equals(Long.class) || returnType.equals(long.class)) {
-			return GlobalState.getActiveDatadictionary().getDatatype("Long");
+			return SDFDatatype.LONG;
 		}
 		if (returnType.equals(PointInTime.class)) {
-			return GlobalState.getActiveDatadictionary().getDatatype("PointInTime");
+			return SDFDatatype.POINT_IN_TIME;
 		}
 		return null;
 	}

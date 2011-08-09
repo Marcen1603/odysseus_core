@@ -15,12 +15,12 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class PointInTimeDatatypeProvider extends AbstractViewableDatatype<Double> {
 
 	public PointInTimeDatatypeProvider(){
-		super.addProvidedSDFDatatype(GlobalState.getActiveDatadictionary().getDatatype("PointInTime"));
+		super.addProvidedSDFDatatype(SDFDatatype.POINT_IN_TIME);
 		super.addProvidedClass(PointInTime.class);
 	}
 	

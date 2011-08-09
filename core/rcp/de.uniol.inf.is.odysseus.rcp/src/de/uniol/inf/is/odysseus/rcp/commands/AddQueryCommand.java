@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class AddQueryCommand extends AbstractHandler implements IHandler {
 
-	private final Logger logger = LoggerFactory.getLogger(AddQueryCommand.class);
+	private final Logger logger = LoggerFactory.getLogger(AddQueryCommand.class);	
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -50,7 +50,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		final String queryToExecute = event.getParameter(OdysseusRCPPlugIn.QUERY_PARAMETER_ID);
 		final String parserToUse = event.getParameter(OdysseusRCPPlugIn.PARSER_PARAMETER_ID);
 		final String parameterTransformationConfigurationName = event.getParameter(OdysseusRCPPlugIn.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID);
-		final User user = GlobalState.getActiveUser();
+		final User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 		final IDataDictionary dd = GlobalState.getActiveDatadictionary();
 		
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();

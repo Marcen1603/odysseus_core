@@ -14,7 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.usermanagement.client;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -24,7 +26,7 @@ public class GlobalState {
 	
 	private static List<IActiveUserListener> activeUserListener = new CopyOnWriteArrayList<IActiveUserListener>();
 	
-	private static User activeUser; 
+	private static Map<String, User> activeUser = new HashMap<String, User>(); 
 	private static IDataDictionary activeDatadictionary;
 	
 	public static IDataDictionary getActiveDatadictionary() {
@@ -38,13 +40,13 @@ public class GlobalState {
 	private GlobalState() {
 	}
 	
-	public synchronized static void setActiveUser( User user ) {
-		activeUser = user;
-		fire();
+	public synchronized static void setActiveUser(String token, User user) {
+		activeUser.put(token, user);
+		fire(user);
 	}
 	
-	public synchronized static User getActiveUser() { 
-		return activeUser;
+	public synchronized static User getActiveUser(String token) { 
+		return activeUser.get(token);
 	}
 	
 	public static void addActiveUserListner(IActiveUserListener listener){
@@ -55,9 +57,9 @@ public class GlobalState {
 		activeUserListener.remove(listener);
 	}
 	
-	public static void fire(){
+	public static void fire(User user){
 		for (IActiveUserListener l: activeUserListener){
-			l.activeUserChanged(activeUser);
+			l.activeUserChanged(user);
 		}
 	}
 	

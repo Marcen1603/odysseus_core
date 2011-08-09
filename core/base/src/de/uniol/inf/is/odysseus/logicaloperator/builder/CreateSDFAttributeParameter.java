@@ -16,15 +16,17 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CreateSDFAttributeParameter extends
 		AbstractParameter<SDFAttribute> {
 	private static final long serialVersionUID = -544787040358885000L;
+	private IDataDictionary dd;
 
-	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement) {
+	public CreateSDFAttributeParameter(String name, REQUIREMENT requirement, IDataDictionary dd) {
 		super(name, requirement);
+		this.dd = dd;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -36,7 +38,7 @@ public class CreateSDFAttributeParameter extends
 					"Wrong number of inputs for SDFAttribute. Expecting id and datatype.");
 		}
 		SDFAttribute attribute = new SDFAttribute(list.get(0));
-		attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(list.get(1)));
+		attribute.setDatatype(dd.getDatatype(list.get(1)));
 
 		setValue(attribute);
 	}

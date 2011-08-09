@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
@@ -87,10 +88,10 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 				// the last plan is the complete plan
 				// so transform this one
 				IQuery query = plans.get(plans.size() - 1);
-				compiler.transform(query, cfg.getValue(), GlobalState.getActiveUser(), dd);
+				compiler.transform(query, cfg.getValue(), GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN), dd);
 	
 				IQuery addedQuery = executor.addQuery(query.getRoots(), user, transCfg.toArray(new IQueryBuildSetting[0]));
-				executor.startQuery(addedQuery.getID(), GlobalState.getActiveUser());
+				executor.startQuery(addedQuery.getID(), GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 			} 
 
 		} catch (QueryParseException e1) {

@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
@@ -74,7 +75,7 @@ public class SourcesViewPart extends ViewPart implements
 				try {
 					getTreeViewer().setInput(
 							getDataDictionary().getStreamsAndViews(
-									GlobalState.getActiveUser()));
+									GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
 					e.printStackTrace();// ?

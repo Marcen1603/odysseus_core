@@ -92,6 +92,7 @@ public class OdysseusDefaults {
 		props.setProperty("slasFilename", odysseusHome + "slas.store");
 
 		props.setProperty("storeDataDictionary", Boolean.FALSE.toString());
+		props.setProperty("defaultDataDictionaryName", "DEFAULT_DD");
 		props.setProperty("streamDefinitionsFilename", odysseusHome
 				+ "viewDefinitions.store");
 		props.setProperty("streamOrViewFromUserFilename", odysseusHome

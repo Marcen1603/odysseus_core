@@ -72,7 +72,7 @@ public class StartQueryCommand extends AbstractHandler implements IHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						executor.startQuery(qID2, GlobalState.getActiveUser());
+						executor.startQuery(qID2, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 						StatusBarManager.getInstance().setMessage("Query started");
 					} catch (PlanManagementException e) {
 						e.printStackTrace();

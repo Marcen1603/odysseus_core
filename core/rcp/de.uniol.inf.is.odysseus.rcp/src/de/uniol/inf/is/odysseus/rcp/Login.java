@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
@@ -78,8 +79,8 @@ public class Login {
 
 			if (user != null) {
 				// anmelden ok
-				GlobalState.setActiveUser(user);
-				GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary("RCP"));
+				GlobalState.setActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN, user);
+				GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary(OdysseusDefaults.get("defaultDataDictionaryName")));
 				StatusBarManager.getInstance().setMessage(
 						"Automatically logged in as " + username);
 				return user;

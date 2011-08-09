@@ -14,13 +14,13 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype;
 
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 
 public class IntegerDatatypeProvider extends AbstractViewableDatatype<Double> {
 
 	public IntegerDatatypeProvider() {
-		super.addProvidedSDFDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
+		super.addProvidedSDFDatatype(SDFDatatype.INTEGER);
 		super.addProvidedClass(Integer.class);
 		super.addProvidedClass(int.class);
 	}

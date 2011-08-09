@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype;
 
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 
 
@@ -22,7 +22,7 @@ public class DoubleDatatypeProvider extends AbstractViewableDatatype<Double>
 {
 
 	public DoubleDatatypeProvider() {
-		super.addProvidedSDFDatatype(GlobalState.getActiveDatadictionary().getDatatype("Double"));			
+		super.addProvidedSDFDatatype(SDFDatatype.DOUBLE);			
 		super.addProvidedClass(Double.class);
 		super.addProvidedClass(double.class);		
 	}

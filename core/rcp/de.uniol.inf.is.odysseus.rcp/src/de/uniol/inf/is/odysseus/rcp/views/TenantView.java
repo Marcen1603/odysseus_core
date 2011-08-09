@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
@@ -47,11 +48,11 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 					l.add(new UserContentNode(
 							UserManagement.getInstance()
 									.getUsers(
-											GlobalState.getActiveUser())));
+											GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN))));
 				} catch (HasNoPermissionException e) {
 					// If user has no rights to view all users, only the
 					// current user is shown
-					l.add(GlobalState.getActiveUser());
+					l.add(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 				}
 				viewer.setInput(l);
 			}

@@ -20,7 +20,7 @@ import java.util.Map;
 public class DataDictionaryFactory {
 
 	static private Map<String, IDataDictionary> cache = new HashMap<String, IDataDictionary>();
-	
+	//TODO: sind mehrere datadictionarys notwendig oder reicht eins?
 	static public IDataDictionary getDefaultDataDictionary(String name){
 		IDataDictionary ret = cache.get(name);
 		if (ret == null){

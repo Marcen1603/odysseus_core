@@ -67,7 +67,7 @@ public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						executor.removeQuery(qID2, GlobalState.getActiveUser());
+						executor.removeQuery(qID2, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 						StatusBarManager.getInstance().setMessage("Query removed successfully");
 					} catch (PlanManagementException e) {
 						e.printStackTrace();

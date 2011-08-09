@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.editors.LogicalPlanEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
@@ -65,7 +66,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 					return null;
 				}
 				// Logischen Plan aufbauen
-				buildLogicalPlan(part.getOperatorPlan(), GlobalState.getActiveUser(), GlobalState.getActiveDatadictionary());
+				buildLogicalPlan(part.getOperatorPlan(), GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN), GlobalState.getActiveDatadictionary());
 
 			}
 		} catch (Exception ex) {

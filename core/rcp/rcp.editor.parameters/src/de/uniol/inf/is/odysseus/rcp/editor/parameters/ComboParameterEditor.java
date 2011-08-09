@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.SimpleParameterEditor;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
@@ -90,7 +91,7 @@ public class ComboParameterEditor extends SimpleParameterEditor<String> implemen
 	protected String[] getList() {
 		// Liste der Quellen
 		List<String> sources = new ArrayList<String>();
-		for( Entry<String, ILogicalOperator> e : GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveUser())) {
+		for( Entry<String, ILogicalOperator> e : GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN))) {
 			sources.add(e.getKey());
 		}
 		return sources.toArray(new String[sources.size()]);

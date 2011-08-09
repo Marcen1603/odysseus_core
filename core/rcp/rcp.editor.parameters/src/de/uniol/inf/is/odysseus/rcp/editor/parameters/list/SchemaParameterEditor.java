@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.ComboEditingColumn
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.SimpleColumnDefinition;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.TextEditingColumnDefinition;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class SchemaParameterEditor extends AbstractTableButtonListParameterEditor<SDFAttribute, SDFAttribute, List<String>> {
@@ -38,7 +39,7 @@ public class SchemaParameterEditor extends AbstractTableButtonListParameterEdito
 	@Override
 	protected SDFAttribute createNewDataRow() {
 		SDFAttribute attr = new SDFAttribute("attribute");
-		attr.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
+		attr.setDatatype(SDFDatatype.INTEGER);
 		return attr;
 	}
 	

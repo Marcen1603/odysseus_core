@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -26,7 +27,7 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 	protected User getCurrentUser(Map<String, Object> variables){
 		Object user =  variables.get("USER");
 		if (user == null){
-			user = GlobalState.getActiveUser();
+			user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 		}
 		return (User)user;
 	}
