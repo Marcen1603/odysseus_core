@@ -96,7 +96,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 								adv.getSourceName(), adv);
 						IDataDictionary datadictionary = GlobalState
 								.getActiveDatadictionary();
-						User caller = GlobalState.getActiveUser();
+						User caller = GlobalState.getActiveUser("");
 						// Login des users?
 						String viewname = adv.getSourceName();
 

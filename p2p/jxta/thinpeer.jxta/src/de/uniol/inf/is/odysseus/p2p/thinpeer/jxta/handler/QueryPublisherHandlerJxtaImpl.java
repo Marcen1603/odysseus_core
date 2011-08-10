@@ -101,7 +101,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
 		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
 		q.setDeclarativeQuery(query);
-		q.setUser(GlobalState.getActiveUser());
+		q.setUser(GlobalState.getActiveUser(""));
 		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setId(queryId);
 		BidJxtaImpl bid = new BidJxtaImpl();

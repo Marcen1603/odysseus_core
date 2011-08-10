@@ -73,7 +73,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		super(new SocketServerListener(), Log.getInstance());
 		getSocketServerListener().setPeer(this);
 		// TODO: Nutzer auslesen
-		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
+		GlobalState.setActiveUser("",UserManagement.getInstance().getSuperUser());
 		GlobalState.setActiveDatadictionary(null);
 	}
 

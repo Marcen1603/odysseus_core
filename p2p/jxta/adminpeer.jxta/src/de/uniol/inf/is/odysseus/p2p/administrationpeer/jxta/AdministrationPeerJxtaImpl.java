@@ -109,7 +109,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		getLogger().debug("Activate Admin Peer");
 
 		// TODO: Nutzer auslesen
-		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
+		GlobalState.setActiveUser("",UserManagement.getInstance().getSuperUser());
 		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur
 		// ein Admin Peer to JVM ..
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory

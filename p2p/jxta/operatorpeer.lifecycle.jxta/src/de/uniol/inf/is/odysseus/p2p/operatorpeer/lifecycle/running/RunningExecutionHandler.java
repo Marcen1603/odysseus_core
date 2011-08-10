@@ -67,7 +67,7 @@ public class RunningExecutionHandler extends
 					logger.debug("Adding plan: "
 							+ AbstractTreeWalker.prefixWalk(s.getAo(),
 									new AlgebraPlanToStringVisitor()));
-					User user = GlobalState.getActiveUser();
+					User user = GlobalState.getActiveUser("");
 					IDataDictionary dd = GlobalState.getActiveDatadictionary();
 					List<IQueryBuildSetting<?>> cfg = getFunction()
 							.getQueryBuildConfiguration("Standard");

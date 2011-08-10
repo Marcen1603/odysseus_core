@@ -56,7 +56,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		// Publish all sources
 		while (true) {
 			advList.clear();
-			User user = GlobalState.getActiveUser(); 
+			User user = GlobalState.getActiveUser(""); 
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			for (Entry<String, ILogicalOperator> v : dd
 					.getStreamsAndViews(user)) {

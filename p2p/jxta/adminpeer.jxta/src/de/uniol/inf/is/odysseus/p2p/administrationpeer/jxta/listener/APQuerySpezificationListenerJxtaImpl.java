@@ -149,7 +149,7 @@ public class APQuerySpezificationListenerJxtaImpl implements
 		q.setId(adv.getQueryId());
 		q.setLanguage(adv.getLanguage());
 		q.setDeclarativeQuery(adv.getQuery());
-		q.setUser(GlobalState.getActiveUser());
+		q.setUser(GlobalState.getActiveUser(""));
 		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setResponseSocketThinPeer(pipeAdv);
 		return q;

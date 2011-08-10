@@ -104,7 +104,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		setName(configuration.getName());
 		
 		// TODO: User einlesen
-		GlobalState.setActiveUser(UserManagement.getInstance().getSuperUser());
+		GlobalState.setActiveUser("",UserManagement.getInstance().getSuperUser());
 		// TODO: Unterschiedliche Namen notwendig?
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory
 				.getDefaultDataDictionary("OperatorPeer"));
@@ -302,7 +302,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 		for (IPair<String, String> s : getSources().values()) {
 			try {
-				User user = GlobalState.getActiveUser();
+				User user = GlobalState.getActiveUser("");
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();
 				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, dd,
 						cfg.toArray(new IQueryBuildSetting[0]));
