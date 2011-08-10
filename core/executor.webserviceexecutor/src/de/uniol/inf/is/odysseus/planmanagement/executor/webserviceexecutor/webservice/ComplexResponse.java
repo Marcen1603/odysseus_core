@@ -19,26 +19,18 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webs
  * @author Dennis Geesen
  * Created at: 09.08.2011
  */
-public class WebserviceResponse<T> {
+public class ComplexResponse<T> extends Response{
 
-	private boolean successful;
+	
 	private T response;
 	
-	public WebserviceResponse(){
-		
+	public ComplexResponse(){
+		super();
 	}
 	
-	public WebserviceResponse(T response, boolean success) {
-		this.response = response;
-		this.successful = success;
-	}
-
-	public boolean isSuccessful() {
-		return successful;
-	}
-
-	public void setSuccessful(boolean successful) {
-		this.successful = successful;
+	public ComplexResponse(T response, boolean success) {
+		super(success);
+		this.response = response;		
 	}
 
 	public T getResponse() {
