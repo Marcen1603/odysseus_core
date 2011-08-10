@@ -52,7 +52,7 @@
          </editor>
       </operator>
       <operator
-            name="JOIN">
+            name="LEFTJOIN">
          <editor
                class="de.uniol.inf.is.odysseus.rcp.editor.parameters.PredicateParameterEditor"
                name="PREDICATE">

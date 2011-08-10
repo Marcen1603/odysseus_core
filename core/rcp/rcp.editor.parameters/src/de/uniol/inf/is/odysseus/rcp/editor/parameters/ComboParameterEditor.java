@@ -74,11 +74,19 @@ public class ComboParameterEditor extends SimpleParameterEditor<String> implemen
 	
 	protected void setComboStartValue( Combo combo ) {
 		try {
-			String txt = convertToString((String)getValue());
-			if( txt == null || txt.equals(""))
+			String txt = convertToString(String.valueOf(getValue()));
+			if( txt == null || txt.equals("")) {
 				combo.select(0);
-			else
-				combo.setText( txt );
+			} else {
+				for( int i = 0; i < combo.getItems().length; i++) {
+					String item = combo.getItem(i);
+					if( item.equalsIgnoreCase(txt)) {
+						combo.select(i);
+						return;
+					}
+				}
+				combo.select(0);
+			}
 		} catch( Exception ex ) {
 			if( combo.getItemCount() > 0 )
 				combo.select(0);
@@ -87,7 +95,7 @@ public class ComboParameterEditor extends SimpleParameterEditor<String> implemen
 		}
 	}
 	
-	// Füllt die Combo mit der Liste
+	// Fï¿½llt die Combo mit der Liste
 	protected String[] getList() {
 		// Liste der Quellen
 		List<String> sources = new ArrayList<String>();
