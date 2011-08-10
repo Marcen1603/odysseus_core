@@ -1,15 +1,16 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
+package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.sla.SLADictionary;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter)
+	public void validate(Map<String, Object> variables, String parameter, User caller)
 			throws QueryTextParseException {
 		/*
 		 * check if the selected sla is already defined
@@ -22,12 +23,12 @@ public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter)
+	public Object execute(Map<String, Object> variables, String parameter, User caller)
 			throws QueryTextParseException {
 		/*
 		 * buffer sla name for the usage for following queries of the user
 		 */
-		SLADictionary.getInstance().setCurrentSLA(getCurrentUser(variables),
+		SLADictionary.getInstance().setCurrentSLA(caller,
 				parameter);
 
 		return null;

@@ -38,11 +38,15 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.IEditorTextParserConstants;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
+import de.uniol.inf.is.odysseus.script.parser.IEditorTextParserConstants;
+import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 
@@ -103,8 +107,9 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 					// Befehle holen
-					final List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text);
+					final List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text, user);
 					
 					// Erst Text testen
 					monitor.beginTask("Executing Commands", statements.size() * 2);
@@ -112,7 +117,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					
 					Map<String, Object> variables = new HashMap<String, Object>();
 					for( PreParserStatement stmt : statements ) {
-						stmt.validate(variables);
+						stmt.validate(variables, user);
 						monitor.worked(1);
 						
 						// Wollte der Nutzer abbrechen?
@@ -125,7 +130,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					int counter = 1;
 					for( PreParserStatement stmt : statements ) {
 						monitor.subTask("Executing (" + counter + " / " + statements.size() + ")" );
-						stmt.execute(variables);
+						stmt.execute(variables, user);
 						monitor.worked(1);
 						counter++;
 					}

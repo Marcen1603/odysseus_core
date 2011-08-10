@@ -12,27 +12,23 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator;
+package de.uniol.inf.is.odysseus.script.parser;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import java.util.Map;
 
-public class Activator implements BundleActivator {
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
-	private static BundleContext context;
 
-	static BundleContext getContext() {
-		return context;
-	}
+/**
+ * Schnittstelle, welches ein Schlüsselwort für den Preparser darstellt. Wird
+ * vom QueryTextParser verwendet. Dadurch kann der Nutzer eigene Befehle
+ * definieren.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
+public interface IPreParserKeyword {
 
-	@Override
-	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-	}
-
-	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-	}
-
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException;
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException;
 }

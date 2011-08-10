@@ -38,8 +38,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserKeywordRegistry;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.script.parser.PreParserKeywordRegistry;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
 
 public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration {
 

@@ -62,7 +62,7 @@
                   Implementierung, worin der Befehl ausgeführt wird, wenn der PreParser das Keyword im Querytext gefunden wird.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.rcp.editor.text.parser.IPreParserKeyword"/>
+                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword"/>
                </appinfo>
             </annotation>
          </attribute>

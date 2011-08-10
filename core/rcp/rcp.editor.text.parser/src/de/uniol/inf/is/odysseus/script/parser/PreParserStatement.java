@@ -12,9 +12,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
+package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.Map;
+
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 
 public class PreParserStatement {
@@ -29,12 +31,12 @@ public class PreParserStatement {
 		this.parameter = parameter;
 	}
 	
-	public void validate( Map<String, Object> variables ) throws QueryTextParseException {
-		keyword.validate(variables, parameter);
+	public void validate( Map<String, Object> variables, User caller ) throws QueryTextParseException {
+		keyword.validate(variables, parameter, caller);
 	}
 	
-	public Object execute( Map<String, Object> variables ) throws QueryTextParseException {
-		return keyword.execute(variables, parameter);
+	public Object execute( Map<String, Object> variables, User caller ) throws QueryTextParseException {
+		return keyword.execute(variables, parameter, caller);
 	}
 	
 	public String getParameter() {

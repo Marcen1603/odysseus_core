@@ -12,19 +12,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
+package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
 		// Eine Validierung ist hier nicht sinnvoll (vorerst). Da bei der Validierung keine
 		// User eingeloggt werden...
 		
@@ -32,9 +32,8 @@ public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter) throws QueryTextParseException {
-		
-		User caller = getCurrentUser(variables);
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
+
 		
 		try {
 			UserManagement.getInstance().logout(caller,parameter);

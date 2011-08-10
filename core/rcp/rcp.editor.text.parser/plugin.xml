@@ -5,63 +5,63 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword">
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ParserPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.ParserPreParserKeyword"
             name="PARSER">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.TransCfgPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.TransCfgPreParserKeyword"
             name="TRANSCFG">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ExecuteQueryPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.ExecuteQueryPreParserKeyword"
             name="QUERY">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.AddQueryPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.AddQueryPreParserKeyword"
             name="ADDQUERY">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ExecuteQueryPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.ExecuteQueryPreParserKeyword"
             name="RUNQUERY">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.CyclicQueryPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.CyclicQueryPreParserKeyword"
             name="CYCLICQUERY">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LoginUserPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.LoginUserPreParserKeyword"
             name="LOGIN">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.LogoutUserPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.LogoutUserPreParserKeyword"
             name="LOGOUT">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.BufferPlacementPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.BufferPlacementPreParserKeyword"
             name="BUFFERPLACEMENT">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.StartAllClosedQueriesPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.StartAllClosedQueriesPreParserKeyword"
             name="STARTQUERIES">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.SchedulerPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.SchedulerPreParserKeyword"
             name="SCHEDULER">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.QuerySharingPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.QuerySharingPreParserKeyword"
             name="DOQUERYSHARING">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.UseRewritePreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.UseRewritePreParserKeyword"
             name="DOREWRITE">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.OdysseusDefaultsPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserKeyword"
             name="ODYSSEUS_PARAM">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.SLAPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.SLAPreParserKeyword"
             name="SLA">
       </PreParserKeyword>
    </extension>

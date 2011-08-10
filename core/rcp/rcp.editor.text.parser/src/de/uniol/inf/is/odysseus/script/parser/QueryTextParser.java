@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
+package de.uniol.inf.is.odysseus.script.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ExecuteQueryPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.ExecuteQueryPreParserKeyword;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 
 public class QueryTextParser {
@@ -52,26 +53,26 @@ public class QueryTextParser {
 		return instance;
 	}
 
-	public List<IQuery> parseAndExecute(String completeText) throws QueryTextParseException{
-		return execute(parseScript(completeText));
+	public List<IQuery> parseAndExecute(String completeText, User caller) throws QueryTextParseException{
+		return execute(parseScript(completeText, caller), caller);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<IQuery> execute(List<PreParserStatement> statements) throws QueryTextParseException {
+	public List<IQuery> execute(List<PreParserStatement> statements, User caller) throws QueryTextParseException {
 
 		List<IQuery> queries = new ArrayList<IQuery>();
 		
 		Map<String, Object> variables = new HashMap<String, Object>();
 		// Validieren
 		for (PreParserStatement stmt : statements) {
-			stmt.validate(variables);
+			stmt.validate(variables, caller);
 		}
 		
 		// Ausf�hren
 		variables = new HashMap<String, Object>();
 		int counter = 1;
 		for (PreParserStatement stmt : statements) {
-			Object ret = stmt.execute(variables);
+			Object ret = stmt.execute(variables, caller);
 			// If Statement generates Queries
 			if (stmt.getKeyword() instanceof ExecuteQueryPreParserKeyword){
 				queries.addAll((Collection<IQuery>)ret);
@@ -82,18 +83,18 @@ public class QueryTextParser {
 		return queries;
 	}
 
-	public List<PreParserStatement> parseScript(String completeText)
+	public List<PreParserStatement> parseScript(String completeText, User caller)
 			throws QueryTextParseException {
 		List<String> lines = null;
 		try {
 			lines = splitToList(completeText);
 		} catch (Exception ex) {
-			throw new QueryTextParseException("cannot parse query", ex);
+			throw new QueryTextParseException("cannot parse script ", ex);
 		}
-		return parseScript(lines.toArray(new String[lines.size()]));
+		return parseScript(lines.toArray(new String[lines.size()]), caller);
 	}
 
-	public List<PreParserStatement> parseScript(String[] text)
+	public List<PreParserStatement> parseScript(String[] text, User caller)
 			throws QueryTextParseException {
 
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();

@@ -51,11 +51,11 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -199,7 +199,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 				if (parserId.equalsIgnoreCase(SCRIPT_PARSER)) {
 					try {
 						QueryTextParser.getInstance().parseAndExecute(
-								queryString);
+								queryString, user);
 					} catch (QueryTextParseException e) {
 						throw new BenchmarkException(e);
 					}

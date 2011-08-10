@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
+import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
 public class OdysseusScriptLabelProvider implements ILabelProvider {
 

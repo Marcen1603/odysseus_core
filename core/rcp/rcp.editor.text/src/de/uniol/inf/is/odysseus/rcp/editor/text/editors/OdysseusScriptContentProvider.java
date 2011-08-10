@@ -20,9 +20,12 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserStatement;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class OdysseusScriptContentProvider implements ITreeContentProvider {
 
@@ -58,8 +61,9 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 		if( parentElement instanceof StringTreeRoot ) {
 			String text = ((StringTreeRoot)parentElement).getString();
 			try {
+				User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 				ArrayList<Object> list = new ArrayList<Object>();
-				List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text);
+				List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text, user);
 				if( replaceLeaf != null ) {
 					list.add( replaceLeaf );
 					list.addAll(statements);

@@ -12,14 +12,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
+package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
  * Realisiert das PARSER-Schlüsselwort für den PreParser. Wenn ein Parser
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler
 public class ParserPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
 		if (parameter.length() == 0)
 			throw new QueryTextParseException("Parameter needed for #PARSER");
 
@@ -51,7 +52,7 @@ public class ParserPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter) throws QueryTextParseException {
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
 		variables.put("PARSER", parameter);
 		return null;
 	}

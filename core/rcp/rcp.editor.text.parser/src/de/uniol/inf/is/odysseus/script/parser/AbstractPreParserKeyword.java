@@ -12,25 +12,17 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser;
+package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 
 public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 	
-	protected User getCurrentUser(Map<String, Object> variables){
-		Object user =  variables.get("USER");
-		if (user == null){
-			user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
-		}
-		return (User)user;
-	}
 	
 	protected IDataDictionary getDataDictionary() {
 		return GlobalState.getActiveDatadictionary();

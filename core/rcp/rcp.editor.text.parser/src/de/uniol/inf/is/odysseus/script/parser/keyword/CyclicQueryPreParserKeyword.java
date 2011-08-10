@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
+package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.List;
 import java.util.Map;
@@ -24,17 +24,16 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
 		try {
 			IExecutor executor = ExecutorHandler.getExecutor();
 			if( executor == null ) 
@@ -60,7 +59,7 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter ) throws QueryTextParseException {
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
 
 		String queries = parameter;
 		String parserID = (String) variables.get("PARSER");
@@ -69,11 +68,10 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		
 		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID);
-		User user = getCurrentUser(variables);
 		try {
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			ICompiler compiler = executor.getCompiler();
-			List<IQuery> plans = compiler.translateQuery(queries, parserID, user, dd);
+			List<IQuery> plans = compiler.translateQuery(queries, parserID, caller, dd);
 			
 			// HACK
 			ParameterTransformationConfiguration cfg = null;
@@ -88,10 +86,10 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 				// the last plan is the complete plan
 				// so transform this one
 				IQuery query = plans.get(plans.size() - 1);
-				compiler.transform(query, cfg.getValue(), GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN), dd);
+				compiler.transform(query, cfg.getValue(), caller, dd);
 	
-				IQuery addedQuery = executor.addQuery(query.getRoots(), user, transCfg.toArray(new IQueryBuildSetting[0]));
-				executor.startQuery(addedQuery.getID(), GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+				IQuery addedQuery = executor.addQuery(query.getRoots(), caller, transCfg.toArray(new IQueryBuildSetting[0]));
+				executor.startQuery(addedQuery.getID(), caller);
 			} 
 
 		} catch (QueryParseException e1) {

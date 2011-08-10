@@ -12,23 +12,23 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword;
+package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.rcp.editor.text.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractQueryPreParserKeyword extends
 		AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter) throws QueryTextParseException {
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
 		try {
 			IExecutor executor = ExecutorHandler.getExecutor();
 			if (executor == null)
@@ -53,12 +53,12 @@ public abstract class AbstractQueryPreParserKeyword extends
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter) throws QueryTextParseException {
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
 		String parserID = (String) variables.get("PARSER");
 		String transCfg = (String) variables.get("TRANSCFG");
 
 		try {
-			return exec(parserID, transCfg, parameter, getCurrentUser(variables), getDataDictionary());
+			return exec(parserID, transCfg, parameter, caller, getDataDictionary());
 		} catch (Exception ex) {
 			throw new QueryTextParseException("Error during executing query", ex);
 		}
