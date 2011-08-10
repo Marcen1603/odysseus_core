@@ -43,7 +43,7 @@ public class BrokerAOBuilder extends AbstractOperatorBuilder {
 			REQUIREMENT.MANDATORY);
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
-					"ATTRIBUTE", REQUIREMENT.MANDATORY));
+					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
 	private final IntegerParameter queuePort = new IntegerParameter("Q",
 			REQUIREMENT.OPTIONAL);
 	private final IntegerParameter dataPort = new IntegerParameter("O",
