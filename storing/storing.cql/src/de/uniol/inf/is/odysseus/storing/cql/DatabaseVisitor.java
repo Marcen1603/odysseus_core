@@ -173,7 +173,7 @@ public class DatabaseVisitor{
 		CQLParser cqlparser = (CQLParser) CQLParser.getInstance();
 
 		//GET GLOBAL USER STATE FOR: User and Data Dictionary
-		cqlparser.setUser(GlobalState.getActiveUser());
+		cqlparser.setUser(caller);
 		cqlparser.setDataDictionary(GlobalState.getActiveDatadictionary());
 		
 		AbstractLogicalOperator result = (AbstractLogicalOperator)cqlparser.visit(complexSelectStatement, null);		
