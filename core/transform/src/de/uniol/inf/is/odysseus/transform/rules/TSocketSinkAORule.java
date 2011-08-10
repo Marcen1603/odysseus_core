@@ -26,7 +26,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 		try {
 			ISinkStreamHandlerBuilder streamHandlerFac = null;
 			ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
-					getStreamHandler(operator.getSinkType()), false, null);
+					getStreamHandler(operator.getSinkType()), false, operator.isLoginNeeded(), null);
 
 			socketSinkPO.setOutputSchema(operator.getOutputSchema());
 			Collection<ILogicalOperator> toUpdate = config

@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.sink;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +35,8 @@ public class SocketSinkPO extends AbstractSink<Object> {
 	private SinkConnectionListener listener;
 	private IObjectHandler objectHandler = null;
 
-	public SocketSinkPO(int serverPort, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, IObjectHandler objectHandler) {
-		listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe, useNIO);
+	public SocketSinkPO(int serverPort, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, IObjectHandler objectHandler) {
+		listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe, useNIO, loginNeeded);
 		this.objectHandler = objectHandler;
 		listener.start();
 	}

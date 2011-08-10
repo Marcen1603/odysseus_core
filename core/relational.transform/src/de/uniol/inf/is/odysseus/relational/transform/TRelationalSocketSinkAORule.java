@@ -33,7 +33,7 @@ public class TRelationalSocketSinkAORule extends AbstractTransformationRule<Sock
 				operator.getOutputSchema());
 		ObjectHandler<RelationalTuple<ITimeInterval>> objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(
 				handler);
-		ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),getStreamHandler(operator), true, objectHandler);
+		ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),getStreamHandler(operator), true,operator.isLoginNeeded(), objectHandler);
 		
 		socketSinkPO.setOutputSchema(operator.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, socketSinkPO);

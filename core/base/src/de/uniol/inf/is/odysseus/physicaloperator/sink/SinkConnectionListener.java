@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.sink;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,6 +24,9 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 @SuppressWarnings("rawtypes")
 class SinkConnectionListener extends Thread {
@@ -35,13 +39,16 @@ class SinkConnectionListener extends Thread {
 
 	private boolean useNIO;
 
+	private boolean loginNeeded;
+
 	public SinkConnectionListener(int port,
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, /*OUT!!*/List<ISinkStreamHandler> subscribe2,
-			boolean useNIO) {
+			boolean useNIO, boolean loginNeeded) {
 		this.port = port;
 		this.sinkStreamHandlerBuilder = sinkStreamHandlerBuilder;
 		this.subscribe = subscribe2;
 		this.useNIO = useNIO;
+		this.loginNeeded = loginNeeded;
 	}
 
 	@Override
@@ -64,18 +71,33 @@ class SinkConnectionListener extends Thread {
 		while (true) {
 			Socket socket = null;
 			try {
+				boolean connectionAllowed = false;
 				logger.debug("Waiting for Server to connect on "+port);
 				socket = server.accept();
 				logger.debug("Connection from "
 						+ socket.getRemoteSocketAddress());
-				if (socket != null) {
+				if (loginNeeded){
+					InputStream inputStream = socket.getInputStream();
+					// TODO: Login und Passwort auslesen
+					String username = "";
+					String password = "";
+					User user = UserManagement.getInstance().login(username, password, false);
+					if (user != null){
+						// TODO: Test if User has right to access sink
+						connectionAllowed = true;
+					}
+				}else{
+					connectionAllowed = true;
+				}
+				if (socket != null && connectionAllowed) {
 					logger.debug("Adding Handler");
 					ISinkStreamHandler temp = sinkStreamHandlerBuilder.newInstance(socket);
 					synchronized (subscribe) {
 						subscribe.add(temp);
 					}
 					logger.debug("Adding Handler done");
-
+				}else{
+					logger.debug("Connection "+(connectionAllowed==false?"not allowed.":" failed"));
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
