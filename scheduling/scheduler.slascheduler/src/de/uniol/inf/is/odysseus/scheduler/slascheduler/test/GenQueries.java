@@ -18,7 +18,7 @@ public class GenQueries {
 	private static final int TIME_SLICE = 10;
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
-	private static final int TEST_INPUT_NUMBER = 0;
+	private static final int TEST_INPUT_NUMBER = 2;
 	private static final double OP_SELECTIVITY = 1.0;
 	private static final int OP_PROCESSING_TIME = 100;
 	private static final int NUMBER_OF_USERS = 3;
@@ -31,6 +31,12 @@ public class GenQueries {
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 100000]]})",
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000, 100], [10000, 1000], [1000, 100]]})" };
+	
+	static int[][] dataRates0 = {{1000000, 5}};
+	static int[][] dataRates1 = {{1000000, 100000}};
+	static int[][] dataRates2 = {{1000, 100}, {10000, 1000}, {1000, 100}};
+	
+	static int[][][] DATA_RATES = {dataRates0, dataRates1, dataRates2};
 
 	public static void main(String[] args) {
 		StringBuilder sb = new StringBuilder();
@@ -222,10 +228,29 @@ public class GenQueries {
 		sb.append("#PARSER PQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
 		sb.append("testinput").append(number).append(numberToChar(subNumber))
-				.append(testinput[TEST_INPUT_NUMBER]).append(NEWLINE);
+		.append(" := testproducer({invertedpriorityratio = 10, parts = [")
+				.append(createTestInputParam()).append("]})").append(NEWLINE);
 		sb.append("#PARSER CQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
 		sb.append("GRANT READ ON testinput TO Public;").append(NEWLINE);
+		return sb.toString();
+	}
+	
+	private static String createTestInputParam() {
+		StringBuilder sb = new StringBuilder();
+		int[][] param = DATA_RATES[TEST_INPUT_NUMBER];
+		for (int i = 0; i < param.length; i++) {
+			if (i != 0) {
+				sb.append(", ");
+			}
+			sb.append("[");
+			for (int k = 0; k < param[i].length; k++) {
+				sb.append(param[i][k]);
+				if (k == 0)
+					sb.append(", ");
+			}
+			sb.append("]");
+		}
 		return sb.toString();
 	}
 
