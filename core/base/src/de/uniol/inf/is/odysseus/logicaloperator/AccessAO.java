@@ -36,6 +36,8 @@ public class AccessAO extends AbstractLogicalOperator implements
 	private int port;
 	private String host;
 	private String fileURL;
+	private String login;
+	private String password;
 
 	public String getFileURL() {
 		return fileURL;
@@ -69,6 +71,8 @@ public class AccessAO extends AbstractLogicalOperator implements
 		this.port = po.port;
 		this.host = po.host;
 		this.outputSchema = createCleanClone(po.outputSchema);
+		this.login = po.login;
+		this.password = po.password;
 	}
 
 	public AccessAO(SDFSource source) {
@@ -138,40 +142,6 @@ public class AccessAO extends AbstractLogicalOperator implements
 		return wildcard;
 	}
 
-	// @Override
-	// public int hashCode() {
-	// final int prime = 31;
-	// int result = super.hashCode();
-	// result = prime * result + ((host == null) ? 0 : host.hashCode());
-	// result = prime * result + port;
-	// result = prime * result + ((source == null) ? 0 : source.hashCode());
-	// return result;
-	// }
-
-	// @Override
-	// public boolean equals(Object obj) {
-	// if (this == obj)
-	// return true;
-	// if (!super.equals(obj))
-	// return false;
-	// if (getClass() != obj.getClass())
-	// return false;
-	// AccessAO other = (AccessAO) obj;
-	// if (host == null) {
-	// if (other.host != null)
-	// return false;
-	// } else if (!host.equals(other.host))
-	// return false;
-	// if (port != other.port)
-	// return false;
-	// if (source == null) {
-	// if (other.source != null)
-	// return false;
-	// } else if (!source.equals(other.source))
-	// return false;
-	// return true;
-	// }
-
 	public void setPort(int port) {
 		this.port = port;
 	}
@@ -209,4 +179,17 @@ public class AccessAO extends AbstractLogicalOperator implements
 		return copy;
 	}
 
+	public void setLoginInfo(String login, String password) {
+		this.login = login;
+		this.password = password;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
 }

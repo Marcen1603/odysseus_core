@@ -1294,12 +1294,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String sinkName = ((ASTIdentifier)node.jjtGetChild(0)).getName();
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
 		String sinkType = ((ASTIdentifier)node.jjtGetChild(2)).getName();
- 		// TODO: Festlegen on Login notwendig ist, oder nicht
 		boolean loginNeeded = false;
-		
+		if (node.jjtGetNumChildren() == 3){
+			loginNeeded = true;
+		}		
 		ILogicalOperator sink = new SocketSinkAO(port, sinkType,loginNeeded);
  		ILogicalOperator transformMeta = new TimestampToPayloadAO();
- 		// TODO: Schema haengt von den Quellen ab ...
  		sink.subscribeToSource(transformMeta, 0, 0, null);
  		dataDictionary.addSink(sinkName, sink);
 		return null;
@@ -1342,6 +1342,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				}
 			}			
 		}
+	}
+
+	@Override
+	public Object visit(ASTLoginPassword node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

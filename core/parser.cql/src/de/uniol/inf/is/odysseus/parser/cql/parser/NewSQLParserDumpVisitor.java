@@ -660,7 +660,6 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTMVCovarianceRow node, Object data) {
-		// TODO Auto-generated method stub
 		return pvisit(node);
 	}
 
@@ -704,6 +703,11 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTStreamToStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTLoginPassword node, Object data) {
 		return pvisit(node);
 	}
 }

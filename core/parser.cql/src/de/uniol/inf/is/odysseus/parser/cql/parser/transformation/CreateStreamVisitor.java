@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTLoginPassword;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
@@ -240,6 +241,16 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		ILogicalOperator op = addTimestampAO(source);
 		dd.setStream(name, op, caller);
 		return data;
+	}
+	
+	@Override
+	public Object visit(ASTLoginPassword node, Object data) {
+		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String password = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+
+		dd.getStream(name, caller).setLoginInfo(user, password);
+		
+		return null;
 	}
 
 	@Override
