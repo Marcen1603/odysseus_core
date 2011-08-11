@@ -71,7 +71,7 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 	}
 
 	final protected double getReadCountProduct() {
-		int c = 0;
+		int c = 1;
 		for (int i = 0; i < readCount.length; i++) {
 			c *= readCount[i];
 		}
