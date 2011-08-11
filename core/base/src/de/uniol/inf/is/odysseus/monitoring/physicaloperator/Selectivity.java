@@ -15,14 +15,14 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
 import de.uniol.inf.is.odysseus.event.IEvent;
-import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
+import de.uniol.inf.is.odysseus.monitoring.AbstractPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POPortEvent;
 
-public abstract class Selectivity extends AbstractMonitoringData<Double>
+public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Double>
 		implements IPOEventListener {
 
 	private Integer writeCount;
@@ -30,6 +30,8 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 	private int readCountSum;
 	private int sourceCount;
 
+	private Double value;
+	
 	public Selectivity(IPhysicalOperator target, int sourceCount, String type) {
 		super(target, type);
 		this.sourceCount = sourceCount;
@@ -39,12 +41,16 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 	}
 
 	public Selectivity(Selectivity other) {
-		super(other);
+		super(other.getTarget(), other.getType());
 		this.writeCount = other.writeCount;
 		this.readCount = new int[other.readCount.length];
 		System.arraycopy(readCount, 0, this.readCount, 0,
 				other.readCount.length);
 		this.readCountSum = other.readCountSum;
+	}
+	
+	public Double getValue() {
+		return value;
 	}
 
 	@Override
@@ -94,4 +100,12 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 		}
 	}
 
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		this.value = calcValue();
+	}
+	
+	protected abstract Double calcValue();
+	
 }

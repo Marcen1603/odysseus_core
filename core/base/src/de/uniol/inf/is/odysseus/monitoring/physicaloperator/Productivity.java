@@ -34,7 +34,7 @@ public class Productivity extends Selectivity {
 	}
 
 	@Override
-	public Double getValue() {
+	public Double calcValue() {
 		return getWriteCount()/getReadCountSum();
 	}
 

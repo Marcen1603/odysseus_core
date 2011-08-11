@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
-import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 /**
@@ -38,12 +37,12 @@ public class ClassicSelectivity extends Selectivity {
 	}
 
 	@Override
-	public Double getValue() {
+	public Double calcValue() {
 		return  getWriteCount()/ getReadCountProduct();
 	}
 
 	@Override
-	public AbstractMonitoringData<Double> clone() {
+	public ClassicSelectivity clone() {
 		return new ClassicSelectivity(this);
 	}
 
