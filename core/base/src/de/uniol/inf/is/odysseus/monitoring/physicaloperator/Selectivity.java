@@ -22,8 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POPortEvent;
 
-public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Double>
-		implements IPOEventListener {
+public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Double> implements IPOEventListener {
 
 	private Integer writeCount;
 	private int[] readCount;
@@ -31,7 +30,7 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 	private int sourceCount;
 
 	private Double value;
-	
+
 	public Selectivity(IPhysicalOperator target, int sourceCount, String type) {
 		super(target, type);
 		this.sourceCount = sourceCount;
@@ -42,13 +41,16 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 
 	public Selectivity(Selectivity other) {
 		super(other.getTarget(), other.getType());
+		this.sourceCount = other.sourceCount;
 		this.writeCount = other.writeCount;
 		this.readCount = new int[other.readCount.length];
-		System.arraycopy(readCount, 0, this.readCount, 0,
-				other.readCount.length);
+		System.arraycopy(other.readCount, 0, this.readCount, 0, other.readCount.length);
 		this.readCountSum = other.readCountSum;
+		this.value = other.value;
+		((IPhysicalOperator) other.getTarget()).subscribe(this, POEventType.PushDone);
+		((IPhysicalOperator) other.getTarget()).subscribe(this, POEventType.ProcessDone);
 	}
-	
+
 	public Double getValue() {
 		return value;
 	}
@@ -62,6 +64,7 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 		for (int i = 0; i < sourceCount; i++) {
 			this.readCount[i] = 0;
 		}
+		this.readCountSum = 0;
 	}
 
 	final protected double getWriteCount() {
@@ -102,10 +105,11 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		this.value = calcValue();
+		notifySubscribers(this.value);
+		reset();
 	}
-	
+
 	protected abstract Double calcValue();
-	
+
 }
