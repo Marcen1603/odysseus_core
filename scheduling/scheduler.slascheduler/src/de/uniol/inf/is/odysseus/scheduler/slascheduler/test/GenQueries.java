@@ -22,14 +22,15 @@ public class GenQueries {
 	private static final double OP_SELECTIVITY = 1.0;
 	private static final int OP_PROCESSING_TIME = 100;
 	private static final int NUMBER_OF_USERS = 3;
+	private static final int NUMBER_OF_QUERIES_PER_USER = 3;
 	private static final int NUMBER_OF_SLAS = 3;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 
 	static String[] testinput = new String[] {
-			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
-			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000000, 100000]]})",
-			"testinput := testproducer({invertedpriorityratio = 10, parts = [[1000, 100], [10000, 1000], [1000, 100]]})" };
+			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
+			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 100000]]})",
+			" := testproducer({invertedpriorityratio = 10, parts = [[1000, 100], [10000, 1000], [1000, 100]]})" };
 
 	public static void main(String[] args) {
 		StringBuilder sb = new StringBuilder();
@@ -52,11 +53,22 @@ public class GenQueries {
 				.append(NEWLINE);
 		sb.append(createSettingComment());
 		sb.append(createGlobalSettings());
-		sb.append(createTestInput());
+		for (int i = 0; i < NUMBER_OF_USERS; i++) {
+			for (int k = 0; k < NUMBER_OF_QUERIES_PER_USER; k++) {
+				sb.append(createTestInput(i, k));
+			}
+		}
 		sb.append("#PARSER PQL").append(NEWLINE);
 		for (int i = 0; i < NUMBER_OF_USERS; i++) {
 			sb.append(createLogin(i));
-			sb.append(createQuery(i, i % NUMBER_OF_SLAS));
+			for (int k = 0; k < NUMBER_OF_QUERIES_PER_USER; k++) {
+				if (k == 0) {
+					sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS));
+				} else {
+					sb.append(createComplexQuery(i, i % NUMBER_OF_SLAS, k + 1));
+				}
+
+			}
 		}
 
 		System.out.println(sb.toString());
@@ -71,18 +83,73 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static String createQuery(int number, int slaNumber) {
+	private static String createSimpleQuery(int number, int slaNumber) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(createQueryParams(slaNumber));
+		sb.append(createBuffer(number, 0));
+		sb.append(createBenchmark(number, 0));
+		sb.append("#STARTQUERIES").append(NEWLINE);
+		return sb.toString();
+	}
+
+	private static String createBenchmark(int number, int subnumber) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("benchmark").append(number).append(numberToChar(subnumber))
+				.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
+				.append(", time = ").append(OP_PROCESSING_TIME)
+				.append("},puffer").append(number)
+				.append(numberToChar(subnumber)).append(")").append(NEWLINE);
+		return sb.toString();
+	}
+
+	private static String createBenchmark2In(int number, int subnumber) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("benchmark").append(number).append(numberToChar(subnumber))
+				.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
+				.append(", time = ").append(OP_PROCESSING_TIME)
+				.append("},puffer").append(number);
+		if (subnumber == 0) {
+			sb.append(numberToChar(subnumber)).append(", puffer")
+					.append(number).append(numberToChar(subnumber + 1))
+					.append(")").append(NEWLINE);
+		} else {
+			sb.append(numberToChar(subnumber + 1)).append(", benchmark")
+					.append(number).append(numberToChar(subnumber - 1))
+					.append(")").append(NEWLINE);
+		}
+		return sb.toString();
+	}
+
+	private static String createBuffer(int number, int subNumber) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("puffer").append(number).append(numberToChar(subNumber))
+				.append(" = buffer({type = 'Normal'},testinput").append(number)
+				.append(numberToChar(subNumber)).append(")").append(NEWLINE);
+		return sb.toString();
+	}
+
+	private static String createComplexQuery(int number, int slaNumber,
+			int numOfSources) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(createQueryParams(slaNumber));
+		for (int i = 0; i < numOfSources; i++) {
+			sb.append(createBuffer(number, i));
+		}
+		for (int i = 0; i < numOfSources - 1; i++) {
+			sb.append(createBenchmark2In(number, i));
+		}
+		sb.append("#STARTQUERIES").append(NEWLINE);
+		return sb.toString();
+	}
+
+	private static char numberToChar(int number) {
+		return (char) ('A' + number);
+	}
+
+	private static String createQueryParams(int slaNumber) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("#SLA sla").append(slaNumber).append(NEWLINE);
 		sb.append("#ADDQUERY").append(NEWLINE);
-		sb.append("puffer").append(number)
-				.append(" = buffer({type = 'Normal'},testinput)")
-				.append(NEWLINE);
-		sb.append("benchmark").append(number)
-				.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
-				.append(", time = ").append(OP_PROCESSING_TIME)
-				.append("},puffer").append(number).append(")").append(NEWLINE);
-		sb.append("#STARTQUERIES").append(NEWLINE);
 		return sb.toString();
 	}
 
@@ -150,11 +217,12 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static String createTestInput() {
+	private static String createTestInput(int number, int subNumber) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("#PARSER PQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
-		sb.append(testinput[TEST_INPUT_NUMBER]).append(NEWLINE);
+		sb.append("testinput").append(number).append(numberToChar(subNumber))
+				.append(testinput[TEST_INPUT_NUMBER]).append(NEWLINE);
 		sb.append("#PARSER CQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
 		sb.append("GRANT READ ON testinput TO Public;").append(NEWLINE);

@@ -56,7 +56,11 @@ public class SLATestLogger {
 	public static void logCSV(String id, Object... obj) {
 		SLATestLoggerData data = csvData.get(id);
 		if (data == null) {
-			throw new RuntimeException("logger not initialized: " + id);
+//			throw new RuntimeException("logger not initialized: " + id);
+			initCSVLogger(id, maxMessages, skip, "");
+			System.err.println("logger not initialized: " + id);
+			System.err.println("initializing default logger!");
+			data = csvData.get(id);
 		}
 		if (data.skip > 0) {
 			skip--;
