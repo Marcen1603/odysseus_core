@@ -128,14 +128,14 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 			List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
 			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
 				if (this.getSLA().getMetric().valueIsMin()) {
-					if (serviceLevels.get(i).getThreshold() < this
+					if (serviceLevels.get(i).getThreshold() > this
 							.getConformance()) {
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost(), i+1, getConformance());
 						break;
 					}
 				} else {
-					if (serviceLevels.get(i).getThreshold() > this
+					if (serviceLevels.get(i).getThreshold() < this
 							.getConformance()) {
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost(), i+1, getConformance());
