@@ -129,12 +129,12 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
 		// init csv logger
-		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
-				"mg", "sf", "prio", "conformance", "service level");
-		SLATestLogger.initCSVLogger("scheduler1", 1000000, 0, "Query", "oc",
-				"mg", "sf", "prio", "conformance", "service level");
-		SLATestLogger.initCSVLogger("scheduler2", 1000000, 0, "Query", "oc",
-				"mg", "sf", "prio", "conformance", "service level");
+//		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
+//				"mg", "sf", "prio", "conformance", "service level");
+//		SLATestLogger.initCSVLogger("scheduler1", 1000000, 0, "Query", "oc",
+//				"mg", "sf", "prio", "conformance", "service level");
+//		SLATestLogger.initCSVLogger("scheduler2", 1000000, 0, "Query", "oc",
+//				"mg", "sf", "prio", "conformance", "service level");
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		IScheduling next = null;
 		double nextPrio = 0;
 
-		SLATestLogger.log("Calculating priorities");
+//		SLATestLogger.log("Calculating priorities");
 
 		for (IScheduling scheduling : this.plans) {
 			// calculate sla conformance for all queries
@@ -237,9 +237,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				// + " servicelevel="
 				// + ((QuadraticCFLatency) costFunc)
 				// .getCurrentServiceLevelIndex(conformance, sla));
-				SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
-						prio, conformance, ((QuadraticCFLatency) costFunc)
-								.getCurrentServiceLevelIndex(conformance, sla));
+//				SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
+//						prio, conformance, ((QuadraticCFLatency) costFunc)
+//								.getCurrentServiceLevelIndex(conformance, sla));
 
 				// select plan with highest priority
 				if (prio > nextPrio) {
@@ -262,11 +262,11 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			}
 		}
 
-		if (next != null)
-			SLATestLogger.log("["
-					+ SLATestLogger.formatNanoTime(System.nanoTime())
-					+ "] Scheduling query "
-					+ next.getPlan().getQueries().get(0).getID());
+//		if (next != null)
+//			SLATestLogger.log("["
+//					+ SLATestLogger.formatNanoTime(System.nanoTime())
+//					+ "] Scheduling query "
+//					+ next.getPlan().getQueries().get(0).getID());
 
 		return next;
 	}
