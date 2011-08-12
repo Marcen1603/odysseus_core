@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.PriorityFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.StarvationFreedomFactory;
 import de.uniol.inf.is.odysseus.sla.factories.PenaltyFactory;
 import de.uniol.inf.is.odysseus.sla.factories.ScopeFactory;
+import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 
 public class GenQueries {
 
@@ -82,7 +83,8 @@ public class GenQueries {
 
 		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
 			sb.append(createSLA(i, (i + 1) * 200, ScopeFactory.SCOPE_AVERAGE,
-					10, "d", calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+					120, TimeUnit.s.toString(),
+					calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
 					calcPenaltyCosts(i), PENALTY_NAME));
 		}
 		sb.append(NEWLINE);
@@ -298,7 +300,7 @@ public class GenQueries {
 		int[] thresholds = new int[NUMBER_OF_SERVICE_LEVELS];
 		if (scope.equals(ScopeFactory.SCOPE_AVERAGE)) {
 			for (int i = 0; i < NUMBER_OF_SERVICE_LEVELS; i++) {
-				thresholds[i] = 100 * (i + 1) + slNumber * 200;
+				thresholds[i] = 1000 * (i + 1) + slNumber * 1000;
 			}
 		} else if (scope.equals(ScopeFactory.SCOPE_NUMBER)) {
 			throw new RuntimeException("not implemented");
@@ -333,10 +335,12 @@ public class GenQueries {
 				.append(NEWLINE).append("///\t OP_PROCESSING_TIME=")
 				.append(OP_PROCESSING_TIME).append(NEWLINE)
 				.append("///\t NUMBER_OF_USERS=").append(NUMBER_OF_USERS)
-				.append(NEWLINE).append("///\t NUMBER_OF_SLAS=")
-				.append(NUMBER_OF_SLAS).append(NEWLINE)
-				.append("///\t PENALTY_NAME=").append(PENALTY_NAME)
-				.append(NEWLINE).append("///\t NUMBER_OF_SERVICE_LEVELS=")
+				.append(NEWLINE).append("///\t NUMBER_OF_QUERIES_PER_USER=")
+				.append(NUMBER_OF_QUERIES_PER_USER).append(NEWLINE)
+				.append("///\t NUMBER_OF_SLAS=").append(NUMBER_OF_SLAS)
+				.append(NEWLINE).append("///\t PENALTY_NAME=")
+				.append(PENALTY_NAME).append(NEWLINE)
+				.append("///\t NUMBER_OF_SERVICE_LEVELS=")
 				.append(NUMBER_OF_SERVICE_LEVELS).append(NEWLINE);
 		return sb.toString();
 	}

@@ -17,16 +17,33 @@ public class SLAViolationEvent {
 	 * the costs caused by the violation due to predefined penalties
 	 */
 	private double cost;
+	/**
+	 * index of the hold service level
+	 */
+	private int serviceLevel;
+	/**
+	 * measured conformnace to sla
+	 */
+	private double conformance;
 
 	/**
 	 * creates a new sla violation event
-	 * @param query the query, the violated sla was defined for
-	 * @param sla the violated sla
-	 * @param cost the costs caused by the violation
+	 * 
+	 * @param query
+	 *            the query, the violated sla was defined for
+	 * @param cost
+	 *            the costs caused by the violation
+	 * @param serviceLevel
+	 *            index of the hold service level
+	 * @param conformance
+	 *            measured conformnace to sla
 	 */
-	public SLAViolationEvent(IQuery query, double cost) {
+	public SLAViolationEvent(IQuery query, double cost, int serviceLevel,
+			double conformance) {
 		this.query = query;
 		this.cost = cost;
+		this.serviceLevel = serviceLevel;
+		this.conformance = conformance;
 	}
 
 	/**
@@ -35,12 +52,26 @@ public class SLAViolationEvent {
 	public IQuery getQuery() {
 		return query;
 	}
-	
+
 	/**
 	 * @return the costs caused by the sla violation
 	 */
 	public double getCost() {
 		return cost;
+	}
+
+	/**
+	 * @return the hold service level of the sla
+	 */
+	public int getServiceLevel() {
+		return serviceLevel;
+	}
+
+	/**
+	 * @return the measured conformance to sla
+	 */
+	public double getConformance() {
+		return conformance;
 	}
 
 }

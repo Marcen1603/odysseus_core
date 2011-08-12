@@ -67,6 +67,8 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		sb.append(System.currentTimeMillis()).append(SEPERATOR)
 				.append(event.getQuery().getSLA().getName()).append(SEPERATOR)
 				.append(event.getQuery().getID()).append(SEPERATOR)
+				.append(event.getConformance()).append(SEPERATOR)
+				.append(event.getServiceLevel()).append(SEPERATOR)
 				.append(event.getCost()).append("\n");
 		return sb.toString();
 	}
@@ -78,6 +80,8 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Timestamp").append(SEPERATOR).append("SLA Name")
 				.append(SEPERATOR).append("Query ID").append(SEPERATOR)
+				.append("Conformance").append(SEPERATOR)
+				.append("Service Level").append(SEPERATOR)
 				.append("Violation Cost\n");
 		return sb.toString();
 	}
