@@ -8,6 +8,11 @@ import de.uniol.inf.is.odysseus.sla.factories.ScopeFactory;
 
 public class GenQueries {
 
+	private static int statsNumSources = 0;
+	private static int statsNumBuffers = 0;
+	private static int statsNumBenchmarks = 0;
+	private static long statsNumElements = 0;
+
 	private static final String NEWLINE = "\n";
 	private static final String TAB = "\t";
 	private static final double SF_DECAY = 0.1;
@@ -18,8 +23,7 @@ public class GenQueries {
 	private static final int TIME_SLICE = 10;
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
-	private static final int TEST_INPUT_NUMBER = 2;
-	private static final double OP_SELECTIVITY = 1.0;
+	private static final double OP_SELECTIVITY = 0.1;
 	private static final int OP_PROCESSING_TIME = 100;
 	private static final int NUMBER_OF_USERS = 3;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 3;
@@ -27,16 +31,44 @@ public class GenQueries {
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 
+	private static final int DATA_RATE_BURST = 10000;
+	private static final int DATA_RATE_HIGH = 1000;
+	private static final int DATA_RATE_MID = 100;
+	private static final int DATA_RATE_LOW = 10;
+	private static final int DATA_RATE_VERY_LOW = 1;
+
 	static String[] testinput = new String[] {
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 100000]]})",
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000, 100], [10000, 1000], [1000, 100]]})" };
-	
-	static int[][] dataRates0 = {{1000000, 5}};
-	static int[][] dataRates1 = {{1000000, 100000}};
-	static int[][] dataRates2 = {{1000, 100}, {10000, 1000}, {1000, 100}};
-	
-	static int[][][] DATA_RATES = {dataRates0, dataRates1, dataRates2};
+
+	static int[][] dataRates0 = { { 1000000, 5 } };
+	static int[][] dataRates1 = { { 1000000, 100000 } };
+	static int[][] dataRates2 = { { 1000, 100 }, { 10000, 1000 }, { 1000, 100 } };
+
+	static int[][] dataRates3 = { calcDataRate(60, DATA_RATE_VERY_LOW),
+			calcDataRate(60, DATA_RATE_LOW), calcDataRate(60, DATA_RATE_MID),
+			calcDataRate(60, DATA_RATE_HIGH),
+			calcDataRate(60, DATA_RATE_BURST),
+			calcDataRate(60, DATA_RATE_HIGH), calcDataRate(60, DATA_RATE_MID),
+			calcDataRate(60, DATA_RATE_LOW),
+			calcDataRate(120, DATA_RATE_VERY_LOW) };
+
+	static int[][] dataRates4 = { calcDataRate(180, DATA_RATE_VERY_LOW),
+			calcDataRate(60, DATA_RATE_BURST),
+			calcDataRate(120, DATA_RATE_VERY_LOW),
+			calcDataRate(60, DATA_RATE_BURST),
+			calcDataRate(180, DATA_RATE_VERY_LOW) };
+
+	static int[][] dataRates5 = { calcDataRate(120, DATA_RATE_LOW),
+			calcDataRate(120, DATA_RATE_MID), calcDataRate(120, DATA_RATE_LOW),
+			calcDataRate(120, DATA_RATE_MID), calcDataRate(120, DATA_RATE_LOW) };
+
+	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
+			dataRates3, dataRates4, dataRates5 };
+
+	static int[] DATA_RATE_INDICES = { 5 };
+	static int dataRatePos = 0;
 
 	public static void main(String[] args) {
 		StringBuilder sb = new StringBuilder();
@@ -77,6 +109,7 @@ public class GenQueries {
 			}
 		}
 
+		sb.append(createStatisticsComments());
 		System.out.println(sb.toString());
 	}
 
@@ -105,6 +138,7 @@ public class GenQueries {
 				.append(", time = ").append(OP_PROCESSING_TIME)
 				.append("},puffer").append(number)
 				.append(numberToChar(subnumber)).append(")").append(NEWLINE);
+		statsNumBenchmarks++;
 		return sb.toString();
 	}
 
@@ -123,6 +157,7 @@ public class GenQueries {
 					.append(number).append(numberToChar(subnumber - 1))
 					.append(")").append(NEWLINE);
 		}
+		statsNumBenchmarks++;
 		return sb.toString();
 	}
 
@@ -131,6 +166,7 @@ public class GenQueries {
 		sb.append("puffer").append(number).append(numberToChar(subNumber))
 				.append(" = buffer({type = 'Normal'},testinput").append(number)
 				.append(numberToChar(subNumber)).append(")").append(NEWLINE);
+		statsNumBuffers++;
 		return sb.toString();
 	}
 
@@ -227,18 +263,21 @@ public class GenQueries {
 		StringBuilder sb = new StringBuilder();
 		sb.append("#PARSER PQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
-		sb.append("testinput").append(number).append(numberToChar(subNumber))
-		.append(" := testproducer({invertedpriorityratio = 10, parts = [")
+		sb.append("testinput")
+				.append(number)
+				.append(numberToChar(subNumber))
+				.append(" := testproducer({invertedpriorityratio = 10, parts = [")
 				.append(createTestInputParam()).append("]})").append(NEWLINE);
 		sb.append("#PARSER CQL").append(NEWLINE);
 		sb.append("#QUERY").append(NEWLINE);
 		sb.append("GRANT READ ON testinput TO Public;").append(NEWLINE);
+		statsNumSources++;
 		return sb.toString();
 	}
-	
+
 	private static String createTestInputParam() {
 		StringBuilder sb = new StringBuilder();
-		int[][] param = DATA_RATES[TEST_INPUT_NUMBER];
+		int[][] param = DATA_RATES[nextDataRateIndex()];
 		for (int i = 0; i < param.length; i++) {
 			if (i != 0) {
 				sb.append(", ");
@@ -250,6 +289,7 @@ public class GenQueries {
 					sb.append(", ");
 			}
 			sb.append("]");
+			statsNumElements += param[i][0];
 		}
 		return sb.toString();
 	}
@@ -287,8 +327,8 @@ public class GenQueries {
 				.append(NEWLINE).append("///\t QUERY_SHARING_COST_MODEL=")
 				.append(QUERY_SHARING_COST_MODEL).append(NEWLINE)
 				.append("///\t COST_FUNC_NAME=").append(COST_FUNC_NAME)
-				.append(NEWLINE).append("///\t TEST_INPUT_NUMBER=")
-				.append(TEST_INPUT_NUMBER).append(NEWLINE)
+				.append(NEWLINE).append("///\t DATA_RATE_INDICES=")
+				.append(arrayToString(DATA_RATE_INDICES)).append(NEWLINE)
 				.append("///\t OP_SELECTIVITY=").append(OP_SELECTIVITY)
 				.append(NEWLINE).append("///\t OP_PROCESSING_TIME=")
 				.append(OP_PROCESSING_TIME).append(NEWLINE)
@@ -299,6 +339,49 @@ public class GenQueries {
 				.append(NEWLINE).append("///\t NUMBER_OF_SERVICE_LEVELS=")
 				.append(NUMBER_OF_SERVICE_LEVELS).append(NEWLINE);
 		return sb.toString();
+	}
+
+	private static Object arrayToString(int[] array) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (int i = 0; i < array.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+			sb.append(array[i]);
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	private static int[] calcDataRate(int lengthInSeconds, int load) {
+		int[] dataRate = new int[2];
+		dataRate[0] = load * lengthInSeconds;
+		dataRate[1] = load;
+		return dataRate;
+	}
+
+	private static String createStatisticsComments() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/// Statistics: ").append(NEWLINE);
+		sb.append("///\t number of sources: ").append(statsNumSources)
+				.append(NEWLINE);
+		sb.append("///\t number of buffers: ").append(statsNumBuffers)
+				.append(NEWLINE);
+		sb.append("///\t number of benchmark operators: ")
+				.append(statsNumBenchmarks).append(NEWLINE);
+		sb.append("///\t number of generated tuples: ")
+				.append(statsNumElements).append(NEWLINE);
+		return sb.toString();
+	}
+
+	private static int nextDataRateIndex() {
+		int next = DATA_RATE_INDICES[dataRatePos];
+		dataRatePos++;
+		if (dataRatePos >= DATA_RATE_INDICES.length) {
+			dataRatePos = 0;
+		}
+		return next;
 	}
 
 }
