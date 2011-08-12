@@ -49,6 +49,10 @@ public class GlobalState {
 		return activeUser.get(token);
 	}
 	
+	public synchronized static void removeActiveUser(String token){
+		activeUser.remove(token);
+	}
+	
 	public static void addActiveUserListner(IActiveUserListener listener){
 		activeUserListener.add(listener);
 	}
