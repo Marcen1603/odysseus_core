@@ -16,9 +16,11 @@ package de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
@@ -44,6 +46,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 	private LinkedList<SLAViolationEvent> eventQueue = new LinkedList<SLAViolationEvent>();
 	private List<ISLAViolationEventListener> listeners;
+	private Set<IQuery> extendedQueries = new HashSet<IQuery>();
 
 	public AbstractDynamicPriorityPlanScheduling() {
 		queue = new LinkedList<IScheduling>();
@@ -70,15 +73,18 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			// Init with Base Priority
 			scheduling.getPlan().setCurrentPriority(
 					scheduling.getPlan().getBasePriority());
-			// add SLA conformance operator to plan for monitoring
 			IQuery query = scheduling.getPlan().getQueries().get(0);
-			SLA sla = query.getSLA();
-			ISLAConformance conformance = new SLAConformanceFactory()
-					.createSLAConformance(sla, this, query);
+			if (!this.extendedQueries.contains(query)) {
+				// add SLA conformance operator to plan for monitoring
+				this.extendedQueries.add(query);
+				SLA sla = query.getSLA();
+				ISLAConformance conformance = new SLAConformanceFactory()
+						.createSLAConformance(sla, this, query);
 
-			ISLAConformancePlacement placement = new SLAConformancePlacementFactory()
-					.buildSLAConformancePlacement(sla);
-			placement.placeSLAConformance(query, conformance);
+				ISLAConformancePlacement placement = new SLAConformancePlacementFactory()
+						.buildSLAConformancePlacement(sla);
+				placement.placeSLAConformance(query, conformance);
+			}
 		}
 	}
 
