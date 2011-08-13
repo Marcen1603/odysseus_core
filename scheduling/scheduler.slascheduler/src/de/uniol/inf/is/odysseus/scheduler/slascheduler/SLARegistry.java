@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
@@ -124,6 +128,9 @@ public class SLARegistry implements IPlanModificationListener {
 			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(query.getSLA());
 			data.setConnectionPoint(placement.placeSLAConformance(query, conformance));
 			
+			List<IBuffer<?>> buffers = this.findBuffers(query);
+			data.setBuffers(buffers);
+			
 			this.addSchedData(query, data);
 			
 			break;
@@ -139,6 +146,23 @@ public class SLARegistry implements IPlanModificationListener {
 			break;
 		}
 		}
+	}
+
+	/**
+	 * Returns a list of all buffers owned by the given query
+	 * @param query the query
+	 * @return a list of all buffers owned by the query. could be empty, if
+	 * 		the query ownes no buffers 
+	 */
+	private List<IBuffer<?>> findBuffers(IQuery query) {
+		List<IBuffer<?>> buffers = new ArrayList<IBuffer<?>>();
+		for (IPhysicalOperator po : query.getAllOperators()) {
+			if (po instanceof IBuffer<?>) {
+				IBuffer<?> buffer = (IBuffer<?>) po;
+				buffers.add(buffer);
+			}
+		}
+		return buffers;
 	}
 	
 }

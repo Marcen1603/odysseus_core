@@ -7,15 +7,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatency;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.SLATestLogger;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
@@ -205,7 +204,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			// Attention: it is expected that 1 partial plan contains 1 query
 			IQuery query = scheduling.getPlan().getQueries().get(0);
 			SLARegistryInfo data = this.registry.getData(query);
-			if (data != null) {
+			if (data != null && this.hasNext(data.getBuffers())) {
 				SLA sla = query.getSLA();
 				double conformance = data.getConformance().getConformance();
 				// calculate priorities for all partial plans:
@@ -269,6 +268,20 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 //					+ next.getPlan().getQueries().get(0).getID());
 
 		return next;
+	}
+
+	/**
+	 * Checks if there are elements waiting for execution in the given buffers
+	 * @param buffers list of buffers owned by one query
+	 * @return true iff the given buffers have elements to process
+	 */
+	private boolean hasNext(List<IBuffer<?>> buffers) {
+		for (IBuffer<?> buffer : buffers) {
+			if (buffer.size() > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

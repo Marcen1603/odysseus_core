@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.ISubscribable;
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 
 /**
  * container for all data items managed by the maps of the SLARegistry
@@ -29,6 +32,10 @@ public class SLARegistryInfo {
 	 * the operator of a partial plan, the conformance object is connected to
 	 */
 	private ISubscribable<?, ?> connectionPoint;
+	/**
+	 * list of buffers owned by the query
+	 */
+	private List<IBuffer<?>> buffers;
 	
 	/**
 	 * 
@@ -112,6 +119,20 @@ public class SLARegistryInfo {
 	 */
 	public ISubscribable<?, ?> getConnectionPoint() {
 		return connectionPoint;
+	}
+	/**
+	 * sets the new list of buffers
+	 * @param buffers the new list of buffers
+	 */
+	public void setBuffers(List<IBuffer<?>> buffers) {
+		this.buffers = buffers;
+	}
+
+	/**
+	 * @return the list of buffers owned by the query
+	 */
+	public List<IBuffer<?>> getBuffers() {
+		return buffers;
 	}
 
 }
