@@ -122,7 +122,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 						break;
 					}
 				}
-				return updateMetaAndReturnPlan(lastRun.remove(0));
+				return updateMetaAndReturnPlan(lastRun.remove(0)); 
 			}
 		}
 	}
