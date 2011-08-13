@@ -25,12 +25,6 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 public class SimpleDynamicSchedulerFactory extends AbstractSchedulerFactory {
 	
 	@Override
-	protected void activate(ComponentContext context) {
-		System.err.println("LOADING PRIO SLA");
-		System.err.println(context.toString());
-	}
-
-	@Override
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
 		return new SingleThreadSchedulerWithStrategy(schedulingFactoring, new SimpleDynamicPriorityPlanScheduling(0));
 	}
