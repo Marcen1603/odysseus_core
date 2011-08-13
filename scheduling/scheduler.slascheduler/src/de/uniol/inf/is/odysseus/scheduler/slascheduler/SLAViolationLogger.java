@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * Simple implementation of {@link ISLAViolationEventListener} interface for
@@ -17,7 +19,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 * name of log file
 	 */
 	public static final String FILE_NAME = "sla_violations_"
-			+ System.currentTimeMillis() + ".csv";
+			+ DateFormat.getDateTimeInstance().format(new Date()) + ".csv";
 	/**
 	 * path of log file
 	 */

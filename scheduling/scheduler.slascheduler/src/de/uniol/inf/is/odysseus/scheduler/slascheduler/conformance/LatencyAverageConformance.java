@@ -37,7 +37,6 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 			SLA sla, IQuery query) {
 		super(dist, sla, query);
 		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
-
 	}
 
 	/**
