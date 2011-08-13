@@ -13,3 +13,6 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
 Require-Bundle: de.uniol.inf.is.odysseus,
  org.junit
 Service-Component: OSGI-INF/SLAScheduler.xml
+Export-Package: de.uniol.inf.is.odysseus.scheduler.slascheduler,
+ de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance,
+ de.uniol.inf.is.odysseus.scheduler.slascheduler.placement
