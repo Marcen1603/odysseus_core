@@ -47,6 +47,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	private LinkedList<SLAViolationEvent> eventQueue = new LinkedList<SLAViolationEvent>();
 	private List<ISLAViolationEventListener> listeners;
 	private Set<IQuery> extendedQueries = new HashSet<IQuery>();
+	private List<ISLAConformance> conformances = new ArrayList<ISLAConformance>();
 
 	public AbstractDynamicPriorityPlanScheduling() {
 		queue = new LinkedList<IScheduling>();
@@ -84,6 +85,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 				ISLAConformancePlacement placement = new SLAConformancePlacementFactory()
 						.buildSLAConformancePlacement(sla);
 				placement.placeSLAConformance(query, conformance);
+				this.conformances.add(conformance);
 			}
 		}
 	}
@@ -97,6 +99,9 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 	@Override
 	public IScheduling nextPlan() {
+		for (ISLAConformance conformance : this.conformances) {
+			conformance.checkViolation();
+		}
 		synchronized (eventQueue) {
 			while (!this.eventQueue.isEmpty()) {
 				this.fireSLAViolationEvent(this.eventQueue.pop());
