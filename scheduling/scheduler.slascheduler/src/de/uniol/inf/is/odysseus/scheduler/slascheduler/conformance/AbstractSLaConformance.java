@@ -119,7 +119,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 * window's end has been reached a new window will be set and all results of
 	 * conformance are reset.
 	 */
-	protected void checkViolation() {
+	public void checkViolation() {
 		/*
 		 * most valuable service level is first list entry! so iterate reverse
 		 * over list to find the less valuable violated service level first

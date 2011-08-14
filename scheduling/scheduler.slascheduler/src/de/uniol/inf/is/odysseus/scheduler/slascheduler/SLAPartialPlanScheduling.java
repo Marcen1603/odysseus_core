@@ -204,50 +204,40 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			// Attention: it is expected that 1 partial plan contains 1 query
 			IQuery query = scheduling.getPlan().getQueries().get(0);
 			SLARegistryInfo data = this.registry.getData(query);
-			if (data != null && this.hasNext(data.getBuffers())) {
-				SLA sla = query.getSLA();
-				double conformance = data.getConformance().getConformance();
-				// calculate priorities for all partial plans:
-				// - calculate oc
-				ICostFunction costFunc = data.getCostFunction();
-				double oc = costFunc.oc(conformance, sla);
+			if (data != null) {
+				// first check for sla violation and create event in case of violation
+				data.getConformance().checkViolation();
+				if (this.hasNext(data.getBuffers())) {
 
-				// - calculate mg
-				double mg = costFunc.mg(conformance, sla);
+					SLA sla = query.getSLA();
+					double conformance = data.getConformance().getConformance();
+					// calculate priorities for all partial plans:
+					// - calculate oc
+					ICostFunction costFunc = data.getCostFunction();
+					double oc = costFunc.oc(conformance, sla);
 
-				// - calculate sf
-				double sf = data.getStarvationFreedom().sf(this.getDecaySF());
+					// - calculate mg
+					double mg = costFunc.mg(conformance, sla);
 
-				// - calculate prio
-				double prio = this.prioFunction.calcPriority(oc, mg, sf);
+					// - calculate sf
+					double sf = data.getStarvationFreedom().sf(this.getDecaySF());
 
-				// SLATestLogger.log("query "
-				// + query.getID()
-				// + " oc="
-				// + oc
-				// + " mg="
-				// + mg
-				// + " sf="
-				// + sf
-				// + " prio="
-				// + prio
-				// + " conformance="
-				// + conformance
-				// + " servicelevel="
-				// + ((QuadraticCFLatency) costFunc)
-				// .getCurrentServiceLevelIndex(conformance, sla));
-//				SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
-//						prio, conformance, ((QuadraticCFLatency) costFunc)
-//								.getCurrentServiceLevelIndex(conformance, sla));
+					// - calculate prio
+					double prio = this.prioFunction.calcPriority(oc, mg, sf);
 
-				// select plan with highest priority
-				if (prio > nextPrio) {
-					next = scheduling;
-					nextPrio = prio;
-				}
+//					SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
+//							prio, conformance, ((QuadraticCFLatency) costFunc)
+//									.getCurrentServiceLevelIndex(conformance, sla));
 
-				if (this.querySharing != null) {
-					this.querySharing.setPriority(scheduling, prio);
+					// select plan with highest priority
+					if (prio > nextPrio) {
+						next = scheduling;
+						nextPrio = prio;
+					}
+
+					if (this.querySharing != null) {
+						this.querySharing.setPriority(scheduling, prio);
+					}
 				}
 			}
 

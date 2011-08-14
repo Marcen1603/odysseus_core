@@ -15,4 +15,6 @@ public interface ISLAConformance {
 	 */
 	public void reset();
 	
+	public void checkViolation();
+	
 }

@@ -66,7 +66,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 */
 	private String eventToString(SLAViolationEvent event) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(System.currentTimeMillis()).append(SEPERATOR)
+		sb.append(DateFormat.getDateTimeInstance().format(new Date())).append(SEPERATOR)
 				.append(event.getQuery().getSLA().getName()).append(SEPERATOR)
 				.append(event.getQuery().getID()).append(SEPERATOR)
 				.append(event.getConformance()).append(SEPERATOR)

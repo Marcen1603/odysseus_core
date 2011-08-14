@@ -68,7 +68,7 @@ public class GenQueries {
 	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
 			dataRates3, dataRates4, dataRates5 };
 
-	static int[] DATA_RATE_INDICES = { 5 };
+	static int[] DATA_RATE_INDICES = { 3, 4, 5 };
 	static int dataRatePos = 0;
 
 	public static void main(String[] args) {
