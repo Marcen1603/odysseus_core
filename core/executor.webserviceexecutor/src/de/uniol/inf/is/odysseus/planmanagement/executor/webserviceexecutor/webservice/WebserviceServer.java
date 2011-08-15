@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
  */
 
 @WebService
-@SOAPBinding(style = Style.RPC)
+@SOAPBinding(style = Style.DOCUMENT)
 @XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class })
 public class WebserviceServer {
 
