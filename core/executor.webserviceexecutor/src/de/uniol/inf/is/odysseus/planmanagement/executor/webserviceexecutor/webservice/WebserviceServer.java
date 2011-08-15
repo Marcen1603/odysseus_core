@@ -15,7 +15,6 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -43,6 +42,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
@@ -110,6 +110,20 @@ public class WebserviceServer {
 			return new StringListResponse(false);
 		}
 
+	}
+	
+	public StringListResponse getInstalledQueries(@WebParam(name="securitytoken") String securityToken){
+		StringListResponse response = new StringListResponse(true);
+		try{
+			loginWithSecurityToken(securityToken);			
+			for(IQuery q : ExecutorServiceBinding.getExecutor().getPlan().getQueries()){
+				response.addResponseValue(q.getQueryText());
+			}
+			return response;
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new StringListResponse(false);
+		}
 	}
 
 	private User loginWithSecurityToken(String securityToken) throws WebserviceException {
