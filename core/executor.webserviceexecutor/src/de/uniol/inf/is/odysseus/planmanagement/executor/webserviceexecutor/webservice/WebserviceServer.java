@@ -97,14 +97,14 @@ public class WebserviceServer {
 	}
 
 	public StringListResponse getInstalledSources(@WebParam(name = "securitytoken") String securityToken) {
-		ArrayList<String> sources = new ArrayList<String>();
+		StringListResponse response = new StringListResponse(true);
 		try {
 			User user = loginWithSecurityToken(securityToken);
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			for (Entry<String, ILogicalOperator> e : dd.getStreams(user)) {
-				sources.add(e.getKey());
+				response.addResponseValue(e.getKey());
 			}
-			return new StringListResponse(sources, true);
+			return response;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new StringListResponse(false);
