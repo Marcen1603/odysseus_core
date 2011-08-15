@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webs
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,6 +36,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception.WebserviceException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.BooleanResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -62,14 +69,14 @@ public class WebserviceServer {
 	}
 
 	@WebResult(name = "securitytoken")
-	public ComplexResponse<String> login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
+	public StringResponse login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
 		User user = UserManagement.getInstance().login(username, password, false);
 		if (user != null) {
 			String token = SessionManagement.getInstance().createNewSession(user);
-			ComplexResponse<String> response = new ComplexResponse<String>(token, true);
+			StringResponse response = new StringResponse(token, true);
 			return response;
 		} else {
-			return new ComplexResponse<String>(null, false);
+			return new StringResponse(null, false);
 		}
 	}
 
@@ -89,7 +96,7 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
-	public ComplexResponse<String[]> getInstalledSources(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getInstalledSources(@WebParam(name = "securitytoken") String securityToken) {
 		ArrayList<String> sources = new ArrayList<String>();
 		try {
 			User user = loginWithSecurityToken(securityToken);
@@ -97,10 +104,10 @@ public class WebserviceServer {
 			for (Entry<String, ILogicalOperator> e : dd.getStreams(user)) {
 				sources.add(e.getKey());
 			}
-			return new ComplexResponse<String[]>(sources.toArray(new String[0]), true);
+			return new StringListResponse(sources, true);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ComplexResponse<String[]>(new String[0], false);
+			return new StringListResponse(false);
 		}
 
 	}
@@ -172,24 +179,24 @@ public class WebserviceServer {
 		}
 	}
 
-	public ComplexResponse<Boolean> isRunning(@WebParam(name = "securitytoken") String securityToken) {
+	public BooleanResponse isRunning(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
 			boolean running = ExecutorServiceBinding.getExecutor().isRunning();
-			return new ComplexResponse<Boolean>(running, true);
+			return new BooleanResponse(running, true);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ComplexResponse<Boolean>(false, false);
+			return new BooleanResponse(false, false);
 		}
 	}
 
-	public ComplexResponse<String> getInfos(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getInfos(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String>(ExecutorServiceBinding.getExecutor().getInfos(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor().getInfos(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ComplexResponse<String>("", false);
+			return new StringResponse("", false);
 		}
 	}
 
@@ -204,24 +211,25 @@ public class WebserviceServer {
 		}
 	}
 
-	public ComplexResponse<String[]> getQueryBuildConfigurationNames(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getQueryBuildConfigurationNames(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String[]>(ExecutorServiceBinding.getExecutor().getQueryBuildConfigurationNames().toArray(new String[0]), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor().getQueryBuildConfigurationNames(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ComplexResponse<String[]>(new String[0], false);
+		return new StringListResponse(false);
 	}
 
-	public ComplexResponse<String[]> getSupportedQueryParsers(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getSupportedQueryParsers(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			ExecutorServiceBinding.getExecutor().getSupportedQueryParsers().toArray(new String[0]);
+			Set<String> parsers = ExecutorServiceBinding.getExecutor().getSupportedQueryParsers();
+			return new StringListResponse(parsers, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ComplexResponse<String[]>(new String[0], false);
+		return new StringListResponse(false);
 	}
 
 	public Response startAllClosedQueries(@WebParam(name = "securitytoken") String securityToken) {
@@ -235,34 +243,34 @@ public class WebserviceServer {
 		}
 	}
 
-	public ComplexResponse<String[]> getRegisteredBufferPlacementStrategiesIDs(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getRegisteredBufferPlacementStrategiesIDs(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String[]>(ExecutorServiceBinding.getExecutor().getRegisteredBufferPlacementStrategiesIDs().toArray(new String[0]), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredBufferPlacementStrategiesIDs(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ComplexResponse<String[]>(new String[0], false);
+		return new StringListResponse(false);
 	}
 
-	public ComplexResponse<String[]> getRegisteredSchedulingStrategies(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getRegisteredSchedulingStrategies(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String[]>(ExecutorServiceBinding.getExecutor().getRegisteredSchedulingStrategies().toArray(new String[0]), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulingStrategies(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ComplexResponse<String[]>(new String[0], false);
+		return new StringListResponse(false);
 	}
 
-	public ComplexResponse<String[]> getRegisteredSchedulers(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getRegisteredSchedulers(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String[]>(ExecutorServiceBinding.getExecutor().getRegisteredSchedulers().toArray(new String[0]), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulers(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ComplexResponse<String[]>(new String[0], false);
+		return new StringListResponse(false);
 	}
 
 	public Response setScheduler(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "scheduler") String scheduler,
@@ -277,23 +285,23 @@ public class WebserviceServer {
 		}
 	}
 
-	public ComplexResponse<String> getCurrentSchedulerID(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getCurrentSchedulerID(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String>(ExecutorServiceBinding.getExecutor().getCurrentSchedulerID(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulerID(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ComplexResponse<String>("", false);
+			return new StringResponse("", false);
 		}
 	}
 
-	public ComplexResponse<String> getCurrentSchedulingStrategyID(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getCurrentSchedulingStrategyID(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String>(ExecutorServiceBinding.getExecutor().getCurrentSchedulingStrategyID(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulingStrategyID(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ComplexResponse<String>("", false);
+			return new StringResponse("", false);
 		}
 	}
 
@@ -309,13 +317,13 @@ public class WebserviceServer {
 
 	}
 
-	public ComplexResponse<String> getName(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getName(@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new ComplexResponse<String>(ExecutorServiceBinding.getExecutor().getName(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor().getName(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ComplexResponse<String>("", false);
+			return new StringResponse("", false);
 		}
 	}
 

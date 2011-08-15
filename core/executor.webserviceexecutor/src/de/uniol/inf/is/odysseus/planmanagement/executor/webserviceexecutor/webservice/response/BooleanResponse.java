@@ -13,33 +13,30 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
+package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
 /**
  * 
  * @author Dennis Geesen
- * Created at: 09.08.2011
+ * Created at: 15.08.2011
  */
-public class ComplexResponse<T> extends Response{
+public class BooleanResponse extends Response {
 
-	
-	private T response;
-	
-	public ComplexResponse(){
+	private boolean responseValue;
+
+	public BooleanResponse() {
 		super();
 	}
-	
-	public ComplexResponse(T response, boolean success) {
+
+	public BooleanResponse(boolean responseValue, boolean success) {
 		super(success);
-		this.response = response;		
+		this.responseValue = responseValue;
 	}
 
-	public T getResponse() {
-		return response;
+	public boolean getResponseValue() {
+		return responseValue;
 	}
 
-	public void setResponse(T response) {
-		this.response = response;
+	public void setResponseValue(boolean responseValue) {
+		this.responseValue = responseValue;
 	}
-	
-	
 }
