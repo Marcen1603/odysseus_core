@@ -32,9 +32,6 @@ import javax.xml.ws.Endpoint;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception.WebserviceException;
@@ -44,8 +41,6 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.util.GraphHelper;
 
 /**
  * 
@@ -59,7 +54,7 @@ public class WebserviceServer {
 
 	public static void startServer() {
 		WebserviceServer server = new WebserviceServer();
-		Endpoint endpoint = Endpoint.publish("http://localhost:9669/odysseus", server);
+		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9669/odysseus", server);
 		if (endpoint.isPublished()) {
 			Logger.getAnonymousLogger().log(Level.FINE, "Webservice published!");
 		}
