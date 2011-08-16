@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.access.ByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.physicaloperator.access.ConnectionMessageReason;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IRouterReceiver;
 import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
@@ -239,6 +240,12 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	@Override
 	public String getSourceName() {
 		return toString();
+	}
+
+	@Override
+	public void notify(Router router, ConnectionMessageReason reason) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
