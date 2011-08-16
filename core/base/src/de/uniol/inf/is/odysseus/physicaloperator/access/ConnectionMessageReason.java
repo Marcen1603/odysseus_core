@@ -1,4 +1,4 @@
-/** Copyright [2011] [The Odysseus Team]
+/** Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -12,12 +12,17 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
+
 package de.uniol.inf.is.odysseus.physicaloperator.access;
+/**
+ * 
+ * @author Dennis Geesen
+ * Created at: 16.08.2011
+ */
+public enum ConnectionMessageReason {
 
-import java.nio.ByteBuffer;
-
-public interface IRouterReceiver extends IConnectionListener{
-	public void process(ByteBuffer buffer);
-	public void done();
-	public String getSourceName();	
+	ConnectionAbort,	
+	ConnectionRefused,
+	ConnectionClosed,
+	ConnectionOpened
 }

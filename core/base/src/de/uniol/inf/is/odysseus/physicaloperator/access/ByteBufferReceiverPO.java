@@ -24,8 +24,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
-public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
-		IRouterReceiver {
+public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRouterReceiver {
 
 	volatile protected static Logger _logger = null;
 
@@ -44,16 +43,18 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 	private String host;
 	private int port;
 	boolean opened;
+	boolean autoReconnect = false;
 
-	public ByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port)
-			throws IOException {
+	public ByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port) throws IOException {
 		super();
 		this.handler = handler;
 		router = Router.getInstance();
+		router.addConnectionListener(this);
 		this.host = host;
 		this.port = port;
 		setName("ByteBufferReceiverPO " + host + ":" + port);
 		this.opened = false;
+		this.autoReconnect = false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -66,6 +67,17 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		host = byteBufferReceiverPO.host;
 		port = byteBufferReceiverPO.port;
 		opened = byteBufferReceiverPO.opened;
+		autoReconnect = byteBufferReceiverPO.autoReconnect;
+	}
+	
+	
+
+	public boolean isAutoReconnectEnabled() {
+		return autoReconnect;
+	}
+
+	public void setAutoReconnectEnabled(boolean autoReconnect) {
+		this.autoReconnect = autoReconnect;
 	}
 
 	@Override
@@ -119,8 +131,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 					// TODO: Reihenfolge mit der die Size kodiert wird
 					// festlegen!!!
 					if (size == -1) {
-						while (sizeBuffer.position() < 4
-								&& buffer.remaining() > 0) {
+						while (sizeBuffer.position() < 4 && buffer.remaining() > 0) {
 							sizeBuffer.put(buffer.get());
 						}
 						// Wenn alles übertragen
@@ -148,20 +159,37 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 						}
 					}
 				}
-			} catch (Exception e) {
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+				reconnect();
+			}
+		}
+	}	
+	
+	private void reconnect() {		
+		if (this.autoReconnect) {
+			getLogger().info("Trying to reconnect...");
+			process_close();
+			try {
+				process_open();
+			} catch (OpenFailedException e) {	
+				if(e.getCause() instanceof IOException){
+					reconnect();
+				}
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private synchronized void transfer() throws IOException,
-			ClassNotFoundException {
-		
+	private synchronized void transfer() throws IOException, ClassNotFoundException {
+
 		W toTrans = null;
 		try {
 			toTrans = handler.create();
 		} catch (Exception e) {
-			getLogger().error(e.getMessage()+". Terminating Processing ...");
+			getLogger().error(e.getMessage() + ". Terminating Processing ...");
 			e.printStackTrace();
 			process_done();
 			process_close();
@@ -196,10 +224,28 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		}
 		@SuppressWarnings("rawtypes")
 		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
-		if (this.handler.equals(bbrpo.handler) && this.port == bbrpo.port
-				&& this.host.equals(bbrpo.host)) {
+		if (this.handler.equals(bbrpo.handler) && this.port == bbrpo.port && this.host.equals(bbrpo.host)) {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void notify(Router router, ConnectionMessageReason reason) {
+		switch (reason) {
+		case ConnectionAbort:
+			reconnect();
+			break;
+		case ConnectionClosed:
+			break;
+		case ConnectionRefused:
+			reconnect();
+			break;
+		case ConnectionOpened:
+			break;
+		default:
+			break;
+		}
+
 	}
 }

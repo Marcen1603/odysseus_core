@@ -38,6 +38,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 	private String fileURL;
 	private String login;
 	private String password;
+	private boolean autoreconnect = false;
 
 	public String getFileURL() {
 		return fileURL;
@@ -73,6 +74,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 		this.outputSchema = createCleanClone(po.outputSchema);
 		this.login = po.login;
 		this.password = po.password;
+		this.autoreconnect = po.autoreconnect;
 	}
 
 	public AccessAO(SDFSource source) {
@@ -190,6 +192,14 @@ public class AccessAO extends AbstractLogicalOperator implements
 	
 	public String getPassword() {
 		return password;
+	}
+
+	public boolean isAutoReconnectEnabled() {
+		return autoreconnect;
+	}
+	
+	public void setAutoReconnectEnabled(boolean enable){
+		this.autoreconnect = enable;		
 	}
 	
 }

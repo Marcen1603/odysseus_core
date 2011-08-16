@@ -15,15 +15,18 @@
 package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +53,7 @@ public class Router extends Thread {
 	private LinkedList<IPair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<IPair<SocketChannel, IRouterReceiver>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
+	private List<IConnectionListener> connectionlistener = new ArrayList<IConnectionListener>();
 
 	public static synchronized Router getInstance() throws IOException {
 		if (instance == null) {
@@ -75,6 +79,20 @@ public class Router extends Thread {
 	public static synchronized boolean hasInstance(){
 		return instance != null;
 	}
+	
+	public void addConnectionListener(IConnectionListener listener){
+		this.connectionlistener .add(listener);
+	}
+	
+	public void removeConnectionListener(IConnectionListener listener){
+		this.connectionlistener.remove(listener);
+	}
+	
+	public void notifyConnectionListeners(ConnectionMessageReason reason){
+		for(IConnectionListener listener : this.connectionlistener){
+			listener.notify(this, reason);
+		}
+	}
 
 	private Router() throws IOException {
 		selector = Selector.open();
@@ -84,7 +102,7 @@ public class Router extends Thread {
 		doRouting = false;
 		//instance = null;
 		selector.wakeup();
-	}
+	}	
 
 	@Override
 	public void run() {
@@ -117,12 +135,12 @@ public class Router extends Thread {
 						if (sc.isConnected()) {
 							key.interestOps(SelectionKey.OP_READ);
 						} else {
-							getLogger().error("NOT CONNECTED!!!!!!!!!!!!!");
+							getLogger().error("NOT CONNECTED");
 						}
 					} else if (key.isReadable()) {
 						if (!sc.isConnected()) {
 							key.interestOps(SelectionKey.OP_CONNECT);
-							getLogger().error("NOT CONNECTED2!!!!!!!!!!!!!");
+							getLogger().error("NOT CONNECTED!");
 						} else {
 							if (op != null) {
 								readDataFromSocket(sc, op);
@@ -155,8 +173,14 @@ public class Router extends Thread {
 			}catch (java.nio.channels.CancelledKeyException e1){
 				// Ignore
 				//e1.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
+			}catch(ConnectException ce){
+				//ce.printStackTrace();
+				getLogger().debug("Connection refused. "+ce.getMessage());
+				notifyConnectionListeners(ConnectionMessageReason.ConnectionRefused);
+			}
+			catch(IOException ioe){
+				getLogger().debug("Connection aborted. "+ioe.getMessage());				
+				notifyConnectionListeners(ConnectionMessageReason.ConnectionAbort);
 			}
 		}
 		getLogger().debug("Router terminated ...");
@@ -171,6 +195,7 @@ public class Router extends Thread {
 		sc.connect(new InetSocketAddress(host, port));
 		deferedRegister(sc, sink);
 		selector.wakeup();
+		notifyConnectionListeners(ConnectionMessageReason.ConnectionOpened);
 	}
 	
 	public void disconnectFromServer(IRouterReceiver sink) throws IOException{
@@ -179,7 +204,7 @@ public class Router extends Thread {
 			if (s!=null){
 				s.close();
 			}
-		}
+		}		
 	}
 
 	private void deferedRegister(SocketChannel sc, IRouterReceiver sink) {
@@ -226,7 +251,7 @@ public class Router extends Thread {
 	// }
 
 	private void readDataFromSocket(SocketChannel socketChannel,
-			IRouterReceiver os) throws Exception {
+			IRouterReceiver os) throws IOException {
 		// ISink<ByteBuffer> os = clientMap.get(socketChannel);
 		// System.out.println(os);
 		// System.out.println("Read From Socket " + socketChannel.toString() +
