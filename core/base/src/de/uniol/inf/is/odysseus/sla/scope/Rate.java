@@ -13,4 +13,9 @@ import de.uniol.inf.is.odysseus.sla.Scope;
  */
 public class Rate extends Scope {
 
+	@Override
+	public boolean thresholdIsMin() {
+		return true;
+	}
+
 }

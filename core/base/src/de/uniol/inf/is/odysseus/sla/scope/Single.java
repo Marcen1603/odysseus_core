@@ -11,4 +11,9 @@ import de.uniol.inf.is.odysseus.sla.Scope;
  */
 public class Single extends Scope {
 
+	@Override
+	public boolean thresholdIsMin() {
+		return false;
+	}
+
 }

@@ -12,4 +12,9 @@ import de.uniol.inf.is.odysseus.sla.Scope;
  */
 public class Average extends Scope {
 
+	@Override
+	public boolean thresholdIsMin() {
+		return false;
+	}
+
 }

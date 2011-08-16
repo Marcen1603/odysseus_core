@@ -17,5 +17,7 @@ public abstract class Scope {
 
 		return sb.toString();
 	}
+	
+	public abstract boolean thresholdIsMin();
 
 }
