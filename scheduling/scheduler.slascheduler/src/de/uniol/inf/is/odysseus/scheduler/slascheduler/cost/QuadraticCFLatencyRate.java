@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.sla.SLA;
  * @author Thomas Vogelgesang
  * 
  */
-public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
+public class QuadraticCFLatencyRate extends QuadraticCFLatency {
 
 	/**
 	 * calculates opportunity costs for metric latency with scope average by

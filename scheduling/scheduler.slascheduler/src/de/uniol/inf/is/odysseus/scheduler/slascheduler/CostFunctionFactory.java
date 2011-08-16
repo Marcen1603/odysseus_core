@@ -2,11 +2,13 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyAverage;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyNumber;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyRate;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencySingle;
 import de.uniol.inf.is.odysseus.sla.SLA;
 import de.uniol.inf.is.odysseus.sla.metric.Latency;
 import de.uniol.inf.is.odysseus.sla.scope.Average;
 import de.uniol.inf.is.odysseus.sla.scope.Number;
+import de.uniol.inf.is.odysseus.sla.scope.Rate;
 import de.uniol.inf.is.odysseus.sla.scope.Single;
 
 /**
@@ -46,6 +48,8 @@ public class CostFunctionFactory {
 					function = new QuadraticCFLatencyNumber();
 				} else if (sla.getScope() instanceof Single) {
 					function = new QuadraticCFLatencySingle();
+				} else if (sla.getScope() instanceof Rate) {
+					function = new QuadraticCFLatencyRate();
 				}
 			}
 		}

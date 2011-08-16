@@ -3,11 +3,13 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyAverageConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyRateConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencySingleConformance;
 import de.uniol.inf.is.odysseus.sla.SLA;
 import de.uniol.inf.is.odysseus.sla.metric.Latency;
 import de.uniol.inf.is.odysseus.sla.scope.Average;
 import de.uniol.inf.is.odysseus.sla.scope.Number;
+import de.uniol.inf.is.odysseus.sla.scope.Rate;
 import de.uniol.inf.is.odysseus.sla.scope.Single;
 
 /**
@@ -40,6 +42,9 @@ public class SLAConformanceFactory {
 			} else if (sla.getScope() instanceof Single) {
 				conformance = new LatencySingleConformance(distributor, sla, 
 						query);
+			} else if (sla.getScope() instanceof Rate) {
+				conformance = new LatencyRateConformance(distributor, sla, 
+						query, sla.getMetric().getValue());
 			}
 		}
 

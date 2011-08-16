@@ -26,7 +26,7 @@ public class OverheadMeasurement {
 	public void stop() {
 		this.totalTime += System.nanoTime() - this.startTS;
 		if (System.nanoTime() > (outputTS + waitingTimeForOutput)) {
-			System.out.format("%-11.9f%n", (this.totalTime  / 1000000000.0) / (double)this.calls);
+//			System.out.format("%-11.9f%n", (this.totalTime  / 1000000000.0) / (double)this.calls);
 			this.totalTime = 0L;
 			this.calls = 0;
 			this.outputTS = System.nanoTime();

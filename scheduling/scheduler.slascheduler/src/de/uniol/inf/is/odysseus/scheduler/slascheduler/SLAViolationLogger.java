@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Simple implementation of {@link ISLAViolationEventListener} interface for
@@ -14,7 +15,7 @@ import java.util.Date;
  * 
  */
 public class SLAViolationLogger implements ISLAViolationEventListener {
-	private static final String SEPERATOR = ",";
+	private static final String SEPERATOR = ";";
 	/**
 	 * name of log file
 	 */
@@ -66,12 +67,17 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 */
 	private String eventToString(SLAViolationEvent event) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(DateFormat.getDateTimeInstance().format(new Date())).append(SEPERATOR)
-				.append(event.getQuery().getSLA().getName()).append(SEPERATOR)
-				.append(event.getQuery().getID()).append(SEPERATOR)
-				.append(event.getConformance()).append(SEPERATOR)
+		sb.append(DateFormat.getDateTimeInstance().format(new Date()))
+				.append(SEPERATOR)
+				.append(event.getQuery().getSLA().getName())
+				.append(SEPERATOR)
+				.append(event.getQuery().getID())
+				.append(SEPERATOR)
+				.append(String.format(Locale.GERMAN, "%15.8f",
+						event.getConformance())).append(SEPERATOR)
 				.append(event.getServiceLevel()).append(SEPERATOR)
-				.append(event.getCost()).append("\n");
+				.append(String.format(Locale.GERMAN, "%7.2f", event.getCost()))
+				.append("\n");
 		return sb.toString();
 	}
 

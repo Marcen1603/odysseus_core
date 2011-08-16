@@ -81,14 +81,16 @@ public class GenQueries {
 			sb.append(createUser(i));
 		}
 
+		// create SLA
 		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-			sb.append(createSLA(i, (i + 1) * 200, ScopeFactory.SCOPE_AVERAGE,
+			sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
 					120, TimeUnit.s.toString(),
-					calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+					calcThresholds(ScopeFactory.SCOPE_RATE, i),
 					calcPenaltyCosts(i), PENALTY_NAME));
 		}
 		sb.append(NEWLINE);
 
+		// Create queries
 		sb.append("/// Move the following code into a new script file!")
 				.append(NEWLINE);
 		sb.append(createSettingComment());
@@ -198,7 +200,7 @@ public class GenQueries {
 	}
 
 	private static String createSLA(int number, double metricValue,
-			String scope, int windowSize, String windowUnit, int[] slThreshold,
+			String scope, int windowSize, String windowUnit, double[] slThreshold,
 			int[] penaltyCost, String penaltyName) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE SLA sla").append(number).append(" WITH")
@@ -223,7 +225,7 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static String createServiceLevel(int threshold, String penaltyName,
+	private static String createServiceLevel(double threshold, String penaltyName,
 			int penaltyCost) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(TAB).append("SERVICELEVEL (").append(threshold)
@@ -296,8 +298,8 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static int[] calcThresholds(String scope, int slNumber) {
-		int[] thresholds = new int[NUMBER_OF_SERVICE_LEVELS];
+	private static double[] calcThresholds(String scope, int slNumber) {
+		double[] thresholds = new double[NUMBER_OF_SERVICE_LEVELS];
 		if (scope.equals(ScopeFactory.SCOPE_AVERAGE)) {
 			for (int i = 0; i < NUMBER_OF_SERVICE_LEVELS; i++) {
 				thresholds[i] = 1000 * (i + 1) + slNumber * 1000;
@@ -306,6 +308,10 @@ public class GenQueries {
 			throw new RuntimeException("not implemented");
 		} else if (scope.equals(ScopeFactory.SCOPE_SINGLE)) {
 			throw new RuntimeException("not implemented");
+		} else if (scope.equals(ScopeFactory.SCOPE_RATE)) {
+			for (int i = 0; i < NUMBER_OF_SERVICE_LEVELS; i++) {
+				thresholds[i] = 1.0 - ((i + 1) * 0.1) - (slNumber * 0.1);
+			}
 		}
 		return thresholds;
 	}
