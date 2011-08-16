@@ -132,7 +132,6 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return join;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTWhereClause node, Object data) {
 		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) data;
@@ -175,7 +174,6 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return curInputAO;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public boolean containsQuantification(IPredicate pred) {
 		if (pred instanceof QuantificationPredicate) {
 			return true;
@@ -191,7 +189,6 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	private AbstractLogicalOperator createQuantificationPlan(
 			AbstractLogicalOperator curInputAO,
 			IPredicate<RelationalTuple<?>> pred) {

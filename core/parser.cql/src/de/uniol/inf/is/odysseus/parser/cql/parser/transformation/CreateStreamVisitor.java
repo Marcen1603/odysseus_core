@@ -108,7 +108,6 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		return data;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTTimedTuples node, Object data) {
 		FixedSetAccessAO newPO = new FixedSetAccessAO(dd.createSDFSource(name), node.getTuples(attributes));
@@ -117,7 +116,6 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTPriorizedStatement node, Object data) {
 		CQLParser parser = new CQLParser();
@@ -255,11 +253,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTSilab node, Object data) {
-		// TODO: Behandlung, wenn kein Visitor gefunden wird
 		try {
 			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.SILABVisitor");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+		} catch (ClassNotFoundException e) {		
 			e.printStackTrace();
 		}
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
