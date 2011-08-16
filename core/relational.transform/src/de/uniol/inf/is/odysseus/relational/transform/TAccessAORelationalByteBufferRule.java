@@ -40,9 +40,10 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSource().getURI(false);
-		ISource accessPO = null;
+		ByteBufferReceiverPO accessPO = null;
 		try {
 			accessPO = new ByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), accessAO.getHost(), accessAO.getPort());
+			accessPO.setAutoReconnectEnabled(accessAO.isAutoReconnectEnabled());
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
