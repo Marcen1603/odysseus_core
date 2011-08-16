@@ -212,7 +212,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				// first check for sla violation and create event in case of violation
 				data.getConformance().checkViolation();
 				if (this.hasNext(data.getBuffers())) {
-
+					
 					SLA sla = query.getSLA();
 					double conformance = data.getConformance().getConformance();
 					// calculate priorities for all partial plans:

@@ -2,7 +2,12 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.metadata.ILatency;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
@@ -40,8 +45,17 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	private IQuery query;
 	/**
 	 * timestamp marking the end of the evaluation window of the sla conformance
+	 * in milliseconds
 	 */
 	private long windowEnd;
+	/**
+	 * true iff the window has run in the current evaluation window
+	 */
+	private boolean hasRunInWindow;
+	/**
+	 * value of the longest latency defined in the sla
+	 */
+	private double maxLatency;
 
 	/**
 	 * default constructor
@@ -61,6 +75,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		this.query = query;
 		this.windowEnd = System.currentTimeMillis()
 				+ this.getSLA().getWindow().lengthToMilliseconds();
+		this.hasRunInWindow = false;
+		this.maxLatency = sla.getMetric().getValue();
 	}
 
 	/**
@@ -125,24 +141,37 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		 * over list to find the less valuable violated service level first
 		 */
 		if (System.currentTimeMillis() >= this.windowEnd) {
-			System.err.println(this.getConformance());
+			double conformance = this.getConformance();
+			System.err.println(conformance);
 			List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
 			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
 				if (this.getSLA().getScope().thresholdIsMin()) {
-					if (serviceLevels.get(i).getThreshold() > this
-							.getConformance()) {
+					if (!this.hasRunInWindow
+							&& (this.windowEnd - this.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
+						conformance = 0.0;
+						System.err.println("manual change of conformance");
+					} else {
+//						System.err.println("no manual change");
+//						System.err.println(this.hasRunInWindow);
+//						System.err.println(this.windowEnd - this.getTimestampOfOldestBufferedElement());
+					}
+					if (serviceLevels.get(i).getThreshold() > conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
-								.getCost(), i+1, getConformance());
+								.getCost(), i + 1, conformance);
 						break;
 					}
 				} else {
-					if (serviceLevels.get(i).getThreshold() < this
-							.getConformance()) {
+					if (!this.hasRunInWindow
+							&& (this.windowEnd - this.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
+						conformance = Double.MAX_VALUE;
+					}
+					if (serviceLevels.get(i).getThreshold() < conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
-								.getCost(), i+1, getConformance());
+								.getCost(), i + 1, conformance);
 						break;
 					}
 				}
+				this.violation(0.0, 0, conformance);
 			}
 			this.windowEnd += this.getSLA().getWindow().lengthToMilliseconds();
 			this.reset();
@@ -152,4 +181,44 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	protected double nanoToMilli(double value) {
 		return value / NANO_TO_MILLI;
 	}
+
+	@Override
+	public void reset() {
+		this.hasRunInWindow = false;
+	}
+	
+	/**
+	 * @return time stamp of oldest buffered element in milliseconds
+	 */
+	private double getTimestampOfOldestBufferedElement() {
+		long timestamp = System.nanoTime();
+		for (IPhysicalOperator po : query.getAllOperators()) {
+			if (po instanceof IBuffer<?>) {
+				IBuffer<?> buffer = (IBuffer<?>) po;
+				Object element = buffer.peek();
+				if (element != null) {
+					MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) element;
+					IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+					if (metadata instanceof ILatency) {
+						ILatency latency = (ILatency) metadata;
+						long ts = latency.getLatencyStart();
+						if (ts < timestamp) {
+							timestamp = ts;
+						}
+					} else {
+						throw new RuntimeException("Latency missing");
+					}
+				}
+			}
+		}
+		return nanoToMilli(timestamp);
+	}
+
+	@Override
+	protected void process_next(T object, int port, boolean isReadOnly) {
+		this.hasRunInWindow = true;
+	}
+	
+	
+
 }

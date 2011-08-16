@@ -60,6 +60,7 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	 */
 	@Override
 	public void reset() {
+		super.reset();
 		this.maxLatency = 0;
 	}
 
@@ -73,6 +74,7 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 	 */
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
+		super.process_next(object, port, isReadOnly);
 		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {
