@@ -710,4 +710,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTLoginPassword node, Object data) {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTAutoReconnect node, Object data) {
+		return pvisit(node);
+	}
 }

@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.lang.reflect.Method;
@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAutoReconnect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
@@ -53,7 +54,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 /**
  * @author Jonas Jacobi
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
 	private User caller;
@@ -186,20 +187,18 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
-		
+
 		// we allow user defined types, so check
 		// whether the defined type exists or not
-		if(this.dd.existsDatatype(astAttrType.getType())){
-		
+		if (this.dd.existsDatatype(astAttrType.getType())) {
+
 			attribute.setDatatype(this.dd.getDatatype(astAttrType.getType()));
 			if (attribute.getDatatype().isDate()) {
 				attribute.addDtConstraint("format", astAttrType.getDateFormat());
 			}
-			if (attribute.getDatatype().isMeasurementValue()
-					&& astAttrType.jjtGetNumChildren() > 0) {
-				attribute
-						.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
-	
+			if (attribute.getDatatype().isMeasurementValue() && astAttrType.jjtGetNumChildren() > 0) {
+				attribute.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+
 			}
 		}
 		this.attributes.add(attribute);
@@ -209,7 +208,18 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTSocket node, Object data) {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
-		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
+		int port = -1;
+		if (node.jjtGetNumChildren() >= 2) {
+			// sollte ASTInteger sein
+			port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
+
+		} else {
+			if (host.contains(":")) {
+				String[] parts = host.split(":");
+				host = parts[0];
+				port = Integer.parseInt(parts[1]);
+			}
+		}
 		AccessAO source = null;
 		if (node.useTupleMode()) {
 			source = new AccessAO(new SDFSource(name, "RelationalInputStreamAccessPO"));
@@ -233,21 +243,44 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTChannel node, Object data) {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
-		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
+		boolean autoReconnect = hasAutoReconnect(node);
+		int port = -1;		
+		if (node.jjtGetNumChildren() >= 2) {
+			if (node.jjtGetChild(1) instanceof ASTInteger) {				
+				port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();			
+			}
+
+		} else {
+			if (host.contains(":")) {
+				String[] parts = host.split(":");
+				host = parts[0];
+				port = Integer.parseInt(parts[1]);
+			}
+		}
 		AccessAO source = new AccessAO(new SDFSource(name, "RelationalByteBufferAccessPO"));
+		source.setAutoReconnectEnabled(autoReconnect);
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
 		dd.setStream(name, op, caller);
 		return data;
 	}
-	
+
+	private boolean hasAutoReconnect(ASTChannel node) {
+		for(int i=0;i<node.jjtGetNumChildren();i++){
+			if(node.jjtGetChild(i) instanceof ASTAutoReconnect){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public Object visit(ASTLoginPassword node, Object data) {
 		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 
 		dd.getStream(name, caller).setLoginInfo(user, password);
-		
+
 		return null;
 	}
 
@@ -255,7 +288,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSilab node, Object data) {
 		try {
 			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.SILABVisitor");
-		} catch (ClassNotFoundException e) {		
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
@@ -265,7 +298,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTCreateFromDatabase node, Object data) {		
+	public Object visit(ASTCreateFromDatabase node, Object data) {
 		try {
 			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
@@ -278,10 +311,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			m = visitor.getDeclaredMethod("visit", ASTCreateFromDatabase.class, Object.class);
 			OutputSchemaSettable ao = (OutputSchemaSettable) m.invoke(v, node, data);
 			ao.setOutputSchema(this.attributes);
-			return addTimestampAO((ILogicalOperator)ao);			
+			return addTimestampAO((ILogicalOperator) ao);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Storing plugin is missing in CQL parser.", e.getCause());
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			throw new RuntimeException("Error while parsing the create from database clause", e.getCause());
 		}
 	}

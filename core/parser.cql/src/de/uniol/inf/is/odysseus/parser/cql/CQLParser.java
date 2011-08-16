@@ -1350,6 +1350,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
+	public Object visit(ASTAutoReconnect node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	
 }

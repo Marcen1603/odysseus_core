@@ -783,4 +783,9 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTAutoReconnect node, Object data) {		
+		return null;
+	}
 }
