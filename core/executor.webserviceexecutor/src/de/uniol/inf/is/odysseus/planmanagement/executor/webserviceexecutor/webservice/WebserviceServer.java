@@ -32,6 +32,7 @@ import javax.xml.ws.Endpoint;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception.WebserviceException;
@@ -60,14 +61,17 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 public class WebserviceServer {
 
 	public static void startServer() {
-		WebserviceServer server = new WebserviceServer();
+		WebserviceServer server = new WebserviceServer();		
 		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9669/odysseus", server);
 		if (endpoint.isPublished()) {
 			Logger.getAnonymousLogger().log(Level.FINE, "Webservice published!");
 		}
-
 	}
 
+	protected IExecutor getExecutor(){
+		return ExecutorServiceBinding.getExecutor();
+	}
+	
 	@WebResult(name = "securitytoken")
 	public StringResponse login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
 		User user = UserManagement.getInstance().login(username, password, false);
@@ -126,7 +130,7 @@ public class WebserviceServer {
 		}
 	}
 
-	private User loginWithSecurityToken(String securityToken) throws WebserviceException {
+	protected User loginWithSecurityToken(String securityToken) throws WebserviceException {
 		if (SessionManagement.getInstance().isValidSession(securityToken)) {
 			User user = SessionManagement.getInstance().getUser(securityToken);
 			return user;
