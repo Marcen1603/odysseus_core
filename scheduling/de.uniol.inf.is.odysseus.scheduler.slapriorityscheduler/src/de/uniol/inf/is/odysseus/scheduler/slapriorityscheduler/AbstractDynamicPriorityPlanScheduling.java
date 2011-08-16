@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformanceFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformancePlacementFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationLogger;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.OverheadMeasurement;
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
@@ -48,6 +49,8 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	private List<ISLAViolationEventListener> listeners;
 	private Set<IQuery> extendedQueries = new HashSet<IQuery>();
 	private List<ISLAConformance> conformances = new ArrayList<ISLAConformance>();
+	
+	private final OverheadMeasurement OVERHEAD = new OverheadMeasurement();
 
 	public AbstractDynamicPriorityPlanScheduling() {
 		queue = new LinkedList<IScheduling>();
@@ -85,7 +88,9 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 				ISLAConformancePlacement placement = new SLAConformancePlacementFactory()
 						.buildSLAConformancePlacement(sla);
 				placement.placeSLAConformance(query, conformance);
-				this.conformances.add(conformance);
+				synchronized (conformances) {
+					this.conformances.add(conformance);
+				}
 			}
 		}
 	}
@@ -99,8 +104,11 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 	@Override
 	public IScheduling nextPlan() {
-		for (ISLAConformance conformance : this.conformances) {
-			conformance.checkViolation();
+		OVERHEAD.start();
+		synchronized (conformances) {
+			for (ISLAConformance conformance : this.conformances) {
+				conformance.checkViolation();
+			}
 		}
 		synchronized (eventQueue) {
 			while (!this.eventQueue.isEmpty()) {
@@ -110,6 +118,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 		synchronized (lastRun) {
 			if (lastRun.size() > 0) {
+				OVERHEAD.stop();
 				return updateMetaAndReturnPlan(lastRun.remove(0));
 			}
 		}
@@ -117,16 +126,21 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			Collections.sort(queue, comperator);
 			Iterator<IScheduling> iter = queue.iterator();
 			synchronized (lastRun) {
-				lastRun.add(iter.next());
-				long prio = queue.get(0).getPlan().getCurrentPriority();
-				while (iter.hasNext()) {
-					IScheduling s = iter.next();
-					if (s.getPlan().getCurrentPriority() == prio) {
-						lastRun.add(s);
-					} else {
-						break;
+				try {
+					lastRun.add(iter.next());
+					long prio = queue.get(0).getPlan().getCurrentPriority();
+					while (iter.hasNext()) {
+						IScheduling s = iter.next();
+						if (s.getPlan().getCurrentPriority() == prio) {
+							lastRun.add(s);
+						} else {
+							break;
+						}
 					}
+				} catch (Exception e) {
+					return null;
 				}
+				OVERHEAD.stop();
 				return updateMetaAndReturnPlan(lastRun.remove(0)); 
 			}
 		}
