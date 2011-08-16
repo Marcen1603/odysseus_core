@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.sla.factories;
 import de.uniol.inf.is.odysseus.sla.Scope;
 import de.uniol.inf.is.odysseus.sla.scope.Average;
 import de.uniol.inf.is.odysseus.sla.scope.Number;
+import de.uniol.inf.is.odysseus.sla.scope.Rate;
 import de.uniol.inf.is.odysseus.sla.scope.Single;
 
 public class ScopeFactory {
@@ -10,6 +11,7 @@ public class ScopeFactory {
 	public static final String SCOPE_AVERAGE = "average";
 	public static final String SCOPE_NUMBER = "number";
 	public static final String SCOPE_SINGLE = "single";
+	public static final String SCOPE_RATE = "rate";
 	
 	public Scope buildScope(String scopeID) {
 		if (SCOPE_AVERAGE.equals(scopeID)) {
@@ -18,6 +20,8 @@ public class ScopeFactory {
 			return new Number();
 		} else if (SCOPE_SINGLE.equals(scopeID)) {
 			return new Single();
+		} else if (SCOPE_RATE.equals(scopeID)) {
+			return new Rate();
 		} else {
 			throw new RuntimeException("unknown scope: " + scopeID);
 		}
