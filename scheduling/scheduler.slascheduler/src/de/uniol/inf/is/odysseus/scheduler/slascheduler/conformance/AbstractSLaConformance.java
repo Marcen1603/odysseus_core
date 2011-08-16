@@ -125,7 +125,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		 * over list to find the less valuable violated service level first
 		 */
 		if (System.currentTimeMillis() >= this.windowEnd) {
-			System.err.println(this.getConformance());
+//			System.err.println(this.getConformance());
 			List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
 			for (int i = serviceLevels.size() - 1; i >= 0; i--) {
 				if (this.getSLA().getMetric().valueIsMin()) {

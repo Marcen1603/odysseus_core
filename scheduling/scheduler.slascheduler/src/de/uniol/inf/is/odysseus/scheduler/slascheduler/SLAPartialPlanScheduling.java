@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.OverheadMeasurement;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
@@ -52,6 +53,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			getLogger().debug(message);
 		}
 	}
+	
+	private final OverheadMeasurement OVERHEAD = new OverheadMeasurement();
 
 	// ----------------------------------------------------------------------------------------
 	// Members
@@ -189,6 +192,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 */
 	@Override
 	public synchronized IScheduling nextPlan() {
+		OVERHEAD.start();
 		// check for sla violation and fire events
 		while (!this.eventQueue.isEmpty()) {
 			this.fireSLAViolationEvent(this.eventQueue.pop());
@@ -256,7 +260,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 //					+ SLATestLogger.formatNanoTime(System.nanoTime())
 //					+ "] Scheduling query "
 //					+ next.getPlan().getQueries().get(0).getID());
-
+		OVERHEAD.stop();
 		return next;
 	}
 
