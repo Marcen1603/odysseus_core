@@ -43,7 +43,9 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 	private String host;
 	private int port;
 	boolean opened;
-	boolean autoReconnect = false;
+	private boolean autoReconnect = false;
+	private long waitingForNextReconnect = 0;
+	private int tries = 0;	
 
 	public ByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port) throws IOException {
 		super();
@@ -69,8 +71,6 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 		opened = byteBufferReceiverPO.opened;
 		autoReconnect = byteBufferReceiverPO.autoReconnect;
 	}
-	
-	
 
 	public boolean isAutoReconnectEnabled() {
 		return autoReconnect;
@@ -166,20 +166,31 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 				reconnect();
 			}
 		}
-	}	
-	
-	private void reconnect() {		
-		if (this.autoReconnect) {
+	}
+
+	private void reconnect() {
+		if (this.autoReconnect) {			
+			if(waitingForNextReconnect<0){
+				waitingForNextReconnect = 0;
+			}
+			getLogger().info("Reconnect in " + waitingForNextReconnect + " ms ...");
+			try {
+				Thread.sleep(waitingForNextReconnect);
+			} catch (InterruptedException e1) {
+			}
 			getLogger().info("Trying to reconnect...");
 			process_close();
 			try {
 				process_open();
-			} catch (OpenFailedException e) {	
-				if(e.getCause() instanceof IOException){
+			} catch (OpenFailedException e) {				
+				if (e.getCause() instanceof IOException) {
 					reconnect();
 				}
 				e.printStackTrace();
 			}
+			// failed again... increase waittime
+			waitingForNextReconnect = ((tries*tries)*100);
+			tries++;
 		}
 	}
 
@@ -200,6 +211,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 		size = -1;
 		sizeBuffer.clear();
 		currentSize = 0;
+		tries = 0;
 	}
 
 	@Override
