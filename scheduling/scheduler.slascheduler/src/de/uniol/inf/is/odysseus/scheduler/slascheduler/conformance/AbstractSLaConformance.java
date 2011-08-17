@@ -149,7 +149,10 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 					if (!this.hasRunInWindow
 							&& (this.windowEnd - this.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
 						conformance = 0.0;
-						System.err.println("manual change of conformance");
+						System.err.println("manual change of conformance: " + conformance);
+						System.err.println("ts element: " + this.getTimestampOfOldestBufferedElement() + " / window end: " + this.windowEnd);
+						System.err.println("diff: " + ( this.windowEnd - this.getTimestampOfOldestBufferedElement()));
+						System.err.println("has run in window" + this.hasRunInWindow);
 					} else {
 //						System.err.println("no manual change");
 //						System.err.println(this.hasRunInWindow);
@@ -191,7 +194,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 * @return time stamp of oldest buffered element in milliseconds
 	 */
 	private double getTimestampOfOldestBufferedElement() {
-		long timestamp = System.nanoTime();
+		double timestamp = System.nanoTime();
 		for (IPhysicalOperator po : query.getAllOperators()) {
 			if (po instanceof IBuffer<?>) {
 				IBuffer<?> buffer = (IBuffer<?>) po;
@@ -201,7 +204,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 					IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 					if (metadata instanceof ILatency) {
 						ILatency latency = (ILatency) metadata;
-						long ts = latency.getLatencyStart();
+						double ts = latency.getLatencyStart();
 						if (ts < timestamp) {
 							timestamp = ts;
 						}
