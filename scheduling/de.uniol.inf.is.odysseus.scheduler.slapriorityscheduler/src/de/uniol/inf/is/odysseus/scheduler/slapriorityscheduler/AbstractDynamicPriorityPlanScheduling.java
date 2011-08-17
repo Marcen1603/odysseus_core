@@ -138,6 +138,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 						}
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					return null;
 				}
 				OVERHEAD.stop();
