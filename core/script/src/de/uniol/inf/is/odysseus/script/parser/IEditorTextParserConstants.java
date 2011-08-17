@@ -17,6 +17,6 @@ package de.uniol.inf.is.odysseus.script.parser;
 public interface IEditorTextParserConstants {
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.editor.text.parser";
 	
-	public static final String PREPARSER_KEYWORD_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword";
+	public static final String PREPARSER_KEYWORD_EXTENSION_ID = "de.uniol.inf.is.odysseus.script.parser.PreParserKeyword";
 
 }
