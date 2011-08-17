@@ -73,8 +73,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		this.distributor = dist;
 		this.sla = sla;
 		this.query = query;
-		this.windowEnd = System.currentTimeMillis()
-				+ this.getSLA().getWindow().lengthToMilliseconds();
+		this.windowEnd = System.nanoTime()
+				+ this.getSLA().getWindow().lengthToNanoseconds();
 		this.hasRunInWindow = false;
 		this.maxLatency = sla.getMetric().getValue();
 	}
@@ -140,7 +140,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		 * most valuable service level is first list entry! so iterate reverse
 		 * over list to find the less valuable violated service level first
 		 */
-		if (System.currentTimeMillis() >= this.windowEnd) {
+		if (System.nanoTime() >= this.windowEnd) {
 			double conformance = this.getConformance();
 			System.err.println(conformance);
 			List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
@@ -167,6 +167,10 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 					if (!this.hasRunInWindow
 							&& (this.windowEnd - this.getTimestampOfOldestBufferedElement()) > this.maxLatency) {
 						conformance = Double.MAX_VALUE;
+						System.err.println("manual change of conformance: " + conformance);
+						System.err.println("ts element: " + this.getTimestampOfOldestBufferedElement() + " / window end: " + this.windowEnd);
+						System.err.println("diff: " + ( this.windowEnd - this.getTimestampOfOldestBufferedElement()));
+						System.err.println("has run in window" + this.hasRunInWindow);
 					}
 					if (serviceLevels.get(i).getThreshold() < conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
@@ -176,7 +180,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 				}
 				this.violation(0.0, 0, conformance);
 			}
-			this.windowEnd += this.getSLA().getWindow().lengthToMilliseconds();
+			this.windowEnd += this.getSLA().getWindow().lengthToNanoseconds();
 			this.reset();
 		}
 	}
@@ -191,10 +195,10 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	}
 	
 	/**
-	 * @return time stamp of oldest buffered element in milliseconds
+	 * @return time stamp of oldest buffered element in nanoseconds
 	 */
-	private double getTimestampOfOldestBufferedElement() {
-		double timestamp = System.nanoTime();
+	private long getTimestampOfOldestBufferedElement() {
+		long timestamp = System.nanoTime();
 		for (IPhysicalOperator po : query.getAllOperators()) {
 			if (po instanceof IBuffer<?>) {
 				IBuffer<?> buffer = (IBuffer<?>) po;
@@ -204,7 +208,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 					IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 					if (metadata instanceof ILatency) {
 						ILatency latency = (ILatency) metadata;
-						double ts = latency.getLatencyStart();
+						long ts = latency.getLatencyStart();
 						if (ts < timestamp) {
 							timestamp = ts;
 						}
@@ -214,7 +218,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 				}
 			}
 		}
-		return nanoToMilli(timestamp);
+		return timestamp;
 	}
 
 	@Override

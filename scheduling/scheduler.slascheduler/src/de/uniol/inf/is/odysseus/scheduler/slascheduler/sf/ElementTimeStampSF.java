@@ -80,7 +80,7 @@ public class ElementTimeStampSF implements IStarvationFreedom {
 		}
 
 		// avoid returning negative delta
-		long delta = System.currentTimeMillis() - oldestTS;
+		long delta = System.nanoTime() - oldestTS;
 		return (delta < 0) ? 0 : delta;
 	}
 

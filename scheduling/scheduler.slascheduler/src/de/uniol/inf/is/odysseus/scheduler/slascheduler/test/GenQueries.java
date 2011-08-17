@@ -88,6 +88,12 @@ public class GenQueries {
 					calcThresholds(ScopeFactory.SCOPE_RATE, i),
 					calcPenaltyCosts(i), PENALTY_NAME));
 		}
+//		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
+//			sb.append(createSLA(i, (i + 3) * 1000, ScopeFactory.SCOPE_AVERAGE,
+//					120, TimeUnit.s.toString(),
+//					calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+//					calcPenaltyCosts(i), PENALTY_NAME));
+//		}
 		sb.append(NEWLINE);
 
 		// Create queries
