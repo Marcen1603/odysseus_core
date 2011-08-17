@@ -43,7 +43,7 @@ public class QuerySharingPreParserKeyword extends AbstractPreParserKeyword {
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
 		List<IQueryBuildSetting<?>> config = executor.getQueryBuildConfiguration((String)
-						variables.get("TRANSCFG"));
+						variables.get("TRANSCFG")).getConfiguration();
 		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
 		if (iter != null){
 			while (iter.hasNext()) {

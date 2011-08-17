@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -98,7 +100,11 @@ public class QueryBuildConfiguration extends
 	 * Creates a new set of parameters with default values.
 	 */
 	public QueryBuildConfiguration() {
-		this(null);
+		this(new IQueryBuildSetting[0]);
+	}
+
+	public QueryBuildConfiguration(List<IQueryBuildSetting<?>> configuration) {
+		this(configuration.toArray(new IQueryBuildSetting<?>[0]));
 	}
 
 	/**

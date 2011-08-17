@@ -14,10 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.script.parser;
 
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 

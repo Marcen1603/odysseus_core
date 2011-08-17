@@ -53,7 +53,6 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
@@ -111,7 +110,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	/**
 	 * Standard Configurationen
 	 */
-	protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting<?>>>();
+	//protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting<?>>>();
+	protected Map<String, IQueryBuildConfiguration> queryBuildConfigs = new HashMap<String, IQueryBuildConfiguration>();
 
 	/**
 	 * Alle Listener f�r Anfragebearbeitungs-Nachrichten
@@ -314,8 +314,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * Binding of predefinded build configurations
 	 * @param config
 	 */
-	public void bindQueryBuildConfiguration(IQueryBuildConfiguration config){
-		queryBuildConfigs.put(config.getName(), config.getConfiguration());
+	public void bindQueryBuildConfiguration(IQueryBuildConfiguration config){			
+		queryBuildConfigs.put(config.getName(), config);
 		getLogger().debug("Query Build Configuration "+config+" bound");
 	}
 	

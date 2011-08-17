@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.login.Configuration;
@@ -29,6 +30,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
@@ -39,7 +41,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -79,8 +80,13 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	/**
 	 * Get specific query build configuration
 	 */
-	public List<IQueryBuildSetting<?>> getQueryBuildConfiguration(String name); 
+	public IQueryBuildConfiguration getQueryBuildConfiguration(String name); 
 	
+	/**
+	 * Get all QueryBuildConfigurations
+	 * @return all build configuration
+	 */
+	public Map<String, IQueryBuildConfiguration> getQueryBuildConfigurations();
 	/**
 	 * getSupportedQueryParser liefert alle IDs der zur Verfuegung stehenden
 	 * Parser zur uebersetzung von Anfragen, die als Zeichenkette vorliegen.
@@ -99,46 +105,30 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 *            Anfrage in Form einer Zeichenkette
 	 * @param parserID
 	 *            ID des zu verwendenden Parsers, ueberschreibt einen evtl. vorhandenen Eintrag in parameters
-	 * @param parameters
-	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
+	 * @param queryBuildConfigurationName
+	 *            Name der zu verwendeden Build-Configuration
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
-	 */
-	@SuppressWarnings("rawtypes")
+	 */	
 	public Collection<IQuery> addQuery(String query, String parserID, User user, IDataDictionary dd,
-			IQueryBuildSetting... parameters)
-			throws PlanManagementException;
-
-	/**
-	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als Zeichenkette vorliegt.
-	 * 
-	 * @param query
-	 *            Anfrage in Form einer Zeichenkette
-	 * @param parameters
-	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
-	 * @return vorläufige ID der neuen Anfrage
-	 * @throws PlanManagementException
-	 */
-	@SuppressWarnings("rawtypes")
-	public Collection<IQuery> addQuery(String query, User user, IDataDictionary dd,
-			IQueryBuildSetting... parameters)
+			String queryBuildConfigurationName)
 			throws PlanManagementException;
 
 	
+		
 	/**
 	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als logischer Plan
 	 * vorliegt. 
 	 * 
 	 * @param logicalPlan
 	 *            logischer Plan der Anfrage
-	 * @param parameters
-	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
-	 * @return vorläufige ID der neuen Anfrage
+	 * @param queryBuildConfigurationName
+	 *            Name der zu verwendeden Build-Configuration
+	 * @return vorl�ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
-	 */
-	@SuppressWarnings("rawtypes")
+	 */	
 	public IQuery addQuery(ILogicalOperator logicalPlan, User user, IDataDictionary dd,
-			IQueryBuildSetting... parameters)
+			String queryBuildConfigurationName)
 			throws PlanManagementException;
 
 	/**
@@ -147,14 +137,13 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * 
 	 * @param physicalPlan
 	 *            physischer Plan der neuen Anfrage
-	 * @param parameters
-	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
-	 * @return vorläufige ID der neuen Anfrage
+	 * @param queryBuildConfigurationName
+	 *            Name der zu verwendeden Build-Configuration
+	 * @return vorl�ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
-	 */
-	@SuppressWarnings("rawtypes")
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, User user,
-			IQueryBuildSetting... parameters)
+	 */	
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, User user, IDataDictionary dd,
+			String queryBuildConfigurationName)
 			throws PlanManagementException;
 	
 

@@ -52,7 +52,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
 		List<IQueryBuildSetting<?>> config = executor
-				.getQueryBuildConfiguration((String) variables.get("TRANSCFG"));
+				.getQueryBuildConfiguration((String) variables.get("TRANSCFG")).getConfiguration();
 		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
 		IBufferPlacementStrategy s = null;
 		if (iter != null) {

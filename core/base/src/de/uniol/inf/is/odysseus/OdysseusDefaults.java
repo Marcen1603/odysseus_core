@@ -81,7 +81,7 @@ public class OdysseusDefaults {
 		in.close();
 	}
 
-	private static void setDefaults(String odysseusHome) {
+	private static void setDefaults(String odysseusHome) {		
 		props.setProperty("odysseusHome", odysseusHome);
 		props.setProperty("storeUsers", Boolean.FALSE.toString());
 		props.setProperty("userStoreFilename", odysseusHome + "users.store");
@@ -132,6 +132,8 @@ public class OdysseusDefaults {
 		props.setProperty("sla_querySharingCostModel", "none");
 		props.setProperty("sla_querySharing", Boolean.FALSE.toString());
 		props.setProperty("sla_costFunctionName", "quadratic");
+		
+		
 	};
 
 	private static void savePropertyFile(String odysseusHome) {

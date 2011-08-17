@@ -67,7 +67,7 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 
 		IExecutor executor = ExecutorHandler.getExecutor();
 		
-		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID);
+		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID).getConfiguration();
 		try {
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			ICompiler compiler = executor.getCompiler();
@@ -88,7 +88,7 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserKeyword {
 				IQuery query = plans.get(plans.size() - 1);
 				compiler.transform(query, cfg.getValue(), caller, dd);
 	
-				IQuery addedQuery = executor.addQuery(query.getRoots(), caller, transCfg.toArray(new IQueryBuildSetting[0]));
+				IQuery addedQuery = executor.addQuery(query.getRoots(), caller, dd, transCfgID);
 				executor.startQuery(addedQuery.getID(), caller);
 			} 
 

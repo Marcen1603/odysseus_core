@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
  * @author Tobias Witt
  *
  */
-@SuppressWarnings({"rawtypes","unchecked"})
 public class OptimizationConfiguration extends Configuration<IOptimizationSetting<?>> {
 	
 	/**
@@ -36,10 +35,18 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 		super(entries);
 	}
 	
-	public OptimizationConfiguration(ISetting[] iSettings) {
-		for (ISetting s:iSettings){
+	public OptimizationConfiguration(Configuration<?> config){
+		for(Object s : config.values()){
+			if(s instanceof IOptimizationSetting<?>){
+				set((IOptimizationSetting<?>)s);
+			}
+		}
+	}
+	
+	public OptimizationConfiguration(ISetting<?>[] iSettings) {
+		for (ISetting<?> s:iSettings){
 			if (s instanceof IOptimizationSetting<?>){
-				set((IOptimizationSetting)s);
+				set((IOptimizationSetting<?>)s);
 			}
 		}
 	}

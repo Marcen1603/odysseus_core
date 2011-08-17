@@ -15,9 +15,9 @@
 package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -42,9 +42,9 @@ public class UseRewritePreParserKeyword extends AbstractPreParserKeyword {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new QueryTextParseException("No executor found");
-		List<IQueryBuildSetting<?>> config = executor.getQueryBuildConfiguration((String)
+		IQueryBuildConfiguration config = executor.getQueryBuildConfiguration((String)
 						variables.get("TRANSCFG"));
-		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
+		Iterator<IQueryBuildSetting<?>> iter = config.getConfiguration().iterator();
 		if (iter != null){
 			while (iter.hasNext()) {
 				IQueryBuildSetting<?> sett = iter.next();
@@ -54,9 +54,9 @@ public class UseRewritePreParserKeyword extends AbstractPreParserKeyword {
 				}
 			}
 			if ("TRUE".equals(parameter.toUpperCase())){
-				config.add(ParameterDoRewrite.TRUE);
+				config.getConfiguration().add(ParameterDoRewrite.TRUE);
 			}else{
-				config.add(ParameterDoRewrite.FALSE);
+				config.getConfiguration().add(ParameterDoRewrite.FALSE);
 			}
 		}
 		return null;

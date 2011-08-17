@@ -15,7 +15,6 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
 
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
@@ -44,7 +43,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
@@ -87,10 +85,9 @@ public class WebserviceServer {
 	public Response addQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "parser") String parser, @WebParam(name = "query") String query,
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
-			User user = loginWithSecurityToken(securityToken);
-			List<IQueryBuildSetting<?>> cfg = ExecutorServiceBinding.getExecutor().getQueryBuildConfiguration(transCfg);
+			User user = loginWithSecurityToken(securityToken);			
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
-			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, dd, cfg.toArray(new IQueryBuildSetting[0]));
+			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, dd,transCfg);
 			return new Response(true);
 		} catch (WebserviceException e) {
 			e.printStackTrace();
