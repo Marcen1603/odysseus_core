@@ -39,7 +39,8 @@ import org.eclipse.core.runtime.Platform;
  * 
  */
 public class PreParserKeywordRegistry {
-
+	
+	public static final String PREPARSER_KEYWORD_EXTENSION_ID = "de.uniol.inf.is.odysseus.script.parser.PreParserKeyword";
 	private static PreParserKeywordRegistry instance = null;
 
 	private Map<String, Class<? extends IPreParserKeyword>> keywords = null;
@@ -160,7 +161,7 @@ public class PreParserKeywordRegistry {
 	 * aufbauen. Z.B. eine Registry aus Dateien o. ä. laden.
 	 */
 	protected void loadRegister() {
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(IEditorTextParserConstants.PREPARSER_KEYWORD_EXTENSION_ID);
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(PREPARSER_KEYWORD_EXTENSION_ID);
 		for (IConfigurationElement e : config) {
 			try {
 				String name = e.getAttribute("name");
