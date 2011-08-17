@@ -37,16 +37,14 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
-import de.uniol.inf.is.odysseus.script.parser.IEditorTextParserConstants;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
 import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
-
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 
