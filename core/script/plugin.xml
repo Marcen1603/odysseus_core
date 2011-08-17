@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword" name="PreParserKeyword" schema="schema/de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword.exsd"/>
+   <extension-point id="de.uniol.inf.is.odysseus.script.parser.PreParserKeyword" name="PreParserKeyword" schema="schema/de.uniol.inf.is.odysseus.script.parser.PreParserKeyword.exsd"/>
    <extension
-         point="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword">
+         point="de.uniol.inf.is.odysseus.script.parser.PreParserKeyword">
       <PreParserKeyword
             class="de.uniol.inf.is.odysseus.script.parser.keyword.ParserPreParserKeyword"
             name="PARSER">
