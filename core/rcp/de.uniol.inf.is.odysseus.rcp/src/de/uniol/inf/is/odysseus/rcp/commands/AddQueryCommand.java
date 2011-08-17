@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.rcp.commands;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -32,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -55,7 +54,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {
-			final List<IQueryBuildSetting<?>> cfg = executor.getQueryBuildConfiguration(parameterTransformationConfigurationName);
+			final IQueryBuildConfiguration cfg = executor.getQueryBuildConfiguration(parameterTransformationConfigurationName);
 			if (cfg == null) {
 				logger.error("ParameterTransformationConfiguration " + parameterTransformationConfigurationName + " nicht gefunden");
 				return null;
@@ -68,7 +67,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						Collection<IQuery> queries = executor.addQuery(queryToExecute, parserToUse, user, dd, cfg.toArray(new IQueryBuildSetting[0]) );
+						Collection<IQuery> queries = executor.addQuery(queryToExecute, parserToUse, user, dd, parameterTransformationConfigurationName);
 						for (IQuery query:queries){
 							executor.startQuery(query.getID(), user);
 						}

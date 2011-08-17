@@ -27,10 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.editors.LogicalPlanEditor;
@@ -94,8 +91,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		}
 		return errorTexts.size() == 0;
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	private void buildLogicalPlan(OperatorPlan plan, User user, IDataDictionary dd) {
 
 		// oberste Operatoren finden
@@ -109,8 +105,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		try {
 			for (Operator sink : sinks) {
 				printLogicalPlan(sink.getLogicalOperator(), 0);
-				OdysseusRCPEditorPlugIn.getExecutor().addQuery(sink.getLogicalOperator(), user,dd,
-						new ParameterTransformationConfiguration(new TransformationConfiguration("relational", ITimeInterval.class)));
+				OdysseusRCPEditorPlugIn.getExecutor().addQuery(sink.getLogicalOperator(), user, dd, "Standard");
 			}
 		} catch (PlanManagementException ex) {
 			ex.printStackTrace();
