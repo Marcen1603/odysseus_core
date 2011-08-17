@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -149,7 +148,7 @@ public class ECAParserTest implements CommandProvider {
 				"	testeca - runs eca test cases\n";
 	}
 
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	private void runTestSuite(String query, List<IActionParameter> parameters, CommandInterpreter ci) throws Exception {	
 		List<IQuery> queries = this.compiler.translateQuery(query , "ECA", user, dd);
 		ILogicalOperator logicalPlan = queries.get(0).getLogicalPlan();
@@ -200,7 +199,7 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, dd, new ParameterParserID("ECA"));
+		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, dd, "Standard");
 		ci.println("	*Testcase3: Check if physical plan is correct");
 		IPlan plan = this.executor.getPlan();
 		IQuery installedQuery = plan.getQuery(addedQuery.getID());

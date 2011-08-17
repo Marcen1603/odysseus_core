@@ -28,12 +28,9 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -49,9 +46,6 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IActuatorBenchmark benchmark;
 	private User user = UserManagement.getInstance().getSuperUser();
 	private IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Console");;
-	@SuppressWarnings("unchecked")
-	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration("relational", ITimeInterval.class));
 
 	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
@@ -61,7 +55,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			Collection<IQuery> ids = this.executer.addQuery(args[0], "ECA", user,dd, this.trafoConfigParam);
+			Collection<IQuery> ids = this.executer.addQuery(args[0], "ECA", user,dd, "Standard");
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -106,7 +100,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55564");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user, dd, this.trafoConfigParam);
+				this.executer.addQuery(query, "CQL", user, dd, "Standard");
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -156,7 +150,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user, dd, this.trafoConfigParam);
+				this.executer.addQuery(query, "CQL", user, dd, "Standard");
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -179,7 +173,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user, dd, this.trafoConfigParam);
+				this.executer.addQuery(query, "CQL", user, dd, "Standard");
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -240,10 +234,10 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		this._mmsdb(ci);
 		
 		try {
-			executer.addQuery("select * from machineMaintenance:usage", "CQL", user, dd);
-			executer.addQuery("select * from machineMaintenance:factory", "CQL", user, dd);
-			executer.addQuery("select * from machineMaintenance:machine", "CQL", user, dd);
-			executer.addQuery("select * from machineMaintenance:install", "CQL", user, dd);
+			executer.addQuery("select * from machineMaintenance:usage", "CQL", user, dd, "Standard");
+			executer.addQuery("select * from machineMaintenance:factory", "CQL", user, dd, "Standard");
+			executer.addQuery("select * from machineMaintenance:machine", "CQL", user, dd, "Standard");
+			executer.addQuery("select * from machineMaintenance:install", "CQL", user, dd, "Standard");
 			
 			this.benchmark.run();
 			

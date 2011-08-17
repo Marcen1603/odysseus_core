@@ -23,11 +23,8 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -48,9 +45,7 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
 	private static IExecutor executor;
-	private static IActuatorFactory actuatorFactory;
-	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration("relational", ITimeInterval.class));
+	private static IActuatorFactory actuatorFactory;	
 	IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("WSPort");
 	
 	/* (non-Javadoc)
@@ -61,7 +56,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         try {
 			// TODO: User einfuegen, der diese Query ausführt
         	User user = UserManagement.getInstance().getSuperUser();
-			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, dd, trafoConfigParam
+			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, dd, "Standard"
 					).iterator().next().getID();
 			return queryID;
 		} catch (Exception e) {
@@ -144,7 +139,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     		}
 			// TODO: User einfuegen, der diese Query ausführt
     		User user = UserManagement.getInstance().login("Console","", false);
-    		executor.addQuery(query, "CQL", user, dd);
+    		executor.addQuery(query, "CQL", user, dd, "Standard");
     		return "";
     	}catch (Exception e){
     		ObjectFactory factory = new ObjectFactory();

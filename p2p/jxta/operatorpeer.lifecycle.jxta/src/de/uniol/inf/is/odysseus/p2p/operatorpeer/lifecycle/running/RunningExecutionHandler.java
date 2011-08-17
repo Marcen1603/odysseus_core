@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.running;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,6 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
@@ -68,11 +66,9 @@ public class RunningExecutionHandler extends
 							+ AbstractTreeWalker.prefixWalk(s.getAo(),
 									new AlgebraPlanToStringVisitor()));
 					User user = GlobalState.getActiveUser("");
-					IDataDictionary dd = GlobalState.getActiveDatadictionary();
-					List<IQueryBuildSetting<?>> cfg = getFunction()
-							.getQueryBuildConfiguration("Standard");
+					IDataDictionary dd = GlobalState.getActiveDatadictionary();					
 					getFunction().addQuery(s.getAo(), user, dd,
-							cfg.toArray(new IQueryBuildSetting[0]));
+							"Standard");
 				}
 			}
 

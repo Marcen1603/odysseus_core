@@ -293,7 +293,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 								"CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442",
 								"CQL"));
 		List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor()
-				.getQueryBuildConfiguration("Standard");
+				.getQueryBuildConfiguration("Standard").getConfiguration();
 		;
 		if (cfg == null) {
 			getLogger().debug("No Query Build Configuration found!!!");
@@ -305,7 +305,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 				User user = GlobalState.getActiveUser("");
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();
 				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, dd,
-						cfg.toArray(new IQueryBuildSetting[0]));
+						"Standard");
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
