@@ -35,7 +35,12 @@ public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 		String userName = para[0];
 		String password = para[1];
 		
-		User user = UserManagement.getInstance().login(userName, password, false);
+		User user = null;
+		if (password != null && password.length() > 0){
+			user = UserManagement.getInstance().login(userName, password, false);
+		}else{
+			user = UserManagement.getInstance().login(userName, caller);			
+		}
 		if( user == null ) 
 			throw new QueryTextParseException("Login with user " + userName + " failed");
 				

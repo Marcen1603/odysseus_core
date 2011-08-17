@@ -48,7 +48,7 @@ public enum UserManagementAction implements IUserAction {
 
 	GRANT, GRANT_ALL, REVOKE, REVOKE_ALL, GRANT_ROLE, REVOKE_ROLE,
 
-	LOGOUT, GET_ALL_USER, GET_ALL;
+	LOGOUT, GET_ALL_USER, GET_ALL, SUDO_LOGIN;
 
 	static List<IUserAction> all;
 	static final String alias = "UserManagement";

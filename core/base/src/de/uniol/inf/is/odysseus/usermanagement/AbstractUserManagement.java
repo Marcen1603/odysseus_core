@@ -503,6 +503,21 @@ abstract class AbstractUserManagement {
 		fireUserManagementListener();
 		return user;
 	}
+	
+	public User login(String username, User caller){
+		User user = this.userStore.getUserByName(username);
+		if (AccessControl.hasPermission(UserManagementAction.SUDO_LOGIN,
+						UserManagementAction.alias, caller)){
+			synchronized (loggedIn) {
+				loggedIn.put(username, user);
+			}
+			user.setSession(new Session(getSessionId()));
+			fireUserManagementListener();
+		}else{
+			user = null;
+		}
+		return user;
+	}
 
 	/**
 	 * logout a user selected by name
