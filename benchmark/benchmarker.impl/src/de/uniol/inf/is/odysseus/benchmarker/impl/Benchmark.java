@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
 import java.util.ArrayList;
@@ -96,8 +96,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		this.buildParameters = null;
 		this.queries = new ArrayList<IPair<String, String>>();
 		this.buildParameters = new ArrayList<IQueryBuildSetting<?>>();
-		this.metadataTypes = new String[] { ITimeInterval.class.getName(),
-				ILatency.class.getName() };
+		this.metadataTypes = new String[] { ITimeInterval.class.getName(), ILatency.class.getName() };
 		this.resultFactory = new LatencyBenchmarkResultFactory();
 		this.usePunctuations = false;
 		this.useLoadShedding = false;
@@ -185,13 +184,13 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			}
 
 			executor.addErrorEventListener(this);
-
-			ArrayList<IQueryBuildSetting<?>> parameters = new ArrayList<IQueryBuildSetting<?>>();
-			parameters
-					.add(new ParameterTransformationConfiguration(trafoConfig));
-			parameters.addAll(getBuildParameters());
-			parameters
-					.add(new ParameterBufferPlacementStrategy(bufferPlacement));
+			
+			BenchmarkBuildConfiguration qbc = new BenchmarkBuildConfiguration(getBuildParameters());
+			qbc.addSetting(new ParameterTransformationConfiguration(trafoConfig));
+			qbc.addSetting(new ParameterBufferPlacementStrategy(bufferPlacement));
+								
+			
+			executor.getQueryBuildConfigurations().put(BenchmarkBuildConfiguration.NAME, qbc);
 
 			for (IPair<String, String> query : getQueries()) {
 				String parserId = query.getE1();
@@ -204,8 +203,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 						throw new BenchmarkException(e);
 					}
 				} else {
-					executor.addQuery(queryString, parserId, user, dd, 
-							parameters.toArray(new IQueryBuildSetting[0]));
+					executor.addQuery(queryString, parserId, user, dd, BenchmarkBuildConfiguration.NAME);
 				}
 			}
 			int i = 0;
@@ -262,14 +260,14 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private void clearExecutor() {
 		this.sinks.clear();
 		this.executor.getExecutionPlan().close();
-		for(IQuery q : this.executor.getQueries()){
+		for (IQuery q : this.executor.getQueries()) {
 			try {
 				this.executor.removeQuery(q.getID(), user);
 			} catch (PlanManagementException e) {
 				throw new RuntimeException(e);
 			}
 		}
-		
+
 	}
 
 	private int getQueryId(IPhysicalOperator curRoot) {
@@ -279,13 +277,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			}
 		}
 		return -1;
-	}
-
-	@SuppressWarnings("unchecked")
+	}	
 	private void createNexmarkSources() {
 		if (sourcesCreated)
 			return;
-		
+
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
 		q[1] = "CREATE STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
@@ -293,10 +289,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, "CQL", user, dd, 
-						new ParameterTransformationConfiguration(
-								new TransformationConfiguration("relational",
-										ITimeInterval.class)));
+				this.executor.addQuery(s, "CQL", user, dd, "Standard");
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}
@@ -327,8 +320,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	@Override
 	public void setResultFactory(String className) {
 		try {
-			this.resultFactory = (IBenchmarkResultFactory<ILatency>) Class
-					.forName(className).newInstance();
+			this.resultFactory = (IBenchmarkResultFactory<ILatency>) Class.forName(className).newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -391,12 +383,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 	@Override
 	public void eventOccured(IEvent<?, ?> event) {
-		if(event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED){
-			for(BenchmarkSink<? extends ILatency> sink : this.sinks){
+		if (event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED) {
+			for (BenchmarkSink<? extends ILatency> sink : this.sinks) {
 				sink.stopRecording();
 			}
 		}
 	}
-
 
 }
