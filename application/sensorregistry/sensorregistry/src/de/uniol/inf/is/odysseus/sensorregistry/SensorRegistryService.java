@@ -15,7 +15,6 @@
 
 package de.uniol.inf.is.odysseus.sensorregistry;
 
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +27,6 @@ import javax.xml.ws.Endpoint;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -67,15 +65,14 @@ public class SensorRegistryService extends WebserviceServer {
 		try {
 
 			User user = loginWithSecurityToken(securityToken);
-			IDataDictionary dd = GlobalState.getActiveDatadictionary();
-			List<IQueryBuildSetting<?>> cfg = getExecutor().getQueryBuildConfiguration(TRANSFORMATION_CONFIGURATION);
+			IDataDictionary dd = GlobalState.getActiveDatadictionary();			
 			Sensor sensor = new Sensor(host, port);
 			boolean result = SensorRegistry.getInstance().registerSensor(name, sensor);
 			if (result) {
 				Logger.getAnonymousLogger().info("Sensor " + name + " registered");
 				String query = "CREATE STREAM " + name + "(" + buildParamList(schema) + ") CHANNEL " + host + " : " + port;
 				Logger.getAnonymousLogger().info("Creating Stream in Odysseus: " + query);
-				getExecutor().addQuery(query, "CQL", user, dd, cfg.toArray(new IQueryBuildSetting[0]));				
+				getExecutor().addQuery(query, "CQL", user, dd, TRANSFORMATION_CONFIGURATION);				
 			}else{
 				Logger.getAnonymousLogger().info("Sensor "+name+" was already registered");
 			}
@@ -102,12 +99,11 @@ public class SensorRegistryService extends WebserviceServer {
 			User user = loginWithSecurityToken(securityToken);
 			boolean result = SensorRegistry.getInstance().unregisterSensor(name);
 			if (result) {				
-				IDataDictionary dd = GlobalState.getActiveDatadictionary();
-				List<IQueryBuildSetting<?>> cfg = getExecutor().getQueryBuildConfiguration(TRANSFORMATION_CONFIGURATION);
+				IDataDictionary dd = GlobalState.getActiveDatadictionary();				
 				Logger.getAnonymousLogger().info("Sensor " + name + " unregistered");
 				String query = "DROP STREAM " + name;
 				Logger.getAnonymousLogger().info("Creating Stream in Odysseus: " + query);
-				getExecutor().addQuery(query, "CQL", user, dd, cfg.toArray(new IQueryBuildSetting[0]));				
+				getExecutor().addQuery(query, "CQL", user, dd, TRANSFORMATION_CONFIGURATION);				
 			}else{
 				Logger.getAnonymousLogger().info("Sensor "+name+" was never registered");
 			}
