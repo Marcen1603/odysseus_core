@@ -99,6 +99,17 @@ public class Window {
 		}
 		return tempLength;
 	}
+	
+	/**
+	 * returns the window length in nanoseconds
+	 * 
+	 * Attention: a month is statically defined as 30 days!
+	 * 
+	 * @return
+	 */
+	public long lengthToNanoseconds() {
+		return this.lengthToMilliseconds() * 1000000;
+	}
 
 	@Override
 	public String toString() {
