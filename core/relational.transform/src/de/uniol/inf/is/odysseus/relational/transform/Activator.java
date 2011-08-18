@@ -50,8 +50,7 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
-	public void bindAggregateFunctionBuilderRegistry(IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry){
-		System.out.println(aggregateFunctionBuilderRegistry +" bound");
+	public void bindAggregateFunctionBuilderRegistry(IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry){		
 		Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
 	}
 	
