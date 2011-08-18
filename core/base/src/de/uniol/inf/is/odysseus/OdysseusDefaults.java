@@ -85,6 +85,8 @@ public class OdysseusDefaults {
 		props.setProperty("odysseusHome", odysseusHome);
 		props.setProperty("storeUsers", Boolean.FALSE.toString());
 		props.setProperty("userStoreFilename", odysseusHome + "users.store");
+		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
+		props.setProperty("reloadLogStoreFilename", odysseusHome + "reloadlog.store");
 		props.setProperty("storeTenants", Boolean.FALSE.toString());
 		props.setProperty("tenantsFilename", odysseusHome + "tenants.store");
 		props.setProperty("userTenantFilename", odysseusHome
