@@ -37,8 +37,14 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; 
+
 abstract public class AbstractDynamicPriorityPlanScheduling implements
 		IPartialPlanScheduling, ISLAViolationEventDistributor {
+	
+	Logger logger = LoggerFactory.getLogger(AbstractDynamicPriorityPlanScheduling.class);
 
 	final CurrentPlanPriorityComperator comperator = new CurrentPlanPriorityComperator();
 
@@ -49,7 +55,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	private List<ISLAViolationEventListener> listeners;
 	private Set<IQuery> extendedQueries = new HashSet<IQuery>();
 	private List<ISLAConformance> conformances = new ArrayList<ISLAConformance>();
-	
+
 	private final OverheadMeasurement OVERHEAD = new OverheadMeasurement();
 
 	public AbstractDynamicPriorityPlanScheduling() {
@@ -123,26 +129,27 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			}
 		}
 		synchronized (queue) {
+
+			if (queue.size() == 0) {
+				logger.warn("Queue is empty!!");
+				return null;
+			}
+
 			Collections.sort(queue, comperator);
 			Iterator<IScheduling> iter = queue.iterator();
 			synchronized (lastRun) {
-				try {
-					lastRun.add(iter.next());
-					long prio = queue.get(0).getPlan().getCurrentPriority();
-					while (iter.hasNext()) {
-						IScheduling s = iter.next();
-						if (s.getPlan().getCurrentPriority() == prio) {
-							lastRun.add(s);
-						} else {
-							break;
-						}
+				lastRun.add(iter.next());
+				long prio = queue.get(0).getPlan().getCurrentPriority();
+				while (iter.hasNext()) {
+					IScheduling s = iter.next();
+					if (s.getPlan().getCurrentPriority() == prio) {
+						lastRun.add(s);
+					} else {
+						break;
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
 				}
 				OVERHEAD.stop();
-				return updateMetaAndReturnPlan(lastRun.remove(0)); 
+				return updateMetaAndReturnPlan(lastRun.remove(0));
 			}
 		}
 	}
