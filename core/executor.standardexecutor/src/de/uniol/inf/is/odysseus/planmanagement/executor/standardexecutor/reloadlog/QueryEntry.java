@@ -43,7 +43,9 @@ public class QueryEntry {
 		s = s + newline;
 		s = s + "#ADDQUERY";
 		s = s + newline;
-		s=  s + this.query;
+		s = s + this.query;
+		s = s + newline;
+		s = s + "#USER "+this.username;		
 		s = s + newline;
 		return s;
 	}
