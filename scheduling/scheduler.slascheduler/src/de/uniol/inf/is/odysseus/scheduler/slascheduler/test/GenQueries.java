@@ -65,10 +65,19 @@ public class GenQueries {
 			calcDataRate(120, DATA_RATE_MID), calcDataRate(120, DATA_RATE_LOW),
 			calcDataRate(120, DATA_RATE_MID), calcDataRate(120, DATA_RATE_LOW) };
 
-	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
-			dataRates3, dataRates4, dataRates5 };
+	static int[][] dataRates6 = { calcDataRate(90, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_BURST),
+			calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_BURST),
+			calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_BURST),
+			calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_BURST), calcDataRate(20, DATA_RATE_LOW) };
 
-	static int[] DATA_RATE_INDICES = { 3, 4, 5 };
+	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
+			dataRates3, dataRates4, dataRates5, dataRates6 };
+
+	static int[] DATA_RATE_INDICES = { 6 };
 	static int dataRatePos = 0;
 
 	public static void main(String[] args) {
@@ -82,12 +91,12 @@ public class GenQueries {
 		}
 
 		// create SLA
-//		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-//			sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
-//					120, TimeUnit.s.toString(),
-//					calcThresholds(ScopeFactory.SCOPE_RATE, i),
-//					calcPenaltyCosts(i), PENALTY_NAME));
-//		}
+		// for (int i = 0; i < NUMBER_OF_SLAS; i++) {
+		// sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
+		// 120, TimeUnit.s.toString(),
+		// calcThresholds(ScopeFactory.SCOPE_RATE, i),
+		// calcPenaltyCosts(i), PENALTY_NAME));
+		// }
 		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
 			sb.append(createSLA(i, (i + 3) * 1000, ScopeFactory.SCOPE_AVERAGE,
 					120, TimeUnit.s.toString(),
@@ -136,37 +145,45 @@ public class GenQueries {
 		StringBuilder sb = new StringBuilder();
 		sb.append(createQueryParams(slaNumber));
 		sb.append(createBuffer(number, 0));
-		sb.append(createBenchmark(number, 0, slaNumber));
+		sb.append(createBenchmark(number, 0, slaNumber, true));
 		sb.append("#STARTQUERIES").append(NEWLINE);
 		return sb.toString();
 	}
 
-	private static String createBenchmark(int number, int subnumber, int slaNumber) {
+	private static String createBenchmark(int number, int subnumber,
+			int slaNumber, boolean isSink) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("benchmark").append(number).append(numberToChar(subnumber))
-				.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
-				.append("} = benchmark({selectivity = ").append(OP_SELECTIVITY)
+		sb.append("benchmark").append(number).append(formatSubnumber(subnumber));
+		if (isSink) {
+			sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
+					.append("}");
+		}
+		sb.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
 				.append(", time = ").append(OP_PROCESSING_TIME)
 				.append("},puffer").append(number)
-				.append(numberToChar(subnumber)).append(")").append(NEWLINE);
+				.append(formatSubnumber(subnumber)).append(")").append(NEWLINE);
 		statsNumBenchmarks++;
 		return sb.toString();
 	}
 
-	private static String createBenchmark2In(int number, int subnumber, int slaNumber) {
+	private static String createBenchmark2In(int number, int subnumber,
+			int slaNumber, boolean isSink) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("benchmark").append(number).append(numberToChar(subnumber))
-				.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
-				.append("} = benchmark({selectivity = ").append(OP_SELECTIVITY)
+		sb.append("benchmark").append(number).append(formatSubnumber(subnumber));
+		if (isSink) {
+			sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
+					.append("}");
+		}
+		sb.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
 				.append(", time = ").append(OP_PROCESSING_TIME)
 				.append("},puffer").append(number);
 		if (subnumber == 0) {
-			sb.append(numberToChar(subnumber)).append(", puffer")
-					.append(number).append(numberToChar(subnumber + 1))
+			sb.append(formatSubnumber(subnumber)).append(", puffer")
+					.append(number).append(formatSubnumber(subnumber + 1))
 					.append(")").append(NEWLINE);
 		} else {
-			sb.append(numberToChar(subnumber + 1)).append(", benchmark")
-					.append(number).append(numberToChar(subnumber - 1))
+			sb.append(formatSubnumber(subnumber + 1)).append(", benchmark")
+					.append(number).append(formatSubnumber(subnumber - 1))
 					.append(")").append(NEWLINE);
 		}
 		statsNumBenchmarks++;
@@ -175,9 +192,9 @@ public class GenQueries {
 
 	private static String createBuffer(int number, int subNumber) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("puffer").append(number).append(numberToChar(subNumber))
+		sb.append("puffer").append(number).append(formatSubnumber(subNumber))
 				.append(" = buffer({type = 'Normal'},testinput").append(number)
-				.append(numberToChar(subNumber)).append(")").append(NEWLINE);
+				.append(formatSubnumber(subNumber)).append(")").append(NEWLINE);
 		statsNumBuffers++;
 		return sb.toString();
 	}
@@ -190,14 +207,15 @@ public class GenQueries {
 			sb.append(createBuffer(number, i));
 		}
 		for (int i = 0; i < numOfSources - 1; i++) {
-			sb.append(createBenchmark2In(number, i, slaNumber));
+			sb.append(createBenchmark2In(number, i, slaNumber,
+					(i == numOfSources - 2) ? true : false));
 		}
 		sb.append("#STARTQUERIES").append(NEWLINE);
 		return sb.toString();
 	}
 
-	private static char numberToChar(int number) {
-		return (char) ('A' + number);
+	private static String formatSubnumber(int number) {
+		return "A" + number;
 	}
 
 	private static String createQueryParams(int slaNumber) {
@@ -208,8 +226,8 @@ public class GenQueries {
 	}
 
 	private static String createSLA(int number, double metricValue,
-			String scope, int windowSize, String windowUnit, double[] slThreshold,
-			int[] penaltyCost, String penaltyName) {
+			String scope, int windowSize, String windowUnit,
+			double[] slThreshold, int[] penaltyCost, String penaltyName) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CREATE SLA sla").append(number).append(" WITH")
 				.append(NEWLINE);
@@ -233,8 +251,8 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static String createServiceLevel(double threshold, String penaltyName,
-			int penaltyCost) {
+	private static String createServiceLevel(double threshold,
+			String penaltyName, int penaltyCost) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(TAB).append("SERVICELEVEL (").append(threshold)
 				.append(", PENALTY (").append(penaltyName).append(", ")
@@ -277,7 +295,7 @@ public class GenQueries {
 		sb.append("#QUERY").append(NEWLINE);
 		sb.append("testinput")
 				.append(number)
-				.append(numberToChar(subNumber))
+				.append(formatSubnumber(subNumber))
 				.append(" := testproducer({invertedpriorityratio = 10, parts = [")
 				.append(createTestInputParam()).append("]})").append(NEWLINE);
 		sb.append("#PARSER CQL").append(NEWLINE);
