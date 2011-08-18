@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.sensorregistry;
 
+import java.util.logging.Logger;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -17,7 +19,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		System.out.println("START REGISTRY");
+		Logger.getAnonymousLogger().config("Sarting sensor registry service...");
 		SensorRegistryService.startServer();
 	}
 
