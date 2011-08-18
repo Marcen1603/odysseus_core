@@ -9,10 +9,13 @@ import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 
 public class GenQueries {
 
+	private static final double SECS_TO_NANOS = 1000000000;
+
 	private static int statsNumSources = 0;
 	private static int statsNumBuffers = 0;
 	private static int statsNumBenchmarks = 0;
 	private static long statsNumElements = 0;
+	private static long statsEstExecTime = 0;
 
 	private static final String NEWLINE = "\n";
 	private static final String TAB = "\t";
@@ -26,14 +29,14 @@ public class GenQueries {
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 0.1;
 	private static final int OP_PROCESSING_TIME = 100;
-	private static final int NUMBER_OF_USERS = 3;
-	private static final int NUMBER_OF_QUERIES_PER_USER = 3;
-	private static final int NUMBER_OF_SLAS = 3;
+	private static final int NUMBER_OF_USERS = 25;
+	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
+	private static final int NUMBER_OF_SLAS = 5;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
 
 	private static final int DATA_RATE_BURST = 10000;
-	private static final int DATA_RATE_HIGH = 1000;
+	private static final int DATA_RATE_HIGH = 100;
 	private static final int DATA_RATE_MID = 100;
 	private static final int DATA_RATE_LOW = 10;
 	private static final int DATA_RATE_VERY_LOW = 1;
@@ -66,13 +69,10 @@ public class GenQueries {
 			calcDataRate(120, DATA_RATE_MID), calcDataRate(120, DATA_RATE_LOW) };
 
 	static int[][] dataRates6 = { calcDataRate(90, DATA_RATE_LOW),
-			calcDataRate(10, DATA_RATE_BURST),
-			calcDataRate(110, DATA_RATE_LOW),
-			calcDataRate(10, DATA_RATE_BURST),
-			calcDataRate(110, DATA_RATE_LOW),
-			calcDataRate(10, DATA_RATE_BURST),
-			calcDataRate(110, DATA_RATE_LOW),
-			calcDataRate(10, DATA_RATE_BURST), calcDataRate(20, DATA_RATE_LOW) };
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(20, DATA_RATE_LOW) };
 
 	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
 			dataRates3, dataRates4, dataRates5, dataRates6 };
@@ -127,6 +127,7 @@ public class GenQueries {
 
 			}
 		}
+		sb.append("#STARTQUERIES").append(NEWLINE);
 
 		sb.append(createStatisticsComments());
 		System.out.println(sb.toString());
@@ -146,14 +147,16 @@ public class GenQueries {
 		sb.append(createQueryParams(slaNumber));
 		sb.append(createBuffer(number, 0));
 		sb.append(createBenchmark(number, 0, slaNumber, true));
-		sb.append("#STARTQUERIES").append(NEWLINE);
+//		sb.append("#STARTQUERIES").append(NEWLINE);
+		statsEstExecTime += OP_PROCESSING_TIME;
 		return sb.toString();
 	}
 
 	private static String createBenchmark(int number, int subnumber,
 			int slaNumber, boolean isSink) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("benchmark").append(number).append(formatSubnumber(subnumber));
+		sb.append("benchmark").append(number)
+				.append(formatSubnumber(subnumber));
 		if (isSink) {
 			sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
 					.append("}");
@@ -169,7 +172,8 @@ public class GenQueries {
 	private static String createBenchmark2In(int number, int subnumber,
 			int slaNumber, boolean isSink) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("benchmark").append(number).append(formatSubnumber(subnumber));
+		sb.append("benchmark").append(number)
+				.append(formatSubnumber(subnumber));
 		if (isSink) {
 			sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
 					.append("}");
@@ -210,7 +214,8 @@ public class GenQueries {
 			sb.append(createBenchmark2In(number, i, slaNumber,
 					(i == numOfSources - 2) ? true : false));
 		}
-		sb.append("#STARTQUERIES").append(NEWLINE);
+//		sb.append("#STARTQUERIES").append(NEWLINE);
+		statsEstExecTime += (numOfSources - 1) * OP_PROCESSING_TIME;
 		return sb.toString();
 	}
 
@@ -345,8 +350,8 @@ public class GenQueries {
 	private static int[] calcPenaltyCosts(int slNumber) {
 		int penaltyCost[] = new int[NUMBER_OF_SERVICE_LEVELS];
 		for (int i = 0; i < penaltyCost.length; i++) {
-			penaltyCost[i] = 500 * (i + 1) + 1000
-					* (NUMBER_OF_SERVICE_LEVELS - slNumber);
+			penaltyCost[i] = 1000 * (i + 1) + 2000
+					* (NUMBER_OF_SLAS - slNumber);
 		}
 		return penaltyCost;
 	}
@@ -408,6 +413,9 @@ public class GenQueries {
 				.append(statsNumBenchmarks).append(NEWLINE);
 		sb.append("///\t number of generated tuples: ")
 				.append(statsNumElements).append(NEWLINE);
+		sb.append("///\t estimated execution time: ")
+				.append(statsEstExecTime / SECS_TO_NANOS * statsNumElements).append(" seconds")
+				.append(NEWLINE);
 		return sb.toString();
 	}
 
