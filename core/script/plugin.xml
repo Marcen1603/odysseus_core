@@ -64,5 +64,9 @@
             class="de.uniol.inf.is.odysseus.script.parser.keyword.SLAPreParserKeyword"
             name="SLA">
       </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.ReloadFromLogPreParserKeyword"
+            name="RELOADFROMLOG">
+      </PreParserKeyword>
    </extension>
 </plugin>
