@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.storing;
 
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Properties;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 
 public class StoringActivator implements BundleActivator{
 
@@ -15,12 +18,18 @@ public class StoringActivator implements BundleActivator{
 	@Override
 	public void start(BundleContext context) throws Exception {
 		StoringActivator.LOGGER.info("Startup Storing Bundle.");
-		URL configuration = context.getBundle().getEntry(System.getenv("databasecf"));		
-		StoringActivator.LOGGER.info(String.format("Read configuration from %s ...", configuration));
-		Properties properties = new Properties();
-		properties.loadFromXML(configuration.openStream());
-	    DatabaseService.registerDefaultUser(properties.getProperty("user"), properties.getProperty("password"));
-		StoringActivator.LOGGER.info(String.format("Done"));
+		File file = new File(OdysseusDefaults.get("storing_database"));
+		if (!file.exists()) {
+			StoringActivator.LOGGER.error(String.format("File does not exist: %s !", file.toString()));
+		} else {
+			StoringActivator.LOGGER.info(String.format("Read configuration from %s ...", file.toString()));
+			FileInputStream inputStream = new FileInputStream(file);
+			Properties properties = new Properties();
+			properties.loadFromXML(inputStream);
+			inputStream.close();
+		    DatabaseService.registerDefaultUser(properties.getProperty("user"), properties.getProperty("password"));
+			StoringActivator.LOGGER.info(String.format("Done"));	
+		}
 	}
 
 	@Override

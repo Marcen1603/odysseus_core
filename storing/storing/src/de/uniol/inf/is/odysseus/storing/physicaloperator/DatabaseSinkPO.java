@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.storing.physicaloperator;
 
 import java.sql.Connection;
@@ -34,28 +34,28 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 /**
  * 
  * @author Kai Pancratz
- *
+ * 
  */
 public class DatabaseSinkPO extends AbstractSink<Object> {
 
 	private Connection connection;
 	private String table;
-	
+
 	private boolean savemetadata;
 	private boolean create;
 	private boolean ifnotexists;
 	private boolean truncate;
 	private boolean opened;
-	
-	//Make the BATCH SIZE CONFIGERABLE 
+
+	// Make the BATCH SIZE CONFIGERABLE
 	private static final int SELECT_BATCH_SIZE = 10;
-	
+
 	private Queue<RelationalTuple<?>> values = new LinkedList<RelationalTuple<?>>();
 	private PreparedStatement preparedStatement;
 
-	private volatile static Logger LOGGER = LoggerFactory.getLogger(DatabaseSinkPO.class);;
+	private volatile static Logger LOGGER = LoggerFactory
+			.getLogger(DatabaseSinkPO.class);;
 
-	
 	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
 		super();
 		this.connection = databaseSinkPO.connection;
@@ -65,9 +65,12 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 		this.ifnotexists = databaseSinkPO.ifnotexists;
 		this.truncate = databaseSinkPO.truncate;
 		this.opened = databaseSinkPO.opened;
-		LOGGER.debug("Instance of DatabaseSinkPO: " + " Connection:" + this.connection + " Table:" + this.table + " SaveMetaData:" + this.savemetadata + " Create:" + this.create + " Ifnotexists:" + this.ifnotexists);
+		LOGGER.debug("Instance of DatabaseSinkPO: " + " Connection:"
+				+ this.connection + " Table:" + this.table + " SaveMetaData:"
+				+ this.savemetadata + " Create:" + this.create
+				+ " Ifnotexists:" + this.ifnotexists);
 	}
-	
+
 	public DatabaseSinkPO(Connection connection, String table,
 			boolean savemetadata, boolean create, boolean ifnotexists,
 			boolean truncate) {
@@ -78,9 +81,10 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 		this.create = create;
 		this.ifnotexists = ifnotexists;
 		this.truncate = truncate;
-		LOGGER.debug("Instance of DatabaseSinkPO: " + " Connection:" + this.connection + " Table:" + this.table + " SaveMetaData:" + this.savemetadata + " Create:" + this.create     );
+		LOGGER.debug("Instance of DatabaseSinkPO: " + " Connection:"
+				+ this.connection + " Table:" + this.table + " SaveMetaData:"
+				+ this.savemetadata + " Create:" + this.create);
 	}
-
 
 	@Override
 	protected void process_open() throws OpenFailedException {
@@ -94,10 +98,10 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 					createTable();
 				} else {
 					// nothing, because only create if NOT exists!
-//					dropTable();
-//					createTable();
+					// dropTable();
+					// createTable();
 				}
-			}else{
+			} else {
 				dropTable();
 				createTable();
 			}
@@ -138,13 +142,14 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 
 	}
 
-	private boolean tableExists() {		
+	private boolean tableExists() {
 		try {
-			this.connection.createStatement().execute("SELECT count(*) FROM "+table);
+			this.connection.createStatement().execute(
+					"SELECT count(*) FROM " + table);
 			return true;
 		} catch (SQLException e) {
 			return false;
-		}		
+		}
 	}
 
 	private boolean checkDatabaseValidity() {
@@ -159,20 +164,20 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected void process_next(Object object, int port, boolean isReadOnly) {
-		if(!opened){
+		if (!opened) {
 			LOGGER.warn("Not opened.");
 			try {
 				process_open();
 				LOGGER.debug("open.");
-			} catch (OpenFailedException e) {				
-				LOGGER.error("OpenFailedException",e.getStackTrace());
+			} catch (OpenFailedException e) {
+				LOGGER.error("OpenFailedException", e.getStackTrace());
 			}
 		}
-		
+
 		synchronized (values) {
-			values.offer((RelationalTuple)object);
+			values.offer((RelationalTuple) object);
 			if (values.size() >= SELECT_BATCH_SIZE) {
-				//LOGGER.debug("Values " + values);
+				// LOGGER.debug("Values " + values);
 				writeToDatabase(values);
 			}
 		}
@@ -185,9 +190,8 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 				for (int i = 1; i <= tuple.getAttributeCount(); i++) {
 					preparedStatement.setObject(i, tuple.getAttribute(i - 1));
 				}
-				if(savemetadata){
+				if (savemetadata) {
 					tuple.getMetadata();
-					
 				}
 				preparedStatement.addBatch();
 			}
@@ -203,14 +207,18 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 	}
 
 	private void createTable() {
-		Statement statememt;
+		Statement statememt = null;
 		try {
-			statememt = this.connection.createStatement();
+			if (this.connection == null) {
+				LOGGER.error("Connection is null!", this.connection);
+			} else {
+				statememt = this.connection.createStatement();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;
 		}
-		
+
 		String query = "CREATE TABLE " + this.table + "(";
 		String delimiter = "";
 		for (SDFAttribute attribute : getOutputSchema()) {
@@ -222,7 +230,7 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 		}
 		query = query + ")";
 		LOGGER.debug("Create Database: " + query);
-		
+
 		try {
 			statememt.execute(query);
 		} catch (SQLException e) {
@@ -231,14 +239,14 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 	}
 
 	private void dropTable() {
-		if(tableExists()){			
+		if (tableExists()) {
 			try {
 				String query = "DROP TABLE " + table;
 				System.out.println("Dropping table: " + query);
 				Statement s = this.connection.createStatement();
 				s.execute(query);
 			} catch (SQLException e1) {
-				System.err.println("Error while dropping table "+table);
+				System.err.println("Error while dropping table " + table);
 			}
 		}
 	}
@@ -264,7 +272,7 @@ public class DatabaseSinkPO extends AbstractSink<Object> {
 		if (type.getURI().equals(SDFDatatype.LONG)) {
 			return "BIGINT";
 		}
-		if (type.getURI(false).toUpperCase().endsWith("TIMESTAMP")){
+		if (type.getURI(false).toUpperCase().endsWith("TIMESTAMP")) {
 			return "BIGINT";
 		}
 		return "VARCHAR(255)";

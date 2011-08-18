@@ -44,6 +44,7 @@ public class DatabaseVisitor{
 
 	private User caller;
 	private String name;
+	private Connection connection;
 	
 	private IDataDictionary dd = null;
 	
@@ -96,17 +97,8 @@ public class DatabaseVisitor{
 	}
 
 	private DatabaseAccessAO getAccessAOForJDBC(String jdbcString, String tableName, boolean isTimeSensitiv) {
-		Connection connection;
 		try {
-			
-			/** @TODO 
-			 *  
-			 *  read configuration file for password and user name.
-			 *  
-			 */
 			connection = DatabaseService.getbyDefaultUser(jdbcString);
-			//connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
-			//connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
 			DatabaseAccessAO databaseAccessAO = new DatabaseAccessAO(new SDFSource(tableName, "databaseReading"),connection,tableName,isTimeSensitiv);
 			return databaseAccessAO;
 		} catch (SQLException e) {
@@ -127,7 +119,6 @@ public class DatabaseVisitor{
 		
 		ASTComplexSelectStatement complexSelectStatement 	= null;
 		String jdbcString 									= null;
-		Connection connection 								= null;
 		
 		ASTDatabaseTableOptions tableOps = (ASTDatabaseTableOptions) node.jjtGetChild(0);
 		
@@ -153,16 +144,9 @@ public class DatabaseVisitor{
 		if (node.jjtGetChild(2) instanceof ASTSaveMetaData) {
 			savemetadata = true;
 		}
-	
-		
-		/**
-		 * @TODO Read configuration file for password and user name.
-		 * @autor kpancratz
-		 */
+
 		try {
 			connection = DatabaseService.getbyDefaultUser(jdbcString);
-			//connection = DatabaseService.getConnection(jdbcString,"salsa","salsa");
-			///connection = DatabaseService.getConnection(jdbcString,"dbit_admin","dbit12ok");
 		} catch (SQLException e) {
 			LOGGER.error("SQLException: ",e.getStackTrace());
 		}
@@ -172,6 +156,8 @@ public class DatabaseVisitor{
 		
 		CQLParser cqlparser = (CQLParser) CQLParser.getInstance();
 
+		
+		//Soll das so bleiben??? s
 		//GET GLOBAL USER STATE FOR: User and Data Dictionary
 		cqlparser.setUser(caller);
 		cqlparser.setDataDictionary(GlobalState.getActiveDatadictionary());
