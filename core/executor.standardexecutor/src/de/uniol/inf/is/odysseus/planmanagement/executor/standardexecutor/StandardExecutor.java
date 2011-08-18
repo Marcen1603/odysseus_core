@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonito
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog.ReloadLog;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -115,7 +116,7 @@ public class StandardExecutor extends AbstractExecutor {
 		} else {
 			this.configuration.set(new ParameterBufferPlacementStrategy());
 		}
-		this.reloadLog = new ReloadLog(this);
+		this.reloadLog = new ReloadLog();
 	}
 
 	/*

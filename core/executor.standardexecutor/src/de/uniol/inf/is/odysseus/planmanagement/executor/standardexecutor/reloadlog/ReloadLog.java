@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;
+package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -31,12 +30,10 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class ReloadLog {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadLog.class);
-
-	private IExecutor executor;
+	
 	private List<QueryEntry> queries = new ArrayList<QueryEntry>();
 
-	public ReloadLog(IExecutor executor) {
-		this.executor = executor;
+	public ReloadLog() {		
 	}
 
 	public void queryAdded(String query, String buildConfig, String parserID, User user) {
