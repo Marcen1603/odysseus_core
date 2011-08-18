@@ -440,6 +440,7 @@ public class StandardExecutor extends AbstractExecutor {
 				WrapperPlanFactory.removeClosedSources();
 				getLogger().debug("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
+				this.reloadLog.removeQuery(queryToRemove.getQueryText());
 			} catch (QueryOptimizationException e) {
 				getLogger().warn("Query not removed. An Error while optimizing occurd (ID: " + queryID + ").");
 				throw new PlanManagementException(e);

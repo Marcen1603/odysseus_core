@@ -15,7 +15,9 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -30,69 +32,55 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class ReloadLog {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadLog.class);
-	
+	public static final String LOG_FILENAME = System.getProperty("user.home") + "/odysseus/reloadlog.store";
+
 	private List<QueryEntry> queries = new ArrayList<QueryEntry>();
 
-	public ReloadLog() {		
+	public ReloadLog() {
 	}
 
 	public void queryAdded(String query, String buildConfig, String parserID, User user) {
 		logger.debug("Query added to log: " + query);
 
 		QueryEntry qe = new QueryEntry();
-		qe.parserID =parserID;
+		qe.parserID = parserID;
 		qe.query = query;
-		// TODO: korrekte holen!
 		qe.transCfgID = buildConfig;
 		qe.username = user.getUsername();
 		queries.add(qe);
+		saveState();
 	}
 
-	public void reload() {
-		logger.debug("Starting reloading from log...");
-		// get clean copies
-		List<QueryEntry> copiedQueries = getCopyForQueries(this.queries);
-		clear();
-		reloadQueries(copiedQueries);
-		logger.debug("Reloading done.");
-	}
-
-	private List<QueryEntry> getCopyForQueries(List<QueryEntry> queries) {
-		List<QueryEntry> copied = new ArrayList<QueryEntry>();
-		for (QueryEntry c : queries) {
-			copied.add(c.getCopy());
+	private void saveState() {
+		FileWriter writer = null;
+		try {
+			logger.debug("Save queries in log.");
+			writer = new FileWriter(LOG_FILENAME);			
+			for (QueryEntry e : this.queries) {
+				writer.write(e.toString());
+			}
+		} catch (Exception ex) {
+			logger.error("Error while saving queries for reload", ex);
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (Exception ex) {
+				logger.error("Error while closing reload log file", ex);
+			}
 		}
-		return copied;
-	}
-
-	private void clear() {
-		logger.debug("Clearing old log file");
 
 	}
 
-	private void reloadQueries(List<QueryEntry> queries) {
-		logger.debug("Reloading queries...");
-		for(QueryEntry e : queries){
-			logger.debug("Reload query with parser " + e.parserID + ": " + e.query);
-			// executor.addQuery(query, user, dd, parameters);
-		}
-		logger.debug("Reloading queries done.");
+	public void removeQuery(String queryText) {
+		logger.debug("Removing query from log: " + queryText);
+		Iterator<QueryEntry> iterator = this.queries.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().query.equals(queryText)) {
+				iterator.remove();
+			}
+		}		
+		saveState();
 	}
-
-	class QueryEntry {
-		public String parserID;
-		public String transCfgID;
-		public String query;
-		public String username;
-
-		public QueryEntry getCopy() {
-			QueryEntry qe = new QueryEntry();
-			qe.parserID = this.parserID;
-			qe.transCfgID = this.transCfgID;
-			qe.query = this.query;
-			qe.username = this.username;
-			return qe;
-		}
-	}
-
 }
