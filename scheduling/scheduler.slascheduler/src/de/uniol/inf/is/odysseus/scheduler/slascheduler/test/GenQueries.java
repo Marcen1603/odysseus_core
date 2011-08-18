@@ -82,18 +82,18 @@ public class GenQueries {
 		}
 
 		// create SLA
-		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-			sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
-					120, TimeUnit.s.toString(),
-					calcThresholds(ScopeFactory.SCOPE_RATE, i),
-					calcPenaltyCosts(i), PENALTY_NAME));
-		}
 //		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-//			sb.append(createSLA(i, (i + 3) * 1000, ScopeFactory.SCOPE_AVERAGE,
+//			sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
 //					120, TimeUnit.s.toString(),
-//					calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+//					calcThresholds(ScopeFactory.SCOPE_RATE, i),
 //					calcPenaltyCosts(i), PENALTY_NAME));
 //		}
+		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
+			sb.append(createSLA(i, (i + 3) * 1000, ScopeFactory.SCOPE_AVERAGE,
+					120, TimeUnit.s.toString(),
+					calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+					calcPenaltyCosts(i), PENALTY_NAME));
+		}
 		sb.append(NEWLINE);
 
 		// Create queries
@@ -136,15 +136,16 @@ public class GenQueries {
 		StringBuilder sb = new StringBuilder();
 		sb.append(createQueryParams(slaNumber));
 		sb.append(createBuffer(number, 0));
-		sb.append(createBenchmark(number, 0));
+		sb.append(createBenchmark(number, 0, slaNumber));
 		sb.append("#STARTQUERIES").append(NEWLINE);
 		return sb.toString();
 	}
 
-	private static String createBenchmark(int number, int subnumber) {
+	private static String createBenchmark(int number, int subnumber, int slaNumber) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("benchmark").append(number).append(numberToChar(subnumber))
-				.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
+				.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
+				.append("} = benchmark({selectivity = ").append(OP_SELECTIVITY)
 				.append(", time = ").append(OP_PROCESSING_TIME)
 				.append("},puffer").append(number)
 				.append(numberToChar(subnumber)).append(")").append(NEWLINE);
@@ -152,10 +153,11 @@ public class GenQueries {
 		return sb.toString();
 	}
 
-	private static String createBenchmark2In(int number, int subnumber) {
+	private static String createBenchmark2In(int number, int subnumber, int slaNumber) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("benchmark").append(number).append(numberToChar(subnumber))
-				.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
+				.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
+				.append("} = benchmark({selectivity = ").append(OP_SELECTIVITY)
 				.append(", time = ").append(OP_PROCESSING_TIME)
 				.append("},puffer").append(number);
 		if (subnumber == 0) {
@@ -188,7 +190,7 @@ public class GenQueries {
 			sb.append(createBuffer(number, i));
 		}
 		for (int i = 0; i < numOfSources - 1; i++) {
-			sb.append(createBenchmark2In(number, i));
+			sb.append(createBenchmark2In(number, i, slaNumber));
 		}
 		sb.append("#STARTQUERIES").append(NEWLINE);
 		return sb.toString();
