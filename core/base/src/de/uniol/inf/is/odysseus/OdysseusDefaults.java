@@ -33,8 +33,7 @@ public class OdysseusDefaults {
 	static Logger logger = LoggerFactory.getLogger(OdysseusDefaults.class);
 	static Properties props = new Properties();
 
-	private static String odysseusDefaultHome = System.getProperty("user.home")
-			+ "/odysseus/";
+	private static String odysseusDefaultHome = String.format("%s/%sodysseus/", System.getProperty("user.home"),getDot(System.getProperty("os.name")));
 	private static String homeDir;
 
 	static public File openOrCreateFile(String path) throws IOException {
@@ -61,7 +60,7 @@ public class OdysseusDefaults {
 			if (homeDir == null || homeDir.length() == 0){
 				homeDir = odysseusDefaultHome;
 			}
-			loadProperties(homeDir, "odysseus.conf", props);
+			loadProperties(homeDir,"odysseus.conf", props);
 			if (props.getProperty("storeUsers") == null) {
 				logger.info("No Odysseus config found.");
 				setDefaults(homeDir);
@@ -135,7 +134,8 @@ public class OdysseusDefaults {
 		props.setProperty("sla_querySharing", Boolean.FALSE.toString());
 		props.setProperty("sla_costFunctionName", "quadratic");
 		
-		
+		// Odysseus Storing 
+		props.setProperty("storing_database", odysseusHome + "database.conf");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {
@@ -187,4 +187,28 @@ public class OdysseusDefaults {
 		return homeDir;
 	}
 
+	/**
+	 * Returns a dot on specific operating systems: unix,linux, and mac.
+	 * 
+	 */
+	private static String getDot(String os){
+		os = os.toLowerCase();
+		if((os.indexOf( "win" ) >= 0)){
+			//Windows
+			logger.info("OS: Windows");
+			return "";
+		}else if((os.indexOf( "mac" ) >= 0)){
+			//Macintosh 
+			logger.info("OS: MacOS");
+			return ".";
+		}else if((os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0)){
+			//Unix
+			logger.info("OS: Unix/Linux");
+			return ".";
+		}else{
+			//All other
+			logger.info("OS: not Supported");
+			return "";
+		}
+	}
 }
