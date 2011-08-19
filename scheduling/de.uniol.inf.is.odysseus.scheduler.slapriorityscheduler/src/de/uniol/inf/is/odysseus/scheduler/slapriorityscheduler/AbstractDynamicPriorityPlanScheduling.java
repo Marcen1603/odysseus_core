@@ -104,6 +104,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	@Override
 	public void clear() {
 		synchronized (queue) {
+			logger.debug("clearing queue");
 			queue.clear();
 		}
 	}

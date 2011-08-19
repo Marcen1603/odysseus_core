@@ -28,7 +28,7 @@ public class GenQueries {
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 0.1;
-	private static final int OP_PROCESSING_TIME = 100;
+	private static final int OP_PROCESSING_TIME = 100; //realistic 1500
 	private static final int NUMBER_OF_USERS = 25;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
 	private static final int NUMBER_OF_SLAS = 5;
@@ -119,15 +119,15 @@ public class GenQueries {
 		for (int i = 0; i < NUMBER_OF_USERS; i++) {
 			sb.append(createLogin(i));
 			for (int k = 0; k < NUMBER_OF_QUERIES_PER_USER; k++) {
-				if (k == 0) {
+//				if (k == 0) {
 					sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS));
-				} else {
-					sb.append(createComplexQuery(i, i % NUMBER_OF_SLAS, k + 1));
-				}
+//				} else {
+//					sb.append(createComplexQuery(i, i % NUMBER_OF_SLAS, k + 1));
+//				}
 
 			}
 		}
-		sb.append("#STARTQUERIES").append(NEWLINE);
+//		sb.append("#STARTQUERIES").append(NEWLINE);
 
 		sb.append(createStatisticsComments());
 		System.out.println(sb.toString());
