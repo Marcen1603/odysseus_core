@@ -7,6 +7,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
+
 /**
  * Simple implementation of {@link ISLAViolationEventListener} interface for
  * logging violations of sla in evaluation.
@@ -24,8 +26,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	/**
 	 * path of log file
 	 */
-	public static final String PATH = System.getProperty("user.home")
-			+ File.separator + "odysseus" + File.separator;
+	public static final String PATH = OdysseusDefaults.getHomeDir();
 	/**
 	 * filewriter used for logging
 	 */
