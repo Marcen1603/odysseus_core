@@ -260,6 +260,12 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 //					+ SLATestLogger.formatNanoTime(System.nanoTime())
 //					+ "] Scheduling query "
 //					+ next.getPlan().getQueries().get(0).getID());
+		// set tmestamp of last execution
+		if (next != null) {
+			SLARegistryInfo data = this.registry.getData(next.getPlan().getQueries().get(0));
+			data.setLastExecTimeStamp(System.currentTimeMillis());
+		}
+		
 		OVERHEAD.stop();
 		return next;
 	}

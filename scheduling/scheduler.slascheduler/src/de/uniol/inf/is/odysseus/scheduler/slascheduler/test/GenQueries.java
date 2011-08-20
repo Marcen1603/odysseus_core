@@ -27,13 +27,15 @@ public class GenQueries {
 	private static final int TIME_SLICE = 10;
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
-	private static final double OP_SELECTIVITY = 0.1;
-	private static final int OP_PROCESSING_TIME = 100; //realistic 1500
+	private static final double OP_SELECTIVITY = 1.0;
+	private static final int OP_PROCESSING_TIME = 100; // realistic 1500
 	private static final int NUMBER_OF_USERS = 25;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
 	private static final int NUMBER_OF_SLAS = 5;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
 	private static final int NUMBER_OF_SERVICE_LEVELS = 3;
+	private static final String SLA_SCOPE = ScopeFactory.SCOPE_AVERAGE;
+	private static final boolean COMPLEX_QUERIES_ENABLED = false;
 
 	private static final int DATA_RATE_BURST = 10000;
 	private static final int DATA_RATE_HIGH = 100;
@@ -91,18 +93,22 @@ public class GenQueries {
 		}
 
 		// create SLA
-		// for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-		// sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
-		// 120, TimeUnit.s.toString(),
-		// calcThresholds(ScopeFactory.SCOPE_RATE, i),
-		// calcPenaltyCosts(i), PENALTY_NAME));
-		// }
-		for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-			sb.append(createSLA(i, (i + 3) * 1000, ScopeFactory.SCOPE_AVERAGE,
-					120, TimeUnit.s.toString(),
-					calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
-					calcPenaltyCosts(i), PENALTY_NAME));
+		if (SLA_SCOPE.equals(ScopeFactory.SCOPE_AVERAGE)) {
+			for (int i = 0; i < NUMBER_OF_SLAS; i++) {
+				sb.append(createSLA(i, (i + 3) * 1000,
+						ScopeFactory.SCOPE_AVERAGE, 120, TimeUnit.s.toString(),
+						calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+						calcPenaltyCosts(i), PENALTY_NAME));
+			}
+		} else if (SLA_SCOPE.equals(ScopeFactory.SCOPE_RATE)) {
+			for (int i = 0; i < NUMBER_OF_SLAS; i++) {
+				sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
+						120, TimeUnit.s.toString(),
+						calcThresholds(ScopeFactory.SCOPE_RATE, i),
+						calcPenaltyCosts(i), PENALTY_NAME));
+			}
 		}
+
 		sb.append(NEWLINE);
 
 		// Create queries
@@ -119,15 +125,19 @@ public class GenQueries {
 		for (int i = 0; i < NUMBER_OF_USERS; i++) {
 			sb.append(createLogin(i));
 			for (int k = 0; k < NUMBER_OF_QUERIES_PER_USER; k++) {
-//				if (k == 0) {
+				if (COMPLEX_QUERIES_ENABLED) {
+					if (k == 0) {
+						sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS));
+					} else {
+						sb.append(createComplexQuery(i, i % NUMBER_OF_SLAS,
+								k + 1));
+					}
+				} else {
 					sb.append(createSimpleQuery(i, i % NUMBER_OF_SLAS));
-//				} else {
-//					sb.append(createComplexQuery(i, i % NUMBER_OF_SLAS, k + 1));
-//				}
-
+				}
 			}
 		}
-//		sb.append("#STARTQUERIES").append(NEWLINE);
+		// sb.append("#STARTQUERIES").append(NEWLINE);
 
 		sb.append(createStatisticsComments());
 		System.out.println(sb.toString());
@@ -147,7 +157,7 @@ public class GenQueries {
 		sb.append(createQueryParams(slaNumber));
 		sb.append(createBuffer(number, 0));
 		sb.append(createBenchmark(number, 0, slaNumber, true));
-//		sb.append("#STARTQUERIES").append(NEWLINE);
+		// sb.append("#STARTQUERIES").append(NEWLINE);
 		statsEstExecTime += OP_PROCESSING_TIME;
 		return sb.toString();
 	}
@@ -214,7 +224,7 @@ public class GenQueries {
 			sb.append(createBenchmark2In(number, i, slaNumber,
 					(i == numOfSources - 2) ? true : false));
 		}
-//		sb.append("#STARTQUERIES").append(NEWLINE);
+		// sb.append("#STARTQUERIES").append(NEWLINE);
 		statsEstExecTime += (numOfSources - 1) * OP_PROCESSING_TIME;
 		return sb.toString();
 	}
@@ -378,7 +388,10 @@ public class GenQueries {
 				.append(NEWLINE).append("///\t PENALTY_NAME=")
 				.append(PENALTY_NAME).append(NEWLINE)
 				.append("///\t NUMBER_OF_SERVICE_LEVELS=")
-				.append(NUMBER_OF_SERVICE_LEVELS).append(NEWLINE);
+				.append(NUMBER_OF_SERVICE_LEVELS).append(NEWLINE)
+				.append("///\t SLA_SCOPE=").append(SLA_SCOPE).append(NEWLINE)
+				.append("///\t COMPLEX_QUERIES_ENABLED=")
+				.append(COMPLEX_QUERIES_ENABLED).append(NEWLINE);
 		return sb.toString();
 	}
 
@@ -414,8 +427,8 @@ public class GenQueries {
 		sb.append("///\t number of generated tuples: ")
 				.append(statsNumElements).append(NEWLINE);
 		sb.append("///\t estimated execution time: ")
-				.append(statsEstExecTime / SECS_TO_NANOS * statsNumElements).append(" seconds")
-				.append(NEWLINE);
+				.append(statsEstExecTime / SECS_TO_NANOS * statsNumElements)
+				.append(" seconds").append(NEWLINE);
 		return sb.toString();
 	}
 
