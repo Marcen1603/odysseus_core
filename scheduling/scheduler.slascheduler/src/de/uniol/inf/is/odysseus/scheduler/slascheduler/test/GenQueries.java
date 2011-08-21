@@ -28,7 +28,7 @@ public class GenQueries {
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
-	private static final int OP_PROCESSING_TIME = 100; // realistic 1500
+	private static final int OP_PROCESSING_TIME = 1500; // realistic 1500
 	private static final int NUMBER_OF_USERS = 25;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
 	private static final int NUMBER_OF_SLAS = 5;
@@ -75,11 +75,17 @@ public class GenQueries {
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(20, DATA_RATE_LOW) };
+	
+	static int[][] dataRates7 = { calcDataRate(30, DATA_RATE_LOW),
+		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(80, DATA_RATE_LOW) };
 
 	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
-			dataRates3, dataRates4, dataRates5, dataRates6 };
+			dataRates3, dataRates4, dataRates5, dataRates6, dataRates7 };
 
-	static int[] DATA_RATE_INDICES = { 6 };
+	static int[] DATA_RATE_INDICES = { 6, 7 };
 	static int dataRatePos = 0;
 
 	public static void main(String[] args) {
