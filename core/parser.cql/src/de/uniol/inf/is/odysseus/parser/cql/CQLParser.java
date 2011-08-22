@@ -1295,7 +1295,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
 		String sinkType = ((ASTIdentifier)node.jjtGetChild(2)).getName();
 		boolean loginNeeded = false;
-		if (node.jjtGetNumChildren() == 3){
+		if (node.jjtGetNumChildren() == 4){
 			loginNeeded = true;
 		}		
 		ILogicalOperator sink = new SocketSinkAO(port, sinkType,loginNeeded);
