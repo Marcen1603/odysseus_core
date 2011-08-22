@@ -27,12 +27,12 @@ public class RelationalTimestampToPayloadPO extends
 		}
 		
 		if (object.getMetadata().getStart().isInfinite()) {
-			out.setAttribute(inputSize,-1);
+			out.setAttribute(inputSize,-1L);
 		} else {
 			out.setAttribute(inputSize, object.getMetadata().getStart().getMainPoint());
 		}
 		if (object.getMetadata().getEnd().isInfinite()) {
-			out.setAttribute(inputSize+1,-1);
+			out.setAttribute(inputSize+1,-1L);
 		} else {
 			out.setAttribute(inputSize+1,object.getMetadata().getEnd().getMainPoint());
 		}
