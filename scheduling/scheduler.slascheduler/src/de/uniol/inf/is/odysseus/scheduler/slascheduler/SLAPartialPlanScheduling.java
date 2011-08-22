@@ -96,6 +96,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	private double decaySF;
 
 	private IQuerySharing querySharing;
+	
+	private LinkedList<IScheduling> queue;
 
 	/**
 	 * creates a new sla-based partial plan scheduler
@@ -130,6 +132,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			this.querySharing = null;
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
+		this.queue = new LinkedList<IScheduling>();
 		// init csv logger
 //		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
 //				"mg", "sf", "prio", "conformance", "service level");
@@ -156,6 +159,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		this.eventQueue = (LinkedList<SLAViolationEvent>) schedule.eventQueue
 				.clone();
 		this.querySharing = schedule.querySharing;
+		this.queue = schedule.queue;
 	}
 
 	/**

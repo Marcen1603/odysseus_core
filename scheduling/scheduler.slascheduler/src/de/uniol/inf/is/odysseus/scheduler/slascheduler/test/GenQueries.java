@@ -37,6 +37,11 @@ public class GenQueries {
 	private static final String SLA_SCOPE = ScopeFactory.SCOPE_AVERAGE;
 	private static final boolean COMPLEX_QUERIES_ENABLED = false;
 
+	private static final int ALTERNATIVE_SLA_RATIO = 10;
+	private static int ALTERNATIVE_SLA_COUNTER = 0;
+	private static final boolean ALTERNATIVE_SLA_ENABLED = true;
+	private static final int ALTERNATIVE_BEST_SLA_PRIO = 4;
+
 	private static final int DATA_RATE_BURST = 10000;
 	private static final int DATA_RATE_HIGH = 100;
 	private static final int DATA_RATE_MID = 100;
@@ -75,12 +80,12 @@ public class GenQueries {
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(20, DATA_RATE_LOW) };
-	
+
 	static int[][] dataRates7 = { calcDataRate(30, DATA_RATE_LOW),
-		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
-		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
-		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
-		calcDataRate(10, DATA_RATE_HIGH), calcDataRate(80, DATA_RATE_LOW) };
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(80, DATA_RATE_LOW) };
 
 	static int[][][] DATA_RATES = { dataRates0, dataRates1, dataRates2,
 			dataRates3, dataRates4, dataRates5, dataRates6, dataRates7 };
@@ -99,19 +104,25 @@ public class GenQueries {
 		}
 
 		// create SLA
-		if (SLA_SCOPE.equals(ScopeFactory.SCOPE_AVERAGE)) {
-			for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-				sb.append(createSLA(i, (i + 3) * 1000,
-						ScopeFactory.SCOPE_AVERAGE, 120, TimeUnit.s.toString(),
-						calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
-						calcPenaltyCosts(i), PENALTY_NAME));
-			}
-		} else if (SLA_SCOPE.equals(ScopeFactory.SCOPE_RATE)) {
-			for (int i = 0; i < NUMBER_OF_SLAS; i++) {
-				sb.append(createSLA(i, (i + 1) * 2000, ScopeFactory.SCOPE_RATE,
-						120, TimeUnit.s.toString(),
-						calcThresholds(ScopeFactory.SCOPE_RATE, i),
-						calcPenaltyCosts(i), PENALTY_NAME));
+		if (ALTERNATIVE_SLA_ENABLED) {
+			sb.append(createAlternativeSLA());
+		} else {
+			if (SLA_SCOPE.equals(ScopeFactory.SCOPE_AVERAGE)) {
+				for (int i = 0; i < NUMBER_OF_SLAS; i++) {
+					sb.append(createSLA(i, (i + 3) * 1000,
+							ScopeFactory.SCOPE_AVERAGE, 120,
+							TimeUnit.s.toString(),
+							calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
+							calcPenaltyCosts(i), PENALTY_NAME));
+				}
+			} else if (SLA_SCOPE.equals(ScopeFactory.SCOPE_RATE)) {
+				for (int i = 0; i < NUMBER_OF_SLAS; i++) {
+					sb.append(createSLA(i, (i + 1) * 2000,
+							ScopeFactory.SCOPE_RATE, 120,
+							TimeUnit.s.toString(),
+							calcThresholds(ScopeFactory.SCOPE_RATE, i),
+							calcPenaltyCosts(i), PENALTY_NAME));
+				}
 			}
 		}
 
@@ -174,8 +185,14 @@ public class GenQueries {
 		sb.append("benchmark").append(number)
 				.append(formatSubnumber(subnumber));
 		if (isSink) {
-			sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
-					.append("}");
+			if (ALTERNATIVE_SLA_ENABLED) {
+				sb.append("{priority=").append(getALternativeSLANumber())
+						.append("}");
+			} else {
+				sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
+						.append("}");
+			}
+
 		}
 		sb.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
 				.append(", time = ").append(OP_PROCESSING_TIME)
@@ -191,8 +208,13 @@ public class GenQueries {
 		sb.append("benchmark").append(number)
 				.append(formatSubnumber(subnumber));
 		if (isSink) {
-			sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
-					.append("}");
+			if (ALTERNATIVE_SLA_ENABLED) {
+				sb.append("{priority=").append(getALternativeSLANumber())
+						.append("}");
+			} else {
+				sb.append("{priority=").append(NUMBER_OF_SLAS - slaNumber)
+						.append("}");
+			}
 		}
 		sb.append(" = benchmark({selectivity = ").append(OP_SELECTIVITY)
 				.append(", time = ").append(OP_PROCESSING_TIME)
@@ -241,9 +263,24 @@ public class GenQueries {
 
 	private static String createQueryParams(int slaNumber) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("#SLA sla").append(slaNumber).append(NEWLINE);
+		if (ALTERNATIVE_SLA_ENABLED) {
+			ALTERNATIVE_SLA_COUNTER++;
+			sb.append("#SLA sla").append(getALternativeSLANumber())
+					.append(NEWLINE);
+		} else {
+			sb.append("#SLA sla").append(slaNumber).append(NEWLINE);
+		}
 		sb.append("#ADDQUERY").append(NEWLINE);
 		return sb.toString();
+	}
+
+	private static int getALternativeSLANumber() {
+		boolean isHighPrio = ALTERNATIVE_SLA_COUNTER % ALTERNATIVE_SLA_RATIO == 0;
+		if (isHighPrio) {
+			return ALTERNATIVE_BEST_SLA_PRIO;
+		} else {
+			return 1;
+		}
 	}
 
 	private static String createSLA(int number, double metricValue,
@@ -269,6 +306,32 @@ public class GenQueries {
 			sb.append(NEWLINE);
 		}
 
+		return sb.toString();
+	}
+
+	private static String createAlternativeSLA() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("CREATE SLA sla").append(ALTERNATIVE_BEST_SLA_PRIO)
+				.append(" WITH").append(NEWLINE);
+		sb.append("METRIC (latency, 4000.0, ms),").append(NEWLINE);
+		sb.append("SCOPE (average),").append(NEWLINE);
+		sb.append("IN (120, s),").append(NEWLINE);
+		sb.append("SERVICELEVEL (2000.0, PENALTY (absolute, 1000)),").append(
+				NEWLINE);
+		sb.append("SERVICELEVEL (3000.0, PENALTY (absolute, 4000)),").append(
+				NEWLINE);
+		sb.append("SERVICELEVEL (4000.0, PENALTY (absolute, 10000));").append(
+				NEWLINE);
+		sb.append("CREATE SLA sla1 WITH").append(NEWLINE);
+		sb.append("METRIC (latency, 10000.0, ms),").append(NEWLINE);
+		sb.append("SCOPE (average),").append(NEWLINE);
+		sb.append("IN (120, s),").append(NEWLINE);
+		sb.append("SERVICELEVEL (5000.0, PENALTY (absolute, 200)),").append(
+				NEWLINE);
+		sb.append("SERVICELEVEL (7500.0, PENALTY (absolute, 600)),").append(
+				NEWLINE);
+		sb.append("SERVICELEVEL (10000.0, PENALTY (absolute, 2000));").append(
+				NEWLINE);
 		return sb.toString();
 	}
 
@@ -397,7 +460,14 @@ public class GenQueries {
 				.append(NUMBER_OF_SERVICE_LEVELS).append(NEWLINE)
 				.append("///\t SLA_SCOPE=").append(SLA_SCOPE).append(NEWLINE)
 				.append("///\t COMPLEX_QUERIES_ENABLED=")
-				.append(COMPLEX_QUERIES_ENABLED).append(NEWLINE);
+				.append(COMPLEX_QUERIES_ENABLED).append(NEWLINE)
+				.append("///\t ALTERNATIVE_SLA_ENABLED=")
+				.append(ALTERNATIVE_SLA_ENABLED).append(NEWLINE)
+				.append("///\t ALTERNATIVE_SLA_RATIO=")
+				.append(ALTERNATIVE_SLA_RATIO).append(NEWLINE)
+				.append("///\t ALTERNATIVE_BEST_SLA_PRIO=")
+				.append(ALTERNATIVE_BEST_SLA_PRIO).append(NEWLINE);
+
 		return sb.toString();
 	}
 
