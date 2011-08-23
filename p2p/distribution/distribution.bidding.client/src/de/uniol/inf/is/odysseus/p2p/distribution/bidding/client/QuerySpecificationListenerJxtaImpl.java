@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationListener;
-import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
@@ -42,12 +41,11 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 	
 	private List<QueryExecutionSpezification> specifications;
 	private IOdysseusPeer peer;
-	private IQuerySelectionStrategy selectionStrategy;
+//	private IQuerySelectionStrategy selectionStrategy;
 	
-	public QuerySpecificationListenerJxtaImpl(IOdysseusPeer peer, IQuerySelectionStrategy strategy, ILogListener log) {
+	public QuerySpecificationListenerJxtaImpl(IOdysseusPeer peer, ILogListener log) {
 		PeerGroupTool.getPeerGroup().getDiscoveryService().addDiscoveryListener(this);
 		this.peer = peer;
-		this.selectionStrategy = strategy;
 		this.specifications = new ArrayList<QueryExecutionSpezification>();
 	}
 
@@ -69,7 +67,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	@Override
 	// This method is called if a query specification is found
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"unchecked"})
 	public synchronized void discoveryEvent(DiscoveryEvent ev) {
 
 		DiscoveryResponseMsg res = ev.getResponse();
@@ -107,10 +105,10 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 		}
 
 	}
-	
-	public IQuerySelectionStrategy getSelectionStrategy() {
-		return selectionStrategy;
-	}
+//	
+//	public IQuerySelectionStrategy getSelectionStrategy() {
+//		return selectionStrategy;
+//	}
 
 	@Override
 	public void startListener() {
@@ -121,13 +119,13 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	@Override
 	public IQuerySpecificationHandler<S> getQuerySpecificationHandler(S spec) {
-		return new QuerySpecificationHandlerJxtaImpl<S>(spec, peer, getSelectionStrategy(), peer.getLog());
+		return new QuerySpecificationHandlerJxtaImpl<S>(spec, peer, peer.getLog());
 	}
 
-	@Override
-	public IQuerySelectionStrategy getQuerySelectionStrategy() {
-		return this.selectionStrategy;
-	}
+//	@Override
+//	public IQuerySelectionStrategy getQuerySelectionStrategy() {
+//		return this.selectionStrategy;
+//	}
 	
 
 }
