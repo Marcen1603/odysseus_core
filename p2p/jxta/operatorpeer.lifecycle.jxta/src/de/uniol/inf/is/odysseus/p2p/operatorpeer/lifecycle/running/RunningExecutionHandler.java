@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
@@ -57,7 +56,6 @@ public class RunningExecutionHandler extends
 	public void run() {
 		logger.debug("running wird ausgefuehrt");
 		try {
-
 			for (Subplan s : getExecutionListenerCallback().getQuery()
 					.getSubPlans().values()) {
 				if (s.getStatus() == Lifecycle.GRANTED) {
@@ -66,9 +64,9 @@ public class RunningExecutionHandler extends
 							+ AbstractTreeWalker.prefixWalk(s.getAo(),
 									new AlgebraPlanToStringVisitor()));
 					User user = GlobalState.getActiveUser("");
-					IDataDictionary dd = GlobalState.getActiveDatadictionary();					
-					getFunction().addQuery(s.getAo(), user, dd,
-							"Standard");
+					getFunction().startQuery(s.getQuery().getID(), user);
+					System.err.println("Query " + s.getQuery() + " started");
+					
 				}
 			}
 
