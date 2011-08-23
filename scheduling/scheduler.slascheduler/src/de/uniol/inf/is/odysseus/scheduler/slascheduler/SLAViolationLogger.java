@@ -19,11 +19,6 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 public class SLAViolationLogger implements ISLAViolationEventListener {
 	private static final String SEPERATOR = ";";
 	/**
-	 * name of log file
-	 */
-	public static final String FILE_NAME = "sla_violations_"
-			+ DateFormat.getDateTimeInstance().format(new Date()) + ".csv";
-	/**
 	 * path of log file
 	 */
 	public static final String PATH = OdysseusDefaults.getHomeDir();
@@ -36,6 +31,8 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 * creates a new event listener instance and initializes logger.
 	 */
 	public SLAViolationLogger() {
+		String FILE_NAME = "sla_violations_"
+			+ DateFormat.getDateTimeInstance().format(new Date()) + ".csv";
 		File file = new File(PATH, FILE_NAME);
 		try {
 			this.writer = new FileWriter(file);

@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.test;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.CostFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.PriorityFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.StarvationFreedomFactory;
@@ -42,11 +47,16 @@ public class GenQueries {
 	private static final boolean ALTERNATIVE_SLA_ENABLED = true;
 	private static final int ALTERNATIVE_BEST_SLA_PRIO = 4;
 
+	private static final int NUMBER_OF_SIMULATIONS = 10;
+	private static int currentNumberOfSimulation = 0;
+
 	private static final int DATA_RATE_BURST = 10000;
 	private static final int DATA_RATE_HIGH = 100;
 	private static final int DATA_RATE_MID = 100;
 	private static final int DATA_RATE_LOW = 10;
 	private static final int DATA_RATE_VERY_LOW = 1;
+
+	private static final String HOME_DIR = "/home/tommy/.odysseus/";
 
 	static String[] testinput = new String[] {
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
@@ -94,6 +104,20 @@ public class GenQueries {
 	static int dataRatePos = 0;
 
 	public static void main(String[] args) {
+		String scriptSLA = createScriptSLA();
+		writeScriptFile("sla.qry", scriptSLA);
+		while (currentNumberOfSimulation < NUMBER_OF_SIMULATIONS) {
+			String scriptOps = createScriptOps();
+			writeScriptFile("ops" + currentNumberOfSimulation + ".qry",
+					scriptOps);
+			currentNumberOfSimulation++;
+		}
+		String scriptRun = "///OdysseusScript" + NEWLINE + "#PARSER CQL"
+				+ NEWLINE + "#TRANSCFG Standard" + NEWLINE + "#STARTQUERIES";
+		writeScriptFile("run.qry", scriptRun);
+	}
+
+	private static String createScriptSLA() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(createSettingComment());
 		sb.append("#PARSER CQL").append(NEWLINE);
@@ -128,6 +152,12 @@ public class GenQueries {
 
 		sb.append(NEWLINE);
 
+		sb.append(createStatisticsComments());
+		return sb.toString();
+	}
+
+	private static String createScriptOps() {
+		StringBuilder sb = new StringBuilder();
 		// Create queries
 		sb.append("/// Move the following code into a new script file!")
 				.append(NEWLINE);
@@ -155,9 +185,7 @@ public class GenQueries {
 			}
 		}
 		// sb.append("#STARTQUERIES").append(NEWLINE);
-
-		sb.append(createStatisticsComments());
-		System.out.println(sb.toString());
+		return sb.toString();
 	}
 
 	private static String createUser(int number) {
@@ -258,7 +286,7 @@ public class GenQueries {
 	}
 
 	private static String formatSubnumber(int number) {
-		return "A" + number;
+		return "" + ((char) ('A' + currentNumberOfSimulation)) + number;
 	}
 
 	private static String createQueryParams(int slaNumber) {
@@ -515,6 +543,19 @@ public class GenQueries {
 			dataRatePos = 0;
 		}
 		return next;
+	}
+
+	private static void writeScriptFile(String fileName, String code) {
+		File file = new File(HOME_DIR, fileName);
+		try {
+			FileWriter writer = new FileWriter(file);
+			writer.write(code);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }
