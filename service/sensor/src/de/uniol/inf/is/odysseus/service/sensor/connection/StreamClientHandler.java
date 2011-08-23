@@ -18,12 +18,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.service.sensor.data.DataTuple;
 import de.uniol.inf.is.odysseus.service.sensor.data.DataType;
+import de.uniol.inf.is.odysseus.service.sensor.data.Schema;
 
 /**
  * Handles a connected client (which should be normally an instance of Odysseus).
@@ -39,8 +37,8 @@ public class StreamClientHandler {
 	/** The socket connection to the client. */
 	private Socket connection;
 	
-	/** The attributes. */
-	private Map<String, DataType> attributes = new HashMap<String, DataType>();
+	/** The schema. */
+	private Schema schema;
 	
 	/** The is dead. */
 	private boolean isDead = false;
@@ -51,9 +49,9 @@ public class StreamClientHandler {
 	 * @param connection the connection to the client
 	 * @param attributes the attributes for the sensor
 	 */
-	public StreamClientHandler(Socket connection, Map<String, DataType> attributes) {
+	public StreamClientHandler(Socket connection, Schema schema) {
 		this.connection = connection;
-		this.attributes = attributes;
+		this.schema = schema;
 	}
 
 	/**
@@ -96,10 +94,11 @@ public class StreamClientHandler {
 		bytebuffer = ByteBuffer.allocate(tuple.memSize(false));
 		bytebuffer.clear();
 
-		for (Entry<String, DataType> e : this.attributes.entrySet()) {
-			Object data = tuple.getAttribute(e.getKey());			
-			this.isDataTypeOK(e, data);
-			DataType expectedType = getSimpleType(e.getValue());
+		for (String name : this.schema.getNameOrder()) {
+			DataType dt = this.schema.getDatatype(name);			
+			Object data = tuple.getAttribute(name);				
+			this.isDataTypeOK(name, dt, data);
+			DataType expectedType = getSimpleType(dt);
 			
 			if (expectedType == DataType.INTEGER) {
 				bytebuffer.putInt(getInteger(data));
@@ -127,14 +126,13 @@ public class StreamClientHandler {
 	 * @param soll the name and data type
 	 * @param data the data to check
 	 */
-	private void isDataTypeOK(Entry<String, DataType> soll, Object data) {
-		DataType sollType = soll.getValue();
+	private void isDataTypeOK(String name, DataType sollType, Object data) {		
 		DataType istType = getAccordingDataType(data);
 		// first every timestamp is a long
 		sollType = getSimpleType(sollType);
 
 		if (istType != sollType) {
-			System.out.println("WARN: " + "You have put an " + istType + " into the tuple for the attribute \"" + soll.getKey() + "\", although the attribute is defined as an "
+			System.out.println("WARN: " + "You have put an " + istType + " into the tuple for the attribute \"" + name + "\", although the attribute is defined as an "
 					+ sollType.toString().toUpperCase());
 			if (sollType == DataType.LONG) {
 				System.out.println("Remember: ENDTIMESTAMP, STARTTIMESTAMP and TIMESTAMP are LONGs!");

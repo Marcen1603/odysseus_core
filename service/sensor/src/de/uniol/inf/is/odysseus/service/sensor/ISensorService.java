@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.service.sensor;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.service.sensor.data.DataType;
+import de.uniol.inf.is.odysseus.service.sensor.data.Schema;
 
 /**
  * The Interface ISensorService represents the service for creating new sensors
@@ -37,9 +38,10 @@ public interface ISensorService {
 	 *
 	 * @param name the name for the sensor
 	 * @param datatypes the attributes and data types that the sensor provides
+	 * @param register tries to register the sensor via the webservice in odysseus
 	 * @return the created sensor
 	 */
-	public ISensor createSensor(String name, Map<String, DataType> datatypes);
+	public ISensor createSensor(String name, Schema schema, boolean register);
 	
 	/**
 	 * Gets a sensor by its name.

@@ -14,13 +14,12 @@
   */
 package de.uniol.inf.is.odysseus.service.test;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.service.sensor.ISensorService;
 import de.uniol.inf.is.odysseus.service.sensor.data.DataTuple;
 import de.uniol.inf.is.odysseus.service.sensor.data.DataType;
+import de.uniol.inf.is.odysseus.service.sensor.data.Schema;
 
 /**
  * The Class SimpleSensor.
@@ -77,19 +76,22 @@ public class SimpleSensor extends Thread{
 		System.out.println("SensorService bound!");
 		
 		// Datentypen setzen, damit man weiß, was für ein Datentyp ein Attribut hat.
-		// Dies darf sich auch nicht während der Laufzeit ändern.
-		Map<String, DataType> datatypes = new HashMap<String, DataType>();
-		datatypes.put(ATTRIBUTE_TIME, DataType.STARTTIMESTAMP);
-		datatypes.put(ATTRIBUTE_NAME, DataType.STRING);
-		datatypes.put(ATTRIBUTE_ID, DataType.LONG);
-		datatypes.put(ATTRIBUTE_X_VALUE, DataType.DOUBLE);
-		datatypes.put(ATTRIBUTE_Y_VALUE, DataType.DOUBLE);
-		datatypes.put(ATTRIBUTE_NUMBER, DataType.INTEGER);
+		// nennt sich dann schema des sensors
+		// Das Schema darf sich auch nicht während der Laufzeit ändern.				
+		Schema schema = new Schema();
+		schema.addAttribute(ATTRIBUTE_TIME, DataType.STARTTIMESTAMP);
+		schema.addAttribute(ATTRIBUTE_NAME, DataType.STRING);
+		schema.addAttribute(ATTRIBUTE_ID, DataType.LONG);
+		schema.addAttribute(ATTRIBUTE_X_VALUE, DataType.DOUBLE);
+		schema.addAttribute(ATTRIBUTE_Y_VALUE, DataType.DOUBLE);
+		schema.addAttribute(ATTRIBUTE_NUMBER, DataType.INTEGER);
 		//erstelle einen neuen Sensor
-		sensorService.createSensor(SENSOR_NAME, datatypes);
+		sensorService.createSensor(SENSOR_NAME, schema, false);
 		System.out.println("Sensor created.");
 		this.start();
 		System.out.println("Sensor is running.");
+		//generate first values
+		this.generateValues();
 	}
 	
 	/**
@@ -148,7 +150,7 @@ public class SimpleSensor extends Thread{
 					//dann sende das tupel an odysseus				
 					this.sensorService.getSensor(SENSOR_NAME).sendTuple(tuple);
 				}
-				
+				System.out.println(tuple);
 				// generiere ein paar neue Werte zur Simulation eines Sensors
 				this.generateValues();
 				

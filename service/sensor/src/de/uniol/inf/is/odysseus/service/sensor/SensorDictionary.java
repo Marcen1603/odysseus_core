@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.service.sensor.connection.SensorStreamServer;
-import de.uniol.inf.is.odysseus.service.sensor.data.DataType;
+import de.uniol.inf.is.odysseus.service.sensor.data.Schema;
 
 /**
  * The Dictionary for all sensors.
@@ -80,9 +80,9 @@ public class SensorDictionary {
 	 * @param attributes the attributes for this sensor
 	 * @return the sensor 
 	 */
-	public ISensor createAndAddSensor(String name,Map<String, DataType> attributes) {
+	public ISensor createAndAddSensor(String name, Schema schema) {
 		try {
-			SensorStreamServer sss = new SensorStreamServer(startPort, attributes);
+			SensorStreamServer sss = new SensorStreamServer(startPort, schema);
 			sss.start();
 			addSensor(name, sss);
 			startPort++;			

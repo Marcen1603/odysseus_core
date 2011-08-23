@@ -72,7 +72,7 @@ public class DataTuple {
 	 *
 	 * @return all attributes
 	 */
-	public Map<String, Object> getAttributes() {
+	public Map<String, Object> getAttributes() {		
 		return attributes;
 	}
 	

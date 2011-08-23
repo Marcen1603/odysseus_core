@@ -14,10 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.service.sensor;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
-import de.uniol.inf.is.odysseus.service.sensor.data.DataType;
+import de.uniol.inf.is.odysseus.service.sensor.data.Schema;
 import de.uniol.inf.is.odysseus.service.sensor.webservice.SensorAttribute;
 import de.uniol.inf.is.odysseus.service.sensor.webservice.SensorRegistryService;
 import de.uniol.inf.is.odysseus.service.sensor.webservice.SensorRegistryServiceService;
@@ -28,35 +25,40 @@ public class SensorService implements ISensorService {
 
 	private String username;
 	private String password;
-	
-	public void setCredentials(String username, String password){
+
+	public void setCredentials(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
-	
-	public ISensor createSensor(String name, Map<String, DataType> datatypes) {
-		ISensor sensor = null;			
-		SensorRegistryServiceService srss = new SensorRegistryServiceService();
-		SensorRegistryService srs = srss.getSensorRegistryServicePort();
-		StringResponse sr = srs.login(username, password);
-		if (sr.isSuccessful()) {
-			sensor = SensorDictionary.getInstance().createAndAddSensor(name, datatypes);
-			String securityToken = sr.getResponseValue();
-			SensorSchema schema = new SensorSchema();
-			for (Entry<String, DataType> e : datatypes.entrySet()) {
-				SensorAttribute sa = new SensorAttribute();
-				sa.setName(e.getKey());
-				sa.setType(e.getValue().toString());
-				schema.addAttribute(sa);
+
+	public ISensor createSensor(String name, Schema schema, boolean register) {
+		ISensor sensor = null;
+		if (register) {			
+			SensorRegistryServiceService srss = new SensorRegistryServiceService();
+			SensorRegistryService srs = srss.getSensorRegistryServicePort();
+			StringResponse sr = srs.login(username, password);
+			if (sr.isSuccessful()) {
+				sensor = SensorDictionary.getInstance().createAndAddSensor(name, schema);
+				String securityToken = sr.getResponseValue();
+				SensorSchema sensorSchema = new SensorSchema();
+				for(String attributeName :schema.getNameOrder()){
+					SensorAttribute sa = new SensorAttribute();
+					sa.setName(attributeName);
+					sa.setType(schema.getDatatype(attributeName).toString());
+					sensorSchema.addAttribute(sa);
+				}
+						
+				boolean result = srs.registerSensor(securityToken, name, sensor.getOwnHost(), sensor.getPort(), sensorSchema);
+				if (!result) {
+					SensorDictionary.getInstance().stopAndRemoveSensor(name);
+					return null;
+				}
 			}
-			boolean result = srs.registerSensor(securityToken, name, sensor.getOwnHost(), sensor.getPort(), schema);
-			if(!result){
-				SensorDictionary.getInstance().stopAndRemoveSensor(name);
-				return null;
-			}
+		} else {
+			sensor = SensorDictionary.getInstance().createAndAddSensor(name, schema);
 		}
 		return sensor;
-	}	
+	}
 
 	public ISensor getSensor(String name) {
 		return SensorDictionary.getInstance().getSensor(name);
@@ -70,17 +72,15 @@ public class SensorService implements ISensorService {
 		}
 	}
 
-
-
 	public boolean removeSensor(String name) {
-		if(isSensorExistent(name)){
+		if (isSensorExistent(name)) {
 			SensorRegistryServiceService srss = new SensorRegistryServiceService();
 			SensorRegistryService srs = srss.getSensorRegistryServicePort();
 			StringResponse sr = srs.login(username, password);
 			if (sr.isSuccessful()) {
-				SensorDictionary.getInstance().stopAndRemoveSensor(name);				
-				String securityToken = sr.getResponseValue();				
-				boolean result = srs.unregisterSensor(securityToken, name);	
+				SensorDictionary.getInstance().stopAndRemoveSensor(name);
+				String securityToken = sr.getResponseValue();
+				boolean result = srs.unregisterSensor(securityToken, name);
 				return result;
 			}
 		}

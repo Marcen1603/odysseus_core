@@ -24,11 +24,10 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.service.sensor.ISensor;
 import de.uniol.inf.is.odysseus.service.sensor.data.DataTuple;
-import de.uniol.inf.is.odysseus.service.sensor.data.DataType;
+import de.uniol.inf.is.odysseus.service.sensor.data.Schema;
 
 /**
  * Implements an ISensor as a server.
@@ -47,8 +46,8 @@ public class SensorStreamServer extends Thread implements ISensor{
     	/** The port this sensor is listening on. */
     	private int port;
 		
-		/** The attributes (the name and the according data type) for this sensor. */
-		private Map<String, DataType> attributes;
+		/** The schema (the name and the according data type) for this sensor. */
+		private Schema schema;
 	    
 		/**
 		 * Instantiates a new sensor stream server.
@@ -57,9 +56,9 @@ public class SensorStreamServer extends Thread implements ISensor{
 		 * @param attributes the attributes which the sensor provides
 		 * @throws Exception the exception is thrown is the socket can not be opened
 		 */
-		public SensorStreamServer(int port, Map<String, DataType> attributes) throws Exception {
+		public SensorStreamServer(int port, Schema schema) throws Exception {
 			this.port = port;
-			this.attributes = attributes;
+			this.schema = schema;
 			
 	        ServerSocketChannel serverChannel = ServerSocketChannel.open();
 	        socket = serverChannel.socket();
@@ -79,7 +78,7 @@ public class SensorStreamServer extends Thread implements ISensor{
 	                connection = socket.accept();
 	                System.out.println("New connection from "+connection.getInetAddress());
 	                System.out.println("Creating a new StreamHandler for the new client...");
-	                StreamClientHandler streamClient = new StreamClientHandler(connection, this.attributes);
+	                StreamClientHandler streamClient = new StreamClientHandler(connection, this.schema);
 	                System.out.println("StreamHandler for the new client created!");
 	                this.streamClientHandlers.add(streamClient);
 	                sleep(0);

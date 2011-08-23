@@ -44,7 +44,7 @@ public enum DataType {
 	/**
 	 * Ein End-Zeitstempel, dessen Datentyp ein Long sein muss.
 	 * Dieser gibt an, ab wann der Messwert nicht mehr gültig ist. 
-	 * Wir eigentlich in der Regel vom System gesetzt.
+	 * Wird eigentlich in der Regel vom System gesetzt.
 	 */
 	ENDTIMESTAMP
 }
