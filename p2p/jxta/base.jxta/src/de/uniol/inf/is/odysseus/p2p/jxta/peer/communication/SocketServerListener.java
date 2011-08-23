@@ -92,6 +92,7 @@ public class SocketServerListener implements ISocketServerListener {
 		while (true) {
 			try {
 				final Socket socket = serverSocket.accept();
+				socket.setSoTimeout(0);
 				if (socket != null) {
 					new Thread() {
 						public void run() {
