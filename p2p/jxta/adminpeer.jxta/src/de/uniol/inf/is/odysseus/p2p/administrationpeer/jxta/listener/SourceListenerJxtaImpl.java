@@ -115,6 +115,8 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 							logger.debug("Adding to DD " + adv.getSourceName()
 									+ " " + sourceType + " as "+entity);
 							
+							datadictionary.addSourceType(viewname, sourceType);
+							datadictionary.addEntity(viewname, entity, caller);
 							if (adv.isView()) {
 								datadictionary.setView(viewname, topOperator,
 										caller);
@@ -122,8 +124,6 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 								datadictionary.setStream(viewname, topOperator,
 										caller);
 							}
-							datadictionary.addSourceType(viewname, sourceType);
-							datadictionary.addEntity(viewname, entity, caller);
 						}
 					} else {
 						return;
