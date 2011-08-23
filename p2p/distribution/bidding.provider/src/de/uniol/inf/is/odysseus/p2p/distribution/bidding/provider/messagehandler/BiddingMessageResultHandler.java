@@ -37,6 +37,8 @@ public class BiddingMessageResultHandler extends AbstractJxtaMessageHandler {
 		Message msg = (Message) oMsg;
 		String queryId = meas(namespace, "queryId", msg);
 		String bid = meas(namespace, "ExecutionBid", msg);
+		Double bidValue = Double.valueOf(bid);
+		
 		PipeAdvertisement pipeAdv = MessageTool.createResponsePipeFromMessage(namespace, msg,
 				0);
 
@@ -45,7 +47,8 @@ public class BiddingMessageResultHandler extends AbstractJxtaMessageHandler {
 		log.logAction(queryId, "Bid (" + bid
 				+ ") from "+peerId);
 		P2PQuery actualQuery = queryProvider.getQuery(queryId);
-		if (actualQuery != null && bid.equals("positive")) {
+		
+		if (actualQuery != null && bidValue >= 0.0 ) {
 			((P2PQueryJxtaImpl) actualQuery).addBidding(pipeAdv, peerId,
 					subplanId, bid);
 			log.addBid(queryId, actualQuery.getSubPlans().get(subplanId)
