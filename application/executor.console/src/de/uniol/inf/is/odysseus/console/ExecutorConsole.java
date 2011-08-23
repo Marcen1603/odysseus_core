@@ -21,9 +21,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +46,9 @@ import org.osgi.service.prefs.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkSink;
 import de.uniol.inf.is.odysseus.benchmarker.impl.LatencyBenchmarkResultFactory;
@@ -83,8 +88,11 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
+import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
@@ -1004,8 +1012,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	// TODO: noch ein hack, damit man die config auch zur laufzeit ändern kann.
-	// Sollte später nur auf statischen
+	// TODO: noch ein hack, damit man die config auch zur laufzeit ï¿½ndern kann.
+	// Sollte spï¿½ter nur auf statischen
 	// gemacht werden
 	private void resetBuildConfig() {
 		IQueryBuildConfiguration qbc = this.originalBuildConfig;
@@ -1813,6 +1821,141 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	@Override
 	public void transformationBound() {
 		System.out.println("Transformation bound");
+	}
+	
+	/*
+	 * Test code for simulation of SLA Scheduler
+	 * should be removed after simulation is done
+	 */
+	
+	private static final int NUMBER_OF_SIMULATIONS = 3;
+	private static final long SIM_LENGTH = 600000; //millis
+	private static final long EXTRA_TIME = 300000;
+	private static final String SCHED1 = "SLA Scheduler";
+//	private static final String SCHED1 = "SLA Dynamic Priority Scheduler";
+	private static final String SCHED2 = "Round Robin";
+	
+	@Help(description = "starts simulation of SLA Scheduler")
+	public void _sim(CommandInterpreter ci) {
+		//load queries
+		File file1 = new File(OdysseusDefaults.getHomeDir(), "sla.qry");
+		File[] file2 = new File[NUMBER_OF_SIMULATIONS];
+		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
+			file2[i] = new File(OdysseusDefaults.getHomeDir(), "ops" + i +".qry");
+		}
+		File file3 = new File(OdysseusDefaults.getHomeDir(), "run.qry");
+		
+		String query1 = this.readScript(file1);
+		String[] query2 = new String[NUMBER_OF_SIMULATIONS];
+		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
+			query2[i] = this.readScript(file2[i]);
+		}
+		String query3 = this.readScript(file3);
+		
+		ci.println("queries loaded");
+		
+		GlobalState.setActiveDatadictionary(dd);
+		
+		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
+			ci.println("strating simulation run number " + i);
+			// init/refresh scheduling
+			try {
+				this.executor.stopExecution();
+			} catch (PlanManagementException e1) {
+				e1.printStackTrace();
+			}
+			this.executor.setScheduler("Single Thread Scheduler RR", SCHED2);
+			this.executor.setScheduler(SCHED1, SCHED2);
+			ci.println("scheduler set to: " + this.executor.getCurrentSchedulerID());
+			try {
+				this.executor.startExecution();
+			} catch (PlanManagementException e1) {
+				e1.printStackTrace();
+			}
+			System.gc();
+			
+			// parse and run queries
+			User user = UserManagement.getInstance().getSuperUser();
+			try {
+				if (i == 0) {
+					ci.println("parsing and running query :");
+					ci.println(query1);
+					QueryTextParser.getInstance().parseAndExecute(query1, user);
+				}
+				ci.println("parsing and running query :");
+				ci.println(query2);
+				QueryTextParser.getInstance().parseAndExecute(query2[i], user);
+				ci.println("parsing and running query :");
+				ci.println(query3);
+				QueryTextParser.getInstance().parseAndExecute(query3, user);
+			} catch (QueryTextParseException e) {
+				e.printStackTrace();
+			}
+			
+			ci.println("waiting for timeout...");
+			
+			//init timeout
+			long startTime = System.currentTimeMillis();
+			while(startTime + SIM_LENGTH + EXTRA_TIME > System.currentTimeMillis()) {
+				try {
+					synchronized (this) {
+						this.wait(60000);
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			ci.println("...timeout");
+			
+			ci.println("starting clean up");
+			// clear sources
+			List<String> sourceNames = new ArrayList<String>();
+			for (Entry<String, ILogicalOperator> sourceDef : dd.getStreamsAndViews(user)) {
+				sourceNames.add(sourceDef.getKey());
+			}
+			for (String name : sourceNames) {
+				System.out.println("removing source: " + name);
+				dd.removeViewOrStream(name, user);
+			}
+			
+			//cleanup
+			ArrayList<IQuery> queries;
+			try {
+				queries = new ArrayList<IQuery>(this.executor.getPlan().getQueries());
+				for(IQuery q: queries) {
+					System.out.println("removing query: " + q.getID());
+					this.executor.getPlan().removeQuery(q.getID());
+				}
+			} catch (PlanManagementException e) {
+				e.printStackTrace();
+			}
+			
+			System.gc();
+			
+			ci.println("finished clean up");
+		}
+
+		// stop execution after time out
+	}
+	
+	private String readScript(File file) {
+		StringBuilder sb = new StringBuilder();
+		
+		try {
+			FileReader reader = new FileReader(file);
+			int character;
+			
+			while ((character = reader.read()) != -1) {
+				sb.append((char)character);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return sb.toString();
 	}
 
 }
