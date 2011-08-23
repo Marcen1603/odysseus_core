@@ -170,7 +170,8 @@ public class MainWindow extends AbstractMainWindow {
 
 	@Override
 	public void addAction(String queryId, String action) {
-		listActions.get(queryId).add(action, 0);
+		if( listActions.get(queryId) != null ) 
+			listActions.get(queryId).add(action, 0);
 	}
 
 	@Override

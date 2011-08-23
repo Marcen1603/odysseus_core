@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
@@ -211,6 +212,12 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 			};
 		}.start();
 		
+		// sofort executor starten
+		try {
+			executor.startExecution();
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void startServerSocketListener() {
