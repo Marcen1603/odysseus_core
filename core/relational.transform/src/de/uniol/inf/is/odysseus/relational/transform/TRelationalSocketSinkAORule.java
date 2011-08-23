@@ -49,7 +49,7 @@ public class TRelationalSocketSinkAORule extends
 			WrapperPlanFactory.putSink(operator.getName(), socketSinkPO);
 		}
 		Collection<ILogicalOperator> toUpdate = config
-				.getTransformationHelper().replace(operator, socketSinkPO);
+				.getTransformationHelper().replace(operator, socketSinkPO,true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
