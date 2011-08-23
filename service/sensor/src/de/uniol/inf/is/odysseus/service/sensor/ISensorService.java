@@ -14,9 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.service.sensor;
 
-import java.util.Map;
-
-import de.uniol.inf.is.odysseus.service.sensor.data.DataType;
 import de.uniol.inf.is.odysseus.service.sensor.data.Schema;
 
 /**
