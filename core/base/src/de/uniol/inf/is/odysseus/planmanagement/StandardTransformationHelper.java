@@ -34,20 +34,26 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class StandardTransformationHelper implements ITransformationHelper{
 	@Override
 	public Collection<ILogicalOperator> replace(
-			ILogicalOperator logical, IPipe physical) {
-		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical);
+			ILogicalOperator logical, IPipe physical, boolean ignoreSocketSinkPort) {
+		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical, ignoreSocketSinkPort);
 		ret.addAll(replace(logical, (ISource) physical));
 		return ret;
 	}
 
 	@Override
+	public Collection<ILogicalOperator> replace(ILogicalOperator logical,
+			IPipe physical) {
+		return replace(logical, physical, false);
+	}
+	
+	@Override
 	public Collection<ILogicalOperator> replace(
-			ILogicalOperator logical, ISink physical) {
+			ILogicalOperator logical, ISink physical, boolean ignoreSocketSinkPort) {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
 			physical.subscribeToSource((ISource) psub.getTarget(),
-					psub.getSinkInPort(), psub.getSourceOutPort(),psub.getSchema());
+					(ignoreSocketSinkPort?-1:psub.getSinkInPort()), psub.getSourceOutPort(),psub.getSchema());
 		}
 		for (LogicalSubscription l : logical.getSubscriptions()) {
 			ILogicalOperator target = l.getTarget();
@@ -57,6 +63,12 @@ public class StandardTransformationHelper implements ITransformationHelper{
 		}
 		ret.add(logical);
 		return ret;
+	}
+	
+	@Override
+	public Collection<ILogicalOperator> replace(ILogicalOperator logical,
+			ISink physical) {
+		return replace(logical, physical, false);
 	}
 
 	@Override

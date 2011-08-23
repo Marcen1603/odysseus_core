@@ -399,6 +399,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void subscribeToSource(ISource<? extends T> source, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
+		
+		if (sinkInPort == -1){
+			sinkInPort = getNextFreeSinkInPort();
+		}
+		
 		if (sinkInPort >= this.noInputPorts) {
 			setInputPortCount(sinkInPort + 1);
 		}
@@ -419,6 +424,18 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
+	private int getNextFreeSinkInPort() {
+		int sinkInPort = -1;
+		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource){
+			if (sub.getSinkInPort()> sinkInPort){
+				sinkInPort = sub.getSinkInPort();
+			}
+		}
+		// und erhöhe um eins
+		sinkInPort ++;
+		return sinkInPort;
+	}
+	
 	private boolean sinkInPortFree(int sinkInPort) {
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == sinkInPort) {

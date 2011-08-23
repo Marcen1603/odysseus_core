@@ -306,7 +306,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 				sourceOutPort, inputSchema);
 		// Finde den maximalen verwendeten Port
 		if (sinkInPort == -1){
-			sinkInPort = getNextFreeSinkInPort(sinkInPort);
+			sinkInPort = getNextFreeSinkInPort();
 		}
 		synchronized (this.subscribedToSource) {
 			if (!this.subscribedToSource.containsKey(sinkInPort)) {
@@ -319,7 +319,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	}
 
-	private int getNextFreeSinkInPort(int sinkInPort) {
+	private int getNextFreeSinkInPort() {
+		int sinkInPort = -1;
 		for (Integer port : subscribedToSource.keySet()){
 			if (port > sinkInPort){
 				sinkInPort = port;
@@ -390,7 +391,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public void subscribeSink(ILogicalOperator sink, int sinkInPort,
 			int sourceOutPort, SDFAttributeList inputSchema) {
 		if (sinkInPort == -1){
-			sinkInPort = getNextFreeSinkInPort(sinkInPort);
+			sinkInPort = getNextFreeSinkInPort();
 		}
 		LogicalSubscription sub = new LogicalSubscription(sink, sinkInPort,
 				sourceOutPort, inputSchema);

@@ -24,8 +24,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 @SuppressWarnings({"unchecked","rawtypes"})
 public interface ITransformationHelper {
 	
+	public Collection<ILogicalOperator> replace(ILogicalOperator logical, IPipe physical, boolean ignoreSocketSinkPort);
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, IPipe physical);
 
+	public Collection<ILogicalOperator> replace(ILogicalOperator logical, ISink physical, boolean ignoreSocketSinkPort);
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, ISink physical);
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, ISource physical);	
 	/**
