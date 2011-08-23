@@ -1298,7 +1298,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		if (node.jjtGetNumChildren() == 4){
 			loginNeeded = true;
 		}		
-		ILogicalOperator sink = new SocketSinkAO(port, sinkType,loginNeeded);
+		ILogicalOperator sink = new SocketSinkAO(port, sinkType,loginNeeded, sinkName);
  		ILogicalOperator transformMeta = new TimestampToPayloadAO();
  		sink.subscribeToSource(transformMeta, 0, 0, null);
  		dataDictionary.addSink(sinkName, sink);

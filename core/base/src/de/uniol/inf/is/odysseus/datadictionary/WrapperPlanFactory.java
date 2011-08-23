@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 
 /**
@@ -43,6 +44,7 @@ public class WrapperPlanFactory {
 	}
 	
 	private static Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
+	private static Map<String, ISink<?>> sinks = new HashMap<String, ISink<?>>();
 
 	public synchronized static void init() throws Exception {
 		//logger.debug("init wrapper");
@@ -76,4 +78,14 @@ public class WrapperPlanFactory {
 		}
 	}
 
+	public static ISink<?> getSink(String sinkName) {
+		return sinks.get(sinkName);
+	}
+
+	public static void putSink(String name, ISink<?> sinkPO) {
+		sinks.put(name, sinkPO);
+	}
+
+	
+	
 }

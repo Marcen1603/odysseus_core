@@ -12,11 +12,13 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	final String sinkType;
 
 	final private boolean loginNeeded;
+	final String sinkName;
 	
-	public SocketSinkAO(int sinkPort, String sinkType, boolean loginNeeded){
+	public SocketSinkAO(int sinkPort, String sinkType, boolean loginNeeded, String name){
 		this.sinkPort = sinkPort;
 		this.sinkType = sinkType;
 		this.loginNeeded = loginNeeded;
+		this.sinkName = name;
 	}
 	
 	public SocketSinkAO(SocketSinkAO socketSinkAO) {
@@ -24,6 +26,7 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.sinkPort = socketSinkAO.sinkPort;
 		this.sinkType = socketSinkAO.sinkType;
 		this.loginNeeded = socketSinkAO.loginNeeded;
+		this.sinkName = socketSinkAO.sinkName;
 	}
 
 	public int getSinkPort() {
@@ -46,6 +49,10 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 
 	public boolean isLoginNeeded() {
 		return loginNeeded;
+	}
+	
+	public String getSinkName() {
+		return sinkName;
 	}
 
 }

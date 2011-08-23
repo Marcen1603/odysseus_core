@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
@@ -24,11 +25,20 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 	public void execute(SocketSinkAO operator,
 			TransformationConfiguration config) {
 		try {
-			ISinkStreamHandlerBuilder streamHandlerFac = null;
-			ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
-					getStreamHandler(operator.getSinkType()), false, operator.isLoginNeeded(), null);
 
-			socketSinkPO.setOutputSchema(operator.getOutputSchema());
+			// Is this sink already translated?
+			ISink<?> socketSinkPO = WrapperPlanFactory.getSink(operator
+					.getSinkName());
+
+			if (socketSinkPO == null) {
+
+				socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
+						getStreamHandler(operator.getSinkType()), false,
+						operator.isLoginNeeded(), null);
+
+				socketSinkPO.setOutputSchema(operator.getOutputSchema());
+				WrapperPlanFactory.putSink(operator.getName(), socketSinkPO);
+			}
 			Collection<ILogicalOperator> toUpdate = config
 					.getTransformationHelper().replace(operator, socketSinkPO);
 			for (ILogicalOperator o : toUpdate) {

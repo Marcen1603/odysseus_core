@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -18,7 +19,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TRelationalSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> {
+public class TRelationalSocketSinkAORule extends
+		AbstractTransformationRule<SocketSinkAO> {
 
 	@Override
 	public int getPriority() {
@@ -28,25 +30,36 @@ public class TRelationalSocketSinkAORule extends AbstractTransformationRule<Sock
 	@Override
 	public void execute(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		ISinkStreamHandlerBuilder streamHandlerFac = null;
-		IAtomicDataHandler handler = new RelationalTupleDataHandler(
-				operator.getOutputSchema());
-		ObjectHandler<RelationalTuple<ITimeInterval>> objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(
-				handler);
-		ISink<?> socketSinkPO = new SocketSinkPO(operator.getSinkPort(),getStreamHandler(operator), true,operator.isLoginNeeded(), objectHandler);
-		
-		socketSinkPO.setOutputSchema(operator.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, socketSinkPO);
-		for (ILogicalOperator o:toUpdate){
+
+		// Is this sink already translated?
+		ISink<?> socketSinkPO = WrapperPlanFactory.getSink(operator
+				.getSinkName());
+
+		if (socketSinkPO == null) {
+
+			IAtomicDataHandler handler = new RelationalTupleDataHandler(
+					operator.getOutputSchema());
+			ObjectHandler<RelationalTuple<ITimeInterval>> objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(
+					handler);
+			socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
+					getStreamHandler(operator), true, operator.isLoginNeeded(),
+					objectHandler);
+
+			socketSinkPO.setOutputSchema(operator.getOutputSchema());
+			WrapperPlanFactory.putSink(operator.getName(), socketSinkPO);
+		}
+		Collection<ILogicalOperator> toUpdate = config
+				.getTransformationHelper().replace(operator, socketSinkPO);
+		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
-		
+
 		retract(operator);
-		insert(socketSinkPO);		
+		insert(socketSinkPO);
 	}
-	
-	public ISinkStreamHandlerBuilder getStreamHandler(SocketSinkAO operator){
-		if (operator.getSinkType().equalsIgnoreCase("bytebuffer")){
+
+	public ISinkStreamHandlerBuilder getStreamHandler(SocketSinkAO operator) {
+		if (operator.getSinkType().equalsIgnoreCase("bytebuffer")) {
 			return new ByteBufferSinkStreamHandlerBuilder();
 		}
 		return null;
@@ -55,7 +68,8 @@ public class TRelationalSocketSinkAORule extends AbstractTransformationRule<Sock
 	@Override
 	public boolean isExecutable(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet() && operator.getSinkType().equalsIgnoreCase("bytebuffer");
+		return operator.isAllPhysicalInputSet()
+				&& operator.getSinkType().equalsIgnoreCase("bytebuffer");
 	}
 
 	@Override
@@ -67,7 +81,7 @@ public class TRelationalSocketSinkAORule extends AbstractTransformationRule<Sock
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
 	public Class<?> getConditionClass() {
 		return SocketSinkAO.class;
