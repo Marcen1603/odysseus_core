@@ -1300,7 +1300,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}		
 		ILogicalOperator sink = new SocketSinkAO(port, sinkType,loginNeeded, sinkName);
  		ILogicalOperator transformMeta = new TimestampToPayloadAO();
- 		sink.subscribeToSource(transformMeta, 0, 0, null);
+ 		sink.subscribeToSource(transformMeta, -1, 0, null);
  		dataDictionary.addSink(sinkName, sink);
 		return null;
 	}

@@ -304,6 +304,16 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			int sourceOutPort, SDFAttributeList inputSchema) {
 		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort,
 				sourceOutPort, inputSchema);
+		// Finde den maximalen verwendeten Port
+		if (sinkInPort == -1){
+			for (Integer port : subscribedToSource.keySet()){
+				if (port > sinkInPort){
+					sinkInPort = port;
+				}
+			}
+			// und erhöhe um eins
+			sinkInPort ++;
+		}
 		synchronized (this.subscribedToSource) {
 			if (!this.subscribedToSource.containsKey(sinkInPort)) {
 				this.subscribedToSource.put(sinkInPort, sub);
