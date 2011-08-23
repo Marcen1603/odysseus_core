@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.clientselecti
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.List;
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
@@ -86,7 +86,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 				Message response = MessageTool.createOdysseusMessage(
 						OdysseusMessageType.BiddingClient, messageElements);
 				log.addEvent(q.getId(),
-						"Sending accept for subplan" + subplan.getId());
+						"Sending accept for subplan" + subplan.getId() + " with optimal bid " + optimalBid.getBid());
 				// Sende die Zusage
 				MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), opPeer,
 					response,10);
@@ -118,25 +118,29 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 
 	private BidJxtaImpl selectPromisingClient(ArrayList<Bid> biddings) {
 
-		// 1. Are there positiv bids
-		boolean found = false;
+		// 1. Are there positiv bids?
+		List<Bid> validBids = new ArrayList<Bid>();
 		for (Bid b : biddings) {
-			if (b.getBid().equals("positive")) {
-				found = true;
-				break;
+			Double bidValue = Double.valueOf(b.getBid());
+			
+			if (bidValue >= 0.0) {
+				validBids.add(b);
 			}
 		}
 
-		if (found) {
-			// random selection
-			Random random = new Random();
-			while (true) {
-				int b = random.nextInt(biddings.size());
-				Bid bid = biddings.get(b);
-				if (bid.getBid().equals("positive")){
-					return (BidJxtaImpl)bid;
+		if (!validBids.isEmpty()) {
+			double highestBidValue = Double.MIN_VALUE;
+			Bid highestBid = null;
+			for( Bid b : validBids ) {
+				Double val = Double.valueOf(b.getBid());
+				if( val > highestBidValue ) {
+					highestBidValue = val;
+					highestBid = b;
 				}
 			}
+			
+			return (BidJxtaImpl)highestBid;
+			
 		} else {
 			return null;
 		}
