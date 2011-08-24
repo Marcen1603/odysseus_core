@@ -1,14 +1,13 @@
 package de.uniol.inf.is.odysseus.logicaloperator.intervalapproach;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 @LogicalOperator(name="TimestampToPayload", minInputPorts=1, maxInputPorts=1)
-public class TimestampToPayloadAO extends UnaryLogicalOp {
+public class TimestampToPayloadAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 7506659021418301530L;
 
@@ -20,7 +19,7 @@ public class TimestampToPayloadAO extends UnaryLogicalOp {
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList outputSchema = new SDFAttributeList(getInputSchema());
+		SDFAttributeList outputSchema = new SDFAttributeList(getInputSchema(0));
 		SDFAttribute starttimeStamp = new SDFAttribute("meta_valid_start");
 		starttimeStamp.setDatatype(SDFDatatype.TIMESTAMP);
 		outputSchema.add(starttimeStamp);
