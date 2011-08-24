@@ -487,6 +487,7 @@ public class StandardExecutor extends AbstractExecutor {
 
 	@Override
 	public List<IQuery> startAllClosedQueries(User user) {
+		executionPlanLock.lock();
 		List<IQuery> started = new LinkedList<IQuery>();
 		for (IQuery q : plan.getQueries()) {
 			if (!q.isOpened()) {
@@ -498,6 +499,7 @@ public class StandardExecutor extends AbstractExecutor {
 				}
 			}
 		}
+		executionPlanLock.unlock();
 		return started;
 	}
 
