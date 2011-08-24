@@ -138,10 +138,11 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		Subplan subplan = query.getSubPlans().get(
 				querySpecification.getSubplanId());
 		
-		Double d = Double.valueOf(getBid(subplan));
+		String bid = getBid(subplan);
+		Double d = Double.valueOf(bid);
 		
-		messageElements.put("ExecutionBid", String.valueOf(d));
-		log.logAction(querySpecification.getSubplanId(), "Bid for execution (" + d + ")");
+		messageElements.put("ExecutionBid", bid);
+		log.logAction(querySpecification.getSubplanId(), "Bid for execution (" + bid + ")");
 		if( d >= 0.0 ) {
 			query.setStatus(Lifecycle.GRANTED);
 			peer.addQuery(query);
@@ -161,8 +162,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 								messageElements), pipeAdv, 10);
 	}
 
-	private double getBid(Subplan subplan) {
-		double bidValue = -1;
+	private String getBid(Subplan subplan) {
 		// Pruefen, ob adressierte Quellen ueberhaupt verwaltet werden
 		List<AccessAO> sources = new ArrayList<AccessAO>();
 		collectSourcesFromPlan(subplan.getAo(), sources);
@@ -171,7 +171,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 				if (!GlobalState.getActiveDatadictionary()
 						.containsViewOrStream(ao.getSource().getURI(),
 								GlobalState.getActiveUser(""))) {
-					return bidValue;
+					return "-1";
 				}
 			}
 		}
@@ -184,57 +184,49 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		IExecutor executor = BiddingClient.getExecutor();
 		IAdmissionControl admissionControl = BiddingClient
 				.getAdmissionControl();
-		
-		// Ohne executor können keine Anfragen
-		// ausgeführt werden
-		if( executor == null ) {
-			return bidValue;
-		}
 
 		try {
-			// Plan in Ausführungsplan hinzufügen
+			// Plan in Ausfï¿½hrungsplan hinzufï¿½gen
+			IQuery query = null;
 			User user = GlobalState.getActiveUser("");
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
-			IQuery query = executor.addQuery(subplan.getAo(), user, dd, "Standard");
-			subplan.setQuery(query);
 
-			if (admissionControl == null) {
-				// Altes Verhalten ohne Admission Control
+			boolean result = false;
+			if (executor == null || admissionControl == null) {
 				if (peer.getQueryCount() < MAXQUERIES) {
-					bidValue = 1.0;
+					result = true;
 				}
 			} else {
-				
-				// Admission Control einsetzen
-				boolean result = admissionControl.canStartQuery(query);
-				
-				if( result == true ) {
-					// Ausführbar!
-					IP2PBidGenerator generator = BiddingClient.getBidGenerator();
-					if( generator != null ) {
-						ICost act = admissionControl.getActualCost();
-						ICost maxCost = admissionControl.getMaximumCost();
-						ICost queryCost = admissionControl.evaluateQuery(query);
-						bidValue = generator.generateBid(admissionControl, act, queryCost, maxCost);
-					} else {
-						bidValue = 1.0;
-					}
-				} else {
-					// Nicht ausführbar
-					bidValue = -1.0;
-				}
+				query = executor.addQuery(subplan.getAo(), user, dd, "Standard");
+				subplan.setQuery(query);
+
+				result = admissionControl.canStartQuery(query);
 			}
 
-			// Ausführungsplan wieder entfernen, falls
+			// Ausfï¿½hrungsplan wieder entfernen, falls
 			// nicht darauf geboten wird
-			if (bidValue < 0.0 ) {
+			if (result == false && query != null && executor != null) {
 				executor.removeQuery(query.getID(), user);
 			}
 			
-			return bidValue;
+			// Wenn AC, dann genaues Gebot bestimmen lassen
+			if( admissionControl != null ) {
+				IP2PBidGenerator generator = BiddingClient.getBidGenerator();
+				double bidValue = 1;
+				if( generator != null ) {
+					ICost act = admissionControl.getActualCost();
+					ICost maxCost = admissionControl.getMaximumCost();
+					ICost queryCost = admissionControl.getCost(query);
+					bidValue = generator.generateBid(admissionControl, act, queryCost, maxCost);
+				}
+				
+				return String.valueOf(bidValue);
+			}
+
+			return "1";
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
-			return -1.0;
+			return "-1";
 		}
 	}
 
