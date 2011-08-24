@@ -150,13 +150,13 @@ public class SimpleSensor extends Thread{
 					//dann sende das tupel an odysseus				
 					this.sensorService.getSensor(SENSOR_NAME).sendTuple(tuple);
 				}
-				System.out.println(tuple);
+				//System.out.println(tuple);
 				// generiere ein paar neue Werte zur Simulation eines Sensors
 				this.generateValues();
 				
 				// warte ein bisschen
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(1);					
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
