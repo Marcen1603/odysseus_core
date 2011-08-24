@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider.clientselection.bidselect">
    <implementation class="de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.clientselection.ClientSelectionPlugIn"/>
-   <reference bind="bindBidSelector" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.ac.bidselection.IBidSelector" name="IBidSelector" policy="static" unbind="unbindBidSelector"/>
+   <reference bind="bindBidSelector" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.ac.bidselection.IP2PBidSelector" name="IP2PBidSelector" policy="dynamic" unbind="unbindBidSelector"/>
 </scr:component>
