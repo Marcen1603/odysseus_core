@@ -46,8 +46,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 	}
 	
 	@Override
-	protected synchronized void process_next(T object, int port) {
-	//	System.out.println(this+" "+object+" "+port);
+	protected void process_next(T object, int port) {
 		if (predicate.evaluate(object)) {
 			transfer(object);
 		}else{
