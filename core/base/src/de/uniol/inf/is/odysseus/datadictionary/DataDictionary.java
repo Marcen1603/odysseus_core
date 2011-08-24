@@ -636,6 +636,11 @@ public class DataDictionary implements IDataDictionary {
 			}
 		}
 	}
+
+	@Override
+	public Set<Entry<String, ILogicalOperator>> getSinks(User caller) {
+		return this.sinkDefinitions.entrySet();
+	}
 	
 	
 

@@ -70,7 +70,7 @@ public interface IDataDictionary {
 	public ILogicalOperator getViewOrStream(String viewname, User caller);
 
 	public Set<Entry<String, ILogicalOperator>> getStreams(User caller);
-	public Set<Entry<String, ILogicalOperator>> getViews(User caller);
+	public Set<Entry<String, ILogicalOperator>> getViews(User caller);	
 
 	
 	public ILogicalOperator removeViewOrStream(String viewname, User caller);
@@ -110,6 +110,8 @@ public interface IDataDictionary {
 	public boolean existsDatatype(String dtName);
 
 	void addSink(String sinkname, ILogicalOperator sink);
+	
+	public Set<Entry<String, ILogicalOperator>> getSinks(User caller);
 
 	ILogicalOperator getSinkTop(String sinkname);
 	ILogicalOperator getSinkInput(String sinkname);
