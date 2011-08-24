@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
@@ -37,8 +37,8 @@ public class RSwitchSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 	public void execute(JoinAO join, RewriteConfiguration config) {
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
 			if (isValidSelect(sel, join)) {
-				Collection<ILogicalOperator> toInsert = new TreeSet<ILogicalOperator>();
-				Collection<ILogicalOperator> toRemove = new TreeSet<ILogicalOperator>();
+				Collection<ILogicalOperator> toInsert = new ArrayList<ILogicalOperator>();
+				Collection<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
 				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(sel, join, toInsert, toRemove);
 				for (ILogicalOperator o : toInsert) {
 					insert(o);
