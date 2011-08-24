@@ -138,11 +138,10 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		Subplan subplan = query.getSubPlans().get(
 				querySpecification.getSubplanId());
 		
-		String bid = getBid(subplan);
-		Double d = Double.valueOf(bid);
+		Double d = Double.valueOf(getBid(subplan));
 		
-		messageElements.put("ExecutionBid", bid);
-		log.logAction(querySpecification.getSubplanId(), "Bid for execution (" + bid + ")");
+		messageElements.put("ExecutionBid", String.valueOf(d));
+		log.logAction(querySpecification.getSubplanId(), "Bid for execution (" + d + ")");
 		if( d >= 0.0 ) {
 			query.setStatus(Lifecycle.GRANTED);
 			peer.addQuery(query);
@@ -162,7 +161,8 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 								messageElements), pipeAdv, 10);
 	}
 
-	private String getBid(Subplan subplan) {
+	private double getBid(Subplan subplan) {
+		double bidValue = -1;
 		// Pruefen, ob adressierte Quellen ueberhaupt verwaltet werden
 		List<AccessAO> sources = new ArrayList<AccessAO>();
 		collectSourcesFromPlan(subplan.getAo(), sources);
@@ -171,7 +171,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 				if (!GlobalState.getActiveDatadictionary()
 						.containsViewOrStream(ao.getSource().getURI(),
 								GlobalState.getActiveUser(""))) {
-					return "-1";
+					return bidValue;
 				}
 			}
 		}
@@ -184,49 +184,57 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		IExecutor executor = BiddingClient.getExecutor();
 		IAdmissionControl admissionControl = BiddingClient
 				.getAdmissionControl();
+		
+		// Ohne executor können keine Anfragen
+		// ausgeführt werden
+		if( executor == null ) {
+			return bidValue;
+		}
 
 		try {
 			// Plan in Ausführungsplan hinzufügen
-			IQuery query = null;
 			User user = GlobalState.getActiveUser("");
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
+			IQuery query = executor.addQuery(subplan.getAo(), user, dd, "Standard");
+			subplan.setQuery(query);
 
-			boolean result = false;
-			if (executor == null || admissionControl == null) {
+			if (admissionControl == null) {
+				// Altes Verhalten ohne Admission Control
 				if (peer.getQueryCount() < MAXQUERIES) {
-					result = true;
+					bidValue = 1.0;
 				}
 			} else {
-				query = executor.addQuery(subplan.getAo(), user, dd, "Standard");
-				subplan.setQuery(query);
-
-				result = admissionControl.canStartQuery(query);
+				
+				// Admission Control einsetzen
+				boolean result = admissionControl.canStartQuery(query);
+				
+				if( result == true ) {
+					// Ausführbar!
+					IP2PBidGenerator generator = BiddingClient.getBidGenerator();
+					if( generator != null ) {
+						ICost act = admissionControl.getActualCost();
+						ICost maxCost = admissionControl.getMaximumCost();
+						ICost queryCost = admissionControl.evaluateQuery(query);
+						bidValue = generator.generateBid(admissionControl, act, queryCost, maxCost);
+					} else {
+						bidValue = 1.0;
+					}
+				} else {
+					// Nicht ausführbar
+					bidValue = -1.0;
+				}
 			}
 
 			// Ausführungsplan wieder entfernen, falls
 			// nicht darauf geboten wird
-			if (result == false && query != null && executor != null) {
+			if (bidValue < 0.0 ) {
 				executor.removeQuery(query.getID(), user);
 			}
 			
-			// Wenn AC, dann genaues Gebot bestimmen lassen
-			if( admissionControl != null ) {
-				IP2PBidGenerator generator = BiddingClient.getBidGenerator();
-				double bidValue = 1;
-				if( generator != null ) {
-					ICost act = admissionControl.getActualCost();
-					ICost maxCost = admissionControl.getMaximumCost();
-					ICost queryCost = admissionControl.evaluateQuery(query);
-					bidValue = generator.generateBid(admissionControl, act, queryCost, maxCost);
-				}
-				
-				return String.valueOf(bidValue);
-			}
-
-			return "1";
+			return bidValue;
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
-			return "-1";
+			return -1.0;
 		}
 	}
 
