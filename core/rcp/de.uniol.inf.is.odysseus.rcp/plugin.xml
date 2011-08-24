@@ -53,6 +53,14 @@
             name="Partial Plan"
             restorable="true">
       </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.views.SinkViewPart"
+            icon="icons/network-hub.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
+            name="Sinks"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
