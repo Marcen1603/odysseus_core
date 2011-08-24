@@ -45,7 +45,7 @@ public class GenQueries {
 	private static final int ALTERNATIVE_SLA_RATIO = 10;
 	private static int ALTERNATIVE_SLA_COUNTER = 0;
 	private static final boolean ALTERNATIVE_SLA_ENABLED = true;
-	private static final int ALTERNATIVE_BEST_SLA_PRIO = 4;
+	private static final int ALTERNATIVE_BEST_SLA_PRIO = 10;
 
 	private static final int NUMBER_OF_SIMULATIONS = 10;
 	private static int currentNumberOfSimulation = 0;
@@ -89,9 +89,31 @@ public class GenQueries {
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(20, DATA_RATE_LOW) };
 
 	static int[][] dataRates7 = { calcDataRate(30, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
+			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
 			calcDataRate(10, DATA_RATE_HIGH), calcDataRate(110, DATA_RATE_LOW),
@@ -134,7 +156,7 @@ public class GenQueries {
 			if (SLA_SCOPE.equals(ScopeFactory.SCOPE_AVERAGE)) {
 				for (int i = 0; i < NUMBER_OF_SLAS; i++) {
 					sb.append(createSLA(i, (i + 3) * 1000,
-							ScopeFactory.SCOPE_AVERAGE, 120,
+							ScopeFactory.SCOPE_AVERAGE, 300,
 							TimeUnit.s.toString(),
 							calcThresholds(ScopeFactory.SCOPE_AVERAGE, i),
 							calcPenaltyCosts(i), PENALTY_NAME));
@@ -142,7 +164,7 @@ public class GenQueries {
 			} else if (SLA_SCOPE.equals(ScopeFactory.SCOPE_RATE)) {
 				for (int i = 0; i < NUMBER_OF_SLAS; i++) {
 					sb.append(createSLA(i, (i + 1) * 2000,
-							ScopeFactory.SCOPE_RATE, 120,
+							ScopeFactory.SCOPE_RATE, 300,
 							TimeUnit.s.toString(),
 							calcThresholds(ScopeFactory.SCOPE_RATE, i),
 							calcPenaltyCosts(i), PENALTY_NAME));
@@ -343,7 +365,7 @@ public class GenQueries {
 				.append(" WITH").append(NEWLINE);
 		sb.append("METRIC (latency, 4000.0, ms),").append(NEWLINE);
 		sb.append("SCOPE (average),").append(NEWLINE);
-		sb.append("IN (120, s),").append(NEWLINE);
+		sb.append("IN (300, s),").append(NEWLINE);
 		sb.append("SERVICELEVEL (2000.0, PENALTY (absolute, 1000)),").append(
 				NEWLINE);
 		sb.append("SERVICELEVEL (3000.0, PENALTY (absolute, 4000)),").append(
@@ -353,7 +375,7 @@ public class GenQueries {
 		sb.append("CREATE SLA sla1 WITH").append(NEWLINE);
 		sb.append("METRIC (latency, 10000.0, ms),").append(NEWLINE);
 		sb.append("SCOPE (average),").append(NEWLINE);
-		sb.append("IN (120, s),").append(NEWLINE);
+		sb.append("IN (300, s),").append(NEWLINE);
 		sb.append("SERVICELEVEL (5000.0, PENALTY (absolute, 200)),").append(
 				NEWLINE);
 		sb.append("SERVICELEVEL (7500.0, PENALTY (absolute, 600)),").append(
