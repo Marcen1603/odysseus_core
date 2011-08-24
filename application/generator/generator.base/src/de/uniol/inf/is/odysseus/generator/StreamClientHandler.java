@@ -38,7 +38,7 @@ public abstract class StreamClientHandler extends Thread{
     	while(next!=null){
     		try {
     			if(this.connection.isClosed()){
-    				System.out.println("Connection closed.");
+//    				System.out.println("Connection closed.");
     				break;
     			}
     			for(DataTuple nextTuple : next){
@@ -47,7 +47,7 @@ public abstract class StreamClientHandler extends Thread{
 				next = next();
 				
 			} catch (IOException e) { 
-				System.out.println("Connection closed.");
+//				System.out.println("Connection closed.");
 				break;
 			}
     	}

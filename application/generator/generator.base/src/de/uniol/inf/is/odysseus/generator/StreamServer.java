@@ -35,13 +35,13 @@ public class StreamServer extends Thread {
 
     @Override
     public void run() {
-    	System.out.println("Starting new server on port "+this.socket.getLocalPort());
+//    	System.out.println("Starting new server on port "+this.socket.getLocalPort());
         while (true) {
             Socket connection = null;
             try {
-            	System.out.println("Waiting for connection...");
+//            	System.out.println("Waiting for connection...");
                 connection = socket.accept();
-                System.out.println("New connection from "+connection.getInetAddress());
+//                System.out.println("New connection from "+connection.getInetAddress());
                 StreamClientHandler streamClient = this.streamClientHandler.newInstance();
                 streamClient.setConnection(connection);
                 streamClient.start();
