@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 	public OdysseusScriptViewerConfiguration(ColorManager colorManager) {
 		this.colorManager = colorManager;
 	}
-	
+
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
@@ -68,56 +68,59 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 
 	protected ITokenScanner getScanner() {
 		RuleBasedScanner scanner = new RuleBasedScanner();
-		
+
 		scanner.setRules(getRules());
-		
+
 		IToken def = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
 		scanner.setDefaultReturnToken(def);
-		
+
 		return scanner;
 	}
-	
+
 	protected IRule[] getRules() {
 		IToken parameter = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_RED), false);
 		IToken comment = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN), false);
 		IToken replacement = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW), false);
 		IToken def = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
-		
+
 		ArrayList<IRule> rules = new ArrayList<IRule>();
-		
+
 		// PreParserKeywords
-		WordRule wr = new WordRule( getWordDetector(), Token.UNDEFINED, false );
-		for( String key : PreParserKeywordRegistry.getInstance().getKeywordNames()) {
+		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, false);
+		for (String key : PreParserKeywordRegistry.getInstance().getKeywordNames()) {
 			wr.addWord(QueryTextParser.PARAMETER_KEY + key, parameter);
 		}
-		wr.addWord("#DEFINE", parameter);
+
+		for (String s : QueryTextParser.getStaticWords()) {
+			wr.addWord(s, parameter);
+		}		
 		rules.add(wr);
-			
+
 		// Replacements
-		rules.add( new SingleLineRule(QueryTextParser.REPLACEMENT_START_KEY, QueryTextParser.REPLACEMENT_END_KEY, replacement));
-		
+		rules.add(new SingleLineRule(QueryTextParser.REPLACEMENT_START_KEY, QueryTextParser.REPLACEMENT_END_KEY, replacement));
+
 		// Extensions
 		WordRule r = new WordRule(getWordDetector(), def, false);
-		for( String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
-			
+		for (String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
+
 			int red = KeywordRegistry.getInstance().getGroupColorR(grp);
 			int green = KeywordRegistry.getInstance().getGroupColorG(grp);
 			int blue = KeywordRegistry.getInstance().getGroupColorB(grp);
-			
-			IToken wordToken = createToken( colorManager.get(red, green, blue), true);
-			
-			for( String word : KeywordRegistry.getInstance().getKeywords(grp)) {
+
+			IToken wordToken = createToken(colorManager.get(red, green, blue), true);
+
+			for (String word : KeywordRegistry.getInstance().getKeywords(grp)) {
 				r.addWord(word, wordToken);
 			}
 		}
 		rules.add(r);
 
 		// Kommentare
-		rules.add(new SingleLineRule( QueryTextParser.SINGLE_LINE_COMMENT_KEY, "\n", comment, '\\', true));
-		
+		rules.add(new SingleLineRule(QueryTextParser.SINGLE_LINE_COMMENT_KEY, "\n", comment, '\\', true));
+
 		// Whitespace
 		rules.add(new WhitespaceRule(getWhitespaceDetector()));
-		
+
 		return rules.toArray(new IRule[rules.size()]);
 	}
 
@@ -133,18 +136,18 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 			};
 		return whitespaceDetector;
 	}
-	
-	protected IToken createToken( Color color, boolean bold ) {
-		if( bold ) 
+
+	protected IToken createToken(Color color, boolean bold) {
+		if (bold)
 			return new Token(new TextAttribute(color, null, SWT.BOLD));
-		else 
+		else
 			return new Token(new TextAttribute(color));
 	}
-	
+
 	protected IWordDetector getWordDetector() {
-		if( wordDetector == null ) {
+		if (wordDetector == null) {
 			wordDetector = new IWordDetector() {
-				
+
 				@Override
 				public boolean isWordStart(char c) {
 					return Character.isLetter(c) || c == '#' || c == '$';
@@ -154,7 +157,7 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 				public boolean isWordPart(char c) {
 					return Character.isJavaIdentifierPart(c) || c == '-';
 				}
-				
+
 			};
 		}
 		return wordDetector;
