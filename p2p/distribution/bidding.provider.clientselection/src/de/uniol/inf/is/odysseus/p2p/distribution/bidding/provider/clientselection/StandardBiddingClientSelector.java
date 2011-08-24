@@ -16,11 +16,11 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.clientselecti
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
+import de.uniol.inf.is.odysseus.p2p.ac.bidselection.IP2PBidSelector;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.AbstractClientSelector;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
@@ -71,8 +71,8 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 				// Strategie, welche über die Zusage entscheidet. Gib Eine
 				// Liste von Gebote rein und erhalte einen passenden Peer für
 				// meine zu erledigende Aufgabe
-				BidJxtaImpl optimalBid = (BidJxtaImpl) selectPromisingClient(subplan
-						.getBiddings());
+				IP2PBidSelector selector = ClientSelectionPlugIn.getBidSelector();
+				BidJxtaImpl optimalBid = (BidJxtaImpl) selector.selectBid(subplan.getBiddings());
 
 				// Adresse des bietenden Operator-Peers
 				PipeAdvertisement opPeer = (optimalBid.getResponseSocket());
@@ -116,34 +116,34 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 
 	}
 
-	private BidJxtaImpl selectPromisingClient(ArrayList<Bid> biddings) {
-
-		// 1. Are there positiv bids?
-		List<Bid> validBids = new ArrayList<Bid>();
-		for (Bid b : biddings) {
-			Double bidValue = Double.valueOf(b.getBid());
-			
-			if (bidValue >= 0.0) {
-				validBids.add(b);
-			}
-		}
-
-		if (!validBids.isEmpty()) {
-			double highestBidValue = Double.MIN_VALUE;
-			Bid highestBid = null;
-			for( Bid b : validBids ) {
-				Double val = Double.valueOf(b.getBid());
-				if( val > highestBidValue ) {
-					highestBidValue = val;
-					highestBid = b;
-				}
-			}
-			
-			return (BidJxtaImpl)highestBid;
-			
-		} else {
-			return null;
-		}
-
-	}
+//	private BidJxtaImpl selectPromisingClient(ArrayList<Bid> biddings) {
+//
+//		// 1. Are there positiv bids?
+//		List<Bid> validBids = new ArrayList<Bid>();
+//		for (Bid b : biddings) {
+//			Double bidValue = Double.valueOf(b.getBid());
+//			
+//			if (bidValue >= 0.0) {
+//				validBids.add(b);
+//			}
+//		}
+//
+//		if (!validBids.isEmpty()) {
+//			double highestBidValue = Double.MIN_VALUE;
+//			Bid highestBid = null;
+//			for( Bid b : validBids ) {
+//				Double val = Double.valueOf(b.getBid());
+//				if( val > highestBidValue ) {
+//					highestBidValue = val;
+//					highestBid = b;
+//				}
+//			}
+//			
+//			return (BidJxtaImpl)highestBid;
+//			
+//		} else {
+//			return null;
+//		}
+//
+//	}
 }

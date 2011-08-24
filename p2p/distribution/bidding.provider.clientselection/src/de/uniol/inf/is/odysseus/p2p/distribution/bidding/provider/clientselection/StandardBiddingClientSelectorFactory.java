@@ -40,5 +40,6 @@ public class StandardBiddingClientSelectorFactory<C extends IExecutionListenerCa
 //		return null;
 //	}
 
-
+	
+	
 }

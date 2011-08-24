@@ -17,8 +17,12 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.clientselecti
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator {
+import de.uniol.inf.is.odysseus.p2p.ac.bidselection.IP2PBidSelector;
 
+public class ClientSelectionPlugIn implements BundleActivator {
+
+	private static IP2PBidSelector bidSelector;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -35,4 +39,17 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 	}
 
+	public void bindBidSelector( IP2PBidSelector sel ) {
+		bidSelector = sel;
+	}
+	
+	public void unbindBidSelector( IP2PBidSelector sel ) {
+		if( bidSelector == sel ) {
+			bidSelector = null;
+		}
+	}
+	
+	public static IP2PBidSelector getBidSelector() {
+		return bidSelector;
+	}
 }
