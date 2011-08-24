@@ -1299,8 +1299,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			loginNeeded = true;
 		}		
 		ILogicalOperator sink = new SocketSinkAO(port, sinkType,loginNeeded, sinkName);
- 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
- 		sink.subscribeToSource(transformMeta, -1, 0, null);
+ 		ILogicalOperator transformMeta = new TimestampToPayloadAO(); 		
+ 		sink.subscribeToSource(transformMeta, 0, 0, null);
  		dataDictionary.addSink(sinkName, sink);
 		return null;
 	}
@@ -1313,7 +1313,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName);
 		// Append plan to input and update subscriptions
 		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName);
-		sinkInput.subscribeToSource(top, 0, 0, top.getOutputSchema());
+		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
 		updateSchemaInfos(sink);
 		
 		Query query = new Query();
