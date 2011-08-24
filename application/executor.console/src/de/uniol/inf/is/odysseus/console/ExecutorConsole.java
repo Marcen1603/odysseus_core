@@ -1828,11 +1828,11 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	 * should be removed after simulation is done
 	 */
 	
-	private static final int NUMBER_OF_SIMULATIONS = 3;
-	private static final long SIM_LENGTH = 600000; //millis
-	private static final long EXTRA_TIME = 300000;
-	private static final String SCHED1 = "SLA Scheduler";
-//	private static final String SCHED1 = "SLA Dynamic Priority Scheduler";
+	private static final int NUMBER_OF_SIMULATIONS = 10;
+	private static final long SIM_LENGTH = 1800000; //millis
+	private static final long EXTRA_TIME = 300000; // millis
+//	private static final String SCHED1 = "SLA Scheduler";
+	private static final String SCHED1 = "SLA Dynamic Priority Scheduler";
 	private static final String SCHED2 = "Round Robin";
 	
 	@Help(description = "starts simulation of SLA Scheduler")
