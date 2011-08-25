@@ -102,4 +102,9 @@ public class LatencyNumberConformance<T> extends AbstractSLaConformance<T> {
 		return new LatencyNumberConformance<T>(this);
 	}
 
+	@Override
+	public double predictConformance() {
+		return this.numberOfViolations + this.getNumberOfViolationsPredictedLatency();
+	}
+
 }

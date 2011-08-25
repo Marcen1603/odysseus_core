@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.ILatency;
@@ -12,6 +13,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.GenQueries;
 import de.uniol.inf.is.odysseus.sla.SLA;
 import de.uniol.inf.is.odysseus.sla.ServiceLevel;
 
@@ -56,6 +58,10 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 * value of the longest latency defined in the sla
 	 */
 	private double maxLatency;
+	
+	private List<IBuffer<?>> buffers;
+	
+	private int numberOfPredictedElements;
 
 	/**
 	 * default constructor
@@ -77,6 +83,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 				+ this.getSLA().getWindow().lengthToNanoseconds();
 		this.hasRunInWindow = false;
 		this.maxLatency = sla.getMetric().getValue();
+		this.buffers = new ArrayList<IBuffer<?>>();
 	}
 
 	/**
@@ -89,6 +96,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		this.sla = conformance.sla;
 		this.query = conformance.query;
 		this.windowEnd = conformance.windowEnd;
+		this.buffers = conformance.buffers;
 	}
 
 	/**
@@ -141,6 +149,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		 * over list to find the less valuable violated service level first
 		 */
 		if (System.nanoTime() >= this.windowEnd) {
+			boolean violated = false;
 			double conformance = this.getConformance();
 			System.err.println(conformance);
 			List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
@@ -161,6 +170,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 					if (serviceLevels.get(i).getThreshold() > conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost(), i + 1, conformance);
+						violated = true;
 						break;
 					}
 				} else {
@@ -175,11 +185,13 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 					if (serviceLevels.get(i).getThreshold() < conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost(), i + 1, conformance);
+						violated = true;
 						break;
 					}
 				}
-				this.violation(0.0, 0, conformance);
 			}
+			if (!violated)
+				this.violation(0.0, 0, conformance);
 			this.windowEnd += this.getSLA().getWindow().lengthToNanoseconds();
 			this.reset();
 		}
@@ -225,7 +237,116 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		this.hasRunInWindow = true;
 	}
+
+	@Override
+	public void setBuffers(List<IBuffer<?>> buffers) {
+		this.buffers = buffers;
+	}
 	
+	protected List<IBuffer<?>> getBuffers() {
+		return this.buffers;
+	}
+
+	/**
+	 * in nanos
+	 */
+	@Override
+	public double getMaxPredictedLatency() {
+		this.numberOfPredictedElements = 0;
+		double max = 0.0;
+		long timestamp = System.nanoTime();
+		for (IBuffer<?> buffer : this.buffers) {
+			synchronized (buffer) {
+				if (buffer.size() > 0) {
+					Object object = buffer.peek();
+					MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
+					IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+					if (metadata instanceof ILatency) {
+						ILatency latency = (ILatency) metadata;
+						long waitingTime = timestamp - latency.getLatencyStart();
+						double predictedLatency = calcLatency(waitingTime);
+						if (predictedLatency > max) {
+							max = predictedLatency;
+						}
+						this.numberOfPredictedElements += buffer.size();
+					} else {
+						throw new RuntimeException("Latency missing");
+					}
+				}
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * in nanos
+	 */
+	@Override
+	public double getSumPredictedLatency() {
+		this.numberOfPredictedElements = 0;
+		double sum = 0.0;
+		long timestamp = System.nanoTime();
+		for (IBuffer<?> buffer : this.buffers) {
+			if (buffer.size() > 0) {
+				Object object = buffer.peek();
+				MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
+				IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+				if (metadata instanceof ILatency) {
+					ILatency latency = (ILatency) metadata;
+					long waitingTime = timestamp - latency.getLatencyStart();
+					sum += calcLatency(waitingTime) * buffer.size();
+					this.numberOfPredictedElements += buffer.size();
+				} else {
+					throw new RuntimeException("Latency missing");
+				}
+			}
+		}
+		return sum;
+	}
 	
+	/**
+	 * nanos
+	 */
+	protected double getOpTime() {
+		return 1500;
+	}
+	
+	/**
+	 * nanos
+	 * @param waitingTime
+	 * @return
+	 */
+	protected double calcLatency(double waitingTime) {
+		return waitingTime + getOpTime();
+	}
+	
+	public int getNumberOfPredictedLatency() {
+		return numberOfPredictedElements;
+	}
+	
+	public int getNumberOfViolationsPredictedLatency() {
+		this.numberOfPredictedElements = 0;
+		int numViolations = 0;
+		long timestamp = System.nanoTime();
+		for (IBuffer<?> buffer : this.buffers) {
+			if (buffer.size() > 0) {
+				Object object = buffer.peek();
+				MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
+				IMetaAttribute metadata = metaAttributeContainer.getMetadata();
+				if (metadata instanceof ILatency) {
+					ILatency latency = (ILatency) metadata;
+					long waitingTime = timestamp - latency.getLatencyStart();
+					double predictedLatency = calcLatency(waitingTime);
+					if (predictedLatency > this.maxLatency) {
+						numViolations += buffer.size();
+					}
+					this.numberOfPredictedElements += buffer.size();
+				} else {
+					throw new RuntimeException("Latency missing");
+				}
+			}
+		}
+		return numViolations;
+	}
 
 }

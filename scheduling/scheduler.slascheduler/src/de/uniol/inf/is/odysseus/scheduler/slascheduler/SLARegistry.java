@@ -130,6 +130,7 @@ public class SLARegistry implements IPlanModificationListener {
 			
 			List<IBuffer<?>> buffers = this.findBuffers(query);
 			data.setBuffers(buffers);
+			conformance.setBuffers(buffers);
 			
 			this.addSchedData(query, data);
 			

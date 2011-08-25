@@ -93,4 +93,10 @@ public class LatencySingleConformance<T> extends AbstractSLaConformance<T> {
 		return new LatencySingleConformance<T>(this);
 	}
 
+	@Override
+	public double predictConformance() {
+		double maxPredictedLatency = this.getMaxPredictedLatency();
+		return Math.max(maxPredictedLatency, this.maxLatency);
+	}
+
 }

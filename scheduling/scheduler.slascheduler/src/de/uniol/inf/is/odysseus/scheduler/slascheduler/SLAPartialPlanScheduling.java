@@ -218,7 +218,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				if (this.hasNext(data.getBuffers())) {
 					
 					SLA sla = query.getSLA();
-					double conformance = data.getConformance().getConformance();
+					double conformance = data.getConformance().predictConformance();
 					// calculate priorities for all partial plans:
 					// - calculate oc
 					ICostFunction costFunc = data.getCostFunction();

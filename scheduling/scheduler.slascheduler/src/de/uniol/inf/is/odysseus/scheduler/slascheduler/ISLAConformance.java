@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+
 /**
  * Interface for sla conformance objects
  * 
@@ -22,5 +26,16 @@ public interface ISLAConformance {
 	 */
 	public void checkViolation();
 
-
+	public void setBuffers(List<IBuffer<?>> buffers);
+	
+	public double predictConformance();
+	
+	public double getMaxPredictedLatency();
+	
+	public double getSumPredictedLatency();
+	
+	public int getNumberOfPredictedLatency();
+	
+	public int getNumberOfViolationsPredictedLatency();
+	
 }

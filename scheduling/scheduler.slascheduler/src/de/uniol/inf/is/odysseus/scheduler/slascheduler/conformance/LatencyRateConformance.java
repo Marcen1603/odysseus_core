@@ -42,8 +42,8 @@ public class LatencyRateConformance<T> extends AbstractSLaConformance<T> {
 	 * @param latencyThreshold
 	 *            latency threshold that should not be exceeded
 	 */
-	public LatencyRateConformance(ISLAViolationEventDistributor dist,
-			SLA sla, IQuery query, double latencyThreshold) {
+	public LatencyRateConformance(ISLAViolationEventDistributor dist, SLA sla,
+			IQuery query, double latencyThreshold) {
 		super(dist, sla, query);
 		this.numberOfViolations = 0;
 		this.totalNumber = 0;
@@ -69,7 +69,8 @@ public class LatencyRateConformance<T> extends AbstractSLaConformance<T> {
 	@Override
 	public double getConformance() {
 		if (this.totalNumber != 0) {
-			return (double)(this.totalNumber - this.numberOfViolations) / (double)this.totalNumber;
+			return (double) (this.totalNumber - this.numberOfViolations)
+					/ (double) this.totalNumber;
 		} else {
 			return 1.0;
 		}
@@ -113,6 +114,20 @@ public class LatencyRateConformance<T> extends AbstractSLaConformance<T> {
 	@Override
 	public AbstractSink<T> clone() {
 		return new LatencyRateConformance<T>(this);
+	}
+
+	@Override
+	public double predictConformance() {
+		double conformance = 0.0;
+		double numberViolationsPredicted = this
+				.getNumberOfViolationsPredictedLatency();
+		double numberPredicted = this.getNumberOfPredictedLatency();
+		conformance = (this.totalNumber + numberPredicted - this.numberOfViolations - numberViolationsPredicted)
+				/ (numberPredicted + this.totalNumber);
+		if (Double.isNaN(conformance))
+			return 0.0;
+		else
+		return conformance;
 	}
 
 }

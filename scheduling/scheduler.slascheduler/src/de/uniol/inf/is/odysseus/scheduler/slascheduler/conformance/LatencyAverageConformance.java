@@ -64,6 +64,18 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 			return avg;
 	}
 
+	@Override
+	public double predictConformance() {
+		double sumPredictedLatency = this.getSumPredictedLatency();
+		double numberOfPredictedLatency = this.getNumberOfPredictedLatency();
+		double conformance = (this.aggregate.getAggValue() + sumPredictedLatency)
+				/ (this.aggregate.getCount() + numberOfPredictedLatency);
+		if (Double.isNaN(conformance))
+			return 0.0;
+		else
+		return conformance;
+	}
+
 	/**
 	 * resets the aggregated average
 	 */
@@ -102,5 +114,4 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	public AbstractSink<T> clone() {
 		return new LatencyAverageConformance<T>(this);
 	}
-
 }
