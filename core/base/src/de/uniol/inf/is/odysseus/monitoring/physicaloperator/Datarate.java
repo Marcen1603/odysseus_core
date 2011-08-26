@@ -26,9 +26,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 		implements IPOEventListener {
 
-	private Integer writeCount;
+	private int writeCount;
 	private long lastTimestamp;
-	private Double value;
+	private double value;
 
 	public Datarate(IPhysicalOperator target) {
 		super(target, MonitoringDataTypes.DATARATE.name);
@@ -48,7 +48,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 	@Override
 	public void reset() {
 		this.writeCount = 0;
-		this.lastTimestamp = System.currentTimeMillis();
+		this.lastTimestamp = System.nanoTime();
 		this.value = new Double(0);
 	}
 
@@ -60,9 +60,9 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 	@Override
 	public void run() {
 //		synchronized (this) {
-			long currentTime = System.currentTimeMillis();
+			long currentTime = System.nanoTime();
 
-			this.value = (double) writeCount / (currentTime - lastTimestamp);
+			this.value = (double) writeCount / ( (currentTime - lastTimestamp) / 1000000.0);
 			notifySubscribers(value);
 			lastTimestamp = currentTime;
 			this.writeCount = 0;
