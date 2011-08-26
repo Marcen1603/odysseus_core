@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.p2p.thinpeer.gui;
 
 import java.awt.BorderLayout;
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class MainWindow extends AbstractMainWindow implements ActionListener {
-	//Thin-Peer spezifisch
+	// Thin-Peer spezifisch
 	protected JList adminPeers;
 	protected JLabel adminPeersLabel;
 	protected JList querys;
@@ -50,20 +50,19 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
-//	public static void main(String[] args) {
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				MainWindow inst = new MainWindow();
-//				inst.setLocationRelativeTo(null);
-//				inst.setVisible(true);
-//			}
-//		});
-//	}
+	// public static void main(String[] args) {
+	// SwingUtilities.invokeLater(new Runnable() {
+	// @Override
+	// public void run() {
+	// MainWindow inst = new MainWindow();
+	// inst.setLocationRelativeTo(null);
+	// inst.setVisible(true);
+	// }
+	// });
+	// }
 
 	private JProgressBar adminPeerProgress;
-//	private JButton close;
+	// private JButton close;
 	private JButton doQuery;
 	private JLabel header;
 	private JPanel jPanel1;
@@ -73,9 +72,33 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	private JLabel makeQuery;
 	private JTextArea query;
 	private JPanel queryPanel;
-//	private JLabel querysLabel;
+	// private JLabel querysLabel;
 	private JLabel sourcesLabel;
 	AbstractThinPeer thinPeer;
+
+	Thread executeThread = new Thread(new Runnable() {
+
+		@Override
+		public void run() {
+//			int queryCount = 0;
+//			while (true) {
+//				try {
+//					thinPeer.publishQuerySpezification(
+//							"SELECT * FROM nexmark:person2", "CQL",
+//							GlobalState.getActiveUser(""));
+//					queryCount++;
+//					System.out.println("Query " + queryCount + " executed");
+//					try {
+//						Thread.sleep(20000);
+//					} catch (InterruptedException ex) {
+//					}
+//				} catch (Throwable t) {
+//					t.printStackTrace();
+//				}
+//			}
+		}
+
+	});
 
 	/**
 	 * @wbp.parser.constructor
@@ -83,38 +106,46 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	public MainWindow(String title) {
 		super(title);
 		initGUI(title);
+		executeThread.setName("QueryExecuteThread");
+		executeThread.start();
 	}
 
 	public MainWindow(AbstractThinPeer thinPeer, String title) {
 		super(title);
 		this.thinPeer = thinPeer;
 		initGUI(title);
+		executeThread.setName("QueryExecuteThread");
+		executeThread.start();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if ("stopPeer".equals(e.getActionCommand())) {
 			this.thinPeer.stopPeer();
-		} 
-		else if ("translateButton".equals(e.getActionCommand())) {
-			thinPeer.publishQuerySpezification(query.getText(), "CQL", GlobalState.getActiveUser(""));
-			
+		} else if ("translateButton".equals(e.getActionCommand())) {
+			thinPeer.publishQuerySpezification(query.getText(), "CQL",
+					GlobalState.getActiveUser(""));
+
 		}
 
 	}
+
 	@Override
 	public void addResult(String queryId, Object o) {
 		List l = listResults.get(queryId);
-		if (o != null){
+		if (o != null) {
 			l.add(o.toString(), 0);
 		}
 	}
+
 	@Override
 	public void addTab(String queryId, String queryAsString) {
 		jPanel1 = new JPanel();
 		List l = new List();
 		listResults.put(queryId, l);
-		tabs.addTab(queryId.substring(queryId.length()-Math.min(queryId.length(), 10),queryId.length()), null, jPanel1, null);
+		tabs.addTab(queryId.substring(
+				queryId.length() - Math.min(queryId.length(), 10),
+				queryId.length()), null, jPanel1, null);
 
 		jPanel1.setPreferredSize(new java.awt.Dimension(996, 373));
 		jPanel1.setLayout(new GridLayout(2, 1));
@@ -140,6 +171,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 		jPanel1.setSize(900, 373);
 		jPanel1.add(information);
 	}
+
 	@Override
 	public void addAdminPeer(String queryId, String adminPeer) {
 		JLabel label = listAdminPeer.get(queryId);
@@ -155,18 +187,23 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	public JProgressBar getAdminPeerProgress() {
 		return adminPeerProgress;
 	}
+
 	public JList getAdminPeers() {
 		return adminPeers;
 	}
+
 	public JLabel getAdminPeersLabel() {
 		return adminPeersLabel;
 	}
+
 	public JList getQuerys() {
 		return querys;
 	}
+
 	public JList getSources() {
 		return sources;
 	}
+
 	public JProgressBar getSourcesProgress() {
 		return sourcesProgress;
 	}
@@ -301,55 +338,55 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	@Override
 	public void addAction(String queryId, String action) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addBids(String queryId, String s) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addEvent(String queryId, String event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addOperation(String queryId, String operation) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addScheduler(String queryId, String scheduler) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addSchedulerStrategy(String queryId, String strategy) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addSplitting(String queryId, String s) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addSubplans(String queryId, int s) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addTab(String queryId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -357,6 +394,5 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 
 }
