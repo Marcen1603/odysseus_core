@@ -202,12 +202,12 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 
 				result = admissionControl.canStartQuery(query);
 			}
-//
-//			// Ausf�hrungsplan wieder entfernen, falls
-//			// nicht darauf geboten wird
-//			if (result == false && query != null && executor != null) {
-//				executor.removeQuery(query.getID(), user);
-//			}
+
+			// Ausf�hrungsplan wieder entfernen, falls
+			// nicht darauf geboten wird
+			if (result == false && query != null && executor != null) {
+				executor.removeQuery(query.getID(), user);
+			}
 			
 			// Wenn AC, dann genaues Gebot bestimmen lassen
 			if( admissionControl != null ) {
