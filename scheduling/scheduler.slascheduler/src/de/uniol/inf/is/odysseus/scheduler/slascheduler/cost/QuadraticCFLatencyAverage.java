@@ -26,7 +26,7 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 		 * calculate oc if current service level is not the less valuable
 		 * service level, return 0 otherwise
 		 */
-		if (slIndex < sla.getServiceLevel().size()) {
+//		if (slIndex < sla.getServiceLevel().size()) {
 			// calculate lower bound
 			double lowerbound = this.calcLowerbound(slIndex, sla);
 
@@ -43,9 +43,9 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 			temp = temp * temp;
 			// multiply cost with relative position
 			return temp * delta;
-		} else {
-			return 0;
-		}
+//		} else {
+//			return 0;
+//		}
 
 	}
 

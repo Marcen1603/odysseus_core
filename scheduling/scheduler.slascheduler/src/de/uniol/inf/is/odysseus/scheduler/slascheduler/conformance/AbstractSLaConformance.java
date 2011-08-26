@@ -308,7 +308,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 * nanos
 	 */
 	protected double getOpTime() {
-		return 1500;
+		return GenQueries.OP_PROCESSING_TIME;
 	}
 	
 	/**

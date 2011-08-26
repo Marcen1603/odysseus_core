@@ -23,8 +23,7 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 	 */
 	public int getCurrentServiceLevelIndex(double conformance, SLA sla) {
 		for (int i = 0; i < sla.getServiceLevel().size(); i++) {
-			if (conformance < sla.getServiceLevel().get(i)
-					.getThreshold()) {
+			if (conformance < sla.getServiceLevel().get(i).getThreshold()) {
 				return i;
 			}
 		}
@@ -43,6 +42,11 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 	 *         service level index
 	 */
 	protected double calcDelta(int slIndex, SLA sla) {
+		if (slIndex == sla.getServiceLevel().size()) {
+			// catch worst service level: difference to next higher service 
+			// level
+			slIndex--;
+		} 
 		if (slIndex != 0) {
 			return sla.getServiceLevel().get(slIndex).getPenalty().getCost()
 					- sla.getServiceLevel().get(slIndex - 1).getPenalty()
@@ -59,8 +63,8 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 	/**
 	 * returns the border value to the next higher service level
 	 * 
-	 * @param slIndex) 
-	 *            the index of the service level whichs upper bound should be
+	 * @param slIndex
+	 *            ) the index of the service level whichs upper bound should be
 	 *            calculated
 	 * @param sla
 	 *            the sla where the service levels are defined in
@@ -71,8 +75,7 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 			// upperbound is 0 if highest service level is held
 			return 0.0;
 		} else {
-			return sla.getServiceLevel().get(slIndex - 1)
-					.getThreshold();
+			return sla.getServiceLevel().get(slIndex - 1).getThreshold();
 			// upperbound remains 0 if highest service level is held
 		}
 	}
@@ -91,9 +94,11 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 		if (slIndex == sla.getServiceLevel().size()) {
 			/*
 			 * if less valuable service level is held the lowerbound is infinite
-			 * (max possible latency)
+			 * (max possible latency) --> limited to 2 times upper bound of this
+			 * service level
 			 */
-			return Double.MAX_VALUE;
+			return sla.getServiceLevel().get(sla.getServiceLevel().size() - 1)
+					.getThreshold() * 2;
 		} else {
 			return sla.getServiceLevel().get(slIndex).getThreshold();
 		}

@@ -33,7 +33,7 @@ public class GenQueries {
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
-	private static final int OP_PROCESSING_TIME = 1500; // realistic 1500
+	public static final int OP_PROCESSING_TIME = 3000; // realistic 1500
 	private static final int NUMBER_OF_USERS = 25;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
 	private static final int NUMBER_OF_SLAS = 5;
@@ -137,6 +137,8 @@ public class GenQueries {
 		String scriptRun = "///OdysseusScript" + NEWLINE + "#PARSER CQL"
 				+ NEWLINE + "#TRANSCFG Standard" + NEWLINE + "#STARTQUERIES";
 		writeScriptFile("run.qry", scriptRun);
+		System.out.println(scriptSLA);
+		System.out.println(createScriptOps());
 	}
 
 	private static String createScriptSLA() {
