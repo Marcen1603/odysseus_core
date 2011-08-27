@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.CostFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.PriorityFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.StarvationFreedomFactory;
@@ -33,7 +32,7 @@ public class GenQueries {
 	private static final String QUERY_SHARING_COST_MODEL = "none";
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
-	public static final int OP_PROCESSING_TIME = 3000; // realistic 1500
+	public static final int OP_PROCESSING_TIME = 1500; // realistic 1500
 	private static final int NUMBER_OF_USERS = 25;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
 	private static final int NUMBER_OF_SLAS = 5;
