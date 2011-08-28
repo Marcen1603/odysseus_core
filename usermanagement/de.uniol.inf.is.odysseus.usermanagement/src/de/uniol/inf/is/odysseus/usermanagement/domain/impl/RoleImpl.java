@@ -38,15 +38,19 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.Role;
 public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements Role {
 
     private static final long serialVersionUID = -3017359149581752836L;
+    /** Find all roles */
     public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.Role.findAll";
+    /** Find a specific role by it's name */
     public static final String NQ_FIND_BY_NAME = "de.uniol.inf.is.odysseus.usermanagement.domain.Role.findByName";
+    /** The name of the role */
     private String name;
+    /** The privileges of the role */
     @OneToMany
     private List<PrivilegeImpl> privileges;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.Role#getName()
      */
     @Override
@@ -63,7 +67,7 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements Role {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.Role#getPrivileges()
      */
     @Override
@@ -71,10 +75,16 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements Role {
         return this.privileges;
     }
 
+    /**
+     * @param privilege
+     */
     public void addPrivilege(final PrivilegeImpl privilege) {
         this.privileges.add(privilege);
     }
 
+    /**
+     * @param privilege
+     */
     public void removePrivilege(final PrivilegeImpl privilege) {
         this.privileges.remove(privilege);
     }

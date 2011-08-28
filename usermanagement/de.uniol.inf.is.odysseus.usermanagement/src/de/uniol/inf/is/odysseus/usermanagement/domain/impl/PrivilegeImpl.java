@@ -38,7 +38,9 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.Privilege;
 @NamedQueries(value = {@NamedQuery(name = PrivilegeImpl.NQ_FIND_ALL, query = "select o from Privilege as o"),
                        @NamedQuery(name = PrivilegeImpl.NQ_FIND_BY_OBJECTURI, query = "select o from Privilege as o where o.objectURI = :objectURI"),})
 public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements Privilege {
+    /** Find all privileges */
     public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findAll";
+    /** Find all privileges for one object */
     public static final String NQ_FIND_BY_OBJECTURI = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findByObjectURI";
 
     private static final long serialVersionUID = 4054608803558374338L;
@@ -50,7 +52,7 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getPermissions()
      */
@@ -66,17 +68,23 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements 
         this.permissions = permissions;
     }
 
+    /**
+     * @param permission
+     */
     public void addPermission(final Permission permission) {
         this.permissions.add(permission);
     }
 
+    /**
+     * @param permission
+     */
     public void removePermission(final Permission permission) {
         this.permissions.remove(permission);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getObjectURI()
      */
@@ -94,7 +102,7 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getOwner()
      */
     @Override

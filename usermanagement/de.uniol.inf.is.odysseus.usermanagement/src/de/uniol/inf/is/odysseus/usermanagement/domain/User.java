@@ -22,8 +22,10 @@ import java.util.List;
  *         TODO Move to base bundle
  */
 public interface User extends AbstractEntity, Principal, Comparable<User> {
-    /**
-     * @return The name of this user.
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.security.Principal#getName()
      */
     @Override
     String getName();
@@ -45,7 +47,7 @@ public interface User extends AbstractEntity, Principal, Comparable<User> {
 
     /**
      * Validates if the given password is correct for this user.
-     * 
+     *
      * @param password
      * @return
      */

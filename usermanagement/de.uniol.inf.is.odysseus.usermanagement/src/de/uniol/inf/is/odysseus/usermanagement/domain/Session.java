@@ -1,5 +1,4 @@
-/**
- * Copyright 2010 Melsa Project
+/** Copyright [2011] [The Odysseus Team]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +15,7 @@
 package de.uniol.inf.is.odysseus.usermanagement.domain;
 
 /**
- *
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public interface Session {
     String getId();

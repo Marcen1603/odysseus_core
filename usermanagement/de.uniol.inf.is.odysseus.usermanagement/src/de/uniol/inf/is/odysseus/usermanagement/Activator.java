@@ -14,23 +14,8 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
-import de.uniol.inf.is.odysseus.usermanagement.domain.Permission;
-import de.uniol.inf.is.odysseus.usermanagement.domain.impl.PrivilegeImpl;
-import de.uniol.inf.is.odysseus.usermanagement.domain.impl.UserImpl;
-import de.uniol.inf.is.odysseus.usermanagement.domain.impl.UsermanagementPermission;
-import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.PrivilegeDAO;
-import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.UserDAO;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-import de.uniol.inf.is.odysseus.usermanagement.domain.impl.UserImpl;
-import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.UserDAO;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

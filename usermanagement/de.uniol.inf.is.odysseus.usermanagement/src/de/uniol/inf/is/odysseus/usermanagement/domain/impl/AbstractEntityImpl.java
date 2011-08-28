@@ -41,7 +41,7 @@ public class AbstractEntityImpl<T> implements Serializable, AbstractEntity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity#getId()
      */
@@ -50,13 +50,16 @@ public class AbstractEntityImpl<T> implements Serializable, AbstractEntity {
         return this.id;
     }
 
+    /**
+     * @param id
+     */
     public void setId(final String id) {
         this.id = id;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity#getVersion
      * ()
@@ -66,10 +69,18 @@ public class AbstractEntityImpl<T> implements Serializable, AbstractEntity {
         return this.version;
     }
 
+    /**
+     * @param version
+     */
     public void setVersion(final Long version) {
         this.version = version;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -77,6 +88,11 @@ public class AbstractEntityImpl<T> implements Serializable, AbstractEntity {
         return hash;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(final Object object) {
         if (object == null) {

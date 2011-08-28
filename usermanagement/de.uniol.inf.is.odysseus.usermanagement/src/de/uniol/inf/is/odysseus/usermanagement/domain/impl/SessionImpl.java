@@ -1,5 +1,4 @@
-/**
- * Copyright 2010 Melsa Project
+/** Copyright [2011] [The Odysseus Team]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +20,7 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.Session;
 import de.uniol.inf.is.odysseus.usermanagement.domain.User;
 
 /**
- *
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class SessionImpl implements Session {
     private final static long SESSION_TIMEOUT = 10 * 60000;
@@ -69,7 +68,7 @@ public class SessionImpl implements Session {
 
     public void updateSession() {
         if (isValid()) {
-            this.end = System.currentTimeMillis()+SESSION_TIMEOUT;
+            this.end = System.currentTimeMillis() + SESSION_TIMEOUT;
         }
     }
 }

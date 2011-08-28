@@ -55,7 +55,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -65,7 +65,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getName()
      */
     @Override
@@ -80,6 +80,9 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
         this.name = name;
     }
 
+    /**
+     * @return
+     */
     public String getAlgorithm() {
         if (this.algorithm == null || "".equals(this.algorithm)) {
             return "SHA-256";
@@ -109,7 +112,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#isActive()
      */
     @Override
@@ -126,7 +129,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getRoles()
      */
     @Override
@@ -141,17 +144,23 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
         this.roles = roles;
     }
 
+    /**
+     * @param role
+     */
     public void addRole(final RoleImpl role) {
         this.roles.add(role);
     }
 
+    /**
+     * @param role
+     */
     public void removeRole(final RoleImpl role) {
         this.roles.remove(role);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getPrivileges()
      */
     @Override
@@ -166,17 +175,23 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
         this.privileges = privileges;
     }
 
+    /**
+     * @param privilege
+     */
     public void addPrivilege(final PrivilegeImpl privilege) {
         this.privileges.add(privilege);
     }
 
+    /**
+     * @param privilege
+     */
     public void removePrivilege(final PrivilegeImpl privilege) {
         this.privileges.remove(privilege);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.usermanagement.domain.User#validatePassword(
      * byte[])
@@ -194,7 +209,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -207,7 +222,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

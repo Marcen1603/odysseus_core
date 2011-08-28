@@ -27,52 +27,174 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.User;
  *         TODO Move to base bundle
  */
 public interface UsermanagementService {
-
+    /**
+     * @param name
+     * @param caller
+     * @return
+     */
     Role createRole(String name, Session caller);
 
+    /**
+     * @param role
+     * @param caller
+     */
     void deleteRole(Role role, Session caller);
 
+    /**
+     * @param name
+     * @param caller
+     * @return
+     */
     Role findRole(String name, Session caller);
 
+    /**
+     * @param roleId
+     * @param caller
+     * @return
+     */
     Role getRole(String roleId, Session caller);
 
+    /**
+     * @param caller
+     * @return
+     */
     List<? extends Role> getRoles(Session caller);
 
+    /**
+     * @param name
+     * @param caller
+     * @return
+     */
     User createUser(String name, Session caller);
 
+    /**
+     * @param user
+     * @param password
+     * @param caller
+     */
     void changePassword(User user, byte[] password, Session caller);
 
+    /**
+     * @param user
+     * @param caller
+     */
     void activateUser(User user, Session caller);
 
+    /**
+     * @param user
+     * @param caller
+     */
     void deactivateUser(User user, Session caller);
 
+    /**
+     * @param user
+     * @param caller
+     */
     void deleteUser(User user, Session caller);
 
+    /**
+     * @param name
+     * @param caller
+     * @return
+     */
     User findUser(String name, Session caller);
 
+    /**
+     * @param userId
+     * @param caller
+     * @return
+     */
     User getUser(String userId, Session caller);
 
+    /**
+     * @param caller
+     * @return
+     */
     List<? extends User> getUsers(Session caller);
 
+    /**
+     * @param user
+     * @param role
+     * @param caller
+     */
     void grantRole(User user, Role role, Session caller);
 
+    /**
+     * @param user
+     * @param role
+     * @param caller
+     */
     void revokeRole(User user, Role role, Session caller);
 
+    /**
+     * @param user
+     * @param permission
+     * @param objectURI
+     * @param caller
+     */
     void grantPermission(User user, Permission permission, String objectURI, Session caller);
 
+    /**
+     * @param user
+     * @param permissions
+     * @param objectURI
+     * @param caller
+     */
     void grantPermissions(User user, Set<Permission> permissions, String objectURI, Session caller);
 
+    /**
+     * @param role
+     * @param permission
+     * @param objectURI
+     * @param caller
+     */
     void grantPermission(Role role, Permission permission, String objectURI, Session caller);
 
+    /**
+     * @param role
+     * @param permissions
+     * @param objectURI
+     * @param caller
+     */
     void grantPermissions(Role role, Set<Permission> permissions, String objectURI, Session caller);
 
+    /**
+     * @param user
+     * @param permission
+     * @param objectURI
+     * @param caller
+     */
     void revokePermission(User user, Permission permission, String objectURI, Session caller);
 
+    /**
+     * @param user
+     * @param permissions
+     * @param objectURI
+     * @param caller
+     */
     void revokePermissions(User user, Set<Permission> permissions, String objectURI, Session caller);
 
+    /**
+     * @param role
+     * @param permission
+     * @param objectURI
+     * @param caller
+     */
     void revokePermission(Role role, Permission permission, String objectURI, Session caller);
 
+    /**
+     * @param role
+     * @param permissions
+     * @param objectURI
+     * @param caller
+     */
     void revokePermissions(Role role, Set<Permission> permissions, String objectURI, Session caller);
 
+    /**
+     * @param caller
+     * @param permission
+     * @param objectURI
+     * @return
+     */
     boolean hasPermission(Session caller, Permission permission, String objectURI);
 }

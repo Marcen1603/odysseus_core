@@ -21,10 +21,22 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.Session;
  *         TODO Move to base bundle
  */
 public interface SessionmanagementService {
-
+    /**
+     * @param username
+     * @param password
+     * @return
+     */
     Session login(String username, byte[] password);
 
+    /**
+     * @param caller
+     */
     void logout(Session caller);
 
+    /**
+     * @param session
+     * @param caller
+     * @return
+     */
     boolean isValid(Session session, Session caller);
 }
