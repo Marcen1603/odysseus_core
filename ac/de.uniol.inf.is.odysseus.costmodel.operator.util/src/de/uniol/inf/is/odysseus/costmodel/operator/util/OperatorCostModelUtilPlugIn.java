@@ -7,12 +7,12 @@ public class OperatorCostModelUtilPlugIn implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) {
-		try {
+//		try {
 		DataStreamRateSaver.getInstance().load();
 		CPURateSaver.getInstance().load();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
 	}
 
 	@Override
