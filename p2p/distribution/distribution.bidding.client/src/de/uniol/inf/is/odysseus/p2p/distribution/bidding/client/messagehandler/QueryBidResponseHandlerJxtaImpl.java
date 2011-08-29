@@ -52,7 +52,6 @@ public class QueryBidResponseHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 		String subPlanId = meas(namespace, "subplanId", msg);
 
 		if (result.equals("granted")) {
-			System.err.println("Can start query!");
 			log.logAction(subPlanId, "Accepted for processing query " + subPlanId);
 
 			P2PQuery q = queryProvider.getQuery(queryId);
@@ -82,8 +81,6 @@ public class QueryBidResponseHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 			
 			Subplan plan = queryProvider.getQuery(queryId).getSubPlans().get(subPlanId);
 			try {
-				System.err.println("Denied to execute query : " + plan.getQuery().getID());
-				System.err.println("Removing query " + plan.getQuery().getID());
 				BiddingClient.getExecutor().removeQuery(plan.getQuery().getID(), GlobalState.getActiveUser(""));
 			} catch (PlanManagementException e) {
 				e.printStackTrace();

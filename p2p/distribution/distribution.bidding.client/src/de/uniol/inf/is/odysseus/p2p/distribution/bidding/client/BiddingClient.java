@@ -90,13 +90,11 @@ public class BiddingClient extends AbstractDistributionClient {
 	
 	public void bindExecutor( IExecutor ex ) {
 		executor = ex;
-		System.err.println("Executor bound");
 	}
 	
 	public void unbindExecutor( IExecutor ex ) {
 		if( executor == ex ) {
 			executor = null;
-			System.err.println("Executor unbound");
 		}
 	}
 	
@@ -106,13 +104,11 @@ public class BiddingClient extends AbstractDistributionClient {
 	
 	public void bindAdmissionControl( IAdmissionControl ac ) {
 		admissionControl = ac;
-		System.err.println("AC bound");
 	}
 	
 	public void unbindAdmissionControl( IAdmissionControl ac ) {
 		if( admissionControl == ac ) {
 			admissionControl = null;
-			System.err.println("AC unbound");
 		}
 	}
 	
@@ -122,13 +118,11 @@ public class BiddingClient extends AbstractDistributionClient {
 	
 	public void bindBidGenerator( IP2PBidGenerator gen ) {
 		bidGenerator = gen;
-		System.err.println("BidGenerator bound");
 	}
 	
 	public void unbindBidGenerator( IP2PBidGenerator gen ) {
 		if( bidGenerator == gen ) {
 			bidGenerator = null;
-			System.err.println("BidGenerator unbound");
 		}
 	}
 	
