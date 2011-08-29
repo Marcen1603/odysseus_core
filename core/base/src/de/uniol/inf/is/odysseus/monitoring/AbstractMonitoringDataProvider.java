@@ -128,6 +128,12 @@ public abstract class AbstractMonitoringDataProvider implements
 	public boolean providesMonitoringData(String type) {
 		return this.metaDataItem.containsKey(type);
 	}
+	
+	@Override
+	public boolean providesMonitoringData(String monitoringType,
+			long monitoringPeriod) {
+		return this.metaDataItem.containsKey(getKeyString(monitoringType,monitoringPeriod));
+	}
 
 	@Override
 	public void addMonitoringData(String type, IMonitoringData<?> item) {

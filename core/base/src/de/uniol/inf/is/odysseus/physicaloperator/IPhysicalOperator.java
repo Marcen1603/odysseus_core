@@ -53,4 +53,5 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public IPhysicalOperator clone();
 	
 	public boolean isOpen();
+
 }
