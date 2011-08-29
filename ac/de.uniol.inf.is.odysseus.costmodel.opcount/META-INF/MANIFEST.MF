@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpCount CostModel
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.opcount
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.opcount.OpCountCostModelPlugIn
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.ac,
+ de.uniol.inf.is.odysseus.costmodel,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement.query,
+ org.osgi.framework;version="1.3.0"
+Service-Component: OSGI-INF/ACCostModel.xml
