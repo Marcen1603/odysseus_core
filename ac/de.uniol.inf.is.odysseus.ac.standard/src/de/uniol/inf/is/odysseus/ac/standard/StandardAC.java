@@ -241,7 +241,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			if (!runningQueryCosts.containsKey(query)) {
 				runningQueryCosts.put(query, queryCost);
 			}
-			updateEstimations();
+//			updateEstimations();
 
 		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
 			getLogger().debug("Query " + query + " stopped");
@@ -250,7 +250,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 				runningQueryCosts.remove(query);
 			}
 
-			updateEstimations();
+//			updateEstimations();
 		}
 	}
 
