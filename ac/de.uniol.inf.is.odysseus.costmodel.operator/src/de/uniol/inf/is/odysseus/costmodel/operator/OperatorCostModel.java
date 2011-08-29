@@ -143,22 +143,22 @@ public class OperatorCostModel implements ICostModel {
 		// aggregate costs
 		AggregatedCost aggCost = operatorAggregator.aggregate(estimatedOperators);
 
-		if( !onUpdate ) {
-			System.out.println();
-			for (IPhysicalOperator op : operators) {
-	
-				OperatorEstimation estimation = estimatedOperators.get(op);
-				double s = estimation.getSelectivity();
-				double r = estimation.getDataStream().getDataRate();
-				double g = estimation.getDataStream().getIntervalLength();
-				double cpu = estimation.getDetailCost().getProcessorCost();
-				double mem = estimation.getDetailCost().getMemoryCost();
-	
-				System.out.println(String.format("%-20s : s = %-8.6f, r = %-10.6f, g = %-10.6f, cpu = %-10.6f, mem = %-10.6f ", op.getClass().getSimpleName(), s, r, g, cpu, mem));
-			}
-			
-			System.out.println("Aggregated: " + aggCost);
-		}
+//		if( !onUpdate ) {
+//			System.out.println();
+//			for (IPhysicalOperator op : operators) {
+//	
+//				OperatorEstimation estimation = estimatedOperators.get(op);
+//				double s = estimation.getSelectivity();
+//				double r = estimation.getDataStream().getDataRate();
+//				double g = estimation.getDataStream().getIntervalLength();
+//				double cpu = estimation.getDetailCost().getProcessorCost();
+//				double mem = estimation.getDetailCost().getMemoryCost();
+//	
+//				System.out.println(String.format("%-20s : s = %-8.6f, r = %-10.6f, g = %-10.6f, cpu = %-10.6f, mem = %-10.6f ", op.getClass().getSimpleName(), s, r, g, cpu, mem));
+//			}
+//			
+//			System.out.println("Aggregated: " + aggCost);
+//		}
 
 		return new OperatorCost(estimatedOperators, aggCost.getMemCost(), aggCost.getCpuCost());
 	}
