@@ -14,11 +14,12 @@
   */
 package de.uniol.inf.is.odysseus.mep;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public interface IExpression<T> {
+public interface IExpression<T> extends Serializable{
 	public T getValue();
 	public Object acceptVisitor(IExpressionVisitor visitor, Object data);
 	public Set<Variable> getVariables();
