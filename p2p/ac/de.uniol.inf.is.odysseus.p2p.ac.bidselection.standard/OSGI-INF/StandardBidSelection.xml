@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard">
+   <implementation class="de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard.StandardP2PBidSelector"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.p2p.ac.bidselection.IP2PBidSelector"/>
+   </service>
+</scr:component>
