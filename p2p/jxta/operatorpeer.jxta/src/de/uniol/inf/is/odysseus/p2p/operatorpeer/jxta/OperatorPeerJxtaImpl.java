@@ -76,7 +76,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		getLogger().info("OSGi Services loaded");
 
 		String configFile = System.getenv("PeerConfig");
-		if (configFile == null){
+		if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0){
 			configFile = OdysseusDefaults.getHomeDir()+"/"+System.getenv("PeerConfigFile");
 		}
 		// If no file given try first Odysseus-Home
