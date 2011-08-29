@@ -9,6 +9,7 @@ Export-Package: de.uniol.inf.is.odysseus.costmodel.operator.util
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
+ de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  org.osgi.framework;version="1.6.0",
  org.slf4j;version="1.5.6"
