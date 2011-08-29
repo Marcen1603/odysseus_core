@@ -25,7 +25,7 @@ public class OperatorCostModelCfg {
 	}
 
 	private static final double STD_MEM_COST = 4;
-	private static final double STD_CPU_COST = 0.0001;
+	private static final double STD_CPU_COST = 0.00005;
 	private static final double MEM_HEADROOM = 0.4;
 	private static final double CPU_HEADROOM = 0.4;
 	
