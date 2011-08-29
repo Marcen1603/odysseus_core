@@ -125,7 +125,7 @@ public class AvgCPUTime extends AbstractMonitoringData<Double> implements IPOEve
 
 	@Override
 	public Double getValue() {
-		if ( !sorted.isEmpty() )
+		if ( !sorted.isEmpty() && runTimes.size() > MAX_DATA / 2 )
 			return new Double(sorted.get(sorted.size() / 2));
 		return null;
 	}
