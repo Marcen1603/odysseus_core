@@ -91,7 +91,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		String configFile = System.getenv("PeerConfig");
 		JxtaConfiguration configuration = null;
 		
-		if (configFile == null){
+		if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0){
 			configFile = OdysseusDefaults.getHomeDir()+"/"+System.getenv("PeerConfigFile");
 		}
 		
