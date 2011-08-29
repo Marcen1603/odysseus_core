@@ -6,13 +6,17 @@ import org.osgi.framework.BundleContext;
 public class OperatorCostModelUtilPlugIn implements BundleActivator {
 
 	@Override
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) {
+		try {
 		DataStreamRateSaver.getInstance().load();
 		CPURateSaver.getInstance().load();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
-	public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context)  {
 		DataStreamRateSaver.getInstance().save();
 		CPURateSaver.getInstance().save();
 	}
