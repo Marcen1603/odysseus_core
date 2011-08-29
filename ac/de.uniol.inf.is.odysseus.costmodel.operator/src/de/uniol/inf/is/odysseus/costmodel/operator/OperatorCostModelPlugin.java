@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -59,7 +58,7 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 		
 		// own metadata
 		for ( IPhysicalOperator operator : query.getPhysicalChilds() ) {
-			if( operator instanceof ISource && operator instanceof ISink) {
+			if( operator instanceof ISink) {
 				if( !operator.getProvidedMonitoringData().contains(AvgCPUTime.METADATA_TYPE_NAME))
 					operator.addMonitoringData(AvgCPUTime.METADATA_TYPE_NAME, new AvgCPUTime(operator) );
 			}
