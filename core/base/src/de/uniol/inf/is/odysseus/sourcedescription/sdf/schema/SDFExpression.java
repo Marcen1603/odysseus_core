@@ -42,8 +42,7 @@ public class SDFExpression implements Serializable, IClone {
 	transient ArrayList<Variable> variableArrayList = new ArrayList<Variable>();
 
 	private int varCounter;
-	// Für P2P als transient gekennzeichnet
-	private transient IExpression<?> expression;
+	private IExpression<?> expression;
 
 	private String expressionString;
 
