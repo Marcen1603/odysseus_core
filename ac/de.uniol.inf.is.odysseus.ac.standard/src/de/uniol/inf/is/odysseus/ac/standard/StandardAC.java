@@ -225,7 +225,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			// query added!
-			System.err.println("Query " + query + " added");
+			getLogger().debug("Query " + query + " added");
 
 			// do cost-estimation now
 			ICost queryCost = estimateCost(operators, false);
