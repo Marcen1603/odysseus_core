@@ -26,6 +26,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.ac.IAdmissionListener;
+import de.uniol.inf.is.odysseus.ac.IAdmissionReaction;
+import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -82,7 +86,7 @@ import de.uniol.inf.is.odysseus.util.SetOwnerVisitor;
  * 
  * @author Wolf Bauer, Jonas Jacobi, Tobias Witt
  */
-public class StandardExecutor extends AbstractExecutor {
+public class StandardExecutor extends AbstractExecutor implements IAdmissionListener {
 
 	// ----------------------------------------------------------------------------------------
 	// Logging
@@ -99,6 +103,39 @@ public class StandardExecutor extends AbstractExecutor {
 
 	private ReloadLog reloadLog;
 
+	
+	private IAdmissionControl admissionControl = null;
+
+	public void bindAdmissionControl(IAdmissionControl control) {
+		if (admissionControl != null)
+			admissionControl.removeListener(this);
+
+		admissionControl = control;
+		if (admissionControl != null)
+			admissionControl.addListener(this);
+	}
+
+	public void unbindAdmissionControl(IAdmissionControl control) {
+		if (admissionControl == control) {
+			if (admissionControl != null)
+				admissionControl.removeListener(this);
+
+			admissionControl = null;
+		}
+	}
+
+	private IAdmissionReaction admissionReaction = null;
+
+	public void bindAdmissionReaction(IAdmissionReaction reaction) {
+		admissionReaction = reaction;
+	}
+
+	public void unbindAdmissionReaction(IAdmissionReaction reaction) {
+		if (admissionReaction == reaction) {
+			admissionReaction = null;
+		}
+	}
+	
 	// ----------------------------------------------------------------------------------------
 	// OSGI-Framework
 	// ----------------------------------------------------------------------------------------
@@ -794,5 +831,19 @@ public class StandardExecutor extends AbstractExecutor {
 	@Override
 	public Map<String, IQueryBuildConfiguration> getQueryBuildConfigurations() {
 		return queryBuildConfigs;
+	}
+
+	@Override
+	public void overloadOccured(IAdmissionControl sender) {
+		if (admissionReaction != null) {
+			List<IPossibleExecution> possibilities = sender.getPossibleExecutions();
+			IPossibleExecution execution = admissionReaction.react(possibilities);
+
+			// Anfragen stoppen
+			for (IQuery query : execution.getStoppingQueries()) {
+//				System.err.println("Stopping query : " + query);
+				stopQuery(query.getID(), query.getUser());
+			}
+		}
 	}
 }

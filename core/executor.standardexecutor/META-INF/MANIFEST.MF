@@ -4,7 +4,8 @@ Bundle-Name: Standard Executor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+Import-Package: de.uniol.inf.is.odysseus.ac,
+ de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.physicaloperator,
