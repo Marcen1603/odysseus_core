@@ -17,9 +17,9 @@ public class StandardP2PBidGenerator implements IP2PBidGenerator {
 			Runtime runtime = Runtime.getRuntime();
 			
 			// calculate potencial system load
-			OperatorCost newSystemLoad = (OperatorCost)actSystemLoad.merge(queryCost);
-			double cpu = newSystemLoad.getCpuCost();
-			double memFactor = newSystemLoad.getMemCost() / (double)runtime.totalMemory();
+			OperatorCost actSystemLoad2 = (OperatorCost)actSystemLoad;
+			double cpu = actSystemLoad2.getCpuCost();
+			double memFactor = actSystemLoad2.getMemCost() / (double)runtime.totalMemory();
 			
 			// higher cost --> higher bid
 			return cpu + memFactor;
