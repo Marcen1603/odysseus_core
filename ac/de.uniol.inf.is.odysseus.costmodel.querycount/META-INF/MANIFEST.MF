@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Querycount Costmodel
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.querycount
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.querycount.QueryCountCostModelPlugIn
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.costmodel,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement.plan,
+ de.uniol.inf.is.odysseus.planmanagement.query,
+ org.osgi.framework;version="1.3.0"
+Service-Component: OSGI-INF/ACCostModel.xml
