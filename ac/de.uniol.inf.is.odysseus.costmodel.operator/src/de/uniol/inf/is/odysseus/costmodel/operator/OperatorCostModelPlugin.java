@@ -39,7 +39,6 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 	public void bindOperatorEstimator(IOperatorEstimator<?> estimator) {
 		OperatorEstimatorFactory.getInstance().register(estimator);
 
-		System.err.println("OperatorEstimator found: " + estimator.getOperatorClass().getSimpleName());
 		getLogger().debug("Bound OperatorEstimator " + estimator.getClass().getSimpleName() + " for Operator " + estimator.getOperatorClass().getSimpleName());
 	}
 
