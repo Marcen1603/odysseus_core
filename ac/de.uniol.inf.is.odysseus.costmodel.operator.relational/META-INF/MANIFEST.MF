@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Relational Operator Cost Estimators
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.operator.relational
+Bundle-Version: 1.0.0.0
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.costmodel.operator,
+ de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.intervalapproach.window,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.mep.functions,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.access,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.predicate,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.relational.base.predicate,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.6"
+Service-Component: OSGI-INF/JoinACEstimator.xml, OSGI-INF/SelectACEstimator.xml, OSGI-INF/ProjectACEstimator.xml, OSGI-INF/UnionPOEstimator.xml, OSGI-INF/ByteBufferReceiverPOEstimator.xml, OSGI-INF/SlidingElementWindowTIPOEstimator.xml, OSGI-INF/DifferencePOEstimator.xml, OSGI-INF/AggregateEstimator.xml, OSGI-INF/SlidingTimeWindowTIPOEstimator.xml, OSGI-INF/SlidingAdvanceTimeWindowTIPOEstimator.xml, OSGI-INF/MetadataUpdateEstimator.xml, OSGI-INF/MetadataCreationEstimator.xml
+Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.operator.relational.Activator
+Bundle-ActivationPolicy: lazy
