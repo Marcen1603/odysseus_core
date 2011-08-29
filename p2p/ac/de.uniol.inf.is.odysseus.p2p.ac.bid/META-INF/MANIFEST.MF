@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bid
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ac.bid
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.ac,
+ de.uniol.inf.is.odysseus.costmodel
+Export-Package: de.uniol.inf.is.odysseus.p2p.ac.bid
