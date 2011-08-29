@@ -159,7 +159,9 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		for (IQuery query : executor.getQueries())
 			for (IPhysicalOperator op : query.getPhysicalChilds())
-				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink"))
+				if (!operators.contains(op) && 
+					!op.getClass().getSimpleName().contains("DataSourceObserverSink") &&
+					op.getOwner().contains(query))
 					operators.add(op);
 
 		return operators;
@@ -169,7 +171,9 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 		// filter
 		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
-			if (!operators.contains(operator) && !operator.getClass().getSimpleName().contains("DataSourceObserverSink"))
+			if (!operators.contains(operator) && 
+				!operator.getClass().getSimpleName().contains("DataSourceObserverSink") && 
+				operator.getOwner().contains(query))
 				operators.add(operator);
 		}
 		return operators;
@@ -221,7 +225,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			// query added!
-			getLogger().debug("Query " + query + " added");
+			System.err.println("Query " + query + " added");
 
 			// do cost-estimation now
 			ICost queryCost = estimateCost(operators, false);
