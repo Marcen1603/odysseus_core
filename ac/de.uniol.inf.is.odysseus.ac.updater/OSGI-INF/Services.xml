@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.ac.updater">
+   <implementation class="de.uniol.inf.is.odysseus.ac.updater.ACUpdaterPlugIn"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
+   <reference bind="bindAdmissionControl" cardinality="1..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionControl" name="IAdmissionControl" policy="static" unbind="unbindAdmissionControl"/>
+   <reference bind="bindAdmissionReaction" cardinality="1..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionReaction" name="IAdmissionReaction" policy="static" unbind="unbindAdmissionReaction"/>
+</scr:component>

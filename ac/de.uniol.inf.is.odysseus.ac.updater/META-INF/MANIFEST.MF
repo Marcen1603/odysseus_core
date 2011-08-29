@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Admission Control Updater
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.ac.updater
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.ac.updater.ACUpdaterPlugIn
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.ac,
+ de.uniol.inf.is.odysseus.costmodel,
+ de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.exception,
+ de.uniol.inf.is.odysseus.planmanagement.query,
+ de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.usermanagement,
+ de.uniol.inf.is.odysseus.usermanagement.client,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.6"
+Service-Component: OSGI-INF/Services.xml
