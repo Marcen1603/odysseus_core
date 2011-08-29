@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
+import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;

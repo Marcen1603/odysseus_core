@@ -7,7 +7,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
  JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
- de.uniol.inf.is.odysseus.costmodel.operator.relational,
+ de.uniol.inf.is.odysseus.costmodel.operator.util,
  de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator
 Service-Component: OSGI-INF/P2PSinkEstimator.xml
