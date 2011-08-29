@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.CostFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.PriorityFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.StarvationFreedomFactory;
@@ -33,7 +34,7 @@ public class GenQueries {
 	private static final String COST_FUNC_NAME = CostFunctionFactory.QUADRATIC_COST_FUNCTION;
 	private static final double OP_SELECTIVITY = 1.0;
 	public static final int OP_PROCESSING_TIME = 1500; // realistic 1500
-	private static final int NUMBER_OF_USERS = 25;
+	private static final int NUMBER_OF_USERS = 50;
 	private static final int NUMBER_OF_QUERIES_PER_USER = 4;
 	private static final int NUMBER_OF_SLAS = 5;
 	private static final String PENALTY_NAME = PenaltyFactory.ABSOLUTE_PENALTY;
@@ -55,7 +56,35 @@ public class GenQueries {
 	private static final int DATA_RATE_LOW = 10;
 	private static final int DATA_RATE_VERY_LOW = 1;
 
-	private static final String HOME_DIR = "/home/tommy/.odysseus/";
+	private static String odysseusDefaultHome = String.format("%s/%sodysseus/", System.getProperty("user.home"),getDot(System.getProperty("os.name")));
+	private static String homeDir;
+	static{
+		homeDir = System.getenv("ODYSSEUS_HOME");
+		if (homeDir == null || homeDir.length() == 0){
+			homeDir = odysseusDefaultHome;
+		}
+	}
+	
+	/**
+	 * Returns a dot on specific operating systems: unix,linux, and mac.
+	 * 
+	 */
+	private static String getDot(String os){
+		os = os.toLowerCase();
+		if((os.indexOf( "win" ) >= 0)){
+			//Windows
+			return "";
+		}else if((os.indexOf( "mac" ) >= 0)){
+			//Macintosh 
+			return ".";
+		}else if((os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0)){
+			//Unix
+			return ".";
+		}else{
+			//All other
+			return "";
+		}
+	}
 
 	static String[] testinput = new String[] {
 			" := testproducer({invertedpriorityratio = 10, parts = [[1000000, 5]]})",
@@ -569,7 +598,7 @@ public class GenQueries {
 	}
 
 	private static void writeScriptFile(String fileName, String code) {
-		File file = new File(HOME_DIR, fileName);
+		File file = new File(homeDir, fileName);
 		try {
 			FileWriter writer = new FileWriter(file);
 			writer.write(code);
