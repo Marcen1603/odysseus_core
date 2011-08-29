@@ -136,6 +136,12 @@ public class OdysseusDefaults {
 		
 		// Odysseus Storing 
 		props.setProperty("storing_database", odysseusHome + "database.conf");
+		
+		// AC
+		props.setProperty("ac_memHeadroom", "0.4");
+		props.setProperty("ac_cpuHeadroom", "0.4");
+		props.setProperty("ac_standardMemCost", "4");
+		props.setProperty("ac_standardCpuCost", "0.00002");
 	};
 
 	private static void savePropertyFile(String odysseusHome) {

@@ -13,7 +13,9 @@ Import-Package:
  org.slf4j,
  org.slf4j.bridge;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.ac,
  de.uniol.inf.is.odysseus.collection,
+ de.uniol.inf.is.odysseus.costmodel,
  de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.event,
  de.uniol.inf.is.odysseus.event.error,

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -172,7 +173,10 @@ public class SDFExpression implements Serializable, IClone {
 			Map<String, String> inverseAliasMappings) {
 		String result = "";
 		{
-			Matcher m2 = AggregateFunctionBuilderRegistry.getAggregatePattern().matcher(value);
+			Pattern pattern = AggregateFunctionBuilderRegistry.getAggregatePattern();
+			if( pattern == null ) 
+				return value;
+			Matcher m2 = pattern.matcher(value);
 			Map<String, String> aliasMappings = new HashMap<String, String>();
 			int start = 0;
 			while (m2.find()) {
