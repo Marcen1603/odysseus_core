@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Standard Admission Control
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.ac.standard
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.ac.standard.StandardACPlugIn
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.ac,
+ de.uniol.inf.is.odysseus.costmodel,
+ de.uniol.inf.is.odysseus.event,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification,
+ de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event,
+ de.uniol.inf.is.odysseus.planmanagement.plan,
+ de.uniol.inf.is.odysseus.planmanagement.query,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Service-Component: OSGI-INF/AdmissionControl.xml
