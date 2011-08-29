@@ -13,10 +13,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 public class AvgCPUTime extends AbstractMonitoringData<Double> implements IPOEventListener {
 
 	public static final String METADATA_TYPE_NAME = "avgCPUTime";
-	private static final int MAX_DATA = 200;
 	private static double granularity;
-	
-	
+	private static final int MAX_DATA = 50;
 	private long start1 = 0;
 	private long end1 = 0;
 	private long start2 = 0;
@@ -127,7 +125,7 @@ public class AvgCPUTime extends AbstractMonitoringData<Double> implements IPOEve
 
 	@Override
 	public Double getValue() {
-		if ( !sorted.isEmpty() && runCount > MAX_DATA )
+		if ( !sorted.isEmpty() )
 			return new Double(sorted.get(sorted.size() / 2));
 		return null;
 	}
