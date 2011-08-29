@@ -26,3 +26,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Service-Component: OSGI-INF/JoinACEstimator.xml, OSGI-INF/SelectACEstimator.xml, OSGI-INF/ProjectACEstimator.xml, OSGI-INF/UnionPOEstimator.xml, OSGI-INF/ByteBufferReceiverPOEstimator.xml, OSGI-INF/SlidingElementWindowTIPOEstimator.xml, OSGI-INF/DifferencePOEstimator.xml, OSGI-INF/AggregateEstimator.xml, OSGI-INF/SlidingTimeWindowTIPOEstimator.xml, OSGI-INF/SlidingAdvanceTimeWindowTIPOEstimator.xml, OSGI-INF/MetadataUpdateEstimator.xml, OSGI-INF/MetadataCreationEstimator.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.operator.relational.Activator
 Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.costmodel.operator.relational

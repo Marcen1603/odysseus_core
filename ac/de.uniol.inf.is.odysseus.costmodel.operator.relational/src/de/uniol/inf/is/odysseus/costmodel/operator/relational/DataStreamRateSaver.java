@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.costmodel.operator.relational.cfg;
+package de.uniol.inf.is.odysseus.costmodel.operator.relational;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

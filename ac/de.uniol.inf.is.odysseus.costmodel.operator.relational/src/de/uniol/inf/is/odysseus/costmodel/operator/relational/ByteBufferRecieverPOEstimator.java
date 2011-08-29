@@ -10,8 +10,6 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
-import de.uniol.inf.is.odysseus.costmodel.operator.relational.cfg.CPURateSaver;
-import de.uniol.inf.is.odysseus.costmodel.operator.relational.cfg.DataStreamRateSaver;
 import de.uniol.inf.is.odysseus.physicaloperator.access.ByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 

@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.costmodel.operator.relational;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.costmodel.operator.relational.cfg.CPURateSaver;
-import de.uniol.inf.is.odysseus.costmodel.operator.relational.cfg.DataStreamRateSaver;
 
 public class Activator implements BundleActivator {
 

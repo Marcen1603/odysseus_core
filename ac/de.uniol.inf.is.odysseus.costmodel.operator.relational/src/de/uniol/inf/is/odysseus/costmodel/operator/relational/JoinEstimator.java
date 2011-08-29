@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorDetailCost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
-import de.uniol.inf.is.odysseus.costmodel.operator.relational.cfg.CPURateSaver;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
