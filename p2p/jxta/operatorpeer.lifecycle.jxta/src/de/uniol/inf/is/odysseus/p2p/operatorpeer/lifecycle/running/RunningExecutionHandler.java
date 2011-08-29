@@ -65,7 +65,7 @@ public class RunningExecutionHandler extends
 									new AlgebraPlanToStringVisitor()));
 					User user = GlobalState.getActiveUser("");
 					getFunction().startQuery(s.getQuery().getID(), user);
-					System.err.println("Query " + s.getQuery() + " started");
+//					System.err.println("Query " + s.getQuery() + " started");
 					
 				}
 			}
