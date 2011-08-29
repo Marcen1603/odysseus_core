@@ -9,5 +9,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.ac,
  de.uniol.inf.is.odysseus.costmodel,
- org.osgi.framework;version="1.6.0"
+ org.osgi.framework
 Service-Component: OSGI-INF/LeastLossReaction.xml
