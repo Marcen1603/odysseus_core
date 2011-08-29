@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
 
 public class CPURateSaver {
 
@@ -67,7 +66,7 @@ public class CPURateSaver {
 	
 	public double get( String streamName ) {
 		if( !cpuRates.containsKey(streamName))
-			return OperatorCostModelCfg.getInstance().getStandardCpuCost();
+			return 0.00005;
 		
 		return cpuRates.get(streamName);
 	}
