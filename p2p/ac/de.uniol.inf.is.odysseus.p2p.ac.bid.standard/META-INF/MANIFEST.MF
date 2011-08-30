@@ -4,7 +4,6 @@ Bundle-Name: Standard
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ac.bid.standard
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.ac,
  de.uniol.inf.is.odysseus.costmodel,
  de.uniol.inf.is.odysseus.costmodel.operator,

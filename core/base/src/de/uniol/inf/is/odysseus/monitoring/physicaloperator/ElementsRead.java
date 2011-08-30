@@ -46,7 +46,7 @@ public class ElementsRead extends AbstractMonitoringData<Long> implements IPOEve
 	}
 	
 	@Override
-	public void eventOccured(IEvent<?,?> poEvent) {
+	public void eventOccured(IEvent<?,?> poEvent, long eventNanoTime) {
 		this.readCount++;
 	}
 

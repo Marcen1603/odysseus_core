@@ -87,9 +87,9 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 	}
 
 	@Override
-	public void eventOccured(IEvent<?,?> poEvent) {
+	public void eventOccured(IEvent<?,?> poEvent, long eventNanoTime) {
 		log.logEvent(queryId, "Event aufgetreten: "
-				+ poEvent.getEventType().toString());
+				+ poEvent);
 		sendEvent((POEvent)poEvent);
 	}
  

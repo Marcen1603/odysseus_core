@@ -73,13 +73,14 @@ public class EventHandler implements IEventHandler {
 
 	@Override
 	final public void fire(IEvent<?, ?> event) {
+		long curTime = System.nanoTime();
 		synchronized (eventListener) {
 			ArrayList<IEventListener> list = eventListener
 					.get(event.getEventType());
 			if (list != null) {
 				synchronized (list) {
 					for (IEventListener listener : list) {
-						listener.eventOccured(event);
+						listener.eventOccured(event, curTime);
 					}
 				}
 			}
@@ -87,7 +88,7 @@ public class EventHandler implements IEventHandler {
 		}
 		synchronized (genericEventListener) {
 			for (IEventListener listener : genericEventListener) {
-				listener.eventOccured(event);
+				listener.eventOccured(event, curTime);
 			}
 		}
 	}

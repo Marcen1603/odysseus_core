@@ -30,7 +30,13 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class OdysseusDefaults {
 
-	static Logger logger = LoggerFactory.getLogger(OdysseusDefaults.class);
+	static Logger _logger = null;
+	static Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(OdysseusDefaults.class);
+		}
+		return _logger;
+	}
 	static Properties props = new Properties();
 
 	private static String odysseusDefaultHome = String.format("%s/%sodysseus/", System.getProperty("user.home"),getDot(System.getProperty("os.name")));
@@ -46,10 +52,10 @@ public class OdysseusDefaults {
 			}
 			success = f.createNewFile();
 			if (success){
-				logger.debug("Created new File " + f.getAbsolutePath());
+				getLogger().debug("Created new File " + f.getAbsolutePath());
 			}
 		} else {
-			logger.debug("Read from file " + f.getAbsolutePath());
+			getLogger().debug("Read from file " + f.getAbsolutePath());
 		}
 		return f;
 	}
@@ -62,7 +68,7 @@ public class OdysseusDefaults {
 			}
 			loadProperties(homeDir,"odysseus.conf", props);
 			if (props.getProperty("storeUsers") == null) {
-				logger.info("No Odysseus config found.");
+				getLogger().info("No Odysseus config found.");
 				setDefaults(homeDir);
 				savePropertyFile(homeDir);
 			}
@@ -151,7 +157,7 @@ public class OdysseusDefaults {
 			props.store(out,
 					"--- Odysseus Property File edit only if you know what you are doing ---");
 			out.close();
-			logger.info("New Odysseus-Config-File created");
+			getLogger().info("New Odysseus-Config-File created");
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
@@ -201,19 +207,19 @@ public class OdysseusDefaults {
 		os = os.toLowerCase();
 		if((os.indexOf( "win" ) >= 0)){
 			//Windows
-			logger.info("OS: Windows");
+			getLogger().info("OS: Windows");
 			return "";
 		}else if((os.indexOf( "mac" ) >= 0)){
 			//Macintosh 
-			logger.info("OS: MacOS");
+			getLogger().info("OS: MacOS");
 			return ".";
 		}else if((os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0)){
 			//Unix
-			logger.info("OS: Unix/Linux");
+			getLogger().info("OS: Unix/Linux");
 			return ".";
 		}else{
 			//All other
-			logger.info("OS: not Supported");
+			getLogger().info("OS: not Supported");
 			return "";
 		}
 	}

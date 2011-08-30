@@ -69,7 +69,7 @@ public class AvgCPUTime extends AbstractMonitoringData<Double> implements IPOEve
 	}
 
 	@Override
-	public void eventOccured(IEvent<?, ?> poEvent) {
+	public void eventOccured(IEvent<?, ?> poEvent, long eventNanoTime) {
 		if (poEvent.getEventType().equals(POEventType.ProcessInit)) {
 			start1 = System.nanoTime();
 		} else if (poEvent.getEventType().equals(POEventType.PushInit)) {

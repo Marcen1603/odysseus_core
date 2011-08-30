@@ -50,7 +50,7 @@ public class ProcessCallsMonitor extends AbstractPlanMonitor<Long> implements
 	}
 
 	@Override
-	public void eventOccured(IEvent<?, ?> event) {
+	public void eventOccured(IEvent<?, ?> event, long eventNanoTime) {
 		POEvent poEvent = (POEvent) event;
 		IPhysicalOperator source = poEvent.getSource();
 		synchronized (processCallsPerOperator) {

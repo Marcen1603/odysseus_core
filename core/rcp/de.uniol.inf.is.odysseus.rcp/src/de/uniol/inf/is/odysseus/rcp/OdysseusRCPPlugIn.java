@@ -127,7 +127,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 	}
 
 	@Override
-	public void eventOccured(IEvent<?, ?> event) {
+	public void eventOccured(IEvent<?, ?> event, long eventNanoTime) {
 		if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED){
 			((SchedulerManagerEvent)event).getValue().unSubscribeFromAll(this);
 		}else if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET){

@@ -382,7 +382,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	}
 
 	@Override
-	public void eventOccured(IEvent<?, ?> event) {
+	public void eventOccured(IEvent<?, ?> event, long eventNanoTime) {
 		if (event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED) {
 			for (BenchmarkSink<? extends ILatency> sink : this.sinks) {
 				sink.stopRecording();

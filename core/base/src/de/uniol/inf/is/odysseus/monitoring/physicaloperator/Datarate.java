@@ -88,7 +88,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 	}
 
 	@Override
-	public void eventOccured(IEvent<?, ?> event) {
+	public void eventOccured(IEvent<?, ?> event, long eventNanoTime) {
 		++writeCount;
 	}
 

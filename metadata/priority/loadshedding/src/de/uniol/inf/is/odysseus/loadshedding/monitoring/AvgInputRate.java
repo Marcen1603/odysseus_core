@@ -50,7 +50,7 @@ public class AvgInputRate implements
 	}
 
 	@Override
-	public void eventOccured(IEvent<?,?> poEvent) {
+	public void eventOccured(IEvent<?,?> poEvent, long eventNanoTime) {
 		read++;
 		target.updateLoadSheddingState();
 	}

@@ -92,7 +92,7 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 	}
 
 	@Override
-	public void eventOccured(IEvent<?, ?> event) {
+	public void eventOccured(IEvent<?, ?> event, long eventNanoTime) {
 		POEvent poEvent = (POEvent) event;
 
 		if (poEvent.getPOEventType() == POEventType.PushDone) {

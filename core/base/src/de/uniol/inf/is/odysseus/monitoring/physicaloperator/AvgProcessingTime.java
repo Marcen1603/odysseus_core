@@ -51,11 +51,11 @@ public class AvgProcessingTime extends AbstractMonitoringData<Double> implements
 	}
 
 	@Override
-	public void eventOccured(IEvent<?,?> poEvent) {
+	public void eventOccured(IEvent<?,?> poEvent, long eventNanoTime) {
 		if (poEvent.getEventType().equals(POEventType.ProcessInit)) {
-			start = System.nanoTime();
+			start = eventNanoTime;
 		} else {
-			lastRun = System.nanoTime() - start;
+			lastRun = eventNanoTime - start;
 			runCount++;
 			runSum += lastRun;
 		}
