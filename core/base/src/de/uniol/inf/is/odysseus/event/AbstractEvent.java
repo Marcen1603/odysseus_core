@@ -82,6 +82,6 @@ public abstract class AbstractEvent<SenderType, ValueType> implements
 	
 	@Override
 	public String toString() {
-		return this.value+" from "+sender;
+		return this.eventType+" "+ this.value+" from "+sender;
 	}
 }
