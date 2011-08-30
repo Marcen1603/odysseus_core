@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventHandler implements IEventHandler {
 
@@ -86,7 +87,7 @@ public class EventHandler implements IEventHandler {
 }
 
 class EventDispatcher extends Thread {
-	List<IEvent<?, ?>> eventQueue = new LinkedList<IEvent<?, ?>>();
+	List<IEvent<?, ?>> eventQueue = new CopyOnWriteArrayList<IEvent<?, ?>>();
 	final EventHandler handler;
 
 	public EventDispatcher(EventHandler handler) {
@@ -94,19 +95,19 @@ class EventDispatcher extends Thread {
 	}
 	
 	public void addEvent(IEvent<?, ?> event){
-		synchronized (eventQueue) {
+		synchronized (this) {
 			eventQueue.add(event);
-			eventQueue.notifyAll();
+			this.notifyAll();
 		}
 	}
 	
 	@Override
 	public void run() {
 		while (!interrupted()) {
-			synchronized (eventQueue) {
+			synchronized (this) {
 				while (eventQueue.isEmpty()){
 					try {
-						eventQueue.wait(1000);
+						this.wait(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
