@@ -10,6 +10,3 @@ Service-Component: OSGI-INF/SensorService.xml
 Export-Package: de.uniol.inf.is.odysseus.service.sensor,
  de.uniol.inf.is.odysseus.service.sensor.connection,
  de.uniol.inf.is.odysseus.service.sensor.data
-Require-Bundle: javax.jws;bundle-version="2.0.0",
- javax.xml.ws;bundle-version="2.1.0",
- javax.xml.bind;bundle-version="2.0.0"
