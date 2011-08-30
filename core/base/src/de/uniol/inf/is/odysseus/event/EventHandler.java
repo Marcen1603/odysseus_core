@@ -16,20 +16,12 @@ package de.uniol.inf.is.odysseus.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventHandler implements IEventHandler {
 
 	final Map<IEventType, ArrayList<IEventListener>> eventListener = new HashMap<IEventType, ArrayList<IEventListener>>();
 	final ArrayList<IEventListener> genericEventListener = new ArrayList<IEventListener>();
-	final EventDispatcher dispatcher = new EventDispatcher(this);
-	
-	public EventHandler() {
-		dispatcher.start();
-	}
 	
 	/**
 	 * One listener can have multiple subscriptions to the same event sender and
@@ -81,61 +73,24 @@ public class EventHandler implements IEventHandler {
 
 	@Override
 	final public void fire(IEvent<?, ?> event) {
-		dispatcher.addEvent(event);
-	}
+		synchronized (eventListener) {
+			ArrayList<IEventListener> list = eventListener
+					.get(event.getEventType());
+			if (list != null) {
+				synchronized (list) {
+					for (IEventListener listener : list) {
+						listener.eventOccured(event);
+					}
+				}
+			}
 
-}
-
-class EventDispatcher extends Thread {
-	List<IEvent<?, ?>> eventQueue = new CopyOnWriteArrayList<IEvent<?, ?>>();
-	final EventHandler handler;
-
-	public EventDispatcher(EventHandler handler) {
-		this.handler = handler;
-	}
-	
-	public void addEvent(IEvent<?, ?> event){
-		synchronized (this) {
-			eventQueue.add(event);
-			this.notifyAll();
 		}
-	}
-	
-	@Override
-	public void run() {
-		while (!interrupted()) {
-			synchronized (this) {
-				while (eventQueue.isEmpty()){
-					try {
-						this.wait(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				for (IEvent<?, ?> eventToFire : eventQueue) {
-					//System.err.println("Fire Event "+eventToFire);
-
-					synchronized (handler.eventListener) {
-						ArrayList<IEventListener> list = handler.eventListener
-								.get(eventToFire.getEventType());
-						if (list != null) {
-							synchronized (list) {
-								for (IEventListener listener : list) {
-									listener.eventOccured(eventToFire);
-								}
-							}
-						}
-
-					}
-					synchronized (handler.genericEventListener) {
-						for (IEventListener listener : handler.genericEventListener) {
-							listener.eventOccured(eventToFire);
-						}
-					}
-				}
-				eventQueue.clear();
+		synchronized (genericEventListener) {
+			for (IEventListener listener : genericEventListener) {
+				listener.eventOccured(event);
 			}
 		}
 	}
 
 }
+
