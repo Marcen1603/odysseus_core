@@ -1,28 +1,35 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-public class EventHandler implements IEventHandler{
-	
-	final private Map<IEventType, ArrayList<IEventListener>> eventListener = new HashMap<IEventType, ArrayList<IEventListener>>();
-	final private ArrayList<IEventListener> genericEventListener = new ArrayList<IEventListener>();
+public class EventHandler implements IEventHandler {
 
+	final Map<IEventType, ArrayList<IEventListener>> eventListener = new HashMap<IEventType, ArrayList<IEventListener>>();
+	final ArrayList<IEventListener> genericEventListener = new ArrayList<IEventListener>();
+	final EventDispatcher dispatcher = new EventDispatcher(this);
+	
+	public EventHandler() {
+		dispatcher.start();
+	}
+	
 	/**
 	 * One listener can have multiple subscriptions to the same event sender and
 	 * the same event type
@@ -41,22 +48,6 @@ public class EventHandler implements IEventHandler{
 			}
 			curEventListener.add(listener);
 		}
-//		if (listener instanceof IMonitoringData) {
-//			IMonitoringData<?> mItem = (IMonitoringData<?>) listener;
-//			// nur dann registrieren, falls es noch nicht registriert ist
-//			// es kann z.B. sein, dass ein MetadataItem f�r zwei Events
-//			// registriert wird, aber nat�rlich trotzdem nur einmal
-//			// als MetadataItem registriert sein muss
-//
-//			// TODO: Die Loesung mit der Exception war nicht schoen ...
-//			// Jetzt wird es einfach ignoriert
-//			// try {
-//			if (!this.providesMonitoringData(mItem.getType())) {
-//				this.addMonitoringData(mItem.getType(), mItem);
-//			}
-//			// } catch (IllegalArgumentException e) {
-//			// }
-//		}
 	}
 
 	@Override
@@ -86,24 +77,64 @@ public class EventHandler implements IEventHandler{
 			this.genericEventListener.remove(listener);
 		}
 	}
-	
-	@Override
-	final public void fire(IEvent<?,?> event) {
-		synchronized (eventListener) {
 
-			ArrayList<IEventListener> list = this.eventListener.get(event
-					.getEventType());
-			if (list != null) {
-				synchronized (list) {
-					for (IEventListener listener : list) {
-						listener.eventOccured(event);
-					}
-				}
-			}
-			for (IEventListener listener : this.genericEventListener) {
-				listener.eventOccured(event);
-			}
+	@Override
+	final public void fire(IEvent<?, ?> event) {
+		dispatcher.addEvent(event);
+	}
+
+}
+
+class EventDispatcher extends Thread {
+	List<IEvent<?, ?>> eventQueue = new LinkedList<IEvent<?, ?>>();
+	final EventHandler handler;
+
+	public EventDispatcher(EventHandler handler) {
+		this.handler = handler;
+	}
+	
+	public void addEvent(IEvent<?, ?> event){
+		synchronized (eventQueue) {
+			eventQueue.add(event);
+			eventQueue.notifyAll();
 		}
 	}
 	
+	@Override
+	public void run() {
+		while (!interrupted()) {
+			synchronized (eventQueue) {
+				while (eventQueue.isEmpty()){
+					try {
+						eventQueue.wait(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				for (IEvent<?, ?> eventToFire : eventQueue) {
+					//System.err.println("Fire Event "+eventToFire);
+
+					synchronized (handler.eventListener) {
+						ArrayList<IEventListener> list = handler.eventListener
+								.get(eventToFire.getEventType());
+						if (list != null) {
+							synchronized (list) {
+								for (IEventListener listener : list) {
+									listener.eventOccured(eventToFire);
+								}
+							}
+						}
+
+					}
+					synchronized (handler.genericEventListener) {
+						for (IEventListener listener : handler.genericEventListener) {
+							listener.eventOccured(eventToFire);
+						}
+					}
+				}
+				eventQueue.clear();
+			}
+		}
+	}
+
 }
