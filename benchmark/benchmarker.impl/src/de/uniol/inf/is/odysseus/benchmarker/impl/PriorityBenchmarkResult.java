@@ -22,11 +22,10 @@ import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.benchmarker.AbstractBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
-import de.uniol.inf.is.odysseus.metadata.ILatency;
-import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.interval_latency_priority.ILatencyPriority;
 
 @Root(name = "priorityresult")
-public class PriorityBenchmarkResult<T extends ILatency & IPriority> extends
+public class PriorityBenchmarkResult<T extends ILatencyPriority> extends
 		AbstractBenchmarkResult<T> {
 	@Element(name="prioritizedStatistics")
 	private DescriptiveStatistics prioritizedStats = new DescriptiveStatistics();
