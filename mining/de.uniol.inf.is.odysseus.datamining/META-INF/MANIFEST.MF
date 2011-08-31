@@ -26,12 +26,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.relational.base
 Export-Package: de.uniol.inf.is.odysseus.datamining.classification,
  de.uniol.inf.is.odysseus.datamining.classification.physicaloperator,
  de.uniol.inf.is.odysseus.datamining.classification.transform,
- de.uniol.inf.is.odysseus.datamining.clustering,
- de.uniol.inf.is.odysseus.datamining.clustering.physicaloperator,
- de.uniol.inf.is.odysseus.datamining.clustering.transform,
- de.uniol.inf.is.odysseus.datamining.state.physicaloperator,
- de.uniol.inf.is.odysseus.datamining.state.transform,
- de.uniol.inf.is.odysseus.datamining.transform,
- de.uniol.inf.is.odysseus.logicaloperator.datamining.classification,
- de.uniol.inf.is.odysseus.logicaloperator.datamining.clustering,
- de.uniol.inf.is.odysseus.logicaloperator.datamining.state
+ de.uniol.inf.is.odysseus.logicaloperator.datamining.classification

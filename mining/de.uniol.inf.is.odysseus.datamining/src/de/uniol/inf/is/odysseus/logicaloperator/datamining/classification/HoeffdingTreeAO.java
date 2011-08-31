@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.datamining.classification;
 
-import de.uniol.inf.is.odysseus.datamining.builder.AttributeOutOfRangeException;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
@@ -156,8 +155,8 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 	public boolean isValid() {
 		boolean isValid = super.isValid();
 		if (probability < 0 || probability > 1) {
-			addError(new AttributeOutOfRangeException("PROBABILITY",
-					"has to be between 0 and 1"));
+//			addError(new AttributeOutOfRangeException("PROBABILITY",
+//					"has to be between 0 and 1"));
 			isValid = false;
 		}
 
