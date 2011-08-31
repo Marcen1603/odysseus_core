@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.util.LinkedMultiHashMap;
 
-public class PriorityIdHashSweepArea<K extends ITimeInterval & IPriority, T extends RelationalTuple<K>>
+public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends RelationalTuple<K>>
 		implements ITimeIntervalSweepArea<T> {
 
 	private LinkedMultiHashMap<Long, T> elements = new LinkedMultiHashMap<Long, T>();
