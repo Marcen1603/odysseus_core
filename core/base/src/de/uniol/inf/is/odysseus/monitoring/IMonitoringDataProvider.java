@@ -21,10 +21,9 @@ public interface IMonitoringDataProvider {
 	public Collection<String> getProvidedMonitoringData();
 
 	public boolean providesMonitoringData(String type);
-	boolean providesMonitoringData(String monitoringType, long monitoringPeriod);
 	
 	public <T> IMonitoringData<T> getMonitoringData(String type);
-	public <T> IPeriodicalMonitoringData<T> getMonitoringData(
+	public void createAndAddMonitoringData(
 				IPeriodicalMonitoringData item, long period);
 
 	public void addMonitoringData(String type, IMonitoringData<?> item);

@@ -53,22 +53,22 @@ public enum MonitoringDataTypes {
 		
 		if( PRODUCTIVITY.name.equals( type )) {
 			
-			getLogger().debug( "Productivity-MetadataItem created" );
+			getLogger().debug( "Productivity-MetadataItem for "+source+" created" );
 			return new Productivity(source, in);
 		
 		} else if( PROCESSING_COST.name.equals( type )) {
 			
-			getLogger().debug( "Processing cost-MetadataItem created" );
+			getLogger().debug( "Processing cost-MetadataItem for "+source+" created" );
 			return new AvgProcessingTime(source);
 			
 		}  else if( DATARATE.name.equals( type )) {
 			
-			getLogger().debug( "Datarate-MetadataItem created" );
+			getLogger().debug( "Datarate-MetadataItem for "+source+" created" );
 			return new Datarate(source);
 			
 		}  else if( SELECTIVITY.name.equals( type )) {
 			
-			getLogger().debug( "Selectivity-MetadataItem created" );
+			getLogger().debug( "Selectivity-MetadataItem for "+source+" created" );
 			return new ClassicSelectivity(source, in);
 			
 		} else {

@@ -32,8 +32,8 @@ public class PlanMonitor extends AbstractPlanMonitor<Double> {
 							.createMetadata(monitoringType, p));
 				}
 			} else {
-				if (!p.providesMonitoringData(monitoringType, monitoringPeriod)) {
-					p.getMonitoringData(
+				if (!p.providesMonitoringData(monitoringType)) {
+					p.createAndAddMonitoringData(
 							(IPeriodicalMonitoringData) MonitoringDataTypes
 									.createMetadata(monitoringType, p),
 							monitoringPeriod);

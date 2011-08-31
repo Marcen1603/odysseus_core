@@ -42,8 +42,9 @@ public class OdysseusMetadataProvider implements IMetadataProvider< IMonitoringD
 
 	@Override
 	public IMonitoringData< ? > createMetadata( String type, INodeModel<?> nodeModel ) {
-		ISource<?> source = (ISource<?>)nodeModel.getContent();
-		return MonitoringDataTypes.createMetadata(type, source);
+//		ISource<?> source = (ISource<?>)nodeModel.getContent();
+//		return MonitoringDataTypes.createMetadata(type, source);
+		return null;
 	}
 
 }
