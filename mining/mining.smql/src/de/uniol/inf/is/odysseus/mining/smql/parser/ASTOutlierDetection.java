@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTOutlierDetection extends SimpleNode {
   public ASTOutlierDetection(int id) {
     super(id);

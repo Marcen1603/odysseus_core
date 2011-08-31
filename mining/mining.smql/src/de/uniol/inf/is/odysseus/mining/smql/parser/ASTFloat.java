@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTFloat extends SimpleNode {
   public ASTFloat(int id) {
     super(id);

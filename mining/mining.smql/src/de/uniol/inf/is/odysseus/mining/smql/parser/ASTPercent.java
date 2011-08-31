@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTPercent extends SimpleNode {
   public ASTPercent(int id) {
     super(id);

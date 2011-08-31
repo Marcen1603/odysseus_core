@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTProcessPhases extends SimpleNode {
   public ASTProcessPhases(int id) {
     super(id);

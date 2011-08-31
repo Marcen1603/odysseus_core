@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTStart extends SimpleNode {
   public ASTStart(int id) {
     super(id);

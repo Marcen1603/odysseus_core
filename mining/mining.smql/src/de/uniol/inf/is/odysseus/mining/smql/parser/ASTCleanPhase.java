@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTCleanPhase extends SimpleNode {
   public ASTCleanPhase(int id) {
     super(id);

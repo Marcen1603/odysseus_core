@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTInteger extends SimpleNode {
   public ASTInteger(int id) {
     super(id);

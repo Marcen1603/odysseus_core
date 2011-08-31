@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTParameterList extends SimpleNode {
   public ASTParameterList(int id) {
     super(id);

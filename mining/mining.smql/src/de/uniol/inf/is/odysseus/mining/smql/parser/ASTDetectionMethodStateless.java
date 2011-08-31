@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTDetectionMethodStateless extends SimpleNode {
   public ASTDetectionMethodStateless(int id) {
     super(id);

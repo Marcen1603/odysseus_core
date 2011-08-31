@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTDetectionMethodSigmaRule extends SimpleNode {
   public ASTDetectionMethodSigmaRule(int id) {
     super(id);

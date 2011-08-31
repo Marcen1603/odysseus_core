@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.mining.smql.parser;
  * Describes the input token stream.
  */
 
+@SuppressWarnings("all")
 public class Token implements java.io.Serializable {
 
   /**

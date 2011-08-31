@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTNumber extends SimpleNode {
   public ASTNumber(int id) {
     super(id);

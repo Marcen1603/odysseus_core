@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTCorrectionMethod extends SimpleNode {
   public ASTCorrectionMethod(int id) {
     super(id);

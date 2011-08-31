@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTDetectionMethodOutOfDomain extends SimpleNode {
   public ASTDetectionMethodOutOfDomain(int id) {
     super(id);
