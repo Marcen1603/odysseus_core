@@ -20,6 +20,10 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class Variable implements IExpression<Object> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6977413577984429091L;
 	private Object value;
 	private final String identifier;
 	private final SDFDatatype type;

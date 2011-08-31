@@ -145,12 +145,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	
 	
 	private HashMap<String, String> prefixes;
-	private String baseURI;
 	
 	private List<SourceInfo> namedStreams;
 	private List<SourceInfo> defaultStreams;
 	
 	private boolean isCreateStatement;
+	@SuppressWarnings("unused")
+	private String baseURI;
 	
 	public SPARQLCreateLogicalPlanVisitor(){
 		this.prefixes = new HashMap<String, String>();
@@ -716,8 +717,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 						
 						// create join predicate
 						// each variable that is in both schemas must be equal
-						SDFAttributeList commonVars = this.getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
-						IPredicate joinPred = this.createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
+						SDFAttributeList commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+						IPredicate joinPred = createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
 						join.setPredicate(joinPred);
 						
 						
@@ -729,8 +730,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							
 							// create join predicate
 							// each variable that is in both schemas must be equal
-							SDFAttributeList innerCommonVars = this.getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
-							IPredicate innerJoinPred = this.createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+							SDFAttributeList innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+							IPredicate innerJoinPred = createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 							innerJoin.setPredicate(innerJoinPred);
 							
 							join = innerJoin;
@@ -753,8 +754,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 					
 					// create join predicate
 					// each variable that is in both schemas must be equal
-					SDFAttributeList commonVars = this.getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
-					IPredicate joinPred = this.createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
+					SDFAttributeList commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+					IPredicate joinPred = createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
 					join.setPredicate(joinPred);
 					
 					
@@ -766,8 +767,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 						
 						// create join predicate
 						// each variable that is in both schemas must be equal
-						SDFAttributeList innerCommonVars = this.getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
-						IPredicate innerJoinPred = this.createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+						SDFAttributeList innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+						IPredicate innerJoinPred = createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 						innerJoin.setPredicate(innerJoinPred);
 						
 						join = innerJoin;

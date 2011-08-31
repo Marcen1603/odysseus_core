@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SpatialCrosses extends AbstractFunction<Boolean>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4157596872563726492L;
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
 	 */

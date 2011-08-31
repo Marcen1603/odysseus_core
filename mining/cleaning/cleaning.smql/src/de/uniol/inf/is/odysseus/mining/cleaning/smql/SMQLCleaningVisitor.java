@@ -3,13 +3,9 @@ package de.uniol.inf.is.odysseus.mining.cleaning.smql;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.directory.InitialDirContext;
-import javax.swing.text.html.MinimalHTMLWriter;
-
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.DiscardCorrection;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.IUnaryCorrection;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.SimpleValueCorrection;

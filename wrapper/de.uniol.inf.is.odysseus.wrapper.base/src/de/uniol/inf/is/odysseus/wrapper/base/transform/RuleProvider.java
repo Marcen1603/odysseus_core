@@ -10,7 +10,8 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 public class RuleProvider implements ITransformRuleProvider {
-    private static Logger LOG = LoggerFactory.getLogger(RuleProvider.class);
+    @SuppressWarnings("unused")
+	private static Logger LOG = LoggerFactory.getLogger(RuleProvider.class);
 
     /*
      * (non-Javadoc)

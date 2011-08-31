@@ -39,7 +39,8 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 			this.writer.write(this.header());
 			this.writer.flush();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			//throw new RuntimeException(e);
+			e.printStackTrace();
 		}
 	}
 

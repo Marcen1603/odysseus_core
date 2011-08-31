@@ -18,6 +18,11 @@ package de.uniol.inf.is.odysseus.mep;
 public abstract class AbstractUnaryOperator<T> extends AbstractFunction<T> implements
 		IOperator<T> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8304097627424316426L;
+
 	@Override
 	public boolean isBinary() {
 		return false;

@@ -24,6 +24,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class MatrixSub extends AbstractFunction<Object> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6507932212926022251L;
+
 	/*
 	 * Liefert die Anzahl der m�glichen �bergabeparameter zur�ck.
 	 */

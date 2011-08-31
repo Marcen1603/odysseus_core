@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class SinusFunction extends AbstractFunction<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4726892948154463075L;
+
 	@Override
 	public int getArity() {
 		return 1;

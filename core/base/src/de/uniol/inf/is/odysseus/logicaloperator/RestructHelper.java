@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
-
 public class RestructHelper {
 	public static Collection<ILogicalOperator> removeOperator(
 			UnaryLogicalOp remove, boolean reserveOutputSchema) {

@@ -21,6 +21,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class Constant<T> implements IExpression<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 504053838249636471L;
 	private final T value;
 	private SDFDatatype type;
 

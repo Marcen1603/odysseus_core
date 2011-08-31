@@ -20,7 +20,6 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 public interface IExecutionPlan extends IClone{
 		

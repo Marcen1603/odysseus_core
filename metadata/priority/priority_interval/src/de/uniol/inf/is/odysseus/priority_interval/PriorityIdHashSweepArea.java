@@ -21,11 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.util.LinkedMultiHashMap;
 

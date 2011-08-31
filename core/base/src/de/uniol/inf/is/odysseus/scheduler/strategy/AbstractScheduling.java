@@ -15,16 +15,12 @@
 package de.uniol.inf.is.odysseus.scheduler.strategy;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 
@@ -38,6 +34,7 @@ import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
  */
 public abstract class AbstractScheduling implements IScheduling,ITrainScheduling {
 
+	@SuppressWarnings("unused")
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractScheduling.class);
 

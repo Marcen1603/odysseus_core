@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampToPayloadPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.storing.physicaloperator.DatabaseSinkPO;

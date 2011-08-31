@@ -20,6 +20,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class MatrixLine extends AbstractFunction<double[]> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2878724836669428853L;
 	private int arity;
 	
 	public MatrixLine(IExpression<?>[] values) {

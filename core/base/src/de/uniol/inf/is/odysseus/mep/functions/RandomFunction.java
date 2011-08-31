@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class RandomFunction extends AbstractFunction<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5923905039135136079L;
+
 	@Override
 	public int getArity() {
 		return 0;

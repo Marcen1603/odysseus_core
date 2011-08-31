@@ -25,6 +25,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SpatialContains extends AbstractFunction<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6505087456838583141L;
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
 	 */

@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class IfFunction extends AbstractFunction<Object> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7330905069703118113L;
+
 	@Override
 	public int getArity() {
 		return 3;

@@ -1,12 +1,9 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
 import de.uniol.inf.is.odysseus.ISubscribable;
-import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;

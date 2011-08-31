@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.SLATestLogger;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**

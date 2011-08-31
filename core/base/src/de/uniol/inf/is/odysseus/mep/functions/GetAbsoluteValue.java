@@ -22,6 +22,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class GetAbsoluteValue extends AbstractFunction<Object>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5389590263951333045L;
+
 	/*
 	 * Liefert die Anzahl der m�glichen �bergabeparameter zur�ck.
 	 */

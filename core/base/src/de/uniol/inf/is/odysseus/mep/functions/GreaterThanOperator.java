@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class GreaterThanOperator extends AbstractBinaryOperator<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3761097192507658786L;
+
 	@Override
 	public int getPrecedence() {
 		return 8;

@@ -25,6 +25,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * 
  */
 public class Distance extends AbstractFunction<Double> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7824049649639008138L;
 	private static Double RADIUS = 6367000.0;
 
 	public static void setRadius(double radius) {

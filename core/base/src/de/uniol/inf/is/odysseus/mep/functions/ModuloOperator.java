@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class ModuloOperator extends AbstractBinaryOperator<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7335362619312568986L;
+
 	@Override
 	public int getPrecedence() {
 		return 5;

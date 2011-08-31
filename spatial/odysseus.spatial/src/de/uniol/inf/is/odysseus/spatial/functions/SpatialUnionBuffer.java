@@ -26,6 +26,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SpatialUnionBuffer extends AbstractFunction<Geometry> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1290987836780172890L;
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
 	 */

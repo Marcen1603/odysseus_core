@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class Now extends AbstractFunction<Long> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2036152535915606579L;
+
 	@Override
 	public String getSymbol() {
 		return "Now";

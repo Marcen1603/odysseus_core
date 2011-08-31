@@ -24,6 +24,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class MatrixInvert extends AbstractFunction<Object> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2408562706605880454L;
+
 	/*
 	 * Liefert die Anzahl der m�glichen �bergabeparameter zur�ck.
 	 */

@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author Stefanie Witzke
  * 
  */
+@SuppressWarnings("all")
 public class SchedulingstrategyServiceTrackerCustomizer implements ServiceTrackerCustomizer {
 
 	private final BundleContext context;

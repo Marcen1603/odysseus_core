@@ -9,6 +9,7 @@ import java.util.Random;
 
 public class RDFStreamGenerator {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
 		for (int fileNo=1;fileNo<=1;fileNo++){
 			FileWriter writer = new FileWriter(new File("labdata_cfg/rdfStream"+fileNo+".csv"));

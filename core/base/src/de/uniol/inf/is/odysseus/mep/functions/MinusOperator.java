@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class MinusOperator extends AbstractBinaryOperator<Double> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -171700341355653362L;
+
 	@Override
 	public int getPrecedence() {
 		return 6;

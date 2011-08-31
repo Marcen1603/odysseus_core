@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class FloorFunction extends AbstractFunction<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -858633322246642617L;
+
 	@Override
 	public int getArity() {
 		return 1;

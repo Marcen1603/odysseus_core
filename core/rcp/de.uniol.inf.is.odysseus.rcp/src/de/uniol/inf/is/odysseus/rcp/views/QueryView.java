@@ -331,6 +331,7 @@ public class QueryView extends ViewPart implements
 
 		Thread t = new Thread(new Runnable() {
 
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void run() {
 				ServiceTracker execTracker = new ServiceTracker(OdysseusRCPPlugIn.getDefault().getBundle().getBundleContext(),

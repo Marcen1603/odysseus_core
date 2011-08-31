@@ -21,8 +21,6 @@ import java.io.InputStream;
 
 import java.util.Properties;
 
-import de.uniol.inf.is.odysseus.storing.DatabaseService;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -37,12 +35,12 @@ public class DerbyDatabase implements BundleActivator {
 	volatile protected static Logger LOGGER = LoggerFactory
 			.getLogger(DerbyDatabase.class);
 	
-	private static String 	database = null,
-							user = null,
-							password = null,
-							host = null,
-							port = null,
-							create = null;
+//	private static String 	database = null,
+//							user = null,
+//							password = null,
+//							host = null,
+//							port = null,
+//							create = null;
 	//private static boolean 	create = false;
 	
 	@Override
@@ -64,12 +62,12 @@ public class DerbyDatabase implements BundleActivator {
 			try {
 				properties.loadFromXML(inputStream);
 				
-				DerbyDatabase.host = properties.getProperty("host").trim();
-				DerbyDatabase.port = properties.getProperty("port").trim();
-				DerbyDatabase.database = properties.getProperty("database").trim();
-				DerbyDatabase.create = properties.getProperty("create").trim();
-				DerbyDatabase.user = properties.getProperty("user").trim();
-				DerbyDatabase.password = properties.getProperty("password").trim();
+//				DerbyDatabase.host = properties.getProperty("host").trim();
+//				DerbyDatabase.port = properties.getProperty("port").trim();
+//				DerbyDatabase.database = properties.getProperty("database").trim();
+//				DerbyDatabase.create = properties.getProperty("create").trim();
+//				DerbyDatabase.user = properties.getProperty("user").trim();
+//				DerbyDatabase.password = properties.getProperty("password").trim();
 				
 //				String defaultURL = String.format("jdbc:derby://%s:%s/%s;create=%s",host,port,database,create);
 //				

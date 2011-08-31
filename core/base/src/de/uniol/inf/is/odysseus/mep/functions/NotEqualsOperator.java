@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class NotEqualsOperator extends AbstractBinaryOperator<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1508977830046773571L;
+
 	@Override
 	public int getPrecedence() {
 		return 9;

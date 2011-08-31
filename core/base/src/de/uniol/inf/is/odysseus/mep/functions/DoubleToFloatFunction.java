@@ -5,7 +5,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class DoubleToFloatFunction  extends AbstractFunction<Float> {
 
-    @Override
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6665008272296004433L;
+
+	@Override
     public int getArity() {
         return 1;
     }

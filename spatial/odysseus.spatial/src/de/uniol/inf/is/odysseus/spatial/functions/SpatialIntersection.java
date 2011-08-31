@@ -7,6 +7,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class SpatialIntersection extends AbstractFunction<Boolean>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8247832718900242504L;
+
 	@Override
 	public int getArity() {
 		// TODO Auto-generated method stub

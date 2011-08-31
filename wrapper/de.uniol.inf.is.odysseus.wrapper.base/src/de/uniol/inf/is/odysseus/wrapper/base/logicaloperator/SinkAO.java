@@ -21,7 +21,8 @@ public class SinkAO extends AbstractLogicalOperator {
      * 
      */
     private static final long serialVersionUID = -2328459291978470344L;
-    private static Logger LOG = LoggerFactory.getLogger(SinkAO.class);
+    @SuppressWarnings("unused")
+	private static Logger LOG = LoggerFactory.getLogger(SinkAO.class);
     private final Map<String, String> options = new HashMap<String, String>();
     private String adapter;
 

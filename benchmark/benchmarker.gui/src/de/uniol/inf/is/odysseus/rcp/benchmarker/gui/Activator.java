@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 /**
  * The activator class controls the plug-in life cycle
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID

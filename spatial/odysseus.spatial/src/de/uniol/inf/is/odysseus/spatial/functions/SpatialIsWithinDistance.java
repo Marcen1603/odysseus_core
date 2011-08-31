@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SpatialIsWithinDistance extends AbstractFunction<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8795757250503029994L;
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
 	 */

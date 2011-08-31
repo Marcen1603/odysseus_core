@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5934608915212061886L;
+
 	@Override
 	public int getPrecedence() {
 		return 3;

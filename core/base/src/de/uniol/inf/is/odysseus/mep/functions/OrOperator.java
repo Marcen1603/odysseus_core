@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class OrOperator extends AbstractBinaryOperator<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5508300237695874743L;
+
 	@Override
 	public boolean isCommutative() {
 		return true;

@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
  * @author Stefanie Witzke
  * 
  */
+@SuppressWarnings("all")
 public class BufferplacementstrategyServiceTrackerCustomizer implements ServiceTrackerCustomizer {
 
 	private final BundleContext context;

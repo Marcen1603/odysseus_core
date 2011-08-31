@@ -16,6 +16,11 @@ package de.uniol.inf.is.odysseus.mep;
 
 public abstract class AbstractBinaryOperator<T> extends AbstractFunction<T>
 		implements IBinaryOperator<T> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8717397809265227223L;
+
 	@Override
 	final public int getArity() {
 		return 2;

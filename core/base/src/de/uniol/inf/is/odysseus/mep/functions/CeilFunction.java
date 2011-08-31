@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class CeilFunction extends AbstractFunction<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3179317408857566584L;
+
 	@Override
 	public int getArity() {
 		return 1;

@@ -14,8 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler;
 
-import org.osgi.service.component.ComponentContext;
-
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.prioritystrategy.SimpleDynamicPriorityPlanScheduling;

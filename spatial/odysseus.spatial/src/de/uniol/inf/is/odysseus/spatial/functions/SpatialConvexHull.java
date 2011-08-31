@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SpatialConvexHull extends AbstractFunction<Geometry> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -547535527365903486L;
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
 	 */

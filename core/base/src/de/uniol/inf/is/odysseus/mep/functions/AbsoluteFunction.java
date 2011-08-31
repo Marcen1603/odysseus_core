@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class AbsoluteFunction extends AbstractFunction<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3805809891847106050L;
+
 	@Override
 	public int getArity() {
 		return 1;

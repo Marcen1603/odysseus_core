@@ -19,6 +19,10 @@ import java.util.Set;
 
 public abstract class AbstractFunction<T> implements IFunction<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3805396798229438499L;
 	private IExpression<?>[] arguments;
 
 	@Override

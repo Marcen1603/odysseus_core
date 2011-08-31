@@ -85,14 +85,14 @@ public class QueryTextParser {
 
 		// Ausf�hren
 		variables = new HashMap<String, Object>();
-		int counter = 1;
+//		int counter = 1;
 		for (PreParserStatement stmt : statements) {
 			Object ret = stmt.execute(variables, caller);
 			// If Statement generates Queries
 			if (stmt.getKeyword() instanceof ExecuteQueryPreParserKeyword) {
 				queries.addAll((Collection<IQuery>) ret);
 			}
-			counter++;
+//			counter++;
 		}
 
 		return queries;

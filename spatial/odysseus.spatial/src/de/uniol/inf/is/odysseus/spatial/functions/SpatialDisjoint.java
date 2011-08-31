@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SpatialDisjoint extends AbstractFunction<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2946459222219510673L;
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
 	 */

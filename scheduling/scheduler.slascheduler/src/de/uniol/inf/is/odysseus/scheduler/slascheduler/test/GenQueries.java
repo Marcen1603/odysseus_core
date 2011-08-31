@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.CostFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.PriorityFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.StarvationFreedomFactory;

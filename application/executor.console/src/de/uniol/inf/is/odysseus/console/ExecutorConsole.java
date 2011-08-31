@@ -21,11 +21,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,8 +43,6 @@ import org.osgi.service.prefs.Preferences;
 import org.osgi.service.prefs.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;

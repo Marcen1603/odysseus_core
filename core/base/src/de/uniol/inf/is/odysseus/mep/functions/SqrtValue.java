@@ -22,6 +22,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SqrtValue extends AbstractFunction<Object>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7488942114484992572L;
+
 	/*
 	 * Liefert die Anzahl der m�glichen �bergabeparameter zur�ck.
 	 */

@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class SmallerEqualsOperator extends AbstractBinaryOperator<Boolean> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4954488959783908936L;
+
 	@Override
 	public int getPrecedence() {
 		return 8;

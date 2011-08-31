@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class SpatialCovers extends AbstractFunction<Boolean>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7217981160007765808L;
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
 	 */

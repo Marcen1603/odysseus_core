@@ -19,6 +19,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class DolToEur extends AbstractFunction<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8220565259943514844L;
 	private static double EXCHANGERATE = 1d / 1.55d;
 
 	@Override

@@ -24,6 +24,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * No check for rectangularity is applied. This is checked in the ExpressionBuilderVisitor!
  */
 public class MatrixFunction extends AbstractFunction<double[][]> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -742218734048620320L;
 	private int arity;
 
 	public MatrixFunction(IExpression<?>[] lines) {

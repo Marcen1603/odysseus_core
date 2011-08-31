@@ -28,6 +28,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class Polygon extends AbstractFunction<Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2150200710987084258L;
 	@SuppressWarnings("unused")
 	private static Double RADIUS = 6367000.0;
 

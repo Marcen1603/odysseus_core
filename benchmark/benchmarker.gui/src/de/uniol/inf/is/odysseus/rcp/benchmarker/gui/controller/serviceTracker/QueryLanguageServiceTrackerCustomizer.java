@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
  * @author Stefanie Witzke
  * 
  */
+@SuppressWarnings("all")
 public class QueryLanguageServiceTrackerCustomizer implements ServiceTrackerCustomizer {
 
 	private final BundleContext context;

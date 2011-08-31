@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class NotOperator extends AbstractUnaryOperator<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3762757228260146398L;
+
 	@Override
 	public int getPrecedence() {
 		return 3;
